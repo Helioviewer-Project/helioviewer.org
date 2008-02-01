@@ -41,8 +41,7 @@
 				// NOTE: This should all be encapsulated in the SunViewer class!
 				// Create viewport
 				var viewport1 = new ViewPort('sunViewer1.viewport1', {
-					//minZoomLevel: 9,
-					maxZoomLevel: 10,
+					maxZoomLevel: 9,
 					blankTileImage: 'images/icons/blank.gif',
 					loadingTileImage: 'images/icons/progress.gif' //,
 					//tileLayerProviders: [
@@ -261,11 +260,31 @@
 				</div>
 				<div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="left: 10px; top: 545px">
 				</div>
-				<!-- div class="viewportControls" style="left: 0px; bottom: 0px; height: 20px; padding: 0px 4px 0px 4px; margin: 0px">
+				<div class="viewportControls" style="left: 0px; bottom: 0px; height: 20px; padding: 0px 4px 0px 4px; margin: 0px">
 					<span class="centerControl">Center</span>
-				</div -->
+				</div>
 		
 			</div>
+			<h2>Horizontal Slider with Preset Values</h2>
+		<div id="track3" style="width:200px; background-color:#ccc; height:10px;">
+			<div id="handle3" style="width:10px; height:15px; background-color:#f00; cursor:move;"></div>
+
+		</div>
+		<p id="debug3">&nbsp;</p>
+
+		<script type="text/javascript" language="javascript">
+		// <![CDATA[
+			
+			// horizontal slider control with preset values
+			new Control.Slider('handle3', 'track3', {
+				range: $R(-200, 200),
+				values: [-200, -150, -100, -50, 0, 50, 100, 150, 200],
+				sliderValue: 1, // won't work if set to 0 due to a bug(?) in script.aculo.us
+				onSlide: function(v){ $('debug3').innerHTML = 'slide: ' + v },
+				onChange: function(v){ $('debug3').innerHTML = 'changed: ' + v }
+			});
+		// ]]>
+		</script>
 		</div>
 		
 		
