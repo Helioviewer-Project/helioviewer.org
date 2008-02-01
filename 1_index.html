@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<script type="text/javascript">
+			if (navigator.userAgent.indexOf('MSIE') > -1 && navigator.userAgent.indexOf('Mac') > -1) {
+				location.href = "html/notsupported.html";
+			}
+		</script>
+		<script src="lib/prototype/prototype.js" type="text/javascript"></script>
+		<script src="lib/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/DomNodeCache.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/AjaxRequestWrapper.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/SunViewerWidget.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/SunImage.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/tiles.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/Surface.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/overlays.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/markers.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/layers.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/InfoBubble.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/ViewPort.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/LayerManager.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/ZoomLevelSlider.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/SunCoordsDisplay.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/SizeIndicator.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/SelectByDateMenu.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/SunViewer.js" type="text/javascript"></script>
+		<script type="text/javascript">
+		// <![CDATA[
+
+		var sunViewer = null;
+		var maximized = false;
+		
+		function initializeGraphic(e) {
+			//Debug.test();
+			
+			// opera triggers the onload twice
+			if (sunViewer == null) {
+				// NOTE: This should all be encapsulated in the SunViewer class!
+				// Create viewport
+				var viewport1 = new ViewPort('sunViewer1.viewport1', {
+					maxZoomLevel: 9,
+					blankTileImage: 'images/icons/blank.gif',
+					loadingTileImage: 'images/icons/progress.gif' //,
+					//tileLayerProviders: [
+					//	new MarkerLayerProvider()
+					//]
+				});
+				
+				var viewport2 = new ViewPort('sunViewer1.viewport2', {
+					maxZoomLevel: 9,
+					blankTileImage: 'images/icons/blank.gif',
+					loadingTileImage: 'images/icons/progress.gif' //,
+				});
+				
+				// Create tile containers
+				var tiles1 = new TileContainer(viewport1);
+				var tiles2 = new TileContainer(viewport2);
+				var layerManager1 = new LayerManager(tiles1, 'layerManager1');
+				var layerManager2 = new LayerManager(tiles2, 'layerManager2');
+				
+				// Create tile layer providers
+				var bg1 = new TileLayerProvider(tiles1);
+				var bg2 = new TileLayerProvider(tiles2);
+				//var debug1 = new TileDebugLayerProvider(tiles1);
+				//var debug2 = new TileDebugLayerProvider(tiles2, { color: 'red' });
+				var markers1 = new MarkerLayerProvider(tiles1);
+				
+				//var menu1 = new SelectByDateMenu('sunViewer1.menu1');
+				//$('layerManager1').appendChild(menu1.createHtmlElement());
+				//var menu2 = new SelectByDateMenu('sunViewer1.menu2');
+				//$('layerManager1').appendChild(menu2.createHtmlElement());
+				var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.zoomLevelSlider');
+				var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);
+				var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
+				// Link menu to tile layer providers
+				zoomLevelSlider.linkToViewports(viewport1);
+				zoomLevelSlider.linkToViewports(viewport2);
+				//bg1.observe(menu1, 'ImageChange');
+				//bg2.observe(menu2, 'ImageChange')
+				markers1.observe(bg1, 'ImageChange');
+				markers1.observe(bg1, 'ZoomOffsetChange');
+
+/*
+				var viewport2 = new ViewPort('sunViewer1.viewport2', {
+					//maxZoomLevel: 5,
+					blankTileImage: 'images/icons/blank.gif',
+					loadingTileImage: 'images/icons/progress.gif'
+				});
+
+				var tiles2 = new TileContainer(viewport1);
+				var bg2 = new TileLayerProvider(tiles2);
+
+
+				var menu2 = new SelectByDateMenu('sunViewer1.menu2');
+				bg2.observe(menu2, 'ImageChange')
+
+				// Link all the listeners and stuff together...
+				zoomLevelSlider.linkToViewports(viewport2);
+				//viewport2.observe(menu2, 'ImageChange');
+*/
+				viewport2.observe(viewport1, 'Move');
+				viewport1.observe(viewport2, 'Move');
+			}
+		}
+		
+		var LoadingIndicator = Class.create();
+		
+		LoadingIndicator.prototype = {
+			initialize: function() {
+				//this.loadingItemCount = 0;
+				this.loadingItems = [];
+				
+				Ajax.Responders.register({
+				  onCreate: this.loadingStarted.bind(this, 'Ajax'),
+				  onComplete: this.loadingFinished.bind(this, 'Ajax')
+				});
+			},
+
+			show: function() {
+				$('loading').show();
+			},
+			
+			hide: function() {
+				$('loading').hide();
+			},
+			
+			reset: function() {
+				this.loadingItemCount = 0;
+				this.hide();
+			},
+			
+			loadingStarted: function(item) {
+				//if (!item) item = new object();
+				this.show();
+				this.loadingItems.push(new Object());
+				//++this.loadingItemCount;
+//Debug.output('Loading started: ' + item + ' (' + this.loadingItems.length + ')');
+			},
+			
+			loadingFinished: function(item) {
+				this.loadingItems.pop();
+				if (this.loadingItems.length == 0) this.hide();
+				//if (this.loadingItemCount < 0) this.loadingItemCount = 0;
+//Debug.output('Loading finished: ' + item + ' (' + this.loadingItems.length + ')');
+			}
+		};
+		
+		var Debug = Class.create();
+
+		Debug.outputBuffer = '';
+		Debug.outputTimeout;
+		Debug.loadingItemCount = 0;
+		
+		Debug.loadingIndicator = new LoadingIndicator();
+		
+		Debug.test = function(xIndex, yIndex, level) {
+			var xIndex = 9;
+			var level = 3;
+			for (var l = 0; l <= level; l++) {
+				var x = (xIndex >> (level - l + 1)) / (1 << l);
+				var x2 = 1 / (1 << l + 1);
+				Debug.output(x, (1<<l), (xIndex >> (level - l)), x2);
+			}
+		};
+
+		Debug.output = function() {
+			var txt = '';
+			
+			for (var i = 0; i < arguments.length; i++) {
+				txt += arguments[i];
+				if (i < arguments.length - 1) txt += ', ';
+			}
+			
+			if (window.console) {
+				window.console.log(txt);
+			} else {
+				if (Debug.outputTimeout) clearTimeout(Debug.outputTimeout);
+				Debug.outputBuffer = txt + '\n' + Debug.outputBuffer;
+				Debug.outputTimeout = setTimeout(Debug.flush, 100);
+			}
+		}
+		
+		Debug.plotArray = function(a) {
+			Debug.output('----\n' + Debug.strArray(a, '', 0));
+		}
+		
+		Debug.strArray = function(a, indent, index) {
+			//Debug.output(typeof(a), a instanceof Array);
+			if (a instanceof Array) {
+				if (a.length == 0) return indent + index + ': []\n';
+				var txt = indent + index + ': [\n';
+				var c = 0;
+				a.each(function(m) {
+					txt += Debug.strArray(m, indent + '  ', c)
+					++c;
+				});
+				return txt + indent + ']\n';
+			} else {
+				return indent + index + ': ' + a + '\n';
+			}
+		}
+		
+		Debug.flush = function() {
+			$('debugOutput').innerHTML = '----\n' + Debug.outputBuffer + $('debugOutput').innerHTML;
+			Debug.outputBuffer = '';
+		}
+		
+		Debug.ajaxFailure = function(transport, url) {
+			Debug.output('Error getting file "' + url + '": ' + transport.status + ' ' + transport.statusText);
+		}
+			
+		Event.observe(window, 'load', initializeGraphic);
+		// ]]>
+		</script>
+		<style type="text/css">
+			@import url(styles/sunviewer.css);
+			@import url(styles/sizeIndicator.css);
+		</style>
+	</head>
+	<body>
+		<span id="loading" style="padding: 3px; font-size: 10pt; color: #FFFFFF; background-color: #990000; position: absolute; top: 30px; right: 30px; display: none">Loading...</span>
+		<div id="sunViewer1.header" class="header">
+			<h1>SunViewer (alpha)</h1>
+        	<p>
+            	<span class="nav" onclick="SunViewer.showMessage('html/about.html')">About</a>&nbsp; 
+        	</p>
+		</div>
+				<!--
+				<table border="0" cellspacing="0" cellpadding="2">
+				<tr>
+					<td>
+				<button type="button" onclick="viewerBean.centreImage()">Centre</button>
+				<button type="button" onclick="viewerBean.reset()">Reset</button>
+					</td><td width="150">
+				<span id="coordinates" style="margin-left: 20px">
+					Coordinates:
+					<span id="NorS" style="width: 10px"></span>
+					<span id="NorSdeg" style="width: 20px; text-align: right"></span>
+					<span id="WorE" style="width: 10px"></span>
+					<span id="WorEdeg" style="width: 20px; text-align: right"></span>
+				</span>
+					</td><td>
+				<span id="rotation" style="margin-left: 20px">
+					Rotation:
+					<span id="RNorS" style="width: 10px">S</span>
+					<span id="RNorSdeg" style="width: 20px; text-align: right">0</span>
+					<span id="RWorE" style="width: 10px">W</span>
+					<span id="RWorEdeg" style="width: 20px; text-align: right">0</span>
+				</span>
+					</td>
+				</tr>
+				</table>
+				-->
+		<div style="clear: left"></div>
+		<div style="z-index: 1; position: relative; width: 600px; margin-right: 10px; margin-bottom: 10px; display: inline; float: left">
+
+			<div id="layerManager1" class="layerManager" style="position: absolute; z-index: 2; height: 15px; width: 70px; overflow: hidden; margin-bottom: 10px">
+			</div>
+			<div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; width: 100%; height: 600px">
+				<div class="surface" id="surface1">
+					
+				</div>
+				<div class="well" id="well1">
+					
+				</div>
+				<div id="sunViewer1.viewport1.zoomLevelSlider" class="viewportControls" style="position: absolute; left: 10px; top: 35px; text-align: center; padding: 2px 4px 2px 4px">
+					<a href="JavaScript:void(0);" class="zoomIn" title="Zoom In">
+						<img src="images/icons/zoomIn.gif" border="0" style="margin: 0px 0px 00px 0px">
+					</a>
+					
+					<div class="zoomLevelContainer">
+						
+					</div>
+					
+					<a href="JavaScript:void(0);" class="zoomOut" title="Zoom Out">
+						<img src="images/icons/zoomOut.gif" border="0" style="margin: 0px 0px 0px 0px">
+					</a>
+				</div>					
+				<div id="sunViewer1.viewport1.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;">
+				
+				</div>
+				<div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="left: 10px; top: 545px">
+				</div>
+				<div class="viewportControls" style="left: 0px; bottom: 0px; height: 20px; padding: 0px 4px 0px 4px; margin: 0px">
+					<span class="centerControl">Center</span>
+				</div>
+			</div>
+		</div>
+		<div style="z-index: 0; position: relative; width: 600px; margin-right: 10px; margin-bottom: 10px;; display: inline; float: left">
+			<div id="layerManager2" class="layerManager" style="position: absolute; z-index: 2; left: 0; top: 0; height: 15px; width: 70px; overflow: hidden; margin-bottom: 10px">
+			</div>
+			<div id="sunViewer1.viewport2" class="viewport" style="left: 0px; width: 100%; height: 600px">
+				<div class="surface" id="surface2">
+					
+				</div>
+				<div class="well" id="well2">
+					
+				</div>
+			</div>
+		</div>
+		<!-- div>
+		<textarea id="debugOutput" cols="100" rows="6"></textarea>
+		</div -->
+	</body>
+</html>

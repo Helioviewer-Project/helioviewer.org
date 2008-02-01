@@ -1,0 +1,17 @@
+.sizeIndicatorElement {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+
+.sizeIndicator
+{
+	position: absolute;
+	z-index: 100000;
+	/* width: 300px; */
+	color: #FFFFFF;
+	font-size: 12px;
+	font-weight: normal;
+}

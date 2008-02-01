@@ -1,0 +1,358 @@
+body {
+	font-family: sans-serif;
+	margin: 0;
+	padding: 10px;
+	color: #000000;
+	background-color: #EEEEF0;
+	font-size: 0.7em;
+}
+
+.viewport {
+	position: relative;
+	top: 0px;
+	left: 0px;
+	/* NOTE: the size and width should be set dynamically when initialized */
+	width: 0;
+	height: 0;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+	background-color: #000000;
+	color: #FFFFFF;
+	overflow: hidden;
+	z-index: 0;
+	/* float: left; */
+}
+
+
+.surface {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 0;
+	overflow: hidden;
+	/* background-color: red;
+	opacity: .5; */
+	/*background: url(../gfx/center.gif) no-repeat center center;*/
+	_background: url(../gfx/blank.gif) no-repeat center center; /* NOTE: required for IE to"see" the surface */
+}
+.well, .tileContainer {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	overflow: hidden;
+	z-index: 10;
+}
+
+.tile
+{
+	border: 0px;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	display: block;
+	overflow: visible;
+	/* border: 1px white solid; */
+	/* background-color: transparent */
+	/*-moz-outline: 1px dashed #FF0000;*/
+}
+
+.centerControl {
+	cursor: pointer;
+}
+.sunCoordsDisplay {
+	color: #FFFFFF;
+	font-size: 12px;
+	z-index: 100000;
+}
+
+.layerManager {
+	position: relative;
+	top: 0;
+	left: 0;
+	border: 1px #000000 solid;
+	margin: 0px 0px 10px 0px;
+	padding: 5px;
+	font-size: 10pt;
+	background-color: #FFFFFF;
+}
+
+.SimpleLayerManager {
+	position: float;
+	top: 0;
+	left: 0;
+	border: 1px #000000 solid;
+	margin: 0px 0px 10px 100px;
+	padding: 5px;
+	font-size: 10pt;
+	background-color: #FFFFFF;
+}
+
+.layerConfigurator {
+	margin: 5px 0px 5px 0px;
+	padding: 5px;
+}
+
+.selectByDateMenu {
+	position: relative;
+	top: 0;
+	left: 0;
+	margin: 5px 5px 5px 5px;
+	/* float: left; */
+}
+
+
+.messageBox {
+	position: absolute;
+	top: 200px;
+	left: 50%;
+	width: 40em;
+	margin-left: -20em;	
+	z-index: 100;
+}
+
+.messageBg {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+	border: 1px solid #000000;
+	background-color: #DDDDE0;
+	opacity: 0.5;
+}
+
+.messageFg {
+	position: relative;
+	padding: 30px 10px 10px 10px;
+	color: #000000;
+	font-size: 12pt;
+	z-index: 1;
+}
+
+.zoomLevelContainer {
+	text-align: right;
+	width: 100%;
+	line-height: 0px;
+	cursor: pointer;
+}
+
+.zoomLevelControl {
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+	position: relative;
+	top: 0px;
+}
+
+.overlay {
+	position: absolute;
+}
+
+.mark {
+	position: absolute;
+    overflow: hidden;
+	color: #FFFFFF;
+	font-size: 16px;
+	z-index: 25;
+	cursor: pointer;
+/*	font-weight: bold; */
+}
+.label {
+	position: absolute;
+    overflow: visible;
+	color: #FFFFFF;
+	/* background-color: #FFFFFF; */
+	font-size: 14px;
+	z-index: 26;
+	padding: 1px 2px 1px 2px;
+	/* border: 1px #000000 solid; */
+	/* cursor: pointer; */
+    white-space: nowrap;
+}
+
+/*\*/
+html*.label {
+	line-height: 16px;
+	text-shadow: #000000 2px 2px 2px;
+    white-space: nowrap;
+}/**/
+
+.blackBg {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: #000000;
+	opacity: 0.5;
+	-moz-opacity: 0.5;
+	filter: alpha(Opacity=50);
+	z-index: -1;	
+}
+
+/*\*/
+html*.blackBg {
+	display: none;/*seen only by safari*/
+}/**/
+
+span.closeX {
+	position: absolute;
+	font-size: 10pt;
+	color: #000000;
+	top: 10px;
+	right: 10px;
+	z-index: 2;
+	cursor: pointer;
+}
+
+a.closeX:link {
+	color: #999999;
+	font-size: 11px;
+	font-family: Arial, sans-serif;
+	border: #999999 1px solid;
+	text-decoration: none;
+	margin: 1px;
+}
+a.closeX:active {
+	color: #999999;
+	font-size: 11px;
+	font-family: Arial, sans-serif;
+	border: #999999 1px solid;
+	text-decoration: none;
+	margin: 1px;
+}
+a.closeX:visited {
+	color: #999999;
+	font-size: 11px;
+	font-family: Arial, sans-serif;
+	border: #999999 1px solid;
+	text-decoration: none;
+	margin: 1px;
+}
+a.closeX:hover {
+	color: #000000;
+	/* background-color: #CCCCCC; */
+	font-size: 11px;
+	font-family: Arial, sans-serif;
+	border: #000000 1px solid;
+	text-decoration: none;
+	margin: 1px;
+}
+
+a.control1 {
+	color: #000000;
+	font-family: Arial, sans-serif;
+	text-decoration: none;
+}
+a.control1:hover {
+	text-decoration: underline;
+}
+a.control2 {
+	color: #000000;
+	font-family: Arial, sans-serif;
+	text-decoration: none;
+}
+
+.noImageAvailable {
+	width: 100%;
+	height: 100%;
+	padding: 50% 2em 50% 2em;
+	font-size: x-small;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+.infoBubble {
+	position: absolute;
+    /* overflow: hidden; */
+	background-color: #FFFFFF;
+	z-index: 10000;
+	padding: 2px;
+	width: 200px;
+	border: 1px #000000 solid;
+	cursor: default;
+	text-align: right;
+}
+.infoContent {
+	color: #000000;
+	font-size: 15px;
+	padding: 2px;
+	text-align: left;
+}
+.controls {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 100000;
+	overflow: hidden;
+}
+.viewportControls        
+{
+	position: absolute;
+	/* NOTE: the right and bottom can be adjusted when initialized */
+	font-size: 12px;
+	line-height: 20px;
+	vertical-align: middle;
+	font-weight: bold;
+	z-index: 100000;
+	color: #000000;
+	background-color: #FFFFFF;
+	border: 1px solid #000000;
+}
+.viewportControls a
+{
+	color: #000000;
+	text-decoration: none;
+	-moz-outline: none;
+}
+.viewportControls a img {
+	border: 0;
+	vertical-align: middle;
+}
+.viewportControls a:active {
+	color: #FF0000;
+}
+
+#track3 {
+	margin: 0px 0px 0px 0px;
+}
+
+.nav { color: #000000; font-size: 14px; cursor: pointer; }
+.nav:link {color: #000000; text-decoration:none;}     /* unvisited link */
+.nav:visited {color: #000000; text-decoration:none;}  /* visited link */
+.nav:hover {color: #000000; text-decoration:none;}   /* mouse over link */
+.nav:active {color: #000000; text-decoration:none;}   /* selected link */
+
+.test {
+	background-color: transparent;
+ 	position: absolute; 
+ 	/* NOTE: the right and bottom can be adjusted when initialized */ 
+	left: 0;
+	top: 200px;
+/* 	width: 44px; */
+/* 	height: 20px; */
+/* 	margin: 0; */
+/*  	padding: 4px 0 0 4px; */
+/* 	font-size: 12px; */
+/* 	line-height: 20px; */
+/* 	vertical-align: middle; */
+/* 	font-weight: bold; */
+/* 	border: 1px solid #000000; */
+	z-index: 30;
+}
+
+	
