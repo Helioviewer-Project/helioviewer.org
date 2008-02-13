@@ -1,0 +1,45 @@
+HelioViewer ChangeLog
+
+
+02/13/2008
+version: alpha
+
+1. Upgraded to Prototype 1.6.0.2 / script.aculo.us 1.8.1 (from prototype 1.5.1/
+   script.aculo.us 1.7.1_beta3). Newer versions include better OO support, 
+   security fixes, ie bug fixes and better performance. The new libraries 
+   are NOT however backwards compatable, and several changes were necessary 
+   for HelioViewer (HV) to work properly with the newer libraries:
+	  	* In prototype 1.6, Hashes require the use of accessors and mutators 
+	  	  instead of simply using dot or bracket access. A simple solution 
+	  	  however was to use the Hash#toObject() method to convert all hashes
+	  	  to Objects before using them to extend any classes. (HV uses a
+	  	  "defaultOptions" hash for many classes in order to pass some default
+	  	  parameters to the class constructor.)
+	  	* getElementsByClassName is deprecated in 1.6, so instances of it
+	  	  were switched for either select(), or, in cases where only the 
+	  	  first element was needed, down().
+	  	* Position#cumulativeOffset is deprecated: switched all instances to 
+	  	  use Element#cumulativeOffset.
+
+2. Removed redundant class definition for ZoomLevelSlider. ZoomLevelSlider.js
+   contained two identical copies of the class definition for ZoomLevelSlider.
+   One of the copies was removed from the file.
+   
+3. Disabled the debugging console output Textarea. With Firebug installed,
+   all messages sent to Debug will output to the Firebug console, thus removing
+   the necessity to have a separate error console. It can be re-enabled easily
+   by simply uncommenting the relevant code in index.html.
+   
+For more information see:
+	[1] http://www.prototypejs.org/2007/11/7/prototype-1-6-0-script-aculo-us-1-8-0-and-the-bungee-book-now-available
+	[2] http://dev.rubyonrails.org/browser/spinoffs/prototype/tags/rel_1-6-0/CHANGELOG
+	[3] http://prototypejs.org/2008/2/12/deprecation-js-easing-the-1-5-1-6-transition
+	[4] http://mislav.caboo.se/js/upgrading-to-prototype-1-6-real-world-examples/
+
+===============================================================================
+ChangeLog started on 02/13/2008. For information on efforts prior to this see
+readme.txt file, and any comments in the code.
+
+-Keith 
+[keith.hughitt@gmail.com]
+===============================================================================

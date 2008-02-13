@@ -36,28 +36,19 @@
 		var maximized = false;
 		
 		function initializeGraphic(e) {
-			//Debug.test();
 			
 			// opera triggers the onload twice
 			if (sunViewer == null) {
 				// NOTE: This should all be encapsulated in the SunViewer class!
 				// Create viewport
-				var viewport1 = new ViewPort('sunViewer1.viewport1', {
-					maxZoomLevel: 9,
-					blankTileImage: 'images/icons/blank.gif',
-					loadingTileImage: 'images/icons/progress.gif' //,
-					//tileLayerProviders: [
-					//	new MarkerLayerProvider()
-					//]
-				});
-				
+				var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 9});
 				
 				// Create tile containers
 				var tiles1 = new TileContainer(viewport1);
 				var layerManager1 = new LayerManager(tiles1, 'layerManager1');
 				
 				// Create tile layer providers
-				var bg1 = new TileLayerProvider(tiles1);
+				var bg1 = new TileLayerProvider(tiles1, {zoomOffset: 10}); // OFFSET CAN BE SET HERE... WHAT ABOUT VIEWPORT PROPERTY?
 				//var debug1 = new TileDebugLayerProvider(tiles1);
 				//var debug2 = new TileDebugLayerProvider(tiles2, { color: 'red' });
 				var markers1 = new MarkerLayerProvider(tiles1);
@@ -182,9 +173,9 @@
 			</script>
 
 			<!-- Debugger output console -->
-			<strong>Debug Output:</strong>
+			<!--<strong>Debug Output:</strong>
 			<div>
 			<textarea id="debugOutput" cols="100" rows="6"></textarea>
-			</div>
+			</div>-->
 	</body>
 </html>
