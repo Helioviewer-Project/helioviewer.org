@@ -1,8 +1,59 @@
 HelioViewer ChangeLog
 
+02/20/2008
+Version: alpha
+By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+
+1. Implemented partial support for Internet Explorer (IE). There are still some issues
+   however with UI components including the loading indicator and SelectByDateMenu.
+   See item #3 for more details on changes made.
+
+2. FIXED Bug #193280 "Page reload (caching) fails for Opera and IE"
+	An issue with using the onload event in conjunction with an image element, and
+	Opera / IE's caching mechanism prevent tiles from properly loading after a
+	page reload. A solution to this problem involved setting the src of the
+	image after the event handlers have been defined and attached. (See links
+	#3 and #4 under the "more information" section at the bottom).
+	
+3. Changed syntax relating to element creation to make better use of Prototype's
+	Element class functionality. This is related to item #1 since supporting IE
+	requires manually extending all Elements to support Prototype's Element class
+	methods (this occurs automatically in Firefox, Safari and Opera). All instances
+	of document.createElement() and *.getElementByXXX were replaced to use the newer
+	syntax.
+	
+	For example:
+	
+		var htmlElement = document.createElement('span');
+		htmlElement.className = 'selectByDateMenu';
+		
+	was replaced with:
+	
+		var htmlElement = new Element('span', {'class': 'selectByDateMenu'});
+		
+	(Alternatively, it would also suffice to wrap the document.createElement(..)
+	statement with prototype's $() function, however the syntax of the later
+	is  much cleaner and more concise.)
+	
+4. Changed SunImage's tileDir member variable initialization 
+   (in SelectByDateMenu.js) from absolute to relative path structure. This
+   prevents a bug from occurring when domain name is different from what
+   is expected, e.g. when working on a local development server.)
+   
+5. Changed size of layer menu from 680px to 700px to eliminate overflow issues.
+
+6. Fixed spelling error for array name in LayerManager.js ("Colums" -> "Columns")
+   
+   
+For more information, see:
+	[1] http://www.prototypejs.org/learn/extensions
+	[2] http://www.prototypejs.org/api/element
+	[3] http://forum.mootools.net/topic.php?id=4678
+	[4] http://www.thefutureoftheweb.com/blog/image-onload-isnt-being-called
 
 02/13/2008
-version: alpha
+Version: alpha
+By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
 
 1. Upgraded to Prototype 1.6.0.2 / script.aculo.us 1.8.1 (from prototype 1.5.1/
    script.aculo.us 1.7.1_beta3). Newer versions include better OO support, 
