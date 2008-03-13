@@ -1,0 +1,21 @@
+:Product: 20040522SRS.txt
+:Issued: 2004 May 22 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 143 Issued at 0030Z on 22 May 2004
+Report compiled from data received at SWO on 21 May
+I.  Regions with Sunspots.  Locations Valid at 21/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0609 S02W88   180  0090 Cao  04   03 Beta
+0613 S09W28   120  0100 Cso  03   03 Beta
+0615 N17W01   093  0100 Hsx  03   01 Alpha
+0617 S11W46   138  0030 Cro  06   06 Beta
+0618 S11E55   037  0150 Cai  12   19 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 21/2400Z May
+Nmbr  Location  Lo
+0616  N07E04   088
+II. Regions Due to Return 22 May to 24 May
+Nmbr Lat    Lo
+None

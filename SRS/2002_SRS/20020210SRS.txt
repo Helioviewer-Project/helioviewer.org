@@ -1,0 +1,35 @@
+:Product: 20020210SRS.txt
+:Issued: 2002 Feb 10 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 41 Issued at 0030Z on 10 Feb 2002
+Report compiled from data received at SWO on 09 Feb
+I.  Regions with Sunspots.  Locations Valid at 09/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9808 N17W67   340  0010 Axx  02   03 Alpha
+9809 S05W50   323  0060 Cso  05   02 Beta
+9810 N10W27   300  0150 Cso  08   09 Beta
+9811 S27W05   278  0130 Cao  06   13 Beta
+9814 N06W63   336  0010 Axx  01   01 Alpha
+9815 N11W09   282  0020 Bxo  06   09 Beta
+9818 N06E01   272  0020 Hsx  03   02 Alpha
+9819 S31E19   254  0010 Cro  04   03 Beta
+9820 N14E15   258  0010 Axx  01   01 Alpha
+9821 S14E03   270  0080 Dso  08   26 Beta
+9822 N17E56   217  0070 Cso  06   05 Beta
+9823 S05E24   249  0020 Cso  03   04 Beta
+9824 N21E67   206  0100 Hsx  02   01 Alpha
+9825 N12E69   204  0320 Eko  13   06 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 09/2400Z Feb
+Nmbr  Location  Lo
+9805  N16W91   004
+9807  S27W47   320
+9817  S06W32   305
+II. Regions Due to Return 10 Feb to 12 Feb
+Nmbr Lat    Lo
+9788 N15    154
+9790 N28    165
+9793 S14    149
+

@@ -1,0 +1,34 @@
+:Product: 20010926SRS.txt
+:Issued: 2001 Sep 26 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 269 Issued at 0030Z on 26 Sep 2001
+Report compiled from data received at SWO on 25 Sep
+I.  Regions with Sunspots.  Locations Valid at 25/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9620 N12W50   328  0070 Hsx  02   02 Alpha
+9621 N14W45   323  0150 Cao  04   04 Beta
+9622 N13W73   351  0200 Dao  10   06 Beta
+9624 N03W40   318  0090 Hsx  02   01 Alpha
+9627 N01W24   302  0060 Dao  07   16 Beta
+9628 S18W14   292  0880 Fkc  19   66 Beta-Gamma-Delta
+9629 N26W42   320  0000 Bxo  01   02 Beta
+9631 N09W85   003  0000 Axx  00   01 Alpha
+9632 S19E06   272  0700 Dki  09   23 Beta-Gamma-Delta
+9633 N22E36   242  0070 Hsx  02   01 Alpha
+9634 N12E41   237  0080 Dao  07   11 Beta
+9635 N21W12   290  0050 Dso  07   13 Beta
+9636 N13E54   224  0300 Eao  14   17 Beta
+9637 S15E59   219  0180 Dao  09   05 Beta
+9638 N03E61   217  0030 Hsx  01   02 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 25/2400Z Sep
+Nmbr  Location  Lo
+9623  N21W61   340
+9626  N25W53   332
+II. Regions Due to Return 26 Sep to 28 Sep
+Nmbr Lat    Lo
+9606 S17    154
+9611 N10    180
+

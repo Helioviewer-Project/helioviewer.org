@@ -1,0 +1,20 @@
+:Product: 20040120SRS.txt
+:Issued: 2004 Jan 20 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 20 Issued at 0030Z on 20 Jan 2004
+Report compiled from data received at SWO on 19 Jan
+I.  Regions with Sunspots.  Locations Valid at 19/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0540 S14W10   284  0300 Fko  16   30 Beta-Gamma-Delta
+0541 S09W58   332  0010 Axx  01   01 Alpha
+0542 N08E15   259  0110 Bxo  15   11 Beta
+0543 S18E05   269  0070 Cai  04   05 Beta-Gamma
+IA. H-alpha Plages without Spots.  Locations Valid at 19/2400Z Jan
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 20 Jan to 22 Jan
+Nmbr Lat    Lo
+None

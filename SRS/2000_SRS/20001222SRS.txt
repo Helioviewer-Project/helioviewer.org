@@ -1,0 +1,29 @@
+:Product: 20001222SRS.txt
+:Issued: 2000 Dec 22 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 357 Issued at 0030Z on 22 Dec 2000
+Report compiled from data received at SWO on 21 Dec
+I.  Regions with Sunspots.  Locations Valid at 21/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9264 S24W73   061  0050 Cso  10   05 Beta
+9268 S18W29   017  0070 Hsx  03   02 Alpha
+9269 N15W42   030  0010 Bxo  04   07 Beta
+9272 N14W71   059  0000 Axx  00   01 Alpha
+9273 N20W05   353  0010 Bxo  04   05 Beta
+9278 N09E09   339  0080 Eao  11   15 Beta
+9279 S13E28   320  0130 Cso  16   06 Beta
+9280 N08E48   300  0450 Eko  15   15 Beta
+9281 N06E20   328  0000 Bxo  03   04 Beta
+9282 N19E68   280  0050 Hax  02   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 21/2400Z Dec
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 22 Dec to 24 Dec
+Nmbr Lat    Lo
+9246 S11    248
+9260 S05    219
+9261 N05    242
+

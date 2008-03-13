@@ -1,0 +1,20 @@
+:Product: 20040111SRS.txt
+:Issued: 2004 Jan 11 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 11 Issued at 0030Z on 11 Jan 2004
+Report compiled from data received at SWO on 10 Jan
+I.  Regions with Sunspots.  Locations Valid at 10/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0536 S12W41   074  0550 Ekc  11   30 Beta-Gamma
+0537 N05E24   009  0210 Dkc  07   16 Beta-Gamma-Delta
+IA. H-alpha Plages without Spots.  Locations Valid at 10/2400Z Jan
+Nmbr  Location  Lo
+0534  S07W92   126
+0538  N05W30   063
+0539  N09W11   044
+II. Regions Due to Return 11 Jan to 13 Jan
+Nmbr Lat    Lo
+None

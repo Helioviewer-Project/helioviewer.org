@@ -1,0 +1,18 @@
+:Product: 20040704SRS.txt
+:Issued: 2004 Jul 04 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 186 Issued at 0030Z on 04 Jul 2004
+Report compiled from data received at SWO on 03 Jul
+I.  Regions with Sunspots.  Locations Valid at 03/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0639 N08W10   253  0060 Hsx  02   04 Alpha
+0640 S09W13   256  0030 Bxo  06   07 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 03/2400Z Jul
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 04 Jul to 06 Jul
+Nmbr Lat    Lo
+0632 S12    120

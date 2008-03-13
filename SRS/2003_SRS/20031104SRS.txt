@@ -1,0 +1,27 @@
+:Product: 20031104SRS.txt
+:Issued: 2003 Nov 04 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 308 Issued at 0030Z on 04 Nov 2003
+Report compiled from data received at SWO on 03 Nov
+I.  Regions with Sunspots.  Locations Valid at 03/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0486 S17W75   284  1430 Fkc  15   16 Beta-Gamma-Delta
+0487 N12W48   256  0040 Cso  03   06 Beta
+0488 N08W82   290  1250 Fkc  19   09 Beta-Gamma-Delta
+0495 S22W35   243  0110 Dso  09   05 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 03/2400Z Nov
+Nmbr  Location  Lo
+0489  S14W89   298
+0490  S12W66   275
+0491  S08W86   295
+0493  N09W74   283
+0494  S23W44   253
+0496  S12W30   239
+II. Regions Due to Return 04 Nov to 06 Nov
+Nmbr Lat    Lo
+0479 N25    104
+0481 S09    096
+

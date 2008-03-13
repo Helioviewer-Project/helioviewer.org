@@ -1,0 +1,21 @@
+:Product: 20041205SRS.txt
+:Issued: 2004 Dec 05 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 340 Issued at 0030Z on 05 Dec 2004
+Report compiled from data received at SWO on 04 Dec
+I.  Regions with Sunspots.  Locations Valid at 04/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0706 S07W62   071  0080 Cao  03   04 Beta
+0707 S13W64   073  0110 Dao  05   03 Beta
+0708 N09W26   035  0090 Cao  02   06 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 04/2400Z Dec
+Nmbr  Location  Lo
+0709  N06E48   321
+II. Regions Due to Return 05 Dec to 07 Dec
+Nmbr Lat    Lo
+0699 S14    271
+0701 S15    241
+0702 S11    260

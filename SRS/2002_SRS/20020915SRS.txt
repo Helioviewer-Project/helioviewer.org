@@ -1,0 +1,38 @@
+:Product: 20020915SRS.txt
+:Issued: 2002 Sep 15 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 258 Issued at 0030Z on 15 Sep 2002
+Report compiled from data received at SWO on 14 Sep
+I.  Regions with Sunspots.  Locations Valid at 14/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0102 N08W94   020  0030 Hsx  01   01 Alpha
+0103 N16W71   357  0200 Eao  13   11 Beta
+0105 S07W18   304  0670 Eko  14   43 Beta-Gamma
+0107 N11W10   296  0190 Dai  09   23 Beta
+0109 S08W36   322  0030 Bxo  04   05 Beta
+0110 N19W35   321  0040 Dro  05   09 Beta
+0111 N11W25   311  0020 Bxo  04   09 Beta
+0114 S12W02   288  0470 Dkc  09   51 Beta-Gamma-Delta
+0115 S03E45   241  0120 Dao  06   14 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 14/2400Z Sep
+Nmbr  Location  Lo
+0104  N09W36   322
+0106  N27W29   316
+0108  S24W06   292
+0112  N02W20   306
+0113  N30W64   350
+II. Regions Due to Return 15 Sep to 17 Sep
+Nmbr Lat    Lo
+0087 S08    158
+Plain
+Analysis of recent data indicating a restructuring
+of the magnetic field and the materialization of
+satellite spots warranted the separation of the
+two main clusters of spots in Region 105
+(now centered at S07W18).  Newly numbered
+Region 114 (S12W02) is the trailing portion of
+spots previously included in Region 105.
+

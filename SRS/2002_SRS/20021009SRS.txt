@@ -1,0 +1,27 @@
+:Product: 20021009SRS.txt
+:Issued: 2002 Oct 09 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 282 Issued at 0030Z on 09 Oct 2002
+Report compiled from data received at SWO on 08 Oct
+I.  Regions with Sunspots.  Locations Valid at 08/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0137 S20W75   043  0130 Hsx  02   01 Alpha
+0139 N11W07   335  0560 Eki  12   28 Beta-Gamma
+0140 S08E25   303  0160 Hsx  02   01 Alpha
+0141 S08W23   351  0040 Axx  02   04 Alpha
+0142 N05E22   306  0020 Hsx  01   01 Alpha
+0143 S17W51   019  0030 Dao  04   05 Beta-Gamma
+0144 N12E30   298  0060 Dso  05   07 Beta
+0145 N12E76   252  0010 Hsx  01   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 08/2400Z Oct
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 09 Oct to 11 Oct
+Nmbr Lat    Lo
+0117 S09    201
+0119 S13    229
+0123 S17    221
+

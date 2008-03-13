@@ -1,0 +1,21 @@
+:Product: 20040415SRS.txt
+:Issued: 2004 Apr 15 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 106 Issued at 0030Z on 15 Apr 2004
+Report compiled from data received at SWO on 14 Apr
+I.  Regions with Sunspots.  Locations Valid at 14/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0588 S13W92   313  0040 Hrx  02   01 Alpha
+0591 S16W25   245  0080 Eai  11   13 Beta-Gamma-Delta
+0592 S12E46   174  0030 Hrx  02   03 Alpha
+0593 S20E43   177  0020 Hsx  01   01 Alpha
+0594 N15E69   151  0060 Hsx  02   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 14/2400Z Apr
+Nmbr  Location  Lo
+0589  N11W62   285
+II. Regions Due to Return 15 Apr to 17 Apr
+Nmbr Lat    Lo
+None

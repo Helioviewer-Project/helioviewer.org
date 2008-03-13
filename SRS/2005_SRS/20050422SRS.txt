@@ -1,0 +1,19 @@
+:Product: 20050422SRS.txt
+:Issued: 2005 Apr 22 0040 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 112 Issued at 0030Z on 22 Apr 2005
+Report compiled from data received at SWO on 21 Apr
+I.  Regions with Sunspots.  Locations Valid at 21/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0752 N03W55   046  0060 Hsx  02   01 Alpha
+0755 S12E21   330  0010 Hsx  01   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 21/2400Z Apr
+Nmbr  Location  Lo
+0754  S07W38   029
+II. Regions Due to Return 22 Apr to 24 Apr
+Nmbr Lat    Lo
+0747 S05    247
+0751 S08    221

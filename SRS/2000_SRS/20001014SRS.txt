@@ -1,0 +1,31 @@
+:Product: 20001014SRS.txt
+:Issued: 2000 Oct 14 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 288 Issued at 0030Z on 14 Oct 2000
+Report compiled from data received at SWO on 13 Oct
+I.  Regions with Sunspots.  Locations Valid at 13/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9182 N04W78   256  0290 Dko  10   12 Beta-Gamma
+9188 S10W34   212  0010 Dso  06   05 Beta
+9189 N14W06   184  0010 Bxo  02   03 Beta
+9190 S17E11   167  0100 Eao  11   16 Beta-Gamma
+9191 N18E29   149  0010 Axx  01   01 Alpha
+9192 S13W25   203  0040 Dso  07   08 Beta
+9193 N05W32   210  0070 Dao  06   08 Beta
+9194 S12E50   128  0060 Dso  04   04 Beta
+9195 N14W82   260  0070 Dso  05   04 Beta
+9196 S33W65   243  0100 Dso  06   06 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 13/2400Z Oct
+Nmbr  Location  Lo
+9181  S27W73   251
+9184  S14W68   246
+9187  N21W74   252
+9197  N26E57   121
+II. Regions Due to Return 14 Oct to 16 Oct
+Nmbr Lat    Lo
+9169 N12    074
+9170 S06    079
+

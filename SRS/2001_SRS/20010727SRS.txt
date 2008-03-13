@@ -1,0 +1,30 @@
+:Product: 20010727SRS.txt
+:Issued: 2001 Jul 27 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 208 Issued at 0030Z on 27 Jul 2001
+Report compiled from data received at SWO on 26 Jul
+I.  Regions with Sunspots.  Locations Valid at 26/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9543 S24W70   074  0310 Eao  15   11 Beta-Gamma
+9548 N16W59   063  0060 Hsx  02   01 Alpha
+9553 N13W05   009  0190 Dai  08   15 Beta
+9554 N16W86   090  0010 Axx  01   01 Alpha
+9555 S09E28   336  0010 Bxo  03   02 Beta
+9556 S07W56   060  0020 Cso  03   02 Beta
+9557 S18E72   292  0080 Hsx  04   01 Alpha
+9558 N18W30   034  0010 Bxo  02   02 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 26/2400Z Jul
+Nmbr  Location  Lo
+9542  N08W81   085
+9546  S14W85   089
+9549  S05W50   054
+9550  N07W69   073
+9552  N13W25   029
+II. Regions Due to Return 27 Jul to 29 Jul
+Nmbr Lat    Lo
+9527 S19    257
+9529 N07    237
+

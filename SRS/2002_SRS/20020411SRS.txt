@@ -1,0 +1,34 @@
+:Product: 20020411SRS.txt
+:Issued: 2002 Apr 11 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 101 Issued at 0030Z on 11 Apr 2002
+Report compiled from data received at SWO on 10 Apr
+I.  Regions with Sunspots.  Locations Valid at 10/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9887 N03W93   285  0060 Cao  02   02 Beta-Gamma
+9888 S13W86   288  0010 Axx  00   01 Alpha
+9893 N19W14   216  0300 Eki  13   20 Beta-Gamma
+9896 S11E08   194  0110 Hsx  02   01 Alpha
+9897 S02W59   261  0030 Cso  03   02 Beta
+9898 S19E12   190  0010 Axx  01   01 Alpha
+9899 N18E22   180  0220 Dao  05   09 Beta
+9900 S28W32   234  0110 Esi  11   18 Beta-Gamma
+9901 N20W02   204  0190 Dai  09   19 Beta-Gamma
+9902 N13E43   159  0100 Eso  15   03 Beta
+9903 N19E47   155  0060 Cso  04   04 Beta
+9904 S16W21   223  0050 Cso  04   06 Beta-Gamma-Delta
+9905 S17E04   198  0040 Cso  04   04 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 10/2400Z Apr
+Nmbr  Location  Lo
+9892  N05W45   247
+9894  N16W74   277
+9895  N07W02   205
+II. Regions Due to Return 11 Apr to 13 Apr
+Nmbr Lat    Lo
+9875 S21    075
+9880 N09    076
+9881 S03    100
+

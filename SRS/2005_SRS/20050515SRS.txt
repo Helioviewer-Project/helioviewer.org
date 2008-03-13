@@ -1,0 +1,20 @@
+:Product: 20050515SRS.txt
+:Issued: 2005 May 15 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 135 Issued at 0030Z on 15 May 2005
+Report compiled from data received at SWO on 14 May
+I.  Regions with Sunspots.  Locations Valid at 14/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0758 S10W90   136  0150 Hax  06   03 Alpha
+0759 N11W07   053  0350 Dhi  09   22 Beta
+0762 S12W37   083  0090 Dao  08   13 Beta
+0763 S16E31   015  0130 Dao  10   13 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 14/2400Z May
+Nmbr  Location  Lo
+0760  S08W85   132
+II. Regions Due to Return 15 May to 17 May
+Nmbr Lat    Lo
+None

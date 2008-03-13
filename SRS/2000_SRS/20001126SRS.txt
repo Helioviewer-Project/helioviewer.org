@@ -1,0 +1,28 @@
+:Product: 20001126SRS.txt
+:Issued: 2000 Nov 26 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 331 Issued at 0030Z on 26 Nov 2000
+Report compiled from data received at SWO on 25 Nov
+I.  Regions with Sunspots.  Locations Valid at 25/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9231 S20W91   062  0080 Cao  03   02 Beta
+9233 N15W70   041  0050 Cso  04   02 Beta
+9235 N12W70   041  0060 Hax  02   01 Alpha
+9236 N22W21   352  0580 Fkc  16   29 Beta-Gamma
+9239 S21E24   307  0140 Hsx  03   01 Alpha
+9240 N09E34   297  0220 Cho  06   04 Beta
+9242 N21E57   274  0020 Axx  00   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 25/2400Z Nov
+Nmbr  Location  Lo
+9232  N25W84   056
+9238  S22W74   046
+9241  N16W46   017
+II. Regions Due to Return 26 Nov to 28 Nov
+Nmbr Lat    Lo
+9219 N07    224
+9220 N12    213
+9225 S20    215
+

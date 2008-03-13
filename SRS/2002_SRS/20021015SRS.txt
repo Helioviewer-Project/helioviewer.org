@@ -1,0 +1,34 @@
+:Product: 20021015SRS.txt
+:Issued: 2002 Oct 15 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 288 Issued at 0030Z on 15 Oct 2002
+Report compiled from data received at SWO on 14 Oct
+I.  Regions with Sunspots.  Locations Valid at 14/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0139 N08W85   334  0330 Dko  11   07 Beta-Gamma
+0140 S08W52   301  0170 Cso  04   04 Beta
+0144 N11W52   301  0100 Cso  04   03 Beta
+0145 N12W05   254  0090 Cso  03   03 Beta
+0148 S20E04   245  0030 Hsx  01   01 Alpha
+0149 N14E06   243  0440 Ehi  11   31 Beta-Gamma
+0154 S12E21   228  0040 Eao  11   09 Beta
+0157 N15E20   229  0010 Cro  01   02 Beta
+0158 S08E47   202  0110 Hsx  02   01 Alpha
+0159 S11E57   192  0140 Hax  03   01 Alpha
+0160 S20E54   195  0030 Cro  04   03 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 14/2400Z Oct
+Nmbr  Location  Lo
+0142  N09W56   306
+0146  S09W44   294
+0150  S09W71   321
+0152  N20W68   318
+0155  S09W92   342
+0156  N09W30   280
+II. Regions Due to Return 15 Oct to 17 Oct
+Nmbr Lat    Lo
+0130 N04    134
+0136 S31    123
+

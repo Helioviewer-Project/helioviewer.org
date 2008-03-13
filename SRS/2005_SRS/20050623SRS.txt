@@ -1,0 +1,19 @@
+:Product: 20050623SRS.txt
+:Issued: 2005 Jun 23 0040 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 174 Issued at 0030Z on 23 Jun 2005
+Report compiled from data received at SWO on 22 Jun
+I.  Regions with Sunspots.  Locations Valid at 22/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0779 S19W82   332  0180 Dao  09   02 Beta
+0780 S08W01   251  0070 Dro  06   17 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 22/2400Z Jun
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 23 Jun to 25 Jun
+Nmbr Lat    Lo
+0772 S18    133
+0774 N04    140

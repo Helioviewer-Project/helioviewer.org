@@ -1,0 +1,33 @@
+:Product: 20011003SRS.txt
+:Issued: 2001 Oct 03 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 276 Issued at 0030Z on 03 Oct 2001
+Report compiled from data received at SWO on 02 Oct
+I.  Regions with Sunspots.  Locations Valid at 02/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9632 S21W88   274  0220 Eki  08   06 Beta-Gamma
+9633 N21W56   242  0080 Hsx  03   03 Alpha
+9634 N12W51   237  0050 Hsx  01   04 Alpha
+9636 N14W41   227  0250 Eac  14   18 Beta-Gamma
+9637 S14W35   221  0090 Dao  07   09 Beta
+9639 N03W51   237  0040 Hsx  02   02 Alpha
+9640 N10E00   186  0020 Cao  05   10 Beta
+9641 S14E08   178  0250 Dao  09   11 Beta
+9642 N05E28   158  0040 Hsx  01   01 Alpha
+9643 S27W37   223  0000 Axx  00   01 Alpha
+9644 N19W17   203  0030 Cso  04   07 Beta
+9645 S18W12   198  0030 Dso  09   10 Beta
+9646 N12E28   158  0010 Bxo  07   02 Beta
+9647 S16E31   155  0000 Axx  00   01 Alpha
+9648 S04E78   108  0050 Hsx  02   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 02/2400Z Oct
+Nmbr  Location  Lo
+9638  N03W30   217
+II. Regions Due to Return 03 Oct to 05 Oct
+Nmbr Lat    Lo
+9608 S30    094
+9610 S12    096
+

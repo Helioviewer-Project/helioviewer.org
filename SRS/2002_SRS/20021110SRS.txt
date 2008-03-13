@@ -1,0 +1,30 @@
+:Product: 20021110SRS.txt
+:Issued: 2002 Nov 10 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 314 Issued at 0030Z on 10 Nov 2002
+Report compiled from data received at SWO on 09 Nov
+I.  Regions with Sunspots.  Locations Valid at 09/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0176 N10W68   335  0250 Hsx  02   01 Alpha
+0177 N18W63   330  0160 Dao  04   05 Beta
+0180 S10W41   308  0630 Fkc  18   38 Beta-Gamma-Delta
+0182 S18W24   291  0060 Hsx  02   01 Alpha
+0185 S13W02   269  0160 Cao  07   12 Beta
+0188 N10W19   286  0090 Dao  05   08 Beta
+0189 N12E21   246  0030 Dso  07   04 Beta
+0190 S22E28   239  0040 Dao  06   04 Beta
+0191 S17E63   204  0310 Eai  13   11 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 09/2400Z Nov
+Nmbr  Location  Lo
+0179  S01W34   301
+0181  S07W48   315
+0184  S05W28   295
+0186  N20W50   317
+0187  N08W31   298
+II. Regions Due to Return 10 Nov to 12 Nov
+Nmbr Lat    Lo
+None
+

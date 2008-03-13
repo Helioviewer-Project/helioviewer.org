@@ -1,0 +1,27 @@
+:Product: 20030823SRS.txt
+:Issued: 2003 Aug 23 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 235 Issued at 0030Z on 23 Aug 2003
+Report compiled from data received at SWO on 22 Aug
+I.  Regions with Sunspots.  Locations Valid at 22/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0436 N07E03   089  0230 Eac  13   32 Beta-Gamma
+0439 N08W38   130  0040 Dso  04   05 Beta
+0440 S07W06   098  0090 Dso  06   15 Beta
+0441 N12E33   059  0030 Dso  06   07 Beta
+0442 S12E65   027  0110 Dao  10   03 Beta
+0443 N15E09   083  0010 Axx  02   04 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 22/2400Z Aug
+Nmbr  Location  Lo
+0432  S03W51   143
+0433  S20W84   176
+0437  S22W65   157
+0438  S31W44   136
+II. Regions Due to Return 23 Aug to 25 Aug
+Nmbr Lat    Lo
+0421 S07    001
+0428 N14    344
+

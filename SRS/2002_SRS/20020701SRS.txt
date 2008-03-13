@@ -1,0 +1,26 @@
+:Product: 20020701SRS.txt
+:Issued: 2002 Jul 01 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 182 Issued at 0030Z on 01 Jul 2002
+Report compiled from data received at SWO on 30 Jun
+I.  Regions with Sunspots.  Locations Valid at 30/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0008 S10W83   294  0340 Hkx  04   01 Alpha
+0011 S10W46   257  0040 Dso  10   08 Beta
+0012 N14W73   284  0040 Bxo  04   02 Beta
+0016 S15E04   207  0060 Cso  05   03 Beta
+0017 S19W23   234  0100 Dso  07   15 Beta
+0018 N14W84   295  0040 Bxo  07   02 Beta
+0019 S18E61   150  0450 Dko  10   10 Beta-Gamma
+IA. H-alpha Plages without Spots.  Locations Valid at 30/2400Z Jun
+Nmbr  Location  Lo
+0013  N04W85   297
+0014  S17W41   253
+0015  S26W42   253
+II. Regions Due to Return 01 Jul to 03 Jul
+Nmbr Lat    Lo
+9991 S22    083
+

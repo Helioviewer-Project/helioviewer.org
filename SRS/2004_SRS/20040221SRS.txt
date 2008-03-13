@@ -1,0 +1,21 @@
+:Product: 20040221SRS.txt
+:Issued: 2004 Feb 21 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 52 Issued at 0030Z on 21 Feb 2004
+Report compiled from data received at SWO on 20 Feb
+I.  Regions with Sunspots.  Locations Valid at 20/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0561 N02W01   213  0010 Hsx  01   01 Alpha
+0562 S11E59   153  0060 Dao  08   02 Beta
+0563 S21E66   146  0030 Axx  01   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 20/2400Z Feb
+Nmbr  Location  Lo
+0555  S16W74   287
+0558  S16W58   271
+0560  S17W35   248
+II. Regions Due to Return 21 Feb to 23 Feb
+Nmbr Lat    Lo
+0547 S08    118

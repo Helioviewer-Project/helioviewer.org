@@ -1,0 +1,30 @@
+:Product: 20020315SRS.txt
+:Issued: 2002 Mar 15 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 74 Issued at 0030Z on 15 Mar 2002
+Report compiled from data received at SWO on 14 Mar
+I.  Regions with Sunspots.  Locations Valid at 14/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9856 S04W72   270  0100 Hax  02   03 Alpha
+9859 S11W79   277  0010 Axx  01   02 Alpha
+9860 S06W55   253  0010 Axx  01   01 Alpha
+9864 N18W20   218  0050 Cso  07   05 Beta
+9866 S10E07   191  0820 Eki  14   36 Beta-Delta
+9868 N19W06   204  0020 Cso  06   11 Beta
+9869 N23E00   198  0010 Axx  01   01 Alpha
+9870 S20E24   174  0120 Cao  10   06 Beta
+9871 S20E58   140  0210 Eao  13   07 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 14/2400Z Mar
+Nmbr  Location  Lo
+9861  N08W51   250
+9865  N13W11   209
+9867  S31W22   220
+II. Regions Due to Return 15 Mar to 17 Mar
+Nmbr Lat    Lo
+9839 S18    106
+9842 S19    099
+9850 N26    083
+

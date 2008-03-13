@@ -1,0 +1,27 @@
+:Product: 20020907SRS.txt
+:Issued: 2002 Sep 07 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 250 Issued at 0030Z on 07 Sep 2002
+Report compiled from data received at SWO on 06 Sep
+I.  Regions with Sunspots.  Locations Valid at 06/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0094 S19W41   072  0110 Cso  05   05 Beta
+0095 N08W31   062  0360 Fki  20   33 Beta
+0096 S16W15   046  0160 Eai  13   22 Beta
+0097 N12W47   078  0050 Dso  08   07 Beta
+0099 S05W43   075  0030 Cso  08   05 Beta
+0100 S19E06   025  0130 Dao  09   09 Beta
+0101 N02E05   026  0010 Bxo  03   08 Beta
+0103 N15E31   000  0140 Dao  08   20 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 06/2400Z Sep
+Nmbr  Location  Lo
+0098  S10W02   034
+0102  N08E13   019
+II. Regions Due to Return 07 Sep to 09 Sep
+Nmbr Lat    Lo
+0069 S08    300
+0079 S22    285
+

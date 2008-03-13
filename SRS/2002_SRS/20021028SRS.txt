@@ -1,0 +1,26 @@
+:Product: 20021028SRS.txt
+:Issued: 2002 Oct 28 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 301 Issued at 0030Z on 28 Oct 2002
+Report compiled from data received at SWO on 27 Oct
+I.  Regions with Sunspots.  Locations Valid at 27/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0162 N26W43   121  0680 Fkc  24   39 Beta-Gamma-Delta
+0165 N21W22   100  0150 Cao  04   04 Beta
+0167 N18E24   054  0020 Hsx  01   01 Alpha
+0169 S18E33   045  0050 Dso  03   02 Beta
+0170 S12E38   040  0030 Cso  03   02 Beta
+0171 N11E52   026  0060 Hsx  02   01 Alpha
+0172 S16E56   022  0030 Hsx  02   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 27/2400Z Oct
+Nmbr  Location  Lo
+0164  N11W38   116
+0166  S06W44   122
+II. Regions Due to Return 28 Oct to 30 Oct
+Nmbr Lat    Lo
+0139 N08    335
+0155 S09    342
+

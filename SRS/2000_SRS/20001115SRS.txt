@@ -1,0 +1,26 @@
+:Product: 20001115SRS.txt
+:Issued: 2000 Nov 15 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 320 Issued at 0030Z on 15 Nov 2000
+Report compiled from data received at SWO on 14 Nov
+I.  Regions with Sunspots.  Locations Valid at 14/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9221 S12W61   176  0040 Cso  02   03 Beta
+9223 S14W47   162  0050 Cso  04   05 Beta
+9227 S10W28   143  0260 Eko  13   16 Beta
+9228 N23W42   157  0030 Bxo  02   03 Beta
+9229 N05E17   098  0070 Hax  03   03 Alpha
+9231 S24E56   059  0250 Eai  11   14 Beta
+9232 N24E61   054  0130 Dso  10   05 Beta
+9233 N13E76   039  0050 Hsx  02   02 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 14/2400Z Nov
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 15 Nov to 17 Nov
+Nmbr Lat    Lo
+9206 N23    346
+9215 N20    024
+

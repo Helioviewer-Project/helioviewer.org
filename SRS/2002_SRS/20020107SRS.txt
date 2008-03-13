@@ -1,0 +1,28 @@
+:Product: 20020107SRS.txt
+:Issued: 2002 Jan 07 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 7 Issued at 0030Z on 07 Jan 2002
+Report compiled from data received at SWO on 06 Jan
+I.  Regions with Sunspots.  Locations Valid at 06/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9761 N10W70   070  0010 Axx  01   01 Alpha
+9763 N06W59   059  0020 Hrx  01   01 Alpha
+9765 N06W41   041  0070 Hsx  01   01 Alpha
+9767 S22W17   017  0280 Fai  16   29 Beta-Gamma
+9768 S05W84   084  0220 Dao  09   06 Beta-Gamma
+9769 S18W88   088  0030 Hsx  01   01 Alpha
+9771 S23W34   034  0010 Bxo  09   05 Beta
+9772 S17E38   322  0070 Hsx  02   01 Alpha
+9773 N13E36   324  0140 Dao  07   08 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 06/2400Z Jan
+Nmbr  Location  Lo
+9756  S28W69   069
+9766  N07W31   032
+9770  N07W75   075
+II. Regions Due to Return 07 Jan to 09 Jan
+Nmbr Lat    Lo
+9741 N04    255
+

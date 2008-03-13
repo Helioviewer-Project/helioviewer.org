@@ -1,0 +1,46 @@
+:Product: 20020626SRS.txt
+:Issued: 2002 Jun 26 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 177 Issued at 0030Z on 26 Jun 2002
+Report compiled from data received at SWO on 25 Jun
+I.  Regions with Sunspots.  Locations Valid at 25/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0001 N20W75   352  0100 Hsx  02   02 Alpha
+0005 N11W44   321  0100 Dso  05   06 Beta
+0008 S11W15   292  0540 Dki  08   16 Beta-Gamma
+0011 S12E23   254  0120 Dao  08   14 Beta
+0012 N21W09   286  0000 Axx  01   01 Alpha
+0013 N04W20   297  0010 Bxo  04   02 Beta
+0015 S27E26   251  0030 Cso  06   05 Beta
+0016 S15E71   206  0050 Hsx  02   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 25/2400Z Jun
+Nmbr  Location  Lo
+0007  N14W76   354
+0010  S13W40   317
+0014  S17E24   253
+II. Regions Due to Return 26 Jun to 28 Jun
+Nmbr Lat    Lo
+9985 N18    166
+9987 S16    148
+9993 N06    149
+PLAIN
+This message is for users of the NOAA/SEC Space
+Weather Operations sunspot region numbers. As you
+may have noticed, region number 10000 was assigned
+on June 14. Space Weather operations is going
+through the sequence of Region numbers as 9998,
+9999, 0000, 0001, and so on. SEC's product text
+discussions of the active regions will ignore the
+leading zeroes (for example, we will say 'Region
+number 5' rather than Region number '0005'). However,
+the Geoalert product, the Region Report product, as
+well as the USAF and ISES data exchange codes will
+preserve the 4 digit format. The necessity of using
+four digits is for operational purposes only. For
+historical purposes all regions beyond Region 9999
+will be understood to be in a series of region numbers
+10000 and higher.
+

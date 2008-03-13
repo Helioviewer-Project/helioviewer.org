@@ -1,0 +1,29 @@
+:Product: 20030211SRS.txt
+:Issued: 2003 Feb 11 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 42 Issued at 0030Z on 11 Feb 2003
+Report compiled from data received at SWO on 10 Feb
+I.  Regions with Sunspots.  Locations Valid at 10/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0276 S14W39   161  0040 Dso  10   16 Beta
+0277 S19W07   129  0040 Dso  06   12 Beta
+0278 N18W02   124  0040 Dao  04   11 Beta
+0280 S05W28   150  0030 Dso  07   09 Beta
+0281 S14E20   102  0030 Hsx  01   02 Alpha
+0282 N11W06   128  0010 Axx  00   02 Alpha
+0283 N01E13   109  0030 Dso  06   05 Beta
+0284 N14W41   163  0000 Axx  00   01 Alpha
+0285 S11E51   071  0070 Cao  03   02 Beta
+0286 S13W32   154  0000 Bxo  03   03 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 10/2400Z Feb
+Nmbr  Location  Lo
+0279  S12W61   184
+II. Regions Due to Return 11 Feb to 13 Feb
+Nmbr Lat    Lo
+0260 N15    026
+0268 N16    002
+0270 S04    359
+

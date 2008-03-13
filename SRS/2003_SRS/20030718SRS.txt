@@ -1,0 +1,29 @@
+:Product: 20030718SRS.txt
+:Issued: 2003 Jul 18 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 199 Issued at 0030Z on 18 Jul 2003
+Report compiled from data received at SWO on 17 Jul
+I.  Regions with Sunspots.  Locations Valid at 17/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0401 S09W90   297  0010 Axx  01   02 Alpha
+0405 S10W16   223  0020 Cso  02   03 Beta
+0408 N12W31   238  0020 Cso  03   02 Beta
+0409 N15E18   189  0210 Eai  14   45 Beta-Gamma
+0410 S12E12   195  0160 Dac  08   29 Beta-Gamma
+0411 N14E38   169  0040 Hsx  02   01 Alpha
+0412 N16E05   202  0060 Dai  05   15 Beta
+0413 N18E35   172  0020 Hsx  01   01 Alpha
+0414 S02E71   136  0090 Hax  03   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 17/2400Z Jul
+Nmbr  Location  Lo
+0403  S17W77   284
+0404  S11W67   274
+0407  N10W49   256
+II. Regions Due to Return 18 Jul to 20 Jul
+Nmbr Lat    Lo
+0390 N15    103
+0394 N07    109
+

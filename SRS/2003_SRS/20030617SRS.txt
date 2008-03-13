@@ -1,0 +1,23 @@
+:Product: 20030617SRS.txt
+:Issued: 2003 Jun 17 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 168 Issued at 0030Z on 17 Jun 2003
+Report compiled from data received at SWO on 16 Jun
+I.  Regions with Sunspots.  Locations Valid at 16/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0380 S16W51   309  0160 Dai  08   16 Beta-Gamma
+0381 S18W75   333  0040 Hrx  01   01 Alpha
+0383 N19W40   298  0000 Axx  01   01 Alpha
+0385 N29E17   241  0070 Dao  06   10 Beta
+0386 S07E71   187  0190 Dao  08   13 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 16/2400Z Jun
+Nmbr  Location  Lo
+0378  N14W36   294
+0382  S17W97   355
+II. Regions Due to Return 17 Jun to 19 Jun
+Nmbr Lat    Lo
+0368 S32    147
+

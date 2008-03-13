@@ -1,0 +1,18 @@
+:Product: 20040920SRS.txt
+:Issued: 2004 Sep 20 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 264 Issued at 0030Z on 20 Sep 2004
+Report compiled from data received at SWO on 19 Sep
+I.  Regions with Sunspots.  Locations Valid at 19/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0672 N05W58   349  0070 Cro  06   07 Beta
+0673 S13E22   269  0300 Eso  11   15 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 19/2400Z Sep
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 20 Sep to 22 Sep
+Nmbr Lat    Lo
+0668 S11    179

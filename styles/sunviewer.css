@@ -1,10 +1,23 @@
+html {
+	background-color: #EEEEF0;	
+}
+
 body {
-	font-family: sans-serif;
-	margin: 0;
 	padding: 10px;
-	color: #000000;
 	background-color: #EEEEF0;
+	color: #000000;
+	font-family: sans-serif;
 	font-size: 0.7em;
+}
+
+.stage {
+	position: relative;
+	float: left;
+	width: 600px;
+	z-index: 1;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	display: inline;
 }
 
 .viewport {
@@ -76,6 +89,7 @@ body {
 	z-index: 100000;
 }
 
+
 .layerManager {
 	position: relative;
 	top: 0;
@@ -87,8 +101,24 @@ body {
 	background-color: #FFFFFF;
 }
 
+
+/*
+.layerManager {
+	position: absolute;
+	top: 0;
+	left 0;
+	border: 1px #000000 solid;
+	z-index: 2;
+	height: 15px;
+	width: 70px;
+	overflow: hidden;
+	margin-bottom: 10px;
+	padding: 5px;
+	font-size: 10pt;
+	background-color: #FFFFFF;
+}*/
+
 .SimpleLayerManager {
-	position: float;
 	top: 0;
 	left: 0;
 	border: 1px #000000 solid;
@@ -320,7 +350,6 @@ a.control2 {
 	-moz-outline: none;
 }
 .viewportControls a img {
-	border: 0;
 	vertical-align: middle;
 }
 .viewportControls a:active {
@@ -330,6 +359,8 @@ a.control2 {
 #track3 {
 	margin: 0px 0px 0px 0px;
 }
+
+#about {position:absolute; left:560px;}
 
 .nav { color: #000000; font-size: 14px; cursor: pointer; }
 .nav:link {color: #000000; text-decoration:none;}     /* unvisited link */
@@ -355,4 +386,64 @@ a.control2 {
 	z-index: 30;
 }
 
-	
+/* Loading Indicator */
+#loading {
+	padding: 3px;
+	font-size: 10pt;
+	color: #FFFFFF;
+	background-color:#990000;
+	position:absolute;
+	top: 30px;
+	right: 30px;
+}
+
+/* Custom Calendar Styles */
+
+/* Clear calendar's float */
+#container .bd:after {content:".";display:block;clear:left;height:0;visibility:hidden;}
+		
+/* Have calendar squeeze upto bd bounding box */
+#container .bd {padding:0;}
+		
+/* Remove calendar's border and set padding in ems instead of px, so we can specify an width in ems for the container */
+#cal {border:none; padding:1em}
+
+
+/* (Scriptaculous) Zoom Level Slider Styles */
+.sliderTrack {
+	position: absolute;
+	left:10px;
+	top:63px;
+	height:209px;
+	width:28px;
+	background: url("../images/bg-fader-vertical.gif") 4px 0 no-repeat;
+	text-align:center;
+	padding: 2px 4px;
+	z-index:1;
+	}
+				
+.sliderHandle {
+	width:24px;
+	height:10px;
+	background-color:#D3D3D3;
+	border:1px solid black;
+	cursor:pointer;
+	z-index:100000;
+	text-align:center;
+	font-weight:bold;
+}
+
+.sliderPlus, .sliderMinus {
+	position: absolute;
+	left:15px;
+	width:24px;
+	height:24px;
+	background-color:#FFF;
+	border: 1px solid black;
+	text-align:center;
+	font-size:20px;
+	font-weight:bold;
+}
+
+.sliderPlus {top:35px;}
+.sliderMinus {top:284px;}

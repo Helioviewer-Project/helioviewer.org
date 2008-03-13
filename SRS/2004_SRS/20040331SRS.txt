@@ -1,0 +1,24 @@
+:Product: 20040331SRS.txt
+:Issued: 2004 Mar 31 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 91 Issued at 0030Z on 31 Mar 2004
+Report compiled from data received at SWO on 30 Mar
+I.  Regions with Sunspots.  Locations Valid at 30/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0581 S05W02   061  0110 Hsx  03   02 Alpha
+0582 N14E04   055  0300 Eki  12   59 Beta-Gamma
+0585 S15E12   047  0010 Axx  01   02 Alpha
+0587 S13E50   009  0120 Eao  11   18 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 30/2400Z Mar
+Nmbr  Location  Lo
+0578  N13W82   141
+0579  S13W58   117
+0580  S06W86   145
+0584  S13W16   075
+II. Regions Due to Return 31 Mar to 02 Apr
+Nmbr Lat    Lo
+0570 S14    310
+0572 N19    302

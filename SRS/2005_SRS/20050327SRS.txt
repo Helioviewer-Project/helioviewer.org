@@ -1,0 +1,18 @@
+:Product: 20050327SRS.txt
+:Issued: 2005 Mar 27 0040 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 86 Issued at 0030Z on 27 Mar 2005
+Report compiled from data received at SWO on 26 Mar
+I.  Regions with Sunspots.  Locations Valid at 26/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0745 N12W11   346  0090 Dao  10   08 Beta
+0746 S12W35   010  0050 Dao  06   13 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 26/2400Z Mar
+Nmbr  Location  Lo
+0744  S14W81   056
+II. Regions Due to Return 27 Mar to 29 Mar
+Nmbr Lat    Lo
+None

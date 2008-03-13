@@ -1,0 +1,24 @@
+:Product: 20030517SRS.txt
+:Issued: 2003 May 17 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 137 Issued at 0030Z on 17 May 2003
+Report compiled from data received at SWO on 16 May
+I.  Regions with Sunspots.  Locations Valid at 16/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0356 N18W29   337  0030 Cso  07   10 Beta
+0357 S17E07   301  0050 Dao  03   04 Beta
+0358 N08W30   339  0030 Cso  07   03 Beta
+0359 S14W75   023  0020 Axx  02   02 Alpha
+0361 N08E25   283  0030 Hsx  02   07 Alpha
+0362 S11E64   244  0240 Dao  10   11 Beta
+IA. H-alpha Plages without Spots.  Locations Valid at 16/2400Z May
+Nmbr  Location  Lo
+0360  S05W47   355
+II. Regions Due to Return 17 May to 19 May
+Nmbr Lat    Lo
+0344 N15    202
+0350 S11    217
+

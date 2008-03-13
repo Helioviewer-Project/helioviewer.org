@@ -1,0 +1,38 @@
+:Product: 20020610SRS.txt
+:Issued: 2002 Jun 10 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 161 Issued at 0030Z on 10 Jun 2002
+Report compiled from data received at SWO on 09 Jun
+I.  Regions with Sunspots.  Locations Valid at 09/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9973 S15W83   211  0110 Hsx  02   01 Alpha
+9975 N22W85   213  0050 Hax  02   01 Alpha
+9978 S21W61   189  0080 Cao  04   02 Beta
+9981 S20W25   153  0010 Hsx  01   01 Alpha
+9985 N18W38   166  0200 Eao  11   12 Beta
+9986 N03E07   121  0020 Cso  05   03 Beta
+9987 S15W16   144  0240 Eki  14   33 Beta
+9990 S23W08   136  0010 Axx  01   01 Alpha
+9991 S22E43   085  0270 Hkx  02   01 Alpha
+9992 S20E60   068  0020 Axx  01   01 Alpha
+9993 N06W20   148  0030 Cao  03   03 Beta
+9994 N10E59   069  0010 Axx  00   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 09/2400Z Jun
+Nmbr  Location  Lo
+9979  S29W41   170
+9980  S26W96   226
+9982  S04W18   147
+9983  N25W23   152
+9984  N20W63   193
+9988  S14W35   164
+9989  S35W57   186
+II. Regions Due to Return 10 Jun to 12 Jun
+Nmbr Lat    Lo
+9954 S22    031
+9957 N10    011
+9958 N04    025
+9964 S14    359
+

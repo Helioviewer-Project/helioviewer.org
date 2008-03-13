@@ -1,0 +1,21 @@
+:Product: 0803SRS.txt
+:Issued: 2005 Aug 03 0033 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 215 Issued at 0030Z on 03 Aug 2005
+Report compiled from data received at SWO on 02 Aug
+I.  Regions with Sunspots.  Locations Valid at 02/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0791 N12W88   157  0060 Hsx  02   01 Alpha
+0792 N12E12   057  0330 Dkc  09   43 Beta-Gamma-Delta
+0793 N13W42   111  0030 Dao  04   07 Beta
+0794 S11E47   022  0150 Dao  06   08 Beta
+0795 N15E51   018  0090 Hsx  02   03 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 02/2400Z Aug
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 03 Aug to 05 Aug
+Nmbr Lat    Lo
+None

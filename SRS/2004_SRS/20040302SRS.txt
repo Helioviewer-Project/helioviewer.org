@@ -1,0 +1,22 @@
+:Product: 20040302SRS.txt
+:Issued: 2004 Mar 02 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 62 Issued at 0030Z on 02 Mar 2004
+Report compiled from data received at SWO on 01 Mar
+I.  Regions with Sunspots.  Locations Valid at 01/2400Z 
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0564 N13W80   160  0130 Dso  10   12 Beta
+0565 S04W64   144  0080 Cso  05   07 Beta-Gamma
+0567 S13E11   069  0120 Dai  09   17 Beta-Gamma
+IA. H-alpha Plages without Spots.  Locations Valid at 01/2400Z Mar
+Nmbr  Location  Lo
+0562  S09W74   154
+0563  S23W65   145
+0568  S17W45   125
+II. Regions Due to Return 02 Mar to 04 Mar
+Nmbr Lat    Lo
+0556 N15    319
+0559 N07    333

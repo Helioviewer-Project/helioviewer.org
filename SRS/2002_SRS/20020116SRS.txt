@@ -1,0 +1,30 @@
+:Product: 20020116SRS.txt
+:Issued: 2002 Jan 16 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 16 Issued at 0030Z on 16 Jan 2002
+Report compiled from data received at SWO on 15 Jan
+I.  Regions with Sunspots.  Locations Valid at 15/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+9772 S17W81   323  0030 Hsx  01   01 Alpha
+9773 N16W82   324  0260 Eao  13   07 Beta-Gamma
+9775 S06W69   311  0280 Fki  16   14 Beta-Gamma-Delta
+9776 N08W50   292  0010 Cso  02   02 Beta
+9778 S15W18   260  0090 Dao  10   11 Beta
+9779 N29W24   266  0110 Hsx  02   01 Alpha
+9781 S05E13   229  0060 Hsx  02   01 Alpha
+9782 N06E20   222  0220 Dao  05   11 Beta-Delta
+9783 S11E42   202  0260 Hkx  03   02 Alpha
+9785 N11E28   214  0190 Dao  06   05 Beta-Gamma
+IA. H-alpha Plages without Spots.  Locations Valid at 15/2400Z Jan
+Nmbr  Location  Lo
+9777  S06W27   270
+9784  S28E31   211
+II. Regions Due to Return 16 Jan to 18 Jan
+Nmbr Lat    Lo
+9751 N04    142
+9753 S17    138
+9754 S07    120
+

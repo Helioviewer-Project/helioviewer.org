@@ -1,0 +1,28 @@
+:Product: 20020705SRS.txt
+:Issued: 2002 Jul 05 0030 UTC
+# Prepared jointly by the U.S. Dept. of Commerce, NOAA,
+# Space Environment Center and the U.S. Air Force.
+#
+Joint USAF/NOAA Solar Region Summary
+SRS Number 186 Issued at 0030Z on 05 Jul 2002
+Report compiled from data received at SWO on 04 Jul
+I.  Regions with Sunspots.  Locations Valid at 04/2400Z
+Nmbr Location  Lo  Area  Z   LL   NN Mag Type
+0016 S17W48   206  0060 Cso  04   04 Beta
+0017 S18W76   234  0520 Eai  12   19 Beta-Gamma
+0019 S17E07   151  0450 Eki  12   27 Beta-Gamma
+0020 N00E35   123  0000 Axx  00   01 Alpha
+0021 S29W08   166  0040 Dso  06   08 Beta
+0022 S20E20   138  0040 Cso  06   11 Beta
+0023 S23E42   116  0020 Cro  06   06 Beta
+0024 S33E50   108  0090 Dao  08   08 Beta
+0025 S18E75   083  0050 Hsx  02   01 Alpha
+IA. H-alpha Plages without Spots.  Locations Valid at 04/2400Z Jul
+Nmbr  Location  Lo
+None
+II. Regions Due to Return 05 Jul to 07 Jul
+Nmbr Lat    Lo
+0004 S15    041
+0006 S07    030
+0009 S19    049
+
