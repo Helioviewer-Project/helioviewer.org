@@ -1,103 +1,145 @@
 HelioViewer ChangeLog
 
-03/13/2008
-Version: alpha
-By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
-
-1. Set index.html to only include only the necessary Scriptaculous
-   components (improves performance).
-
-2. Renamed main driver function in index.html from "initializeGraphic" to "main"
-
-3. Moved event listener for "About" button from inline attribute to SunViewer class
-   (less obtrusive).
-   
-4. Using prototype 1.6's custom "dom:loaded" event instead of document.onload:
-   this makes it so that behavior can be initiated once the DOM has been loaded,
-   before all assets (images, etc) have finished loaded. This also avoids to problem
-   of Opera triggering the onLoad event twice so the "if (sunviewer = null)" check
-   has been removed as well.
-
-5. Began replacing custom event-handling code (SunViewerWidget methods) YUI Custom events.
-   The YUI Custom event model [1] allows for the creation of custom events associated with
-   non-DOM code. The new syntax for creating an event is:
-   
-   		document.customEventName = new YAHOO.util.CustomEvent("customEventName");
-   		
-   Once you have a custom event, you can then subscribe and fire it using:
-   
-   		document.customEventName.subscribe(fn callback, obj associatedObj, boolean scope);
-   		document.customEventName.fire(arg1, arg2, ...); 
-   		
-   Arguments passed to fire are then accessed via an array, which is the second argument
-   that should be specified in the callback function.
-   
-   For example, the old way of registering and responding to the Zoom event
-   was:
-   
-   	this.observe(imageLayerProvider.tileContainer.viewport, 'Zoom');
-   	this.notifyListeners('Zoom', level, source);
-   
-   When the up button was clicked, the SunViewerWidget functionality would cause
-   "onExchange" to be called. Using YUI's custom events, the syntax is:
-   
-     document.zoomLevelChange.subscribe(this.onZoomLevelChange, this, true);
-     document.zoomLevelChange.fire(level);
-     
-   Finally, callback functions should be setup with a minimal of two arguments: the
-   event type and arguments. e.g.
-   
-   onZoomLevelChange: function(type, args) {
-	    var newZoomLevel = args[0];
-	    ...
-   }
-   
-   Although the syntax may initially appear more complex, there are several advantages
-   to using this style for handling events:
-   
-   (1) Using the older syntax you had to pass in the widget you want to watch (e.g.
-       "layerProvider" in this.observe(layerProvider ...)) Using custom events, you
-       can simply have a different event for each firing widget: layerProvidersExchange,
-       rowsExchange, etc. This makes setting up and looking for the right event much easier.
-       
-   (2) All events can be associated with a single object (in this case document). In the
-       old style, event handling code is dispersed throughout various objects, and there
-       is no central location to check for the existence of a given event handler. By attaching
-       all the event handling code to the document object, this makes it more centralized and
-       easy to manage.
-       
-   (3) In the old system, a superclass, SunViewerWidget, was created which contained all
-	   of the event-handling code and was inherited by all objects which needed to deal
-	   with events. Using YUI's custom events eliminates the need for this class and
-	   thus greatly simplifies the system architecture and overhead.
+	03/18/20088
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
+	1. Restructured HelioViewer CSS Design. Formerly, the many of the UI components, as well
+	   as the viewport were placed using absolute positioning, and were tied together. This
+	   resulted in a very rigid system whereby modifying seemingly unrelated components could
+	   have a large affect on other parts of the system.
 	   
-   In essence, the problem with the old event-handling system is that the different components
-   are too dependent on one another, and a large part of this was due to the fact that they needed
-   to be able to see each other directly (via references passed in). By communicating instead through
-   events, the separate components can remain separate and instead only listen for events/fire events
-   relevant to them.
+	   To eliminate this problem and simplify the overall architecture, I restructured
+	   the CSS design, breaking it down into Four main components: a Header, Viewport, UI,
+	   and a Footer. All of these items reside in a larger outter container called "outsideBox."
+	   The general structure is:
 	   
-   Note: Several other event-handling frameworks were considered for this task including that of
-   Prototype and jQuery. In the end I chose to use YUI's because of it's simplicity, and also for the
-   fact that the newly included calendar widget (see item number 8 below) required the YUI event-handling libraries,
-   so the code was already available.
+	   outsideBox
+	    |
+	    |----> header
+	    |
+	    |----> viewport
+	    |		|
+	    |		|------> ui
+	    |
+	    |----> footer
+	    
+	   	Items that are to appear above the viewport go in head, and items below the viewport in footer.
+	   	The "ui" layer contains all of the user interface (UI) components that reside in the viewport,
+	   	and acts as a layer that floats directly above the actual viewport. Changes to contents of
+	   	either have no affect on one another, and thus can be manipulated independently.
+	   	
+	2. Implemented a new "look-and-feel" for HelioViewer. In order to give HelioViewer a more clean
+	   and polished look, custom buttons and images were designed using GIMP. The viewport was centered
+	   on the screen, and a border the same style as the buttons was placed surrounding the viewport.
+	   A chrome background-tile (http://gnome-look.org/content/show.php/Mithril?content=64288) was 
+	   also incorporated.
 	   
-6. Continued to separate classes into individual files: split tiles.js and layers.js into multiple
-   files for ease of maintenance. To optimize end-product a make or Ant file can be used to automatically
-   concatenate, minify, and gzip all of the classes. This way it will not matter how many files are
-   maintained during development.
-   
-7. Replaced custom ZoomLevelSlider with a much simpler extended version of the scriptaculous slider [2].
-   It is currently not linked to the zooming functionality, however, because of the way it has been
-   designed, it is extremely easy to link the slider to any desired functionality.
-  
-8. Added a YUI calendar navigation tool [3]. Again, it has not yet been linked to the functionality,
-   but has been otherwise prepared to be hooked easily in to the system.
+	3. The buttons for navigating foward and back in time were removed from the SelectByDateMenu
+	   and placed instead below the viewport. Two new custom events (timeNext and timePrevious)
+	   are used to communicate between the UI and functionality.
+	
+	4. Added a favicon (shows up next the URL and bookmarks in many web-browsers).
+	
 
-For more information, see:
-    [1] http://developer.yahoo.com/yui/event/
-    [2] http://wiki.script.aculo.us/scriptaculous/show/Slider
-    [3] http://developer.yahoo.com/yui/calendar/
+	03/13/2008
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
+	1. Set index.html to only include only the necessary Scriptaculous
+	   components (improves performance).
+	
+	2. Renamed main driver function in index.html from "initializeGraphic" to "main"
+	
+	3. Moved event listener for "About" button from inline attribute to SunViewer class
+	   (less obtrusive).
+	   
+	4. Using prototype 1.6's custom "dom:loaded" event instead of document.onload:
+	   this makes it so that behavior can be initiated once the DOM has been loaded,
+	   before all assets (images, etc) have finished loaded. This also avoids to problem
+	   of Opera triggering the onLoad event twice so the "if (sunviewer = null)" check
+	   has been removed as well.
+	
+	5. Began replacing custom event-handling code (SunViewerWidget methods) YUI Custom events.
+	   The YUI Custom event model [1] allows for the creation of custom events associated with
+	   non-DOM code. The new syntax for creating an event is:
+	   
+	   		document.customEventName = new YAHOO.util.CustomEvent("customEventName");
+	   		
+	   Once you have a custom event, you can then subscribe and fire it using:
+	   
+	   		document.customEventName.subscribe(fn callback, obj associatedObj, boolean scope);
+	   		document.customEventName.fire(arg1, arg2, ...); 
+	   		
+	   Arguments passed to fire are then accessed via an array, which is the second argument
+	   that should be specified in the callback function.
+	   
+	   For example, the old way of registering and responding to the Zoom event
+	   was:
+	   
+	   	this.observe(imageLayerProvider.tileContainer.viewport, 'Zoom');
+	   	this.notifyListeners('Zoom', level, source);
+	   
+	   When the up button was clicked, the SunViewerWidget functionality would cause
+	   "onExchange" to be called. Using YUI's custom events, the syntax is:
+	   
+	     document.zoomLevelChange.subscribe(this.onZoomLevelChange, this, true);
+	     document.zoomLevelChange.fire(level);
+	     
+	   Finally, callback functions should be setup with a minimal of two arguments: the
+	   event type and arguments. e.g.
+	   
+	   onZoomLevelChange: function(type, args) {
+		    var newZoomLevel = args[0];
+		    ...
+	   }
+	   
+	   Although the syntax may initially appear more complex, there are several advantages
+	   to using this style for handling events:
+	   
+	   (1) Using the older syntax you had to pass in the widget you want to watch (e.g.
+	       "layerProvider" in this.observe(layerProvider ...)) Using custom events, you
+	       can simply have a different event for each firing widget: layerProvidersExchange,
+	       rowsExchange, etc. This makes setting up and looking for the right event much easier.
+	       
+	   (2) All events can be associated with a single object (in this case document). In the
+	       old style, event handling code is dispersed throughout various objects, and there
+	       is no central location to check for the existence of a given event handler. By attaching
+	       all the event handling code to the document object, this makes it more centralized and
+	       easy to manage.
+	       
+	   (3) In the old system, a superclass, SunViewerWidget, was created which contained all
+		   of the event-handling code and was inherited by all objects which needed to deal
+		   with events. Using YUI's custom events eliminates the need for this class and
+		   thus greatly simplifies the system architecture and overhead.
+		   
+	   In essence, the problem with the old event-handling system is that the different components
+	   are too dependent on one another, and a large part of this was due to the fact that they needed
+	   to be able to see each other directly (via references passed in). By communicating instead through
+	   events, the separate components can remain separate and instead only listen for events/fire events
+	   relevant to them.
+		   
+	   Note: Several other event-handling frameworks were considered for this task including that of
+	   Prototype and jQuery. In the end I chose to use YUI's because of it's simplicity, and also for the
+	   fact that the newly included calendar widget (see item number 8 below) required the YUI event-handling libraries,
+	   so the code was already available.
+		   
+	6. Continued to separate classes into individual files: split tiles.js and layers.js into multiple
+	   files for ease of maintenance. To optimize end-product a make or Ant file can be used to automatically
+	   concatenate, minify, and gzip all of the classes. This way it will not matter how many files are
+	   maintained during development.
+	   
+	7. Replaced custom ZoomLevelSlider with a much simpler extended version of the scriptaculous slider [2].
+	   It is currently not linked to the zooming functionality, however, because of the way it has been
+	   designed, it is extremely easy to link the slider to any desired functionality.
+	  
+	8. Added a YUI calendar navigation tool [3]. Again, it has not yet been linked to the functionality,
+	   but has been otherwise prepared to be hooked easily in to the system.
+	
+	For more information, see:
+	    [1] http://developer.yahoo.com/yui/event/
+	    [2] http://wiki.script.aculo.us/scriptaculous/show/Slider
+	    [3] http://developer.yahoo.com/yui/calendar/
 
 
 02/20/2008

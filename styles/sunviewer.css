@@ -1,25 +1,87 @@
+/**
+ * helioviewer.css
+ * last updated: 03/18/2008
+ *
+ * blackGlass design by Keith, 2008
+ *
+ * Background tile from Jawbreaker's excellent "Mitril" theme for GTK 2.x.
+ * (http://gnome-look.org/content/show.php/Mithril?content=64288).
+ * Calendar button uses an icon from DBGthekafu's "black-white 2 Vista" icon
+ * theme (http://www.gnome-look.org/content/show.php/black-white+2+Vista?content=72618).
+ */
+
+/* HTML ELEMENTS */
 html {
-	background-color: #EEEEF0;	
-}
+	/*background-color: #EEEEF0;*/
+	background: url(../images/bg.png);
+	}
 
 body {
 	padding: 10px;
-	background-color: #EEEEF0;
+	/*background-color: #EEEEF0;*/
 	color: #000000;
 	font-family: sans-serif;
 	font-size: 0.7em;
 }
 
-.stage {
-	position: relative;
-	float: left;
-	width: 600px;
-	z-index: 1;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	display: inline;
+h1 {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
+button {cursor:pointer}
+
+/* MAIN STRUCTURAL COMPONENTS */
+#outsideBox {
+	border:0;
+}
+#header {
+	width:600px;
+	height:60px;
+	font-size:14px;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	padding-bottom:5px;
+}
+#viewport-outer {
+	background: url(../images/blackGlass/glass_border_light.png);
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	position:relative;
+	width:640px;
+	height:640px;
+	z-index:1;
+}
+#viewport-inner {
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	position:relative;
+	width:600px;
+	height:600px;
+	border:1px solid black;
+	top:20px;
 }
 
+#ui {
+	width:600px;
+	height:600px;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	position:absolute;
+	top:0px;
+	left:0px;
+	z-index:2;
+}
+#footer {
+	width:600px;
+	height:70px;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+	padding-top:9px;
+}
+
+/* VIEWPORT-RELATED */
 .viewport {
 	position: relative;
 	top: 0px;
@@ -34,7 +96,6 @@ body {
 	color: #FFFFFF;
 	overflow: hidden;
 	z-index: 0;
-	/* float: left; */
 }
 
 
@@ -80,8 +141,10 @@ body {
 	/*-moz-outline: 1px dashed #FF0000;*/
 }
 
+/* UI-RELATED */
 .centerControl {
 	cursor: pointer;
+	margin-left:4px;
 }
 .sunCoordsDisplay {
 	color: #FFFFFF;
@@ -92,37 +155,10 @@ body {
 
 .layerManager {
 	position: relative;
-	top: 0;
-	left: 0;
+	top: -1px;
+	left: -1px;
 	border: 1px #000000 solid;
 	margin: 0px 0px 10px 0px;
-	padding: 5px;
-	font-size: 10pt;
-	background-color: #FFFFFF;
-}
-
-
-/*
-.layerManager {
-	position: absolute;
-	top: 0;
-	left 0;
-	border: 1px #000000 solid;
-	z-index: 2;
-	height: 15px;
-	width: 70px;
-	overflow: hidden;
-	margin-bottom: 10px;
-	padding: 5px;
-	font-size: 10pt;
-	background-color: #FFFFFF;
-}*/
-
-.SimpleLayerManager {
-	top: 0;
-	left: 0;
-	border: 1px #000000 solid;
-	margin: 0px 0px 10px 100px;
 	padding: 5px;
 	font-size: 10pt;
 	background-color: #FFFFFF;
@@ -169,21 +205,6 @@ body {
 	color: #000000;
 	font-size: 12pt;
 	z-index: 1;
-}
-
-.zoomLevelContainer {
-	text-align: right;
-	width: 100%;
-	line-height: 0px;
-	cursor: pointer;
-}
-
-.zoomLevelControl {
-	padding: 0px;
-	margin: 0px;
-	border: 0px;
-	position: relative;
-	top: 0px;
 }
 
 .overlay {
@@ -332,16 +353,19 @@ a.control2 {
 }
 .viewportControls        
 {
+	background:url(../images/blackGlass/glass_button_rect_48x20px.png);
+	color: #FFF;
 	position: absolute;
-	/* NOTE: the right and bottom can be adjusted when initialized */
+	left:-1px;
+	bottom:-1px;
 	font-size: 12px;
 	line-height: 20px;
 	vertical-align: middle;
 	font-weight: bold;
 	z-index: 100000;
-	color: #000000;
-	background-color: #FFFFFF;
-	border: 1px solid #000000;
+	border: 0;
+	width:48px;
+	height:20px;
 }
 .viewportControls a
 {
@@ -359,8 +383,6 @@ a.control2 {
 #track3 {
 	margin: 0px 0px 0px 0px;
 }
-
-#about {position:absolute; left:560px;}
 
 .nav { color: #000000; font-size: 14px; cursor: pointer; }
 .nav:link {color: #000000; text-decoration:none;}     /* unvisited link */
@@ -389,9 +411,9 @@ a.control2 {
 /* Loading Indicator */
 #loading {
 	padding: 3px;
-	font-size: 10pt;
-	color: #FFFFFF;
-	background-color:#990000;
+	font-size: 12px;
+	background-color:#858585;
+	color: #F0F0F0;
 	position:absolute;
 	top: 30px;
 	right: 30px;
@@ -409,41 +431,76 @@ a.control2 {
 #cal {border:none; padding:1em}
 
 
+#date {
+	background-color:snow;
+	width:200px;
+}
+
+#show {
+	background: url(../images/blackGlass/glass_button_rect_34x30px_calendar.png);
+	width:34px;
+	height:30px;
+	border:0;
+	vertical-align:50%;
+}
+
+
 /* (Scriptaculous) Zoom Level Slider Styles */
 .sliderTrack {
 	position: absolute;
-	left:10px;
+	left:26px;
 	top:63px;
 	height:209px;
-	width:28px;
-	background: url("../images/bg-fader-vertical.gif") 4px 0 no-repeat;
+	width:6px;
+	background: url(../images/blackGlass/glass_slider_6px_vert) repeat-y;
 	text-align:center;
-	padding: 2px 4px;
-	z-index:1;
 	}
 				
 .sliderHandle {
-	width:24px;
-	height:10px;
-	background-color:#D3D3D3;
-	border:1px solid black;
+	/*width:24px;
+	height:10px;*/
+	left:-8px;
+	width:21px;
+	height:12px;
+	background:url(../images/blackGlass/glass_slider_handle.png);
 	cursor:pointer;
-	z-index:100000;
+	z-index:4;
 	text-align:center;
 	font-weight:bold;
 }
 
-.sliderPlus, .sliderMinus {
+.sliderMinus, .sliderPlus {
+	background: url(../images/blackGlass/glass_button_square_24px_light.png);
 	position: absolute;
-	left:15px;
+	color:white;
+	left:16px;
+	cursor:pointer;
 	width:24px;
 	height:24px;
-	background-color:#FFF;
-	border: 1px solid black;
 	text-align:center;
 	font-size:20px;
 	font-weight:bold;
 }
 
-.sliderPlus {top:35px;}
-.sliderMinus {top:284px;}
+.sliderMinus {top:272px;}
+.sliderPlus  {top:39px;}
+
+
+#timeBackBtn {
+	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_left.png);
+	width:34px;
+	height:30px;
+	border:0;
+}
+
+#timeForwardBtn {
+	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_right.png);
+	margin-left:5px;
+	width:34px;
+	height:30px;
+	border:0;
+}
+
+#show:hover {background: url(../images/blackGlass/glass_button_rect_34x30px_calendar_mouseover.png);}
+
+    

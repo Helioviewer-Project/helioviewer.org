@@ -3,6 +3,9 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
+		<title>HelioViewer Alpha</title>
+		<link rel="shortcut icon" href="favicon.ico" />
+	
 		<!-- YUI Libraries and Stylesheets -->
 		<link rel="stylesheet" type="text/css" href="lib/yui/build/reset-fonts/reset-fonts.css">
 		<link rel="stylesheet" type="text/css" href="lib/yui/build/container/assets/skins/sam/container.css"> 
@@ -48,7 +51,7 @@
 		<script src="lib/SunViewer/ZoomLevelSlider.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/SunViewer.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="styles/sunviewer.css">
-		<link rel="stylesheet" type="text/css" href="styles/sizeIndicator.css">		
+		<link rel="stylesheet" type="text/css" href="styles/sizeIndicator.css">
 		
 		<script type="text/javascript">
 		// <![CDATA[
@@ -62,6 +65,8 @@
 			document.zoomLevelChange =  new YAHOO.util.CustomEvent("zoomLevelChange");
 			document.zoomOffsetChange = new YAHOO.util.CustomEvent("zoomOffsetChange");
 			document.sunImageChange =   new YAHOO.util.CustomEvent("sunImageChange");
+			document.timePrevious =		new YAHOO.util.CustomEvent("timePrevious");
+			document.timeNext = 		new YAHOO.util.CustomEvent("timeNext");
 			
 			// Create viewport
 			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 12});
@@ -87,7 +92,11 @@
 			
 			var calendar = new Calendar('cal', 'date', 'show');
 				
-			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack');
+			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 0, 12, 10);
+			
+			//Setup event-handling time-navigation buttons
+			$('timeBackBtn').observe('click', function() {document.timePrevious.fire();});
+			$('timeForwardBtn').observe('click', function() {document.timeNext.fire();});
 		}
 
 		document.observe('dom:loaded', main);
@@ -96,129 +105,71 @@
 		
 	</head>
 	<body class="yui-skin-sam">
-
+	
+	<!-- OUTERMOST CONTENT BOX -->
+	<div id="outsideBox">
 		<div><span id="loading" style="display: none">Loading...</span></div>
-		<div id="sunViewer1.header" class="header">
-			<h1>SunViewer (alpha)</h1>
-			<div id="header-row-01" style="margin:5px;">
-			<span style="font-size:14px">Observation Date: </span>
-
-			   <input type="text" id="date" name="date" value="" /><button type="button" id="show" title="Show Calendar"><img src="lib/yui/assets/calbtn.gif" width="18" height="18" alt="Calendar" ></button>
-
-			   <div id="container">
-			      <div class="hd">Calendar</div>
-			      <div class="bd">
-			         <div id="cal"></div>
-			      </div>
-			   </div>
-
-
-        	<span>
-            	<a id="about" class="nav">About</a>&nbsp; 
-        	</span>
+		
+		<!--  HEADER -->
+		<div id="header">
+			<h1>HelioViewer</h1>
+			<div id="header-row-01">
+			
+				<!--  Observation Date -->
+				<span>Observation Date:</span>
+				<input type="text" id="date" name="date" value="" />
+				
+				<!-- Calendar Widget -->
+				<button type="button" id="show" title="Show Calendar"></button>
+                <div id="container">
+			    	<div class="hd">Calendar</div>
+			    	<div class="bd">
+			        	<div id="cal"></div>
+			    	</div>
+			    </div>
+			    
+			    <!-- About Button -->
+        		<span style="margin-left:170px;">
+            		<a id="about" class="nav">About</a> 
+        		</span>
         	</div>
 		</div>
-				<!--
-				<table border="0" cellspacing="0" cellpadding="2">
-				<tr>
-					<td>
-				<button type="button" onclick="viewerBean.centreImage()">Centre</button>
-				<button type="button" onclick="viewerBean.reset()">Reset</button>
-					</td><td width="150">
-				<span id="coordinates" style="margin-left: 20px">
-					Coordinates:
-					<span id="NorS" style="width: 10px"></span>
-					<span id="NorSdeg" style="width: 20px; text-align: right"></span>
-					<span id="WorE" style="width: 10px"></span>
-					<span id="WorEdeg" style="width: 20px; text-align: right"></span>
-				</span>
-					</td><td>
-				<span id="rotation" style="margin-left: 20px">
-					Rotation:
-					<span id="RNorS" style="width: 10px">S</span>
-					<span id="RNorSdeg" style="width: 20px; text-align: right">0</span>
-					<span id="RWorE" style="width: 10px">W</span>
-					<span id="RWorEdeg" style="width: 20px; text-align: right">0</span>
-				</span>
-					</td>
-				</tr>
-				</table>
-				-->
-
-
-		<div id="sunViewer1.stage" class="stage">
-
-			<div id="layerManager1" class="layerManager" style="position: absolute; z-index: 2; height: 15px; width: 70px; overflow: hidden; margin-bottom: 10px" />
-			</div>
+	
+		<!-- VIEWPORT AND UI LAYERS -->			
+		<div id="viewport-outer">
+			<div id="viewport-inner">
 			
-			<div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; width: 100%; height: 600px">
-				<div class="surface" id="surface1">
-					
+				<!--  VIEWPORT -->
+				<div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 600px; height: 600px">
+					<div class="surface" id="surface1"></div>
+					<div class="well" id="well1"></div>
 				</div>
-				<div class="well" id="well1">
-					
-				</div>
-				<!--
-				<div id="sunViewer1.viewport1.zoomLevelSlider" class="viewportControls" style="position: absolute; left: 10px; top: 35px; text-align: center; padding: 2px 4px 2px 4px">
-					<a href="JavaScript:void(0);" class="zoomIn" title="Zoom In">
-						<img src="images/icons/zoomIn.gif" alt="" border="0" style="margin: 0px 0px 0px 0px" />
-					</a>
-					
-					<div class="zoomLevelContainer">
-						
-					</div>
-					
-					<a href="JavaScript:void(0);" class="zoomOut" title="Zoom Out">
-						<img src="images/icons/zoomOut.gif" alt="" border="0" style="margin: 0px 0px 0px 0px" />
-					</a>
-				</div>
-				-->
-									
-				<div id="sunViewer1.viewport1.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;">
 				
+				<!--  UI LAYER  -->
+				<div id="ui">		
+					<div id="layerManager1" class="layerManager" style="height: 15px; width: 70px; overflow: hidden; z-index:4;"></div>
+					<div id="sunViewer1.viewport1.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;"></div>
+					<div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="left: 10px; top: 545px"></div>
+					<div class="viewportControls">
+						<span class="centerControl">Center</span>
+					</div>
+			
+					<!--  Zoom-Level Slider -->
+					<div id="sunViewer1.viewport1.sliderPlus" class="sliderPlus">+</div>			
+					<div id="sunViewer1.viewport1.sliderTrack" class="sliderTrack">
+			   			<div id="sunViewer1.viewport1.sliderHandle" class="sliderHandle"></div>
+					</div>
+					<div id="sunViewer1.viewport1.sliderMinus" class="sliderMinus">-</div>
 				</div>
-				<div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="left: 10px; top: 545px">
-				</div>
-				<div class="viewportControls" style="left: 0px; bottom: 0px; height: 20px; padding: 0px 4px 0px 4px; margin: 0px">
-					<span class="centerControl">Center</span>
-				</div>
+			</div>
+		</div>
 		
-			</div>
-			<h2>Horizontal Slider with Preset Values</h2>
+		<!-- FOOTER -->
+		<div id="footer">
+			<button type="button" id="timeBackBtn" value="Previous Image"></button>
+			<button type="button" id="timeForwardBtn" value="Next Image"></button>
+		</div>
 			
-			<div id="track3" style="width:200px; background-color:#ccc; height:10px;">
-				<div id="handle3" style="width:10px; height:15px; background-color:#f00; cursor:move;"></div>
-
-			</div>
-
-			<!-- Horizontal slider -->		
-			<p id="debug3">&nbsp;</p>
-			<script type="text/javascript" language="javascript">
-			// <![CDATA[
-			
-				// horizontal slider control with preset values
-				new Control.Slider('handle3', 'track3', {
-					range: $R(0,10),
-					values: $R(0,10), //can programatically create by getting min max and creating a range
-					sliderValue: 5, // won't work if set to 0 due to a bug(?) in script.aculo.us
-					onSlide: function(v){ $('debug3').innerHTML = 'slide: ' + v },
-					onChange: function(v){ $('debug3').innerHTML = 'changed: ' + v }
-				});
-			// ]]>
-			</script>
-			
-			<!--  VERTICAL SLIDER (on viewport) -->
-			 
-			<div id="sunViewer1.viewport1.sliderPlus" class="sliderPlus">+</div>
-			<div id="sunViewer1.viewport1.sliderTrack" class="sliderTrack">
-    			<div id="sunViewer1.viewport1.sliderHandle" class="sliderHandle">=</div>
-			</div>
-			<div id="sunViewer1.viewport1.sliderMinus" class="sliderMinus">-</div>
-			
-			<!-- Debugger output console -->
-			<!--<strong>Debug Output:</strong>
-			<div>
-			<textarea id="debugOutput" cols="100" rows="6"></textarea>
-			</div>-->
+	</div>
 	</body>
 </html>
