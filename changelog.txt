@@ -1,6 +1,24 @@
 HelioViewer ChangeLog
 
-	03/18/20088
+	03/19/2008
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+
+	1. Added support for multiple viewport sizes: 640x640, 1024x768, and 1280x960.
+	   This is currently implemented in a separate class, ViewportSizeManager. In the
+	   future this functionality would probably be better off in the Viewport class, however,
+	   since that class is likely to be modified heavily in the days to come, I have kept
+	   it separate for the time being.
+	   
+	2. Fixed a small bug introduced in the previous version whereby the center button was
+	   not functioning properly.
+	   
+	3. Changed color of slider to make more visible.
+	
+	4. Added drop-shadows to time-navigation buttons.
+
+
+	03/18/2008
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
 	

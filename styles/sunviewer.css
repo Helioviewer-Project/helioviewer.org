@@ -41,7 +41,7 @@ button {cursor:pointer}
 	padding-bottom:5px;
 }
 #viewport-outer {
-	background: url(../images/blackGlass/glass_border_light.png);
+	background: url(../images/blackGlass/glass_border_light_640x640.png);
 	display:block;
 	margin-left:auto;
 	margin-right:auto;
@@ -62,8 +62,8 @@ button {cursor:pointer}
 }
 
 #ui {
-	width:600px;
-	height:600px;
+	width:100%;
+	height:100%;
 	display:block;
 	margin-left:auto;
 	margin-right:auto;
@@ -452,7 +452,7 @@ a.control2 {
 	top:63px;
 	height:209px;
 	width:6px;
-	background: url(../images/blackGlass/glass_slider_6px_vert) repeat-y;
+	background: url(../images/blackGlass/glass_slider_trough_vertical_white.png) repeat-y;
 	text-align:center;
 	}
 				
@@ -462,7 +462,7 @@ a.control2 {
 	left:-8px;
 	width:21px;
 	height:12px;
-	background:url(../images/blackGlass/glass_slider_handle.png);
+	background:url(../images/blackGlass/glass_slider_handle_white.png);
 	cursor:pointer;
 	z-index:4;
 	text-align:center;
@@ -470,7 +470,7 @@ a.control2 {
 }
 
 .sliderMinus, .sliderPlus {
-	background: url(../images/blackGlass/glass_button_square_24px_light.png);
+	background: url(../images/blackGlass/glass_button_square_24px_white.png);
 	position: absolute;
 	color:white;
 	left:16px;
@@ -487,20 +487,34 @@ a.control2 {
 
 
 #timeBackBtn {
-	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_left.png);
-	width:34px;
-	height:30px;
+	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_left_shadow.png);
+	width:64px;
+	height:60px;
 	border:0;
 }
 
 #timeForwardBtn {
-	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_right.png);
-	margin-left:5px;
-	width:34px;
-	height:30px;
+	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_right_shadow.png);
+	width:64px;
+	height:60px;
 	border:0;
 }
 
-#show:hover {background: url(../images/blackGlass/glass_button_rect_34x30px_calendar_mouseover.png);}
+/* Text-related */
+a.gray {
+	text-decoration:none;
+	font-weight:bold;
+	color:#858585;
+	}
+a.gray:hover {
+	border-top:1px solid #858585;
+	border-bottom:1px solid #858585;
+	}
+a.lightGray {
+	/*color:#F0F0F0;*/
+	color:#E5E5E5;
+	text-decoration:none;
+	font-weight:bold;
+}
 
     
