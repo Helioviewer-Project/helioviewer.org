@@ -87,10 +87,10 @@
 			
 			var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
 				
-			//markers1.observe(bg1, 'ImageChange');
+			markers1.observe(bg1, 'ImageChange');
 			//markers1.observe(bg1, 'ZoomOffsetChange');
 			document.zoomOffsetChange.subscribe(markers1.onZoomOffsetChange, markers1);
-			document.sunImageChange.subscribe(markers1.onImageChange, markers1);
+			//document.sunImageChange.subscribe(markers1.onImageChange, markers1);
 			
 			var calendar = new Calendar('cal', 'date', 'show');
 				
