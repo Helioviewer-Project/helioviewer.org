@@ -71,7 +71,7 @@ def Verify(Root, File):
 	elif Position == 7 and len(File) == 3:
 		return True
 		
-	elif Position == 8 and (len(File) == 47 or len(File) == 48):
+	elif Position == 8 and (len(File) == 67 or len(File) == 68):
 		return True
 		
 	else:
@@ -131,9 +131,10 @@ for root, dirs, files in os.walk(RootDir):
 		for Iterator in files:
 			StatusNumber = StatusNumber + 1
 			print "INSERTING %s" % StatusNumber
-			if len(Iterator) != 47 and len(Iterator) != 48:
-				print "REMOVING " + Iterator
-				dirs.remove(Iterator)
+			print len(Iterator)
+			#if len(Iterator) != 67 and len(Iterator) != 68:
+			#	print "REMOVING " + Iterator
+			#	dirs.remove(Iterator)
 			
 			if Verify(root, Iterator):
 				INSValue = root[RootDir_Length:]	# Cut off the root directory.
@@ -143,22 +144,27 @@ for root, dirs, files in os.walk(RootDir):
 				Hour = Iterator[11:13]
 				Minute = Iterator[13:15]
 				Second = Iterator[15:17]
+				print Iterator
+				print Hour
+				print Minute
+				print Second
 				Observatory = Iterator[18:22]
 				Instrument = Iterator[23:26]
 				Detector = Iterator[27:30]
 				Measurement = Iterator[31:34]
-				Extension = Iterator[44:]				
+				Extension = Iterator[64:]
+				Timestamp = "%s%s%s%s%s%s" % (Year, Month, Day, Hour, Minute, Second)
 				Map = "%s_%s_%s_%s%s%s_%s_%s_%s_%s" % (Year, Month, Day, Hour, Minute, Second, Observatory, Instrument, Detector, Measurement)
 	
-				sqlquery = "INSERT INTO maps (map, year, month, day, hour, minute, second, observatory, instrument, detector, measurement, extension) VALUES('%s', %s, %s, %s, %s, '%s', %s, '%s', '%s', '%s', '%s', '%s')" % (Map, Year, Month, Day, Hour, Minute, Second, Observatory, Instrument, Detector, Measurement, Extension)
+				sqlquery = "INSERT INTO maps (map, timestamp, year, month, day, hour, minute, second, observatory, instrument, detector, measurement, extension) VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (Map, Timestamp, Year, Month, Day, Hour, Minute, Second, Observatory, Instrument, Detector, Measurement, Extension)
 				try:
 					Cursor.execute(sqlquery)
 					
 				except MySQLdb.Error, e:
 					if e.args[0] == 1146:	# We got an error that the table does not exist. Create the table and insert the data.
-						sqlquery = "CREATE TABLE maps (map, CHAR(34) NOT NULL , year INT(4) NOT NULL , month INT(2) NOT NULL , day INT(2) NOT NULL , hour INT(2) NOT NULL , minute CHAR(2) NOT NULL , second INT(2) NOT NULL , observatory CHAR(4) NOT NULL , instrument CHAR(3) NOT NULL , detector CHAR(3) NOT NULL , measurement CHAR(3) NOT NULL , extension VARCHAR(4) NOT NULL , PRIMARY KEY (map))"
+						sqlquery = "CREATE TABLE maps (map CHAR(34) NOT NULL, timestamp DATETIME NOT NULL, year INT(4) NOT NULL , month INT(2) NOT NULL , day INT(2) NOT NULL , hour INT(2) NOT NULL , minute CHAR(2) NOT NULL , second INT(2) NOT NULL , observatory CHAR(4) NOT NULL , instrument CHAR(3) NOT NULL , detector CHAR(3) NOT NULL , measurement CHAR(3) NOT NULL , extension VARCHAR(4) NOT NULL , PRIMARY KEY (map))"
 						Cursor.execute(sqlquery)
-						sqlquery = "INSERT INTO maps (map, year, month, day, hour, minute, second, observatory, instrument, detector, measurement, extension) VALUES('%s', %s, %s, %s, %s, '%s', %s, '%s', '%s', '%s', '%s')" % (Map, Year, Month, Day, Hour, Minute, Second, Observatory, Instrument, Detector, Measurement, Extension)
+						sqlquery = "INSERT INTO maps (map, timestamp, year, month, day, hour, minute, second, observatory, instrument, detector, measurement, extension) VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (Map, Timestamp, Year, Month, Day, Hour, Minute, Second, Observatory, Instrument, Detector, Measurement, Extension)
 						Cursor.execute(sqlquery)
 					#else:
 					#	print e.args[1]		

@@ -21,35 +21,16 @@
 		$MultipleCriteria = false;
 		$Query = "SELECT * FROM maps WHERE (";
 		
-		if ($Observatory != null)
-		{
-			$Query = "$Query Observatory = '$Observatory'";
-			$MultipleCriteria = true;
-			
-		}
-
 		if ($Instrument != null)
 		{
 			AppendAND();
-			$Query = "$Query Measurement = '$Instrument'";
+			$Query = "$Query Instrument = '$Instrument'";
 			$MultipleCriteria = true;
 		}
 
-		if ($Detector != null)
-		{
-			AppendAND();
-			$Query = "$Query Detector = '$Detector'";
-			$MultipleCriteria = true;
-		}
-
-		if ($Measurement != null)
-		{
-			AppendAND();
-			$Query = "$Query Measurement = '$Measurement'";
-			$MultipleCriteria = true;
-		}
 		AppendAND();
-		$Query = "$Query timestamp BETWEEN '$From 00:00:00' AND '$To 00:00:00') ORDER BY timestamp";
+		//$Query = "$Query timestamp BETWEEN '$From 00:00:00' AND '$To 00:00:00') ORDER BY timestamp";
+		$Query = "$Query AND timestamp BETWEEN '$From 00:00:00' AND '$To 00:00:00') ORDER BY timestamp";
 		$Result = mysql_query($Query);
 		$ResultStore = array();
 

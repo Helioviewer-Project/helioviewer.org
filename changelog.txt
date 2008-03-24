@@ -1,5 +1,16 @@
 HelioViewer ChangeLog
 
+	03/24/2008
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
+	1. Merged working branches.
+	
+	2. Fixed an unreported bug relating to the placement of the size indicator after resizing the viewport.
+	
+	3. Fixed an unreported bug relating to centering (causes images to revert to last position before
+	   centering).
+
 	03/19/2008
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
