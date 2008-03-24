@@ -76,10 +76,10 @@
 			// Create tile containers
 			var tiles1 = new TileContainer(viewport1);
 				
-			var layerManager1 = new LayerManager(tiles1, 'layerManager1');
+			var layerManager1 = new LayerManager(tiles1, 'layerManager1', {viewport: viewport1});
 				
 			// Create tile layer providers
-			var bg1 = new TileLayerProvider(tiles1, {zoomOffset: 10}); // OFFSET CAN BE SET HERE... WHAT ABOUT VIEWPORT PROPERTY?
+			var bg1 = new TileLayerProvider(tiles1, {zoomOffset: 12}); // OFFSET CAN BE SET HERE... WHAT ABOUT VIEWPORT PROPERTY?
 
 			var markers1 = new MarkerLayerProvider(tiles1);
 				
@@ -94,7 +94,7 @@
 			
 			var calendar = new Calendar('cal', 'date', 'show');
 				
-			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 0, 12, 10);
+			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 0, 12, 12);
 			
 			//Setup event-handling time-navigation buttons
 			$('timeBackBtn').observe('click', function() {document.timePrevious.fire();});
