@@ -1,5 +1,17 @@
 HelioViewer ChangeLog
 
+	03/25/2008
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
+	1. Fixed bug #193781 which caused the loading indicator to continue to be displayed
+	   even after all content had finished being loaded.
+	   
+	2. Restructured CSS so that the UI components reside in the same layer as the viewport.
+	   This is convenient because of the way the markers and drag and drop work for HV.
+	   
+	3. Initial marker re-implementation. Fixed positioning calculation.
+
 	03/24/2008
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
