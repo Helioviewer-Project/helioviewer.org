@@ -71,15 +71,18 @@
 			document.viewportSizeChange =	new YAHOO.util.CustomEvent("viewportSizeChange");
 			
 			// Create viewport
-			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 12});
+			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 16});
 			
 			// Create tile containers
 			var tiles1 = new TileContainer(viewport1);
 				
 			var layerManager1 = new LayerManager(tiles1, 'layerManager1', {viewport: viewport1});
-				
+			numberOfTileLayers = 0;
+			numberOfMarkerLayers = 0;
 			// Create tile layer providers
-			var bg1 = new TileLayerProvider(tiles1, {zoomOffset: 12}); // OFFSET CAN BE SET HERE... WHAT ABOUT VIEWPORT PROPERTY?
+			GLOBAL_zoomLevel = 16;
+			GLOBAL_zoomOffset = 0;
+			var bg1 = new TileLayerProvider(tiles1, {zoomOffset: GLOBAL_zoomLevel}); // OFFSET CAN BE SET HERE... WHAT ABOUT VIEWPORT PROPERTY?
 
 			var markers1 = new MarkerLayerProvider(tiles1);
 			
@@ -87,7 +90,7 @@
 			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);			
 			var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
 			var calendar = new Calendar('cal', 'date', 'show');
-			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 0, 12, 12);
+			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 0, 16, 16);
 			
 			// Event-handling	
 			markers1.observe(bg1, 'ImageChange');
