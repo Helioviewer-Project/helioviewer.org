@@ -71,7 +71,7 @@
 			document.viewportSizeChange =	new YAHOO.util.CustomEvent("viewportSizeChange");
 			
 			// Create viewport
-			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 16});
+			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 20});
 			
 			// Create tile containers
 			var tiles1 = new TileContainer(viewport1);
@@ -80,7 +80,7 @@
 			numberOfTileLayers = 0;
 			numberOfMarkerLayers = 0;
 			// Create tile layer providers
-			GLOBAL_zoomLevel = 16;
+			GLOBAL_zoomLevel = 12;
 			GLOBAL_zoomOffset = 0;
 			var bg1 = new TileLayerProvider(tiles1, {zoomOffset: GLOBAL_zoomLevel}); // OFFSET CAN BE SET HERE... WHAT ABOUT VIEWPORT PROPERTY?
 
@@ -90,7 +90,7 @@
 			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);			
 			var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
 			var calendar = new Calendar('cal', 'date', 'show');
-			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 16, 16);
+			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, 12);
 			
 			// Event-handling	
 			markers1.observe(bg1, 'ImageChange');
@@ -117,11 +117,14 @@
 	
 	<!-- OUTERMOST CONTENT BOX -->
 	<div id="outsideBox">
+		<div style="float: center"><a href="http://sirius.nascom.nasa.gov/~jack/patrick/sunviewer/index.html">Go to TRACE full disk 
+mosaics...</a></div>
 		<div><span id="loading" style="display: none">Loading...</span></div>
 		
 		<!--  1. HEADER -->
 		<div id="header">
 			<h1>HelioViewer</h1>
+
 
 				<!-- Align left -->
 				<div style="float:left">
@@ -188,7 +191,11 @@
 				<button type="button" id="timeBackBtn" value="Previous Image"></button>
 				<button type="button" id="timeForwardBtn" value="Next Image"></button>
 			</div>
-       		<div style="text-align:right"><a id="about" class="nav">About</a></div>
+       		<div style="text-align:right; font-size:120%">
+       		    <a id="about" class="gray" href="#" style="margin-right:20px;">About</a>
+       			<a href="mailto:admin@helioviewer.org" alt="Contact Helioviewer.org Web Administrator" class="gray" style="margin-right:20px;">Contact</a>
+       			<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
+       		</div>
 		</div>
 			
 	</div>
