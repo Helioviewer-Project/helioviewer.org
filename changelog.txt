@@ -1,5 +1,15 @@
 HelioViewer ChangeLog
 
+	03/27/2008
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
+	1. Markers layer now works with new positioning scheme. There may still be some issues
+	   regarding the exact positioning of the markers, but the overall system is functioning.
+	   Furthermore, because of the way the markers layer is set-up, it only works well for zoom
+	   levels starting from 12 and moving inward. This is an issue regarding the data structure
+	   which represents the marker tiles, and needs to be addressed at a future date.
+	   
 	03/25/2008
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)

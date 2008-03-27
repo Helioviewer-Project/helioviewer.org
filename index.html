@@ -77,7 +77,7 @@
 			GLOBAL_zoomOffset = 0;
 			
 			// Create viewport
-			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 16});
+			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 20});
 			
 			// Create tile containers
 			var tiles1 = new TileContainer(viewport1);
@@ -87,13 +87,17 @@
 			// Create tile layer providers
 			var bg1 = new TileLayerProvider(tiles1);
 
+			GLOBAL_zoomLevel = 12;
+			GLOBAL_zoomOffset = 0;
+
 			var markers1 = new MarkerLayerProvider(tiles1);
 			
 			// UI Components
 			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);			
 			var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
 			var calendar = new Calendar('cal', 'date', 'show');
-			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 16, GLOBAL_zoomLevel);
+
+			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, GLOBAL_zoomLevel);
 			
 			// Event-handling	
 			markers1.observe(bg1, 'ImageChange');
@@ -120,11 +124,14 @@
 	
 	<!-- OUTERMOST CONTENT BOX -->
 	<div id="outsideBox">
+		<div style="float:center; text-align:left; font-size:120%;"><a href="http://sirius.nascom.nasa.gov/~jack/patrick/sunviewer/index.html" class="gray">Go to TRACE full disk 
+mosaics...</a></div>
 		<div><span id="loading" style="display: none">Loading...</span></div>
 		
 		<!--  1. HEADER -->
 		<div id="header">
 			<h1>HelioViewer</h1>
+
 
 				<!-- Align left -->
 				<div style="float:left">
