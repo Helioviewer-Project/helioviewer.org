@@ -9,6 +9,12 @@ HelioViewer ChangeLog
 	   Furthermore, because of the way the markers layer is set-up, it only works well for zoom
 	   levels starting from 12 and moving inward. This is an issue regarding the data structure
 	   which represents the marker tiles, and needs to be addressed at a future date.
+	 
+	2. Adjusted the SunImage.sunRadius constant from 0.233 to 0.3671. This represents the
+	   size of one sun radii relative to the image size and is used in calculating placement
+	   information for markers.
+	   
+	3. Add a link to the Wiki.
 	   
 	03/25/2008
 	Version: alpha

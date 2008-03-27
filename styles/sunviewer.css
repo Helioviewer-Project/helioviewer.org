@@ -263,7 +263,7 @@ html*.blackBg {
 span.closeX {
 	position: absolute;
 	font-size: 10pt;
-	color: #000000;
+	color: #999999;
 	top: 10px;
 	right: 10px;
 	z-index: 2;
@@ -271,35 +271,35 @@ span.closeX {
 }
 
 a.closeX:link {
-	color: #999999;
+	color: #FFF;
 	font-size: 11px;
 	font-family: Arial, sans-serif;
-	border: #999999 1px solid;
+	border: #FFF 1px solid;
 	text-decoration: none;
 	margin: 1px;
 }
 a.closeX:active {
-	color: #999999;
+	color: #d6f1ff;
 	font-size: 11px;
 	font-family: Arial, sans-serif;
-	border: #999999 1px solid;
+	border: #d6f1ff 1px solid;
 	text-decoration: none;
 	margin: 1px;
 }
 a.closeX:visited {
-	color: #999999;
+	color: #FFF;
 	font-size: 11px;
 	font-family: Arial, sans-serif;
-	border: #999999 1px solid;
+	border: #FFF 1px solid;
 	text-decoration: none;
 	margin: 1px;
 }
 a.closeX:hover {
-	color: #000000;
+	color: #d6f1ff;
 	/* background-color: #CCCCCC; */
 	font-size: 11px;
 	font-family: Arial, sans-serif;
-	border: #000000 1px solid;
+	border: #d6f1ff 1px solid;
 	text-decoration: none;
 	margin: 1px;
 }
@@ -330,20 +330,26 @@ a.control2 {
 .infoBubble {
 	position: absolute;
     /* overflow: hidden; */
-	background-color: #FFFFFF;
+	background-color: #111;
+	-moz-opacity:0.75;
+	-moz-border-radius:19px;
 	z-index: 10000;
-	padding: 2px;
+	padding: 6px;
 	width: 200px;
-	border: 1px #000000 solid;
+	border: 1px #000 solid;
 	cursor: default;
 	text-align: right;
 }
 .infoContent {
-	color: #000000;
+	color: #FFF;
 	font-size: 15px;
 	padding: 2px;
 	text-align: left;
 }
+
+a.infoBubbleLink {font-size:80%; color:white;}
+a.infoBubbleLink:visited {color:white;}
+
 .controls {
 	position: absolute;
 	top: 0px;
