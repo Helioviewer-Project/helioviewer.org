@@ -4,6 +4,26 @@ HelioViewer ChangeLog
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
 	
+	1. Layer numbers are no longer displayed. While it is  possible instead of hiding them to have them 
+	   reflect the current numbers, other functionality (layer provider names, zindices, etc.) relies on
+	   the numbers as they are currently used and would have to be updated as well.
+	   
+	2. Updated the date input field to reflect the currently selected date.
+	
+	3. Updated the calendar to start on the month and year corresponding to the SelectByDateMenu.
+	   
+	   Note: The calendar is still not fully implemented. In a future release it will be hooked
+	   into the time navigation code and the SelectByDateMenu, but for now it has merely
+	   been updated to reflect the current browsing period.
+	   
+	4. Fixed a small bug with the previous revision which resulted in the marker layer failing
+	   to be properly hidden.
+
+
+	03/28/2008
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
 	1. Added check to zoom-level slider to prevent it from attempting to change the zoom level
 	   to an out-of-bounds value (prevents unnecessary reloading of current view).
 	   

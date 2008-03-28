@@ -69,13 +69,16 @@
 			document.timePrevious =			new YAHOO.util.CustomEvent("timePrevious");
 			document.timeNext = 			new YAHOO.util.CustomEvent("timeNext");
 			document.viewportSizeChange =	new YAHOO.util.CustomEvent("viewportSizeChange");
-			document.hideInfoBubble =		new YAHOO.util.CustomEvent("hideInfoBubble");
+			document.dayChange =			new YAHOO.util.CustomEvent("dayChange");
 			
 			//Global Variables
 			numberOfTileLayers = 0;
 			numberOfMarkerLayers = 0;
 			GLOBAL_zoomLevel = 12;
 			GLOBAL_zoomOffset = 0;
+			GLOBAL_TIME_YEAR = null;
+			GLOBAL_TIME_MONTH = null;
+			GLOBAL_TIME_DAY = null;
 			
 			// Create viewport
 			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 20});

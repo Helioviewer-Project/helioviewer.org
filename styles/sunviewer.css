@@ -12,13 +12,11 @@
 
 /* HTML ELEMENTS */
 html {
-	/*background-color: #EEEEF0;*/
 	background: url(../images/bg.png);
 	}
 
 body {
 	padding: 10px;
-	/*background-color: #EEEEF0;*/
 	color: #000000;
 	font-family: sans-serif;
 	font-size: 0.7em;
@@ -220,18 +218,15 @@ button {cursor:pointer}
 	font-size: 16px;
 	z-index: 25;
 	cursor: pointer;
-/*	font-weight: bold; */
 }
 .label {
 	position: absolute;
     overflow: visible;
 	color: #FFFFFF;
 	visibility: visible;
-	/* background-color: #FFFFFF; */
 	font-size: 14px;
 	z-index: 26;
 	padding: 1px 2px 1px 2px;
-	/* border: 1px #000000 solid; */
 	/* cursor: pointer; */
     white-space: nowrap;
 }
@@ -297,7 +292,6 @@ a.closeX:visited {
 }
 a.closeX:hover {
 	color: #d6f1ff;
-	/* background-color: #CCCCCC; */
 	font-size: 11px;
 	font-family: Arial, sans-serif;
 	border: #d6f1ff 1px solid;
@@ -398,24 +392,6 @@ a.infoBubbleLink:visited {color:white;}
 .nav:visited {color: #000000; text-decoration:none;}  /* visited link */
 .nav:hover {color: #000000; text-decoration:none;}   /* mouse over link */
 .nav:active {color: #000000; text-decoration:none;}   /* selected link */
-
-.test {
-	background-color: transparent;
- 	position: absolute; 
- 	/* NOTE: the right and bottom can be adjusted when initialized */ 
-	left: 0;
-	top: 200px;
-/* 	width: 44px; */
-/* 	height: 20px; */
-/* 	margin: 0; */
-/*  	padding: 4px 0 0 4px; */
-/* 	font-size: 12px; */
-/* 	line-height: 20px; */
-/* 	vertical-align: middle; */
-/* 	font-weight: bold; */
-/* 	border: 1px solid #000000; */
-	z-index: 30;
-}
 
 /* Loading Indicator */
 #loading {
