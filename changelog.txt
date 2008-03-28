@@ -1,5 +1,26 @@
 HelioViewer ChangeLog
 
+	03/28/2008
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
+	1. Added check to zoom-level slider to prevent it from attempting to change the zoom level
+	   to an out-of-bounds value (prevents unnecessary reloading of current view).
+	   
+	2. Info-bubbles are now draggable, and thus behave more like traditional popup boxes.
+	
+	3. Fixed bug #207964 (Possible open multiple instances of the same markers). It was
+	   actually not ever possible to open multiple instances of the same marker: clicking
+	   the label simply re-opened the same label. The behavior has been changed still, however,
+	   such that clicking on the label for an open infoBubble will close the bubble. This
+	   is more convenient and expected behavior for such a pop-up.
+	   
+	4. Fixed bug #207973 (Some markers not clickable). Because the markers (labels) were
+	   in some cases being placed outside of the element in which they rested, they were
+	   being hidden by those elements. A fix involved setting the default visibility for
+	   the overlay layers to "hidden," and then setting the visibility of the label themselves
+	   to "visible."
+
 	03/27/2008
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
