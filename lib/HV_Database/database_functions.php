@@ -6,6 +6,8 @@
 
 	mysql_select_db ("esahelio_svdb0");	
 	
+	//Instrument=EIT&From=2003-10-1&To=2003-10-7
+	//SELECT * FROM maps WHERE (Instrument = 'EIT' AND timestamp BETWEEN '2003-10-1 00:00:00' AND '2003-10-7 00:00:00') ORDER BY timestamp;
 	function Filter($Observatory, $Instrument, $Detector, $Measurement, $From, $To)
 	{
 		function AppendAND()
