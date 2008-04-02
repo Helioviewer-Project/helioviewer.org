@@ -100,19 +100,19 @@
 			GLOBAL_zoomLevel = 12;
 			GLOBAL_zoomOffset = 0;
 
-			var markers1 = new MarkerLayerProvider(tiles1);
+		//var markers1 = new MarkerLayerProvider(tiles1);
 			
 			// UI Components
-			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);			
-			var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
+		//var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);			
+		//var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
 			var calendar = new Calendar('cal', 'date', 'show');
 
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, GLOBAL_zoomLevel);
 			
 			// Event-handling	
-			markers1.observe(bg1, 'ImageChange');
+	   //markers1.observe(bg1, 'ImageChange');
 			
-			document.zoomOffsetChange.subscribe(markers1.onZoomOffsetChange, markers1);
+	   //document.zoomOffsetChange.subscribe(markers1.onZoomOffsetChange, markers1);
 			$('timeBackBtn').observe('click', function() {document.timePrevious.fire();});
 			$('timeForwardBtn').observe('click', function() {document.timeNext.fire();});
 			//markers1.observe(bg1, 'ZoomOffsetChange');
