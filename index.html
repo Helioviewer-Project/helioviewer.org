@@ -73,7 +73,6 @@
 			document.dayChange =			new YAHOO.util.CustomEvent("dayChange");
 			document.newLayer =				new YAHOO.util.CustomEvent("newLayer");
 			document.observeDateChange =	new YAHOO.util.CustomEvent("observeDateChange");
-			document.tmpHandleImgChange =   new YAHOO.util.CustomEvent("tmpHandleImgChange"); //for testing purposes
 			
 			//Global Variables
 			numberOfTileLayers = 0;
@@ -90,8 +89,9 @@
 			// Create tile containers
 			var tiles1 = new TileContainer(viewport1);
 			
+			// Create a DataNavigator to keep traverse and keep track of available data near a given time
 			var dataNavigator = new DataNavigator(2003, 10, 4, 0, 0, 0, [0, 0, 1, 0, 0]);
-				
+			
 			var layerManager1 = new LayerManager(tiles1, 'layerManager1');
 			
 			// Create tile layer providers
@@ -100,7 +100,7 @@
 			GLOBAL_zoomLevel = 12;
 			GLOBAL_zoomOffset = 0;
 
-		//var markers1 = new MarkerLayerProvider(tiles1);
+			var markers1 = new MarkerLayerProvider(tiles1);
 			
 			// UI Components
 		//var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);			
