@@ -8,31 +8,24 @@
 	
 	//Instrument=EIT&From=2003-10-1&To=2003-10-7
 	//SELECT * FROM maps WHERE (Instrument = 'EIT' AND timestamp BETWEEN '2003-10-1 00:00:00' AND '2003-10-7 00:00:00') ORDER BY timestamp;
-	function Filter($Observatory, $Instrument, $Detector, $Measurement, $From, $To)
+	function Filter($Observatory, $Instrument, $Detector, $Measurement, $From, $To, $Increment, $Units)
 	{
-		function AppendAND()
-		{
-			global $MultipleCriteria, $Query;
-			if ($MultipleCriteria == true)
-			{
-				$Query = "$Query AND ";
-			}	
-		}
+		$limit = 1;
 		
-		
-		$MultipleCriteria = false;
 		$Query = "SELECT * FROM maps WHERE (";
 		
-		if ($Instrument != null)
-		{
-			AppendAND();
-			$Query = "$Query Instrument = '$Instrument'";
-			$MultipleCriteria = true;
+		//Instrument
+		if ($Instrument != null) {
+			$Query .= "Instrument = '$Instrument'";
+		}
+		
+		//Time Increment
+		if ($Units == "hours") {
+			$Query .= "AND minute = '00'";
+			$limit = 24;
 		}
 
-		AppendAND();
-		//$Query = "$Query timestamp BETWEEN '$From 00:00:00' AND '$To 00:00:00') ORDER BY timestamp";
-		$Query = "$Query AND timestamp BETWEEN '$From 00:00:00' AND '$To 00:00:00') ORDER BY timestamp";
+		$Query .= "AND timestamp BETWEEN '$From 00:00:00' AND '$To 00:00:00') ORDER BY timestamp LIMIT $limit";
 		$Result = mysql_query($Query);
 		$ResultStore = array();
 
