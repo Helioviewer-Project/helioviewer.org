@@ -74,7 +74,8 @@
 			document.timeNext = 				new YAHOO.util.CustomEvent("timeNext");
 			document.viewportSizeChange =		new YAHOO.util.CustomEvent("viewportSizeChange");
 			document.dayChange =				new YAHOO.util.CustomEvent("dayChange");
-			document.newLayer =					new YAHOO.util.CustomEvent("newLayer");
+			document.layerAdded =				new YAHOO.util.CustomEvent("layerAdded");
+			document.layerRemoved =				new YAHOO.util.CustomEvent("layerRemoved");
 			document.observationDateChange =	new YAHOO.util.CustomEvent("observeDateChange");
 			document.instrumentChange =     	new YAHOO.util.CustomEvent("instrumentChange");
 			document.timeIncrementChange =		new YAHOO.util.CustomEvent("timeIncrementChange");
@@ -98,13 +99,14 @@
 			
 			// Create tile layer providers
 			var bg1 = new TileLayerProvider(tiles1);
+			
+			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
 			var markers1 = new MarkerLayerProvider(tiles1);
 			
 			// UI Components
-		    // var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1);			
+
 		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
 			var calendar = new Calendar('cal', 'date', 'show');
-
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, GLOBAL_zoomLevel);
 			
 			// Event-handling	
