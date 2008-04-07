@@ -93,7 +93,7 @@
 			var tiles1 = new TileContainer(viewport1);
 			
 			// Create a DataNavigator to keep traverse and keep track of available data near a given time
-			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, {years:0, months:0, days:1, hours:0, minutes:0, seconds:0});
+			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, {years: 0, months: 0, days: 1, hours: 0, minutes: 0, seconds: 0});
 			
 			var layerManager1 = new LayerManager(tiles1, 'layerManager1');
 			
@@ -110,15 +110,23 @@
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, GLOBAL_zoomLevel);
 			
 			// Event-handling	
-			$('timeBackBtn').observe('click', function() {document.timePrevious.fire();});
-			$('timeForwardBtn').observe('click', function() {document.timeNext.fire();});
-			$('date').observe('change', function() {document.observationDateChange.fire(this.value);});
-			$('timeIncrement').observe('change', function() {document.timeIncrementChange.fire(this.value)});
+			$('timeBackBtn').observe('click', function () {
+				document.timePrevious.fire();
+			});
+			$('timeForwardBtn').observe('click', function () {
+				document.timeNext.fire();
+			});
+			$('date').observe('change', function () {
+				document.observationDateChange.fire(this.value);
+			});
+			$('timeIncrement').observe('change', function () {
+				document.timeIncrementChange.fire(this.value);
+			});
 	
 			// Set-up alternative viewport sizes
-			var viewportSizeManager = new ViewportSizeManager([["viewport-size-small",640,640,"images/blackGlass/glass_border_light_640x640.png"],
-															   ["viewport-size-med",1024,768,"images/blackGlass/glass_border_light_1024x768.png"],
-															   ["viewport-size-large",1280,960,"images/blackGlass/glass_border_light_1280x960.png"]]);
+			var viewportSizeManager = new ViewportSizeManager([["viewport-size-small", 640,640, "images/blackGlass/glass_border_light_640x640.png"],
+															   ["viewport-size-med", 1024,768, "images/blackGlass/glass_border_light_1024x768.png"],
+															   ["viewport-size-large", 1280,960, "images/blackGlass/glass_border_light_1280x960.png"]]);
 				   
 		}
 
