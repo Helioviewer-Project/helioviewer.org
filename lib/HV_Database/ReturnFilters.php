@@ -35,7 +35,7 @@
 		}
 		
 		//Direction to query
-		if ($direction == "forward") {
+		//if ($direction == "forward") {
 			//Time Increment
 			if ($incrementHours == 1) {
 				$query .= "AND minute = '$minute'";
@@ -56,7 +56,7 @@
 				$query .= "AND month= '$month' AND day = '$day' AND hour = '$hour'";
 				$limit = 10;
 			}
-		}
+		//}
 		
 		// Limit Range to query
 		$query .= "AND timestamp BETWEEN '$from' AND '$to'";
@@ -75,37 +75,36 @@
 		}
 
 		//pad array to keep images in sync with observation time
-		//for (var $i = 0; $i < $resultArray.length; $i++) {...}
 		if ($incrementDays == 1) {
-			$time = date_create("from");
-
-			
-			if ($row[i]["timestamp"] != $time->format('Y-d-m H:i:s')) {
-				//Get the next cloest time
-				$timeString = $time->format('Y-d-m H:i:s');
-				$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) DESC LIMIT 1";
+			$time = date_create($from);
+		
+			for ($i = 0; $i < $limit; $i++) {
+				//echo "<b>time:</b> " . $time->format('Y-m-d H:i:s') . "<br /><br />";
+				//echo "resultArray[$i]['timestamp']: " . $resultArray[$i]["timestamp"] . "<br /><br />";
 				
-				$result      = mysql_query($query);
-				$closestDate = array();
-				
-				while ($row = mysql_fetch_array($result, MYSQL_ASSOC))
-				{
-					array_push($closestDate, $row);
-				}
-				
-				//echo $closestDate["timestamp"];
+				if ($resultArray[$i]["timestamp"] != $time->format('Y-m-d H:i:s')) {
+					//Get the next cloest time
+					$timeString = $time->format('Y-m-d H:i:s');
+					$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+					//echo "\n\n$query\n\n<br /><br />";
 					
-				//Insert into array
-				array_splice($resultArray, i, 0, $closestDate);
-				
+					$result      = mysql_query($query);
+					$closestDate = array();
+					
+					while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+						array_push($closestDate, $row);
+					}
+					//echo "closest date: " . $closestDate[0]["timestamp"] . "<br /><br />";
+						
+					//Insert into array
+					array_splice($resultArray, $i, 0, $closestDate);
+				}
 				//Update the time variable
-				$time->modify("+1 day");
+				$time->modify("+$incrementDays day");
 				
+				//another method: first add all missing values and then sort array...
 			}
-			
-			//another method: first add all missing values and then sort array...
 		}
-
 		echo json_encode($resultArray);
 	}
 	
