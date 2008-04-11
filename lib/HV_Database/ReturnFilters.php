@@ -4,9 +4,6 @@
 	
 	//example query: SELECT * FROM maps WHERE (Instrument = 'EIT' AND day >= '5' AND hour = '0' AND minute = '00'AND timestamp BETWEEN '2003-10-05 00:00:00' AND '2003-10-15 00:00:00') ORDER BY timestamp LIMIT 30
 	
-	//$Observatory = $_POST["Observatory"];
-	//$Detector = $_POST["Detector"];
-	//$Measurement = $_POST["Measurement"];
 	$From = 	        $_GET["From"];
 	$To = 		 	    $_GET["To"];
 	$Instrument = 	    $_GET["Instrument"];
@@ -33,30 +30,28 @@
 		if ($instrument != null) {
 			$query .= "Instrument = '$instrument' ";
 		}
+
+		//Time Increment
+		if ($incrementHours == 1) {
+			$query .= "AND minute = '$minute'";
+			$limit = 15; 
+		}
 		
-		//Direction to query
-		//if ($direction == "forward") {
-			//Time Increment
-			if ($incrementHours == 1) {
-				$query .= "AND minute = '$minute'";
-				$limit = 24;
-			}
-			
-			if ($incrementDays == 1) {
-				$query .= "AND hour = '$hour' AND minute = '$minute'";
-				$limit = 30;
-			}
-			
-			if ($incrementYears == 1) {
-				$query .= "AND day = '$day' AND hour = '$hour' AND minute = '$minute'";
-				$limit = 10;
-			}
-			
-			if ($incrementMinutes == 1) {
-				$query .= "AND month= '$month' AND day = '$day' AND hour = '$hour'";
-				$limit = 10;
-			}
-		//}
+		if ($incrementDays == 1) {
+			$query .= "AND hour = '$hour' AND minute = '$minute'";
+			$limit = 16; //TEMP WORK-AROUND
+		}
+		
+		if ($incrementYears == 1) {
+			$query .= "AND day = '$day' AND hour = '$hour' AND minute = '$minute'";
+			$limit = 15;
+		}
+		
+		if ($incrementMinutes == 1) {
+			$query .= "AND month= '$month' AND day = '$day' AND hour = '$hour'";
+			$limit = 15;
+		}
+
 		
 		// Limit Range to query
 		$query .= "AND timestamp BETWEEN '$from' AND '$to'";
