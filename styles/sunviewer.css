@@ -31,7 +31,7 @@ button {cursor:pointer}
 }
 #header {
 	width:600px;
-	height:60px;
+	height:74px;
 	font-size:14px;
 	display:block;
 	margin-left:auto;
@@ -399,9 +399,15 @@ a.infoBubbleLink:visited {color:white;}
 	font-size: 12px;
 	background-color:#858585;
 	color: #F0F0F0;
-	position:absolute;
-	top: 30px;
-	right: 30px;
+}
+
+/* Message Console */
+#message-console {
+    text-align:center;
+    font-size:115%;
+    font-weight: bold;
+    font-family: verdana, arial, sans-serif;
+    color: #CC3333;
 }
 
 /* Custom Calendar Styles */

@@ -86,6 +86,12 @@
 			GLOBAL_zoomLevel = 12;
 			GLOBAL_zoomOffset = 0;
 			
+			// Available data ranges
+		    DATE_START_EIT = "2003-10-04 03:24:00";
+            DATE_END_EIT =   "2003-10-31 23:48:00";
+            DATE_START_LAS = "2003-10-01 00:00:00";
+            DATE_END_LAS =   "2003-10-31 23:54:00";
+			
 			// Create viewport
 			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 20});
 			
@@ -139,14 +145,19 @@
 	
 	<!-- OUTERMOST CONTENT BOX -->
 	<div id="outsideBox">
-		<div style="float:center; text-align:left; font-size:120%;"><a href="http://sirius.nascom.nasa.gov/~jack/patrick/sunviewer/index.html" class="gray">Go to TRACE full disk 
-mosaics...</a></div>
-		<div><span id="loading" style="display: none">Loading...</span></div>
+	
+	    <!-- 1. MESSAGE CONSOLE AND LOADING INDICATOR -->
+        <div id="pre-header" style="height:18px;">
+           <div style="width:33%; text-align:left; float:left; font-size:120%;"><a href="http://sirius.nascom.nasa.gov/~jack/patrick/sunviewer/index.html" class="gray">Go to TRACE full disk mosaics...</a></div>
+           <div style="width:33%; text-align:center; float:left;">
+               <span id="message-console" style="width:100%; display:none;">&nbsp;</span>&nbsp;
+           </div>
+           <div style="width:33%; text-align:right; float:left">&nbsp;<span id="loading" style="display: none">Loading...</span></div>
+        </div>
 		
-		<!--  1. HEADER -->
+		<!--  2. HEADER -->
 		<div id="header">
 			<h1>HelioViewer</h1>
-
 
 				<!-- Align left -->
 				<div style="float:left">
@@ -178,7 +189,7 @@ mosaics...</a></div>
 
 		</div>
 	
-		<!-- 2. VIEWPORT AND UI LAYERS -->			
+		<!-- 3. VIEWPORT AND UI LAYERS -->			
 		<div id="viewport-outer">
 			<div id="viewport-inner">
 			<div id="layerManager1" class="layerManager" style="height: 15px; width: 70px; overflow: hidden; z-index:10001;"></div>
@@ -211,7 +222,7 @@ mosaics...</a></div>
 			</div>
 		</div>
 		
-		<!-- 3. FOOTER -->
+		<!-- 4. FOOTER -->
 		<div id="footer">
 			<div style="float:left">
 				<button type="button" id="timeBackBtn" value="Previous Image"></button>
