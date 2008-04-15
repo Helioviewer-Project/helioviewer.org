@@ -99,7 +99,7 @@
 			var tiles1 = new TileContainer(viewport1);
 			
 			// Create a DataNavigator to keep traverse and keep track of available data near a given time
-			var dataNavigator = new DataNavigator(2003, 10, 4, 0, 0, 0, {years: 0, months: 0, days: 1, hours: 0, minutes: 0, seconds: 0});
+			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, 86400);
 			
 			var layerManager1 = new LayerManager(tiles1, 'layerManager1');
 			
@@ -227,12 +227,9 @@
 			<div style="float:left">
 				<button type="button" id="timeBackBtn" value="Previous Image"></button>
 				<button type="button" id="timeForwardBtn" value="Next Image"></button>
-				<span style="font-size:120%">Time Step:</span>
-				<select id="timeIncrement" style="font-size:120%">
-					<option value='day'>day</option>
-					<option value='hour'>hour</option>
-					<option value='minute'>minute</option>
-				</select>
+				<span style="font-size:120%">Time Step (sec):</span>
+				<input type="text" value="86400" id="timeIncrement" style="width:60px"></input>
+				<span>(Press Enter)</span>
 			</div>
        		<div style="text-align:right; font-size:120%">
        		    <a id="about" class="gray" href="#" style="margin-right:20px;">About</a>

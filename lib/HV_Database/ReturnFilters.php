@@ -19,16 +19,14 @@
 	$Hour =				$_GET["Hour"];
 	$Minute =			$_GET["Minute"];
 	$Second =			$_GET["Second"];
-	$IncrementDays =    $_GET["IncrementDays"];
-	$IncrementHours =   $_GET["IncrementHours"];
-	$IncrementMinutes = $_GET["IncrementMinutes"];
+	$Increment =		$_GET["Increment"];
 	$Direction =		$_GET["Direction"];
 
-	Filter ($Observatory, $Instrument, $Detector, $From, $To, $Measurement, $Year, $Month, $Day, $Hour, $Minute, $Second, $IncrementDays, $IncrementHours, $IncrementMinutes, $Direction);
+	Filter ($Observatory, $Instrument, $Detector, $From, $To, $Measurement, $Year, $Month, $Day, $Hour, $Minute, $Second, $Increment, $Direction);
 	
-	function Filter ($observatory, $instrument, $detector, $from, $to, $measurement, $year, $month, $day, $hour, $minute, $second, $incrementDays, $incrementHours, $incrementMinutes, $direction)
+	function Filter ($observatory, $instrument, $detector, $from, $to, $measurement, $year, $month, $day, $hour, $minute, $second, $increment, $direction)
 	{
-		$limit = 2;
+		$limit = 16;
 		
 		$query = "SELECT * FROM maps WHERE (";
 		
@@ -37,28 +35,16 @@
 			$query .= "Instrument = '$instrument' ";
 		}
 
-		//Time Increment
-		if ($incrementHours == 1) {
-			$query .= "AND minute = '$minute'";
-			$limit = 15; 
-		}
-		
-		if ($incrementDays == 1) {
-			$query .= "AND hour = '$hour' AND minute = '$minute'";
-			$limit = 16; //TEMP WORK-AROUND
-		}
-		
-		if ($incrementYears == 1) {
-			$query .= "AND day = '$day' AND hour = '$hour' AND minute = '$minute'";
-			$limit = 15;
-		}
-		
-		if ($incrementMinutes == 1) {
-			$query .= "AND month= '$month' AND day = '$day' AND hour = '$hour'";
-			$limit = 15;
-		}
+		if ($increment % (3600 * 24) == 0)
+			$query .= "And hour = '$hour' AND minute = '$minute' AND second = '$second'";
+			
+		else if ($increment % 3600 == 0)
+			$query .= "AND minute = '$minute' AND second = '$second'";
+			
+		else if ($increment % 60 == 0)
+			$query .= "AND second = '$second'";
 
-		
+	
 		// Limit Range to query
 		$query .= "AND timestamp BETWEEN '$from' AND '$to'";
 		
@@ -76,58 +62,78 @@
 		}
 
 		// Pad array to keep images in sync with observation time
-		if ($incrementDays == 1) {
-			$time = date_create($from);
-			$atEnd =    false;
-		
-			// Check each point in array for the specified query range and see if an exact match was found
-			for ($i = 0; $i < $limit; $i++) {
-				$currentTime = $time->format('Y-m-d H:i:s');
+
+		$time = date_create($from);
+		$atEnd =    false;
+	
+		// Check each point in array for the specified query range and see if an exact match was found
+		for ($i = 0; $i < $limit; $i++) {
+			$currentTime = $time->format('Y-m-d H:i:s');
+			
+			// Only query if you are still within the available range of data for the specified instrument				
+			if ((constant("DATE_START_" . $instrument) <= $currentTime) && (constant("DATE_END_" . $instrument) >= $currentTime)) { 
+			
+				// If a missing data point is detected, get the next closest match and fill it ins
+				if ($resultArray[$i]["timestamp"] != $currentTime) {
 				
-				// Only query if you are still within the available range of data for the specified instrument				
-				if ((constant("DATE_START_" . $instrument) <= $currentTime) && (constant("DATE_END_" . $instrument) >= $currentTime)) { 
-				
-					// If a missing data point is detected, get the next closest match and fill it ins
-					if ($resultArray[$i]["timestamp"] != $currentTime) {
-					
-						// Get the next cloest time
-						$timeString = $time->format('Y-m-d H:i:s');
-						$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
-						$result      = mysql_query($query);
-						$closestDate = array();
-						
-						// Add it to the result set
-						while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-							array_push($closestDate, $row);
-						}
-						array_splice($resultArray, $i, 0, $closestDate);
-					}
-				}
-				
-				// If end of data-set is reached, include last available data-point
-				else if ($atEnd == false) {
+					// Get the next cloest time
 					$timeString = $time->format('Y-m-d H:i:s');
 					$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
-					
 					$result      = mysql_query($query);
 					$closestDate = array();
 					
+					// Add it to the result set
 					while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
 						array_push($closestDate, $row);
 					}
-
 					array_splice($resultArray, $i, 0, $closestDate);
-					$atEnd = true;
+				}
+			}
+			
+			// If the begining of the data-set is reached, include the first available data-point
+			else if ( ($currentTime <= constant("DATE_START_" . $instrument)) && ($atBegining == false) ) {
+				$timeString = $time->format('Y-m-d H:i:s');
+				$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+				
+				$result      = mysql_query($query);
+				$closestDate = array();
+				
+				while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+					array_push($closestDate, $row);
 				}
 				
-				//Update the time variable
-				$time->modify("+$incrementDays day");
+				//Insert into array
+				array_splice($resultArray, $i, 0, $closestDate);
 				
-				// Note: Another possible method to achieve the above: first add all missing values and then sort array...
-				//       Also, to make things more generalizable it may be desirable when navigating BACK in time to simply
-				//       perform the SQL queries sorting DESC instead of ASC.. then most other operations should be the same.
+				$atBegining = true;
+			}
+			
+			// If end of data-set is reached, include last available data-point
+			else if ( ($currentTime >= constant("DATE_END_" . $instrument)) && ($atEnd == false) ) {
+				$timeString = $time->format('Y-m-d H:i:s');
+				$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+				
+				$result      = mysql_query($query);
+				$closestDate = array();
+				
+				while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+					array_push($closestDate, $row);
 				}
-		}
+				
+				//Insert into array
+				array_splice($resultArray, $i, 0, $closestDate);
+				
+				$atEnd = true;
+			}
+
+		
+			//Update the time variable
+			$time->modify("+$increment second");
+			
+			// Note: Another possible method to achieve the above: first add all missing values and then sort array...
+			//       Also, to make things more generalizable it may be desirable when navigating BACK in time to simply
+			//       perform the SQL queries sorting DESC instead of ASC.. then most other operations should be the same.
+			}
 		echo json_encode($resultArray);
 	}
 ?>

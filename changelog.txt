@@ -1,6 +1,6 @@
 HelioViewer ChangeLog
 
-	03/28/2008
+    03/31/2008
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
 	
