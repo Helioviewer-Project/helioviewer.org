@@ -76,7 +76,8 @@
 			document.dayChange =				new YAHOO.util.CustomEvent("dayChange");
 			document.layerAdded =				new YAHOO.util.CustomEvent("layerAdded");
 			document.layerRemoved =				new YAHOO.util.CustomEvent("layerRemoved");
-			document.observationDateChange =	new YAHOO.util.CustomEvent("observeDateChange");
+			document.observationDateChange =	new YAHOO.util.CustomEvent("observationDateChange");
+			document.observationTimeChange =    new YAHOO.util.CustomEvent("observationTimeChange");
 			document.instrumentChange =     	new YAHOO.util.CustomEvent("instrumentChange");
 			document.timeIncrementChange =		new YAHOO.util.CustomEvent("timeIncrementChange");
 			
@@ -125,9 +126,91 @@
 			$('date').observe('change', function () {
 				document.observationDateChange.fire(this.value);
 			});
-			$('timeIncrement').observe('change', function () {
-				document.timeIncrementChange.fire(this.value);
-			});
+			$('time').observe('change', function () {
+                document.observationTimeChange.fire(this.value);
+            });
+			//$('timeIncrement').observe('change', function () {
+			//	document.timeIncrementChange.fire(this.value);
+			//});
+			
+			//TEMPORARY: TESTING TIME NAVIGATION SLIDER
+			// Allowed values (in seconds): 60, 300, 900, 3600, 21600, 43200, 86400, 604800, etc.. Question: What about months and years which vary? (could use "daysInMonth()" or assume 30 days)
+			var tmpLastVal = null;
+			new Control.Slider('timestepHandle', 'timestepTrack', {
+			                         sliderValue: 7,
+			                         values: [0,1,2,3,4,5,6,7,8],
+			                         range: $R(0,8),
+			                         onSlide: function (v) {
+			                             if (v == tmpLastVal) {
+			                                 return;
+			                             }
+			                             var newText = null;
+			                             switch (v) {
+			                                 case 0:
+			                                    newText = "1&nbsp;Sec";
+			                                    break;
+			                                 case 1:
+			                                    newText = "1&nbsp;Min";
+			                                    break;
+			                                 case 2:
+			                                     newText = "5&nbsp;Mins";
+			                                     break;
+			                                 case 3:
+			                                     newText = "15&nbsp;Mins";
+			                                     break;
+			                                 case 4:
+			                                     newText = "1&nbsp;Hour";
+			                                     break;
+			                                 case 5:
+			                                     newText = "6&nbsp;Hours";
+			                                     break;
+			                                 case 6:
+			                                     newText = "12&nbsp;Hours";
+			                                     break;
+			                                 case 7:
+			                                     newText = "1&nbsp;Day";
+			                                     break;
+			                                 case 8:
+			                                     newText = "1&nbsp;Week";  
+			                                     break;
+			                                 }
+			                                 tmpLastVal = v;
+                                             $('timestepValueDisplay').update(newText);
+			                             },
+			                         onChange: function (v) {
+			                             var newVal = null;
+                                         switch (v) {
+                                             case 0:
+                                                newVal = 1;
+                                                break;
+                                             case 1:
+                                                newVal = 60;
+                                                break;
+                                             case 2:
+                                                 newVal = 300;
+                                                 break;
+                                             case 3:
+                                                 newVal = 900;
+                                                 break;
+                                             case 4:
+                                                 newVal = 3600;
+                                                 break;
+                                             case 5:
+                                                 newVal = 21600;
+                                                 break;
+                                             case 6:
+                                                 newVal = 43200;
+                                                 break;
+                                             case 7:
+                                                 newVal = 86400;
+                                                 break;
+                                             case 8:
+                                                 newVal = 604800;  
+                                                 break;
+                                             }
+                                             document.timeIncrementChange.fire(newVal);
+			                             }
+			                   });
 	
 			// Set-up alternative viewport sizes
 			var viewportSizeManager = new ViewportSizeManager([["viewport-size-small", 640,640, "images/blackGlass/glass_border_light_640x640.png"],
@@ -139,6 +222,34 @@
 		document.observe('dom:loaded', main);
 		// ]]>
 		</script>
+		<style type="text/css">
+		  #timestepTrack {
+		      margin-top:7px;
+		      width: 200px;
+		      height: 5px;
+		      background-color: #E5E5E5;
+		      border:1px solid #858585;
+		  }
+		  #timestepHandle {
+		      cursor: pointer;
+		      height:17px;
+		      color: white;
+		      -moz-border-radius:3px;
+		      width: 8px;
+		      top:-5px;
+		      /**background-color: #858585;*/
+		      background-color:#111;
+		      opacity:0.75;
+		      border:2px solid black;
+		  }
+		  #timestepValueDisplay {
+		      color:#111;
+		      top:24px;
+		      left:-7px;
+		      position:relative;
+		      padding:2px 0 0 1px;
+		  }
+		</style>
 		
 	</head>
 	<body class="yui-skin-sam">
@@ -224,14 +335,21 @@
 		
 		<!-- 4. FOOTER -->
 		<div id="footer">
-			<div style="float:left">
+			<div style="float:left;">
 				<button type="button" id="timeBackBtn" value="Previous Image"></button>
 				<button type="button" id="timeForwardBtn" value="Next Image"></button>
-				<span style="font-size:120%">Time Step (sec):</span>
-				<input type="text" value="86400" id="timeIncrement" style="width:60px"></input>
-				<span>(Press Enter)</span>
 			</div>
-       		<div style="text-align:right; font-size:120%">
+				
+			<!-- Increment -->
+			<div style="float:left;">
+			    <span style="font-size:120%; clear:right; margin-bottom:10px;">timestep:</span>
+			    <div id="timestepTrack">
+                    <div id="timestepHandle">=<span id="timestepValueDisplay">1&nbsp;Day</span></div>
+                </div>
+			    <!-- <input type="text" value="86400" id="timeIncrement" style="width:60px"></input>-->
+			</div>
+
+       		<div style="text-align:right; font-size:120%;">
        		    <a id="about" class="gray" href="#" style="margin-right:20px;">About</a>
        		    <a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
        			<a href="mailto:admin@helioviewer.org" alt="Contact Helioviewer.org Web Administrator" class="gray" style="margin-right:20px;">Contact</a>
