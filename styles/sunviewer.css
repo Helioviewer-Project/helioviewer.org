@@ -1,6 +1,5 @@
 /**
  * helioviewer.css
- * last updated: 03/18/2008
  *
  * blackGlass design by Keith, 2008
  *
@@ -10,102 +9,42 @@
  * theme (http://www.gnome-look.org/content/show.php/black-white+2+Vista?content=72618).
  */
 
+
 /* HTML ELEMENTS */
-html {
-	background: url(../images/bg.png);
-	}
-
-body {
-	padding: 10px;
-	color: #000000;
-	font-family: sans-serif;
-	font-size: 0.7em;
-}
-
-h1 {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
+html   {background: url(../images/bg.png);}
+body   {padding: 10px; font-size: 0.7em;}
+h1     {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button {cursor:pointer}
 
 /* MAIN STRUCTURAL COMPONENTS */
-#outsideBox {
-	border:0;
-}
-#header {
-	width:600px;
-	height:74px;
-	font-size:14px;
-	display:block;
-	margin-left:auto;
-	margin-right:auto;
-	padding-bottom:5px;
-}
+.centered       {display: block; margin-left:auto; margin-right: auto;}
+#outsideBox     {border:0;}
+#pre-header     {height:18px;}
+#header         {width:600px; height:64px; font-size:14px;	padding-bottom:5px;}
+#viewport-inner {position:relative; width:600px; height:600px; border:1px solid black; top:20px;}
+#ui             {width:100%; height:100%; position:absolute; top:0px; left:0px; z-index:2;}
+#footer         {width:600px; height:70px; padding-top:9px;}
 #viewport-outer {
-	background: url(../images/blackGlass/glass_border_light_640x640.png);
-	display:block;
-	margin-left:auto;
-	margin-right:auto;
-	position:relative;
-	width:640px;
-	height:640px;
-	z-index:1;
-}
-#viewport-inner {
-	display:block;
-	margin-left:auto;
-	margin-right:auto;
-	position:relative;
-	width:600px;
-	height:600px;
-	border:1px solid black;
-	top:20px;
-}
-
-#ui {
-	width:100%;
-	height:100%;
-	display:block;
-	margin-left:auto;
-	margin-right:auto;
-	position:absolute;
-	top:0px;
-	left:0px;
-	z-index:2;
-}
-
-#footer {
-	width:600px;
-	height:70px;
-	display:block;
-	margin-left:auto;
-	margin-right:auto;
-	padding-top:9px;
+    background: url(../images/blackGlass/glass_border_light_640x640.png);
+    position:relative;
+    width:640px;
+    height:640px;
+    z-index:1;
 }
 
 /* VIEWPORT-RELATED */
 .viewport {
 	position: relative;
-	top: 0px;
-	left: 0px;
-	/* NOTE: the size and width should be set dynamically when initialized */
-	width: 0;
-	height: 0;
-	padding: 0px;
-	margin: 0px;
-	border: 0px;
 	background-color: #000000;
 	color: #FFFFFF;
 	overflow: hidden;
 	z-index: 0;
 }
 
-
 .surface {
-	margin: 0;
-	padding: 0;
 	width: 100%;
 	height: 100%;
 	position: absolute;
-	top: 0px;
-	left: 0px;
 	z-index: 0;
 	overflow: hidden;
 	/* background-color: red;
@@ -113,6 +52,7 @@ button {cursor:pointer}
 	/*background: url(../gfx/center.gif) no-repeat center center;*/
 	_background: url(../gfx/blank.gif) no-repeat center center; /* NOTE: required for IE to"see" the surface */
 }
+
 .well, .tileContainer {
 	margin: 0;
 	padding: 0;
@@ -140,44 +80,7 @@ button {cursor:pointer}
 	/*-moz-outline: 1px dashed #FF0000;*/
 }
 
-/* UI-RELATED */
-.centerControl {
-	cursor: pointer;
-	margin-left:4px;
-}
-.sunCoordsDisplay {
-	color: #FFFFFF;
-	font-size: 12px;
-	z-index: 100000;
-}
-
-
-.layerManager {
-	position: absolute;
-	top: -1px;
-	left: -1px;
-	border: 1px #000000 solid;
-	margin: 0px 0px 10px 0px;
-	padding: 5px;
-	font-size: 10pt;
-	background-color: #FFFFFF;
-	color:#000;
-}
-
-.layerConfigurator {
-	margin: 5px 0px 5px 0px;
-	padding: 5px;
-}
-
-.selectByDateMenu {
-	position: relative;
-	top: 0;
-	left: 0;
-	margin: 5px 5px 5px 5px;
-	/* float: left; */
-}
-
-
+/* OVERLAY-RELATED */ 
 .messageBox {
 	position: absolute;
 	top: 200px;
@@ -266,7 +169,7 @@ span.closeX {
 	cursor: pointer;
 }
 
-a.closeX:link {
+a.closeX {
 	color: #FFF;
 	font-size: 11px;
 	font-family: Arial, sans-serif;
@@ -274,44 +177,13 @@ a.closeX:link {
 	text-decoration: none;
 	margin: 1px;
 }
-a.closeX:active {
-	color: #d6f1ff;
-	font-size: 11px;
-	font-family: Arial, sans-serif;
-	border: #d6f1ff 1px solid;
-	text-decoration: none;
-	margin: 1px;
-}
-a.closeX:visited {
-	color: #FFF;
-	font-size: 11px;
-	font-family: Arial, sans-serif;
-	border: #FFF 1px solid;
-	text-decoration: none;
-	margin: 1px;
-}
-a.closeX:hover {
-	color: #d6f1ff;
-	font-size: 11px;
-	font-family: Arial, sans-serif;
-	border: #d6f1ff 1px solid;
-	text-decoration: none;
-	margin: 1px;
-}
+a.closeX:active  {color: #d6f1ff; border-color: #d6f1ff;}
+a.closeX:visited {border: #FFF 1px solid;}
+a.closeX:hover   {color: #d6f1ff; border-color: #d6f1ff;}
 
-a.control1 {
-	color: #000000;
-	font-family: Arial, sans-serif;
-	text-decoration: none;
-}
-a.control1:hover {
-	text-decoration: underline;
-}
-a.control2 {
-	color: #000000;
-	font-family: Arial, sans-serif;
-	text-decoration: none;
-}
+a.control1       {color: #000000; font-family: Arial, sans-serif; text-decoration: none;}
+a.control1:hover {text-decoration: underline;}
+a.control2       {color: #000000; font-family: Arial, sans-serif; text-decoration: none;}
 
 .noImageAvailable {
 	width: 100%;
@@ -342,8 +214,36 @@ a.control2 {
 	text-align: left;
 }
 
-a.infoBubbleLink {font-size:80%; color:white;}
+a.infoBubbleLink         {font-size:80%; color:white;}
 a.infoBubbleLink:visited {color:white;}
+
+/* UI-RELATED */
+.centerControl {
+    cursor: pointer;
+    margin-left:4px;
+}
+.sunCoordsDisplay {
+    color: #FFFFFF;
+    font-size: 12px;
+    z-index: 100000;
+}
+
+.layerManager {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    border: 1px #000000 solid;
+    margin: 0px 0px 10px 0px;
+    padding: 5px;
+    font-size: 10pt;
+    background-color: #FFFFFF;
+    color:#000;
+}
+
+.layerConfigurator {
+    margin: 5px 0px 5px 0px;
+    padding: 5px;
+}
 
 .controls {
 	position: absolute;
@@ -354,6 +254,7 @@ a.infoBubbleLink:visited {color:white;}
 	z-index: 100000;
 	overflow: hidden;
 }
+
 .viewportControls        
 {
 	background:url(../images/blackGlass/glass_button_rect_48x20px.png);
@@ -370,36 +271,12 @@ a.infoBubbleLink:visited {color:white;}
 	width:48px;
 	height:20px;
 }
-.viewportControls a
-{
-	color: #000000;
-	text-decoration: none;
-	-moz-outline: none;
-}
-.viewportControls a img {
-	vertical-align: middle;
-}
-.viewportControls a:active {
-	color: #FF0000;
-}
-
-#track3 {
-	margin: 0px 0px 0px 0px;
-}
-
-.nav { color: #000000; font-size: 14px; cursor: pointer; }
-.nav:link {color: #000000; text-decoration:none;}     /* unvisited link */
-.nav:visited {color: #000000; text-decoration:none;}  /* visited link */
-.nav:hover {color: #000000; text-decoration:none;}   /* mouse over link */
-.nav:active {color: #000000; text-decoration:none;}   /* selected link */
+.viewportControls a        {color: #000000; text-decoration: none; -moz-outline: none;}
+.viewportControls a img    {vertical-align: middle;}
+.viewportControls a:active {color: #FF0000;}
 
 /* Loading Indicator */
-#loading {
-	padding: 3px;
-	font-size: 12px;
-	background-color:#858585;
-	color: #F0F0F0;
-}
+#loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 
 /* Message Console */
 #message-console {
@@ -422,9 +299,7 @@ a.infoBubbleLink:visited {color:white;}
 #cal {border:none; padding:1em}
 
 
-#date {
-	width:80px;
-}
+#date {width:80px;}
 
 #show {
 	background: url(../images/blackGlass/glass_button_rect_34x30px_calendar.png);
@@ -435,7 +310,7 @@ a.infoBubbleLink:visited {color:white;}
 }
 
 
-/* (Scriptaculous) Zoom Level Slider Styles */
+/* Zoom Level Slider Styles */
 .sliderTrack {
 	position: absolute;
 	left:26px;
@@ -478,7 +353,7 @@ a.infoBubbleLink:visited {color:white;}
 .sliderMinus {top:272px;}
 .sliderPlus  {top:39px;}
 
-
+/* Time Navigation UI Components */
 #timeBackBtn {
 	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_left_shadow.png);
 	width:64px;
@@ -492,8 +367,50 @@ a.infoBubbleLink:visited {color:white;}
 	height:60px;
 	border:0;
 }
+#timestepTrack {
+    margin-top:7px;
+    width: 200px;
+    height: 5px;
+    background-color: #E5E5E5;
+    border:1px solid #858585;
+}
+#timestepHandle {
+    cursor: pointer;
+    height:17px;
+    color: white;
+    -moz-border-radius:3px;
+    width: 8px;
+    top:-5px;
+    background-color:#111;
+    opacity:0.75;
+    border:2px solid black;
+}
+#timestepValueDisplay {
+    color:#111;
+    top:24px;
+    left:-7px;
+    position:relative;
+    padding:2px 0 0 1px;
+}
 
-/* Text-related */
+.sizeIndicatorElement {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+.sizeIndicator
+{
+    position: absolute;
+    z-index: 100000;
+    /* width: 300px; */
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+/* TEXT-RELATED */
 a.gray {
 	text-decoration:none;
 	font-weight:bold;
@@ -510,4 +427,9 @@ a.lightGray {
 	font-weight:bold;
 }
 
-    
+.yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}
+.yui-skin-sam .yui-calendar td.calcell.highlight1 > a {color: red}
+.yui-skin-sam .yui-calendar td.calcell.highlight2     {background-color:white;}
+.yui-skin-sam .yui-calendar td.calcell.highlight2 > a {color:green;}
+.yui-skin-sam .yui-calendar td.calcell.highlight3     {background-color:white;}
+.yui-skin-sam .yui-calendar td.calcell.highlight3 > a {color: orange;}

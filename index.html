@@ -12,10 +12,10 @@
 		<link rel="stylesheet" type="text/css" href="lib/yui/build/button/assets/skins/sam/button.css"> 
 		<link rel="stylesheet" type="text/css" href="lib/yui/build/calendar/assets/skins/sam/calendar.css"> 
 		
-		<script type="text/javascript" src="lib/yui/build/utilities/utilities.js?_yuiversion=2.5.0"></script>
-		<script type="text/javascript" src="lib/yui/build/button/button.js?_yuiversion=2.5.0"></script>
-		<script type="text/javascript" src="lib/yui/build/container/container.js?_yuiversion=2.5.0"></script>
-		<script type="text/javascript" src="lib/yui/build/calendar/calendar.js?_yuiversion=2.5.0"></script>
+		<script type="text/javascript" src="lib/yui/build/utilities/utilities.js?_yuiversion=2.5.1"></script>
+		<script type="text/javascript" src="lib/yui/build/button/button.js?_yuiversion=2.5.1"></script>
+		<script type="text/javascript" src="lib/yui/build/container/container.js?_yuiversion=2.5.1"></script>
+		<script type="text/javascript" src="lib/yui/build/calendar/calendar.js?_yuiversion=2.5.1"></script>
 	
 		<!-- Prototype and Scriptaculous -->
 		<script src="lib/prototype/prototype.js" type="text/javascript"></script>
@@ -53,10 +53,10 @@
 		<script src="lib/SunViewer/SelectByDateMenu.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/ZoomLevelSlider.js" type="text/javascript"></script>
+		<script src="lib/SunViewer/TimeStepSlider.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/ViewportSizeManager.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/SunViewer.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="styles/sunviewer.css">
-		<link rel="stylesheet" type="text/css" href="styles/sizeIndicator.css">
 		
 		<script type="text/javascript">
 		// <![CDATA[
@@ -66,20 +66,21 @@
 			var sunViewer = new SunViewer();
 			
 			// Custom Events
-			document.layerExchange =    		new YAHOO.util.CustomEvent("layerExchange");
-			document.zoomLevelChange =  		new YAHOO.util.CustomEvent("zoomLevelChange");
-			document.zoomOffsetChange = 		new YAHOO.util.CustomEvent("zoomOffsetChange");
-			document.sunImageChange =   		new YAHOO.util.CustomEvent("sunImageChange");
-			document.timePrevious =				new YAHOO.util.CustomEvent("timePrevious");
-			document.timeNext = 				new YAHOO.util.CustomEvent("timeNext");
-			document.viewportSizeChange =		new YAHOO.util.CustomEvent("viewportSizeChange");
-			document.dayChange =				new YAHOO.util.CustomEvent("dayChange");
-			document.layerAdded =				new YAHOO.util.CustomEvent("layerAdded");
-			document.layerRemoved =				new YAHOO.util.CustomEvent("layerRemoved");
-			document.observationDateChange =	new YAHOO.util.CustomEvent("observationDateChange");
-			document.observationTimeChange =    new YAHOO.util.CustomEvent("observationTimeChange");
-			document.instrumentChange =     	new YAHOO.util.CustomEvent("instrumentChange");
-			document.timeIncrementChange =		new YAHOO.util.CustomEvent("timeIncrementChange");
+			document.layerExchange =    	 new YAHOO.util.CustomEvent("layerExchange");
+			document.zoomLevelChange =  	 new YAHOO.util.CustomEvent("zoomLevelChange");
+			document.zoomOffsetChange = 	 new YAHOO.util.CustomEvent("zoomOffsetChange");
+			document.sunImageChange =   	 new YAHOO.util.CustomEvent("sunImageChange");
+			document.timePrevious =			 new YAHOO.util.CustomEvent("timePrevious");
+			document.timeNext = 			 new YAHOO.util.CustomEvent("timeNext");
+			document.viewportSizeChange =	 new YAHOO.util.CustomEvent("viewportSizeChange");
+			document.dayChange =			 new YAHOO.util.CustomEvent("dayChange");
+			document.layerAdded =			 new YAHOO.util.CustomEvent("layerAdded");
+			document.layerRemoved =			 new YAHOO.util.CustomEvent("layerRemoved");
+			document.observationDateChange = new YAHOO.util.CustomEvent("observationDateChange");
+			document.observationTimeChange = new YAHOO.util.CustomEvent("observationTimeChange");
+			document.instrumentChange =      new YAHOO.util.CustomEvent("instrumentChange");
+			document.timeIncrementChange =	 new YAHOO.util.CustomEvent("timeIncrementChange");
+			document.onMonthChange =         new YAHOO.util.CustomEvent("onMonthChange");
 			
 			//Global Variables
 			numberOfTileLayers = 0;
@@ -116,6 +117,8 @@
 			var calendar = new Calendar('cal', 'date', 'show');
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, GLOBAL_zoomLevel);
 			
+			document.onMonthChange.fire (10, 2003);
+			
 			// Event-handling	
 			$('timeBackBtn').observe('click', function () {
 				document.timePrevious.fire();
@@ -129,89 +132,10 @@
 			$('time').observe('change', function () {
                 document.observationTimeChange.fire(this.value);
             });
-			//$('timeIncrement').observe('change', function () {
-			//	document.timeIncrementChange.fire(this.value);
-			//});
 			
-			//TEMPORARY: TESTING TIME NAVIGATION SLIDER
-			// Allowed values (in seconds): 60, 300, 900, 3600, 21600, 43200, 86400, 604800, etc.. Question: What about months and years which vary? (could use "daysInMonth()" or assume 30 days)
-			var tmpLastVal = null;
-			new Control.Slider('timestepHandle', 'timestepTrack', {
-			                         sliderValue: 7,
-			                         values: [0,1,2,3,4,5,6,7,8],
-			                         range: $R(0,8),
-			                         onSlide: function (v) {
-			                             if (v == tmpLastVal) {
-			                                 return;
-			                             }
-			                             var newText = null;
-			                             switch (v) {
-			                                 case 0:
-			                                    newText = "1&nbsp;Sec";
-			                                    break;
-			                                 case 1:
-			                                    newText = "1&nbsp;Min";
-			                                    break;
-			                                 case 2:
-			                                     newText = "5&nbsp;Mins";
-			                                     break;
-			                                 case 3:
-			                                     newText = "15&nbsp;Mins";
-			                                     break;
-			                                 case 4:
-			                                     newText = "1&nbsp;Hour";
-			                                     break;
-			                                 case 5:
-			                                     newText = "6&nbsp;Hours";
-			                                     break;
-			                                 case 6:
-			                                     newText = "12&nbsp;Hours";
-			                                     break;
-			                                 case 7:
-			                                     newText = "1&nbsp;Day";
-			                                     break;
-			                                 case 8:
-			                                     newText = "1&nbsp;Week";  
-			                                     break;
-			                                 }
-			                                 tmpLastVal = v;
-                                             $('timestepValueDisplay').update(newText);
-			                             },
-			                         onChange: function (v) {
-			                             var newVal = null;
-                                         switch (v) {
-                                             case 0:
-                                                newVal = 1;
-                                                break;
-                                             case 1:
-                                                newVal = 60;
-                                                break;
-                                             case 2:
-                                                 newVal = 300;
-                                                 break;
-                                             case 3:
-                                                 newVal = 900;
-                                                 break;
-                                             case 4:
-                                                 newVal = 3600;
-                                                 break;
-                                             case 5:
-                                                 newVal = 21600;
-                                                 break;
-                                             case 6:
-                                                 newVal = 43200;
-                                                 break;
-                                             case 7:
-                                                 newVal = 86400;
-                                                 break;
-                                             case 8:
-                                                 newVal = 604800;  
-                                                 break;
-                                             }
-                                             document.timeIncrementChange.fire(newVal);
-			                             }
-			                   });
-	
+	        // Set-up timestep slider
+	        var timeStepSlider = new TimeStepSlider ("timestepHandle", "timestepTrack", 7);
+
 			// Set-up alternative viewport sizes
 			var viewportSizeManager = new ViewportSizeManager([["viewport-size-small", 640,640, "images/blackGlass/glass_border_light_640x640.png"],
 															   ["viewport-size-med", 1024,768, "images/blackGlass/glass_border_light_1024x768.png"],
@@ -222,34 +146,6 @@
 		document.observe('dom:loaded', main);
 		// ]]>
 		</script>
-		<style type="text/css">
-		  #timestepTrack {
-		      margin-top:7px;
-		      width: 200px;
-		      height: 5px;
-		      background-color: #E5E5E5;
-		      border:1px solid #858585;
-		  }
-		  #timestepHandle {
-		      cursor: pointer;
-		      height:17px;
-		      color: white;
-		      -moz-border-radius:3px;
-		      width: 8px;
-		      top:-5px;
-		      /**background-color: #858585;*/
-		      background-color:#111;
-		      opacity:0.75;
-		      border:2px solid black;
-		  }
-		  #timestepValueDisplay {
-		      color:#111;
-		      top:24px;
-		      left:-7px;
-		      position:relative;
-		      padding:2px 0 0 1px;
-		  }
-		</style>
 		
 	</head>
 	<body class="yui-skin-sam">
@@ -258,7 +154,7 @@
 	<div id="outsideBox">
 	
 	    <!-- 1. MESSAGE CONSOLE AND LOADING INDICATOR -->
-        <div id="pre-header" style="height:18px;">
+        <div id="pre-header"">
            <div style="width:33%; text-align:left; float:left; font-size:120%;"><a href="http://sirius.nascom.nasa.gov/~jack/patrick/sunviewer/index.html" class="gray">Go to TRACE full disk mosaics...</a></div>
            <div style="width:33%; text-align:center; float:left;">
                <span id="message-console" style="width:100%; display:none;">&nbsp;</span>&nbsp;
@@ -267,7 +163,7 @@
         </div>
 		
 		<!--  2. HEADER -->
-		<div id="header">
+		<div id="header" class="centered">
 			<h1>HelioViewer</h1>
 
 				<!-- Align left -->
@@ -301,8 +197,8 @@
 		</div>
 	
 		<!-- 3. VIEWPORT AND UI LAYERS -->			
-		<div id="viewport-outer">
-			<div id="viewport-inner">
+		<div id="viewport-outer" class="centered">
+			<div id="viewport-inner" class="centered">
 			<div id="layerManager1" class="layerManager" style="height: 15px; width: 70px; overflow: hidden; z-index:10001;"></div>
 				<!--  VIEWPORT -->
 				<div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%">
@@ -334,7 +230,8 @@
 		</div>
 		
 		<!-- 4. FOOTER -->
-		<div id="footer">
+		<div id="footer" class="centered">
+		    <!-- Time Navigation Buttons -->
 			<div style="float:left;">
 				<button type="button" id="timeBackBtn" value="Previous Image"></button>
 				<button type="button" id="timeForwardBtn" value="Next Image"></button>
@@ -343,12 +240,19 @@
 			<!-- Increment -->
 			<div style="float:left;">
 			    <span style="font-size:120%; clear:right; margin-bottom:10px;">timestep:</span>
-			    <div id="timestepTrack">
+		   	    <div id="timestepTrack">
                     <div id="timestepHandle">=<span id="timestepValueDisplay">1&nbsp;Day</span></div>
                 </div>
-			    <!-- <input type="text" value="86400" id="timeIncrement" style="width:60px"></input>-->
+                <!--
+                <div style="background-color:#FC3; width:200px;">
+                    <div style="width:50%; float:left; line-height:43px;">1 Sec</div>
+                    <div style="width:50%; float:right; text-align:right; line-height:43px;">1 Week</div>
+                </div>
+                -->
+                
 			</div>
 
+            <!-- Links -->
        		<div style="text-align:right; font-size:120%;">
        		    <a id="about" class="gray" href="#" style="margin-right:20px;">About</a>
        		    <a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
