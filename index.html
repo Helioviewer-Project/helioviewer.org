@@ -75,7 +75,10 @@
 			document.viewportSizeChange =	 new YAHOO.util.CustomEvent("viewportSizeChange");
 			document.dayChange =			 new YAHOO.util.CustomEvent("dayChange");
 			document.layerAdded =			 new YAHOO.util.CustomEvent("layerAdded");
+			document.showOverlayInfo =       new YAHOO.util.CustomEvent("showOverlayInfo");
 			document.layerRemoved =			 new YAHOO.util.CustomEvent("layerRemoved");
+			document.tileLayerAdded =        new YAHOO.util.CustomEvent("tileLayerAdded");
+			document.newOverlay =            new YAHOO.util.CustomEvent("newOverlay");
 			document.observationDateChange = new YAHOO.util.CustomEvent("observationDateChange");
 			document.observationTimeChange = new YAHOO.util.CustomEvent("observationTimeChange");
 			document.instrumentChange =      new YAHOO.util.CustomEvent("instrumentChange");
@@ -116,8 +119,6 @@
 		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
 			var calendar = new Calendar('cal', 'date', 'show');
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, GLOBAL_zoomLevel);
-			
-			document.onMonthChange.fire (10, 2003);
 			
 			// Event-handling	
 			$('timeBackBtn').observe('click', function () {
