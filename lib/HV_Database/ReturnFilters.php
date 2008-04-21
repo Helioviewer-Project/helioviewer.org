@@ -13,6 +13,7 @@
 	$From = 	        $_GET["From"];
 	$To = 		 	    $_GET["To"];
 	$Instrument = 	    $_GET["Instrument"];
+	$Wavelength =       $_GET["Wavelength"];
 	$Year =				$_GET["Year"];
 	$Month =			$_GET["Month"];
 	$Day = 				$_GET["Day"];
@@ -22,18 +23,20 @@
 	$Increment =		$_GET["Increment"];
 	$Direction =		$_GET["Direction"];
 
-	Filter ($Observatory, $Instrument, $Detector, $From, $To, $Measurement, $Year, $Month, $Day, $Hour, $Minute, $Second, $Increment, $Direction);
+	Filter ($Observatory, $Instrument, $Wavelength, $Detector, $From, $To, $Measurement, $Year, $Month, $Day, $Hour, $Minute, $Second, $Increment, $Direction);
 	
-	function Filter ($observatory, $instrument, $detector, $from, $to, $measurement, $year, $month, $day, $hour, $minute, $second, $increment, $direction)
+	function Filter ($observatory, $instrument, $wavelength, $detector, $from, $to, $measurement, $year, $month, $day, $hour, $minute, $second, $increment, $direction)
 	{
 		$limit = 16;
 		
 		$query = "SELECT * FROM maps WHERE (";
 		
-		//Instrument
-		if ($instrument != null) {
-			$query .= "Instrument = '$instrument' ";
-		}
+		// Instrument
+		$query .= "Instrument = '$instrument' ";
+		
+		// Wavelength (EIT Only)
+		$query .= "AND measurement = $wavelength ";
+		
 
 		if ($increment % (3600 * 24) == 0)
 			$query .= "And hour = '$hour' AND minute = '$minute' AND second = '$second'";
@@ -78,7 +81,7 @@
 				
 					// Get the next cloest time
 					$timeString = $time->format('Y-m-d H:i:s');
-					$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+					$query = "SELECT * FROM maps WHERE (instrument = '$instrument' AND measurement = $wavelength) ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
 					$result      = mysql_query($query);
 					$closestDate = array();
 					
@@ -93,7 +96,7 @@
 			// If the begining of the data-set is reached, include the first available data-point
 			else if ( ($currentTime <= constant("DATE_START_" . $instrument)) && ($atBegining == false) ) {
 				$timeString = $time->format('Y-m-d H:i:s');
-				$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+				$query = "SELECT * FROM maps WHERE (instrument = '$instrument' AND measurement = $wavelength) ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
 				
 				$result      = mysql_query($query);
 				$closestDate = array();
@@ -111,7 +114,7 @@
 			// If end of data-set is reached, include last available data-point
 			else if ( ($currentTime >= constant("DATE_END_" . $instrument)) && ($atEnd == false) ) {
 				$timeString = $time->format('Y-m-d H:i:s');
-				$query = "SELECT * FROM maps WHERE (instrument = '$instrument') ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+				$query = "SELECT * FROM maps WHERE (instrument = '$instrument' AND measurement = $wavelength) ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
 				
 				$result      = mysql_query($query);
 				$closestDate = array();
