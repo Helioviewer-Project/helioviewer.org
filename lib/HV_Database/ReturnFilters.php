@@ -45,10 +45,12 @@
 		for ($i = 0; $i < $limit; $i++) {
 			$currentTime = $time->format('Y-m-d H:i:s');
 			
+			($instrument == "EIT") ? $wl = " AND measurement = $wavelength" : "";
+			
 			// Only query if you are still within the available range of data for the specified instrument				
 			if ((constant("DATE_START_" . $instrument) <= $currentTime) && (constant("DATE_END_" . $instrument) >= $currentTime)) { 
-				// Get the next cloest time
-				$query = "SELECT * FROM maps WHERE (instrument = '$instrument' AND measurement = $wavelength) ORDER BY ABS(UNIX_TIMESTAMP('$currentTime')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+				// Get the next closest time
+				$query = "SELECT * FROM maps WHERE (instrument = '$instrument'$wl) ORDER BY ABS(UNIX_TIMESTAMP('$currentTime')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
 				
 				//echo "<br /><b>Next Closest query for $timeString: </b>$query <br /><br />";
 				
@@ -62,7 +64,7 @@
 			
 			// If the begining of the data-set is reached, include the first available data-point
 			else if ( ($currentTime <= constant("DATE_START_" . $instrument)) && ($atBegining == false) ) {
-				$query =  "SELECT * FROM maps WHERE (instrument = '$instrument' AND measurement = $wavelength) ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+				$query =  "SELECT * FROM maps WHERE (instrument = '$instrument'$wl) ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
 				$result = mysql_query($query);
 				
 				while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
@@ -74,7 +76,7 @@
 			
 			// If end of data-set is reached, include last available data-point
 			else if ( ($currentTime >= constant("DATE_END_" . $instrument)) && ($atEnd == false) ) {
-				$query = "SELECT * FROM maps WHERE (instrument = '$instrument' AND measurement = $wavelength) ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
+				$query = "SELECT * FROM maps WHERE (instrument = '$instrument'$wl) ORDER BY ABS(UNIX_TIMESTAMP('$timeString')-UNIX_TIMESTAMP(timestamp)) ASC LIMIT 1";
 				
 				$result      = mysql_query($query);
 				

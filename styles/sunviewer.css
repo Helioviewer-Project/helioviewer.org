@@ -427,6 +427,9 @@ a.lightGray {
 	font-weight:bold;
 }
 
+/* LayerManager-related */
+tr#layerManagerHeaders > th {font-weight:bold; text-decoration: underline;}
+
 .yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}
 .yui-skin-sam .yui-calendar td.calcell.highlight1 > a {color: red}
 .yui-skin-sam .yui-calendar td.calcell.highlight2     {background-color:white;}

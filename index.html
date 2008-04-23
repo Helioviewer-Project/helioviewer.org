@@ -75,6 +75,7 @@
 			document.viewportSizeChange =	 new YAHOO.util.CustomEvent("viewportSizeChange");
 			document.dayChange =			 new YAHOO.util.CustomEvent("dayChange");
 			document.layerAdded =			 new YAHOO.util.CustomEvent("layerAdded");
+			document.layerPrepared =         new YAHOO.util.CustomEvent("layerPrepared");
 			document.showOverlayInfo =       new YAHOO.util.CustomEvent("showOverlayInfo");
 			document.layerRemoved =			 new YAHOO.util.CustomEvent("layerRemoved");
 			document.tileLayerAdded =        new YAHOO.util.CustomEvent("tileLayerAdded");
@@ -106,7 +107,10 @@
 			// Create a DataNavigator to keep traverse and keep track of available data near a given time
 			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, 86400);
 			
-			var layerManager1 = new LayerManager(tiles1, 'layerManager1');
+			var layerManager = new LayerManager(tiles1);
+			
+		    // Layer Manager UI
+            var lm = new LayerManagerUI('layerManagerUI');
 			
 			// Create tile layer providers
 			var bg1 = new TileLayerProvider(tiles1, {zoomLevel: 12});
@@ -134,8 +138,7 @@
                 document.observationTimeChange.fire(this.value);
             });
             
-            // Layer Manager UI
-            var lm = new LayerManagerUI('layerManagerUI');
+
 			
 	        // Set-up timestep slider
 	        var timeStepSlider = new TimeStepSlider ("timestepHandle", "timestepTrack", 7);
@@ -203,7 +206,6 @@
 		<!-- 3. VIEWPORT AND UI LAYERS -->			
 		<div id="viewport-outer" class="centered">
 			<div id="viewport-inner" class="centered">
-			<div id="layerManager1" class="layerManager" style="height: 15px; width: 70px; overflow: hidden; z-index:10001;"></div>
 				<!--  VIEWPORT -->
 				<div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%">
 					<div class="surface" id="surface1"></div>
