@@ -75,13 +75,14 @@
 			document.viewportSizeChange =	 new YAHOO.util.CustomEvent("viewportSizeChange");
 			document.dayChange =			 new YAHOO.util.CustomEvent("dayChange");
 			document.layerAdded =			 new YAHOO.util.CustomEvent("layerAdded");
-			document.layerPrepared =         new YAHOO.util.CustomEvent("layerPrepared");
+			document.layerPrepared =         new YAHOO.util.CustomEvent("layerPrepared"); //fires after sunImage has been set
 			document.showOverlayInfo =       new YAHOO.util.CustomEvent("showOverlayInfo");
 			document.layerRemoved =			 new YAHOO.util.CustomEvent("layerRemoved");
 			document.tileLayerAdded =        new YAHOO.util.CustomEvent("tileLayerAdded");
 			document.newOverlay =            new YAHOO.util.CustomEvent("newOverlay");
 			document.observationDateChange = new YAHOO.util.CustomEvent("observationDateChange");
 			document.observationTimeChange = new YAHOO.util.CustomEvent("observationTimeChange");
+			document.toggleLayerEnabled    = new YAHOO.util.CustomEvent("toggleLayerEnabled");
 			document.instrumentChange =      new YAHOO.util.CustomEvent("instrumentChange");
 			document.updateTiles =           new YAHOO.util.CustomEvent("updateTiles");
 			document.timeIncrementChange =	 new YAHOO.util.CustomEvent("timeIncrementChange");
