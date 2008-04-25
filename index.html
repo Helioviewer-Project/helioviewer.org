@@ -67,27 +67,29 @@
 			var sunViewer = new SunViewer();
 			
 			// Custom Events
-			document.layerExchange =    	 new YAHOO.util.CustomEvent("layerExchange");
-			document.zoomLevelChange =  	 new YAHOO.util.CustomEvent("zoomLevelChange");
-			document.sunImageChange =   	 new YAHOO.util.CustomEvent("sunImageChange");
-			document.timePrevious =			 new YAHOO.util.CustomEvent("timePrevious");
-			document.timeNext = 			 new YAHOO.util.CustomEvent("timeNext");
-			document.viewportSizeChange =	 new YAHOO.util.CustomEvent("viewportSizeChange");
-			document.dayChange =			 new YAHOO.util.CustomEvent("dayChange");
-			document.layerAdded =			 new YAHOO.util.CustomEvent("layerAdded");
-			document.layerPrepared =         new YAHOO.util.CustomEvent("layerPrepared"); //fires after sunImage has been set
-			document.showOverlayInfo =       new YAHOO.util.CustomEvent("showOverlayInfo");
-			document.layerRemoved =			 new YAHOO.util.CustomEvent("layerRemoved");
-			document.tileLayerAdded =        new YAHOO.util.CustomEvent("tileLayerAdded");
+			document.addLayer =              new YAHOO.util.CustomEvent("addLayer");
+			document.dayChange =             new YAHOO.util.CustomEvent("dayChange");
+			document.instrumentChange =      new YAHOO.util.CustomEvent("instrumentChange");
+			document.layerAdded =            new YAHOO.util.CustomEvent("layerAdded");
+            document.layerExchange =    	 new YAHOO.util.CustomEvent("layerExchange");
+            document.layerPrepared =         new YAHOO.util.CustomEvent("layerPrepared");
+            document.layerRemoved =          new YAHOO.util.CustomEvent("layerRemoved");
+			document.monthChange =           new YAHOO.util.CustomEvent("monthChange");
 			document.newOverlay =            new YAHOO.util.CustomEvent("newOverlay");
 			document.observationDateChange = new YAHOO.util.CustomEvent("observationDateChange");
-			document.observationTimeChange = new YAHOO.util.CustomEvent("observationTimeChange");
-			document.toggleLayerEnabled    = new YAHOO.util.CustomEvent("toggleLayerEnabled");
-			document.instrumentChange =      new YAHOO.util.CustomEvent("instrumentChange");
-			document.updateTiles =           new YAHOO.util.CustomEvent("updateTiles");
+            document.observationTimeChange = new YAHOO.util.CustomEvent("observationTimeChange");
+            document.removeLayer =           new YAHOO.util.CustomEvent("removeLayer");
+            document.showOverlayInfo =       new YAHOO.util.CustomEvent("showOverlayInfo");
+			document.sunImageChange =   	 new YAHOO.util.CustomEvent("sunImageChange");
+			document.tileLayerAdded =        new YAHOO.util.CustomEvent("tileLayerAdded");
 			document.timeIncrementChange =	 new YAHOO.util.CustomEvent("timeIncrementChange");
-			document.monthChange =           new YAHOO.util.CustomEvent("monthChange");
+			document.timeNext =              new YAHOO.util.CustomEvent("timeNext");
+			document.timePrevious =          new YAHOO.util.CustomEvent("timePrevious");
+			document.toggleLayerEnabled =    new YAHOO.util.CustomEvent("toggleLayerEnabled");
+			document.updateTiles =           new YAHOO.util.CustomEvent("updateTiles");
+			document.viewportSizeChange =    new YAHOO.util.CustomEvent("viewportSizeChange");
 			document.wavelengthChange =      new YAHOO.util.CustomEvent("wavelengthChange");
+			document.zoomLevelChange =       new YAHOO.util.CustomEvent("zoomLevelChange");
 			
 			//Global Variables
 			numberOfTileLayers = 0;
@@ -108,20 +110,19 @@
 			// Create a DataNavigator to keep traverse and keep track of available data near a given time
 			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, 86400);
 			
-			var layerManager = new LayerManager(tiles1);
+			var layerManager = new LayerManager(tiles1, 12);
 			
 		    // Layer Manager UI
             var lm = new LayerManagerUI('layerManagerUI');
 			
 			// Create tile layer providers
-			var bg1 = new TileLayerProvider(tiles1, {zoomLevel: 12});
+			var bg1 = new TileLayerProvider(tiles1, {id: 0, zoomLevel: 12});
 			
 			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
-			var markers1 = new MarkerLayerProvider(tiles1, {zoomLevel: 12});
+			var markers1 = new MarkerLayerProvider(tiles1, {id: 1, zoomLevel: 12});
 			
 			// UI Components
-
-		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1);
+		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1); //TODO: This and other components shouldn't depend on any one specific layer (e.g. bg1)
 			var calendar = new Calendar('cal', 'date', 'show');
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, 12);
 			
