@@ -75,6 +75,7 @@
             document.layerPrepared =         new YAHOO.util.CustomEvent("layerPrepared");
             document.layerRemoved =          new YAHOO.util.CustomEvent("layerRemoved");
 			document.monthChange =           new YAHOO.util.CustomEvent("monthChange");
+			document.moveLayer =             new YAHOO.util.CustomEvent("moveLayer");
 			document.newOverlay =            new YAHOO.util.CustomEvent("newOverlay");
 			document.observationDateChange = new YAHOO.util.CustomEvent("observationDateChange");
             document.observationTimeChange = new YAHOO.util.CustomEvent("observationTimeChange");
@@ -109,39 +110,28 @@
 			
 			// Create a DataNavigator to keep traverse and keep track of available data near a given time
 			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, 86400);
-			
-			var layerManager = new LayerManager(tiles1, 12);
-			
-		    // Layer Manager UI
+
+		    // Layer Manager & UI
+		    var layerManager = new LayerManager(tiles1, 12);
             var lm = new LayerManagerUI('layerManagerUI');
 			
+			var markers1 = new MarkerLayerProvider(tiles1, {id: 0, zoomLevel: 12});
+			
 			// Create tile layer providers
-			var bg1 = new TileLayerProvider(tiles1, {id: 0, zoomLevel: 12});
-			
-			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
-			var markers1 = new MarkerLayerProvider(tiles1, {id: 1, zoomLevel: 12});
-			
+			var bg1 = new TileLayerProvider(tiles1, {id: 1, zoomLevel: 12});
+            
 			// UI Components
+		    var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
 		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1); //TODO: This and other components shouldn't depend on any one specific layer (e.g. bg1)
 			var calendar = new Calendar('cal', 'date', 'show');
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, 12);
 			
 			// Event-handling	
-			$('timeBackBtn').observe('click', function () {
-				document.timePrevious.fire();
-			});
-			$('timeForwardBtn').observe('click', function () {
-				document.timeNext.fire();
-			});
-			$('date').observe('change', function () {
-				document.observationDateChange.fire(this.value);
-			});
-			$('time').observe('change', function () {
-                document.observationTimeChange.fire(this.value);
-            });
-            
+			$('timeBackBtn').observe('click', function ()    {document.timePrevious.fire();});
+			$('timeForwardBtn').observe('click', function () {document.timeNext.fire();});
+			$('date').observe('change', function ()          {document.observationDateChange.fire(this.value);});
+			$('time').observe('change', function ()          {document.observationTimeChange.fire(this.value);});
 
-			
 	        // Set-up timestep slider
 	        var timeStepSlider = new TimeStepSlider ("timestepHandle", "timestepTrack", 7);
 
