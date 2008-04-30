@@ -88,7 +88,6 @@
 			document.timePrevious =          new YAHOO.util.CustomEvent("timePrevious");
 			document.toggleLayerEnabled =    new YAHOO.util.CustomEvent("toggleLayerEnabled");
 			document.updateTiles =           new YAHOO.util.CustomEvent("updateTiles");
-			document.viewportSizeChange =    new YAHOO.util.CustomEvent("viewportSizeChange");
 			document.wavelengthChange =      new YAHOO.util.CustomEvent("wavelengthChange");
 			document.zoomLevelChange =       new YAHOO.util.CustomEvent("zoomLevelChange");
 			
@@ -114,14 +113,13 @@
 		    // Layer Manager & UI
 		    var layerManager = new LayerManager(tiles1, 12);
             var lm = new LayerManagerUI('layerManagerUI');
-			
+
+            // Default layers			
 			var markers1 = new MarkerLayerProvider(tiles1, {id: 0, zoomLevel: 12});
-			
-			// Create tile layer providers
 			var bg1 = new TileLayerProvider(tiles1, {id: 1, zoomLevel: 12});
             
 			// UI Components
-		    var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
+            var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...		    
 		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1); //TODO: This and other components shouldn't depend on any one specific layer (e.g. bg1)
 			var calendar = new Calendar('cal', 'date', 'show');
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, 12);
@@ -134,12 +132,6 @@
 
 	        // Set-up timestep slider
 	        var timeStepSlider = new TimeStepSlider ("timestepHandle", "timestepTrack", 7);
-
-			// Set-up alternative viewport sizes
-			var viewportSizeManager = new ViewportSizeManager([["viewport-size-small", 640,640, "images/blackGlass/glass_border_light_640x640.png"],
-															   ["viewport-size-med", 1024,768, "images/blackGlass/glass_border_light_1024x768.png"],
-															   ["viewport-size-large", 1280,960, "images/blackGlass/glass_border_light_1280x960.png"]]);
-				   
 		}
 
 		document.observe('dom:loaded', main);
@@ -148,114 +140,100 @@
 		
 	</head>
 	<body class="yui-skin-sam">
-	
-	<!-- OUTERMOST CONTENT BOX -->
-	<div id="outsideBox">
-	
-	    <!-- 1. MESSAGE CONSOLE AND LOADING INDICATOR -->
-        <div id="pre-header"">
-           <div style="width:33%; text-align:left; float:left; font-size:120%;"><a href="http://sirius.nascom.nasa.gov/~jack/patrick/sunviewer/index.html" class="gray">Go to TRACE full disk mosaics...</a></div>
-           <div style="width:33%; text-align:center; float:left;">
-               <span id="message-console" style="width:100%; display:none;">&nbsp;</span>&nbsp;
-           </div>
-           <div style="width:33%; text-align:right; float:left">&nbsp;<span id="loading" style="display: none">Loading...</span></div>
-        </div>
-		
-		<!--  2. HEADER -->
-		<div id="header" class="centered">
-			<h1>HelioViewer</h1>
-
-				<!-- Align left -->
-				<div style="float:left">
-					<!--  Observation Date -->
-					<span>Observation Date:</span>
-					<input type="text" id="date" name="date" value="" />
-					
-					<!-- Calendar Widget -->
-					<button type="button" id="show" title="Show Calendar"></button>
-	                <div id="container">
-				    	<div class="hd">Calendar</div>
-				    	<div class="bd">
-				        	<div id="cal"></div>
-				    	</div>
-				    </div>
-				    
-				    <!-- Observation Time -->
-				   	<span style="margin-left:15px;">Observation Time:</span>
-					<input type="text" id="time" name="time" value="00:00:00" style="width:80px"/>
-				</div>
-				
-				<!-- Align right -->
-	        	<div style="text-align:right; line-height:400%; margin-right:12px;">
-	        		<!-- Viewport Size Selection -->
-				    <a href="#" id="viewport-size-small" class="lightGray">640</a>
-				    <a href="#" id="viewport-size-med" class="gray">1024</a>
-				    <a href="#" id="viewport-size-large" class="gray">1280</a>
-				</div>
-
-		</div>
-	
-		<!-- 3. VIEWPORT AND UI LAYERS -->			
-		<div id="viewport-outer" class="centered">
-			<div id="viewport-inner" class="centered">
-				<!--  VIEWPORT -->
-				<div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%">
-					<div class="surface" id="surface1"></div>
-					<div class="well" id="well1"></div>
-					
-					<!-- UI COMPONENTS -->
-					
-					<div id="sunViewer1.viewport1.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;"></div>
-					<div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="left: 10px; top: 545px"></div>
-					<div class="viewportControls">
-						<span class="centerControl">Center</span>
-					</div>
-			
-					<!--  Zoom-Level Slider -->
-					<div id="sunViewer1.viewport1.sliderPlus" class="sliderPlus">+</div>			
-					<div id="sunViewer1.viewport1.sliderTrack" class="sliderTrack">
-			   			<div id="sunViewer1.viewport1.sliderHandle" class="sliderHandle"></div>
-					</div>
-					<div id="sunViewer1.viewport1.sliderMinus" class="sliderMinus">-</div>
-					
-				</div>
-				
-				<!--  UI LAYER (Moved temporarily to VIEWPORT layer)  -->
-				<!-- <div id="ui">		
-
-				</div>-->
-			</div>
-		</div>
-		
-		<!-- 4. FOOTER -->
-		<div id="footer" class="centered">
-		    <!-- Time Navigation Buttons -->
-			<div style="float:left;">
-				<button type="button" id="timeBackBtn" value="Previous Image"></button>
-				<button type="button" id="timeForwardBtn" value="Next Image"></button>
-			</div>
-				
-			<!-- Increment -->
-			<div style="float:left;">
-			    <span style="font-size:120%; clear:right; margin-bottom:10px;">timestep:</span>
-		   	    <div id="timestepTrack">
+    	<div id="minHeight"></div>
+    	
+    	<!-- Header and Content -->
+        <div id="outsideBox">
+        
+            <!-- Left Column -->
+	        <div id="left-col">
+	           <div id="left-col-header"><h1>HelioViewer</h1></div>	                                   
+               <div id="layerManagerUI"></div>
+	        </div>
+	        
+	        <!-- Right Column -->
+	        <div id="right-col">
+	           <div id="right-col-header">
+	               <span id="loading" style="display: none">Loading...</span>
+	           </div>
+	        </div>
+	        
+	        <!-- Middle Column -->
+	        <div id="middle-col">
+	            <div id="middle-col-header">
+	                <!-- Message Console -->
+                    <span id="message-console" style="width:100%; display:none;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
+                    
+                    <!--  Observation Date -->
+                    <span>Observation Date:</span>
+                    <input type="text" id="date" name="date" value=""></input>
+                
+                    <!-- Calendar Widget -->
+                    <button type="button" id="show" title="Show Calendar"></button>
+                    <div id="container">
+                        <div class="hd">Calendar</div>
+                        <div class="bd">
+                            <div id="cal"></div>
+                        </div>
+                    </div>
+                
+                    <!-- Observation Time -->
+                    <span style="margin-left:15px;">Observation Time:</span>
+                    <input type="text" id="time" name="time" value="00:00:00" style="width:80px"></input>
+                </div>
+                
+                <!-- Viewport -->
+                <div id="viewport-outer" style="height:600px; background: transparent url(images/blackGlass/transparentBG25.png) repeat scroll 0%; border:1px solid black; -moz-border-radius:20px;">
+                    <div id="viewport-inner" class="centered" style="top:14px; width:95%; height:570px;">
+	                    <div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%">
+		                    <div class="surface" id="surface1"></div>
+		                    <div class="well" id="well1"></div>
+		                    
+		                    <!-- UI COMPONENTS -->
+		                    
+		                    <div id="sunViewer1.viewport1.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;"></div>
+		                    <div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="left: 10px; top: 93%"></div>
+		                    <div class="viewportControls">
+		                        <span class="centerControl">Center</span>
+		                    </div>
+		            
+		                    <!--  Zoom-Level Slider -->
+		                    <div id="sunViewer1.viewport1.sliderPlus" class="sliderPlus">+</div>            
+		                    <div id="sunViewer1.viewport1.sliderTrack" class="sliderTrack">
+		                        <div id="sunViewer1.viewport1.sliderHandle" class="sliderHandle"></div>
+		                    </div>
+	                        <div id="sunViewer1.viewport1.sliderMinus" class="sliderMinus">-</div>
+	                    </div>
+	                </div>
+                </div> 
+	        </div>
+	        <div id="clearfooter"></div>
+	    </div>
+	    <!-- end outer div -->
+	    
+	    <!-- Footer -->
+	    <div id="footer">
+            <!-- Time Navigation Buttons -->
+            <div style="float:left;">
+                <button type="button" id="timeBackBtn" value="Previous Image"></button>
+                <button type="button" id="timeForwardBtn" value="Next Image"></button>
+            </div>
+                
+            <!-- Increment -->
+            <div style="float:left;">
+                <span style="font-size:120%; clear:right; margin-bottom:10px;">timestep:</span>
+                <div id="timestepTrack">
                     <div id="timestepHandle">=<span id="timestepValueDisplay">1&nbsp;Day</span></div>
                 </div>
-			</div>
+            </div>
 
             <!-- Links -->
-       		<div style="text-align:right; font-size:120%; height:60px;">
-       		    <a id="about" class="gray" href="#" style="margin-right:20px;">About</a>
-       		    <a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
-       			<a href="mailto:admin@helioviewer.org" alt="Contact Helioviewer.org Web Administrator" class="gray" style="margin-right:20px;">Contact</a>
-       			<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
-       		</div>
-       		
-       		<!-- New Layer Manager UI Testing -->
-       		<div id="layerManagerUI" style='width:100%; height:100%; padding:5px;'></div>
-       		<br />
-		</div>
-			
-	</div>
+            <div style="text-align:right; font-size:120%; height:60px;">
+                <a id="about" class="gray" href="#" style="margin-right:20px;">About</a>
+                <a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
+                <a href="mailto:admin@helioviewer.org" alt="Contact Helioviewer.org Web Administrator" class="gray" style="margin-right:20px;">Contact</a>
+                <a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
+            </div>
+	    </div>
 	</body>
 </html>

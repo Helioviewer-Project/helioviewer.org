@@ -7,38 +7,73 @@
  * (http://gnome-look.org/content/show.php/Mithril?content=64288).
  * Calendar button uses an icon from DBGthekafu's "black-white 2 Vista" icon
  * theme (http://www.gnome-look.org/content/show.php/black-white+2+Vista?content=72618).
+ *
+ * Three-column layout based off of Paul O'Bs design (http://www.pmob.co.uk/temp/3colfixedtest_4.htm).
  */
 
 
 /* HTML ELEMENTS */
-html   {background: url(../images/bg.png);}
-body   {padding: 10px; font-size: 0.7em;}
-h1     {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
-button {cursor:pointer}
+
+            
+html, body {height:100%;}
+html       {background: url(../images/bg.png);}
+h1         {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
+button     {cursor:pointer}
 
 /* MAIN STRUCTURAL COMPONENTS */
-.centered       {display: block; margin-left:auto; margin-right: auto;}
-#outsideBox     {border:0;}
-#pre-header     {height:18px;}
-#header         {width:600px; height:64px; font-size:14px;	padding-bottom:5px;}
-#viewport-inner {position:relative; width:600px; height:600px; border:1px solid black; top:20px;}
+#viewport-inner {width:100%; height:100%; position:relative; border:1px solid black; top:0px;}
 #ui             {width:100%; height:100%; position:absolute; top:0px; left:0px; z-index:2;}
-#footer         {width:600px; height:70px; padding-top:9px;}
-#viewport-outer {
-    background: url(../images/blackGlass/glass_border_light_640x640.png);
-    position:relative;
-    width:640px;
-    height:640px;
-    z-index:1;
+#outsideBox     {margin-left:400px; margin-right:400px; margin-bottom:-72px; min-height:100%;}
+
+#left-col {
+    position:relative;/*ie needs this to show float */
+    width:400px;
+    float:left;
+    margin-left:-399px;/*must be 1px less than width otherwise won't push footer down */
+    z-index:100;
+    left:-1px;
 }
+
+#right-col {
+    position:relative;/*ie needs this to show float */
+    width:400px;
+    float:right;
+    margin-right:-399px;/*must be 1px less than width otherwise won't push footer down */
+    left:1px;
+    color: #000;
+}
+
+#middle-col {min-width:500px;}
+
+#footer {
+    width:100%;
+    clear:both;
+    height:70px;
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+    background-color: #ADDF9D;
+    text-align:center;
+    position:relative;
+}
+#clearfooter{clear:both;height:72px;}/*needed to make room for footer*/
+* > html #clearfooter {float:left;width:100%;}/* ie mac styles */
+
+#left-col-header, #middle-col-header, #right-col-header { height:70px; width: 100%; }
+#left-col-header   {left: -1px}
+#right-col-header  {left: 1px}
+
+/* FORMATING */
+.centered       {display: block; margin-left:auto; margin-right: auto;}
 
 /* VIEWPORT-RELATED */
 .viewport {
-	position: relative;
 	background-color: #000000;
 	color: #FFFFFF;
 	overflow: hidden;
 	z-index: 0;
+	position:relative;
+    width:100%;
+    height:100%;
 }
 
 .surface {
@@ -427,9 +462,21 @@ a.lightGray {
 	font-weight:bold;
 }
 
-/* LayerManager-related */
+/* LayerManager */
+#layerManagerUI    {width:390px; height:100%; padding:0px;}
+#layerManager-Container {
+    background: transparent url(images/blackGlass/transparentBG50.png) repeat scroll 0%;
+    border: 1px solid black;
+    -moz-border-radius:20px;	
+	}
+#layerManager-Menu {
+	width: 100%;
+	height: 95%;
+}
 tr#layerManagerHeaders > th {font-weight:bold; text-decoration: underline;}
 
+
+/* Calendar cell formatting */
 .yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}
 .yui-skin-sam .yui-calendar td.calcell.highlight1 > a {color: red}
 .yui-skin-sam .yui-calendar td.calcell.highlight2     {background-color:white;}
