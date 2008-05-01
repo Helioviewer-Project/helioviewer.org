@@ -19,6 +19,7 @@ html, body {height:100%;}
 html       {background: url(../images/bg.png);}
 h1         {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button     {cursor:pointer}
+strong     {font-weight:bold;}
 
 /* MAIN STRUCTURAL COMPONENTS */
 #viewport-inner {width:100%; height:100%; position:relative; border:1px solid black; top:0px;}
@@ -49,9 +50,6 @@ button     {cursor:pointer}
     width:100%;
     clear:both;
     height:70px;
-    border-top:1px solid #000;
-    border-bottom:1px solid #000;
-    background-color: #ADDF9D;
     text-align:center;
     position:relative;
 }
@@ -463,9 +461,9 @@ a.lightGray {
 }
 
 /* LayerManager */
-#layerManagerUI    {width:390px; height:100%; padding:0px;}
+#layerManagerUI    {width:390px; height:100%; padding:0px; margin-left:5px;}
 #layerManager-Container {
-    background: transparent url(images/blackGlass/transparentBG50.png) repeat scroll 0%;
+    background: transparent url(../images/blackGlass/transparentBG25.png) repeat scroll 0%;
     border: 1px solid black;
     -moz-border-radius:20px;	
 	}
@@ -483,3 +481,19 @@ tr#layerManagerHeaders > th {font-weight:bold; text-decoration: underline;}
 .yui-skin-sam .yui-calendar td.calcell.highlight2 > a {color:green;}
 .yui-skin-sam .yui-calendar td.calcell.highlight3     {background-color:white;}
 .yui-skin-sam .yui-calendar td.calcell.highlight3 > a {color: orange;}
+
+/* updates and to-do list */
+.notes {
+	position:relative;
+	padding:5px;
+    top:10px;
+    left: 10px;
+    width: 360px;
+    background: url(../images/blackGlass/transparentBG50.png) transparent repeat scroll 0%;
+    -moz-border-radius:20px;
+    color: white;
+    height:300px;
+    border: 1px solid black;
+}
+
+ol > li {list-style-type: disc;}
