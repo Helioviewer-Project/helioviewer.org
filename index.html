@@ -148,78 +148,93 @@
         
             <!-- Left Column -->
 	        <div id="left-col">
-	           <div id="left-col-header"><h1>HelioViewer</h1></div>	                                   
-               <div id="layerManagerUI"></div>
+	            <div id="left-col-header"><h1>HelioViewer</h1></div>	                                   
+                <div id="layerManagerUI"></div>
 	        </div>
 	        
 	        <!-- Right Column -->
 	        <div id="right-col">
-	           <div id="right-col-header">
-	               <span id="loading" style="display: none">Loading...</span>
-	           </div>
+	            <div id="right-col-header">
+	                <span id="loading" style="display: none">Loading...</span>
+	            </div>
 	           
-	           <!-- Recent Updates -->
-	           <div class='notes'>
-		           <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">Recent Updates</strong>
-                   <div style="float:left; width:35%; height:100%">
-                    <b>05/01/2008</b>
-                   </div>
-                   <div style="float:right; width:65%; height:100%">
+	            <!-- Recent Updates -->
+	            <div class='notes'>
+		            <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">Recent Updates</strong>
+                    <div style="float:left; width:35%; height:100%">
+                        <b>05/01/2008</b>
+                    </div>
+                    <div style="float:right; width:65%; height:100%">
                         <ol>
                             <li>Initial mouse-wheel support</li><br />
                             <li>Viewport now dynamically adjusts size to fill available space</li>
                         </ol>
-                   </div>
-	           </div>
+                    </div>
+	            </div>
 	           
                 <br /><br />
+                
 	            <!-- TODO -->
-               <div class='notes'>
-                   <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">TODO</strong>
-                   <div style="float:left; width:35%; height:100%">
-                    <b>Layout/CSS</b><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-                    <b>Layer Manager</b>
-                   </div>
-                   <div style="float:right; width:65%; height:100%">
-                        <ol>
-                            <li>Allow for graceful degradation in very small window-sizes.</li><br />
-                            <li>Cross-browser solution for rounded corners.</li><br />
-                            <li>Shrink UI Buttons</li><br />
-                            <li>Find optimal and consistent color scheme for layer manager items</li><br />
-                            <li>Relocate time navigation buttons and size-indicator</li><br />
-                        </ol>
-                        <ol>
-                            <li>Implement move buttons</li><br />
-                            <li>Timestamps</li><br />
-                        </ol>
+                <div class='notes'>
+                    <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">TODO</strong>
+                    
+                    <!--  section one -->
+                    <div style="height:75%">
+                        <div style="float:left; width:35%; height:100%">
+                            <b>Layout/CSS</b>
+                        </div>
+                        <div style="width:100%; height:100%">
+                            <ol>
+                                <li style="text-decoration: line-through">Allow for graceful degradation in very small window-sizes.</li><br />
+                                <li>Cross-browser solution for rounded corners.</li><br />
+                                <li>Shrink UI Buttons</li><br />
+                                <li>Find optimal and consistent color scheme for layer manager items</li><br />
+                                <li>Relocate time navigation buttons and size-indicator</li><br />
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <!-- section two -->
+                    <div style="height:25%">
+                        <div style="float:left; width:35%; height:100%">
+                            <b>Layer Manager</b>
+                        </div>
+                        <div style="width:100%; height:100%">
+                            <ol>
+                                <li>Implement move buttons</li><br />
+                                <li>Timestamps</li><br />
+                            </ol>
+                        </div>
                    </div>
                </div>
-	           
 	        </div>
 	        
 	        <!-- Middle Column -->
 	        <div id="middle-col">
 	            <div id="middle-col-header">
-	                <!-- Message Console -->
-                    <span id="message-console" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
-                    
-                    <!--  Observation Date -->
-                    <span>Observation Date:</span>
-                    <input type="text" id="date" name="date" value=""></input>
-                
-                    <!-- Calendar Widget -->
-                    <button type="button" id="show" title="Show Calendar"></button>
-                    <div id="container">
-                        <div class="hd">Calendar</div>
-                        <div class="bd">
-                            <div id="cal"></div>
-                        </div>
-                    </div>
-                
-                    <!-- Observation Time -->
-                    <span style="margin-left:15px;">Observation Time:</span>
-                    <input type="text" id="time" name="time" value="00:00:00" style="width:80px"></input>
+	               <div style="position: absolute; min-width:500px;">
+		                <!-- Message Console -->
+	                    <span id="message-console" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
+	                    
+	                    <!--  Observation Date -->
+	                    <span>Observation Date:</span>
+	                    <input type="text" id="date" name="date" value=""></input>
+	                
+	                    <!-- Calendar Widget -->
+	                    <button type="button" id="show" title="Show Calendar"></button>
+	                    <div id="container">
+	                        <div class="hd">Calendar</div>
+	                        <div class="bd">
+	                            <div id="cal"></div>
+	                        </div>
+	                    </div>
+	                
+	                    <!-- Observation Time -->
+	                    <span style="margin-left:15px;">Observation Time:</span>
+	                    <input type="text" id="time" name="time" value="00:00:00" style="width:80px"></input>
+	                </div>
                 </div>
+                <!-- End middle-col-header -->
                 
                 <!-- Viewport -->
                 <div id="viewport-outer" style="height:600px; background: transparent url(images/blackGlass/transparentBG25.png) repeat scroll 0%; border:1px solid black; -moz-border-radius:25px;">
