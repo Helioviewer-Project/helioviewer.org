@@ -294,7 +294,7 @@ a.infoBubbleLink:visited {color:white;}
 	color: #FFF;
 	position: absolute;
 	left:-1px;
-	bottom:-1px;
+	top:-1px;
 	font-size: 12px;
 	line-height: 20px;
 	vertical-align: middle;
@@ -388,39 +388,39 @@ a.infoBubbleLink:visited {color:white;}
 
 /* Time Navigation UI Components */
 #timeBackBtn {
-	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_left_shadow.png);
-	width:64px;
-	height:60px;
+	background: url(../images/blackGlass/arrow_left.png);
+	width:28px;
+	height:24px;
 	border:0;
+	z-index:10000;
 }
 
 #timeForwardBtn {
-	background: url(../images/blackGlass/glass_button_rect_34x30px_arrow_right_shadow.png);
-	width:64px;
-	height:60px;
+	background: url(../images/blackGlass/arrow_right.png);
+	width:28px;
+	height:24px;
 	border:0;
+	z-index:10000;
 }
 #timestepTrack {
     margin-top:7px;
     width: 200px;
-    height: 5px;
-    background-color: #E5E5E5;
-    border:1px solid #858585;
+    height: 8px;
+    background: url(../images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }
 #timestepHandle {
+	background: url(../images/blackGlass/glass_slider_handle_horizontal_white.png) transparent scroll 0%;
     cursor: pointer;
-    height:17px;
-    color: white;
-    -moz-border-radius:3px;
-    width: 8px;
-    top:-5px;
-    background-color:#111;
-    opacity:0.75;
-    border:2px solid black;
+    height:21px;
+    width: 12px;
+    top:-6px;
 }
 #timestepValueDisplay {
-    color:#111;
-    top:24px;
+    /*color:#111;*/
+    color:white;
+    top:-24px;
     left:-7px;
     position:relative;
     padding:2px 0 0 1px;

@@ -117,10 +117,10 @@
 
             // Default layers			
 			var markers1 = new MarkerLayerProvider(tiles1, {id: 0, zoomLevel: 12});
+			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', 256, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
 			var bg1 = new TileLayerProvider(tiles1, {id: 1, zoomLevel: 12});
             
 			// UI Components
-            var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', bg1, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...		    
 		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1); //TODO: This and other components shouldn't depend on any one specific layer (e.g. bg1)
 			var calendar = new Calendar('cal', 'date', 'show');
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, 12);
@@ -244,9 +244,23 @@
 		                    <div class="well" id="well1"></div>
 		                    
 		                    <!-- UI COMPONENTS -->
+		                    <!-- Time Navigation Buttons -->
+			                <div style="position: absolute; bottom:10px; left:20px; z-index:10000">
+			                    <button type="button" id="timeBackBtn" value="Previous Image"></button>
+			                    <button type="button" id="timeForwardBtn" value="Next Image"></button>
+			                </div>
+			                
+			                <!-- Time Increment -->
+			                <div style="position: absolute; bottom:15px; left:100px; z-index:1000">
+			                    <!-- <span style="font-size:120%; clear:right; margin-bottom:10px;">timestep:</span>-->
+			                    <div id="timestepTrack">
+			                        <div id="timestepHandle"><span id="timestepValueDisplay">1&nbsp;Day</span></div>
+			                    </div>
+			                </div>
 		                    
+		                    <!-- Coordinates display -->
 		                    <div id="sunViewer1.viewport1.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;"></div>
-		                    <div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="left: 10px; top: 93%"></div>
+		                    <div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="right: 0px; bottom:10px;"></div>
 		                    <div class="viewportControls">
 		                        <span class="centerControl">Center</span>
 		                    </div>
@@ -269,19 +283,8 @@
 	    <div id="footer">
 	       <div style="height:70px; width:420px; float:left;"></div>
 	       <div style="height:70px; width:660px; float:left; font-size:0.85em">
-	            <!-- Time Navigation Buttons -->
-	            <div style="float:left;">
-	                <button type="button" id="timeBackBtn" value="Previous Image"></button>
-	                <button type="button" id="timeForwardBtn" value="Next Image"></button>
-	            </div>
 	                
-	            <!-- Increment -->
-	            <div style="float:left;">
-	                <span style="font-size:120%; clear:right; margin-bottom:10px;">timestep:</span>
-	                <div id="timestepTrack">
-	                    <div id="timestepHandle">=<span id="timestepValueDisplay">1&nbsp;Day</span></div>
-	                </div>
-	            </div>
+
 	
 	            <!-- Links -->
 	            <div style="text-align:right; font-size:120%; height:60px;">
