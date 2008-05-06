@@ -462,38 +462,16 @@ a.lightGray {
 
 /* LayerManager */
 #layerManagerUI    {width:390px; height:100%; padding:0px; margin-left:5px;}
-/*
-#layerManager-Container {
-    background: transparent url(../images/blackGlass/transparentBG25.png) repeat scroll 0%;
-    border: 1px solid black;
-    -moz-border-radius:20px;	
-	}*/
 
 #layerManager-Container {
     border: 1px solid black;
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
 }
-.accordion_toggle {
-	background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;
-	cursor: pointer;
-	color:  white;
-	font-size: 130%;
-}
 
-.accordion_toggle:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
+div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; cursor: pointer; font-size:150%; font-weight:130%; color:white;}
+div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
+div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 
-.accordion_toggle_active {
-    background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;	
-}
-.accordion_content {
-
-}
-
-#layerManager-Menu {
-	width: 100%;
-	height: 95%;
-}
-tr#layerManagerHeaders > th {font-weight:bold; text-decoration: underline;}
 
 
 /* Calendar cell formatting */
