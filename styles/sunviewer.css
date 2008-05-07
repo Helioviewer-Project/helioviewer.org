@@ -24,27 +24,27 @@ strong     {font-weight:bold;}
 /* MAIN STRUCTURAL COMPONENTS */
 #viewport-inner {width:100%; height:100%; position:relative; border:1px solid black; top:0px;}
 #ui             {width:100%; height:100%; position:absolute; top:0px; left:0px; z-index:2;}
-#outsideBox     {margin-left:400px; margin-right:400px; margin-bottom:-72px; min-height:100%;}
+#outsideBox     {margin-left:340px; margin-right:340px; margin-bottom:-72px; min-height:100%;}
 
 #left-col {
     position:relative;/*ie needs this to show float */
-    width:400px;
+    width:340px;
     float:left;
-    margin-left:-399px;/*must be 1px less than width otherwise won't push footer down */
+    margin-left:-339px;/*must be 1px less than width otherwise won't push footer down */
     z-index:100;
     left:-1px;
 }
 
 #right-col {
     position:relative;/*ie needs this to show float */
-    width:400px;
+    width:340px;
     float:right;
-    margin-right:-399px;/*must be 1px less than width otherwise won't push footer down */
+    margin-right:-339px;/*must be 1px less than width otherwise won't push footer down */
     left:1px;
     color: #000;
 }
 
-#middle-col {min-width:300px;}
+#middle-col {min-width:400px;}
 
 #footer {
     width:100%;
@@ -461,14 +461,14 @@ a.lightGray {
 }
 
 /* LayerManager */
-#layerManagerUI    {width:390px; height:100%; padding:0px; margin-left:5px;}
+#layerManagerUI    {width:330px; height:100%; padding:0px; margin-left:5px;}
 
 #layerManager-Container {
     border: 1px solid black;
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
 }
 
-div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; cursor: pointer; font-size:150%; font-weight:130%; color:white;}
+div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; cursor: pointer; font-size:150%; font-weight:700; color:white;}
 div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 
@@ -485,10 +485,11 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 /* updates and to-do list */
 .notes {
 	position:relative;
+	font-size:95%;
 	padding:5px;
     top:10px;
     left: 10px;
-    width: 360px;
+    width: 310px;
     background: url(../images/blackGlass/transparentBG50.png) transparent repeat scroll 0%;
     -moz-border-radius:20px;
     color: white;

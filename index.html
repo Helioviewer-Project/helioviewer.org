@@ -23,9 +23,10 @@
 		<script src="lib/scriptaculous/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
 
 		<!-- jQuery -->
-		<script src="lib/jquery/jquery-pre-1.2.4.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery-ui-personalized-1.5b4.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.accordion.js" type="text/javascript"></script>
+		<script src="lib/jquery/ui/jquery-1.2.4b.js" type="text/javascript"></script>
+		<script src="lib/jquery/ui/ui.core.js" type="text/javascript"></script>
+		<script src="lib/jquery/ui/ui.sortable.js" type="text/javascript"></script>
+		<script src="lib/jquery/ui/ui.accordion.js" type="text/javascript"></script>
 		
 		<!-- date.js -->
 		<script src="lib/utility/date.js" type="text/javascript"></script>
@@ -35,7 +36,6 @@
 		<script src="lib/SunViewer/Debug.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/DomNodeCache.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/AjaxRequestWrapper.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/SunViewerWidget.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/DataNavigator.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/SunImage.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/Filter.js" type="text/javascript"></script>
@@ -53,15 +53,12 @@
 		<script src="lib/SunViewer/MarkerLayerProvider.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/InfoBubble.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/ViewPort.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/LayerConfigurator.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/LayerManager.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/SunCoordsDisplay.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/SizeIndicator.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/SelectByDateMenu.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/ZoomLevelSlider.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/TimeStepSlider.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/ViewportSizeManager.js" type="text/javascript"></script>
 		<script src="lib/SunViewer/SunViewer.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="styles/sunviewer.css">
 		
@@ -108,30 +105,30 @@
             DATE_END_LAS =   "2003-10-31 23:54:00";
 			
 			// Create viewport
-			var viewport1 = new ViewPort('sunViewer1.viewport1', {maxZoomLevel: 20});
+			var viewport = new ViewPort('sunViewer.viewport', {maxZoomLevel: 20});
 			
 			// Create tile containers
-			var tiles1 = new TileContainer(viewport1);
+			var tiles = new TileContainer(viewport);
 			
 			// Create a DataNavigator to keep traverse and keep track of available data near a given time
 			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, 86400);
 
             // Layer Manager & UI
-            var layerManager = new LayerManager(tiles1, 12);
+            var layerManager = new LayerManager(tiles, 12);
             var lm = new LayerManagerUI('layerManagerUI');
 
             // Default layers			
-            var markers1 = new MarkerLayerProvider(tiles1, {id: 0, zoomLevel: 12});
-			var sizeIndicator = new SizeIndicator('sunViewer1.viewport1.sizeIndicator', 256, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
-			var bg1 = new TileLayerProvider(tiles1, {id: 1, zoomLevel: 12});
+            var markers = new MarkerLayerProvider(tiles, {id: 0, zoomLevel: 12});
+			var sizeIndicator = new SizeIndicator('sunViewer.viewport.sizeIndicator', 256, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
+			var bg = new TileLayerProvider(tiles, {id: 1, zoomLevel: 12});
             
             // Render layer manager
             lm.render();
             
 			// UI Components
-		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer1.viewport1.sunCoordsDisplay', bg1); //TODO: This and other components shouldn't depend on any one specific layer (e.g. bg1)
+		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer.viewport.sunCoordsDisplay', bg); //TODO: This and other components shouldn't depend on any one specific layer (e.g. bg)
 			var calendar = new Calendar('cal', 'date', 'show');
-			var zoomLevelSlider = new ZoomLevelSlider('sunViewer1.viewport1.sliderHandle','sunViewer1.viewport1.sliderTrack', 'sunViewer1.viewport1.sliderPlus', 'sunViewer1.viewport1.sliderMinus', 10, 20, 12);
+			var zoomLevelSlider = new ZoomLevelSlider('sunViewer.viewport.sliderHandle','sunViewer.viewport.sliderTrack', 'sunViewer.viewport.sliderPlus', 'sunViewer.viewport.sliderMinus', 10, 20, 12);
 			
 			// Event-handling	
 			$('timeBackBtn').observe('click', function ()    {document.timePrevious.fire();});
@@ -160,28 +157,7 @@
             <!-- Left Column -->
 	        <div id="left-col">
 	            <div id="left-col-header"><h1>HelioViewer</h1></div>	                                   
-                <div id="layerManagerUI">
-                	<!--
-				  	<ul id="layerManager-Container" class="ui-accordion-container">
-						<li>
-							<a href='#'>Test 1</a>
-							<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-							</div>
-				
-						</li>
-						<li>
-							<a href='#'>Test 2</a>
-							<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam <br>
-							</div>
-						</li>
-						<li>
-							<a href='#'>Test 3</a>
-							<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-							</div>
-						</li>
-					</ul>
-					-->
-                </div>
+                <div id="layerManagerUI"></div>
 	        </div>
 	        
 	        <!-- Right Column -->
@@ -191,27 +167,56 @@
 	            </div>
 	           
 	            <!-- Recent Updates -->
-	            <div class='notes' style="height:200px">
-		            <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">Recent Updates</strong>
-                    <div style="float:left; width:35%; height:100%">
-                        <b>05/06/2008</b><br /><br /><br /><br />
-                        <b>05/01/2008</b>
+	            <div class='notes' style="height:420px">
+                    <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">Recent Updates</strong>
+                    
+                    <!--  05/07/2008 -->
+                    <div style="height:220px">
+                        <div style="float:left; width:35%; height:100%">
+                            <b>05/07/2008</b>
+                        </div>
+                        <div style="width:100%; height:100%">
+                            <ol>
+                                <li>Toggling details limited to a link/button ("details")</li><br />
+                                <li>Rest of header now capable of being dragged vertically, which eventually
+                                    will result in the layer being moved up/down accordingly.</li><br />
+                                <li>Will probably switch the two so that there is a specific button for dragging (moving layers) and
+                                    the rest of the header, when pressed, will hide/show the detailed options for the layer.</li>
+                            </ol>
+                        </div>
                     </div>
-                    <div style="float:right; width:65%; height:100%">
-                        <ol>
-                        	<li>Initial implementation of new layer manager UI component.</li>
-                        </ol><br /><br />
-                        <ol>
-                            <li>Initial mouse-wheel support</li><br />
-                            <li>Viewport now dynamically adjusts size to fill available space</li>
-                        </ol>
+                    
+                    <!-- 05/06/2008 -->
+                    <div style="height:60px">
+ 						<div style="float:left; width:35%; height:100%">
+                            <b>05/06/2008</b>
+                        </div>
+                        <div style="width:100%; height:100%">
+                            <ol>
+                        		<li>Initial implementation of new layer manager UI component.</li>
+                        	</ol>
+                    	</div>
+                    </div>
+                    
+                    <!--  05/01/2008 -->
+                    <div style="height:140px">
+                    	<div style="float:left; width: 35%; height: 100%">
+                    		<b>05/01/2008</b>
+                    	</div>
+                    	<div style="width:100%; height:100%">
+	                    	<ol>
+	                        	<li>Initial implementation of new layer manager UI component.</li><br />
+	                            <li>Initial mouse-wheel support</li><br />
+	                            <li>Viewport now dynamically adjusts size to fill available space</li>
+	                        </ol>
+                        </div>                    	
                     </div>
 	            </div>
 	           
-                <br /><br />
+                <br />
                 
 	            <!-- TODO -->
-                <div class='notes' style="height:400px">
+                <div class='notes' style="height:380px">
                     <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">TODO</strong>
                     
                     <!--  section one -->
@@ -277,9 +282,9 @@
                 <!-- Viewport -->
                 <div id="viewport-outer" style="height:600px; background: transparent url(images/blackGlass/transparentBG25.png) repeat scroll 0%; border:1px solid black; -moz-border-radius:25px;">
                     <div id="viewport-inner" class="centered" style="top:3%; width:94%; height:94%">
-	                    <div id="sunViewer1.viewport1" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%">
-		                    <div class="surface" id="surface1"></div>
-		                    <div class="well" id="well1"></div>
+	                    <div id="sunViewer.viewport" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%">
+		                    <div class="surface" id="surface"></div>
+		                    <div class="well" id="well"></div>
 		                    
 		                    <!-- UI COMPONENTS -->
 		                    <!-- Time Navigation Buttons -->
@@ -297,18 +302,18 @@
 			                </div>
 		                    
 		                    <!-- Coordinates display -->
-		                    <div id="sunViewer1.viewport1.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;"></div>
-		                    <div class="sizeIndicator" id="sunViewer1.viewport1.sizeIndicator" style="right: 0px; bottom:10px;"></div>
+		                    <div id="sunViewer.viewport.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;"></div>
+		                    <div class="sizeIndicator" id="sunViewer.viewport.sizeIndicator" style="right: 0px; bottom:10px;"></div>
 		                    <div class="viewportControls">
 		                        <span class="centerControl">Center</span>
 		                    </div>
 		            
 		                    <!--  Zoom-Level Slider -->
-		                    <div id="sunViewer1.viewport1.sliderPlus" class="sliderPlus">+</div>            
-		                    <div id="sunViewer1.viewport1.sliderTrack" class="sliderTrack">
-		                        <div id="sunViewer1.viewport1.sliderHandle" class="sliderHandle"></div>
+		                    <div id="sunViewer.viewport.sliderPlus" class="sliderPlus">+</div>            
+		                    <div id="sunViewer.viewport.sliderTrack" class="sliderTrack">
+		                        <div id="sunViewer.viewport.sliderHandle" class="sliderHandle"></div>
 		                    </div>
-	                        <div id="sunViewer1.viewport1.sliderMinus" class="sliderMinus">-</div>
+	                        <div id="sunViewer.viewport.sliderMinus" class="sliderMinus">-</div>
 	                    </div>
 	                </div>
                 </div> 
