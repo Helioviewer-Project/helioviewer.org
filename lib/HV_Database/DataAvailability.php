@@ -3,8 +3,8 @@
 	header("content-type:application/json");
 	
 	// CONSTANTS
-	define ("DATE_START_EIT", "2003-10-04 03:24:00");
-	define ("DATE_END_EIT",   "2003-10-31 23:48:00");
+	define ("DATE_START_EIT", "2003-01-01 00:00:00");
+	define ("DATE_END_EIT",   "2003-12-26 22:00:00");
 	define ("DATE_START_LAS", "2003-10-01 00:00:00");
 	define ("DATE_END_LAS",   "2003-10-31 23:54:00");
 	

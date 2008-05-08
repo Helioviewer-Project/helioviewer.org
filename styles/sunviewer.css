@@ -468,11 +468,17 @@ a.lightGray {
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
 }
 
-div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; cursor: pointer; font-size:150%; font-weight:700; color:white;}
+div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; width:329px; cursor: pointer; font-size:150%; font-weight:700; color:white;}
 div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 
-
+.layerManagerBtn {
+	width:20px;
+	height:20px;
+	position: relative;
+	top:-6px;
+	border: 0;
+}
 
 /* Calendar cell formatting */
 .yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}

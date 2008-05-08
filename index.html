@@ -99,8 +99,8 @@
 			numberOfMarkerLayers = 0;
 			
 			// Available data ranges
-            DATE_START_EIT = "2003-10-04 03:24:00";
-            DATE_END_EIT =   "2003-10-31 23:48:00";
+            DATE_START_EIT = "2003-01-01 00:00:00";
+            DATE_END_EIT =   "2003-12-26 22:00:00";
             DATE_START_LAS = "2003-10-01 00:00:00";
             DATE_END_LAS =   "2003-10-31 23:54:00";
 			
@@ -137,7 +137,7 @@
 			$('time').observe('change', function ()          {document.observationTimeChange.fire(this.value);});
 
 	        // Set-up timestep slider
-	        var timeStepSlider = new TimeStepSlider ("timestepHandle", "timestepTrack", 7);
+	        var timeStepSlider = new TimeStepSlider ("timestepHandle", "timestepTrack", 8);
 	        
 		}
         // Default to prototype for $() behavior
@@ -167,8 +167,22 @@
 	            </div>
 	           
 	            <!-- Recent Updates -->
-	            <div class='notes' style="height:420px">
+	            <div class='notes' style="height:380px">
                     <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">Recent Updates</strong>
+                    
+                    <!--  05/08/2008 -->
+                    <div style="height:100px">
+                    	<div style="float:left; width: 35%; height: 100%">
+                    		<b>05/08/2008</b>
+                    	</div>
+                    	<div style="width:100%; height:100%">
+	                    	<ol>
+	                        	<li>Fixed issues relating to draggable components</li>
+	                        	<li>Incorporated entire year of EIT data.</li>
+	                        	<li>Dont worry... the icons are just placeholders.</li>	                        
+	                        </ol>
+                        </div>                    	
+                    </div>
                     
                     <!--  05/07/2008 -->
                     <div style="height:220px">
@@ -198,19 +212,7 @@
                     	</div>
                     </div>
                     
-                    <!--  05/01/2008 -->
-                    <div style="height:140px">
-                    	<div style="float:left; width: 35%; height: 100%">
-                    		<b>05/01/2008</b>
-                    	</div>
-                    	<div style="width:100%; height:100%">
-	                    	<ol>
-	                        	<li>Initial implementation of new layer manager UI component.</li><br />
-	                            <li>Initial mouse-wheel support</li><br />
-	                            <li>Viewport now dynamically adjusts size to fill available space</li>
-	                        </ol>
-                        </div>                    	
-                    </div>
+
 	            </div>
 	           
                 <br />
