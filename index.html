@@ -86,6 +86,7 @@
 			document.showOverlayInfo =       new YAHOO.util.CustomEvent("showOverlayInfo");
 			document.sunImageChange =   	 new YAHOO.util.CustomEvent("sunImageChange");
 			document.tileLayerAdded =        new YAHOO.util.CustomEvent("tileLayerAdded");
+			document.timeChange =			 new YAHOO.util.CustomEvent("timeChange");
 			document.timeIncrementChange =	 new YAHOO.util.CustomEvent("timeIncrementChange");
 			document.timeNext =              new YAHOO.util.CustomEvent("timeNext");
 			document.timePrevious =          new YAHOO.util.CustomEvent("timePrevious");
@@ -167,8 +168,35 @@
 	            </div>
 	           
 	            <!-- Recent Updates -->
-	            <div class='notes' style="height:380px">
+	            <div class='notes' style="height:400px">
                     <strong style="text-decoration: underline; font-size:150%; margin-bottom:10px; ">Recent Updates</strong>
+                    
+                    <!--  05/12/2008 -->
+                    <div style="height:200px">
+                        <div style="float:left; width:35%; height:100%">
+                            <b>05/12/2008</b>
+                        </div>
+                        <div style="width:100%; height:100%">
+                            <ol>
+                                <li>Instrument switching.</li><br />
+                                <li>Adding and removing of layers.</li><br />
+                                <li>Some bugs when working with multiple layers. Should be worked out shortly.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <!-- 05/09/2008 -->
+                    <div style="height:80px">
+ 						<div style="float:left; width:35%; height:100%">
+                            <b>05/09/2008</b>
+                        </div>
+                        <div style="width:100%; height:100%">
+                            <ol>
+                        		<li>Timestamps. Yellow if diffs from desired time. (Could turn off this feature, or
+                        		specify a threshold, e.g. 12 hours, past which timestamp should be highlighted.</li>
+                        	</ol>
+                    	</div>
+                    </div>
                     
                     <!--  05/08/2008 -->
                     <div style="height:100px">
@@ -183,36 +211,7 @@
 	                        </ol>
                         </div>                    	
                     </div>
-                    
-                    <!--  05/07/2008 -->
-                    <div style="height:220px">
-                        <div style="float:left; width:35%; height:100%">
-                            <b>05/07/2008</b>
-                        </div>
-                        <div style="width:100%; height:100%">
-                            <ol>
-                                <li>Toggling details limited to a link/button ("details")</li><br />
-                                <li>Rest of header now capable of being dragged vertically, which eventually
-                                    will result in the layer being moved up/down accordingly.</li><br />
-                                <li>Will probably switch the two so that there is a specific button for dragging (moving layers) and
-                                    the rest of the header, when pressed, will hide/show the detailed options for the layer.</li>
-                            </ol>
-                        </div>
-                    </div>
-                    
-                    <!-- 05/06/2008 -->
-                    <div style="height:60px">
- 						<div style="float:left; width:35%; height:100%">
-                            <b>05/06/2008</b>
-                        </div>
-                        <div style="width:100%; height:100%">
-                            <ol>
-                        		<li>Initial implementation of new layer manager UI component.</li>
-                        	</ol>
-                    	</div>
-                    </div>
-                    
-
+                   
 	            </div>
 	           
                 <br />
@@ -245,7 +244,7 @@
                         <div style="width:100%; height:100%">
                             <ol>
                                 <li style="text-decoration: line-through">Implement move buttons</li><br />
-                                <li>Timestamps</li><br />
+                                <li style="text-decoration: line-through">Timestamps</li><br />
                                 <li>Icons to toggle layer visibility, details view, and to remove a layer</li>
                                 <li>If possible, enabling moving of layers via dragging layer manager items</li>
                             </ol>
