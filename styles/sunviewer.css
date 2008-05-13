@@ -15,15 +15,14 @@
 /* HTML ELEMENTS */
 
             
-html, body {height:100%;}
-html       {background: url(../images/bg.png);}
-h1         {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
-button     {cursor:pointer}
-strong     {font-weight:bold;}
+html, body    {height:100%;}
+html          {background: url(../images/bg.png);}
+h1            {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
+button        {cursor:pointer}
+strong    	  {font-weight:bold;}
+input, select {background-color: #F4F4F4;}
 
-/* MAIN STRUCTURAL COMPONENTS */
-#viewport-inner {width:100%; height:100%; position:relative; border:1px solid black; top:0px;}
-#ui             {width:100%; height:100%; position:absolute; top:0px; left:0px; z-index:2;}
+/* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
 #outsideBox     {margin-left:340px; margin-right:340px; margin-bottom:-72px; min-height:100%;}
 
 #left-col {
@@ -60,10 +59,10 @@ strong     {font-weight:bold;}
 #left-col-header   {left: -1px}
 #right-col-header  {left: 1px}
 
-/* FORMATING */
-.centered       {display: block; margin-left:auto; margin-right: auto;}
 
 /* VIEWPORT-RELATED */
+#viewport-inner {width:100%; height:100%; position:relative; border:1px solid black; top:0px;}
+#ui             {width:100%; height:100%; position:absolute; top:0px; left:0px; z-index:2;}
 .viewport {
 	background-color: #000000;
 	color: #FFFFFF;
@@ -321,19 +320,12 @@ a.infoBubbleLink:visited {color:white;}
 }
 
 /* Custom Calendar Styles */
-
-/* Clear calendar's float */
-#container .bd:after {content:".";display:block;clear:left;height:0;visibility:hidden;}
-		
-/* Have calendar squeeze upto bd bounding box */
-#container .bd {padding:0;}
+#container .bd:after {content:".";display:block;clear:left;height:0;visibility:hidden;} /* Clear calendar's float */
+#container .bd {padding:0;} /* Have calendar squeeze upto bd bounding box */
 		
 /* Remove calendar's border and set padding in ems instead of px, so we can specify an width in ems for the container */
 #cal {border:none; padding:1em}
-
-
 #date {width:80px;}
-
 #show {
 	background: url(../images/blackGlass/glass_button_rect_34x30px_calendar.png);
 	width:34px;
@@ -341,6 +333,13 @@ a.infoBubbleLink:visited {color:white;}
 	border:0;
 	vertical-align:50%;
 }
+
+.yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}
+.yui-skin-sam .yui-calendar td.calcell.highlight1 > a {color: red}
+.yui-skin-sam .yui-calendar td.calcell.highlight2     {background-color:white;}
+.yui-skin-sam .yui-calendar td.calcell.highlight2 > a {color:green;}
+.yui-skin-sam .yui-calendar td.calcell.highlight3     {background-color:white;}
+.yui-skin-sam .yui-calendar td.calcell.highlight3 > a {color: orange;}
 
 
 /* Zoom Level Slider Styles */
@@ -460,6 +459,8 @@ a.lightGray {
 	font-weight:bold;
 }
 
+.centered       {display: block; margin-left:auto; margin-right: auto;}
+
 /* LayerManager */
 #layerManagerUI    {width:330px; height:100%; padding:0px; margin-left:5px;}
 
@@ -480,13 +481,7 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 	border: 0;
 }
 
-/* Calendar cell formatting */
-.yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}
-.yui-skin-sam .yui-calendar td.calcell.highlight1 > a {color: red}
-.yui-skin-sam .yui-calendar td.calcell.highlight2     {background-color:white;}
-.yui-skin-sam .yui-calendar td.calcell.highlight2 > a {color:green;}
-.yui-skin-sam .yui-calendar td.calcell.highlight3     {background-color:white;}
-.yui-skin-sam .yui-calendar td.calcell.highlight3 > a {color: orange;}
+
 
 /* updates and to-do list */
 .notes {
