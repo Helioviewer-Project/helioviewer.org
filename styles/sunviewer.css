@@ -481,6 +481,7 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 	border: 0;
 }
 
+#remove-button-*:hover {background: url(images/blackGlass/LayerManagerButton_Remove.png) transparent; margin-left: 10px;}
 
 
 /* updates and to-do list */
