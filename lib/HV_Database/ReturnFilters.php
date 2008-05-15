@@ -40,6 +40,10 @@
 		$time =        date_create($from);
 		$atEnd =       false;
 		$atBegining =  false;
+		
+		// Rename LASCO to LAS for database compatability
+		if ($instrument == "LASCO")
+			$instrument = "LAS";
 	
 		// Check each point in array for the specified query range and see if an exact match was found
 		for ($i = 0; $i < $limit; $i++) {

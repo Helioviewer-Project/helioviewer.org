@@ -1,5 +1,105 @@
 HelioViewer ChangeLog
 
+	05/15/208
+	Version: alpha
+	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)
+	
+	It has been a couple months since I last updated this document and the number of changes to HelioViewer
+	since then is very large. Rather than attempting to document every single change, below are summaries
+	of some of the larger changes to the system.
+	
+	1. LAYOUT
+	   The layout has been changed to a dynamically-sized three column layout[1][2]. There are two fixed-width
+	   columns on each side of the viewport, which itself dynamically sizes to use up the reamining available
+	   space. Because of the limitations of CSS when implementing 100% height containers, a JavaScript
+	   function is called after the window is resized to set the new viewport height.
+	   
+	   Additionally, there is currently a fixed-size footer as well, which will always be displayed at the 
+	   bottom of the screen. It is also possible to have a fixed-height header, but for convenience, the
+	   fixed-height header is merely simulated by having three separate fixed height headers for each column.
+	   The end result of the fixed-size elements surrounding the viewport is that the header, footer, and
+	   side-bar contents will always be displayed on the screen (as long as it not smaller than the sum
+	   of those componenets), and thus the user will not have to scroll at any point to access that
+	   functionality. Furthermore, the size of the viewport is now much larger on most screens since it can
+	   use up any free space available, and does not have to depend on a pre-determined size constraint.
+	   
+	   
+	2. TIME NAVIAGATION
+	   Time navigation system has been overhauled. A additional class called "DataNavigator" has
+       been employed to keep track of the global (user-requested) time, as well as meta-informations
+       for a set of data-points for each filter. Each tile layer added (EIT, LASCO, etc) has it's
+       own "Filter" which contains meta-information for a limited set (e.g. 15 items) of data-points.
+       This meta-information is used to construct the filepaths for tile-data as well as keep track
+       of the actual observation time being displayed (which may differ from the time requested by
+       the user). The DataNavigator manages these filters, and also tells them when to update (e.g.
+       if you reach the end of the data the filter knows about).
+       
+       In addition to the addition of the Data Navigator, the Filter itself, and the php function
+       which handles requesting the desired data has been extended significantly. The Filter is
+       now able to perform fuzzy date-matching (e.g. grabbing the next-closest available date),
+       and can accept any arbitrary time increment. The functionality is still being developed
+       however, and the ability to navigate with any arbitrary time increment is not entirely
+       completed.
+       
+    3. LAYER MANAGER
+       In an effect to move towards an MVC[2] design, it is necessary to separate the user interface
+       (UI) from the underlying functionality. One place where the two have been closely coupled
+       is the LayerManager/LayerConfigurator/SelectByDateMenu classes. The layer manager has been redesigned
+       to meet this goal. Instead of three mixed UI/Functionality classes (LayerManager, LayerConfigurator,
+       and SelectByDateMenu), there are now two classes: LayerManager and LayerManagerUI. Layer manager
+       is simply an extended array which supports basic functions such as "add layer" and "remove layer."
+       LayerManagerUI on the other hand handles building the UI interface itself. It attempts to avoid
+       implementing any of the actual layer manipulation functionality itself, however, and instead
+       relies on events (e.g. "opacityChange") to inform the layer manager when necessary.
+       
+	   The advantage to using an accordion to handle the layer manager is that it reduces the amount
+	   of information that is displayed on the screen at most times significantly, while still providing
+	   the user with that functionality. By only displaying the layer name, timestamp, and several small icons
+	   for each layer, the amount of clutter is reduced greatly.
+
+       The UI implementation relies on jQuery's "Accordion" plugin[3]. jQuery's accordion implementation
+       was chosen because of it's stability and maturity. Initially I attempted to use script.aculo.us's
+       accordion component[4], however, it is currently incompatible with newer releases of Prototype/
+       script.aculo.us[5], and my attempt to debug the accordion to have it work with the newer release failed.
+      
+	   Finally, one more issue related to the layer manager is the ability to move layers up and down.
+	   Prior version of HelioViewer allowed the users to move different layers up and down above one another.
+	   After some discussion, it has been decided that a better option may be to use only opacity to determine
+	   which layers are most visible. By having the opacities of each layer add up to 100%, and the layers placed
+	   on the same z-index, it should be much more straight-forward for the user to decide what they want
+	   to see.
+	
+	4. INTERNET EXPLORER
+	   A number of bugs have been fixed to allow HelioViewer to run properly in Internet Explorer (IE). 
+	   Currently it has been tested and works well in IE7, but not in IE8 beta 1. Because IE8 is still
+	   in an early developmental phase, however, making HV compatible with IE8 is currently not a priority.
+	
+	5. MOUSE-WHEEL SUPPORT
+	   Initial mouse-wheel support has been added. Improvements will include turning off the default behavior
+	   when mouse-wheel is used within the viewport, and responding only once within some amount of time,
+	   regardless of the speed of mouse-wheel movement.
+	   
+	6. EVENT-HANDLING SYSTEM
+	   The "SunViewerWidget" class which has been completely replaced in recent version of HV by YUI
+	   Custom Events. The advantage of this is that the custom events are much easier to use. By initiating
+	   the events at the document level, any class can catch events from any other class without having
+	   to know anything about that class. One caveat worth mentioning is that this means that you have
+	   to be careful _who_ responds when more than one object may be listening, unless you want all objects
+	   to respond. This is handled by passing the id of the object who should respond when the event
+	   is fired, and then checking in the listener to see if the id's match (can pass the listener the
+	   id via curry or a similar method). In many cases however all objects should respond and this is not
+	   an issue.
+       
+    For more information, see:
+       [1] http://www.pmob.co.uk/temp/3colfixedtest_4.htm
+       [2] http://css-discuss.incutio.com/?page=ThreeColumnLayouts
+       [3] http://en.wikipedia.org/wiki/Model-view-controller
+       [4] http://docs.jquery.com/UI/Accordion
+       [5] http://stickmanlabs.com/accordion/
+       [6] http://discuss.stickmanlabs.com/forums/7/topics/430
+	
+	
+	
     03/31/2008
 	Version: alpha
 	By: Keith Hughitt (hughitt1@grace.nascom.nasa.gov)

@@ -134,13 +134,13 @@
 			var zoomLevelSlider = new ZoomLevelSlider('sunViewer.viewport.sliderHandle','sunViewer.viewport.sliderTrack', 'sunViewer.viewport.sliderPlus', 'sunViewer.viewport.sliderMinus', 10, 20, 12);
 			
 			// Event-handling	
-			$('timeBackBtn').observe('click', function ()    {document.timePrevious.fire();});
-			$('timeForwardBtn').observe('click', function () {document.timeNext.fire();});
-			$('date').observe('change', function ()          {document.observationDateChange.fire(this.value);});
-			$('time').observe('change', function ()          {document.observationTimeChange.fire(this.value);});
+			$('timeBackBtn').observe('click', function ()    {document.timePrevious.fire(); });
+			$('timeForwardBtn').observe('click', function () {document.timeNext.fire(); });
+			$('date').observe('change', function ()          {document.observationDateChange.fire(this.value); });
+			$('time').observe('change', function ()          {document.observationTimeChange.fire(this.value); });
 
 	        // Set-up timestep slider
-	        var timeStepSlider = new TimeStepSlider ("timestepHandle", "timestepTrack", 8);
+	        var timeStepSlider = new TimeStepSlider("timestepHandle", "timestepTrack", 8);
 	        
 		}
         // Default to prototype for $() behavior

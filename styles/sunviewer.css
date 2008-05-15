@@ -476,6 +476,7 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 .layerManagerBtn {
 	width:20px;
 	height:20px;
+	margin-left: 10px;
 	position: relative;
 	top:-6px;
 	border: 0;
@@ -483,6 +484,7 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 
 #remove-button-*:hover {background: url(images/blackGlass/LayerManagerButton_Remove.png) transparent; margin-left: 10px;}
 
+.timestamp {font-size:0.6em; margin-left: 0px; color:white;}
 
 /* updates and to-do list */
 .notes {
