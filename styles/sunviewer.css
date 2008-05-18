@@ -469,7 +469,7 @@ a.lightGray {
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
 }
 
-div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; width:329px; cursor: pointer; font-size:140%; font-weight:700; color:white;}
+div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; cursor: pointer; font-size:140%; font-weight:700; color:white;}
 div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 
