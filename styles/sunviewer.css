@@ -71,6 +71,7 @@ input, select {background-color: #F4F4F4;}
 	position:relative;
     width:100%;
     height:100%;
+    cursor: pointer;
 }
 
 .surface {
@@ -83,6 +84,13 @@ input, select {background-color: #F4F4F4;}
 	opacity: .5; */
 	/*background: url(../gfx/center.gif) no-repeat center center;*/
 	_background: url(../gfx/blank.gif) no-repeat center center; /* NOTE: required for IE to"see" the surface */
+}
+
+.movingContainer /* this is what actually moves */ {
+  position: absolute;
+  z-index: 0;
+  left: 0px;
+  top: 0px;
 }
 
 .well, .tileContainer {
@@ -345,8 +353,8 @@ a.infoBubbleLink:visited {color:white;}
 /* Zoom Level Slider Styles */
 .sliderTrack {
 	position: absolute;
-	left:26px;
-	top:63px;
+	left:10px;
+	top:24px;
 	height:209px;
 	width:6px;
 	background: url(../images/blackGlass/glass_slider_trough_vertical_white.png) repeat-y;
@@ -372,7 +380,7 @@ a.infoBubbleLink:visited {color:white;}
 	background: url(../images/blackGlass/glass_button_square_24px_white.png);
 	position: absolute;
 	color:white;
-	left:16px;
+	left:0px;
 	cursor:pointer;
 	width:24px;
 	height:24px;
@@ -382,8 +390,8 @@ a.infoBubbleLink:visited {color:white;}
 	z-index:10000;
 }
 
-.sliderMinus {top:272px;}
-.sliderPlus  {top:39px;}
+.sliderMinus {top:233px;}
+.sliderPlus  {top:0px;}
 
 /* Time Navigation UI Components */
 #timeBackBtn {
