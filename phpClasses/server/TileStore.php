@@ -25,7 +25,7 @@ class TileStore {
 
   function getTile($map, $zoom, $x, $y) {
     $query = "SELECT t1.tile AS tile, t1.imgSunRatio AS imgSunRatio, t2.instrument AS instrument FROM $this->tilestable AS t1, $this->mapstable AS t2 WHERE t2.map='$map' AND t1.map='$map' AND t1.zoom=$zoom AND t1.x=$x AND t1.y=$y";
-//echo "query: $query";
+	//echo "query: $query";
     $result = $this->dbConnection->query($query);
     if (mysql_num_rows($result) > 0) {
       $row = mysql_fetch_array($result);

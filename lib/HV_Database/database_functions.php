@@ -1,7 +1,7 @@
 <?php
 
 	
-	$Database = mysql_connect ("localhost", "root", "password")
+	$Database = mysql_connect ("localhost", "helioviewer", "helioviewer")
 		or die ('I cannot connect to the database because: ' . mysql_error());
 
 	mysql_select_db ("esahelio_svdb0");	
