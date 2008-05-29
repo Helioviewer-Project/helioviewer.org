@@ -19,6 +19,7 @@ switch ($action) {
       $src["$field.$queryForField"] = $_GET[$field];
     }
     echo json_encode($imgIndex->getClosestImage($_GET['timestamp'], $src));
+    //$imgIndex->getClosestImage($_GET['timestamp'], $src);
     break;
 }
 ?>

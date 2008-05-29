@@ -1,9 +1,9 @@
 <?php
   class DbConnection {
     //private $user = 'root';
-    private $user = "esahelio_patrick";
+    private $user = "helioviewer";
     //private $password = '';
-    private $password = "changeme02";
+    private $password = "helioviewer";
     private $host = "localhost";
     private $db = "esahelio_svdb0";
   
