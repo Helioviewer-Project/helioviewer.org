@@ -2,14 +2,13 @@
 class ImgIndex {
   private $dbConnection;
 
-  //const SRC_IDENTIFYING_FIELDS = array('observatory', 'instrument', 'detector', 'measurement');
-
   public function __construct($dbConnection) {
     $this->dbConnection = $dbConnection;
   }
 
-  public function getMap($fields) {
-    $query = "SELECT map FROM maps WHERE";
+	/* needs to be changed to the new DB scheme
+  public function getImageId($fields) {
+    $query = "SELECT imageId FROM images WHERE";
     $i = 0;
     foreach($fields as $key => $value) {
       if ($i>0) $query .= " AND";
@@ -21,18 +20,36 @@ class ImgIndex {
     $row = mysql_fetch_array($result);
     return $row['map'];
   }
+  */
 
-  public function getProperties($map) {
-    $query = "SELECT * FROM maps WHERE map=$map";
+  public function getProperties($imageId) {
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    						detector.name AS detector, instrument.name AS instrument, observatory.name AS observatory, 
+    						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp
+    					FROM image
+							LEFT JOIN measurement on measurementId = measurement.id
+							LEFT JOIN measurementType on measurementTypeId = measurementType.id
+							LEFT JOIN detector on detectorId = detector.id
+							LEFT JOIN instrument on instrumentId = instrument.id
+							LEFT JOIN observatory on observatoryId = observatory.id 
+							WHERE image.id=$imageId";
     $result = $this->dbConnection->query($query);
     return mysql_fetch_array($result, MYSQL_ASSOC);
   }
 
-  public function getClosestMap($timestamp, $src) {
-    $query = "SELECT *, UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp,
-                UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp AS timediff,
-                ABS(UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp) AS timediffAbs 
-              FROM maps WHERE";
+  public function getClosestImage($timestamp, $src) {
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    						detector.name AS detector, instrument.name AS instrument, observatory.name AS observatory, 
+    						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp,
+								UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp AS timediff,
+								ABS(UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp) AS timediffAbs 
+							FROM image
+							LEFT JOIN measurement on measurementId = measurement.id
+							LEFT JOIN measurementType on measurementTypeId = measurementType.id
+							LEFT JOIN detector on detectorId = detector.id
+							LEFT JOIN instrument on instrumentId = instrument.id
+							LEFT JOIN observatory on observatoryId = observatory.id
+              WHERE";
     $i=0;
     foreach($src as $key => $value) {
       if ($i>0) $query .= " AND";
@@ -46,12 +63,15 @@ class ImgIndex {
     return mysql_fetch_array($result, MYSQL_ASSOC);
   }
 
-  public function getDefaultMap() {
+/*
+  public function getDefaultImage() {
     $query = "SELECT map FROM maps WHERE instrument='EIT' ORDER BY timestamp DESC LIMIT 0,1";
     $result = $this->dbConnection->query($query);
     $row = mysql_fetch_array($result);
     return $row['map'];
   }
-  // ToDo: Search function
+*/
+	
+	// ToDo: Search function
 }
 ?>

@@ -1,8 +1,8 @@
 <?php
 class TileStore {
   private $dbConnection;
-  private $tilestable = "tilestore";
-  private $mapstable = "maps";
+  private $tilestable = "tile";
+  //private $mapstable = "maps";
   private $noImage = "images/transparent.gif";
 
   const CUT_OUT_ONE_TILE_IMAGES = false;
@@ -12,9 +12,13 @@ class TileStore {
     $this->dbConnection = $dbConnection;
   }
 
-  function getNumTiles($map, $zoom) {
-    $query = "SELECT COUNT(tile) AS numTiles FROM $this->tilestable WHERE map='$map' AND zoom=$zoom";
+  function getNumTiles($imageId, $zoom) {
+    $query = "SELECT COUNT(tile) AS numTiles FROM $this->tilestable WHERE imageId=$imageId AND zoom=$zoom";
     $result = $this->dbConnection->query($query);
+		if (!$result) {
+      echo "$query - failed\n";
+      die (mysql_error());
+    }
     if (mysql_num_rows($result) > 0) {
       $row = mysql_fetch_array($result);
       return $row['numTiles'];    
@@ -23,10 +27,15 @@ class TileStore {
     }
   }
 
-  function getTile($map, $zoom, $x, $y) {
-    $query = "SELECT t1.tile AS tile, t1.imgSunRatio AS imgSunRatio, t2.instrument AS instrument FROM $this->tilestable AS t1, $this->mapstable AS t2 WHERE t2.map='$map' AND t1.map='$map' AND t1.zoom=$zoom AND t1.x=$x AND t1.y=$y";
-	//echo "query: $query";
+  function getTile($imageId, $zoom, $x, $y) {
+    //$query = "SELECT t1.tile AS tile, t1.imgSunRatio AS imgSunRatio, t2.instrument AS instrument FROM $this->tilestable AS t1, $this->mapstable AS t2 WHERE t2.map='$map' AND t1.map='$map' AND t1.zoom=$zoom AND t1.x=$x AND t1.y=$y";
+		$query = "SELECT tile FROM tile WHERE imageId=$imageId AND zoom=$zoom AND x=$x AND y=$y";
+//echo "query: $query";
     $result = $this->dbConnection->query($query);
+		if (!$result) {
+      echo "$query - failed\n";
+      die (mysql_error());
+    }
     if (mysql_num_rows($result) > 0) {
       $row = mysql_fetch_array($result);
       return $row;
@@ -36,7 +45,7 @@ class TileStore {
     }
   }
   
-  function outputTile($map, $zoom, $x, $y) {
+  function outputTile($imageId, $zoom, $x, $y) {
     // Cache-Lebensdauer (in Minuten)
     $dauer = 60;
     $exp_gmt = gmdate("D, d M Y H:i:s", time() + $dauer * 60) ." GMT";
@@ -45,9 +54,9 @@ class TileStore {
     // Speziell für MSIE 5
     header("Cache-Control: pre-check=" . $dauer * 60, FALSE);
   
-    $numTiles = $this->getNumTiles($map, $zoom);
+    $numTiles = $this->getNumTiles($imageId, $zoom);
     if ($numTiles == 1 && ($x == 0 || $x == -1) && ($y == 0 || $y == -1)) {
-      $row = $this->getTile($map, $zoom, 0, 0);
+      $row = $this->getTile($imageId, $zoom, 0, 0);
       $mask = self::CUT_OUT_ONE_TILE_IMAGES && ($row['instrument'] == 'EIT');
       $orgImg = imagecreatefromstring($row['tile']);
       $width = imagesx($orgImg);
@@ -79,7 +88,7 @@ class TileStore {
       }
     } else if ($numTiles > 1) {
       $offset = max(1, (int)(sqrt($numTiles)/2));
-      $row = $this->getTile($map, $zoom, $x + $offset, $y + $offset);
+      $row = $this->getTile($imageId, $zoom, $x + $offset, $y + $offset);
       header('Content-type: image/jpeg');
       if ($row) echo $row['tile'];
       else readfile($this->noImage);
