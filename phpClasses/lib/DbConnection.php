@@ -1,9 +1,9 @@
 <?php
   class DbConnection {
     //private $user = 'root';
-    private $user = "helioviewer";
+    private $user = "esahelio_patrick";
     //private $password = '';
-    private $password = "helioviewer";
+    private $password = "changeme02";
     private $host = "localhost";
     private $db = "esahelio_patrick";
   
@@ -22,7 +22,9 @@
     }
     
     public function query($query) {
-      return mysql_query($query);
+      $result = mysql_query($query);
+      if (!$result)	die("Error executing query:<br>\n$query <br>\n " . mysql_error());
+      return $result;
     }
   }
 ?>
