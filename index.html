@@ -32,93 +32,40 @@
 		<script src="lib/utility/date.js" type="text/javascript"></script>
 				
 		<!-- HelioViewer-Specific -->
-        <script src="lib/SunViewer/classes.js"></script>
-		<script src="lib/SunViewer/LoadingIndicator.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/Debug.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/DomNodeCache.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/AjaxRequestWrapper.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/DataNavigator.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/Filter.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/LayerManagerUI.js" type="text/javascript"></script>
-		<!--<script src="lib/SunViewer/LayerManager.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/SunCoordsDisplay.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/SizeIndicator.js" type="text/javascript"></script>-->
-		<script src="lib/SunViewer/Calendar.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/ZoomLevelSlider.js" type="text/javascript"></script>
-		<script src="lib/SunViewer/TimeStepSlider.js" type="text/javascript"></script>
-        <script src="lib/SunViewer/helioviewer.js"></script>
-		<link rel="stylesheet" type="text/css" href="styles/sunviewer.css">
+        <script src="lib/helioviewer/UIElement.js"></script>
+        <script src="lib/helioviewer/OutputReciever.js"></script>
+        <script src="lib/helioviewer/Viewport.js"></script>
+        <script src="lib/helioviewer/ViewportHandlers.js"></script>
+        <script src="lib/helioviewer/Counter.js"></script>
+        <script src="lib/helioviewer/Layer.js"></script>
+        <script src="lib/helioviewer/UrlTileLayer.js"></script>
+        <script src="lib/helioviewer/ZoomControl.js"></script>
+        <script src="lib/helioviewer/TimeBrowserControl.js"></script>
+        <script src="lib/helioviewer/HelperFunctions.js"></script>
+		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/Debug.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/DomNodeCache.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/AjaxRequestWrapper.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/DataNavigator.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/Filter.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/LayerManagerUI.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/LayerManagerUIMenuEntry.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/ZoomLevelSlider.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/TimeStepSlider.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/Helioviewer.js"></script>
+		<link rel="stylesheet" type="text/css" href="styles/main.css">
+		<!--<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/SunCoordsDisplay.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/SizeIndicator.js" type="text/javascript"></script>-->
 		
 		<script type="text/javascript">
-
-		function main() {
-			// Custom Events
-      		document.addLayer =              new YAHOO.util.CustomEvent("addLayer");
-			document.dayChange =             new YAHOO.util.CustomEvent("dayChange");
-			document.instrumentChange =      new YAHOO.util.CustomEvent("instrumentChange");
-			document.layerAdded =            new YAHOO.util.CustomEvent("layerAdded");
-			document.layerExchange =    	 new YAHOO.util.CustomEvent("layerExchange");
-			document.layerPrepared =         new YAHOO.util.CustomEvent("layerPrepared");
-			document.layerRemoved =          new YAHOO.util.CustomEvent("layerRemoved");
-			document.monthChange =           new YAHOO.util.CustomEvent("monthChange");
-			document.moveLayer =             new YAHOO.util.CustomEvent("moveLayer");
-			document.newOverlay =            new YAHOO.util.CustomEvent("newOverlay");
-			document.observationDateChange = new YAHOO.util.CustomEvent("observationDateChange");
-			document.observationTimeChange = new YAHOO.util.CustomEvent("observationTimeChange");
-			document.opacityChange =		 new YAHOO.util.CustomEvent("opacityChange");
-			document.removeLayer =           new YAHOO.util.CustomEvent("removeLayer");
-			document.showOverlayInfo =       new YAHOO.util.CustomEvent("showOverlayInfo");
-			document.sunImageChange =   	 new YAHOO.util.CustomEvent("sunImageChange");
-			document.tileLayerAdded =        new YAHOO.util.CustomEvent("tileLayerAdded");
-			document.timeChange =			 new YAHOO.util.CustomEvent("timeChange");
-			document.timeIncrementChange =	 new YAHOO.util.CustomEvent("timeIncrementChange");
-			document.timeNext =              new YAHOO.util.CustomEvent("timeNext");
-			document.timePrevious =          new YAHOO.util.CustomEvent("timePrevious");
-			document.toggleLayerEnabled =    new YAHOO.util.CustomEvent("toggleLayerEnabled");
-			document.updateTiles =           new YAHOO.util.CustomEvent("updateTiles");
-			document.wavelengthChange =      new YAHOO.util.CustomEvent("wavelengthChange");
-			document.zoomLevelChange =       new YAHOO.util.CustomEvent("zoomLevelChange");
-			
-			// Available data ranges
-            DATE_START_EIT = "2003-01-01 00:00:00";
-            DATE_END_EIT =   "2003-12-26 22:00:00";
-            DATE_START_LAS = "2003-10-01 00:00:00";
-            DATE_END_LAS =   "2003-10-31 23:54:00";
-			
-			// Create a DataNavigator to keep traverse and keep track of available data near a given time
-			var dataNavigator = new DataNavigator(2003, 10, 5, 0, 0, 0, 86400);
-
-            // Default layers			
-//			var sizeIndicator = new SizeIndicator('sunViewer.viewport.sizeIndicator', 256, {zoomLevel: 12}); //Currently needs to hear a 'sunImageChange' to tell it to load initially...
-            
-            // Render layer manager
- //           lm.render();
-            
-			// UI Components
-//		    var sunCoordsDisplay = new SunCoordsDisplay('sunViewer.viewport.sunCoordsDisplay', bg); //TODO: This and other components shouldn't depend on any one specific layer (e.g. bg)
-//			var calendar = new Calendar('cal', 'date', 'show');
-//			var zoomLevelSlider = new ZoomLevelSlider('sunViewer.viewport.sliderHandle','sunViewer.viewport.sliderTrack', 'sunViewer.viewport.sliderPlus', 'sunViewer.viewport.sliderMinus', 10, 20, 12);
-			
-			// Event-handling	
-			$('timeBackBtn').observe('click', function ()    {document.timePrevious.fire(); });
-			$('timeForwardBtn').observe('click', function () {document.timeNext.fire(); });
-//			$('date').observe('change', function ()          {document.observationDateChange.fire(this.value); });
-//			$('time').observe('change', function ()          {document.observationTimeChange.fire(this.value); });
-
-	        // Set-up timestep slider
-//	        var timeStepSlider = new TimeStepSlider("timestepHandle", "timestepTrack", 8);
-	        
-		}
-		
-        // Default to prototype for $() behavior
         jQuery.noConflict();
-
-		//document.observe('dom:loaded', main);
 
         Event.observe(window, 'load', function() {
         	var helioviewer = new Helioviewer({ viewportId: 'helioviewer.viewport' });
-	        var lm = new LayerManagerUI(helioviewer.viewports[0], 'layerManagerUI');
-     	    lm.render();
+        	var lm = new LayerManagerUI(helioviewer.viewports[0], 'layerManagerUI');
+        	lm.render();
 	    });
 		</script>
 		
@@ -285,15 +232,6 @@
 			                        <div id="timestepHandle"><span id="timestepValueDisplay">1&nbsp;Day</span></div>
 			                    </div>
 			                </div>
-		                    
-		                    <!-- Coordinates display -->
-<!--
-                                    <div id="sunViewer.viewport.sunCoordsDisplay" class="sunCoordsDisplay" style="position: absolute; right: 10px; top: 10px;"></div>
-		                    <div class="sizeIndicator" id="sunViewer.viewport.sizeIndicator" style="right: 0px; bottom:10px;"></div>
-		                    <div class="viewportControls">
-		                        <span class="centerControl">Center</span>
-		                    </div>
--->
 
                             <!--  Zoom-Level Slider -->
                             <div id="zoomControl" style="position: absolute; left: 16px; top:39px">
