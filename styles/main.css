@@ -9,6 +9,18 @@
  * theme (http://www.gnome-look.org/content/show.php/black-white+2+Vista?content=72618).
  *
  * Three-column layout based off of Paul O'Bs design (http://www.pmob.co.uk/temp/3colfixedtest_4.htm).
+ *
+ * Adjusting size of layout elements:
+ * 1. Adjusting size of left & right sidebars
+ *    To adjust the size of either sidebar, add/subtract the desired amount from the width and margin-left/right
+ *    properties of [#outsideBox, #leftCol, #rightCol, and layerManagerUI].
+ *
+ * 2. Adjusting the size of the header and footer elements
+ *    The header is currently broken up and set individually in each of the three columns. The footer, however,
+ *    is stored as a single continuous div. In addition to the height's of each relevent element in the stylesheet,
+ *    for the viewport auto-resizing to function properly, you must also set the "headerAndFooterHeight" property
+ *    of the Viewport object to the correct size: middle-col-header.height + footer.height + 4.
+ *
  */
 
 
@@ -23,27 +35,27 @@ strong    	  {font-weight:bold;}
 input, select {background-color: #F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
-#outsideBox     {margin-left:340px; margin-right:340px; margin-bottom:-72px; min-height:100%;}
+#outsideBox     {margin-left:240px; margin-right:240px; margin-bottom:-72px; min-height:100%;}
 
 #left-col {
     position:relative;/*ie needs this to show float */
-    width:340px;
+    width:240px;
     float:left;
-    margin-left:-339px;/*must be 1px less than width otherwise won't push footer down */
+    margin-left:-239px;/*must be 1px less than width otherwise won't push footer down */
     z-index:100;
     left:-1px;
 }
 
 #right-col {
     position:relative;/*ie needs this to show float */
-    width:340px;
+    width:240px;
     float:right;
-    margin-right:-339px;/*must be 1px less than width otherwise won't push footer down */
+    margin-right:-239px;/*must be 1px less than width otherwise won't push footer down */
     left:1px;
     color: #000;
 }
 
-#middle-col {min-width:400px;}
+#middle-col {min-width:300px;}
 
 #footer {
     width:100%;
@@ -471,44 +483,42 @@ a.lightGray {
 .centered       {display: block; margin-left:auto; margin-right: auto;}
 
 /* LayerManager */
-#layerManagerUI    {width:330px; height:100%; padding:0px; margin-left:5px;}
+#layerManagerUI    {width:230px; height:100%; padding:0px; margin-left:5px;}
 
 #layerManager-Container {
     border: 1px solid black;
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
 }
 
-div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; cursor: pointer; font-size:140%; font-weight:700; color:white;}
+div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; font-size:0.9em; font-weight: bolder; cursor: pointer; color:white;}
 div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 
 .layerManagerBtn {
 	width:20px;
-	height:20px;
-	margin-left: 10px;
+	height:12px;
+	vertical-align: middle;
 	position: relative;
-	top:-6px;
 	border: 0;
 }
 /* Styles for buttons moved to stylesheet since some browsers insert extra quotes around image urls */ 	
 .layerManagerBtn.visible { 	
 	background: url(../images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent; 	
-	width:24px; 	
-	height:14px; 	
+	margin-left: 2px;
 } 	
 .layerManagerBtn.hidden { 	
 	background: url(../images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent; 	
-	width:24px; 	
-	height:14px; 	
+	margin-left: 2px;
 } 	
 .layerManagerBtn.remove { 	
-	background: url(../images/blackGlass/LayerManagerButton_Remove_Shadow.png) transparent; 	
-    margin-right:8px; 	
+	background: url(../images/blackGlass/LayerManagerButton_Remove.png) transparent;
+    margin-right:4px;
+    height: 14px; 	
 } 	
 
-#remove-button-*:hover {background: url(images/blackGlass/LayerManagerButton_Remove.png) transparent; margin-left: 10px;}
+/*.layerManagerBtn.remove:hover {background: url(../images/blackGlass/LayerManagerButton_Remove_Shadow.png) transparent; margin-left: 2px;}*/
 
-.timestamp {font-size:0.6em; margin-left: 0px; color:white;}
+.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}
 
 /* updates and to-do list */
 .notes {
@@ -517,7 +527,7 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 	padding:5px;
     top:10px;
     left: 10px;
-    width: 310px;
+    width: 190px;
     background: url(../images/blackGlass/transparentBG50.png) transparent repeat scroll 0%;
     -moz-border-radius:20px;
     color: white;
