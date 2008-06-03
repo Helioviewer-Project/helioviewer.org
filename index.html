@@ -63,7 +63,7 @@
         jQuery.noConflict();
 
         Event.observe(window, 'load', function() {
-        	var helioviewer = new Helioviewer({ viewportId: 'helioviewer.viewport' });
+        	var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport' });
         	var lm = new LayerManagerUI(helioviewer.viewports[0], 'layerManagerUI');
         	lm.render();
 	    });
@@ -92,34 +92,37 @@
 	        <!-- Middle Column -->
 	        <div id="middle-col">
 	            <div id="middle-col-header">
-	               <div style="position: absolute; min-width:500px;">
+	               <div style="position: absolute; min-width:550px; top:14px;">
+
 		                <!-- Message Console -->
 	                    <span id="message-console" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
-	                    
-	                    <!--  Observation Date -->
-	                    <span>Observation Date:</span>
-	                    <input type="text" id="date" name="date" value="">
-	                
-	                    <!-- Calendar Widget -->
-	                    <button type="button" id="show" title="Show Calendar"></button>
-	                    <div id="container">
-	                        <div class="hd">Calendar</div>
-	                        <div class="bd">
-	                            <div id="cal"></div>
-	                        </div>
-	                    </div>
-	                
-	                    <!-- Observation Time -->
-	                    <span style="margin-left:15px;">Observation Time:</span>
-	                    <input type="text" id="time" name="time" value="00:00:00" style="width:80px">
+
+   	               		<div style="font-size: 0.9em;">
+		                    <!--  Observation Date -->
+		                    <span>Observation Date:</span>
+		                    <input type="text" id="date" name="date" value="">
+		                
+		                    <!-- Calendar Widget -->
+		                    <button type="button" id="show" title="Show Calendar"></button>
+		                    <div id="container">
+		                        <div class="hd">Calendar</div>
+		                        <div class="bd">
+		                            <div id="cal"></div>
+		                        </div>
+		                    </div>
+	
+		                    <!-- Observation Time -->
+		                    <span style="margin-left:15px;">Observation Time:</span>
+		                    <input type="text" id="time" name="time" value="00:00:00" style="width:80px">
+   	                	</div>
 	                </div>
                 </div>
                 <!-- End middle-col-header -->
                 
                 <!-- Viewport -->
-                <div id="viewport-outer">
-                    <div id="viewport-inner" class="centered" style="top:3%; width:94%; height:94%">
-	                    <div id="helioviewer.viewport" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%"></div>
+                <div id="helioviewer-viewport-container-outer">
+                    <div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:94%; height:94%">
+	                    <div id="helioviewer-viewport" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%"></div>
 		                    
 		                    
 		                    <!-- UI COMPONENTS -->

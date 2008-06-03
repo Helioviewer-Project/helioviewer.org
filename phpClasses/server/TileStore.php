@@ -46,13 +46,13 @@ class TileStore {
   }
   
   function outputTile($imageId, $zoom, $x, $y) {
-    // Cache-Lebensdauer (in Minuten)
-    $dauer = 60;
-    $exp_gmt = gmdate("D, d M Y H:i:s", time() + $dauer * 60) ." GMT";
+    // Cache-Lifetime (in minutes)
+    $lifetime = 60;
+    $exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
     header("Expires: " . $exp_gmt);
-    header("Cache-Control: public, max-age=" . $dauer * 60);
-    // Speziell für MSIE 5
-    header("Cache-Control: pre-check=" . $dauer * 60, FALSE);
+    header("Cache-Control: public, max-age=" . $lifetime * 60);
+    // Special header for MSIE 5
+    header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
   
     $numTiles = $this->getNumTiles($imageId, $zoom);
     if ($numTiles == 1 && ($x == 0 || $x == -1) && ($y == 0 || $y == -1)) {

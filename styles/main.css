@@ -3,7 +3,7 @@
  *
  * blackGlass design by Keith, 2008
  *
- * Background tile from Jawbreaker's excellent "Mitril" theme for GTK 2.x.
+ * Background tile from Jawbreaker's Mitril" theme for GTK 2.x.
  * (http://gnome-look.org/content/show.php/Mithril?content=64288).
  * Calendar button uses an icon from DBGthekafu's "black-white 2 Vista" icon
  * theme (http://www.gnome-look.org/content/show.php/black-white+2+Vista?content=72618).
@@ -17,10 +17,7 @@
  *
  * 2. Adjusting the size of the header and footer elements
  *    The header is currently broken up and set individually in each of the three columns. The footer, however,
- *    is stored as a single continuous div. In addition to the height's of each relevent element in the stylesheet,
- *    for the viewport auto-resizing to function properly, you must also set the "headerAndFooterHeight" property
- *    of the Viewport object to the correct size: middle-col-header.height + footer.height + 4.
- *
+ *    is stored as a single continuous div.
  */
 
 
@@ -73,9 +70,9 @@ input, select {background-color: #F4F4F4;}
 
 
 /* VIEWPORT-RELATED */
-#viewport-inner {width:100%; height:100%; position:relative; border:1px solid black; top:0px;}
-#viewport-outer {height:600px; background: transparent url(../images/blackGlass/transparentBG25.png) repeat scroll 0%; border:1px solid black; -moz-border-radius:25px;}
-#ui             {width:100%; height:100%; position:absolute; top:0px; left:0px; z-index:2;}
+#helioviewer-viewport-container-inner {width:100%; height:100%; position: relative; border: 1px solid black; top: 0px;}
+#helioviewer-viewport-container-outer {height: 600px; background: transparent url(../images/blackGlass/transparentBG25.png) repeat scroll 0%; border:1px solid black; -moz-border-radius:25px;}
+#ui {width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; z-index: 2;}
 .viewport {
 	background-color: #000000;
 	color: #FFFFFF;
@@ -348,11 +345,12 @@ a.infoBubbleLink:visited {color:white;}
 #cal {border:none; padding:1em}
 #date {width:80px;}
 #show {
-	background: url(../images/blackGlass/glass_button_rect_34x30px_calendar.png);
-	width:34px;
-	height:30px;
+	background: url(../images/blackGlass/glass_button_calendar.png);
+	width:24px;
+	height:21px;
 	border:0;
-	vertical-align:50%;
+	position: relative;
+	top:-4px;
 }
 
 .yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}
