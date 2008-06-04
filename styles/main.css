@@ -13,7 +13,7 @@
  * Adjusting size of layout elements:
  * 1. Adjusting size of left & right sidebars
  *    To adjust the size of either sidebar, add/subtract the desired amount from the width and margin-left/right
- *    properties of [#outsideBox, #leftCol, #rightCol, and layerManagerUI].
+ *    properties of [#outsideBox, #leftCol, #rightCol, and layerManager].
  *
  * 2. Adjusting the size of the header and footer elements
  *    The header is currently broken up and set individually in each of the three columns. The footer, however,
@@ -481,7 +481,8 @@ a.lightGray {
 .centered       {display: block; margin-left:auto; margin-right: auto;}
 
 /* LayerManager */
-#layerManagerUI    {width:230px; height:100%; padding:0px; margin-left:5px;}
+/*#layerManager {width:230px; height:100%; padding:0px; margin-left:5px;} */
+#layerManager {margin:0 5px 0 5px;}
 
 #layerManager-Container {
     border: 1px solid black;

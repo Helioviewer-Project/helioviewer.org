@@ -32,30 +32,30 @@
 		<script src="lib/utility/date.js" type="text/javascript"></script>
 				
 		<!-- HelioViewer-Specific -->
-        <script src="lib/helioviewer/UIElement.js"></script>
-        <script src="lib/helioviewer/OutputReciever.js"></script>
-        <script src="lib/helioviewer/Viewport.js"></script>
-        <script src="lib/helioviewer/ViewportHandlers.js"></script>
-        <script src="lib/helioviewer/Counter.js"></script>
-        <script src="lib/helioviewer/Layer.js"></script>
-        <script src="lib/helioviewer/UrlTileLayer.js"></script>
-        <script src="lib/helioviewer/ZoomControl.js"></script>
-        <script src="lib/helioviewer/TimeBrowserControl.js"></script>
-        <script src="lib/helioviewer/HelperFunctions.js"></script>
+        <script src="lib/helioviewer/UIElement.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/OutputReciever.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/Counter.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/Layer.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/ZoomControl.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/TimeBrowserControl.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Debug.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/DomNodeCache.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/AjaxRequestWrapper.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/DataNavigator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Filter.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/LayerManagerUI.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/LayerManagerUIMenuEntry.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/LayerManagerMenuEntry.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ZoomLevelSlider.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeStepSlider.js" type="text/javascript"></script>
         <script src="lib/helioviewer/Helioviewer.js"></script>
 		<link rel="stylesheet" type="text/css" href="styles/main.css">
-		<!--<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
+		<!--
 		<script src="lib/helioviewer/SunCoordsDisplay.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/SizeIndicator.js" type="text/javascript"></script>-->
 		
@@ -64,7 +64,7 @@
 
         Event.observe(window, 'load', function() {
         	var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport' });
-        	var lm = new LayerManagerUI(helioviewer.viewports[0], 'layerManagerUI');
+        	var lm = new LayerManager(helioviewer.viewports[0], 'layerManager');
         	lm.render();
 	    });
 		</script>
@@ -79,13 +79,18 @@
             <!-- Left Column -->
 	        <div id="left-col">
 	            <div id="left-col-header"><h1>HelioViewer</h1></div>	                                   
-                <div id="layerManagerUI"></div>
+                <div id="layerManager"></div>
 	        </div>
 	        
 	        <!-- Right Column -->
 	        <div id="right-col">
 	            <div id="right-col-header">
 	                <span id="loading" style="display: none">Loading...</span>
+                </div>
+                
+                 <!-- Recent Updates -->
+	            <div class='notes' style="height:400px">
+                    <strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong>
                 </div>
 	        </div>
 	        

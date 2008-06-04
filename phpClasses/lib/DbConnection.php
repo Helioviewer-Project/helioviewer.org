@@ -1,8 +1,6 @@
 <?php
   class DbConnection {
-    //private $user = 'root';
     private $user = "helioviewer";
-    //private $password = '';
     private $password = "helioviewer";
     private $host = "localhost";
     private $db = "esahelio_svdb0";
