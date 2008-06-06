@@ -24,12 +24,14 @@ class ImgIndex {
 
   public function getProperties($imageId) {
     $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
-    						detector.name AS detector, instrument.name AS instrument, observatory.name AS observatory, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
     						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp
     					FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
 							LEFT JOIN detector on detectorId = detector.id
+							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id 
 							WHERE image.id=$imageId";
@@ -39,7 +41,8 @@ class ImgIndex {
 
   public function getClosestImage($timestamp, $src) {
     $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
-    						detector.name AS detector, instrument.name AS instrument, observatory.name AS observatory, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
     						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp,
 								UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp AS timediff,
 								ABS(UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp) AS timediffAbs 
@@ -47,6 +50,7 @@ class ImgIndex {
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
 							LEFT JOIN detector on detectorId = detector.id
+							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id
               WHERE";

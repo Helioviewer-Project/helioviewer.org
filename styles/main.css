@@ -535,3 +535,12 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 }
 
 ol > li {list-style-type: disc;}
+
+.tooltip {
+	font-family: Arial;
+	border: none;
+	width: 175px;
+	padding:30px;
+	height: 130px;
+	background: url('../images/blackGlass/tooltip.png');
+}
