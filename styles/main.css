@@ -374,14 +374,11 @@ a.infoBubbleLink:visited {color:white;}
 	}
 				
 .sliderHandle {
-	/*width:24px;
-	height:10px;*/
 	left:-8px;
 	width:21px;
 	height:12px;
 	background:url(../images/blackGlass/glass_slider_handle_white.png);
 	cursor:pointer;
-	z-index:4;
 	text-align:center;
 	font-weight:bold;
 	z-index:10000;
@@ -537,10 +534,17 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 ol > li {list-style-type: disc;}
 
 .tooltip {
+	position: absolute;
+	z-index: 1000;
 	font-family: Arial;
-	border: none;
 	width: 175px;
-	padding:30px;
 	height: 130px;
-	background: url('../images/blackGlass/tooltip.png');
+	background: url('../images/blackGlass/tooltip.png') no-repeat;
 }
+
+.tooltip div {
+	padding: 30px;
+}
+
+
+
