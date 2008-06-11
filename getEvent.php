@@ -10,4 +10,4 @@ $showNonDisplayable = $_REQUEST['showNonDisplayable'];
 $events = VsoEvent::getEvents($srcs, $dates, $showNonDisplayable);
 
 echo json_encode($events);
-?>
+?> 
