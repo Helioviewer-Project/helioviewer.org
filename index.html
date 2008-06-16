@@ -64,7 +64,6 @@
 
         Event.observe(window, 'load', function() {
         	var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport' });
-
 	    });
 		</script>
 		
@@ -92,6 +91,9 @@
                  <!-- Recent Updates -->
 	            <div class='notes' style="height:400px">
                     <strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
+                    <strong>06/16/2008</strong><p>IE bug-fix.</p><br><br>
+                    <strong>06/13/2008</strong><p>Initial support for loading event catalogs (Currently disabled until a stable
+                    server for Event services is in place.)</p><br><br>
                     <strong>06/09/2008</strong><p>Adding/Removing layers, MDI, tooltips.</p>
                 </div>
 	        </div>
@@ -163,13 +165,10 @@
 	    
 	    <!-- Footer -->
 	    <div id="footer">
-	       <div style="height:70px; width:420px; float:left;"></div>
-	       <div style="height:70px; width:660px; float:left; font-size:0.85em">
-	                
+	       <div style="height:70px; width:100%; float:left; font-size:0.85em">
 
-	
 	            <!-- Links -->
-	            <div style="text-align:right; font-size:120%; height:60px;">
+	            <div style="text-align:right; font-size:120%; height:60px; margin-right: 256px; margin-top: 3px;">
 	                <a id="about" class="gray" href="#" style="margin-right:20px;">About</a>
 	                <a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
 	                <a href="mailto:admin@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>

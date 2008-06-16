@@ -13,7 +13,7 @@
  * Adjusting size of layout elements:
  * 1. Adjusting size of left & right sidebars
  *    To adjust the size of either sidebar, add/subtract the desired amount from the width and margin-left/right
- *    properties of [#outsideBox, #leftCol, #rightCol, and layerManager].
+ *    properties of [#outsideBox, #leftCol, and #rightCol].
  *
  * 2. Adjusting the size of the header and footer elements
  *    The header is currently broken up and set individually in each of the three columns. The footer, however,
@@ -32,27 +32,27 @@ strong    	  {font-weight:bold;}
 input, select {background-color: #F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
-#outsideBox     {margin-left:240px; margin-right:240px; margin-bottom:-72px; min-height:100%;}
+#outsideBox     {margin-left:250px; margin-right:250px; margin-bottom:-72px; min-height:100%;}
 
 #left-col {
     position:relative;/*ie needs this to show float */
-    width:240px;
+    width:250px;
     float:left;
-    margin-left:-239px;/*must be 1px less than width otherwise won't push footer down */
+    margin-left:-249px;/*must be 1px less than width otherwise won't push footer down */
     z-index:100;
     left:-1px;
 }
 
 #right-col {
     position:relative;/*ie needs this to show float */
-    width:240px;
+    width:250px;
     float:right;
-    margin-right:-239px;/*must be 1px less than width otherwise won't push footer down */
+    margin-right:-249px;/*must be 1px less than width otherwise won't push footer down */
     left:1px;
     color: #000;
 }
 
-#middle-col {min-width:300px;}
+#middle-col {min-width:280px;}
 
 #footer {
     width:100%;
@@ -288,11 +288,6 @@ a.infoBubbleLink:visited {color:white;}
     font-size: 10pt;
     background-color: #FFFFFF;
     color:#000;
-}
-
-.layerConfigurator {
-    margin: 5px 0px 5px 0px;
-    padding: 5px;
 }
 
 .controls {
