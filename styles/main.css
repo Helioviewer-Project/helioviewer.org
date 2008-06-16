@@ -330,11 +330,12 @@ a.infoBubbleLink:visited {color:white;}
 
 /* Message Console */
 #message-console {
-    text-align:center;
-    font-size:115%;
-    font-weight: bold;
-    font-family: verdana, arial, sans-serif;
-    color: #CC3333;
+    width:100%;
+    position: absolute;
+    height: 17px;
+    text-align: center;
+    padding-top: 8px;
+    font-size:1em;
 }
 
 /* Custom Calendar Styles */
