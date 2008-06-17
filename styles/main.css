@@ -333,28 +333,13 @@ a.infoBubbleLink:visited {color:white;}
     font-size:1em;
 }
 
-/* Custom Calendar Styles */
-#container .bd:after {content:".";display:block;clear:left;height:0;visibility:hidden;} /* Clear calendar's float */
-#container .bd {padding:0;} /* Have calendar squeeze upto bd bounding box */
-		
-/* Remove calendar's border and set padding in ems instead of px, so we can specify an width in ems for the container */
-#cal {border:none; padding:1em}
+/* Calendar */
 #date {width:80px;}
-#show {
-	background: url(../images/blackGlass/glass_button_calendar.png);
-	width:24px;
-	height:21px;
-	border:0;
+.ui-datepicker-trigger {
+    cursor: pointer;
 	position: relative;
 	top:-4px;
 }
-
-.yui-skin-sam .yui-calendar td.calcell.highlight1     {background-color:white;}
-.yui-skin-sam .yui-calendar td.calcell.highlight1 > a {color: red}
-.yui-skin-sam .yui-calendar td.calcell.highlight2     {background-color:white;}
-.yui-skin-sam .yui-calendar td.calcell.highlight2 > a {color:green;}
-.yui-skin-sam .yui-calendar td.calcell.highlight3     {background-color:white;}
-.yui-skin-sam .yui-calendar td.calcell.highlight3 > a {color: orange;}
 
 
 /* Zoom Level Slider Styles */
@@ -529,18 +514,30 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 
 ol > li {list-style-type: disc;}
 
-.tooltip {
+.tooltip-medium {
 	position: absolute;
 	z-index: 1000;
 	font-family: Arial;
 	width: 175px;
 	height: 130px;
-	background: url('../images/blackGlass/tooltip.png') no-repeat;
+	background: url('../images/blackGlass/tooltip-medium.png') no-repeat;
 }
 
-.tooltip div {
+.tooltip-large {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 350px;
+    height: 260px;
+    background: url('../images/blackGlass/tooltip-large.png') no-repeat;
+}
+
+.tooltip-medium div {
 	padding: 30px;
 }
 
 
+.tooltip-large div {
+    padding: 35px;
+}
 
