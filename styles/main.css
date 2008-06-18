@@ -23,7 +23,6 @@
 
 /* HTML ELEMENTS */
 
-            
 html, body    {height:100%;}
 html          {background: url(../images/bg.png);}
 h1            {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
@@ -33,6 +32,10 @@ input, select {background-color: #F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
 #outsideBox     {margin-left:250px; margin-right:250px; margin-bottom:-72px; min-height:100%;}
+
+#left-col-header, #middle-col-header, #right-col-header { height:70px; width: 100%; }
+#left-col-header   {left: -1px}
+#right-col-header  {left: 1px}
 
 #left-col {
     position:relative;/*ie needs this to show float */
@@ -64,15 +67,10 @@ input, select {background-color: #F4F4F4;}
 #clearfooter{clear:both;height:72px;}/*needed to make room for footer*/
 * > html #clearfooter {float:left;width:100%;}/* ie mac styles */
 
-#left-col-header, #middle-col-header, #right-col-header { height:70px; width: 100%; }
-#left-col-header   {left: -1px}
-#right-col-header  {left: 1px}
-
-
 /* VIEWPORT-RELATED */
 #helioviewer-viewport-container-inner {width:100%; height:100%; position: relative; border: 1px solid black; top: 0px;}
 #helioviewer-viewport-container-outer {height: 600px; background: transparent url(../images/blackGlass/transparentBG25.png) repeat scroll 0%; border:1px solid black; -moz-border-radius:25px;}
-#ui {width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; z-index: 2;}
+
 .viewport {
 	background-color: #000000;
 	color: #FFFFFF;
@@ -84,35 +82,11 @@ input, select {background-color: #F4F4F4;}
     cursor: pointer;
 }
 
-.surface {
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	z-index: 0;
-	overflow: hidden;
-	/* background-color: red;
-	opacity: .5; */
-	/*background: url(../gfx/center.gif) no-repeat center center;*/
-	_background: url(../gfx/blank.gif) no-repeat center center; /* NOTE: required for IE to"see" the surface */
-}
-
 .movingContainer /* this is what actually moves */ {
   position: absolute;
   z-index: 0;
   left: 0px;
   top: 0px;
-}
-
-.well, .tileContainer {
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	overflow: hidden;
-	z-index: 10;
 }
 
 .tile
@@ -131,110 +105,6 @@ input, select {background-color: #F4F4F4;}
 }
 
 /* OVERLAY-RELATED */ 
-.messageBox {
-	position: absolute;
-	top: 200px;
-	left: 50%;
-	width: 40em;
-	margin-left: -20em;	
-	z-index: 100;
-}
-
-.messageBg {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: -1;
-	border: 1px solid #000000;
-	background-color: #DDDDE0;
-	opacity: 0.5;
-}
-
-.messageFg {
-	position: relative;
-	padding: 30px 10px 10px 10px;
-	color: #000000;
-	font-size: 12pt;
-	z-index: 1;
-}
-
-.overlay {
-	position: absolute;
-}
-
-.mark {
-	position: absolute;
-    overflow: hidden;
-	color: #FFFFFF;
-	font-size: 16px;
-	z-index: 25;
-	cursor: pointer;
-}
-.label {
-	position: absolute;
-    overflow: visible;
-	color: #FFFFFF;
-	visibility: visible;
-	font-size: 14px;
-	z-index: 26;
-	padding: 1px 2px 1px 2px;
-	/* cursor: pointer; */
-    white-space: nowrap;
-}
-
-/*\*/
-html*.label {
-	line-height: 16px;
-	text-shadow: #000000 2px 2px 2px;
-    white-space: nowrap;
-}/**/
-
-.blackBg {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-	background-color: #000000;
-	opacity: 0.5;
-	-moz-opacity: 0.5;
-	filter: alpha(Opacity=50);
-	z-index: -1;	
-}
-
-/*\*/
-html*.blackBg {
-	display: none;/*seen only by safari*/
-}/**/
-
-span.closeX {
-	position: absolute;
-	font-size: 10pt;
-	color: #999999;
-	top: 10px;
-	right: 10px;
-	z-index: 2;
-	cursor: pointer;
-}
-
-a.closeX {
-	color: #FFF;
-	font-size: 11px;
-	font-family: Arial, sans-serif;
-	border: #FFF 1px solid;
-	text-decoration: none;
-	margin: 1px;
-}
-a.closeX:active  {color: #d6f1ff; border-color: #d6f1ff;}
-a.closeX:visited {border: #FFF 1px solid;}
-a.closeX:hover   {color: #d6f1ff; border-color: #d6f1ff;}
-
-a.control1       {color: #000000; font-family: Arial, sans-serif; text-decoration: none;}
-a.control1:hover {text-decoration: underline;}
-a.control2       {color: #000000; font-family: Arial, sans-serif; text-decoration: none;}
-
 .noImageAvailable {
 	width: 100%;
 	height: 100%;
@@ -243,82 +113,6 @@ a.control2       {color: #000000; font-family: Arial, sans-serif; text-decoratio
 	text-align: center;
 	color: #FFFFFF;
 }
-
-.infoBubble {
-	position: absolute;
-    /* overflow: hidden; */
-	background-color: #111;
-	-moz-opacity:0.75;
-	-moz-border-radius:19px;
-	z-index: 10000;
-	padding: 6px;
-	width: 200px;
-	border: 1px #000 solid;
-	cursor: default;
-	text-align: right;
-}
-.infoContent {
-	color: #FFF;
-	font-size: 15px;
-	padding: 2px;
-	text-align: left;
-}
-
-a.infoBubbleLink         {font-size:80%; color:white;}
-a.infoBubbleLink:visited {color:white;}
-
-/* UI-RELATED */
-.centerControl {
-    cursor: pointer;
-    margin-left:4px;
-}
-.sunCoordsDisplay {
-    color: #FFFFFF;
-    font-size: 12px;
-    z-index: 100000;
-}
-
-.layerManager {
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    border: 1px #000000 solid;
-    margin: 0px 0px 10px 0px;
-    padding: 5px;
-    font-size: 10pt;
-    background-color: #FFFFFF;
-    color:#000;
-}
-
-.controls {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: 100000;
-	overflow: hidden;
-}
-
-.viewportControls        
-{
-	background:url(../images/blackGlass/glass_button_rect_48x20px.png);
-	color: #FFF;
-	position: absolute;
-	left:-1px;
-	top:-1px;
-	font-size: 12px;
-	line-height: 20px;
-	vertical-align: middle;
-	font-weight: bold;
-	z-index: 100000;
-	border: 0;
-	width:48px;
-	height:20px;
-}
-.viewportControls a        {color: #000000; text-decoration: none; -moz-outline: none;}
-.viewportControls a img    {vertical-align: middle;}
-.viewportControls a:active {color: #FF0000;}
 
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
@@ -459,9 +253,7 @@ a.lightGray {
 .centered       {display: block; margin-left:auto; margin-right: auto;}
 
 /* LayerManager */
-/*#layerManager {width:230px; height:100%; padding:0px; margin-left:5px;} */
 #layerManager {margin:0 5px 0 5px;}
-
 #layerManager-Container {
     border: 1px solid black;
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
@@ -492,8 +284,6 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
     margin-right:4px;
     height: 14px; 	
 } 	
-
-/*.layerManagerBtn.remove:hover {background: url(../images/blackGlass/LayerManagerButton_Remove_Shadow.png) transparent; margin-left: 2px;}*/
 
 .timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}
 

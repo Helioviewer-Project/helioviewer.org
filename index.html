@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
+	    <!-- HelioViewer rev. 79. June 18, 2008 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -52,15 +53,15 @@
         <script src="lib/helioviewer/Helioviewer.js"></script>
 		<link rel="stylesheet" type="text/css" href="styles/main.css">
 		<script type="text/javascript">
-        jQuery.noConflict();
+            jQuery.noConflict();
 
-        Event.observe(window, 'load', function() {
-        	var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport' });
-	    });
+            Event.observe(window, 'load', function () {
+        	    var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport' });
+	        });
 		</script>
 		
 	</head>
-	<body class="yui-skin-sam">
+	<body>
     	<div id="minHeight"></div>
       	<!-- Message Console -->
       	<span id="message-console" style="display:none;">&nbsp;</span>
@@ -83,6 +84,7 @@
                  <!-- Recent Updates -->
 	            <div class='notes' style="height:400px">
                     <strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
+                    <strong>06/18/2008</strong><p>Improved calendar. Faster loading time.</p><br><br>
                     <strong>06/16/2008</strong><p>IE bug-fix.</p><br><br>
                     <strong>06/13/2008</strong><p>Initial support for loading event catalogs (Currently disabled until a stable
                     server for Event services is in place.)</p><br><br>
