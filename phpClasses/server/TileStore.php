@@ -55,6 +55,7 @@ class TileStore {
     header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
   
     $numTiles = $this->getNumTiles($imageId, $zoom);
+    /**
     if ($numTiles == 1 && ($x == 0 || $x == -1) && ($y == 0 || $y == -1)) {
       $row = $this->getTile($imageId, $zoom, 0, 0);
       $mask = self::CUT_OUT_ONE_TILE_IMAGES && ($row['instrument'] == 'EIT');
@@ -86,7 +87,8 @@ class TileStore {
         header('Content-type: image/jpeg');
         imagejpeg($img);
       }
-    } else if ($numTiles > 1) {
+    } else if ($numTiles > 1) { **/
+    if ($numTiles >1) {
       $offset = max(1, (int)(sqrt($numTiles)/2));
       $row = $this->getTile($imageId, $zoom, $x + $offset, $y + $offset);
       header('Content-type: image/jpeg');
