@@ -1,5 +1,7 @@
 <?php
-  /* usage: "php file2sql.php /path/to/tiles" */
+  /* Example usage:
+   *    php file2sql.php /path/to/tiles
+   */ 
   set_time_limit(0);
   ini_set('display_errors', 'On');
   

@@ -304,22 +304,35 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 
 ol > li {list-style-type: disc;}
 
-.tooltip-medium {
+.tooltip-bottomleft-medium {
 	position: absolute;
 	z-index: 1000;
 	font-family: Arial;
 	width: 175px;
 	height: 130px;
-	background: url('../images/blackGlass/tooltip-medium.png') no-repeat;
+	background: url('../images/blackGlass/tooltip-bottomleft-medium.png') no-repeat;
 }
 
-.tooltip-large {
+.tooltip-bottomleft-large {
     position: absolute;
     z-index: 1000;
     font-family: Arial;
     width: 350px;
     height: 260px;
-    background: url('../images/blackGlass/tooltip-large.png') no-repeat;
+    background: url('../images/blackGlass/tooltip-bottomleft-large.png') no-repeat;
+}
+
+.tooltip-topleft-medium {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 175px;
+    height: 130px;
+    background: url('../images/blackGlass/tooltip-topleft-medium.png') no-repeat;
+}
+
+#tooltip div {
+    padding: 30px;
 }
 
 .tooltip-medium div {
