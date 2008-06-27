@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-	    <!-- HelioViewer rev. 81. June 20, 2008 -->
+	    <!-- HelioViewer rev. 84, June 27, 2008 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -33,7 +33,6 @@
         <script src="lib/helioviewer/OutputReciever.js" type="text/javascript"></script>
         <script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
         <script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/Counter.js" type="text/javascript"></script>
         <script src="lib/helioviewer/Layer.js" type="text/javascript"></script>
         <script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
         <script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
@@ -51,9 +50,9 @@
 		<script src="lib/helioviewer/TimeStepSlider.js" type="text/javascript"></script>
         <script src="lib/helioviewer/Helioviewer.js"></script>
 		<link rel="stylesheet" type="text/css" href="styles/main.css">
+		
 		<script type="text/javascript">
             jQuery.noConflict();
-
             Event.observe(window, 'load', function () {
         	    var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport' });
 	        });
