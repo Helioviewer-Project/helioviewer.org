@@ -51,9 +51,9 @@ class ImgIndex {
     $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
-    						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') + 3600 AS timestamp,
-								UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') + 3600 - $timestamp AS timediff,
-								ABS(UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') + 3600 - $timestamp) AS timediffAbs 
+    						UNIX_TIMESTAMP(timestamp) AS timestamp,
+								UNIX_TIMESTAMP(timestamp) - $timestamp AS timediff,
+								ABS(UNIX_TIMESTAMP(timestamp) - $timestamp) AS timediffAbs 
 							FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id

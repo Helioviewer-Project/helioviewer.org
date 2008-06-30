@@ -54,6 +54,15 @@
       $sec = substr($time, 4, 2);
       
         $ratio = (float) substr($filename, 47, 7);
+
+        
+      //Note: MySQL stores dates using the server's local timezone, but outputs UNIX_TIMESTAMP() in GMT time. Rather than requiring the
+      //      server switch to using UTC to store dates by default, which is not entirely straight-forward, it is easier to pass it a
+      //      local date, so that when UNIX_TIMESTAMP() is called, the returned timestamp is the actual UTC time.
+      $ts = convertToLocalDate("$year-$month-$day $hour:$min:$sec");
+      
+      //echo "original date: " . "$year-$month-$day $hour:$min:$sec\n";
+      //echo "offseted date: $ts\n";
       
       $GLOBALS['observatory'][$observatory]['abbreviation'] = $observatory;
       $GLOBALS['observatory'][$observatory]['instrument'][$instrument]['abbreviation'] = $instrument;
@@ -61,7 +70,9 @@
       //$GLOBALS['observatory'][$observatory]['instrument'][$instrument]['detector'][$detector]['sunImgRatio'] = $ratio;
       // ToDo: Determine lowestRegularZoomLevel (lowest zoom level that still has the same image/sun diameter ratio as higher levels. The ratio decreases by the factor 2 for lower zoom levels)
       $GLOBALS['observatory'][$observatory]['instrument'][$instrument]['detector'][$detector]['measurement'][$measurement]['abbreviation'] = $measurement;
-      $GLOBALS['observatory'][$observatory]['instrument'][$instrument]['detector'][$detector]['measurement'][$measurement]['image'][] = array('timestamp' => "$year-$month-$day $hour:$min:$sec", 'measurement' => $measurement, 'filetype' => $extension, 'tiles' => $tiles);
+      $GLOBALS['observatory'][$observatory]['instrument'][$instrument]['detector'][$detector]['measurement'][$measurement]['image'][] = array('timestamp' => $ts, 'measurement' => $measurement, 'filetype' => $extension, 'tiles' => $tiles);
+      
+
 
 /*
       $GLOBALS['tables']['observatory'][$observatory] = array('abbreviation' => $observatory);
@@ -230,6 +241,13 @@
       echo "$query - failed\n";
       die (mysql_error());
     }
+  }
+  
+ function convertToLocalDate ($timestamp) {
+      $time = date_create($timestamp);
+      $offset = date_offset_get($time);
+      $time->modify($offset . " seconds");
+      return $time->format('Y-m-d H:i:s');
   }
 ?>
 
