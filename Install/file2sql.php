@@ -53,7 +53,7 @@
       $min = substr($time, 2, 2);
       $sec = substr($time, 4, 2);
       
-        $ratio = (float) substr($filename, 47, 7);
+       //$ratio = (float) substr($filename, 47, 7);
 
         
       //Note: MySQL stores dates using the server's local timezone, but outputs UNIX_TIMESTAMP() in GMT time. Rather than requiring the
@@ -222,7 +222,7 @@
     }
 
   function addTile($filepath, $imageId) {
-  global $ratio;
+  //global $ratio;
     $pathinfo = pathinfo($filepath);
     $filename = $pathinfo['basename'];
     $filetype = $pathinfo['extension'];

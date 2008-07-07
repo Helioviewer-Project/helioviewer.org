@@ -331,16 +331,21 @@ ol > li {list-style-type: disc;}
     background: url('../images/blackGlass/tooltip-topleft-medium.png') no-repeat;
 }
 
+.tooltip-topleft-large {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 350px;
+    height: 260px;
+    background: url('../images/blackGlass/tooltip-topleft-large.png') no-repeat;
+}
+
 #tooltip div {
     padding: 30px;
 }
 
-.tooltip-medium div {
-	padding: 30px;
-}
-
-
-.tooltip-large div {
-    padding: 35px;
+/* doesn't get inherited as is... need to specify for each class instead of by id as above */
+.tooltip-topleft-large div {
+    padding: 55px;
 }
 
