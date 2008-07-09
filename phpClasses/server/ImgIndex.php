@@ -22,19 +22,11 @@ class ImgIndex {
   }
   */
 
-  /*
-   * NOTE: Because MySQL and Javascript/PHP seem to use a different UTC Offset (-0400 vs -0500), images are being returned that are off
-   *       by one hour. Until a better solution is found, I will temporarily add one hour (3600 seconds) manually to correct for this 
-   *       difference.
-   *       
-   *       -Keith 06-27-2008 
-   */
-  
   public function getProperties($imageId) {
     $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
-    						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') +3600 AS timestamp
+    						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp
     					FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -70,7 +62,9 @@ class ImgIndex {
     }
 
     $query .= " ORDER BY timediffAbs LIMIT 0,1";
-    //echo date("O") . "<br><br>$query<br><br>";
+    //echo date("O");
+    //echo "<br><br>$query<br><br>";
+    
     $result = $this->dbConnection->query($query);
     return mysql_fetch_array($result, MYSQL_ASSOC);
   }

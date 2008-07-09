@@ -340,12 +340,11 @@ ol > li {list-style-type: disc;}
     background: url('../images/blackGlass/tooltip-topleft-large.png') no-repeat;
 }
 
-#tooltip div {
-    padding: 30px;
-}
-
 /* doesn't get inherited as is... need to specify for each class instead of by id as above */
 .tooltip-topleft-large div {
     padding: 55px;
 }
 
+.tooltip-bottomleft-large div, .tooltip-topleft-medium div, .tooltip-bottomleft-medium div {
+    padding: 30px;
+}
