@@ -1,0 +1,95 @@
+===================================================================
+= HelioViewer Installation Notes                                  =
+= By Keith Hughitt, July 2008                                     =
+===================================================================
+
+I. Installation
+	Requirements:
+		-MySQL5
+		-PHP5
+		-Python (>=2.5)
+	
+	I. Setting up MySQL
+		A. Timezones
+			In order to instruct MySQL to store datetime objects
+			you must first enable support for timezones [1]: 
+			
+				mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -uroot -p mysql
+			
+			Once you have timezone support enabled, you can specify
+			that MySQL should use UTC in the mysqld-safe configuration
+			settings:
+			
+				sudo vi /etc/mysql/my.cnf
+
+			Add the line "timezone	= UTC" under the [mysqld_safe] section.
+			
+				[mysqld_safe]
+				socket		= /var/run/mysqld/mysqld.sock
+				nice		= 0
+				timezone	= UTC
+				
+			You can then restart MySQL to have the new settings take effect:
+			
+				sudo /etc/init.d/mysql restart
+		B. Tables
+			To set-up the tables for HelioViewer, create a new database
+			schema and users with full access to that database. Edit the
+			file createTables.sql using that information, and then at the
+			command line run:
+			
+				mysql -uuser -p < createTables.sql
+			
+			where "user" is the username specified in createTables.sql.
+			
+	II. Populating the database
+		A. install.py
+			If you have a properly structured dataset[2], you can use
+			install.py to populate the database. Simply run the installation
+			script and follow the instructions.
+				
+				./install.py	
+				
+			You will be prompted for the database name, username and password
+			as setup above.
+			
+	III. Building with Apache Ant
+		A. Install Apache Ant
+			Download and install Apache Ant[3]. On Ubuntu Linux, this can be
+			done simply using aptitude:
+				sudo aptitude install ant
+		
+		B. Set the ANT_HOME Environmental variable
+			Make sure the environmental variable ANT_HOME is set. On Linux, you
+			can edit the file /etc/environment, and add the line:
+				ANT_HOME="/usr/share/ant"
+				
+		C. Run Ant
+			To then use Ant to build an optimized (concatenated and minified)[4]
+			version of HelioViewer's JavaScript classes and CSS, run ant
+			in the directory where build.xml is located (by default that
+			should be the same location as this README).
+				ant
+			The will produce three optmized files optimized files:
+				helioviewer-all.js
+				helioviewer-all-min.js
+				main-min.css
+				
+			Note: Build.xml makes use of two external scripts, JSMin and jsmin.py
+			located in the /install/tools directory. jsmin.py is a python port
+			of Douglas Crockford's excellent utility, JSMin[4]. The script "JSMin"
+			(no extension) is simply a bash script which passes along arguments to
+			jsmin.py in order to avoid some limitation of Apache Ant's <exec> command
+			when dealing with command line argument that contain special characters[6].
+	
+			
+			
+Resources:
+
+[1] http://dev.mysql.com/doc/refman/5.0/en/time-zone-support.html
+[2] http://helioviewer.org/wiki/index.php?title=Directory_structure_and_tile_naming_convention
+[3] http://ant.apache.org/
+[4] http://developer.yahoo.com/performance/rules.html
+[5] http://www.crockford.com/javascript/jsmin.html
+[6] http://mail-archives.apache.org/mod_mbox/ant-user/200807.mbox/browser
+

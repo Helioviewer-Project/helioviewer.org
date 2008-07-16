@@ -1,0 +1,36 @@
+<project name="HelioViewer" default="build" basedir="../">
+	<!-- HelioViewer Apache Ant build.xml. -->
+	<!-- Last updated: July 2008 By Keith -->
+	<description>
+		HelioViewer Apache Ant build.xml
+    </description>
+    
+    <!-- Some useful variables -->
+    <property name="hvlibs" value="lib/helioviewer"/>
+
+	<target name="build">
+		<echo>Building HelioViewer...</echo>
+		
+		<!-- create build directory -->
+		<mkdir dir="${hvlibs}/build"/>
+		
+		<!-- concatenate in two-steps to preserve include order -->
+		<concat destfile="${hvlibs}/build/helioviewer-all.js" encoding="UTF-8" eol="lf">
+		    <filelist dir="${hvlibs}" files="LoadingIndicator.js, UIElement.js"/>
+			<fileset dir="${hvlibs}" includes="*.js" excludes="LoadingIndicator.js, UIElement.js"/>
+		</concat>
+		
+		<!-- minify -->
+		<exec dir="install/tools" executable="JSMin" resolveexecutable="true">
+			<arg value="../../${hvlibs}/build/helioviewer-all.js"/>
+			<arg value="../../${hvlibs}/build/helioviewer-all-min.js"/>
+		</exec>
+		
+		<exec dir="install/tools" executable="JSMin" resolveexecutable="true">
+			<arg value="../../styles/main.css"/>
+			<arg value="../../styles/main-min.css"/>
+		</exec>
+		
+		<echo>Done!</echo>
+	</target>
+</project>

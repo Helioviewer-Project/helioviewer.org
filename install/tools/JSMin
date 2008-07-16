@@ -1,0 +1,7 @@
+#!/bin/bash
+
+input=$1
+output=$2
+
+./jsmin.py <$input>$output
+

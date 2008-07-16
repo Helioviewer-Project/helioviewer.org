@@ -34,6 +34,7 @@ def traverseTiles (path, cursor):
 
 def processImages (dir, cursor):
 	''' populate images table with images from a single directory '''
+	from UTC import utc
 	times = []
 
 	#get times of observations in current directory
@@ -52,12 +53,12 @@ def processImages (dir, cursor):
 
 	#populate images table
 	for time in times:
-		date = datetime.datetime(int(params[0]), int(params[1]), int(params[2]), int(params[3]), int(time[0:1]), int(time[2:3]))
-		query = "INSERT INTO image VALUES(%d, %d, UNIX_TIMESTAMP(%s), '%s')" % (id, 21, date, 'jpg')
+		date = datetime.datetime(int(params[0]), int(params[1]), int(params[2]), int(params[3]), int(time[0:1]), int(time[2:3]), 0, utc)
+		query = "INSERT INTO image VALUES(%d, %d, %s, '%s')" % (id, 21, date, 'jpg')
+		print "SQL Query: " + query;
 
 		try:
 			cursor.execute(query)
-			print "SQL Query: " + query;
 
 		except MySQLdb.Error, e:
 			if e.args[0] == 1146:	# We got an error that the table does not exist. Create the table and insert the data.
