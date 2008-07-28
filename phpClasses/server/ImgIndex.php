@@ -23,9 +23,27 @@ class ImgIndex {
   */
 
   public function getProperties($imageId) {
+<<<<<<< TREE
+<<<<<<< TREE
+<<<<<<< TREE
     $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
+=======
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
+>>>>>>> MERGE-SOURCE
+=======
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
+>>>>>>> MERGE-SOURCE
+=======
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
+>>>>>>> MERGE-SOURCE
     						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp
     					FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
@@ -40,12 +58,39 @@ class ImgIndex {
   }
 
   public function getClosestImage($timestamp, $src) {
+<<<<<<< TREE
+<<<<<<< TREE
+<<<<<<< TREE
     $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
     						UNIX_TIMESTAMP(timestamp) AS timestamp,
 								UNIX_TIMESTAMP(timestamp) - $timestamp AS timediff,
 								ABS(UNIX_TIMESTAMP(timestamp) - $timestamp) AS timediffAbs 
+=======
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
+    						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp,
+								UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp AS timediff,
+								ABS(UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') - $timestamp) AS timediffAbs 
+>>>>>>> MERGE-SOURCE
+=======
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
+    						UNIX_TIMESTAMP(timestamp) AS timestamp,
+								UNIX_TIMESTAMP(timestamp) - $timestamp AS timediff,
+								ABS(UNIX_TIMESTAMP(timestamp) - $timestamp) AS timediffAbs 
+>>>>>>> MERGE-SOURCE
+=======
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						instrument.name AS instrument, observatory.name AS observatory, 
+    						UNIX_TIMESTAMP(timestamp) AS timestamp,
+								UNIX_TIMESTAMP(timestamp) - $timestamp AS timediff,
+								ABS(UNIX_TIMESTAMP(timestamp) - $timestamp) AS timediffAbs 
+>>>>>>> MERGE-SOURCE
 							FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
