@@ -31,7 +31,12 @@ strong    	  {font-weight:bold;}
 input, select {background-color: #F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
-#outsideBox     {margin-left:250px; margin-right:250px; margin-bottom:-72px; min-height:100%;}
+#outsideBox     {
+  margin-left:250px; 
+  margin-right:250px;
+  margin-bottom:-72px;
+  min-height:100%;
+}
 
 #left-col-header, #middle-col-header, #right-col-header { height:70px; width: 100%; }
 #left-col-header   {left: -1px}
@@ -55,7 +60,9 @@ input, select {background-color: #F4F4F4;}
     color: #000;
 }
 
-#middle-col {min-width:280px;}
+#middle-col {
+  min-width:280px;
+}
 
 #footer {
     width:100%;
@@ -69,7 +76,13 @@ input, select {background-color: #F4F4F4;}
 
 /* VIEWPORT-RELATED */
 #helioviewer-viewport-container-inner {width:100%; height:100%; position: relative; border: 1px solid black; top: 0px;}
-#helioviewer-viewport-container-outer {height: 600px; background: transparent url(../images/blackGlass/transparentBG25.png) repeat scroll 0%; border:1px solid black; -moz-border-radius:25px;}
+#helioviewer-viewport-container-outer {
+  height: 600px; 
+  background: transparent url('../images/blackGlass/transparentBG25.png') repeat scroll 0%;
+/*  background-image: url('images/blackGlass/transparentBG25.png');*/
+  border:1px solid black; 
+  -moz-border-radius:25px;
+}
 
 .viewport {
 	background-color: #000000;
@@ -211,9 +224,11 @@ input, select {background-color: #F4F4F4;}
     /*color:#111;*/
     color:white;
     top:-24px;
-    left:-7px;
+    left:-69px;
+    text-align: center;
     position:relative;
     padding:2px 0 0 1px;
+    width: 150px;
 }
 
 .sizeIndicatorElement {

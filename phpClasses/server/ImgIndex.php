@@ -23,7 +23,7 @@ class ImgIndex {
   */
 
   public function getProperties($imageId) {
-    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
     						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp
@@ -40,7 +40,7 @@ class ImgIndex {
   }
 
   public function getClosestImage($timestamp, $src) {
-    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
     						UNIX_TIMESTAMP(timestamp) AS timestamp,
@@ -70,7 +70,7 @@ class ImgIndex {
   }
   
   public function getMeasurements($detector) {
-    $query = "SELECT DISTINCT measurement.name as measurement, measurementType.name as type " .
+    $query = "SELECT DISTINCT measurement.name as measurement, measurementType.name as measurementType " .
              "FROM measurement " . 
              "INNER JOIN detector ON measurement.detectorId = detector.id " . 
              "INNER JOIN measurementType ON measurement.measurementTypeId = measurementType.id " . 
