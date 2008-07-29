@@ -6,27 +6,11 @@ class ImgIndex {
     $this->dbConnection = $dbConnection;
   }
 
-	/* needs to be changed to the new DB scheme
-  public function getImageId($fields) {
-    $query = "SELECT imageId FROM images WHERE";
-    $i = 0;
-    foreach($fields as $key => $value) {
-      if ($i>0) $query .= " AND";
-      $query .= " $key='$value'";
-      $i++;
-    }
-    $query .= " ORDER BY timestamp";
-    $result = $this->dbConnection->query($query);
-    $row = mysql_fetch_array($result);
-    return $row['map'];
-  }
-  */
-
   public function getProperties($imageId) {
-    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
-    						UNIX_TIMESTAMP(timestamp) - UNIX_TIMESTAMP('1970-01-01 00:00:00') AS timestamp
+    						UNIX_TIMESTAMP(timestamp) AS timestamp
     					FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -40,7 +24,7 @@ class ImgIndex {
   }
 
   public function getClosestImage($timestamp, $src) {
-    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS type, unit, 
+    $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
     						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
     						UNIX_TIMESTAMP(timestamp) AS timestamp,
@@ -70,7 +54,7 @@ class ImgIndex {
   }
   
   public function getMeasurements($detector) {
-    $query = "SELECT DISTINCT measurement.name as measurement, measurementType.name as type " .
+    $query = "SELECT DISTINCT measurement.name as measurement, measurementType.name as measurementType " .
              "FROM measurement " . 
              "INNER JOIN detector ON measurement.detectorId = detector.id " . 
              "INNER JOIN measurementType ON measurement.measurementTypeId = measurementType.id " . 
