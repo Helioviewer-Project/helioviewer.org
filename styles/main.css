@@ -302,6 +302,13 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 
 .timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}
 
+/* Event Layer Accordion */
+#eventAccordion {margin:0 5px 0 5px;}
+#EventLayerAccordion-Container {
+    border: 1px solid black;
+    background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
+}
+
 /* updates and to-do list */
 .notes {
 	position:relative;
