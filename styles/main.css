@@ -79,7 +79,6 @@ input, select {background-color: #F4F4F4;}
 #helioviewer-viewport-container-outer {
   height: 600px; 
   background: transparent url('../images/blackGlass/transparentBG25.png') repeat scroll 0%;
-/*  background-image: url('images/blackGlass/transparentBG25.png');*/
   border:1px solid black; 
   -moz-border-radius:25px;
 }
@@ -112,9 +111,6 @@ input, select {background-color: #F4F4F4;}
 	left: 0px;
 	display: block;
 	overflow: visible;
-	/* border: 1px white solid; */
-	/* background-color: transparent */
-	/*-moz-outline: 1px dashed #FF0000;*/
 }
 
 /* OVERLAY-RELATED */ 
@@ -221,7 +217,6 @@ input, select {background-color: #F4F4F4;}
     top:-6px;
 }
 #timestepValueDisplay {
-    /*color:#111;*/
     color:white;
     top:-24px;
     left:-69px;
@@ -242,7 +237,6 @@ input, select {background-color: #F4F4F4;}
 {
     position: absolute;
     z-index: 100000;
-    /* width: 300px; */
     color: #FFFFFF;
     font-size: 12px;
     font-weight: normal;
@@ -259,17 +253,16 @@ a.gray:hover {
 	border-bottom:1px solid #858585;
 	}
 a.lightGray {
-	/*color:#F0F0F0;*/
 	color:#E5E5E5;
 	text-decoration:none;
 	font-weight:bold;
 }
 
-.centered       {display: block; margin-left:auto; margin-right: auto;}
+.centered {display: block; margin-left:auto; margin-right: auto;}
 
-/* LayerManager */
-#layerManager {margin:0 5px 0 5px;}
-#layerManager-Container {
+/* LayerManager & Event Manager */
+#layerManager, #eventAccordion {margin:0 5px 0 5px;}
+#layerManager-Container, #EventLayerAccordion-Container {
     border: 1px solid black;
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
 }
@@ -300,14 +293,10 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
     height: 14px; 	
 } 	
 
-.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}
+span.event-accordion-header-left  {display: block; width:33%; float: left;}
+span.event-accordion-header-right {display: block; width:100%; text-align: right;}
 
-/* Event Layer Accordion */
-#eventAccordion {margin:0 5px 0 5px;}
-#EventLayerAccordion-Container {
-    border: 1px solid black;
-    background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
-}
+.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}
 
 /* updates and to-do list */
 .notes {
@@ -323,8 +312,6 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
     height:300px;
     border: 1px solid black;
 }
-
-ol > li {list-style-type: disc;}
 
 .tooltip-bottomleft-medium {
 	position: absolute;
