@@ -14,7 +14,7 @@ USE esahelio_svdb0;
 --
 -- Table structure for table `image`
 --
-CREATE TABLE  `esahelio_svdb0`.`image` (
+CREATE TABLE  `image` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `measurementId` int(10) unsigned NOT NULL default '0',
   `timestamp` datetime NOT NULL default '0000-00-00 00:00:00',

@@ -1,131 +1,191 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, glob, math, MySQLdb, datetime
+import os, math, MySQLdb, datetime
 
 def main():
 	printGreeting()
-	path, dbname, dbuser, dbpass = getInput()
+
+	path = getFilePath()
+
+	images = traverseDirectory(path)
+	print "Found " + str(len(images)) + " images."
+
+	dbname, dbuser, dbpass = getDBInfo()
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()
-	traverseTiles(path, cursor)
-	#traverseDirectory(path)
+
+	processImages(images, cursor)
+
+	print "Finished!"
 
 def traverseDirectory (path):
-	''' Traverses file-tree starting with the specified path'''
+	''' Traverses file-tree starting with the specified path and builds a
+		list of meta-files representing the available images'''
+	images = []
+
 	for child in os.listdir(path):
 		node = os.path.join(path, child)
 		if os.path.isdir(node):
-			traverseDirectory(node)
+			new = traverseDirectory(node)
+			images.extend(new)
 		else:
-			processTile(os.path.split(node)[1]);
+			if node[-4:] == "meta":
+				images.append(node[:-5])
 
-def traverseTiles (path, cursor):
-	''' Travels to the each of the lowest-level child directories and
-		processes tiles found there.'''
+	return images
 
-	#Find lowest-level directories. Assumes that search is starting at the
-	#root directory (one containing year directories).
-	leafDirs = glob.glob (os.path.join(path, '*/*/*/*/*/*/*/*'))
+def processImages (images, cursor):
+	''' iterates through list of meta files and populates the image and tile
+	    tables of the database schema provided. '''
+	import glob
+	measurementIds = getMeasurementIds(cursor)
+	id = getStartingId(cursor);
 
-	for dir in leafDirs:
-		processImages(dir, cursor)
-		#processTiles(dir)
+	for img in images:
+		dir, file = os.path.split(img)
 
-def processImages (dir, cursor):
-	''' populate images table with images from a single directory '''
-	from UTC import utc
-	times = []
+		year = int(file[:4])
+		mon  = int(file[5:7])
+		day  = int(file[8:10])
+		hour = int(file[11:13])
+		min  = int(file[13:15])
+		sec  = int(file[15:17])
+		obs  = file[18:22]
+		inst = file[23:26]
+		det  = file[27:30]
+		meas = file[31:34]
+		zoom = int(file[35:])
 
-	#get times of observations in current directory
-	for file in os.listdir(dir):
-		times.append(file[13:17])
+		print "Processing " + file + "..."
 
-	#get rid of redudant entries
-	times = compact(times)
+		#Add images to the "image" table
+		filetype = "png" if (inst == "LAS") else "jpg"
 
-	#shared params
-	params = dir.split('/')[-8:-1]
-	print params
-
-	#TODO: get last image id
-	id = 1;
-
-	#populate images table
-	for time in times:
-		date = datetime.datetime(int(params[0]), int(params[1]), int(params[2]), int(params[3]), int(time[0:1]), int(time[2:3]), 0, utc)
-		query = "INSERT INTO image VALUES(%d, %d, %s, '%s')" % (id, 21, date, 'jpg')
-		print "SQL Query: " + query;
+		date = datetime.datetime(year, mon, day, hour, min, sec)
+		query = "INSERT INTO image VALUES(%d, %d, '%s', '%s')" % (id, measurementIds[meas], date, filetype)
 
 		try:
 			cursor.execute(query)
 
 		except MySQLdb.Error, e:
-			if e.args[0] == 1146:	# We got an error that the table does not exist. Create the table and insert the data.
-				print "Error: Table does not exist"
-			else:
-				print "Error: " + e.args[1]
+			print "Error: " + e.args[1]
+
+		#Add entries to the "tile" table
+		'''
+		for x in range(0, getNumTiles(zoom)/2):
+			for y in range(0, getNumTiles(zoom)/2):
+				if os.path.exists(os.path.join(dir, file, ):
+					print "Tile exists!"
+				else:
+					print "Tile DOES NOT exist!"
+		'''
+
+		for tile in glob.glob(img + "*"):
+			if tile[-4:] != "meta":
+				tile_dir, tile_name = os.path.split(tile)
+				x = int(tile_name[38:40])
+				y = int(tile_name[41:43])
+				blob = open(tile, 'rb').read()
+
+				sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, null, '%s')" % (id, x, y, zoom, MySQLdb.escape_string(blob))
+
+				try:
+					cursor.execute(sql)
+
+				except MySQLdb.Error, e:
+					print "Error: " + e.args[1]
 
 		id += 1
 
-	#print "times"
-	#for i in times:
-	#	print i
+def getMeasurementIds(cursor):
+	''' Returns an associative array of the measurement ID's used for the
+		measurement types supported. '''
 
-#old
-def processTile (tile):
-	time =	  tile[11:17]
-	zoomLevel = tile[35:37]
-	#print zoomLevel + ', ' + time
+	query = "SELECT id, name FROM measurement m LIMIT 0,1000"
+
+	try:
+		cursor.execute(query)
+		result_array = cursor.fetchall()
+	except MySQLdb.Error, e:
+		print "Error: " + e.args[1]
+
+	measurements = {}
+	for meas in result_array:
+		measurements[meas[1]] = meas[0]
+
+	return measurements
+
+def getStartingId(cursor):
+	''' Returns the highest Id number found in the database before any new
+		images are added. The id numbers can then start at the next highest
+		number. This makes it easier to keep track of the image id when
+		adding the tiles to the database later.'''
+
+	query = "SELECT id FROM image ORDER BY id  DESC LIMIT 1"
+
+	try:
+		cursor.execute(query)
+		result = cursor.fetchone()
+	except MySQLdb.Error, e:
+		print "Error: " + e.args[1]
+
+	return (int(result[0]) + 1) if result else 0
 
 def printGreeting():
 	''' Prints a greeting to the user'''
 	os.system("clear")
 
 	print "===================================================================="
-	print "= HelioViewer Database Population Script 0.1                       ="
-	print "= By: Keith Hughitt, July 08, 2008                                 ="
+	print "= HelioViewer Database Population Script 0.5                       ="
+	print "= By: Keith Hughitt, August 11, 2008                               ="
 	print "=                                                                  ="
 	print "= This script processes raw tile images, and inserts them into a   ="
 	print "= database, along with their relevent information.                 ="
 	print "=                                                                  ="
 	print "= The script requires several pieces of information to function:   ="
-	print "=   (1) The location of the root directory where tiles are stored. ="
-	print "=       This is the directory whose sub-directories are years:     ="
-	print "=       2003, 2004, etc.                                           ="
+	print "=   (1) The location of a directory containing tiled images.       ="
 	print "=   (2) The name of the database schema to populate.               ="
 	print "=   (3) The name of the database user with appropriate access.     ="
 	print "=   (4) The password for the specified database user.              ="
 	print "===================================================================="
 
-def getInput():
-	''' Prompts the user for required information '''
+def getFilePath():
+	''' Prompts the user for the directory information '''
 
 	path = raw_input("Root directory: ")
 	while not os.path.isdir(path):
 		print "That is not a valid directory! Please try again."
 		path = raw_input("Root directory: ")
 
+	return path
+
+def getDBInfo():
+	''' Prompts the user for the required database information '''
 	dbname = raw_input("Database name: ")
 	dbuser = raw_input("Database user: ")
 	dbpass = raw_input("Database password: ")
-	return path, dbname, dbuser, dbpass
+	return dbname, dbuser, dbpass
 
 
 def getNumTiles (zoomLevel):
 	''' Returns the number of tiles expected for a given zoom-level '''
 
-	#Each image above zoom-level 11 consists of 4 tiles, for zoom Levels
-	#below that, the number of tiles is 3^2, 4^2, etc.
-	return int(4 if zoomLevel >= 12 else math.pow((14 - zoomLevel), 2))
+	#INCORRECT
+	#Each image above zoom-level 9 consists of exactly 4 tiles. For zoom Levels
+	#below that, the number of tiles is 4^2, 5^2, etc.
+	#return int(4 if zoomLevel >= 10 else math.pow((13 - zoomLevel), 2))
 
+	#CORRECT
+	#Each image above zoom-level 9 consists of exactly 4 tiles. For zoom Levels
+	#below that, the number of tiles is 4^2, 4^3, etc.
+	return int(4 if zoomLevel >= 10 else math.pow(4, 11 - zoomLevel))
 
 def compact(seq):
 	'''Removes duplicate entries from a list.
 	   From http://www.peterbe.com/plog/uniqifiers-benchmark'''
 	seen = set()
 	return [ x for x in seq if x not in seen and not seen.add(x)]
-
 
 if __name__ == '__main__':
 	main()
