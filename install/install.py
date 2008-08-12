@@ -8,13 +8,13 @@ def main():
 
 	path = getFilePath()
 
-	images = traverseDirectory(path)
-	print "Found " + str(len(images)) + " images."
+	metafiles = traverseDirectory(path)
+	print "Found " + str(len(metafiles)) + " images."
+	images = processMetaFiles(metafiles)
 
 	dbname, dbuser, dbpass = getDBInfo()
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()
-
 	processImages(images, cursor)
 
 	print "Finished!"
@@ -35,14 +35,34 @@ def traverseDirectory (path):
 
 	return images
 
+def processMetaFiles (meta):
+	'''Takes a list of meta files and sorts them into a list of "images"
+	   each of which may contain multiple images.'''
+	images = {}
+	for m in meta:
+		dir, file = os.path.split(m)
+
+		#Use the entire filepath excluding the zoomlevel as a key
+		image = os.path.join(dir, file[:-3])
+		zoomlevel = file[-2:]
+
+		#Store each of the zoom-levels
+		if not images.has_key(image):
+			images[image] = []
+
+		images[image].append(zoomlevel)
+
+	return images
+
 def processImages (images, cursor):
-	''' iterates through list of meta files and populates the image and tile
-	    tables of the database schema provided. '''
+	''' Iterates through a collection of images, each of which keeps
+		a list of all of the zoom-levels for which data exists, and populates
+		the image and tile tables of the database schema provided. '''
 	import glob
 	measurementIds = getMeasurementIds(cursor)
 	id = getStartingId(cursor);
 
-	for img in images:
+	for img in images.keys():
 		dir, file = os.path.split(img)
 
 		year = int(file[:4])
@@ -55,7 +75,8 @@ def processImages (images, cursor):
 		inst = file[23:26]
 		det  = file[27:30]
 		meas = file[31:34]
-		zoom = int(file[35:])
+
+		zoomLevels = images[img]
 
 		print "Processing " + file + "..."
 
@@ -81,14 +102,17 @@ def processImages (images, cursor):
 					print "Tile DOES NOT exist!"
 		'''
 
+
 		for tile in glob.glob(img + "*"):
 			if tile[-4:] != "meta":
 				tile_dir, tile_name = os.path.split(tile)
+				zoom = int(tile_name[35:37])
 				x = int(tile_name[38:40])
 				y = int(tile_name[41:43])
 				blob = open(tile, 'rb').read()
 
 				sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, null, '%s')" % (id, x, y, zoom, MySQLdb.escape_string(blob))
+				#print "Working with tile: " + tile + ", zoomlevel: " + str(zoom)
 
 				try:
 					cursor.execute(sql)

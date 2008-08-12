@@ -4,8 +4,8 @@
 --
 -- Create schema esahelio_svdb0
 --
-CREATE DATABASE IF NOT EXISTS esahelio_svdb0;
-USE esahelio_svdb0;
+CREATE DATABASE IF NOT EXISTS hv;
+USE hv;
 
 --
 -- Create tables
