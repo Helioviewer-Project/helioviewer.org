@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `tile` (
   `y` int(11) NOT NULL default '0',
   `zoom` int(11) NOT NULL default '0',
   `url` varchar(255) default NULL,
-  `tile` blob,
+  `tile` mediumblob,
   PRIMARY KEY  (`imageId`,`x`,`y`,`zoom`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -52,10 +52,10 @@ CREATE TABLE `detector` (
 -- Dumping data for table `detector`
 --
 
-INSERT INTO `detector` VALUES(11, 'MDI', 'MDI', 8, NULL, NULL, 1);
-INSERT INTO `detector` VALUES(12, '0C3', '0C3', 9, NULL, NULL, 3);
-INSERT INTO `detector` VALUES(13, '0C2', '0C2', 9, NULL, NULL, 2);
-INSERT INTO `detector` VALUES(14, 'EIT', 'EIT', 10, NULL, NULL, 1);
+INSERT INTO `detector` VALUES(11, 'MDI', 'MDI', 8, NULL, 10, 1);
+INSERT INTO `detector` VALUES(12, '0C3', '0C3', 9, NULL, 15, 3);
+INSERT INTO `detector` VALUES(13, '0C2', '0C2', 9, NULL, 13, 2);
+INSERT INTO `detector` VALUES(14, 'EIT', 'EIT', 10, NULL, 10, 1);
 
 -- --------------------------------------------------------
 

@@ -58,7 +58,7 @@ def processImages (images, cursor):
 	''' Iterates through a collection of images, each of which keeps
 		a list of all of the zoom-levels for which data exists, and populates
 		the image and tile tables of the database schema provided. '''
-	import glob
+	import glob, base64
 	measurementIds = getMeasurementIds(cursor)
 	id = getStartingId(cursor);
 
@@ -161,8 +161,8 @@ def printGreeting():
 	os.system("clear")
 
 	print "===================================================================="
-	print "= HelioViewer Database Population Script 0.5                       ="
-	print "= By: Keith Hughitt, August 11, 2008                               ="
+	print "= HelioViewer Database Population Script 0.9                       ="
+	print "= By: Keith Hughitt, August 13, 2008                               ="
 	print "=                                                                  ="
 	print "= This script processes raw tile images, and inserts them into a   ="
 	print "= database, along with their relevent information.                 ="
