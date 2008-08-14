@@ -13,6 +13,7 @@ def main():
 	images = processMetaFiles(metafiles)
 
 	dbname, dbuser, dbpass = getDBInfo()
+
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()
 	processImages(images, cursor)
@@ -37,7 +38,7 @@ def traverseDirectory (path):
 
 def processMetaFiles (meta):
 	'''Takes a list of meta files and sorts them into a list of "images"
-	   each of which may contain multiple images.'''
+	   each of which may contain multiple zoom levels.'''
 	images = {}
 	for m in meta:
 		dir, file = os.path.split(m)
@@ -84,7 +85,7 @@ def processImages (images, cursor):
 		filetype = "png" if (inst == "LAS") else "jpg"
 
 		date = datetime.datetime(year, mon, day, hour, min, sec)
-		query = "INSERT INTO image VALUES(%d, %d, '%s', '%s')" % (id, measurementIds[meas], date, filetype)
+		query = "INSERT INTO image VALUES(%d, %d, '%s', '%s')" % (id, measurementIds[det + meas], date, filetype)
 
 		try:
 			cursor.execute(query)
@@ -124,9 +125,10 @@ def processImages (images, cursor):
 
 def getMeasurementIds(cursor):
 	''' Returns an associative array of the measurement ID's used for the
-		measurement types supported. '''
+		measurement types supported. Uses the combination of detector and
+		measurement (e.g. 195EIT) as a hash key.'''
 
-	query = "SELECT id, name FROM measurement m LIMIT 0,1000"
+	query = "SELECT  detector.name as detector, measurement.name as measurement, measurement.id as measurementId FROM measurement LEFT JOIN detector on detectorId = detector.id"
 
 	try:
 		cursor.execute(query)
@@ -136,7 +138,7 @@ def getMeasurementIds(cursor):
 
 	measurements = {}
 	for meas in result_array:
-		measurements[meas[1]] = meas[0]
+		measurements[meas[0] + meas[1]] = meas[2]
 
 	return measurements
 

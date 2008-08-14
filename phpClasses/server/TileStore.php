@@ -22,6 +22,7 @@ class TileStore {
 
 	function getTile($imageId, $zoom, $x, $y) {
 		$query = "SELECT tile FROM tile WHERE imageId=$imageId AND zoom=$zoom AND x=$x AND y=$y";
+		//echo $query;
 		$result = $this->dbConnection->query($query);
 		if (!$result) {
 			echo "$query - failed\n";

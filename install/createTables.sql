@@ -1,8 +1,8 @@
 -- HelioViewer Database Structure --
--- last update: 06-25-2008        --
+-- last update: 08-14-2008        --
 
 --
--- Create schema esahelio_svdb0
+-- Create schema
 --
 CREATE DATABASE IF NOT EXISTS hv;
 USE hv;

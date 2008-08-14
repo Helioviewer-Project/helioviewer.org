@@ -15,7 +15,7 @@
 	}
 
 	/**
-	 * traverseDirectory (INCOMPLETE)
+	 * traverseDirectory
 	 *
 	 * Traverses file-tree starting with the specified path and builds a
 	 * list of meta-files representing the available images
@@ -28,7 +28,7 @@
 				$node = $path . DIRECTORY_SEPARATOR . $child;
 				if (is_dir($node)) {
 					$new = traverseDirectory($node);
-					array_merge($images, $new);
+					$images = array_merge($images, $new);
 				}
 				else {
 					if (substr($node, -4) == "meta")
@@ -54,8 +54,8 @@
 
 	function printGreeting() {
 		echo "====================================================================\n";
-		echo "= HelioViewer Database Population Script (PHP Version) 0.1         =\n";
-		echo "= By: Keith Hughitt, August 13, 2008                               =\n";
+		echo "= HelioViewer Database Population Script (PHP Version) 0.2         =\n";
+		echo "= By: Keith Hughitt, August 14, 2008                               =\n";
 		echo "=                                                                  =\n";
 		echo "= This script processes raw tile images, and inserts them into a   =\n";
 		echo "= database, along with their relevent information.                 =\n";
