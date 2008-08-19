@@ -32,7 +32,7 @@ input, select {background-color: #F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
 #outsideBox     {
-  margin-left:250px; 
+  margin-left:250px;
   margin-right:250px;
   margin-bottom:-72px;
   min-height:100%;
@@ -77,9 +77,9 @@ input, select {background-color: #F4F4F4;}
 /* VIEWPORT-RELATED */
 #helioviewer-viewport-container-inner {width:100%; height:100%; position: relative; border: 1px solid black; top: 0px;}
 #helioviewer-viewport-container-outer {
-  height: 600px; 
+  height: 600px;
   background: transparent url('../images/blackGlass/transparentBG25.png') repeat scroll 0%;
-  border:1px solid black; 
+  border:1px solid black;
   -moz-border-radius:25px;
 }
 
@@ -113,7 +113,7 @@ input, select {background-color: #F4F4F4;}
 	overflow: visible;
 }
 
-/* OVERLAY-RELATED */ 
+/* OVERLAY-RELATED */
 .noImageAvailable {
 	width: 100%;
 	height: 100%;
@@ -156,7 +156,7 @@ input, select {background-color: #F4F4F4;}
 	text-align:center;
 	z-index:10000;
 	}
-				
+
 .sliderHandle {
 	left:-8px;
 	width:21px;
@@ -264,7 +264,7 @@ a.lightGray {
 #layerManager, #eventAccordion {margin:0 5px 0 5px;}
 #layerManager-Container, #EventLayerAccordion-Container {
     border: 1px solid black;
-    background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;	
+    background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;
 }
 
 div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; font-size:0.9em; font-weight: bolder; cursor: pointer; color:white;}
@@ -278,22 +278,22 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 	position: relative;
 	border: 0;
 }
-/* Styles for buttons moved to stylesheet since some browsers insert extra quotes around image urls */ 	
-.layerManagerBtn.visible { 	
-	background: url(../images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent; 	
+/* Styles for buttons moved to stylesheet since some browsers insert extra quotes around image urls */
+.layerManagerBtn.visible {
+	background: url(../images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent;
 	margin-left: 2px;
-} 	
-.layerManagerBtn.hidden { 	
-	background: url(../images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent; 	
+}
+.layerManagerBtn.hidden {
+	background: url(../images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent;
 	margin-left: 2px;
-} 	
-.layerManagerBtn.remove { 	
+}
+.layerManagerBtn.remove {
 	background: url(../images/blackGlass/LayerManagerButton_Remove.png) transparent;
     margin-right:4px;
-    height: 14px; 	
-} 	
+    height: 14px;
+}
 
-span.event-accordion-header-left  {display: block; width:33%; float: left;}
+span.event-accordion-header-left  {display: block; width:60%; float: left;}
 span.event-accordion-header-right {display: block; width:100%; text-align: right;}
 
 .timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}

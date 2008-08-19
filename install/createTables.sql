@@ -56,6 +56,7 @@ INSERT INTO `detector` VALUES(11, 'MDI', 'MDI', 8, NULL, 10, 1);
 INSERT INTO `detector` VALUES(12, '0C3', '0C3', 9, NULL, 15, 3);
 INSERT INTO `detector` VALUES(13, '0C2', '0C2', 9, NULL, 13, 2);
 INSERT INTO `detector` VALUES(14, 'EIT', 'EIT', 10, NULL, 10, 1);
+INSERT INTO `detector` VALUES(15, 'TRA', 'TRA', 10, NULL, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -78,6 +79,7 @@ CREATE TABLE `instrument` (
 INSERT INTO `instrument` VALUES(8, 'MDI', 'MDI', 3);
 INSERT INTO `instrument` VALUES(9, 'LAS', 'LAS', 3);
 INSERT INTO `instrument` VALUES(10, 'EIT', 'EIT', 3);
+INSERT INTO `instrument` VALUES(11, 'TRA', 'TRA', 4);
 
 -- --------------------------------------------------------
 
@@ -106,6 +108,7 @@ INSERT INTO `measurement` VALUES(21, 1, 14, '195', '195');
 INSERT INTO `measurement` VALUES(22, 1, 14, '171', '171');
 INSERT INTO `measurement` VALUES(23, 1, 14, '304', '304');
 INSERT INTO `measurement` VALUES(24, 1, 14, '284', '284');
+INSERT INTO `measurement` VALUES(25, 1, 15, '171', '171');
 
 -- --------------------------------------------------------
 
@@ -145,6 +148,7 @@ CREATE TABLE `observatory` (
 --
 
 INSERT INTO `observatory` VALUES(3, 'soho', 'soho');
+INSERT INTO `observatory` VALUES(4, 'trac', 'trac');
 
 -- --------------------------------------------------------
 

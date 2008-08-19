@@ -1,0 +1,37 @@
+[
+    {
+        "class": "class org.helioviewer.ws.wsdl.pointofinterest.PointsOfInterestCatalog",
+        "coordinateSystem": "PRINCIPAL_ANGLE",
+        "eventType": "CME",
+        "id": "VSOService::type2cme",
+        "name": "CDAW Type II Radio Bursts"
+    },
+    {
+        "class": "class org.helioviewer.ws.wsdl.pointofinterest.PointsOfInterestCatalog",
+        "coordinateSystem": "HELIOGRAPHIC",
+        "eventType": "Active Region",
+        "id": "VSOService::noaa",
+        "name": "NOAA Active Regions"
+    },
+    {
+        "class": "class org.helioviewer.ws.wsdl.pointofinterest.PointsOfInterestCatalog",
+        "coordinateSystem": "PRINCIPAL_ANGLE",
+        "eventType": "GeneralActivityReport",
+        "id": "EITPlanningService::EITActivity",
+        "name": "EIT Activity Reports"
+    },
+    {
+        "class": "class org.helioviewer.ws.wsdl.pointofinterest.PointsOfInterestCatalog",
+        "coordinateSystem": "PRINCIPAL_ANGLE",
+        "eventType": "CME",
+        "id": "CACTusService::CACTus",
+        "name": "CACTus CME"
+    },
+    {
+        "class": "class org.helioviewer.ws.wsdl.pointofinterest.PointsOfInterestCatalog",
+        "coordinateSystem": "PRINCIPAL_ANGLE",
+        "eventType": "CME",
+        "id": "VSOService::cmelist",
+        "name": "LASCO CME List"
+    }
+]
