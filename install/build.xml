@@ -16,8 +16,8 @@
 
 		<!-- concatenate in two-steps to preserve include order -->
 		<concat destfile="${hvlibs}/build/helioviewer-all.js" encoding="UTF-8" eol="lf">
-		    <filelist dir="${hvlibs}" files="LoadingIndicator.js, UIElement.js"/>
-			<fileset dir="${hvlibs}" includes="*.js" excludes="LoadingIndicator.js, UIElement.js"/>
+		    <filelist dir="${hvlibs}" files="LoadingIndicator.js, UIElement.js, Layer.js"/>
+			<fileset dir="${hvlibs}" includes="*.js" excludes="LoadingIndicator.js, UIElement.js, Layer.js"/>
 		</concat>
 
 		<!-- minify -->

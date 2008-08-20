@@ -293,8 +293,8 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
     height: 14px;
 }
 
-span.event-accordion-header-left  {display: block; width:60%; float: left;}
-span.event-accordion-header-right {display: block; width:100%; text-align: right;}
+span.event-accordion-header-left  {display: block; width:70%; float: left;}
+span.event-accordion-header-right {display: block; text-align: right;}
 
 .timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}
 
