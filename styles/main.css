@@ -258,6 +258,22 @@ a.lightGray {
 	font-weight:bold;
 }
 
+.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px;}
+
+.timeBehind {
+	color: #FFFF66;
+	font-weight: bold;
+}
+
+.timeAhead {
+	color: #b2ff66;
+	font-style: italic;	
+}
+
+.timeSignificantlyOff {
+	color: #ff6666;
+}
+
 .centered {display: block; margin-left:auto; margin-right: auto;}
 
 /* LayerManager & Event Manager */
@@ -295,8 +311,6 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 
 span.event-accordion-header-left  {display: block; width:70%; float: left;}
 span.event-accordion-header-right {display: block; text-align: right;}
-
-.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px; color:white;}
 
 /* updates and to-do list */
 .notes {
