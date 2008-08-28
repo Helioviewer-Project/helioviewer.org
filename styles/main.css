@@ -375,3 +375,38 @@ span.event-accordion-header-right {display: block; text-align: right;}
 .tooltip-bottomleft-large div, .tooltip-topleft-medium div, .tooltip-bottomleft-medium div {
     padding: 27px;
 }
+
+/* Events */
+.event-layer {
+	position: absolute;
+}
+.event {
+	position: absolute;
+}
+div.event-marker {
+	position: absolute;
+	height: 15px;
+	width: 15px;
+	border: none;
+	z-index: 101;
+}
+
+.Active_Region {background: url(../images/events/activeregion.png);}
+.CME {background: url(../images/events/cme.png);}
+.Type_II_Radio_Burst {background: url(../images/events/typeII_radioburst.png);}
+
+div.event-label {
+	background: #4a4a4a;
+	position: absolute;
+	top: 15px;
+	left: 5px;
+	z-index: 102;
+}
+div.event-popup {
+	color: #000;
+	position: absolute;
+	padding: 55px;
+	top: 12px;
+	left: 12px;
+	z-index: 103;
+}
