@@ -369,7 +369,7 @@ span.event-accordion-header-right {display: block; text-align: right;}
 
 /* doesn't get inherited as is... need to specify for each class instead of by id as above */
 .tooltip-topleft-large div {
-    padding: 55px;
+	padding: 50px 35px 50px 60px;
 }
 
 .tooltip-bottomleft-large div, .tooltip-topleft-medium div, .tooltip-bottomleft-medium div {
@@ -404,9 +404,35 @@ div.event-label {
 }
 div.event-popup {
 	color: #000;
+	cursor: default;
 	position: absolute;
-	padding: 55px;
 	top: 12px;
 	left: 12px;
 	z-index: 103;
+}
+
+a.event-popup-close-btn {
+	position: absolute;
+	cursor: pointer;
+	color: #4673b2;
+	padding: 0;
+	font-family: sans-serif;
+	font-size: 14px;
+	right: 60px;
+	top: 35px;
+}
+
+a.event-popup-close-btn:hover {
+	font-weight: bold;
+	color: #b24673;
+}
+
+a.event-url {
+	text-decoration: none;
+	color: #4673b2;
+}
+
+a.event-url:hover {
+	text-decoration: underline;
+	color: #b24673;
 }
