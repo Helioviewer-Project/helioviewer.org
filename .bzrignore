@@ -9,3 +9,5 @@ __MACOSX
 phpClasses/server/ImgIndex.php.THIS
 phpClasses/server/ImgIndex.php.BASE
 phpClasses/server/ImgIndex.php.OTHER
+tiles
+.pydevproject

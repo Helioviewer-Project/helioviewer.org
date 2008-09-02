@@ -13,10 +13,11 @@ def main():
 	images = processMetaFiles(metafiles)
 
 	dbname, dbuser, dbpass = getDBInfo()
+	storageMethod = getStorageReqs()
 
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()
-	processImages(images, cursor)
+	processImages(images, storageMethod, cursor)
 
 	print "Finished!"
 
@@ -55,13 +56,20 @@ def processMetaFiles (meta):
 
 	return images
 
-def processImages (images, cursor):
+def processImages (images, storageMethod, cursor):
 	''' Iterates through a collection of images, each of which keeps
 		a list of all of the zoom-levels for which data exists, and populates
 		the image and tile tables of the database schema provided. '''
-	import glob, base64
+	import glob
+	from urlparse import urljoin
+
 	measurementIds = getMeasurementIds(cursor)
 	id = getStartingId(cursor);
+
+	if storageMethod != 'database':
+		baseurl = raw_input("Please enter the root directory where the tiles are located (e.g. http://localhost/tiles):")
+		if not baseurl[-1] == "/":
+			baseurl += "/"
 
 	for img in images.keys():
 		dir, file = os.path.split(img)
@@ -112,7 +120,24 @@ def processImages (images, cursor):
 				y = int(tile_name[41:43])
 				blob = open(tile, 'rb').read()
 
-				sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, null, '%s')" % (id, x, y, zoom, MySQLdb.escape_string(blob))
+				if storageMethod != 'database':
+					filepath = str(year) + "/" + str(mon) + "/" + str(day) + "/" + str(hour) + "/" + str(obs) + "/" + str(inst) + "/" + str(det) + "/" + str(meas) + "/"
+					zoomStr = '%02d' % zoom
+					xStr = '%02d' % x
+					yStr = '%02d' % y
+					filepath += file + "-" + zoomStr + "-" + xStr + "-" + yStr + "." + filetype
+					url = urljoin(baseurl, filepath)
+
+				# SQL statement depends on where the tile images should be stored
+				if storageMethod == "database":
+					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, null, '%s')" % (id, x, y, zoom, MySQLdb.escape_string(blob))
+
+				elif storageMethod == "filesystem":
+					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, '%s', null)" % (id, x, y, zoom, url)
+
+				elif storageMethod == "both":
+					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, '%s', '%s')" % (id, x, y, zoom, url, MySQLdb.escape_string(blob))
+
 				#print "Working with tile: " + tile + ", zoomlevel: " + str(zoom)
 
 				try:
@@ -163,8 +188,8 @@ def printGreeting():
 	os.system("clear")
 
 	print "===================================================================="
-	print "= HelioViewer Database Population Script 0.9                       ="
-	print "= By: Keith Hughitt, August 13, 2008                               ="
+	print "= HelioViewer Database Population Script 0.92                      ="
+	print "= By: Keith Hughitt, September 02, 2008                            ="
 	print "=                                                                  ="
 	print "= This script processes raw tile images, and inserts them into a   ="
 	print "= database, along with their relevent information.                 ="
@@ -193,6 +218,32 @@ def getDBInfo():
 	dbpass = raw_input("Database password: ")
 	return dbname, dbuser, dbpass
 
+def getStorageReqs():
+	''' Prompts the user to input the desired tile storage method '''
+	''' Note: meta-information is always stored in a database.'''
+	print "Where would you like to store the tile images?"
+	print "    (1) Filesystem"
+	print "    (2) Database"
+	print "    (3) Both"
+	choice = int(raw_input(":"))
+
+	while (not ((choice == 1) or (choice == 2) or (choice == 3))):
+		print "That is not a valid selection!"
+		print "Where would you like to store the tile images?"
+		print "    (1) Filesystem"
+		print "    (2) Database"
+		print "    (3) Both"
+		print "Please enter '1', '2', or '3'"
+		choice = int(raw_input(":"))
+
+	if choice == 1:
+		storage = "filesystem"
+	elif choice == 2:
+		storage = "database"
+	elif choice == 3:
+		storage = "both"
+
+	return storage
 
 def getNumTiles (zoomLevel):
 	''' Returns the number of tiles expected for a given zoom-level '''
