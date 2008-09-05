@@ -37,6 +37,23 @@ class TileStore {
 		}
 	}
 
+	function outputTileURI($imageId, $zoom, $x, $y) {
+		$query = "SELECT url FROM tile WHERE imageId=$imageId AND zoom=$zoom AND x=$x AND y=$y";
+		//echo $query;
+		$result = $this->dbConnection->query($query);
+		if (!$result) {
+			echo "$query - failed\n";
+			die (mysql_error());
+		}
+		if (mysql_num_rows($result) > 0) {
+			$row = mysql_fetch_array($result);
+			return $row;
+		} else {
+			//return file_get_contents($this->noImage);
+			return false;
+		}
+	}
+
 	function outputTile($imageId, $detector, $zoom, $x, $y) {
 		// Cache-Lifetime (in minutes)
 		$lifetime = 60;

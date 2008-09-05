@@ -5,13 +5,12 @@ import os, math, MySQLdb, datetime
 
 def main():
 	printGreeting()
-
 	path = getFilePath()
-
 	metafiles = traverseDirectory(path)
-	print "Found " + str(len(metafiles)) + " images."
-	images = processMetaFiles(metafiles)
 
+	print "Found " + str(len(metafiles)) + " images."
+
+	images = processMetaFiles(metafiles)
 	dbname, dbuser, dbpass = getDBInfo()
 	storageMethod = getStorageReqs()
 
@@ -113,30 +112,29 @@ def processImages (images, storageMethod, cursor):
 
 
 		for tile in glob.glob(img + "*"):
-			if tile[-4:] != "meta":
+			if (tile[-4:] != "meta") and (tile[-3:] != "jp2"):
 				tile_dir, tile_name = os.path.split(tile)
-				zoom = int(tile_name[35:37])
-				x = int(tile_name[38:40])
-				y = int(tile_name[41:43])
+				zoom = tile_name[35:37]
+				x = tile_name[38:40]
+				y = tile_name[41:43]
 				blob = open(tile, 'rb').read()
+				
+				print "Processing " + tile + "..."
 
 				if storageMethod != 'database':
 					filepath = str(year) + "/" + str(mon) + "/" + str(day) + "/" + str(hour) + "/" + str(obs) + "/" + str(inst) + "/" + str(det) + "/" + str(meas) + "/"
-					zoomStr = '%02d' % zoom
-					xStr = '%02d' % x
-					yStr = '%02d' % y
-					filepath += file + "-" + zoomStr + "-" + xStr + "-" + yStr + "." + filetype
+					filepath += file + "-" + zoom + "-" + x + "-" + y + "." + filetype
 					url = urljoin(baseurl, filepath)
 
 				# SQL statement depends on where the tile images should be stored
 				if storageMethod == "database":
-					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, null, '%s')" % (id, x, y, zoom, MySQLdb.escape_string(blob))
+					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, null, '%s')" % (id, int(x), int(y), int(zoom), MySQLdb.escape_string(blob))
 
 				elif storageMethod == "filesystem":
-					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, '%s', null)" % (id, x, y, zoom, url)
+					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, '%s', null)" % (id, int(x), int(y), int(zoom), url)
 
 				elif storageMethod == "both":
-					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, '%s', '%s')" % (id, x, y, zoom, url, MySQLdb.escape_string(blob))
+					sql = "INSERT INTO tile VALUES(%d, %d, %d, %d, '%s', '%s')" % (id, int(x), int(y), int(zoom), url, MySQLdb.escape_string(blob))
 
 				#print "Working with tile: " + tile + ", zoomlevel: " + str(zoom)
 
