@@ -36,23 +36,23 @@ class TileStore {
 			return false;
 		}
 	}
-
-	function outputTileURI($imageId, $zoom, $x, $y) {
+	
+	function getTileURI($imageId, $zoom, $x, $y) {
 		$query = "SELECT url FROM tile WHERE imageId=$imageId AND zoom=$zoom AND x=$x AND y=$y";
-		//echo $query;
+
 		$result = $this->dbConnection->query($query);
 		if (!$result) {
-			echo "$query - failed\n";
-			die (mysql_error());
+		        echo "$query - failed\n";
+		        die (mysql_error());
 		}
 		if (mysql_num_rows($result) > 0) {
-			$row = mysql_fetch_array($result);
-			return $row;
+		        $row = mysql_fetch_array($result);
+		        return $row;
 		} else {
-			//return file_get_contents($this->noImage);
-			return false;
+		        //return file_get_contents($this->noImage);
+		        return false;
 		}
-	}
+	} 
 
 	function outputTile($imageId, $detector, $zoom, $x, $y) {
 		// Cache-Lifetime (in minutes)
@@ -66,10 +66,19 @@ class TileStore {
 		$numTiles = $this->getNumTiles($detector, $zoom);
 		if ($numTiles >1) {
 			$offset = max(1, (int)(sqrt($numTiles)/2));
-			$row = $this->getTile($imageId, $zoom, $x + $offset, $y + $offset);
-			header('Content-type: image/jpeg');
-			if ($row) echo $row['tile'];
-			else readfile($this->noImage);
+			
+			if ($source == "filesystem") {
+				$tile = new Imagick($this->getTileURI($imageId, $zoom, $x + $offset, $y + $offset));
+				header('Content-type: image/jpeg');
+				echo $tile;
+			}
+			else {
+				$row = $this->getTile($imageId, $zoom, $x + $offset, $y + $offset);
+				header('Content-type: image/jpeg');
+				if ($row) echo $row['tile'];
+				else readfile($this->noImage);
+			}
+
 		} else {
 			header('Content-type: image/jpeg');
 			readfile($this->noImage);
