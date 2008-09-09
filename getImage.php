@@ -14,12 +14,11 @@ switch ($action) {
     echo json_encode($imgIndex->getProperties($_GET['imageId']));
     break;
   case 'getClosest':
-    header('Content-type: application/json');
+	header('Content-type: application/json');
     foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
       $src["$field.$queryForField"] = $_GET[$field];
     }
     echo json_encode($imgIndex->getClosestImage($_GET['timestamp'], $src));
-    //$imgIndex->getClosestImage($_GET['timestamp'], $src);
     break;
 }
 ?>

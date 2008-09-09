@@ -67,17 +67,11 @@ class TileStore {
 		if ($numTiles >1) {
 			$offset = max(1, (int)(sqrt($numTiles)/2));
 			
-			if ($source == "filesystem") {
-				$tile = new Imagick($this->getTileURI($imageId, $zoom, $x + $offset, $y + $offset));
-				header('Content-type: image/jpeg');
-				echo $tile;
-			}
-			else {
-				$row = $this->getTile($imageId, $zoom, $x + $offset, $y + $offset);
-				header('Content-type: image/jpeg');
-				if ($row) echo $row['tile'];
-				else readfile($this->noImage);
-			}
+			$row = $this->getTile($imageId, $zoom, $x + $offset, $y + $offset);
+			header('Content-type: image/jpeg');
+			if ($row) echo $row['tile'];
+			else readfile($this->noImage);
+		
 
 		} else {
 			header('Content-type: image/jpeg');

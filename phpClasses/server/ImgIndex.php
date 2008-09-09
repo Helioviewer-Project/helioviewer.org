@@ -25,7 +25,9 @@ class ImgIndex {
 
   public function getClosestImage($timestamp, $src) {
     $query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit, 
-    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+    						detector.name AS detector, detector.opacityGroupId AS opacityGroupId,
+    						detector.lowestRegularZoomLevel as lowestRegularZoom,
+    						opacityGroup.description AS opacityGroupDescription,
     						instrument.name AS instrument, observatory.name AS observatory, 
     						UNIX_TIMESTAMP(timestamp) AS timestamp,
 								UNIX_TIMESTAMP(timestamp) - $timestamp AS timediff,
