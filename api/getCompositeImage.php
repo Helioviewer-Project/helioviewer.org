@@ -1,49 +1,40 @@
 <?php
+require('classes/CompositeImage.php');
+
+//Passing timestamps from JavaScript:
+// var d = new Date(Date.UTC(2003, 9, 5));
+// escape(d.toISOString().slice(1,-1));
+// "2003-10-05T00%3A00%3A00Z"
+
+//Example queries: http://localhost/hv/api/getCompositeImage.php?layers=EITEIT171&timestamps=2003-10-05T00%3A00%3A00Z
+// http://localhost/hv/api/getCompositeImage.php?layers=EITEIT195,LAS0C20WL&timestamps=2003-01-05T00%3A00%3A00Z,2003-01-05T00%3A06%3A00Z
+
+
 //Configuration
 $root = '/var/www/hv/tiles/';
-$zoom = 13;
 
-//Get query information
-$year = $_GET['year'];
-$month = $_GET['month'];
-$day = $_GET['day'];
-$hour = $_GET['hour'];
-$min = $_GET['min'];
-$sec = $_GET['sec'];
-$wl = $_GET['wavelength'];
+//Process query string
+try {
+	$layers = explode(",", $_GET['layers']);
 
-//Some more hard-coded information
-$c2_path = 'soho/LAS/0C2/0WL/';
-$c3_path = 'soho/LAS/0C3/0WL/';
-$eit_path = 'soho/EIT/EIT/' . $wl . "/";
+	if ((sizeOf($layers) > 3) || (strlen($_GET['layers']) == 0)) {
+		throw new Exception("Error: Invalid layer choices! You must specify 1-3 command-separate layernames.");
+	}
+	
+	$timestamps = explode(",", $_GET['timestamps']);
+	if ((sizeOf($timestamps) != sizeOf($layers)) || (strlen($_GET['layers']) == 0)) {
+		throw new Exception("Error: Incorrect number of timestamps specified!");
+	}
+	
+	$zoomLevel = $_GET['zoomLevel'];
+	$edges = $_GET['edgeDetect'];
+}
+catch(Exception $e) {
+	echo 'Error: ' .$e->getMessage();
+	exit();
+}
 
-//EIT
-/*
-$eitarray = array();
-array_push($eitarray, 'images/2003_10_19_120000_soho_EIT_EIT_195-13-00-00-C-n011.229-p011.229.jpg',
-					  'images/2003_10_19_120000_soho_EIT_EIT_195-13-01-00-C.jpg',
-					  'images/2003_10_19_120000_soho_EIT_EIT_195-13-00-01-C.jpg',
-					  'images/2003_10_19_120000_soho_EIT_EIT_195-13-01-01-C.jpg');
-					  * */
-
-$filepath = $root . $year . "/" . $month . "/" . $day . "/" . $hour" . "/";
-$timestamp = $year . "_" . $month . "_" . $day . "_" . $hour . $min . $sec . "_";
-
-$eitfull = $filepath . $eit_path .
-
-$eitarray = array();
-array_push($eitarray,
-
-$eitImg = new Imagick ($eitarray);
-
-$eit = $eitImg->montageImage( new imagickdraw(), "2x2+0+0", "512x512+0+0", imagick::MONTAGEMODE_UNFRAME, "0x0+0+0" );
-$eit->setImageFormat("png");
-
-//LASCO
-$las = new Imagick("images/las.png");
-$eit->compositeImage($las, $las->getImageCompose(), 0, 0);
-
-header( "Content-Type: image/png" );
-echo $eit;
-
+//Create and display composite image
+$img = new CompositeImage($layers, $timestamps, $zoomLevel, $edges);
+$img->printImage();
 ?>
