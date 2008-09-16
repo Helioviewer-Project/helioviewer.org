@@ -1,0 +1,47 @@
+The examples require some auxilary files. If you do not have these files you can
+download them from http://www.buggedcom.co.uk/ffmpeg
+
+examples/example-config.php 
+Please edit this files in order for the examples to work.
+
+examples/example01.php 
+Converts video to Flash Video (ie FLV).
+
+examples/example02.php 
+Screen grabs video frames.
+
+examples/example03.php
+Compile a movie from multiple jpegs.
+
+examples/example04.php 
+Watermark a video.
+
+examples/example05.php 
+Access media metadata without using the ffmpeg-php library.
+
+examples/example06.php 
+Extract audio from video.
+
+examples/example07.php 
+Join multiple videos together.
+
+examples/example08.php 
+Easy video conversion to common formats using the adapters.
+
+examples/example09.php 
+Shows you how to access the information about your ffmpeg installation.
+
+examples/example10.php 
+Shows you how to extract a specific frame from a movie.
+
+examples/example11.php 
+Shows you an example usage of the ffmpeg-php emulation via the ffmpeg-php adapter.
+
+examples/example12.php 
+Shows you how to manipulate/format timecode strings.
+
+examples/example13.php 
+This demonstrates how to simply create a FLV stream script.
+
+/* SVN FILE: $Id$ */
+

@@ -6,9 +6,9 @@ class CompositeImage {
 	
 	private $layers;
 	private $obs = "soho";
-	private $rootDir = "/var/www/hv/tiles/";
+	private $rootDir = "../tiles/";
 	private $composite;
-	private $emptyTile = "/var/www/hv/images/transparent.gif";
+	private $emptyTile = "../images/transparent.gif";
 	private $edgeEnhance = false;
 	
 	/*
@@ -35,8 +35,13 @@ class CompositeImage {
 			
 			$i++;
 		}
-
-		$this->composite = $this->buildComposite($images);
+		
+		if (sizeOf($this->layers) > 1) {
+			$this->composite = $this->buildComposite($images);
+		}
+		else {
+			$this->composite = $images[0];
+		}
 		
 		//Optional edge detection
 		if ($this->edgeEnhance == "true")
@@ -83,7 +88,7 @@ class CompositeImage {
 		
 		$img = $tiles->montageImage( new imagickdraw(), $geometry, "512x512+0+0", imagick::MONTAGEMODE_UNFRAME, "0x0+0+0" );
 		$img->setImageFormat($ext);
-		
+
 		return $img;
 	}
 	
@@ -108,20 +113,43 @@ class CompositeImage {
 		echo $this->composite;
 	}
 	
+	/*
+	 * getImage
+	 */
+	 public function getImage() {
+	 	return $this->composite;
+	 }
+	 
+	 /*
+	  * writeImage
+	  */
+	 public function writeImage($filename) {
+	 	$this->composite->writeImage($filename);
+	 }
+	
 	/**
 	 * @name getFilepath
 	 * @description Builds a directory string for the given layer
 	 */
 	private function getFilepath($inst, $det, $meas, $ts) {
-		$format = '%Y-%m-%dUTC%H:%M:%S';
-		$d = strptime(date($ts), $format);
+		//$format = '%Y-%m-%dUTC%H:%M:%S';
+		//$d = strptime(date($ts), $format);
+		$d = getdate($ts);
 		
+		/*
 		$year = $d['tm_year'] + 1900;
 		$mon  = str_pad($d['tm_mon'] + 1, 2 , "0", STR_PAD_LEFT);
 		$day =  str_pad($d['tm_mday'], 2 , "0", STR_PAD_LEFT);
 		$hour =  str_pad($d['tm_hour'], 2 , "0", STR_PAD_LEFT);
 		$min =  str_pad($d['tm_min'], 2 , "0", STR_PAD_LEFT);
-		$sec =  str_pad($d['tm_sec'], 2 , "0", STR_PAD_LEFT);
+		$sec =  str_pad($d['tm_sec'], 2 , "0", STR_PAD_LEFT);*/
+		
+		$year = $d['year'];
+		$mon  = str_pad($d['mon'], 2 , "0", STR_PAD_LEFT);
+		$day =  str_pad($d['mday'], 2 , "0", STR_PAD_LEFT);
+		$hour =  str_pad($d['hours'], 2 , "0", STR_PAD_LEFT);
+		$min =  str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
+		$sec =  str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
 		
 		$path = $this->rootDir . implode("/", array($year, $mon, $day, $hour));	
 		$path .= "/$this->obs/$inst/$det/$meas/";
@@ -171,7 +199,7 @@ class CompositeImage {
 		
 		print "&nbsp;&nbsp;&nbsp;&nbsp;Timestamps: ";
 		foreach ($this->timestamps as $t)
-			print " " . date($t);
+			print " " . $t;
 			
 		print "<br><br>";
 		

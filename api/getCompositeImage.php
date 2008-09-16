@@ -3,15 +3,10 @@ require('classes/CompositeImage.php');
 
 //Passing timestamps from JavaScript:
 // var d = new Date(Date.UTC(2003, 9, 5));
-// escape(d.toISOString().slice(1,-1));
-// "2003-10-05T00%3A00%3A00Z"
+// var unix_ts = d.getTime() * 1000;
 
-//Example queries: http://localhost/hv/api/getCompositeImage.php?layers=EITEIT171&timestamps=2003-10-05T00%3A00%3A00Z
-// http://localhost/hv/api/getCompositeImage.php?layers=EITEIT195,LAS0C20WL&timestamps=2003-01-05T00%3A00%3A00Z,2003-01-05T00%3A06%3A00Z
-
-
-//Configuration
-$root = '/var/www/hv/tiles/';
+//Example queries: http://localhost/hv/api/getCompositeImage.php?layers=EITEIT171&timestamps=1041728400&zoomLevel=10
+// http://localhost/hv/api/getCompositeImage.php?layers=EITEIT195,LAS0C20WL&timestamps=1041724800,1041725160&zoomLevel=13
 
 //Process query string
 try {
