@@ -20,6 +20,8 @@ class ImageSeries {
 	private $timeStep;
 	private $db;
 	private $tmpdir = "/var/www/hv/api/tmp/";
+	private $tmpurl = "http://localhost/hv/api/tmp/";
+	private $obs = "soho";
 	
 	/*
 	 * constructor
@@ -64,61 +66,134 @@ class ImageSeries {
 	}
 	
 	/*
-	 * quickMovie
+	 * getImageTimes
+	 * 
+	 * Queries the database and returns an array of times of size equal to $this->numFrames. 
+	 * If specified, each time will be chosen to be as close as possible to the time in the same
+	 * indice of the $times array. Otherwise it will simply return an array of the closest 
+	 * times to $this->startTime.
 	 */
-	public function quickMovie() {
-		// First layer is the primary one
-		$layer = $this->layers[0];
-		
-		$obs  = "soho";
+	private function getImageTimes($layer, $times = null) {
+		$obs  = $this->obs;
 		$inst = substr($layer, 0, 3);
 		$det  = substr($layer, 3,3);
 		$meas = substr($layer, 6,3);		
-		
 
-		$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $this->startTime AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $this->startTime) AS timediffAbs 
-				FROM image
-					LEFT JOIN measurement on measurementId = measurement.id
-					LEFT JOIN measurementType on measurementTypeId = measurementType.id
-					LEFT JOIN detector on detectorId = detector.id
-					LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
-					LEFT JOIN instrument on instrumentId = instrument.id
-					LEFT JOIN observatory on observatoryId = observatory.id
-             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' ORDER BY timediffAbs LIMIT 0,$this->numFrames";
-        
-		//echo "SQL: $sql <br><br>";
-             	
-		$result = $this->db->query($sql);
 		$resultArray = array();
-		
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-    		array_push($resultArray, $row);
-		}
-		
-		//Sort by time
-		foreach ($resultArray as $key => $row) {
-    		$timediff[$key]  = $row['timediff'];
-		}
-		array_multisort($timediff, SORT_ASC, $resultArray);
 
-		//Create images
+		//If $times is defined, correlate returned times to it.
+		if ($times) {
+			foreach ($times as $time) {
+				$time = $time['unix_timestamp'];
+				$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $time AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $time) AS timediffAbs 
+						FROM image
+							LEFT JOIN measurement on measurementId = measurement.id
+							LEFT JOIN measurementType on measurementTypeId = measurementType.id
+							LEFT JOIN detector on detectorId = detector.id
+							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
+							LEFT JOIN instrument on instrumentId = instrument.id
+							LEFT JOIN observatory on observatoryId = observatory.id
+		             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' ORDER BY timediffAbs LIMIT 0,1";
+				$result = $this->db->query($sql);
+				$row = mysql_fetch_array($result, MYSQL_ASSOC);
+	    		array_push($resultArray, $row);
+			}	
+		}
+		 
+		//Otherwise simply return the closest times to the startTIme specified
+		else {
+			$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $this->startTime AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $this->startTime) AS timediffAbs 
+					FROM image
+						LEFT JOIN measurement on measurementId = measurement.id
+						LEFT JOIN measurementType on measurementTypeId = measurementType.id
+						LEFT JOIN detector on detectorId = detector.id
+						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
+						LEFT JOIN instrument on instrumentId = instrument.id
+						LEFT JOIN observatory on observatoryId = observatory.id
+	             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' ORDER BY timediffAbs LIMIT 0,$this->numFrames";
+	
+			//echo "SQL: $sql <br><br>";
+	             	
+			$result = $this->db->query($sql);
+			
+			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+	    		array_push($resultArray, $row);
+			}
+			
+			//Sort the results
+			foreach ($resultArray as $key => $row) {
+	    		$timediff[$key]  = $row['timediff'];
+			}
+			array_multisort($timediff, SORT_ASC, $resultArray);
+		}
+		return $resultArray;		
+	}
+	
+	/*
+	 * showMovie
+	 */
+	public function showMovie($url, $width, $height) {
+	?>
+		<!-- MC Media Player -->
+		<script type="text/javascript">
+			playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
+			fpFileURL = "<?php print $url?>";
+			playerSize = "<?php print $width . 'x' . $height?>";
+		</script>
+		<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
+		<!-- / MC Media Player -->
+	<?php
+	}
+	
+	/*
+	 * quickMovie
+	 */
+	public function quickMovie() {
+		// Make a temporary directory
+		$now = time();
+		$tmpdir = $this->tmpdir . $now . "/";
+		$tmpurl = $this->tmpurl . $now . "/" . "out.flv";
+		mkdir($tmpdir);
+
+		// Create an array of the timestamps to use for each layer
+		$imageTimes = array();
+		
 		$i = 0;
-		foreach ($resultArray as $time) {
-			
-			//CompositeImage excepts an array of timestamps
-			$ts = array();
-			array_push($ts, $time['unix_timestamp']);
-			
-			$img = new CompositeImage($this->layers, $ts, $this->zoomLevel, false);
-			$fn = $this->tmpdir . $i . '.jpg';
-			$img->writeImage($fn);
-			
-			array_push($this->images, $fn);
+		foreach ($this->layers as $layer) {
+			if ($i == 0)
+				$times = $this->getImageTimes($layer);
+			else
+				$times = $this->getImageTimes($layer, $imageTimes[0]);
+				
+			array_push($imageTimes, $times);
 			$i++;
 		}
 		
+		//print "<br>" . sizeOf($imageTimes) . "<br><br>";
+		
+		
+		// For each frame, create a composite images and store it into $this->images
+		for ($j = 0; $j < $this->numFrames; $j++) {
+			
+			// CompositeImage expects an array of timestamps
+			$timestamps = array();
+		
+			// Grab timestamp for each layer
+			foreach ($imageTimes as $time) {
+				array_push($timestamps, $time[$j]['unix_timestamp']);
+			}
+			
+			// Build a composite image
+			$img = new CompositeImage($this->layers, $timestamps, $this->zoomLevel, false);
+			$filename = $tmpdir . $j . '.jpg';
+			$img->writeImage($filename);
+			
+			array_push($this->images, $filename);
+			$j++;
+		}
+		
 		// 	init PHPVideoToolkit class
-		$toolkit = new PHPVideoToolkit($this->tmpdir);
+		$toolkit = new PHPVideoToolkit($tmpdir);
 				
 		// 	compile the image to the tmp dir with an input frame rate of 10 per second
 		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, 10);
@@ -132,8 +207,8 @@ class ImageSeries {
 		$toolkit->setVideoOutputDimensions(1024, 1024);
 
 		// 	set the output parameters
-		$output_filename = 'out.avi';
-		$ok = $toolkit->setOutput($this->tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		$output_filename = 'out.flv';
+		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 		if(!$ok)
 		{
 			// 		if there was an error then get it
@@ -153,9 +228,7 @@ class ImageSeries {
 		}
 	
 		$thumb = array_shift($toolkit->getLastOutput());
-			echo "Video created from images... <b>".basename($thumb)."</b><br />";
-			echo '<img src="tmp/'.basename($thumb).'" border="0" /><br /><br />';
-		    echo '</body></html>';
+		$this->showMovie($tmpurl, 512, 512);
 	}
 }
 ?>
