@@ -6,9 +6,9 @@ import os, math, MySQLdb, datetime
 def main():
 	printGreeting()
 	path = getFilePath()
-	metafiles = traverseDirectory(path)
+	metafiles, jp2 = traverseDirectory(path)
 
-	print "Found " + str(len(metafiles)) + " images."
+	print "Found " + str(len(metafiles)) + " regular images and " + str(len(jp2)) + " jp2 images."
 
 	images = processMetaFiles(metafiles)
 	dbname, dbuser, dbpass = getDBInfo()
@@ -16,7 +16,12 @@ def main():
 
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()
-	processImages(images, storageMethod, cursor)
+
+	if(len(jp2) > 0):
+		processJPEG2000Images(jp2, cursor)
+
+	if(len(images) > 0):
+		processImages(images, storageMethod, cursor)
 
 	print "Finished!"
 
@@ -24,17 +29,21 @@ def traverseDirectory (path):
 	''' Traverses file-tree starting with the specified path and builds a
 		list of meta-files representing the available images'''
 	images = []
+	jp2 = []
 
 	for child in os.listdir(path):
 		node = os.path.join(path, child)
 		if os.path.isdir(node):
-			new = traverseDirectory(node)
-			images.extend(new)
+			newImgs, newJP2 = traverseDirectory(node)
+			images.extend(newImgs)
+			jp2.extend(newJP2)
 		else:
 			if node[-4:] == "meta":
 				images.append(node[:-5])
+			elif node[-3:] == "jp2":
+				jp2.append(node[:-4])
 
-	return images
+	return images, jp2
 
 def processMetaFiles (meta):
 	'''Takes a list of meta files and sorts them into a list of "images"
@@ -54,6 +63,40 @@ def processMetaFiles (meta):
 		images[image].append(zoomlevel)
 
 	return images
+
+def processJPEG2000Images (images, cursor):
+	''' Processes a collection of JPEG2000 Images. '''
+	measurementIds = getMeasurementIds(cursor)
+
+	for img in images:
+		dir, file = os.path.split(img)
+
+		year = int(file[:4])
+		mon  = int(file[5:7])
+		day  = int(file[8:10])
+		hour = int(file[11:13])
+		min  = int(file[13:15])
+		sec  = int(file[15:17])
+		obs  = file[18:22]
+		inst = file[23:26]
+		det  = file[27:30]
+		meas = file[31:34]
+
+		print "Processing " + file + ".jp2..."
+
+		filetype = "jp2"
+
+		date = datetime.datetime(year, mon, day, hour, min, sec)
+		query = "INSERT INTO image VALUES(NULL, %d, '%s', '%s')" % (measurementIds[det + meas], date, filetype)
+
+		try:
+			cursor.execute(query)
+
+		except MySQLdb.Error, e:
+			print "Error: " + e.args[1]
+
+
+
 
 def processImages (images, storageMethod, cursor):
 	''' Iterates through a collection of images, each of which keeps
@@ -118,7 +161,7 @@ def processImages (images, storageMethod, cursor):
 				x = tile_name[38:40]
 				y = tile_name[41:43]
 				blob = open(tile, 'rb').read()
-				
+
 				print "Processing " + tile + "..."
 
 				if storageMethod != 'database':
@@ -186,8 +229,8 @@ def printGreeting():
 	os.system("clear")
 
 	print "===================================================================="
-	print "= HelioViewer Database Population Script 0.92                      ="
-	print "= By: Keith Hughitt, September 02, 2008                            ="
+	print "= HelioViewer Database Population Script 0.94                      ="
+	print "= By: Keith Hughitt, September 17, 2008                            ="
 	print "=                                                                  ="
 	print "= This script processes raw tile images, and inserts them into a   ="
 	print "= database, along with their relevent information.                 ="
