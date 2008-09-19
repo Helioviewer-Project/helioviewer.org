@@ -101,7 +101,7 @@ class CompositeImage {
 		$las = $images[1];
 
 		//$eit->compositeImage($las, $las->getImageCompose(), 0, 0);
-		$eit->compositeImage($las, imagick::COMPOSITE_OVER, 0,0);
+		$eit->compositeImage($las, imagick::COMPOSITE_OVER, 0, 0);
 		return $eit;
 	}
 	

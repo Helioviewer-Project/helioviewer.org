@@ -144,6 +144,14 @@ input, select {background-color: #F4F4F4;}
 	top:-4px;
 }
 
+/* Movie Builder */
+img#movieBuilder {
+	position: relative;
+	cursor: pointer;
+	margin: 2px;
+	vertical-align: middle;
+	top: -4px;
+}
 
 /* Zoom Level Slider Styles */
 .sliderTrack {
@@ -373,7 +381,7 @@ span.event-accordion-header-right {display: block; text-align: right;}
 }
 
 .tooltip-bottomleft-large div, .tooltip-topleft-medium div, .tooltip-bottomleft-medium div {
-    padding: 27px;
+    padding: 30px;
 }
 
 /* Events */

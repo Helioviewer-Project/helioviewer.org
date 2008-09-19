@@ -22,17 +22,19 @@ class ImageSeries {
 	private $tmpdir = "/var/www/hv/api/tmp/";
 	private $tmpurl = "http://localhost/hv/api/tmp/";
 	private $obs = "soho";
+	private $filetype = "flv";
 	
 	/*
 	 * constructor
 	 */
-	public function __construct($layers, $startTime, $zoomLevel, $numFrames) {
+	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate) {
 		date_default_timezone_set('UTC');
 		
 		$this->layers = $layers;
 		$this->startTime = $startTime;
 		$this->zoomLevel = $zoomLevel;
 		$this->numFrames = $numFrames;
+		$this->frameRate = $frameRate;
 		
 		$this->db = new DbConnection();
 	}
@@ -152,7 +154,7 @@ class ImageSeries {
 		// Make a temporary directory
 		$now = time();
 		$tmpdir = $this->tmpdir . $now . "/";
-		$tmpurl = $this->tmpurl . $now . "/" . "out.flv";
+		$tmpurl = $this->tmpurl . $now . "/" . "out." . $this->filetype;
 		mkdir($tmpdir);
 
 		// Create an array of the timestamps to use for each layer
@@ -189,14 +191,13 @@ class ImageSeries {
 			$img->writeImage($filename);
 			
 			array_push($this->images, $filename);
-			$j++;
 		}
 		
 		// 	init PHPVideoToolkit class
 		$toolkit = new PHPVideoToolkit($tmpdir);
 				
-		// 	compile the image to the tmp dir with an input frame rate of 10 per second
-		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, 10);
+		// 	compile the image to the tmp dir
+		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
 		if(!$ok)
 		{
 			// 		if there was an error then get it
@@ -207,7 +208,7 @@ class ImageSeries {
 		$toolkit->setVideoOutputDimensions(1024, 1024);
 
 		// 	set the output parameters
-		$output_filename = 'out.flv';
+		$output_filename = 'out.' . $this->filetype;
 		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 		if(!$ok)
 		{
@@ -228,7 +229,12 @@ class ImageSeries {
 		}
 	
 		$thumb = array_shift($toolkit->getLastOutput());
-		$this->showMovie($tmpurl, 512, 512);
+		//echo $thumb;
+		//$this->showMovie($tmpurl, 512, 512);
+		
+		header('Content-type: application/json');
+		echo json_encode($tmpurl);
+		//echo $url[0];
 	}
 }
 ?>
