@@ -136,6 +136,17 @@ input, select {background-color: #F4F4F4;}
     font-size:1em;
 }
 
+.message-console-link {
+	text-decoration: none;
+	font-weight: bold;
+	color: #3d76e0;
+}
+
+.message-console-link:hover {
+	text-decoration: underline;
+	color: #e03d76;
+}
+
 /* Calendar */
 #date {width:80px;}
 .ui-datepicker-trigger {

@@ -23,11 +23,14 @@ class ImageSeries {
 	private $tmpurl = "http://localhost/hv/api/tmp/";
 	private $obs = "soho";
 	private $filetype = "flv";
+	private $highQualityBitrate = 845;
+	private $watermarkURL = "/var/www/hv/images/watermark.gif";
+	private $watermarkOptions = "-m1";
 	
 	/*
 	 * constructor
 	 */
-	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate) {
+	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat) {
 		date_default_timezone_set('UTC');
 		
 		$this->layers = $layers;
@@ -35,6 +38,7 @@ class ImageSeries {
 		$this->zoomLevel = $zoomLevel;
 		$this->numFrames = $numFrames;
 		$this->frameRate = $frameRate;
+		$this->highQualityFiletype = $hqFormat;
 		
 		$this->db = new DbConnection();
 	}
@@ -153,8 +157,9 @@ class ImageSeries {
 	public function quickMovie() {
 		// Make a temporary directory
 		$now = time();
+		$movieName = "Helioviewer-Quick-Movie-" . $this->startTime;
 		$tmpdir = $this->tmpdir . $now . "/";
-		$tmpurl = $this->tmpurl . $now . "/" . "out." . $this->filetype;
+		$tmpurl = $this->tmpurl . $now . "/" . "$movieName." . $this->filetype;
 		mkdir($tmpdir);
 
 		// Create an array of the timestamps to use for each layer
@@ -170,9 +175,7 @@ class ImageSeries {
 			array_push($imageTimes, $times);
 			$i++;
 		}
-		
 		//print "<br>" . sizeOf($imageTimes) . "<br><br>";
-		
 		
 		// For each frame, create a composite images and store it into $this->images
 		for ($j = 0; $j < $this->numFrames; $j++) {
@@ -207,8 +210,8 @@ class ImageSeries {
 		
 		$toolkit->setVideoOutputDimensions(1024, 1024);
 
-		// 	set the output parameters
-		$output_filename = 'out.' . $this->filetype;
+		// 	set the output parameters (Flash video)
+		$output_filename = "$movieName." . $this->filetype;
 		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 		if(!$ok)
 		{
@@ -220,21 +223,43 @@ class ImageSeries {
 		// 	execute the ffmpeg command
 		$quickMov = $toolkit->execute(false, true);
 		
-		
 		// 	check the return value in-case of error
 		if($quickMov !== PHPVideoToolkit::RESULT_OK) {
 			// 		if there was an error then get it
 			echo $toolkit->getLastError()."<br />\r\n";
 			exit;
 		}
+		
+		// Create a high-quality version as well
+		$hq_filename = "$movieName." . $this->highQualityFiletype;
+		
+		$toolkit->setVideoBitRate($this->highQualityBitrate);
+		
+		// Add a watermark
+		$toolkit->addWatermark($this->watermarkURL, $this->watermarkOptions);
+		
+		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		if(!$ok)
+		{
+			// 		if there was an error then get it
+			echo $toolkit->getLastError()."<br />\r\n";
+			exit;
+		}
+		
+		// 	execute the ffmpeg command
+		$mp4 = $toolkit->execute(false, true);
+		if($mp4 !== PHPVideoToolkit::RESULT_OK) {
+			// 		if there was an error then get it
+			echo $toolkit->getLastError()."<br />\r\n";
+			exit;
+		}
 	
-		$thumb = array_shift($toolkit->getLastOutput());
+		//$thumb = array_shift($toolkit->getLastOutput());
 		//echo $thumb;
 		//$this->showMovie($tmpurl, 512, 512);
 		
 		header('Content-type: application/json');
 		echo json_encode($tmpurl);
-		//echo $url[0];
 	}
 }
 ?>

@@ -3,6 +3,7 @@ require('classes/ImageSeries.php');
 set_time_limit(180);
 $maxFrames = 150;
 
+
 //Example Queries:
 //	http://localhost/hv/api/getImageSeries.php?layers=EITEIT195&startDate=1065312000&zoomLevel=10&numFrames=100
 //	http://localhost/hv/api/getImageSeries.php?layers=EITEIT171,LAS0C20WL&startDate=1041724800&zoomLevel=13&numFrames=15&frameRate=10&action=quickMovie
@@ -15,6 +16,7 @@ try {
 	$numFrames = $_GET['numFrames'];
 	$frameRate = $_GET['frameRate'];
 	$action    = $_GET['action'];
+	$hqFormat = $_GET['hq'];
 
 	if ($action == 'quickMovie') {
 		//Limit number of layers to three
@@ -36,16 +38,16 @@ catch(Exception $e) {
 
 
 if ($action == "quickMovie") {
-	$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate);
+	$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat);
 	$imgSeries->quickMovie();
 }
 else if ($action == "play") {
 	$url = $_GET['url'];
-	showMovie($url, 512, 512);
+	showMovie($url , $hqFormat, 512, 512);
 }
 
-	function showMovie($url, $width, $height) {
-		echo ($url);
+	function showMovie($url, $hqFormat, $width, $height) {
+		$urlHQ = substr($url, 0, -3) . $hqFormat;
 	?>
 		<!-- MC Media Player -->
 		<div style="text-align: center;">
@@ -61,6 +63,10 @@ else if ($action == "play") {
 			</script>
 			<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
 			<!-- / MC Media Player -->
+		</div>
+		<br>
+		<div style="text-align: center;">
+			<a href="<?php print $urlHQ;?>" style="text-decoration: none; color: white; font-weight: bold;">High-quality download.</a>
 		</div>
 	<?php
 	}
