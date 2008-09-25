@@ -1,0 +1,7 @@
+These tests are taken directly from the FFMPEG-PHP module. So theoretically
+if the adapter works exactly as required none of these tests shall fail.
+NOTE: these tests are redistributed under the original FFMPEG-PHP modules GPL
+license and not under this classes BSD license.
+
+NOTE: The all the tests, inc test_phpvideotoolkit.php have been altered slightly
+to fit this classes example layout and class structure.

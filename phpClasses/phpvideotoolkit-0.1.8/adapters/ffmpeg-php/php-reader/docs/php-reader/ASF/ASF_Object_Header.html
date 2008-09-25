@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ASF_Object_Header</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ASF_Object_Header</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The role of the header object is to provide a well-known byte sequence at the  beginning of ASF files and to contain all the information that is needed to  properly interpret the information within the data object. The header object  can optionally contain metadata such as bibliographic information.</p>
+<p class="description"><p>Of the three top-level ASF objects, the header object is the only one that  contains other ASF objects. The header object may include a number of  standard objects including, but not limited to:</p><p><ul><li>File Properties Object -- Contains global file attributes.</li><li>Stream Properties Object -- Defines a digital media stream and its
+    characteristics.</li><li>Header Extension Object -- Allows additional functionality to be added to
+    an ASF file while maintaining backward compatibility.</li><li>Content Description Object -- Contains bibliographic information.</li><li>Script Command Object -- Contains commands that can be executed on the
+    playback timeline.</li><li>Marker Object -- Provides named jump points within a file.</li></ul>  Note that objects in the header object may appear in any order. To be valid,  the header object must contain a <a href="../../php-reader/ASF/ASF_Object_FileProperties.html">File  Properties Object</a>, a <a href="../../php-reader/ASF/ASF_Object_HeaderExtension.html">Header Extension  Object</a>, and at least one <a href="../../php-reader/ASF/ASF_Object_StreamProperties.html">Stream  Properties Object</a>.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 102 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2006-2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ASF---Object---Header.php.html">/ASF/Object/Header.php</a> (line <span class="field">76</span>)
+		</p>
+		
+				
+		<pre><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a>
+   |
+   --<a href="../../php-reader/ASF/ASF_Object_Container.html">ASF_Object_Container</a>
+      |
+      --ASF_Object_Header</pre>
+	
+			</div>
+</div>
+
+
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+												<a href="#sec-vars">Vars</a>
+				 
+				|
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#BITRATE_MUTUAL_EXCLUSION" title="details" class="const-name">BITRATE_MUTUAL_EXCLUSION</a> = 					<span class="var-type"> &quot;d6e229dc-35da-11d1-9034-00a0c90349be&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#CODEC_LIST" title="details" class="const-name">CODEC_LIST</a> = 					<span class="var-type"> &quot;86d15240-311d-11d0-a3a4-00a0c90348f6&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#CONTENT_BRANDING" title="details" class="const-name">CONTENT_BRANDING</a> = 					<span class="var-type"> &quot;2211b3fa-bd23-11d2-b4b7-00a0c955fc6e&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#CONTENT_DESCRIPTION" title="details" class="const-name">CONTENT_DESCRIPTION</a> = 					<span class="var-type"> &quot;75b22633-668e-11cf-a6d9-00aa0062ce6c&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#CONTENT_ENCRYPTION" title="details" class="const-name">CONTENT_ENCRYPTION</a> = 					<span class="var-type"> &quot;2211b3fb-bd23-11d2-b4b7-00a0c955fc6e&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#DIGITAL_SIGNATURE" title="details" class="const-name">DIGITAL_SIGNATURE</a> = 					<span class="var-type"> &quot;2211b3fc-bd23-11d2-b4b7-00a0c955fc6e&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#ERROR_CORRECTION" title="details" class="const-name">ERROR_CORRECTION</a> = 					<span class="var-type"> &quot;75b22635-668e-11cf-a6d9-00aa0062ce6c&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#EXTENDED_CONTENT_DESCRIPTION" title="details" class="const-name">EXTENDED_CONTENT_DESCRIPTION</a> = 					<span class="var-type"> &quot;d2d0a440-e307-11d2-97f0-00a0c95ea850&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#EXTENDED_CONTENT_ENCRYPTION" title="details" class="const-name">EXTENDED_CONTENT_ENCRYPTION</a> = 					<span class="var-type"> &quot;298ae614-2622-4c17-b935-dae07ee9289c&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#FILE_PROPERTIES" title="details" class="const-name">FILE_PROPERTIES</a> = 					<span class="var-type"> &quot;8cabdca1-a947-11cf-8ee4-00c00c205365&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#HEADER_EXTENSION" title="details" class="const-name">HEADER_EXTENSION</a> = 					<span class="var-type"> &quot;5fbf03b5-a92e-11cf-8ee3-00c00c205365&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#MARKER" title="details" class="const-name">MARKER</a> = 					<span class="var-type"> &quot;f487cd01-a951-11cf-8ee6-00c00c205365&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#PADDING" title="details" class="const-name">PADDING</a> = 					<span class="var-type"> &quot;1806d474-cadf-4509-a4ba-9aabcb96aae8&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#SCRIPT_COMMAND" title="details" class="const-name">SCRIPT_COMMAND</a> = 					<span class="var-type"> &quot;1efb1a30-0b62-11d0-a39b-00a0c90348f6&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#STREAM_BITRATE_PROPERTIES" title="details" class="const-name">STREAM_BITRATE_PROPERTIES</a> = 					<span class="var-type"> &quot;7bf875ce-468d-11d1-8d82-006097c9a2b2&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#STREAM_PROPERTIES" title="details" class="const-name">STREAM_PROPERTIES</a> = 					<span class="var-type"> &quot;b7dc0791-a9b7-11cf-8ee6-00c00c205365&quot;</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+															<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+												
+												<div class="method-definition">
+											<span class="method-result">ASF_Object_Header</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ASF/ASF_Object.html#var$_options">ASF_Object::$_options</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ASF/ASF_Object.html#var$_reader">ASF_Object::$_reader</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																			<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">101</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs the class with given parameters and options.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ASF_Object_Header</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+				<span class="var-name">$reader</span><span class="var-description">: The reader object.</span>			</li>
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../php-reader/ASF/ASF_Object.html#method__construct">ASF_Object::__construct()</a></dt>
+						<dd>Constructs the class with given parameters and options.</dd>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ASF/ASF_Object_Container.html">ASF_Object_Container</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object_Container.html#methodaddObject">ASF_Object_Container::addObject()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object_Container.html#methodconstructObjects">ASF_Object_Container::constructObjects()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object_Container.html#methodgetObjects">ASF_Object_Container::getObjects()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object_Container.html#methodgetObjectsByIdentifier">ASF_Object_Container::getObjectsByIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object_Container.html#methodhasObject">ASF_Object_Container::hasObject()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object_Container.html#method__get">ASF_Object_Container::__get()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object_Container.html#method__isset">ASF_Object_Container::__isset()</a></span><br>
+											</blockquote>
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__construct">ASF_Object::__construct()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetIdentifier">ASF_Object::getIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOffset">ASF_Object::getOffset()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOption">ASF_Object::getOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOptions">ASF_Object::getOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetParent">ASF_Object::getParent()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetSize">ASF_Object::getSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetIdentifier">ASF_Object::setIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOffset">ASF_Object::setOffset()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOption">ASF_Object::setOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOptions">ASF_Object::setOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetParent">ASF_Object::setParent()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetSize">ASF_Object::setSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__get">ASF_Object::__get()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__set">ASF_Object::__set()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-vars">Vars</a>
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constBITRATE_MUTUAL_EXCLUSION" id="BITRATE_MUTUAL_EXCLUSION"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">BITRATE_MUTUAL_EXCLUSION</span>
+			 = <span class="const-default"> &quot;d6e229dc-35da-11d1-9034-00a0c90349be&quot;</span>
+			(line <span class="line-number">84</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constCODEC_LIST" id="CODEC_LIST"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">CODEC_LIST</span>
+			 = <span class="const-default"> &quot;86d15240-311d-11d0-a3a4-00a0c90348f6&quot;</span>
+			(line <span class="line-number">81</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constCONTENT_BRANDING" id="CONTENT_BRANDING"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">CONTENT_BRANDING</span>
+			 = <span class="const-default"> &quot;2211b3fa-bd23-11d2-b4b7-00a0c955fc6e&quot;</span>
+			(line <span class="line-number">88</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constCONTENT_DESCRIPTION" id="CONTENT_DESCRIPTION"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">CONTENT_DESCRIPTION</span>
+			 = <span class="const-default"> &quot;75b22633-668e-11cf-a6d9-00aa0062ce6c&quot;</span>
+			(line <span class="line-number">86</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constCONTENT_ENCRYPTION" id="CONTENT_ENCRYPTION"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">CONTENT_ENCRYPTION</span>
+			 = <span class="const-default"> &quot;2211b3fb-bd23-11d2-b4b7-00a0c955fc6e&quot;</span>
+			(line <span class="line-number">90</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constDIGITAL_SIGNATURE" id="DIGITAL_SIGNATURE"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">DIGITAL_SIGNATURE</span>
+			 = <span class="const-default"> &quot;2211b3fc-bd23-11d2-b4b7-00a0c955fc6e&quot;</span>
+			(line <span class="line-number">92</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constERROR_CORRECTION" id="ERROR_CORRECTION"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">ERROR_CORRECTION</span>
+			 = <span class="const-default"> &quot;75b22635-668e-11cf-a6d9-00aa0062ce6c&quot;</span>
+			(line <span class="line-number">85</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constEXTENDED_CONTENT_DESCRIPTION" id="EXTENDED_CONTENT_DESCRIPTION"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">EXTENDED_CONTENT_DESCRIPTION</span>
+			 = <span class="const-default"> &quot;d2d0a440-e307-11d2-97f0-00a0c95ea850&quot;</span>
+			(line <span class="line-number">87</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constEXTENDED_CONTENT_ENCRYPTION" id="EXTENDED_CONTENT_ENCRYPTION"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">EXTENDED_CONTENT_ENCRYPTION</span>
+			 = <span class="const-default"> &quot;298ae614-2622-4c17-b935-dae07ee9289c&quot;</span>
+			(line <span class="line-number">91</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constFILE_PROPERTIES" id="FILE_PROPERTIES"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">FILE_PROPERTIES</span>
+			 = <span class="const-default"> &quot;8cabdca1-a947-11cf-8ee4-00c00c205365&quot;</span>
+			(line <span class="line-number">78</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constHEADER_EXTENSION" id="HEADER_EXTENSION"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">HEADER_EXTENSION</span>
+			 = <span class="const-default"> &quot;5fbf03b5-a92e-11cf-8ee3-00c00c205365&quot;</span>
+			(line <span class="line-number">80</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constMARKER" id="MARKER"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">MARKER</span>
+			 = <span class="const-default"> &quot;f487cd01-a951-11cf-8ee6-00c00c205365&quot;</span>
+			(line <span class="line-number">83</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constPADDING" id="PADDING"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">PADDING</span>
+			 = <span class="const-default"> &quot;1806d474-cadf-4509-a4ba-9aabcb96aae8&quot;</span>
+			(line <span class="line-number">93</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constSCRIPT_COMMAND" id="SCRIPT_COMMAND"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">SCRIPT_COMMAND</span>
+			 = <span class="const-default"> &quot;1efb1a30-0b62-11d0-a39b-00a0c90348f6&quot;</span>
+			(line <span class="line-number">82</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constSTREAM_BITRATE_PROPERTIES" id="STREAM_BITRATE_PROPERTIES"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">STREAM_BITRATE_PROPERTIES</span>
+			 = <span class="const-default"> &quot;7bf875ce-468d-11d1-8d82-006097c9a2b2&quot;</span>
+			(line <span class="line-number">89</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constSTREAM_PROPERTIES" id="STREAM_PROPERTIES"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">STREAM_PROPERTIES</span>
+			 = <span class="const-default"> &quot;b7dc0791-a9b7-11cf-8ee6-00c00c205365&quot;</span>
+			(line <span class="line-number">79</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+						
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:18:46 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

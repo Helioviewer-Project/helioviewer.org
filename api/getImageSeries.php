@@ -16,7 +16,7 @@ try {
 	$numFrames = $_GET['numFrames'];
 	$frameRate = $_GET['frameRate'];
 	$action    = $_GET['action'];
-	$hqFormat = $_GET['hq'];
+	$hqFormat = $_GET['format'];
 
 	if ($action == 'quickMovie') {
 		//Limit number of layers to three

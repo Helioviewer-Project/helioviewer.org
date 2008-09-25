@@ -1,0 +1,32 @@
+-----------
+PLUGINS
+-----------
+
+FLASH
+- default extensions; swf, flash
+
+QUICKTIME
+- default extensions; mov, mpeg, mpg, avi, acc, qt, wav, au
+
+REALPLAYER
+- default extensions; ra, ram, rv, rpm
+
+WINDOWS MEDIA PLAYER
+- default extensions; wmv, wma, wvx, wax, asf, asx
+
+DIVX PLAYER
+- default extensions; divx
+
+SHOCKWAVE
+- default extensions; dcr
+
+-----------
+SPECIAL
+-----------
+
+FLASH MEDIA
+- Automatically embeds media within Jeroen Wijering's Flash Media Player
+  http://www.jeroenwijering.com/
+- default extensions; mp3, flv, jpg, jpeg, png, gif
+
+

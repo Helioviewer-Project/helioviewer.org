@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ASF_Object_ContentBranding</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ASF_Object_ContentBranding</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The <em>Content Branding Object</em> stores branding data for an ASF file,  including information about a banner image and copyright associated with the  file.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 108 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ASF---Object---ContentBranding.php.html">/ASF/Object/ContentBranding.php</a> (line <span class="field">54</span>)
+		</p>
+		
+				
+		<pre><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a>
+   |
+   --ASF_Object_ContentBranding</pre>
+	
+			</div>
+</div>
+
+
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+												<a href="#sec-vars">Vars</a>
+				 
+				|
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#TYPE_BMP" title="details" class="const-name">TYPE_BMP</a> = 					<span class="var-type"> 1</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#TYPE_GIF" title="details" class="const-name">TYPE_GIF</a> = 					<span class="var-type"> 3</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#TYPE_JPEG" title="details" class="const-name">TYPE_JPEG</a> = 					<span class="var-type"> 2</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#TYPE_NONE" title="details" class="const-name">TYPE_NONE</a> = 					<span class="var-type"> 0</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+															<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																												
+												<div class="method-definition">
+											<span class="method-result">ASF_Object_ContentBranding</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getBannerImageData" title="details" class="method-name">getBannerImageData</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getBannerImageType" title="details" class="method-name">getBannerImageType</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getBannerImageUrl" title="details" class="method-name">getBannerImageUrl</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getCopyrightUrl" title="details" class="method-name">getCopyrightUrl</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ASF/ASF_Object.html#var$_options">ASF_Object::$_options</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ASF/ASF_Object.html#var$_reader">ASF_Object::$_reader</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																			<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">88</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs the class with given parameters and reads object related data  from the ASF file.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ASF_Object_ContentBranding</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+				<span class="var-name">$reader</span><span class="var-description">: The reader object.</span>			</li>
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../php-reader/ASF/ASF_Object.html#method__construct">ASF_Object::__construct()</a></dt>
+						<dd>Constructs the class with given parameters and options.</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetBannerImageData" id="getBannerImageData"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBannerImageData</span> (line <span class="line-number">119</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the entire banner image, including the header for the appropriate  image format.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getBannerImageData
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetBannerImageType" id="getBannerImageType"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBannerImageType</span> (line <span class="line-number">111</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the type of data contained in the <em>Banner Image Data</em>. Valid</p>
+<p class="description"><p>values are 0 to indicate that there is no banner image data; 1 to indicate  that the data represent a bitmap; 2 to indicate that the data represents a  JPEG; and 3 to indicate that the data represents a GIF. If this value is  set to 0, then the <em>Banner Image Data Size field is set to 0, and the
+ &lt;i&gt;Banner Image Data</em> field is empty.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getBannerImageType
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetBannerImageUrl" id="getBannerImageUrl"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBannerImageUrl</span> (line <span class="line-number">126</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns, if present, a link to more information about the banner image.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getBannerImageUrl
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetCopyrightUrl" id="getCopyrightUrl"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCopyrightUrl</span> (line <span class="line-number">134</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns, if present, a link to more information about the copyright for the  content.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getCopyrightUrl
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__construct">ASF_Object::__construct()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetIdentifier">ASF_Object::getIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOffset">ASF_Object::getOffset()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOption">ASF_Object::getOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOptions">ASF_Object::getOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetParent">ASF_Object::getParent()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetSize">ASF_Object::getSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetIdentifier">ASF_Object::setIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOffset">ASF_Object::setOffset()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOption">ASF_Object::setOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOptions">ASF_Object::setOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetParent">ASF_Object::setParent()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetSize">ASF_Object::setSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__get">ASF_Object::__get()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__set">ASF_Object::__set()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-vars">Vars</a>
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constTYPE_BMP" id="TYPE_BMP"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">TYPE_BMP</span>
+			 = <span class="const-default"> 1</span>
+			(line <span class="line-number">60</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Indicates that the data represents a bitmap</p>
+	
+	
+</div>
+<a name="constTYPE_GIF" id="TYPE_GIF"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">TYPE_GIF</span>
+			 = <span class="const-default"> 3</span>
+			(line <span class="line-number">66</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Indicates that the data represents a GIF</p>
+	
+	
+</div>
+<a name="constTYPE_JPEG" id="TYPE_JPEG"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">TYPE_JPEG</span>
+			 = <span class="const-default"> 2</span>
+			(line <span class="line-number">63</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Indicates that the data represents a JPEG</p>
+	
+	
+</div>
+<a name="constTYPE_NONE" id="TYPE_NONE"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">TYPE_NONE</span>
+			 = <span class="const-default"> 0</span>
+			(line <span class="line-number">57</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Indicates that there is no banner</p>
+	
+	
+</div>
+						
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:18:26 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

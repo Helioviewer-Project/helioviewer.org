@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ASF_Object_MediaObjectIndexParameters</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ASF_Object_MediaObjectIndexParameters</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The <em>Media Object Index Parameters Object</em> supplies information about</p>
+<p class="description"><p>those streams that actually indexed (there must be at least one stream in an  index) by media objects. This object shall be present in the  <a href="../../php-reader/ASF/ASF_Object_Header.html">Header Object</a> if there is a  <a href="../../php-reader/ASF/ASF_Object_MediaObjectIndex.html">Media Object Index Object</a> present in the  file.</p><p>An Index Specifier is required for each stream that will be indexed by the  <a href="../../php-reader/ASF/ASF_Object_MediaObjectIndex.html">Media Object Index Object</a>. These  specifiers must exactly match those in the  <a href="../../php-reader/ASF/ASF_Object_MediaObjectIndex.html">Media Object Index Object</a>.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 108 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ASF---Object---MediaObjectIndexParameters.php.html">/ASF/Object/MediaObjectIndexParameters.php</a> (line <span class="field">62</span>)
+		</p>
+		
+				
+		<pre><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a>
+   |
+   --ASF_Object_MediaObjectIndexParameters</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																												
+												<div class="method-definition">
+											<span class="method-result">ASF_Object_MediaObjectIndexParameters</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getIndexEntryCountInterval" title="details" class="method-name">getIndexEntryCountInterval</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Array</span>
+										<a href="#getIndexSpecifiers" title="details" class="method-name">getIndexSpecifiers</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ASF/ASF_Object.html#var$_options">ASF_Object::$_options</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ASF/ASF_Object.html#var$_reader">ASF_Object::$_reader</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">77</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs the class with given parameters and reads object related data  from the ASF file.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ASF_Object_MediaObjectIndexParameters</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+				<span class="var-name">$reader</span><span class="var-description">: The reader object.</span>			</li>
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../php-reader/ASF/ASF_Object.html#method__construct">ASF_Object::__construct()</a></dt>
+						<dd>Constructs the class with given parameters and options.</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetIndexEntryCountInterval" id="getIndexEntryCountInterval"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIndexEntryCountInterval</span> (line <span class="line-number">96</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the interval between each index entry by the number of media  objects. This value cannot be 0.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getIndexEntryCountInterval
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetIndexSpecifiers" id="getIndexSpecifiers"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIndexSpecifiers</span> (line <span class="line-number">129</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns an array of index entries. Each entry consists of the following  keys.</p>
+<p class="description"><p><ul><li>streamNumber -- Specifies the stream number that the Index Specifiers
+     refer to. Valid values are between 1 and 127.</li></ul> <ul><li>indexType -- Specifies the type of index. Values are defined as
+     follows:
+       1 = Nearest Past Data Packet,
+       2 = Nearest Past Media Object,
+       3 = Nearest Past Cleanpoint,
+       0xff = Frame Number Offset.
+     For a video stream, the Nearest Past Media Object and Nearest Past Data
+     Packet indexes point to the closest data packet containing an entire
+     video frame or first fragment of a video frame; Nearest Past Cleanpoint
+     indexes point to the closest data packet containing an entire video
+     frame (or first fragment of a video frame) that is a key frame; and
+     Frame Number Offset indicates how many more frames need to be read for
+     the given stream, starting with the first frame in the packet pointed
+     to by the index entry, in order to get to the requested frame. Nearest
+     Past Media Object is the most common value. Because ASF payloads do not
+     contain the full frame number, there is often a Frame Number Offset
+     index alongside one of the other types of indexes to allow the user to
+     identify the exact frame being seeked to.</li></ul></p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Array</span>
+		<span class="method-name">
+			getIndexSpecifiers
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__construct">ASF_Object::__construct()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetIdentifier">ASF_Object::getIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOffset">ASF_Object::getOffset()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOption">ASF_Object::getOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetOptions">ASF_Object::getOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetParent">ASF_Object::getParent()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodgetSize">ASF_Object::getSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetIdentifier">ASF_Object::setIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOffset">ASF_Object::setOffset()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOption">ASF_Object::setOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetOptions">ASF_Object::setOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetParent">ASF_Object::setParent()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#methodsetSize">ASF_Object::setSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__get">ASF_Object::__get()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ASF/ASF_Object.html#method__set">ASF_Object::__set()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:19:03 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

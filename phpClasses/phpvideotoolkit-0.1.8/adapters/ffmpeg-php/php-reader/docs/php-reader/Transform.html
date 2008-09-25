@@ -1,0 +1,1937 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Transform</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Transform</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An utility class to perform simple byte transformations on data.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Ryan Butterfield &lt;<a href="mailto:buttza@gmail.com">buttza@gmail.com</a>&gt;</li>
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 105 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2006-2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Transform.php.html">/Transform.php</a> (line <span class="field">49</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#BIG_ENDIAN_ORDER" title="details" class="const-name">BIG_ENDIAN_ORDER</a> = 					<span class="var-type"> 2</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#LITTLE_ENDIAN_ORDER" title="details" class="const-name">LITTLE_ENDIAN_ORDER</a> = 					<span class="var-type"> 1</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#MACHINE_ENDIAN_ORDER" title="details" class="const-name">MACHINE_ENDIAN_ORDER</a> = 					<span class="var-type"> 0</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+									<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+												<div class="method-definition">
+					static 						<span class="method-result">float</span>
+										<a href="#fromFloat" title="details" class="method-name">fromFloat</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">float</span>
+										<a href="#fromFloatBE" title="details" class="method-name">fromFloatBE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">float</span>
+										<a href="#fromFloatLE" title="details" class="method-name">fromFloatLE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#fromGUID" title="details" class="method-name">fromGUID</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#fromHHex" title="details" class="method-name">fromHHex</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt8" title="details" class="method-name">fromInt8</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt16" title="details" class="method-name">fromInt16</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt16BE" title="details" class="method-name">fromInt16BE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt16LE" title="details" class="method-name">fromInt16LE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt32" title="details" class="method-name">fromInt32</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt32BE" title="details" class="method-name">fromInt32BE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt32LE" title="details" class="method-name">fromInt32LE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt64BE" title="details" class="method-name">fromInt64BE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromInt64LE" title="details" class="method-name">fromInt64LE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#fromLHex" title="details" class="method-name">fromLHex</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#fromString8" title="details" class="method-name">fromString8</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#fromString16" title="details" class="method-name">fromString16</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$order</span> = <span class="var-default">self::MACHINE_ENDIAN_ORDER</span>], <span class="var-type">integer</span>&nbsp;<span class="var-name">$order</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#fromString16BE" title="details" class="method-name">fromString16BE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#fromString16LE" title="details" class="method-name">fromString16LE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromUInt8" title="details" class="method-name">fromUInt8</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromUInt16BE" title="details" class="method-name">fromUInt16BE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromUInt16LE" title="details" class="method-name">fromUInt16LE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromUInt32BE" title="details" class="method-name">fromUInt32BE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#fromUInt32LE" title="details" class="method-name">fromUInt32LE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">boolean</span>
+										<a href="#isBigEndian" title="details" class="method-name">isBigEndian</a>
+										()
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">boolean</span>
+										<a href="#isLittleEndian" title="details" class="method-name">isLittleEndian</a>
+										()
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toFloat" title="details" class="method-name">toFloat</a>
+											(<span class="var-type">float</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toFloatBE" title="details" class="method-name">toFloatBE</a>
+											(<span class="var-type">float</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toFloatLE" title="details" class="method-name">toFloatLE</a>
+											(<span class="var-type">float</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toGUID" title="details" class="method-name">toGUID</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toHHex" title="details" class="method-name">toHHex</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#toInt8" title="details" class="method-name">toInt8</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt16" title="details" class="method-name">toInt16</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt16BE" title="details" class="method-name">toInt16BE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt16LE" title="details" class="method-name">toInt16LE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt32" title="details" class="method-name">toInt32</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt32BE" title="details" class="method-name">toInt32BE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt32LE" title="details" class="method-name">toInt32LE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt64BE" title="details" class="method-name">toInt64BE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toInt64LE" title="details" class="method-name">toInt64LE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toLHex" title="details" class="method-name">toLHex</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toString8" title="details" class="method-name">toString8</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$length</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$padding</span> = <span class="var-default">&quot;\0&quot;</span>])
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toString16" title="details" class="method-name">toString16</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">self::MACHINE_ENDIAN_ORDER</span>])
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toString16BE" title="details" class="method-name">toString16BE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toString16LE" title="details" class="method-name">toString16LE</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#toUInt8" title="details" class="method-name">toUInt8</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toUInt16BE" title="details" class="method-name">toUInt16BE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toUInt16LE" title="details" class="method-name">toUInt16LE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toUInt32BE" title="details" class="method-name">toUInt32BE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toUInt32LE" title="details" class="method-name">toUInt32LE</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+								
+																																																																																																																																																																																																																																																																																																																																																																																																																				</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodfromFloat" id="fromFloat"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromFloat</span> (line <span class="line-number">470</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns machine endian ordered binary data as a floating point number.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">float</span>
+		<span class="method-name">
+			fromFloat
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromFloatBE" id="fromFloatBE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromFloatBE</span> (line <span class="line-number">524</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered binary data as a float point number.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">float</span>
+		<span class="method-name">
+			fromFloatBE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromFloatLE" id="fromFloatLE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromFloatLE</span> (line <span class="line-number">496</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns little-endian ordered binary data as a floating point number.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">float</span>
+		<span class="method-name">
+			fromFloatLE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromGUID" id="fromGUID"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromGUID</span> (line <span class="line-number">732</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the little-endian ordered binary data as big-endian ordered  hexadecimal GUID string.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			fromGUID
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromHHex" id="fromHHex"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromHHex</span> (line <span class="line-number">681</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns binary data as hexadecimal string having high nibble first.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			fromHHex
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt8" id="fromInt8"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt8</span> (line <span class="line-number">424</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns binary data as 8-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt8
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt16" id="fromInt16"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt16</span> (line <span class="line-number">286</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns machine endian ordered binary data as signed 16-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt16
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt16BE" id="fromInt16BE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt16BE</span> (line <span class="line-number">340</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered binary data as signed 16-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt16BE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt16LE" id="fromInt16LE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt16LE</span> (line <span class="line-number">312</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns little-endian ordered binary data as signed 16-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt16LE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt32" id="fromInt32"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt32</span> (line <span class="line-number">151</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns machine-endian ordered binary data as signed 32-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt32
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt32BE" id="fromInt32BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt32BE</span> (line <span class="line-number">205</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered binary data as signed 32-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt32BE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt32LE" id="fromInt32LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt32LE</span> (line <span class="line-number">177</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns little-endian ordered binary data as signed 32-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt32LE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt64BE" id="fromInt64BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt64BE</span> (line <span class="line-number">127</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered binary data as 64-bit float. PHP does not  support 64-bit integers as the long integer is of 32-bits but using  aritmetic operations it is implicitly converted into floating point which  is of 64-bits long.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt64BE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromInt64LE" id="fromInt64LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromInt64LE</span> (line <span class="line-number">100</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns little-endian ordered binary data as 64-bit float. PHP does not  support 64-bit integers as the long integer is of 32-bits but using  aritmetic operations it is implicitly converted into floating point which  is of 64-bits long.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromInt64LE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromLHex" id="fromLHex"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromLHex</span> (line <span class="line-number">704</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns binary data as hexadecimal string having low nibble first.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			fromLHex
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromString8" id="fromString8"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromString8</span> (line <span class="line-number">549</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns binary data as string. Removes terminating zero.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			fromString8
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromString16" id="fromString16"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromString16</span> (line <span class="line-number">582</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns UTF-16 formatted binary data as machine-ordered multibyte string.</p>
+<p class="description"><p>The byte order is determined from the byte order mark included in the  binary data string. The order parameter is updated if a BOM is found.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			fromString16
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$order</span> = <span class="var-default">self::MACHINE_ENDIAN_ORDER</span>], <span class="var-type">integer</span>&nbsp;<span class="var-name">$order</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$order</span><span class="var-description">: The endian to decode using if no BOM was found.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$order</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromString16BE" id="fromString16BE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromString16BE</span> (line <span class="line-number">655</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered binary data as machine ordered multibyte string.</p>
+<p class="description"><p>Removes terminating zero.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			fromString16BE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromString16LE" id="fromString16LE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromString16LE</span> (line <span class="line-number">625</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns little-endian ordered binary data as machine ordered multibyte  string. Removes terminating zero.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			fromString16LE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromUInt8" id="fromUInt8"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromUInt8</span> (line <span class="line-number">447</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns binary data as an unsigned 8-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromUInt8
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromUInt16BE" id="fromUInt16BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromUInt16BE</span> (line <span class="line-number">402</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered binary data as unsigned 16-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromUInt16BE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromUInt16LE" id="fromUInt16LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromUInt16LE</span> (line <span class="line-number">380</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns little-endian ordered binary data as unsigned 16-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromUInt16LE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromUInt32BE" id="fromUInt32BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromUInt32BE</span> (line <span class="line-number">258</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered binary data as unsigned 32-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromUInt32BE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfromUInt32LE" id="fromUInt32LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method fromUInt32LE</span> (line <span class="line-number">230</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns little-endian ordered binary data as unsigned 32-bit integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			fromUInt32LE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodisBigEndian" id="isBigEndian"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method isBigEndian</span> (line <span class="line-number">75</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns whether the current machine endian order is big endian.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isBigEndian
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodisLittleEndian" id="isLittleEndian"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method isLittleEndian</span> (line <span class="line-number">65</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns whether the current machine endian order is little endian.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isLittleEndian
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtoFloat" id="toFloat"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toFloat</span> (line <span class="line-number">459</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a floating point number as machine endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toFloat
+		</span>
+					(<span class="var-type">float</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">float</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoFloatBE" id="toFloatBE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toFloatBE</span> (line <span class="line-number">510</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a floating point number as big-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toFloatBE
+		</span>
+					(<span class="var-type">float</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">float</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoFloatLE" id="toFloatLE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toFloatLE</span> (line <span class="line-number">482</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a floating point number as little-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toFloatLE
+		</span>
+					(<span class="var-type">float</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">float</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoGUID" id="toGUID"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toGUID</span> (line <span class="line-number">717</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns big-endian ordered hexadecimal GUID string as little-endian ordered  binary data string.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toGUID
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoHHex" id="toHHex"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toHHex</span> (line <span class="line-number">670</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns hexadecimal string having high nibble first as binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toHHex
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt8" id="toInt8"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt8</span> (line <span class="line-number">413</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns an 8-bit integer as binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			toInt8
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt16" id="toInt16"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt16</span> (line <span class="line-number">275</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns signed 16-bit integer as machine endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt16
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt16BE" id="toInt16BE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt16BE</span> (line <span class="line-number">326</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns signed 16-bit integer as big-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt16BE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt16LE" id="toInt16LE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt16LE</span> (line <span class="line-number">298</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns signed 16-bit integer as little-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt16LE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt32" id="toInt32"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt32</span> (line <span class="line-number">140</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns signed 32-bit integer as machine-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt32
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt32BE" id="toInt32BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt32BE</span> (line <span class="line-number">191</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns signed 32-bit integer as big-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt32BE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt32LE" id="toInt32LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt32LE</span> (line <span class="line-number">163</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns signed 32-bit integer as little-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt32LE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt64BE" id="toInt64BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt64BE</span> (line <span class="line-number">113</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns 64-bit float as big-endian ordered binary data string.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt64BE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoInt64LE" id="toInt64LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toInt64LE</span> (line <span class="line-number">86</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns 64-bit float as little-endian ordered binary data string.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toInt64LE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoLHex" id="toLHex"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toLHex</span> (line <span class="line-number">693</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns hexadecimal string having low nibble first as binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toLHex
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoString8" id="toString8"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toString8</span> (line <span class="line-number">538</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns string as binary data padded to given length with zeros.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toString8
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$length</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$padding</span> = <span class="var-default">&quot;\0&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$length</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$padding</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoString16" id="toString16"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toString16</span> (line <span class="line-number">563</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns machine-ordered multibyte string as UTF-16 defined-order binary  data. The byte order is stored using a byte order mask (BOM) in the binary  data string.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toString16
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">self::MACHINE_ENDIAN_ORDER</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$order</span><span class="var-description">: The byte order of the binary data string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoString16BE" id="toString16BE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toString16BE</span> (line <span class="line-number">640</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns machine ordered multibyte string as big-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toString16BE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoString16LE" id="toString16LE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toString16LE</span> (line <span class="line-number">610</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns machine-ordered multibyte string as little-endian ordered binary  data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toString16LE
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoUInt8" id="toUInt8"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toUInt8</span> (line <span class="line-number">436</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns an unsigned 8-bit integer as binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			toUInt8
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoUInt16BE" id="toUInt16BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toUInt16BE</span> (line <span class="line-number">391</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns unsigned 16-bit integer as big-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toUInt16BE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoUInt16LE" id="toUInt16LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toUInt16LE</span> (line <span class="line-number">369</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns unsigned 16-bit integer as little-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toUInt16LE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoUInt32BE" id="toUInt32BE"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toUInt32BE</span> (line <span class="line-number">247</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns unsigned 32-bit integer as big-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toUInt32BE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoUInt32LE" id="toUInt32LE"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toUInt32LE</span> (line <span class="line-number">219</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns unsigned 32-bit integer as little-endian ordered binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toUInt32LE
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The input value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+						
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constBIG_ENDIAN_ORDER" id="BIG_ENDIAN_ORDER"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">BIG_ENDIAN_ORDER</span>
+			 = <span class="const-default"> 2</span>
+			(line <span class="line-number">53</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constLITTLE_ENDIAN_ORDER" id="LITTLE_ENDIAN_ORDER"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">LITTLE_ENDIAN_ORDER</span>
+			 = <span class="const-default"> 1</span>
+			(line <span class="line-number">52</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constMACHINE_ENDIAN_ORDER" id="MACHINE_ENDIAN_ORDER"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">MACHINE_ENDIAN_ORDER</span>
+			 = <span class="const-default"> 0</span>
+			(line <span class="line-number">51</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+						
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:19:57 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

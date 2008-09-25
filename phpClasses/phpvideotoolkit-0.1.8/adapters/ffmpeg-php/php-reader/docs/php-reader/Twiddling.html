@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Twiddling</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Twiddling</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">A utility class to perform bit twiddling on integers.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Ryan Butterfield &lt;<a href="mailto:buttza@gmail.com">buttza@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 110 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Twiddling.php.html">/Twiddling.php</a> (line <span class="field">47</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+												<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#clearBit" title="details" class="method-name">clearBit</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#clearBits" title="details" class="method-name">clearBits</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#enableBit" title="details" class="method-name">enableBit</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#enableBits" title="details" class="method-name">enableBits</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#getMask" title="details" class="method-name">getMask</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$end</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#getValue" title="details" class="method-name">getValue</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$end</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#setBit" title="details" class="method-name">setBit</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$on</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#setBits" title="details" class="method-name">setBits</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$on</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#setValue" title="details" class="method-name">setValue</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$end</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">boolean</span>
+										<a href="#testAllBits" title="details" class="method-name">testAllBits</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">boolean</span>
+										<a href="#testAnyBits" title="details" class="method-name">testAnyBits</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">boolean</span>
+										<a href="#testBit" title="details" class="method-name">testBit</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#toggleBit" title="details" class="method-name">toggleBit</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#toggleBits" title="details" class="method-name">toggleBits</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+									</div>
+								
+																																																																																																																				</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodclearBit" id="clearBit"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method clearBit</span> (line <span class="line-number">87</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Clears a bit at a given position in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			clearBit
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$position</span><span class="var-description">: The position of the bit to clear.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodclearBits" id="clearBits"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method clearBits</span> (line <span class="line-number">149</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Clears a given set of bits in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			clearBits
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$bits</span><span class="var-description">: The bits to clear.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodenableBit" id="enableBit"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method enableBit</span> (line <span class="line-number">75</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Enables a bit at a given position in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			enableBit
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$position</span><span class="var-description">: The position of the bit to enable.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodenableBits" id="enableBits"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method enableBits</span> (line <span class="line-number">137</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Enables a given set of bits in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			enableBits
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$bits</span><span class="var-description">: The bits to enable.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetMask" id="getMask"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getMask</span> (line <span class="line-number">228</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns an integer with all bits set from start to end.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getMask
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$end</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$start</span><span class="var-description">: The position to start setting bits from. Must                        be &lt;= $end.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$end</span><span class="var-description">: The position to stop setting bits. Must be &gt;= $start.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetValue" id="getValue"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getValue</span> (line <span class="line-number">215</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieves a value from a given range in an integer, inclusive.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getValue
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$end</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to read from.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$start</span><span class="var-description">: The position to read from. Must be &lt;= $end.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$end</span><span class="var-description">: The position to read to. Must be &gt;= $start.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetBit" id="setBit"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method setBit</span> (line <span class="line-number">62</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets a bit at a given position in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			setBit
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$on</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$position</span><span class="var-description">: The position of the bit to set.</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$on</span><span class="var-description">: Whether to enable or clear the bit.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetBits" id="setBits"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method setBits</span> (line <span class="line-number">124</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets a given set of bits in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			setBits
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$on</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$bits</span><span class="var-description">: The bits to set.</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$on</span><span class="var-description">: Whether to enable or clear the bits.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetValue" id="setValue"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method setValue</span> (line <span class="line-number">201</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Stores a value in a given range in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			setValue
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$end</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to store into.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$start</span><span class="var-description">: The position to store from. Must be &lt;= $end.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$end</span><span class="var-description">: The position to store to. Must be &gt;= $start.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$value</span><span class="var-description">: The value to store.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtestAllBits" id="testAllBits"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method testAllBits</span> (line <span class="line-number">174</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Tests a given set of bits in an integer  returning whether all bits are set.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			testAllBits
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to test.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$bits</span><span class="var-description">: The bits to test.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtestAnyBits" id="testAnyBits"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method testAnyBits</span> (line <span class="line-number">187</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Tests a given set of bits in an integer  returning whether any bits are set.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			testAnyBits
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to test.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$bits</span><span class="var-description">: The bits to test.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtestBit" id="testBit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method testBit</span> (line <span class="line-number">111</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Tests a bit at a given position in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			testBit
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to test.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$position</span><span class="var-description">: The position of the bit to test.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoggleBit" id="toggleBit"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toggleBit</span> (line <span class="line-number">99</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Toggles a bit at a given position in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			toggleBit
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$position</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$position</span><span class="var-description">: The position of the bit to toggle.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoggleBits" id="toggleBits"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toggleBits</span> (line <span class="line-number">161</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Toggles a given set of bits in an integer.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			toggleBits
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$integer</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$bits</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$integer</span><span class="var-description">: The value to manipulate.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$bits</span><span class="var-description">: The bits to toggle.</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:20:06 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

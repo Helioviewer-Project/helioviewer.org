@@ -1,0 +1,1054 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ASF_Object</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ASF_Object</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+							<a href="#sec-descendents">Descendents</a>
+			|											<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The base unit of organization for ASF files is called the ASF object. It  consists of a 128-bit GUID for the object, a 64-bit integer object size, and  the variable-length object data.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 102 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2006-2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ASF---Object.php.html">/ASF/Object.php</a> (line <span class="field">55</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+	<a name="sec-descendents"></a>
+	<div class="info-box">
+		<div class="info-box-title">Direct descendents</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+			<span class="disabled">Descendents</span>
+			|												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+								|															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<table cellpadding="2" cellspacing="0" class="class-table">
+				<tr>
+					<th class="class-table-header">Class</th>
+					<th class="class-table-header">Description</th>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_AdvancedContentEncryption.html">ASF_Object_AdvancedContentEncryption</a></td>
+					<td>
+											The <em>Advanced Content Encryption Object</em> lets authors protect content by  using Next Generation Windows Media Digital Rights Management for Network  Devices.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_AdvancedMutualExclusion.html">ASF_Object_AdvancedMutualExclusion</a></td>
+					<td>
+											The <em>Advanced Mutual Exclusion Object</em> identifies streams that have a  mutual exclusion relationship to each other (in other words, only one of the  streams within such a relationship can be streamed—the rest are ignored).
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_BandwidthSharing.html">ASF_Object_BandwidthSharing</a></td>
+					<td>
+											The <em>Bandwidth Sharing Object</em> indicates streams that share bandwidth in
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_BitrateMutualExclusion.html">ASF_Object_BitrateMutualExclusion</a></td>
+					<td>
+											The <em>Bitrate Mutual Exclusion Object</em> identifies video streams that have
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_CodecList.html">ASF_Object_CodecList</a></td>
+					<td>
+											The <em>Codec List Object</em> provides user-friendly information about the  codecs and formats used to encode the content found in the ASF file.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_Compatibility.html">ASF_Object_Compatibility</a></td>
+					<td>
+											The <em>Compatibility Object</em> is reserved for future use.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_Container.html">ASF_Object_Container</a></td>
+					<td>
+											An abstract base container class that contains other ASF objects.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ContentBranding.html">ASF_Object_ContentBranding</a></td>
+					<td>
+											The <em>Content Branding Object</em> stores branding data for an ASF file,  including information about a banner image and copyright associated with the  file.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ContentDescription.html">ASF_Object_ContentDescription</a></td>
+					<td>
+											The <em>Content Description Object</em> lets authors record well-known data  describing the file and its contents. This object is used to store standard  bibliographic information such as title, author, copyright, description, and  rating information. This information is pertinent to the entire file.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ContentEncryption.html">ASF_Object_ContentEncryption</a></td>
+					<td>
+											The <em>Content Encryption Object</em> lets authors protect content by using  Microsoft® Digital Rights Manager version 1.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_Data.html">ASF_Object_Data</a></td>
+					<td>
+											The <em>Data Object</em> contains all of the <em>Data Packet</em>s for a file.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_DigitalSignature.html">ASF_Object_DigitalSignature</a></td>
+					<td>
+											The <em>Digital Signature Object</em> lets authors sign the portion of their  header that lies between the end of the <em>File Properties Object</em> and the  beginning of the <em>Digital Signature Object</em>.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ErrorCorrection.html">ASF_Object_ErrorCorrection</a></td>
+					<td>
+											The <em>Error Correction Object</em> defines the error correction method. This
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ExtendedContentDescription.html">ASF_Object_ExtendedContentDescription</a></td>
+					<td>
+											The <em>ASF_Extended_Content_Description_Object</em> object implementation.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ExtendedContentEncryption.html">ASF_Object_ExtendedContentEncryption</a></td>
+					<td>
+											The <em>Extended Content Encryption Object</em> lets authors protect content by  using the Windows Media Rights Manager 7 Software Development Kit (SDK).
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ExtendedStreamProperties.html">ASF_Object_ExtendedStreamProperties</a></td>
+					<td>
+											The <em>Extended Stream Properties Object</em> defines additional optional  properties and characteristics of a digital media stream that are not  described in the <em>Stream Properties Object</em>.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_FileProperties.html">ASF_Object_FileProperties</a></td>
+					<td>
+											The <em>File Properties Object</em> defines the global characteristics of the  combined digital media streams found within the Data Object.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_GroupMutualExclusion.html">ASF_Object_GroupMutualExclusion</a></td>
+					<td>
+											The <em>Group Mutual Exclusion Object</em> is used to describe mutual exclusion
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_Index.html">ASF_Object_Index</a></td>
+					<td>
+											This top-level ASF object supplies the necessary indexing information for an  ASF file that contains more than just a plain script-audio-video combination.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_IndexParameters.html">ASF_Object_IndexParameters</a></td>
+					<td>
+											The <em>Index Parameters Object</em> supplies information about those streams  that are actually indexed (there must be at least one stream in an index) by  the <a href="../../php-reader/ASF/ASF_Object_Index.html">Index Object</a> and how they are being indexed.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_LanguageList.html">ASF_Object_LanguageList</a></td>
+					<td>
+											The <em>Language List Object</em> contains an array of Unicode-based language  IDs. All other header objects refer to languages through zero-based positions  in this array.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_Marker.html">ASF_Object_Marker</a></td>
+					<td>
+											The <em>Marker Object</em> class.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_MediaObjectIndex.html">ASF_Object_MediaObjectIndex</a></td>
+					<td>
+											This top-level ASF object supplies media object indexing information for the  streams of an ASF file. It includes stream-specific indexing information  based on an adjustable index entry media object count interval. This object  can be used to index all the video frames or key frames in a video stream.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_MediaObjectIndexParameters.html">ASF_Object_MediaObjectIndexParameters</a></td>
+					<td>
+											The <em>Media Object Index Parameters Object</em> supplies information about
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_Metadata.html">ASF_Object_Metadata</a></td>
+					<td>
+											The <em>Metadata Object</em> permits authors to store stream-based metadata in  a file. This object supports the same types of metadata information as the  <em>Extended Content Description Object</em> except that it also allows a  stream number to be specified.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_MetadataLibrary.html">ASF_Object_MetadataLibrary</a></td>
+					<td>
+											The <em>Metadata Library Object</em> lets authors store stream-based,  language-attributed, multiply defined, and large metadata attributes in a  file.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_Padding.html">ASF_Object_Padding</a></td>
+					<td>
+											The <em>Padding Object</em> is a dummy object that is used to pad the size of  the <em>Header Object</em>. This object enables the size of any object stored  in the <em>Header Object</em> to grow or shrink without having to rewrite the  entire <em>Data Object</em> and <em>Index Object</em> sections of the ASF file.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_ScriptCommand.html">ASF_Object_ScriptCommand</a></td>
+					<td>
+											The <em>Script Command Object</em> provides a list of type/parameter pairs of
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_SimpleIndex.html">ASF_Object_SimpleIndex</a></td>
+					<td>
+											For each video stream in an ASF file, there should be one instance of the  <em>Simple Index Object</em>. Additionally, the instances of the <em>Simple
+ Index Object</em> shall be ordered by stream number.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_StreamBitrateProperties.html">ASF_Object_StreamBitrateProperties</a></td>
+					<td>
+											The <em>Stream Bitrate Properties Object</em> defines the average bit rate of  each digital media stream.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_StreamPrioritization.html">ASF_Object_StreamPrioritization</a></td>
+					<td>
+											The <em>Stream Prioritization Object</em> indicates the author's intentions as
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_StreamProperties.html">ASF_Object_StreamProperties</a></td>
+					<td>
+											The <em>Stream Properties Object</em> defines the specific properties and  characteristics of a digital media stream. This object defines how a digital  media stream within the <em>Data Object</em> is interpreted, as well as the  specific format (of elements) of the <em>Data Packet</em> itself.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_TimecodeIndex.html">ASF_Object_TimecodeIndex</a></td>
+					<td>
+											This top-level ASF object supplies timecode indexing information for the
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ASF/ASF_Object_TimecodeIndexParameters.html">ASF_Object_TimecodeIndexParameters</a></td>
+					<td>
+											The <em>Timecode Index Parameters Object</em> supplies information about those
+										</td>
+				</tr>
+							</table>
+		</div>
+	</div>
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																<div class="var-title">
+					<span class="var-type">Array</span>
+					<a href="#$_options" title="details" class="var-name">$_options</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+					<a href="#$_reader" title="details" class="var-name">$_reader</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																												
+												<div class="method-definition">
+											<span class="method-result">ASF_Object</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getIdentifier" title="details" class="method-name">getIdentifier</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getOffset" title="details" class="method-name">getOffset</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getOption" title="details" class="method-name">getOption</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$defaultValue</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Array</span>
+										<a href="#getOptions" title="details" class="method-name">getOptions</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span>
+										<a href="#getParent" title="details" class="method-name">getParent</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getSize" title="details" class="method-name">getSize</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setIdentifier" title="details" class="method-name">setIdentifier</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setOffset" title="details" class="method-name">setOffset</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$offset</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setOption" title="details" class="method-name">setOption</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setOptions" title="details" class="method-name">setOptions</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span>, <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setParent" title="details" class="method-name">setParent</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$parent</span>, <span class="var-type"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span>&nbsp;<span class="var-name">$parent</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setSize" title="details" class="method-name">setSize</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$size</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#__get" title="details" class="method-name">__get</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#__set" title="details" class="method-name">__set</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$_options" id="$_options"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">Array</span>
+			<span class="var-name">$_options</span>
+						(line <span class="line-number">69</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The options array.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_reader" id="$_reader"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+			<span class="var-name">$_reader</span>
+						(line <span class="line-number">62</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The reader object.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">89</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs the class with given parameters and options.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ASF_Object</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+				<span class="var-name">$reader</span><span class="var-description">: The reader object.</span>			</li>
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_AdvancedContentEncryption.html#method__construct">ASF_Object_AdvancedContentEncryption::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_AdvancedMutualExclusion.html#method__construct">ASF_Object_AdvancedMutualExclusion::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_BandwidthSharing.html#method__construct">ASF_Object_BandwidthSharing::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_BitrateMutualExclusion.html#method__construct">ASF_Object_BitrateMutualExclusion::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_CodecList.html#method__construct">ASF_Object_CodecList::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_Compatibility.html#method__construct">ASF_Object_Compatibility::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF.html#method__construct">ASF::__construct()</a>
+								: Constructs the ASF class with given file and options.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_Header.html#method__construct">ASF_Object_Header::__construct()</a>
+								: Constructs the class with given parameters and options.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_HeaderExtension.html#method__construct">ASF_Object_HeaderExtension::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ContentBranding.html#method__construct">ASF_Object_ContentBranding::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ContentDescription.html#method__construct">ASF_Object_ContentDescription::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ContentEncryption.html#method__construct">ASF_Object_ContentEncryption::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_Data.html#method__construct">ASF_Object_Data::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_DigitalSignature.html#method__construct">ASF_Object_DigitalSignature::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ErrorCorrection.html#method__construct">ASF_Object_ErrorCorrection::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ExtendedContentDescription.html#method__construct">ASF_Object_ExtendedContentDescription::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ExtendedContentEncryption.html#method__construct">ASF_Object_ExtendedContentEncryption::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ExtendedStreamProperties.html#method__construct">ASF_Object_ExtendedStreamProperties::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_FileProperties.html#method__construct">ASF_Object_FileProperties::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_GroupMutualExclusion.html#method__construct">ASF_Object_GroupMutualExclusion::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_Index.html#method__construct">ASF_Object_Index::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_IndexParameters.html#method__construct">ASF_Object_IndexParameters::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_LanguageList.html#method__construct">ASF_Object_LanguageList::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_Marker.html#method__construct">ASF_Object_Marker::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_MediaObjectIndex.html#method__construct">ASF_Object_MediaObjectIndex::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_MediaObjectIndexParameters.html#method__construct">ASF_Object_MediaObjectIndexParameters::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_Metadata.html#method__construct">ASF_Object_Metadata::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_MetadataLibrary.html#method__construct">ASF_Object_MetadataLibrary::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_ScriptCommand.html#method__construct">ASF_Object_ScriptCommand::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_SimpleIndex.html#method__construct">ASF_Object_SimpleIndex::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_StreamBitrateProperties.html#method__construct">ASF_Object_StreamBitrateProperties::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_StreamPrioritization.html#method__construct">ASF_Object_StreamPrioritization::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_StreamProperties.html#method__construct">ASF_Object_StreamProperties::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_TimecodeIndex.html#method__construct">ASF_Object_TimecodeIndex::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_TimecodeIndexParameters.html#method__construct">ASF_Object_TimecodeIndexParameters::__construct()</a>
+								: Constructs the class with given parameters and reads object related data  from the ASF file.
+							</li>
+				</ul>
+	</div>
+<a name="methodgetIdentifier" id="getIdentifier"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIdentifier</span> (line <span class="line-number">117</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the GUID of the ASF object.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getIdentifier
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetOffset" id="getOffset"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getOffset</span> (line <span class="line-number">103</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the file offset to box start, or -1 if the box was created on heap.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getOffset
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetOption" id="getOption"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getOption</span> (line <span class="line-number">161</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the given option value, or the default value if the option is not  defined.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getOption
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$defaultValue</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$option</span><span class="var-description">: The name of the option.</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$defaultValue</span><span class="var-description">: The default value to be returned.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetOptions" id="getOptions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getOptions</span> (line <span class="line-number">152</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the options array.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Array</span>
+		<span class="method-name">
+			getOptions
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetParent" id="getParent"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getParent</span> (line <span class="line-number">191</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the parent object containing this box.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span>
+		<span class="method-name">
+			getParent
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetSize" id="getSize"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSize</span> (line <span class="line-number">131</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the object size in bytes, including the header.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getSize
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetIdentifier" id="setIdentifier"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setIdentifier</span> (line <span class="line-number">124</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the GUID of the ASF object.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setIdentifier
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$id</span><span class="var-description">: The GUID</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetOffset" id="setOffset"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setOffset</span> (line <span class="line-number">110</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the file offset where the box starts.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setOffset
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$offset</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$offset</span><span class="var-description">: The file offset to box start.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetOption" id="setOption"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setOption</span> (line <span class="line-number">181</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the given option the given value.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setOption
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$option</span><span class="var-description">: The name of the option.</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$value</span><span class="var-description">: The value to set for the option.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetOptions" id="setOptions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setOptions</span> (line <span class="line-number">173</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the options array. See <a href="../../php-reader/ISO/ISO14496.html">ISO14496</a> class for available options.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setOptions
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span>, <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetParent" id="setParent"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setParent</span> (line <span class="line-number">198</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the parent containing object.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setParent
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$parent</span>, <span class="var-type"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span>&nbsp;<span class="var-name">$parent</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/ASF/ASF_Object.html">ASF_Object</a></span>
+				<span class="var-name">$parent</span><span class="var-description">: The parent object.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$parent</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetSize" id="setSize"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setSize</span> (line <span class="line-number">138</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the box size. The size must include the header.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setSize
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$size</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$size</span><span class="var-description">: The box size.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__get" id="__get"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__get</span> (line <span class="line-number">206</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Magic function so that $obj-&gt;value will work.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			__get
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The field name.</span>			</li>
+				</ul>
+		
+			
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../../php-reader/ASF/ASF_Object_Container.html#method__get">ASF_Object_Container::__get()</a>
+								: Override magic function so that $obj-&gt;value will work as expected.
+							</li>
+				</ul>
+	</div>
+<a name="method__set" id="__set"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">__set</span> (line <span class="line-number">220</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Magic function so that assignments with $obj-&gt;value will work.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			__set
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The field name.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The field value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:19:11 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

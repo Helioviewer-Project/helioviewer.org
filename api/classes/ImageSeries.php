@@ -8,8 +8,8 @@
  */
 require('CompositeImage.php');
 require('../phpClasses/lib/DbConnection.php');
-require_once('../phpClasses/phpvideotoolkit/config.php');
-require_once('../phpClasses/phpvideotoolkit/phpvideotoolkit.php5.php');
+require_once('../phpClasses/phpvideotoolkit-0.1.8/config.php');
+require_once('../phpClasses/phpvideotoolkit-0.1.8/phpvideotoolkit.php5.php');
 
 
 class ImageSeries {
@@ -23,9 +23,11 @@ class ImageSeries {
 	private $tmpurl = "http://localhost/hv/api/tmp/";
 	private $obs = "soho";
 	private $filetype = "flv";
-	private $highQualityBitrate = 845;
-	private $watermarkURL = "/var/www/hv/images/watermark.gif";
-	private $watermarkOptions = "-m1";
+	private $highQualityLevel = 100;
+	//private $watermarkURL = "/var/www/hv/images/watermark.gif";
+	//private $watermarkOptions = "-m1";
+	private $watermarkURL = "/var/www/hv/images/watermark_small_gs.png";
+	private $watermarkOptions = "-x 720 -y 965 ";
 	
 	/*
 	 * constructor
@@ -232,11 +234,10 @@ class ImageSeries {
 		
 		// Create a high-quality version as well
 		$hq_filename = "$movieName." . $this->highQualityFiletype;
-		
-		$toolkit->setVideoBitRate($this->highQualityBitrate);
+		$toolkit->setConstantQuality($this->highQualityLevel);
 		
 		// Add a watermark
-		$toolkit->addWatermark($this->watermarkURL, $this->watermarkOptions);
+		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
 		
 		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 		if(!$ok)
@@ -253,6 +254,8 @@ class ImageSeries {
 			echo $toolkit->getLastError()."<br />\r\n";
 			exit;
 		}
+		
+		//echo $toolkit->getLastCommand();
 	
 		//$thumb = array_shift($toolkit->getLastOutput());
 		//echo $thumb;

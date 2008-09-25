@@ -1,0 +1,12 @@
+-------------------------------
+FFMPEG OUTPUT
+-------------------------------
+-------------------------------
+COMMAND
+-------------------------------
+/usr/bin/ffmpeg -i '/var/www/hv/api/tmp/1222262755/Helioviewer-Quick-Movie-1041465600.mp4' -s '320x240' -sameq -acodec 'libmp3lame' -ab '64kb' -ar '44100' -f 'flv' -pass '1' -passlogfile '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355730-48dbab122a1a8-multipass'  -y /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355730-48dbab122a16d.flv &> /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355730-48dbab122a1f5.info
+/usr/bin/ffmpeg -i '/var/www/hv/api/tmp/1222262755/Helioviewer-Quick-Movie-1041465600.mp4' -s '320x240' -sameq -acodec 'libmp3lame' -ab '64kb' -ar '44100' -f 'flv' -pass '2' -passlogfile '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355730-48dbab122a1a8-multipass'  -y /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355730-48dbab122a16d.flv &> /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355730-48dbab122a1f5.info
+-------------------------------
+RESULT
+-------------------------------
+Execute error. Output for file "/var/www/hv/api/tmp/1222262755/Helioviewer-Quick-Movie-1041465600.mp4" was not found. Please check server write permissions and/or available codecs compiled with FFmpeg. You can check the encode decode availability by inspecting the output array from PHPVideoToolkit::getFFmpegInfo().

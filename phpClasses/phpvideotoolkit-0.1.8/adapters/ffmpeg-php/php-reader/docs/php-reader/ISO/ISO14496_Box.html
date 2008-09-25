@@ -1,0 +1,1555 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ISO14496_Box</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ISO14496_Box</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+							<a href="#sec-descendents">Descendents</a>
+			|											<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">A base class for all ISO 14496-12 boxes.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 102 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2008 PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ISO14496---Box.php.html">/ISO14496/Box.php</a> (line <span class="field">52</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+	<a name="sec-descendents"></a>
+	<div class="info-box">
+		<div class="info-box-title">Direct descendents</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+			<span class="disabled">Descendents</span>
+			|												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+								|															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<table cellpadding="2" cellspacing="0" class="class-table">
+				<tr>
+					<th class="class-table-header">Class</th>
+					<th class="class-table-header">Description</th>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496.html">ISO14496</a></td>
+					<td>
+											This class represents a file in ISO base media file format as described in  ISO/IEC 14496 Part 12 standard.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_CDSC.html">ISO14496_Box_CDSC</a></td>
+					<td>
+											This box provides a reference from the containing track to another track in  the presentation. This track describes the referenced track.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_DINF.html">ISO14496_Box_DINF</a></td>
+					<td>
+											The <em>Data Information Box</em> contains objects that declare the location  of the media information in a track.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_EDTS.html">ISO14496_Box_EDTS</a></td>
+					<td>
+											The <em>Edit Box</em> maps the presentation time-line to the media time-line as  it is stored in the file. The Edit Box is a container for the edit lists.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_FREE.html">ISO14496_Box_FREE</a></td>
+					<td>
+											The contents of a <em>Free Space Box</em> are irrelevant and may be ignored, or  the object deleted, without affecting the presentation. (Care should be  exercised when deleting the object, as this may invalidate the offsets used  in the sample table, unless this object is after all the media data).
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_FRMA.html">ISO14496_Box_FRMA</a></td>
+					<td>
+											The <em>Original Format Box</em> contains the four-character-code of the  original un-transformed sample description.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_FTYP.html">ISO14496_Box_FTYP</a></td>
+					<td>
+											The <em>File Type Box</em> is placed as early as possible in the file (e.g.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_Full.html">ISO14496_Box_Full</a></td>
+					<td>
+											A base class for objects that also contain a version number and flags field.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_HINT.html">ISO14496_Box_HINT</a></td>
+					<td>
+											This box provides a reference from the containing track to another track in  the presentation. The referenced track(s) contain the original media for this  hint track.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_IINF.html">ISO14496_Box_IINF</a></td>
+					<td>
+											The <em>Item Information Box</em> provides extra information about selected
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_ILOC.html">ISO14496_Box_ILOC</a></td>
+					<td>
+											The <em>The Item Location Box</em> provides a directory of resources in this or
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_ILST.html">ISO14496_Box_ILST</a></td>
+					<td>
+											A container box for all the iTunes/iPod specific boxes. A list of well known  boxes is provided in the following table. The value for each box is contained  in a nested <a href="../../php-reader/ISO/ISO14496_Box_DATA.html">Data Box</a>.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_IMIF.html">ISO14496_Box_IMIF</a></td>
+					<td>
+											The <em>IPMP Information Box</em> contains IPMP Descriptors which document the  protection applied to the stream.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_IPRO.html">ISO14496_Box_IPRO</a></td>
+					<td>
+											The <em>Item Protection Box</em> provides an array of item protection  information, for use by the <a href="../../php-reader/ISO/ISO14496_Box_IINF.html">Item Information Box</a>.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_MDAT.html">ISO14496_Box_MDAT</a></td>
+					<td>
+											The <em>Media Data Box</em> contains the media data. In video tracks, this box  would contain video frames. There may be any number of these boxes in the  file (including zero, if all the media data is in other files).
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_MDIA.html">ISO14496_Box_MDIA</a></td>
+					<td>
+											The <em>Media Box</em> contains all the objects that declare information about  the media data within a track.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_MFRA.html">ISO14496_Box_MFRA</a></td>
+					<td>
+											The <em>Movie Fragment Random Access Box</em> provides a table which may assist
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_MINF.html">ISO14496_Box_MINF</a></td>
+					<td>
+											The <em>Media Information Box</em> contains all the objects that declare  characteristic information of the media in the track.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_MOOF.html">ISO14496_Box_MOOF</a></td>
+					<td>
+											The <em>Movie Fragment Box</em> extend the presentation in time. They provide
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_MOOV.html">ISO14496_Box_MOOV</a></td>
+					<td>
+											The metadata for a presentation is stored in the single <em>Movie Box</em>  which occurs at the top-level of a file. Normally this box is close to the  beginning or end of the file, though this is not required.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_MVEX.html">ISO14496_Box_MVEX</a></td>
+					<td>
+											The <em>Movie Extends Box</em> warns readers that there might be
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_SCHI.html">ISO14496_Box_SCHI</a></td>
+					<td>
+											The <em>Scheme Information Box</em> is a container Box that is only interpreted
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_SINF.html">ISO14496_Box_SINF</a></td>
+					<td>
+											The <em>Protection Scheme Information Box</em> contains all the information
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_SKIP.html">ISO14496_Box_SKIP</a></td>
+					<td>
+											The contents of a <em>Free Space Box</em> are irrelevant and may be ignored, or  the object deleted, without affecting the presentation. (Care should be  exercised when deleting the object, as this may invalidate the offsets used  in the sample table, unless this object is after all the media data).
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_STBL.html">ISO14496_Box_STBL</a></td>
+					<td>
+											The <em>Sample Table Box</em> contains all the time and data indexing of the  media samples in a track. Using the tables here, it is possible to locate  samples in time, determine their type (e.g. I-frame or not), and determine  their size, container, and offset into that container.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_TRAF.html">ISO14496_Box_TRAF</a></td>
+					<td>
+											Within the <em>Track Fragment Box</em> there is a set of track fragments, zero  or more per track. The track fragments in turn contain zero or more track  runs, each of which document a contiguous run of samples for that track.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_TRAK.html">ISO14496_Box_TRAK</a></td>
+					<td>
+											The <em>Track Box</em> is a container box for a single track of a presentation.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_TREF.html">ISO14496_Box_TREF</a></td>
+					<td>
+											The <em>Track Reference Box</em> provides a reference from the containing track
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../php-reader/ISO/ISO14496_Box_UDTA.html">ISO14496_Box_UDTA</a></td>
+					<td>
+											The <em>User Data Box</em> contains objects that declare user information about  the containing box and its data (presentation or track).
+										</td>
+				</tr>
+							</table>
+		</div>
+	</div>
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																								<div class="var-title">
+					<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+					<a href="#$_reader" title="details" class="var-name">$_reader</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																																																																				
+												<div class="method-definition">
+											<span class="method-result">ISO14496_Box</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>
+										<a href="#addBox" title="details" class="method-name">addBox</a>
+											(<span class="var-type"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>&nbsp;<span class="var-name">$box</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#constructBoxes" title="details" class="method-name">constructBoxes</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$defaultclassname</span> = <span class="var-default">&quot;ISO14496_Box&quot;</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Array</span>
+										<a href="#getBoxes" title="details" class="method-name">getBoxes</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Array</span>
+										<a href="#getBoxesByIdentifier" title="details" class="method-name">getBoxesByIdentifier</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$identifier</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#getContainer" title="details" class="method-name">getContainer</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getOffset" title="details" class="method-name">getOffset</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getOption" title="details" class="method-name">getOption</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$defaultValue</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Array</span>
+										<a href="#getOptions" title="details" class="method-name">getOptions</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>
+										<a href="#getParent" title="details" class="method-name">getParent</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getSize" title="details" class="method-name">getSize</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getType" title="details" class="method-name">getType</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#hasBox" title="details" class="method-name">hasBox</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$identifier</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isContainer" title="details" class="method-name">isContainer</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setContainer" title="details" class="method-name">setContainer</a>
+											(<span class="var-type">boolean</span>&nbsp;<span class="var-name">$container</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setOffset" title="details" class="method-name">setOffset</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$offset</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setOption" title="details" class="method-name">setOption</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setOptions" title="details" class="method-name">setOptions</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span>, <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setParent" title="details" class="method-name">setParent</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$parent</span>, <span class="var-type"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>&nbsp;<span class="var-name">$parent</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setSize" title="details" class="method-name">setSize</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$size</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setType" title="details" class="method-name">setType</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#__get" title="details" class="method-name">__get</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#__isset" title="details" class="method-name">__isset</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#__set" title="details" class="method-name">__set</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#__toString" title="details" class="method-name">__toString</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$data</span> = <span class="var-default">&quot;&quot;</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__unset" title="details" class="method-name">__unset</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$_reader" id="$_reader"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+			<span class="var-name">$_reader</span>
+						(line <span class="line-number">59</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The reader object.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">93</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs the class with given parameters and options.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ISO14496_Box</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+				<span class="var-name">$reader</span><span class="var-description">: The reader object.</span>			</li>
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../../php-reader/ISO/ISO14496.html#method__construct">ISO14496::__construct()</a>
+								: Constructs the ISO14496 class with given file and options.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_CDSC.html#method__construct">ISO14496_Box_CDSC::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_DINF.html#method__construct">ISO14496_Box_DINF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_EDTS.html#method__construct">ISO14496_Box_EDTS::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_FREE.html#method__construct">ISO14496_Box_FREE::__construct()</a>
+								: Constructs the class with given parameters.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_FRMA.html#method__construct">ISO14496_Box_FRMA::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_FTYP.html#method__construct">ISO14496_Box_FTYP::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_Full.html#method__construct">ISO14496_Box_Full::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_BXML.html#method__construct">ISO14496_Box_BXML::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_CO64.html#method__construct">ISO14496_Box_CO64::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_CPRT.html#method__construct">ISO14496_Box_CPRT::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_CTTS.html#method__construct">ISO14496_Box_CTTS::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_DREF.html#method__construct">ISO14496_Box_DREF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_ELST.html#method__construct">ISO14496_Box_ELST::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_HDLR.html#method__construct">ISO14496_Box_HDLR::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_HMHD.html#method__construct">ISO14496_Box_HMHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_ID32.html#method__construct">ISO14496_Box_ID32::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_DATA.html#method__construct">ISO14496_Box_DATA::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_INFE.html#method__construct">ISO14496_Box_INFE::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MDHD.html#method__construct">ISO14496_Box_MDHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MEHD.html#method__construct">ISO14496_Box_MEHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_META.html#method__construct">ISO14496_Box_META::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MFHD.html#method__construct">ISO14496_Box_MFHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MFRO.html#method__construct">ISO14496_Box_MFRO::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MVHD.html#method__construct">ISO14496_Box_MVHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_PDIN.html#method__construct">ISO14496_Box_PDIN::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_PITM.html#method__construct">ISO14496_Box_PITM::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SBGP.html#method__construct">ISO14496_Box_SBGP::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SCHM.html#method__construct">ISO14496_Box_SCHM::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SDTP.html#method__construct">ISO14496_Box_SDTP::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SMHD.html#method__construct">ISO14496_Box_SMHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STCO.html#method__construct">ISO14496_Box_STCO::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STDP.html#method__construct">ISO14496_Box_STDP::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STSC.html#method__construct">ISO14496_Box_STSC::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STSH.html#method__construct">ISO14496_Box_STSH::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STSS.html#method__construct">ISO14496_Box_STSS::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STSZ.html#method__construct">ISO14496_Box_STSZ::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STTS.html#method__construct">ISO14496_Box_STTS::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STZ2.html#method__construct">ISO14496_Box_STZ2::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SUBS.html#method__construct">ISO14496_Box_SUBS::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TFHD.html#method__construct">ISO14496_Box_TFHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TFRA.html#method__construct">ISO14496_Box_TFRA::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TKHD.html#method__construct">ISO14496_Box_TKHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TREX.html#method__construct">ISO14496_Box_TREX::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TRUN.html#method__construct">ISO14496_Box_TRUN::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_URL.html#method__construct">ISO14496_Box_URL::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_URN.html#method__construct">ISO14496_Box_URN::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_VMHD.html#method__construct">ISO14496_Box_VMHD::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_XML.html#method__construct">ISO14496_Box_XML::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_HINT.html#method__construct">ISO14496_Box_HINT::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_IINF.html#method__construct">ISO14496_Box_IINF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_ILOC.html#method__construct">ISO14496_Box_ILOC::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_ILST.html#method__construct">ISO14496_Box_ILST::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_IMIF.html#method__construct">ISO14496_Box_IMIF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_IPRO.html#method__construct">ISO14496_Box_IPRO::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MDAT.html#method__construct">ISO14496_Box_MDAT::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MDIA.html#method__construct">ISO14496_Box_MDIA::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MFRA.html#method__construct">ISO14496_Box_MFRA::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MINF.html#method__construct">ISO14496_Box_MINF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MOOF.html#method__construct">ISO14496_Box_MOOF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MOOV.html#method__construct">ISO14496_Box_MOOV::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_MVEX.html#method__construct">ISO14496_Box_MVEX::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SCHI.html#method__construct">ISO14496_Box_SCHI::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SINF.html#method__construct">ISO14496_Box_SINF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_SKIP.html#method__construct">ISO14496_Box_SKIP::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STBL.html#method__construct">ISO14496_Box_STBL::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TRAF.html#method__construct">ISO14496_Box_TRAF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TRAK.html#method__construct">ISO14496_Box_TRAK::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_TREF.html#method__construct">ISO14496_Box_TREF::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_UDTA.html#method__construct">ISO14496_Box_UDTA::__construct()</a>
+								: Constructs the class with given parameters and reads box related data from  the ISO Base Media file.
+							</li>
+				</ul>
+	</div>
+<a name="methodaddBox" id="addBox"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addBox</span> (line <span class="line-number">354</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a new box into the current box and returns it.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>
+		<span class="method-name">
+			addBox
+		</span>
+					(<span class="var-type"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>&nbsp;<span class="var-name">$box</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>
+				<span class="var-name">$box</span><span class="var-description">: The box to add</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodconstructBoxes" id="constructBoxes"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">constructBoxes</span> (line <span class="line-number">248</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Reads and constructs the boxes found within this box.</p>
+	<ul class="tags">
+				<li><span class="field">todo:</span> Does not parse iTunes internal ---- boxes.</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			constructBoxes
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$defaultclassname</span> = <span class="var-default">&quot;ISO14496_Box&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$defaultclassname</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetBoxes" id="getBoxes"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBoxes</span> (line <span class="line-number">312</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns all the boxes the file contains as an associate array. The box  identifiers work as keys having an array of boxes as associated value.</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ISO14496_Exception if called on a non-container box</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Array</span>
+		<span class="method-name">
+			getBoxes
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetBoxesByIdentifier" id="getBoxesByIdentifier"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBoxesByIdentifier</span> (line <span class="line-number">334</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns an array of boxes matching the given identifier or an empty array  if no boxes matched the identifier.</p>
+<p class="description"><p>The identifier may contain wildcard characters &quot;*&quot; and &quot;?&quot;. The asterisk  matches against zero or more characters, and the question mark matches any  single character.</p><p>Please note that one may also use the shorthand $obj-&gt;identifier to access  the first box with the identifier given. Wildcards cannot be used with  the shorthand and they will not work with user defined uuid types.</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ISO14496_Exception if called on a non-container box</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Array</span>
+		<span class="method-name">
+			getBoxesByIdentifier
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$identifier</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$identifier</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetContainer" id="getContainer"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getContainer</span> (line <span class="line-number">231</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a boolean value corresponding to whether the box is a container.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			getContainer
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetOffset" id="getOffset"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getOffset</span> (line <span class="line-number">157</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the file offset to box start, or -1 if the box was created on heap.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getOffset
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetOption" id="getOption"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getOption</span> (line <span class="line-number">127</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the given option value, or the default value if the option is not  defined.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getOption
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$defaultValue</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$option</span><span class="var-description">: The name of the option.</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$defaultValue</span><span class="var-description">: The default value to be returned.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetOptions" id="getOptions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getOptions</span> (line <span class="line-number">118</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the options array.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Array</span>
+		<span class="method-name">
+			getOptions
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetParent" id="getParent"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getParent</span> (line <span class="line-number">210</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the parent box containing this box.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>
+		<span class="method-name">
+			getParent
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetSize" id="getSize"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSize</span> (line <span class="line-number">172</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the box size in bytes, including the size and type header,  fields, and all contained boxes, or -1 if the box was created on heap.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getSize
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetType" id="getType"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getType</span> (line <span class="line-number">196</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the box type.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getType
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodhasBox" id="hasBox"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">hasBox</span> (line <span class="line-number">298</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Checks whether the box given as an argument is present in the file. Returns  <var>true</var> if one or more boxes are present, <var>false</var>  otherwise.</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ISO14496_Exception if called on a non-container box</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			hasBox
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$identifier</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$identifier</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodisContainer" id="isContainer"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">isContainer</span> (line <span class="line-number">224</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a boolean value corresponding to whether the box is a container.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isContainer
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetContainer" id="setContainer"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setContainer</span> (line <span class="line-number">238</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets whether the box is a container.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setContainer
+		</span>
+					(<span class="var-type">boolean</span>&nbsp;<span class="var-name">$container</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$container</span><span class="var-description">: Whether the box is a container.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetOffset" id="setOffset"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setOffset</span> (line <span class="line-number">164</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the file offset where the box starts.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setOffset
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$offset</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$offset</span><span class="var-description">: The file offset to box start.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetOption" id="setOption"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setOption</span> (line <span class="line-number">147</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the given option the given value.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setOption
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$option</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$option</span><span class="var-description">: The name of the option.</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$value</span><span class="var-description">: The value to set for the option.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetOptions" id="setOptions"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setOptions</span> (line <span class="line-number">139</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the options array. See <a href="../../php-reader/ISO/ISO14496.html">ISO14496</a> class for available options.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setOptions
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span>, <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetParent" id="setParent"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setParent</span> (line <span class="line-number">217</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the parent containing box.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setParent
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$parent</span>, <span class="var-type"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>&nbsp;<span class="var-name">$parent</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/ISO/ISO14496_Box.html">ISO14496_Box</a></span>
+				<span class="var-name">$parent</span><span class="var-description">: The parent box.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$parent</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetSize" id="setSize"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setSize</span> (line <span class="line-number">182</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the box size. The size must include the size and type header,  fields, and all contained boxes.</p>
+<p class="description"><p>The method will propagate size change to box parents.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setSize
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$size</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$size</span><span class="var-description">: The box size.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetType" id="setType"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setType</span> (line <span class="line-number">203</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the box type.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setType
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: The box type.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__get" id="__get"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__get</span> (line <span class="line-number">376</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Magic function so that $obj-&gt;value will work. If called on a container box,  the method will first attempt to return the first contained box that  matches the identifier, and if not found, invoke a getter method.</p>
+<p class="description"><p>If there are no boxes or getter methods with given name, the method  attempts to create a frame with given identifier.</p><p>If none of these work, an exception is thrown.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			__get
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The box or field name.</span>			</li>
+				</ul>
+		
+			
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_DATA.html#method__get">ISO14496_Box_DATA::__get()</a>
+								: Override magic function so that $obj-&gt;data will return the current box  instead of an error. For other values the method will attempt to call a  getter method.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_ILST.html#method__get">ISO14496_Box_ILST::__get()</a>
+								: Override magic function so that $obj-&gt;value on a box will return the data  box instead of the data container box.
+							</li>
+				</ul>
+	</div>
+<a name="method__isset" id="__isset"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">__isset</span> (line <span class="line-number">412</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Magic function so that isset($obj-&gt;value) will work. This method checks  whether the box is a container and contains a box that matches the  identifier.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			__isset
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The box name.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__set" id="__set"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__set</span> (line <span class="line-number">397</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Magic function so that assignments with $obj-&gt;value will work.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			__set
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The field name.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: The field value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__toString" id="__toString"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">__toString</span> (line <span class="line-number">434</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the box raw data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			__toString
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$data</span> = <span class="var-default">&quot;&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$data</span>			</li>
+				</ul>
+		
+			
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../../php-reader/ISO/ISO14496.html#method__toString">ISO14496::__toString()</a>
+								: Returns the raw data of the ISO14496 file.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_FREE.html#method__toString">ISO14496_Box_FREE::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_Full.html#method__toString">ISO14496_Box_Full::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_CO64.html#method__toString">ISO14496_Box_CO64::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_DREF.html#method__toString">ISO14496_Box_DREF::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_HDLR.html#method__toString">ISO14496_Box_HDLR::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_ID32.html#method__toString">ISO14496_Box_ID32::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_DATA.html#method__toString">ISO14496_Box_DATA::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_STCO.html#method__toString">ISO14496_Box_STCO::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_IINF.html#method__toString">ISO14496_Box_IINF::__toString()</a>
+								: Returns the box raw data.
+							</li>
+					<li>
+				<a href="../../php-reader/ISO/ISO14496_Box_IPRO.html#method__toString">ISO14496_Box_IPRO::__toString()</a>
+								: Returns the box raw data.
+							</li>
+				</ul>
+	</div>
+<a name="method__unset" id="__unset"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__unset</span> (line <span class="line-number">423</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Magic function so that unset($obj-&gt;value) will work. This method removes  all the boxes from this container that match the identifier.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__unset
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The box name.</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:18:20 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

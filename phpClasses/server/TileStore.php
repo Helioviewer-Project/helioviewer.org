@@ -8,8 +8,13 @@ class TileStore {
 		$this->dbConnection = $dbConnection;
 	}
 
-	function getNumTiles($detector, $zoom) {
-		$query = "SELECT lowestRegularZoomLevel FROM detector WHERE name = '$detector';";
+	function getNumTiles($imageId, $zoom) {
+		$query = "SELECT detector.lowestRegularZoomLevel as lowestRegularZoomLevel FROM image
+					LEFT JOIN measurement ON image.measurementId = measurement.id
+					LEFT JOIN detector ON measurement.detectorId = detector.id
+					WHERE image.id = $imageId";
+		
+		
 		$result = $this->dbConnection->query($query);
 		$row = mysql_fetch_array($result);
 		
@@ -54,7 +59,7 @@ class TileStore {
 		}
 	} 
 
-	function outputTile($imageId, $detector, $zoom, $x, $y) {
+	function outputTile($imageId, $zoom, $x, $y) {
 		// Cache-Lifetime (in minutes)
 		$lifetime = 60;
 		$exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
@@ -63,7 +68,7 @@ class TileStore {
 		// Special header for MSIE 5
 		header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
 
-		$numTiles = $this->getNumTiles($detector, $zoom);
+		$numTiles = $this->getNumTiles($imageId, $zoom);
 		if ($numTiles >1) {
 			$offset = max(1, (int)(sqrt($numTiles)/2));
 			

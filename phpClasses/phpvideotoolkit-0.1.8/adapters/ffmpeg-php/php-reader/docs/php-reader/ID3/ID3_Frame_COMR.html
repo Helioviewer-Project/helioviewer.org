@@ -1,0 +1,1022 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ID3_Frame_COMR</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ID3_Frame_COMR</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-consts">Constants</a>
+						
+			</div>
+	<div class="info-box-body">
+                <p class="implements">
+            Implements interfaces:
+            <ul>
+                <li><a href="../../php-reader/ID3/ID3_Encoding.html">ID3_Encoding</a></li>            </ul>
+        </p>
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The <em>Commercial frame</em> enables several competing offers in the same tag  by bundling all needed information. That makes this frame rather complex but  it's an easier solution than if one tries to achieve the same result with  several frames.</p>
+<p class="description"><p>There may be more than one commercial frame in a tag, but no two may be  identical.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Ryan Butterfield &lt;<a href="mailto:buttza@gmail.com">buttza@gmail.com</a>&gt;</li>
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 105 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ID3---Frame---COMR.php.html">/ID3/Frame/COMR.php</a> (line <span class="field">60</span>)
+		</p>
+		
+				
+		<pre><a href="../../php-reader/ID3/ID3_Object.html">ID3_Object</a>
+   |
+   --<a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a>
+      |
+      --ID3_Frame_COMR</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-consts">Constants</a>
+							
+					</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+												<div class="var-title">
+					static <span class="var-type">Array</span>
+					<a href="#$types" title="details" class="var-name">$types</a>
+				</div>
+																							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-consts">Constants</a>
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																																												
+												<div class="method-definition">
+											<span class="method-result">ID3_Frame_COMR</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getContact" title="details" class="method-name">getContact</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getCurrency" title="details" class="method-name">getCurrency</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getDate" title="details" class="method-name">getDate</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getDelivery" title="details" class="method-name">getDelivery</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getDescription" title="details" class="method-name">getDescription</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getEncoding" title="details" class="method-name">getEncoding</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getImageData" title="details" class="method-name">getImageData</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getImageSize" title="details" class="method-name">getImageSize</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getMimeType" title="details" class="method-name">getMimeType</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getPrice" title="details" class="method-name">getPrice</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getSeller" title="details" class="method-name">getSeller</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setContact" title="details" class="method-name">setContact</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$contact</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setCurrency" title="details" class="method-name">setCurrency</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$currency</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setDate" title="details" class="method-name">setDate</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$date</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setDelivery" title="details" class="method-name">setDelivery</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$delivery</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setDescription" title="details" class="method-name">setDescription</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$description</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$encoding</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setEncoding" title="details" class="method-name">setEncoding</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$encoding</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setImageData" title="details" class="method-name">setImageData</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$imageData</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setMimeType" title="details" class="method-name">setMimeType</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$mimeType</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setPrice" title="details" class="method-name">setPrice</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$price</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setSeller" title="details" class="method-name">setSeller</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$seller</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$encoding</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#__toString" title="details" class="method-name">__toString</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-consts">Constants</a>
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$types" id="$types"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">Array</span>
+			<span class="var-name">$types</span>
+			 = <span class="var-default">array<br />    (&quot;Other&quot;, &quot;Standard CD album with other songs&quot;, &quot;Compressed audio on CD&quot;,<br />     &quot;File over the Internet&quot;, &quot;Stream over the Internet&quot;, &quot;As note sheets&quot;,<br />     &quot;As note sheets in a book with other sheets&quot;, &quot;Music on other media&quot;,<br />     &quot;Non-musical merchandise&quot;)</span>			(line <span class="line-number">68</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The delivery types.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ID3/ID3_Frame.html#var$_data">ID3_Frame::$_data</a></span><br>
+							</span>
+											</blockquote> 
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ID3/ID3_Object.html">ID3_Object</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ID3/ID3_Object.html#var$_reader">ID3_Object::$_reader</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																			<a href="#sec-consts">Constants</a>
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">113</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs the class with given parameters and parses object related data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ID3_Frame_COMR</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+				<span class="var-name">$reader</span><span class="var-description">: The reader object.</span>			</li>
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Frame.html#method__construct">ID3_Frame::__construct()</a></dt>
+						<dd>Constructs the class with given parameters and reads object related data  from the ID3v2 tag.</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetContact" id="getContact"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getContact</span> (line <span class="line-number">235</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the contact URL, with which the user can contact the seller.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getContact
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetCurrency" id="getCurrency"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCurrency</span> (line <span class="line-number">182</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the currency code, encoded according to  <a href="http://www.iso.org/iso/support/faqs/faqs_widely_used_standards/widely_used_standards_other/currency_codes/currency_codes_list-1.htm">ISO 4217</a> alphabetic currency code.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getCurrency
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDate" id="getDate"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDate</span> (line <span class="line-number">220</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the date as an 8 character date string (YYYYMMDD), describing for  how long the price is valid.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getDate
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDelivery" id="getDelivery"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDelivery</span> (line <span class="line-number">249</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the delivery type with whitch the audio was delivered when bought.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getDelivery
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDescription" id="getDescription"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDescription</span> (line <span class="line-number">284</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the short description of the product.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getDescription
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetEncoding" id="getEncoding"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getEncoding</span> (line <span class="line-number">165</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the text encoding.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getEncoding
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Encoding.html#methodgetEncoding">ID3_Encoding::getEncoding()</a></dt>
+						<dd>Returns the text encoding.</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetImageData" id="getImageData"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getImageData</span> (line <span class="line-number">322</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the embedded image binary data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getImageData
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetImageSize" id="getImageSize"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getImageSize</span> (line <span class="line-number">341</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the size of the embedded image data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getImageSize
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetMimeType" id="getMimeType"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMimeType</span> (line <span class="line-number">307</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the MIME type of the seller's company logo, if attached, or  <var>false</var> otherwise. Currently only &quot;image/png&quot; and &quot;image/jpeg&quot;  are allowed.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getMimeType
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetPrice" id="getPrice"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPrice</span> (line <span class="line-number">201</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the price as a numerical string using &quot;.&quot; as the decimal separator.</p>
+<p class="description"><p>In the price string several prices may be concatenated, separated by a &quot;/&quot;  character, but there may only be one currency of each type.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getPrice
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetSeller" id="getSeller"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSeller</span> (line <span class="line-number">263</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the name of the seller.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getSeller
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetContact" id="setContact"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setContact</span> (line <span class="line-number">242</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the contact URL, with which the user can contact the seller.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setContact
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$contact</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$contact</span><span class="var-description">: The contact URL.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetCurrency" id="setCurrency"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setCurrency</span> (line <span class="line-number">191</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the currency used in transaction, encoded according to  <a href="http://www.iso.org/iso/support/faqs/faqs_widely_used_standards/widely_used_standards_other/currency_codes/currency_codes_list-1.htm">ISO 4217</a> alphabetic currency code.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setCurrency
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$currency</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$currency</span><span class="var-description">: The currency code.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetDate" id="setDate"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setDate</span> (line <span class="line-number">228</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the date describing for how long the price is valid for. The date must  be an 8 character date string (YYYYMMDD).</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setDate
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$date</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$date</span><span class="var-description">: The date string.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetDelivery" id="setDelivery"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setDelivery</span> (line <span class="line-number">256</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the delivery type with whitch the audio was delivered when bought.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setDelivery
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$delivery</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$delivery</span><span class="var-description">: The delivery type code.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetDescription" id="setDescription"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setDescription</span> (line <span class="line-number">293</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the content description text using given encoding. The description  encoding must be that of the seller text.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setDescription
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$description</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$encoding</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$description</span><span class="var-description">: The content description text.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$encoding</span><span class="var-description">: The text encoding.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetEncoding" id="setEncoding"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setEncoding</span> (line <span class="line-number">173</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the text encoding.</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../../php-reader/ID3/ID3_Encoding.html">ID3_Encoding</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setEncoding
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$encoding</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$encoding</span><span class="var-description">: The text encoding.</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Encoding.html#methodsetEncoding">ID3_Encoding::setEncoding()</a></dt>
+						<dd>Sets the text encoding.</dd>
+					</dl>
+			
+	</div>
+<a name="methodsetImageData" id="setImageData"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setImageData</span> (line <span class="line-number">330</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the embedded image data. Also updates the image size to correspond the  new data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setImageData
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$imageData</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$imageData</span><span class="var-description">: The image data.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetMimeType" id="setMimeType"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setMimeType</span> (line <span class="line-number">315</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the MIME type. Currently only &quot;image/png&quot; and &quot;image/jpeg&quot; are  allowed. The MIME type is always ISO-8859-1 encoded.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setMimeType
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$mimeType</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$mimeType</span><span class="var-description">: The MIME type.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetPrice" id="setPrice"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setPrice</span> (line <span class="line-number">209</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the price. The price must use &quot;.&quot; as the decimal separator and have  multiple values be separated by a &quot;/&quot; character.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setPrice
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$price</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$price</span><span class="var-description">: The price.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetSeller" id="setSeller"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setSeller</span> (line <span class="line-number">272</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the name of the seller using given encoding. The seller text encoding  must be that of the description text.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setSeller
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$seller</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$encoding</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$seller</span><span class="var-description">: The name of the seller.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$encoding</span><span class="var-description">: The text encoding.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__toString" id="__toString"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__toString</span> (line <span class="line-number">348</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the frame raw data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			__toString
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Frame.html#method__toString">ID3_Frame::__toString()</a></dt>
+						<dd>Returns the frame raw data.</dd>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#method__construct">ID3_Frame::__construct()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodgetFlags">ID3_Frame::getFlags()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodgetIdentifier">ID3_Frame::getIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodgetSize">ID3_Frame::getSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodhasFlag">ID3_Frame::hasFlag()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodsetData">ID3_Frame::setData()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodsetFlags">ID3_Frame::setFlags()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodsetIdentifier">ID3_Frame::setIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#method__toString">ID3_Frame::__toString()</a></span><br>
+											</blockquote>
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ID3/ID3_Object.html">ID3_Object</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#method__construct">ID3_Object::__construct()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methoddecodeSynchsafe32">ID3_Object::decodeSynchsafe32()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methoddecodeUnsynchronisation">ID3_Object::decodeUnsynchronisation()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodencodeSynchsafe32">ID3_Object::encodeSynchsafe32()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodencodeUnsynchronisation">ID3_Object::encodeUnsynchronisation()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodexplodeString8">ID3_Object::explodeString8()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodexplodeString16">ID3_Object::explodeString16()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodgetOption">ID3_Object::getOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodgetOptions">ID3_Object::getOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodsetOption">ID3_Object::setOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodsetOptions">ID3_Object::setOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#method__get">ID3_Object::__get()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#method__set">ID3_Object::__set()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Constants</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a></span></p>
+					<blockquote>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constCOMPRESSION">ID3_Frame::COMPRESSION</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constDATA_LENGTH_INDICATOR">ID3_Frame::DATA_LENGTH_INDICATOR</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constDISCARD_ON_FILECHANGE">ID3_Frame::DISCARD_ON_FILECHANGE</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constDISCARD_ON_TAGCHANGE">ID3_Frame::DISCARD_ON_TAGCHANGE</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constENCRYPTION">ID3_Frame::ENCRYPTION</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constGROUPING_IDENTITY">ID3_Frame::GROUPING_IDENTITY</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constREAD_ONLY">ID3_Frame::READ_ONLY</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constUNSYNCHRONISATION">ID3_Frame::UNSYNCHRONISATION</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:18:25 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

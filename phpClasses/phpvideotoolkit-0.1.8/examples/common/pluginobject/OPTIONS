@@ -1,0 +1,76 @@
+
+Required Options
+- width
+  The width of the media.
+- height
+  The height of the media.
+
+
+Optional Options
+- require_min_version
+  If a minimum version of plugin is to be used you can then set an integer or string
+  version. For example, '6.0.4' or 6. If set to false no version checking is carried out
+  but checks are made to see if the plugin does exist.
+- auto_load
+  	Determines if unloaded plugin sources should be dynamically loaded at runtime.
+- auto_embed
+  	Determines if the plugin should be embeded automagically when the DOM is ready. If set
+  to false then you will have to call the write() function yourself.
+- force_plugin
+  	If you wish to force a particular plugin type as opposed to the autodetected type. 
+  	The value would be one of the plugin Plugin values, ie  one of the values in 
+  	PluginObject.Plugins.Flash or similar. 
+- force_into_id
+  	If you wish to embed the object into a particular element provide the element id to 
+  	this option. Note: if no id is supplied PO will automatically attempt
+  	to embed the media into the current element.
+- force_plugin_id
+  	When PO creates the embed html it will automagically create it's own 
+  	unique id. If you want to force a plugin id set it here.
+- params
+  Any extra params you wish to provide the media with.
+- attributes
+  Any extra element attributes you wish to provide the media with.
+
+
+Media Placeholder Options
+- placeholder
+  If you wish to use a click to display placeholder set this to the url of the 
+  image to use.
+- placeholder_alt
+  The placeholder image alt text to use.
+- placeholder_title
+  The title in the placeholder href.
+- placeholder_autoplay
+  Autoplays the media (if applicable) when the placeholder is clicked and the media is embeded.
+
+
+On Fail Options
+- on_fail_message
+  The message that is displayed if the version is incorrect, note this is only 
+  displayed if options.on_fail_redirect = false.
+- on_fail_redirect
+  If you wish for a redirection if the player fails then set this to the url 
+  you wish to redirect to.
+- on_fail_callback
+  If you wish to use a custom on fail callback method. This will be called before 
+  the on_fail_message and on_fail_redirect methods are checked. If you wish to fall 
+  back from your custom callback to these methods, this function must return a false 
+  (boolean) value.  
+
+
+Skip Detection Options
+- skip_detect_allow
+  If you wish to use a click to display placeholder set this to the url of the 
+  image to use.
+- memorise_detect_status
+  The placeholder image alt text to use.
+- memorise_cookie_expiry
+  The title in the placeholder href.
+- memorise_cookie_path
+  The title in the placeholder href.
+- memorise_cookie_domain
+  The title in the placeholder href.
+- memorise_cookie_secure
+  The title in the placeholder href.  
+

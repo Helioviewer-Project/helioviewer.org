@@ -1,0 +1,83 @@
+-----------
+INFO
+-----------
+Q] What is PluginObject?
+A] PluginObject is an end-all solution to embedding browser based plugins. For
+   those of you familiar with SWFObject, PluginObject is remarkably similar, 
+   except with PluginObject you are not just limited to the Flash Plugin.
+
+Q] What plugins are supported?
+A] See OPTIONS (below) for more information.
+
+Q] I already use SWFObject, is there any point in using PluginObject instead?
+A] Most likely, no. If you are using SWFObject already and your site only
+   utilizes the Flash plugin then there is no need to update your site. 
+   However if you use multiple plugins across your site then updating from
+   your current solution to PluginObject may hold certain advantages.
+
+Q] What are the advantages of PluginObject?
+A] 1. Multiple plugin support. PluginObject already supports over 7 different
+   types of plugins and with PluginObject's architecture being easy to extend
+   then it has never before been easier to embed plugins.
+   2. Same code, different plugin. The same code is used to embed all plugin
+   types, so there is not much to learn.
+   3. Autoloading javascript libraries. If you're using a dynamic page and you
+   are not sure what plugin will be required on your page, then don't worry, 
+   don't load all the libraries regardless of wether or not you will use them.		
+   PluginObject takes care of everything, simply load the base pluginobject.js
+   file and embed your plugins as normal. PluginObject will dynamically load
+   the required javascript as soon as the library is required.
+   4. Automatic placeholders across all plugins even if the plugin does not
+   support it! Every wanted an easy way of providing placeholder support on a
+   plugin that doesn't support it, well now any plugin that is supported by
+   PluginObject can make use of placeholders. (Placeholders are images that
+   are loaded in-place of the plugin when the page loads. The user is then 
+   required to 'activate' the plugin by clicking on the placeholder)
+
+Q] Which library should I use, PluginObject or SWFObject?
+A] The answer is realistically either as they both provide the same 
+   functionality. However if you are using multiple plugins on your site then 
+   PluginObject provides a uniform way of embedding them. But if you are 
+   using only the Flash plugin then SWFObject is probably the best choice for 
+   you as SWFObject is only 8kb and the combination of the PluginObject and 
+   Flash Plugin code is 14.5kb.
+
+-----------
+DEMOS
+-----------
+See DEMOS for more information about PluginObject demos
+
+-----------
+CHANGES
+-----------
+See CHANGELOG for version changes.
+
+-----------
+SUPPORTED PLUGINS
+-----------
+See SUPPORTED PLUGINS for a list of plugins that PluginObject supports. If you
+wish to add a plugin to the repository add it to the bug tracker at
+Sourceforge as a Feature Request.
+
+-----------
+OPTIONS
+-----------
+See OPTIONS for a list of options and detailed explanations about each one.
+
+-----------
+UPDATING
+-----------
+The new home of pluginobject is located at Sourceforge. Whilst I will make
+every effort to update the files at every location it is updated you should
+always check the Sourceforge repository for the latest version.
+
+http://sourceforge.net/projects/pluginobject/
+
+
+
+
+Regards,
+bugged
+
+
+/* SVN FILE: $Id$ */

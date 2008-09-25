@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ID3_Frame_ETCO</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ID3_Frame_ETCO</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-consts">Constants</a>
+						
+			</div>
+	<div class="info-box-body">
+                <p class="implements">
+            Implements interfaces:
+            <ul>
+                <li><a href="../../php-reader/ID3/ID3_Timing.html">ID3_Timing</a></li>            </ul>
+        </p>
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The <em>Event timing codes</em> allows synchronisation with key events in the  audio.</p>
+<p class="description"><p>The events are an array of timestamp and type pairs. The time stamp is set to  zero if directly at the beginning of the sound or after the previous event.  All events are sorted in chronological order.</p><p>The events $E0-EF are for user events. You might want to synchronise your  music to something, like setting off an explosion on-stage, activating a  screensaver etc.</p><p>There may only be one ETCO frame in each tag.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Ryan Butterfield &lt;<a href="mailto:buttza@gmail.com">buttza@gmail.com</a>&gt;</li>
+				<li><span class="field">author:</span> Sven Vollbehr &lt;<a href="mailto:svollbehr@gmail.com">svollbehr@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Rev: 105 $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2008 The PHP Reader Project Workgroup</li>
+				<li><span class="field">license:</span> <a href="http://code.google.com/p/php-reader/wiki/License">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ID3---Frame---ETCO.php.html">/ID3/Frame/ETCO.php</a> (line <span class="field">65</span>)
+		</p>
+		
+				
+		<pre><a href="../../php-reader/ID3/ID3_Object.html">ID3_Object</a>
+   |
+   --<a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a>
+      |
+      --ID3_Frame_ETCO</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-consts">Constants</a>
+							
+					</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+												<div class="var-title">
+					static <span class="var-type">Array</span>
+					<a href="#$types" title="details" class="var-name">$types</a>
+				</div>
+																							</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-consts">Constants</a>
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																				
+												<div class="method-definition">
+											<span class="method-result">ID3_Frame_ETCO</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Array</span>
+										<a href="#getEvents" title="details" class="method-name">getEvents</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getFormat" title="details" class="method-name">getFormat</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setEvents" title="details" class="method-name">setEvents</a>
+											(<span class="var-type">Array</span>&nbsp;<span class="var-name">$events</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$format</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setFormat" title="details" class="method-name">setFormat</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$format</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#__toString" title="details" class="method-name">__toString</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-consts">Constants</a>
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$types" id="$types"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">Array</span>
+			<span class="var-name">$types</span>
+			 = <span class="var-default">array<br />    (&quot;Padding&quot;, &quot;End of initial silence&quot;, &quot;Intro start&quot;, &quot;Main part start&quot;,<br />     &quot;Outro start&quot;, &quot;Outro end&quot;, &quot;Verse start&quot;,&quot;Refrain start&quot;,<br />     &quot;Interlude start&quot;, &quot;Theme start&quot;, &quot;Variation start&quot;, &quot;Key change&quot;,<br />     &quot;Time change&quot;, &quot;Momentary unwanted noise&quot;, &quot;Sustained noise&quot;,<br />     &quot;Sustained noise end&quot;, &quot;Intro end&quot;, &quot;Main part end&quot;, &quot;Verse end&quot;,<br />     &quot;Refrain end&quot;, &quot;Theme end&quot;, &quot;Profanity&quot;, &quot;Profanity end&quot;,<br />    <br />     0xe0 =&gt; &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;,<br />     &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;,<br />     &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;, &quot;User event&quot;,<br />    <br />     0xfd =&gt; &quot;Audio end (start of silence)&quot;, &quot;Audio file ends&quot;,<br />     &quot;One more byte of events follows&quot;)</span>			(line <span class="line-number">73</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The list of event types.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ID3/ID3_Frame.html#var$_data">ID3_Frame::$_data</a></span><br>
+							</span>
+											</blockquote> 
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ID3/ID3_Object.html">ID3_Object</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../php-reader/ID3/ID3_Object.html#var$_reader">ID3_Object::$_reader</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																			<a href="#sec-consts">Constants</a>
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">100</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructs the class with given parameters and parses object related data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ID3_Frame_ETCO</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>&nbsp;<span class="var-name">$reader</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">&$options</span> = <span class="var-default">array()</span>], <span class="var-type">Array</span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../php-reader/Reader.html">Reader</a></span>
+				<span class="var-name">$reader</span><span class="var-description">: The reader object.</span>			</li>
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$options</span><span class="var-description">: The options array.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$options</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Frame.html#method__construct">ID3_Frame::__construct()</a></dt>
+						<dd>Constructs the class with given parameters and reads object related data  from the ID3v2 tag.</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetEvents" id="getEvents"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getEvents</span> (line <span class="line-number">138</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the events as an associated array having the timestamps as keys and  the event types as values.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Array</span>
+		<span class="method-name">
+			getEvents
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetFormat" id="getFormat"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFormat</span> (line <span class="line-number">122</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the timing format.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getFormat
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Timing.html#methodgetFormat">ID3_Timing::getFormat()</a></dt>
+						<dd>Returns the timing format.</dd>
+					</dl>
+			
+	</div>
+<a name="methodsetEvents" id="setEvents"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setEvents</span> (line <span class="line-number">147</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the events using given format. The value must be an associated array  having the timestamps as keys and the event types as values.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setEvents
+		</span>
+					(<span class="var-type">Array</span>&nbsp;<span class="var-name">$events</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$format</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">Array</span>
+				<span class="var-name">$events</span><span class="var-description">: The events array.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$format</span><span class="var-description">: The timing format.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetFormat" id="setFormat"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setFormat</span> (line <span class="line-number">130</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the timing format.</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../../php-reader/ID3/ID3_Timing.html">ID3_Timing</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setFormat
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$format</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$format</span><span class="var-description">: The timing format.</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Timing.html#methodsetFormat">ID3_Timing::setFormat()</a></dt>
+						<dd>Sets the timing format.</dd>
+					</dl>
+			
+	</div>
+<a name="method__toString" id="__toString"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__toString</span> (line <span class="line-number">160</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the frame raw data.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			__toString
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../php-reader/ID3/ID3_Frame.html#method__toString">ID3_Frame::__toString()</a></dt>
+						<dd>Returns the frame raw data.</dd>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#method__construct">ID3_Frame::__construct()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodgetFlags">ID3_Frame::getFlags()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodgetIdentifier">ID3_Frame::getIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodgetSize">ID3_Frame::getSize()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodhasFlag">ID3_Frame::hasFlag()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodsetData">ID3_Frame::setData()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodsetFlags">ID3_Frame::setFlags()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#methodsetIdentifier">ID3_Frame::setIdentifier()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Frame.html#method__toString">ID3_Frame::__toString()</a></span><br>
+											</blockquote>
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../php-reader/ID3/ID3_Object.html">ID3_Object</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#method__construct">ID3_Object::__construct()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methoddecodeSynchsafe32">ID3_Object::decodeSynchsafe32()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methoddecodeUnsynchronisation">ID3_Object::decodeUnsynchronisation()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodencodeSynchsafe32">ID3_Object::encodeSynchsafe32()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodencodeUnsynchronisation">ID3_Object::encodeUnsynchronisation()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodexplodeString8">ID3_Object::explodeString8()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodexplodeString16">ID3_Object::explodeString16()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodgetOption">ID3_Object::getOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodgetOptions">ID3_Object::getOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodsetOption">ID3_Object::setOption()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#methodsetOptions">ID3_Object::setOptions()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#method__get">ID3_Object::__get()</a></span><br>
+													<span class="method-name"><a href="../../php-reader/ID3/ID3_Object.html#method__set">ID3_Object::__set()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Constants</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../php-reader/ID3/ID3_Frame.html">ID3_Frame</a></span></p>
+					<blockquote>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constCOMPRESSION">ID3_Frame::COMPRESSION</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constDATA_LENGTH_INDICATOR">ID3_Frame::DATA_LENGTH_INDICATOR</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constDISCARD_ON_FILECHANGE">ID3_Frame::DISCARD_ON_FILECHANGE</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constDISCARD_ON_TAGCHANGE">ID3_Frame::DISCARD_ON_TAGCHANGE</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constENCRYPTION">ID3_Frame::ENCRYPTION</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constGROUPING_IDENTITY">ID3_Frame::GROUPING_IDENTITY</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constREAD_ONLY">ID3_Frame::READ_ONLY</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../php-reader/ID3/ID3_Frame.html#constUNSYNCHRONISATION">ID3_Frame::UNSYNCHRONISATION</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 05 Sep 2008 20:18:35 +0300 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.1</a>
+	</p>
+	</div></body>
+</html>

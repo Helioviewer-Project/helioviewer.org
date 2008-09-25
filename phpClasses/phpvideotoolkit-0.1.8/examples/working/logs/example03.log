@@ -1,0 +1,15 @@
+-------------------------------
+FFMPEG OUTPUT
+-------------------------------
+-------------------------------
+COMMAND
+-------------------------------
+/usr/bin/ffmpeg -r '2' -i '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222348373-48db8e559fb85/tmp_%d.jpg' -s '160x120' -loop_output '0'  -y /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222348373-48db8e55a02bb.mp4 &> /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222348373-48db8e55a0321.info
+-------------------------------
+OUTPUT
+-------------------------------
+/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/processed/videos/my-picture-movie.mp4
+-------------------------------
+RESULT
+-------------------------------
+Process Completed. The process successfully completed. Output was generated to "/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/processed/videos/my-picture-movie.mp4".

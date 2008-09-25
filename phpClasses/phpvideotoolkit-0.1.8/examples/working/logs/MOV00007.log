@@ -1,0 +1,12 @@
+-------------------------------
+FFMPEG OUTPUT
+-------------------------------
+-------------------------------
+COMMAND
+-------------------------------
+/usr/bin/ffmpeg -i '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/to-be-processed/MOV00007.3gp' -s '320x240' -sameq -acodec 'libmp3lame' -ab '64kb' -ar '44100' -f 'flv' -pass '1' -passlogfile '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355967-48dbabff5f4f7-multipass'  -y /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355967-48dbabff5f4a0.flv &> /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355967-48dbabff5f563.info
+/usr/bin/ffmpeg -i '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/to-be-processed/MOV00007.3gp' -s '320x240' -sameq -acodec 'libmp3lame' -ab '64kb' -ar '44100' -f 'flv' -pass '2' -passlogfile '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355967-48dbabff5f4f7-multipass'  -y /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355967-48dbabff5f4a0.flv &> /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355967-48dbabff5f563.info
+-------------------------------
+RESULT
+-------------------------------
+Execute error. Output for file "/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/to-be-processed/MOV00007.3gp" was not found. Please check server write permissions and/or available codecs compiled with FFmpeg. You can check the encode decode availability by inspecting the output array from PHPVideoToolkit::getFFmpegInfo().

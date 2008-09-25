@@ -1,0 +1,11 @@
+-------------------------------
+FFMPEG OUTPUT
+-------------------------------
+-------------------------------
+COMMAND
+-------------------------------
+/usr/bin/ffmpeg -i '/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/to-be-processed/cat.mpeg' -s '384x284' -b '1200kb' -r '29.7' -sameq -acodec 'libmp3lame' -ab '64kb' -ar '44100' -f 'flv'  -y /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355973-48dbac0546594.flv &> /var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/tmp/1222355973-48dbac0546623.info
+-------------------------------
+RESULT
+-------------------------------
+Execute error. Output for file "/var/www/hv/phpClasses/phpvideotoolkit-0.1.8/examples/working/to-be-processed/cat.mpeg" was not found. Please check server write permissions and/or available codecs compiled with FFmpeg. You can check the encode decode availability by inspecting the output array from PHPVideoToolkit::getFFmpegInfo().
