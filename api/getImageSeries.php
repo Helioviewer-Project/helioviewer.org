@@ -16,7 +16,9 @@ try {
 	$numFrames = $_GET['numFrames'];
 	$frameRate = $_GET['frameRate'];
 	$action    = $_GET['action'];
-	$hqFormat = $_GET['format'];
+	$edges     = $_GET['edges'];
+	$sharpen   = $_GET['sharpen'];
+	$hqFormat  = $_GET['format'];
 
 	if ($action == 'quickMovie') {
 		//Limit number of layers to three
@@ -36,9 +38,8 @@ catch(Exception $e) {
 	exit();
 }
 
-
 if ($action == "quickMovie") {
-	$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat);
+	$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $edges, $sharpen);
 	$imgSeries->quickMovie();
 }
 else if ($action == "play") {

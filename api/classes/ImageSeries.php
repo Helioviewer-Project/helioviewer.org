@@ -24,15 +24,15 @@ class ImageSeries {
 	private $obs = "soho";
 	private $filetype = "flv";
 	private $highQualityLevel = 100;
-	//private $watermarkURL = "/var/www/hv/images/watermark.gif";
-	//private $watermarkOptions = "-m1";
 	private $watermarkURL = "/var/www/hv/images/watermark_small_gs.png";
 	private $watermarkOptions = "-x 720 -y 965 ";
+	private $edgeEnhance = false;
+	private $sharpen = false;
 	
 	/*
 	 * constructor
 	 */
-	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat) {
+	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $edgeEnhance, $sharpen) {
 		date_default_timezone_set('UTC');
 		
 		$this->layers = $layers;
@@ -41,6 +41,8 @@ class ImageSeries {
 		$this->numFrames = $numFrames;
 		$this->frameRate = $frameRate;
 		$this->highQualityFiletype = $hqFormat;
+		$this->edgeEnhance = $edgeEnhance;
+		$this->sharpen = $sharpen;
 		
 		$this->db = new DbConnection();
 	}
@@ -191,7 +193,7 @@ class ImageSeries {
 			}
 			
 			// Build a composite image
-			$img = new CompositeImage($this->layers, $timestamps, $this->zoomLevel, false);
+			$img = new CompositeImage($this->layers, $timestamps, $this->zoomLevel, $this->edgeEnhance, $this->sharpen, "full");
 			$filename = $tmpdir . $j . '.jpg';
 			$img->writeImage($filename);
 			
