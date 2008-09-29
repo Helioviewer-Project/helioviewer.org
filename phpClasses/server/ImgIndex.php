@@ -79,7 +79,7 @@ class ImgIndex {
 		//WORKAROUND FOR MySQL TimeZone differences (HostGator is not using UTC by default)
 		//$offset = (5 * 3600); // 5 hours in seconds
 		$offset = 0; //local installation of MySQL set to use UTC by default...
-
+		
 		$query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit,
 						detector.name AS detector, detector.opacityGroupId AS opacityGroupId,
 						detector.lowestRegularZoomLevel as lowestRegularZoom,
@@ -115,8 +115,7 @@ class ImgIndex {
 		// Adjust for utc offset
 		$ts = $ra['timestamp'] - $offset;
 		
-		print $this->getFilepath($ra['observatory'], $ra['instrument'], $ra['detector'], $ra['measurement'], $ts);
-
+		return $this->getFilepath($ra['observatory'], $ra['instrument'], $ra['detector'], $ra['measurement'], $ts);
 	}
 	/*
 	 * getFilePath
