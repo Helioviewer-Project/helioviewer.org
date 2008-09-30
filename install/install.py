@@ -158,15 +158,15 @@ def processImages (images, storageMethod, cursor):
 			if (tile[-4:] != "meta") and (tile[-3:] != "jp2"):
 				tile_dir, tile_name = os.path.split(tile)
 				zoom = tile_name[35:37]
-				x = tile_name[38:40]
-				y = tile_name[41:43]
+				x = tile_name[38:41]
+				y = tile_name[42:45]
 				blob = open(tile, 'rb').read()
 
 				print "Processing " + tile + "..."
 
 				if storageMethod != 'database':
 					filepath = str(year) + "/" + str(mon) + "/" + str(day) + "/" + str(hour) + "/" + str(obs) + "/" + str(inst) + "/" + str(det) + "/" + str(meas) + "/"
-					filepath += file + "-" + zoom + "-" + x + "-" + y + "." + filetype
+					filepath += file + "_" + zoom + "_" + x + "_" + y + "." + filetype
 					url = urljoin(baseurl, filepath)
 
 				# SQL statement depends on where the tile images should be stored
@@ -229,8 +229,8 @@ def printGreeting():
 	os.system("clear")
 
 	print "===================================================================="
-	print "= HelioViewer Database Population Script 0.94                      ="
-	print "= By: Keith Hughitt, September 17, 2008                            ="
+	print "= HelioViewer Database Population Script 0.95                      ="
+	print "= By: Keith Hughitt, September 30, 2008                            ="
 	print "=                                                                  ="
 	print "= This script processes raw tile images, and inserts them into a   ="
 	print "= database, along with their relevent information.                 ="
@@ -262,18 +262,18 @@ def getDBInfo():
 def getStorageReqs():
 	''' Prompts the user to input the desired tile storage method '''
 	''' Note: meta-information is always stored in a database.'''
-	print "Where would you like to store the tile images?"
-	print "    (1) Filesystem"
-	print "    (2) Database"
-	print "    (3) Both"
+	def printChoices():
+			print "Where would you like to store the tile images?"
+			print "    (1) Filesystem"
+			print "    (2) Database"
+			print "    (3) Both"
+	
+	printChoices()
 	choice = int(raw_input(":"))
 
 	while (not ((choice == 1) or (choice == 2) or (choice == 3))):
 		print "That is not a valid selection!"
-		print "Where would you like to store the tile images?"
-		print "    (1) Filesystem"
-		print "    (2) Database"
-		print "    (3) Both"
+		printChoices()
 		print "Please enter '1', '2', or '3'"
 		choice = int(raw_input(":"))
 

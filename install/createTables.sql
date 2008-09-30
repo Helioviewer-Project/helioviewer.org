@@ -4,8 +4,8 @@
 --
 -- Create schema
 --
-CREATE DATABASE IF NOT EXISTS hv;
-USE hv;
+CREATE DATABASE IF NOT EXISTS hv3;
+USE hv3;
 
 --
 -- Create tables

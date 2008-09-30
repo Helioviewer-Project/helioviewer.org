@@ -2,8 +2,13 @@
 require('classes/ImageSeries.php');
 set_time_limit(180);
 $maxFrames = 150;
-$tmp_dir = "/var/www/hv/api/tmp";
-$kdu_merge_bin = "/var/www/hv/kakadu/bin/Linux-x86-32-gcc/kdu_merge";
+$tmp_root_dir =			"/var/www/hv/api/tmp";
+$tmp_root_url =         "http://localhost/hv/api/tmp";
+$kdu_merge_bin =		"/usr/bin/kdu_merge";
+$web_root_dir =			"/var/www/hv";
+$web_root_dir_regex =	"/\/var\/www\/hv/";
+$web_root_url =			"http://localhost/hv";
+$web_root_url_regex =	"/http:\/\/localhost\/hv/";
 
 //Example Queries:
 //	http://localhost/hv/api/getImageSeries.php?layers=EITEIT195&startDate=1065312000&zoomLevel=10&numFrames=100
@@ -94,7 +99,7 @@ else if ($action == "createJP2ImageSeries") {
 	// Get nearest JP2 images to each time-step
 	for ($i = 0; $i < $numFrames; $i++) {
 		$url = $imgIndex->getJP2URL($time, $src);
-		$url = preg_replace("/http:\/\/localhost/", "/var/www", $url);
+		$url = preg_replace($web_root_url_regex, $web_root_dir, $url);
 		array_push($images, $url);
 		$time += $cadence;		
 	}
@@ -105,7 +110,18 @@ else if ($action == "createJP2ImageSeries") {
 		$cmd .= "$url,";
 	}
 	
-	$output_file = "$tmp_dir/jhv_image_series_2.jp2";
+	// Make a temporary directory
+	$now = time();
+	$tmpdir = $tmp_root_dir . "/$now/";
+	mkdir($tmpdir);
+	
+	$tmpurl = $tmp_root_url . "/$now/" . "jhv_image_series.jp2";
+	
+	echo "tmpurl = $tmpurl<br><br>";
+	
+	$output_file = "$tmpdir" . "jhv_image_series.jp2";
+	
+	echo "outputfile = $output_file<br><br>";
 	
 	$cmd = substr($cmd, 0, -1);
 	$cmd .= " -o $output_file";
@@ -114,8 +130,9 @@ else if ($action == "createJP2ImageSeries") {
 	
 	// display url if query was successful
 	if ($return == "0") {
-		$output_file = preg_replace("/\/var\/www/", "http://localhost", $output_file);
-		echo $output_file;
+		//$output_file = preg_replace($web_root_dir_regex, $web_root_url, $output_file);
+		//echo $output_file;
+		echo $tmpurl;
 	}
 }
 

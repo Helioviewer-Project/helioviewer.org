@@ -8,6 +8,9 @@ I. Installation
 		-MySQL5
 		-PHP5
 		-Python (>=2.5)
+		-php5-imagick (Optional)
+		-php5-ffmpeg (Optional)
+		-php-video-tookkit (>= 0.1.5) (Optional)
 	
 	I. Setting up MySQL
 		A. Timezones
