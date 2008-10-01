@@ -7,15 +7,15 @@ class CompositeImage {
 	private $layers;
 	private $obs = "soho";
 	private $rootDir = "../tiles/";
+	private $tileSize = 512;
 	private $composite;
 	private $focus = "full";
 	private $emptyTile = "../images/transparent.gif";
-	private $edgeEnhance = false;
 	
 	/*
 	 * @constructor
 	 */
-	public function __construct($layers, $timestamps, $zoomLevel, $edges, $sharpen, $focus, $xRange=null, $yRange=null) {
+	public function __construct($layers, $timestamps, $zoomLevel, $edges=false, $sharpen=false, $focus, $xRange=null, $yRange=null) {
 		date_default_timezone_set('UTC');
 		$this->layers = $layers;
 		$this->timestamps = $timestamps;
@@ -81,7 +81,7 @@ class CompositeImage {
 			for ($j = 0; $j < $numTiles/2; $j++) {
 				$x = str_pad($j, 2, "0", STR_PAD_LEFT);
 				$y = str_pad($i, 2, "0", STR_PAD_LEFT);
-				$tile = $filepath . "-$x-$y.$ext";
+				$tile = $filepath . "_$x_$y.$ext";
 				
 				//Substitute a blank tile if tile does not exist
 				if (file_exists($tile))
@@ -100,7 +100,8 @@ class CompositeImage {
 		// Determine geometry to use (e.g. 2x2+0+0 for four-tile images)
 		$geometry = $numTiles/2 . "x" . $numTiles/2 . "+0+0";
 		
-		$img = $tiles->montageImage( new imagickdraw(), $geometry, "512x512+0+0", imagick::MONTAGEMODE_UNFRAME, "0x0+0+0" );
+		$ts = $this->tileSize;
+		$img = $tiles->montageImage( new imagickdraw(), $geometry, $ts . "x" . $ts . "+0+0", imagick::MONTAGEMODE_UNFRAME, "0x0+0+0" );
 		$img->setImageFormat($ext);
 
 		return $img;
@@ -133,9 +134,23 @@ class CompositeImage {
 		
 		for ($i = $xRange['start']; $i < $xRange['end']; $i++) {
 			for ($j = $yRange['start']; $j < $yRange['end']; $j++) {
-				$x = str_pad($j, 2, "0", STR_PAD_LEFT);
-				$y = str_pad($i, 2, "0", STR_PAD_LEFT);
-				$tile = $filepath . "-$x-$y.$ext";
+
+				// Convert coordinates to strings including sign
+				if ($i < 0)
+					$x = "-" . str_pad(substr($i,1), 2, "0", STR_PAD_LEFT);
+				else
+					$x = "+" . str_pad($i, 2, "0", STR_PAD_LEFT);
+
+				if ($j < 0)
+					$y = "-" . str_pad(substr($j,1), 2, "0", STR_PAD_LEFT);
+				else
+					$y = "+" . str_pad($j, 2, "0", STR_PAD_LEFT);
+
+
+				$tile = $filepath . "_$x" . "_$y.$ext";
+				
+				echo "[$i, $j] ";
+				echo "tile: $tile<br>";
 				
 				//Substitute a blank tile if tile does not exist
 				if (file_exists($tile))
@@ -221,8 +236,7 @@ class CompositeImage {
 		
 		$path = $this->rootDir . implode("/", array($year, $mon, $day, $hour));	
 		$path .= "/$this->obs/$inst/$det/$meas/";
-		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $this->obs, $inst, $det, $meas));
-		$path .= "-$this->zoomLevel";
+		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $this->obs, $inst, $det, $meas, $this->zoomLevel));
 		
 		return $path;
 	}

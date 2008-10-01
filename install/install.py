@@ -165,7 +165,8 @@ def processImages (images, storageMethod, cursor):
 				print "Processing " + tile + "..."
 
 				if storageMethod != 'database':
-					filepath = str(year) + "/" + str(mon) + "/" + str(day) + "/" + str(hour) + "/" + str(obs) + "/" + str(inst) + "/" + str(det) + "/" + str(meas) + "/"
+					filepath = str(year) + "/" + str(mon).rjust(2, "0") + "/" + str(day).rjust(2, "0") + "/" + str(hour).rjust(2, "0") + "/" \
+					+ str(obs) + "/" + str(inst) + "/" + str(det) + "/" + str(meas) + "/"
 					filepath += file + "_" + zoom + "_" + x + "_" + y + "." + filetype
 					url = urljoin(baseurl, filepath)
 

@@ -70,9 +70,8 @@ class TileStore {
 
 		$numTiles = $this->getNumTiles($imageId, $zoom);
 		if ($numTiles >1) {
-			$offset = max(1, (int)(sqrt($numTiles)/2));
+			$row = $this->getTile($imageId, $zoom, $x, $y);
 			
-			$row = $this->getTile($imageId, $zoom, $x + $offset, $y + $offset);
 			header('Content-type: image/jpeg');
 			if ($row) echo $row['tile'];
 			else readfile($this->noImage);
