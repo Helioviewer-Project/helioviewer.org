@@ -149,8 +149,8 @@ class CompositeImage {
 
 				$tile = $filepath . "_$x" . "_$y.$ext";
 				
-				echo "[$i, $j] ";
-				echo "tile: $tile<br>";
+				//echo "[$i, $j] ";
+				//echo "tile: $tile<br>";
 				
 				//Substitute a blank tile if tile does not exist
 				if (file_exists($tile))
