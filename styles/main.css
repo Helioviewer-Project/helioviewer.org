@@ -456,3 +456,6 @@ a.event-url:hover {
 	text-decoration: underline;
 	color: #b24673;
 }
+
+/* TileLayerAccordion Styles */
+div.layer-select-label {width:90px; float: left; color: white;}
