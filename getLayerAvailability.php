@@ -11,8 +11,11 @@
 	// Return format
 	$return = $_GET['format'];
 	
+	// Type of query
+	//$function = $_GET['function'];
+	
 	// Query
-	$query = "SELECT DISTINCT instrument.name as instrument, detector.name as detector, observatory.name as observatory, measurement.name as measurement 
+	$query = "SELECT DISTINCT instrument.abbreviation as instrument, detector.abbreviation as detector, observatory.abbreviation as observatory, measurement.abbreviation as measurement 
 	FROM observatory
 	INNER JOIN instrument ON observatory.id = instrument.observatoryId
 	INNER JOIN detector ON detector.instrumentId = instrument.id
@@ -23,24 +26,24 @@
 	
 	// Limit results
 	if ($obs != "none")
-		$query .= " observatory.name = '$obs'";
+		$query .= " observatory.abbreviation = '$obs'";
 	
 	if ($inst != "none") {
 		if (substr($query, -5) != "WHERE")
 			$query .= " AND";
-		$query .= " instrument.name = '$inst'";
+		$query .= " instrument.abbreviation = '$inst'";
 	}
 	
 	if ($det != "none") {
 		if (substr($query, -5) != "WHERE")
 			$query .= " AND";
-		$query .= " detector.name = '$det'";
+		$query .= " detector.abbreviation = '$det'";
 	}
 	
 	if ($meas != "none") {
 		if (substr($query, -5) != "WHERE")
 			$query .= " AND";
-		$query .= " measurement.name = '$meas'";
+		$query .= " measurement.abbreviation = '$meas'";
 	}
 	$query .= ";";
 		
@@ -66,10 +69,14 @@
 	$settings['detectors'] =     array_keys(array_flip($detectors));
 	$settings['measurements'] =  array_keys(array_flip($measurements));
 	
-	// JSON
+	// Output results in specified format
 	if ($return == "json") {
 		header("Content-type: application/json");
 		echo json_encode($settings);
+	}
+	
+	if ($return == "plaintext") {
+		echo json_encode($settings);		
 	}
 ?>
 

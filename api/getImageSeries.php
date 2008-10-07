@@ -142,25 +142,33 @@ else if ($action == "createJP2ImageSeries") {
 	function showMovie($url, $hqFormat, $width, $height) {
 	$urlHQ = substr($url, 0, -3) . $hqFormat;
 	?>
-		<!-- MC Media Player -->
-		<div style="text-align: center;">
-			<script type="text/javascript">
-				playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-				fpFileURL = "<?php print $url?>";
-				fpButtonSize = "48x48";
-				fpAction = "play";
-				cpHidePanel = "mouseout";
-				cpHideDelay = "1";
-				defaultEndAction = "repeat";
-				playerSize = "<?php print $width . 'x' . $height?>";
-			</script>
-			<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
-			<!-- / MC Media Player -->
-		</div>
-		<br>
-		<div style="text-align: center;">
-			<a href="<?php print $urlHQ;?>" style="text-decoration: none; color: white; font-weight: bold;">High-quality download.</a>
-		</div>
+		<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+		<html>
+		<head>
+			<title>Helioviewer.org QuickMovie</title>
+		</head>
+		<body style="background-color: #000, color: #FFF">
+			<!-- MC Media Player -->
+			<div style="text-align: center;">
+				<script type="text/javascript">
+					playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
+					fpFileURL = "<?php print $url?>";
+					fpButtonSize = "48x48";
+					fpAction = "play";
+					cpHidePanel = "mouseout";
+					cpHideDelay = "1";
+					defaultEndAction = "repeat";
+					playerSize = "<?php print $width . 'x' . $height?>";
+				</script>
+				<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
+				<!-- / MC Media Player -->
+			</div>
+			<br>
+			<div style="text-align: center;">
+				<a href="<?php print $urlHQ;?>" style="text-decoration: none; color: white; font-weight: bold;">High-quality download.</a>
+			</div>
+		</body>
+		</html>
 	<?php
 	}
 

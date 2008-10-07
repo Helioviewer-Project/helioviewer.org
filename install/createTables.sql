@@ -1,11 +1,11 @@
 -- HelioViewer Database Structure --
--- last update: 09-17-2008        --
+-- last update: 10-06-2008        --
 
 --
 -- Create schema
 --
-CREATE DATABASE IF NOT EXISTS hv;
-USE hv;
+CREATE DATABASE IF NOT EXISTS hv2;
+USE hv2;
 
 --
 -- Create tables
@@ -39,14 +39,15 @@ CREATE TABLE `instrument` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `abbreviation` varchar(4) NOT NULL default '',
   `name` varchar(255) default NULL,
+  `description` varchar(255) default NULL,
   `observatoryId` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `instrument` VALUES(1, 'MDI', 'MDI', 1);
-INSERT INTO `instrument` VALUES(2, 'LAS', 'LAS', 1);
-INSERT INTO `instrument` VALUES(3, 'EIT', 'EIT', 1);
-INSERT INTO `instrument` VALUES(4, 'TRA', 'TRA', 2);
+INSERT INTO `instrument` VALUES(1, 'MDI', 'MDI', 'Michelson Doppler Imager', 1);
+INSERT INTO `instrument` VALUES(2, 'LAS', 'LASCO', 'The Large Angle Spectrometric Coronagraph', 1);
+INSERT INTO `instrument` VALUES(3, 'EIT', 'EIT', 'Extreme ultraviolet Imaging Telescope', 1);
+INSERT INTO `instrument` VALUES(4, 'TRA', 'TRACE', 'TRACE', 2);
 
 --
 -- Table structure for table `detector`
@@ -55,6 +56,7 @@ CREATE TABLE `detector` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `abbreviation` varchar(4) NOT NULL default '',
   `name` varchar(255) default NULL,
+  `description` varchar(255) default NULL,
   `instrumentId` int(10) unsigned NOT NULL default '0',
   `imgSunRatio` float(6,3) default NULL,
   `lowestRegularZoomLevel` tinyint(4) default NULL,
@@ -62,11 +64,11 @@ CREATE TABLE `detector` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `detector` VALUES(1, 'MDI', 'MDI', 1, NULL, 10, 1);
-INSERT INTO `detector` VALUES(2, '0C3', '0C3', 2, NULL, 15, 3);
-INSERT INTO `detector` VALUES(3, '0C2', '0C2', 2, NULL, 13, 2);
-INSERT INTO `detector` VALUES(4, 'EIT', 'EIT', 3, NULL, 10, 1);
-INSERT INTO `detector` VALUES(5, 'TRA', 'TRA', 4, NULL, 10, 1);
+INSERT INTO `detector` VALUES(1, 'MDI', '', 'MDI', 1, NULL, 10, 1);
+INSERT INTO `detector` VALUES(2, '0C3', 'C3', 'LASCO C3', 2, NULL, 15, 3);
+INSERT INTO `detector` VALUES(3, '0C2', 'C2', 'LASCO C2', 2, NULL, 13, 2);
+INSERT INTO `detector` VALUES(4, 'EIT', '', 'EIT', 3, NULL, 10, 1);
+INSERT INTO `detector` VALUES(5, 'TRA', '', 'TRACE', 4, NULL, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -78,20 +80,21 @@ CREATE TABLE `measurement` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `measurementTypeId` int(10) unsigned NOT NULL default '0',
   `detectorId` int(10) unsigned NOT NULL default '0',
-  `name` varchar(255) default NULL,
   `abbreviation` varchar(4) NOT NULL default '',
+  `name` varchar(255) default NULL,
+  `description` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `measurement` VALUES(1, 1, 1, 'mag', 'mag');
-INSERT INTO `measurement` VALUES(2, 1, 1, 'int', 'int');
-INSERT INTO `measurement` VALUES(3, 1, 2, '0WL', '0WL');
-INSERT INTO `measurement` VALUES(4, 1, 3, '0WL', '0WL');
-INSERT INTO `measurement` VALUES(5, 2, 4, '195', '195');
-INSERT INTO `measurement` VALUES(6, 2, 4, '171', '171');
-INSERT INTO `measurement` VALUES(7, 2, 4, '304', '304');
-INSERT INTO `measurement` VALUES(8, 2, 4, '284', '284');
-INSERT INTO `measurement` VALUES(9, 2, 5, '171', '171');
+INSERT INTO `measurement` VALUES(1, 1, 1, 'mag', 'mag', 'Magnetogram');
+INSERT INTO `measurement` VALUES(2, 1, 1, 'int', 'int', 'Intensitygram');
+INSERT INTO `measurement` VALUES(3, 1, 2, '0WL', 'WL', 'White Light');
+INSERT INTO `measurement` VALUES(4, 1, 3, '0WL', 'WL', 'White Light');
+INSERT INTO `measurement` VALUES(5, 2, 4, '195', '195', '195 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(6, 2, 4, '171', '171', '171 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(7, 2, 4, '304', '304', '304 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(8, 2, 4, '284', '284', '284 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(9, 2, 5, '171', '171', '171 Angstrom extreme ultraviolet');
 
 -- --------------------------------------------------------
 

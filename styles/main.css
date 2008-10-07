@@ -399,6 +399,7 @@ span.event-accordion-header-right, span.tile-accordion-header-right {display: bl
 /* Events */
 .event-layer {
 	position: absolute;
+	z-index: 500;
 }
 .event {
 	position: absolute;
@@ -458,4 +459,16 @@ a.event-url:hover {
 }
 
 /* TileLayerAccordion Styles */
-div.layer-select-label {width:90px; float: left; color: white;}
+div.layer-select-label {
+	width:90px;
+	float: left;
+	color: white;
+	margin: 2px 0px 0px 1px;
+}
+select.layer-select {
+	width:75px;
+	background-color:#DFE5CF;
+	color: #424242;
+	border: 1px solid #5c5c5c;
+	margin: 2px 0px 0px 1px;
+	}

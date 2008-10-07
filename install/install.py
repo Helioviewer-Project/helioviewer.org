@@ -195,7 +195,7 @@ def getMeasurementIds(cursor):
 		measurement types supported. Uses the combination of detector and
 		measurement (e.g. 195EIT) as a hash key.'''
 
-	query = "SELECT  detector.name as detector, measurement.name as measurement, measurement.id as measurementId FROM measurement LEFT JOIN detector on detectorId = detector.id"
+	query = "SELECT  detector.abbreviation as detector, measurement.abbreviation as measurement, measurement.id as measurementId FROM measurement LEFT JOIN detector on detectorId = detector.id"
 
 	try:
 		cursor.execute(query)
@@ -204,7 +204,10 @@ def getMeasurementIds(cursor):
 		print "Error: " + e.args[1]
 
 	measurements = {}
+
+	# Note: By convention, "0"'s are added in front of any identifier < full size. (e.g. "C2" -> "0C2").
 	for meas in result_array:
+		#measurements[meas[0].rjust(3, "0") + meas[1].rjust(3, "0")] = meas[2]
 		measurements[meas[0] + meas[1]] = meas[2]
 
 	return measurements
@@ -268,7 +271,7 @@ def getStorageReqs():
 			print "    (1) Filesystem"
 			print "    (2) Database"
 			print "    (3) Both"
-	
+
 	printChoices()
 	choice = int(raw_input(":"))
 

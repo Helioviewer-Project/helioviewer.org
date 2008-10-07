@@ -8,9 +8,10 @@ class ImgIndex {
 	}
 
 	public function getProperties($imageId) {
-		$query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit,
-							detector.name AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
-							instrument.name AS instrument, observatory.name AS observatory,
+		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+							CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name,
+							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
+							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
 							UNIX_TIMESTAMP(timestamp) AS timestamp
 						FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
@@ -25,11 +26,12 @@ class ImgIndex {
 	}
 
 	public function getClosestImage($timestamp, $src) {
-		$query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit,
-							detector.name AS detector, detector.opacityGroupId AS opacityGroupId,
+		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name,
+							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 							detector.lowestRegularZoomLevel as lowestRegularZoom,
 							opacityGroup.description AS opacityGroupDescription,
-							instrument.name AS instrument, observatory.name AS observatory,
+							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
 							UNIX_TIMESTAMP(timestamp) AS timestamp,
 								UNIX_TIMESTAMP(timestamp) - $timestamp AS timediff,
 								ABS(UNIX_TIMESTAMP(timestamp) - $timestamp) AS timediffAbs
@@ -58,7 +60,7 @@ class ImgIndex {
 	}
 
 	public function getMeasurements($detector) {
-		$query = "SELECT DISTINCT measurement.name as measurement, measurementType.name as measurementType " .
+		$query = "SELECT DISTINCT measurement.abbreviation as measurement, measurementType.name as measurementType " .
 				 "FROM measurement " .
 				 "INNER JOIN detector ON measurement.detectorId = detector.id " .
 				 "INNER JOIN measurementType ON measurement.measurementTypeId = measurementType.id " .
@@ -80,11 +82,12 @@ class ImgIndex {
 		//$offset = (5 * 3600); // 5 hours in seconds
 		$offset = 0; //local installation of MySQL set to use UTC by default...
 		
-		$query = "SELECT image.id AS imageId, filetype, measurement.name AS measurement, measurementType.name AS measurementType, unit,
-						detector.name AS detector, detector.opacityGroupId AS opacityGroupId,
+		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+						CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name,
+						detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 						detector.lowestRegularZoomLevel as lowestRegularZoom,
 						opacityGroup.description AS opacityGroupDescription,
-						instrument.name AS instrument, observatory.name AS observatory,
+						instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
 						UNIX_TIMESTAMP(timestamp) AS timestamp,
 							UNIX_TIMESTAMP(timestamp) - $timestamp -$offset AS timediff,
 							ABS(UNIX_TIMESTAMP(timestamp) - $timestamp - $offset) AS timediffAbs

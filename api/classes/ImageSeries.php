@@ -238,6 +238,14 @@ class ImageSeries {
 		$hq_filename = "$movieName." . $this->highQualityFiletype;
 		$toolkit->setConstantQuality($this->highQualityLevel);
 		
+		// Use ASF for Windows
+		if ($this->highQualityFiletype == "avi")
+			$toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
+			
+		// Use MPEG-4 for Mac
+		if ($this->highQualityFiletype == "mov")		
+			$toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
+		
 		// Add a watermark
 		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
 		
