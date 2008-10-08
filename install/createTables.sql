@@ -45,7 +45,7 @@ CREATE TABLE `instrument` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
 INSERT INTO `instrument` VALUES(1, 'MDI', 'MDI', 'Michelson Doppler Imager', 1);
-INSERT INTO `instrument` VALUES(2, 'LAS', 'LASCO', 'The Large Angle Spectrometric Coronagraph', 1);
+INSERT INTO `instrument` VALUES(2, 'LAS', 'LAS', 'The Large Angle Spectrometric Coronagraph', 1);
 INSERT INTO `instrument` VALUES(3, 'EIT', 'EIT', 'Extreme ultraviolet Imaging Telescope', 1);
 INSERT INTO `instrument` VALUES(4, 'TRA', 'TRACE', 'TRACE', 2);
 

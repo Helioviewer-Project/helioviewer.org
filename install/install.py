@@ -107,9 +107,11 @@ def processImages (images, storageMethod, cursor):
 
 	measurementIds = getMeasurementIds(cursor)
 	id = getStartingId(cursor);
-
+	
 	if storageMethod != 'database':
-		baseurl = raw_input("Please enter the root directory where the tiles are located (e.g. http://localhost/tiles):")
+		baseurl = raw_input("Please enter the root directory where the tiles are located [http://localhost/tiles]:")
+		if baseurl == "":
+			baseurl = "http://localhost/tiles/"
 		if not baseurl[-1] == "/":
 			baseurl += "/"
 

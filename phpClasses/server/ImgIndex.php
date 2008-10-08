@@ -42,7 +42,7 @@ class ImgIndex {
 							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id
-				WHERE";
+				WHERE filetype != 'jp2' AND ";
 
 		// Layer-settings
 		$i=0;

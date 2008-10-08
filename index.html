@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<!-- HelioViewer rev. 134, October 06, 2008 -->
+		<!-- HelioViewer rev. 135, October 08, 2008 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -20,15 +20,18 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.core.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.accordion.min.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.slider.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.datepicker.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery.preload/jquery.preload-min.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.5.2/themes/ui.datepicker.css" type="text/css">
+		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.5.2/themes/flora/flora.slider.css" type="text/css">
+		<link rel="stylesheet" href="styles/jquery-ui-themeroller.css" type="text/css">
 
 		<!-- date.js -->
 		<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
-		
+
 		<!-- ShadowBox -->
 		<script type="text/javascript" src="lib/shadowbox/src/adapter/shadowbox-prototype.js"></script>
 		<script type="text/javascript" src="lib/shadowbox/src/shadowbox.js"></script>
@@ -103,11 +106,10 @@
 				<!-- Recent Updates -->
 				<div class='notes' style="height:425px">
 					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
+					<strong>10/07/2008</strong><p>Fixed multiple issues relating to image layer manager.</p><br><br>
 					<strong>09/30/2008</strong><p>Added summary information for each event catalog.</p><br><br>
 					<strong>09/09/2008</strong><p>Optimized drawing-code. Added support to specify tile-storage method on a per-layer basis.</p><br><br>
 					<strong>08/29/2008</strong><p>Added source URLs to event markers when available. Click marker to view details.</p><br><br>
-					<strong>08/25/2008</strong><p>Added custom formating for dates based on it's relation to the requested date: italicized green text for
-					dates ahead and bold yellow text for dates behind.</p><br><br>
 				</div>
 			</div>
 
@@ -130,7 +132,7 @@
 							<!-- Observation Time -->
 							<span style="margin-left:15px;">Observation Time:</span>
 							<input type="text" id="time" name="time" value="00:00:00" style="width:80px">
-							
+
 							<!-- Movie Builder -->
 							<img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."/>
 						</div>
