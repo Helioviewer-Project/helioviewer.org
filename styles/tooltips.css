@@ -1,0 +1,50 @@
+/* Tooltips */
+.tooltip-bottomleft-medium {
+	position: absolute;
+	z-index: 1000;
+	font-family: Arial;
+	width: 180px;
+	height: 130px;
+	background: url('../images/blackGlass/tooltip-bottomleft-medium.png') no-repeat;
+}
+
+.tooltip-bottomleft-large {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 350px;
+    height: 260px;
+    background: url('../images/blackGlass/tooltip-bottomleft-large.png') no-repeat;
+}
+
+.tooltip-topleft-medium {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 180px;
+    height: 130px;
+    background: url('../images/blackGlass/tooltip-topleft-medium.png') no-repeat;
+}
+
+.tooltip-topleft-large {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 350px;
+    height: 260px;
+    background: url('../images/blackGlass/tooltip-topleft-large.png') no-repeat;
+}
+
+
+.viewport-right {
+	background: url('../images/blackGlass/tooltip-topright-large.png') no-repeat;
+}
+
+/* doesn't get inherited as is... need to specify for each class instead of by id as above */
+.tooltip-topleft-large div {
+	padding: 50px 35px 50px 60px;
+}
+
+.tooltip-bottomleft-large div, .tooltip-topleft-medium div, .tooltip-bottomleft-medium div {
+    padding: 30px;
+}

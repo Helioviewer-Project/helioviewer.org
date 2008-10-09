@@ -1,0 +1,59 @@
+/* Zoom Level Slider */
+.sliderTrack {
+	position: absolute;
+	left:10px;
+	top:24px;
+	height:209px;
+	width:6px;
+	background: url(../images/blackGlass/glass_slider_trough_vertical_white.png) repeat-y;
+	text-align:center;
+	z-index:10000;
+	}
+
+.sliderHandle {
+	left:-8px;
+	width:21px;
+	height:12px;
+	background:url(../images/blackGlass/glass_slider_handle_white.png);
+	cursor:pointer;
+	text-align:center;
+	font-weight:bold;
+	z-index:10000;
+}
+
+.sliderMinus, .sliderPlus {
+	background: url(../images/blackGlass/glass_button_square_24px_white.png);
+	position: absolute;
+	color:white;
+	left:0px;
+	cursor:pointer;
+	width:24px;
+	height:24px;
+	text-align:center;
+	font-size:20px;
+	font-weight:bold;
+	z-index:10000;
+}
+
+.sliderMinus {top:233px;}
+.sliderPlus  {top:0px;}
+
+/* Opacity Slider */
+.opacity-slider-track{
+	width:120px;
+	height:10px;
+	margin:10px;
+	height: 8px;
+    background: url(../images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+	float: left;
+}
+.opacity-slider-handle{
+	background: url(images/444444_40x100_textures_02_glass_25.png) transparent scroll 0%;
+	border: 1px solid black;
+    cursor: pointer;
+    height:19px;
+    width: 10px;
+    top:-6px;	
+}

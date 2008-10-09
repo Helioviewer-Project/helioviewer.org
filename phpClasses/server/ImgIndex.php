@@ -9,7 +9,7 @@ class ImgIndex {
 
 	public function getProperties($imageId) {
 		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
-							CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name,
+							CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
 							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
 							UNIX_TIMESTAMP(timestamp) AS timestamp
@@ -25,9 +25,9 @@ class ImgIndex {
 		return mysql_fetch_array($result, MYSQL_ASSOC);
 	}
 
-	public function getClosestImage($timestamp, $src) {
+	public function getClosestImage($timestamp, $src, $debug = false) {
 		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
-							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name,
+							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 							detector.lowestRegularZoomLevel as lowestRegularZoom,
 							opacityGroup.description AS opacityGroupDescription,
@@ -53,7 +53,9 @@ class ImgIndex {
 		}
 
 		$query .= " ORDER BY timediffAbs LIMIT 0,1";
-		//echo "<br><br>$query<br><br>";
+		
+		if ($debug)
+			echo "<br><br>$query<br><br>";
 
 		$result = $this->dbConnection->query($query);
 		return mysql_fetch_array($result, MYSQL_ASSOC);

@@ -1,0 +1,56 @@
+/* Time Navigation */
+#timeBackBtn {
+	background: url(../images/blackGlass/arrow_left.png);
+	width:28px;
+	height:24px;
+	border:0;
+	z-index:10000;
+}
+
+#timeForwardBtn {
+	background: url(../images/blackGlass/arrow_right.png);
+	width:28px;
+	height:24px;
+	border:0;
+	z-index:10000;
+}
+#timestepTrack {
+    margin-top:7px;
+    width: 200px;
+    height: 8px;
+    background: url(../images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+#timestepHandle {
+	background: url(../images/blackGlass/glass_slider_handle_horizontal_white.png) transparent scroll 0%;
+    cursor: pointer;
+    height:21px;
+    width: 12px;
+    top:-6px;
+}
+#timestepValueDisplay {
+    color:white;
+    top:-24px;
+    left:-69px;
+    text-align: center;
+    position:relative;
+    padding:2px 0 0 1px;
+    width: 150px;
+}
+
+.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px;}
+
+.timeBehind {
+	color: #FFFF66;
+	font-weight: bold;
+}
+
+.timeAhead {
+	color: #b2ff66;
+	font-style: italic;	
+}
+
+.timeSignificantlyOff {
+	color: #ff6666;
+}

@@ -1,0 +1,61 @@
+/* Events */
+.event-layer {
+	position: absolute;
+	z-index: 500;
+}
+.event {
+	position: absolute;
+}
+div.event-marker {
+	position: absolute;
+	height: 15px;
+	width: 15px;
+	border: none;
+	z-index: 101;
+}
+
+.Active_Region {background: url(../images/events/activeregion.png);}
+.CME {background: url(../images/events/cme.png);}
+.Type_II_Radio_Burst {background: url(../images/events/typeII_radioburst.png);}
+
+div.event-label {
+	background: #4a4a4a;
+	position: absolute;
+	top: 15px;
+	left: 5px;
+	z-index: 102;
+}
+div.event-popup {
+	color: #000;
+	cursor: default;
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	z-index: 103;
+}
+
+a.event-popup-close-btn {
+	position: absolute;
+	cursor: pointer;
+	color: #4673b2;
+	padding: 0;
+	font-family: sans-serif;
+	font-size: 14px;
+	right: 60px;
+	top: 35px;
+}
+
+a.event-popup-close-btn:hover {
+	font-weight: bold;
+	color: #b24673;
+}
+
+a.event-url {
+	text-decoration: none;
+	color: #4673b2;
+}
+
+a.event-url:hover {
+	text-decoration: underline;
+	color: #b24673;
+}

@@ -7,6 +7,7 @@
 
     <!-- Some useful variables -->
     <property name="hvlibs" value="lib/helioviewer"/>
+	<property name="cssdir" value="styles"/>
 
 	<target name="build">
 		<echo>Building HelioViewer...</echo>
@@ -20,15 +21,15 @@
 			<fileset dir="${hvlibs}" includes="*.js" excludes="LoadingIndicator.js, UIElement.js, Layer.js"/>
 		</concat>
 
-		<!-- minify -->
+		<concat destfile="${cssdir}/helioviewer-all.css" encoding="UTF-8" eol="lf">
+			<filelist dir="${cssdir}" files="main.css"/>
+		    <fileset dir="${cssdir}" includes="*.css" excludes="main-ie.css, helioviewer-all.css, main.css, jquery-ui-themeroller.css"/>
+		</concat>		
+
+		<!-- minify-->
 		<exec dir="install/tools" executable="JSMin" resolveexecutable="true">
 			<arg value="../../${hvlibs}/build/helioviewer-all.js"/>
 			<arg value="../../${hvlibs}/build/helioviewer-all-min.js"/>
-		</exec>
-
-		<exec dir="install/tools" executable="JSMin" resolveexecutable="true">
-			<arg value="../../styles/main.css"/>
-			<arg value="../../styles/main-min.css"/>
 		</exec>
 
 		<echo>Done!</echo>

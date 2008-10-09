@@ -4,8 +4,8 @@
 --
 -- Create schema
 --
-CREATE DATABASE IF NOT EXISTS hv2;
-USE hv2;
+CREATE DATABASE IF NOT EXISTS hv;
+USE hv;
 
 --
 -- Create tables
@@ -60,15 +60,16 @@ CREATE TABLE `detector` (
   `instrumentId` int(10) unsigned NOT NULL default '0',
   `imgSunRatio` float(6,3) default NULL,
   `lowestRegularZoomLevel` tinyint(4) default NULL,
+  `minZoom` tinyint(4) default NULL,
   `opacityGroupId` int(10) unsigned NOT NULL default '1',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `detector` VALUES(1, 'MDI', '', 'MDI', 1, NULL, 10, 1);
-INSERT INTO `detector` VALUES(2, '0C3', 'C3', 'LASCO C3', 2, NULL, 15, 3);
-INSERT INTO `detector` VALUES(3, '0C2', 'C2', 'LASCO C2', 2, NULL, 13, 2);
-INSERT INTO `detector` VALUES(4, 'EIT', '', 'EIT', 3, NULL, 10, 1);
-INSERT INTO `detector` VALUES(5, 'TRA', '', 'TRACE', 4, NULL, 10, 1);
+INSERT INTO `detector` VALUES(1, 'MDI', '', 'MDI', 1, NULL, 10, 9, 1);
+INSERT INTO `detector` VALUES(2, '0C3', 'C3', 'LASCO C3', 2, NULL, 15, 14, 3);
+INSERT INTO `detector` VALUES(3, '0C2', 'C2', 'LASCO C2', 2, NULL, 13, 12, 2);
+INSERT INTO `detector` VALUES(4, 'EIT', '', 'EIT', 3, NULL, 10, 10, 1);
+INSERT INTO `detector` VALUES(5, 'TRA', '', 'TRACE', 4, NULL, 10, 9, 1);
 
 -- --------------------------------------------------------
 
