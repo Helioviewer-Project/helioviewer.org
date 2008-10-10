@@ -30,9 +30,24 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
     height: 14px;
 }
 
+div.accordion-arrow {
+	float:left;
+	height:9px;
+	width:9px;
+	margin: 2px 5px 0px 2px;
+	border:none;
+	vertical-align: middle;
+}
 
-span.event-accordion-header-left {display: block; width:70%; float: left;}
-span.tile-accordion-header-left  {display: block; width:33%; float: left;}
+div.menu-open {
+	background: url(../images/blackGlass/accordion_menu_open.png) transparent;
+}
+div.menu-closed {
+	background: url(../images/blackGlass/accordion_menu_closed.png) transparent;
+}
+
+span.event-accordion-header-left {display: block; width:65%; float: left;}
+span.tile-accordion-header-left  {display: block; width:35%; float: left;}
 span.event-accordion-header-right, span.tile-accordion-header-right {display: block; text-align: right;}
 
 /* TileLayerAccordion Styles */

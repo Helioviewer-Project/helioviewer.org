@@ -32,7 +32,7 @@ input, select {background-color: #F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
 #outsideBox     {
-  margin-left:250px;
+  margin-left:280px;
   margin-right:250px;
   margin-bottom:-72px;
   min-height:100%;
@@ -44,9 +44,9 @@ input, select {background-color: #F4F4F4;}
 
 #left-col {
     position:relative;/*ie needs this to show float */
-    width:250px;
+    width:280px;
     float:left;
-    margin-left:-249px;/*must be 1px less than width otherwise won't push footer down */
+    margin-left:-279px;/*must be 1px less than width otherwise won't push footer down */
     z-index:100;
     left:-1px;
 }
@@ -76,6 +76,25 @@ input, select {background-color: #F4F4F4;}
 
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
+
+/* Center button */
+.center-button {
+    background: url(../images/blackGlass/transparentBGWhite.png) transparent repeat scroll 0%;
+	width:50px;
+	height:16px;
+	position: absolute;
+	bottom:0px;
+	right: 0px;
+	border-left:1px solid #CFCFCF;
+	border-top:1px solid #CFCFCF;
+	text-align:center;
+	cursor: pointer;
+}
+
+.center-button > span {
+	color: white;
+	font-weight: bold;
+}
 
 /* Message Console */
 #message-console {

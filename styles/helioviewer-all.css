@@ -32,7 +32,7 @@ input, select {background-color: #F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
 #outsideBox     {
-  margin-left:250px;
+  margin-left:280px;
   margin-right:250px;
   margin-bottom:-72px;
   min-height:100%;
@@ -44,9 +44,9 @@ input, select {background-color: #F4F4F4;}
 
 #left-col {
     position:relative;/*ie needs this to show float */
-    width:250px;
+    width:280px;
     float:left;
-    margin-left:-249px;/*must be 1px less than width otherwise won't push footer down */
+    margin-left:-279px;/*must be 1px less than width otherwise won't push footer down */
     z-index:100;
     left:-1px;
 }
@@ -76,6 +76,25 @@ input, select {background-color: #F4F4F4;}
 
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
+
+/* Center button */
+.center-button {
+    background: url(../images/blackGlass/transparentBGWhite.png) transparent repeat scroll 0%;
+	width:50px;
+	height:16px;
+	position: absolute;
+	bottom:0px;
+	right: 0px;
+	border-left:1px solid #CFCFCF;
+	border-top:1px solid #CFCFCF;
+	text-align:center;
+	cursor: pointer;
+}
+
+.center-button > span {
+	color: white;
+	font-weight: bold;
+}
 
 /* Message Console */
 #message-console {
@@ -178,9 +197,24 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
     height: 14px;
 }
 
+div.accordion-arrow {
+	float:left;
+	height:9px;
+	width:9px;
+	margin: 2px 5px 0px 2px;
+	border:none;
+	vertical-align: middle;
+}
 
-span.event-accordion-header-left {display: block; width:70%; float: left;}
-span.tile-accordion-header-left  {display: block; width:33%; float: left;}
+div.menu-open {
+	background: url(../images/blackGlass/accordion_menu_open.png) transparent;
+}
+div.menu-closed {
+	background: url(../images/blackGlass/accordion_menu_closed.png) transparent;
+}
+
+span.event-accordion-header-left {display: block; width:65%; float: left;}
+span.tile-accordion-header-left  {display: block; width:35%; float: left;}
 span.event-accordion-header-right, span.tile-accordion-header-right {display: block; text-align: right;}
 
 /* TileLayerAccordion Styles */
@@ -200,7 +234,6 @@ select.layer-select {
 /* Events */
 .event-layer {
 	position: absolute;
-	z-index: 500;
 }
 .event {
 	position: absolute;
@@ -210,7 +243,7 @@ div.event-marker {
 	height: 15px;
 	width: 15px;
 	border: none;
-	z-index: 101;
+	z-index: 10;
 }
 
 .Active_Region {background: url(../images/events/activeregion.png);}
@@ -230,7 +263,7 @@ div.event-popup {
 	position: absolute;
 	top: 12px;
 	left: 12px;
-	z-index: 103;
+	z-index: 11;
 }
 
 a.event-popup-close-btn {

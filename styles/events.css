@@ -1,7 +1,6 @@
 /* Events */
 .event-layer {
 	position: absolute;
-	z-index: 500;
 }
 .event {
 	position: absolute;
@@ -11,7 +10,7 @@ div.event-marker {
 	height: 15px;
 	width: 15px;
 	border: none;
-	z-index: 101;
+	z-index: 10;
 }
 
 .Active_Region {background: url(../images/events/activeregion.png);}
@@ -31,7 +30,7 @@ div.event-popup {
 	position: absolute;
 	top: 12px;
 	left: 12px;
-	z-index: 103;
+	z-index: 11;
 }
 
 a.event-popup-close-btn {
