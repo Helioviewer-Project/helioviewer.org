@@ -12,7 +12,8 @@
 	$return = $_GET['format'];
 	
 	// Validate new combinations (Note: measurement changes are always valid)
-	if ($changed = $_GET['changed']) {
+	if (isset($_GET['changed'])) {
+		$changed = $_GET['changed'];
 		$newValue = $_GET['value'];
 		
 		// If query returns any matches then the new combination is valid

@@ -54,7 +54,7 @@ class ImgIndex {
 
 		$query .= " ORDER BY timediffAbs LIMIT 0,1";
 		
-		if ($debug)
+		if ($debug == "true")
 			echo "<br><br>$query<br><br>";
 
 		$result = $this->dbConnection->query($query);

@@ -17,7 +17,7 @@ require('phpClasses/autoload.php');
 			break;
 	  
 		case 'getClosest':
-			if (!$debug == "true") {
+			if ($debug != "true") {
 				header('Content-type: application/json');
 			}
 			echo json_encode($imgIndex->getClosestImage($_GET['timestamp'], $src, $debug));
