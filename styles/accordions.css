@@ -64,3 +64,12 @@ select.layer-select {
 	border: 1px solid #5c5c5c;
 	margin: 2px 0px 0px 1px;
 	}
+	
+/* EventLayerAccordion Styles */
+button.event-accordion-icon {
+	border: none;
+	width:  15px;
+	height: 15px;
+	vertical-align: middle;
+	margin-right:4px;
+}

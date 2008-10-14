@@ -1,13 +1,6 @@
 /**
  * Helioviewer.org Custom Styles
  *
- * blackGlass design by Keith, 2008
- *
- * Background tile from Jawbreaker's Mitril" theme for GTK 2.x.
- * (http://gnome-look.org/content/show.php/Mithril?content=64288).
- * Calendar button uses an icon from DBGthekafu's "black-white 2 Vista" icon
- * theme (http://www.gnome-look.org/content/show.php/black-white+2+Vista?content=72618).
- *
  * Three-column layout based off of Paul O'Bs design (http://www.pmob.co.uk/temp/3colfixedtest_4.htm).
  *
  * Adjusting size of layout elements:
@@ -22,9 +15,7 @@
 
 
 /* HTML ELEMENTS */
-
 html, body    {height:100%;}
-html          {background: url(../images/bg.png);}
 h1            {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
@@ -136,20 +127,6 @@ img#movieBuilder {
 
 /* MISC TEXT-RELATED */
 .centered {display: block; margin-left:auto; margin-right: auto;}
-a.gray {
-	text-decoration:none;
-	font-weight:bold;
-	color:#858585;
-	}
-a.gray:hover {
-	border-top:1px solid #858585;
-	border-bottom:1px solid #858585;
-	}
-a.lightGray {
-	color:#E5E5E5;
-	text-decoration:none;
-	font-weight:bold;
-}
 
 /* updates and to-do list */
 .notes {
@@ -231,6 +208,15 @@ select.layer-select {
 	border: 1px solid #5c5c5c;
 	margin: 2px 0px 0px 1px;
 	}
+	
+/* EventLayerAccordion Styles */
+button.event-accordion-icon {
+	border: none;
+	width:  15px;
+	height: 15px;
+	vertical-align: middle;
+	margin-right:4px;
+}
 /* Events */
 .event-layer {
 	position: absolute;
