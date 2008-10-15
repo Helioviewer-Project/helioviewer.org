@@ -235,6 +235,7 @@ div.event-marker {
 .Active_Region {background: url(../images/events/activeregion.png);}
 .CME {background: url(../images/events/cme.png);}
 .Type_II_Radio_Burst {background: url(../images/events/typeII_radioburst.png);}
+.Solar_Flare {background: url(../images/events/flare.png);}
 
 div.event-label {
 	background: #4a4a4a;

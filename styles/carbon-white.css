@@ -1,0 +1,26 @@
+/**
+ * Helioviewer.org Carbon Theme (White)
+ * By Keith, 2008
+ *
+ * Based off of the "Black Glass" theme for Helioviewer.
+ */
+html {background: white url(../images/carbon/carbonBG5L.png) repeat-x;}
+#middle-col-header {color:white;}
+a.gray {
+	text-decoration:none;
+	font-weight:bold;
+	color:white;
+	}
+a.gray:hover {
+	border-top:1px solid white;
+	border-bottom:1px solid white;
+	}
+a.lightGray {
+	color:#E5E5E5;
+	text-decoration:none;
+	font-weight:bold;
+}
+.accordion-title {
+	color: white;
+	font-weight: bold;
+}

@@ -1,5 +1,5 @@
 <?php
-require('classes/CompositeImage.php');
+require('lib/helioviewer/CompositeImage.php');
 
 //Passing timestamps from JavaScript:
 // var d = new Date(Date.UTC(2003, 9, 5));

@@ -1,12 +1,11 @@
 <?php
-//require('classes/ImageSeries.php');
-require('../phpClasses/lib/DbConnection.php');
+require('lib/helioviewer/DbConnection.php');
 set_time_limit(180);
 ini_set('display_errors', 'On');
 
 $maxFrames = 350;
-$tmp_root_dir =			"/home/esahelio/public_html/api/tmp";
-$tmp_root_url =         "http://helioviewer.org/api/tmp";
+$tmp_root_dir =			"/home/esahelio/public_html/tmp";
+$tmp_root_url =         "http://helioviewer.org/tmp";
 $kdu_merge_bin =		"/home/esahelio/kakadu/bin/kdu_merge";
 $web_root_dir =			"/home/esahelio/public_html";
 $web_root_dir_regex =	"/\/home\/esahelio\/public_html/";
@@ -73,7 +72,7 @@ else if ($action == "play") {
 
 // Create a JP2 Image Series
 else if ($action == "createJP2ImageSeries") {
-	require('../phpClasses/server/ImgIndex.php');
+	require('lib/helioviewer/ImgIndex.php');
 	//date_default_timezone_set('UTC');
 
 	$startTime = $_GET['startTime'];

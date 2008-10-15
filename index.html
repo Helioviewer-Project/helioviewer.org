@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<!-- HelioViewer rev. 138, October 14, 2008 -->
+		<!-- HelioViewer rev. 139, October 15, 2008 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -18,14 +18,16 @@
 
 		<!-- jQuery -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.core.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.accordion.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.slider.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.5.2/ui/minified/ui.datepicker.min.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.core.min.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.accordion.min.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.slider.min.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.dialog.min.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.datepicker.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.5.2/themes/ui.datepicker.css" type="text/css">
-		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.5.2/themes/flora/flora.slider.css" type="text/css">
+		<!--<link rel="stylesheet" href="lib/jquery/jquery.ui-1.6rc2/themes/ui.datepicker.css" type="text/css">-->
+		<link rel="stylesheet" href="styles/jquery-ui-themeroller.css" type="text/css">
+		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.6rc2/themes/flora/flora.slider.css" type="text/css">
 
 		<!-- date.js -->
 		<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -51,7 +53,6 @@
 		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Debug.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/DataNavigator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
@@ -116,10 +117,10 @@
 				<!-- Recent Updates -->
 				<div class='notes' style="height:425px">
 					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
+					<strong>10/15/2008</strong><p>Added support for GOES event catalog.</p><br><br>
 					<strong>10/10/2008</strong><p>Added support for SEEDS event catalog.</p><br><br>
 					<strong>10/09/2008</strong><p>Added opacity slider to layer settings.</p><br><br>
 					<strong>10/07/2008</strong><p>Fixed multiple issues relating to image layer manager.</p><br><br>
-					<strong>09/30/2008</strong><p>Added summary information for each event catalog.</p><br><br>
 				</div>
 			</div>
 
@@ -190,12 +191,14 @@
 
 				<!-- Links -->
 				<div style="text-align:right; font-size:120%; height:60px; margin-right: 258px; margin-top: 3px;">
-					<a id="about" class="gray" href="#" style="margin-right:20px;">About</a>
+					<a id="helioviewer-about" class="gray" href="#" style="margin-right:20px;">About</a>
 					<a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
 					<a href="mailto:webmaster@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>
 					<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
 				</div>
 			</div>
 		</div>
+		
+		<div id='about-dialog' color: black;">Test!<p>TEST</p></div>
 	</body>
 </html>

@@ -1,0 +1,28 @@
+/**
+ * Helioviewer.org Black Glass Theme
+ * By Keith, 2008
+ *
+ * Background tile from Jawbreaker's Mitril" theme for GTK 2.x.
+ * (http://gnome-look.org/content/show.php/Mithril?content=64288).
+ * Calendar button uses an icon from DBGthekafu's "black-white 2 Vista" icon
+ * theme (http://www.gnome-look.org/content/show.php/black-white+2+Vista?content=72618).
+ */
+html {background: url(../images/bg.png);}
+a.gray {
+	text-decoration:none;
+	font-weight:bold;
+	color:#858585;
+	}
+a.gray:hover {
+	border-top:1px solid #858585;
+	border-bottom:1px solid #858585;
+	}
+a.lightGray {
+	color:#E5E5E5;
+	text-decoration:none;
+	font-weight:bold;
+}
+.accordion-title {
+	color: black;
+	font-weight: bold;
+}
