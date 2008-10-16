@@ -127,6 +127,10 @@ img#movieBuilder {
 
 /* MISC TEXT-RELATED */
 .centered {display: block; margin-left:auto; margin-right: auto;}
+#about-dialog-header {
+	font-family: "Lucida Sans", Script, Helvetica, sans-serif;
+	font-size:   16px;
+}
 
 /* updates and to-do list */
 .notes {
