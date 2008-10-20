@@ -5,7 +5,7 @@
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;
 }
 
-div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; font-size:0.9em; font-weight: bolder; cursor: pointer; color:white;}
+div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; font-size:0.9em; font-weight: bolder; cursor: pointer; color:white; padding: 1px;}
 div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
 
@@ -68,8 +68,45 @@ select.layer-select {
 /* EventLayerAccordion Styles */
 button.event-accordion-icon {
 	border: none;
-	width:  15px;
-	height: 15px;
+	width:  16px;
+	height: 16px;
 	vertical-align: middle;
 	margin-right:4px;
+}
+
+div#event-icon-menu{
+	position: absolute;
+	z-index: 1000;
+	background: #F4F4F4;
+	border: 1px solid #5E5E5E;
+}
+
+div#event-icon-menu-title {
+	background-color: #c7c7c7;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	border-bottom: 2px solid #424242;
+	text-align: center;
+	color: #5E5E5E;
+	height: 20px;
+	padding-top:5px;
+	width: 100%;
+}
+
+div#event-icon-menu-body {
+	position: relative;
+	padding: 10px;
+}
+
+.event-icon-menu-icon {
+	cursor: pointer;
+	margin: 2px 8px 2px 8px;
+}
+
+.event-icon-menu-icon:hover {
+	background: #add8e6;
+	border: 2px solid blue;
+	margin: 0px 6px 0px 6px;
+	text-decoration: underline;
 }

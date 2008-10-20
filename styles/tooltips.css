@@ -35,13 +35,22 @@
     background: url('../images/blackGlass/tooltip-topleft-large.png') no-repeat;
 }
 
+.tooltip-topleft-larger {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 357px;
+    height: 358px;
+    background: url('../images/blackGlass/tooltip-topleft-larger.png') no-repeat;
+}
+
 
 .viewport-right {
 	background: url('../images/blackGlass/tooltip-topright-large.png') no-repeat;
 }
 
 /* doesn't get inherited as is... need to specify for each class instead of by id as above */
-.tooltip-topleft-large div {
+.tooltip-topleft-large div, .tooltip-topleft-larger div {
 	padding: 50px 35px 50px 60px;
 }
 
