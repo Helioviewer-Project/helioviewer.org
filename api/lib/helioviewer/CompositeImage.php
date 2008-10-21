@@ -1,21 +1,20 @@
 <?php
 /*
  * Created on Sep 12, 2008
+ * Last modified Oct 21, 2008
  */
 class CompositeImage {
 
 	private $layers;
-	private $obs = "soho";
-	private $rootDir = "/tiles/";
+	private $rootDir = "../tiles/";
+	private $emptyTile = "../images/transparent.gif";
 	private $tileSize = 512;
 	private $composite;
-	private $focus = "full";
-	private $emptyTile = "/images/transparent.gif";
 
 	/*
 	 * @constructor
 	 */
-	public function __construct($layers, $timestamps, $zoomLevel, $edges=false, $sharpen=false, $focus, $xRange=null, $yRange=null) {
+	public function __construct($layers, $timestamps, $zoomLevel, $edges=false, $sharpen=false, $focus="full", $xRange=null, $yRange=null) {
 		date_default_timezone_set('UTC');
 		$this->layers = $layers;
 		$this->timestamps = $timestamps;
@@ -25,21 +24,22 @@ class CompositeImage {
 		$this->focus = $focus;
 		$this->xRange = $xRange;
 		$this->yRange = $yRange;
-
+		
 		//$this->debug();
 
 		$images = array();
 
 		$i = 0;
 		foreach($this->layers as $layer) {
-			$inst = substr($layer, 0, 3);
-			$det  = substr($layer, 3,3);
-			$meas = substr($layer, 6,3);
+			$obs  = strtolower(substr($layer, 0, 4));
+			$inst = substr($layer, 4, 3);
+			$det  = substr($layer, 7,3);
+			$meas = substr($layer, 10,3);
 
 			if ($this->focus == "full") {
-				array_push($images, $this->buildFullImage($inst, $det, $meas, $this->timestamps[$i]));
+				array_push($images, $this->buildFullImage($obs, $inst, $det, $meas, $this->timestamps[$i]));
 			} else {
-				array_push($images, $this->buildPartialImage($inst, $det, $meas, $this->timestamps[$i], $xRange, $yRange));
+				array_push($images, $this->buildPartialImage($obs, $inst, $det, $meas, $this->timestamps[$i], $xRange, $yRange));
 			}
 
 			$i++;
@@ -66,8 +66,8 @@ class CompositeImage {
 	 * for that layer (i.e. it builds a "full" image instead of an image based off of a subset of those
 	 * tiles).
 	 */
-	private function buildFullImage($inst, $det, $meas, $ts) {
-		$filepath = $this->getFilepath($inst, $det, $meas, $ts);
+	private function buildFullImage($obs, $inst, $det, $meas, $ts) {
+		$filepath = $this->getFilepath($obs, $inst, $det, $meas, $ts);
 		$numTiles = $this->getNumTiles($det);
 
 		//cheating...
@@ -125,8 +125,8 @@ class CompositeImage {
 	/*
 	 * buildPartialImage
 	 */
-	 private function buildPartialImage ($inst, $det, $meas, $ts, $xRange, $yRange) {
-	 	$filepath = $this->getFilepath($inst, $det, $meas, $ts);
+	 private function buildPartialImage ($obs, $inst, $det, $meas, $ts, $xRange, $yRange) {
+	 	$filepath = $this->getFilepath($obs, $inst, $det, $meas, $ts);
 
 	 	$numTiles = $this->getNumTiles($det);
 
@@ -147,8 +147,8 @@ class CompositeImage {
 
 		$tilesArray = array();
 
-		for ($i = $xRange['start']; $i < $xRange['end']; $i++) {
-			for ($j = $yRange['start']; $j < $yRange['end']; $j++) {
+		for ($i = $xRange['start']; $i <= $xRange['end']; $i++) {
+			for ($j = $yRange['start']; $j <= $yRange['end']; $j++) {
 
 				// Convert coordinates to strings including sign
 				if ($j < 0)
@@ -229,7 +229,7 @@ class CompositeImage {
 	 * @name getFilepath
 	 * @description Builds a directory string for the given layer
 	 */
-	private function getFilepath($inst, $det, $meas, $ts) {
+	private function getFilepath($obs, $inst, $det, $meas, $ts) {
 		//$format = '%Y-%m-%dUTC%H:%M:%S';
 		//$d = strptime(date($ts), $format);
 		$d = getdate($ts);
@@ -250,8 +250,8 @@ class CompositeImage {
 		$sec =  str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
 
 		$path = $this->rootDir . implode("/", array($year, $mon, $day, $hour));
-		$path .= "/$this->obs/$inst/$det/$meas/";
-		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $this->obs, $inst, $det, $meas, $this->zoomLevel));
+		$path .= "/$obs/$inst/$det/$meas/";
+		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas, $this->zoomLevel));
 
 		return $path;
 	}

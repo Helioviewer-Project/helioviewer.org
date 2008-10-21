@@ -8,8 +8,8 @@
  */
 require('CompositeImage.php');
 require('DbConnection.php');
-require_once('../phpvideotoolkit/config.php');
-require_once('../phpvideotoolkit/phpvideotoolkit.php5.php');
+require_once('lib/phpvideotoolkit/config.php');
+require_once('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
 
 
 class ImageSeries {
@@ -21,7 +21,6 @@ class ImageSeries {
 	private $db;
 	private $tmpdir = "/var/www/hv/tmp/";
 	private $tmpurl = "http://localhost/hv/tmp/";
-	private $obs = "soho";
 	private $filetype = "flv";
 	private $highQualityLevel = 100;
 	private $watermarkURL = "/var/www/hv/images/watermark_small_gs.png";
@@ -84,10 +83,10 @@ class ImageSeries {
 	 * times to $this->startTime.
 	 */
 	private function getImageTimes($layer, $times = null) {
-		$obs  = $this->obs;
-		$inst = substr($layer, 0, 3);
-		$det  = substr($layer, 3,3);
-		$meas = substr($layer, 6,3);		
+		$obs  = strtolower(substr($layer, 0, 4));
+		$inst = substr($layer, 4, 3);
+		$det  = substr($layer, 7,3);
+		$meas = substr($layer, 10,3);		
 
 		$resultArray = array();
 
@@ -200,21 +199,21 @@ class ImageSeries {
 			array_push($this->images, $filename);
 		}
 		
-		// 	init PHPVideoToolkit class
+		// init PHPVideoToolkit class
 		$toolkit = new PHPVideoToolkit($tmpdir);
 				
-		// 	compile the image to the tmp dir
+		// compile the image to the tmp dir
 		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
 		if(!$ok)
 		{
-			// 		if there was an error then get it
+			// if there was an error then get it
 			echo $toolkit->getLastError()."<br />\r\n";
 			exit;
 		}
 		
 		$toolkit->setVideoOutputDimensions(1024, 1024);
 
-		// 	set the output parameters (Flash video)
+		// set the output parameters (Flash video)
 		$output_filename = "$movieName." . $this->filetype;
 		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 		if(!$ok)
@@ -227,9 +226,9 @@ class ImageSeries {
 		// 	execute the ffmpeg command
 		$quickMov = $toolkit->execute(false, true);
 		
-		// 	check the return value in-case of error
+		// check the return value in-case of error
 		if($quickMov !== PHPVideoToolkit::RESULT_OK) {
-			// 		if there was an error then get it
+			// if there was an error then get it
 			echo $toolkit->getLastError()."<br />\r\n";
 			exit;
 		}
@@ -252,23 +251,19 @@ class ImageSeries {
 		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 		if(!$ok)
 		{
-			// 		if there was an error then get it
+			// if there was an error then get it
 			echo $toolkit->getLastError()."<br />\r\n";
 			exit;
 		}
 		
-		// 	execute the ffmpeg command
+		// execute the ffmpeg command
 		$mp4 = $toolkit->execute(false, true);
 		if($mp4 !== PHPVideoToolkit::RESULT_OK) {
 			// 		if there was an error then get it
 			echo $toolkit->getLastError()."<br />\r\n";
 			exit;
 		}
-		
-		//echo $toolkit->getLastCommand();
-	
-		//$thumb = array_shift($toolkit->getLastOutput());
-		//echo $thumb;
+
 		//$this->showMovie($tmpurl, 512, 512);
 		
 		header('Content-type: application/json');
