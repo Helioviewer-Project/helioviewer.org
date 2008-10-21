@@ -89,6 +89,7 @@ input, select {background-color: #F4F4F4;}
 
 /* Message Console */
 #message-console {
+	display: inline;
     width:100%;
     position: absolute;
     height: 17px;
