@@ -1,5 +1,6 @@
 <?php
-require('lib/helioviewer/DbConnection.php');
+//require('lib/helioviewer/DbConnection.php');
+require('lib/helioviewer/ImageSeries.php');
 set_time_limit(180);
 ini_set('display_errors', 'On');
 
@@ -16,8 +17,8 @@ $kdu_lib_path = "/home/esahelio/kakadu/lib";
 
 
 //Example Queries:
-//	http://localhost/hv/api/getImageSeries.php?layers=EITEIT195&startDate=1065312000&zoomLevel=10&numFrames=100
-//	http://localhost/hv/api/getImageSeries.php?layers=EITEIT171,LAS0C20WL&startDate=1041724800&zoomLevel=13&numFrames=15&frameRate=10&action=quickMovie
+//	http://localhost/hv/api/getImageSeries.php?layers=SOHOEITEIT195&startDate=1065312000&zoomLevel=10&numFrames=100
+//	http://localhost/hv/api/getImageSeries.php?layers=SOHOEITEIT171,SOHOLAS0C20WL&startDate=1041724800&zoomLevel=13&numFrames=15&frameRate=10&action=quickMovie
 
 //Process query string
 try {

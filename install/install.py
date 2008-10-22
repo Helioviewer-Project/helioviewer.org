@@ -239,7 +239,7 @@ def printGreeting():
 	print "= By: Keith Hughitt, September 30, 2008                            ="
 	print "=                                                                  ="
 	print "= This script processes raw tile images, and inserts them into a   ="
-	print "= database, along with their relevent information.                 ="
+	print "= database, along with their relevant information.                 ="
 	print "=                                                                  ="
 	print "= The script requires several pieces of information to function:   ="
 	print "=   (1) The location of a directory containing tiled images.       ="
