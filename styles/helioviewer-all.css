@@ -151,6 +151,7 @@ img#movieBuilder {
 #layerManager, #eventAccordion {margin:0 5px 0 5px;}
 #TileLayerAccordion-Container, #EventLayerAccordion-Container {
     border: 1px solid black;
+	margin-top: 2px;
     background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;
 }
 
