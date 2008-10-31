@@ -39,7 +39,7 @@
     width: 150px;
 }
 
-.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px;}
+.timestamp {font-size:0.8em; font-weight: normal; margin-left: 0px;}
 
 .timeBehind {
 	color: #FFFF66;
@@ -52,5 +52,6 @@
 }
 
 .timeSignificantlyOff {
+	font-weight: 500;
 	color: #ff6666;
 }

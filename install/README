@@ -1,18 +1,47 @@
 ===================================================================
 = HelioViewer Installation Notes                                  =
-= By Keith Hughitt, July 2008                                     =
+= By Keith Hughitt, October 2008   s                               =
 ===================================================================
 
-I. Installation
+I. Overview
+
 	Requirements:
 		-MySQL5
 		-PHP5
 		-Python (>=2.5)
 		-Python-MysqlDB
-		-php5-imagick (Optional)
-		-php5-ffmpeg (Optional)
-		-php-video-tookkit (>= 0.1.5)(Optional)
-		-svgfig (Optional, included in /tools)
+		-Prototip 2
+		
+	Optional:
+		-launchpadlib (Automated bug/feature-request submission)
+		-php5-imagick (Movie generation)
+		-php5-ffmpeg  (Movie generation)
+		-php-video-tookkit (>= 0.1.5)(Movie generation)
+		-svgfig (Icon generation)
+		-Kakadu tools (MJ2 generation)
+		
+	Pre-Installion notes:
+	
+	Helioviewer is a AJAX-based web application which relies on PHP and MySQL as a back-end, and
+	Python for file-processing and installation, as well as for some additional optional functionality
+	relating to Feature/Event icon generation. A web-server must also be installed with the appropriate
+	PHP & Mysql modules. Apache2 is recommended.
+
+	In addition to the above-mentioned requirements, there is one proprietary javascrip library which
+	is currently used by Helioviewer: Prototip. Prototip is a commercial javascript library with fairly
+	inexpensive lisences for non-commercial use (about $5 USD). It is also available for download to
+	try for free, but is not allowed to be redistributed, and thus was not included with Helioviewer.
+	See reference [8] for a link to the Prototip website.
+	
+	Finally, there are many optional components that enable some of the extra features such as movie
+	generation and automated generation of custom feature/event icons. On Ubuntu Linux you can download
+	most of the software needed with the command:
+	
+		sudo apt-get install python-mysqldb php5-imagick php5-ffmpeg
+		
+	PHPVideoToolkit and svgfig are included with the Helioviewer source-code.
+		
+	
 	
 	I. Setting up MySQL
 		A. Timezones
@@ -52,7 +81,7 @@ I. Installation
 			If you have a properly structured dataset[2], you can use
 			install.py to populate the database. Simply run the installation
 			script and follow the instructions.
-				
+
 				./install.py	
 				
 			You will be prompted for the database name, username and password
@@ -78,7 +107,7 @@ I. Installation
 			The will produce three optmized files optimized files:
 				helioviewer-all.js
 				helioviewer-all-min.js
-				main-min.css
+				main-min.csshttp://www.nickstakenburg.com/projects/prototip2/
 				
 			Note: Build.xml makes use of two external scripts, JSMin and jsmin.py
 			located in the /install/tools directory. jsmin.py is a python port
@@ -87,7 +116,32 @@ I. Installation
 			jsmin.py in order to avoid some limitation of Apache Ant's <exec> command
 			when dealing with command line argument that contain special characters[6].
 	
+	IV. Seting up FFMPEG/phpvideotoolkit
 			
+			PHPVideoToolkit uses the FFmpeg php module. Additionally, there are several configuration parameters
+			that may be different for your system and should be set in the "api/lib/phpvideotoolkit/config.php" file.	
+			See [9] and [10] for additional help and examples of how to use the class.		
+			
+	V.  Using svgfig to generate icons
+	
+			You can generate a large array of shapes and colors of icons to use for feature/event markers simply
+			using the included script "svgicons.py" in install/tools. Before using the script be sure to install
+			svgfig[11], included in /install/tools.
+			
+			To modify colors or labels to use, edit the lists on lines 16 & 17 of the file. Running the program will 
+			generate a directory of SVG icons and a directory of PNG icons. PNG icons are currently used by Helioviewer,
+			although as support grows, SVG may be used in the future.
+	
+	VI. launchpadlib
+			launchpadlib is a python library that allows access to Launchpad. This (will be) used in Helioviewer
+			for automated bug & feature-request submission. (Note: python-dev is required if it is not already
+			installed. See reference [7] for instructions on how to install launchpadlib on your machine.
+			
+	VII. JP2 (Kakadu) support
+			
+	
+	VIII. Prototip 
+				
 			
 Resources:
 
@@ -97,4 +151,8 @@ Resources:
 [4] http://developer.yahoo.com/performance/rules.html
 [5] http://www.crockford.com/javascript/jsmin.html
 [6] http://mail-archives.apache.org/mod_mbox/ant-user/200807.mbox/browser
-
+[7] https://help.launchpad.net/API/launchpadlib
+[8] http://www.nickstakenburg.com/projects/prototip2/
+[9] http://sourceforge.net/projects/phpvideotoolkit
+[10] http://www.buggedcom.co.uk/discuss/index.php
+[11] http://code.google.com/p/svgfig/
