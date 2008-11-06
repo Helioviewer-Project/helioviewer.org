@@ -12,11 +12,10 @@ USE hv;
 --
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `observatory`
 --
-
+-- --------------------------------------------------------
 CREATE TABLE `observatory` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `abbreviation` varchar(4) NOT NULL default '',
@@ -30,10 +29,10 @@ INSERT INTO `observatory` VALUES(2, 'trac', 'TRACE', 'The Transition Region and 
 
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `instrument`
 --
+-- --------------------------------------------------------
 
 CREATE TABLE `instrument` (
   `id` int(10) unsigned NOT NULL auto_increment,
@@ -49,9 +48,11 @@ INSERT INTO `instrument` VALUES(2, 'LAS', 'LAS', 'The Large Angle Spectrometric 
 INSERT INTO `instrument` VALUES(3, 'EIT', 'EIT', 'Extreme ultraviolet Imaging Telescope', 1);
 INSERT INTO `instrument` VALUES(4, 'TRA', 'TRACE', 'TRACE', 2);
 
+-- --------------------------------------------------------
 --
 -- Table structure for table `detector`
 --
+-- --------------------------------------------------------
 CREATE TABLE `detector` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `abbreviation` varchar(4) NOT NULL default '',
@@ -72,11 +73,10 @@ INSERT INTO `detector` VALUES(4, 'EIT', '', 'EIT', 3, NULL, 10, 10, 1);
 INSERT INTO `detector` VALUES(5, 'TRA', '', 'TRACE', 4, NULL, 10, 9, 1);
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `measurement`
 --
-
+-- --------------------------------------------------------
 CREATE TABLE `measurement` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `measurementTypeId` int(10) unsigned NOT NULL default '0',
@@ -114,10 +114,10 @@ INSERT INTO `measurementType` VALUES(1, 'other', NULL);
 INSERT INTO `measurementType` VALUES(2, 'wavelength', 'nm');
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `opacityGroup`
 --
+-- --------------------------------------------------------
 CREATE TABLE `opacityGroup` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `description` varchar(255) NOT NULL,
@@ -130,27 +130,19 @@ INSERT INTO `opacityGroup` VALUES(2, 'Coronagraph Image, in the range of LASCO C
 INSERT INTO `opacityGroup` VALUES(3, 'Coronagraph Image, in the range of LASCO C3');
 INSERT INTO `opacityGroup` VALUES(4, 'Sub-field');
 
+-- --------------------------------------------------------
 --
 -- Table structure for table `image`
 --
+-- --------------------------------------------------------
 CREATE TABLE  `image` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `measurementId` int(10) unsigned NOT NULL default '0',
   `timestamp` datetime NOT NULL default '0000-00-00 00:00:00',
-  `filetype` varchar(4) default NULL,
+  `solarCenterX` float(6) NOT NULL,
+  `solarCenterY` float(6) NOT NULL,
+  `imgScaleX`    float(6) NOT NULL,
+  `imgScaleY`    float(6) NOT NULL,
+  `solarRadius`  float(6) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
-
---
--- Table structure for table `tile`
---
-DROP TABLE IF EXISTS `tile`;
-CREATE TABLE IF NOT EXISTS `tile` (
-  `imageId` int(11) NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `zoom` int(11) NOT NULL default '0',
-  `url` varchar(255) default NULL,
-  `tile` mediumblob,
-  PRIMARY KEY  (`imageId`,`x`,`y`,`zoom`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;

@@ -10,6 +10,7 @@ I. Overview
 		-PHP5
 		-Python (>=2.5)
 		-Python-MysqlDB
+		-ExifTool
 		-Prototip 2
 		
 	Optional:
@@ -137,7 +138,18 @@ I. Overview
 			for automated bug & feature-request submission. (Note: python-dev is required if it is not already
 			installed. See reference [7] for instructions on how to install launchpadlib on your machine.
 			
-	VII. JP2 (Kakadu) support
+	VII. JP2 support
+	
+			Helioviewer currently uses a combination of ExifTool[12] and Kakadu [13] to support on-the-fly jp2 tiling. 
+			XML Header information is first read from the JP2 images using Exif and stored into the database. When tiles are
+			required, the kakadu tool "kdu_extract" is then used to produce the tiles on the fly.
+			
+			To install ExifTool on Ubuntu Linux (8.10 or higher), you can use the command: 
+			
+			sudo apt-get install exif
+			
+			Kakadu is proprietary software and thus cannot be included with Helioviewer.
+			
 			
 	
 	VIII. Prototip 
@@ -156,3 +168,5 @@ Resources:
 [9] http://sourceforge.net/projects/phpvideotoolkit
 [10] http://www.buggedcom.co.uk/discuss/index.php
 [11] http://code.google.com/p/svgfig/
+[12] http://www.sno.phy.queensu.ca/~phil/exiftool/
+[13] http://www.kakadusoftware.com/
