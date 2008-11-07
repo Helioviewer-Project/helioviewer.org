@@ -144,5 +144,7 @@ CREATE TABLE  `image` (
   `imgScaleX`    float(6) NOT NULL,
   `imgScaleY`    float(6) NOT NULL,
   `solarRadius`  float(6) NOT NULL,
+  `uri`          varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
+

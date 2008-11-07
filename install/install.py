@@ -49,7 +49,7 @@ def processJPEG2000Images (images, cursor):
 		date = datetime.datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]))
 
 		# insert into database
-		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s)" % (measurementIds[meta["det"] + meta["meas"]], date, meta["centerX"], meta["centerY"], meta["scaleX"], meta["scaleY"], meta["radius"])
+		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s)" % (measurementIds[meta["det"] + meta["meas"]], date, meta["centerX"], meta["centerY"], meta["scaleX"], meta["scaleY"], meta["radius"], meta["height"], meta["width"], img)
 		print query
 
 		try:
@@ -61,6 +61,7 @@ def processJPEG2000Images (images, cursor):
 def extractJP2MetaInfo (img):
 	''' Extracts useful meta-information from a given JP2 image and
 		returns a dictionary of that information.'''
+	import commands
 
 	tags = {"date":    "Fits Date-obs",
 			"obs" :    "Fits Telescop",
@@ -71,11 +72,21 @@ def extractJP2MetaInfo (img):
 			"centerY": "Fits Crpix 2",
 			"scaleX" : "Fits Cdelt 1",
 			"scaleY" : "Fits Cdelt 2",
-			"radius" : "Fits Solar R"}
+			"radius" : "Fits Solar R",
+			"height" : "Image Height",
+			"width"  : "Image Width"}
 	meta = {}
 
+	cmd   = "exiftool %s" % img
+	output= commands.getoutput(cmd)
+
 	for (param, tag) in tags.items():
-		meta[param] = getMetaTag(img, tag)
+		for line in output.split("\n"):
+			if (line.find(tag + "  ") != -1):
+				meta[param] = line[34:]
+
+	#for (param, tag) in tags.items():
+	#	meta[param] = getMetaTag(img, tag)
 
 	return meta
 
@@ -130,13 +141,15 @@ def printGreeting():
 	os.system("clear")
 
 	print "===================================================================="
-	print "= HelioViewer Database Population Script 0.95b                     ="
-	print "= By: Keith Hughitt, November 05 2008                              ="
+	print "= HelioViewer Database Population Script 0.96b                     ="
+	print "= By: Keith Hughitt, November 07 2008                              ="
 	print "=                                                                  ="
 	print "= This script processes JP2 images, extracts their associated      ="
 	print "= meta-information and stores it away in a database. Currently,    ="
 	print "= it is assumed that the database strucuture has already been      ="
-	print "= created (See createTables.sql).                                  ="
+	print "= created (See createTables.sql). Please make sure the images      ="
+	print "= are placed in their permanent home (within the server) before    ="
+	print "= running the installation script.                                 ="
 	print "=                                                                  ="
 	print "= The script requires several pieces of information to function:   ="
 	print "=   (1) The location of a directory containing JP2 images.         ="
