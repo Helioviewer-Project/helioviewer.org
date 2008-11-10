@@ -56,7 +56,7 @@
 
 	// Determine appropriate options to display given the current combination of layer parameters
 	$options = array(
-		"observatories" => array(array("name" => "SOHO", "abbreviation" => "soho")),
+		"observatories" => array(array("name" => "SOHO", "abbreviation" => "SOH")),
 		"instruments" =>   queryField($dbConnection, "observatory", "instrument", $obs),
 		"detectors" =>     queryField($dbConnection, "instrument", "detector", $inst),
 		"measurements" =>  queryField($dbConnection, "detector", "measurement", $det)

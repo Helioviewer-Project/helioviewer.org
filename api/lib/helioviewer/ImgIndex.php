@@ -8,7 +8,7 @@ class ImgIndex {
 	}
 
 	public function getProperties($imageId) {
-		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+		$query = "SELECT image.id AS imageId, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
 							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
@@ -26,7 +26,7 @@ class ImgIndex {
 	}
 
 	public function getClosestImage($timestamp, $src, $debug = false) {
-		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+		$query = "SELECT image.id AS imageId, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 							detector.lowestRegularZoomLevel as lowestRegularZoom,
@@ -42,7 +42,7 @@ class ImgIndex {
 							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id
-				WHERE filetype != 'jp2' AND ";
+				WHERE ";
 
 		// Layer-settings
 		$i=0;
@@ -84,7 +84,7 @@ class ImgIndex {
 		//$offset = (5 * 3600); // 5 hours in seconds
 		$offset = 0; //local installation of MySQL set to use UTC by default...
 		
-		$query = "SELECT image.id AS imageId, filetype, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+		$query = "SELECT image.id AS imageId, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 						CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name,
 						detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 						detector.lowestRegularZoomLevel as lowestRegularZoom,
@@ -100,7 +100,7 @@ class ImgIndex {
 						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 						LEFT JOIN instrument on instrumentId = instrument.id
 						LEFT JOIN observatory on observatoryId = observatory.id
-				WHERE filetype='jp2' AND ";
+				WHERE ";
 
 		// Layer-settings
 		$i=0;

@@ -1,11 +1,11 @@
 -- HelioViewer Database Structure --
--- last update: 10-06-2008        --
+-- last update: 11-10-2008        --
 
 --
 -- Create schema
 --
-CREATE DATABASE IF NOT EXISTS hv;
-USE hv;
+CREATE DATABASE IF NOT EXISTS hv2;
+USE hv2;
 
 --
 -- Create tables
@@ -18,14 +18,14 @@ USE hv;
 -- --------------------------------------------------------
 CREATE TABLE `observatory` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `abbreviation` varchar(4) NOT NULL default '',
+  `abbreviation` varchar(3) NOT NULL default '',
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `observatory` VALUES(1, 'soho', 'SOHO', 'Solar and Heliospheric Observatory');
-INSERT INTO `observatory` VALUES(2, 'trac', 'TRACE', 'The Transition Region and Coronal Explorer');
+INSERT INTO `observatory` VALUES(1, 'SOH', 'SOHO', 'Solar and Heliospheric Observatory');
+INSERT INTO `observatory` VALUES(2, 'TRA', 'TRACE', 'The Transition Region and Coronal Explorer');
 
 
 -- --------------------------------------------------------
@@ -36,7 +36,7 @@ INSERT INTO `observatory` VALUES(2, 'trac', 'TRACE', 'The Transition Region and 
 
 CREATE TABLE `instrument` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `abbreviation` varchar(4) NOT NULL default '',
+  `abbreviation` varchar(3) NOT NULL default '',
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   `observatoryId` int(10) unsigned NOT NULL default '0',
@@ -55,7 +55,7 @@ INSERT INTO `instrument` VALUES(4, 'TRA', 'TRACE', 'TRACE', 2);
 -- --------------------------------------------------------
 CREATE TABLE `detector` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `abbreviation` varchar(4) NOT NULL default '',
+  `abbreviation` varchar(3) NOT NULL default '',
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   `instrumentId` int(10) unsigned NOT NULL default '0',
@@ -81,7 +81,7 @@ CREATE TABLE `measurement` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `measurementTypeId` int(10) unsigned NOT NULL default '0',
   `detectorId` int(10) unsigned NOT NULL default '0',
-  `abbreviation` varchar(4) NOT NULL default '',
+  `abbreviation` varchar(3) NOT NULL default '',
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
@@ -144,6 +144,8 @@ CREATE TABLE  `image` (
   `imgScaleX`    float(6) NOT NULL,
   `imgScaleY`    float(6) NOT NULL,
   `solarRadius`  float(6) NOT NULL,
+  `width`        int(10) NOT NULL,
+  `height`       int(10) NOT NULL,
   `uri`          varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
