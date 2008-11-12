@@ -3,7 +3,7 @@ class TileStore {
 	private $dbConnection;
 	private $noImage     = "images/transparent.gif";
 	private $kdu_expand  = "kdu_expand";
-	private $tmpdir      = "/var/www/hv/tmp/";
+	private $cacheDir    = "/var/www/hv/tiles/";
 	private $defaultRes  = 2.63; //Resolution of an EIT image: 2.63 arcseconds/px
 	private $defaultZoom = 10;   //Zoom-level at which images are of this resolution. (FOR EIT...Need to look-up/define for each image-source!)
 	
@@ -20,16 +20,27 @@ class TileStore {
 	 * @param $y		Int
 	 * @param $ts		Int
 	 */
-	function getTile($imageId, $zoom, $x, $y, $ts=512) {
+	function getTile($imageId, $zoom, $x, $y, $ts) {
 		// Retrieve meta-information
 		$imageInfo = $this->getMetaInfo($imageId);
 		
-		// Tile name & filepath
-		$tilename = $imageId . "_" . $zoom . "_" . $x . "_" . $y . ".tif";
-		$tilepath = $this->tmpdir . $tilename;
+		// Filepaths (For .tif and .png images)
+		$tif = $this->getFilePath($imageId, $imageInfo['timestamp'], $zoom, $x, $y, $ts);
+		$png = substr($tif, 0, -3) . "png";
+		
+		//print "<span style='color: red'>" . $tilepath . "</span><br>";
+		
+		// If tile already exists in cache, use it
+		if (file_exists($png)) {
+			header( "Content-Type: image/png" );
+			echo new Imagick($png);
+			exit();
+		}			
+		
+		//print "<span style='color: red'>" . substr($imageInfo['uri'], 0, -4) . "_gray.jp2" . "</span><br>";
 		
 		// kdu_expand command
-		$cmd = "$this->kdu_expand -i " . $imageInfo['uri'] . " -o $tilepath ";
+		$cmd = "$this->kdu_expand -i " . $imageInfo['uri'] . " -o $tif ";
 		
 		// Determine desired image resolution
 		$zoomOffset = $this->defaultZoom - $zoom;
@@ -57,59 +68,117 @@ class TileStore {
 		// Add desired region
 		$cmd .= $this->getRegionString($imageInfo['width'], $imageInfo['height'], $x, $y, $relTs);
 
-		// Check to see if tile exists (can this be done any earlier?)
+		// If the tile exists, execute command to extract region of interest
 		if ((($x * $ts) <= ($imageInfo['width']/2)) && (($y * $ts) <= ($imageInfo['height']/2))) {
 			exec($cmd, $output, $return);
-			//print_r($output);
-			//print "<br><br>".$cmd;			
 		}
 		
 		// Open in ImageMagick
-		$im = new Imagick($tilepath);
+		$im = new Imagick($tif);
 		
 		// Apply color table
-		//$clut = new Imagick('/var/www/hv/images/color-tables/colortables_EIT/ctable_EIT_195.png');
-		//$im->clutImage( $clut );
+		$clut = new Imagick('/var/www/hv/images/color-tables/ctable_EIT_195.png');
+		$im->clutImage( $clut );
+
+		// Pad if tile is smaller than it should be (Case 2)
+		if ($zoomOffset < 0) {
+			$this->padImage($im, $ts, $x, $y);
+		}
 		
-		// Resize if necessary
+		// Resize if necessary (Case 3)
 		if ($relTs < $ts)
 			$im->scaleImage($ts, $ts);
 			
-		// Pad if tile is smaller than it should be
-		if ($zoomOffset < 0) {
-			// pad
-			$clear = new ImagickPixel( "transparent" );
-			$padx = $ts - $im->getImageWidth();
-			$pady = $ts - $im->getImageHeight();
-			$im->borderImage($clear, $padx, $pady);
-			
-			// top-left
-			if (($x == -1) && ($y == -1))
-				$im->cropImage($ts, $ts, 0, 0);
-						
-			// top-right
-			if (($x == 0) && ($y == -1))
-				$im->cropImage($ts, $ts, $padx, 0);
-						
-			// bottom-right
-			if (($x == 0) && ($y == 0))
-				$im->cropImage($ts, $ts, $padx, $pady);
-			
-			// bottom-left
-			if (($x == -1) && ($y == 0))
-				$im->cropImage($ts, $ts, 0, $pady);
-			
-		}
-			
-		
 		// Convert to png
-		$im->setFilename(substr($tilepath, 0, -3) . "png");
-		$im->writeImage($im->getFilename);
+		$im->setFilename($png);
+		$im->writeImage($im->getFilename());
+		
+		// Delete tif image
+		unlink($tif);
+		
+		// Display tile
 		header( "Content-Type: image/png" );
 		echo $im;
 		
-		
 		exit();
+	}
+	
+	function padImage($im, $ts, $x, $y) {
+		// First pad all sides, then trim away unwanted parts
+		$clear = new ImagickPixel( "transparent" );
+		$padx = $ts - $im->getImageWidth();
+		$pady = $ts - $im->getImageHeight();
+		$im->borderImage($clear, $padx, $pady);
+		
+		// left
+		if ($x <= -1)
+			$im->cropImage($ts, $ts + $pady, 0, 0);
+					
+		// top-right
+		if (($x == 0) && ($y == -1))
+			$im->cropImage($ts, $ts, $padx, 0);
+					
+		// bottom-right
+		if (($x == 0) && ($y == 0))
+			$im->cropImage($ts, $ts, $padx, $pady);
+		
+		// bottom-left
+		if (($x == -1) && ($y == 0))
+			$im->cropImage($ts, $ts, 0, $pady);
+				
+		/**		
+		// top-left
+		if (($x == -1) && ($y == -1))
+			$im->cropImage($ts, $ts, 0, 0);
+					
+		// top-right
+		if (($x == 0) && ($y == -1))
+			$im->cropImage($ts, $ts, $padx, 0);
+					
+		// bottom-right
+		if (($x == 0) && ($y == 0))
+			$im->cropImage($ts, $ts, $padx, $pady);
+		
+		// bottom-left
+		if (($x == -1) && ($y == 0))
+			$im->cropImage($ts, $ts, 0, $pady);
+		*/
+	}
+	
+	function getFilePath($imageId, $timestamp, $zoom, $x, $y, $ts) {
+		// Starting point
+		$filepath = $this->cacheDir . $ts . "/";
+		
+		// Date information
+		$year  = substr($timestamp,0,4);
+		$month = substr($timestamp,5,2);
+		$day   = substr($timestamp,8,2);
+		
+		// Create necessary directories
+		$filepath .= $year . "/";
+		if (!file_exists($filepath))
+			mkdir($filepath);
+			
+		$filepath .= $month . "/";
+		if (!file_exists($filepath))
+			mkdir($filepath);
+			
+		$filepath .= $day . "/";
+		if (!file_exists($filepath))
+			mkdir($filepath);
+		
+		// Convert coordinates to strings
+		$xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
+		if (substr($x,0,1) == "-")
+			$xStr = "-" . str_pad(substr($x, 1), 2, '0', STR_PAD_LEFT);
+			
+		$yStr = "+" . str_pad($y, 2, '0', STR_PAD_LEFT);
+		if (substr($y,0,1) == "-")
+			$yStr = "-" . str_pad(substr($y, 1), 2, '0', STR_PAD_LEFT);
+		
+		$filepath .= $imageId . "_" . $zoom . "_" . $xStr . "_" . $yStr . ".tif";
+		
+		return $filepath;
 	}
 	
 	/**
@@ -140,7 +209,7 @@ class TileStore {
 	 * @param $imageId Object
 	 */
 	function getMetaInfo($imageId) {
-		$query = "SELECT uri, width, height, imgScaleX, imgScaleY FROM image WHERE id=$imageId";
+		$query = "SELECT timestamp, uri, width, height, imgScaleX, imgScaleY FROM image WHERE id=$imageId";
 
 		// Query database
 		$result = $this->dbConnection->query($query);
@@ -154,28 +223,17 @@ class TileStore {
 			return false;
 	}
 
-	function outputTile($imageId, $zoom, $x, $y) {
+	function outputTile($imageId, $zoom, $x, $y, $ts) {
 		// Cache-Lifetime (in minutes)
 		$lifetime = 60;
 		$exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
 		header("Expires: " . $exp_gmt);
 		header("Cache-Control: public, max-age=" . $lifetime * 60);
+
 		// Special header for MSIE 5
 		header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
 
-		#$numTiles = $this->getNumTiles($imageId, $zoom);
-		#if ($numTiles >1) {
-		$this->getTile($imageId, $zoom, $x, $y);
-			
-			#header('Content-type: image/jpeg');
-			#if ($row) echo $row['tile'];
-			#else readfile($this->noImage);
-		
-
-		#} else {
-			#header('Content-type: image/jpeg');
-			#readfile($this->noImage);
-		#}
+		$this->getTile($imageId, $zoom, $x, $y, $ts);
 	}
 }
 ?>

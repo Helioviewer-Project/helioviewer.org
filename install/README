@@ -144,9 +144,9 @@ I. Overview
 			XML Header information is first read from the JP2 images using Exif and stored into the database. When tiles are
 			required, the kakadu tool "kdu_extract" is then used to produce the tiles on the fly.
 			
-			To install ExifTool on Ubuntu Linux (8.10 or higher), you can use the command: 
+			To install ExifTool on Ubuntu Linux you can use the command: 
 			
-			sudo apt-get install exif
+			sudo apt-get install libimage-exiftool-perl
 			
 			Kakadu is proprietary software and thus cannot be included with Helioviewer.
 			
