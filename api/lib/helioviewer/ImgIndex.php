@@ -7,26 +7,8 @@ class ImgIndex {
 		$this->dbConnection = $dbConnection;
 	}
 
-	public function getProperties($imageId) {
-		$query = "SELECT image.id AS imageId, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
-							CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name, detector.minZoom as minZoom,
-							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId, opacityGroup.description AS opacityGroupDescription,
-							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
-							UNIX_TIMESTAMP(timestamp) AS timestamp
-						FROM image
-							LEFT JOIN measurement on measurementId = measurement.id
-							LEFT JOIN measurementType on measurementTypeId = measurementType.id
-							LEFT JOIN detector on detectorId = detector.id
-							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
-							LEFT JOIN instrument on instrumentId = instrument.id
-							LEFT JOIN observatory on observatoryId = observatory.id
-							WHERE image.id=$imageId";
-		$result = $this->dbConnection->query($query);
-		return mysql_fetch_array($result, MYSQL_ASSOC);
-	}
-
 	public function getClosestImage($timestamp, $src, $debug = false) {
-		$query = "SELECT image.id AS imageId, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+		$query = "SELECT image.id AS imageId, image.width as width, image.height as height, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 							detector.lowestRegularZoomLevel as lowestRegularZoom,

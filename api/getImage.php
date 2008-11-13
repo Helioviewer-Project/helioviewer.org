@@ -12,11 +12,6 @@
 	}
 	
 	switch ($_GET['action']) {
-		case 'getProperties':
-			header('Content-type: application/json');
-			echo json_encode($imgIndex->getProperties($_GET['imageId']));
-			break;
-	  
 		case 'getClosest':
 			if ($debug != "true") {
 				header('Content-type: application/json');
