@@ -77,8 +77,11 @@ class TileStore {
 		$im = new Imagick($tif);
 		
 		// Apply color table
-		$clut = new Imagick('/var/www/hv/images/color-tables/ctable_EIT_195.png');
-		$im->clutImage( $clut );
+		$meas = $imageInfo['measurement'];
+		if (($meas == 171) || ($meas == 195) || ($meas == 284) || ($meas == 304)) {
+			$clut = new Imagick("/var/www/hv/images/color-tables/ctable_EIT_$meas.png");
+			$im->clutImage( $clut );
+		}
 
 		// Pad if tile is smaller than it should be (Case 2)
 		if ($zoomOffset < 0) {
@@ -209,7 +212,8 @@ class TileStore {
 	 * @param $imageId Object
 	 */
 	function getMetaInfo($imageId) {
-		$query = "SELECT timestamp, uri, width, height, imgScaleX, imgScaleY FROM image WHERE id=$imageId";
+		$query  = "SELECT timestamp, uri, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement FROM image ";
+		$query .= "LEFT JOIN measurement on image.measurementId = measurement.id WHERE image.id=$imageId";
 
 		// Query database
 		$result = $this->dbConnection->query($query);

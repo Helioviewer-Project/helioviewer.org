@@ -1,6 +1,6 @@
 ===================================================================
-= HelioViewer Installation Notes                                  =
-= By Keith Hughitt, October 2008   s                               =
+= Helioviewer Installation Notes                                  =
+= By Keith Hughitt, October 2008                                  =
 ===================================================================
 
 I. Overview
@@ -12,6 +12,7 @@ I. Overview
 		-Python-MysqlDB
 		-ExifTool
 		-Prototip 2
+                -Kakadu
 		
 	Optional:
 		-launchpadlib (Automated bug/feature-request submission)
@@ -19,7 +20,6 @@ I. Overview
 		-php5-ffmpeg  (Movie generation)
 		-php-video-tookkit (>= 0.1.5)(Movie generation)
 		-svgfig (Icon generation)
-		-Kakadu tools (MJ2 generation)
 		
 	Pre-Installion notes:
 	
@@ -38,7 +38,7 @@ I. Overview
 	generation and automated generation of custom feature/event icons. On Ubuntu Linux you can download
 	most of the software needed with the command:
 	
-		sudo apt-get install python-mysqldb php5-imagick php5-ffmpeg
+		sudo apt-get install python-mysqldb php5-imagick php5-ffmpeg libimage-exiftool-perl ant
 		
 	PHPVideoToolkit and svgfig are included with the Helioviewer source-code.
 		
@@ -101,14 +101,14 @@ I. Overview
 				
 		C. Run Ant
 			To then use Ant to build an optimized (concatenated and minified)[4]
-			version of HelioViewer's JavaScript classes and CSS, run ant
+			version of Helioviewer's JavaScript classes and CSS, run ant
 			in the directory where build.xml is located (by default that
 			should be the same location as this README).
 				ant
 			The will produce three optmized files optimized files:
 				helioviewer-all.js
 				helioviewer-all-min.js
-				main-min.csshttp://www.nickstakenburg.com/projects/prototip2/
+				helioviewer-all.css
 				
 			Note: Build.xml makes use of two external scripts, JSMin and jsmin.py
 			located in the /install/tools directory. jsmin.py is a python port
@@ -148,10 +148,6 @@ I. Overview
 			
 			sudo apt-get install libimage-exiftool-perl
 			
-			Kakadu is proprietary software and thus cannot be included with Helioviewer.
-			
-			
-	
 	VIII. Prototip 
 				
 			
