@@ -1,6 +1,6 @@
 ===================================================================
 = Helioviewer Installation Notes                                  =
-= By Keith Hughitt, October 2008                                  =
+= By Keith Hughitt, November 2008                                 =
 ===================================================================
 
 I. Overview
@@ -11,8 +11,8 @@ I. Overview
 		-Python (>=2.5)
 		-Python-MysqlDB
 		-ExifTool
-		-Prototip 2
-                -Kakadu
+        -Prototip 2
+        -Kakadu
 		
 	Optional:
 		-launchpadlib (Automated bug/feature-request submission)

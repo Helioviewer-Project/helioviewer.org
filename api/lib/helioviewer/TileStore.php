@@ -19,16 +19,31 @@ class TileStore {
 	 * @param $x		Int
 	 * @param $y		Int
 	 * @param $ts		Int
+	 * 
+	 * Notes:
+	 * 	1. Range of available tiles = +/- ceil([(1/2)(2^zoom-offset)(image width or height)]/ts)
 	 */
 	function getTile($imageId, $zoom, $x, $y, $ts) {
 		// Retrieve meta-information
 		$imageInfo = $this->getMetaInfo($imageId);
 		
+		// Determine desired image resolution
+		$zoomOffset = $this->defaultZoom - $zoom;
+		$desiredRes = $this->defaultRes * (pow(2, $zoomOffset));
+
+		// Check to see if the tile requested is within the range of available data
+		$xRange = ceil((1/2)*(pow(2, $zoomOffset))*$imageInfo["width"] *(1/$ts));
+		$yRange = ceil((1/2)*(pow(2, $zoomOffset))*$imageInfo["height"]*(1/$ts));
+		if ((abs($x) > $xRange) || (abs($y) > $yRange)) {
+			//print "x: $xRange, y: $yRange";
+			exit();
+		}
+		
 		// Filepaths (For .tif and .png images)
 		$tif = $this->getFilePath($imageId, $imageInfo['timestamp'], $zoom, $x, $y, $ts);
 		$png = substr($tif, 0, -3) . "png";
 		
-		//print "<span style='color: red'>" . $tilepath . "</span><br>";
+		//print "<span style='color: red'>" . $tif . "</span><br>";
 		
 		// If tile already exists in cache, use it
 		if (file_exists($png)) {
@@ -41,10 +56,6 @@ class TileStore {
 		
 		// kdu_expand command
 		$cmd = "$this->kdu_expand -i " . $imageInfo['uri'] . " -o $tif ";
-		
-		// Determine desired image resolution
-		$zoomOffset = $this->defaultZoom - $zoom;
-		$desiredRes = $this->defaultRes * (pow(2, $zoomOffset));
 		
 		// Scale Factor
 		$scaleFactor = abs($zoomOffset);
@@ -68,10 +79,8 @@ class TileStore {
 		// Add desired region
 		$cmd .= $this->getRegionString($imageInfo['width'], $imageInfo['height'], $x, $y, $relTs);
 
-		// If the tile exists, execute command to extract region of interest
-		if ((($x * $ts) <= ($imageInfo['width']/2)) && (($y * $ts) <= ($imageInfo['height']/2))) {
-			exec($cmd, $output, $return);
-		}
+		// Execute the command
+		exec($cmd, $output, $return);
 		
 		// Open in ImageMagick
 		$im = new Imagick($tif);
