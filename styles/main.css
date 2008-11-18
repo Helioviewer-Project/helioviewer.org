@@ -87,6 +87,18 @@ input, select {background-color: #F4F4F4;}
 	font-weight: bold;
 }
 
+/* Coordinates */
+#mouse-coords {
+	background: transparent;
+	color: white;
+	font-weight: 600;
+	width: 160px;
+	height: 16px;
+	position: absolute;
+	top:0px;
+	right: 0px;
+}
+
 /* Message Console */
 #message-console {
 	display: inline;
