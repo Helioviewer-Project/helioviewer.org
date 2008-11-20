@@ -113,7 +113,22 @@
 
 			<!-- Left Column -->
 			<div id="left-col">
-				<div id="left-col-header"><h1>HelioViewer</h1></div>
+				<div id="left-col-header">
+					<img src="images/logo/simple.png" alt="Helioviewer.org Logo" style="margin-top:14px; margin-left: 9px;"></img>
+				</div>
+				<div class="accordion-title" style="margin-left:5px; margin-top: 15px;">Observation</div> 
+				<div id="observation-controls" style="padding: 2px; background: url(images/blackGlass/transparentBG50.png) transparent; border: 1px solid black; color: white; font-size: 0.95em; margin: 2px 5px 20px;">
+					<!--  Observation Date -->
+					<div style="width: 65px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
+					<input type="text" id="date" name="date" value="2003/10/05"><br><br>
+
+					<!-- Observation Time -->
+					<div style="float: left; width: 65px; margin-top: 3px; font-weight: 600;">Time:</div>
+					<input type="text" id="time" name="time" value="00:00:00" style="width:80px">
+
+					<!-- Movie Builder -->
+					<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
+				</div>
 				<div id="layerManager"></div>
 				<br><br>
 				<div id="eventAccordion"></div>
@@ -142,19 +157,6 @@
 
 						<!-- Message Console -->
 						<span id="message-console-spacer" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
-
-						<div style="font-size: 0.9em;">
-							<!--  Observation Date -->
-							<span>Observation Date:</span>
-							<input type="text" id="date" name="date" value="2003/10/05">
-
-							<!-- Observation Time -->
-							<span style="margin-left:15px;">Observation Time:</span>
-							<input type="text" id="time" name="time" value="00:00:00" style="width:80px">
-
-							<!-- Movie Builder -->
-							<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
-						</div>
 					</div>
 				</div>
 				<!-- End middle-col-header -->

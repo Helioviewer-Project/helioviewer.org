@@ -122,11 +122,15 @@ input, select {background-color: #F4F4F4;}
 }
 
 /* Calendar */
-#date {width:80px;}
+#date {
+	width:80px; 
+	margin-right: 2px;
+}
 .ui-datepicker-trigger {
+	background-color: transparent;
+	color: transparent;
     cursor: pointer;
 	position: relative;
-	top:-4px;
 }
 
 /* Movie Builder */
