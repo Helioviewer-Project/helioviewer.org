@@ -65,7 +65,7 @@
 		<script src="lib/helioviewer/EventLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/TimeStepSlider.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
@@ -114,21 +114,35 @@
 			<!-- Left Column -->
 			<div id="left-col">
 				<div id="left-col-header">
-					<img src="images/logo/simple.png" alt="Helioviewer.org Logo" style="margin-top:14px; margin-left: 9px;"></img>
+					<img src="images/logo/simple.png" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
 				</div>
+				<br><br>
 				<div class="accordion-title" style="margin-left:5px; margin-top: 15px;">Observation</div> 
-				<div id="observation-controls" style="padding: 2px; background: url(images/blackGlass/transparentBG50.png) transparent; border: 1px solid black; color: white; font-size: 0.95em; margin: 2px 5px 20px;">
+				<div id="observation-controls" style="padding: 2px; background: url(images/blackGlass/transparentBG50.png) transparent; border: 1px solid black; color: white; font-size: 0.95em; margin: 0px 5px 0px 5px;">
 					<!--  Observation Date -->
-					<div style="width: 65px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
-					<input type="text" id="date" name="date" value="2003/10/05"><br><br>
+					<div style="margin-bottom: 5px;">
+						<div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
+						<input type="text" id="date" name="date" value="2003/10/05">
+					</div>
 
 					<!-- Observation Time -->
-					<div style="float: left; width: 65px; margin-top: 3px; font-weight: 600;">Time:</div>
-					<input type="text" id="time" name="time" value="00:00:00" style="width:80px">
+					<div style="margin-bottom: 8px;">
+						<div style="float: left; width: 78px; font-weight: 600;">Time:</div>
+						<input type="text" id="time" name="time" value="00:00:00" style="width:80px">
+					</div>
+					
+					<!-- Time Navigation Buttons & Time Increment selector -->
+					<div>
+						<div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
+						<select id="timestep-select" style="width:85px; border: none; margin-right: 1px;" name="time-step"></select>
+						<button type="button" id="timeBackBtn"    value="Previous Image" title=" - Move the Observation Date/Time backward one time-step"></button>
+						<button type="button" id="timeForwardBtn" value="Next Image" title=" - Move the Observation Date/Time forward one time-step"></button>
+					</div>
 
 					<!-- Movie Builder -->
 					<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
 				</div>
+				<br><br>
 				<div id="layerManager"></div>
 				<br><br>
 				<div id="eventAccordion"></div>
@@ -163,22 +177,10 @@
 
 				<!-- Viewport -->
 				<div id="helioviewer-viewport-container-outer">
-					<div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:94%; height:94%">
+					<div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
 						<div id="helioviewer-viewport" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%"></div>
 
 							<!-- UI COMPONENTS -->
-							<!-- Time Navigation Buttons -->
-							<div style="position: absolute; bottom:10px; left:20px;">
-								<button type="button" id="timeBackBtn" value="Previous Image" title=" - Move the Observation Date/Time backward one time-step"></button>
-								<button type="button" id="timeForwardBtn" value="Next Image" title=" - Move the Observation Date/Time forward one time-step"></button>
-							</div>
-
-							<!-- Time Increment -->
-							<div style="position: absolute; bottom:15px; left:100px; z-index:1000">
-								<div id="timestepTrack">
-									<div id="timestepHandle" title=" - Drag handle to select a time-step."><div id="timestepValueDisplay">1&nbsp;Day</div></div>
-								</div>
-							</div>
 
 							<!--  Zoom-Level Slider -->
 							<div id="zoomControl" style="position: absolute; left: 16px; top:39px; z-index:1000">
