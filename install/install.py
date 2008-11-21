@@ -5,12 +5,16 @@ import os, math, MySQLdb, datetime
 
 def main():
 	printGreeting()
-	path = getFilePath()
+	#path = getFilePath()
+	path = "/home/hughitt1/Desktop/jp2"
 	images = traverseDirectory(path)
 
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
-	dbname, dbuser, dbpass = getDBInfo()
+	#dbname, dbuser, dbpass = getDBInfo()
+	dbname = "hv3"
+	dbuser = "helioviewer"
+	dbpass = dbuser
 
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()
@@ -46,6 +50,9 @@ def processJPEG2000Images (images, cursor):
 
 		# format date
 		d = meta["date"]
+		
+		print "DATE: " + d
+		
 		date = datetime.datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]))
 
 		# insert into database

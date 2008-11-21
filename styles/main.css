@@ -68,6 +68,7 @@ input, select {background-color:#F4F4F4;}
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 
+
 /* Center button */
 .center-button {
     background: url(../images/blackGlass/transparentBGWhite.png) transparent repeat scroll 0%;
@@ -144,10 +145,9 @@ img#movieBuilder {
 
 /* MISC TEXT-RELATED */
 .centered {display: block; margin-left:auto; margin-right: auto;}
-#about-dialog-header {
-	font-family: "Lucida Sans", Script, Helvetica, sans-serif;
-	font-size:   16px;
-}
+
+/* Usage Tips dialog */
+
 
 /* updates and to-do list */
 .notes {

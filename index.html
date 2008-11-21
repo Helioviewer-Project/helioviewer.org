@@ -15,7 +15,7 @@
 		<!-- Prototype and Scriptaculous -->
 		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
-		<!--<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>-->
+		<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>
 		
 		<!-- Prototip -->
 		<script src="lib/prototip2.0.4/js/prototip.js" type="text/javascript"></script>
@@ -204,6 +204,7 @@
 				<!-- Links -->
 				<div style="text-align:right; font-size:120%; height:60px; margin-right: 258px; margin-top: 3px;">
 					<a id="helioviewer-about" class="gray" href="#" style="margin-right:20px;">About</a>
+					<a id="helioviewer-shortcuts" class="gray" href="#" style="margin-right: 20px;">Usage Tips</a>
 					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="gray" style="margin-right:20px">JHelioviewer</a>
 					<a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
 					<a href="mailto:webmaster@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>
@@ -215,12 +216,78 @@
 		<!-- About dialog -->
 		<div id='about-dialog'>
 			<img src="images/logo/about.png" alt="Helioviewer.org Logo"><br>
-			<span style="font-size:small;">Last Updated: October 22, 2008 (rev. 145)</span><br><br>
+			<span style="font-size:small;">Last Updated: November 21, 2008 (rev. 157)</span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
 				<li><a href="mailto:webmaster@helioviewer.org" class="gray">Keith Hughitt</a></li>
-				<li><a href="mailto:patrick.schmiedel@gmx.net" class="gray">Patrick Schmiedel</a></li>
 			</ul>
 		</div>
+		
+		<!-- Keyboard shortcuts dialog -->
+		<div id='keyboard-shortcuts-dialog'>
+			<strong>Keyboard Shortcuts:</strong>
+			<br><br>
+				<table>
+					<tr>
+						<td width="30%"><strong>c</strong></td>
+						<td>Center the screen.</td>
+					</tr>
+					<tr>
+						<td><strong>d</strong></td>
+						<td>Display detailed feature/event labels.</td>
+					</tr>
+					<tr>
+						<td><strong>m</strong></td>
+						<td>Toggle mouse coordinates display.</td>
+					</tr>
+					<tr>
+						<td><strong>+</strong></td>
+						<td>Zoom-in once.</td>
+					</tr>
+					<tr>
+						<td><strong>-</strong></td>
+						<td>Zoom-out once.</td>
+					</tr>
+					<tr>
+						<td><strong>&larr;</strong></td>
+						<td>Pan left.</td>
+					</tr>
+					<tr>
+						<td><strong>&uarr;</strong></td>
+						<td>Pan upward.</td>
+					</tr>
+					<tr>
+						<td><strong>&rarr;</strong></td>
+						<td>Pan Right.</td>
+					</tr>
+					<tr>
+						<td><strong>&darr;</strong></td>
+						<td>Pan downward.</td>
+					</tr>
+					
+				</table>
+				<br><br>
+				<strong>Mouse Shortcuts:</strong>
+				<table>
+					<tr>
+						<td width="30%"><strong>Double-click</strong></td>
+						<td>Zoom in.</td>
+					</tr>
+					<tr>
+						<td><strong>Shift + Double-click</strong></td>
+						<td>Zoom out.</td>
+					</tr>
+					<tr>
+						<td><strong>Mouse-wheel up</strong></td>
+						<td>Zoom in.</td>
+					</tr>
+					<tr>
+						<td><strong>Mouse-wheel down</strong></td>
+						<td>Zoom out.</td>
+					</tr>
+				</table>
+				
+		</div>
+		
 	</body>
 </html>
