@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, math, MySQLdb, datetime
+import os, math, MySQLdb
+from datetime import datetime
 
 def main():
 	printGreeting()
@@ -12,7 +13,7 @@ def main():
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
 	#dbname, dbuser, dbpass = getDBInfo()
-	dbname = "hv3"
+	dbname = "hv2"
 	dbuser = "helioviewer"
 	dbpass = dbuser
 
@@ -48,12 +49,10 @@ def processJPEG2000Images (images, cursor):
 		#dir, file = os.path.split(img)
 		meta = extractJP2MetaInfo(img)
 
-		# format date
-		d = meta["date"]
-		
-		print "DATE: " + d
-		
-		date = datetime.datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]))
+		# Format date
+		date = datetime.strptime(meta["date"][0:19], "%Y:%m:%d %H:%M:%S")
+
+		#date = datetime.datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]))
 
 		# insert into database
 		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, '%s')" % (measurementIds[meta["det"] + meta["meas"]], date, meta["centerX"], meta["centerY"], meta["scaleX"], meta["scaleY"], meta["radius"], meta["width"], meta["height"], img)
@@ -70,16 +69,16 @@ def extractJP2MetaInfo (img):
 		returns a dictionary of that information.'''
 	import commands
 
-	tags = {"date":    "Fits Date-obs",
-			"obs" :    "Fits Telescop",
-			"inst":    "Fits Instrume",
-			"det" :    "Fits Instrume", #SHOULD BE CHANGED
-			"meas":    "Fits Wavelnth", #SHOULD BE CHANGED
+	tags = {"date":    "Fits Hv Date Obs",
+			"obs" :    "Fits Hv Observatory",
+			"inst":    "Fits Hv Instrument",
+			"det" :    "Fits Hv Detector",
+			"meas":    "Fits Hv Measurement",
 			"centerX": "Fits Crpix 1",
 			"centerY": "Fits Crpix 2",
 			"scaleX" : "Fits Cdelt 1",
 			"scaleY" : "Fits Cdelt 2",
-			"radius" : "Fits Solar R",
+			"radius" : "Fits Hv Rsun",
 			"height" : "Image Height",
 			"width"  : "Image Width"}
 	meta = {}
@@ -92,18 +91,7 @@ def extractJP2MetaInfo (img):
 			if (line.find(tag + "  ") != -1):
 				meta[param] = line[34:]
 
-	#for (param, tag) in tags.items():
-	#	meta[param] = getMetaTag(img, tag)
-
 	return meta
-
-def getMetaTag (img, tag):
-	''' Searches the JP2 XML-Box for a specific tag and returns it's value.'''
-	import commands
-	cmd = "exiftool %s | grep \"%s [^D]\"" % (img, tag)
-	t= commands.getoutput(cmd)[34:]
-	print t
-	return t
 
 def getMeasurementIds(cursor):
 	''' Returns an associative array of the measurement ID's used for the

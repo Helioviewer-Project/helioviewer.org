@@ -5,18 +5,17 @@
 
 I. Overview
 
-	Requirements:
+	Requirements (Server):
 		-MySQL5
 		-PHP5
+		-php5-imagick
 		-Python (>=2.5)
 		-Python-MysqlDB
 		-ExifTool
-        -Prototip 2
         -Kakadu
 		
 	Optional:
 		-launchpadlib (Automated bug/feature-request submission)
-		-php5-imagick (Movie generation)
 		-php5-ffmpeg  (Movie generation)
 		-php-video-tookkit (>= 0.1.5)(Movie generation)
 		-svgfig (Icon generation)
@@ -28,7 +27,7 @@ I. Overview
 	relating to Feature/Event icon generation. A web-server must also be installed with the appropriate
 	PHP & Mysql modules. Apache2 is recommended.
 
-	In addition to the above-mentioned requirements, there is one proprietary javascrip library which
+	In addition to the above-mentioned requirements, there is one proprietary javascript library which
 	is currently used by Helioviewer: Prototip. Prototip is a commercial javascript library with fairly
 	inexpensive lisences for non-commercial use (about $5 USD). It is also available for download to
 	try for free, but is not allowed to be redistributed, and thus was not included with Helioviewer.
