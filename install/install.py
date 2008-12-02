@@ -6,8 +6,7 @@ from datetime import datetime
 
 def main():
 	printGreeting()
-	#path = getFilePath()
-	path = "/home/hughitt1/Desktop/jp2"
+	path = getFilePath()
 	images = traverseDirectory(path)
 
 	print "Found " + str(len(images)) + " JPEG2000 images."
@@ -69,16 +68,16 @@ def extractJP2MetaInfo (img):
 		returns a dictionary of that information.'''
 	import commands
 
-	tags = {"date":    "Fits Hv Date Obs",
-			"obs" :    "Fits Hv Observatory",
-			"inst":    "Fits Hv Instrument",
-			"det" :    "Fits Hv Detector",
-			"meas":    "Fits Hv Measurement",
+	tags = {"date":    "Helioviewer Date Obs",
+			"obs" :    "Helioviewer Observatory",
+			"inst":    "Helioviewer Instrument",
+			"det" :    "Helioviewer Detector",
+			"meas":    "Helioviewer Measurement",
 			"centerX": "Fits Crpix 1",
 			"centerY": "Fits Crpix 2",
-			"scaleX" : "Fits Cdelt 1",
-			"scaleY" : "Fits Cdelt 2",
-			"radius" : "Fits Hv Rsun",
+			"scaleX" : "Helioviewer Cdelt 1",
+			"scaleY" : "Helioviewer Cdelt 2",
+			"radius" : "Helioviewer Rsun",
 			"height" : "Image Height",
 			"width"  : "Image Width"}
 	meta = {}

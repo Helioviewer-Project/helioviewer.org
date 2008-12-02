@@ -4,8 +4,8 @@ class TileStore {
 	private $noImage     = "images/transparent.gif";
 	private $kdu_expand  = "kdu_expand";
 	private $cacheDir    = "/var/www/hv/tiles/";
-	private $baseRes  = 2.63; //Resolution of an EIT image: 2.63 arcseconds/px
-	private $baseZoom = 10;   //Zoom-level at which images are of this resolution. (FOR EIT...Need to look-up/define for each image-source!)
+	private $baseScale  = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
+	private $baseZoom = 10;     //Zoom-level at which (EIT) images are of this scale.
 
 	public function __construct($dbConnection) {
 		$this->dbConnection = $dbConnection;
@@ -27,18 +27,6 @@ class TileStore {
 		// Retrieve meta-information
 		$imageInfo = $this->getMetaInfo($imageId);
 
-		// Determine desired image resolution
-		$zoomOffset = $this->baseZoom - $zoom;
-		$desiredRes = $this->baseRes * (pow(2, $zoomOffset));
-
-		// Check to see if the tile requested is within the range of available data
-		$xRange = ceil((1/2)*(pow(2, $zoomOffset))*$imageInfo["width"] *(1/$ts));
-		$yRange = ceil((1/2)*(pow(2, $zoomOffset))*$imageInfo["height"]*(1/$ts));
-		if ((abs($x) > $xRange) || (abs($y) > $yRange)) {
-			//print "x: $xRange, y: $yRange";
-			exit();
-		}
-
 		// Filepaths (For .tif and .png images)
 		$tif = $this->getFilePath($imageId, $imageInfo['timestamp'], $zoom, $x, $y, $ts);
 		$png = substr($tif, 0, -3) . "png";
@@ -51,36 +39,54 @@ class TileStore {
 			echo new Imagick($png);
 			exit();
 		}
-
-		//print "<span style='color: red'>" . substr($imageInfo['uri'], 0, -4) . "_gray.jp2" . "</span><br>";
-
-		// kdu_expand command
-		$cmd = "$this->kdu_expand -i " . $imageInfo['uri'] . " -o $tif ";
-
+		
+		// Determine desired image scale
+		$zoomOffset = $zoom - $this->baseZoom;
+		$desiredScale = $this->baseScale * (pow(2, $zoomOffset));
+		
+		// Ratio of the desired scale to the actual JP2 image scale
+		$desiredToActual = $desiredScale / $imageInfo['imgScaleX'];
+		
 		// Scale Factor
-		$scaleFactor = abs($zoomOffset);
+		$scaleFactor = log($desiredToActual, 2);
+		
+		//print "<span style='color: red'>Desired Scale: $desiredScale</span><br>";
+		//print "<span style='color: orange'>Image Scale: " . $imageInfo['imgScaleX'] . "</span><br>";
+		//print "<span style='color: green'>Desired to Actual Scale Ratio: " . $desiredToActual . "</span><br>";
+		
+		// kdu_expand command
+		$cmd = "$this->kdu_expand -i " . $imageInfo['uri'] . " -o $tif ";		
+		
+		//print "Scale Factor: $scaleFactor<br>";
 
-		// Relative tile-size
-		$relTs = $ts;
-
+		$relTs = $ts * $desiredToActual;
+		
 		// Case 1: JP2 image resolution = desired resolution
 		// Nothing special to do...
 
-		// Case 2: JP2 image resolution > desired resolution (use -reduce)
-		if ($imageInfo['imgScaleX'] > $desiredRes) {
+		// Case 2: JP2 image resolution > desired resolution (use -reduce)		
+		if ($imageInfo['imgScaleX'] < $desiredScale) {
 			$cmd .= "-reduce " . $scaleFactor . " ";
 		}
 
 		// Case 3: JP2 image resolution < desired resolution (get smaller tile and then enlarge)
-		if ($imageInfo['imgScaleX'] < $desiredRes) {
-			$relTs = $ts / (1 + $scaleFactor);
+		// Don't do anything yet...
+		
+		// Check to see if the tile requested is within the range of available data
+		$xRange = ceil($imageInfo["width"]  / (2 * $desiredToActual * $ts));
+		$yRange = ceil($imageInfo["height"] / (2 * $desiredToActual * $ts));
+		if ((abs($x) > $xRange) || (abs($y) > $yRange)) {
+			print "Out of range tile request... Range- x: $xRange, y: $yRange";
+			exit();
 		}
+		
+		//print "<span style='color: purple'>Relative Tilesize: $relTs</span><br>";
 
 		// Add desired region
 		$cmd .= $this->getRegionString($imageInfo['width'], $imageInfo['height'], $x, $y, $relTs);
 
-		// Don't modify color tables
-		$cmd .= " -raw_components";
+		//print "<br><span style='color: red'>" . $cmd . "</span><br>";
+		//print "<br><span style='color: blue'>getRegionString($relWidth, $relHeight, $x, $y, $relTs)</span><br>";
 
 		// Execute the command
 		exec($cmd, $output, $return);
@@ -96,11 +102,11 @@ class TileStore {
 		}
 		
 		// For images with transparent components, convert pixels with value "0" to be transparent.
-		//if ($imageInfo['instrument'] == "LAS")
-		//	$im->paintTransparentImage(new ImagickPixel("black"),0,0);
-
+		if ($imageInfo['measurement'] == "0WL")
+			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
+			
 		// Pad if tile is smaller than it should be (Case 2)
-		if ($zoomOffset < 0) {
+		if ($imageInfo['imgScaleX'] < $desiredScale) {
 			$this->padImage($im, $ts, $x, $y);
 		}
 
@@ -127,11 +133,16 @@ class TileStore {
 		$clear = new ImagickPixel( "transparent" );
 		$padx = $ts - $im->getImageWidth();
 		$pady = $ts - $im->getImageHeight();
+		
 		$im->borderImage($clear, $padx, $pady);
 
 		// left
-		if ($x <= -1)
-			$im->cropImage($ts, $ts + $pady, 0, 0);
+		//if ($x <= -1)
+		//	$im->cropImage($ts, $ts + $pady, 0, 0);
+		
+		// top-left
+		if (($x == -1) && ($y == -1))
+			$im->cropImage($ts, $ts, 0, 0);
 
 		// top-right
 		if (($x == 0) && ($y == -1))
@@ -206,9 +217,11 @@ class TileStore {
 	 */
 	function getRegionString($width, $height, $x, $y, $ts) {
 		// Determine region to tile from (Note: assuming that image dimensions are a factor of TS)
-		$numTilesX = $width / $ts;
-		$numTilesY = $height / $ts;
-
+		$numTilesX = max(2, $width / $ts);
+		$numTilesY = max(2, $height / $ts);
+		
+		//print "numTilesX: $numTilesX, numTilesY: $numTilesY <br>";
+		
 		// Shift so that 0,0 now corresponds to the top-left tile
 		$relX = (0.5 * $numTilesX) + $x;
 		$relY = (0.5 * $numTilesY) + $y;
