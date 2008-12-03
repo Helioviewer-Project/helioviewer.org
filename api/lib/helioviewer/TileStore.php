@@ -20,8 +20,6 @@ class TileStore {
 	 * @param $y		Int
 	 * @param $ts		Int
 	 *
-	 * Notes:
-	 * 	1. Range of available tiles = +/- ceil([(1/2)(2^zoom-offset)(image width or height)]/ts)
 	 */
 	function getTile($imageId, $zoom, $x, $y, $ts) {
 		// Retrieve meta-information
@@ -30,8 +28,6 @@ class TileStore {
 		// Filepaths (For .tif and .png images)
 		$tif = $this->getFilePath($imageId, $imageInfo['timestamp'], $zoom, $x, $y, $ts);
 		$png = substr($tif, 0, -3) . "png";
-
-		//print "<span style='color: red'>" . $tif . "</span><br>";
 
 		// If tile already exists in cache, use it
 		if (file_exists($png)) {
@@ -49,16 +45,10 @@ class TileStore {
 		
 		// Scale Factor
 		$scaleFactor = log($desiredToActual, 2);
-		
-		//print "<span style='color: red'>Desired Scale: $desiredScale</span><br>";
-		//print "<span style='color: orange'>Image Scale: " . $imageInfo['imgScaleX'] . "</span><br>";
-		//print "<span style='color: green'>Desired to Actual Scale Ratio: " . $desiredToActual . "</span><br>";
-		
+
 		// kdu_expand command
 		$cmd = "$this->kdu_expand -i " . $imageInfo['uri'] . " -o $tif ";		
 		
-		//print "Scale Factor: $scaleFactor<br>";
-
 		$relTs = $ts * $desiredToActual;
 		
 		// Case 1: JP2 image resolution = desired resolution
@@ -80,13 +70,8 @@ class TileStore {
 			exit();
 		}
 		
-		//print "<span style='color: purple'>Relative Tilesize: $relTs</span><br>";
-
 		// Add desired region
 		$cmd .= $this->getRegionString($imageInfo['width'], $imageInfo['height'], $x, $y, $relTs);
-
-		//print "<br><span style='color: red'>" . $cmd . "</span><br>";
-		//print "<br><span style='color: blue'>getRegionString($relWidth, $relHeight, $x, $y, $relTs)</span><br>";
 
 		// Execute the command
 		exec($cmd, $output, $return);
@@ -117,6 +102,9 @@ class TileStore {
 		// Convert to png
 		$im->setFilename($png);
 		$im->writeImage($im->getFilename());
+		
+		// Optimize PNG
+		exec("optipng " . $png, $output, $return);
 
 		// Delete tif image
 		unlink($tif);
@@ -178,7 +166,9 @@ class TileStore {
 	function getFilePath($imageId, $timestamp, $zoom, $x, $y, $ts) {
 		// Starting point
 		$filepath = $this->cacheDir . $ts . "/";
-
+		if (!file_exists($filepath))
+			mkdir($filepath);
+			
 		// Date information
 		$year  = substr($timestamp,0,4);
 		$month = substr($timestamp,5,2);

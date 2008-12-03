@@ -21,6 +21,9 @@ class ImageSeries {
 	private $db;
 	private $tmpdir = "/var/www/hv/tmp/";
 	private $tmpurl = "http://localhost/hv/tmp/";
+	private $baseScale = 2.63;
+	private $baseZoom  = 10;
+	private $tileSize  = 512;
 	private $filetype = "flv";
 	private $highQualityLevel = 100;
 	private $watermarkURL = "/var/www/hv/images/watermark_small_gs.png";
@@ -31,7 +34,7 @@ class ImageSeries {
 	/*
 	 * constructor
 	 */
-	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $edgeEnhance, $sharpen) {
+	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $edgeEnhance, $sharpen) {
 		date_default_timezone_set('UTC');
 		
 		$this->layers = $layers;
@@ -40,6 +43,8 @@ class ImageSeries {
 		$this->numFrames = $numFrames;
 		$this->frameRate = $frameRate;
 		$this->highQualityFiletype = $hqFormat;
+		$this->xRange    = $xRange;
+		$this->yRange    = $yRange;		
 		$this->edgeEnhance = $edgeEnhance;
 		$this->sharpen = $sharpen;
 		
@@ -83,10 +88,10 @@ class ImageSeries {
 	 * times to $this->startTime.
 	 */
 	private function getImageTimes($layer, $times = null) {
-		$obs  = strtolower(substr($layer, 0, 4));
-		$inst = substr($layer, 4, 3);
-		$det  = substr($layer, 7,3);
-		$meas = substr($layer, 10,3);		
+		$obs  = substr($layer, 0, 3);
+		$inst = substr($layer, 3, 3);
+		$det  = substr($layer, 6, 3);
+		$meas = substr($layer, 9, 3);		
 
 		$resultArray = array();
 
@@ -164,20 +169,42 @@ class ImageSeries {
 		$tmpdir = $this->tmpdir . $now . "/";
 		$tmpurl = $this->tmpurl . $now . "/" . "$movieName." . $this->filetype;
 		mkdir($tmpdir);
-
+		
 		// Create an array of the timestamps to use for each layer
 		$imageTimes = array();
 		
+		// Create another array to keep track of the dimensions to use for each layer
+		$dimensions = array();
+		
 		$i = 0;
 		foreach ($this->layers as $layer) {
-			if ($i == 0)
-				$times = $this->getImageTimes($layer);
-			else
-				$times = $this->getImageTimes($layer, $imageTimes[0]);
+			// Get dimensions to display for the layer
+			$d = $this->getMovieDimensions($layer);
+			
+			// Make sure that at least some tiles are visible in the viewport
+			if (($d['width'] > 0) && ($d['height'] > 0)) {
+				array_push($dimensions, $d);
 				
-			array_push($imageTimes, $times);
+				if ($i == 0)
+					$times = $this->getImageTimes($layer);
+				else
+					$times = $this->getImageTimes($layer, $imageTimes[0]);
+					
+				array_push($imageTimes, $times);
+			}
+			
+			// Remove the layer if it is not visible
+			else {
+				array_splice($this->layers, $i, 1);		
+			}
 			$i++;
 		}
+		
+		// PAD IF NECESSARY? (OR OFFSET... WHICHEVER IS EASIER... USE LARGEST IMAGE AS A GUIDELINE)
+		
+		//print_r($dimensions);
+		//exit();
+		
 		//print "<br>" . sizeOf($imageTimes) . "<br><br>";
 		
 		// For each frame, create a composite images and store it into $this->images
@@ -268,6 +295,71 @@ class ImageSeries {
 		
 		header('Content-type: application/json');
 		echo json_encode($tmpurl);
+	}
+	
+	/**
+	 * @function
+	 * @description Determine the dimensions for the movie
+	 * @return 
+	 */
+	public function getMovieDimensions($layer) {
+		$ts = $this->tileSize;
+		
+		// Layer parameters
+		$obs  = substr($layer, 0, 3);
+		$inst = substr($layer, 3, 3);
+		$det  = substr($layer, 6, 3);
+		$meas = substr($layer, 9, 3);
+		
+		// Get full image dimensions
+		$sql = "SELECT width, height, imgScaleX 
+					FROM image
+						LEFT JOIN measurement on measurementId = measurement.id
+						LEFT JOIN measurementType on measurementTypeId = measurementType.id
+						LEFT JOIN detector on detectorId = detector.id
+						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
+						LEFT JOIN instrument on instrumentId = instrument.id
+						LEFT JOIN observatory on observatoryId = observatory.id
+	             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' LIMIT 1";
+					
+		$result = $this->db->query($sql);
+		$img = mysql_fetch_array($result, MYSQL_ASSOC);
+	    $width  = $img['width'];
+		$height = $img['height'];
+		$scale  = $img['imgScaleX'];
+		
+		// Account for scaling of image
+		$zoomOffset = $this->zoomLevel - $this->baseZoom;
+		$desiredScale = $this->baseScale * (pow(2, $zoomOffset));
+		
+		// Ratio of the desired scale to the actual JP2 image scale
+		$desiredToActual = $desiredScale / $scale;
+		
+		// Number of tiles in scaled image
+		$imgNumTilesX = ceil($width  / ($desiredToActual * $ts));
+		$imgNumTilesY = ceil($height / ($desiredToActual * $ts));
+		
+		//print $imgNumTilesX . "<br>";
+		//print $imgNumTilesY . "<br>";
+		
+		// Valid number of tiles for movie
+		$numTilesX = min($imgNumTilesX, $this->xRange[1] - $this->xRange[2] + 1);
+		$numTilesY = min($imgNumTilesY, $this->yRange[1] - $this->yRange[2] + 1);
+		
+		//print "numTilesX: $numTilesX<br>";
+		//print "numTilesY: $numTilesY<br>";
+		
+		// Movie (ROI) Dimensions
+		$dimensions = array();
+		$dimensions['width']  = $ts * $numTilesX;
+		$dimensions['height'] = $ts * $numTilesY;
+		$dimensions['x'] = (1/2) * ($width  - $dimensions['width']);
+		$dimensions['y'] = (1/2) * ($height - $dimensions['height']);
+		
+		//print_r($dimensions);
+		//exit();
+		
+		return $dimensions;
 	}
 }
 ?>

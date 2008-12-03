@@ -7,23 +7,21 @@ class CompositeImage {
 
 	private $layers;
 	private $rootDir = "../tiles/";
-	private $emptyTile = "../images/transparent.gif";
+	private $emptyTile = "../images/transparent_512.gif";
 	private $tileSize = 512;
 	private $composite;
 
 	/*
 	 * @constructor
 	 */
-	public function __construct($layers, $timestamps, $zoomLevel, $edges=false, $sharpen=false, $focus="full", $xRange=null, $yRange=null) {
+	public function __construct($layers, $dimensions, $timestamps, $zoomLevel, $edges=false, $sharpen=false) {
 		date_default_timezone_set('UTC');
 		$this->layers = $layers;
+		$this->dimensions = $dimensions;
 		$this->timestamps = $timestamps;
 		$this->zoomLevel = $zoomLevel;
 		$this->edgeEnhance = $edges;
 		$this->sharpen = $sharpen;
-		$this->focus = $focus;
-		$this->xRange = $xRange;
-		$this->yRange = $yRange;
 		
 		//$this->debug();
 
@@ -31,16 +29,18 @@ class CompositeImage {
 
 		$i = 0;
 		foreach($this->layers as $layer) {
-			$obs  = strtolower(substr($layer, 0, 4));
-			$inst = substr($layer, 4, 3);
-			$det  = substr($layer, 7,3);
-			$meas = substr($layer, 10,3);
+			$obs  = substr($layer, 0, 3);
+			$inst = substr($layer, 3, 3);
+			$det  = substr($layer, 6,3);
+			$meas = substr($layer, 9,3);
 
-			if ($this->focus == "full") {
-				array_push($images, $this->buildFullImage($obs, $inst, $det, $meas, $this->timestamps[$i]));
-			} else {
-				array_push($images, $this->buildPartialImage($obs, $inst, $det, $meas, $this->timestamps[$i], $xRange, $yRange));
-			}
+			//if ($this->focus == "full") {
+			//	array_push($images, $this->buildFullImage($obs, $inst, $det, $meas, $this->timestamps[$i]));
+			//} else {
+			//	array_push($images, $this->buildPartialImage($obs, $inst, $det, $meas, $this->timestamps[$i], $xRange, $yRange));
+			//}
+			
+			array_push($images, $this->buildImage($obs, $inst, $det, $meas, $this->timestamps[$i], $this->dimensions[$i]));
 
 			$i++;
 		}
@@ -58,6 +58,62 @@ class CompositeImage {
 
 		if ($this->sharpen == "true")
 			$this->composite->adaptiveSharpenImage(2,1);
+	}
+	
+	private function buildImage($obs, $inst, $det, $meas, $ts, $dimensions) {
+		$filepath = $this->getFilepath($obs, $inst, $det, $meas, $ts);
+		$numTiles = $this->getNumTiles($det);
+
+		//cheating...
+		$n = sqrt($numTiles) / 2;
+
+		$start = - $n;
+		$end   =   $n - 1;
+
+		if ($inst == "LAS")
+			$ext = "png";
+		else
+			$ext = "jpg";
+
+		$tilesArray = array();
+
+		for ($i = $start; $i <= $end; $i++) {
+			for ($j = $start; $j <= $end; $j++) {
+				// Convert coordinates to strings including sign
+				if ($j < 0)
+					$x = "-" . str_pad(substr($j,1), 2, "0", STR_PAD_LEFT);
+				else
+					$x = "+" . str_pad($j, 2, "0", STR_PAD_LEFT);
+
+				if ($i < 0)
+					$y = "-" . str_pad(substr($i,1), 2, "0", STR_PAD_LEFT);
+				else
+					$y = "+" . str_pad($i, 2, "0", STR_PAD_LEFT);
+
+				$tile = $filepath . "_$x" . "_$y.$ext";
+
+				//Substitute a blank tile if tile does not exist
+				if (file_exists($tile))
+					array_push($tilesArray, $tile);
+				else
+					array_push($tilesArray, $this->emptyTile);
+			}
+		}
+
+		$tiles = new Imagick($tilesArray);
+
+		// Set background to be transparent for LASCO
+		if ($inst == "LAS")
+			$tiles->setBackgroundColor(new ImagickPixel("transparent"));
+
+		// Determine geometry to use (e.g. 2x2+0+0 for four-tile images)
+		$geometry = $numTiles/2 . "x" . $numTiles/2 . "+0+0";
+
+		$ts = $this->tileSize;
+		$img = $tiles->montageImage( new imagickdraw(), $geometry, $ts . "x" . $ts . "+0+0", imagick::MONTAGEMODE_UNFRAME, "0x0+0+0" );
+		$img->setImageFormat($ext);
+
+		return $img;
 	}
 
 	/**
@@ -244,12 +300,12 @@ class CompositeImage {
 
 		$year = $d['year'];
 		$mon  = str_pad($d['mon'], 2 , "0", STR_PAD_LEFT);
-		$day =  str_pad($d['mday'], 2 , "0", STR_PAD_LEFT);
-		$hour =  str_pad($d['hours'], 2 , "0", STR_PAD_LEFT);
-		$min =  str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
-		$sec =  str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
+		$day  = str_pad($d['mday'], 2 , "0", STR_PAD_LEFT);
+		$hour = str_pad($d['hours'], 2 , "0", STR_PAD_LEFT);
+		$min  = str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
+		$sec  = str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
 
-		$path = $this->rootDir . implode("/", array($year, $mon, $day, $hour));
+		$path = $this->rootDir . implode("/", array($year, $mon, $day));
 		$path .= "/$obs/$inst/$det/$meas/";
 		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas, $this->zoomLevel));
 

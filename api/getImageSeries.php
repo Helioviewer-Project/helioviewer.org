@@ -11,8 +11,8 @@ $web_root_url =			"http://localhost/hv";
 $web_root_url_regex =	"/http:\/\/localhost\/hv/";
 
 //Example Queries:
-//	http://localhost/hv/api/getImageSeries.php?layers=SOHOEITEIT195&startDate=1065312000&zoomLevel=10&numFrames=100
-//	http://localhost/hv/api/getImageSeries.php?layers=SOHOEITEIT171,SOHOLAS0C20WL&startDate=1041724800&zoomLevel=13&numFrames=15&frameRate=10&action=quickMovie
+//	http://localhost/hv/api/getImageSeries.php?layers=SOHEITEIT195&startDate=1065312000&zoomLevel=10&numFrames=100
+//	http://localhost/hv/api/getImageSeries.php?layers=SOHEITEIT171,SOHOLAS0C20WL&startDate=1041724800&zoomLevel=13&numFrames=15&frameRate=10&action=quickMovie
 
 //Process query string
 try {
@@ -30,6 +30,9 @@ if ($action == "quickMovie") {
 	$zoomLevel = $_GET['zoomLevel'];
 	$numFrames = $_GET['numFrames'];
 	$frameRate = $_GET['frameRate'];
+	
+	$xRange    = $_GET['xRange'];
+	$yRange    = $_GET['yRange'];
 
 	$edges     = $_GET['edges'];
 	$sharpen   = $_GET['sharpen'];
@@ -49,7 +52,7 @@ if ($action == "quickMovie") {
 			throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than $maxFrames.");
 		}
 
-		$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $edges, $sharpen);
+		$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $edges, $sharpen);
 		$imgSeries->quickMovie();
 
 	} catch(Exception $e) {
