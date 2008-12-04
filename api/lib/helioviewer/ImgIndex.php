@@ -108,7 +108,7 @@ class ImgIndex {
 	 * getFilePath
 	 */
 	private function getFilepath($obs, $inst, $det, $meas, $ts) {
-		$rootdir = "http://localhost/hv/jpeg2000/";
+		$rootdir = "http://localhost/hv/jp2/";
 		$d = getdate($ts);
 
 		$year = $d['year'];

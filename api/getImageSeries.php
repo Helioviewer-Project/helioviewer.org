@@ -34,9 +34,12 @@ if ($action == "quickMovie") {
 	$xRange    = $_GET['xRange'];
 	$yRange    = $_GET['yRange'];
 
-	$edges     = $_GET['edges'];
-	$sharpen   = $_GET['sharpen'];
 	$hqFormat  = $_GET['format'];
+	
+	// Optional arguments
+	$options = array();
+	$options['enhanceEdges'] = $_GET['edges'] || false;
+	$options['sharpen']      = $_GET['sharpen'] || false;	
 
 	//Check to make sure values are acceptable
 	try {
@@ -52,7 +55,7 @@ if ($action == "quickMovie") {
 			throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than $maxFrames.");
 		}
 
-		$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $edges, $sharpen);
+		$imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options);
 		$imgSeries->quickMovie();
 
 	} catch(Exception $e) {

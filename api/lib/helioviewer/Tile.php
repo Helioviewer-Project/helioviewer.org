@@ -1,12 +1,9 @@
 <?php
-class TileStore {
-	private $dbConnection;
-	private $noImage     = "images/transparent.gif";
-	private $kdu_expand  = "kdu_expand";
-	private $cacheDir    = "/var/www/hv/tiles/";
-	private $baseScale  = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
-	private $baseZoom = 10;     //Zoom-level at which (EIT) images are of this scale.
+require('JP2Image.php');
 
+class Tile extends JP2Image {
+	private $dbConnection;
+	
 	public function __construct($dbConnection) {
 		$this->dbConnection = $dbConnection;
 	}
@@ -246,7 +243,7 @@ class TileStore {
 			return false;
 	}
 
-	function outputTile($imageId, $zoom, $x, $y, $ts) {
+	function display($imageId, $zoom, $x, $y, $ts) {
 		// Cache-Lifetime (in minutes)
 		$lifetime = 60;
 		$exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";

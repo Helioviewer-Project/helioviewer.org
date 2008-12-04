@@ -1,8 +1,7 @@
 <?php
 	require('lib/helioviewer/DbConnection.php');
-	require('lib/helioviewer/TileStore.php');
-
-	$tileStore = new TileStore(new DbConnection());
+	require('lib/helioviewer/Tile.php');
 	
-	$tileStore->outputTile($_GET['imageId'], $_GET['zoom'], $_GET['x'], $_GET['y'], $_GET['ts']);
+	$tile = new Tile(new DbConnection());
+	$tile->display($_GET['imageId'], $_GET['zoom'], $_GET['x'], $_GET['y'], $_GET['ts']);
 ?>

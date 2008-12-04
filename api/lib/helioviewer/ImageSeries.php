@@ -28,13 +28,11 @@ class ImageSeries {
 	private $highQualityLevel = 100;
 	private $watermarkURL = "/var/www/hv/images/watermark_small_gs.png";
 	private $watermarkOptions = "-x 720 -y 965 ";
-	private $edgeEnhance = false;
-	private $sharpen = false;
 	
 	/*
 	 * constructor
 	 */
-	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $edgeEnhance, $sharpen) {
+	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options) {
 		date_default_timezone_set('UTC');
 		
 		$this->layers = $layers;
@@ -45,8 +43,7 @@ class ImageSeries {
 		$this->highQualityFiletype = $hqFormat;
 		$this->xRange    = $xRange;
 		$this->yRange    = $yRange;		
-		$this->edgeEnhance = $edgeEnhance;
-		$this->sharpen = $sharpen;
+		$this->options   = $options;
 		
 		$this->db = new DbConnection();
 	}
@@ -77,6 +74,144 @@ class ImageSeries {
 	  */
 	private function buildMovie() {
 		
+	}
+	
+	/*
+	 * quickMovie
+	 */
+	public function quickMovie() {
+		// Make a temporary directory
+		$now = time();
+		$movieName = "Helioviewer-Quick-Movie-" . $this->startTime;
+		$tmpdir = $this->tmpdir . $now . "/";
+		$tmpurl = $this->tmpurl . $now . "/" . "$movieName." . $this->filetype;
+		mkdir($tmpdir);
+		
+		// Create an array of the timestamps to use for each layer
+		$imageTimes = array();
+		
+		// Create another array to keep track of the dimensions to use for each layer
+		$dimensions = array();
+		
+		$i = 0;
+		foreach ($this->layers as $layer) {
+			// Get dimensions to display for the layer
+			$d = $this->getMovieDimensions($layer);
+			
+			// Make sure that at least some tiles are visible in the viewport
+			if (($d['width'] > 0) && ($d['height'] > 0)) {
+				array_push($dimensions, $d);
+				
+				if ($i == 0)
+					$times = $this->getImageTimes($layer);
+				else
+					$times = $this->getImageTimes($layer, $imageTimes[0]);
+					
+				array_push($imageTimes, $times);
+			}
+			
+			// Remove the layer if it is not visible
+			else {
+				array_splice($this->layers, $i, 1);		
+			}
+			$i++;
+		}
+		
+		// PAD IF NECESSARY? (OR OFFSET... WHICHEVER IS EASIER... USE LARGEST IMAGE AS A GUIDELINE)
+		
+		//print_r($dimensions);
+		//exit();
+		
+		//print "<br>" . sizeOf($imageTimes) . "<br><br>";
+		
+		// For each frame, create a composite images and store it into $this->images
+		for ($j = 0; $j < $this->numFrames; $j++) {
+			
+			// CompositeImage expects an array of timestamps
+			$timestamps = array();
+		
+			// Grab timestamp for each layer
+			foreach ($imageTimes as $time) {
+				array_push($timestamps, $time[$j]['unix_timestamp']);
+			}
+			
+			// Build a composite image
+			$img = new CompositeImage($this->layers, $timestamps, $this->zoomLevel, $this->options);
+			$filename = $tmpdir . $j . '.jpg';
+			$img->writeImage($filename);
+			
+			array_push($this->images, $filename);
+		}
+		
+		// init PHPVideoToolkit class
+		$toolkit = new PHPVideoToolkit($tmpdir);
+				
+		// compile the image to the tmp dir
+		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
+		if(!$ok)
+		{
+			// if there was an error then get it
+			echo $toolkit->getLastError()."<br />\r\n";
+			exit;
+		}
+		
+		$toolkit->setVideoOutputDimensions(1024, 1024);
+
+		// set the output parameters (Flash video)
+		$output_filename = "$movieName." . $this->filetype;
+		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		if(!$ok)
+		{
+			// 		if there was an error then get it
+			echo $toolkit->getLastError()."<br />\r\n";
+			exit;
+		}
+		
+		// 	execute the ffmpeg command
+		$quickMov = $toolkit->execute(false, true);
+		
+		// check the return value in-case of error
+		if($quickMov !== PHPVideoToolkit::RESULT_OK) {
+			// if there was an error then get it
+			echo $toolkit->getLastError()."<br />\r\n";
+			exit;
+		}
+		
+		// Create a high-quality version as well
+		$hq_filename = "$movieName." . $this->highQualityFiletype;
+		$toolkit->setConstantQuality($this->highQualityLevel);
+		
+		// Use ASF for Windows
+		if ($this->highQualityFiletype == "avi")
+			$toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
+			
+		// Use MPEG-4 for Mac
+		if ($this->highQualityFiletype == "mov")		
+			$toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
+		
+		// Add a watermark
+		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
+		
+		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		if(!$ok)
+		{
+			// if there was an error then get it
+			echo $toolkit->getLastError()."<br />\r\n";
+			exit;
+		}
+		
+		// execute the ffmpeg command
+		$mp4 = $toolkit->execute(false, true);
+		if($mp4 !== PHPVideoToolkit::RESULT_OK) {
+			// 		if there was an error then get it
+			echo $toolkit->getLastError()."<br />\r\n";
+			exit;
+		}
+
+		//$this->showMovie($tmpurl, 512, 512);
+		
+		header('Content-type: application/json');
+		echo json_encode($tmpurl);
 	}
 	
 	/*
@@ -157,209 +292,6 @@ class ImageSeries {
 		<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
 		<!-- / MC Media Player -->
 	<?php
-	}
-	
-	/*
-	 * quickMovie
-	 */
-	public function quickMovie() {
-		// Make a temporary directory
-		$now = time();
-		$movieName = "Helioviewer-Quick-Movie-" . $this->startTime;
-		$tmpdir = $this->tmpdir . $now . "/";
-		$tmpurl = $this->tmpurl . $now . "/" . "$movieName." . $this->filetype;
-		mkdir($tmpdir);
-		
-		// Create an array of the timestamps to use for each layer
-		$imageTimes = array();
-		
-		// Create another array to keep track of the dimensions to use for each layer
-		$dimensions = array();
-		
-		$i = 0;
-		foreach ($this->layers as $layer) {
-			// Get dimensions to display for the layer
-			$d = $this->getMovieDimensions($layer);
-			
-			// Make sure that at least some tiles are visible in the viewport
-			if (($d['width'] > 0) && ($d['height'] > 0)) {
-				array_push($dimensions, $d);
-				
-				if ($i == 0)
-					$times = $this->getImageTimes($layer);
-				else
-					$times = $this->getImageTimes($layer, $imageTimes[0]);
-					
-				array_push($imageTimes, $times);
-			}
-			
-			// Remove the layer if it is not visible
-			else {
-				array_splice($this->layers, $i, 1);		
-			}
-			$i++;
-		}
-		
-		// PAD IF NECESSARY? (OR OFFSET... WHICHEVER IS EASIER... USE LARGEST IMAGE AS A GUIDELINE)
-		
-		//print_r($dimensions);
-		//exit();
-		
-		//print "<br>" . sizeOf($imageTimes) . "<br><br>";
-		
-		// For each frame, create a composite images and store it into $this->images
-		for ($j = 0; $j < $this->numFrames; $j++) {
-			
-			// CompositeImage expects an array of timestamps
-			$timestamps = array();
-		
-			// Grab timestamp for each layer
-			foreach ($imageTimes as $time) {
-				array_push($timestamps, $time[$j]['unix_timestamp']);
-			}
-			
-			// Build a composite image
-			$img = new CompositeImage($this->layers, $timestamps, $this->zoomLevel, $this->edgeEnhance, $this->sharpen, "full");
-			$filename = $tmpdir . $j . '.jpg';
-			$img->writeImage($filename);
-			
-			array_push($this->images, $filename);
-		}
-		
-		// init PHPVideoToolkit class
-		$toolkit = new PHPVideoToolkit($tmpdir);
-				
-		// compile the image to the tmp dir
-		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
-		if(!$ok)
-		{
-			// if there was an error then get it
-			echo $toolkit->getLastError()."<br />\r\n";
-			exit;
-		}
-		
-		$toolkit->setVideoOutputDimensions(1024, 1024);
-
-		// set the output parameters (Flash video)
-		$output_filename = "$movieName." . $this->filetype;
-		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
-		if(!$ok)
-		{
-			// 		if there was an error then get it
-			echo $toolkit->getLastError()."<br />\r\n";
-			exit;
-		}
-		
-		// 	execute the ffmpeg command
-		$quickMov = $toolkit->execute(false, true);
-		
-		// check the return value in-case of error
-		if($quickMov !== PHPVideoToolkit::RESULT_OK) {
-			// if there was an error then get it
-			echo $toolkit->getLastError()."<br />\r\n";
-			exit;
-		}
-		
-		// Create a high-quality version as well
-		$hq_filename = "$movieName." . $this->highQualityFiletype;
-		$toolkit->setConstantQuality($this->highQualityLevel);
-		
-		// Use ASF for Windows
-		if ($this->highQualityFiletype == "avi")
-			$toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
-			
-		// Use MPEG-4 for Mac
-		if ($this->highQualityFiletype == "mov")		
-			$toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
-		
-		// Add a watermark
-		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
-		
-		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
-		if(!$ok)
-		{
-			// if there was an error then get it
-			echo $toolkit->getLastError()."<br />\r\n";
-			exit;
-		}
-		
-		// execute the ffmpeg command
-		$mp4 = $toolkit->execute(false, true);
-		if($mp4 !== PHPVideoToolkit::RESULT_OK) {
-			// 		if there was an error then get it
-			echo $toolkit->getLastError()."<br />\r\n";
-			exit;
-		}
-
-		//$this->showMovie($tmpurl, 512, 512);
-		
-		header('Content-type: application/json');
-		echo json_encode($tmpurl);
-	}
-	
-	/**
-	 * @function
-	 * @description Determine the dimensions for the movie
-	 * @return 
-	 */
-	public function getMovieDimensions($layer) {
-		$ts = $this->tileSize;
-		
-		// Layer parameters
-		$obs  = substr($layer, 0, 3);
-		$inst = substr($layer, 3, 3);
-		$det  = substr($layer, 6, 3);
-		$meas = substr($layer, 9, 3);
-		
-		// Get full image dimensions
-		$sql = "SELECT width, height, imgScaleX 
-					FROM image
-						LEFT JOIN measurement on measurementId = measurement.id
-						LEFT JOIN measurementType on measurementTypeId = measurementType.id
-						LEFT JOIN detector on detectorId = detector.id
-						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
-						LEFT JOIN instrument on instrumentId = instrument.id
-						LEFT JOIN observatory on observatoryId = observatory.id
-	             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' LIMIT 1";
-					
-		$result = $this->db->query($sql);
-		$img = mysql_fetch_array($result, MYSQL_ASSOC);
-	    $width  = $img['width'];
-		$height = $img['height'];
-		$scale  = $img['imgScaleX'];
-		
-		// Account for scaling of image
-		$zoomOffset = $this->zoomLevel - $this->baseZoom;
-		$desiredScale = $this->baseScale * (pow(2, $zoomOffset));
-		
-		// Ratio of the desired scale to the actual JP2 image scale
-		$desiredToActual = $desiredScale / $scale;
-		
-		// Number of tiles in scaled image
-		$imgNumTilesX = ceil($width  / ($desiredToActual * $ts));
-		$imgNumTilesY = ceil($height / ($desiredToActual * $ts));
-		
-		//print $imgNumTilesX . "<br>";
-		//print $imgNumTilesY . "<br>";
-		
-		// Valid number of tiles for movie
-		$numTilesX = min($imgNumTilesX, $this->xRange[1] - $this->xRange[2] + 1);
-		$numTilesY = min($imgNumTilesY, $this->yRange[1] - $this->yRange[2] + 1);
-		
-		//print "numTilesX: $numTilesX<br>";
-		//print "numTilesY: $numTilesY<br>";
-		
-		// Movie (ROI) Dimensions
-		$dimensions = array();
-		$dimensions['width']  = $ts * $numTilesX;
-		$dimensions['height'] = $ts * $numTilesY;
-		$dimensions['x'] = (1/2) * ($width  - $dimensions['width']);
-		$dimensions['y'] = (1/2) * ($height - $dimensions['height']);
-		
-		//print_r($dimensions);
-		//exit();
-		
-		return $dimensions;
 	}
 }
 ?>
