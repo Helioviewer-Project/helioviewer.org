@@ -4,13 +4,7 @@
  * Last modified Oct 21, 2008
  */
 class CompositeImage {
-
 	private $layers;
-	private $rootDir    = "jp2/";
-	private $kdu_expand = "kdu_expand";
-	private $cacheDir   = "/var/www/hv/tiles/";
-	private $emptyTile  = "images/transparent_512.gif";
-	private $tileSize   = 512;
 	private $composite;
 
 	/*
@@ -92,16 +86,28 @@ class CompositeImage {
 	/*
 	 * getImage
 	 */
-	 public function getImage() {
-	 	return $this->composite;
-	 }
-
-	 /*
-	  * writeImage
-	  */
-	 public function writeImage($filename) {
-	 	$this->composite->writeImage($filename);
-	 }
+	public function getImage() {
+		return $this->composite;
+	}
+	
+	/*
+	 * writeImage
+	 */
+	public function writeImage($filename) {
+		$this->composite->writeImage($filename);
+	}
+	 
+	public function timestamps() {
+		return $this->timestamps;
+	}
+	
+	public function nextTime() {
+		return array_shift($this->timestamps);
+	}
+	
+	public function numFrames() {
+		return sizeOf($this->timestamps);
+	}
 
 	/**
 	 * @name getFilepath
