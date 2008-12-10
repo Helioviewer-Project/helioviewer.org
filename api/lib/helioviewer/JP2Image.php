@@ -27,15 +27,15 @@ abstract class JP2Image {
 		$this->yRange    = $yRange;
 
 		// Determine desired image scale
-		$zoomOffset         = $zoomLevel - $this->baseZoom;
-		$this->desiredScale = $this->baseScale * (pow(2, $zoomOffset));
+		$this->zoomOffset   = $zoomLevel - $this->baseZoom;
+		$this->desiredScale = $this->baseScale * (pow(2, $this->zoomOffset));
 	}
 	
 	/**
 	 * extractRegion
 	 * @return Returns an Imagick object representing the extracted region
 	 */
-	protected function extractRegion($input, $output, $imageWidth, $imageHeight, $imageScale, $meas) {
+	protected function extractRegion($input, $output, $imageWidth, $imageHeight, $imageScale, $detector, $measurement) {
 		$cmd = "$this->kdu_expand -i " . $input . " -o $output ";
 		
 		// Ratio of the desired scale to the actual JP2 image scale
@@ -85,13 +85,13 @@ abstract class JP2Image {
 		$im = new Imagick($output);
 		
 		// Apply color table
-		if (($meas == 171) || ($meas == 195) || ($meas == 284) || ($meas == 304)) {
-			$clut = new Imagick("/var/www/hv/images/color-tables/ctable_EIT_$meas.png");
+		if (($detector == "EIT") || ($measurement == "0WL")) {
+			$clut = new Imagick($this->getColorTable($detector, $measurement));
 			$im->clutImage( $clut );
 		}
 		
 		// For images with transparent components, convert pixels with value "0" to be transparent.
-		if ($meas == "0WL")
+		if ($measurement == "0WL")
 			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
 			
 		// Pad if tile is smaller than it should be (Case 2)
@@ -184,6 +184,18 @@ abstract class JP2Image {
 		if (($x == -1) && ($y == 0))
 			$im->cropImage($ts, $ts, 0, $pady);
 		*/
+	}
+	
+	private function getColorTable($detector, $measurement) {
+		if ($detector == "EIT") {
+			return "/var/www/hv/images/color-tables/ctable_EIT_$measurement.png";
+		}
+		else if ($detector == "0C2") {
+			return "/var/www/hv/images/color-tables/ctable_idl_3.png";
+		}
+		else if ($detector == "0C3") {
+			return "/var/www/hv/images/color-tables/ctable_idl_1.png";
+		}		
 	}
 	
 	public function display() {

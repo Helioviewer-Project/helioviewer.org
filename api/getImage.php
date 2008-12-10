@@ -2,8 +2,6 @@
 	require('lib/helioviewer/DbConnection.php');
 	require('lib/helioviewer/ImgIndex.php');
 
-	$dbConnection =  new DbConnection();
-	$imgIndex =      new ImgIndex($dbConnection);
 	$queryForField = 'abbreviation'; // eventually this will change to id
 	$debug= $_GET['debug'];
 	
@@ -13,6 +11,8 @@
 	
 	switch ($_GET['action']) {
 		case 'getClosest':
+			$dbConnection =  new DbConnection();
+			$imgIndex =      new ImgIndex($dbConnection);
 			if ($debug != "true") {
 				header('Content-type: application/json');
 			}
@@ -20,6 +20,7 @@
 			break;
 			
 		case 'getJP2URL':
+			$imgIndex = new ImgIndex(new DbConnection($db="hv2"));
 			echo $imgIndex->getJP2URL($_GET['timestamp'], $src);
 			break;
 	}

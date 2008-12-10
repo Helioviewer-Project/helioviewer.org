@@ -16,21 +16,21 @@
 
 /* HTML ELEMENTS */
 html, body    {height:100%;}
-h1            {font: normal 20px Verdana,Arial,Helvetica,sans-serif;}
+h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
-input, select {background-color: #F4F4F4;}
+input, select {background-color:#F4F4F4;}
 
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
-#outsideBox     {
-  margin-left:280px;
-  margin-right:250px;
-  margin-bottom:-72px;
-  min-height:100%;
+#outsideBox {
+  margin-left   : 280px;
+  margin-right  : 250px;
+  margin-bottom :-72px;
+  min-height    : 100%;
 }
 
-#left-col-header, #middle-col-header, #right-col-header { height:70px; width: 100%; }
-#left-col-header   {left: -1px}
+#left-col-header, #middle-col-header, #right-col-header { height:25px; width: 100%; }
+#left-col-header   {left: -1px; height: 50px;}
 #right-col-header  {left: 1px}
 
 #left-col {
@@ -68,6 +68,7 @@ input, select {background-color: #F4F4F4;}
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 
+
 /* Center button */
 .center-button {
     background: url(../images/blackGlass/transparentBGWhite.png) transparent repeat scroll 0%;
@@ -85,6 +86,18 @@ input, select {background-color: #F4F4F4;}
 .center-button > span {
 	color: white;
 	font-weight: bold;
+}
+
+/* Coordinates */
+#mouse-coords {
+	background: transparent;
+	color: white;
+	font-weight: 600;
+	width: 160px;
+	height: 16px;
+	position: absolute;
+	top:0px;
+	right: 0px;
 }
 
 /* Message Console */
@@ -110,11 +123,15 @@ input, select {background-color: #F4F4F4;}
 }
 
 /* Calendar */
-#date {width:80px;}
+#date {
+	width:80px; 
+	margin-right: 2px;
+}
 .ui-datepicker-trigger {
+	background-color: transparent;
+	color: transparent;
     cursor: pointer;
 	position: relative;
-	top:-4px;
 }
 
 /* Movie Builder */
@@ -128,10 +145,9 @@ img#movieBuilder {
 
 /* MISC TEXT-RELATED */
 .centered {display: block; margin-left:auto; margin-right: auto;}
-#about-dialog-header {
-	font-family: "Lucida Sans", Script, Helvetica, sans-serif;
-	font-size:   16px;
-}
+
+/* Usage Tips dialog */
+
 
 /* updates and to-do list */
 .notes {
@@ -527,49 +543,25 @@ a.event-url:hover {
 /* Time Navigation */
 #timeBackBtn {
 	background: url(../images/blackGlass/arrow_left.png);
-	width:28px;
-	height:24px;
+	width:20px;
+	height:17px;
 	border:0;
-	z-index:10000;
+	vertical-align: middle;
 }
 
 #timeForwardBtn {
 	background: url(../images/blackGlass/arrow_right.png);
-	width:28px;
-	height:24px;
+	width:20px;
+	height:17px;
 	border:0;
-	z-index:10000;
-}
-#timestepTrack {
-    margin-top:7px;
-    width: 200px;
-    height: 8px;
-    background: url(../images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-}
-#timestepHandle {
-	background: url(../images/blackGlass/glass_slider_handle_horizontal_white.png) transparent scroll 0%;
-    cursor: pointer;
-    height:21px;
-    width: 12px;
-    top:-6px;
-}
-#timestepValueDisplay {
-    color:white;
-    top:-24px;
-    left:-69px;
-    text-align: center;
-    position:relative;
-    padding:2px 0 0 1px;
-    width: 150px;
+	vertical-align: middle;
 }
 
-.timestamp {font-size:0.85em; font-weight: normal; margin-left: 0px;}
+.timestamp {font-size:0.8em; font-weight: normal; margin-left: 0px;}
 
 .timeBehind {
 	color: #FFFF66;
-	font-weight: 600;
+	font-weight: bold;
 }
 
 .timeAhead {
@@ -578,7 +570,7 @@ a.event-url:hover {
 }
 
 .timeSignificantlyOff {
-	font-weight: 600;
+	font-weight: 500;
 	color: #ff6666;
 }/* Tooltips */
 .tooltip-bottomleft-medium {

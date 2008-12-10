@@ -66,20 +66,10 @@ class ImgIndex {
 		//$offset = (5 * 3600); // 5 hours in seconds
 		$offset = 0; //local installation of MySQL set to use UTC by default...
 		
-		$query = "SELECT image.id AS imageId, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
-						CONCAT(instrument.name, ' ', detector.name, ' ', measurement.name) AS name,
-						detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
-						detector.lowestRegularZoomLevel as lowestRegularZoom,
-						opacityGroup.description AS opacityGroupDescription,
-						instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
-						UNIX_TIMESTAMP(timestamp) AS timestamp,
-							UNIX_TIMESTAMP(timestamp) - $timestamp -$offset AS timediff,
-							ABS(UNIX_TIMESTAMP(timestamp) - $timestamp - $offset) AS timediffAbs
+		$query = "SELECT image.uri as url, ABS(UNIX_TIMESTAMP(timestamp) - $timestamp - $offset) AS timediffAbs
 						FROM image
 						LEFT JOIN measurement on measurementId = measurement.id
-						LEFT JOIN measurementType on measurementTypeId = measurementType.id
 						LEFT JOIN detector on detectorId = detector.id
-						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 						LEFT JOIN instrument on instrumentId = instrument.id
 						LEFT JOIN observatory on observatoryId = observatory.id
 				WHERE ";
@@ -95,35 +85,11 @@ class ImgIndex {
 		$query .= " ORDER BY timediffAbs LIMIT 0,1";
 
 		//echo $query . "<br><br>";
-
 		$result = $this->dbConnection->query($query);
 		$ra = mysql_fetch_array($result, MYSQL_ASSOC);
 		
-		// Adjust for utc offset
-		$ts = $ra['timestamp'] - $offset;
+		return $ra["url"];
 		
-		return $this->getFilepath($ra['observatory'], $ra['instrument'], $ra['detector'], $ra['measurement'], $ts);
-	}
-	/*
-	 * getFilePath
-	 */
-	private function getFilepath($obs, $inst, $det, $meas, $ts) {
-		$rootdir = "http://localhost/hv/jp2/";
-		$d = getdate($ts);
-
-		$year = $d['year'];
-		$mon  = str_pad($d['mon'], 2 , "0", STR_PAD_LEFT);
-		$day =  str_pad($d['mday'], 2 , "0", STR_PAD_LEFT);
-		$hour =  str_pad($d['hours'], 2 , "0", STR_PAD_LEFT);
-		$min =  str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
-		$sec =  str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
-
-		$path = $rootdir . implode("/", array($year, $mon, $day, $hour));
-		$path .= "/$obs/$inst/$det/$meas/";
-		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas));
-		$path .= ".jp2";
-
-		return $path;
 	}
 }
 ?>

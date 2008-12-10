@@ -5,7 +5,7 @@
 		private $host =     "localhost";
 		private $db =       "hv2";
 		
-		public function __construct($user = null, $password = null, $host = null, $db = null) {
+		public function __construct($db = null, $user = null, $password = null, $host = null) {
 			if ($user) $this->user = $user;
 			if ($password) $this->password = $password;
 			if ($host) $this->host = $host;

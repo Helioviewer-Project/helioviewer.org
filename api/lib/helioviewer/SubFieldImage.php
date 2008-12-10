@@ -63,7 +63,7 @@ class SubFieldImage extends JP2Image {
 		//}
 		
 		// kdu_expand command
-		$im = $this->extractRegion($jp2, $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $this->measurement);
+		$im = $this->extractRegion($jp2, $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $this->detector, $this->measurement);
 		//echo $im;
 		//exit();
 		

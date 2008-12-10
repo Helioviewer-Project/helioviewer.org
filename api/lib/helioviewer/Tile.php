@@ -30,10 +30,12 @@ class Tile extends JP2Image {
 	function getTile() {
 		// Retrieve meta-information
 		$imageInfo = $this->getMetaInfo();
-
+		
 		// Filepaths (For .tif and .png images)
-		$tif = $this->getFilePath($imageInfo['timestamp']);
-		$png = substr($tif, 0, -3) . "png";
+		$png = $this->getFilePath($imageInfo['timestamp'], $this->zoomLevel, $this->x, $this->y);
+		$tif = substr($png, 0, -3) . "tif";
+
+		$actualToDesired = ($imageInfo['imgScaleX'] / $this->desiredScale);
 
 		// If tile already exists in cache, use it
 		if (file_exists($png)) {
@@ -41,20 +43,34 @@ class Tile extends JP2Image {
 			$this->display();
 			exit();
 		}
-		
-		// kdu_expand command
-		$im = $this->extractRegion($imageInfo['uri'], $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['measurement']);
-		
-		// Convert to png
+		// Otherwise, if the resolution requested is higher than the image's native resolution, try and use a cached version of the highest res tile available
+		/*
+		elseif ($actualToDesired > 1) {
+			$newX    = ($this->x < 0) ? floor($this->x / pow($actualToDesired, 2)) : ceil($this->x / pow($actualToDesired, 2));
+			$newY    = ($this->y < 0) ? floor($this->y / pow($actualToDesired, 2)) : ceil($this->y / pow($actualToDesired, 2));
+			$newZoom = $this->zoomLevel + log($actualToDesired, 2);
+			
+			$cached = $this->getFilePath($imageInfo['timestamp'], $newZoom, $newX, $newY);
+			
+			$im = new Imagick($cached);
+		}*/
 
-		$im->setFilename($png);
-		$im->writeImage($im->getFilename());
-		
-		// Optimize PNG
-		exec("optipng $png", $out, $ret);
-
-		// Delete tif image
-		unlink($tif);
+		// If nothing useful is in the cache, create the tile from scratch
+		else {
+			// kdu_expand command
+			$im = $this->extractRegion($imageInfo['uri'], $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
+			
+			// Convert to png
+	
+			$im->setFilename($png);
+			$im->writeImage($im->getFilename());
+			
+			// Optimize PNG
+			exec("optipng $png", $out, $ret);
+	
+			// Delete tif image
+			unlink($tif);
+		}
 		
 		// Store image
 		$this->image = $im;
@@ -65,7 +81,7 @@ class Tile extends JP2Image {
 	 * @return 
 	 * @param $timestamp Object
 	 */
-	function getFilePath($timestamp) {
+	function getFilePath($timestamp, $zoomLevel, $x, $y) {
 		// Starting point
 		$filepath = $this->cacheDir . $this->tileSize . "/";
 		if (!file_exists($filepath))
@@ -90,15 +106,15 @@ class Tile extends JP2Image {
 			mkdir($filepath);
 
 		// Convert coordinates to strings
-		$xStr = "+" . str_pad($this->x, 2, '0', STR_PAD_LEFT);
-		if (substr($this->x,0,1) == "-")
-			$xStr = "-" . str_pad(substr($this->x, 1), 2, '0', STR_PAD_LEFT);
+		$xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
+		if (substr($x,0,1) == "-")
+			$xStr = "-" . str_pad(substr($x, 1), 2, '0', STR_PAD_LEFT);
 
-		$yStr = "+" . str_pad($this->y, 2, '0', STR_PAD_LEFT);
-		if (substr($this->y,0,1) == "-")
-			$yStr = "-" . str_pad(substr($this->y, 1), 2, '0', STR_PAD_LEFT);
+		$yStr = "+" . str_pad($y, 2, '0', STR_PAD_LEFT);
+		if (substr($y,0,1) == "-")
+			$yStr = "-" . str_pad(substr($y, 1), 2, '0', STR_PAD_LEFT);
 
-		$filepath .= $this->imageId . "_" . $this->zoomLevel . "_" . $xStr . "_" . $yStr . ".tif";
+		$filepath .= $this->imageId . "_" . $zoomLevel . "_" . $xStr . "_" . $yStr . ".png";
 
 		return $filepath;
 	}
@@ -111,8 +127,8 @@ class Tile extends JP2Image {
 	 * @param $imageId Object
 	 */
 	function getMetaInfo() {
-		$query  = "SELECT timestamp, uri, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement FROM image ";
-		$query .= "LEFT JOIN measurement on image.measurementId = measurement.id WHERE image.id=$this->imageId";
+		$query  = "SELECT timestamp, uri, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image ";
+		$query .= "LEFT JOIN measurement on image.measurementId = measurement.id  LEFT JOIN detector on measurement.detectorId = detector.id WHERE image.id=$this->imageId";
 
 		// Query database
 		$result = $this->db->query($query);
