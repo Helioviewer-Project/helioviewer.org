@@ -2,13 +2,13 @@
 require('DbConnection.php');
 
 abstract class JP2Image {
-	protected $noImage    = "images/transparent_512.gif";
-	protected $kdu_expand = "kdu_expand";
+	protected $noImage      = "images/transparent_512.gif";
+	protected $kdu_expand   = "/home/esahelio/kakadu/bin/kdu_expand";
+	protected $cacheDir     = "/home/esahelio/public_html/cache/";
+	protected $jp2Dir       = "/home/esahelio/public_html/jp2/";
 	protected $kdu_lib_path = "/home/esahelio/kakadu/lib";
-	protected $cacheDir   = "/var/www/hv/cache/";
-	protected $jp2Dir     = "/var/www/hv/jp2/";
-	protected $baseScale  = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
-	protected $baseZoom   = 10;   //Zoom-level at which (EIT) images are of this scale.
+	protected $baseScale    = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
+	protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
 	
 	protected $db;
 	protected $xRange;
@@ -72,11 +72,11 @@ abstract class JP2Image {
 		
 		// Execute the command
 		try {
-			//exec($cmd, $out, $ret);
 			exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . escapeshellcmd($cmd), $out, $ret);
 			
-			if ($ret != 0)
+			if ($ret != 0) {
 				throw new Exception("Failed to expand request sub-region!<br><br> <b>Command:</b> '$cmd'");
+			}
 				
 		} catch(Exception $e) {
 			echo '<span style="color:red;">Error:</span> ' .$e->getMessage();
@@ -84,28 +84,36 @@ abstract class JP2Image {
 		}
 		
 		// Open in ImageMagick
-		$im = new Imagick($output);
+		// $im = new Imagick($output);
+		$tif = $output;
+
+		// For images with transparent components, convert pixels with value "0" to be transparent.
+		if ($measurement == "0WL")
+			exec("convert -transparent black $tif $tif", $out, $ret);
+			//$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
 		
 		// Apply color table
 		if (($detector == "EIT") || ($measurement == "0WL")) {
-			$clut = new Imagick($this->getColorTable($detector, $measurement));
-			$im->clutImage( $clut );
+			//$clut = new Imagick($this->getColorTable($detector, $measurement));
+			//$im->clutImage( $clut );
+			$clut = $this->getColorTable($detector, $measurement);
+			exec("convert $tif $clut -clut $tif", $out, $ret);
+
 		}
 		
-		// For images with transparent components, convert pixels with value "0" to be transparent.
-		if ($measurement == "0WL")
-			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
-			
 		// Pad if tile is smaller than it should be (Case 2)
 		if ($imageScale < $this->desiredScale) {
-			$this->padImage($im, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+			//$this->padImage($im, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+			$this->padImage($tif, $this->tileSize, $this->xRange["start"], $this->yRange["start"], $relTs);
 		}
 
 		// Resize if necessary (Case 3)
 		if ($relTs < $this->tileSize)
-			$im->scaleImage($this->tileSize, $this->tileSize);
+			exec("convert -geometry " . $this->tileSize . "x" . $this->tileSize . "! $tif $tif", $out, $ret);
+			//$im->scaleImage($this->tileSize, $this->tileSize);
 
-		return $im;
+		//return $im;
+		return $tif;
 	}
 	
 	/**
@@ -141,13 +149,17 @@ abstract class JP2Image {
 	/**
 	 * padImage
 	 */
-	function padImage($im, $ts, $x, $y) {
+	//function padImage($im, $ts, $x, $y) {
+	function padImage($tif, $ts, $x, $y, $relTs) {
 		// First pad all sides, then trim away unwanted parts
-		$clear = new ImagickPixel( "transparent" );
-		$padx = $ts - $im->getImageWidth();
-		$pady = $ts - $im->getImageHeight();
+		//$clear = new ImagickPixel( "transparent" );
+		//$padx = $ts - $im->getImageWidth();
+		//$pady = $ts - $im->getImageHeight();
+		$padx = $ts - $relTs;
+		$pady = $ts - $relTs;
 		
-		$im->borderImage($clear, $padx, $pady);
+		//$im->borderImage($clear, $padx, $pady);
+		//exec("convert $tif -background transparent -gravity center -extent 380x144 test2.png
 
 		// left
 		//if ($x <= -1)
@@ -155,19 +167,23 @@ abstract class JP2Image {
 		
 		// top-left
 		if (($x == -1) && ($y == -1))
-			$im->cropImage($ts, $ts, 0, 0);
+			exec("convert $tif -background transparent -gravity SouthEast -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+			//$im->cropImage($ts, $ts, 0, 0);
 
 		// top-right
 		if (($x == 0) && ($y == -1))
-			$im->cropImage($ts, $ts, $padx, 0);
+			exec("convert $tif -background transparent -gravity SouthWest -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+//			$im->cropImage($ts, $ts, $padx, 0);
 
 		// bottom-right
 		if (($x == 0) && ($y == 0))
-			$im->cropImage($ts, $ts, $padx, $pady);
+			exec("convert $tif -background transparent -gravity NorthWest -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+			//$im->cropImage($ts, $ts, $padx, $pady);
 
 		// bottom-left
 		if (($x == -1) && ($y == 0))
-			$im->cropImage($ts, $ts, 0, $pady);
+			exec("convert $tif -background transparent -gravity NorthEast -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+			//$im->cropImage($ts, $ts, 0, $pady);
 
 		/**
 		// top-left
@@ -190,13 +206,13 @@ abstract class JP2Image {
 	
 	private function getColorTable($detector, $measurement) {
 		if ($detector == "EIT") {
-			return "/var/www/hv/images/color-tables/ctable_EIT_$measurement.png";
+			return "/home/esahelio/public_html/images/color-tables/ctable_EIT_$measurement.png";
 		}
 		else if ($detector == "0C2") {
-			return "/var/www/hv/images/color-tables/ctable_idl_3.png";
+			return "/home/esahelio/public_html/images/color-tables/ctable_idl_3.png";
 		}
 		else if ($detector == "0C3") {
-			return "/var/www/hv/images/color-tables/ctable_idl_1.png";
+			return "/home/esahelio/public_html/images/color-tables/ctable_idl_1.png";
 		}		
 	}
 	
@@ -211,7 +227,8 @@ abstract class JP2Image {
 		header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
 		
 		header( "Content-Type: image/png" );
-		echo $this->image;
+		//echo $this->image;
+	    readfile($this->image);
 	}
 }
 ?>
