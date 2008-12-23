@@ -69,27 +69,33 @@ abstract class JP2Image {
 		// Add desired region
 		$cmd .= $this->getRegionString($imageWidth, $imageHeight, $relTs);
 		//print $cmd;
-		
+
 		// Execute the command
-		try {
-			exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . escapeshellcmd($cmd), $out, $ret);
-			
-			if ($ret != 0) {
-				throw new Exception("Failed to expand request sub-region!<br><br> <b>Command:</b> '$cmd'");
-			}
-				
-		} catch(Exception $e) {
-			echo '<span style="color:red;">Error:</span> ' .$e->getMessage();
-			exit();
+		$ret = 1;
+
+		// Work-around: Keep trying until successful
+		exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . escapeshellcmd($cmd), $out, $ret);
+	
+		// On fail, write to Helioviewer log 
+		if ($ret != 0) {
+			$log = "/home/esahelio/www/HelioviewerLog.txt";
+			$fp  = fopen($log, 'a');
+			$time = date('Y-m-d h:m:s');
+			fwrite($fp, $time . ": '$cmd'" . "\n");
+			fclose($fp);
 		}
 		
 		// Open in ImageMagick
 		// $im = new Imagick($output);
 		$tif = $output;
 
+		// Work-around: Call Image-magick manually...
+		$imcmd = "convert $tif ";
+
 		// For images with transparent components, convert pixels with value "0" to be transparent.
 		if ($measurement == "0WL")
-			exec("convert -transparent black $tif $tif", $out, $ret);
+			$imcmd .= "-transparent black ";
+			//exec("convert -transparent black $tif $tif", $out, $ret);
 			//$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
 		
 		// Apply color table
@@ -97,20 +103,26 @@ abstract class JP2Image {
 			//$clut = new Imagick($this->getColorTable($detector, $measurement));
 			//$im->clutImage( $clut );
 			$clut = $this->getColorTable($detector, $measurement);
-			exec("convert $tif $clut -clut $tif", $out, $ret);
+			$imcmd .= "$clut -clut ";
+			//exec("convert $tif $clut -clut $tif", $out, $ret);
 
 		}
 		
 		// Pad if tile is smaller than it should be (Case 2)
 		if ($imageScale < $this->desiredScale) {
 			//$this->padImage($im, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
-			$this->padImage($tif, $this->tileSize, $this->xRange["start"], $this->yRange["start"], $relTs);
+			$imcmd .= $this->padImage($tif, $this->tileSize, $this->xRange["start"], $this->yRange["start"], $relTs);
 		}
 
 		// Resize if necessary (Case 3)
 		if ($relTs < $this->tileSize)
-			exec("convert -geometry " . $this->tileSize . "x" . $this->tileSize . "! $tif $tif", $out, $ret);
+			$imcmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
+			//exec("convert -geometry " . $this->tileSize . "x" . $this->tileSize . "! $tif $tif", $out, $ret);
 			//$im->scaleImage($this->tileSize, $this->tileSize);
+
+		exec($imcmd . "$tif");
+
+		//echo $imcmd . $tif;
 
 		//return $im;
 		return $tif;
@@ -132,7 +144,7 @@ abstract class JP2Image {
 		// number of tiles
 		$numTilesX = min($imgNumTilesX - $relX, $this->xRange["end"] - $this->xRange["start"] + 1);
 		$numTilesY = min($imgNumTilesY - $relY, $this->yRange["end"] - $this->yRange["start"] + 1);
-
+		
 		//print "numTilesX: $numTilesX, numTilesY: $numTilesY <br>";
 		//print "imgNumTilesX: $imgNumTilesX, imgNumTilesY: $imgNumTilesY <br>";
 		//exit();
@@ -140,8 +152,29 @@ abstract class JP2Image {
 		// Convert to percentages
 		$tsPercentX = 1 / $imgNumTilesX;
 		$tsPercentY = 1 / $imgNumTilesY;
+		
+		// Width and Height as a fraction of 1
+		$width  = $numTilesX * $tsPercentX;
+		$height = $numTilesY * $tsPercentY;
+		
+		// Starting coordinates
+		$top  = $relY * $tsPercentY;
+		$left = $relX * $tsPercentX;
 
-		$region = "-region {" . ($relY * $tsPercentY) . "," . ($relX * $tsPercentX) . "},{" . $numTilesX * $tsPercentX . "," . $numTilesY * $tsPercentY . "} ";
+		// Exit if either of the dimensions are not valid
+		if (($width <= 0) || ($width > 1) || ($height <= 0) || ($height > 1)) {
+			print "Error: Invalid tile dimensions.";
+			exit();
+		}
+		
+		// Make sure region is within bounds
+		if (($top < 0) || ($top >= 1) || ($left < 0) || ($left >= 1)) {
+			print "Error: Requested region out of bounds. Start coordinates: $relX, $relY";
+			exit();
+		}
+
+		//$region = "-region \{$top,$left\},\{$height,$width\}";
+		$region = "-region {" . $top . "," . $left . "},{" . $height . "," . $width . "} ";
 
 		return $region;
 	}
@@ -167,22 +200,26 @@ abstract class JP2Image {
 		
 		// top-left
 		if (($x == -1) && ($y == -1))
-			exec("convert $tif -background transparent -gravity SouthEast -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+			return "-background transparent -gravity SouthEast -extent $ts" . "x" . "$ts ";
+			//exec("convert $tif -background transparent -gravity SouthEast -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
 			//$im->cropImage($ts, $ts, 0, 0);
 
 		// top-right
 		if (($x == 0) && ($y == -1))
-			exec("convert $tif -background transparent -gravity SouthWest -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+			return "-background transparent -gravity SouthWest -extent $ts" . "x" . "$ts ";
+			//exec("convert $tif -background transparent -gravity SouthWest -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
 //			$im->cropImage($ts, $ts, $padx, 0);
 
 		// bottom-right
 		if (($x == 0) && ($y == 0))
-			exec("convert $tif -background transparent -gravity NorthWest -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+			return "-background transparent -gravity NorthWest -extent $ts" . "x" . "$ts ";
+			//exec("convert $tif -background transparent -gravity NorthWest -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
 			//$im->cropImage($ts, $ts, $padx, $pady);
 
 		// bottom-left
 		if (($x == -1) && ($y == 0))
-			exec("convert $tif -background transparent -gravity NorthEast -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
+			return "-background transparent -gravity NorthEast -extent $ts" . "x" . "$ts ";
+			//exec("convert $tif -background transparent -gravity NorthEast -extent " . $ts . "x" . $ts . " $tif", $out, $ret);
 			//$im->cropImage($ts, $ts, 0, $pady);
 
 		/**
