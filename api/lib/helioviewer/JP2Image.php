@@ -76,7 +76,7 @@ abstract class JP2Image {
 			exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . escapeshellcmd($cmd), $out, $ret);
 			
 			if ($ret != 0)
-				throw new Exception("Failed to expand request sub-region!<br><br> <b>Command:</b> '$cmd'");
+				throw new Exception("Failed to expand requested sub-region!<br><br> <b>Command:</b> '$cmd'");
 				
 		} catch(Exception $e) {
 			echo '<span style="color:red;">Error:</span> ' .$e->getMessage();

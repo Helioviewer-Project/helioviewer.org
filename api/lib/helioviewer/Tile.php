@@ -12,25 +12,25 @@ class Tile extends JP2Image {
 	/**
 	 * constructor
 	 */
-	public function __construct($id, $zoomLevel, $x, $y, $tileSize) {
+	public function __construct($id, $zoomLevel, $x, $y, $tileSize, $skipCheck=false) {
 		$xRange = array("start" => $x, "end" => $x);
 		$yRange = array("start" => $y, "end" => $y);
-		
+
 		parent::__construct($zoomLevel, $xRange, $yRange, $tileSize);
-		
+
 		$this->x = $x;
 		$this->y = $y;
 		$this->imageId = $id;
-		$this->getTile();
+		$this->getTile($skipCheck);
 	}
 
 	/**
 	 * getTile
 	 */
-	function getTile() {
+	function getTile($skipCheck) {
 		// Retrieve meta-information
 		$imageInfo = $this->getMetaInfo();
-		
+
 		// Filepaths (For .tif and .png images)
 		$png = $this->getFilePath($imageInfo['timestamp'], $this->zoomLevel, $this->x, $this->y);
 		$tif = substr($png, 0, -3) . "tif";
@@ -38,10 +38,12 @@ class Tile extends JP2Image {
 		$actualToDesired = ($imageInfo['imgScaleX'] / $this->desiredScale);
 
 		// If tile already exists in cache, use it
-		if (file_exists($png)) {
-			$this->image = new Imagick($png);
-			$this->display();
-			exit();
+		if (!$skipCheck) {
+			if (file_exists($png)) {
+				$this->image = new Imagick($png);
+				$this->display();
+				exit();
+			}
 		}
 		// Otherwise, if the resolution requested is higher than the image's native resolution, try and use a cached version of the highest res tile available
 		/*
@@ -49,9 +51,9 @@ class Tile extends JP2Image {
 			$newX    = ($this->x < 0) ? floor($this->x / pow($actualToDesired, 2)) : ceil($this->x / pow($actualToDesired, 2));
 			$newY    = ($this->y < 0) ? floor($this->y / pow($actualToDesired, 2)) : ceil($this->y / pow($actualToDesired, 2));
 			$newZoom = $this->zoomLevel + log($actualToDesired, 2);
-			
+
 			$cached = $this->getFilePath($imageInfo['timestamp'], $newZoom, $newX, $newY);
-			
+
 			$im = new Imagick($cached);
 		}*/
 
@@ -59,26 +61,26 @@ class Tile extends JP2Image {
 		else {
 			// kdu_expand command
 			$im = $this->extractRegion($imageInfo['uri'], $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
-			
+
 			// Convert to png
-	
+
 			$im->setFilename($png);
 			$im->writeImage($im->getFilename());
-			
+
 			// Optimize PNG
 			exec("optipng $png", $out, $ret);
-	
+
 			// Delete tif image
 			unlink($tif);
 		}
-		
+
 		// Store image
 		$this->image = $im;
 	}
 
 	/**
 	 * getFilePath
-	 * @return 
+	 * @return
 	 * @param $timestamp Object
 	 */
 	function getFilePath($timestamp, $zoomLevel, $x, $y) {
@@ -86,7 +88,7 @@ class Tile extends JP2Image {
 		$filepath = $this->cacheDir . $this->tileSize . "/";
 		if (!file_exists($filepath))
 			mkdir($filepath);
-			
+
 		// Date information
 		$year  = substr($timestamp,0,4);
 		$month = substr($timestamp,5,2);
