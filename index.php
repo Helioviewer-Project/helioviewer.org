@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<!-- HelioViewer rev. 169, December 29, 2008 -->
+		<!-- HelioViewer rev. 170, December 30, 2008 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -100,7 +100,19 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 			Event.observe(window, 'load', function () {
-				var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport' });
+				<?php
+					//API Example: index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL
+					if ($_GET['layers'])
+						$layers = explode(",", $_GET['layers']);
+				
+					$view = array(
+						'obs-date'  => $_GET['obs-date'],
+						'img-scale' => $_GET['img-scale'],
+						'layers'    => $layers
+					);
+					echo "var view = " . json_encode($view) . ";\n";
+				?>
+				var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport', load: view });
 			});
 		</script>
 

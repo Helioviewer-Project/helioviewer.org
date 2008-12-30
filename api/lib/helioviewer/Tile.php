@@ -30,7 +30,7 @@ class Tile extends JP2Image {
 	function getTile($skipCheck) {
 		// Retrieve meta-information
 		$imageInfo = $this->getMetaInfo();
-
+		
 		// Filepaths (For .tif and .png images)
 		$png = $this->getFilePath($imageInfo['timestamp'], $this->zoomLevel, $this->x, $this->y);
 		$tif = substr($png, 0, -3) . "tif";
@@ -58,21 +58,20 @@ class Tile extends JP2Image {
 		}*/
 
 		// If nothing useful is in the cache, create the tile from scratch
-		else {
-			// kdu_expand command
-			$im = $this->extractRegion($imageInfo['uri'], $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
 
-			// Convert to png
+		// kdu_expand command
+		$im = $this->extractRegion($imageInfo['uri'], $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
 
-			$im->setFilename($png);
-			$im->writeImage($im->getFilename());
+		// Convert to png
 
-			// Optimize PNG
-			exec("optipng $png", $out, $ret);
+		$im->setFilename($png);
+		$im->writeImage($im->getFilename());
 
-			// Delete tif image
-			unlink($tif);
-		}
+		// Optimize PNG
+		exec("optipng $png", $out, $ret);
+
+		// Delete tif image
+		unlink($tif);
 
 		// Store image
 		$this->image = $im;
@@ -96,16 +95,22 @@ class Tile extends JP2Image {
 
 		// Create necessary directories
 		$filepath .= $year . "/";
-		if (!file_exists($filepath))
+		if (!file_exists($filepath)) {
 			mkdir($filepath);
+			chmod($filepath, 0777);
+		}
 
 		$filepath .= $month . "/";
-		if (!file_exists($filepath))
+		if (!file_exists($filepath)) {
 			mkdir($filepath);
+			chmod($filepath, 0777);
+		}
 
 		$filepath .= $day . "/";
-		if (!file_exists($filepath))
+		if (!file_exists($filepath)) {
 			mkdir($filepath);
+			chmod($filepath, 0777);
+		}
 
 		// Convert coordinates to strings
 		$xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
