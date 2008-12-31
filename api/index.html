@@ -5,11 +5,12 @@
 		<link rel="shortcut icon" href="../favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="Cache-Control" content="No-Cache">
+		<meta name="author" content="Keith Hughitt">
 		<meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
 		<meta name="keywords" content="Helioviewer, hv, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, API">
 		<style type="text/css">
 			.toc {
-				background-color: #c9dfff;
+				background-color: #E3EFFF;
 				color: #111;
 				border: 1px solid black;
 				width: 250px;
@@ -17,25 +18,46 @@
 				margin-left:30px;
 			}
 			
-			.toc a {
+			a {
 				text-decoration: none;
 				color: #111;			
 			}
 			
 			a:hover {
-				text-decoration: none;
+				text-decoration: underline;
 				color: #d9759d;			
 			}
 			
-			.contents {
-				background-color: #f0f6ff;
+			ol > li, ul > li {margin: 5px 0px 5px 0px;}
+		
+			div.content {
 				color: #000;
-				border: 1px solid black;
 				width: 90%;
-				height: 300px;
+				height: 100%;
 				margin-left:30px;
 				padding: 10px;
 			}
+			
+			div.content > div { width: 90%; }
+			
+			div.content > div > p { margin-left: 20px; text-indent: 20px; font-family: verdana, sans-serif }
+			div.content > div > p:first-letter {color:#3366FF; font-size:x-large;}
+			
+			div.summary-box {
+				width: 60%;
+				margin-left: 40px;
+				background-color: #f0f1f2;
+				color: #000;
+				border: 1px solid black;
+				padding: 10px;
+			}
+			
+			span.example-header {display: block; color: #3366FF}
+			span.example-url    {display: block; margin-left: 20px; font-size: 12px;}
+			span.example-url > a {color: #3399ff;}
+			
+			table.param-list {border: none; margin-left: 10px;}
+			
 		</style>
 	</head>
 	
@@ -46,21 +68,112 @@
 		<!-- Table of contents -->
 		<div class='toc'>
 			<ol>
+				<li><a href="index.html#Overview">Overview</a></li>
 				<li><a href="index.html#CustomView">Loading a Custom View</a></li>
-				<li>Events API</li>
-				<li>Jpeg-2000 API</li>
-			</ol>			
+				<li><a href="index.html#ImageAPI">Image API</a>
+					<ul>
+						<li>Image id</li>
+						<li>Tiles</li>
+					</ul>
+				</li>
+				<li>Feature/Event API
+					<ul>
+						<li>Catalogs</li>
+						<li>Catalog Entries</li>
+					</ul>
+				</li>
+				<li>Jpeg-2000 API
+					<ul>
+						<li>Image API</li>
+						<li>Image Series API</li>
+					</ul>
+				</li>
+				<li><a href="index.html#Movies">Movie API</a></li>
+				<li>
+					<a href="index.html#Appendices">Appendices</a>
+						<ol style="list-style-type: upper-latin;">
+							<li><a href="index.html#Identifiers">Identifiers</a></li>
+							<li><a href="index.html#VariableTypes">Variable Types</a></li>
+						</ol>
+				</li>
+			</ol>
 		</div>
 		
-		<br>
+		<br><hr><br>
 		
-		<!-- Contents -->
-		<div class='contents'>
+		<!-- Main Content -->
+		<div class='content'>
+			
+			<!-- Overview -->
+			<div id="Overview">
+				1. Overview 
+				<p>In order to facilitate third-party application developers who wish use content from and interact with Helioviewer.org, 
+				a number of <abbr title="Application Programming Interface">APIs</abbr> have been developed, offering access to a variety of components used
+				by Helioviewer. All of the interfaces are accessed using HTML query strings. The simplest API's require only a single URI, and result in
+				some resource being returned, e.g. a movie or <abbr title="JPEG-2000">JP2</abbr> image series, or some action being performed, e.g. loading
+				a particular "View." into Helioviewer. Some of the API's are somewhat more complex, and involve two steps. For example, in order to get a list
+				of events from some catalogs for a certain period of time, first a query is usually made to see which catalogs are available and functional. A second
+				query then returns a list of features/events are fetched using a second query. It is possible to skip the first part of the query if you know
+				the ID's for the desired catalogs and are confident that they are available, you can skip the first query and go straight to the second query.
+				More on that later though.</p>
+			</div>
+			
+			<!-- Custom View API-->
 			<div id="CustomView">
-				1. Custom View API:
-			</div>			
+				2. Custom View API:
+				<p>The custom view API enables the user to load a specific set of parameters into Helioviewer: "view," here, simply means a given set of observation
+				parameters. This is useful for dynamically loading a specific view or observation into Helioviewer using a URL.</p>
+				
+				<div class="summary-box">
+					<span style="text-decoration: underline;">Usage:</span><br><br>
+					
+					http://www.helioviewer.org/index.php<br><br>
+					
+					Supported Parameters:<br><br>
+					
+					<table class="param-list">
+						<tr>
+							<td width="25%"><b>obs-date</b></td>
+							<td width="35%"><i>Unix Timestamp</i></td>
+							<td>Date and time to display</td>
+						</tr>
+						<tr>
+							<td><b>img-scale</b></td>
+							<td><i>Float</i></td>
+							<td>Image scale in arc-seconds/pixel</td>
+						</tr>
+						<tr>
+							<td><b>layers</b></td>
+							<td><i>List</i></td>
+							<td>A comma-separated list of the image layers to be displayed</td>
+						</tr>
+					</table>
+					
+					<br>
+					
+					<span class="example-header">Example:</span>
+					<span class="example-url">
+						<a href="http://www.helioviewer.org/index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL">http://www.helioviewer.org/index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL</a>
+					</span>	
+				</div>
+			</div>
+			
+			<br>
+			
+			<!-- Image API -->
+			<div id="ImageAPI">
+				2. Image API:
+				<p></p>
+				<ul>
+				</ul>
+			</div>
+					
 		</div>
 
+		<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
+			Last Updated: 2008-12-31 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+		</div>
+	
 	</body>
 </html>	
 	

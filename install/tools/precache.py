@@ -40,17 +40,16 @@ def main(argv):
 			
 			numTilesX = img['width']  / relTs
 			numTilesY = img['height'] / relTs
+			
+			xStart = max(-max(1, numTilesX/2), args.xStart)
+			xEnd   = min( max(1, numTilesX/2), args.xEnd)
+			yStart = max(-max(1, numTilesY/2), args.yStart)
+			yEnd   = min( max(1, numTilesY/2), args.yEnd)
 
-			for x in range (-max(1, numTilesX/2), max(1, numTilesX/2)):
-				for y in range (-max(1, numTilesY/2), max(1, numTilesY/2)):
+			for x in range (xStart, xEnd):
+				for y in range (yStart, yEnd):
 					print "Caching tile(" + str(img['id']) + ", " + str(zoomLevel) + ", " + str(x) + ", " + str(y) + ");"
 					ret = subprocess.call([cacheTile, str(img['id']), str(zoomLevel), str(x), str(y)])
-	
-	#print images[0]['width']
-	
-	# Next, for each image in resulting array, for each zoom-level, for each x & y coordinate call Tile constructor which generates the tile.
-	#ret = subprocess.call(["ls", "-l"])
-	#ret = subprocess.call(["./cacheTile.php " + id + " " + zoom + " " + x + " " + y])
 
 def getArguments():
 	''' Gets command-line arguments and handles validation '''
@@ -59,6 +58,10 @@ def getArguments():
 	parser.add_option("", "--max-Zoom", dest="maxZoom", metavar="ZOOM", help="Minimum zoom-level to cache")
 	parser.add_option("", "--start-Time", dest="startTime", help="UNIX_TIMESTAMP of date range start")
 	parser.add_option("", "--end-Time", dest="endTime", help="UNIX_TIMESTAMP of date range end")
+	parser.add_option("", "--x-Start", dest="xStart", help="[Optional] Horizontal lower limit on tiles to precache.")
+	parser.add_option("", "--x-End", dest="xEnd", help="[Optional] Horizontal upper limit on tiles to precache.")
+	parser.add_option("", "--y-Start", dest="yStart", help="[Optional] Vertical lower limit on tiles to precache.")
+	parser.add_option("", "--y-End", dest="yEnd", help="[Optional] Vertical lower limit on tiles to precache.")
 
 	try:                                
 		options, args = parser.parse_args()
@@ -69,6 +72,7 @@ def getArguments():
 
 	ok = True
 
+	# Required parameters
 	if options.minZoom == None:
 		print "Minimum zoom-level not specified!"
 		ok = False
@@ -88,6 +92,23 @@ def getArguments():
 	if not ok:
 		usage(parser)
 		sys.exit(2)
+		
+	# Optional parameters (None ~ negative infinity, () ~ positive infinity)
+	if options.xStart != None:
+		options.xStart = int(options.xStart)
+
+	if options.yStart != None:
+		options.yStart = int(options.yStart)
+
+	if options.xEnd == None:
+		options.xEnd = ()
+	else:
+		options.xEnd = int(options.xEnd) + 1
+		
+	if options.yEnd == None:
+		options.yEnd = ()		
+	else:
+		options.yEnd = int(options.yEnd) + 1
 		
 	return options
 	
@@ -119,8 +140,10 @@ def usage(parser):
 	''' Prints program usage description '''
 	print ""
 	parser.print_help()
-	print "\n Example: \n"
+	print "\n Examples: \n"
 	print "    \"precache.py --start-Time=1065312000 --end-Time=1065512000 --min-Zoom=10 --max-Zoom=14\"\n"
+	print "\n"
+	print "    \"./precache.py --start-Time=1064966400 --end-Time=1067644799 --min-Zoom=13 --max-Zoom=14 --x-Start=-1 --x-End=1 --y-Start=-1 --y-End=1\"\n"
 	
 if __name__ == "__main__":
     main(sys.argv[1:])
