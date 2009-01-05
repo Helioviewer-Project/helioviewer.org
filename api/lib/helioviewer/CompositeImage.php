@@ -2,6 +2,7 @@
 /*
  * Created on Sep 12, 2008
  * Last modified Oct 21, 2008
+ * by Keith Hughitt
  */
 class CompositeImage {
 	private $layers;

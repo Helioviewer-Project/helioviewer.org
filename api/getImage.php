@@ -20,8 +20,8 @@
 			break;
 			
 		case 'getJP2URL':
-			$imgIndex = new ImgIndex(new DbConnection($db="hv2"));
-			echo $imgIndex->getJP2URL($_GET['timestamp'], $src);
+			$imgIndex = new ImgIndex(new DbConnection());
+			echo $imgIndex->getJP2Location($_GET['timestamp'], $src);
 			break;
 	}
 ?>

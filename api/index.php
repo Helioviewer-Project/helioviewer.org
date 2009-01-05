@@ -1,3 +1,9 @@
+<?php
+	if (isset($_GET['action'])) {
+		require_once("lib/helioviewer/API.php");
+		new API($_GET);
+	} else {
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
@@ -86,8 +92,8 @@
 				</li>
 				<li><a href="index.html#JPEG2000API">JPEG-2000 API</a>
 					<ul>
-						<li>Image API</li>
-						<li>Image Series API</li>
+						<li><a href="index.html#JP2">Image API</a></li>
+						<li><a href="index.html#JP2SERIES">Image Series API</a></li>
 					</ul>
 				</li>
 				<li><a href="index.html#MovieAPI">Movie API</a></li>
@@ -435,7 +441,35 @@
 			<!-- JPEG-2000 API -->
 			<div id="JPEG2000API">
 				6. JPEG-2000 API:
-				<p><i>Under Development...</i></p>
+				<p>Helioviewer's JPEG-2000 API's enable access to the raw JPEG-2000 images used to generate the tiles seen on the site, as
+				well as real-time generation of JPEG-2000 Image Series.</p>
+				<ol style="list-style-type: upper-latin;">
+					<!-- JPEG-2000 Image API -->
+					<li>
+						<div id="JP2">
+							JP2 Images:
+							<p>desc.</p>
+							
+							<br>
+							
+							<div class="summary-box">
+							</div>
+						</div>
+					</li>
+					
+					<!-- JPEG-2000 Image-Series API -->
+					<li>
+						<div id="JP2SERIES">
+							JP2 Image Series:
+							<p>desc.</p>
+							
+							<br>
+							
+							<div class="summary-box">
+							</div>
+						</div>
+					</li>
+				</ol>
 			</div>
 			
 			<!-- Movie API -->
@@ -614,4 +648,6 @@
 	
 	</body>
 </html>	
-	
+<?php
+	}
+?>

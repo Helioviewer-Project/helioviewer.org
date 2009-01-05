@@ -1,6 +1,7 @@
 <?php
 /**
  * @class Tile
+ * @author Keith Hughitt
  */
 require('JP2Image.php');
 

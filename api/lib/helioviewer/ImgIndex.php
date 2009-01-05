@@ -61,7 +61,7 @@ class ImgIndex {
 		return $measurements;
 	}
 
-	public function getJP2URL($timestamp, $src) {
+	public function getJP2Location($timestamp, $src) {
 		//WORKAROUND FOR MySQL TimeZone differences (HostGator is not using UTC by default)
 		//$offset = (5 * 3600); // 5 hours in seconds
 		$offset = 0; //local installation of MySQL set to use UTC by default...

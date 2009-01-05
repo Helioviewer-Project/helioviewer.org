@@ -1,5 +1,5 @@
 <?php
-require('DbConnection.php');
+require_once('DbConnection.php');
 
 abstract class JP2Image {
 	protected $noImage    = "images/transparent_512.gif";
