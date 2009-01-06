@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<!-- HelioViewer rev. 170, December 30, 2008 -->
+		<!-- HelioViewer rev. 174, January 06, 2009 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -230,7 +230,7 @@
 		<!-- About dialog -->
 		<div id='about-dialog'>
 			<img src="images/logo/about.png" alt="Helioviewer.org Logo"><br>
-			<span style="font-size:small;">Last Updated: December 29, 2008 (rev. 169)</span><br><br>
+			<span style="font-size:small;">Last Updated: January 06, 2009 (rev. 174)</span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
 				<li><a href="mailto:webmaster@helioviewer.org" class="gray">Keith Hughitt</a></li>

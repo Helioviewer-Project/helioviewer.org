@@ -36,6 +36,8 @@ class ImgIndex {
 
 		$query .= " ORDER BY timediffAbs LIMIT 0,1";
 		
+		//echo $query . "<br>";
+		
 		if ($debug == "true")
 			echo "<br><br>$query<br><br>";
 

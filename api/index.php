@@ -2,6 +2,10 @@
 	if (isset($_GET['action'])) {
 		require_once("lib/helioviewer/API.php");
 		new API($_GET);
+	}
+	elseif (isset($_POST['action'])) {
+		require_once("lib/helioviewer/API.php");
+		new API($_POST);
 	} else {
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -76,32 +80,27 @@
 		<!-- Table of contents -->
 		<div class='toc'>
 			<ol>
-				<li><a href="index.html#Overview">Overview</a></li>
-				<li><a href="index.html#CustomView">Loading a Custom View</a></li>
-				<li><a href="index.html#ImageAPI">Image API</a>
+				<li><a href="index.php#Overview">Overview</a></li>
+				<li><a href="index.php#CustomView">Loading a Custom View</a></li>
+				<li><a href="index.php#ImageAPI">Image API</a></li>
+				<li><a href="index.php#FeatureEventAPI">Feature/Event API</a>
 					<ul>
-						<li>Image id</li>
-						<li>Tiles</li>
+						<li><a href="index.php#Catalogs">Catalogs</a></li>
+						<li><a href="index.php#CatalogEntries">Catalog Entries</a></li>
 					</ul>
 				</li>
-				<li><a href="index.html#FeatureEventAPI">Feature/Event API</a>
+				<li><a href="index.php#JPEG2000API">JPEG-2000 API</a>
 					<ul>
-						<li><a href="index.html#Catalogs">Catalogs</a></li>
-						<li><a href="index.html#CatalogEntries">Catalog Entries</a></li>
+						<li><a href="index.php#JP2">Image API</a></li>
+						<li><a href="index.php#JP2SERIES">Image Series API</a></li>
 					</ul>
 				</li>
-				<li><a href="index.html#JPEG2000API">JPEG-2000 API</a>
-					<ul>
-						<li><a href="index.html#JP2">Image API</a></li>
-						<li><a href="index.html#JP2SERIES">Image Series API</a></li>
-					</ul>
-				</li>
-				<li><a href="index.html#MovieAPI">Movie API</a></li>
+				<li><a href="index.php#MovieAPI">Movie API</a></li>
 				<li>
-					<a href="index.html#Appendices">Appendices</a>
+					<a href="index.php#Appendices">Appendices</a>
 						<ol style="list-style-type: upper-latin;">
-							<li><a href="index.html#Identifiers">Identifiers</a></li>
-							<li><a href="index.html#VariableTypes">Variable Types</a></li>
+							<li><a href="index.php#Identifiers">Identifiers</a></li>
+							<li><a href="index.php#VariableTypes">Variable Types</a></li>
 						</ol>
 				</li>
 			</ol>
@@ -119,7 +118,7 @@
 				a number of <abbr title="Application Programming Interface">APIs</abbr> have been developed, offering access to a variety of components used
 				by Helioviewer. All of the interfaces are accessed using HTML query strings. The simplest API's require only a single URI, and result in
 				some resource being returned, e.g. a movie or <abbr title="JPEG-2000">JP2</abbr> image series, or some action being performed, e.g. loading
-				a particular "View." into Helioviewer. Some of the API's are somewhat more complex, and involve two steps. For example, in order to get a list
+				a particular "view." into Helioviewer. Some of the API's are somewhat more complex, and involve two steps. For example, in order to get a list
 				of events from some catalogs for a certain period of time, first a query is usually made to see which catalogs are available and functional. A second
 				query then returns a list of features/events are fetched using a second query. It is possible to skip the first part of the query if you know
 				the ID's for the desired catalogs and are confident that they are available, you can skip the first query and go straight to the second query.
@@ -174,8 +173,6 @@
 			<div id="ImageAPI">
 				3. Image API:
 				<p><i>Under Development...</i></p>
-				<ul>
-				</ul>
 			</div>
 			
 			<!-- Feature/Event API -->
@@ -198,7 +195,7 @@
 							
 							<div class="summary-box">
 								<span style="text-decoration: underline;">Usage:</span><br><br>
-								http://helioviewer.org/api/getEvents.php<br><br>
+								<a href="http://helioviewer.org/api/index.php?action=getEventCatalogs">http://helioviewer.org/api/index.php?action=getEventCatalogs</a><br><br>
 								
 								Result:<br><br>
 								
