@@ -135,17 +135,19 @@ class Tile extends JP2Image {
 	 * @param $imageId Object
 	 */
 	function getMetaInfo() {
-		$query  = "SELECT timestamp, uri, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image ";
-		$query .= "LEFT JOIN measurement on image.measurementId = measurement.id  LEFT JOIN detector on measurement.detectorId = detector.id WHERE image.id=$this->imageId";
+		$query  = sprintf("SELECT timestamp, uri, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image 
+							LEFT JOIN measurement on image.measurementId = measurement.id  
+							LEFT JOIN detector on measurement.detectorId = detector.id 
+							WHERE image.id=%d", $this->imageId);
 
 		// Query database
 		$result = $this->db->query($query);
 		if (!$result) {
 		        echo "$query - failed\n";
-		        die (mysql_error());
+		        die (mysqli_error($this->db->link));
 		}
-		if (mysql_num_rows($result) > 0)
-			return mysql_fetch_array($result, MYSQL_ASSOC);
+		if (mysqli_num_rows($result) > 0)
+			return mysqli_fetch_array($result, MYSQL_ASSOC);
 		else
 			return false;
 	}

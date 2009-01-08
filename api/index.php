@@ -1,12 +1,15 @@
 <?php
+	//error_reporting(0); 
 	if (isset($_GET['action'])) {
 		require_once("lib/helioviewer/API.php");
-		new API($_GET);
+		new API($_GET, "text");
 	}
 	elseif (isset($_POST['action'])) {
 		require_once("lib/helioviewer/API.php");
-		new API($_POST);
+		new API($_POST, "json");
 	} else {
+		
+	$baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -53,7 +56,7 @@
 			div.content > div { width: 90%; }
 			
 			div.content > div > p { margin-left: 20px; text-indent: 20px; font-family: verdana, sans-serif }
-			div > p:first-letter {color:#3366FF; font-size:large;}
+			div > p:first-letter {color:red; font-size:large;}
 			
 			div.summary-box {
 				width: 60%;
@@ -85,14 +88,14 @@
 				<li><a href="index.php#ImageAPI">Image API</a></li>
 				<li><a href="index.php#FeatureEventAPI">Feature/Event API</a>
 					<ul>
-						<li><a href="index.php#Catalogs">Catalogs</a></li>
-						<li><a href="index.php#CatalogEntries">Catalog Entries</a></li>
+						<li><a href="index.php#getEventCatalogs">Catalogs</a></li>
+						<li><a href="index.php#getEvents">Catalog Entries</a></li>
 					</ul>
 				</li>
 				<li><a href="index.php#JPEG2000API">JPEG-2000 API</a>
 					<ul>
-						<li><a href="index.php#JP2">Image API</a></li>
-						<li><a href="index.php#JP2SERIES">Image Series API</a></li>
+						<li><a href="index.php#getJP2">Image API</a></li>
+						<li><a href="index.php#getJP2ImageSeries">Image Series API</a></li>
 					</ul>
 				</li>
 				<li><a href="index.php#MovieAPI">Movie API</a></li>
@@ -122,7 +125,21 @@
 				of events from some catalogs for a certain period of time, first a query is usually made to see which catalogs are available and functional. A second
 				query then returns a list of features/events are fetched using a second query. It is possible to skip the first part of the query if you know
 				the ID's for the desired catalogs and are confident that they are available, you can skip the first query and go straight to the second query.
-				More on that later though.</p>
+				More on that later though.<br><br>
+				
+				The general structure of queries is as follows:</p>
+				
+				<div class="summary-box">
+					<?php echo $baseURL;?>?action=methodName&param1=value1&param2=value2 ...
+				</div>
+				
+				
+				<p>The base URL is the same for each of the API's (<a href="<?php echo $baseURL;?>"><?php echo $baseURL;?></a>).
+				The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters may also be required depending
+				on the specific API being accessed. The one exception to this rule is the <a href="index.php#CustomView">Custom View API</a> which is accessed from 
+				<a href="http://www.helioviewer.org/index.php">http://www.helioviewer.org/index.php</a> and does not require an "action" to be specified. Finally,
+				The queries may be sent using either a GET or POST request. In cases where the result is a JSON object, using a POST request will return JSON using 
+				the proper headers and using GET will simply output the JSON as plain-text. Plain-text results may be useful for debugging purposes.</p>
 			</div>
 			
 			<!-- Custom View API-->
@@ -184,7 +201,7 @@
 				<ol style="list-style-type: upper-latin;">
 					<!-- Catalog API -->
 					<li>
-						<div id="Catalogs">
+						<div id="getEventCatalogs">
 							Feature/Event Catalogs:
 							<p>To query the list of available catalogs, simply call the "getEvents" API with no parameters. This will return a list
 							of the available catalogs, as well as some meta-information describing each of the catalogs. The most important parameters
@@ -195,7 +212,7 @@
 							
 							<div class="summary-box">
 								<span style="text-decoration: underline;">Usage:</span><br><br>
-								<a href="http://helioviewer.org/api/index.php?action=getEventCatalogs">http://helioviewer.org/api/index.php?action=getEventCatalogs</a><br><br>
+								<a href="<?php echo $baseURL;?>?action=getEventCatalogs"><?php echo $baseURL;?>?action=getEventCatalogs</a><br><br>
 								
 								Result:<br><br>
 								
@@ -207,7 +224,7 @@
 										<tr>
 											<td width="25%"><b>adjustRotation</b></td>
 											<td width="15%"><i>Boolean</i></td>
-											<td>...</td>
+											<td>Specifies whether the position of the events has been adjusted to account for solar rotation.</td>
 										</tr>
 										<tr>
 											<td><b>coordinateSystem</b></td>
@@ -268,14 +285,14 @@
 					
 					<!-- Catalog Entry API -->
 					<li>
-						<div id="CatalogEntries">
+						<div id="getEvents">
 							Feature/Event Catalog Entries:
 							<p></p>
 							
 							<div class="summary-box">
 								<span style="text-decoration: underline;">Usage:</span><br><br>
 								
-								http://helioviewer.org/api/getEvents.php<br><br>
+								<?php echo $baseURL;?>?action=getEvents<br><br>
 								
 								Supported Parameters:<br><br>
 					
@@ -406,7 +423,7 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href=http://helioviewer.org/api/getEvents.php?task=getPoi&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay">http://helioviewer.org/api/getEvents.php?task=getPoi&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay</a>
+									<a href=<?php echo $baseURL;?>?action=getEvents.php&task=getPoi&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay"><?php echo $baseURL;?>?action=getEvents&task=getPoi&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay</a>
 								</span>
 							</div>
 							
@@ -443,7 +460,7 @@
 				<ol style="list-style-type: upper-latin;">
 					<!-- JPEG-2000 Image API -->
 					<li>
-						<div id="JP2">
+						<div id="getJP2">
 							JP2 Images:
 							<p>desc.</p>
 							
@@ -456,7 +473,7 @@
 					
 					<!-- JPEG-2000 Image-Series API -->
 					<li>
-						<div id="JP2SERIES">
+						<div id="getJP2ImageSeries">
 							JP2 Image Series:
 							<p>desc.</p>
 							

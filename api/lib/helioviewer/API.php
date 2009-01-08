@@ -10,10 +10,23 @@ class API {
 	/**
 	 * @constructor
 	 */
-	public function __construct ($params) {
+	public function __construct ($params, $format) {
 		$this->params = $params;
+		$this->format = $format;
+		
 		$_SERVER['HTTP_HOST'] == "localhost" ? require_once('Config.php') : require_once('Config.Server.php');
-		call_user_func(array("API" ,"_" . $params["action"]));
+		
+		try {
+			if (!$this->validate($params["action"]))
+				throw new Exception("Invalid parameters specified for <a href='http://www.helioviewer.org/api/index.php#" . $params['action'] . "'>" . $params['action'] . "</a>.");
+
+			if (!call_user_func(array("API" ,"_" . $params["action"])))
+				throw new Exception("Unable to execute " . $params["action"] . ". Please make sure you are using valid input and contact the web-admin if problems persist.");
+
+		} catch (Exception $e) {
+			echo "<br><b>Error:</b> ", $e->getMessage(), "<br>";
+		}
+		
 		exit();
 	}
 	
@@ -25,13 +38,15 @@ class API {
 		require_once('lib/helioviewer/Tile.php');
 		$tile = new Tile($this->params['imageId'], $this->params['zoom'], $this->params['x'], $this->params['y'], $this->params['ts']);
 		$tile->display();
+		
+		return 1;
 	}
 	
 	/**
 	 * getClosestImage
 	 */
 	private function _getClosestImage () {
-		require('ImgIndex.php');
+		require_once('ImgIndex.php');
 		$imgIndex = new ImgIndex(new DbConnection());
 		
 		$queryForField = 'abbreviation';
@@ -39,11 +54,16 @@ class API {
 			$src["$field.$queryForField"] = $this->params[$field];
 		}
 		
-		//print_r($src);		
-		//print "<br><br>";
+		$result = $imgIndex->getClosestImage($this->params['timestamp'], $src);
 		
-		header('Content-type: application/json');
-		echo json_encode($imgIndex->getClosestImage($this->params['timestamp'], $src));
+		if ($this->format == "json") {
+			header('Content-type: application/json');
+			echo json_encode($result);
+		} else {
+			echo json_encode($result);
+		}
+		
+		return 1;
 	}
 	
 	/**
@@ -116,7 +136,8 @@ class API {
 		//Create and display composite image
 		$img = new CompositeImage($layers, $zoomLevel, $xRange, $yRange, $options);
 		$img->printImage();
-
+		
+		return 1;
 	}
 	
 	/**
@@ -144,6 +165,8 @@ class API {
 		
 		echo $contents;
  		fclose($fp);
+		
+		return 1;
 	}
 	
 	/**
@@ -219,6 +242,8 @@ class API {
 		exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
 		
 		echo $tmpurl;
+		
+		return 1;
 	}
 	
 	/**
@@ -230,14 +255,14 @@ class API {
 		$id = $this->params["imageId"];
 		
 		$db  = new DbConnection();
-		$sql = "SELECT uri FROM image WHERE id=$id;";
+		$sql = sprintf("SELECT uri FROM image WHERE id=%s;", mysqli_real_escape_string($db->link, $id));
 		
-		$row = mysql_fetch_array($db->query($sql), MYSQL_ASSOC);
+		$row = mysqli_fetch_array($db->query($sql), MYSQL_ASSOC);
 		$url = $row['uri'];
 		
 		// Query header information using Exiftool
 		$cmd = "exiftool $url | grep Fits | grep -v Descr";
-		exec(escapeshellcmd($cmd), $out, $ret);
+		exec($cmd, $out, $ret);
 		
 		$fits = array();
 		foreach ($out as $index => $line) {
@@ -247,8 +272,15 @@ class API {
 			array_push($fits, $param . ": " . $value);
 		}
 		
-		header('Content-type: application/json');
-		echo json_encode($fits);
+		if ($this->format == "json") {
+			header('Content-type: application/json');
+			echo json_encode($fits);
+		}
+		else {
+			echo json_encode($fits);
+		}
+		
+		return 1;
 	}
 	
 	/**
@@ -259,6 +291,8 @@ class API {
 		header("Content-type: application/json");
 		$url = "http://washington.tm.uni-karlsruhe.de:8080/Dispatcher/resources/eventCatalogs?" . $_SERVER['QUERY_STRING'];
 		echo file_get_contents($url);
+		
+		return 1;
 	}
 	
 	/**
@@ -268,6 +302,8 @@ class API {
 		header("Content-type: application/json");
 		$url = "http://washington.tm.uni-karlsruhe.de:8080/Dispatcher/resources/eventCatalogs?" . $_SERVER['QUERY_STRING'];
 		echo file_get_contents($url);
+		
+		return 1;
 	}
 	
 	/**
@@ -314,6 +350,8 @@ class API {
 			echo 'Error: ' .$e->getMessage();
 			exit();
 		}
+		
+		return 1;
 	}
 	
 	/**
@@ -356,6 +394,7 @@ class API {
 			</body>
 			</html>
 		<?php
+		return 1;
 	}
 	/**
 	 * getLayerAvailability (Internal use)
@@ -364,30 +403,27 @@ class API {
 		$dbConnection = new DbConnection();
 	
 		// Layer parameters
-		$obs =  $this->params['observatory'];
-		$inst = $this->params['instrument'];
-		$det  = $this->params['detector'];
-		$meas = $this->params['measurement'];
+		$obs  = mysqli_real_escape_string($dbConnection->link, $this->params['observatory']);
+		$inst = mysqli_real_escape_string($dbConnection->link, $this->params['instrument']);
+		$det  = mysqli_real_escape_string($dbConnection->link, $this->params['detector']);
+		$meas = mysqli_real_escape_string($dbConnection->link, $this->params['measurement']);
 
 		// Validate new combinations (Note: measurement changes are always valid)
 		if (isset($this->params['changed'])) {
-			$changed  = $this->params['changed'];
-			$newValue = $this->params['value'];
+			$changed  = mysqli_real_escape_string($dbConnection->link, $this->params['changed']);
+			$newValue = mysqli_real_escape_string($dbConnection->link, $this->params['value']);
 	
 			// If query returns any matches then the new combination is valid
-			$query = "SELECT
-						count(*) as count from observatory
-					  INNER JOIN
-					  	instrument ON observatory.id = instrument.observatoryId
-					  INNER JOIN
-					  	detector ON detector.instrumentId = instrument.id
-					  INNER JOIN
-					  	measurement ON measurement.detectorId = detector.id
-					  WHERE
-					  	observatory.abbreviation = '$obs' AND instrument.abbreviation = '$inst' and detector.abbreviation='$det' and measurement.abbreviation = '$meas';";
+			$query = sprintf("SELECT count(*) as count from observatory 
+								INNER JOIN instrument ON observatory.id = instrument.observatoryId
+								INNER JOIN detector ON detector.instrumentId = instrument.id
+					  			INNER JOIN measurement ON measurement.detectorId = detector.id
+								WHERE
+								observatory.abbreviation = '%s' AND instrument.abbreviation = '%s' and detector.abbreviation='%s' and measurement.abbreviation = '%s';",
+								$obs, $inst, $det, $meas);
 	
 			$result = $dbConnection->query($query);
-			$row = mysql_fetch_array($result, MYSQL_ASSOC);
+			$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 			$valid = $row['count'];
 	
 			//If combination is invalid, adjust options to provide a valid combination
@@ -397,9 +433,10 @@ class API {
 				//CASE 2: Instrument changefirst grab a list of valid detectors for the chosen instrumentd
 				if ($changed == "instrument") {
 					//Find a valid detector for the chosen instrument
-					$query = "SELECT detector.abbreviation from detector INNER JOIN instrument ON instrument.id = detector.instrumentId WHERE instrument.abbreviation = '$newValue' LIMIT 1;";
+					$query = sprintf("SELECT detector.abbreviation from detector INNER JOIN instrument ON instrument.id = detector.instrumentId 
+									  WHERE instrument.abbreviation = '%s' LIMIT 1;", $newValue);
 					$result = $dbConnection->query($query);
-					$row = mysql_fetch_array($result, MYSQL_ASSOC);
+					$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 					$det = $row['abbreviation'];
 	
 					//Measurements will be automatically updated...
@@ -431,7 +468,7 @@ class API {
 				echo "<strong>query:</strong><br>$query<br><br>";
 	
 			$result = $db->query($query);
-			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+			while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
 				array_push($values, $row);
 			}
 	
@@ -447,8 +484,60 @@ class API {
 		);
 		
 		//Output results
-		header("Content-type: application/json");
+		if ($this->format == "json")
+			header("Content-type: application/json");
+
 		echo json_encode($options);
+		return 1;
+	}
+	
+	/**
+	 * validate
+	 * 
+	 * Action-specific code for validating input. Currently only input for external-use API's are
+	 * validated. All input destined for database use is secured at time of SQL construction. 
+	 */
+	private function validate ($action) {
+		// Some useful regexes
+		$layer_regex            = "/^[a-zA-Z0-9]{12}$/";
+		$layer_list_regex       = "/^[a-zA-Z0-9]{12}(,[a-zA-Z0-9]{12})*$/";
+		$timestamp_regex        = "/^[0-9]{1,10}$/";
+		$timestamp_list_regex   = "/^[0-9]{1,10}(,[0-9]{1,10})*$/";
+		$coordinate_range_regex = "/^[0-9]{1,2},[0-9]{1,2}$/";
+		
+		switch ($action) {
+			case "getTile":
+				break;
+			case "getClosestImage":
+				break;
+			case "getViewerImage":
+				if (!isset($this->params["layers"]) or !preg_match($layer_list_regex, $this->params["layers"]))
+					return false;
+				if (!isset($this->params["timestamps"]) or !preg_match($timestamp_list_regex, $this->params["timestamps"]))
+					return false;
+				if (!isset($this->params["zoomLevel"]) or !is_numeric($this->params["zoomLevel"]) or $this->params["zoomLevel"] < 0 or $this->params["zoomLevel"] > 20)
+					return false;
+				if (!isset($this->params["xRange"]))
+					return false;
+				if (!isset($this->params["yRange"]))
+					return false;				
+				break;
+				
+			case "getJP2Header":
+				if (!isset($this->params["imageId"]) or !is_numeric($this->params["imageId"]))
+					return false;
+				break;
+			case "getEventCatalogs":
+				break;
+			case "getEvents":
+				break;
+			case "getLayerAvailability":
+				break;
+			default:
+				throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");		
+		}
+		
+		return true;
 	}
 }
 ?>

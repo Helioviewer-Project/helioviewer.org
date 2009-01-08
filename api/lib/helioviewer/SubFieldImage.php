@@ -136,7 +136,7 @@ class SubFieldImage extends JP2Image {
 		$meas = $this->measurement;
 		
 		// Get full image dimensions
-		$sql = "SELECT width, height, imgScaleX 
+		$sql = sprintf("SELECT width, height, imgScaleX 
 					FROM image
 						LEFT JOIN measurement on measurementId = measurement.id
 						LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -144,7 +144,8 @@ class SubFieldImage extends JP2Image {
 						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 						LEFT JOIN instrument on instrumentId = instrument.id
 						LEFT JOIN observatory on observatoryId = observatory.id
-	             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' LIMIT 1";
+	             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' LIMIT 1",
+					mysql_real_escape_string($obs), mysql_real_escape_string($inst), mysql_real_escape_string($det), mysql_real_escape_string($meas));
 					
 		$result = $this->db->query($sql);
 		$meta = mysql_fetch_array($result, MYSQL_ASSOC);

@@ -72,7 +72,6 @@ abstract class JP2Image {
 		
 		// Execute the command
 		try {
-			//exec($cmd, $out, $ret);
 			exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . escapeshellcmd($cmd), $out, $ret);
 			
 			if ($ret != 0)

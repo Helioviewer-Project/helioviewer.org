@@ -1,7 +1,7 @@
 <?php
 /*
  * Created on Sep 12, 2008
- * Last modified Oct 21, 2008
+ * Last modified Jan 08, 2009
  * by Keith Hughitt
  */
 class CompositeImage {

@@ -234,7 +234,7 @@ class ImageSeries {
 		if ($times) {
 			foreach ($times as $time) {
 				$time = $time['unix_timestamp'];
-				$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $time AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $time) AS timediffAbs 
+				$sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs 
 						FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -242,16 +242,18 @@ class ImageSeries {
 							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id
-		             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' ORDER BY timediffAbs LIMIT 0,1";
+		             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,1",
+						$time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
+				
 				$result = $this->db->query($sql);
-				$row = mysql_fetch_array($result, MYSQL_ASSOC);
+				$row = mysqli_fetch_array($result, MYSQL_ASSOC);
 	    		array_push($resultArray, $row);
 			}	
 		}
 		 
 		//Otherwise simply return the closest times to the startTIme specified
 		else {
-			$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $this->startTime AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $this->startTime) AS timediffAbs 
+			$sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs 
 					FROM image
 						LEFT JOIN measurement on measurementId = measurement.id
 						LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -259,13 +261,14 @@ class ImageSeries {
 						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 						LEFT JOIN instrument on instrumentId = instrument.id
 						LEFT JOIN observatory on observatoryId = observatory.id
-	             	WHERE observatory.abbreviation='$obs' AND instrument.abbreviation='$inst' AND detector.abbreviation='$det' AND measurement.abbreviation='$meas' ORDER BY timediffAbs LIMIT 0,$this->numFrames";
+	             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,%d",
+					$this->startTime, $this->startTime, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas), $this->numFrames);
 	
 			//echo "SQL: $sql <br><br>";
 	             	
 			$result = $this->db->query($sql);
 			
-			while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+			while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
 	    		array_push($resultArray, $row);
 			}
 			
