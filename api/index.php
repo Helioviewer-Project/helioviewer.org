@@ -309,11 +309,6 @@
 											<td>The date about which the feature/event query is centered.</td>
 										</tr>
 										<tr>
-											<td><b>task</b></td>
-											<td><i>String</i></td>
-											<td>The specific task to perform: must be set to "getPoi" for this type of query.</td>
-										</tr>
-										<tr>
 											<td><b>windowSize</b></td>
 											<td><i>Integer</i></td>
 											<td>The window-size (in seconds) to search.</td>
@@ -423,7 +418,7 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href=<?php echo $baseURL;?>?action=getEvents.php&task=getPoi&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay"><?php echo $baseURL;?>?action=getEvents&task=getPoi&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay</a>
+									<a href=<?php echo $baseURL;?>?action=getEvents.php&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay"><?php echo $baseURL;?>?action=getEvents&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay</a>
 								</span>
 							</div>
 							
@@ -433,9 +428,6 @@
 							<div class="summary-box" style="background-color: #E3EFFF;">
 								<span style="text-decoration: underline;">Notes:</span><br><br>
 								<ul>
-									<li>
-										<p>In order to search the feature/event catalogs, the "task" parameter must be set to "getPoi."</p>
-									</li>
 									<li>
 										<p>The coordinate parameters returned will vary depending on the specific catalog queried. For catalogs which use the "PRINCIPAL_ANGLE"
 										coordinate system, the parameters "polarCpa" and "polarWidth" are returned. For catalogs which use the "HELIOGRAPHIC" coordinate system, "hlat"

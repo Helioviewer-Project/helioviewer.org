@@ -261,7 +261,7 @@ class API {
 		$url = $row['uri'];
 		
 		// Query header information using Exiftool
-		$cmd = "exiftool $url | grep Fits | grep -v Descr";
+		$cmd = Config::EXIF_TOOL . " $url | grep Fits | grep -v Descr";
 		exec($cmd, $out, $ret);
 		
 		$fits = array();
@@ -288,10 +288,15 @@ class API {
 	 * @return 
 	 */
 	private function _getEventCatalogs () {
-		header("Content-type: application/json");
-		$url = "http://washington.tm.uni-karlsruhe.de:8080/Dispatcher/resources/eventCatalogs?" . $_SERVER['QUERY_STRING'];
-		echo file_get_contents($url);
-		
+		if ($this->format == "text") {
+			header("Content-type: text/plain");
+			$url = Config::EVENT_SERVER_URL . $_SERVER["QUERY_STRING"] . "&debug=1";
+		}
+		else {
+			header("Content-type: application/json");
+			$url = Config::EVENT_SERVER_URL . "action=getEventCatalogs";
+		}
+		echo file_get_contents($url);		
 		return 1;
 	}
 	
@@ -299,10 +304,15 @@ class API {
 	 * getEvents
 	 */
 	private function _getEvents () {
-		header("Content-type: application/json");
-		$url = "http://washington.tm.uni-karlsruhe.de:8080/Dispatcher/resources/eventCatalogs?" . $_SERVER['QUERY_STRING'];
+		if ($this->format == "text") {
+			header("Content-type: text/plain");
+			$url = Config::EVENT_SERVER_URL . $_SERVER["QUERY_STRING"] . "&debug=1";
+		}
+		else {
+			header("Content-type: application/json");
+			$url = Config::EVENT_SERVER_URL . "action=getEvents&date=" . $this->params["date"] . "&windowSize=" . $this->params["windowSize"] . "&catalogs=" . $this->params["catalogs"];
+		}
 		echo file_get_contents($url);
-		
 		return 1;
 	}
 	
