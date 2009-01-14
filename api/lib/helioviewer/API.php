@@ -141,9 +141,9 @@ class API {
 	}
 	
 	/**
-	 * getJP2
+	 * getJP2Image
 	 */
-	private function _getJP2 () {
+	private function _getJP2Image () {
 		require('lib/helioviewer/ImgIndex.php');
 		$imgIndex = new ImgIndex(new DbConnection());
 		
@@ -176,10 +176,11 @@ class API {
 	private function _getJP2ImageSeries () {
 		require_once('ImgIndex.php');
 		//date_default_timezone_set('UTC');
-	
+		
 		$startTime = $this->params['startTime'];
 		$endTime   = $this->params['endTime'];
 		$cadence   = $this->params['cadence'];
+		$format    = $this->params['format'];
 	
 		// Layer information
 		foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
@@ -542,6 +543,10 @@ class API {
 			case "getEvents":
 				break;
 			case "getLayerAvailability":
+				break;
+			case "getJP2Image":
+				break;
+			case "getJP2ImageSeries":
 				break;
 			default:
 				throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");		

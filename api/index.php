@@ -94,8 +94,8 @@
 				</li>
 				<li><a href="index.php#JPEG2000API">JPEG-2000 API</a>
 					<ul>
-						<li><a href="index.php#getJP2">Image API</a></li>
-						<li><a href="index.php#getJP2ImageSeries">Image Series API</a></li>
+						<li><a href="index.php#getJP2Image">Image API</a></li>
+						<li><a href="index.php#getJP2ImageSeries">MJ2/Image Series API</a></li>
 					</ul>
 				</li>
 				<li><a href="index.php#MovieAPI">Movie API</a></li>
@@ -418,7 +418,7 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href=<?php echo $baseURL;?>?action=getEvents.php&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay"><?php echo $baseURL;?>?action=getEvents&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay</a>
+									<a href=<?php echo $baseURL;?>?action=getEvents&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay"><?php echo $baseURL;?>?action=getEvents&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay</a>
 								</span>
 							</div>
 							
@@ -448,17 +448,61 @@
 			<div id="JPEG2000API">
 				6. JPEG-2000 API:
 				<p>Helioviewer's JPEG-2000 API's enable access to the raw JPEG-2000 images used to generate the tiles seen on the site, as
-				well as real-time generation of JPEG-2000 Image Series.</p>
+				well as real-time generation of JPEG-2000 Image Series (JPX) and MJ2 Movies.</p>
 				<ol style="list-style-type: upper-latin;">
 					<!-- JPEG-2000 Image API -->
 					<li>
-						<div id="getJP2">
+						<div id="getJP2Image">
 							JP2 Images:
-							<p>desc.</p>
+							<p>Returns a single JPEG-2000 (JP2) image. If an image is not available for the date request the closest available
+							image is returned.</p>
 							
 							<br>
 							
 							<div class="summary-box">
+								<span style="text-decoration: underline;">Usage:</span><br><br>
+								
+								<?php echo $baseURL;?>?action=getJP2Image<br><br>
+								
+								Supported Parameters:<br><br>
+					
+								<table class="param-list">
+									<tbody valign="top">
+										<tr>
+											<td width="25%"><b>observatory</b></td>
+											<td width="35%"><i>String</i></td>
+											<td>Image observatory</td>
+										</tr>
+										<tr>
+											<td><b>instrument</b></td>
+											<td><i>String</i></td>
+											<td>Image instrument</td>
+										</tr>
+										<tr>
+											<td><b>detector</b></td>
+											<td><i>String</i></td>
+											<td>Image detector</td>
+										</tr>
+										<tr>
+											<td><b>measurement</b></td>
+											<td><i>String</i></td>
+											<td>Image measurement</td>
+										</tr>
+										<tr>
+											<td><b>timestamp</b></td>
+											<td><i>Unix Timestamp</i></td>
+											<td>Observation time</td>
+										</tr>
+									</tbody>
+								</table>
+								
+								<br>
+								
+								<span class="example-header">Example:</span>
+								<span class="example-url">
+									<a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&timestamp=1065312000"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&timestamp=1065312000</a>
+								</span>	
+								
 							</div>
 						</div>
 					</li>
@@ -466,13 +510,84 @@
 					<!-- JPEG-2000 Image-Series API -->
 					<li>
 						<div id="getJP2ImageSeries">
-							JP2 Image Series:
-							<p>desc.</p>
+							MJ2/Image Series API:
+							<p>Returns either a Motion JPEG-2000 (MJ2) or JPEG-2000 Image Series (JPX) depending on the parameters specified. The movie frames are
+							chosen by matching the closest image available at each step of a specified range of dates and image cadence.</p>
 							
 							<br>
 							
 							<div class="summary-box">
+								<span style="text-decoration: underline;">Usage:</span><br><br>
+								
+								<?php echo $baseURL;?>?action=getJP2ImageSeries<br><br>
+								
+								Supported Parameters:<br><br>
+					
+								<table class="param-list">
+									<tbody valign="top">
+										<tr>
+											<td width="25%"><b>observatory</b></td>
+											<td width="35%"><i>String</i></td>
+											<td>Image observatory</td>
+										</tr>
+										<tr>
+											<td><b>instrument</b></td>
+											<td><i>String</i></td>
+											<td>Image instrument</td>
+										</tr>
+										<tr>
+											<td><b>detector</b></td>
+											<td><i>String</i></td>
+											<td>Image detector</td>
+										</tr>
+										<tr>
+											<td><b>measurement</b></td>
+											<td><i>String</i></td>
+											<td>Image measurement</td>
+										</tr>
+										<tr>
+											<td><b>startTime</b></td>
+											<td><i>Unix Timestamp</i></td>
+											<td>Movie start time</td>
+										</tr>
+										<tr>
+											<td><b>endTime</b></td>
+											<td><i>Unix Timestamp</i></td>
+											<td>Movie end time</td>
+										</tr>
+										<tr>
+											<td><b>cadence</b></td>
+											<td><i>Integer</i></td>
+											<td>The desired amount of time between each movie-frame, in seconds</td>
+										</tr>
+										<tr>
+											<td><b>format</b></td>
+											<td><i>String</i></td>
+											<td>[MJ2|JPX] Whether a MJ2 movie or a JPX file should be returned</td>
+										</tr>
+									</tbody>
+								</table>
+								
+								<br>
+								
+								<span class="example-header">Example:</span>
+								<span class="example-url">
+									<a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1065402792&cadence=1800&format=MJ2"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1065402792&cadence=1800&format=MJ2</a>
+								</span>								
 							</div>
+						</div>
+						
+						<br>
+						
+						<!-- JPEG-2000 Image-Series API Notes -->
+						<div class="summary-box" style="background-color: #E3EFFF;">
+							<span style="text-decoration: underline;">Notes:</span><br><br>
+							<ul>
+								<li>
+									<p>During MJ2/JPX movie generation it is possible that for lower cadences some redundent image frames will be used. In order
+									to avoid this a sufficiently large cadence should be specified.</p>
+								</li>
+							</ul>
 						</div>
 					</li>
 				</ol>
@@ -649,7 +764,7 @@
 		</div>
 
 		<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-			Last Updated: 2009-01-02 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+			Last Updated: 2009-01-14 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 		</div>
 	
 	</body>
