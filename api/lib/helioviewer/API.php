@@ -234,12 +234,17 @@ class API {
 			chmod($tmpdir, 0777);
 		}
 	
-		$tmpurl = Config::TMP_ROOT_URL . "/jp2-image-series/$now/" . "jhv_image_series.jp2";
+		$filename = "jhv_image_series." . strtolower($format);
+		$tmpurl = Config::TMP_ROOT_URL . "/jp2-image-series/$now/" . $filename;
+		$output_file = "$tmpdir" . $filename;
 	
-		$output_file = "$tmpdir" . "jhv_image_series.jp2";
-	
-		// Execute kdu_merge command
 		$cmd .= " -o $output_file";
+		
+		// MJ2
+		if ($format == "MJ2")
+			$cmd .= " -mj2_tracks P:0-@30";
+
+		// Execute kdu_merge command
 		exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
 		
 		echo $tmpurl;

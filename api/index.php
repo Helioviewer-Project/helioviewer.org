@@ -73,6 +73,8 @@
 			
 			table.param-list {border: none; margin-left: 10px;}
 			
+			div.content h1 {font-size: 18px; font-weight: normal;}
+			
 		</style>
 	</head>
 	
@@ -92,7 +94,7 @@
 						<li><a href="index.php#getEvents">Catalog Entries</a></li>
 					</ul>
 				</li>
-				<li><a href="index.php#JPEG2000API">JPEG-2000 API</a>
+				<li><a href="index.php#JPEG2000API">JPEG 2000 API</a>
 					<ul>
 						<li><a href="index.php#getJP2Image">Image API</a></li>
 						<li><a href="index.php#getJP2ImageSeries">MJ2/Image Series API</a></li>
@@ -116,16 +118,15 @@
 			
 			<!-- Overview -->
 			<div id="Overview">
-				1. Overview 
-				<p>In order to facilitate third-party application developers who wish use content from and interact with Helioviewer.org, 
+				<h1>1. Overview</h1> 
+				<p>In order to facilitate third-party application developers who wish to use content from and interact with Helioviewer.org, 
 				a number of <abbr title="Application Programming Interface">APIs</abbr> have been developed, offering access to a variety of components used
-				by Helioviewer. All of the interfaces are accessed using HTML query strings. The simplest API's require only a single URI, and result in
-				some resource being returned, e.g. a movie or <abbr title="JPEG-2000">JP2</abbr> image series, or some action being performed, e.g. loading
-				a particular "view." into Helioviewer. Some of the API's are somewhat more complex, and involve two steps. For example, in order to get a list
+				by Helioviewer. All of the interfaces are accessed using HTML query strings. The simplest APIs require only a single URI, and result in
+				some resource being returned, e.g. a movie or <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading
+				a particular "view" into Helioviewer. Some of the API's are somewhat more complex, and involve two steps. For example, in order to get a list
 				of events from some catalogs for a certain period of time, first a query is usually made to see which catalogs are available and functional. A second
-				query then returns a list of features/events are fetched using a second query. It is possible to skip the first part of the query if you know
-				the ID's for the desired catalogs and are confident that they are available, you can skip the first query and go straight to the second query.
-				More on that later though.<br><br>
+				query then returns a list of features/events are fetched using a second query. If you know the ID's for the desired catalogs and are confident that 
+				they are available, you can skip the first query and go straight to the second query. More on that later though.<br><br>
 				
 				The general structure of queries is as follows:</p>
 				
@@ -134,17 +135,17 @@
 				</div>
 				
 				
-				<p>The base URL is the same for each of the API's (<a href="<?php echo $baseURL;?>"><?php echo $baseURL;?></a>).
+				<p>The base URL is the same for each of the APIs (<a href="<?php echo $baseURL;?>"><?php echo $baseURL;?></a>).
 				The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters may also be required depending
 				on the specific API being accessed. The one exception to this rule is the <a href="index.php#CustomView">Custom View API</a> which is accessed from 
 				<a href="http://www.helioviewer.org/index.php">http://www.helioviewer.org/index.php</a> and does not require an "action" to be specified. Finally,
-				The queries may be sent using either a GET or POST request. In cases where the result is a JSON object, using a POST request will return JSON using 
+				the queries may be sent using either a GET or POST request. In cases where the result is a JSON object, using a POST request will return JSON using 
 				the proper headers and using GET will simply output the JSON as plain-text. Plain-text results may be useful for debugging purposes.</p>
 			</div>
 			
 			<!-- Custom View API-->
 			<div id="CustomView">
-				2. Custom View API:
+				<h1>2. Custom View API:</h1>
 				<p>The custom view API enables the user to load a specific set of parameters into Helioviewer: "view," here, simply means a given set of observation
 				parameters. This is useful for dynamically loading a specific view or observation into Helioviewer using a URL.</p>
 				
@@ -188,13 +189,13 @@
 			
 			<!-- Image API -->
 			<div id="ImageAPI">
-				3. Image API:
+				<h1>3. Image API:</h1>
 				<p><i>Under Development...</i></p>
 			</div>
 			
 			<!-- Feature/Event API -->
 			<div id="FeatureEventAPI">
-				4. Feature/Event API:
+				<h1>4. Feature/Event API:</h1>
 				<p>There are two ways to use Helioviewer's Feature/Event API. The first is to query the available catalogs, and then query for specific
 				features/events within each catalog. The second method is to go straight to querying for features/events, skipping the catalog step. This
 				requires that you already know the identifiers for each specific catalog you wish you query. Both steps are described below.</p>
@@ -245,8 +246,8 @@
 										<tr>
 											<td><b>id</b></td>
 											<td><i>String</i></td>
-											<td>The identifier for a specific catalog. The identifier consists of two parts separate by double-colans. The left-side
-											of the double-colans identifies the catalog provider, which may be the same for several catalogs. The right-side identifies
+											<td>The identifier for a specific catalog. The identifier consists of two parts separate by double-colons. The left-side
+											of the double-colons identifies the catalog provider, which may be the same for several catalogs. The right-side identifies
 											the specific catalog.</td>
 										</tr>
 										<tr>
@@ -268,7 +269,7 @@
 									<li>
 										<p>The identifiers for working with the feature/event API do not follow the three-character used for most of the other API's on
 										Helioviewer. Although it may be switched to follow this convention in the future, the Feature/Event identifiers are currently variable
-										length. Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a> for the specific id's used.</p>
+										length. Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a> for the specific IDs used.</p>
 									</li>
 									<li>
 										<p>Results are returned as <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr>. Future versions will provide the ability
@@ -319,9 +320,9 @@
 								<br>
 								
 								Result:<br><br>
-								An array of event objects is returned formatted as JSON. Each event object includes 12 required parameters as well as an array, "properties"
-								which contains additional parameters which vary from catalog to catalog. Among the 12 require parameters, two of the parameters relating to
-								the coordinates of the event may also vary, but every event object will include a set of coordinates.<br><br>
+								An array of event objects is returned formatted as JSON. Each event object includes 12 required parameters as well as an array, "properties",
+								which contains additional parameters which vary from catalog to catalog. Among the 12 required parameters, two of the parameters relating to
+								the coordinates of the event may vary, but every event object will include a set of coordinates.<br><br>
 								
 								<!-- Event Parameter Description -->
 								<table class="param-list" cellspacing="10">
@@ -359,7 +360,7 @@
 										<tr>
 											<td><b>hlat</b></td>
 											<td><i>Integer</i></td>
-											<td><i>[Optional]</i> Heliocentric lattitudinal coordinate of event...</td>
+											<td><i>[Optional]</i> Heliocentric latitudinal coordinate of event...</td>
 										</tr>
 										<tr>
 											<td><b>hlong</b></td>
@@ -384,7 +385,7 @@
 										<tr>
 											<td><b>properties</b></td>
 											<td><i>List</i></td>
-											<td>An array of parameters which depend on the specific catalog queried. Should handle separately from other known parameters.</td>
+											<td>An array of parameters which vary depending on the specific catalog queried: each catalog is associated with a separate set of parameters.</td>
 										</tr>
 										<tr>
 											<td><b>shortInfo</b></td>
@@ -404,12 +405,12 @@
 										<tr>
 											<td><b>sunX</b></td>
 											<td><i>Float</i></td>
-											<td>Normalized Heliocentric cartesian X-coordinate.</td>
+											<td>Normalized heliocentric cartesian X-coordinate.</td>
 										</tr>
 										<tr>
 											<td><b>sunY</b></td>
 											<td><i>Float</i></td>
-											<td>Normalized Heliocentric cartesian Y-coordinate.</td>
+											<td>Normalized heliocentric cartesian Y-coordinate.</td>
 										</tr>
 									</tbody>
 								</table>
@@ -444,17 +445,17 @@
 			
 			
 			
-			<!-- JPEG-2000 API -->
+			<!-- JPEG 2000 API -->
 			<div id="JPEG2000API">
-				6. JPEG-2000 API:
-				<p>Helioviewer's JPEG-2000 API's enable access to the raw JPEG-2000 images used to generate the tiles seen on the site, as
-				well as real-time generation of JPEG-2000 Image Series (JPX) and MJ2 Movies.</p>
+				<h1>5. JPEG 2000 API:</h1>
+				<p>Helioviewer's JPEG 2000 API's enable access to the raw JPEG 2000 images used to generate the tiles seen on the site, as
+				well as real-time generation of JPEG 2000 Image Series (JPX) and MJ2 Movies.</p>
 				<ol style="list-style-type: upper-latin;">
-					<!-- JPEG-2000 Image API -->
+					<!-- JPEG 2000 Image API -->
 					<li>
 						<div id="getJP2Image">
 							JP2 Images:
-							<p>Returns a single JPEG-2000 (JP2) image. If an image is not available for the date request the closest available
+							<p>Returns a single JPEG 2000 (JP2) image. If an image is not available for the date request the closest available
 							image is returned.</p>
 							
 							<br>
@@ -471,22 +472,22 @@
 										<tr>
 											<td width="25%"><b>observatory</b></td>
 											<td width="35%"><i>String</i></td>
-											<td>Image observatory</td>
+											<td>Observatory</td>
 										</tr>
 										<tr>
 											<td><b>instrument</b></td>
 											<td><i>String</i></td>
-											<td>Image instrument</td>
+											<td>Instrument</td>
 										</tr>
 										<tr>
 											<td><b>detector</b></td>
 											<td><i>String</i></td>
-											<td>Image detector</td>
+											<td>Detector</td>
 										</tr>
 										<tr>
 											<td><b>measurement</b></td>
 											<td><i>String</i></td>
-											<td>Image measurement</td>
+											<td>Measurement</td>
 										</tr>
 										<tr>
 											<td><b>timestamp</b></td>
@@ -507,11 +508,11 @@
 						</div>
 					</li>
 					
-					<!-- JPEG-2000 Image-Series API -->
+					<!-- JPEG 2000 Image-Series API -->
 					<li>
 						<div id="getJP2ImageSeries">
 							MJ2/Image Series API:
-							<p>Returns either a Motion JPEG-2000 (MJ2) or JPEG-2000 Image Series (JPX) depending on the parameters specified. The movie frames are
+							<p>Returns either a Motion JPEG 2000 (MJ2) or JPEG 2000 Image Series (JPX) depending on the parameters specified. The movie frames are
 							chosen by matching the closest image available at each step of a specified range of dates and image cadence.</p>
 							
 							<br>
@@ -528,22 +529,22 @@
 										<tr>
 											<td width="25%"><b>observatory</b></td>
 											<td width="35%"><i>String</i></td>
-											<td>Image observatory</td>
+											<td>Observatory</td>
 										</tr>
 										<tr>
 											<td><b>instrument</b></td>
 											<td><i>String</i></td>
-											<td>Image instrument</td>
+											<td>Instrument</td>
 										</tr>
 										<tr>
 											<td><b>detector</b></td>
 											<td><i>String</i></td>
-											<td>Image detector</td>
+											<td>Detector</td>
 										</tr>
 										<tr>
 											<td><b>measurement</b></td>
 											<td><i>String</i></td>
-											<td>Image measurement</td>
+											<td>Measurement</td>
 										</tr>
 										<tr>
 											<td><b>startTime</b></td>
@@ -572,14 +573,14 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1065402792&cadence=1800&format=MJ2"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1065402792&cadence=1800&format=MJ2</a>
+									<a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1066673880&cadence=27000&format=MJ2"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1065402792&cadence=1800&format=MJ2</a>
 								</span>								
 							</div>
 						</div>
 						
 						<br>
 						
-						<!-- JPEG-2000 Image-Series API Notes -->
+						<!-- JPEG 2000 Image-Series API Notes -->
 						<div class="summary-box" style="background-color: #E3EFFF;">
 							<span style="text-decoration: underline;">Notes:</span><br><br>
 							<ul>
@@ -595,13 +596,13 @@
 			
 			<!-- Movie API -->
 			<div id="MovieAPI">
-				6. Movie API:
+				<h1>6. Movie API:</h1>
 				<p><i>Under Development...</i></p>
 			</div>
 			
 			<!-- Appendices -->
 			<div id="Appendices">
-				7. Appendices:
+				<h1>7. Appendices:</h1>
 				<p></p>
 				<ol style="list-style-type: upper-latin;">
 					<!-- Appendix A: Identifiers -->

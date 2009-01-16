@@ -13,6 +13,6 @@ class Config {
 	const KDU_LIBS_DIR = '/usr/lib/kakadu/';
 	const EXIF_TOOL = 'exiftool';
 	const MAX_MOVIE_FRAMES = 150;
-	const EVENT_SERVER_URL = "http://washington.tm.uni-karlsruhe.de:8080/Dispatcher/resources/eventCatalogs?";
+	const EVENT_SERVER_URL = "http://achilles.nascom.nasa.gov/~wamsler/API/index.php?";
 }
 ?>
