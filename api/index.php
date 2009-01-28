@@ -494,6 +494,11 @@
 											<td><i>Unix Timestamp</i></td>
 											<td>Observation time</td>
 										</tr>
+										<tr>
+											<td><b>getURL</b></td>
+											<td><i>Boolean</i></td>
+											<td>[Optional] Returns a URL instead of an actual image.</td>
+										</tr>
 									</tbody>
 								</table>
 								
@@ -765,7 +770,7 @@
 		</div>
 
 		<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-			Last Updated: 2009-01-14 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+			Last Updated: 2009-01-28 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 		</div>
 	
 	</body>

@@ -149,22 +149,28 @@ class API {
 		
 		$queryForField = 'abbreviation';
 		foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-			$src["$field.$queryForField"] = $_GET[$field];
+			$src["$field.$queryForField"] = $this->params[$field];
 		}
 		
 		$filepath = $imgIndex->getJP2Location($this->params['timestamp'], $src);
 		$filename = end(explode("/", $filepath));
 		
-		$fp = fopen($filepath, 'r');
-		
-		header("Content-Length: " . filesize($filepath));
-		header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));		
-		header("Content-Disposition: attachment; filename=\"$filename\"");
-		
-		$contents = fread($fp, filesize($filepath));
-		
-		echo $contents;
- 		fclose($fp);
+		if ($this->params['getURL'] == "true") {
+			$url = preg_replace(CONFIG::WEB_ROOT_DIR_REGEX, CONFIG::WEB_ROOT_URL, $filepath);
+			echo $url;
+		}
+		else {
+			$fp = fopen($filepath, 'r');
+			
+			header("Content-Length: " . filesize($filepath));
+			header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));		
+			header("Content-Disposition: attachment; filename=\"$filename\"");
+			
+			$contents = fread($fp, filesize($filepath));
+			
+			echo $contents;
+	 		fclose($fp);		
+		}
 		
 		return 1;
 	}
@@ -242,10 +248,12 @@ class API {
 		
 		// MJ2
 		if ($format == "MJ2")
-			$cmd .= " -mj2_tracks P:0-@30";
+			$cmd .= " -mj2_tracks P:0-@25";
 
 		// Execute kdu_merge command
 		exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
+		
+		//echo $cmd . "<br><br>";
 		
 		echo $tmpurl;
 		

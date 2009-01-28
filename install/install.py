@@ -56,7 +56,21 @@ def processJPEG2000Images (images, cursor):
 		date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]))
 
 		# insert into database
-		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, '%s')" % (measurementIds[meta["det"] + meta["meas"]], date, meta["centerX"], meta["centerY"], meta["scaleX"], meta["scaleY"], meta["radius"], meta["width"], meta["height"], img)
+		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
+			measurementIds[meta["det"] + meta["meas"]],
+			date,
+			meta["centering"],
+			meta["centerX"],
+			meta["centerY"],
+			meta["lengthX"],
+			meta["lengthY"],
+			meta["scaleX"],
+			meta["scaleY"],
+			meta["radius"],
+			meta["width"],
+			meta["height"],
+			meta["opacityGrp"],
+			img)
 		print query
 
 		try:
@@ -75,13 +89,17 @@ def extractJP2MetaInfo (img):
 			"inst":    "Helioviewer Instrument",
 			"det" :    "Helioviewer Detector",
 			"meas":    "Helioviewer Measurement",
-			"centerX": "Fits Crpix 1",
-			"centerY": "Fits Crpix 2",
-			"scaleX" : "Helioviewer Cdelt 1",
-			"scaleY" : "Helioviewer Cdelt 2",
-			"radius" : "Helioviewer Rsun",
-			"height" : "Image Height",
-			"width"  : "Image Width"}
+			"centering" : "Helioviewer Centering",
+			"centerX"      : "Helioviewer Xcen",
+			"lengthX"      : "Helioviewer Xlen",
+			"centerY"      : "Helioviewer Ycen",
+			"lengthY"      : "Helioviewer Ylen",
+			"scaleX"    : "Helioviewer Cdelt 1",
+			"scaleY"    : "Helioviewer Cdelt 2",
+			"radius"    : "Helioviewer Rsun",
+			"height"    : "Image Height",
+			"width"     : "Image Width",
+			"opacityGrp": "Helioviewer Opacity Group"}
 	meta = {}
 
 	cmd   = "exiftool %s" % img
