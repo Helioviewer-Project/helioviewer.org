@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<!-- HelioViewer rev. 176, January 08, 2009 -->
+		<!-- HelioViewer rev. 181, February 09, 2009 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -171,10 +171,10 @@
 				<!-- Recent Updates -->
 				<div class='notes' style="height:425px">
 					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
+					<strong>02/09/2009</strong><p>Mixed an issue which resulting in incorrect mouse-coordinates being displayed.</p><br><br>
+					<strong>02/02/2009</strong><p>Helioviewer <a style="color: white;" href="docs/">source code documentation</a> now available.</p><br><br>
+					<strong>01/15/2009</strong><p>Experimental version of <a href="api/" style="color:white;">Helioviewer APIs</a> available.</p><br><br>
 					<strong>12/24/2008</strong><p>Unified interface for time navigation.</p><br><br>
-					<strong>12/09/2008</strong><p>LASCO C2 and C3 streamers now properly align.</p><br><br>
-					<strong>12/04/2008</strong><p>Tiles generated dynamically from JPEG2000 Images.</p><br><br>
-					<strong>12/01/2008</strong><p>Allowed draggable region limited to areas where data may be present.</p><br><br>
 				</div>
 			</div>
 
@@ -220,7 +220,8 @@
 					<a id="helioviewer-about" class="gray" href="#" style="margin-right:20px;">About</a>
 					<a id="helioviewer-shortcuts" class="gray" href="#" style="margin-right: 20px;">Usage Tips</a>
 					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="gray" style="margin-right:20px">JHelioviewer</a>
-					<a href="http://www.helioviewer.org/wiki" class="gray" style="margin-right:20px">Wiki</a>
+					<a href="wiki/" class="gray" style="margin-right:20px">Wiki</a>
+					<a href="api/" class="gray" style="margin-right:20px">API</a>
 					<a href="mailto:webmaster@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>
 					<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
 				</div>
@@ -230,7 +231,7 @@
 		<!-- About dialog -->
 		<div id='about-dialog'>
 			<img src="images/logo/about.png" alt="Helioviewer.org Logo"><br>
-			<span style="font-size:small;">Last Updated: January 08, 2009 (rev. 176)</span><br><br>
+			<span style="font-size:small;">Last Updated: February 09, 2009 (rev. 181)</span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
 				<li><a href="mailto:webmaster@helioviewer.org" class="gray">Keith Hughitt</a></li>

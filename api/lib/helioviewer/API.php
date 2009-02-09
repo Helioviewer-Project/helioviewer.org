@@ -253,10 +253,9 @@ class API {
 		// Execute kdu_merge command
 		exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
 		
-		//echo $cmd . "<br><br>";
+		//echo $cmd;
 		
 		echo $tmpurl;
-		
 		return 1;
 	}
 	
