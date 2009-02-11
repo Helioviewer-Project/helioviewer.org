@@ -189,6 +189,8 @@ ul.inheritsList
 <h2>Classes</h2>
 <ul class="classList">
 	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	
 	<li><a href="../symbols/Calendar.html">Calendar</a></li>
 	
 	<li><a href="../symbols/Date.html">Date</a></li>
@@ -200,6 +202,8 @@ ul.inheritsList
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
+	
+	<li><a href="../symbols/Helioviewer.handlers.html">Helioviewer.handlers</a></li>
 	
 	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
 	
@@ -252,7 +256,7 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_var_www_hv_lib_helioviewer_UserSettings.js.html">UserSettings.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/lib_helioviewer_UserSettings.js.html">UserSettings.js</a>.
 				
 			</p>
 
@@ -282,6 +286,34 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class UserSettings.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/UserSettings.html#_DEFAULTS">_DEFAULTS</a></b>
+								</div>
+								<div class="description">Default user settings</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 
 <!-- ============================== methods summary ======================== -->
 			
@@ -309,9 +341,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_getDefault">_getDefault</a></b>(setting)
+								</div>
+								<div class="description">Gets the default value for a given setting</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_loadDefaults">_loadDefaults</a></b>()
 								</div>
 								<div class="description">Loads defaults if cookies have not been set prior.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_resetSetting">_resetSetting</a></b>(setting)
+								</div>
+								<div class="description">Resets a single setting to it's default value</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_validate">_validate</a></b>(setting, value)
+								</div>
+								<div class="description">Validates a setting (Currently checks observation date and zoom-level)</div>
 							</td>
 						</tr>
 					
@@ -385,6 +444,33 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="_DEFAULTS"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_DEFAULTS</b>
+					
+					</div>
+					<div class="description">
+						Default user settings
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -417,6 +503,42 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="_getDefault"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_getDefault</b>(setting)
+					
+					</div>
+					<div class="description">
+						Gets the default value for a given setting
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>setting</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="_loadDefaults"> </a>
 					<div class="fixedFont">&lt;private&gt; 
 					
@@ -432,6 +554,84 @@ ul.inheritsList
 					
 					
 					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_resetSetting"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_resetSetting</b>(setting)
+					
+					</div>
+					<div class="description">
+						Resets a single setting to it's default value
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>setting</b>
+									
+								</dt>
+								<dd>The setting for which the default value should be loaded</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_validate"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_validate</b>(setting, value)
+					
+					</div>
+					<div class="description">
+						Validates a setting (Currently checks observation date and zoom-level)
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>setting</b>
+									
+								</dt>
+								<dd>The setting to be validated</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>value</b>
+									
+								</dt>
+								<dd>The value of the setting to check</dd>
+							
+							</dl>
 						
 						
 						
@@ -539,7 +739,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Thu Jan 29 2009 15:18:23 GMT-0500 (EST)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Feb 11 2009 17:07:41 GMT-0500 (EST)
 		</div>
 	</body>
 </html>
