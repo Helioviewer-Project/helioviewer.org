@@ -139,7 +139,7 @@ class Tile extends JP2Image {
 							LEFT JOIN measurement on image.measurementId = measurement.id  
 							LEFT JOIN detector on measurement.detectorId = detector.id 
 							WHERE image.id=%d", $this->imageId);
-
+							
 		// Query database
 		$result = $this->db->query($query);
 		if (!$result) {

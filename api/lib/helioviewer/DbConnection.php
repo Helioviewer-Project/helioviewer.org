@@ -3,7 +3,7 @@
 		private $user     = "helioviewer";
 		private $password = "helioviewer";
 		private $host     = "localhost";
-		private $dbname   = "hv2";
+		private $dbname   = "hv";
 		
 		public function __construct($dbname = null, $user = null, $password = null, $host = null) {
 			if ($user) $this->user = $user;

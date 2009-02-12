@@ -13,7 +13,7 @@ class API {
 	public function __construct ($params, $format) {
 		$this->params = $params;
 		$this->format = $format;
-		
+	
 		$_SERVER['HTTP_HOST'] == "localhost" ? require_once('Config.php') : require_once('Config.Server.php');
 		
 		try {
