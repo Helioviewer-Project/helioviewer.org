@@ -25,7 +25,7 @@ input, select {background-color:#F4F4F4;}
 #outsideBox {
   margin-left   : 280px;
   margin-right  : 250px;
-  margin-bottom :-72px;
+  margin-bottom :-252px;
   min-height    : 100%;
 }
 
@@ -58,11 +58,11 @@ input, select {background-color:#F4F4F4;}
 #footer {
     width:100%;
     clear:both;
-    height:70px;
+    height:250px;
     text-align:center;
     position:relative;
 }
-#clearfooter{clear:both;height:72px;}/*needed to make room for footer*/
+#clearfooter{clear:both;height:252px;}/*needed to make room for footer*/
 * > html #clearfooter {float:left;width:100%;}/* ie mac styles */
 
 /* Loading Indicator */

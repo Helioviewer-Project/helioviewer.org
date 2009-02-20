@@ -39,6 +39,9 @@
 		
 		<!-- CookieJar -->
 		<script src="lib/CookieJar/cookiejar.js" type="text/javascript"></script>
+		
+		<!-- Simile -->
+		<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>
 
 		<!-- ShadowBox -->
 		<!--
@@ -68,6 +71,7 @@
 		<script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
@@ -171,7 +175,7 @@
 				<!-- Recent Updates -->
 				<div class='notes' style="height:425px">
 					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
-					<strong>02/09/2009</strong><p>Mixed an issue which resulting in incorrect mouse-coordinates being displayed.</p><br><br>
+					<strong>02/09/2009</strong><p>Fixed an issue which resulting in incorrect mouse-coordinates being displayed.</p><br><br>
 					<strong>02/02/2009</strong><p>Helioviewer <a style="color: white;" href="docs/">source code documentation</a> now available.</p><br><br>
 					<strong>01/15/2009</strong><p>Experimental version of <a href="api/" style="color:white;">Helioviewer APIs</a> available.</p><br><br>
 					<strong>12/24/2008</strong><p>Unified interface for time navigation.</p><br><br>
@@ -213,7 +217,7 @@
 
 		<!-- Footer -->
 		<div id="footer">
-			<div style="height:70px; width:100%; float:left; font-size:0.85em">
+			<div style="height:250px; width:100%; float:left; font-size:0.85em">
 
 				<!-- Links -->
 				<div style="text-align:right; font-size:120%; height:60px; margin-right: 258px; margin-top: 3px;">
@@ -224,6 +228,11 @@
 					<a href="api/" class="gray" style="margin-right:20px">API</a>
 					<a href="mailto:webmaster@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>
 					<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
+				</div>
+				
+				<!-- Timeline -->
+				<div style="text-align: center;">
+					<div id="timeline" style="height: 150px; width: 70%; margin-left: auto; margin-right: auto; border: 1px solid #000"></div>
 				</div>
 			</div>
 		</div>

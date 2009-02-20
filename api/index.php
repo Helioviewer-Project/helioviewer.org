@@ -704,19 +704,19 @@
 									</tr>
 									<tr>
 										<td>171</td>
-										<td>171 nm</td>
+										<td>171 Ångström</td>
 									</tr>
 									<tr>
 										<td>195</td>
-										<td>195 nm</td>
+										<td>195 Ångström</td>
 									</tr>
 									<tr>
 										<td>284</td>
-										<td>284 nm</td>
+										<td>284 Ångström</td>
 									</tr>
 									<tr>
 										<td>304</td>
-										<td>304 nm</td>
+										<td>304 Ångström</td>
 									</tr>
 									<tr>
 										<td>0WL</td>
