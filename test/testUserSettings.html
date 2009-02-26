@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>Test Page for UsingSettings Class</title>
+	<script src="../lib/jsunit/app/jsUnitCore.js" type="text/javascript"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
+	<script src="../lib/CookieJar/cookiejar.js" type="text/javascript"></script>
+	<script src="../lib/helioviewer/UserSettings.js" type="text/javascript"></script>
+</head>
+<body>
+	<script language="javascript">
+		var settings, DEFAULTS;
+		
+		// Initialize
+		function setUp() {
+			settings = new UserSettings({});
+			
+			DEFAULTS = {
+			'obs-date'			: 1065312000000,
+			'zoom-level'		: 12,
+			'tile-layers'		: [{ tileAPI: "api/index.php", observatory: 'SOH', instrument: 'EIT', detector: 'EIT', measurement: '195' }],
+			'warn-zoom-level'	: false,
+			'warn-mouse-coords'	: false,
+			'event-icons'		: {
+				'VSOService::noaa':				'small-blue-circle',
+				'GOESXRayService::GOESXRay':	'small-green-diamond',
+				'VSOService::cmelist':			'small-yellow-square'
+				}
+			};
+		}
+		
+		// Cleanup
+		function tearDown() {
+			settings._loadDefaults();
+		}
+
+		// This one should pass
+		function testDefaultSettings() {
+			assertEquals(DEFAULTS['obs-date'], settings.get('obs-date'));
+		}
+	</script>
+</body>
+</html>
