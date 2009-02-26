@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<!-- Helioviewer rev. 186, February 24, 2009 -->
+		<!-- Helioviewer rev. 187, February 25, 2009 -->
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -65,7 +65,6 @@
 		<script src="lib/helioviewer/ZoomControl.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/Debug.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
@@ -240,7 +239,7 @@
 		<!-- About dialog -->
 		<div id='about-dialog'>
 			<img src="images/logo/about.png" alt="Helioviewer.org Logo"><br>
-			<span style="font-size:small;">Last Updated: February 24, 2009 (rev. 186)</span><br><br>
+			<span style="font-size:small;">Last Updated: February 25, 2009 (rev. 187)</span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
 				<li><a href="mailto:webmaster@helioviewer.org" class="gray">Keith Hughitt</a></li>

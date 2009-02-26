@@ -1,8 +1,8 @@
-<project name="HelioViewer" default="build" basedir="../">
-	<!-- HelioViewer Apache Ant build.xml. -->
+<project name="Helioviewer" default="build" basedir="../">
+	<!-- Helioviewer Apache Ant build.xml. -->
 	<!-- Last updated: February 2009 By Keith -->
 	<description>
-		HelioViewer Apache Ant build.xml
+		Helioviewer Apache Ant build.xml
     </description>
 
     <!-- Some useful variables -->
@@ -11,7 +11,7 @@
 	<property name="dochome" value="install/tools/jsdoc-toolkit/" />
 
 	<target name="build">
-		<echo>Building HelioViewer...</echo>
+		<echo>Building Helioviewer...</echo>
 
 		<!-- create build directory -->
 		<mkdir dir="${hvlibs}/build"/>
@@ -38,6 +38,7 @@
 	
 	<!-- Documentation Generation -->
 	<target name="doc">
+		<echo>Generating documentation...</echo>
 		<exec dir="${dochome}" executable="java">
 			<arg line="-jar jsrun.jar app/run.js -a -p -t=templates/jsdoc -d=../../../docs/ ../../../lib/helioviewer/" />
 		</exec>

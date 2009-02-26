@@ -764,13 +764,76 @@
 							</div>							
 						</div>						
 					</li>
-				</ul>
+					
+					<br>
+					
+					<!-- Appendix B: Variable Types -->
+					<li>
+						<div id="VariableTypes">
+							Variable Types
+							<p>This appendice contains a list of some of the variable types used by the Helioviewer API's.</p> 
+							<div class="summary-box" style="background-color: #E3EFFF;">
+							
+								<!-- Observatories -->
+								<i>Observatories:</i><br><br>
+								<table class="param-list" cellspacing="10">
+								<tbody valign="top">
+									<tr>
+										<td width="25%"><strong>Type:</strong></td>
+										<td width="45%"><strong>Description:</strong></td>
+										<td><strong>Example:</strong></td>										
+									</tr>
+									<tr>
+										<td>Integer</td>
+										<td>An integer.</td>
+										<td>12</td>
+									</tr>
+									<tr>
+										<td>Float</td>
+										<td>A floating point number.</td>
+										<td>2.63</td>
+									</tr>
+									<tr>
+										<td>String</td>
+										<td>A string.</td>
+										<td>SOH</td>
+									</tr>
+									<tr>
+										<td>List</td>
+										<td>A comma-separated list of some other type, usually strings or integers</td>
+										<td>VSOService::noaa,GOESXRayService::GOESXRay</td>
+									</tr>
+									<tr>
+										<td>Unix Timestamp</td>
+										<td>The number of seconds since January 1, 1970, midnight UTC. (see <a href="#variable-type-resources">[1]</a>)</td>
+										<td>1065512000 <span style="color:grey">// October 7th 2003, 7:33:20 UTC</span></td>																		
+									</tr>
+									<tr>
+										<td>ISO 8601 UTC Date</td>
+										<td>ISO 8601 is a widely supported standarized date format. (See <a href="#variable-type-resources">[2]</a>, <a href="#variable-type-resources">[3]</a>)</td>
+										<td>2003-10-05T00:00:00Z <span style="color:grey">// Note the "Z" at the end. This specifies that this is a UTC datetime</span></td>
+									</tr>
+								</tbody>
+								</table>
+								
+								<br><br>
+								<div id="variable-type-resources">
+									<strong>References:</strong><br><br>
+									[1] <a href="http://www.epochconverter.com/">Epoch Converter - Unix Timestamp Converter</a><br>
+									[2] <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 - Wikipedia</a><br>
+									[3] <a href="http://www.w3.org/TR/NOTE-datetime">Date and Time Formats - W3.org</a><br>
+									<br>
+								</div>
+							</div>							
+						</div>						
+					</li>
+				</ol>
 			</div>
 					
 		</div>
 
 		<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-			Last Updated: 2009-01-28 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+			Last Updated: 2009-02-25 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 		</div>
 	
 	</body>

@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - LoadingIndicator</title>
+		<title>JsDoc Reference - EventTimeline</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -248,7 +248,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class LoadingIndicator
+				Class EventTimeline
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -258,13 +258,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/lib_helioviewer_LoadingIndicator.js.html">LoadingIndicator.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/lib_helioviewer_EventTimeline.js.html">EventTimeline.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class LoadingIndicator.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class EventTimeline.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -277,9 +277,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/LoadingIndicator.html">LoadingIndicator</a></b>()
+								<b><a href="../symbols/EventTimeline.html">EventTimeline</a></b>(controller, container)
 							</div>
-							<div class="description">Creates a new LoadingIndicator</div>
+							<div class="description">Creates a new EventTimeline.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -293,7 +293,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class LoadingIndicator.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class EventTimeline.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -306,45 +306,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LoadingIndicator.html#hide">hide</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/EventTimeline.html#resize">resize</a></b>()
 								</div>
-								<div class="description">Hide the loading indicator</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LoadingIndicator.html#loadingFinished">loadingFinished</a></b>(i)
-								</div>
-								<div class="description">Remove an AJAX request from the loading stack</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LoadingIndicator.html#loadingStarted">loadingStarted</a></b>(e)
-								</div>
-								<div class="description">Add an AJAX request to the loading stack</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LoadingIndicator.html#reset">reset</a></b>()
-								</div>
-								<div class="description">Reset the loading indicator</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LoadingIndicator.html#show">show</a></b>()
-								</div>
-								<div class="description">Display the loading indicator</div>
+								<div class="description">Event-hanlder for window resize</div>
 							</td>
 						</tr>
 					
@@ -365,17 +329,34 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>LoadingIndicator</b>()
+						<b>EventTimeline</b>(controller, container)
 				</div>
 				
 				<div class="description">
-					Creates a new LoadingIndicator
+					Creates a new EventTimeline.
 					
 				</div>
 				
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{Object}</span>  <b>controller</b>
+								
+							</dt>
+								<dd>Reference to the controller class (Helioviewer).</dd>
+						
+							<dt>
+								<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span>  <b>container</b>
+								
+							</dt>
+								<dd>The ID for the timeline's container.</dd>
+						
+						</dl>
 					
 					
 					
@@ -396,137 +377,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="hide"> </a>
+					<a name="resize"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>hide</b>()
+					<b>resize</b>()
 					
 					</div>
 					<div class="description">
-						Hide the loading indicator
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="loadingFinished"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>loadingFinished</b>(i)
-					
-					</div>
-					<div class="description">
-						Remove an AJAX request from the loading stack
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>i</b>
-									
-								</dt>
-								<dd>Item to remove</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="loadingStarted"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>loadingStarted</b>(e)
-					
-					</div>
-					<div class="description">
-						Add an AJAX request to the loading stack
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>e</b>
-									
-								</dt>
-								<dd>Event</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="reset"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>reset</b>()
-					
-					</div>
-					<div class="description">
-						Reset the loading indicator
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="show"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>show</b>()
-					
-					</div>
-					<div class="description">
-						Display the loading indicator
+						Event-hanlder for window resize
 						
 						
 					</div>
@@ -555,7 +414,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Feb 25 2009 14:47:29 GMT-0500 (EST)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Feb 25 2009 14:47:28 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

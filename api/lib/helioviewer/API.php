@@ -330,6 +330,15 @@ class API {
 	}
 	
 	/**
+	 * launchJHelioviewer
+	 */
+	private function _launchJHelioviewer () {
+		require_once('lib/helioviewer/JHV.php');
+		$jhv = new JHV();
+		$jhv->launch();
+	}
+	
+	/**
 	 * buildMovie
 	 * @return 
 	 */
@@ -559,6 +568,8 @@ class API {
 			case "getJP2Image":
 				break;
 			case "getJP2ImageSeries":
+				break;
+			case "launchJHelioviewer":
 				break;
 			default:
 				throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");		
