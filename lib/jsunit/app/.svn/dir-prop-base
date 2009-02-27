@@ -1,0 +1,6 @@
+K 13
+svn:externals
+V 71
+css https://jsunit.svn.sourceforge.net/svnroot/jsunit/trunk/jsunit/css
+
+END

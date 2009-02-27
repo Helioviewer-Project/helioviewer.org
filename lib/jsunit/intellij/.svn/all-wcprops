@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/jsunit/!svn/ver/1247/trunk/jsunit/intellij
+END
+services_client.iml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/jsunit/!svn/ver/1086/trunk/jsunit/intellij/services_client.iml
+END
+browser.iml
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/jsunit/!svn/ver/1247/trunk/jsunit/intellij/browser.iml
+END
+aggregate.iml
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/jsunit/!svn/ver/1247/trunk/jsunit/intellij/aggregate.iml
+END
+server.iml
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/jsunit/!svn/ver/1247/trunk/jsunit/intellij/server.iml
+END
+core.iml
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/jsunit/!svn/ver/1247/trunk/jsunit/intellij/core.iml
+END
+union.iml
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/jsunit/!svn/ver/1247/trunk/jsunit/intellij/union.iml
+END
