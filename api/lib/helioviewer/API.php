@@ -35,7 +35,7 @@ class API {
 	 * @return 
 	 */
 	private function _getTile () {
-		require_once('lib/helioviewer/Tile.php');
+		require_once(Config::TILE_API_URL);
 		$tile = new Tile($this->params['imageId'], $this->params['zoom'], $this->params['x'], $this->params['y'], $this->params['ts']);
 		$tile->display();
 		
@@ -156,7 +156,7 @@ class API {
 		$filename = end(explode("/", $filepath));
 		
 		if ($this->params['getURL'] == "true") {
-			$url = preg_replace(CONFIG::WEB_ROOT_DIR_REGEX, CONFIG::WEB_ROOT_URL, $filepath);
+			$url = preg_replace(Config::WEB_ROOT_DIR_REGEX, Config::WEB_ROOT_URL, $filepath);
 			echo $url;
 		}
 		else {

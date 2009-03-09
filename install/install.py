@@ -12,7 +12,7 @@ def main():
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
 	#dbname, dbuser, dbpass = getDBInfo()
-	dbname = "hv"
+	dbname = "hv2"
 	dbuser = "helioviewer"
 	dbpass = dbuser
 
@@ -90,10 +90,10 @@ def extractJP2MetaInfo (img):
 			"det" :    "Helioviewer Detector",
 			"meas":    "Helioviewer Measurement",
 			"centering" : "Helioviewer Centering",
-			"centerX"      : "Helioviewer Xcen",
-			"lengthX"      : "Helioviewer Xlen",
-			"centerY"      : "Helioviewer Ycen",
-			"lengthY"      : "Helioviewer Ylen",
+			"centerX"   : "Helioviewer Xcen",
+			"lengthX"   : "Helioviewer Xlen",
+			"centerY"   : "Helioviewer Ycen",
+			"lengthY"   : "Helioviewer Ylen",
 			"scaleX"    : "Helioviewer Cdelt 1",
 			"scaleY"    : "Helioviewer Cdelt 2",
 			"radius"    : "Helioviewer Rsun",
@@ -155,7 +155,7 @@ def printGreeting():
 	os.system("clear")
 
 	print "===================================================================="
-	print "= HelioViewer Database Population Script 0.96b                     ="
+	print "= Helioviewer Database Population Script 0.96b                     ="
 	print "= By: Keith Hughitt, November 07 2008                              ="
 	print "=                                                                  ="
 	print "= This script processes JP2 images, extracts their associated      ="

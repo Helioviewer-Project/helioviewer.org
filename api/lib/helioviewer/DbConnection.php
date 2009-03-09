@@ -1,9 +1,9 @@
 <?php
 	class DbConnection {
-		private $user     = "helioviewer";
-		private $password = "helioviewer";
-		private $host     = "localhost";
-		private $dbname   = "hv";
+		private $host     = Config::DB_HOST;
+		private $dbname   = Config::DB_NAME;
+		private $user     = Config::DB_USER;
+		private $password = Config::DB_PASS;
 		
 		public function __construct($dbname = null, $user = null, $password = null, $host = null) {
 			if ($user) $this->user = $user;

@@ -1,11 +1,10 @@
 <?php
 	//error_reporting(0); 
+	require_once("lib/helioviewer/API.php");
 	if (isset($_GET['action'])) {
-		require_once("lib/helioviewer/API.php");
 		new API($_GET, "text");
 	}
 	elseif (isset($_POST['action'])) {
-		require_once("lib/helioviewer/API.php");
 		new API($_POST, "json");
 	} else {
 		

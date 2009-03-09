@@ -32,16 +32,21 @@ class Tile extends JP2Image {
 		// Retrieve meta-information
 		$imageInfo = $this->getMetaInfo();
 		
-		// Filepaths (For .tif and .png images)
-		$png = $this->getFilePath($imageInfo['timestamp'], $this->zoomLevel, $this->x, $this->y);
-		$tif = substr($png, 0, -3) . "tif";
+		// Determine final image format (jpg for disk images, png for all others)
+		$format = ($imageInfo['opacityGrp'] == 1) ? "jpg" : "png";
 
+		// Filepaths (for intermediate pgm and final png/jpg image)
+		$final = $this->getFilePath($this->zoomLevel, $this->x, $this->y, $imageInfo['timestamp'], $format);
+		
+		$pgm   = substr($final, 0, -3) . "pgm";
+
+		// Ratio of actual image scale to the requested image scale
 		$actualToDesired = ($imageInfo['imgScaleX'] / $this->desiredScale);
 
 		// If tile already exists in cache, use it
 		if (!$skipCheck) {
-			if (file_exists($png)) {
-				$this->image = new Imagick($png);
+			if (file_exists($final)) {
+				$this->image = new Imagick($final);
 				$this->display();
 				exit();
 			}
@@ -61,18 +66,19 @@ class Tile extends JP2Image {
 		// If nothing useful is in the cache, create the tile from scratch
 
 		// kdu_expand command
-		$im = $this->extractRegion($imageInfo['uri'], $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
+		$im = $this->extractRegion($imageInfo['uri'], $pgm, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
 
 		// Convert to png
-
-		$im->setFilename($png);
+		$im->setCompressionQuality(Config::PNG_COMPRESSION_QUALITY);		
+		$im->setFilename($final);
+		
 		$im->writeImage($im->getFilename());
 
 		// Optimize PNG
-		exec("optipng $png", $out, $ret);
+		// exec("optipng $png", $out, $ret);
 
-		// Delete tif image
-		unlink($tif);
+		// Delete pgm image
+		unlink($pgm);
 
 		// Store image
 		$this->image = $im;
@@ -83,12 +89,12 @@ class Tile extends JP2Image {
 	 * @return
 	 * @param $timestamp Object
 	 */
-	function getFilePath($timestamp, $zoomLevel, $x, $y) {
+	function getFilePath($zoomLevel, $x, $y, $timestamp, $format) {
 		// Starting point
 		$filepath = $this->cacheDir . $this->tileSize . "/";
 		if (!file_exists($filepath))
 			mkdir($filepath);
-
+			
 		// Date information
 		$year  = substr($timestamp,0,4);
 		$month = substr($timestamp,5,2);
@@ -122,7 +128,7 @@ class Tile extends JP2Image {
 		if (substr($y,0,1) == "-")
 			$yStr = "-" . str_pad(substr($y, 1), 2, '0', STR_PAD_LEFT);
 
-		$filepath .= $this->imageId . "_" . $zoomLevel . "_" . $xStr . "_" . $yStr . ".png";
+		$filepath .= $this->imageId . "_" . $zoomLevel . "_" . $xStr . "_" . $yStr . ".$format";
 
 		return $filepath;
 	}
@@ -135,7 +141,7 @@ class Tile extends JP2Image {
 	 * @param $imageId Object
 	 */
 	function getMetaInfo() {
-		$query  = sprintf("SELECT timestamp, uri, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image 
+		$query  = sprintf("SELECT timestamp, uri, opacityGrp, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image 
 							LEFT JOIN measurement on image.measurementId = measurement.id  
 							LEFT JOIN detector on measurement.detectorId = detector.id 
 							WHERE image.id=%d", $this->imageId);

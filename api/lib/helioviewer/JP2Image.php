@@ -1,14 +1,19 @@
 <?php
 require_once('DbConnection.php');
 
+/**
+ * TODO:
+ *     - use JPG instead of PNG for disk images.
+ */
+
 abstract class JP2Image {
-	protected $noImage    = "images/transparent_512.gif";
-	protected $kdu_expand = "kdu_expand";
-	protected $kdu_lib_path = "/home/esahelio/kakadu/lib";
-	protected $cacheDir   = "/var/www/hv/cache/";
-	protected $jp2Dir     = "/var/www/hv/jp2/";
-	protected $baseScale  = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
-	protected $baseZoom   = 10;   //Zoom-level at which (EIT) images are of this scale.
+	protected $kdu_expand   = CONFIG::KDU_EXPAND;
+	protected $kdu_lib_path = CONFIG::KDU_LIBS_DIR;
+	protected $cacheDir     = CONFIG::CACHE_DIR;
+	protected $jp2Dir       = CONFIG::JP2_DIR;
+	protected $noImage      = "images/transparent_512.gif";
+	protected $baseScale    = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
+	protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
 	
 	protected $db;
 	protected $xRange;
@@ -81,6 +86,9 @@ abstract class JP2Image {
 			echo '<span style="color:red;">Error:</span> ' .$e->getMessage();
 			exit();
 		}
+
+		//print "<br><br><div style='color:blue'>$cmd</div><br>";
+		//exit();
 		
 		// Open in ImageMagick
 		$im = new Imagick($output);
@@ -95,14 +103,24 @@ abstract class JP2Image {
 		if ($measurement == "0WL")
 			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
 			
-		// Pad if tile is smaller than it should be (Case 2)
-		if ($imageScale < $this->desiredScale) {
-			$this->padImage($im, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
-		}
-
 		// Resize if necessary (Case 3)
 		if ($relTs < $this->tileSize)
 			$im->scaleImage($this->tileSize, $this->tileSize);
+
+		// Pad if tile is smaller than it should be (Case 2)
+		//if ($imageScale < $this->desiredScale) {
+			//$this->padImage($im, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+		//}
+		//if (($imageScale < $this->desiredScale) || (true)) {
+		//}
+		
+		// Pad if needed
+		$tileWidth  = $im->getImageWidth();
+		$tileHeight = $im->getImageHeight();
+		
+		if (($tileWidth < $this->tileSize) || ($tileHeight < $this->tileSize)) {
+			$this->padImage($im, $imageWidth, $imageHeight, $tileWidth, $tileHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+		}
 
 		return $im;
 	}
@@ -111,7 +129,7 @@ abstract class JP2Image {
 	 * getRegionString
 	 * Build a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
 	 */
-	public function getRegionString($width, $height, $ts) {
+	private function getRegionString($width, $height, $ts) {
 		// Number of tiles for the entire image
 		$imgNumTilesX = max(2, $width / $ts);
 		$imgNumTilesY = max(2, $height / $ts);
@@ -137,9 +155,38 @@ abstract class JP2Image {
 		return $region;
 	}
 	
+	private function padImage ($im, $imageWidth, $imageHeight, $tileWidth, $tileHeight, $ts, $x, $y) {
+		// Determine which direction "outside" is
+		$xOutside = ($x <= -1) ? "LEFT" : "RIGHT";
+		$yOutside = ($y <= -1) ? "TOP"  : "BOTTOM";
+		
+		// Pad all sides
+		$clear = new ImagickPixel( "transparent" );
+		$padx = $ts - $tileWidth;
+		$pady = $ts - $tileHeight;
+		
+		$im->borderImage($clear, $padx, $pady);
+		
+		// Remove inside padding
+		if ($xOutside == "LEFT") {
+			if ($yOutside == "TOP") {
+				$im->cropImage($ts, $ts, 0, 0);
+			} else {
+				$im->cropImage($ts, $ts, 0, $pady);
+			}
+		} else {
+			if ($yOutside == "TOP") {
+				$im->cropImage($ts, $ts, $padx, 0);
+			} else {
+				$im->cropImage($ts, $ts, $padx, $pady);
+			}			
+		}
+	}
+	
 	/**
-	 * padImage
+	 * padImage (old version)
 	 */
+	/**
 	function padImage($im, $ts, $x, $y) {
 		// First pad all sides, then trim away unwanted parts
 		$clear = new ImagickPixel( "transparent" );
@@ -147,10 +194,6 @@ abstract class JP2Image {
 		$pady = $ts - $im->getImageHeight();
 		
 		$im->borderImage($clear, $padx, $pady);
-
-		// left
-		//if ($x <= -1)
-		//	$im->cropImage($ts, $ts + $pady, 0, 0);
 		
 		// top-left
 		if (($x == -1) && ($y == -1))
@@ -168,24 +211,7 @@ abstract class JP2Image {
 		if (($x == -1) && ($y == 0))
 			$im->cropImage($ts, $ts, 0, $pady);
 
-		/**
-		// top-left
-		if (($x == -1) && ($y == -1))
-			$im->cropImage($ts, $ts, 0, 0);
-
-		// top-right
-		if (($x == 0) && ($y == -1))
-			$im->cropImage($ts, $ts, $padx, 0);
-
-		// bottom-right
-		if (($x == 0) && ($y == 0))
-			$im->cropImage($ts, $ts, $padx, $pady);
-
-		// bottom-left
-		if (($x == -1) && ($y == 0))
-			$im->cropImage($ts, $ts, 0, $pady);
-		*/
-	}
+	}*/
 	
 	private function getColorTable($detector, $measurement) {
 		if ($detector == "EIT") {
@@ -208,8 +234,14 @@ abstract class JP2Image {
 
 		// Special header for MSIE 5
 		header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
+
+		$format = $this->image->getImageFormat();
 		
-		header( "Content-Type: image/png" );
+		if ($format == "PNG")
+			header("Content-Type: image/png");
+		else
+			header("Content-Type: image/jpeg");
+		
 		echo $this->image;
 	}
 }

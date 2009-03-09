@@ -1,11 +1,11 @@
 -- HelioViewer Database Structure --
--- last update: 11-10-2008        --
+-- last update: 03-09-2008        --
 
 --
 -- Create schema
 --
-CREATE DATABASE IF NOT EXISTS hv;
-USE hv;
+CREATE DATABASE IF NOT EXISTS hv2;
+USE hv2;
 
 --
 -- Create tables
