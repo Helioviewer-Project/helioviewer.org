@@ -71,8 +71,7 @@ class Tile extends JP2Image {
 		// Convert to png
 		$im->setCompressionQuality(Config::PNG_COMPRESSION_QUALITY);		
 		$im->setFilename($final);
-		
-		$im->writeImage($im->getFilename());
+		$im->writeImage($final);
 
 		// Optimize PNG
 		// exec("optipng $png", $out, $ret);
@@ -82,6 +81,9 @@ class Tile extends JP2Image {
 
 		// Store image
 		$this->image = $im;
+		
+		// Display image
+		$this->display($final);
 	}
 
 	/**
