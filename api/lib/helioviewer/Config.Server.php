@@ -15,6 +15,7 @@ class Config {
 	const CACHE_DIR          = '/home/esahelio/public_html/cache/';
 	const JP2_DIR            = '/home/esahelio/public_html/jp2/';
 	const KDU_LIBS_DIR       = '/home/esahelio/kakadu/lib';
+	const EMPTY_TILE         = 'images/transparent_512.gif';
 	
 	// URL's
 	const WEB_ROOT_URL       = 'http://helioviewer.org';
@@ -35,6 +36,6 @@ class Config {
 	const MAX_MOVIE_FRAMES   = 150;
 			
 	// Image parameters
-	const PNG_COMPRESSION_QUALITY = 40;
+	const PNG_COMPRESSION_QUALITY = 60;
 }
 ?>

@@ -1,17 +1,12 @@
 <?php
 require_once('DbConnection.php');
 
-/**
- * TODO:
- *     - use JPG instead of PNG for disk images.
- */
-
 abstract class JP2Image {
 	protected $kdu_expand   = CONFIG::KDU_EXPAND;
 	protected $kdu_lib_path = CONFIG::KDU_LIBS_DIR;
 	protected $cacheDir     = CONFIG::CACHE_DIR;
 	protected $jp2Dir       = CONFIG::JP2_DIR;
-	protected $noImage      = "images/transparent_512.gif";
+	protected $noImage      = CONFIG::EMPTY_TILE;
 	protected $baseScale    = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
 	protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
 	

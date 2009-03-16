@@ -17,6 +17,7 @@ class Config {
 	const CACHE_DIR          = '/var/www/hv/cache/';
 	const JP2_DIR            = '/var/www/hv/jp2/';
 	const KDU_LIBS_DIR       = '/usr/lib/kakadu/';
+	const EMPTY_TILE         = 'images/transparent_512.gif';
 	
 	// URL's
 	const WEB_ROOT_URL       = 'http://localhost/hv';
@@ -37,6 +38,6 @@ class Config {
 	const MAX_MOVIE_FRAMES   = 150;
 
 	// Image parameters
-	const PNG_COMPRESSION_QUALITY = 40;
+	const PNG_COMPRESSION_QUALITY = 60;
 }
 ?>

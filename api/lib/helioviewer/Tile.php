@@ -68,6 +68,7 @@ class Tile extends JP2Image {
 		// kdu_expand command
 		$im = $this->extractRegion($imageInfo['uri'], $pgm, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
 
+		// TODO: handle JPEG's separately
 		// Convert to png
 		$im->setCompressionQuality(Config::PNG_COMPRESSION_QUALITY);		
 		$im->setFilename($final);
