@@ -21,7 +21,7 @@ class Config {
 	const WEB_ROOT_URL       = 'http://helioviewer.org';
 	const TMP_ROOT_URL       = 'http://helioviewer.org/tmp';	
 	const EVENT_SERVER_URL   = "http://achilles.nascom.nasa.gov/~wamsler/API/index.php?";
-	const TILE_API_URL       = '/home/esahelio/public_html/api/lib/helioviewer/no-mod-imagick/Tile.php';
+	const TILE_API_URL       = '/home/esahelio/public_html/api/lib/helioviewer/Tile.Manual.php';
 		
 	// Regular Expressions	
 	const WEB_ROOT_DIR_REGEX = '/\/home\/esahelio\/public_html/';
@@ -36,6 +36,12 @@ class Config {
 	const MAX_MOVIE_FRAMES   = 150;
 			
 	// Image parameters
-	const PNG_COMPRESSION_QUALITY = 60;
+	const PNG_COMPRESSION_QUALITY  = 20;
+	const JPEG_COMPRESSION_QUALITY = 75;
+	const BIT_DEPTH                = 8;
+	const NUM_COLORS               = 256;
+			
+	// Debugging
+	const ENABLE_CACHE       = true;
 }
 ?>

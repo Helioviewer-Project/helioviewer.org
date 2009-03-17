@@ -33,17 +33,24 @@ abstract class JP2Image {
 	}
 	
 	/**
-	 * extractRegion
+	 * buildImage
 	 * @return Returns an Imagick object representing the extracted region
 	 */
-	protected function extractRegion($input, $output, $imageWidth, $imageHeight, $imageScale, $detector, $measurement) {
-		$cmd = "$this->kdu_expand -i " . $input . " -o $output ";
+	protected function buildImage($jp2, $tile, $imageWidth, $imageHeight, $imageScale, $detector, $measurement) {
+		// Intermediate image file
+		$pgm = substr($tile, 0, -3) . "pgm";
+		
+		$cmd = "$this->kdu_expand -i $jp2 -o $pgm ";
 		
 		// Ratio of the desired scale to the actual JP2 image scale
 		$desiredToActual = $this->desiredScale / $imageScale;
 		
 		// Scale Factor
-		$scaleFactor = log($desiredToActual, 2);		
+		$scaleFactor = log($desiredToActual, 2);
+		
+		// Determine relative size of image at this scale
+		$jp2RelWidth  = $imageWidth  /  $desiredToActual;
+		$jp2RelHeight = $imageHeight /  $desiredToActual;
 		
 		$relTs = $this->tileSize * $desiredToActual;
 		
@@ -54,22 +61,11 @@ abstract class JP2Image {
 		if ($imageScale < $this->desiredScale) {
 			$cmd .= "-reduce " . $scaleFactor . " ";
 		}
-
 		// Case 3: JP2 image resolution < desired resolution (get smaller tile and then enlarge)
 		// Don't do anything yet...
 		
-		// Check to see if the tile requested is within the range of available data
-		//$xRange = ceil($imageWidth  / (2 * $desiredToActual * $this->tileSize));
-		//$yRange = ceil($imageHeight / (2 * $desiredToActual * $this->tileSize));
-		//if ((abs($x) > $xRange) || (abs($y) > $yRange)) {
-		//	print "Out of range tile request... Range- x: $xRange, y: $yRange";
-		//	exit();
-		//}
-		
 		// Add desired region
 		$cmd .= $this->getRegionString($imageWidth, $imageHeight, $relTs);
-		//print $cmd;
-
 		
 		// Execute the command
 		try {
@@ -83,55 +79,73 @@ abstract class JP2Image {
 			exit();
 		}
 		
-		$imcmd = "convert $output ";
+		$imcmd = "convert $pgm ";
 
 		// For images with transparent components, convert pixels with value "0" to be transparent.
 		if ($measurement == "0WL")
 			$imcmd .= "-transparent black ";
 		
 		// Get dimensions of extracted region
-		$dimensions = split("x", trim(exec("identify $output | grep -o \" [0-9]*x[0-9]* \"")));
-		$tileWidth  = $dimensions[0];
-		$tileHeight = $dimensions[1];
+		$dimensions = split("x", trim(exec("identify $pgm | grep -o \" [0-9]*x[0-9]* \"")));
+		$extractedWidth  = $dimensions[0];
+		$extractedHeight = $dimensions[1];
 
-		// Pad up the the relative tilesize (in cases where region extract for outer tiles is smaller than for inner tiles)
-		//$tileWidth  = $im->getImageWidth();
-		//$tileHeight = $im->getImageHeight();
-		//if (($relTs < $this->tileSize) && (($tileWidth < $relTs) || ($tileHeight < $relTs))) {
-		//	$this->padImage($im, $tileWidth, $tileHeight, $relTs, $this->xRange["start"], $this->yRange["start"]);
-		//}
+		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+		if (($relTs < $this->tileSize) && (($extractedWidth < $relTs) || ($extractedHeight < $relTs))) {
+			$pad = "convert $pgm " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extractedWidth, $extractedHeight, $relTs, $this->xRange["start"], $this->yRange["start"]) . " $pgm";
+			exec($pad);
+		}		
 		
-		
-		// Apply color table
-		if (($detector == "EIT") || ($measurement == "0WL")) {
-			$clut = $this->getColorTable($detector, $measurement);
-			$imcmd .= "$clut -clut ";
-		}
-		
-		// Pad if tile is smaller than it should be (Case 2)
-		if ($imageScale < $this->desiredScale) {
-			$imcmd .= $this->padImage($tif, $this->tileSize, $this->xRange["start"], $this->yRange["start"], $relTs);
-		}
-
 		// Resize if necessary (Case 3)
 		if ($relTs < $this->tileSize)
 			$imcmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
 			//exec("convert -geometry " . $this->tileSize . "x" . $this->tileSize . "! $tif $tif", $out, $ret);
 			//$im->scaleImage($this->tileSize, $this->tileSize);
 
-		exec($imcmd . "$output");
+		// Get dimensions of extracted region
+		$d = split("x", trim(exec("identify $pgm | grep -o \" [0-9]*x[0-9]* \"")));
+		$tileWidth  = $d[0];
+		$tileHeight = $d[1];
+		
+		// Pad if tile is smaller than it should be (Case 2)
+		if ((($tileWidth < $this->tileSize) || ($tileHeight < $this->tileSize)) && ($relTs >= $this->tileSize)) {
+			$imcmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tileWidth, $tileHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+		}
+		
+		// Compression
+		$qual = Config::PNG_COMPRESSION_QUALITY;
+		$imcmd .= "-quality $qual -colors 256 -depth 8 ";
 
-		//echo $imcmd . $tif;
+		// Apply color table
+		if (($detector == "EIT") || ($measurement == "0WL")) {
+			$clut = $this->getColorTable($detector, $measurement);
+			$imcmd .= "$clut -clut ";
+		}
 
-		//return $im;
-		return $output;
+		//echo ("$imcmd $tile");
+		//exit();
+
+		// Execute command		
+		exec($imcmd . "$tile");
+
+		// Remove intermediate file
+		unlink($pgm);
+			
+		return $tile;
 	}
+	
+	/**
+	 * expand with kdu_expand
+	 */
+	private function expandRegion() {
+		
+	}	
 	
 	/**
 	 * getRegionString
 	 * Build a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
 	 */
-	public function getRegionString($jp2Width, $jp2Height, $ts) {
+	private function getRegionString($jp2Width, $jp2Height, $ts) {
 		// Parameters
 		$top = $left = $width = $height = null;
 		
@@ -184,6 +198,7 @@ abstract class JP2Image {
 	 * padImage
 	 */
 	//function padImage($im, $ts, $x, $y) {
+	/**
 	function padImage($tif, $ts, $x, $y, $relTs) {
 		$padx = $ts - $relTs;
 		$pady = $ts - $relTs;
@@ -204,12 +219,20 @@ abstract class JP2Image {
 		if (($x == -1) && ($y == 0))
 			return "-background transparent -gravity NorthEast -extent $ts" . "x" . "$ts ";
 
-	}
+	}**/
 	
-	private function padImage ($im, $jp2Width, $jp2Height, $tileWidth, $tileHeight, $ts, $x, $y) {
+	private function padImage ($jp2Width, $jp2Height, $tileWidth, $tileHeight, $ts, $x, $y) {
 		// Determine min and max tile numbers
 		$imgNumTilesX = max(2, ceil($jp2Width  / $ts));
 		$imgNumTilesY = max(2, ceil($jp2Height / $ts));
+		
+		// Tile placement architecture expects an even number of tiles along each dimension
+		if ($imgNumTilesX % 2 != 0)
+			$imgNumTilesX += 1;
+
+		if ($imgNumTilesY % 2 != 0)
+			$imgNumTilesY += 1;
+		
 		$tileMinX = - ($imgNumTilesX / 2);
 		$tileMaxX =   ($imgNumTilesX / 2) - 1;
 		$tileMinY = - ($imgNumTilesY / 2);
@@ -255,17 +278,17 @@ abstract class JP2Image {
 	
 	private function getColorTable($detector, $measurement) {
 		if ($detector == "EIT") {
-			return "/home/esahelio/public_html/images/color-tables/ctable_EIT_$measurement.png";
+			return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_EIT_$measurement.png";
 		}
 		else if ($detector == "0C2") {
-			return "/home/esahelio/public_html/images/color-tables/ctable_idl_3.png";
+			return Config::WEB_ROOT_DIR .  "/images/color-tables/ctable_idl_3.png";
 		}
 		else if ($detector == "0C3") {
-			return "/home/esahelio/public_html/images/color-tables/ctable_idl_1.png";
+			return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
 		}		
 	}
 	
-	public function display() {
+	public function display($filepath=null) {
 		// Cache-Lifetime (in minutes)
 		$lifetime = 60;
 		$exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
@@ -274,10 +297,23 @@ abstract class JP2Image {
 
 		// Special header for MSIE 5
 		header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
+
+		// Filename & Content-length
+		if (isset($filepath)) {
+			$filename = end(split("/", $filepath));
+			header("Content-Length: " . filesize($filepath));
+			header("Content-Disposition: inline; filename=\"$filename\"");	
+		}
+
+		// Specify format
+		$format = strtoupper(substr($filepath,-3,3));
+
+		if ($format == "PNG")
+			header("Content-Type: image/png");
+		else
+			header("Content-Type: image/jpeg");
 		
-		header( "Content-Type: image/png" );
-		//echo $this->image;
-	    readfile($this->image);
+		readfile($filepath);
 	}
 }
 ?>

@@ -33,41 +33,109 @@ abstract class JP2Image {
 	}
 	
 	/**
-	 * extractRegion
+	 * buildImage
 	 * @return Returns an Imagick object representing the extracted region
+	 * $imageInfo['uri'], $tile, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
 	 */
-	protected function extractRegion($input, $output, $imageWidth, $imageHeight, $imageScale, $detector, $measurement) {
-		$cmd = "$this->kdu_expand -i " . $input . " -o $output ";
+	protected function buildImage($filename) {
+		// Relative tilesize
+		$relTs = $this->getRelativeTilesize();
 		
-		// Ratio of the desired scale to the actual JP2 image scale
-		$desiredToActual = $this->desiredScale / $imageScale;
+		// extract region from JP2
+		$pgm = $this->extractRegion($filename, $relTs);
+
+		// Open in ImageMagick
+		$im = new Imagick($pgm);
 		
+		// Compression settings & Interlacing
+		$this->setImageParams($im);
+		
+		// Apply color table
+		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
+			$clut = new Imagick($this->getColorTable($this->detector, $this->measurement));
+			$im->clutImage( $clut );
+		}
+		
+		// For images with transparent components, convert pixels with value "0" to be transparent.
+		if ($this->getImageFormat() == "png")
+			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
+			
+		// Get dimensions of extracted region
+		$extractedWidth  = $im->getImageWidth();
+		$extractedHeight = $im->getImageHeight();
+
+		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+		if (($relTs < $this->tileSize) && (($extractedWidth < $relTs) || ($extractedHeight < $relTs))) {
+			$this->padImage($im, $extractedWidth, $extractedHeight, $relTs, $this->xRange["start"], $this->yRange["start"]);
+		}
+		
+		// Resize if necessary (Case 3)
+		if ($relTs < $this->tileSize)
+			$im->scaleImage($this->tileSize, $this->tileSize);
+
+		// Pad if tile is smaller than it should be (Case 2)
+		$tileWidth  = $im->getImageWidth();
+		$tileHeight = $im->getImageHeight();
+		
+		if (($tileWidth < $this->tileSize) || ($tileHeight < $this->tileSize)) {
+			$this->padImage($im, $tileWidth, $tileHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+		}
+		
+		$im->setFilename($filename);
+		$im->writeImage($filename);
+
+		// Quantize PNG's
+		if ($this->getImageFormat() == "png") {
+			$colors = Config::NUM_COLORS;
+			exec("pngnq -n $colors -e '.png.tmp' -f $filename && mv $filename.tmp $filename ");
+			$im = new Imagick($filename);
+		}
+
+		// Remove intermediate file
+		unlink($pgm);
+		
+		return $im;
+	}
+	
+	/**
+	 * Set Image Parameters
+	 * @return 
+	 * @param $im IMagick Image
+	 */
+	private function setImageParams($im) {
+		if ($this->getImageFormat() == "png") {
+			$im->setCompressionQuality(Config::PNG_COMPRESSION_QUALITY);
+			$im->setInterlaceScheme(imagick::INTERLACE_PLANE);
+		}
+		else {
+			$im->setCompressionQuality(Config::JPEG_COMPRESSION_QUALITY);
+			$im->setInterlaceScheme(imagick::INTERLACE_LINE);
+		}
+		$im->setImageDepth(Config::BIT_DEPTH);
+	}
+	
+	private function extractRegion($filename, $relTs) {
+		// Intermediate image file
+		$pgm = substr($filename, 0, -3) . "pgm";
+		
+		$cmd = "$this->kdu_expand -i $this->jp2 -o $pgm ";
+
 		// Scale Factor
-		$scaleFactor = log($desiredToActual, 2);		
-		
-		$relTs = $this->tileSize * $desiredToActual;
+		$scaleFactor = $this->getScaleFactor();		
 		
 		// Case 1: JP2 image resolution = desired resolution
 		// Nothing special to do...
 
 		// Case 2: JP2 image resolution > desired resolution (use -reduce)		
-		if ($imageScale < $this->desiredScale) {
+		if ($this->jp2Scale < $this->desiredScale) {
 			$cmd .= "-reduce " . $scaleFactor . " ";
 		}
 
 		// Case 3: JP2 image resolution < desired resolution (get smaller tile and then enlarge)
 		// Don't do anything yet...
-		
-		// Check to see if the tile requested is within the range of available data
-		//$xRange = ceil($imageWidth  / (2 * $desiredToActual * $this->tileSize));
-		//$yRange = ceil($imageHeight / (2 * $desiredToActual * $this->tileSize));
-		//if ((abs($x) > $xRange) || (abs($y) > $yRange)) {
-		//	print "Out of range tile request... Range- x: $xRange, y: $yRange";
-		//	exit();
-		//}
-		
+
 		// Add desired region
-		$cmd .= $this->getRegionString($imageWidth, $imageHeight, $relTs);
+		$cmd .= $this->getRegionString($this->jp2Width, $this->jp2Height, $relTs);
 		
 		// Execute the command
 		try {
@@ -80,47 +148,21 @@ abstract class JP2Image {
 			echo '<span style="color:red;">Error:</span> ' .$e->getMessage();
 			exit();
 		}
-
-		// Open in ImageMagick
-		$im = new Imagick($output);
 		
-		// Apply color table
-		if (($detector == "EIT") || ($measurement == "0WL")) {
-			$clut = new Imagick($this->getColorTable($detector, $measurement));
-			$im->clutImage( $clut );
-		}
+		return $pgm;
+	}
+	
+	private function getScaleFactor() {
+		// Ratio of the desired scale to the actual JP2 image scale
+		$desiredToActual = $this->desiredScale / $this->jp2Scale;
 		
-		// For images with transparent components, convert pixels with value "0" to be transparent.
-		if ($measurement == "0WL")
-			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
-			
-		// Pad up the the relative tilesize (in cases where region extract for outer tiles is smaller than for inner tiles)
-		$tileWidth  = $im->getImageWidth();
-		$tileHeight = $im->getImageHeight();
-		if (($relTs < $this->tileSize) && (($tileWidth < $relTs) || ($tileHeight < $relTs))) {
-			$this->padImage($im, $tileWidth, $tileHeight, $relTs, $this->xRange["start"], $this->yRange["start"]);
-		}
-		
-		// Resize if necessary (Case 3)
-		if ($relTs < $this->tileSize)
-			$im->scaleImage($this->tileSize, $this->tileSize);
-
-		// Pad if tile is smaller than it should be (Case 2)
-		//if ($imageScale < $this->desiredScale) {
-			//$this->padImage($im, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
-		//}
-		//if (($imageScale < $this->desiredScale) || (true)) {
-		//}
-		
-		// Pad if needed (to full tilesize)
-		$tileWidth  = $im->getImageWidth();
-		$tileHeight = $im->getImageHeight();
-		
-		if (($tileWidth < $this->tileSize) || ($tileHeight < $this->tileSize)) {
-			$this->padImage($im, $tileWidth, $tileHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
-		}
-
-		return $im;
+		// Scale Factor
+		return log($desiredToActual, 2);	
+	}
+	
+	private function getRelativeTilesize () {
+		$desiredToActual = $this->desiredScale / $this->jp2Scale;
+		return $this->tileSize * $desiredToActual;
 	}
 	
 	/**
@@ -272,13 +314,13 @@ abstract class JP2Image {
 	
 	private function getColorTable($detector, $measurement) {
 		if ($detector == "EIT") {
-			return "/var/www/hv/images/color-tables/ctable_EIT_$measurement.png";
+			return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_EIT_$measurement.png";
 		}
 		else if ($detector == "0C2") {
-			return "/var/www/hv/images/color-tables/ctable_idl_3.png";
+			return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_3.png";
 		}
 		else if ($detector == "0C3") {
-			return "/var/www/hv/images/color-tables/ctable_idl_1.png";
+			return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
 		}		
 	}
 	
@@ -300,15 +342,55 @@ abstract class JP2Image {
 		}
 
 		// Specify format
-		$format = $this->image->getImageFormat();
+		$format = $this->getImageFormat();
 
-		if ($format == "PNG")
+		if ($format == "png")
 			header("Content-Type: image/png");
 		else
 			header("Content-Type: image/jpeg");
 		
 			
 		echo $this->image;
+	}
+	
+	/**
+	 * getMetaInfo
+	 * @param $imageId Object
+	 */
+	protected function getMetaInfo($id) {
+		$query  = sprintf("SELECT timestamp, uri, opacityGrp, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image 
+							LEFT JOIN measurement on image.measurementId = measurement.id  
+							LEFT JOIN detector on measurement.detectorId = detector.id 
+							WHERE image.id=%d", $id);
+
+		$result = $this->db->query($query);
+
+		if (!$result) {
+		        echo "$query - failed\n";
+		        die (mysqli_error($this->db->link));
+		}
+		else if (mysqli_num_rows($result) > 0) {
+			$meta = mysqli_fetch_array($result, MYSQL_ASSOC);
+			
+			$this->jp2         = $meta['uri'];
+			$this->jp2Width    = $meta['width'];
+			$this->jp2Height   = $meta['height'];
+			$this->jp2Scale    = $meta['imgScaleX'];
+			$this->detector    = $meta['detector'];
+			$this->measurement = $meta['measurement'];
+			$this->opacityGrp  = $meta['opacityGrp'];
+			$this->timestamp   = $meta['timestamp'];
+		}
+		else
+			return false;
+	}
+	
+	/**
+	 * getImageFormat
+	 * @return 
+	 */
+	protected function getImageFormat() {
+		return ($this->opacityGrp == 1) ? "jpg" : "png";
 	}
 }
 ?>

@@ -38,6 +38,12 @@ class Config {
 	const MAX_MOVIE_FRAMES   = 150;
 
 	// Image parameters
-	const PNG_COMPRESSION_QUALITY = 60;
+	const PNG_COMPRESSION_QUALITY  = 20;
+	const JPEG_COMPRESSION_QUALITY = 75;
+	const BIT_DEPTH                = 8;
+	const NUM_COLORS               = 256;
+	
+	// Debugging
+	const ENABLE_CACHE       = false;
 }
 ?>
