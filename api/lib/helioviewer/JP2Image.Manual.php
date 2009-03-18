@@ -11,61 +11,168 @@ abstract class JP2Image {
 	protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
 	
 	protected $db;
+	protected $imageId;
 	protected $xRange;
 	protected $yRange;
 	protected $zoomLevel;
 	protected $tileSize;
 	protected $desiredScale;
+	protected $desiredToActual;
+	protected $scaleFactor;
+	
+	protected $jp2;
+	protected $jp2Width;
+	protected $jp2Height;
+	protected $jp2Scale;
+	protected $detector;
+	protected $measurement;
+	protected $opacityGrp;
+	protected $timestamp;
 	
 	protected $image;
 		
-	protected function __construct($zoomLevel, $xRange, $yRange, $tileSize) {
+	protected function __construct($id, $zoomLevel, $xRange, $yRange, $tileSize) {
 		date_default_timezone_set('UTC');
-		$this->db = new DbConnection();
+		$this->db        = new DbConnection();
+		$this->imageId   = $id;
 		$this->zoomLevel = $zoomLevel;
 		$this->tileSize  = $tileSize;
 		$this->xRange    = $xRange;
 		$this->yRange    = $yRange;
 
+		// Get image meta information
+		$this->getMetaInfo();
+
 		// Determine desired image scale
 		$this->zoomOffset   = $zoomLevel - $this->baseZoom;
 		$this->desiredScale = $this->baseScale * (pow(2, $this->zoomOffset));
+		
+		// Ratio of the desired scale to the actual JP2 image scale
+		$this->desiredToActual = $this->desiredScale / $this->jp2Scale;
+		
+		// Scale Factor
+		$this->scaleFactor = log($this->desiredToActual, 2);
+		
+		// Relative Tilesize
+		$this->relativeTilesize = $this->tileSize * $this->desiredToActual;		
 	}
 	
 	/**
 	 * buildImage
-	 * @return Returns an Imagick object representing the extracted region
+	 * @return
 	 */
-	protected function buildImage($jp2, $tile, $imageWidth, $imageHeight, $imageScale, $detector, $measurement) {
-		// Intermediate image file
-		$pgm = substr($tile, 0, -3) . "pgm";
+	protected function buildImage($filename) {
+		$relTs = $this->relativeTilesize;
 		
-		$cmd = "$this->kdu_expand -i $jp2 -o $pgm ";
-		
-		// Ratio of the desired scale to the actual JP2 image scale
-		$desiredToActual = $this->desiredScale / $imageScale;
-		
-		// Scale Factor
-		$scaleFactor = log($desiredToActual, 2);
+		// extract region from JP2
+		$pgm = $this->extractRegion($filename);
 		
 		// Determine relative size of image at this scale
-		$jp2RelWidth  = $imageWidth  /  $desiredToActual;
-		$jp2RelHeight = $imageHeight /  $desiredToActual;
+		$jp2RelWidth  = $this->jp2Width  /  $this->desiredToActual;
+		$jp2RelHeight = $this->jp2Height /  $this->desiredToActual;
 		
-		$relTs = $this->tileSize * $desiredToActual;
+		$cmd = "convert $pgm ";
+
+		// For images with transparent components, convert pixels with value "0" to be transparent.
+		if ($this->measurement == "0WL")
+			$cmd .= "-transparent black ";
+		
+		// Get dimensions of extracted region
+		$extracted = $this->getImageDimensions($pgm);
+
+		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+		if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
+			$pad = "convert $pgm " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $pgm";
+			exec($pad);
+		}		
+		
+		// Resize if necessary (Case 3)
+		if ($relTs < $this->tileSize)
+			$cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
+
+		// Refetch dimensions of extracted region
+		$tile = $this->getImageDimensions($pgm);
+		
+		// Pad if tile is smaller than it should be (Case 2)
+		if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
+			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tile['width'], $tile['height'], $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+		}
+		
+		// Apply color table
+		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
+			$clut = $this->getColorTable($this->detector, $this->measurement);
+			$cmd .= "$clut -clut ";
+		}
+
+		// Compression settings & Interlacing
+		$cmd .= $this->setImageParams();
+
+		//echo ("$cmd $filename");
+		//exit();
+
+		// Execute command		
+		exec("$cmd $filename");
+
+		// Remove intermediate file
+		unlink($pgm);
+			
+		return $filename;
+	}
+	
+	/**
+	 * Set Image Parameters
+	 * @return 
+	 */
+	private function setImageParams() {
+		$args = "-quality ";
+		if ($this->getImageFormat() == "png") {
+			$args .= Config::PNG_COMPRESSION_QUALITY . " -interlace plane ";
+		}
+		else {
+			$args .= Config::JPEG_COMPRESSION_QUALITY . " -interlace line ";
+		}
+		$args .= "-colors " . Config::NUM_COLORS . " -depth " . Config::BIT_DEPTH . " ";
+		
+		return $args;
+	}
+	
+	/**
+	 * Call's the identify command in order to determine an image's dimensions
+	 * @return Object the width and height of the given image
+	 * @param $filename String - The image filepath
+	 */
+	private function getImageDimensions($filename) {
+		$dimensions = split("x", trim(exec("identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
+		return array (
+			'width'  => $dimensions[0],
+			'height' => $dimensions[1]
+		);
+	}
+	
+	/**
+	 * Extract a region using kdu_expand
+	 * @return String - Filename of the expanded region 
+	 * @param $filename String - JP2 filename
+	 */
+	private function extractRegion($filename) {
+		// Intermediate image file
+		$pgm = substr($filename, 0, -3) . "pgm";
+		
+		$cmd = "$this->kdu_expand -i $this->jp2 -o $pgm ";
 		
 		// Case 1: JP2 image resolution = desired resolution
 		// Nothing special to do...
 
 		// Case 2: JP2 image resolution > desired resolution (use -reduce)		
-		if ($imageScale < $this->desiredScale) {
-			$cmd .= "-reduce " . $scaleFactor . " ";
+		if ($this->jp2Scale < $this->desiredScale) {
+			$cmd .= "-reduce " . $this->scaleFactor . " ";
 		}
+
 		// Case 3: JP2 image resolution < desired resolution (get smaller tile and then enlarge)
 		// Don't do anything yet...
-		
+
 		// Add desired region
-		$cmd .= $this->getRegionString($imageWidth, $imageHeight, $relTs);
+		$cmd .= $this->getRegionString($this->jp2Width, $this->jp2Height, $this->relativeTilesize);
 		
 		// Execute the command
 		try {
@@ -79,73 +186,18 @@ abstract class JP2Image {
 			exit();
 		}
 		
-		$imcmd = "convert $pgm ";
-
-		// For images with transparent components, convert pixels with value "0" to be transparent.
-		if ($measurement == "0WL")
-			$imcmd .= "-transparent black ";
-		
-		// Get dimensions of extracted region
-		$dimensions = split("x", trim(exec("identify $pgm | grep -o \" [0-9]*x[0-9]* \"")));
-		$extractedWidth  = $dimensions[0];
-		$extractedHeight = $dimensions[1];
-
-		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-		if (($relTs < $this->tileSize) && (($extractedWidth < $relTs) || ($extractedHeight < $relTs))) {
-			$pad = "convert $pgm " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extractedWidth, $extractedHeight, $relTs, $this->xRange["start"], $this->yRange["start"]) . " $pgm";
-			exec($pad);
-		}		
-		
-		// Resize if necessary (Case 3)
-		if ($relTs < $this->tileSize)
-			$imcmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
-			//exec("convert -geometry " . $this->tileSize . "x" . $this->tileSize . "! $tif $tif", $out, $ret);
-			//$im->scaleImage($this->tileSize, $this->tileSize);
-
-		// Get dimensions of extracted region
-		$d = split("x", trim(exec("identify $pgm | grep -o \" [0-9]*x[0-9]* \"")));
-		$tileWidth  = $d[0];
-		$tileHeight = $d[1];
-		
-		// Pad if tile is smaller than it should be (Case 2)
-		if ((($tileWidth < $this->tileSize) || ($tileHeight < $this->tileSize)) && ($relTs >= $this->tileSize)) {
-			$imcmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tileWidth, $tileHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
-		}
-		
-		// Compression
-		$qual = Config::PNG_COMPRESSION_QUALITY;
-		$imcmd .= "-quality $qual -colors 256 -depth 8 ";
-
-		// Apply color table
-		if (($detector == "EIT") || ($measurement == "0WL")) {
-			$clut = $this->getColorTable($detector, $measurement);
-			$imcmd .= "$clut -clut ";
-		}
-
-		//echo ("$imcmd $tile");
-		//exit();
-
-		// Execute command		
-		exec($imcmd . "$tile");
-
-		// Remove intermediate file
-		unlink($pgm);
-			
-		return $tile;
+		return $pgm;
 	}
-	
-	/**
-	 * expand with kdu_expand
-	 */
-	private function expandRegion() {
-		
-	}	
 	
 	/**
 	 * getRegionString
 	 * Build a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
 	 */
-	private function getRegionString($jp2Width, $jp2Height, $ts) {
+	private function getRegionString() {
+		$jp2Width  = $this->jp2Width;
+		$jp2Height = $this->jp2Height;
+		$ts = $this->relativeTilesize;
+		
 		// Parameters
 		$top = $left = $width = $height = null;
 		
@@ -306,14 +358,54 @@ abstract class JP2Image {
 		}
 
 		// Specify format
-		$format = strtoupper(substr($filepath,-3,3));
+		$format = $this->getImageFormat();
 
-		if ($format == "PNG")
+		if ($format == "png")
 			header("Content-Type: image/png");
 		else
 			header("Content-Type: image/jpeg");
 		
 		readfile($filepath);
+	}
+	
+	/**
+	 * getMetaInfo
+	 * @param $imageId Object
+	 */
+	protected function getMetaInfo() {
+		$query  = sprintf("SELECT timestamp, uri, opacityGrp, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image 
+							LEFT JOIN measurement on image.measurementId = measurement.id  
+							LEFT JOIN detector on measurement.detectorId = detector.id 
+							WHERE image.id=%d", $this->imageId);
+
+		$result = $this->db->query($query);
+
+		if (!$result) {
+		        echo "$query - failed\n";
+		        die (mysqli_error($this->db->link));
+		}
+		else if (mysqli_num_rows($result) > 0) {
+			$meta = mysqli_fetch_array($result, MYSQL_ASSOC);
+			
+			$this->jp2         = $meta['uri'];
+			$this->jp2Width    = $meta['width'];
+			$this->jp2Height   = $meta['height'];
+			$this->jp2Scale    = $meta['imgScaleX'];
+			$this->detector    = $meta['detector'];
+			$this->measurement = $meta['measurement'];
+			$this->opacityGrp  = $meta['opacityGrp'];
+			$this->timestamp   = $meta['timestamp'];
+		}
+		else
+			return false;
+	}
+	
+	/**
+	 * getImageFormat
+	 * @return 
+	 */
+	protected function getImageFormat() {
+		return ($this->opacityGrp == 1) ? "jpg" : "png";
 	}
 }
 ?>

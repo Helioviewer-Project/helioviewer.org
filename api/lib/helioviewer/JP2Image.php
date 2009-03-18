@@ -11,25 +11,50 @@ abstract class JP2Image {
 	protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
 	
 	protected $db;
+	protected $imageId;
 	protected $xRange;
 	protected $yRange;
 	protected $zoomLevel;
 	protected $tileSize;
 	protected $desiredScale;
+	protected $desiredToActual;
+	protected $scaleFactor;
+	
+	protected $jp2;
+	protected $jp2Width;
+	protected $jp2Height;
+	protected $jp2Scale;
+	protected $detector;
+	protected $measurement;
+	protected $opacityGrp;
+	protected $timestamp;
 	
 	protected $image;
 		
-	protected function __construct($zoomLevel, $xRange, $yRange, $tileSize) {
+	protected function __construct($id, $zoomLevel, $xRange, $yRange, $tileSize) {
 		date_default_timezone_set('UTC');
-		$this->db = new DbConnection();
+		$this->db        = new DbConnection();
+		$this->imageId   = $id;
 		$this->zoomLevel = $zoomLevel;
 		$this->tileSize  = $tileSize;
 		$this->xRange    = $xRange;
 		$this->yRange    = $yRange;
 
+		// Get image meta information
+		$this->getMetaInfo();
+
 		// Determine desired image scale
 		$this->zoomOffset   = $zoomLevel - $this->baseZoom;
 		$this->desiredScale = $this->baseScale * (pow(2, $this->zoomOffset));
+		
+		// Ratio of the desired scale to the actual JP2 image scale
+		$this->desiredToActual = $this->desiredScale / $this->jp2Scale;
+		
+		// Scale Factor
+		$this->scaleFactor = log($this->desiredToActual, 2);
+		
+		// Relative Tilesize
+		$this->relativeTilesize = $this->tileSize * $this->desiredToActual;		
 	}
 	
 	/**
@@ -38,27 +63,23 @@ abstract class JP2Image {
 	 * $imageInfo['uri'], $tile, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $imageInfo['detector'], $imageInfo['measurement']);
 	 */
 	protected function buildImage($filename) {
-		// Relative tilesize
-		$relTs = $this->getRelativeTilesize();
+		$relTs = $this->relativeTilesize;
 		
 		// extract region from JP2
-		$pgm = $this->extractRegion($filename, $relTs);
+		$pgm = $this->extractRegion($filename);
 
 		// Open in ImageMagick
 		$im = new Imagick($pgm);
 		
-		// Compression settings & Interlacing
-		$this->setImageParams($im);
-		
+		// For images with transparent components, convert pixels with value "0" to be transparent.
+		if ($this->getImageFormat() == "png")
+			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
+
 		// Apply color table
 		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
 			$clut = new Imagick($this->getColorTable($this->detector, $this->measurement));
 			$im->clutImage( $clut );
 		}
-		
-		// For images with transparent components, convert pixels with value "0" to be transparent.
-		if ($this->getImageFormat() == "png")
-			$im->paintTransparentImage(new ImagickPixel("black"), 0,0);
 			
 		// Get dimensions of extracted region
 		$extractedWidth  = $im->getImageWidth();
@@ -70,7 +91,7 @@ abstract class JP2Image {
 		}
 		
 		// Resize if necessary (Case 3)
-		if ($relTs < $this->tileSize)
+		if (($relTs < $this->tileSize) || ($extractedWidth > $this->tileSize) || ($extractedHeight > $this->tileSize))
 			$im->scaleImage($this->tileSize, $this->tileSize);
 
 		// Pad if tile is smaller than it should be (Case 2)
@@ -81,14 +102,17 @@ abstract class JP2Image {
 			$this->padImage($im, $tileWidth, $tileHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
 		}
 		
+		// Compression settings & Interlacing
+		$this->setImageParams($im);
+		
 		$im->setFilename($filename);
 		$im->writeImage($filename);
 
 		// Quantize PNG's
 		if ($this->getImageFormat() == "png") {
 			$colors = Config::NUM_COLORS;
-			exec("pngnq -n $colors -e '.png.tmp' -f $filename && mv $filename.tmp $filename ");
-			$im = new Imagick($filename);
+			exec("pngnq -n $colors -e '.png.tmp' -f $filename");
+			rename($filename . ".tmp", $filename);
 		}
 
 		// Remove intermediate file
@@ -114,28 +138,25 @@ abstract class JP2Image {
 		$im->setImageDepth(Config::BIT_DEPTH);
 	}
 	
-	private function extractRegion($filename, $relTs) {
+	private function extractRegion($filename) {
 		// Intermediate image file
 		$pgm = substr($filename, 0, -3) . "pgm";
 		
 		$cmd = "$this->kdu_expand -i $this->jp2 -o $pgm ";
-
-		// Scale Factor
-		$scaleFactor = $this->getScaleFactor();		
 		
 		// Case 1: JP2 image resolution = desired resolution
 		// Nothing special to do...
 
 		// Case 2: JP2 image resolution > desired resolution (use -reduce)		
 		if ($this->jp2Scale < $this->desiredScale) {
-			$cmd .= "-reduce " . $scaleFactor . " ";
+			$cmd .= "-reduce " . $this->scaleFactor . " ";
 		}
 
 		// Case 3: JP2 image resolution < desired resolution (get smaller tile and then enlarge)
 		// Don't do anything yet...
 
 		// Add desired region
-		$cmd .= $this->getRegionString($this->jp2Width, $this->jp2Height, $relTs);
+		$cmd .= $this->getRegionString();
 		
 		// Execute the command
 		try {
@@ -150,19 +171,6 @@ abstract class JP2Image {
 		}
 		
 		return $pgm;
-	}
-	
-	private function getScaleFactor() {
-		// Ratio of the desired scale to the actual JP2 image scale
-		$desiredToActual = $this->desiredScale / $this->jp2Scale;
-		
-		// Scale Factor
-		return log($desiredToActual, 2);	
-	}
-	
-	private function getRelativeTilesize () {
-		$desiredToActual = $this->desiredScale / $this->jp2Scale;
-		return $this->tileSize * $desiredToActual;
 	}
 	
 	/**
@@ -222,7 +230,11 @@ abstract class JP2Image {
 	 * create separate functions for handling single tiles vs. multiple tiles or other regions.
 	 * This way assumptions can be made in each case to simplify the process.
 	 */
-	private function getRegionString($jp2Width, $jp2Height, $ts) {
+	private function getRegionString() {
+		$jp2Width  = $this->jp2Width;
+		$jp2Height = $this->jp2Height;
+		$ts = $this->relativeTilesize;
+		
 		// Parameters
 		$top = $left = $width = $height = null;
 		
@@ -349,19 +361,18 @@ abstract class JP2Image {
 		else
 			header("Content-Type: image/jpeg");
 		
-			
-		echo $this->image;
+		readfile($filepath);
 	}
 	
 	/**
 	 * getMetaInfo
 	 * @param $imageId Object
 	 */
-	protected function getMetaInfo($id) {
+	protected function getMetaInfo() {
 		$query  = sprintf("SELECT timestamp, uri, opacityGrp, width, height, imgScaleX, imgScaleY, measurement.abbreviation as measurement, detector.abbreviation as detector FROM image 
 							LEFT JOIN measurement on image.measurementId = measurement.id  
 							LEFT JOIN detector on measurement.detectorId = detector.id 
-							WHERE image.id=%d", $id);
+							WHERE image.id=%d", $this->imageId);
 
 		$result = $this->db->query($query);
 

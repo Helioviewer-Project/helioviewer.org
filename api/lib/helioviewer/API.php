@@ -35,7 +35,7 @@ class API {
 	 * @return 
 	 */
 	private function _getTile () {
-		require_once(Config::TILE_API_URL);
+		require_once("Tile.php");
 		$tile = new Tile($this->params['imageId'], $this->params['zoom'], $this->params['x'], $this->params['y'], $this->params['ts']);
 		
 		return 1;

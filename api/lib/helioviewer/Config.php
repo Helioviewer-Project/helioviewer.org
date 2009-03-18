@@ -23,7 +23,6 @@ class Config {
 	const WEB_ROOT_URL       = 'http://localhost/hv';
 	const TMP_ROOT_URL       = 'http://localhost/hv/tmp';
 	const EVENT_SERVER_URL   = "http://localhost:8080/Dispatcher/resources/eventCatalogs?";
-	const TILE_API_URL       = '/var/www/hv/api/lib/helioviewer/Tile.php';
 	
 	// Regular Expressions
 	const WEB_ROOT_DIR_REGEX = '/\/var\/www\/hv/';
@@ -42,8 +41,11 @@ class Config {
 	const JPEG_COMPRESSION_QUALITY = 75;
 	const BIT_DEPTH                = 8;
 	const NUM_COLORS               = 256;
+
+	// Apache IMagick Module
+	const MOD_IMAGICK_ENABLED = false;
 	
 	// Debugging
-	const ENABLE_CACHE       = false;
+	const ENABLE_CACHE = true;
 }
 ?>

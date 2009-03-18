@@ -3,10 +3,12 @@
  * @class Tile
  * @author Keith Hughitt
  */
-require('JP2Image.php');
+if (Config::MOD_IMAGICK_ENABLED == true)
+	require('JP2Image.php');
+else
+	require('JP2Image.Manual.php');
 
 class Tile extends JP2Image {
-	private $imageId;
 	private $x;
 	private $y;
 
@@ -17,12 +19,10 @@ class Tile extends JP2Image {
 		$xRange = array("start" => $x, "end" => $x);
 		$yRange = array("start" => $y, "end" => $y);
 
-		parent::__construct($zoomLevel, $xRange, $yRange, $tileSize);
+		parent::__construct($id, $zoomLevel, $xRange, $yRange, $tileSize);
 
 		$this->x = $x;
 		$this->y = $y;
-		$this->imageId = $id;
-		$this->getMetaInfo($id);
 		$this->getTile();
 	}
 
@@ -39,7 +39,6 @@ class Tile extends JP2Image {
 		// If tile already exists in cache, use it
 		if (Config::ENABLE_CACHE) {
 			if (file_exists($tile)) {
-				$this->image = new Imagick($tile);
 				$this->display($tile);
 				exit();
 			}

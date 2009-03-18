@@ -21,7 +21,6 @@ class Config {
 	const WEB_ROOT_URL       = 'http://helioviewer.org';
 	const TMP_ROOT_URL       = 'http://helioviewer.org/tmp';	
 	const EVENT_SERVER_URL   = "http://achilles.nascom.nasa.gov/~wamsler/API/index.php?";
-	const TILE_API_URL       = '/home/esahelio/public_html/api/lib/helioviewer/Tile.Manual.php';
 		
 	// Regular Expressions	
 	const WEB_ROOT_DIR_REGEX = '/\/home\/esahelio\/public_html/';
@@ -41,6 +40,9 @@ class Config {
 	const BIT_DEPTH                = 8;
 	const NUM_COLORS               = 256;
 			
+	// Apache IMagick Module
+	const MOD_IMAGICK_ENABLED = true;
+
 	// Debugging
 	const ENABLE_CACHE       = true;
 }
