@@ -67,6 +67,9 @@ abstract class JP2Image {
 		// extract region from JP2
 		$pgm = $this->extractRegion($filename);
 		
+		// Use PNG as intermediate format so that GD can read it in
+		$png = substr($filename, 0, -3) . "png";
+		
 		// Determine relative size of image at this scale
 		$jp2RelWidth  = $this->jp2Width  /  $this->desiredToActual;
 		$jp2RelHeight = $this->jp2Height /  $this->desiredToActual;
@@ -98,40 +101,37 @@ abstract class JP2Image {
 			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tile['width'], $tile['height'], $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
 		}
 		
-		// Apply color table
-		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
-			$clut = $this->getColorTable($this->detector, $this->measurement);
-			$cmd .= "$clut -clut ";
-		}
-
 		// Compression settings & Interlacing
 		$cmd .= $this->setImageParams();
 
-		//echo ("$cmd $filename");
+		//echo ("$cmd $png");
 		//exit();
 
-		// Execute command		
-		exec("$cmd $filename");
-
+		// Apply color table
+		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
+			exec("$cmd $png");
+			$clut = $this->getColorTable($this->detector, $this->measurement);
+			$this->setColorPalette($png, $clut, $filename);
+		}
+		else
+			exec("$cmd $filename");
+			
 		// Remove intermediate file
 		unlink($pgm);
-			
+		
 		return $filename;
 	}
 	
 	/**
 	 * Set Image Parameters
-	 * @return 
+	 * @return String Image compression and quality related flags.
 	 */
 	private function setImageParams() {
-		$args = "-quality ";
+		$args = "-type palette -quality " . Config::PNG_COMPRESSION_QUALITY;
 		if ($this->getImageFormat() == "png") {
-			$args .= Config::PNG_COMPRESSION_QUALITY . " -interlace plane ";
+			$args .= " -colors " . Config::NUM_COLORS;
 		}
-		else {
-			$args .= Config::JPEG_COMPRESSION_QUALITY . " -interlace line ";
-		}
-		$args .= "-colors " . Config::NUM_COLORS . " -depth " . Config::BIT_DEPTH . " ";
+		$args .= " -depth " . Config::BIT_DEPTH . " ";
 		
 		return $args;
 	}
@@ -235,10 +235,10 @@ abstract class JP2Image {
 		$left = (($relX == 0) ? 0 :  $outerTS + ($relX - 1) * $innerTS) / $jp2Width;
 		
 		// <height>
-		$height = ((($relY == 0) || ($relY == (imgNumTilesY -1))) ? $outerTS : $innerTS) / $jp2Height;
+		$height = ((($relY == 0) || ($relY == ($imgNumTilesY -1))) ? $outerTS : $innerTS) / $jp2Height;
 		
 		// <width>
-		$width  = ((($relX == 0) || ($relX == (imgNumTilesX -1))) ? $outerTS : $innerTS) / $jp2Width;
+		$width  = ((($relX == 0) || ($relX == ($imgNumTilesX -1))) ? $outerTS : $innerTS) / $jp2Width;
 
 		// {<top>,<left>},{<height>,<width>}
 		$region = "-region \{$top,$left\},\{$height,$width\}";
@@ -325,7 +325,8 @@ abstract class JP2Image {
 		}
 		
 		// Construct padding command
-		return "-background transparent -gravity $gravity -extent $ts" . "x" . "$ts ";
+		// TEST: use black instead of transparent for background?
+		return "-background black -gravity $gravity -extent $ts" . "x" . "$ts ";
 	}
 	
 	private function getColorTable($detector, $measurement) {
@@ -352,7 +353,9 @@ abstract class JP2Image {
 
 		// Filename & Content-length
 		if (isset($filepath)) {
-			$filename = end(split("/", $filepath));
+			$exploded = explode("/", $filepath);
+			$filename = end($exploded);
+						
 			header("Content-Length: " . filesize($filepath));
 			header("Content-Disposition: inline; filename=\"$filename\"");	
 		}
@@ -406,6 +409,30 @@ abstract class JP2Image {
 	 */
 	protected function getImageFormat() {
 		return ($this->opacityGrp == 1) ? "jpg" : "png";
+	}
+	
+	/**
+	 * setColorPalette
+	 */
+	private function setColorPalette ($input, $clut, $output) {
+		$gd     = imagecreatefrompng($input);
+		$ctable = imagecreatefrompng($clut);
+		
+		for ($i = 0; $i <= 255; $i++) {
+			$rgba = imagecolorsforindex($ctable, $i);
+			imagecolorset($gd, $i, $rgba["red"], $rgba["green"], $rgba["blue"]);
+		}
+
+		// Enable interlancing
+		imageinterlace($gd, true);
+		
+		$this->getImageFormat() == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
+		
+		// Cleanup
+		if ($input != $output)
+			unlink($input);
+		imagedestroy($gd);
+		imagedestroy($ctable);
 	}
 }
 ?>

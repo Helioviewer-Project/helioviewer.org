@@ -105,7 +105,6 @@ abstract class JP2Image {
 		// Compression settings & Interlacing
 		$this->setImageParams($im);
 		
-		$im->setFilename($filename);
 		$im->writeImage($filename);
 
 		// Quantize PNG's
@@ -272,10 +271,10 @@ abstract class JP2Image {
 		$left = (($relX == 0) ? 0 :  $outerTS + ($relX - 1) * $innerTS) / $jp2Width;
 		
 		// <height>
-		$height = ((($relY == 0) || ($relY == (imgNumTilesY -1))) ? $outerTS : $innerTS) / $jp2Height;
+		$height = ((($relY == 0) || ($relY == ($imgNumTilesY -1))) ? $outerTS : $innerTS) / $jp2Height;
 		
 		// <width>
-		$width  = ((($relX == 0) || ($relX == (imgNumTilesX -1))) ? $outerTS : $innerTS) / $jp2Width;
+		$width  = ((($relX == 0) || ($relX == ($imgNumTilesX -1))) ? $outerTS : $innerTS) / $jp2Width;
 
 		// {<top>,<left>},{<height>,<width>}
 		$region = "-region \{$top,$left\},\{$height,$width\}";
@@ -348,7 +347,8 @@ abstract class JP2Image {
 
 		// Filename & Content-length
 		if (isset($filepath)) {
-			$filename = end(split("/", $filepath));
+			$exploded = explode("/", $filepath);
+			$filename = end($exploded);
 			header("Content-Length: " . filesize($filepath));
 			header("Content-Disposition: inline; filename=\"$filename\"");	
 		}

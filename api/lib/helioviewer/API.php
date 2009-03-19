@@ -3,7 +3,9 @@
  * @class API
  * @author Keith Hughitt
  */
+error_reporting(E_ALL | E_STRICT);
 require_once('DbConnection.php');
+
 
 class API {
 
@@ -20,7 +22,8 @@ class API {
 			if (!$this->validate($params["action"]))
 				throw new Exception("Invalid parameters specified for <a href='http://www.helioviewer.org/api/index.php#" . $params['action'] . "'>" . $params['action'] . "</a>.");
 
-			if (!call_user_func(array("API" ,"_" . $params["action"])))
+			#if (!call_user_func(array("API" ,"_" . $params["action"])))
+			if (!$this->{"_" . $params["action"]}())
 				throw new Exception("Unable to execute " . $params["action"] . ". Please make sure you are using valid input and contact the web-admin if problems persist.");
 
 		} catch (Exception $e) {
