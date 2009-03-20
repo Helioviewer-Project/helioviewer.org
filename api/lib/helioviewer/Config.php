@@ -1,7 +1,9 @@
 <?php
 /**
- * Helioviewer API Configuration (Dev)
- * 	TODO: Determine performance of storing in class vs. YAML (need to use for every tile)
+ * Helioviewer API Configuration
+ * @package Config
+ * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ *  TODO: Determine performance of storing in class vs. YAML (need to use for every tile)
  */
 class Config {
 	

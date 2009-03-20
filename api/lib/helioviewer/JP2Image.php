@@ -1,6 +1,8 @@
 <?php
-require_once('DbConnection.php');
-
+/**
+ * @package JP2Image - JPEG 2000 Image Class
+ * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ */
 abstract class JP2Image {
 	protected $kdu_expand   = CONFIG::KDU_EXPAND;
 	protected $kdu_lib_path = CONFIG::KDU_LIBS_DIR;
@@ -30,8 +32,24 @@ abstract class JP2Image {
 	protected $timestamp;
 	
 	protected $image;
-		
+
+    /**
+     * @param int The image identifier
+     * @param int The zoomlevel to work with
+     * @param array An associative array reprenting the desired image width
+     *              in terms of tile x-coordinates.
+     * @param array An associative array reprenting the desired image height
+     *              in terms of tile y-coordinates.
+     * @param int The size of the tile to work with.
+     * 
+     * @TODO: Move away from working in terms of tiles in the "JP2Image" class
+     * and instead use top-left corner, width, and height. The Tile class can
+     * make any neccessary conversions from tile x&y.
+     * 
+     * Also need to determine how functions that use "tilesize" can be handled.
+     */
 	protected function __construct($id, $zoomLevel, $xRange, $yRange, $tileSize) {
+		require_once('DbConnection.php');
 		date_default_timezone_set('UTC');
 		$this->db        = new DbConnection();
 		$this->imageId   = $id;

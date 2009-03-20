@@ -1,6 +1,8 @@
 <?php
 /**
  * Helioviewer API Configuration
+ * @package Config
+ * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
  */
 class Config {
 	// Database
