@@ -12,7 +12,7 @@ def main():
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
 	#dbname, dbuser, dbpass = getDBInfo()
-	dbname = "hv2"
+	dbname = "hv"
 	dbuser = "helioviewer"
 	dbpass = dbuser
 
@@ -50,6 +50,8 @@ def processJPEG2000Images (images, cursor):
 
 		# Format date (> Python 2.5 Method)
 		# date = datetime.strptime(meta["date"][0:19], "%Y:%m:%d %H:%M:%S")
+
+		print "Image: " + img
 
 		# Format date
 		d = meta["date"]

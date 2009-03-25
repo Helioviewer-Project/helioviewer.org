@@ -85,6 +85,8 @@ abstract class JP2Image {
 		// extract region from JP2
 		$pgm = $this->extractRegion($filename);
 		
+		//exit();
+		
 		// Use PNG as intermediate format so that GD can read it in
 		$png = substr($filename, 0, -3) . "png";
 		
@@ -108,6 +110,7 @@ abstract class JP2Image {
 		}		
 		
 		// Resize if necessary (Case 3)
+		//if (($relTs < $this->tileSize) || ($extracted['width'] > $this->tileSize) || ($extracted['height'] > $this->tileSize))
 		if ($relTs < $this->tileSize)
 			$cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
 
@@ -135,7 +138,7 @@ abstract class JP2Image {
 			exec("$cmd $filename");
 			
 		// Remove intermediate file
-		unlink($pgm);
+		//unlink($pgm);
 		
 		return $filename;
 	}
@@ -192,6 +195,8 @@ abstract class JP2Image {
 		// Add desired region
 		$cmd .= $this->getRegionString($this->jp2Width, $this->jp2Height, $this->relativeTilesize);
 		
+		//echo $cmd;
+		
 		// Execute the command
 		try {
 			exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . $cmd, $out, $ret);
@@ -210,11 +215,17 @@ abstract class JP2Image {
 	/**
 	 * getRegionString
 	 * Build a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
+	 * 
+	 * NOTE: Because kakadu's internal precision for region strings is less than PHP,
+	 * the numbers used are cut off to prevent erronious rounding.
 	 */
 	private function getRegionString() {
 		$jp2Width  = $this->jp2Width;
 		$jp2Height = $this->jp2Height;
 		$ts = $this->relativeTilesize;
+		
+		// Rounding
+		$precision = 6;
 		
 		// Parameters
 		$top = $left = $width = $height = null;
@@ -247,16 +258,16 @@ abstract class JP2Image {
 		$outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
 		
 		// <top>
-		$top  = (($relY == 0) ? 0 :  $outerTS + ($relY - 1) * $innerTS) / $jp2Height;
-
-		// <left>
-		$left = (($relX == 0) ? 0 :  $outerTS + ($relX - 1) * $innerTS) / $jp2Width;
+		$top  = substr((($relY == 0) ? 0 :  $outerTS + ($relY - 1) * $innerTS) / $jp2Height, 0, $precision);
 		
+		// <left>
+		$left = substr((($relX == 0) ? 0 :  $outerTS + ($relX - 1) * $innerTS) / $jp2Width, 0, $precision);
+
 		// <height>
-		$height = ((($relY == 0) || ($relY == ($imgNumTilesY -1))) ? $outerTS : $innerTS) / $jp2Height;
+		$height = substr(((($relY == 0) || ($relY == ($imgNumTilesY -1))) ? $outerTS : $innerTS) / $jp2Height, 0, $precision);
 		
 		// <width>
-		$width  = ((($relX == 0) || ($relX == ($imgNumTilesX -1))) ? $outerTS : $innerTS) / $jp2Width;
+		$width  = substr(((($relX == 0) || ($relX == ($imgNumTilesX -1))) ? $outerTS : $innerTS) / $jp2Width, 0, $precision);
 
 		// {<top>,<left>},{<height>,<width>}
 		$region = "-region \{$top,$left\},\{$height,$width\}";
@@ -293,8 +304,8 @@ abstract class JP2Image {
 	
 	private function padImage ($jp2Width, $jp2Height, $tileWidth, $tileHeight, $ts, $x, $y) {
 		// Determine min and max tile numbers
-		$imgNumTilesX = max(2, ceil($jp2Width  / $ts));
-		$imgNumTilesY = max(2, ceil($jp2Height / $ts));
+		$imgNumTilesX = max(2, ceil($jp2Width  / $this->tileSize));
+		$imgNumTilesY = max(2, ceil($jp2Height / $this->tileSize));
 		
 		// Tile placement architecture expects an even number of tiles along each dimension
 		if ($imgNumTilesX % 2 != 0)

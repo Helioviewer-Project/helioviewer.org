@@ -8,10 +8,10 @@ class ImgIndex {
 	}
 
 	public function getClosestImage($timestamp, $src, $debug = false) {
-		$query = sprintf("SELECT image.id AS imageId, image.width as width, image.height as height, measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
+		$query = sprintf("SELECT image.id AS imageId, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
+							measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
-							detector.lowestRegularZoomLevel as lowestRegularZoom,
 							opacityGroup.description AS opacityGroupDescription,
 							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
 							UNIX_TIMESTAMP(timestamp) AS timestamp,
