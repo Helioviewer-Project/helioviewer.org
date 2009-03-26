@@ -2,11 +2,10 @@
 .pydevproject
 .DS_Store
 __MACOSX
-tiles
 tmp
 kakadu
 java
 install/tools/icons
-prototip2.0.4
 jp2
 cache
+prototip2.0.5

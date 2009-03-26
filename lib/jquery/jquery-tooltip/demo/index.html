@@ -36,14 +36,20 @@ $('#yahoo a').tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
-	showBody: " - "
+	showBody: " - ",
+	fade: 250
 });
+
+$("select").tooltip({
+	left: 25
+});
+
+$("map > area").tooltip({ positionLeft: true });
 
 $("#fancy, #fancy2").tooltip({
 	track: true,
 	delay: 0,
 	showURL: false,
-	opacity: 1,
 	fixPNG: true,
 	showBody: " - ",
 	extraClass: "pretty fancy",
@@ -58,7 +64,6 @@ $('#pretty').tooltip({
 	showBody: " - ",
 	extraClass: "pretty",
 	fixPNG: true,
-	opacity: 0.95,
 	left: -120
 });
 
@@ -68,13 +73,9 @@ $('#right a').tooltip({
 	showURL: false,
 	extraClass: "right"
 });
-$('#right2 a').tooltip({ showURL: false });
+$('#right2 a').tooltip({ showURL: false, positionLeft: true });
 
 $("#block").click($.tooltip.block);
-
-$("#remote").click(function() {
-	$("#username").tooltipFor();
-});
 
 });
 </script>
@@ -118,8 +119,12 @@ $("#remote").click(function() {
 		<legend>An image with a tooltip</legend>
 		<img id="tonus" src="image.png" height="80" title="No delay. The src value is displayed below the title" />
 		<h3>Code</h3>
-	<pre><code class="mix">$('img').tooltip({
-	delay: 0
+	<pre><code class="mix">$('#tonus').tooltip({
+	delay: 0,
+	showURL: false,
+	bodyHandler: function() {
+		return $("&lt;img/&gt;").attr("src", this.src);
+	}
 });</code></pre>
 	</fieldset>
 	
@@ -130,7 +135,7 @@ $("#remote").click(function() {
 	</fieldset>
 	
 	<fieldset>
-		<legend>The next four links have no delay with tracking, with extra content:</legend>
+		<legend>The next four links have no delay with tracking and fading, with extra content:</legend>
 		<div id="yahoo">
 			<a title="Yahoo doo - more content" href="http://yahoo.com">Link to yahoo</a>
 			<a title="Yahoo doo2 - wohooo" href="http://yahoo.com">Link to yahoo1</a>
@@ -144,7 +149,7 @@ $("#remote").click(function() {
 	delay: 0,
 	showURL: false,
 	showBody: " - ",
-	opacity: 0.85
+	fade: 250
 });</code></pre>
 	</fieldset>
 	
@@ -185,6 +190,55 @@ $('#pretty').tooltip({
 	</fieldset>
 	
 	<fieldset>
+		<legend>Selects</legend>
+		<select title="fancy select with a tooltip">
+			<option>1. option</option>
+			<option>2. option</option>
+			<option>3. option</option>
+		</select>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Image map with tooltips.</legend>
+	
+		<img id="map" src="karte.png" width="345" height="312" border="0" usemap="#Landkarte">
+		<map name="Landkarte">
+		  <area shape="rect" coords="11,10,59,29"
+		        href="http://www.koblenz.de/" alt="Koblenz" title="Koblenz">
+		  <area shape="rect" coords="42,36,96,57"
+		        href="http://www.wiesbaden.de/" alt="Wiesbaden" title="Wiesbaden">
+		  <area shape="rect" coords="42,59,78,80"
+		        href="http://www.mainz.de/" alt="Mainz" title="Mainz">
+		  <area shape="rect" coords="100,26,152,58"
+		        href="http://www.frankfurt.de/" alt="Frankfurt" title="Frankfurt">
+		  <area shape="rect" coords="27,113,93,134"
+		        href="http://www.mannheim.de/" alt="Mannheim" title="Mannheim">
+		  <area shape="rect" coords="100,138,163,159"
+		        href="http://www.heidelberg.de/" alt="Heidelberg" title="Heidelberg">
+		  <area shape="rect" coords="207,77,266,101"
+		        href="http://www.wuerzburg.de/" alt="W&uuml;rzburg" title="W&uuml;rzburg">
+		  <area shape="rect" coords="282,62,344,85"
+		        href="http://www.bamberg.de/" alt="Bamberg" title="Bamberg">
+		  <area shape="rect" coords="255,132,316,150"
+		        href="http://www.nuernberg.de/" alt="N&uuml;rnberg" title="N&uuml;rnberg">
+		  <area shape="rect" coords="78,182,132,200"
+		        href="http://www.karlsruhe.de/" alt="Karlsruhe" title="Karlsruhe">
+		  <area shape="rect" coords="142,169,200,193"
+		        href="http://www.heilbronn.de/" alt="Heilbronn" title="Heilbronn">
+		  <area shape="rect" coords="140,209,198,230"
+		        href="http://www.stuttgart.de/" alt="Stuttgart" title="Stuttgart">
+		  <area shape="rect" coords="187,263,222,281"
+		        href="http://www.ulm.de/" alt="Ulm" title="Ulm">
+		  <area shape="rect" coords="249,278,304,297"
+		        href="http://www.augsburg.de/" alt="Augsburg" title="Augsburg">
+		  <area shape="poly" coords="48,311,105,248,96,210,75,205,38,234,8,310"
+		        href="http://www.baden-aktuell.de/" alt="Baden" title="Baden">
+		</map>
+		<h3>Code</h3>
+		<pre><code class="mix">$("map *").tooltip({ positionLeft: true });</code></pre>
+	</fieldset>
+	
+	<fieldset>
 		<legend>Testing repositioning at viewport borders</legend>
 		<p id="right">
 			Tooltip with fixed width<br/>
@@ -203,7 +257,7 @@ $('#pretty').tooltip({
 	showURL: false,
 	extraClass: "right"
 });
-$('#right2 a').tooltip({ showURL: false });</code></pre>
+$('#right2 a').tooltip({ showURL: false, positionLeft: true });</code></pre>
 	</fieldset>
 </div>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">

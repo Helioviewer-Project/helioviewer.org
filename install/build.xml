@@ -1,6 +1,6 @@
 <project name="Helioviewer" default="build" basedir="../">
 	<!-- Helioviewer Apache Ant build.xml. -->
-	<!-- Last updated: February 2009 By Keith -->
+	<!-- Last updated: March 2009 By Keith -->
 	<description>
 		Helioviewer Apache Ant build.xml
     </description>
@@ -24,7 +24,7 @@
 
 		<concat destfile="${cssdir}/helioviewer-all.css" encoding="UTF-8" eol="lf">
 			<filelist dir="${cssdir}" files="main.css"/>
-		    <fileset dir="${cssdir}" includes="*.css" excludes="blackGlass.css, carbon.css, carbon-white.css, main-ie.css, helioviewer-all.css, main.css, jquery-ui-themeroller.css"/>
+		    <fileset dir="${cssdir}" includes="*.css" excludes="blackGlass.css, carbon.css, carbon-white.css, main-ie.css, helioviewer-all.css, main.css, main-timeline.css"/>
 		</concat>		
 
 		<!-- minify-->

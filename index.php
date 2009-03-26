@@ -1,7 +1,8 @@
+<?php require_once('settings/Config.php'); ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<!-- Helioviewer rev. 192, March 10, 2009 -->
+		<?php printf("<!-- Helioviewer rev. %s, %s-->\n", Config::BUILD_NUM, Config::LAST_UPDATE);?>
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
 		<link rel="shortcut icon" href="favicon.ico">
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -10,29 +11,23 @@
 		<meta name="keywords" content="Helioviewer, hv, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, ">
 
 		<!-- YUI CSS Reset -->
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts/reset-fonts.css">
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
 
 		<!-- Prototype and Scriptaculous -->
 		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.1/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
 		<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>
 		
 		<!-- Prototip -->
-		<script src="lib/prototip2.0.4/js/prototip.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="lib/prototip2.0.4/css/prototip.css" type="text/css">
-		
+		<script src="lib/prototip2.0.5/js/prototip.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="lib/prototip2.0.5/css/prototip.css" type="text/css">
+
 		<!-- jQuery -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.core.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.accordion.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.slider.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.draggable.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.dialog.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery.ui-1.6rc2/ui/minified/ui.datepicker.min.js" type="text/javascript"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.6rc2/themes/default/ui.datepicker.css" type="text/css">
-		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.6rc2/themes/flora/flora.slider.css" type="text/css">
+		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/ui-darkness/jquery-ui-1.7.1.custom.css" type="text/css"  />	
 
 		<!-- date.js -->
 		<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -41,7 +36,11 @@
 		<script src="lib/CookieJar/cookiejar.js" type="text/javascript"></script>
 		
 		<!-- Simile -->
-		<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>
+		<!--<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>-->
+		
+		<!-- Pixastic -->
+		<!-- jQuery("img.tile[src!=images/transparent_512.gif]"); -->
+		<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>
 
 		<!-- ShadowBox -->
 		<!--
@@ -70,7 +69,7 @@
 		<script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>
+		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
 		<!--<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
@@ -216,7 +215,8 @@
 
 		<!-- Footer -->
 		<div id="footer">
-			<div style="height:250px; width:100%; float:left; font-size:0.85em">
+			<!-- <div style="height:250px; width:100%; float:left; font-size:0.85em"> -->
+			<div style="height:70px; width:100%; float:left; font-size:0.85em">
 
 				<!-- Links -->
 				<div style="text-align:right; font-size:120%; height:60px; margin-right: 258px; margin-top: 3px;">
@@ -230,16 +230,18 @@
 				</div>
 				
 				<!-- Timeline -->
+				<!--
 				<div style="text-align: center;">
 					<div id="timeline" style="height: 150px; width: 70%; margin-left: auto; margin-right: auto; border: 1px solid #000"></div>
 				</div>
+				-->
 			</div>
 		</div>
 		
 		<!-- About dialog -->
 		<div id='about-dialog'>
 			<img src="images/logo/about.png" alt="Helioviewer.org Logo"><br>
-			<span style="font-size:small;">Last Updated: March 10, 2009 (rev. 192)</span><br><br>
+			<span style="font-size:small;">Last Updated: March 26, 2009 (rev. 199)</span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
 				<li><a href="mailto:webmaster@helioviewer.org" class="gray">Keith Hughitt</a></li>

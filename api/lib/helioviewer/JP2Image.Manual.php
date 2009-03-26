@@ -80,66 +80,75 @@ abstract class JP2Image {
 	 * @return
 	 */
 	protected function buildImage($filename) {
-		$relTs = $this->relativeTilesize;
-		
 		// extract region from JP2
 		$pgm = $this->extractRegion($filename);
 		
-		//exit();
-		
 		// Use PNG as intermediate format so that GD can read it in
 		$png = substr($filename, 0, -3) . "png";
+		exec("convert $pgm -depth 8 -quality 10 $png");
+		
+		// Apply color-lookup table
+		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
+			$clut = $this->getColorTable($this->detector, $this->measurement);
+			$this->setColorPalette($png, $clut, $png);
+		}
+
+		// IM command for transparency, padding, rescaling, etc.
+		$cmd = "convert $png -background black ";
+		
+		// Apply alpha mask for images with transparent components
+		if ($this->hasAlphaMask()) {
+			$mask = substr($filename, 0, -4) . "-mask.tif";
+			$cmd .= "$mask ";
+		}
 		
 		// Determine relative size of image at this scale
 		$jp2RelWidth  = $this->jp2Width  /  $this->desiredToActual;
 		$jp2RelHeight = $this->jp2Height /  $this->desiredToActual;
 		
-		$cmd = "convert $pgm ";
-
-		// For images with transparent components, convert pixels with value "0" to be transparent.
-		if ($this->measurement == "0WL")
-			$cmd .= "-transparent black ";
-		
 		// Get dimensions of extracted region
 		$extracted = $this->getImageDimensions($pgm);
 
 		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+		$relTs = $this->relativeTilesize;
 		if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
-			$pad = "convert $pgm " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $pgm";
+			$pad = "convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
 			exec($pad);
 		}		
 		
 		// Resize if necessary (Case 3)
-		//if (($relTs < $this->tileSize) || ($extracted['width'] > $this->tileSize) || ($extracted['height'] > $this->tileSize))
 		if ($relTs < $this->tileSize)
 			$cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
 
 		// Refetch dimensions of extracted region
-		$tile = $this->getImageDimensions($pgm);
+		$tile = $this->getImageDimensions($png);
 		
 		// Pad if tile is smaller than it should be (Case 2)
 		if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
 			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tile['width'], $tile['height'], $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
 		}
 		
+		if ($this->hasAlphaMask()) {
+			$cmd .= "-compose copy_opacity -composite ";
+		}
+		
 		// Compression settings & Interlacing
 		$cmd .= $this->setImageParams();
-
-		//echo ("$cmd $png");
-		//exit();
-
-		// Apply color table
-		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
-			exec("$cmd $png");
-			$clut = $this->getColorTable($this->detector, $this->measurement);
-			$this->setColorPalette($png, $clut, $filename);
-		}
-		else
-			exec("$cmd $filename");
-			
-		// Remove intermediate file
-		//unlink($pgm);
 		
+		//echo ("$cmd $filename");
+		//exit();
+		
+		//WORKING:
+		//convert /var/www/hv/cache/512/2003/10/08/1135_13_+00_+00.png -background black  
+		//        /var/www/hv/cache/512/2003/10/08/1135_13_+00_+00-mask.tif -gravity NorthWest -extent 512x512 
+		//        -compose copy_opacity -composite -quality 20 -interlace plane -depth 8 -colors 256 test.png
+
+		// Execute command
+		exec("$cmd $filename");
+
+		// Remove intermediate file (note: remove mask)
+		//unlink($pgm);		
+	
 		return $filename;
 	}
 	
@@ -148,11 +157,13 @@ abstract class JP2Image {
 	 * @return String Image compression and quality related flags.
 	 */
 	private function setImageParams() {
-		$args = "-type palette -quality " . Config::PNG_COMPRESSION_QUALITY;
+		$args = " -quality ";
 		if ($this->getImageFormat() == "png") {
-			$args .= " -colors " . Config::NUM_COLORS;
+			$args .= Config::PNG_COMPRESSION_QUALITY . " -interlace plane";
+		} else {
+			$args .= Config::JPEG_COMPRESSION_QUALITY . " -interlace line";
 		}
-		$args .= " -depth " . Config::BIT_DEPTH . " ";
+		$args .= " -depth " . Config::BIT_DEPTH . " -colors " . Config::NUM_COLORS . " ";
 		
 		return $args;
 	}
@@ -179,7 +190,14 @@ abstract class JP2Image {
 		// Intermediate image file
 		$pgm = substr($filename, 0, -3) . "pgm";
 		
-		$cmd = "$this->kdu_expand -i $this->jp2 -o $pgm ";
+		// For images with transparent parts, extract a mask as well
+		if ($this->hasAlphaMask()) {
+			$mask = substr($filename, 0, -4) . "-mask.tif";
+			$cmd = "$this->kdu_expand -i $this->jp2 -raw_components -o $pgm,$mask ";
+		}
+		else {
+			$cmd = "$this->kdu_expand -i $this->jp2 -o $pgm ";
+		}
 		
 		// Case 1: JP2 image resolution = desired resolution
 		// Nothing special to do...
@@ -355,7 +373,7 @@ abstract class JP2Image {
 		
 		// Construct padding command
 		// TEST: use black instead of transparent for background?
-		return "-background black -gravity $gravity -extent $ts" . "x" . "$ts ";
+		return "-gravity $gravity -extent $ts" . "x" . "$ts ";
 	}
 	
 	private function getColorTable($detector, $measurement) {
@@ -398,6 +416,14 @@ abstract class JP2Image {
 			header("Content-Type: image/jpeg");
 		
 		readfile($filepath);
+	}
+	
+	/**
+	 * hasAlphaMask
+	 * @return string
+	 */
+	private function hasAlphaMask() {
+		return $this->measurement === "0WL" ? true : false;
 	}
 	
 	/**
@@ -447,6 +473,9 @@ abstract class JP2Image {
 		$gd     = imagecreatefrompng($input);
 		$ctable = imagecreatefrompng($clut);
 		
+		//echo "$input<br> $clut<br> $output";
+		//exit();
+		
 		for ($i = 0; $i <= 255; $i++) {
 			$rgba = imagecolorsforindex($ctable, $i);
 			imagecolorset($gd, $i, $rgba["red"], $rgba["green"], $rgba["blue"]);
@@ -455,8 +484,12 @@ abstract class JP2Image {
 		// Enable interlacing
 		imageinterlace($gd, true);
 		
-		$this->getImageFormat() == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
-		
+		//$this->getImageFormat() == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
+		//if ($this->getImageFormat() == "jpg")
+		//	imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY);
+		//else
+		imagepng($gd, $output);
+
 		// Cleanup
 		if ($input != $output)
 			unlink($input);
