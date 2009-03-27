@@ -8,8 +8,17 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/03/26';
-	const BUILD_NUM          = '199';
+	const LAST_UPDATE		 = '2009/03/27';
+	const BUILD_NUM          = 200;
+	
+	// Viewer
+	const DEFAULT_ZOOM_LEVEL = 12;
+	const DEFAULT_OBS_TIME   = 1065312000000;
+	const DEFAULT_TIMESTEP   = 86400;
+	const MIN_ZOOM_LEVEL     = 8;
+	const MAX_ZOOM_LEVEL     = 16;           
+	const PREFETCH_SIZE      = 0;
+
 	
 	// Database
 	const DB_HOST            = 'localhost';
@@ -29,6 +38,7 @@ class Config {
 	const WEB_ROOT_URL       = 'http://localhost/hv';
 	const TMP_ROOT_URL       = 'http://localhost/hv/tmp';
 	const EVENT_SERVER_URL   = "http://localhost:8080/Dispatcher/resources/eventCatalogs?";
+	const API_BASE_URL       = "api/index.php";
 	
 	// Regular Expressions
 	const WEB_ROOT_DIR_REGEX = '/\/var\/www\/hv/';
@@ -48,11 +58,15 @@ class Config {
 	const BIT_DEPTH                = 8;
 	const NUM_COLORS               = 256;
 	const TILE_PAD_WIDTH           = 8;
+	
+	// Image scale computation
+	const BASE_ZOOM_LEVEL          = 10;
+	const BASE_IMAGE_SCALE         = 2.63;
 
 	// Apache IMagick Module
 	const MOD_IMAGICK_ENABLED = false;
 	
 	// Debugging
-	const ENABLE_CACHE = false;
+	const ENABLE_CACHE = true;
 }
 ?>

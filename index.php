@@ -13,6 +13,16 @@
 		<!-- YUI CSS Reset -->
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
 
+		<!-- jQuery -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
+		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/ui-darkness/jquery-ui-1.7.1.custom.css" type="text/css" />	
+		<script type="text/javascript">
+			jQuery.noConflict();
+		</script>
+
 		<!-- Prototype and Scriptaculous -->
 		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
@@ -21,13 +31,6 @@
 		<!-- Prototip -->
 		<script src="lib/prototip2.0.5/js/prototip.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="lib/prototip2.0.5/css/prototip.css" type="text/css">
-
-		<!-- jQuery -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/ui-darkness/jquery-ui-1.7.1.custom.css" type="text/css"  />	
 
 		<!-- date.js -->
 		<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -52,7 +55,7 @@
 		<link rel="stylesheet" href="lib/shadowbox/src/skin/classic/skin.css" type="text/css" media="screen">
 		-->
 
-		<!-- HelioViewer-Specific -->
+		<!-- Helioviewer-Specific -->
 		<script src="lib/helioviewer/UIElement.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
@@ -89,32 +92,42 @@
 		<!-- Theme -->
 		<link rel="stylesheet" type="text/css" href="styles/blackGlass.css">
 		
-		<!-- PNG Fix -->
-		<!--<script src="lib/pngfix/unitpngfix.js"></script>-->
-		<style type="text/css">
-			img, div, input { behavior: url("lib/iepngfix/iepngfix.htc") }
-		</style>
-		
 		<!--[if IE]>
 			<link href="styles/main-ie.css" rel="stylesheet" type="text/css" />
 		<![endif]-->
 		
 		<script type="text/javascript">
-			jQuery.noConflict();
 			Event.observe(window, 'load', function () {
 				<?php
 					//API Example: index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL
 					if ($_GET['layers'])
 						$layers = explode(",", $_GET['layers']);
 				
+					// View
 					$view = array(
 						'obs-date'  => $_GET['obs-date'],
 						'img-scale' => $_GET['img-scale'],
 						'layers'    => $layers
 					);
-					echo "var view = " . json_encode($view) . ";\n";
+                    printf("var view = %s;\n", json_encode($view));
+               
+                    echo "\t\t\t\t";
+					
+					// Default settings
+					$settings = array(
+						'defaultZoomLevel'  => Config::DEFAULT_ZOOM_LEVEL,
+                        'minZoomLevel'      => Config::MIN_ZOOM_LEVEL,
+                        'maxZoomLevel'      => Config::MAX_ZOOM_LEVEL,
+                        'baseZoom'          => Config::BASE_ZOOM_LEVEL,
+                        'baseScale'         => Config::BASE_IMAGE_SCALE,
+                        'prefetchSize'      => Config::PREFETCH_SIZE,
+	                    'timeIncrementSecs' => Config::DEFAULT_TIMESTEP
+					);
+                    echo "var defaults = " . json_encode($settings) . ";\n";
+                    echo "\t\t\t\t";
+                    printf ("var api = '%s';\n", Config::API_BASE_URL);
 				?>
-				var helioviewer = new Helioviewer({ viewportId: 'helioviewer-viewport', load: view });
+				var helioviewer = new Helioviewer('helioviewer-viewport', api, view, defaults );
 			});
 		</script>
 
@@ -216,10 +229,10 @@
 		<!-- Footer -->
 		<div id="footer">
 			<!-- <div style="height:250px; width:100%; float:left; font-size:0.85em"> -->
-			<div style="height:70px; width:100%; float:left; font-size:0.85em">
+			<div style="height:50px; width:100%; float:left; font-size:0.85em">
 
 				<!-- Links -->
-				<div style="text-align:right; font-size:120%; height:60px; margin-right: 258px; margin-top: 3px;">
+				<div style="text-align:right; font-size:120%; height:30px; margin-right: 258px; margin-top: 3px;">
 					<a id="helioviewer-about" class="gray" href="#" style="margin-right:20px;">About</a>
 					<a id="helioviewer-shortcuts" class="gray" href="#" style="margin-right: 20px;">Usage Tips</a>
 					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="gray" style="margin-right:20px">JHelioviewer</a>
@@ -241,7 +254,7 @@
 		<!-- About dialog -->
 		<div id='about-dialog'>
 			<img src="images/logo/about.png" alt="Helioviewer.org Logo"><br>
-			<span style="font-size:small;">Last Updated: March 26, 2009 (rev. 199)</span><br><br>
+			<span style="font-size:small;"><?php printf("Last Updated: %s (rev. %s)", Config::LAST_UPDATE, Config::BUILD_NUM); ?></span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
 				<li><a href="mailto:webmaster@helioviewer.org" class="gray">Keith Hughitt</a></li>
