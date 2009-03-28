@@ -1,14 +1,25 @@
 /* Tile and Event layer accordions */
 #layerManager, #eventAccordion {margin:0 5px 0 5px;}
 #TileLayerAccordion-Container, #EventLayerAccordion-Container {
-    border: 1px solid black;
 	margin-top: 2px;
-    background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%;
+    font-size: 0.8em;
 }
 
-div.layer-Head {background: url(../images/blackGlass/transparentBG25.png) transparent scroll 0%; font-size:0.9em; font-weight: 600; cursor: pointer; color:white; padding: 1px;}
+span.tile-accordion-header-right > span.accordion-header-divider {
+    position: absolute;
+    left: 226px;
+}
+
+span.event-accordion-header-right > span.accordion-header-divider {
+    position: absolute;
+    left: 226px;
+}
+
 div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
-div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
+
+.dynaccordion-tab {
+    cursor: pointer;
+}
 
 .layerManagerBtn {
 	width:20px;
@@ -19,16 +30,29 @@ div.layer-Head:hover {background: url(../images/blackGlass/transparentBG50.png) 
 }
 .layerManagerBtn.visible {
 	background: url(../images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent;
-	margin-left: 2px;
-}
+    position: absolute;
+    left: 233px;
+    margin-top: 2px;
+ }
 .layerManagerBtn.hidden {
 	background: url(../images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent;
-	margin-left: 2px;
-}
+    position: absolute;
+    left: 233px;
+    margin-top: 2px;
+ }
 .layerManagerBtn.remove {
 	background: url(../images/blackGlass/LayerManagerButton_Remove.png) transparent;
     margin-right:4px;
     height: 14px;
+}
+
+.dynaccordion-section {
+    margin-bottom:2px;
+}
+
+.removeBtn {
+    position: absolute;
+    right: 10px;
 }
 
 div.accordion-arrow {
@@ -49,7 +73,7 @@ div.menu-closed {
 
 span.event-accordion-header-left {display: block; width:65%; float: left;}
 span.tile-accordion-header-left  {display: block; width:35%; float: left;}
-span.event-accordion-header-right, span.tile-accordion-header-right {display: block; text-align: right;}
+span.event-accordion-header-right, span.tile-accordion-header-right {display: block; text-align: right; height: 16px;}
 
 /* TileLayerAccordion Styles */
 div.layer-select-label {
@@ -59,8 +83,8 @@ div.layer-select-label {
 	margin: 2px 0px 0px 1px;
 }
 select.layer-select {
-	width:100px;
-	background-color:#DFE5CF;
+	width: 100px;
+	background-color: #DFE5CF; /* #c7ddf2 */
 	color: #424242;
 	border: 1px solid #5c5c5c;
 	margin: 2px 0px 0px 1px;
@@ -69,10 +93,10 @@ select.layer-select {
 /* EventLayerAccordion Styles */
 button.event-accordion-icon {
 	border: none;
+    position: absolute;
+    left: 202px;
 	width:  16px;
 	height: 16px;
-	vertical-align: middle;
-	margin-right:2px;
 }
 
 div#event-icon-menu{

@@ -1,8 +1,7 @@
 /* Viewport */
-#helioviewer-viewport-container-inner {width:100%; height:100%; position: relative; border: 1px solid black; top: 0px;}
+#helioviewer-viewport-container-inner {width:100%; height:100%; position: relative; border: 1px solid #262424; top: 0px;}
 #helioviewer-viewport-container-outer {
   height: 600px;
-  background: transparent url('../images/blackGlass/transparentBG25.png') repeat scroll 0%;
   border:1px solid black;
   -moz-border-radius:25px;
 }

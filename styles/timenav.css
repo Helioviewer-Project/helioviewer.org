@@ -1,21 +1,12 @@
 /* Time Navigation */
-#timeBackBtn {
-	background: url(../images/blackGlass/arrow_left.png);
-	width:20px;
-	height:17px;
-	border:0;
-	vertical-align: middle;
+.timestamp {
+	font-size:0.8em;
+    font-weight: normal;
+    margin-left: 0px;
+    line-height: 2em;
+    position: absolute;
+    left: 138px;
 }
-
-#timeForwardBtn {
-	background: url(../images/blackGlass/arrow_right.png);
-	width:20px;
-	height:17px;
-	border:0;
-	vertical-align: middle;
-}
-
-.timestamp {font-size:0.8em; font-weight: normal; margin-left: 0px;}
 
 .timeBehind {
 	color: #FFFF66;

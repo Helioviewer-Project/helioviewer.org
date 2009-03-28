@@ -8,8 +8,8 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/03/27';
-	const BUILD_NUM          = 200;
+	const LAST_UPDATE		 = '2009/03/28';
+	const BUILD_NUM          = 201;
 	
 	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 12;

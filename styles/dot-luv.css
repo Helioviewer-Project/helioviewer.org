@@ -1,0 +1,26 @@
+/**
+ * jQuery UI dot-luv theme modifications
+ */
+html {background: url(../images/gradient_v5.png);}
+a.gray {
+	text-decoration:none;
+	font-weight:bold;
+	color:#262424;
+	}
+a.gray:hover {
+	border-top:1px solid #858585;
+	border-bottom:1px solid #858585;
+    color: #c2e0fc;
+	}
+a.lightGray {
+	color:#E5E5E5;
+	text-decoration:none;
+	font-weight:bold;
+}
+.accordion-title {
+	color: black;
+	font-weight: bold;
+}
+.ui-datepicker {
+    font-size:1.0em;
+}

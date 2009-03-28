@@ -71,21 +71,22 @@ input, select {background-color:#F4F4F4;}
 
 /* Center button */
 .center-button {
-    background: url(../images/blackGlass/transparentBGWhite.png) transparent repeat scroll 0%;
-	width:50px;
+    font-size: 0.8em;
+	width:54px;
 	height:16px;
 	position: absolute;
 	bottom:0px;
 	right: 0px;
-	border-left:1px solid #CFCFCF;
-	border-top:1px solid #CFCFCF;
+	border-left:1px dashed #9ccdfc;
+	border-top:1px dashed #9ccdfc;
 	text-align:center;
 	cursor: pointer;
 }
 
 .center-button > span {
-	color: white;
-	font-weight: bold;
+	color: #9ccdfc;
+    font-family: courier new, Futura, terminal, monospace, sans;
+    font-weight: bold;
 }
 
 /* Coordinates */
@@ -156,14 +157,13 @@ img#movieBuilder {
 /* updates and to-do list */
 .notes {
 	position:relative;
-	font-size:95%;
+	font-size:100%;
+    font-family: "Courier New", Courier, monospace;
 	padding:5px;
     top:10px;
     left: 10px;
     width: 190px;
-    background: url(../images/blackGlass/transparentBG50.png) transparent repeat scroll 0%;
-    -moz-border-radius:20px;
-    color: white;
+    color: #DFE5CF;
     height:300px;
     border: 1px solid black;
 }

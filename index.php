@@ -18,7 +18,7 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/ui-darkness/jquery-ui-1.7.1.custom.css" type="text/css" />	
+		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv/jquery-ui-1.7.1.custom.css" type="text/css" />	
 		<script type="text/javascript">
 			jQuery.noConflict();
 		</script>
@@ -90,7 +90,7 @@
 		<link rel="stylesheet" type="text/css" href="styles/sliders.css">
 		
 		<!-- Theme -->
-		<link rel="stylesheet" type="text/css" href="styles/blackGlass.css">
+		<link rel="stylesheet" type="text/css" href="styles/dot-luv.css">
 		
 		<!--[if IE]>
 			<link href="styles/main-ie.css" rel="stylesheet" type="text/css" />
@@ -147,7 +147,7 @@
 				</div>
 				<br><br>
 				<div class="accordion-title" style="margin-left:5px; margin-top: 15px;">Observation</div> 
-				<div id="observation-controls" style="padding: 2px; background: url(images/blackGlass/transparentBG50.png) transparent; border: 1px solid black; color: white; font-size: 0.95em; margin: 0px 5px 0px 5px;">
+				<div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all" style="padding: 2px 2px 8px 2px; border: 1px solid black; color: white; font-size: 0.95em; margin: 0px 5px 0px 5px;">
 					<!--  Observation Date -->
 					<div style="margin-bottom: 5px;">
 						<div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
@@ -163,9 +163,9 @@
 					<!-- Time Navigation Buttons & Time Increment selector -->
 					<div>
 						<div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
-						<select id="timestep-select" style="width:85px; border: none; margin-right: 1px;" name="time-step"></select>
-						<button type="button" id="timeBackBtn"    value="Previous Image" title=" - Move the Observation Date/Time backward one time-step"></button>
-						<button type="button" id="timeForwardBtn" value="Next Image" title=" - Move the Observation Date/Time forward one time-step"></button>
+						<select id="timestep-select" style="width:85px; border: none; margin-right: 1px; float: left;" name="time-step"></select>
+						<span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" style="float: left;" title=" - Move the Observation Date/Time backward one time-step"></span>
+						<span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title=" - Move the Observation Date/Time forward one time-step"></span>
 						<!-- Movie Builder -->
 						<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
 					</div>
@@ -184,12 +184,13 @@
 				</div>
 
 				<!-- Recent Updates -->
-				<div class='notes' style="height:425px">
-					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
-					<strong>02/09/2009</strong><p>Fixed an issue which resulting in incorrect mouse-coordinates being displayed.</p><br><br>
-					<strong>02/02/2009</strong><p>Helioviewer <a style="color: white;" href="docs/">source code documentation</a> now available.</p><br><br>
-					<strong>01/15/2009</strong><p>Experimental version of <a href="api/" style="color:white;">Helioviewer APIs</a> available.</p><br><br>
-					<strong>12/24/2008</strong><p>Unified interface for time navigation.</p><br><br>
+				<div class='notes ui-widget ui-widget-content ui-corner-all' style="height:425px">
+					<!--<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>-->
+                    <div style="background: url(images/recent_updates-green.png); width: 160px; height: 21px; margin-bottom: 8px;"></div>
+					<strong>> 02/09/2009</strong><p>Fixed an issue which resulting in incorrect mouse-coordinates being displayed.</p><br><br>
+					<strong>> 02/02/2009</strong><p>Helioviewer <a style="color: white;" href="docs/">source code documentation</a> now available.</p><br><br>
+					<strong>> 01/15/2009</strong><p>Experimental version of <a href="api/" style="color:white;">Helioviewer APIs</a> available.</p><br><br>
+					<strong>> 12/24/2008</strong><p>Unified interface for time navigation.</p><br><br>
 				</div>
 			</div>
 
@@ -205,7 +206,7 @@
 				<!-- End middle-col-header -->
 
 				<!-- Viewport -->
-				<div id="helioviewer-viewport-container-outer">
+				<div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
 					<div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
 						<div id="helioviewer-viewport" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%"></div>
 
@@ -253,17 +254,17 @@
 		
 		<!-- About dialog -->
 		<div id='about-dialog'>
-			<img src="images/logo/about.png" alt="Helioviewer.org Logo"><br>
+			<img src="images/logo/about_white.png" alt="Helioviewer.org Logo"><br>
 			<span style="font-size:small;"><?php printf("Last Updated: %s (rev. %s)", Config::LAST_UPDATE, Config::BUILD_NUM); ?></span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
-				<li><a href="mailto:webmaster@helioviewer.org" class="gray">Keith Hughitt</a></li>
-				<li><a href="mailto:Jack.Ireland@ nasa.gov" class="gray">Jack Ireland</a></li>
+				<li><a href="mailto:webmaster@helioviewer.org" class="gray" style="color: #9CCDFC;">Keith Hughitt</a></li>
+				<li><a href="mailto:Jack.Ireland@ nasa.gov" class="gray" style="color: #9CCDFC;">Jack Ireland</a></li>
 			</ul>
 		</div>
 		
 		<!-- Helioviewer usage dialog -->
-		<div id='keyboard-shortcuts-dialog'>
+		<div id='keyboard-shortcuts-dialog' style="font-size: 0.85em; color: #DFE5CF; font-family: 'Courier New', Courier, monospace;">
 			<strong>Keyboard Shortcuts:</strong>
 			<br><br>
 				<table>
