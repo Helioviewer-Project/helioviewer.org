@@ -15,36 +15,26 @@ span.event-accordion-header-right > span.accordion-header-divider {
     left: 226px;
 }
 
-div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.png) transparent scroll 0%;}
-
 .dynaccordion-tab {
     cursor: pointer;
 }
 
-.layerManagerBtn {
-	width:20px;
-	height:12px;
-	vertical-align: middle;
-	position: relative;
-	border: 0;
-}
 .layerManagerBtn.visible {
 	background: url(../images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent;
     position: absolute;
-    left: 233px;
-    margin-top: 2px;
+    width: 20px;
+    height: 12px;
+    left: 234px;
+    margin-top:2px;
  }
 .layerManagerBtn.hidden {
 	background: url(../images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent;
     position: absolute;
-    left: 233px;
-    margin-top: 2px;
+    width: 20px;
+    height: 12px;
+    left: 234px;
+    margin-top:2px;
  }
-.layerManagerBtn.remove {
-	background: url(../images/blackGlass/LayerManagerButton_Remove.png) transparent;
-    margin-right:4px;
-    height: 14px;
-}
 
 .dynaccordion-section {
     margin-bottom:2px;
@@ -57,22 +47,11 @@ div.layer-Head.selected {background: url(../images/blackGlass/transparentBG50.pn
 
 div.accordion-arrow {
 	float:left;
-	height:9px;
-	width:9px;
-	margin: 2px 5px 0px 2px;
 	border:none;
-	vertical-align: middle;
 }
 
-div.menu-open {
-	background: url(../images/blackGlass/accordion_menu_open.png) transparent;
-}
-div.menu-closed {
-	background: url(../images/blackGlass/accordion_menu_closed.png) transparent;
-}
-
-span.event-accordion-header-left {display: block; width:65%; float: left;}
-span.tile-accordion-header-left  {display: block; width:35%; float: left;}
+span.event-accordion-header-left {display: block; width:65%; float: left; margin-top:2px;}
+span.tile-accordion-header-left  {display: block; width:35%; float: left; margin-top:2px;}
 span.event-accordion-header-right, span.tile-accordion-header-right {display: block; text-align: right; height: 16px;}
 
 /* TileLayerAccordion Styles */

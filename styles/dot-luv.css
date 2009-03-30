@@ -5,12 +5,12 @@ html {background: url(../images/gradient_v5.png);}
 a.gray {
 	text-decoration:none;
 	font-weight:bold;
-	color:#262424;
+	color:#fff;
 	}
 a.gray:hover {
-	border-top:1px solid #858585;
-	border-bottom:1px solid #858585;
-    color: #c2e0fc;
+	border-top:1px solid #DFE5CF;
+	border-bottom:1px solid #DFE5CF;
+    color: #DFE5CF;
 	}
 a.lightGray {
 	color:#E5E5E5;

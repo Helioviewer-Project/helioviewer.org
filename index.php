@@ -18,7 +18,7 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv/jquery-ui-1.7.1.custom.css" type="text/css" />	
+		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/jquery-ui-1.7.1.custom.css" type="text/css" />	
 		<script type="text/javascript">
 			jQuery.noConflict();
 		</script>
@@ -233,14 +233,16 @@
 			<div style="height:50px; width:100%; float:left; font-size:0.85em">
 
 				<!-- Links -->
-				<div style="text-align:right; font-size:120%; height:30px; margin-right: 258px; margin-top: 3px;">
-					<a id="helioviewer-about" class="gray" href="#" style="margin-right:20px;">About</a>
-					<a id="helioviewer-shortcuts" class="gray" href="#" style="margin-right: 20px;">Usage Tips</a>
-					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="gray" style="margin-right:20px">JHelioviewer</a>
-					<a href="wiki/" class="gray" style="margin-right:20px">Wiki</a>
-					<a href="api/" class="gray" style="margin-right:20px">API</a>
-					<a href="mailto:webmaster@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>
-					<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
+				<div style="text-align:right; font-size:100%; height:30px; margin-right: 258px; margin-top: 3px; position: relative;">
+                    <div class="ui-widget ui-widget-content ui-corner-all" style="position: absolute; right: 0; padding: 4px; border: 2px solid #262424; font-size: 1.0em; ">
+    					<a id="helioviewer-about" class="gray" href="#" style="margin-right:20px;">About</a>
+    					<a id="helioviewer-shortcuts" class="gray" href="#" style="margin-right: 20px;">Usage Tips</a>
+    					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="gray" style="margin-right:20px">JHelioviewer</a>
+    					<a href="wiki/" class="gray" style="margin-right:20px">Wiki</a>
+    					<a href="api/" class="gray" style="margin-right:20px">API</a>
+    					<a href="mailto:webmaster@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>
+    					<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
+                    </div>
 				</div>
 				
 				<!-- Timeline -->
