@@ -15,7 +15,7 @@
 
 
 /* HTML ELEMENTS */
-html, body    {height:100%;}
+html, body    {height:100%; background: url(../images/gradient_v5.png);}
 h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
@@ -71,22 +71,24 @@ input, select {background-color:#F4F4F4;}
 
 /* Center button */
 .center-button {
+    background: transparent url(../images/blackGlass/transparentBGWhite.png);
     font-size: 0.8em;
 	width:54px;
 	height:16px;
 	position: absolute;
-	bottom:0px;
-	right: 0px;
-	border-left:1px dashed #9ccdfc;
-	border-top:1px dashed #9ccdfc;
+	top: 0px;
+	left: 0px;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
 	text-align:center;
 	cursor: pointer;
 }
 
 .center-button > span {
-	color: #9ccdfc;
-    font-family: courier new, Futura, terminal, monospace, sans;
+	color: #E8E8E8;
     font-weight: bold;
+    vertical-align: top;
+    line-height: 1.0;
 }
 
 /* Coordinates */
@@ -125,12 +127,13 @@ input, select {background-color:#F4F4F4;}
 
 /* Calendar */
 #date {
-	width:80px; 
+	width:80px;
+    vertical-align: top;
 	margin-right: 2px;
+    margin-top: 1px;
 }
 .ui-datepicker-trigger {
 	background-color: transparent;
-	color: transparent;
     cursor: pointer;
 	position: relative;
 }
@@ -150,6 +153,24 @@ img#movieBuilder {
 
 /* MISC TEXT-RELATED */
 .centered {display: block; margin-left:auto; margin-right: auto;}
+
+a.dark {
+	text-decoration: none;
+	font-weight: bold;
+	color: #262424;
+	}
+a.dark:hover {
+    color: #d18f61;
+	}
+a.light {
+    text-decoration: none;
+    font-weight: bold;
+    color: #E8E8E8;
+}
+a.light:hover {
+    color: #d18f61;
+}
+
 
 /* Usage Tips dialog */
 

@@ -8,7 +8,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="Cache-Control" content="No-Cache">
 		<meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
-		<meta name="keywords" content="Helioviewer, hv, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, ">
+		<meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, ">
 
 		<!-- YUI CSS Reset -->
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
@@ -149,7 +149,7 @@
 				<div class="accordion-title" style="margin-left:5px; margin-top: 15px;">Observation</div> 
 				<div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all" style="padding: 2px 2px 8px 2px; border: 1px solid black; color: white; font-size: 0.95em; margin: 0px 5px 0px 5px;">
 					<!--  Observation Date -->
-					<div style="margin-bottom: 5px;">
+					<div style="margin-bottom: 4px; position: relative;">
 						<div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
 						<input type="text" id="date" name="date" value="">
 					</div>
@@ -234,14 +234,14 @@
 
 				<!-- Links -->
 				<div style="text-align:right; font-size:100%; height:30px; margin-right: 258px; margin-top: 3px; position: relative;">
-                    <div class="ui-widget ui-widget-content ui-corner-all" style="position: absolute; right: 0; padding: 4px; border: 2px solid #262424; font-size: 1.0em; ">
-    					<a id="helioviewer-about" class="gray" href="#" style="margin-right:20px;">About</a>
-    					<a id="helioviewer-shortcuts" class="gray" href="#" style="margin-right: 20px;">Usage Tips</a>
-    					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="gray" style="margin-right:20px">JHelioviewer</a>
-    					<a href="wiki/" class="gray" style="margin-right:20px">Wiki</a>
-    					<a href="api/" class="gray" style="margin-right:20px">API</a>
-    					<a href="mailto:webmaster@helioviewer.org" class="gray" style="margin-right:20px;">Contact</a>
-    					<a href="https://bugs.launchpad.net/helioviewer/" class="gray">Report Bug</a>
+                    <div class="ui-corner-bottom" style="background: transparent url(images/blackGlass/transparentBG25.png); position: absolute; right: 25px; top:-3px; padding: 4px; border-bottom: 1px solid #262424; border-left: 1px solid #262424; border-right: 1px solid #262424; font-size: 1.0em; -moz-border-radius-bottomleft: 20px; -moz-border-radius-bottomright: 20px;">
+    					<a id="helioviewer-about" class="light" href="#" style="margin-right:20px;">About</a>
+    					<a id="helioviewer-shortcuts" class="light" href="#" style="margin-right: 20px;">Usage Tips</a>
+    					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank" style="margin-right:20px">JHelioviewer</a>
+    					<a href="wiki/" class="light" style="margin-right:20px" target="_blank">Wiki</a>
+    					<a href="api/" class="light" style="margin-right:20px" target="_blank">API</a>
+    					<a href="mailto:webmaster@helioviewer.org" class="light" style="margin-right:20px;">Contact</a>
+    					<a href="https://bugs.launchpad.net/helioviewer/" class="light" target="_blank">Report Bug</a>
                     </div>
 				</div>
 				
@@ -260,8 +260,8 @@
 			<span style="font-size:small;"><?php printf("Last Updated: %s (rev. %s)", Config::LAST_UPDATE, Config::BUILD_NUM); ?></span><br><br>
 			<span style='font-weight: bold;'>Current Developers:</span><br>
 			<ul>
-				<li><a href="mailto:webmaster@helioviewer.org" class="gray" style="color: #9CCDFC;">Keith Hughitt</a></li>
-				<li><a href="mailto:Jack.Ireland@ nasa.gov" class="gray" style="color: #9CCDFC;">Jack Ireland</a></li>
+				<li><a href="mailto:webmaster@helioviewer.org" class="light">Keith Hughitt</a></li>
+				<li><a href="mailto:Jack.Ireland@ nasa.gov" class="light">Jack Ireland</a></li>
 			</ul>
 		</div>
 		

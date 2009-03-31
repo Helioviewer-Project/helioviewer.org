@@ -22,3 +22,7 @@
 	font-weight: 500;
 	color: #ff6666;
 }
+
+#timeBackBtn, #timeForwardBtn {
+    cursor: pointer;
+}

@@ -19,6 +19,16 @@ span.event-accordion-header-right > span.accordion-header-divider {
     cursor: pointer;
 }
 
+.dynaccordion-cell {
+    border: 1px solid #262424;
+    padding: 5px;
+}
+
+.accordion-title {
+	color: black;
+	font-weight: bold;
+}
+
 .layerManagerBtn.visible {
 	background: url(../images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent;
     position: absolute;

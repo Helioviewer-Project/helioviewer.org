@@ -40,10 +40,7 @@
 
 /* Opacity Slider */
 .opacity-slider-track{
-	width:120px;
-	height:10px;
-	margin:10px;
-	height: 8px;
+    margin: 4px 0 9px 0;
     background: url(../images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
     border-left: 1px solid black;
     border-right: 1px solid black;
@@ -51,6 +48,7 @@
 }
 .opacity-slider-handle{
 	background: url(../lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_glass_20_555555_1x400.png) transparent scroll 0%;
+    -moz-border-radius: 3px;
 	border: 1px solid black;
     cursor: pointer;
     height:19px;

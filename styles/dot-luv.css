@@ -1,26 +1,30 @@
 /**
  * jQuery UI dot-luv theme modifications
  */
-html {background: url(../images/gradient_v5.png);}
-a.gray {
-	text-decoration:none;
-	font-weight:bold;
-	color:#fff;
-	}
-a.gray:hover {
-	border-top:1px solid #DFE5CF;
-	border-bottom:1px solid #DFE5CF;
-    color: #DFE5CF;
-	}
-a.lightGray {
-	color:#E5E5E5;
-	text-decoration:none;
-	font-weight:bold;
-}
-.accordion-title {
-	color: black;
-	font-weight: bold;
-}
 .ui-datepicker {
     font-size:1.0em;
+}
+
+.ui-state-hover-bgonly {
+    background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-bg_dots-small_40_00498f_2x2.png);
+    background-color: #00498f;
+}
+
+.ui-state-hover-icononly {
+    background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+}
+
+span.removeBtn:hover, span#timeBackBtn:hover, span#timeForwardBtn:hover, .accordion-arrow:hover {
+    background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+}
+
+.layerManagerBtn.visible:hover {
+    background-image: url(../images/blackGlass/LayerManagerButton_Visibility_Visible-hover.png);
+}
+.layerManagerBtn.hidden:hover {
+    background-image: url(../images/blackGlass/LayerManagerButton_Visibility_Hidden-hover.png);    
+}
+
+span.ui-datepicker-trigger:hover {
+    background-image: url(images/calendar_small-hover.png);
 }
