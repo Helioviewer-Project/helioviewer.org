@@ -5,6 +5,19 @@
  * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
  */
 class Config {
+    
+  	// Version Information
+	const LAST_UPDATE		 = '2009/04/01';
+	const BUILD_NUM          = 204;
+    
+   	// Viewer
+	const DEFAULT_ZOOM_LEVEL = 11;
+	const DEFAULT_OBS_TIME   = 1065312000000;
+	const DEFAULT_TIMESTEP   = 86400;
+	const MIN_ZOOM_LEVEL     = 8;
+	const MAX_ZOOM_LEVEL     = 16;           
+	const PREFETCH_SIZE      = 0;
+    
 	// Database
 	const DB_HOST            = '';
 	const DB_NAME            = '';
@@ -17,12 +30,13 @@ class Config {
 	const CACHE_DIR          = '/home/esahelio/public_html/cache/';
 	const JP2_DIR            = '/home/esahelio/public_html/jp2/';
 	const KDU_LIBS_DIR       = '/home/esahelio/kakadu/lib';
-	const EMPTY_TILE         = 'images/transparent_512.gif';
+	const EMPTY_TILE         = 'images/transparent_512.png';
 	
 	// URL's
 	const WEB_ROOT_URL       = 'http://helioviewer.org';
 	const TMP_ROOT_URL       = 'http://helioviewer.org/tmp';	
 	const EVENT_SERVER_URL   = "http://achilles.nascom.nasa.gov/~wamsler/API/index.php?";
+   	const API_BASE_URL       = "api/index.php";
 		
 	// Regular Expressions	
 	const WEB_ROOT_DIR_REGEX = '/\/home\/esahelio\/public_html/';
@@ -43,8 +57,12 @@ class Config {
 	const NUM_COLORS               = 256;
 	const TILE_PAD_WIDTH           = 8;
 			
+	// Image scale computation
+	const BASE_ZOOM_LEVEL          = 10;
+	const BASE_IMAGE_SCALE         = 2.63;
+
 	// Apache IMagick Module
-	const MOD_IMAGICK_ENABLED = true;
+	const MOD_IMAGICK_ENABLED = false;
 
 	// Debugging
 	const ENABLE_CACHE       = true;

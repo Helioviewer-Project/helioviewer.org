@@ -78,7 +78,7 @@
 	</head>
 	
 	<body>
-		<img alt="Helioviewer.org Logo" src="../images/logo/about.png"/ style="float:left;">
+		<img alt="Helioviewer.org Logo" src="../images/logos/about.png"/ style="float:left;">
 		<h1 style="position:relative; top:22px;">API</h1><br>
 		
 		<!-- Table of contents -->

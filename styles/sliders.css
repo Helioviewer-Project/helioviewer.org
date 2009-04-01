@@ -55,3 +55,10 @@
     width: 10px;
     top:-6px;	
 }
+
+#zoomControl {
+    position: absolute;
+    left: 16px;
+    top:39px;
+    z-index:1000;
+}

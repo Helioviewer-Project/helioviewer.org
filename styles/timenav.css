@@ -26,3 +26,14 @@
 #timeBackBtn, #timeForwardBtn {
     cursor: pointer;
 }
+
+#timeBackBtn {
+    float: left;
+}
+
+#timestep-select {
+    width:85px;
+    border: none;
+    margin-right: 1px;
+    float: left;
+}

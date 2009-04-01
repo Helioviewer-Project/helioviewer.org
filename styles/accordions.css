@@ -1,5 +1,5 @@
 /* Tile and Event layer accordions */
-#layerManager, #eventAccordion {margin:0 5px 0 5px;}
+#tileLayerAccordion, #eventAccordion {margin:0 5px 0 5px;}
 #TileLayerAccordion-Container, #EventLayerAccordion-Container {
 	margin-top: 2px;
     font-size: 0.8em;
@@ -22,11 +22,6 @@ span.event-accordion-header-right > span.accordion-header-divider {
 .dynaccordion-cell {
     border: 1px solid #262424;
     padding: 5px;
-}
-
-.accordion-title {
-	color: black;
-	font-weight: bold;
 }
 
 .layerManagerBtn.visible {
@@ -90,22 +85,16 @@ button.event-accordion-icon {
 
 div#event-icon-menu{
 	position: absolute;
+    font-size: 12px;
 	z-index: 1000;
-	background: #F4F4F4;
-	border: 1px solid #5E5E5E;
 }
 
 div#event-icon-menu-title {
-	background-color: #c7c7c7;
-	font-family: Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	font-size: 12px;
-	border-bottom: 2px solid #424242;
+	border-bottom: 1px solid #424242;
 	text-align: center;
-	color: #5E5E5E;
 	height: 20px;
 	padding-top:5px;
-	width: 100%;
 }
 
 div#event-icon-menu-body {
@@ -119,8 +108,7 @@ div#event-icon-menu-body {
 }
 
 .event-icon-menu-icon:hover {
-	background: #add8e6;
-	border: 2px solid blue;
+	border: 2px solid #D18F61;
 	margin: 0px 6px 0px 6px;
 	text-decoration: underline;
 }

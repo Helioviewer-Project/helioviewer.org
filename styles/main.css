@@ -15,7 +15,7 @@
 
 
 /* HTML ELEMENTS */
-html, body    {height:100%; background: url(../images/gradient_v5.png);}
+html, body    {height:100%; background: url(../images/backgrounds/gradient_v5-optimized.png);}
 h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
@@ -68,6 +68,14 @@ input, select {background-color:#F4F4F4;}
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 
+/* Observation controls */
+#observation-controls {
+    padding: 2px 2px 8px 2px;
+    margin: 0px 5px 0px 5px;
+    border: 1px solid black;
+    color: white;
+    font-size: 0.95em;
+}
 
 /* Center button */
 .center-button {
@@ -132,15 +140,6 @@ input, select {background-color:#F4F4F4;}
 	margin-right: 2px;
     margin-top: 1px;
 }
-.ui-datepicker-trigger {
-	background-color: transparent;
-    cursor: pointer;
-	position: relative;
-}
-
-.ui-datepicker {
-	z-index: 2000;	
-}
 
 /* Movie Builder */
 img#movieBuilder {
@@ -171,9 +170,37 @@ a.light:hover {
     color: #d18f61;
 }
 
+.section-header {
+	font-weight: bold;
+}
 
-/* Usage Tips dialog */
+/* Footer linkbar */
+#footer-links-outer {
+    text-align:right;
+    font-size:100%;
+    height:30px;
+    margin-right: 258px;
+    margin-top: 3px;
+    position: relative;
+}
 
+#footer-links-inner {
+    background: url(../images/blackGlass/transparentBG25.png);
+    position: absolute;
+    right: 25px;
+    top:-3px;
+    padding: 4px 8px;
+    border-bottom: 1px solid #262424;
+    border-left: 1px solid #262424;
+    border-right: 1px solid #262424;
+    font-size: 1.0em;
+    -moz-border-radius-bottomleft: 20px;
+    -moz-border-radius-bottomright: 20px;
+}
+
+#footer-links-inner > a {
+    margin-right: 20px;
+}
 
 /* updates and to-do list */
 .notes {
@@ -185,6 +212,6 @@ a.light:hover {
     left: 10px;
     width: 190px;
     color: #DFE5CF;
-    height:300px;
+    height:425px;
     border: 1px solid black;
 }

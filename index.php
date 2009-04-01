@@ -43,7 +43,7 @@
 		
 		<!-- Pixastic -->
 		<!-- jQuery("img.tile[src!=images/transparent_512.gif]"); -->
-		<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>
+		<!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
 
 		<!-- ShadowBox -->
 		<!--
@@ -83,13 +83,13 @@
 		<link rel="stylesheet" type="text/css" href="styles/main.css">
 		<link rel="stylesheet" type="text/css" href="styles/viewport.css">
 		<link rel="stylesheet" type="text/css" href="styles/events.css">
-		<link rel="stylesheet" type="text/css" href="styles/dialog.css">
+		<link rel="stylesheet" type="text/css" href="styles/dialogs.css">
 		<link rel="stylesheet" type="text/css" href="styles/tooltips.css">
 		<link rel="stylesheet" type="text/css" href="styles/timenav.css">
 		<link rel="stylesheet" type="text/css" href="styles/accordions.css">
 		<link rel="stylesheet" type="text/css" href="styles/sliders.css">
 		
-		<!-- Theme -->
+		<!-- Theme Modifications -->
 		<link rel="stylesheet" type="text/css" href="styles/dot-luv.css">
 		
 		<!--[if IE]>
@@ -135,7 +135,7 @@
 	<body>
 		<div id="minHeight"></div>
 		<!-- Message Console -->
-		<div id="message-console" style="display:none;">&nbsp;</div>
+		<div id="message-console" style="display: none;">&nbsp;</div>
 
 		<!-- Header and Content -->
 		<div id="outsideBox">
@@ -143,11 +143,11 @@
 			<!-- Left Column -->
 			<div id="left-col">
 				<div id="left-col-header">
-					<img src="images/logo/simple.png" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
+					<img src="images/logos/simple.png" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
 				</div>
 				<br><br>
-				<div class="accordion-title" style="margin-left:5px; margin-top: 15px;">Observation</div> 
-				<div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all" style="padding: 2px 2px 8px 2px; border: 1px solid black; color: white; font-size: 0.95em; margin: 0px 5px 0px 5px;">
+				<div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div> 
+				<div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
 					<!--  Observation Date -->
 					<div style="margin-bottom: 4px; position: relative;">
 						<div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
@@ -163,8 +163,8 @@
 					<!-- Time Navigation Buttons & Time Increment selector -->
 					<div>
 						<div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
-						<select id="timestep-select" style="width:85px; border: none; margin-right: 1px; float: left;" name="time-step"></select>
-						<span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" style="float: left;" title=" - Move the Observation Date/Time backward one time-step"></span>
+						<select id="timestep-select" name="time-step"></select>
+						<span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title=" - Move the Observation Date/Time backward one time-step"></span>
 						<span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title=" - Move the Observation Date/Time forward one time-step"></span>
 						<!-- Movie Builder -->
 						<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
@@ -172,7 +172,7 @@
 
 				</div>
 				<br><br>
-				<div id="layerManager"></div>
+				<div id="tileLayerAccordion"></div>
 				<br><br>
 				<div id="eventAccordion"></div>
 			</div>
@@ -184,13 +184,11 @@
 				</div>
 
 				<!-- Recent Updates -->
-				<div class='notes ui-widget ui-widget-content ui-corner-all' style="height:425px">
-					<!--<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>-->
-                    <div style="background: url(images/recent_updates-green.png); width: 160px; height: 21px; margin-bottom: 8px;"></div>
+				<div class='notes ui-widget ui-widget-content ui-corner-all'>
+					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
 					<strong>> 02/09/2009</strong><p>Fixed an issue which resulting in incorrect mouse-coordinates being displayed.</p><br><br>
 					<strong>> 02/02/2009</strong><p>Helioviewer <a style="color: white;" href="docs/">source code documentation</a> now available.</p><br><br>
 					<strong>> 01/15/2009</strong><p>Experimental version of <a href="api/" style="color:white;">Helioviewer APIs</a> available.</p><br><br>
-					<strong>> 12/24/2008</strong><p>Unified interface for time navigation.</p><br><br>
 				</div>
 			</div>
 
@@ -213,7 +211,7 @@
 							<!-- UI COMPONENTS -->
 
 							<!--  Zoom-Level Slider -->
-							<div id="zoomControl" style="position: absolute; left: 16px; top:39px; z-index:1000">
+							<div id="zoomControl">
 								<div id="zoomControlZoomIn" class="sliderPlus" title=" - Zoom in.">+</div>
 								<div id="zoomControlTrack" class="sliderTrack">
 									<div id="zoomControlHandle" class="sliderHandle" title=" - Drag handle to zoom in and out."></div>
@@ -233,15 +231,15 @@
 			<div style="height:50px; width:100%; float:left; font-size:0.85em">
 
 				<!-- Links -->
-				<div style="text-align:right; font-size:100%; height:30px; margin-right: 258px; margin-top: 3px; position: relative;">
-                    <div class="ui-corner-bottom" style="background: transparent url(images/blackGlass/transparentBG25.png); position: absolute; right: 25px; top:-3px; padding: 4px; border-bottom: 1px solid #262424; border-left: 1px solid #262424; border-right: 1px solid #262424; font-size: 1.0em; -moz-border-radius-bottomleft: 20px; -moz-border-radius-bottomright: 20px;">
-    					<a id="helioviewer-about" class="light" href="#" style="margin-right:20px;">About</a>
-    					<a id="helioviewer-shortcuts" class="light" href="#" style="margin-right: 20px;">Usage Tips</a>
-    					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank" style="margin-right:20px">JHelioviewer</a>
-    					<a href="wiki/" class="light" style="margin-right:20px" target="_blank">Wiki</a>
-    					<a href="api/" class="light" style="margin-right:20px" target="_blank">API</a>
-    					<a href="mailto:webmaster@helioviewer.org" class="light" style="margin-right:20px;">Contact</a>
-    					<a href="https://bugs.launchpad.net/helioviewer/" class="light" target="_blank">Report Bug</a>
+				<div id="footer-links-outer">
+                    <div id="footer-links-inner" class="ui-corner-bottom">
+    					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
+    					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
+    					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank">JHelioviewer</a>
+    					<a href="wiki/" class="light" target="_blank">Wiki</a>
+    					<a href="api/" class="light" target="_blank">API</a>
+    					<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
+    					<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
                     </div>
 				</div>
 				
@@ -255,82 +253,10 @@
 		</div>
 		
 		<!-- About dialog -->
-		<div id='about-dialog'>
-			<img src="images/logo/about_white.png" alt="Helioviewer.org Logo"><br>
-			<span style="font-size:small;"><?php printf("Last Updated: %s (rev. %s)", Config::LAST_UPDATE, Config::BUILD_NUM); ?></span><br><br>
-			<span style='font-weight: bold;'>Current Developers:</span><br>
-			<ul>
-				<li><a href="mailto:webmaster@helioviewer.org" class="light">Keith Hughitt</a></li>
-				<li><a href="mailto:Jack.Ireland@ nasa.gov" class="light">Jack Ireland</a></li>
-			</ul>
-		</div>
+		<div id='about-dialog'></div>
 		
-		<!-- Helioviewer usage dialog -->
-		<div id='keyboard-shortcuts-dialog' style="font-size: 0.85em; color: #DFE5CF; font-family: 'Courier New', Courier, monospace;">
-			<strong>Keyboard Shortcuts:</strong>
-			<br><br>
-				<table>
-					<tr>
-						<td width="30%"><strong>c</strong></td>
-						<td>Center the screen.</td>
-					</tr>
-					<tr>
-						<td><strong>d</strong></td>
-						<td>Display detailed feature/event labels.</td>
-					</tr>
-					<tr>
-						<td><strong>m</strong></td>
-						<td>Toggle mouse coordinates display.</td>
-					</tr>
-					<tr>
-						<td><strong>+</strong></td>
-						<td>Zoom-in once.</td>
-					</tr>
-					<tr>
-						<td><strong>-</strong></td>
-						<td>Zoom-out once.</td>
-					</tr>
-					<tr>
-						<td><strong>&larr;</strong></td>
-						<td>Pan left.</td>
-					</tr>
-					<tr>
-						<td><strong>&uarr;</strong></td>
-						<td>Pan upward.</td>
-					</tr>
-					<tr>
-						<td><strong>&rarr;</strong></td>
-						<td>Pan Right.</td>
-					</tr>
-					<tr>
-						<td><strong>&darr;</strong></td>
-						<td>Pan downward.</td>
-					</tr>
-					
-				</table>
-				<br><br>
-				<strong>Mouse Shortcuts:</strong>
-				<br><br>
-				<table>
-					<tr>
-						<td width="75%">Double-click</td>
-						<td>Zoom in.</td>
-					</tr>
-					<tr>
-						<td>Shift + Double-click</td>
-						<td>Zoom out.</td>
-					</tr>
-					<tr>
-						<td>Mouse-wheel up</td>
-						<td>Zoom in.</td>
-					</tr>
-					<tr>
-						<td>Mouse-wheel down</td>
-						<td>Zoom out.</td>
-					</tr>
-				</table>
-				
-		</div>
+        <!-- Usage Dialog -->
+        <div id='usage-dialog'></div>
 		
 	</body>
 </html>

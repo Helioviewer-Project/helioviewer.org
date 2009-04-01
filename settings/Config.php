@@ -8,8 +8,8 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/03/31';
-	const BUILD_NUM          = 203;
+	const LAST_UPDATE		 = '2009/04/01';
+	const BUILD_NUM          = 204;
 	
 	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -18,7 +18,6 @@ class Config {
 	const MIN_ZOOM_LEVEL     = 8;
 	const MAX_ZOOM_LEVEL     = 16;           
 	const PREFETCH_SIZE      = 0;
-
 	
 	// Database
 	const DB_HOST            = 'localhost';
@@ -32,7 +31,7 @@ class Config {
 	const CACHE_DIR          = '/var/www/hv/cache/';
 	const JP2_DIR            = '/var/www/hv/jp2/';
 	const KDU_LIBS_DIR       = '/usr/lib/kakadu/';
-	const EMPTY_TILE         = 'images/transparent_512.gif';
+	const EMPTY_TILE         = 'images/transparent_512.png';
 	
 	// URL's
 	const WEB_ROOT_URL       = 'http://localhost/hv';

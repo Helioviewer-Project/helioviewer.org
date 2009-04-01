@@ -3,6 +3,12 @@
  */
 .ui-datepicker {
     font-size:1.0em;
+  	z-index: 2000;	
+}
+.ui-datepicker-trigger {
+	background-color: transparent;
+    cursor: pointer;
+	position: relative;
 }
 
 .ui-state-hover-bgonly {
