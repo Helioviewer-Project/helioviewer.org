@@ -498,6 +498,11 @@
 											<td><i>Boolean</i></td>
 											<td>[Optional] Returns a URL instead of an actual image.</td>
 										</tr>
+                                        <tr>
+											<td><b>getJPIP</b></td>
+											<td><i>Boolean</i></td>
+											<td>[Optional] Returns a JPIP URI instead of an actual image.</td>
+										</tr>
 									</tbody>
 								</table>
 								
@@ -569,6 +574,11 @@
 											<td><b>format</b></td>
 											<td><i>String</i></td>
 											<td>[MJ2|JPX] Whether a MJ2 movie or a JPX file should be returned</td>
+										</tr>
+                                        <tr>
+											<td><b>getJPIP</b></td>
+											<td><i>Boolean</i></td>
+											<td>[Optional] Returns a JPIP URI instead of an actual movie.</td>
 										</tr>
 									</tbody>
 								</table>

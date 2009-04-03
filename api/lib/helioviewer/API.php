@@ -159,11 +159,16 @@ class API {
         }
 
         $filepath = $imgIndex->getJP2Location($this->params['timestamp'], $src);
-        $filename = end(explode("/", $filepath));
+        $exploded = explode("/", $filepath);
+        $filename = end($exploded);
 
-        if ($this->params['getURL'] == "true") {
+        if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
             $url = preg_replace(Config::WEB_ROOT_DIR_REGEX, Config::WEB_ROOT_URL, $filepath);
             echo $url;
+        }
+        else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
+            $jpip = "jpip" . substr(preg_replace(Config::WEB_ROOT_DIR_REGEX, Config::WEB_ROOT_URL, $filepath), 4);
+            echo $jpip;
         }
         else {
             $fp = fopen($filepath, 'r');
@@ -260,7 +265,12 @@ class API {
 
         //echo $cmd;
 
-        echo $tmpurl;
+        if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
+            $mj2 = "jpip" . substr(preg_replace(Config::WEB_ROOT_DIR_REGEX, Config::WEB_ROOT_URL, $tmpurl), 4);
+            echo $mj2;
+        } else {
+            echo $tmpurl;
+        }
         return 1;
     }
 
