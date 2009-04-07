@@ -1,11 +1,11 @@
 /* Time Navigation */
 .timestamp {
-	font-size:0.8em;
+	font-size:1.0em;
     font-weight: normal;
     margin-left: 0px;
-    line-height: 2em;
+    line-height: 1.6em;
     position: absolute;
-    left: 138px;
+    left: 120px;
 }
 
 .timeBehind {

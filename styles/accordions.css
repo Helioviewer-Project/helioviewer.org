@@ -7,11 +7,13 @@
 
 span.tile-accordion-header-right > span.accordion-header-divider {
     position: absolute;
+    line-height: 1.5;
     left: 226px;
 }
 
 span.event-accordion-header-right > span.accordion-header-divider {
     position: absolute;
+    line-height: 1.5;
     left: 226px;
 }
 
@@ -21,6 +23,7 @@ span.event-accordion-header-right > span.accordion-header-divider {
 
 .dynaccordion-cell {
     border: 1px solid #262424;
+    font-size:1.25em;
     padding: 5px;
 }
 
@@ -61,7 +64,7 @@ span.event-accordion-header-right, span.tile-accordion-header-right {display: bl
 
 /* TileLayerAccordion Styles */
 div.layer-select-label {
-	width:90px;
+	width:102px;
 	float: left;
 	color: white;
 	margin: 2px 0px 0px 1px;

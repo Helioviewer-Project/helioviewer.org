@@ -1,5 +1,5 @@
--- HelioViewer Database Structure --
--- last update: 03-09-2008        --
+-- Helioviewer Database Structure --
+-- last update: 04-07-2009        --
 
 --
 -- Create schema
@@ -14,6 +14,7 @@ USE hv;
 -- --------------------------------------------------------
 --
 -- Table structure for table `observatory`
+-- (id, abbreviation, name, description)
 --
 -- --------------------------------------------------------
 CREATE TABLE `observatory` (
@@ -31,6 +32,7 @@ INSERT INTO `observatory` VALUES(2, 'TRA', 'TRACE', 'The Transition Region and C
 -- --------------------------------------------------------
 --
 -- Table structure for table `instrument`
+-- (id, abbreviation, name, description, observatoryId)
 --
 -- --------------------------------------------------------
 
@@ -43,14 +45,15 @@ CREATE TABLE `instrument` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `instrument` VALUES(1, 'MDI', 'MDI', 'Michelson Doppler Imager', 1);
+INSERT INTO `instrument` VALUES(1, 'EIT', 'EIT', 'Extreme ultraviolet Imaging Telescope', 1);
 INSERT INTO `instrument` VALUES(2, 'LAS', 'LASCO', 'The Large Angle Spectrometric Coronagraph', 1);
-INSERT INTO `instrument` VALUES(3, 'EIT', 'EIT', 'Extreme ultraviolet Imaging Telescope', 1);
+INSERT INTO `instrument` VALUES(3, 'MDI', 'MDI', 'Michelson Doppler Imager', 1);
 INSERT INTO `instrument` VALUES(4, 'TRA', 'TRACE', 'TRACE', 2);
 
 -- --------------------------------------------------------
 --
 -- Table structure for table `detector`
+-- (id, abbreviation, name, description, instrumentId, minZoom, opacityGroupId)
 --
 -- --------------------------------------------------------
 CREATE TABLE `detector` (
@@ -59,21 +62,21 @@ CREATE TABLE `detector` (
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   `instrumentId` int(10) unsigned NOT NULL default '0',
-  `imgSunRatio` float(6,3) default NULL,
   `minZoom` tinyint(4) default NULL,
   `opacityGroupId` int(10) unsigned NOT NULL default '1',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `detector` VALUES(1, 'MDI', '', 'MDI', 1, NULL, 9, 1);
-INSERT INTO `detector` VALUES(2, '0C3', 'C3', 'LASCO C3', 2, NULL, 14, 3);
-INSERT INTO `detector` VALUES(3, '0C2', 'C2', 'LASCO C2', 2, NULL, 12, 2);
-INSERT INTO `detector` VALUES(4, 'EIT', '', 'EIT', 3, NULL, 10, 1);
-INSERT INTO `detector` VALUES(5, 'TRA', '', 'TRACE', 4, NULL, 9, 1);
+INSERT INTO `detector` VALUES(1, '0C2', 'C2', 'LASCO C2', 2, 12, 2);
+INSERT INTO `detector` VALUES(2, '0C3', 'C3', 'LASCO C3', 2, 14, 3);
+INSERT INTO `detector` VALUES(3, 'EIT', '', 'EIT', 1, 10, 1);
+INSERT INTO `detector` VALUES(4, 'MDI', '', 'MDI', 3, 9, 1);
+INSERT INTO `detector` VALUES(5, 'TRA', '', 'TRACE', 4, 9, 1);
 
 -- --------------------------------------------------------
 --
 -- Table structure for table `measurement`
+-- (id, measurementTypeId, detectorId, abbreviation, name, description)
 --
 -- --------------------------------------------------------
 CREATE TABLE `measurement` (
@@ -86,21 +89,23 @@ CREATE TABLE `measurement` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
-INSERT INTO `measurement` VALUES(1, 1, 1, 'mag', 'mag', 'Magnetogram');
-INSERT INTO `measurement` VALUES(2, 1, 1, 'int', 'int', 'Intensitygram');
-INSERT INTO `measurement` VALUES(3, 1, 2, '0WL', 'WL', 'White Light');
-INSERT INTO `measurement` VALUES(4, 1, 3, '0WL', 'WL', 'White Light');
-INSERT INTO `measurement` VALUES(5, 2, 4, '195', '195', '195 Angstrom extreme ultraviolet');
-INSERT INTO `measurement` VALUES(6, 2, 4, '171', '171', '171 Angstrom extreme ultraviolet');
-INSERT INTO `measurement` VALUES(7, 2, 4, '304', '304', '304 Angstrom extreme ultraviolet');
-INSERT INTO `measurement` VALUES(8, 2, 4, '284', '284', '284 Angstrom extreme ultraviolet');
-INSERT INTO `measurement` VALUES(9, 2, 5, '171', '171', '171 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(1, 2, 3, '171', '171', '171 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(2, 2, 3, '195', '195', '195 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(3, 2, 3, '284', '284', '284 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(4, 2, 3, '304', '304', '304 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(5, 2, 5, '171', '171', '171 Angstrom extreme ultraviolet');
+INSERT INTO `measurement` VALUES(6, 1, 4, 'int', 'int', 'Intensitygram');
+INSERT INTO `measurement` VALUES(7, 1, 4, 'mag', 'mag', 'Magnetogram');
+INSERT INTO `measurement` VALUES(8, 1, 2, '0WL', 'WL', 'White Light');
+INSERT INTO `measurement` VALUES(9, 1, 1, '0WL', 'WL', 'White Light');
+
 
 -- --------------------------------------------------------
-
 --
 -- Table structure for table `measurementType`
+-- (id, name, unit)
 --
+-- --------------------------------------------------------
 
 CREATE TABLE `measurementType` (
   `id` int(10) unsigned NOT NULL auto_increment,
@@ -115,6 +120,7 @@ INSERT INTO `measurementType` VALUES(2, 'wavelength', 'nm');
 -- --------------------------------------------------------
 --
 -- Table structure for table `opacityGroup`
+-- (id, description)
 --
 -- --------------------------------------------------------
 CREATE TABLE `opacityGroup` (
@@ -132,6 +138,8 @@ INSERT INTO `opacityGroup` VALUES(4, 'Sub-field');
 -- --------------------------------------------------------
 --
 -- Table structure for table `image`
+-- (id, measurementId, timestamp, centering, centerX, centerY, lengthX, lengthY, imgScaleX, imgScaleY, solarRadius, 
+--  width, height, opacityGrp, uri)
 --
 -- --------------------------------------------------------
 CREATE TABLE  `image` (

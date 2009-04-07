@@ -288,16 +288,19 @@ class API {
         $url = $row['uri'];
 
         // Query header information using Exiftool
-        $cmd = Config::EXIF_TOOL . " $url | grep Fits | grep -v Descr";
+        $cmd = Config::EXIF_TOOL . " $url | grep Fits";
         exec($cmd, $out, $ret);
 
         $fits = array();
         foreach ($out as $index => $line) {
             $data = explode(":", $line);
-            $param = substr(strtoupper(str_replace(" ", "", $data[0])), 4);
+            $param = substr(strtoupper(str_replace(" ", "", $data[0])), 8);
             $value = $data[1];
             array_push($fits, $param . ": " . $value);
         }
+
+        // Sort FITS keys        
+        // sort($fits);
 
         if ($this->format == "json") {
             header('Content-type: application/json');
