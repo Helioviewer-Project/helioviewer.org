@@ -12,7 +12,7 @@ def main():
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
 	#dbname, dbuser, dbpass = getDBInfo()
-	dbname = "hv"
+	dbname = "hv2"
 	dbuser = "helioviewer"
 	dbpass = dbuser
 

@@ -8,7 +8,7 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/04/01';
+	const LAST_UPDATE		 = '2009/04/08';
 	const BUILD_NUM          = 204;
 	
 	// Viewer
@@ -21,7 +21,7 @@ class Config {
 	
 	// Database
 	const DB_HOST            = 'localhost';
-	const DB_NAME            = 'hv';
+	const DB_NAME            = 'hv2';
 	const DB_USER            = 'helioviewer';
 	const DB_PASS            = 'helioviewer';
 	

@@ -62,8 +62,10 @@ input, select {background-color:#F4F4F4;}
     text-align:center;
     position:relative;
 }
-#clearfooter{clear:both;height:72px;}/*needed to make room for footer*/
-* > html #clearfooter {float:left;width:100%;}/* ie mac styles */
+/*needed to make room for footer*/
+/*
+#clearfooter{clear:both;height:72px;}
+* > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
 
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
@@ -179,16 +181,22 @@ a.light:hover {
 }
 
 /* Footer linkbar */
-#footer-links-outer {
+#footer-links-container-outer {
+    height:50px;
+    width:100%;
+    font-size:0.85em;
+}
+
+#footer-links-container-inner {
     text-align:right;
     font-size:100%;
     height:30px;
-    margin-right: 258px;
+    margin-right: 10px;
     margin-top: 3px;
     position: relative;
 }
 
-#footer-links-inner {
+#footer-links {
     background: url(../images/blackGlass/transparentBG25.png);
     position: absolute;
     right: 25px;
@@ -202,7 +210,7 @@ a.light:hover {
     -moz-border-radius-bottomright: 20px;
 }
 
-#footer-links-inner > a {
+#footer-links > a {
     margin-right: 20px;
 }
 

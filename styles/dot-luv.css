@@ -20,7 +20,7 @@
     background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
-span.removeBtn:hover, span#timeBackBtn:hover, span#timeForwardBtn:hover, .accordion-arrow:hover {
+span.removeBtn:hover, span#timeBackBtn:hover, span#timeForwardBtn:hover, .accordion-arrow:hover, #full-screen-btn > div:hover {
     background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 

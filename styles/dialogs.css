@@ -3,3 +3,17 @@ div#usage-dialog {
     color: #DFE5CF;
     font-family: 'Courier New', Courier, monospace;
 }
+
+div.fits-regular, div.fits-sorted {
+    padding:1.5em 1.7em;
+    font-size: 14px;
+}
+
+span.fits-sort-btn {
+    right:4px;
+    font-weight: bold;
+    font-size: 12px;
+    position: absolute;
+    top:4px;
+    cursor: pointer;
+}

@@ -218,31 +218,26 @@
 								</div>
 								<div id="zoomControlZoomOut" class="sliderMinus" title=" - Zoom out.">-</div>
 							</div>
+
 					</div>
 				</div>
-			</div>
-			<div id="clearfooter"></div>
-		</div>
-		<!-- end outer div -->
-
-		<!-- Footer -->
-		<div id="footer">
-			<!-- <div style="height:250px; width:100%; float:left; font-size:0.85em"> -->
-			<div style="height:50px; width:100%; float:left; font-size:0.85em">
-
-				<!-- Links -->
-				<div id="footer-links-outer">
-                    <div id="footer-links-inner" class="ui-corner-bottom">
-    					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
-    					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-    					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank">JHelioviewer</a>
-    					<a href="wiki/" class="light" target="_blank">Wiki</a>
-    					<a href="api/" class="light" target="_blank">API</a>
-    					<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
-    					<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
-                    </div>
-				</div>
-				
+                
+             <!-- <div style="height:250px; width:100%; float:left; font-size:0.85em"> -->
+        		<div id="footer-links-container-outer">
+    
+    				<!-- Links -->
+    				<div id="footer-links-container-inner">
+                        <div id="footer-links" class="ui-corner-bottom">
+        					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
+        					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
+        					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank">JHelioviewer</a>
+        					<a href="wiki/" class="light" target="_blank">Wiki</a>
+        					<a href="api/" class="light" target="_blank">API</a>
+        					<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
+        					<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
+                        </div>
+    				</div>
+			
 				<!-- Timeline -->
 				<!--
 				<div style="text-align: center;">
@@ -250,6 +245,14 @@
 				</div>
 				-->
 			</div>
+                
+			</div>
+			<div id="clearfooter"></div>
+		</div>
+		<!-- end outer div -->
+
+		<!-- Footer -->
+		<div id="footer">			
 		</div>
 		
 		<!-- About dialog -->
