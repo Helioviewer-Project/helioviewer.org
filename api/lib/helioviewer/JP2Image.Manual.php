@@ -214,6 +214,7 @@ abstract class JP2Image {
 		$cmd .= $this->getRegionString($this->jp2Width, $this->jp2Height, $this->relativeTilesize);
 		
 		//echo $cmd;
+        //exit();
 		
 		// Execute the command
 		try {

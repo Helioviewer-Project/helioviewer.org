@@ -66,6 +66,6 @@ class Config {
 	const MOD_IMAGICK_ENABLED = false;
 	
 	// Debugging
-	const ENABLE_CACHE = true;
+	const ENABLE_CACHE = false;
 }
 ?>

@@ -218,6 +218,11 @@
 								</div>
 								<div id="zoomControlZoomOut" class="sliderMinus" title=" - Zoom out.">-</div>
 							</div>
+                            
+                            <!-- Fullscreen toggle -->
+                            <div id='fullscreen-btn'>
+                                <div class='ui-icon ui-icon-arrow-4-diag'></div>
+                            </div>
 
 					</div>
 				</div>

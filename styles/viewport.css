@@ -36,7 +36,7 @@
 	overflow: visible;
 }
 
-#full-screen-btn {
+#fullscreen-btn {
     position: absolute;
     background: transparent url(../images/blackGlass/transparentBG50.png) repeat scroll 0 0;
     border-bottom:1px solid black;

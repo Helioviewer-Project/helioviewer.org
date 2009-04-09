@@ -174,7 +174,7 @@ abstract class JP2Image {
 
 		// Add desired region
 		$cmd .= $this->getRegionString();
-		
+
 		// Execute the command
 		try {
 			exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . $cmd, $out, $ret);
