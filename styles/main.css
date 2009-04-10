@@ -80,7 +80,7 @@ input, select {background-color:#F4F4F4;}
 }
 
 /* Center button */
-.center-button {
+#center-button {
     background: transparent url(../images/blackGlass/transparentBGWhite.png);
     font-size: 0.8em;
 	width:54px;
@@ -94,7 +94,7 @@ input, select {background-color:#F4F4F4;}
 	cursor: pointer;
 }
 
-.center-button > span {
+#center-button > span {
 	color: #E8E8E8;
     font-weight: bold;
     vertical-align: top;

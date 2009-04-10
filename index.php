@@ -206,7 +206,7 @@
 				<!-- Viewport -->
 				<div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
 					<div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
-						<div id="helioviewer-viewport" class="viewport" style="z-index: 0; left: 0px; top:0px; width: 100%; height: 100%"></div>
+						<div id="helioviewer-viewport"></div>
 
 							<!-- UI COMPONENTS -->
 
@@ -218,6 +218,11 @@
 								</div>
 								<div id="zoomControlZoomOut" class="sliderMinus" title=" - Zoom out.">-</div>
 							</div>
+                            
+                            <!-- Center button -->
+                            <div id="center-button">
+                                <span>center</span>
+                            </div>
                             
                             <!-- Fullscreen toggle -->
                             <div id='fullscreen-btn'>

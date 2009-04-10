@@ -6,7 +6,7 @@
   -moz-border-radius:25px;
 }
 
-.viewport {
+#helioviewer-viewport {
 	background-color: #000000;
 	color: #FFFFFF;
 	overflow: hidden;
@@ -15,9 +15,12 @@
     width:100%;
     height:100%;
     cursor: pointer;
+    left: 0px;
+    top:0px;
 }
 
-.movingContainer /* this is what actually moves */ {
+/* this is what actually moves */
+#moving-container {
   position: absolute;
   z-index: 0;
   left: 0px;
