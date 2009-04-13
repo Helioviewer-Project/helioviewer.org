@@ -10,6 +10,10 @@
 		<td><strong>d</strong></td>
 		<td>Display detailed feature/event labels.</td>
 	</tr>
+    <tr>
+		<td><strong>f</strong></td>
+		<td>Toggle fullscreen display.</td>
+	</tr>
 	<tr>
 		<td><strong>m</strong></td>
 		<td>Toggle mouse coordinates display.</td>

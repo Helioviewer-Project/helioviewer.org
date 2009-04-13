@@ -12,7 +12,7 @@ def main():
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
 	#dbname, dbuser, dbpass = getDBInfo()
-	dbname = "hv2"
+	dbname = "hv"
 	dbuser = "helioviewer"
 	dbpass = dbuser
 
@@ -55,7 +55,14 @@ def processJPEG2000Images (images, cursor):
 
 		# Format date
 		d = meta["date"]
-		date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]))
+
+		# Temporary work-around
+		if d[17:19] == "60":
+			secs = "30"
+		else:
+			secs = d[17:19]
+
+		date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(secs))
 
 		# insert into database
 		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (

@@ -7,7 +7,8 @@ I. Install Tomcat and Ant:
 
     2. Test Tomcat install: http://localhost:8080/
     
-    3. ANT_HOME=/usr/share/ant
+    3. Edit /etc/environment (or ~/.bashrc) and add the following lines:
+       ANT_HOME=/usr/share/ant
        JAVA_HOME=/usr/lib/jvm/java-6-sun/
        
     4. May also have to do the following:
