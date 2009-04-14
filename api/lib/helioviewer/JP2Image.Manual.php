@@ -64,10 +64,10 @@ abstract class JP2Image {
 		// Determine desired image scale
 		$this->zoomOffset   = $zoomLevel - $this->baseZoom;
 		$this->desiredScale = $this->baseScale * (pow(2, $this->zoomOffset));
-		
+        
 		// Ratio of the desired scale to the actual JP2 image scale
 		$this->desiredToActual = $this->desiredScale / $this->jp2Scale;
-		
+        
 		// Scale Factor
 		$this->scaleFactor = log($this->desiredToActual, 2);
 		
@@ -85,7 +85,8 @@ abstract class JP2Image {
 		
 		// Use PNG as intermediate format so that GD can read it in
 		$png = substr($filename, 0, -3) . "png";
-		exec("convert $pgm -depth 8 -quality 10 $png");
+        
+        exec("convert $pgm -depth 8 -quality 10 $png");
 		
 		// Apply color-lookup table
 		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
@@ -131,13 +132,13 @@ abstract class JP2Image {
 		if ($this->hasAlphaMask()) {
 			$cmd .= "-compose copy_opacity -composite ";
 		}
-		
+
 		// Compression settings & Interlacing
 		$cmd .= $this->setImageParams();
 		
 		//echo ("$cmd $filename");
 		//exit();
-		
+
 		//WORKING:
 		//convert /var/www/hv/cache/512/2003/10/08/1135_13_+00_+00.png -background black  
 		//        /var/www/hv/cache/512/2003/10/08/1135_13_+00_+00-mask.tif -gravity NorthWest -extent 512x512 
@@ -146,8 +147,14 @@ abstract class JP2Image {
 		// Execute command
 		exec("$cmd $filename");
 
-		// Remove intermediate file (note: remove mask)
-		//unlink($pgm);		
+		// Cleanup
+  		if ($this->hasAlphaMask()) {
+  		    unlink($mask);
+        }
+        if ($this->getImageFormat() === "jpg") {
+            unlink($png);
+        }
+  		unlink($pgm);
 	
 		return $filename;
 	}
@@ -159,11 +166,11 @@ abstract class JP2Image {
 	private function setImageParams() {
 		$args = " -quality ";
 		if ($this->getImageFormat() == "png") {
-			$args .= Config::PNG_COMPRESSION_QUALITY . " -interlace plane";
+			$args .= Config::PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . Config::NUM_COLORS;
 		} else {
 			$args .= Config::JPEG_COMPRESSION_QUALITY . " -interlace line";
 		}
-		$args .= " -depth " . Config::BIT_DEPTH . " -colors " . Config::NUM_COLORS . " ";
+		$args .= " -depth " . Config::BIT_DEPTH . " ";
 		
 		return $args;
 	}

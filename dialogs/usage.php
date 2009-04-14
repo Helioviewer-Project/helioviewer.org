@@ -42,6 +42,14 @@
 		<td><strong>&darr;</strong></td>
 		<td>Pan downward.</td>
 	</tr>
+    <tr>
+		<td><strong>&lt;</strong></td>
+		<td>Step backward in time.</td>
+	</tr>
+    <tr>
+		<td><strong>&gt;</strong></td>
+		<td>Step forward in time.</td>
+	</tr>
 	
 </table>
 <br><br>
