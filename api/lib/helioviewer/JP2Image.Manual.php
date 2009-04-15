@@ -225,13 +225,15 @@ abstract class JP2Image {
 		
 		// Execute the command
 		try {
-			exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . $cmd, $out, $ret);
-			
-			if ($ret != 0)
-				throw new Exception("Failed to expand requested sub-region!<br><br> <b>Command:</b> '$cmd'");
+			$line = exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . $cmd, $out, $ret);
+			if ($ret != 0) {
+				throw new Exception("COMMAND: $cmd\n\t $line");
+            }
 				
 		} catch(Exception $e) {
-			echo '<span style="color:red;">Error:</span> ' .$e->getMessage();
+		    $error = "[kdu][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+		    file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+			print $error;
 			exit();
 		}
 		

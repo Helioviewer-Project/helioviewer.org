@@ -6,7 +6,7 @@
 /**
  * @package Helioviewer API
  */
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL | E_STRICT | E_NOTICE);
 class API {
 
     /**
