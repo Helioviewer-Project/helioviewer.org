@@ -15,7 +15,7 @@ class Tile extends JP2Image {
 	/**
 	 * constructor
 	 */
-	public function __construct($id, $zoomLevel, $x, $y, $tileSize) {
+	public function __construct($id, $zoomLevel, $x, $y, $tileSize, $display = true) {
 		$xRange = array("start" => $x, "end" => $x);
 		$yRange = array("start" => $y, "end" => $y);
 
@@ -23,21 +23,22 @@ class Tile extends JP2Image {
 
 		$this->x = $x;
 		$this->y = $y;
-		$this->getTile();
+		$this->getTile($display);
 	}
 
 	/**
 	 * getTile
 	 */
-	function getTile() {
+	function getTile($display) {
+       
 		// Tile image format
 		$format = $this->getImageFormat();
-
+        
 		// Filepaths (for intermediate pgm and final png/jpg image)
 		$tile = $this->getFilePath($format);
 		
 		// If tile already exists in cache, use it
-		if (Config::ENABLE_CACHE) {
+		if (Config::ENABLE_CACHE && $display) {
 			if (file_exists($tile)) {
 				$this->display($tile);
 				exit();
@@ -51,7 +52,8 @@ class Tile extends JP2Image {
 		$this->image = $im;
 		
 		// Display image
-		$this->display($tile);
+        if ($display)
+    		$this->display($tile);
 	}
 
 	/**

@@ -83,6 +83,7 @@ abstract class JP2Image {
 		// extract region from JP2
 		$pgm = $this->extractRegion($filename);
 		
+
 		// Use PNG as intermediate format so that GD can read it in
 		$png = substr($filename, 0, -3) . "png";
         
@@ -226,15 +227,21 @@ abstract class JP2Image {
 		// Execute the command
 		try {
 			$line = exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . $cmd, $out, $ret);
-			if ($ret != 0) {
+			if (($ret != 0) || (sizeof($out) > 5)) {
+			    var_dump($out);
 				throw new Exception("COMMAND: $cmd\n\t $line");
             }
 				
 		} catch(Exception $e) {
-		    $error = "[kdu][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-		    file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+    	    $error = "[kdu][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+		    //file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
 			print $error;
-			exit();
+            
+            //Clean-up
+            if ($this->hasAlphaMask())
+                unlink($mask);
+            unlink($pgm);                
+			die();
 		}
 		
 		return $pgm;
@@ -399,33 +406,40 @@ abstract class JP2Image {
 	}
 	
 	public function display($filepath=null) {
-		// Cache-Lifetime (in minutes)
-		$lifetime = 60;
-		$exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
-		header("Expires: " . $exp_gmt);
-		header("Cache-Control: public, max-age=" . $lifetime * 60);
-
-		// Special header for MSIE 5
-		header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
-
-		// Filename & Content-length
-		if (isset($filepath)) {
-			$exploded = explode("/", $filepath);
-			$filename = end($exploded);
-						
-			header("Content-Length: " . filesize($filepath));
-			header("Content-Disposition: inline; filename=\"$filename\"");	
-		}
-
-		// Specify format
-		$format = $this->getImageFormat();
-
-		if ($format == "png")
-			header("Content-Type: image/png");
-		else
-			header("Content-Type: image/jpeg");
-		
-		readfile($filepath);
+	    try {
+    		// Cache-Lifetime (in minutes)
+    		$lifetime = 60;
+    		$exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
+    		header("Expires: " . $exp_gmt);
+    		header("Cache-Control: public, max-age=" . $lifetime * 60);
+    
+    		// Special header for MSIE 5
+    		header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
+    
+    		// Filename & Content-length
+    		if (isset($filepath)) {
+    			$exploded = explode("/", $filepath);
+    			$filename = end($exploded);
+    						
+    			header("Content-Length: " . filesize($filepath));
+    			header("Content-Disposition: inline; filename=\"$filename\"");	
+    		}
+    
+    		// Specify format
+    		$format = $this->getImageFormat();
+    
+    		if ($format == "png")
+    			header("Content-Type: image/png");
+    		else
+    			header("Content-Type: image/jpeg");
+    		
+    		if (!readfile($filepath)) {
+                throw new Exception("Error displaying $filename\n");
+    		}
+        } catch (Exception $e) {
+            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+        }
 	}
 	
 	/**

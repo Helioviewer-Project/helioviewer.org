@@ -7,8 +7,8 @@
 class Config {
     
   	// Version Information
-	const LAST_UPDATE		 = '2009/04/10';
-	const BUILD_NUM          = 209;
+	const LAST_UPDATE		 = '2009/04/16';
+	const BUILD_NUM          = 214;
     
    	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -65,6 +65,7 @@ class Config {
 	const MOD_IMAGICK_ENABLED = false;
 
 	// Debugging
-	const ENABLE_CACHE       = true;
+	const ENABLE_CACHE = true;
+    const ERROR_LOG    = '/var/www/hv/log/error';
 }
 ?>

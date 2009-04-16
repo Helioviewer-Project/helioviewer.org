@@ -12,7 +12,7 @@ def main(argv):
 	args = getArguments()
 	
 	# Database configuration
-	dbname = "hv2"
+	dbname = "hv"
 	dbuser = "helioviewer"
 	dbpass = "helioviewer"
 	
@@ -49,7 +49,7 @@ def main(argv):
 			for x in range (xStart, xEnd):
 				for y in range (yStart, yEnd):
 					print "Caching tile(" + str(img['id']) + ", " + str(zoomLevel) + ", " + str(x) + ", " + str(y) + ");"
-					ret = subprocess.call([cacheTile, str(img['id']), str(zoomLevel), str(x), str(y)])
+					ret = subprocess.call([cacheTile, str(img['id']), str(zoomLevel), str(x), str(y)], stderr=subprocess.PIPE)
 
 def getArguments():
 	''' Gets command-line arguments and handles validation '''
