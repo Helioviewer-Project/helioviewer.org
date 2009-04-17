@@ -82,7 +82,7 @@ abstract class JP2Image {
 	 */
 	protected function buildImage($filename) {
 		$relTs = $this->relativeTilesize;
-		
+
 		// extract region from JP2
 		$pgm = $this->extractRegion($filename);
 
@@ -352,6 +352,16 @@ abstract class JP2Image {
 			return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
 		}		
 	}
+    
+    
+    /**
+     * Handles clean-up in case something goes wrong to avoid mal-formed tiles from being displayed
+     * @TODO: Clost any open IM/GD file handlers
+     */
+    private function abort($filename) {
+        $pgm = substr($filename, 0, -3) . "pgm";
+   		$png = substr($filename, 0, -3) . "png";
+    }
 	
 	public function display($filepath=null) {
 		// Cache-Lifetime (in minutes)

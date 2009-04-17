@@ -2,6 +2,11 @@
 /**
  * @package JP2Image - JPEG 2000 Image Class
  * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ * @TODO: Extend Exception class to create more useful objects.
+ * @TODO: Use different name for intermediate PNG than final version.
+ * @TODO: Forward request to secondary server if it fails for a valid tile?
+ * @TODO: build up a "process log" string for each tile process which can be
+ *        output to the log in case of failure.
  */
 abstract class JP2Image {
 	protected $kdu_expand   = CONFIG::KDU_EXPAND;
@@ -80,84 +85,90 @@ abstract class JP2Image {
 	 * @return
 	 */
 	protected function buildImage($filename) {
-		// extract region from JP2
-		$pgm = $this->extractRegion($filename);
-		
-
-		// Use PNG as intermediate format so that GD can read it in
-		$png = substr($filename, 0, -3) . "png";
-        
-        exec("convert $pgm -depth 8 -quality 10 $png");
-		
-		// Apply color-lookup table
-		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
-			$clut = $this->getColorTable($this->detector, $this->measurement);
-			$this->setColorPalette($png, $clut, $png);
+	    try {
+            // extract region from JP2
+    		$pgm = $this->extractRegion($filename);
+    		
+    		// Use PNG as intermediate format so that GD can read it in
+    		$png = substr($filename, 0, -3) . "png";
+            
+            exec("convert $pgm -depth 8 -quality 10 $png");
+    		
+    		// Apply color-lookup table
+    		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
+    			$clut = $this->getColorTable($this->detector, $this->measurement);
+    			$this->setColorPalette($png, $clut, $png);
+    		}
+    
+    		// IM command for transparency, padding, rescaling, etc.
+    		$cmd = "convert $png -background black ";
+    		
+    		// Apply alpha mask for images with transparent components
+    		if ($this->hasAlphaMask()) {
+    			$mask = substr($filename, 0, -4) . "-mask.tif";
+    			$cmd .= "$mask ";
+    		}
+    		
+    		// Determine relative size of image at this scale
+    		$jp2RelWidth  = $this->jp2Width  /  $this->desiredToActual;
+    		$jp2RelHeight = $this->jp2Height /  $this->desiredToActual;
+    		
+    		// Get dimensions of extracted region
+    		$extracted = $this->getImageDimensions($pgm);
+    
+    		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+    		$relTs = $this->relativeTilesize;
+    		if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
+    			$pad = "convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
+    			exec($pad);
+    		}		
+    		
+    		// Resize if necessary (Case 3)
+    		if ($relTs < $this->tileSize)
+    			$cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
+    
+    		// Refetch dimensions of extracted region
+    		$tile = $this->getImageDimensions($png);
+    		
+    		// Pad if tile is smaller than it should be (Case 2)
+    		if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
+    			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tile['width'], $tile['height'], $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+    		}
+    		
+    		if ($this->hasAlphaMask()) {
+    			$cmd .= "-compose copy_opacity -composite ";
+    		}
+    
+    		// Compression settings & Interlacing
+    		$cmd .= $this->setImageParams();
+    		
+    		//echo ("$cmd $filename");
+    		//exit();
+    
+    		// Execute command
+    		exec("$cmd $filename", $out, $ret);
+            if ($ret != 0)
+                throw new Exception("Unable to apply final processing. Command: $cmd");
+    
+    		// Cleanup
+      		if ($this->hasAlphaMask()) {
+      		    unlink($mask);
+            }
+            if ($this->getImageFormat() === "jpg") {
+                unlink($png);
+            }
+      		unlink($pgm);
+    	
+    		return $filename;
+            
+        } catch(Exception $e) {
+    	    $error = "[buildImage][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+		    file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+			print $error;
+                        
+            //Clean-up and exit
+            $this->abort($filename);
 		}
-
-		// IM command for transparency, padding, rescaling, etc.
-		$cmd = "convert $png -background black ";
-		
-		// Apply alpha mask for images with transparent components
-		if ($this->hasAlphaMask()) {
-			$mask = substr($filename, 0, -4) . "-mask.tif";
-			$cmd .= "$mask ";
-		}
-		
-		// Determine relative size of image at this scale
-		$jp2RelWidth  = $this->jp2Width  /  $this->desiredToActual;
-		$jp2RelHeight = $this->jp2Height /  $this->desiredToActual;
-		
-		// Get dimensions of extracted region
-		$extracted = $this->getImageDimensions($pgm);
-
-		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-		$relTs = $this->relativeTilesize;
-		if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
-			$pad = "convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
-			exec($pad);
-		}		
-		
-		// Resize if necessary (Case 3)
-		if ($relTs < $this->tileSize)
-			$cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
-
-		// Refetch dimensions of extracted region
-		$tile = $this->getImageDimensions($png);
-		
-		// Pad if tile is smaller than it should be (Case 2)
-		if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
-			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tile['width'], $tile['height'], $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
-		}
-		
-		if ($this->hasAlphaMask()) {
-			$cmd .= "-compose copy_opacity -composite ";
-		}
-
-		// Compression settings & Interlacing
-		$cmd .= $this->setImageParams();
-		
-		//echo ("$cmd $filename");
-		//exit();
-
-		//WORKING:
-		//convert /var/www/hv/cache/512/2003/10/08/1135_13_+00_+00.png -background black  
-		//        /var/www/hv/cache/512/2003/10/08/1135_13_+00_+00-mask.tif -gravity NorthWest -extent 512x512 
-		//        -compose copy_opacity -composite -quality 20 -interlace plane -depth 8 -colors 256 test.png
-
-		// Execute command
-		exec("$cmd $filename");
-
-		// Cleanup
-  		if ($this->hasAlphaMask()) {
-  		    unlink($mask);
-        }
-        if ($this->getImageFormat() === "jpg") {
-            unlink($png);
-        }
-  		unlink($pgm);
-	
-		return $filename;
 	}
 	
 	/**
@@ -182,11 +193,21 @@ abstract class JP2Image {
 	 * @param $filename String - The image filepath
 	 */
 	private function getImageDimensions($filename) {
-		$dimensions = split("x", trim(exec("identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
-		return array (
-			'width'  => $dimensions[0],
-			'height' => $dimensions[1]
-		);
+	    try {
+    		$dimensions = split("x", trim(exec("identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
+            if (sizeof($dimensions) < 2)
+                throw new Exception("Unable to extract image dimensions for $filename!");
+            else {
+        		return array (
+        			'width'  => $dimensions[0],
+        			'height' => $dimensions[1]
+        		);
+            }
+        } catch (Exception $e) {
+            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+            $this->abort($filename);
+        }
 	}
 	
 	/**
@@ -234,14 +255,11 @@ abstract class JP2Image {
 				
 		} catch(Exception $e) {
     	    $error = "[kdu][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-		    //file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+		    file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
 			print $error;
             
-            //Clean-up
-            if ($this->hasAlphaMask())
-                unlink($mask);
-            unlink($pgm);                
-			die();
+            //Clean-up and exit
+            $this->abort($filename);
 		}
 		
 		return $pgm;
@@ -449,6 +467,31 @@ abstract class JP2Image {
 	private function hasAlphaMask() {
 		return $this->measurement === "0WL" ? true : false;
 	}
+    
+    /**
+     * Handles clean-up in case something goes wrong to avoid mal-formed tiles from being displayed
+     * @TODO: Clost any open IM/GD file handlers
+     */
+    private function abort($filename) {
+        $pgm = substr($filename, 0, -3) . "pgm";
+   		$png = substr($filename, 0, -3) . "png";
+        
+        // Clean up
+        if (file_exists($pgm))
+            unlink($pgm);
+        if (file_exists($png))
+            unlink($png);
+        if (file_exists($filename))
+            unlink($filename);
+            
+      	if ($this->hasAlphaMask()) {
+			$mask = substr($filename, 0, -4) . "-mask.tif";
+            if (file_exists($mask))
+                unlink($mask);
+        }
+        
+        die();
+    }
 	
 	/**
 	 * getMetaInfo
@@ -463,8 +506,8 @@ abstract class JP2Image {
 		$result = $this->db->query($query);
 
 		if (!$result) {
-		        echo "$query - failed\n";
-		        die (mysqli_error($this->db->link));
+	        echo "$query - failed\n";
+	        die (mysqli_error($this->db->link));
 		}
 		else if (mysqli_num_rows($result) > 0) {
 			$meta = mysqli_fetch_array($result, MYSQL_ASSOC);
@@ -494,7 +537,23 @@ abstract class JP2Image {
 	 * setColorPalette
 	 */
 	private function setColorPalette ($input, $clut, $output) {
-		$gd     = imagecreatefrompng($input);
+    	$gd = null;
+	    try {
+	        if (file_exists($input))
+    	        $gd = imagecreatefrompng($input);
+            else
+                throw new Exception("Unable to apply color-table: $input does not exist.");
+
+    		if (!$gd)
+				throw new Exception("Unable to apply color-table: $input is not a valid image.");
+				
+		} catch(Exception $e) {
+    	    $error = "[gd][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+		    file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+			print $error;
+
+			die();
+		}
 		$ctable = imagecreatefrompng($clut);
 		
 		//echo "$input<br> $clut<br> $output";

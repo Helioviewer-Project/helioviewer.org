@@ -8,7 +8,9 @@ class ImgIndex {
 	}
 
 	public function getClosestImage($timestamp, $src) {
-        $offset = "(UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(UTC_TIMESTAMP()))";
+        //$offset = "(UNIX_TIMESTAMP(UTC_TIMESTAMP()) - UNIX_TIMESTAMP(now()))"; #Off by one hour (daylight savings)
+        //$offset = 5 * 3600;
+        $offset = 0;
         
 		$query = sprintf("SELECT image.id AS imageId, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
 							measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
@@ -17,8 +19,8 @@ class ImgIndex {
 							opacityGroup.description AS opacityGroupDescription,
 							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
 							UNIX_TIMESTAMP(timestamp) - %s AS timestamp,
-								UNIX_TIMESTAMP(timestamp) - %d - %s AS timediff,
-								ABS(UNIX_TIMESTAMP(timestamp) - %d - %s) AS timediffAbs
+								%d - (UNIX_TIMESTAMP(timestamp) - %s) AS timediff,
+								ABS(%d - (UNIX_TIMESTAMP(timestamp) - %s)) AS timediffAbs
 							FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -27,6 +29,7 @@ class ImgIndex {
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id
 				WHERE ", $offset, $timestamp, $offset, $timestamp, $offset);
+
 
 		// Layer-settings
 		$i=0;
@@ -47,15 +50,17 @@ class ImgIndex {
 
 	public function getJP2Location($timestamp, $src) {
 		//WORKAROUND FOR MySQL Timezone differences (For MySQL servers not set to UTC timezone)
-        $offset = "(UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(UTC_TIMESTAMP()))";
+        //$offset = 5 * 3600;
+        $offset = 0;
+
 		
-		$query = sprintf("SELECT image.uri as url, ABS(UNIX_TIMESTAMP(timestamp) - %d - %s) AS timediffAbs
+		$query = sprintf("SELECT image.uri as url, ABS((UNIX_TIMESTAMP(timestamp) - %s) - %d) AS timediffAbs
 						FROM image
 						LEFT JOIN measurement on measurementId = measurement.id
 						LEFT JOIN detector on detectorId = detector.id
 						LEFT JOIN instrument on instrumentId = instrument.id
 						LEFT JOIN observatory on observatoryId = observatory.id
-				  WHERE ", $timestamp, $offset);
+				  WHERE ", $offset, $timestamp);
 
 		// Layer-settings
 		$i=0;
