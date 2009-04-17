@@ -186,9 +186,9 @@
 				<!-- Recent Updates -->
 				<div class='notes ui-widget ui-widget-content ui-corner-all'>
 					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
-					<strong>> 02/09/2009</strong><p>Fixed an issue which resulting in incorrect mouse-coordinates being displayed.</p><br><br>
-					<strong>> 02/02/2009</strong><p>Helioviewer <a style="color: white;" href="docs/">source code documentation</a> now available.</p><br><br>
-					<strong>> 01/15/2009</strong><p>Experimental version of <a href="api/" style="color:white;">Helioviewer APIs</a> available.</p><br><br>
+                    <strong>> 04/17/2009</strong><p>Improved performance.</p><br><br>
+                    <strong>> 04/17/2009</strong><p>Added fullscreen view support.</p><br><br>
+                    <strong>> 04/17/2009</strong><p>New look and feel.</p><br><br>
 				</div>
 			</div>
 

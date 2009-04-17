@@ -60,10 +60,11 @@ input, select {background-color:#F4F4F4;}
     clear:both;
     height:40px;
     text-align:center;
-    position:relative;
 }
-#clearfooter{clear:both;height:72px;}/*needed to make room for footer*/
-* > html #clearfooter {float:left;width:100%;}/* ie mac styles */
+/*needed to make room for footer*/
+/*
+#clearfooter{clear:both;height:72px;}
+* > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
 
 /* Loading Indicator */
 #loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
@@ -78,7 +79,7 @@ input, select {background-color:#F4F4F4;}
 }
 
 /* Center button */
-.center-button {
+#center-button {
     background: transparent url(../images/blackGlass/transparentBGWhite.png);
     font-size: 0.8em;
 	width:54px;
@@ -92,7 +93,7 @@ input, select {background-color:#F4F4F4;}
 	cursor: pointer;
 }
 
-.center-button > span {
+#center-button > span {
 	color: #E8E8E8;
     font-weight: bold;
     vertical-align: top;
@@ -103,12 +104,13 @@ input, select {background-color:#F4F4F4;}
 #mouse-coords {
 	background: transparent;
 	color: white;
+    font-size: 13px;
 	font-weight: 600;
 	width: 160px;
 	height: 16px;
 	position: absolute;
 	top:0px;
-	right: 0px;
+	right: 30px;
 }
 
 /* Message Console */
@@ -170,21 +172,31 @@ a.light:hover {
     color: #d18f61;
 }
 
+.italic {
+    font-style: italic;
+}
+
 .section-header {
 	font-weight: bold;
 }
 
 /* Footer linkbar */
-#footer-links-outer {
+#footer-links-container-outer {
+    height:50px;
+    width:100%;
+    font-size:0.85em;
+}
+
+#footer-links-container-inner {
     text-align:right;
     font-size:100%;
     height:30px;
-    margin-right: 258px;
+    margin-right: 10px;
     margin-top: 3px;
     position: relative;
 }
 
-#footer-links-inner {
+#footer-links {
     background: url(../images/blackGlass/transparentBG25.png);
     position: absolute;
     right: 25px;
@@ -198,7 +210,7 @@ a.light:hover {
     -moz-border-radius-bottomright: 20px;
 }
 
-#footer-links-inner > a {
+#footer-links > a {
     margin-right: 20px;
 }
 
@@ -224,11 +236,13 @@ a.light:hover {
 
 span.tile-accordion-header-right > span.accordion-header-divider {
     position: absolute;
+    line-height: 1.5;
     left: 226px;
 }
 
 span.event-accordion-header-right > span.accordion-header-divider {
     position: absolute;
+    line-height: 1.5;
     left: 226px;
 }
 
@@ -238,6 +252,7 @@ span.event-accordion-header-right > span.accordion-header-divider {
 
 .dynaccordion-cell {
     border: 1px solid #262424;
+    font-size:1.25em;
     padding: 5px;
 }
 
@@ -278,7 +293,7 @@ span.event-accordion-header-right, span.tile-accordion-header-right {display: bl
 
 /* TileLayerAccordion Styles */
 div.layer-select-label {
-	width:90px;
+	width:102px;
 	float: left;
 	color: white;
 	margin: 2px 0px 0px 1px;
@@ -333,7 +348,22 @@ div#usage-dialog {
     font-size: 0.85em;
     color: #DFE5CF;
     font-family: 'Courier New', Courier, monospace;
-}/**
+}
+
+div.fits-regular, div.fits-sorted {
+    padding:1.5em 1.7em;
+    font-size: 14px;
+}
+
+span.fits-sort-btn {
+    right:4px;
+    font-weight: bold;
+    font-size: 12px;
+    position: absolute;
+    top:4px;
+    cursor: pointer;
+}
+/**
  * jQuery UI dot-luv theme modifications
  */
 .ui-datepicker {
@@ -355,7 +385,7 @@ div#usage-dialog {
     background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
-span.removeBtn:hover, span#timeBackBtn:hover, span#timeForwardBtn:hover, .accordion-arrow:hover {
+span.removeBtn:hover, span#timeBackBtn:hover, span#timeForwardBtn:hover, .accordion-arrow:hover, #full-screen-btn > div:hover {
     background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
@@ -498,12 +528,12 @@ a.event-url:hover {
 }
 /* Time Navigation */
 .timestamp {
-	font-size:0.8em;
+	font-size:1.0em;
     font-weight: normal;
     margin-left: 0px;
-    line-height: 2em;
+    line-height: 1.6em;
     position: absolute;
-    left: 138px;
+    left: 120px;
 }
 
 .timeBehind {
@@ -602,7 +632,7 @@ a.event-url:hover {
   -moz-border-radius:25px;
 }
 
-.viewport {
+#helioviewer-viewport {
 	background-color: #000000;
 	color: #FFFFFF;
 	overflow: hidden;
@@ -611,9 +641,12 @@ a.event-url:hover {
     width:100%;
     height:100%;
     cursor: pointer;
+    left: 0px;
+    top:0px;
 }
 
-.movingContainer /* this is what actually moves */ {
+/* this is what actually moves */
+#moving-container {
   position: absolute;
   z-index: 0;
   left: 0px;
@@ -630,4 +663,14 @@ a.event-url:hover {
 	left: 0px;
 	display: block;
 	overflow: visible;
+}
+
+#fullscreen-btn {
+    position: absolute;
+    background: transparent url(../images/blackGlass/transparentBG50.png) repeat scroll 0 0;
+    border-bottom:1px solid black;
+    border-left: 1px solid black;
+    top:0px;
+    right: 0px;
+    cursor: pointer;
 }

@@ -7,16 +7,18 @@ class ImgIndex {
 		$this->dbConnection = $dbConnection;
 	}
 
-	public function getClosestImage($timestamp, $src, $debug = false) {
+	public function getClosestImage($timestamp, $src) {
+        $offset = "(UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(UTC_TIMESTAMP()))";
+        
 		$query = sprintf("SELECT image.id AS imageId, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
 							measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 							opacityGroup.description AS opacityGroupDescription,
 							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
-							UNIX_TIMESTAMP(timestamp) AS timestamp,
-								UNIX_TIMESTAMP(timestamp) - %d AS timediff,
-								ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs
+							UNIX_TIMESTAMP(timestamp) - %s AS timestamp,
+								UNIX_TIMESTAMP(timestamp) - %d - %s AS timediff,
+								ABS(UNIX_TIMESTAMP(timestamp) - %d - %s) AS timediffAbs
 							FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -24,7 +26,7 @@ class ImgIndex {
 							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id
-				WHERE ", $timestamp, $timestamp);
+				WHERE ", $offset, $timestamp, $offset, $timestamp, $offset);
 
 		// Layer-settings
 		$i=0;
@@ -36,19 +38,18 @@ class ImgIndex {
 
 		$query .= " ORDER BY timediffAbs LIMIT 0,1";
 		
-		//if ($debug == "true")
-		//	echo "<br><br>$query<br><br>";
+        //echo "<br><br>$query<br><br>";
+        //exit();
 
 		$result = $this->dbConnection->query($query);
 		return mysqli_fetch_array($result, MYSQL_ASSOC);
 	}
 
 	public function getJP2Location($timestamp, $src) {
-		//WORKAROUND FOR MySQL TimeZone differences (HostGator is not using UTC by default)
-		//$offset = (5 * 3600); // 5 hours in seconds
-		$offset = 0; //local installation of MySQL set to use UTC by default...
+		//WORKAROUND FOR MySQL Timezone differences (For MySQL servers not set to UTC timezone)
+        $offset = "(UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(UTC_TIMESTAMP()))";
 		
-		$query = sprintf("SELECT image.uri as url, ABS(UNIX_TIMESTAMP(timestamp) - %d - %d) AS timediffAbs
+		$query = sprintf("SELECT image.uri as url, ABS(UNIX_TIMESTAMP(timestamp) - %d - %s) AS timediffAbs
 						FROM image
 						LEFT JOIN measurement on measurementId = measurement.id
 						LEFT JOIN detector on detectorId = detector.id
