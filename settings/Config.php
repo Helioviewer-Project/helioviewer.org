@@ -9,7 +9,7 @@ class Config {
 	
 	// Version Information
 	const LAST_UPDATE		 = '2009/04/20';
-	const BUILD_NUM          = 217;
+	const BUILD_NUM          = 218;
 	
 	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -40,7 +40,7 @@ class Config {
 	const API_BASE_URL       = 'api/index.php';
 	
     // Backup API
-    const BACKUP_ENABLED     = true;
+    const BACKUP_ENABLED     = false;
     const BACKUP_API         = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
     
 	// Regular Expressions

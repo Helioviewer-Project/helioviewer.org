@@ -279,9 +279,7 @@ class API {
      * @return 
      */
     private function _getJP2Id () {
-        header('Content-Type: application/json');
- 
-        if ($this->params['server'] == "backup") {
+        if (isset($this->params['server']) && ($this->params['server'] == "backup")) {
             $obs  = $this->params['observatory'];
             $inst = $this->params['instrument'];
             $det  = $this->params['detector'];
@@ -289,7 +287,9 @@ class API {
             $ts   = $this->params['timestamp'];
             
             $url =  Config::BACKUP_API . "?action=getJP2Id&observatory=$obs&instrument=$inst&detector=$det&measurement=$meas&timestamp=$ts";
-            echo file_get_contents($url);        
+            
+            header('Content-Type: application/json');
+            echo file_get_contents($url);
         }
         else {
             require_once('lib/helioviewer/ImgIndex.php');
