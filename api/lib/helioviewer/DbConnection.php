@@ -40,6 +40,7 @@ class DbConnection {
             die('Error connecting to data base: ' . mysqli_error($this->link));
 		}
 		mysqli_select_db($this->link, $this->dbname);
+        mysqli_query($this->link, "SET @@session.time_zone = '+00:00'");
 	}
 
     /**

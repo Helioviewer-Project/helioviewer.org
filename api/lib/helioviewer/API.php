@@ -273,6 +273,38 @@ class API {
         }
         return 1;
     }
+    
+    /**
+     * Retrieves the ID for a single JP2
+     * @return 
+     */
+    private function _getJP2Id () {
+        header('Content-Type: application/json');
+ 
+        if ($this->params['server'] == "backup") {
+            $obs  = $this->params['observatory'];
+            $inst = $this->params['instrument'];
+            $det  = $this->params['detector'];
+            $meas = $this->params['measurement'];
+            $ts   = $this->params['timestamp'];
+            
+            $url =  Config::BACKUP_API . "?action=getJP2Id&observatory=$obs&instrument=$inst&detector=$det&measurement=$meas&timestamp=$ts";
+            echo file_get_contents($url);        
+        }
+        else {
+            require_once('lib/helioviewer/ImgIndex.php');
+            $imgIndex = new ImgIndex(new DbConnection());
+
+            $queryForField = 'abbreviation';
+            foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
+                $src["$field.$queryForField"] = $this->params[$field];
+            }
+            $id = $imgIndex->getJP2Id($this->params['timestamp'], $src);
+            echo json_encode(array('id' => $id));
+        }
+
+        return 1;
+    }
 
     /**
      * @return int Returns "1" if the action was completed successfully.
@@ -568,7 +600,6 @@ class API {
                 if (!isset($this->params["yRange"]))
                     return false;                
                 break;
-
             case "getJP2Header":
                 if (!isset($this->params["imageId"]) or !is_numeric($this->params["imageId"]))
                     return false;
@@ -580,6 +611,8 @@ class API {
             case "getLayerAvailability":
                 break;
             case "getJP2Image":
+                break;
+            case "getJP2Id":
                 break;
             case "getJP2ImageSeries":
                 break;

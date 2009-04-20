@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package ImgIndex
+ * @author Patrick Schmiedel <patrick.schmiedel@gmx.net>
+ * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ */
 class ImgIndex {
 	private $dbConnection;
 
@@ -7,20 +12,16 @@ class ImgIndex {
 		$this->dbConnection = $dbConnection;
 	}
 
-	public function getClosestImage($timestamp, $src) {
-        //$offset = "(UNIX_TIMESTAMP(UTC_TIMESTAMP()) - UNIX_TIMESTAMP(now()))"; #Off by one hour (daylight savings)
-        //$offset = 5 * 3600;
-        $offset = 0;
-        
+	public function getClosestImage($obsTime, $src) {
 		$query = sprintf("SELECT image.id AS imageId, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
 							measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
 							opacityGroup.description AS opacityGroupDescription,
 							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
-							UNIX_TIMESTAMP(timestamp) - %s AS timestamp,
-								%d - (UNIX_TIMESTAMP(timestamp) - %s) AS timediff,
-								ABS(%d - (UNIX_TIMESTAMP(timestamp) - %s)) AS timediffAbs
+							UNIX_TIMESTAMP(timestamp) AS timestamp,
+								%d - UNIX_TIMESTAMP(timestamp) AS timediff,
+								ABS(%d - UNIX_TIMESTAMP(timestamp)) AS timediffAbs
 							FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -28,7 +29,7 @@ class ImgIndex {
 							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
 							LEFT JOIN instrument on instrumentId = instrument.id
 							LEFT JOIN observatory on observatoryId = observatory.id
-				WHERE ", $offset, $timestamp, $offset, $timestamp, $offset);
+				WHERE ", $obsTime, $obsTime);
 
 
 		// Layer-settings
@@ -48,19 +49,45 @@ class ImgIndex {
 		return mysqli_fetch_array($result, MYSQL_ASSOC);
 	}
 
-	public function getJP2Location($timestamp, $src) {
-		//WORKAROUND FOR MySQL Timezone differences (For MySQL servers not set to UTC timezone)
-        //$offset = 5 * 3600;
-        $offset = 0;
-
-		
-		$query = sprintf("SELECT image.uri as url, ABS((UNIX_TIMESTAMP(timestamp) - %s) - %d) AS timediffAbs
+    /**
+     * getJP2Location
+     * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+     * @return string $url
+     * @param object $obsTime
+     * @param object $src
+     * 
+     * Retrieves the URI of the closest JPEG 2000 image to the desired time.
+     * The query is done in two parts- first the image ID is found, then the ID is used
+     * to retrieve the URI. By querying the two pieces separately, a significant amount of time
+     * is saved.
+     * 
+     */
+	public function getJP2Location($obsTime, $src) {
+		// Find ID of JP2
+        $id = $this->getJP2Id($obsTime, $src);
+        
+        // Use ID to find the JP2 URL
+        $query = "SELECT uri as url FROM image WHERE id=$id";
+        $result = $this->dbConnection->query($query);
+		$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+        
+        return $result_array["url"];
+	}
+    
+    /**
+     * getJP2Id
+     * @return string $id
+     * @param object $obsTime
+     * @param object $src
+     */
+    public function getJP2Id ($obsTime, $src) {
+        $query = sprintf("SELECT image.id as id, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs
 						FROM image
 						LEFT JOIN measurement on measurementId = measurement.id
 						LEFT JOIN detector on detectorId = detector.id
 						LEFT JOIN instrument on instrumentId = instrument.id
 						LEFT JOIN observatory on observatoryId = observatory.id
-				  WHERE ", $offset, $timestamp);
+				  WHERE ", $obsTime);
 
 		// Layer-settings
 		$i=0;
@@ -69,15 +96,12 @@ class ImgIndex {
 			$query .= sprintf(" $key='%s'", mysqli_real_escape_string($this->dbConnection->link, $value));
 			$i++;
 		}
-
 		$query .= " ORDER BY timediffAbs LIMIT 0,1";
 
-		//echo $query . "<br><br>";
 		$result = $this->dbConnection->query($query);
 		$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
-		
-		return $result_array["url"];
-		
-	}
+
+        return $result_array["id"];
+    }
 }
 ?>
