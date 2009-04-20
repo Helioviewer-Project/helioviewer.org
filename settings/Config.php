@@ -40,6 +40,7 @@ class Config {
 	const API_BASE_URL       = 'api/index.php';
 	
     // Backup API
+    const BACKUP_ENABLED     = true;
     const BACKUP_API         = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
     
 	// Regular Expressions

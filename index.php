@@ -122,7 +122,8 @@
                         'baseScale'         => Config::BASE_IMAGE_SCALE,
                         'prefetchSize'      => Config::PREFETCH_SIZE,
 	                    'timeIncrementSecs' => Config::DEFAULT_TIMESTEP,
-                        'backupAPI'         => Config::BACKUP_API
+                        'backupAPI'         => Config::BACKUP_API,
+                        'backupEnabled'     => Config::BACKUP_ENABLED
 					);
                     echo "var defaults = " . json_encode($settings) . ";\n";
                     echo "\t\t\t\t";
