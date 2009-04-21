@@ -7,8 +7,8 @@
 class Config {
     
   	// Version Information
-	const LAST_UPDATE		 = '2009/04/20';
-	const BUILD_NUM          = 218;
+	const LAST_UPDATE		 = '2009/04/21';
+	const BUILD_NUM          = 220;
     
    	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -38,6 +38,10 @@ class Config {
 	const EVENT_SERVER_URL   = 'http://achilles.nascom.nasa.gov/~wamsler/API/index.php?';
    	const API_BASE_URL       = 'api/index.php';
     
+    // Tiling Servers
+    const TILE_SERVER_1       = 'api/index.php';
+    const TILE_SERVER_2       = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
+
     // Backup API
     const BACKUP_ENABLED     = false;
     const BACKUP_API         = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';

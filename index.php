@@ -115,6 +115,7 @@
 					
 					// Default settings
 					$settings = array(
+                        'version'           => Config::BUILD_NUM,
 						'defaultZoomLevel'  => Config::DEFAULT_ZOOM_LEVEL,
                         'minZoomLevel'      => Config::MIN_ZOOM_LEVEL,
                         'maxZoomLevel'      => Config::MAX_ZOOM_LEVEL,
@@ -122,6 +123,8 @@
                         'baseScale'         => Config::BASE_IMAGE_SCALE,
                         'prefetchSize'      => Config::PREFETCH_SIZE,
 	                    'timeIncrementSecs' => Config::DEFAULT_TIMESTEP,
+                        'tileServer1'       => Config::TILE_SERVER_1,
+                        'tileServer2'       => Config::TILE_SERVER_2,
                         'backupAPI'         => Config::BACKUP_API,
                         'backupEnabled'     => Config::BACKUP_ENABLED
 					);

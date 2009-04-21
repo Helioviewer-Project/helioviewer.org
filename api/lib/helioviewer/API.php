@@ -49,23 +49,37 @@ class API {
      * @return int Returns "1" if the action was completed successfully.
      */
     private function _getClosestImage () {
-        require_once('ImgIndex.php');
-        $imgIndex = new ImgIndex(new DbConnection());
-
-        $queryForField = 'abbreviation';
-        foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-            $src["$field.$queryForField"] = $this->params[$field];
-        }
-
-        $result = $imgIndex->getClosestImage($this->params['timestamp'], $src);
-
-        if ($this->format == "json") {
-            header('Content-type: application/json');
-            echo json_encode($result);
+        // TILE_SERVER_1
+        if ($this->params['server'] == 1) {
+            require_once('ImgIndex.php');
+            $imgIndex = new ImgIndex(new DbConnection());
+    
+            $queryForField = 'abbreviation';
+            foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
+                $src["$field.$queryForField"] = $this->params[$field];
+            }
+    
+            $result = $imgIndex->getClosestImage($this->params['timestamp'], $src);
+    
+            if ($this->format == "json") {
+                header('Content-type: application/json');
+                echo json_encode($result);
+            } else {
+                echo json_encode($result);
+            }
+        // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
         } else {
-            echo json_encode($result);
+            $obs  = $this->params['observatory'];
+            $inst = $this->params['instrument'];
+            $det  = $this->params['detector'];
+            $meas = $this->params['measurement'];
+            $ts   = $this->params['timestamp'];
+            
+            $url =  Config::TILE_SERVER_2 . "?action=getClosestImage&observatory=$obs&instrument=$inst&detector=$det&measurement=$meas&timestamp=$ts&server=1";
+            
+            header('Content-Type: application/json');
+            echo file_get_contents($url);
         }
-
         return 1;
     }
 
