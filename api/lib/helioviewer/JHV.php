@@ -9,10 +9,10 @@ class JHV {
 	
 	public function launch() {
 		header('content-type: application/x-java-jnlp-file');
-		header('content-disposition: attachment; filename="HV.jnlp"'); 
+		header('content-disposition: attachment; filename="JHelioviewer.jnlp"'); 
 		echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 ?>
-<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~wamsler/" href="HV.jnlp">
+<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~wamsler/" href="JHelioviewer.jnlp">
 	<information>    
 		<title>ESA JHelioviewer Demo</title>   
 		<vendor>Wamsler Benjamin</vendor>   
@@ -23,7 +23,7 @@ class JHV {
 	
 	<resources>    
 		<j2se version="1.4+" initial-heap-size="512M" max-heap-size="1000M"/>     
-		<jar href="HV.jar" />  
+		<jar href="JHelioviewer.jar" />  
 	</resources>  
 	
 	<security>    

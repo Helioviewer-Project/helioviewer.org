@@ -6,7 +6,7 @@
 	.REGX {color: #339;}
 	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
 	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
-<span class='line'>  2</span>  * @author &lt;a href="mailto:keith.hughitt@gmail.com">Keith Hughitt&lt;/a>
+<span class='line'>  2</span>  * @author &lt;a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt&lt;/a>
 <span class='line'>  3</span>  * @fileOverview Contains the class definition for an EventLayer class.
 <span class='line'>  4</span>  * @see Layer, TileLayer
 <span class='line'>  5</span>  *
@@ -71,9 +71,9 @@
 <span class='line'> 64</span> 		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 65</span> </span><span class="WHIT">			</span><span class="NAME">xhr</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">queryDate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 66</span> </span><span class="WHIT">		
-<span class='line'> 67</span> 		</span><span class="COMM">// Work-around: In Firefox 3.1, Date.toISOString() Returns single-quoted strings</span><span class="WHIT">
+<span class='line'> 67</span> 		</span><span class="COMM">// Work-around: In Firefox 3.1+, Date.toISOString() Returns single-quoted strings</span><span class="WHIT">
 <span class='line'> 68</span> </span><span class="WHIT">		</span><span class="COMM">// http://code.google.com/p/datejs/issues/detail?id=54</span><span class="WHIT">
-<span class='line'> 69</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">navigator.userAgent.search</span><span class="PUNC">(</span><span class="REGX">/3\.1/</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">navigator.userAgent.search</span><span class="PUNC">(</span><span class="REGX">/3\.[1-9]/</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!==</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 70</span> </span><span class="WHIT">			</span><span class="NAME">queryDate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.viewport.controller.date.toISOString</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 71</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'> 72</span> </span><span class="WHIT">		</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -81,7 +81,7 @@
 <span class='line'> 74</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'> 75</span> 
 <span class='line'> 76</span> </span><span class="WHIT">		</span><span class="COMM">// Ajax request</span><span class="WHIT">
-<span class='line'> 77</span> </span><span class="WHIT">		</span><span class="NAME">xhr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Ajax.Request</span><span class="PUNC">(</span><span class="NAME">this.viewport.controller.eventAPI</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">		</span><span class="NAME">xhr</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Ajax.Request</span><span class="PUNC">(</span><span class="NAME">this.viewport.controller.api</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 78</span> </span><span class="WHIT">			</span><span class="NAME">method</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'POST'</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 79</span> </span><span class="WHIT">			</span><span class="NAME">onSuccess</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">processResponse.bind</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 80</span> </span><span class="WHIT">			</span><span class="NAME">parameters</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">

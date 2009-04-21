@@ -334,6 +334,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#computeValidTiles">computeValidTiles</a></b>()
+								</div>
+								<div class="description">Creates a 2d array representing the range of valid (potentially data-containing) tiles</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#getTile">getTile</a></b>(x, y)
 								</div>
 								<div class="description">Generates URL to retrieve a single Tile and displays the transparent tile if request fails</div>
@@ -343,9 +352,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#getValidTileRange">getValidTileRange</a></b>()
+								</div>
+								<div class="description">Determines the boundaries for the valid tile range</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#loadClosestImage">loadClosestImage</a></b>()
 								</div>
 								<div class="description">Loads the closest image in time to that requested</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#refreshTiles">refreshTiles</a></b>(visible)
+								</div>
+								<div class="description">Refresh displayed tiles</div>
 							</td>
 						</tr>
 					
@@ -424,6 +451,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#toggleSharpening">toggleSharpening</a></b>()
+								</div>
+								<div class="description">Toggle image sharpening</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#viewportMove">viewportMove</a></b>(position)
 								</div>
 								<div class="description">Check to see if all visible tiles have been loaded</div>
@@ -473,7 +509,6 @@ ul.inheritsList
 		<b>type</b>	       - The type of the layer (used by layer manager to differentiate event vs. tile layers)<br>
      <b>tileSize</b>	   - Tilesize to use<br>
 		<b>source</b>      - Tile source ["database" | "filesystem"]<br>
-		<b>rootDir</b>	   - The root directory where the tiles are stored (when using filesystem as the tile source)<br>
      <b>opacity</b>	   - Default opacity (adjusted automatically when layer is added)<br>
 		<b>autoOpaicty</b> - Whether or not the opacity should be automatically determined when the image properties are loaded<br>
 		<b>startOpened</b> - Whether or not the layer menu entry should initially be open or closed<br>
@@ -533,6 +568,31 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
+					<a name="computeValidTiles"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>computeValidTiles</b>()
+					
+					</div>
+					<div class="description">
+						Creates a 2d array representing the range of valid (potentially data-containing) tiles
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="getTile"> </a>
 					<div class="fixedFont">
 					
@@ -582,6 +642,38 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="getValidTileRange"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Array}</span>
+					<b>getValidTileRange</b>()
+					
+					</div>
+					<div class="description">
+						Determines the boundaries for the valid tile range
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> An array containing the tile boundaries</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name="loadClosestImage"> </a>
 					<div class="fixedFont">
 					
@@ -597,6 +689,42 @@ ul.inheritsList
 					
 					
 					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="refreshTiles"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>refreshTiles</b>(visible)
+					
+					</div>
+					<div class="description">
+						Refresh displayed tiles
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>visible</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
 						
 						
 						
@@ -851,6 +979,31 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="toggleSharpening"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>toggleSharpening</b>()
+					
+					</div>
+					<div class="description">
+						Toggle image sharpening
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="viewportMove"> </a>
 					<div class="fixedFont">
 					
@@ -899,7 +1052,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Feb 25 2009 14:47:29 GMT-0500 (EST)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Tue Apr 21 2009 15:10:44 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

@@ -6,7 +6,7 @@
 	.REGX {color: #339;}
 	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
 	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
-<span class='line'>  2</span>  * @author &lt;a href="mailto:keith.hughitt@gmail.com">Keith Hughitt&lt;/a>
+<span class='line'>  2</span>  * @author &lt;a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt&lt;/a>
 <span class='line'>  3</span>  * @fileoverview Contains the class definition for an EventMarker class.
 <span class='line'>  4</span>  * @see EventLayer
 <span class='line'>  5</span>  * 
@@ -84,7 +84,7 @@
 <span class='line'> 77</span> 	 * @description Creates a small block of text which is displayed when the user pressed the "d" key ("details").
 <span class='line'> 78</span> 	 */</span><span class="WHIT">
 <span class='line'> 79</span> </span><span class="WHIT">	</span><span class="NAME">createLabel</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 80</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">display</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.eventLayer.displayLabels</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="STRN">"inline"</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"none"</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">display</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.eventLayer.viewport.controller.layerManager.getLabelVisibility</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 81</span> </span><span class="WHIT">			</span><span class="NAME">labelText</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.getLabelText</span><span class="PUNC">(</span><span class="NAME">this.type</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 82</span> </span><span class="WHIT">		
 <span class='line'> 83</span> 			</span><span class="COMM">//Determine time difference between desired time and event time</span><span class="WHIT">
@@ -255,19 +255,12 @@
 <span class='line'>248</span> </span><span class="WHIT">			</span><span class="NAME">top</span><span class="PUNC">:</span><span class="WHIT">  </span><span class="PUNC">(</span><span class="NAME">this.pos.y</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'px'</span><span class="WHIT">
 <span class='line'>249</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>250</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>251</span> 
-<span class='line'>252</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'>253</span> 	 * @description Toggles event label visibility
+<span class='line'>251</span> </span><span class="WHIT">	
+<span class='line'>252</span> 	</span><span class="COMM">/**
+<span class='line'>253</span> 	 * @description Toggle event popup visibility
 <span class='line'>254</span> 	 */</span><span class="WHIT">	
-<span class='line'>255</span> 	</span><span class="NAME">toggleLabel</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>256</span> </span><span class="WHIT">		</span><span class="NAME">this.label.toggle</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>257</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>258</span> </span><span class="WHIT">	
-<span class='line'>259</span> 	</span><span class="COMM">/**
-<span class='line'>260</span> 	 * @description Toggle event popup visibility
-<span class='line'>261</span> 	 */</span><span class="WHIT">	
-<span class='line'>262</span> 	</span><span class="NAME">togglePopup</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>263</span> </span><span class="WHIT">		</span><span class="NAME">this.popup.toggle</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>264</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>265</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>266</span> </span></pre></body></html>
+<span class='line'>255</span> 	</span><span class="NAME">togglePopup</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT">		</span><span class="NAME">this.popup.toggle</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>259</span> </span></pre></body></html>

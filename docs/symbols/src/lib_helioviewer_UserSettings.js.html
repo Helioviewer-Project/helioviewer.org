@@ -8,122 +8,140 @@
 	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
 <span class='line'>  2</span>  * @fileOverview Contains the class definition for an UserSettings class.
 <span class='line'>  3</span>  * Syntax: Prototype, jQuery
-<span class='line'>  4</span>  * @author &lt;a href="mailto:keith.hughitt@gmail.com">Keith Hughitt&lt;/a>
-<span class='line'>  5</span>  */</span><span class="WHIT">
-<span class='line'>  6</span> </span><span class="COMM">/*global Class, CookieJar, $H */</span><span class="WHIT">
-<span class='line'>  7</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">UserSettings</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Class.create</span><span class="PUNC">(</span><span class="WHIT">
-<span class='line'>  8</span> </span><span class="WHIT">	</span><span class="COMM">/** @lends UserSettings.prototype */</span><span class="WHIT">
-<span class='line'>  9</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 10</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 11</span> 	 * @constructs
-<span class='line'> 12</span> 	 * @description Creates a new UserSettings instance
-<span class='line'> 13</span> 	 * @param {Object} controller A reference to the Helioviewer application class
-<span class='line'> 14</span> 	 */</span><span class="WHIT">
-<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="NAME">initialize</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">controller</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 16</span> </span><span class="WHIT">		</span><span class="NAME">this.controller</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">controller</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 17</span> </span><span class="WHIT">		
-<span class='line'> 18</span> 		</span><span class="COMM">/**
-<span class='line'> 19</span> 		 * @description Default user settings
-<span class='line'> 20</span> 		 */</span><span class="WHIT">
-<span class='line'> 21</span> </span><span class="WHIT">		</span><span class="NAME">this._DEFAULTS</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$H</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 22</span> </span><span class="WHIT">			</span><span class="STRN">'obs-date'</span><span class="WHIT">			</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1065312000000</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 23</span> </span><span class="WHIT">			</span><span class="STRN">'zoom-level'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.controller.defaultZoomLevel</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 24</span> </span><span class="WHIT">			</span><span class="STRN">'tile-layers'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">{</span><span class="WHIT"> </span><span class="NAME">tileAPI</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"api/index.php"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">observatory</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'SOH'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">instrument</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'EIT'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">detector</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'EIT'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">measurement</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'195'</span><span class="WHIT"> </span><span class="PUNC">}</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 25</span> </span><span class="WHIT">			</span><span class="STRN">'warn-zoom-level'</span><span class="WHIT">	</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 26</span> </span><span class="WHIT">			</span><span class="STRN">'warn-mouse-coords'</span><span class="WHIT">	</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 27</span> </span><span class="WHIT">			</span><span class="STRN">'event-icons'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 28</span> </span><span class="WHIT">				</span><span class="STRN">'VSOService::noaa'</span><span class="PUNC">:</span><span class="WHIT">				</span><span class="STRN">'small-blue-circle'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 29</span> </span><span class="WHIT">				</span><span class="STRN">'GOESXRayService::GOESXRay'</span><span class="PUNC">:</span><span class="WHIT">	</span><span class="STRN">'small-green-diamond'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 30</span> </span><span class="WHIT">				</span><span class="STRN">'VSOService::cmelist'</span><span class="PUNC">:</span><span class="WHIT">			</span><span class="STRN">'small-yellow-square'</span><span class="WHIT">
-<span class='line'> 31</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 32</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 33</span> 
-<span class='line'> 34</span> </span><span class="WHIT">		</span><span class="NAME">this.cookies</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">CookieJar</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 35</span> </span><span class="WHIT">			</span><span class="NAME">expires</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">31536000</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">//1 year</span><span class="WHIT">
-<span class='line'> 36</span> </span><span class="WHIT">			</span><span class="NAME">path</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/'</span><span class="WHIT">
-<span class='line'> 37</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 38</span> </span><span class="WHIT">		
-<span class='line'> 39</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this._exists</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 40</span> </span><span class="WHIT">			</span><span class="NAME">this._loadDefaults</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 41</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 42</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 43</span> </span><span class="WHIT">	
-<span class='line'> 44</span> 	</span><span class="COMM">/**
-<span class='line'> 45</span> 	 * @description Saves a specified setting
-<span class='line'> 46</span> 	 * @param {String} key The setting to update
-<span class='line'> 47</span> 	 * @param {JSON} value The new value for the setting
-<span class='line'> 48</span> 	 */</span><span class="WHIT">
-<span class='line'> 49</span> </span><span class="WHIT">	</span><span class="NAME">set</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 50</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this._validate</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 51</span> </span><span class="WHIT">			</span><span class="NAME">this.cookies.put</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 52</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 53</span> </span><span class="WHIT">			</span><span class="COMM">//console.log("Ignoring invalid user-setting...");</span><span class="WHIT">
-<span class='line'> 54</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 55</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 56</span> </span><span class="WHIT">	
-<span class='line'> 57</span> 	</span><span class="COMM">/**
-<span class='line'> 58</span> 	 * @description Gets a specified setting
-<span class='line'> 59</span> 	 * @param {String} key The setting to retrieve
-<span class='line'> 60</span> 	 * @returns {JSON} The value of the desired setting
-<span class='line'> 61</span> 	 */</span><span class="WHIT">
-<span class='line'> 62</span> </span><span class="WHIT">	</span><span class="NAME">get</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 63</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.cookies.get</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 64</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 65</span> </span><span class="WHIT">	
-<span class='line'> 66</span> 	</span><span class="COMM">/**
-<span class='line'> 67</span> 	 * @description Checks to see if user-settings cookies have been set.
-<span class='line'> 68</span> 	 */</span><span class="WHIT">
-<span class='line'> 69</span> </span><span class="WHIT">	</span><span class="NAME">_exists</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 70</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.cookies.getKeys</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">length</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 71</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 72</span> </span><span class="WHIT">	
-<span class='line'> 73</span> 	</span><span class="COMM">/**
-<span class='line'> 74</span> 	 * @description Validates a setting (Currently checks observation date and zoom-level)
-<span class='line'> 75</span> 	 * @param {String} setting The setting to be validated
-<span class='line'> 76</span> 	 * @param {String} value The value of the setting to check
-<span class='line'> 77</span> 	 */</span><span class="WHIT">
-<span class='line'> 78</span> </span><span class="WHIT">	</span><span class="NAME">_validate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 79</span> </span><span class="WHIT">		</span><span class="KEYW">switch</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 80</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="STRN">"obs-date"</span><span class="PUNC">:</span><span class="WHIT">
-<span class='line'> 81</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">isNaN</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 82</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 83</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 84</span> </span><span class="WHIT">			</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 85</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="STRN">"zoom-level"</span><span class="PUNC">:</span><span class="WHIT">
-<span class='line'> 86</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">isNaN</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">value</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">this.controller.minZoomLevel</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">value</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">this.controller.maxZoomLevel</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 87</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 88</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 89</span> </span><span class="WHIT">			</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 90</span> </span><span class="WHIT">		</span><span class="KEYW">default</span><span class="PUNC">:</span><span class="WHIT">
-<span class='line'> 91</span> </span><span class="WHIT">			</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">		
-<span class='line'> 92</span> 		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 93</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 94</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 95</span> </span><span class="WHIT">	
-<span class='line'> 96</span> 	</span><span class="COMM">/**
-<span class='line'> 97</span> 	 * @description Resets a single setting to it's default value
-<span class='line'> 98</span> 	 * @param {String} setting The setting for which the default value should be loaded
-<span class='line'> 99</span> 	 */</span><span class="WHIT">
-<span class='line'>100</span> </span><span class="WHIT">	</span><span class="NAME">_resetSetting</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>101</span> </span><span class="WHIT">		</span><span class="NAME">this.set</span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this._getDefault</span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">		
-<span class='line'>102</span> 	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>103</span> </span><span class="WHIT">	
-<span class='line'>104</span> 	</span><span class="COMM">/**
-<span class='line'>105</span> 	 * @description Gets the default value for a given setting
-<span class='line'>106</span> 	 * @param {Object} setting
-<span class='line'>107</span> 	 */</span><span class="WHIT">
-<span class='line'>108</span> </span><span class="WHIT">	</span><span class="NAME">_getDefault</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>109</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this._DEFAULTS.get</span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>110</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>111</span> </span><span class="WHIT">	
-<span class='line'>112</span> 	</span><span class="COMM">/**
-<span class='line'>113</span> 	 * @description Loads defaults if cookies have not been set prior.
-<span class='line'>114</span> 	 */</span><span class="WHIT">
-<span class='line'>115</span> </span><span class="WHIT">	</span><span class="NAME">_loadDefaults</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>116</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">self</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>117</span> </span><span class="WHIT">		</span><span class="NAME">this._DEFAULTS.each</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>118</span> </span><span class="WHIT">			</span><span class="NAME">self.set</span><span class="PUNC">(</span><span class="NAME">setting.key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">setting.value</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>119</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>120</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>121</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>122</span> </span></pre></body></html>
+<span class='line'>  4</span>  * @author &lt;a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt&lt;/a>
+<span class='line'>  5</span>  * @TODO Store either last version of HV or Cookie version to use enable forced updates
+<span class='line'>  6</span>  */</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="COMM">/*global Class, CookieJar, $H */</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">UserSettings</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Class.create</span><span class="PUNC">(</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="WHIT">	</span><span class="COMM">/** @lends UserSettings.prototype */</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="WHIT">	</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 12</span> 	 * @constructs
+<span class='line'> 13</span> 	 * @description Creates a new UserSettings instance. Because all cookie data is stored as strings, numeric types
+<span class='line'> 14</span> 	 *              must be specified (e.g. in _INTGER_PARAMS) so that the application knows to parse them as such.
+<span class='line'> 15</span> 	 * @param {Object} controller A reference to the Helioviewer application class
+<span class='line'> 16</span> 	 */</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">	</span><span class="NAME">initialize</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">controller</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">		</span><span class="NAME">this.controller</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">controller</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">		
+<span class='line'> 20</span> 		</span><span class="COMM">/**
+<span class='line'> 21</span> 		 * @description Default user settings
+<span class='line'> 22</span> 		 */</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="WHIT">		</span><span class="NAME">this._DEFAULTS</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$H</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">			</span><span class="STRN">'obs-date'</span><span class="WHIT">			</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1065312000000</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">			</span><span class="STRN">'zoom-level'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.controller.defaultZoomLevel</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">			</span><span class="STRN">'tile-layers'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">{</span><span class="WHIT"> </span><span class="NAME">tileAPI</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"api/index.php"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">server</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">observatory</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'SOH'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">instrument</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'EIT'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">detector</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'EIT'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">measurement</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'304'</span><span class="WHIT"> </span><span class="PUNC">}</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">            </span><span class="STRN">'version'</span><span class="WHIT">           </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.controller.version</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">			</span><span class="STRN">'warn-zoom-level'</span><span class="WHIT">	</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">			</span><span class="STRN">'warn-mouse-coords'</span><span class="WHIT">	</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">			</span><span class="STRN">'event-icons'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">				</span><span class="STRN">'VSOService::noaa'</span><span class="PUNC">:</span><span class="WHIT">				</span><span class="STRN">'small-blue-circle'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="WHIT">				</span><span class="STRN">'GOESXRayService::GOESXRay'</span><span class="PUNC">:</span><span class="WHIT">	</span><span class="STRN">'small-green-diamond'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 33</span> </span><span class="WHIT">				</span><span class="STRN">'VSOService::cmelist'</span><span class="PUNC">:</span><span class="WHIT">			</span><span class="STRN">'small-yellow-square'</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">		
+<span class='line'> 37</span> 		</span><span class="NAME">this._INTEGER_PARAMS</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$A</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="STRN">'obs-date'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'zoom-level'</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">		</span><span class="NAME">this._FLOAT_PARAMS</span><span class="WHIT">   </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$A</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">		</span><span class="NAME">this._BOOLEAN_PARAMS</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$A</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="STRN">'warn-zoom-level'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'warn-mouse-coords'</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 40</span> 
+<span class='line'> 41</span> 
+<span class='line'> 42</span> </span><span class="WHIT">		</span><span class="NAME">this.cookies</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">CookieJar</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">			</span><span class="NAME">expires</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">31536000</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">//1 year</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">			</span><span class="NAME">path</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'/'</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">		
+<span class='line'> 47</span> 		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this._exists</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.get</span><span class="PUNC">(</span><span class="STRN">'version'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">this.controller.version</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">			</span><span class="NAME">this._loadDefaults</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">	
+<span class='line'> 52</span> 	</span><span class="COMM">/**
+<span class='line'> 53</span> 	 * @description Saves a specified setting
+<span class='line'> 54</span> 	 * @param {String} key The setting to update
+<span class='line'> 55</span> 	 * @param {JSON} value The new value for the setting
+<span class='line'> 56</span> 	 */</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">	</span><span class="NAME">set</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this._validate</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">			</span><span class="NAME">this.cookies.put</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">			</span><span class="COMM">//console.log("Ignoring invalid user-setting...");</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">	
+<span class='line'> 65</span> 	</span><span class="COMM">/**
+<span class='line'> 66</span> 	 * @description Gets a specified setting
+<span class='line'> 67</span> 	 * @param {String} key The setting to retrieve
+<span class='line'> 68</span> 	 * @returns {JSON} The value of the desired setting
+<span class='line'> 69</span> 	 */</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">	</span><span class="NAME">get</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">		</span><span class="COMM">// Parse numeric types</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this._INTEGER_PARAMS.include</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">parseInt</span><span class="PUNC">(</span><span class="NAME">this.cookies.get</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">		</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this._FLOAT_PARAMS.include</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">parseFloat</span><span class="PUNC">(</span><span class="NAME">this.cookies.get</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">		</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this._BOOLEAN_PARAMS.include</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.cookies.get</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="STRN">"true"</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.cookies.get</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">	
+<span class='line'> 84</span> 	</span><span class="COMM">/**
+<span class='line'> 85</span> 	 * @description Checks to see if user-settings cookies have been set.
+<span class='line'> 86</span> 	 */</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">	</span><span class="NAME">_exists</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.cookies.getKeys</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">length</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">	
+<span class='line'> 91</span> 	</span><span class="COMM">/**
+<span class='line'> 92</span> 	 * @description Validates a setting (Currently checks observation date and zoom-level)
+<span class='line'> 93</span> 	 * @param {String} setting The setting to be validated
+<span class='line'> 94</span> 	 * @param {String} value The value of the setting to check
+<span class='line'> 95</span> 	 */</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">	</span><span class="NAME">_validate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">value</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">		</span><span class="KEYW">switch</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="STRN">"obs-date"</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">isNaN</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">			</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">		</span><span class="KEYW">case</span><span class="WHIT"> </span><span class="STRN">"zoom-level"</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">isNaN</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">value</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">this.controller.minZoomLevel</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">value</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">this.controller.maxZoomLevel</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">			</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">		</span><span class="KEYW">default</span><span class="PUNC">:</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">			</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">		
+<span class='line'>110</span> 		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">	
+<span class='line'>114</span> 	</span><span class="COMM">/**
+<span class='line'>115</span> 	 * @description Resets a single setting to it's default value
+<span class='line'>116</span> 	 * @param {String} setting The setting for which the default value should be loaded
+<span class='line'>117</span> 	 */</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">	</span><span class="NAME">_resetSetting</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">		</span><span class="NAME">this.set</span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this._getDefault</span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">		
+<span class='line'>120</span> 	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">	
+<span class='line'>122</span> 	</span><span class="COMM">/**
+<span class='line'>123</span> 	 * @description Gets the default value for a given setting
+<span class='line'>124</span> 	 * @param {Object} setting
+<span class='line'>125</span> 	 */</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">	</span><span class="NAME">_getDefault</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this._DEFAULTS.get</span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">	
+<span class='line'>130</span> 	</span><span class="COMM">/**
+<span class='line'>131</span> 	 * @description Loads defaults if cookies have not been set prior.
+<span class='line'>132</span> 	 */</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">	</span><span class="NAME">_loadDefaults</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">self</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">		</span><span class="NAME">this._DEFAULTS.each</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">setting</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">			</span><span class="NAME">self.set</span><span class="PUNC">(</span><span class="NAME">setting.key</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">setting.value</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>140</span> </span></pre></body></html>

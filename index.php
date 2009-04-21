@@ -191,7 +191,7 @@
 				<!-- Recent Updates -->
 				<div class='notes ui-widget ui-widget-content ui-corner-all'>
 					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
-                    <strong>> 04/17/2009</strong><p>Added support for all of SOHO 2003 Data Archive.</p><br><br>
+                    <strong>> 04/17/2009</strong><p>Added support for all 2003 LASCO, EIT, subset of MDI data.</p><br><br>
                     <strong>> 04/17/2009</strong><p>Improved performance.</p><br><br>
                     <strong>> 04/17/2009</strong><p>Added fullscreen view support.</p><br><br>
                     <strong>> 04/17/2009</strong><p>New look and feel.</p><br><br>

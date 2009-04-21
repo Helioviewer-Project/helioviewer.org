@@ -277,7 +277,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Helioviewer.html">Helioviewer</a></b>(options)
+								<b><a href="../symbols/Helioviewer.html">Helioviewer</a></b>(options, api, view, defaults)
 							</div>
 							<div class="description">Creates a new Helioviewer instance.</div>
 						</td>
@@ -289,29 +289,6 @@ ul.inheritsList
 <!-- ============================== properties summary ===================== -->
 			
 				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class Helioviewer.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/Helioviewer.html#defaultOptions">defaultOptions</a></b>
-								</div>
-								<div class="description">Default Helioviewer options<br><br></div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
 				
 				
 				
@@ -332,65 +309,75 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#addToolTip">addToolTip</a></b>(CSS, A)
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_createFullscreenBtn">_createFullscreenBtn</a></b>()
 								</div>
-								<div class="description">Adds a tooltip with specified settings to a given component.</div>
+								<div class="description">Creates an HTML button for toggling between regular and fullscreen display
+Syntax: jQuery</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#addViewport">addViewport</a></b>(viewport)
-								</div>
-								<div class="description">Adds a new viewport to the list of maintained viewports: Usually only one will exist at a given time.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#initEvents">initEvents</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initEvents">_initEvents</a></b>()
 								</div>
 								<div class="description">Initialize event-handlers for UI components controlled by the Helioviewer class</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#initKeyBoardListeners">initKeyBoardListeners</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initKeyBoardListeners">_initKeyBoardListeners</a></b>()
 								</div>
 								<div class="description">Initialize keyboard-related event handlers.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#initToolTips">initToolTips</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initToolTips">_initToolTips</a></b>()
 								</div>
 								<div class="description">Adds tooltips to all elements that are loaded everytime (buttons, etc) using default tooltip options.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#initUI">initUI</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initUI">_initUI</a></b>()
 								</div>
 								<div class="description">Initialize Helioviewer's user interface (UI) components</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#initViewports">initViewports</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initViewport">_initViewport</a></b>()
 								</div>
 								<div class="description">Initialize Helioviewer's viewport(s).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_setupDialogs">_setupDialogs</a></b>()
+								</div>
+								<div class="description">Sets up event-handlers for dialog components</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#addToolTip">addToolTip</a></b>(CSS, A)
+								</div>
+								<div class="description">Adds a tooltip with specified settings to a given component.</div>
 							</td>
 						</tr>
 					
@@ -447,7 +434,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>Helioviewer</b>(options)
+						<b>Helioviewer</b>(options, api, view, defaults)
 				</div>
 				
 				<div class="description">
@@ -473,12 +460,28 @@ ul.inheritsList
 		<b>defaultZoomLevel</b>	- The initial zoom-level to display.<br>
 		<b>defaultPrefetchSize</b> - The radius outside of the visible viewport to prefetch.<br>
 		<b>timeIncrementSecs</b>	- The default amount of time to move when the time navigation arrows are pressed.<br>
-		<b>minZoomLevel</b>		- Minimum zoom level allowed.<br> 
+		<b>minZoomLevel</b>		- Minimum zoom level allowed.<br>
 		<b>maxZoomLevel</b>		- Maximum zoom level allowed.<br>
-		<b>imageAPI</b>			- URL to the API for retrieving image meta information.<br>
-		<b>tileAPI</b>				- URL to the API for retrieving tiles.<br>
-		<b>eventAPI</b>			- URL to the API for retrieving events and event-catalogs.<br>
+		<b>api</b>              - Primary API for querying image and event information.
 </div></dd>
+						
+							<dt>
+								 <b>api</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>view</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>defaults</b>
+								
+							</dt>
+								<dd></dd>
 						
 						</dl>
 					
@@ -491,7 +494,7 @@ ul.inheritsList
 						<dl class="detailList">
 						<dt class="heading">See:</dt>
 						
-							<dd><a href="../symbols/Helioviewer.html#defaultOptions">Helioviewer#defaultOptions</a> for a list of the available parameters.</dd>
+							<dd>Helioviewer#defaultOptions for a list of the available parameters.</dd>
 						
 						</dl>
 					
@@ -501,39 +504,195 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name="defaultOptions"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>defaultOptions</b>
-					
-					</div>
-					<div class="description">
-						Default Helioviewer options<br><br>
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
 			
 				<div class="sectionTitle">
 					Method Detail
 				</div>
+				
+					<a name="_createFullscreenBtn"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_createFullscreenBtn</b>()
+					
+					</div>
+					<div class="description">
+						Creates an HTML button for toggling between regular and fullscreen display
+Syntax: jQuery
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_initEvents"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_initEvents</b>()
+					
+					</div>
+					<div class="description">
+						Initialize event-handlers for UI components controlled by the Helioviewer class
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_initKeyBoardListeners"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_initKeyBoardListeners</b>()
+					
+					</div>
+					<div class="description">
+						Initialize keyboard-related event handlers.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>Based off method by <a href="http://www.quirksmode.org/js/events_properties.html#key">PPK</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name="_initToolTips"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_initToolTips</b>()
+					
+					</div>
+					<div class="description">
+						Adds tooltips to all elements that are loaded everytime (buttons, etc) using default tooltip options.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_initUI"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_initUI</b>()
+					
+					</div>
+					<div class="description">
+						Initialize Helioviewer's user interface (UI) components
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_initViewport"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_initViewport</b>()
+					
+					</div>
+					<div class="description">
+						Initialize Helioviewer's viewport(s).
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_setupDialogs"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_setupDialogs</b>()
+					
+					</div>
+					<div class="description">
+						Sets up event-handlers for dialog components
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
 				
 					<a name="addToolTip"> </a>
 					<div class="fixedFont">
@@ -567,174 +726,6 @@ ul.inheritsList
 								<dd>hash containing any options configuration parameters to use.</dd>
 							
 							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="addViewport"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>addViewport</b>(viewport)
-					
-					</div>
-					<div class="description">
-						Adds a new viewport to the list of maintained viewports: Usually only one will exist at a given time.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>viewport</b>
-									
-								</dt>
-								<dd>A reference to the viewport instance to add.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="initEvents"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>initEvents</b>()
-					
-					</div>
-					<div class="description">
-						Initialize event-handlers for UI components controlled by the Helioviewer class
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="initKeyBoardListeners"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>initKeyBoardListeners</b>()
-					
-					</div>
-					<div class="description">
-						Initialize keyboard-related event handlers.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd>Based off method by <a href="http://www.quirksmode.org/js/events_properties.html#key">PPK</a></dd>
-							
-							</dl>
-						
-
-					<hr />
-				
-					<a name="initToolTips"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>initToolTips</b>()
-					
-					</div>
-					<div class="description">
-						Adds tooltips to all elements that are loaded everytime (buttons, etc) using default tooltip options.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="initUI"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>initUI</b>()
-					
-					</div>
-					<div class="description">
-						Initialize Helioviewer's user interface (UI) components
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="initViewports"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>initViewports</b>()
-					
-					</div>
-					<div class="description">
-						Initialize Helioviewer's viewport(s).
-						
-						
-					</div>
-					
-					
-					
 						
 						
 						
@@ -909,7 +900,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Feb 25 2009 14:47:29 GMT-0500 (EST)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Tue Apr 21 2009 15:10:44 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

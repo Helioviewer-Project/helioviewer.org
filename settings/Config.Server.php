@@ -8,14 +8,14 @@ class Config {
     
   	// Version Information
 	const LAST_UPDATE		 = '2009/04/21';
-	const BUILD_NUM          = 220;
+	const BUILD_NUM          = 221;
     
    	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
 	const DEFAULT_OBS_TIME   = 1065312000000;
 	const DEFAULT_TIMESTEP   = 86400;
 	const MIN_ZOOM_LEVEL     = 8;
-	const MAX_ZOOM_LEVEL     = 16;           
+	const MAX_ZOOM_LEVEL     = 15;           
 	const PREFETCH_SIZE      = 0;
     
 	// Database
