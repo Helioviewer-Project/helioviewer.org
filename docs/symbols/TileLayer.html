@@ -352,6 +352,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#getTileArray">getTileArray</a></b>()
+								</div>
+								<div class="description">Creates an array of tile dom-nodes</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#getValidTileRange">getValidTileRange</a></b>()
 								</div>
 								<div class="description">Determines the boundaries for the valid tile range</div>
@@ -370,7 +379,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#refreshTiles">refreshTiles</a></b>(visible)
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#refreshTiles">refreshTiles</a></b>(zoomLevelChanged)
 								</div>
 								<div class="description">Refresh displayed tiles</div>
 							</td>
@@ -397,6 +406,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#removeTileDomNodes">removeTileDomNodes</a></b>(tileArray)
+								</div>
+								<div class="description">remove tile dom-nodes</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#removeTiles">removeTiles</a></b>()
 								</div>
 								<div class="description"></div>
@@ -406,7 +424,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#reset">reset</a></b>(A)
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#reset">reset</a></b>(zoomLevelChanged)
 								</div>
 								<div class="description">Reload the tile layer</div>
 							</td>
@@ -460,7 +478,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#viewportMove">viewportMove</a></b>(position)
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#viewportMove">viewportMove</a></b>()
 								</div>
 								<div class="description">Check to see if all visible tiles have been loaded</div>
 							</td>
@@ -642,6 +660,38 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="getTileArray"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Array}</span>
+					<b>getTileArray</b>()
+					
+					</div>
+					<div class="description">
+						Creates an array of tile dom-nodes
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> An array containing pointers to all of the tiles currently loaded</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name="getValidTileRange"> </a>
 					<div class="fixedFont">
 					
@@ -703,7 +753,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>refreshTiles</b>(visible)
+					<b>refreshTiles</b>(zoomLevelChanged)
 					
 					</div>
 					<div class="description">
@@ -719,10 +769,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>visible</b>
+									<span class="light fixedFont">{Boolean}</span> <b>zoomLevelChanged</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>Whether or not the zoom level has been changed</dd>
 							
 							</dl>
 						
@@ -785,6 +835,42 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="removeTileDomNodes"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeTileDomNodes</b>(tileArray)
+					
+					</div>
+					<div class="description">
+						remove tile dom-nodes
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>tileArray</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="removeTiles"> </a>
 					<div class="fixedFont">
 					
@@ -814,7 +900,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>reset</b>(A)
+					<b>reset</b>(zoomLevelChanged)
 					
 					</div>
 					<div class="description">
@@ -830,10 +916,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>A</b>
+									<span class="light fixedFont">{Boolean}</span> <b>zoomLevelChanged</b>
 									
 								</dt>
-								<dd>2-d binary array indicating which tiles have been (should be) loaded</dd>
+								<dd>Whether or not the zoom level has been changed</dd>
 							
 							</dl>
 						
@@ -1008,7 +1094,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>viewportMove</b>(position)
+					<b>viewportMove</b>()
 					
 					</div>
 					<div class="description">
@@ -1019,17 +1105,6 @@ ul.inheritsList
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>position</b>
-									
-								</dt>
-								<dd>Position</dd>
-							
-							</dl>
 						
 						
 						
@@ -1052,7 +1127,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Tue Apr 21 2009 15:10:44 GMT-0400 (EDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Apr 22 2009 16:00:21 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>
