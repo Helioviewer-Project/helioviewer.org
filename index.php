@@ -231,7 +231,7 @@
                             </div>
                             
                             <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn'>
+                            <div id='fullscreen-btn' title=" - Toggle fullscreen display.">
                                 <div class='ui-icon ui-icon-arrow-4-diag'></div>
                             </div>
 

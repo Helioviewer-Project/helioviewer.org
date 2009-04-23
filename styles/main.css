@@ -78,6 +78,10 @@ input, select {background-color:#F4F4F4;}
     font-size: 0.95em;
 }
 
+#observation-controls > div > input, #observation-controls > div > select {
+    border: 1px solid #5c5c5c;
+}
+
 /* Center button */
 #center-button {
     background: transparent url(../images/blackGlass/transparentBGWhite.png);

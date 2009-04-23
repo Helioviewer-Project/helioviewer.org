@@ -71,8 +71,6 @@ div.layer-select-label {
 }
 select.layer-select {
 	width: 100px;
-	background-color: #DFE5CF; /* #c7ddf2 */
-	color: #424242;
 	border: 1px solid #5c5c5c;
 	margin: 2px 0px 0px 1px;
 	}

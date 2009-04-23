@@ -78,6 +78,10 @@ input, select {background-color:#F4F4F4;}
     font-size: 0.95em;
 }
 
+#observation-controls > div > input, #observation-controls > div > select {
+    border: 1px solid #5c5c5c;
+}
+
 /* Center button */
 #center-button {
     background: transparent url(../images/blackGlass/transparentBGWhite.png);
@@ -300,8 +304,6 @@ div.layer-select-label {
 }
 select.layer-select {
 	width: 100px;
-	background-color: #DFE5CF; /* #c7ddf2 */
-	color: #424242;
 	border: 1px solid #5c5c5c;
 	margin: 2px 0px 0px 1px;
 	}
@@ -593,6 +595,15 @@ a.event-url:hover {
     background: url('../images/blackGlass/tooltip-topleft-medium.png') no-repeat;
 }
 
+.tooltip-topright-medium {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 180px;
+    height: 130px;
+    background: url('../images/blackGlass/tooltip-topright-medium.png') no-repeat;
+}
+
 .tooltip-topleft-large {
     position: absolute;
     z-index: 1000;
@@ -621,7 +632,11 @@ a.event-url:hover {
 	padding: 50px 35px 50px 60px;
 }
 
-.tooltip-bottomleft-large div, .tooltip-topleft-medium div, .tooltip-bottomleft-medium div {
+.tooltip-bottomleft-large div, .tooltip-bottomleft-medium div {
+    padding: 23px 32px 23px 23px;
+}
+
+.tooltip-topleft-medium div, .tooltip-topright-medium div {
     padding: 30px;
 }
 /* Viewport */

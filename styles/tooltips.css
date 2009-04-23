@@ -26,6 +26,15 @@
     background: url('../images/blackGlass/tooltip-topleft-medium.png') no-repeat;
 }
 
+.tooltip-topright-medium {
+    position: absolute;
+    z-index: 1000;
+    font-family: Arial;
+    width: 180px;
+    height: 130px;
+    background: url('../images/blackGlass/tooltip-topright-medium.png') no-repeat;
+}
+
 .tooltip-topleft-large {
     position: absolute;
     z-index: 1000;
@@ -54,6 +63,10 @@
 	padding: 50px 35px 50px 60px;
 }
 
-.tooltip-bottomleft-large div, .tooltip-topleft-medium div, .tooltip-bottomleft-medium div {
+.tooltip-bottomleft-large div, .tooltip-bottomleft-medium div {
+    padding: 23px 32px 23px 23px;
+}
+
+.tooltip-topleft-medium div, .tooltip-topright-medium div {
     padding: 30px;
 }
