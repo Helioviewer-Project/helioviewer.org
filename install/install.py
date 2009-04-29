@@ -11,10 +11,7 @@ def main():
 
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
-	#dbname, dbuser, dbpass = getDBInfo()
-	dbname = "hv"
-	dbuser = "helioviewer"
-	dbpass = dbuser
+	dbname, dbuser, dbpass = getDBInfo()
 
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()

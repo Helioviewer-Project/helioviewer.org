@@ -1,10 +1,11 @@
 -- Helioviewer Database Structure --
--- last update: 04-07-2009        --
+-- last update: 04-28-2009        --
 
 --
--- Create schema
+-- Create schema & user
 --
 CREATE DATABASE IF NOT EXISTS hv;
+GRANT ALL ON hv.* TO 'helioviewer'@'localhost' IDENTIFIED BY 'helioviewer';
 USE hv;
 
 --

@@ -1,6 +1,6 @@
 ===================================================================
 = Helioviewer Installation Notes                                  =
-= By Keith Hughitt, November 2008                                 =
+= By Keith Hughitt, April 2009                                    =
 ===================================================================
 
 I. Overview
@@ -8,7 +8,7 @@ I. Overview
 	Requirements (Server):
 		-MySQL5
 		-PHP5
-		-php5-imagick
+		-ImageMagick
 		-Python (>=2.5)
 		-Python-MysqlDB
 		-ExifTool
@@ -29,7 +29,7 @@ I. Overview
 
 	In addition to the above-mentioned requirements, there is one proprietary javascript library which
 	is currently used by Helioviewer: Prototip. Prototip is a commercial javascript library with fairly
-	inexpensive lisences for non-commercial use (about $5 USD). It is also available for download to
+	inexpensive licenses for non-commercial use (about $5 USD). It is also available for download to
 	try for free, but is not allowed to be redistributed, and thus was not included with Helioviewer.
 	See reference [8] for a link to the Prototip website.
 	
@@ -54,7 +54,7 @@ I. Overview
 			that MySQL should use UTC in the mysqld-safe configuration
 			settings:
 			
-				sudo vi /etc/mysql/my.cnf
+				sudo gedit /etc/mysql/my.cnf
 
 			Add the line "timezone	= UTC" under the [mysqld_safe] section.
 			
@@ -67,7 +67,7 @@ I. Overview
 			
 				sudo /etc/init.d/mysql restart
 		B. Tables
-			To set-up the tables for HelioViewer, create a new database
+			To set-up the tables for Helioviewer, create a new database
 			schema and users with full access to that database. Edit the
 			file createTables.sql using that information, and then at the
 			command line run:

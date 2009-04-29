@@ -10,8 +10,8 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/04/23';
-	const BUILD_NUM          = 223;
+	const LAST_UPDATE		 = '2009/04/29';
+	const BUILD_NUM          = 225;
 	
 	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -28,8 +28,8 @@ class Config {
 	const DB_PASS            = 'helioviewer';
 	
 	// Filepaths
-	const TMP_ROOT_DIR       = '/var/www/hv/tmp';
 	const WEB_ROOT_DIR       = '/var/www/hv';
+	const TMP_ROOT_DIR       = '/var/www/hv/tmp';
 	const CACHE_DIR          = '/var/www/hv/cache/';
 	const JP2_DIR            = '/var/www/hv/jp2/';
 	const KDU_LIBS_DIR       = '/usr/lib/kakadu/';
@@ -48,10 +48,6 @@ class Config {
     // Backup API
     const BACKUP_ENABLED     = false;
     const BACKUP_API         = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
-    
-	// Regular Expressions
-	const WEB_ROOT_DIR_REGEX = '/\/var\/www\/hv/';
-	const WEB_ROOT_URL_REGEX = '/http:\/\/localhost\/hv/';
 	
 	// Executables
 	const KDU_MERGE_BIN      = '/usr/bin/kdu_merge';

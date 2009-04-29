@@ -17,6 +17,9 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
+        
+        <!-- TODO: move jquery-dynaccordion to /lib/helioviewer with rest of custom code -->
+        <!-- TODO: Include compiled versions of Kakadu? -->
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/jquery-ui-1.7.1.custom.css" type="text/css" />	
 		<script type="text/javascript">

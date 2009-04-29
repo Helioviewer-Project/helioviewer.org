@@ -7,8 +7,8 @@
 class Config {
     
   	// Version Information
-	const LAST_UPDATE		 = '2009/04/23';
-	const BUILD_NUM          = 223;
+	const LAST_UPDATE		 = '2009/04/29';
+	const BUILD_NUM          = 225;
     
    	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -25,8 +25,8 @@ class Config {
 	const DB_PASS            = '';
 	
 	// Filepaths
-	const TMP_ROOT_DIR       = '/home/esahelio/public_html/tmp';
 	const WEB_ROOT_DIR       = '/home/esahelio/public_html';
+	const TMP_ROOT_DIR       = '/home/esahelio/public_html/tmp';
 	const CACHE_DIR          = '/home/esahelio/public_html/cache/';
 	const JP2_DIR            = '/home/esahelio/public_html/jp2/';
 	const KDU_LIBS_DIR       = '/home/esahelio/kakadu/lib';
@@ -45,10 +45,6 @@ class Config {
     // Backup API
     const BACKUP_ENABLED     = false;
     const BACKUP_API         = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
-		
-	// Regular Expressions	
-	const WEB_ROOT_DIR_REGEX = '/\/home\/esahelio\/public_html/';
-	const WEB_ROOT_URL_REGEX = '/http:\/\/helioviewer\.org/';
 	
 	// Executables
 	const KDU_MERGE_BIN      = '/home/esahelio/kakadu/bin/kdu_merge';
@@ -74,6 +70,6 @@ class Config {
 
 	// Debugging
 	const ENABLE_CACHE = true;
-    const ERROR_LOG    = '/var/www/hv/log/error';
+    const ERROR_LOG    = '/home/esahelio/public_html/log/error';
 }
 ?>
