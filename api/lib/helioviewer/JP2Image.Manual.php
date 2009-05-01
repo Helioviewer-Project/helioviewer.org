@@ -92,7 +92,7 @@ abstract class JP2Image {
     		// Use PNG as intermediate format so that GD can read it in
     		$png = substr($filename, 0, -3) . "png";
             
-            exec("convert $pgm -depth 8 -quality 10 $png");
+            exec("convert $pgm -depth 8 -quality 10 -type Grayscale $png");
     		
     		// Apply color-lookup table
     		if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
