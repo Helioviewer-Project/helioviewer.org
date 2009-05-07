@@ -187,28 +187,17 @@
 
 			<!-- Right Column -->
 			<div id="right-col">
-				<div id="right-col-header">
-					<span id="loading" style="display: none">Loading...</span>
-				</div>
-
-				<!-- Recent Updates -->
-				<div class='notes ui-widget ui-widget-content ui-corner-all'>
-					<strong style="text-decoration: underline; font-size:130%; margin-bottom:10px; ">Recent Updates</strong><br><br>
-                    <strong>> 04/17/2009</strong><p>Added support for all 2003 LASCO, EIT, subset of MDI data.</p><br><br>
-                    <strong>> 04/17/2009</strong><p>Improved performance.</p><br><br>
-                    <strong>> 04/17/2009</strong><p>Added fullscreen view support.</p><br><br>
-                    <strong>> 04/17/2009</strong><p>New look and feel.</p><br><br>
-				</div>
+				<div id="right-col-header"></div>
 			</div>
 
 			<!-- Middle Column -->
 			<div id="middle-col">
 				<div id="middle-col-header">
 					<div style="position: absolute; min-width:550px; top:14px;">
-
 						<!-- Message Console -->
 						<span id="message-console-spacer" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
 					</div>
+                    <div id="loading" style="display: none">Loading...</div>
 				</div>
 				<!-- End middle-col-header -->
 

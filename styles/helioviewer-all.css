@@ -24,7 +24,7 @@ input, select {background-color:#F4F4F4;}
 /* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
 #outsideBox {
   margin-left   : 280px;
-  margin-right  : 250px;
+  margin-right  : 20px; /* (1) margin-right  : 250px;*/
   margin-bottom :-72px;
   min-height    : 100%;
 }
@@ -44,9 +44,9 @@ input, select {background-color:#F4F4F4;}
 
 #right-col {
     position:relative;/*ie needs this to show float */
-    width:250px;
+    width:20px; /* (2) width:250px;*/
     float:right;
-    margin-right:-249px;/*must be 1px less than width otherwise won't push footer down */
+    margin-right: -19px; /* (3) margin-right:-249px;*//*must be 1px less than width otherwise won't push footer down */
     left:1px;
     color: #000;
 }
@@ -67,7 +67,7 @@ input, select {background-color:#F4F4F4;}
 * > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
 
 /* Loading Indicator */
-#loading {padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
+#loading {position: absolute; right: 35px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 
 /* Observation controls */
 #observation-controls {
