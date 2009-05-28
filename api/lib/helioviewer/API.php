@@ -369,7 +369,7 @@ class API {
     private function _launchJHelioviewer () {
         require_once('lib/helioviewer/JHV.php');
         $jhv = new JHV();
-        $jhv->launch();
+        $jhv->launch($this->params["files"]);
     }
 
     /**

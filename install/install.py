@@ -16,6 +16,8 @@ def main():
 	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
 	cursor = db.cursor()
 
+	# Exiftool location
+
 	if(len(images) > 0):
 		processJPEG2000Images(images, cursor)
 
@@ -62,8 +64,7 @@ def processJPEG2000Images (images, cursor):
 		date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(secs))
 
 		# insert into database
-		query = "INSERT INTO image VALUES('%s', %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (
-			uri,
+		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
 			measurementIds[meta["det"] + meta["meas"]],
 			date,
 			meta["centering"],
@@ -76,7 +77,8 @@ def processJPEG2000Images (images, cursor):
 			meta["radius"],
 			meta["width"],
 			meta["height"],
-			meta["opacityGrp"])
+			meta["opacityGrp"],
+			uri)
 		print query
 
 		try:

@@ -23,7 +23,7 @@ class Config {
 	
 	// Database
 	const DB_HOST            = 'localhost';
-	const DB_NAME            = 'hv2';
+	const DB_NAME            = 'hv';
 	const DB_USER            = 'helioviewer';
 	const DB_PASS            = 'helioviewer';
 	

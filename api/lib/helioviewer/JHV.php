@@ -7,7 +7,7 @@ class JHV {
 		
 	}
 	
-	public function launch() {
+	public function launch($files) {
 		header('content-type: application/x-java-jnlp-file');
 		header('content-disposition: attachment; filename="JHelioviewer.jnlp"'); 
 		echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
@@ -31,6 +31,7 @@ class JHV {
 	</security> 
 	
 	<application-desc main-class="org.helioviewer.JavaHelioViewer">
+	    <argument><?php echo $files;?></argument>
 	</application-desc>
 </jnlp>
 
