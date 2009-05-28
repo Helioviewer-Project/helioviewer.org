@@ -19,8 +19,6 @@ class ImageSeries {
 	private $endTime;
 	private $timeStep;
 	private $db;
-	private $tmpdir = "/var/www/hv/tmp/";
-	private $tmpurl = "http://localhost/hv/tmp/";
 	private $baseScale = 2.63;
 	private $baseZoom  = 10;
 	private $tileSize  = 512;
@@ -83,8 +81,8 @@ class ImageSeries {
 		// Make a temporary directory
 		$now = time();
 		$movieName = "Helioviewer-Quick-Movie-" . $this->startTime;
-		$tmpdir = $this->tmpdir . $now . "/";
-		$tmpurl = $this->tmpurl . $now . "/" . "$movieName." . $this->filetype;
+		$tmpdir = Config::TMP_ROOT_DIR . "/$now/";
+		$tmpurl = Config::TMP_ROOT_URL . "/$now/$movieName." . $this->filetype;
 		mkdir($tmpdir);
 		
 		// Create an array of the timestamps to use for each layer

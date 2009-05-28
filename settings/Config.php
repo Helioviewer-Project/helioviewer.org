@@ -10,8 +10,8 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/05/07';
-	const BUILD_NUM          = 228;
+	const LAST_UPDATE		 = '2009/05/27';
+	const BUILD_NUM          = 229;
 	
 	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -23,7 +23,7 @@ class Config {
 	
 	// Database
 	const DB_HOST            = 'localhost';
-	const DB_NAME            = 'hv';
+	const DB_NAME            = 'hv2';
 	const DB_USER            = 'helioviewer';
 	const DB_PASS            = 'helioviewer';
 	
@@ -31,7 +31,7 @@ class Config {
 	const WEB_ROOT_DIR       = '/var/www/hv';
 	const TMP_ROOT_DIR       = '/var/www/hv/tmp';
 	const CACHE_DIR          = '/var/www/hv/cache/';
-	const JP2_DIR            = '/var/www/hv/jp2/';
+	const JP2_DIR            = '/var/www/hv/jp2/v20090511/';
 	const KDU_LIBS_DIR       = '/usr/lib/kakadu/';
 	const EMPTY_TILE         = 'images/transparent_512.png';
 	
@@ -56,7 +56,7 @@ class Config {
 	
 	// Movie Parameters
 	const MAX_MOVIE_FRAMES   = 150;
-
+    
 	// Image parameters
 	const PNG_COMPRESSION_QUALITY  = 20;
 	const JPEG_COMPRESSION_QUALITY = 75;
@@ -67,9 +67,6 @@ class Config {
 	// Image scale computation
 	const BASE_ZOOM_LEVEL          = 10;
 	const BASE_IMAGE_SCALE         = 2.63;
-
-	// Apache IMagick Module
-	const MOD_IMAGICK_ENABLED = false;
 	
 	// Debugging
 	const ENABLE_CACHE = true;

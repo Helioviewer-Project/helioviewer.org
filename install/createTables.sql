@@ -161,4 +161,3 @@ CREATE TABLE  `image` (
   `uri`          varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
-

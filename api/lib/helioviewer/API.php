@@ -40,7 +40,7 @@ class API {
      */
     private function _getTile () {
         require_once("Tile.php");
-        $tile = new Tile($this->params['imageId'], $this->params['zoom'], $this->params['x'], $this->params['y'], $this->params['ts']);
+        $tile = new Tile($this->params['uri'], $this->params['zoom'], $this->params['x'], $this->params['y'], $this->params['ts']);
 
         return 1;
     }
@@ -167,25 +167,32 @@ class API {
         require('lib/helioviewer/ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
 
+        // find the closest image
         $queryForField = 'abbreviation';
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
             $src["$field.$queryForField"] = $this->params[$field];
         }
 
-        $filepath = $imgIndex->getJP2Location($this->params['timestamp'], $src);
-        $exploded = explode("/", $filepath);
-        $filename = end($exploded);
+        // file name and location
+        $filename = $imgIndex->getJP2Location($this->params['timestamp'], $src);
+        $filepath = $this->getFilepath($filename);
 
+        // regex for URL construction
         $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
         
+        // http url
         if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
             $url = preg_replace($webRootRegex, Config::WEB_ROOT_URL, $filepath);
             echo $url;
         }
+        
+        // jpip url
         else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
             $jpip = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $filepath), 4);
             echo $jpip;
         }
+        
+        // jp2 image
         else {
             $fp = fopen($filepath, 'r');
 
@@ -237,7 +244,7 @@ class API {
 
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
-            $jp2 = $imgIndex->getJP2Location($time, $src);
+            $jp2 = $this->getFilepath($imgIndex->getJP2Location($time, $src));
             //$url = preg_replace($this->web_root_url_regex, $this->web_root_dir, $url);
             array_push($images, $jp2);
             $time += $cadence;
@@ -292,52 +299,14 @@ class API {
     }
     
     /**
-     * Retrieves the ID for a single JP2
-     * @return 
-     */
-    private function _getJP2Id () {
-        if (isset($this->params['server']) && ($this->params['server'] == "backup")) {
-            $obs  = $this->params['observatory'];
-            $inst = $this->params['instrument'];
-            $det  = $this->params['detector'];
-            $meas = $this->params['measurement'];
-            $ts   = $this->params['timestamp'];
-            
-            $url =  Config::BACKUP_API . "?action=getJP2Id&observatory=$obs&instrument=$inst&detector=$det&measurement=$meas&timestamp=$ts";
-            
-            header('Content-Type: application/json');
-            echo file_get_contents($url);
-        }
-        else {
-            require_once('lib/helioviewer/ImgIndex.php');
-            $imgIndex = new ImgIndex(new DbConnection());
-
-            $queryForField = 'abbreviation';
-            foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-                $src["$field.$queryForField"] = $this->params[$field];
-            }
-            $id = $imgIndex->getJP2Id($this->params['timestamp'], $src);
-            echo json_encode(array('id' => $id));
-        }
-
-        return 1;
-    }
-
-    /**
      * @return int Returns "1" if the action was completed successfully.
      * NOTE: Add option to specify XML vs. JSON... FITS vs. Entire header?
      */
     private function _getJP2Header () {
-        $id = $this->params["imageId"];
-
-        $db  = new DbConnection();
-        $sql = sprintf("SELECT uri FROM image WHERE id=%s;", mysqli_real_escape_string($db->link, $id));
-
-        $row = mysqli_fetch_array($db->query($sql), MYSQL_ASSOC);
-        $url = $row['uri'];
+        $filepath = $this->getFilepath($this->params["uri"]);
 
         // Query header information using Exiftool
-        $cmd = Config::EXIF_TOOL . " $url | grep Fits";
+        $cmd = Config::EXIF_TOOL . " $filepath | grep Fits";
         exec($cmd, $out, $ret);
 
         $fits = array();
@@ -585,6 +554,21 @@ class API {
         echo json_encode($options);
         return 1;
     }
+    
+    /**
+     * @return string filepath to the specified jpeg 2000 image
+     * 
+     * Given a jp2 uri, builds a complete filepath to the image
+     */
+    public static function getFilepath ($uri) {
+        $exploded = explode("_", substr($uri, 0, -4));
+        
+        // remove time portion
+        array_splice($exploded, 3, 1);
+        
+        // recombine to construct filepath
+        return Config::JP2_DIR . implode("/", $exploded) . "/$uri";
+    }
 
     /**
      * @return bool Input validity.
@@ -618,7 +602,7 @@ class API {
                     return false;                
                 break;
             case "getJP2Header":
-                if (!isset($this->params["imageId"]) or !is_numeric($this->params["imageId"]))
+                if (!isset($this->params["uri"]))
                     return false;
                 break;
             case "getEventCatalogs":
@@ -628,8 +612,6 @@ class API {
             case "getLayerAvailability":
                 break;
             case "getJP2Image":
-                break;
-            case "getJP2Id":
                 break;
             case "getJP2ImageSeries":
                 break;

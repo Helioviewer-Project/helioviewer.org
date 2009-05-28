@@ -13,7 +13,7 @@ class ImgIndex {
 	}
 
 	public function getClosestImage($obsTime, $src) {
-		$query = sprintf("SELECT image.id AS imageId, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
+		$query = sprintf("SELECT image.uri AS uri, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
 							measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
@@ -73,35 +73,5 @@ class ImgIndex {
         
         return $result_array["url"];
 	}
-    
-    /**
-     * getJP2Id
-     * @return string $id
-     * @param object $obsTime
-     * @param object $src
-     */
-    public function getJP2Id ($obsTime, $src) {
-        $query = sprintf("SELECT image.id as id, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs
-						FROM image
-						LEFT JOIN measurement on measurementId = measurement.id
-						LEFT JOIN detector on detectorId = detector.id
-						LEFT JOIN instrument on instrumentId = instrument.id
-						LEFT JOIN observatory on observatoryId = observatory.id
-				  WHERE ", $obsTime);
-
-		// Layer-settings
-		$i=0;
-		foreach($src as $key => $value) {
-			if ($i>0) $query .= " AND";
-			$query .= sprintf(" $key='%s'", mysqli_real_escape_string($this->dbConnection->link, $value));
-			$i++;
-		}
-		$query .= " ORDER BY timediffAbs LIMIT 0,1";
-
-		$result = $this->dbConnection->query($query);
-		$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
-
-        return $result_array["id"];
-    }
 }
 ?>

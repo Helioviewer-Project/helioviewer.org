@@ -7,8 +7,8 @@
 class Config {
     
   	// Version Information
-	const LAST_UPDATE		 = '2009/05/07';
-	const BUILD_NUM          = 228;
+	const LAST_UPDATE		 = '2009/05/27';
+	const BUILD_NUM          = 229;
     
    	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -64,9 +64,6 @@ class Config {
 	// Image scale computation
 	const BASE_ZOOM_LEVEL          = 10;
 	const BASE_IMAGE_SCALE         = 2.63;
-
-	// Apache IMagick Module
-	const MOD_IMAGICK_ENABLED = false;
 
 	// Debugging
 	const ENABLE_CACHE = true;

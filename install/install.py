@@ -42,7 +42,7 @@ def processJPEG2000Images (images, cursor):
 	measurementIds = getMeasurementIds(cursor)
 
 	for img in images:
-		#dir, file = os.path.split(img)
+		path, uri = os.path.split(img)
 		meta = extractJP2MetaInfo(img)
 
 		# Format date (> Python 2.5 Method)
@@ -62,7 +62,8 @@ def processJPEG2000Images (images, cursor):
 		date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(secs))
 
 		# insert into database
-		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
+		query = "INSERT INTO image VALUES('%s', %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (
+			uri,
 			measurementIds[meta["det"] + meta["meas"]],
 			date,
 			meta["centering"],
@@ -75,8 +76,7 @@ def processJPEG2000Images (images, cursor):
 			meta["radius"],
 			meta["width"],
 			meta["height"],
-			meta["opacityGrp"],
-			img)
+			meta["opacityGrp"])
 		print query
 
 		try:
@@ -140,29 +140,13 @@ def getMeasurementIds(cursor):
 
 	return measurements
 
-def getStartingId(cursor):
-	''' Returns the highest Id number found in the database before any new
-		images are added. The id numbers can then start at the next highest
-		number. This makes it easier to keep track of the image id when
-		adding the tiles to the database later.'''
-
-	query = "SELECT id FROM image ORDER BY id  DESC LIMIT 1"
-
-	try:
-		cursor.execute(query)
-		result = cursor.fetchone()
-	except MySQLdb.Error, e:
-		print "Error: " + e.args[1]
-
-	return (int(result[0]) + 1) if result else 0
-
 def printGreeting():
 	''' Prints a greeting to the user'''
 	os.system("clear")
 
 	print "===================================================================="
-	print "= Helioviewer Database Population Script 0.96b                     ="
-	print "= By: Keith Hughitt, November 07 2008                              ="
+	print "= Helioviewer Database Population Script 0.97                      ="
+	print "= Last updated: 2009/05/26                                         ="
 	print "=                                                                  ="
 	print "= This script processes JP2 images, extracts their associated      ="
 	print "= meta-information and stores it away in a database. Currently,    ="
@@ -176,10 +160,6 @@ def printGreeting():
 	print "=   (2) The name of the database schema to populate.               ="
 	print "=   (3) The name of the database user with appropriate access.     ="
 	print "=   (4) The password for the specified database user.              ="
-	print "=                                                                  ="
-	print "= Additionally, ExifTool is required to function. It can be        ="
-	print "= downloaded from:                                                 ="
-	print "=   http://www.sno.phy.queensu.ca/~phil/exiftool/                  ="
 	print "===================================================================="
 
 def getFilePath():
