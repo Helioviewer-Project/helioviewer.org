@@ -6,11 +6,10 @@
  *       from the database. To get from a javascript Date object to a Unix timestamp, simply
  *       use "date.getTime() * 1000." (getTime returns the number of miliseconds)
  */
-require('CompositeImage.php');
-require('DbConnection.php');
+require_once('CompositeImage.php');
+require_once('DbConnection.php');
 require_once('lib/phpvideotoolkit/config.php');
 require_once('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
-
 
 class ImageSeries {
 	private $images = array();

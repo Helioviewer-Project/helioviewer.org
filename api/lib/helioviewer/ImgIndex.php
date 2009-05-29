@@ -13,7 +13,7 @@ class ImgIndex {
 	}
 
 	public function getClosestImage($obsTime, $src) {
-		$query = sprintf("SELECT image.uri AS uri, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
+		$query = sprintf("SELECT image.id as mysqlId, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
 							measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
 							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
 							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
@@ -42,15 +42,20 @@ class ImgIndex {
 
 		$query .= " ORDER BY timediffAbs LIMIT 0,1";
 		
-        //echo "<br><br>$query<br><br>";
+        //echo "$query<br><br>";
         //exit();
 
 		$result = $this->dbConnection->query($query);
-		return mysqli_fetch_array($result, MYSQL_ASSOC);
+        $im = mysqli_fetch_array($result, MYSQL_ASSOC);
+        
+        // get uri
+        $im["uri"] = $this->idToURI($im["mysqlId"]);
+
+		return $im;
 	}
 
     /**
-     * getJP2Location
+     * getJP2Filename
      * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
      * @return string $url
      * @param object $obsTime
@@ -62,16 +67,55 @@ class ImgIndex {
      * is saved.
      * 
      */
-	public function getJP2Location($obsTime, $src) {
+	public function getJP2Filename($obsTime, $src) {
 		// Find ID of JP2
         $id = $this->getJP2Id($obsTime, $src);
         
         // Use ID to find the JP2 URL
-        $query = "SELECT uri as url FROM image WHERE id=$id";
-        $result = $this->dbConnection->query($query);
-		$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
-        
-        return $result_array["url"];
+        return $this->idToURI($id);
 	}
+    
+     /**
+     * getJP2Id
+     * @return string $id
+     * @param object $obsTime
+     * @param object $src
+     */
+    public function getJP2Id ($obsTime, $src) {
+        $query = sprintf("SELECT image.id as id, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs
+    					FROM image
+    					LEFT JOIN measurement on measurementId = measurement.id
+    					LEFT JOIN detector on detectorId = detector.id
+    					LEFT JOIN instrument on instrumentId = instrument.id
+    					LEFT JOIN observatory on observatoryId = observatory.id
+    			  WHERE ", $obsTime);
+    
+    	// Layer-settings
+    	$i=0;
+    	foreach($src as $key => $value) {
+    		if ($i>0) $query .= " AND";
+    		$query .= sprintf(" $key='%s'", mysqli_real_escape_string($this->dbConnection->link, $value));
+    		$i++;
+    	}
+    	$query .= " ORDER BY timediffAbs LIMIT 0,1";
+    
+    	$result = $this->dbConnection->query($query);
+    	$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+    
+        return $result_array["id"];
+    }
+    
+    /**
+     * idToURI
+     * @return 
+     * @param object $id
+     */
+    private function idToURI ($id) {
+        $query = "SELECT uri FROM image WHERE id = $id";
+        $result = $this->dbConnection->query($query);
+    	$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+    
+        return $result_array["uri"];
+    }
 }
 ?>

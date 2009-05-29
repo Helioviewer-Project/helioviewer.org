@@ -3,21 +3,23 @@
  * JHV - JHelioviewer Launcher
  */
 class JHV {
-	public function __construct() {
-		
+    private $files;
+    
+	public function __construct($files=Null) {
+	    $this->files = $files;		
 	}
 	
-	public function launch($files) {
+	public function launch() {
 		header('content-type: application/x-java-jnlp-file');
 		header('content-disposition: attachment; filename="JHelioviewer.jnlp"'); 
 		echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 ?>
-<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~wamsler/" href="JHelioviewer.jnlp">
+<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/" href="JHelioviewer.jnlp">
 	<information>    
-		<title>ESA JHelioviewer Demo</title>   
-		<vendor>Wamsler Benjamin</vendor>   
-		<homepage href="http://achilles.nascom.nasa.gov/~wamsler/index.html" />
-		<description>An ESA Webstart Test</description>   
+		<title>JHelioviewer</title>   
+		<vendor>ESA</vendor>   
+		<homepage href="http://achilles.nascom.nasa.gov/~dmueller/" />
+		<description>JHelioviewer web launcher</description>   
 		<offline-allowed />  
 	</information> 
 	
@@ -31,7 +33,10 @@ class JHV {
 	</security> 
 	
 	<application-desc main-class="org.helioviewer.JavaHelioViewer">
-	    <argument><?php echo $files;?></argument>
+<?php if (isset($this->files)) {
+    echo "        <argument>$this->files</argument>\n";
+}
+?>
 	</application-desc>
 </jnlp>
 

@@ -2,6 +2,8 @@
 /**
  * @package Helioviewer API
  * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ *
+ * TODO: Move JP2 Image Series functionality to ImageSeries class
  */
 /**
  * @package Helioviewer API
@@ -168,13 +170,12 @@ class API {
         $imgIndex = new ImgIndex(new DbConnection());
 
         // find the closest image
-        $queryForField = 'abbreviation';
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-            $src["$field.$queryForField"] = $this->params[$field];
+            $src["$field.abbreviation"] = $this->params[$field];
         }
 
         // file name and location
-        $filename = $imgIndex->getJP2Location($this->params['timestamp'], $src);
+        $filename = $imgIndex->getJP2Filename($this->params['timestamp'], $src);
         $filepath = $this->getFilepath($filename);
 
         // regex for URL construction
@@ -203,7 +204,7 @@ class API {
             $contents = fread($fp, filesize($filepath));
 
             echo $contents;
-             fclose($fp);
+            fclose($fp);
         }
 
         return 1;
@@ -211,15 +212,68 @@ class API {
 
     /**
      * @return int Returns "1" if the action was completed successfully.
+     * 
+     *  Converting timestamp to a PHP DateTime:
+     *     $dt = new DateTime("@$startTime");
+     *     echo $dt->format("U");
+     *     date_add($dt, new DateInterval("T" . $cadence . "S"));
+     *  (See http://us2.php.net/manual/en/function.date-create.php)
      */
     private function _getJP2ImageSeries () {
-        require_once('ImgIndex.php');
-        //date_default_timezone_set('UTC');
+        $startTime   = $this->params['startTime'];
+        $endTime     = $this->params['endTime'];
+        $cadence     = $this->params['cadence'];
+        $format      = $this->params['format'];
         
-        $startTime = $this->params['startTime'];
-        $endTime   = $this->params['endTime'];
-        $cadence   = $this->params['cadence'];
-        $format    = $this->params['format'];
+        $observatory = $this->params['observatory'];
+        $instrument  = $this->params['instrument'];
+        $detector    = $this->params['detector'];
+        $measurement = $this->params['measurement'];
+
+        // Create a temporary directory to store image-series (TODO: Move this + other directory creation to installation script)
+        $tmpdir = Config::TMP_ROOT_DIR . "/movies/";
+        if (!file_exists($tmpdir)) {
+            mkdir($tmpdir);
+            chmod($tmpdir, 0777);
+        }
+
+        // Filename
+        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence")) . "." . strtolower($format);
+        
+        // Filepath
+        $filepath = "$tmpdir" . $filename;
+
+        // URL
+        $url = Config::TMP_ROOT_URL . "/movies/" . $filename;
+
+        // If the file doesn't exist already, create it
+        if (!file_exists($filepath)) {
+            $this->buildJP2ImageSeries($filepath);
+        }
+
+        // Output the file/jpip URL
+        if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
+            $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
+            $mj2 = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $url), 4);
+            echo $mj2;
+        } else {
+            echo $url;
+        }
+        return 1;
+    }
+    
+    /**
+     * @param string The filename to use
+     * Constructs a JPX/MJ2 image series
+     */
+    private function buildJP2ImageSeries ($output_file) {
+        //date_default_timezone_set('UTC');
+        require_once('ImgIndex.php');
+        
+        $startTime   = $this->params['startTime'];
+        $endTime     = $this->params['endTime'];
+        $cadence     = $this->params['cadence'];
+        $format      = $this->params['format'];
 
         // Layer information
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
@@ -232,20 +286,15 @@ class API {
         // Determine number of frames to grab
         $timeInSecs = $endTime - $startTime;
         $numFrames  = min(Config::MAX_MOVIE_FRAMES, ceil($timeInSecs / $cadence));
-
-        // Convert timestamp to a PHP DateTime (See http://us2.php.net/manual/en/function.date-create.php)
-        //$dt = new DateTime("@$startTime");
-        //echo $dt->format("U");
-        //date_add($dt, new DateInterval("T" . $cadence . "S"));
-
+        
+        // Timer
         $time = $startTime;
 
         $images = array();
 
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
-            $jp2 = $this->getFilepath($imgIndex->getJP2Location($time, $src));
-            //$url = preg_replace($this->web_root_url_regex, $this->web_root_dir, $url);
+            $jp2 = $this->getFilepath($imgIndex->getJP2Filename($time, $src));
             array_push($images, $jp2);
             $time += $cadence;
         }
@@ -259,43 +308,15 @@ class API {
         // Drop trailing comma
         $cmd = substr($cmd, 0, -1);
 
-        // Create a temporary directory to store image-series
-        $now = time();
-        $tmpdir = Config::TMP_ROOT_DIR . "/jp2-image-series/";
-        if (!file_exists($tmpdir)) {
-            mkdir($tmpdir);
-            chmod($tmpdir, 0777);
-        }
-
-        $tmpdir .= "/$now/";
-        if (!file_exists($tmpdir)) {
-            mkdir($tmpdir);
-            chmod($tmpdir, 0777);
-        }
-
-        $filename = "jhv_image_series." . strtolower($format);
-        $tmpurl = Config::TMP_ROOT_URL . "/jp2-image-series/$now/" . $filename;
-        $output_file = "$tmpdir" . $filename;
-
         $cmd .= " -o $output_file";
-
-        // MJ2
+    
+        // MJ2 Creation
         if ($format == "MJ2")
             $cmd .= " -mj2_tracks P:0-@25";
-
+    
         // Execute kdu_merge command
         exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
 
-        //echo $cmd;
-
-        if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
-            $mj2 = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $tmpurl), 4);
-            echo $mj2;
-        } else {
-            echo $tmpurl;
-        }
-        return 1;
     }
     
     /**
@@ -368,8 +389,12 @@ class API {
      */
     private function _launchJHelioviewer () {
         require_once('lib/helioviewer/JHV.php');
-        $jhv = new JHV();
-        $jhv->launch($this->params["files"]);
+        if ((isset($this->params['files'])) && ($this->params['files'] != "")) {
+            $jhv = new JHV($this->params['files']);
+        } else {
+            $jhv = new JHV();
+        }
+        $jhv->launch();
     }
 
     /**
@@ -403,9 +428,9 @@ class API {
                 throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
             }
 
-            //Limit number of frames to 100
+            //Limit number of frames
             if (($numFrames < 10) || ($numFrames > Config::MAX_MOVIE_FRAMES)) {
-                throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than $maxFrames.");
+                throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
 
             $imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options);
@@ -616,6 +641,8 @@ class API {
             case "getJP2ImageSeries":
                 break;
             case "launchJHelioviewer":
+                break;
+            case "buildQuickMovie":
                 break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        
