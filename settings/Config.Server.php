@@ -40,7 +40,8 @@ class Config {
     
     // Tiling Servers
     const TILE_SERVER_1       = 'api/index.php';
-    const TILE_SERVER_2       = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
+    const TILE_SERVER_1       = 'api/index.php';
+    //const TILE_SERVER_2       = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
 
     // Backup API
     const BACKUP_ENABLED     = false;

@@ -38,12 +38,13 @@ class Config {
 	// URL's
 	const WEB_ROOT_URL       = 'http://localhost/hv';
 	const TMP_ROOT_URL       = 'http://localhost/hv/tmp';
-	const EVENT_SERVER_URL   = 'http://localhost:8080/Dispatcher/resources/eventCatalogs?';
+	const EVENT_SERVER_URL   = 'http://achilles.nascom.nasa.gov/~wamsler/API/index.php?';
 	const API_BASE_URL       = 'api/index.php';
 	
     // Tiling Servers
     const TILE_SERVER_1       = 'api/index.php';
-    const TILE_SERVER_2       = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
+    const TILE_SERVER_1       = 'api/index.php';
+    //const TILE_SERVER_2       = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
     
     // Backup API
     const BACKUP_ENABLED     = false;
