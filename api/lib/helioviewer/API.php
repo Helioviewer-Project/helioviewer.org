@@ -298,6 +298,9 @@ class API {
             array_push($images, $jp2);
             $time += $cadence;
         }
+        
+        // Remove redundant entries
+        $images = array_unique($images);
 
         // Append filepaths to kdu_merge command
         $cmd = Config::KDU_MERGE_BIN . " -i ";
@@ -538,38 +541,12 @@ class API {
             }
         }
 
-        /**
-         *
-         * @return Array Allowed values for given field
-         * @param $db Object MySQL Database connection
-         * @param $f1 String Field Objectof interest
-         * @param $f2 String Limiting field
-         * @param $limit String Limiting field value
-         *
-         * Queries one field based on a limit in another. Performs queries of the sort
-         * "Give me all instruments where observatory equals SOHO."
-         */
-        function queryField($db, $format, $f1, $f2, $f1_value) {
-            $values = array();
-            $query = "SELECT $f2.name, $f2.abbreviation from $f2 INNER JOIN $f1 ON $f1.id = $f2.$f1" . "Id" . " WHERE $f1.abbreviation = '$f1_value';";
-
-            if ($format === "plaintext")
-                echo "<strong>query:</strong><br>$query<br><br>";
-
-            $result = $db->query($query);
-            while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
-                array_push($values, $row);
-            }
-
-            return $values;
-        }
-
         // Determine appropriate options to display given the current combination of layer parameters
         $options = array(
             "observatories" => array(array("name" => "SOHO", "abbreviation" => "SOH")),
-            "instruments" =>   queryField($dbConnection, $this->format, "observatory", "instrument", $obs),
-            "detectors" =>     queryField($dbConnection, $this->format, "instrument", "detector", $inst),
-            "measurements" =>  queryField($dbConnection, $this->format, "detector", "measurement", $det)
+            "instruments" =>   $this->getValidChoices($dbConnection, "observatory", "instrument", $obs),
+            "detectors" =>     $this->getValidChoices($dbConnection, "instrument", "detector", $inst),
+            "measurements" =>  $this->getValidChoices($dbConnection, "detector", "measurement", $det)
         );
 
         //Output results
@@ -578,6 +555,32 @@ class API {
 
         echo json_encode($options);
         return 1;
+    }
+    
+     /**
+     *
+     * @return Array Allowed values for given field
+     * @param $db Object MySQL Database connection
+     * @param $f1 String Field Objectof interest
+     * @param $f2 String Limiting field
+     * @param $limit String Limiting field value
+     *
+     * Queries one field based on a limit in another. Performs queries of the sort
+     * "Give me all instruments where observatory equals SOHO."
+     */
+    private function getValidChoices ($db, $f1, $f2, $f1_value) {
+        $values = array();
+        $query = "SELECT $f2.name, $f2.abbreviation from $f2 INNER JOIN $f1 ON $f1.id = $f2.$f1" . "Id" . " WHERE $f1.abbreviation = '$f1_value';";
+
+        if ($this->format === "plaintext")
+            echo "<strong>query:</strong><br>$query<br><br>";
+
+        $result = $db->query($query);
+        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+            array_push($values, $row);
+        }
+
+        return $values;
     }
     
     /**

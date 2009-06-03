@@ -7,8 +7,8 @@
 class Config {
     
   	// Version Information
-	const LAST_UPDATE		 = '2009/05/27';
-	const BUILD_NUM          = 229;
+	const LAST_UPDATE		 = '2009/06/03';
+	const BUILD_NUM          = 233;
     
    	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
@@ -39,9 +39,9 @@ class Config {
    	const API_BASE_URL       = 'api/index.php';
     
     // Tiling Servers
-    const TILE_SERVER_1       = 'api/index.php';
-    const TILE_SERVER_1       = 'api/index.php';
-    //const TILE_SERVER_2       = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
+    const DISTRIBUTED_TILING_ENABLED  = false;
+    const TILE_SERVER_1               = 'api/index.php';
+    const TILE_SERVER_2               = 'http://delphi.nascom.nasa.gov/helioviewer/api/index.php';
 
     // Backup API
     const BACKUP_ENABLED     = false;

@@ -129,7 +129,8 @@
                         'tileServer1'       => Config::TILE_SERVER_1,
                         'tileServer2'       => Config::TILE_SERVER_2,
                         'backupAPI'         => Config::BACKUP_API,
-                        'backupEnabled'     => Config::BACKUP_ENABLED
+                        'backupEnabled'     => Config::BACKUP_ENABLED,
+                        'distributed'       => Config::DISTRIBUTED_TILING_ENABLED
 					);
                     echo "var defaults = " . json_encode($settings) . ";\n";
                     echo "\t\t\t\t";
