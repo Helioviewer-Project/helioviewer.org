@@ -4,9 +4,7 @@
 --
 -- Create schema & user
 --
-CREATE DATABASE IF NOT EXISTS hv;
-GRANT ALL ON hv.* TO 'helioviewer'@'localhost' IDENTIFIED BY 'helioviewer';
-USE hv;
+USE helioviewer;
 
 --
 -- Create tables

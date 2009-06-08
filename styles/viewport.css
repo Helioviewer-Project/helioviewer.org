@@ -48,3 +48,13 @@
     right: 0px;
     cursor: pointer;
 }
+
+#movie-button {
+	position:absolute;
+	background: transparent url(../images/blackGlass/transparentBG50.png) repeat scroll 0 0;
+	border-bottom: 1px solid black;
+	border-left: 1px solid black;
+	top: 0px;
+	right: 0px;
+	cursor: pointer;
+}

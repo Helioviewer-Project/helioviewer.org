@@ -403,14 +403,15 @@ class API {
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
-    private function _buildQuickMovie () {
+    private function _buildMovie () {
         require_once('ImageSeries.php');
-        
+       
         // Required parameters
         $startDate = $this->params['startDate'];
         $zoomLevel = $this->params['zoomLevel'];
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
+		$timeStep = $this->params['timeStep'];
         
         $xRange    = $this->params['xRange'];
         $yRange    = $this->params['yRange'];
@@ -436,8 +437,9 @@ class API {
                 throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
 
-            $imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options);
-            $imgSeries->quickMovie();
+		// Can you just pass imgSeries the $_GET or $_POST array?
+            $imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options, $timeStep);
+            $imgSeries->buildMovie();
 
         } catch(Exception $e) {
             echo 'Error: ' .$e->getMessage();
@@ -645,7 +647,7 @@ class API {
                 break;
             case "launchJHelioviewer":
                 break;
-            case "buildQuickMovie":
+            case "buildMovie":
                 break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        

@@ -20,46 +20,32 @@ class CompositeImage {
 		$this->options    = $options;
 
 		$images = array();
-//		$filepath = $this->getFilepath($image['uri']);
-//		$filepath = Config::JP2_DIR . "2003/01/31/SOH/EIT/EIT/304/2003_01_31_011937_SOH_EIT_EIT_304.jp2";
-		$filepath = Config::TMP_ROOT_DIR . "/1/eit_final.jpg";
-		if(file_exists($filepath))
-			array_push($images, $filepath);
-		else
-			echo "Error: " . $filepath . "<br />";
-		$filepath2 = Config::TMP_ROOT_DIR . "/1/output.jpg";
-		if(file_exists($filepath2))
-			array_push($images, $filepath2);
-		else
-			echo "Error: " . $filepath2 . "<br />";
+
 		// Build separate images
-//		foreach($this->layers as $layer) {
-//		array_push($images, $this->buildImage($layer));
-//		}
+/*		foreach($this->layers as $layer) {
+			array_push($images, $this->buildImage($layer));
+		}
 
 		// Composite on top of one another
-//		if (sizeOf($this->layers) > 1) {
+		if (sizeOf($this->layers) > 1) {
 			$this->composite = $this->buildComposite($images);
-//		} 
+		} */
 		
 	// Only one layer for now. 
 //		else {
-//		$this->composite = $images[0];
-		echo $this->composite;
-		exit();
+			$this->composite = $images[0];
 //		}
 
 		//Optional settings
-/*		if ($this->options['enhanceEdges'] == "true")
+		if ($this->options['enhanceEdges'] == "true")
 			$this->composite->edgeImage(3);
 
 		if ($this->options['sharpen'] == "true")
 			$this->composite->adaptiveSharpenImage(2,1);
-*/
 	}
 	
-	private function buildImage($image) {
-		$filepath = $this->getFilepath($image['uri']);
+	private function buildImage($layer) {
+		$filepath = $this->getFilepath($layer);
 		
 		//echo "Filepath: $filepath<br>";
 		//exit();
@@ -70,12 +56,12 @@ class CompositeImage {
 		else
 			$ext = "jpg";
 
-		$img->setImageFormat($ext);
+		//$img->setImageFormat($ext);
 		// Set background to be transparent for LASCO
 		//if ($inst == "LAS")
 		//	$tiles->setBackgroundColor(new ImagickPixel("transparent"));
 
-		return $img;
+		//return $img;
 	}
 
 
@@ -113,7 +99,7 @@ class CompositeImage {
 	public function writeImage($filename) {
 		$this->composite->writeImage($filename);
 	}
- 
+	 
 	public function timestamps() {
 		return $this->timestamps;
 	}
@@ -130,8 +116,8 @@ class CompositeImage {
 	 * @name getFilepath
 	 * @description Builds a directory string for the given layer
 	 */
-	private function getFilepath($uri) {
-/*		$d    = getdate($layer->nextTime());
+	private function getFilepath($layer) {
+		$d    = getdate($layer->nextTime());
 		$obs  = $layer->observatory();
 		$inst = $layer->instrument();
 		$det  = $layer->detector();
@@ -143,14 +129,11 @@ class CompositeImage {
 		$hour = str_pad($d['hours'], 2 , "0", STR_PAD_LEFT);
 		$min  = str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
 		$sec  = str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
-*/
-		sscanf($uri, "%s_%s_%s_%s_%s_%s_%s_%s.jp2", $year, $month, $day, $time, $obs, $inst, $det, $meas);
-		$path = Config::JP2_DIR . implode("/", array($year, $month, $day));
-		$path .= "/$obs/$inst/$det/$meas/";
-		$path .= $uri;
-//		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
 
-		// echo $path;
+		$path = $this->rootDir . implode("/", array($year, $mon, $day));
+		$path .= "/$obs/$inst/$det/$meas/";
+		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
+
 		return $path;
 	}
 }

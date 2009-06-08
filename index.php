@@ -76,7 +76,7 @@
 		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
-		<!--<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>-->
+		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Helioviewer.js" type="text/javascript"></script>
@@ -184,6 +184,8 @@
 				<div id="tileLayerAccordion"></div>
 				<br><br>
 				<div id="eventAccordion"></div>
+				<br /><br />
+			
 			</div>
 
 			<!-- Right Column -->
@@ -246,7 +248,7 @@
         					<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
                         </div>
     				</div>
-			
+
 				<!-- Timeline -->
 				<!--
 				<div style="text-align: center;">
@@ -254,7 +256,10 @@
 				</div>
 				-->
 			</div>
-                
+				<!-- Movie button -->
+				<div id='movie-button' title=" Build Movie ">
+					<div class='ui-icon ui-icon-arrow-4-diag'></div>
+				</div>               
 			</div>
 			<div id="clearfooter"></div>
 		</div>
