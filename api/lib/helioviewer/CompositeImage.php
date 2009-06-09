@@ -4,6 +4,8 @@
  * Last modified May 29, 2009
  * by Keith Hughitt
  */
+require 'SubFieldImage.php';
+
 class CompositeImage {
 	private $layers;
 	private $composite;
@@ -18,20 +20,19 @@ class CompositeImage {
 		$this->xRange     = $xRange;
 		$this->yRange     = $yRange;
 		$this->options    = $options;
+		$this->tileSize	  = 512;
 
 		$images = array();
-//		$filepath = $this->getFilepath($image['uri']);
+		$filepath = $this->getFilepath($image['uri']);
 //		$filepath = Config::JP2_DIR . "2003/01/31/SOH/EIT/EIT/304/2003_01_31_011937_SOH_EIT_EIT_304.jp2";
-		$filepath = Config::TMP_ROOT_DIR . "/1/eit_final.jpg";
+//		$filepath = Config::TMP_ROOT_DIR . "/1/eit_final.jpg";
 		if(file_exists($filepath))
 			array_push($images, $filepath);
-		else
-			echo "Error: " . $filepath . "<br />";
-		$filepath2 = Config::TMP_ROOT_DIR . "/1/output.jpg";
-		if(file_exists($filepath2))
-			array_push($images, $filepath2);
-		else
-			echo "Error: " . $filepath2 . "<br />";
+		else {
+			echo "Error: " . $filepath . " does not exist. <br />";
+			exit();
+		}
+
 		// Build separate images
 //		foreach($this->layers as $layer) {
 //		array_push($images, $this->buildImage($layer));
@@ -39,14 +40,16 @@ class CompositeImage {
 
 		// Composite on top of one another
 //		if (sizeOf($this->layers) > 1) {
-			$this->composite = $this->buildComposite($images);
+//			$this->composite = $this->buildComposite($images);
 //		} 
 		
 	// Only one layer for now. 
 //		else {
 //		$this->composite = $images[0];
-		echo $this->composite;
-		exit();
+		$this->subFieldImage = new SubFieldImage($filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->tileSize, false);
+		
+		$this->composite = "hi";
+		echo "Composite: " . $this->composite . "<br />";
 //		}
 
 		//Optional settings
@@ -144,7 +147,18 @@ class CompositeImage {
 		$min  = str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
 		$sec  = str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
 */
-		sscanf($uri, "%s_%s_%s_%s_%s_%s_%s_%s.jp2", $year, $month, $day, $time, $obs, $inst, $det, $meas);
+		if(strlen($uri) != 37) {
+			echo "Error: supplied uri is not a valid image file path. <br />";
+			exit();
+		}
+		$year = substr($uri, 0, 4);
+		$month = substr($uri, 5, 2); 
+		$day = substr($uri, 8, 2);
+		$obs = substr($uri, 18, 3);
+		$inst = substr($uri, 22, 3);
+		$det = substr($uri, 26, 3);
+		$meas = substr($uri, 30, 3);
+//		sscanf($uri, "%s_%s_%s_%s_%s_%s_%s_%s.jp2", $year, $month, $day, $time, $obs, $inst, $det, $meas);
 		$path = Config::JP2_DIR . implode("/", array($year, $month, $day));
 		$path .= "/$obs/$inst/$det/$meas/";
 		$path .= $uri;

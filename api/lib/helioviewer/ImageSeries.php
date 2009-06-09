@@ -82,8 +82,7 @@ class ImageSeries
     public function buildMovie()
     {
         // Make a temporary directory to store the movie in.
- //       $now = time();
- 		$now = 1;
+        $now = time();
         $movieName = "Helioviewer-Movie-".$this->startTime;
         $tmpdir = Config::TMP_ROOT_DIR."/$now/";
         $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
@@ -123,7 +122,6 @@ class ImageSeries
          	$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $image);
           	$filename = $tmpdir.$frameNum.'.jpg';
            	$compImage->writeImage($filename);
-
             array_push($this->images, $filename);
 			$frameNum++;
 		}
