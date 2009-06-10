@@ -10,8 +10,14 @@ class CompositeImage {
 	private $layers;
 	private $composite;
 
-	/*
-	 * @constructor
+	/**
+	 * Constructor
+	 * @param object $layers an array of at least one layer name, such as SOHEITEIT304 (obs, inst, det, meas, no quotation marks)
+	 * @param object $zoomLevel a number between 8-15, default is 10.
+	 * @param object $xRange
+	 * @param object $yRange
+	 * @param object $options an array with ["edges"] => true/false, ["sharpen"] => true/false
+	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
 	 */
 	public function __construct($layers, $zoomLevel, $xRange, $yRange, $options, $image) {
 		date_default_timezone_set('UTC');
@@ -23,15 +29,11 @@ class CompositeImage {
 		$this->tileSize	  = 512;
 
 		$images = array();
-		$filepath = $this->getFilepath($image['uri']);
+
+		$jp2filepath = $this->getFilepath($image['uri']);
+
 //		$filepath = Config::JP2_DIR . "2003/01/31/SOH/EIT/EIT/304/2003_01_31_011937_SOH_EIT_EIT_304.jp2";
 //		$filepath = Config::TMP_ROOT_DIR . "/1/eit_final.jpg";
-		if(file_exists($filepath))
-			array_push($images, $filepath);
-		else {
-			echo "Error: " . $filepath . " does not exist. <br />";
-			exit();
-		}
 
 		// Build separate images
 //		foreach($this->layers as $layer) {
@@ -46,10 +48,28 @@ class CompositeImage {
 	// Only one layer for now. 
 //		else {
 //		$this->composite = $images[0];
-		$this->subFieldImage = new SubFieldImage($filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->tileSize, false);
-		
-		$this->composite = "hi";
-		echo "Composite: " . $this->composite . "<br />";
+
+		if(file_exists($jp2filepath))
+			$this->subFieldImage = new SubFieldImage($jp2filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->tileSize, false);
+		else {
+			echo "Error: JP2 image " . $jp2filepath . " does not exist. <br />";
+		}
+	
+		$filepath = $this->subFieldImage->getCacheFilepath();
+//		echo $filepath . " From CompositeImage->constructor<br />";
+
+		if(file_exists($filepath))
+			array_push($images, $filepath);
+		else {
+			echo "Error: cached imaged " . $filepath . " does not exist. <br />";
+			exit();
+		}
+
+//		$img = $this->buildImage($this->subFieldImage);
+//		echo $img;
+//		exit();		
+		// There is only one layer right now. Later, $this->composite will equal $this->compositeImages(...)		
+		$this->composite = $images[0];
 //		}
 
 		//Optional settings
@@ -62,23 +82,20 @@ class CompositeImage {
 	}
 	
 	private function buildImage($image) {
-		$filepath = $this->getFilepath($image['uri']);
+//		$filepath = $this->getFilepath($image['uri']);
 		
-		//echo "Filepath: $filepath<br>";
-		//exit();
-
 		// File extension
-		if ($layer->instrument() == "LAS")
+//		if ($layer->instrument() == "LAS")
 			$ext = "png";
-		else
-			$ext = "jpg";
+//		else
+//			$ext = "jpg";
 
-		$img->setImageFormat($ext);
+		$image->setImageFormat($ext);
 		// Set background to be transparent for LASCO
 		//if ($inst == "LAS")
 		//	$tiles->setBackgroundColor(new ImagickPixel("transparent"));
 
-		return $img;
+		return $image;
 	}
 
 
@@ -151,6 +168,7 @@ class CompositeImage {
 			echo "Error: supplied uri is not a valid image file path. <br />";
 			exit();
 		}
+		
 		$year = substr($uri, 0, 4);
 		$month = substr($uri, 5, 2); 
 		$day = substr($uri, 8, 2);
@@ -158,14 +176,17 @@ class CompositeImage {
 		$inst = substr($uri, 22, 3);
 		$det = substr($uri, 26, 3);
 		$meas = substr($uri, 30, 3);
-//		sscanf($uri, "%s_%s_%s_%s_%s_%s_%s_%s.jp2", $year, $month, $day, $time, $obs, $inst, $det, $meas);
+
 		$path = Config::JP2_DIR . implode("/", array($year, $month, $day));
 		$path .= "/$obs/$inst/$det/$meas/";
 		$path .= $uri;
 //		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
 
-		// echo $path;
 		return $path;
+	}
+	
+	function getComposite() {
+		return $this->composite;
 	}
 }
 ?>

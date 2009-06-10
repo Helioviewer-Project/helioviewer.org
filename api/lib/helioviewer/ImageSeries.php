@@ -27,9 +27,19 @@ class ImageSeries
     private $watermarkURL = "/var/www/hv/images/logos/watermark_small_gs.png";
     private $watermarkOptions = "-x 720 -y 965 ";
 
-    /*
-     * constructor
-     */
+	/**
+	 * 
+	 * @param object $layers is an array with at least one value, in the format of SOHEITEIT304 (obs, inst, det, meas, no quotation marks).
+	 * @param object $startTime is a unix timestamp.
+	 * @param object $zoomLevel is a number between 8-15 (for now) with 10 being the default, base zoom level.
+	 * @param object $numFrames is a number between 1 and 150, with the default being 40.
+	 * @param object $frameRate is almost always 8.
+	 * @param object $hqFormat
+	 * @param object $xRange a 0 or -1 representing which range of tiles are being asked for
+	 * @param object $yRange a 0 or -1 representing which range of tiles are being asked for
+	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
+	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
+	 */
     public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options, $timeStep)
     {
         date_default_timezone_set('UTC');
@@ -120,11 +130,16 @@ class ImageSeries
   		$frameNum = 0;
    	    foreach ($closestImages as $image) {
          	$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $image);
-          	$filename = $tmpdir.$frameNum.'.jpg';
-           	$compImage->writeImage($filename);
+          	$filename = $tmpdir . $frameNum . '.tif';
+			$compFile = $compImage->getComposite(); 
+			exec("export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib && convert $compFile $filename");
+//           	$compImage->writeImage($filename);
             array_push($this->images, $filename);
 			$frameNum++;
 		}
+		
+		print_r($this->images);
+		exit();
 
             // Use phpvideotoolkit to compile them
 

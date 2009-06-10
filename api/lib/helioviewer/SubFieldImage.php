@@ -5,6 +5,19 @@
 require('JP2Image.php');
 
 class SubFieldImage extends JP2Image {
+	private $jp2Filepath;
+
+	/**
+	  * Constructor
+	  * @param object $filepath a string representing the location of the jp2 image, including subfolders.
+	  * @param object $uri the name of the jp2 image file, in the format 2003_01_31_SOH_EIT_EIT_304.jpg
+	  * @param object $zoomLevel a number between 8-15, default is 10.
+	  * @param object $x 0 or -1, the range of tiles viewed. 
+	  * @param object $y 0 or -1, the range of tiles viewed.
+	  * @param object $imageSize is 512 pixels. 
+	  * @param correlate
+	  */	
+	
 	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize, $correlate = NULL) {
         $xRange = array("start" => $x, "end" => $x);
         $yRange = array("start" => $y, "end" => $y);
@@ -23,28 +36,30 @@ class SubFieldImage extends JP2Image {
 		
 		// Filepath of image in cache directory
 		$filepath = $this->getFilePath($format);
-
+//		echo "Checking cache...<br />";
 		// If it's already cached, just display it
-		if(Config::ENABLE_CACHE && $display) {
-			if(file_exists($filepath)) {
-				$this->display($filepath);
-				exit();
-			}
+		if(Config::ENABLE_CACHE && $display && file_exists($filepath)) {
+			$this->image = $filepath;
+//			echo "File exists";
+//			$this->display($filepath);
 		}
 		
-		// If it's not cached, build it and put it in the cache.
-        $this->image = $this->buildImage($filepath);	
-        
-        // Display image
-        if ($display)
-            $this->display($filepath);
+		else {	
+//			echo "Building image with filepath " . $filepath . "...<br />";	
+			// If it's not cached, build it and put it in the cache.
+	        $this->image = $this->buildImage($filepath);	
+//	        echo "Image: " . $this->image . " (from SubFieldImage->getImage())<br />";
+	        // Display image
+//	        if ($display)
+//	            $this->display($filepath);
+		}
 	}
 	
 	/**
 	 * @description Gets the filepath of where the image will go in the cache directory. 
 	 * @description Filepaths are of the format /var/www/helioviewer/cache/movies/year/month/day/obs/inst/det/meas/image_uri
 	 * @return $filepath
-	 * @param object $format
+	 * @param object $format is something like "jpg" or "png"
 	 */	
 	protected function getFilePath($format) {
         // Base filename
@@ -84,9 +99,15 @@ class SubFieldImage extends JP2Image {
 		if (substr($this->yRange["end"],0,1) == "-")
 			$yEndStr = "-" . str_pad(substr($this->yRange["end"], 1), 2, '0', STR_PAD_LEFT);	
 
-		$filepath .= implode("_", array(substr($this->uri, 0, -4), $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr, ".tif"));
+		$filepath .= implode("_", array(substr($this->uri, 0, -4), $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr));
 
+		$filepath .= ".tif";
+//		 echo $filepath . " From SubFieldImage->getFilepath()  <br />";
 		return $filepath;
+	}
+	
+	function getCacheFilepath() {
+		return $this->image;
 	}
 }
 ?>
