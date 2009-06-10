@@ -94,12 +94,14 @@ abstract class JP2Image {
         try {
             // extract region from JP2
             $pgm = $this->extractRegion($filename);
-            
+  echo "PGM: " . $pgm;          
             // Use PNG as intermediate format so that GD can read it in
             $png = substr($filename, 0, -3) . "png";
-            
-            exec("convert $pgm -depth 8 -quality 10 -type Grayscale $png");
-            
+			$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD;
+//			echo $cmd;
+          
+            exec($cmd . " && convert $pgm -depth 8 -quality 10 -type Grayscale $png");
+        
             // Apply color-lookup table
             if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
                 $clut = $this->getColorTable($this->detector, $this->measurement);
@@ -107,7 +109,7 @@ abstract class JP2Image {
             }
     
             // IM command for transparency, padding, rescaling, etc.
-            $cmd = "convert $png -background black ";
+            $cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black ";
             
             // Apply alpha mask for images with transparent components
             if ($this->hasAlphaMask()) {
@@ -125,7 +127,7 @@ abstract class JP2Image {
             // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             $relTs = $this->relativeTilesize;
             if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
-                $pad = "convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
+                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
                 exec($pad);
             }        
             
@@ -200,7 +202,7 @@ abstract class JP2Image {
      */
     private function getImageDimensions($filename) {
         try {
-            $dimensions = split("x", trim(exec("identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
+            $dimensions = split("x", trim(exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
             if (sizeof($dimensions) < 2)
                 throw new Exception("Unable to extract image dimensions for $filename!");
             else {
@@ -224,7 +226,7 @@ abstract class JP2Image {
     private function extractRegion($filename) {
         // Intermediate image file
         $pgm = substr($filename, 0, -3) . "pgm";
-        
+     
         // For images with transparent parts, extract a mask as well
         if ($this->hasAlphaMask()) {
             $mask = substr($filename, 0, -4) . "-mask.tif";
@@ -250,10 +252,10 @@ abstract class JP2Image {
         
         //echo $cmd;
         //exit();
-        
+   
         // Execute the command
         try {
-            $line = exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . "$this->kdu_lib_path; " . $cmd, $out, $ret);
+            $line = exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && " . $cmd, $out, $ret);
             if (($ret != 0) || (sizeof($out) > 5)) {
                 var_dump($out);
                 throw new Exception("COMMAND: $cmd\n\t $line");

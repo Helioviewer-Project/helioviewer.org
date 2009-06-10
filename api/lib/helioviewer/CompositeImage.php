@@ -53,10 +53,11 @@ class CompositeImage {
 			$this->subFieldImage = new SubFieldImage($jp2filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->tileSize, false);
 		else {
 			echo "Error: JP2 image " . $jp2filepath . " does not exist. <br />";
+			exit();
 		}
 	
 		$filepath = $this->subFieldImage->getCacheFilepath();
-//		echo $filepath . " From CompositeImage->constructor<br />";
+		echo $filepath . " From CompositeImage->constructor<br />";
 
 		if(file_exists($filepath))
 			array_push($images, $filepath);
@@ -70,6 +71,7 @@ class CompositeImage {
 //		exit();		
 		// There is only one layer right now. Later, $this->composite will equal $this->compositeImages(...)		
 		$this->composite = $images[0];
+		echo $this->composite;
 //		}
 
 		//Optional settings
