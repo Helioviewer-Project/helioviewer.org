@@ -103,11 +103,11 @@ abstract class JP2Image {
             exec($cmd . " && convert $pgm -depth 8 -quality 10 -type Grayscale $png");
         
             // Apply color-lookup table
-            if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
+/*            if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
                 $clut = $this->getColorTable($this->detector, $this->measurement);
                 $this->setColorPalette($png, $clut, $png);
             }
-    
+*/    
             // IM command for transparency, padding, rescaling, etc.
             $cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black ";
             

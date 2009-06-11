@@ -57,7 +57,7 @@ class CompositeImage {
 		}
 	
 		$filepath = $this->subFieldImage->getCacheFilepath();
-		echo $filepath . " From CompositeImage->constructor<br />";
+//		echo $filepath . " From CompositeImage->constructor<br />";
 
 		if(file_exists($filepath))
 			array_push($images, $filepath);
@@ -71,7 +71,7 @@ class CompositeImage {
 //		exit();		
 		// There is only one layer right now. Later, $this->composite will equal $this->compositeImages(...)		
 		$this->composite = $images[0];
-		echo $this->composite;
+//		echo $this->composite;
 //		}
 
 		//Optional settings

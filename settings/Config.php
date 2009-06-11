@@ -31,7 +31,7 @@ class Config {
 	
 	// Filepaths
 	const WEB_ROOT_DIR       = '/Library/WebServer/Documents/helioviewer';
-	const TMP_ROOT_DIR       = '/Users/beck/helioviewer/tmp';
+	const TMP_ROOT_DIR       = '/Library/WebServer/Documents/helioviewer/tmp'; // '/Users/beck/helioviewer/tmp';
 	const CACHE_DIR          = '/Users/beck/helioviewer/cache/';
 	const JP2_DIR            = '/Library/WebServer/Documents/jp2/';
 	const KDU_LIBS_DIR       = '/Users/beck/kakadu/lib/';

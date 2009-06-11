@@ -102,7 +102,7 @@ class ImageSeries
         $timeStamps = array ();
 
         // Calculates unix time stamps, successively increasing by the time step (default step is 86400 seconds, or 1 day)
-        for ($time = $this->startTime; $time <= $this->startTime+($this->numFrames*$this->timeStep); $time += $this->timeStep)
+        for ($time = $this->startTime; $time < $this->startTime+($this->numFrames*$this->timeStep); $time += $this->timeStep)
         {
             array_push($timeStamps, $time);
         }
@@ -127,24 +127,96 @@ class ImageSeries
 //			array_push($layerImages, $closestImages);
         }
 		
-  		$frameNum = 0;
+  		$frameNum = 1;
    	    foreach ($closestImages as $image) {
          	$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $image);
           	$filename = $tmpdir . $frameNum . '.tif';
 			$compFile = $compImage->getComposite(); 
-			exec("export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib && convert $compFile $filename");
+			exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $compFile $filename");
 //           	$compImage->writeImage($filename);
             array_push($this->images, $filename);
 			$frameNum++;
 		}
 		
-		print_r($this->images);
-		exit();
+//		echo "Success. Images are located in " . $tmpdir . "<br />";
 
-            // Use phpvideotoolkit to compile them
+		// Use phpvideotoolkit to compile them
+//		$movie = $this->compileVideo($tmpdir, $tmpurl);
 
-    }
+//    }
 
+//	private function compileVideo($tmpdir, $tmpurl) {
+		$toolkit = new PHPVideoToolkit($tmpdir);
+
+		// compile the image to the tmp dir
+		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
+		
+		if (!$ok) {
+		    // if there was an error then get it
+		    echo $toolkit->getLastError()."<br />";
+			exit();
+		}
+	
+		$toolkit->setVideoOutputDimensions(1024, 1024);
+		
+		// set the output parameters (Flash video)
+		$output_filename = "$movieName." . $this->filetype;
+		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		
+		if (!$ok) {
+		    // 		if there was an error then get it
+		    echo $toolkit->getLastError()."<br />";
+			exit();
+		}
+		
+		// 	execute the ffmpeg command
+		$movie = $toolkit->execute(false, true);
+		
+		// check the return value in-case of error
+		if ($movie !== PHPVideoToolkit::RESULT_OK) {
+		    // if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+			exit();
+		}
+		
+		// Create a high-quality version as well
+		$hq_filename = "$movieName." . $this->highQualityFiletype;
+		$toolkit->setConstantQuality($this->highQualityLevel);
+		
+		// Use ASF for Windows
+		if ($this->highQualityFiletype == "avi")
+		    $toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
+		
+		// Use MPEG-4 for Mac
+		if ($this->highQualityFiletype == "mov")
+		    $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
+		
+		// Add a watermark
+		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
+		
+		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		
+		if (!$ok) {
+		    // if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+			exit();
+		}
+		
+		// execute the ffmpeg command
+		$mp4 = $toolkit->execute(false, true);
+		
+		if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
+		    // 		if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+			exit();
+		}
+		
+		$this->showMovie($tmpurl, 512, 512);
+		
+		//header('Content-type: application/json');
+		//echo json_encode($tmpurl);
+	}
+	
     /*
      * Queries the database to find the exact timestamps for images nearest each time in $timeStamps.
      * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', and 'uri'
