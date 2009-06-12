@@ -19,7 +19,7 @@ class CompositeImage {
 	 * @param object $options an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
 	 */
-	public function __construct($layers, $zoomLevel, $xRange, $yRange, $options, $image) {
+	public function __construct($layers, $zoomLevel, $xRange, $yRange, $options, $layerImages) {
 		date_default_timezone_set('UTC');
 		$this->layers     = $layers;
 		$this->zoomLevel  = $zoomLevel;
@@ -28,52 +28,44 @@ class CompositeImage {
 		$this->options    = $options;
 		$this->tileSize	  = 512;
 
-		$images = array();
-
-		$jp2filepath = $this->getFilepath($image['uri']);
-
-//		$filepath = Config::JP2_DIR . "2003/01/31/SOH/EIT/EIT/304/2003_01_31_011937_SOH_EIT_EIT_304.jp2";
-//		$filepath = Config::TMP_ROOT_DIR . "/1/eit_final.jpg";
-
-		// Build separate images
-//		foreach($this->layers as $layer) {
-//		array_push($images, $this->buildImage($layer));
-//		}
-
-		// Composite on top of one another
-//		if (sizeOf($this->layers) > 1) {
-//			$this->composite = $this->buildComposite($images);
-//		} 
+		// Array holds the filepaths for all 'built' images.
+		$builtImages = array();
 		
-	// Only one layer for now. 
-//		else {
-//		$this->composite = $images[0];
-
-		if(file_exists($jp2filepath))
-			$this->subFieldImage = new SubFieldImage($jp2filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->tileSize, false);
-		else {
-			echo "Error: JP2 image " . $jp2filepath . " does not exist. <br />";
-			exit();
-		}
+		foreach($layerImages as $image) {
+			// Build each image separately
+			$jp2filepath = $this->getFilepath($image['uri']);
 	
-		$filepath = $this->subFieldImage->getCacheFilepath();
-//		echo $filepath . " From CompositeImage->constructor<br />";
-
-		if(file_exists($filepath))
-			array_push($images, $filepath);
-		else {
-			echo "Error: cached imaged " . $filepath . " does not exist. <br />";
-			exit();
+			if(file_exists($jp2filepath))
+				$subFieldImage = new SubFieldImage($jp2filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->tileSize);
+			else {
+				echo "Error: JP2 image " . $jp2filepath . " does not exist. <br />";
+				exit();
+			}
+		
+			$filepath = $subFieldImage->getCacheFilepath();
+	//		echo $filepath . " From CompositeImage->constructor<br />";
+	
+			if(file_exists($filepath))
+				array_push($builtImages, $filepath);
+			else {
+				echo "Error: cached imaged " . $filepath . " does not exist. <br />";
+				exit();
+			}
 		}
+		
+		// Composite on top of one another
+		if (sizeOf($this->layers) > 1) {
+			$this->composite = $this->buildComposite($builtImages);
+		} 
+
+		else {
+			$this->composite = $builtImages[0];
 
 //		$img = $this->buildImage($this->subFieldImage);
 //		echo $img;
 //		exit();		
-		// There is only one layer right now. Later, $this->composite will equal $this->compositeImages(...)		
-		$this->composite = $images[0];
+		}
 //		echo $this->composite;
-//		}
-
 		//Optional settings
 /*		if ($this->options['enhanceEdges'] == "true")
 			$this->composite->edgeImage(3);
@@ -108,10 +100,14 @@ class CompositeImage {
 		//TEMP
 		$eit = $images[0];
 		$las = $images[1];
+//		echo $eit . " " . $las;
+		$tmpImg = CONFIG::CACHE_DIR . "movies/compImg.tif";
+		$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && composite -gravity Center " . $las . " " . $eit . " " . $tmpImg;
+//		echo "Executing " . $cmd . "<br />";
 
 		//$eit->compositeImage($las, $las->getImageCompose(), 0, 0);
-		$eit->compositeImage($las, imagick::COMPOSITE_OVER, 0, 0);
-		return $eit;
+//		$eit->compositeImage($las, imagick::COMPOSITE_OVER, 0, 0);
+		return $tmpImg;	
 	}
 
 	/*
@@ -179,7 +175,7 @@ class CompositeImage {
 		$det = substr($uri, 26, 3);
 		$meas = substr($uri, 30, 3);
 
-		$path = Config::JP2_DIR . implode("/", array($year, $month, $day));
+		$path = CONFIG::JP2_DIR . implode("/", array($year, $month, $day));
 		$path .= "/$obs/$inst/$det/$meas/";
 		$path .= $uri;
 //		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";

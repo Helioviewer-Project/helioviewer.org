@@ -49,7 +49,7 @@ class SubFieldImage extends JP2Image {
 		else {	
 //			echo "Building image with filepath " . $filepath . "...<br />";	
 			// If it's not cached, build it and put it in the cache.
-	        $this->image = $this->buildImage($filepath);	
+	        $this->image = $this->buildImage($filepath, false);	
 //	        echo "Image: " . $this->image . " (from SubFieldImage->getImage())<br />";
 	        // Display image
 //	        if ($display)

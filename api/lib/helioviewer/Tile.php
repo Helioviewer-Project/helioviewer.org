@@ -42,13 +42,13 @@ class Tile extends JP2Image {
         $tile = $this->getTileFilepath($format);
         
         // If tile already exists in cache, use it
-/*        if (Config::ENABLE_CACHE && $display) {
+        if (Config::ENABLE_CACHE && $display) {
             if (file_exists($tile)) {
                 $this->display($tile);
                 exit();
             }
         }
-*/
+
         // If nothing useful is in the cache, create the tile from scratch
         $im = $this->buildImage($tile);
 

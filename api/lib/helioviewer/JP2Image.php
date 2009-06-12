@@ -93,9 +93,12 @@ abstract class JP2Image {
     
     /**
      * buildImage
+     * @param noPadding - If the image is a SubFieldImage, no padding is necessary because there
+     * 					  are no tiles. If the image is smaller than the standard tilesize, it will
+     * 					  be padded with -gravity Center.
      * @return
      */
-    protected function buildImage($filename) {
+    protected function buildImage($filename, $padding = true) {
         try {
             // extract region from JP2
             $pgm = $this->extractRegion($filename);
@@ -128,14 +131,15 @@ abstract class JP2Image {
             
             // Get dimensions of extracted region
             $extracted = $this->getImageDimensions($pgm);
-    
-            // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-            $relTs = $this->relativeTilesize;
-            if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
-                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
-                exec($pad);
-            }        
-            
+	        $relTs = $this->relativeTilesize;
+			if($padding) {
+	            // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+	            if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
+	                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
+	                exec($pad);
+	            }        
+			}
+						
             // Resize if necessary (Case 3)
             if ($relTs < $this->tileSize) 
                 $cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
@@ -145,7 +149,10 @@ abstract class JP2Image {
            
             // Pad if tile is smaller than it should be (Case 2)
             if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
-                $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+            	if($padding) 
+                	$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+				else
+					$cmd .= " -gravity Center -extent 512x512";
             }
             
             if ($this->hasAlphaMask()) {

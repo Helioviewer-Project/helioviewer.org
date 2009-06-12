@@ -25,7 +25,7 @@ class ImageSeries
     private $filetype = "flv";
     private $highQualityLevel = 100;
     private $watermarkURL = "/Library/WebServer/Documents/helioviewer/images/logos/watermark_small_gs.png";
-    private $watermarkOptions = "-x 720 -y 965 ";
+    private $watermarkOptions = "-x 10 -y 10"; //"-x 720 -y 965 ";
 
 	/**
 	 * 
@@ -108,7 +108,7 @@ class ImageSeries
         }
 
 		// Array that holds $closestImages for each layer
-//		$layerImages = array();
+		$layerImages = array();
 		/*
 		 * Right now there is only one layer so I'm using $closestImages by itself for now.
 		 */
@@ -124,28 +124,39 @@ class ImageSeries
             // Array to hold timestamps corresponding to each image, and each image's uri
 //            $closestImages = array ();
             $closestImages = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);
-//			array_push($layerImages, $closestImages);
+			$layerImages[$layer] = $closestImages;
         }
+
+//  		$frameNum = 1;
 		
-  		$frameNum = 1;
-   	    foreach ($closestImages as $image) {
+		for($frameNum = 0; $frameNum < $this->numFrames; $frameNum++) {
+			$images = array();
+			foreach($this->layers as $layer) {
+				$images[$layer] = $layerImages[$layer][$frameNum];
+			}	
+			$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $images);	
+          	$filename = $tmpdir . $frameNum . '.tif';
+			$compFile = $compImage->getComposite(); 
+			echo $compFile;
+			exit();
+			copy($compFile, $filename);
+			array_push($this->images, $filename);
+		}
+/*   	    foreach ($closestImages as $image) {
          	$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $image);
           	$filename = $tmpdir . $frameNum . '.tif';
 			$compFile = $compImage->getComposite(); 
-			exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $compFile $filename");
+			copy($compFile, $filename);
+			
+			//exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $compFile $filename");
 //           	$compImage->writeImage($filename);
             array_push($this->images, $filename);
 			$frameNum++;
 		}
-		
+*/		
 //		echo "Success. Images are located in " . $tmpdir . "<br />";
 
 		// Use phpvideotoolkit to compile them
-//		$movie = $this->compileVideo($tmpdir, $tmpurl);
-
-//    }
-
-//	private function compileVideo($tmpdir, $tmpurl) {
 		$toolkit = new PHPVideoToolkit($tmpdir);
 
 		// compile the image to the tmp dir
@@ -210,7 +221,12 @@ class ImageSeries
 		    echo $toolkit->getLastError()."<br />\r\n";
 			exit();
 		}
-		
+
+		// Clean up images
+		foreach($this->images as $image) {
+			unlink($image);
+		}	
+			
 		$this->showMovie($tmpurl, 512, 512);
 		
 //		header('Content-type: application/json');
