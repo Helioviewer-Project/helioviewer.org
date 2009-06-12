@@ -19,8 +19,10 @@ class SubFieldImage extends JP2Image {
 	  */	
 	
 	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize, $correlate = NULL) {
-        $xRange = array("start" => $x, "end" => $x);
-        $yRange = array("start" => $y, "end" => $y);
+		$xArray = explode(",", $x);
+		$yArray = explode(",", $y);
+        $xRange = array("start" => $xArray[0], "end" => $xArray[1]);
+        $yRange = array("start" => $yArray[0], "end" => $yArray[1]);
 
         parent::__construct($uri, $zoomLevel, $xRange, $yRange, $imageSize);
 

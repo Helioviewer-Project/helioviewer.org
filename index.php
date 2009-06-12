@@ -49,14 +49,14 @@
 		<!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
 
 		<!-- ShadowBox -->
-		<!--
+	
 		<script type="text/javascript" src="lib/shadowbox/src/adapter/shadowbox-prototype.js"></script>
 		<script type="text/javascript" src="lib/shadowbox/src/shadowbox.js"></script>
 		<script type="text/javascript" src="lib/shadowbox/src/skin/classic/skin.js"></script>
 		<script type="text/javascript" src="lib/shadowbox/src/player/shadowbox-iframe.js"></script>
 		<script type="text/javascript" src="lib/shadowbox/src/lang/shadowbox-en.js"></script>
 		<link rel="stylesheet" href="lib/shadowbox/src/skin/classic/skin.css" type="text/css" media="screen">
-		-->
+	
 
 		<!-- Helioviewer-Specific -->
 		<script src="lib/helioviewer/UIElement.js" type="text/javascript"></script>

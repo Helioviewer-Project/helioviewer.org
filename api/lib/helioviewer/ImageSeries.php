@@ -24,7 +24,7 @@ class ImageSeries
     private $tileSize = 512;
     private $filetype = "flv";
     private $highQualityLevel = 100;
-    private $watermarkURL = "/var/www/hv/images/logos/watermark_small_gs.png";
+    private $watermarkURL = "/Library/WebServer/Documents/helioviewer/images/logos/watermark_small_gs.png";
     private $watermarkOptions = "-x 720 -y 965 ";
 
 	/**
@@ -213,8 +213,8 @@ class ImageSeries
 		
 		$this->showMovie($tmpurl, 512, 512);
 		
-		//header('Content-type: application/json');
-		//echo json_encode($tmpurl);
+//		header('Content-type: application/json');
+//		echo json_encode($tmpurl);
 	}
 	
     /*

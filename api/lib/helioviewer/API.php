@@ -482,9 +482,9 @@ class API {
                     <!-- / MC Media Player -->
                 </div>
                 <br>
-                <div style="text-align: center;">
+ <!--               <div style="text-align: center;">
                     <a href="<?php print $highQualityVersion;?>" style="text-decoration: none; color: white; font-weight: bold;">High-quality download.</a>
-                </div>
+                </div> -->
             </body>
             </html>
         <?php
@@ -649,6 +649,8 @@ class API {
                 break;
             case "buildMovie":
                 break;
+			case "playMovie":
+				break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        
         }

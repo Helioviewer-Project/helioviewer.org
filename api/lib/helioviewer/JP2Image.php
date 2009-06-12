@@ -2,11 +2,16 @@
 /**
  * @package JP2Image - JPEG 2000 Image Class
  * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ * @author Jaclyn Beck
  * @TODO: Extend Exception class to create more useful objects.
  * @TODO: Use different name for intermediate PNG than final version.
  * @TODO: Forward request to secondary server if it fails for a valid tile?
  * @TODO: build up a "process log" string for each tile process which can be
  *        output to the log in case of failure.
+ * 6-12-2009 Converted this class to use pixels instead of tile coordinates when
+ * 			 calculating padding and regions for kdu_expand. 
+ * 			 If a tile is being generated, the Tile.php class converts its tile
+ * 			 coordinates into pixels first before sending them here. 
  */
 abstract class JP2Image {
     protected $kdu_expand   = CONFIG::KDU_EXPAND;
@@ -94,7 +99,7 @@ abstract class JP2Image {
         try {
             // extract region from JP2
             $pgm = $this->extractRegion($filename);
-  echo "PGM: " . $pgm;          
+        
             // Use PNG as intermediate format so that GD can read it in
             $png = substr($filename, 0, -3) . "png";
 			$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD;
@@ -127,20 +132,20 @@ abstract class JP2Image {
             // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             $relTs = $this->relativeTilesize;
             if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
-                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $extracted['width'], $extracted['height'], $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
+                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
                 exec($pad);
             }        
             
             // Resize if necessary (Case 3)
-            if ($relTs < $this->tileSize)
+            if ($relTs < $this->tileSize) 
                 $cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
     
             // Refetch dimensions of extracted region
             $tile = $this->getImageDimensions($png);
-            
+           
             // Pad if tile is smaller than it should be (Case 2)
             if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
-                $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $tile['width'], $tile['height'], $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
+                $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
             }
             
             if ($this->hasAlphaMask()) {
@@ -238,7 +243,7 @@ abstract class JP2Image {
         
         // Case 1: JP2 image resolution = desired resolution
         // Nothing special to do...
-
+	
         // Case 2: JP2 image resolution > desired resolution (use -reduce)        
         if ($this->jp2Scale < $this->desiredScale) {
             $cmd .= "-reduce " . $this->scaleFactor . " ";
@@ -272,15 +277,29 @@ abstract class JP2Image {
         
         return $pgm;
     }
-    
+
     /**
      * getRegionString
      * Build a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
      * 
      * NOTE: Because kakadu's internal precision for region strings is less than PHP,
      * the numbers used are cut off to prevent erronious rounding.
+     * 
+     * 6-12-2009 Converted from using tile coordinates to pixels.
      */
-    private function getRegionString() {
+	private function getRegionString() {
+		$precision = 6;
+		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
+		$top 	= substr($this->yRange["start"]/$this->jp2Width, 0, $precision);
+		$left 	= substr($this->xRange["start"]/$this->jp2Height, 0, $precision);
+		$height	= substr($this->yRange["end"]/$this->jp2Height, 0, $precision);
+		$width 	= substr($this->xRange["end"]/$this->jp2Width, 0, $precision);
+		
+        $region = "-region \{$top,$left\},\{$height,$width\}";
+        return $region;		
+	}    
+
+/*    private function getRegionString() {
         $jp2Width  = $this->jp2Width;
         $jp2Height = $this->jp2Height;
         $ts = $this->relativeTilesize;
@@ -335,7 +354,7 @@ abstract class JP2Image {
 
         return $region;
     }
-    
+*/    
     /**
      * padImage
      */
@@ -362,8 +381,9 @@ abstract class JP2Image {
             return "-background transparent -gravity NorthEast -extent $ts" . "x" . "$ts ";
 
     }**/
-    
-    private function padImage ($jp2Width, $jp2Height, $tileWidth, $tileHeight, $ts, $x, $y) {
+
+// 6-12-2009 converted from using tile coordinates to pixels.     
+    private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y) {
         // Determine min and max tile numbers
         $imgNumTilesX = max(2, ceil($jp2Width  / $this->tileSize));
         $imgNumTilesY = max(2, ceil($jp2Height / $this->tileSize));
@@ -374,12 +394,17 @@ abstract class JP2Image {
 
         if ($imgNumTilesY % 2 != 0)
             $imgNumTilesY += 1;
-        
+/*   
         $tileMinX = - ($imgNumTilesX / 2);
         $tileMaxX =   ($imgNumTilesX / 2) - 1;
         $tileMinY = - ($imgNumTilesY / 2);
         $tileMaxY =   ($imgNumTilesY / 2) - 1; 
-                 
+*/
+ 		$tileMinX = 0;
+		$tileMaxX = $this->jp2Width - $this->jp2Width / $imgNumTilesX;     
+		$tileMinY = 0;
+		$tileMaxY = $this->jp2Height - $this->jp2Height / $imgNumTilesY;   
+
         // Determine where the tile is located (where tile should lie in the padding)
         $gravity = null;
         if ($x == $tileMinX) {
@@ -416,7 +441,7 @@ abstract class JP2Image {
         
         // Construct padding command
         // TEST: use black instead of transparent for background?
-        return "-gravity $gravity -extent $ts" . "x" . "$ts ";
+        return "-gravity $gravity -extent $tilesize" . "x" . "$tilesize ";
     }
     
     private function getColorTable($detector, $measurement) {
