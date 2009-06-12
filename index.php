@@ -237,6 +237,7 @@
     				<!-- Links -->
     				<div id="footer-links-container-inner">
                         <div id="footer-links" class="ui-corner-bottom">
+        					<a href="help/" class="light" target="_blank">Help</a>
         					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
         					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
         					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank">JHelioviewer</a>

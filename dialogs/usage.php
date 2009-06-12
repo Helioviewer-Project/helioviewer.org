@@ -1,4 +1,5 @@
 <!-- Helioviewer keyboard shortcuts dialog -->
+<br>
 <strong>Keyboard Shortcuts:</strong>
 <br><br>
 <table>
