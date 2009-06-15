@@ -86,20 +86,21 @@ abstract class JP2Image {
         
         // Scale Factor
         $this->scaleFactor = log($this->desiredToActual, 2);
-        
+   
         // Relative Tilesize
         $this->relativeTilesize = $this->tileSize * $this->desiredToActual;        
     }
     
     /**
      * buildImage
-     * @param noPadding - If the image is a SubFieldImage, no padding is necessary because there
-     * 					  are no tiles. If the image is smaller than the standard tilesize, it will
-     * 					  be padded with -gravity Center.
+     * @param isTile - If the image is a SubFieldImage, padding must be with -gravity Center because there
+     * 					  are no tiles or parts of images. Tiles are padded with respect to what part of the image
+     * 					  they are by default. 
      * @return
      */
-    protected function buildImage($filename, $padding = true) {
+    protected function buildImage($filename, $isTile = true) {
         try {
+        	$this->isTile = $isTile;
             // extract region from JP2
             $pgm = $this->extractRegion($filename);
         
@@ -128,32 +129,33 @@ abstract class JP2Image {
             // Determine relative size of image at this scale
             $jp2RelWidth  = $this->jp2Width  /  $this->desiredToActual;
             $jp2RelHeight = $this->jp2Height /  $this->desiredToActual;
-            
+
             // Get dimensions of extracted region
             $extracted = $this->getImageDimensions($pgm);
 	        $relTs = $this->relativeTilesize;
-			if($padding) {
-	            // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-	            if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
-	                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
-	                exec($pad);
-	            }        
-			}
+//echo "relTs: " . $relTs . " width & height: " . $extracted['width'] . ", " . $extracted['height'] . " relW and relH: " . $jp2RelWidth . ", " . $jp2RelHeight . "<br />";	        
+			// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+            if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
+                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"], $isTile) . " $png";
+                exec($pad);
+            }        
+//			if($isTile)
+//				$ts = $this->tileSize;
+//			else
+//				$ts = $jp2RelWidth;
 						
             // Resize if necessary (Case 3)
-            if ($relTs < $this->tileSize) 
+            if ($relTs < $this->tileSize) {
                 $cmd .= "-geometry " . $this->tileSize . "x" . $this->tileSize . "! ";
+			}
     
             // Refetch dimensions of extracted region
             $tile = $this->getImageDimensions($png);
            
             // Pad if tile is smaller than it should be (Case 2)
             if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
-            	if($padding) 
-                	$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
-				else
-					$cmd .= " -gravity Center -extent 512x512";
-            }
+                $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"], $isTile);
+			}
             
             if ($this->hasAlphaMask()) {
                 $cmd .= "-compose copy_opacity -composite ";
@@ -260,7 +262,7 @@ abstract class JP2Image {
         // Don't do anything yet...
 
         // Add desired region
-        $cmd .= $this->getRegionString($this->jp2Width, $this->jp2Height, $this->relativeTilesize);
+        $cmd .= $this->getRegionString();
         
         //echo $cmd;
         //exit();
@@ -296,13 +298,18 @@ abstract class JP2Image {
      */
 	private function getRegionString() {
 		$precision = 6;
+		$rangeDiffX = max($this->xRange["end"], $this->relativeTilesize);
+		$rangeDiffY = max($this->yRange["end"], $this->relativeTilesize);
+
 		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
-		$top 	= substr($this->yRange["start"]/$this->jp2Width, 0, $precision);
-		$left 	= substr($this->xRange["start"]/$this->jp2Height, 0, $precision);
-		$height	= substr($this->yRange["end"]/$this->jp2Height, 0, $precision);
-		$width 	= substr($this->xRange["end"]/$this->jp2Width, 0, $precision);
+		// The extra statements are temporary until it can grab direct ranges from the javascript classes.
+		$top 	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr(($rangeDiffY-$this->relativeTilesize)/2/$this->jp2Height, 0, $precision) : substr($this->yRange["start"]/$this->jp2Width, 0, $precision);
+		$left 	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr(($rangeDiffX-$this->relativeTilesize)/2/$this->jp2Width, 0, $precision) : substr($this->xRange["start"]/$this->jp2Height, 0, $precision);
+		$height	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr($this->relativeTilesize/$this->jp2Height, 0, $precision) : substr($this->yRange["end"]/$this->jp2Height, 0, $precision);
+		$width 	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr($this->relativeTilesize/$this->jp2Width, 0, $precision) : substr($this->xRange["end"]/$this->jp2Width, 0, $precision);
 		
         $region = "-region \{$top,$left\},\{$height,$width\}";
+//		echo $region . "<br />";
         return $region;		
 	}    
 
@@ -389,63 +396,68 @@ abstract class JP2Image {
 
     }**/
 
-// 6-12-2009 converted from using tile coordinates to pixels.     
-    private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y) {
-        // Determine min and max tile numbers
-        $imgNumTilesX = max(2, ceil($jp2Width  / $this->tileSize));
-        $imgNumTilesY = max(2, ceil($jp2Height / $this->tileSize));
-        
-        // Tile placement architecture expects an even number of tiles along each dimension
-        if ($imgNumTilesX % 2 != 0)
-            $imgNumTilesX += 1;
-
-        if ($imgNumTilesY % 2 != 0)
-            $imgNumTilesY += 1;
-/*   
-        $tileMinX = - ($imgNumTilesX / 2);
-        $tileMaxX =   ($imgNumTilesX / 2) - 1;
-        $tileMinY = - ($imgNumTilesY / 2);
-        $tileMaxY =   ($imgNumTilesY / 2) - 1; 
-*/
- 		$tileMinX = 0;
-		$tileMaxX = $this->jp2Width - $this->jp2Width / $imgNumTilesX;     
-		$tileMinY = 0;
-		$tileMaxY = $this->jp2Height - $this->jp2Height / $imgNumTilesY;   
-
-        // Determine where the tile is located (where tile should lie in the padding)
-        $gravity = null;
-        if ($x == $tileMinX) {
-            if ($y == $tileMinY) {
-                $gravity = "SouthEast";
-            }
-            else if ($y == $tileMaxY) {
-                $gravity = "NorthEast";
-            }
-            else {
-                $gravity = "East";
-            }
-        }
-        else if ($x == $tileMaxX) {
-            if ($y == $tileMinY) {
-                $gravity = "SouthWest";
-            }
-            else if ($y == $tileMaxY) {
-                $gravity = "NorthWest";
-            }
-            else {
-                $gravity = "West";
-            }
-        }
-        
-        else {
-            if ($y == $tileMinY) {
-                $gravity = "South";
-            }
-            else {
-                $gravity = "North";
-            }
-        }
-        
+// 6-12-2009 converted from using tile coordinates to pixels.   
+// Tiles are padded depending on what part of the image they are. isTile defaults to true.
+// If the image is a SubFieldImage, isTile is false and the image is padded with -gravity Center instead.  
+    private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y, $isTile = true) {
+		if($isTile) {
+	        // Determine min and max tile numbers
+	        $imgNumTilesX = max(2, ceil($jp2Width  / $this->tileSize));
+	        $imgNumTilesY = max(2, ceil($jp2Height / $this->tileSize));
+	        
+	        // Tile placement architecture expects an even number of tiles along each dimension
+	        if ($imgNumTilesX % 2 != 0)
+	            $imgNumTilesX += 1;
+	
+	        if ($imgNumTilesY % 2 != 0)
+	            $imgNumTilesY += 1;
+	/*   
+	        $tileMinX = - ($imgNumTilesX / 2);
+	        $tileMaxX =   ($imgNumTilesX / 2) - 1;
+	        $tileMinY = - ($imgNumTilesY / 2);
+	        $tileMaxY =   ($imgNumTilesY / 2) - 1; 
+	*/
+	 		$tileMinX = 0;
+			$tileMaxX = $this->jp2Width - $this->jp2Width / $imgNumTilesX;     
+			$tileMinY = 0;
+			$tileMaxY = $this->jp2Height - $this->jp2Height / $imgNumTilesY;   
+	
+	        // Determine where the tile is located (where tile should lie in the padding)
+	        $gravity = null;
+	        if ($x == $tileMinX) {
+	            if ($y == $tileMinY) {
+	                $gravity = "SouthEast";
+	            }
+	            else if ($y == $tileMaxY) {
+	                $gravity = "NorthEast";
+	            }
+	            else {
+	                $gravity = "East";
+	            }
+	        }
+	        else if ($x == $tileMaxX) {
+	            if ($y == $tileMinY) {
+	                $gravity = "SouthWest";
+	            }
+	            else if ($y == $tileMaxY) {
+	                $gravity = "NorthWest";
+	            }
+	            else {
+	                $gravity = "West";
+	            }
+	        }
+	        
+	        else {
+	            if ($y == $tileMinY) {
+	                $gravity = "South";
+	            }
+	            else {
+	                $gravity = "North";
+	            }
+	        }
+		}
+		else
+			$gravity = "Center";
         // Construct padding command
         // TEST: use black instead of transparent for background?
         return "-gravity $gravity -extent $tilesize" . "x" . "$tilesize ";

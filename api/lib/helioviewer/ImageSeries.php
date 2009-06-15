@@ -24,6 +24,7 @@ class ImageSeries
     private $tileSize = 512;
     private $filetype = "flv";
     private $highQualityLevel = 100;
+	// Watermarking does not work yet, missing module for it on this computer. 
     private $watermarkURL = "/Library/WebServer/Documents/helioviewer/images/logos/watermark_small_gs.png";
     private $watermarkOptions = "-x 10 -y 10"; //"-x 720 -y 965 ";
 
@@ -51,6 +52,7 @@ class ImageSeries
         $this->numFrames = $numFrames;
         $this->frameRate = $frameRate;
         $this->highQualityFiletype = $hqFormat;
+		// xRange and yRange are in pixels, e.g. "0,512"
         $this->xRange = $xRange;
         $this->yRange = $yRange;
         $this->options = $options;
@@ -109,9 +111,7 @@ class ImageSeries
 
 		// Array that holds $closestImages for each layer
 		$layerImages = array();
-		/*
-		 * Right now there is only one layer so I'm using $closestImages by itself for now.
-		 */
+
 		$closestImages = array(); 		
         foreach ($this->layers as $layer)
         {
@@ -134,11 +134,11 @@ class ImageSeries
 			foreach($this->layers as $layer) {
 				$images[$layer] = $layerImages[$layer][$frameNum];
 			}	
-			$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $images);	
+			// TODO: xRange and yRange will need to be arrays of ranges for each layer, because not all layer images are the same size.
+			$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $images, $frameNum);	
           	$filename = $tmpdir . $frameNum . '.tif';
 			$compFile = $compImage->getComposite(); 
-			echo $compFile;
-			exit();
+
 			copy($compFile, $filename);
 			array_push($this->images, $filename);
 		}
@@ -227,10 +227,10 @@ class ImageSeries
 			unlink($image);
 		}	
 			
-		$this->showMovie($tmpurl, 512, 512);
+//		$this->showMovie($tmpurl, 512, 512);
 		
-//		header('Content-type: application/json');
-//		echo json_encode($tmpurl);
+		header('Content-type: application/json');
+		echo json_encode($tmpurl);
 	}
 	
     /*
@@ -312,206 +312,206 @@ class ImageSeries
                     $times = $this->getImageTimes($layer, $imageTimes[0]);
 
                 array_push($imageTimes, $times);
-        }
+        	}
+	
+	        // Remove the layer if it is not visible
+	        else
+	        {
+	            array_splice($this->layers, $i, 1);
+		    }
+	    	$i++;
+		}
+	
+		// PAD IF NECESSARY? (OR OFFSET... WHICHEVER IS EASIER... USE LARGEST IMAGE AS A GUIDELINE)
+		
+		//print_r($dimensions);
+		//exit();
+		
+		//print "<br>" . sizeOf($imageTimes) . "<br><br>";
+		
+		// For each frame, create a composite images and store it into $this->images
+		for ($j = 0; $j < $this->numFrames; $j++)
+		{
+		
+		    // CompositeImage expects an array of timestamps
+		    $timestamps = array ();
+		
+		// Grab timestamp for each layer
+		foreach ($imageTimes as $time)
+		{
+		    array_push($timestamps, $time[$j]['unix_timestamp']);
+		}
+		
+		// Build a composite image
+		$img = new CompositeImage($this->layers, $timestamps, $this->zoomLevel, $this->options);
+		$filename = $tmpdir.$j.'.jpg';
+		$img->writeImage($filename);
+		
+		array_push($this->images, $filename);
+		}
+		
+		// init PHPVideoToolkit class
+		$toolkit = new PHPVideoToolkit($tmpdir);
+		
+		// compile the image to the tmp dir
+		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
+		if (!$ok)
+		{
+		    // if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+		exit ;
+		}
+		
+		$toolkit->setVideoOutputDimensions(1024, 1024);
+		
+		// set the output parameters (Flash video)
+		$output_filename = "$movieName.".$this->filetype;
+		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		if (!$ok)
+		{
+		    // 		if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+		exit ;
+		}
+		
+		// 	execute the ffmpeg command
+		$quickMov = $toolkit->execute(false, true);
+		
+		// check the return value in-case of error
+		if ($quickMov !== PHPVideoToolkit::RESULT_OK)
+		{
+		    // if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+		exit ;
+		}
+		
+		// Create a high-quality version as well
+		$hq_filename = "$movieName.".$this->highQualityFiletype;
+		$toolkit->setConstantQuality($this->highQualityLevel);
+		
+		// Use ASF for Windows
+		if ($this->highQualityFiletype == "avi")
+		    $toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
+		
+		// Use MPEG-4 for Mac
+		if ($this->highQualityFiletype == "mov")
+		    $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
+		
+		// Add a watermark
+		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
+		
+		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+		if (!$ok)
+		{
+		    // if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+		exit ;
+		}
+		
+		// execute the ffmpeg command
+		$mp4 = $toolkit->execute(false, true);
+		if ($mp4 !== PHPVideoToolkit::RESULT_OK)
+		{
+		    // 		if there was an error then get it
+		    echo $toolkit->getLastError()."<br />\r\n";
+		exit ;
+		}
+		
+		//$this->showMovie($tmpurl, 512, 512);
+		
+		header('Content-type: application/json');
+		echo json_encode($tmpurl);
+	}
 
-        // Remove the layer if it is not visible
-        else
-        {
-            array_splice($this->layers, $i, 1);
-    }
-    $i++;
-}
+	/*
+	 * getImageTimes
+	 *
+	 * Queries the database and returns an array of times of size equal to $this->numFrames.
+	 * If specified, each time will be chosen to be as close as possible to the time in the same
+	 * indice of the $times array. Otherwise it will simply return an array of the closest
+	 * times to $this->startTime.
+	 */
+	private function getImageTimes($layer, $times = null)
+	{
+	    $obs = substr($layer, 0, 3);
+		$inst = substr($layer, 3, 3);
+		$det = substr($layer, 6, 3);
+		$meas = substr($layer, 9, 3);
+		
+		$resultArray = array ();
+		
+		//If $times is defined, correlate returned times to it.
+		if ($times)
+		{
+		    foreach ($times as $time)
+		    {
+		        $time = $time['unix_timestamp'];
+			    $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs 
+									FROM image
+										LEFT JOIN measurement on measurementId = measurement.id
+										LEFT JOIN measurementType on measurementTypeId = measurementType.id
+										LEFT JOIN detector on detectorId = detector.id
+										LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
+										LEFT JOIN instrument on instrumentId = instrument.id
+										LEFT JOIN observatory on observatoryId = observatory.id
+					             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,1",
+			    $time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
+			
+			$result = $this->db->query($sql);
+			$row = mysqli_fetch_array($result, MYSQL_ASSOC);
+			array_push($resultArray, $row);
+			}
+		}
+	
+		//Otherwise simply return the closest times to the startTIme specified
+		else
+		{
+		    $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs 
+							FROM image
+								LEFT JOIN measurement on measurementId = measurement.id
+								LEFT JOIN measurementType on measurementTypeId = measurementType.id
+								LEFT JOIN detector on detectorId = detector.id
+								LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
+								LEFT JOIN instrument on instrumentId = instrument.id
+								LEFT JOIN observatory on observatoryId = observatory.id
+			             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,%d",
+		    $this->startTime, $this->startTime, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas), $this->numFrames);
+		
+			//echo "SQL: $sql <br><br>";
+			
+			$result = $this->db->query($sql);
+			
+			while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
+			{
+			    array_push($resultArray, $row);
+			}
+			
+			//Sort the results
+			foreach ($resultArray as $key=>$row)
+			{
+			    $timediff[$key] = $row['timediff'];
+			}
+			array_multisort($timediff, SORT_ASC, $resultArray);
+		}
+		return $resultArray;
+	}
 
-// PAD IF NECESSARY? (OR OFFSET... WHICHEVER IS EASIER... USE LARGEST IMAGE AS A GUIDELINE)
-
-//print_r($dimensions);
-//exit();
-
-//print "<br>" . sizeOf($imageTimes) . "<br><br>";
-
-// For each frame, create a composite images and store it into $this->images
-for ($j = 0; $j < $this->numFrames; $j++)
-{
-
-    // CompositeImage expects an array of timestamps
-    $timestamps = array ();
-
-// Grab timestamp for each layer
-foreach ($imageTimes as $time)
-{
-    array_push($timestamps, $time[$j]['unix_timestamp']);
-}
-
-// Build a composite image
-$img = new CompositeImage($this->layers, $timestamps, $this->zoomLevel, $this->options);
-$filename = $tmpdir.$j.'.jpg';
-$img->writeImage($filename);
-
-array_push($this->images, $filename);
-}
-
-// init PHPVideoToolkit class
-$toolkit = new PHPVideoToolkit($tmpdir);
-
-// compile the image to the tmp dir
-$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
-if (!$ok)
-{
-    // if there was an error then get it
-    echo $toolkit->getLastError()."<br />\r\n";
-exit ;
-}
-
-$toolkit->setVideoOutputDimensions(1024, 1024);
-
-// set the output parameters (Flash video)
-$output_filename = "$movieName.".$this->filetype;
-$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
-if (!$ok)
-{
-    // 		if there was an error then get it
-    echo $toolkit->getLastError()."<br />\r\n";
-exit ;
-}
-
-// 	execute the ffmpeg command
-$quickMov = $toolkit->execute(false, true);
-
-// check the return value in-case of error
-if ($quickMov !== PHPVideoToolkit::RESULT_OK)
-{
-    // if there was an error then get it
-    echo $toolkit->getLastError()."<br />\r\n";
-exit ;
-}
-
-// Create a high-quality version as well
-$hq_filename = "$movieName.".$this->highQualityFiletype;
-$toolkit->setConstantQuality($this->highQualityLevel);
-
-// Use ASF for Windows
-if ($this->highQualityFiletype == "avi")
-    $toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
-
-// Use MPEG-4 for Mac
-if ($this->highQualityFiletype == "mov")
-    $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
-
-// Add a watermark
-$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
-
-$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
-if (!$ok)
-{
-    // if there was an error then get it
-    echo $toolkit->getLastError()."<br />\r\n";
-exit ;
-}
-
-// execute the ffmpeg command
-$mp4 = $toolkit->execute(false, true);
-if ($mp4 !== PHPVideoToolkit::RESULT_OK)
-{
-    // 		if there was an error then get it
-    echo $toolkit->getLastError()."<br />\r\n";
-exit ;
-}
-
-//$this->showMovie($tmpurl, 512, 512);
-
-header('Content-type: application/json');
-echo json_encode($tmpurl);
-}
-
-/*
- * getImageTimes
- *
- * Queries the database and returns an array of times of size equal to $this->numFrames.
- * If specified, each time will be chosen to be as close as possible to the time in the same
- * indice of the $times array. Otherwise it will simply return an array of the closest
- * times to $this->startTime.
- */
-private function getImageTimes($layer, $times = null)
-{
-    $obs = substr($layer, 0, 3);
-$inst = substr($layer, 3, 3);
-$det = substr($layer, 6, 3);
-$meas = substr($layer, 9, 3);
-
-$resultArray = array ();
-
-//If $times is defined, correlate returned times to it.
-if ($times)
-{
-    foreach ($times as $time)
-    {
-        $time = $time['unix_timestamp'];
-    $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs 
-						FROM image
-							LEFT JOIN measurement on measurementId = measurement.id
-							LEFT JOIN measurementType on measurementTypeId = measurementType.id
-							LEFT JOIN detector on detectorId = detector.id
-							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
-							LEFT JOIN instrument on instrumentId = instrument.id
-							LEFT JOIN observatory on observatoryId = observatory.id
-		             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,1",
-    $time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
-
-$result = $this->db->query($sql);
-$row = mysqli_fetch_array($result, MYSQL_ASSOC);
-array_push($resultArray, $row);
-}
-}
-
-//Otherwise simply return the closest times to the startTIme specified
-else
-{
-    $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs 
-					FROM image
-						LEFT JOIN measurement on measurementId = measurement.id
-						LEFT JOIN measurementType on measurementTypeId = measurementType.id
-						LEFT JOIN detector on detectorId = detector.id
-						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
-						LEFT JOIN instrument on instrumentId = instrument.id
-						LEFT JOIN observatory on observatoryId = observatory.id
-	             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,%d",
-    $this->startTime, $this->startTime, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas), $this->numFrames);
-
-//echo "SQL: $sql <br><br>";
-
-$result = $this->db->query($sql);
-
-while ($row = mysqli_fetch_array($result, MYSQL_ASSOC))
-{
-    array_push($resultArray, $row);
-}
-
-//Sort the results
-foreach ($resultArray as $key=>$row)
-{
-    $timediff[$key] = $row['timediff'];
-}
-array_multisort($timediff, SORT_ASC, $resultArray);
-}
-return $resultArray;
-}
-
-/*
- * showMovie
- */
-public function showMovie($url, $width, $height)
-{
-?>
-<!-- MC Media Player -->
-<script type="text/javascript">
-    playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-    fpFileURL = "<?php print $url?>";
-    playerSize = "<?php print $width . 'x' . $height?>";
-</script>
-<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js">
-</script>
-<!-- / MC Media Player -->
-<?php
-}
+	/*
+	 * showMovie
+	 */
+	public function showMovie($url, $width, $height)
+	{
+		?>
+		<!-- MC Media Player -->
+		<script type="text/javascript">
+		    playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
+		    fpFileURL = "<?php print $url?>";
+		    playerSize = "<?php print $width . 'x' . $height?>";
+		</script>
+		<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js">
+		</script>
+		<!-- / MC Media Player -->
+		<?php
+	}
 }
 ?>

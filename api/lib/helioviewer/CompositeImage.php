@@ -18,15 +18,24 @@ class CompositeImage {
 	 * @param object $yRange
 	 * @param object $options an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
+	 * @param object $frameNum is the frame number if this belongs to a movie, or an id number if it's a screenshot.
 	 */
-	public function __construct($layers, $zoomLevel, $xRange, $yRange, $options, $layerImages) {
+	public function __construct($layers, $zoomLevel, $xRange, $yRange, $options, $layerImages, $frameNum) {
 		date_default_timezone_set('UTC');
 		$this->layers     = $layers;
 		$this->zoomLevel  = $zoomLevel;
 		$this->xRange     = $xRange;
 		$this->yRange     = $yRange;
 		$this->options    = $options;
-		$this->tileSize	  = 512;
+		// Default imageSize will be 512 for now. Later on this will be modified to reflect appropriate aspect ratios for movies or screenshots.
+		$this->imageSize  = 512;
+		$this->frameNum = $frameNum;
+
+		$this->tmpDir = CONFIG::CACHE_DIR . "movies/";
+		if(!file_exists($this->tmpDir)) {
+			mkdir($this->tmpDir);
+			chmod($this->tmpDir, 0777);
+		}			
 
 		// Array holds the filepaths for all 'built' images.
 		$builtImages = array();
@@ -36,7 +45,7 @@ class CompositeImage {
 			$jp2filepath = $this->getFilepath($image['uri']);
 	
 			if(file_exists($jp2filepath))
-				$subFieldImage = new SubFieldImage($jp2filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->tileSize);
+				$subFieldImage = new SubFieldImage($jp2filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->imageSize);
 			else {
 				echo "Error: JP2 image " . $jp2filepath . " does not exist. <br />";
 				exit();
@@ -52,7 +61,7 @@ class CompositeImage {
 				exit();
 			}
 		}
-		
+	
 		// Composite on top of one another
 		if (sizeOf($this->layers) > 1) {
 			$this->composite = $this->buildComposite($builtImages);
@@ -98,13 +107,20 @@ class CompositeImage {
 	 */
 	private function buildComposite($images) {
 		//TEMP
-		$eit = $images[0];
-		$las = $images[1];
+//		$eit = $images[0];
+//		$las = $images[1];
 //		echo $eit . " " . $las;
-		$tmpImg = CONFIG::CACHE_DIR . "movies/compImg.tif";
-		$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && composite -gravity Center " . $las . " " . $eit . " " . $tmpImg;
-//		echo "Executing " . $cmd . "<br />";
 
+		$tmpImg = $this->tmpDir . $this->frameNum . ".tif";
+		$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && composite -gravity Center";
+		
+		// It is assumed that the array $images is already in the order of smallest image -> largest image,
+		// for example, EIT (smallest), LASCO C2, LASCO C3 (largest);
+		foreach(array_reverse($images) as $image)
+			$cmd .= " " . $image;
+		$cmd .= " " . $tmpImg;
+//		echo "Executing " . $cmd . "<br />";
+		exec($cmd);
 		//$eit->compositeImage($las, $las->getImageCompose(), 0, 0);
 //		$eit->compositeImage($las, imagick::COMPOSITE_OVER, 0, 0);
 		return $tmpImg;	

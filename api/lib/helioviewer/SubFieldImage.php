@@ -29,6 +29,7 @@ class SubFieldImage extends JP2Image {
         $this->x = $x;
         $this->y = $y;
 		$this->jp2Filepath = $filepath;
+		// The true/false parameter means whether to display the image or not when finished building it.
 		$this->getImage(true);
 	}
 	
@@ -49,7 +50,9 @@ class SubFieldImage extends JP2Image {
 		else {	
 //			echo "Building image with filepath " . $filepath . "...<br />";	
 			// If it's not cached, build it and put it in the cache.
+			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center).
 	        $this->image = $this->buildImage($filepath, false);	
+			
 //	        echo "Image: " . $this->image . " (from SubFieldImage->getImage())<br />";
 	        // Display image
 //	        if ($display)

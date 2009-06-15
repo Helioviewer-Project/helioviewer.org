@@ -411,7 +411,7 @@ class API {
         $zoomLevel = $this->params['zoomLevel'];
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
-		$timeStep = $this->params['timeStep'];
+		$timeStep  = $this->params['timeStep'];
         
         $xRange    = $this->params['xRange'];
         $yRange    = $this->params['yRange'];
