@@ -41,21 +41,24 @@ class ImageSeries
 	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
 	 */
-    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options, $timeStep)
+    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, /*$xRange, $yRange, */ $options, $timeStep)
     {
         date_default_timezone_set('UTC');
 
         $this->layers = $layers;
+			
         // startTime is a Unix timestamp in seconds.
         $this->startTime = $startTime;
         $this->zoomLevel = $zoomLevel;
         $this->numFrames = $numFrames;
         $this->frameRate = $frameRate;
         $this->highQualityFiletype = $hqFormat;
-		// xRange and yRange are in pixels, e.g. "0,512"
-        $this->xRange = $xRange;
-        $this->yRange = $yRange;
+		
+		// xRange and yRange are in pixels, e.g. "0,512" for each range.
+//        $this->xRange = $xRange;
+//        $this->yRange = $yRange;
         $this->options = $options;
+		
         // timeStep is in seconds
         $this->timeStep = $timeStep;
 
@@ -109,33 +112,38 @@ class ImageSeries
             array_push($timeStamps, $time);
         }
 
-		// Array that holds $closestImages for each layer
+		// Array that holds $closestImages array for each layer
 		$layerImages = array();
-
-		$closestImages = array(); 		
+		
+		// Array to hold timestamps corresponding to each image, and each image's uri
+		$closestImages = array(); 
+				
         foreach ($this->layers as $layer)
         {
-            // Extract info from $layer
-            $obs = substr($layer, 0, 3);
-            $inst = substr($layer, 3, 3);
-            $det = substr($layer, 6, 3);
-            $meas = substr($layer, 9, 3);
+        	$layerInfo = explode("_", $layer["name"]);
 
-            // Array to hold timestamps corresponding to each image, and each image's uri
-//            $closestImages = array ();
+            // Extract info from $layer
+            $obs 	= $layerInfo[0]; //substr($name, 0, 3);
+            $inst 	= $layerInfo[1]; //substr($name, 3, 3);
+            $det 	= $layerInfo[2]; //substr($name, 6, 3);
+            $meas 	= $layerInfo[3]; //substr($name, 9, 3);
+
             $closestImages = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);
-			$layerImages[$layer] = $closestImages;
+			$layerImages[$layer["name"]] = $closestImages;
         }
 
-//  		$frameNum = 1;
-		
 		for($frameNum = 0; $frameNum < $this->numFrames; $frameNum++) {
+			// images array hold one image from each layer (the closest images to a specific timestamp)
 			$images = array();
+			
 			foreach($this->layers as $layer) {
-				$images[$layer] = $layerImages[$layer][$frameNum];
+				$name = $layer["name"];
+				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $layer["opacity"], "closestImages" => $layerImages[$name][$frameNum]);
+				//$images[$name] = $layerImages[$name][$frameNum];
+				$images[$name] = $image;
 			}	
-			// TODO: xRange and yRange will need to be arrays of ranges for each layer, because not all layer images are the same size.
-			$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $images, $frameNum);	
+
+			$compImage = new CompositeImage(/*$this->layers,*/ $this->zoomLevel, /*$this->xRange, $this->yRange,*/ $this->options, $images, $frameNum);	
           	$filename = $tmpdir . $frameNum . '.tif';
 			$compFile = $compImage->getComposite(); 
 

@@ -20,13 +20,14 @@ class CompositeImage {
 	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
 	 * @param object $frameNum is the frame number if this belongs to a movie, or an id number if it's a screenshot.
 	 */
-	public function __construct($layers, $zoomLevel, $xRange, $yRange, $options, $layerImages, $frameNum) {
+	public function __construct($zoomLevel,/* $xRanges, $yRanges,*/ $options, $layerImages, $frameNum) {
 		date_default_timezone_set('UTC');
-		$this->layers     = $layers;
+//		$this->layers     = $layers;
 		$this->zoomLevel  = $zoomLevel;
-		$this->xRange     = $xRange;
-		$this->yRange     = $yRange;
+//		$this->xRange     = $xRange;
+//		$this->yRange     = $yRange;
 		$this->options    = $options;
+
 		// Default imageSize will be 512 for now. Later on this will be modified to reflect appropriate aspect ratios for movies or screenshots.
 		$this->imageSize  = 512;
 		$this->frameNum = $frameNum;
@@ -39,21 +40,26 @@ class CompositeImage {
 
 		// Array holds the filepaths for all 'built' images.
 		$builtImages = array();
-		
+		$opacities = array();
 		foreach($layerImages as $image) {
 			// Build each image separately
-			$jp2filepath = $this->getFilepath($image['uri']);
-	
+			$uri = $image['closestImages']['uri'];
+			$jp2filepath = $this->getFilepath($uri);
+
+			$xRange = $image["xRange"];	
+			$yRange = $image["yRange"];
+			array_push($opacities, $image["opacity"]);
+					
 			if(file_exists($jp2filepath))
-				$subFieldImage = new SubFieldImage($jp2filepath, $image['uri'], $this->zoomLevel, $this->xRange, $this->yRange, $this->imageSize);
+				$subFieldImage = new SubFieldImage($jp2filepath, $uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize);
 			else {
 				echo "Error: JP2 image " . $jp2filepath . " does not exist. <br />";
 				exit();
 			}
 		
 			$filepath = $subFieldImage->getCacheFilepath();
-	//		echo $filepath . " From CompositeImage->constructor<br />";
-	
+			//echo $filepath . " From CompositeImage->constructor<br />";
+
 			if(file_exists($filepath))
 				array_push($builtImages, $filepath);
 			else {
@@ -63,8 +69,8 @@ class CompositeImage {
 		}
 	
 		// Composite on top of one another
-		if (sizeOf($this->layers) > 1) {
-			$this->composite = $this->buildComposite($builtImages);
+		if (sizeOf($layerImages) > 1) {
+			$this->composite = $this->buildComposite($builtImages, $opacities);
 		} 
 
 		else {
@@ -105,7 +111,7 @@ class CompositeImage {
 	/*
 	 * buildComposite
 	 */
-	private function buildComposite($images) {
+	private function buildComposite($images, $opacities) {
 		//TEMP
 //		$eit = $images[0];
 //		$las = $images[1];

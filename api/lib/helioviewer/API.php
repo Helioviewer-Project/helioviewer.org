@@ -412,21 +412,33 @@ class API {
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
 		$timeStep  = $this->params['timeStep'];
-        
-        $xRange    = $this->params['xRange'];
-        $yRange    = $this->params['yRange'];
-
+		$opacity   = explode(",", $this->params['opacity']);        
+        $xRange    = explode("/", $this->params['xRange']);
+       	$yRange    = explode("/", $this->params['yRange']);
+		$layerName = explode(",", $this->params['layers']);
+		
         $hqFormat  = $this->params['format'];
 
         // Optional parameters
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
-
+/*$layers = explode(",", $this->params['layers']);
+header('Content-type: application/json');
+echo json_encode($layers["SOH_EIT_EIT_304"]);
+exit();	
+*/
+		// Each array (opacity, xRange, and yRange) should already be in order with the first value of each array corresponding to
+		// the first layer, the second values corresponding to the second layer, and so on. 
+		$layers = array();
+		$i = 0;
+		foreach($layerName as $lname) {
+			$layers[$lname] = array("name" => $lname, "opacity" => $opacity[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
+			$i++;
+		}
+	
         //Check to make sure values are acceptable
         try {
-            $layers = explode(",", $this->params['layers']);
-
             //Limit number of layers to three
             if ((sizeOf($layers) > 3) || (strlen($this->params['layers']) == 0)) {
                 throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
@@ -437,8 +449,8 @@ class API {
                 throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
 
-		// Can you just pass imgSeries the $_GET or $_POST array?
-            $imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options, $timeStep);
+		// Can you just pass imgSeries the $_GET or $_POST array? or put some layer info in one array.
+            $imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, /*$xRange, $yRange, $opacity, */ $options, $timeStep);
             $imgSeries->buildMovie();
 
         } catch(Exception $e) {
