@@ -412,28 +412,25 @@ class API {
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
 		$timeStep  = $this->params['timeStep'];
-		$opacity   = explode(",", $this->params['opacity']);        
+       
         $xRange    = explode("/", $this->params['xRange']);
        	$yRange    = explode("/", $this->params['yRange']);
 		$layerName = explode(",", $this->params['layers']);
 		
         $hqFormat  = $this->params['format'];
-
+		$opacityValue = explode(",", $this->params['opacity']); 
+		
         // Optional parameters
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
-/*$layers = explode(",", $this->params['layers']);
-header('Content-type: application/json');
-echo json_encode($layers["SOH_EIT_EIT_304"]);
-exit();	
-*/
+
 		// Each array (opacity, xRange, and yRange) should already be in order with the first value of each array corresponding to
 		// the first layer, the second values corresponding to the second layer, and so on. 
 		$layers = array();
 		$i = 0;
 		foreach($layerName as $lname) {
-			$layers[$lname] = array("name" => $lname, "opacity" => $opacity[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
+			$layers[$lname] = array("name" => $lname, "opacityValue" => $opacityValue[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
 			$i++;
 		}
 	
@@ -461,6 +458,49 @@ exit();
         return 1;
     }
 
+	private function _takeScreenshot() {
+		require_once('ScreenImage.php');
+		
+        $obsDate = $this->params['obsDate'];
+        $zoomLevel = $this->params['zoomLevel'];
+		
+        $xRange    = explode("/", $this->params['xRange']);
+       	$yRange    = explode("/", $this->params['yRange']);
+		$layerName = explode(",", $this->params['layers']);
+		$opacityValue = explode(",", $this->params['opacity']); 
+
+        $options = array();
+        $options['enhanceEdges'] = $this->params['edges'] || false;
+        $options['sharpen']      = $this->params['sharpen'] || false;    
+
+		// Each array (opacity, xRange, and yRange) should already be in order with the first value of each array corresponding to
+		// the first layer, the second values corresponding to the second layer, and so on. 
+		$layers = array();
+		$i = 0;
+		foreach($layerName as $lname) {
+			$layers[$lname] = array("name" => $lname, "opacityValue" => $opacityValue[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
+			$i++;
+		}
+		
+		try {
+			if(sizeOf($layers) < 1) 
+				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
+
+			// Give the image a unix timestamp as the id.
+			$id = time();
+			$screenImage = new ScreenImage($obsDate, $zoomLevel, $options, $layers, $id);	
+			// TODO: Change this over to png 
+			header('Content-type: image/png');
+			echo file_get_contents($screenImage->getComposite());
+		}
+		catch(Exception $e) {
+			echo 'Error: ' . $e->getMessage();
+			exit();
+		}
+		
+		return 1;
+	}
+	
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
@@ -662,6 +702,8 @@ exit();
             case "buildMovie":
                 break;
 			case "playMovie":
+				break;
+			case "takeScreenshot":
 				break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        

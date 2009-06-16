@@ -133,6 +133,7 @@ abstract class JP2Image {
             // Get dimensions of extracted region
             $extracted = $this->getImageDimensions($pgm);
 	        $relTs = $this->relativeTilesize;
+				
 //echo "relTs: " . $relTs . " width & height: " . $extracted['width'] . ", " . $extracted['height'] . " relW and relH: " . $jp2RelWidth . ", " . $jp2RelHeight . "<br />";	        
 			// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {

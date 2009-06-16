@@ -6,7 +6,8 @@
  *       from the database. To get from a javascript Date object to a Unix timestamp, simply
  *       use "date.getTime() * 1000." (getTime returns the number of miliseconds)
  */
-require_once ('CompositeImage.php');
+//require_once ('CompositeImage.php');
+require_once ('FrameLayer.php');
 require_once ('DbConnection.php');
 require_once ('lib/phpvideotoolkit/config.php');
 require_once ('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
@@ -138,16 +139,17 @@ class ImageSeries
 			
 			foreach($this->layers as $layer) {
 				$name = $layer["name"];
-				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $layer["opacity"], "closestImages" => $layerImages[$name][$frameNum]);
-				//$images[$name] = $layerImages[$name][$frameNum];
+				$opacity = $layer["opacityValue"]; //array("opacityValue" => $layer["opacityValue"], "opacityGroup" => $this->getOpacityGroup($name));
+
+				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $opacity, "closestImages" => $layerImages[$name][$frameNum]);
 				$images[$name] = $image;
 			}	
 
-			$compImage = new CompositeImage(/*$this->layers,*/ $this->zoomLevel, /*$this->xRange, $this->yRange,*/ $this->options, $images, $frameNum);	
+			$frameLayer = new FrameLayer($this->zoomLevel, $this->options, $images, $frameNum);	
           	$filename = $tmpdir . $frameNum . '.tif';
-			$compFile = $compImage->getComposite(); 
+			$frameFile = $frameLayer->getComposite(); 
 
-			copy($compFile, $filename);
+			copy($frameFile, $filename);
 			array_push($this->images, $filename);
 		}
 /*   	    foreach ($closestImages as $image) {
@@ -235,12 +237,12 @@ class ImageSeries
 			unlink($image);
 		}	
 			
-//		$this->showMovie($tmpurl, 512, 512);
+		$this->showMovie($tmpurl, 512, 512);
 		
-		header('Content-type: application/json');
-		echo json_encode($tmpurl);
+//		header('Content-type: application/json');
+//		echo json_encode($tmpurl);
 	}
-	
+		
     /*
      * Queries the database to find the exact timestamps for images nearest each time in $timeStamps.
      * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', and 'uri'
@@ -255,7 +257,7 @@ class ImageSeries
         {
             foreach ($timeStamps as $time)
             {
-                $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri 
+                $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri, opacityGrp 
 						FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id

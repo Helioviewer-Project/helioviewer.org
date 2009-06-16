@@ -36,7 +36,7 @@ class SubFieldImage extends JP2Image {
 	function getImage($display) {
 		// JPG or PNG
 		$format = $this->getImageFormat();
-		
+
 		// Filepath of image in cache directory
 		$filepath = $this->getFilePath($format);
 //		echo "Checking cache for " . $filepath . "...<br />";
@@ -52,7 +52,7 @@ class SubFieldImage extends JP2Image {
 			// If it's not cached, build it and put it in the cache.
 			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center).
 	        $this->image = $this->buildImage($filepath, false);	
-			
+				
 //	        echo "Image: " . $this->image . " (from SubFieldImage->getImage())<br />";
 	        // Display image
 //	        if ($display)

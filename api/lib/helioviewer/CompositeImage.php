@@ -6,57 +6,63 @@
  */
 require 'SubFieldImage.php';
 
-class CompositeImage {
-	private $layers;
-	private $composite;
+abstract class CompositeImage {
+	protected $composite;
+	protected $zoomLevel;
+	protected $options;
+	protected $imageSize;
+	protected $tmpDir;
+	protected $layerImages;
 
 	/**
 	 * Constructor
-	 * @param object $layers an array of at least one layer name, such as SOHEITEIT304 (obs, inst, det, meas, no quotation marks)
 	 * @param object $zoomLevel a number between 8-15, default is 10.
-	 * @param object $xRange
-	 * @param object $yRange
 	 * @param object $options an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
 	 * @param object $frameNum is the frame number if this belongs to a movie, or an id number if it's a screenshot.
 	 */
-	public function __construct($zoomLevel,/* $xRanges, $yRanges,*/ $options, $layerImages, $frameNum) {
+	protected function __construct($zoomLevel, $options, $tmpDir) { 
 		date_default_timezone_set('UTC');
-//		$this->layers     = $layers;
-		$this->zoomLevel  = $zoomLevel;
-//		$this->xRange     = $xRange;
-//		$this->yRange     = $yRange;
-		$this->options    = $options;
 
+		$this->zoomLevel  	= $zoomLevel;
+		$this->options    	= $options;
+		$this->tmpDir 	   	= $tmpDir;
+
+//		$this->layerImages	= $layerImages;
+		
 		// Default imageSize will be 512 for now. Later on this will be modified to reflect appropriate aspect ratios for movies or screenshots.
 		$this->imageSize  = 512;
-		$this->frameNum = $frameNum;
+//		$this->frameNum = $frameNum;
 
-		$this->tmpDir = CONFIG::CACHE_DIR . "movies/";
+//		$this->tmpDir = CONFIG::CACHE_DIR . "movies/";
+		// Create the temp directory where images will be stored.
 		if(!file_exists($this->tmpDir)) {
 			mkdir($this->tmpDir);
 			chmod($this->tmpDir, 0777);
 		}			
-
+	}
+	
+	protected function compileImages() {
 		// Array holds the filepaths for all 'built' images.
 		$builtImages = array();
 		$opacities = array();
-		foreach($layerImages as $image) {
+		
+		foreach($this->layerImages as $image) {
 			// Build each image separately
 			$uri = $image['closestImages']['uri'];
 			$jp2filepath = $this->getFilepath($uri);
 
 			$xRange = $image["xRange"];	
 			$yRange = $image["yRange"];
-			array_push($opacities, $image["opacity"]);
-					
+			array_push($opacities, array("opacityValue" => $image["opacity"], "opacityGroup" => $image['closestImages']['opacityGrp']));
+				
 			if(file_exists($jp2filepath))
 				$subFieldImage = new SubFieldImage($jp2filepath, $uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize);
 			else {
 				echo "Error: JP2 image " . $jp2filepath . " does not exist. <br />";
 				exit();
 			}
-		
+
 			$filepath = $subFieldImage->getCacheFilepath();
 			//echo $filepath . " From CompositeImage->constructor<br />";
 
@@ -67,14 +73,20 @@ class CompositeImage {
 				exit();
 			}
 		}
-	
+
 		// Composite on top of one another
-		if (sizeOf($layerImages) > 1) {
+		if (sizeOf($this->layerImages) > 1) {
 			$this->composite = $this->buildComposite($builtImages, $opacities);
 		} 
 
 		else {
-			$this->composite = $builtImages[0];
+			if(isset($this->frameNum))
+				$this->composite = $builtImages[0];
+			else {
+				$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert " . $builtImages[0] . " " . $this->tmpDir . $this->id . ".png";
+				exec($cmd);
+				$this->composite = $this->tmpDir . $this->id . ".png";
+			}
 
 //		$img = $this->buildImage($this->subFieldImage);
 //		echo $img;
@@ -90,7 +102,7 @@ class CompositeImage {
 */
 	}
 	
-	private function buildImage($image) {
+	protected function buildImage($image) {
 //		$filepath = $this->getFilepath($image['uri']);
 		
 		// File extension
@@ -117,13 +129,19 @@ class CompositeImage {
 //		$las = $images[1];
 //		echo $eit . " " . $las;
 
-		$tmpImg = $this->tmpDir . $this->frameNum . ".tif";
+		// Put images into the order they will be composited onto each other. 
+		$sortedImages = $this->sortByOpacity($images, $opacities); 
+
+		if(isset($this->frameNum))		
+			$tmpImg = $this->tmpDir . $this->frameNum . ".tif";
+		else
+			$tmpImg = $this->tmpDir . $this->id . ".png";
+			
 		$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && composite -gravity Center";
 		
-		// It is assumed that the array $images is already in the order of smallest image -> largest image,
-		// for example, EIT (smallest), LASCO C2, LASCO C3 (largest);
-		foreach(array_reverse($images) as $image)
-			$cmd .= " " . $image;
+		// It is assumed that the array $images is already in the correct order for opacity groups.
+		foreach($sortedImages as $image)
+			$cmd .= " " . $image["image"];
 		$cmd .= " " . $tmpImg;
 //		echo "Executing " . $cmd . "<br />";
 		exec($cmd);
@@ -132,6 +150,37 @@ class CompositeImage {
 		return $tmpImg;	
 	}
 
+	/*
+	 * Sorts the layers by opacity group and then by opacity value. 
+	 * Opacity groups that are used currently are 3 (C3 images), 2 (C2 images), 1 (EIT/MDI images).
+	 * The array is sorted like this: Group 3, Group 2, Group 1(smallest opacity, -> , largest opacity).
+	 */
+	private function sortByOpacity($images, $opacities) {
+		// Separate images by opacity group.
+		// TODO: find a sort function that is cleaner than this.
+		$imageGroups = array("1" => array(), "2" => array(), "3" => array(), "4" => array());
+		$i = 0;
+		foreach($opacities as $op) {
+			array_push($imageGroups[$op["opacityGroup"]], array("image" => $images[$i], "opacity" => $op["opacityValue"]));
+			$i++;
+		}
+
+		// Sort each group separately in order of increasing opacity
+		foreach($imageGroups as $group) {
+			array_multisort($group, SORT_NUMERIC, SORT_ASC);
+		}
+
+		$sortedImages = array();
+		foreach($imageGroups as $group) {
+			foreach($group as $data) {
+				array_push($sortedImages, $data);
+			}
+		}
+//			echo substr($images[$key], -60, -27);
+		// return the sorted array in order of largest opacity group to smallest.
+		return array_reverse($sortedImages);		
+	}
+	
 	/*
 	 * printImage
 	 */
@@ -170,7 +219,7 @@ class CompositeImage {
 	 * @name getFilepath
 	 * @description Builds a directory string for the given layer
 	 */
-	private function getFilepath($uri) {
+	protected function getFilepath($uri) {
 /*		$d    = getdate($layer->nextTime());
 		$obs  = $layer->observatory();
 		$inst = $layer->instrument();
