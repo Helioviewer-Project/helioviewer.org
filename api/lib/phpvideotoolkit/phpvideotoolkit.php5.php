@@ -890,6 +890,7 @@
 //<-				exits
 				}
 				$escaped_name = $file;
+
 // 				$escaped_name = escapeshellarg($files[0]);
 				$this->_input_file = $escaped_name;
 				$this->_input_file_id = md5($escaped_name);
@@ -1257,6 +1258,7 @@
 				return $this->_raiseError('prepareImagesForConversionToVideo_one_img');
 //<-			exits
 			}
+			
 //			loop through and validate existence first before making a temporary copy
 			foreach ($images as $key=>$img)
 			{
@@ -1278,9 +1280,11 @@
 			}
 //			get the number of preceding places for the files based on how many files there are to copy
 			$total = count($images);
+
 //			create a temp dir in the temp dir
 			$uniqid = $this->unique();
 			mkdir($this->_tmp_directory.$uniqid, 0777);
+
 //			loop through, copy and rename specified images to the temp dir
 			$ext = false;
 			foreach ($images as $key=>$img)
@@ -1309,9 +1313,10 @@
 			$this->addCommand('-inputr', $input_frame_rate);
 // 			exit;
 //			add the directory to the unlinks
-			array_push($this->_unlink_dirs, $this->_tmp_directory.$uniqid);
+			array_push($this->_unlink_dirs, $this->_tmp_directory.$uniqid); 
 //			get the input file format
 			$file_iteration = $this->_tmp_file_prefix.'%d.'.$ext;
+
 //			set the input filename
 			return $this->setInputFile($this->_tmp_directory.$uniqid.DS.$file_iteration);
 		}

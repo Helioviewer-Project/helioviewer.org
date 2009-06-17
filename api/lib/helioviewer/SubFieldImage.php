@@ -1,6 +1,6 @@
 <?php
 /**
- * @class SubFieldImage - A simple class to keep track of a specific layer's associated parameters.
+ * @class SubFieldImage - Obtains an extracted region from a jp2 image and saves it as a .tif
  */
 require('JP2Image.php');
 
@@ -12,15 +12,16 @@ class SubFieldImage extends JP2Image {
 	  * @param object $filepath a string representing the location of the jp2 image, including subfolders.
 	  * @param object $uri the name of the jp2 image file, in the format 2003_01_31_SOH_EIT_EIT_304.jpg
 	  * @param object $zoomLevel a number between 8-15, default is 10.
-	  * @param object $x 0 or -1, the range of tiles viewed. 
-	  * @param object $y 0 or -1, the range of tiles viewed.
+	  * @param object $x the range of tiles viewed, in pixels. 
+	  * @param object $y the range of tiles viewed, in pixels.
 	  * @param object $imageSize is 512 pixels. 
-	  * @param correlate
 	  */	
 	
-	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize, $correlate = NULL) {
+	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize) {
 		$xArray = explode(",", $x);
 		$yArray = explode(",", $y);
+		
+		// JP2Image constructor expects an array of start and end pixels
         $xRange = array("start" => $xArray[0], "end" => $xArray[1]);
         $yRange = array("start" => $yArray[0], "end" => $yArray[1]);
 
@@ -30,7 +31,7 @@ class SubFieldImage extends JP2Image {
         $this->y = $y;
 		$this->jp2Filepath = $filepath;
 		// The true/false parameter means whether to display the image or not when finished building it.
-		$this->getImage(true);
+		$this->getImage(false);
 	}
 	
 	function getImage($display) {
@@ -39,24 +40,25 @@ class SubFieldImage extends JP2Image {
 
 		// Filepath of image in cache directory
 		$filepath = $this->getFilePath($format);
-//		echo "Checking cache for " . $filepath . "...<br />";
-		// If it's already cached, just display it
-		if(Config::ENABLE_CACHE && $display && file_exists($filepath)) {
+
+		// If it's already cached, just use the cached file
+		if(Config::ENABLE_CACHE && file_exists($filepath)) {
 			$this->image = $filepath;
 //			echo "File exists";
-//			$this->display($filepath);
+			if($display)
+				$this->display($filepath);
 		}
 		
 		else {	
 //			echo "Building image with filepath " . $filepath . "...<br />";	
 			// If it's not cached, build it and put it in the cache.
-			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center).
+			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center for now).
 	        $this->image = $this->buildImage($filepath, false);	
 				
 //	        echo "Image: " . $this->image . " (from SubFieldImage->getImage())<br />";
 	        // Display image
-//	        if ($display)
-//	            $this->display($filepath);
+	        if ($display)
+	            $this->display($filepath);
 		}
 	}
 	
@@ -76,7 +78,7 @@ class SubFieldImage extends JP2Image {
         $day   = substr($this->timestamp,8,2);
 
         // Create necessary directories		
-		$folders = array("movies", $year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
+		$folders = array($year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
 		$filepath = $this->cacheDir;
 
 		foreach($folders as $folder) {
@@ -107,7 +109,7 @@ class SubFieldImage extends JP2Image {
 		$filepath .= implode("_", array(substr($this->uri, 0, -4), $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr));
 
 		$filepath .= ".tif";
-//		 echo $filepath . " From SubFieldImage->getFilepath()  <br />";
+
 		return $filepath;
 	}
 	

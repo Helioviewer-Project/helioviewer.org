@@ -6,7 +6,7 @@
  *       from the database. To get from a javascript Date object to a Unix timestamp, simply
  *       use "date.getTime() * 1000." (getTime returns the number of miliseconds)
  */
-//require_once ('CompositeImage.php');
+
 require_once ('FrameLayer.php');
 require_once ('DbConnection.php');
 require_once ('lib/phpvideotoolkit/config.php');
@@ -27,7 +27,7 @@ class ImageSeries
     private $highQualityLevel = 100;
 	// Watermarking does not work yet, missing module for it on this computer. 
     private $watermarkURL = "/Library/WebServer/Documents/helioviewer/images/logos/watermark_small_gs.png";
-    private $watermarkOptions = "-x 10 -y 10"; //"-x 720 -y 965 ";
+    private $watermarkOptions = "-x 720 -y 965 ";
 
 	/**
 	 * 
@@ -46,6 +46,8 @@ class ImageSeries
     {
         date_default_timezone_set('UTC');
 
+		// $layers is an array of layer information arrays, identified by their layer names.
+		// Each layer information array has values for "name", "xRange", "yRange", and "opacityValue"
         $this->layers = $layers;
 			
         // startTime is a Unix timestamp in seconds.
@@ -55,9 +57,6 @@ class ImageSeries
         $this->frameRate = $frameRate;
         $this->highQualityFiletype = $hqFormat;
 		
-		// xRange and yRange are in pixels, e.g. "0,512" for each range.
-//        $this->xRange = $xRange;
-//        $this->yRange = $yRange;
         $this->options = $options;
 		
         // timeStep is in seconds
@@ -92,7 +91,7 @@ class ImageSeries
 
     /*
      * buildMovie
-     * @TDOD: is it possible to combine getImageTimestamps and getFilePaths so that the combined
+     * @TODO: is it possible to combine getImageTimestamps and getFilePaths so that the combined
      * function just sets $this->imageTimestamps and $this->images?
      */
     public function buildMovie()
@@ -103,7 +102,7 @@ class ImageSeries
         $tmpdir = Config::TMP_ROOT_DIR."/$now/";
         $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
         mkdir($tmpdir);
-		
+
         // Build an array with all timestamps needed when requesting images
         $timeStamps = array ();
 
@@ -113,11 +112,11 @@ class ImageSeries
             array_push($timeStamps, $time);
         }
 
-		// Array that holds $closestImages array for each layer
+		// Array that holds $closestImage array for each layer
 		$layerImages = array();
 		
 		// Array to hold timestamps corresponding to each image, and each image's uri
-		$closestImages = array(); 
+		$closestImage = array(); 
 				
         foreach ($this->layers as $layer)
         {
@@ -129,29 +128,32 @@ class ImageSeries
             $det 	= $layerInfo[2]; //substr($name, 6, 3);
             $meas 	= $layerInfo[3]; //substr($name, 9, 3);
 
-            $closestImages = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);
-			$layerImages[$layer["name"]] = $closestImages;
+            $closestImage = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);
+			$layerImages[$layer["name"]] = $closestImage;
         }
 
+		// For each frame, make a composite image of all layers at that timestamp
 		for($frameNum = 0; $frameNum < $this->numFrames; $frameNum++) {
-			// images array hold one image from each layer (the closest images to a specific timestamp)
+			// images array holds one image from each layer (the closest images to a specific timestamp)
 			$images = array();
 			
 			foreach($this->layers as $layer) {
 				$name = $layer["name"];
-				$opacity = $layer["opacityValue"]; //array("opacityValue" => $layer["opacityValue"], "opacityGroup" => $this->getOpacityGroup($name));
+				$opacity = $layer["opacityValue"]; 
 
-				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $opacity, "closestImages" => $layerImages[$name][$frameNum]);
+				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $opacity, "closestImage" => $layerImages[$name][$frameNum]);
 				$images[$name] = $image;
 			}	
-
-			$frameLayer = new FrameLayer($this->zoomLevel, $this->options, $images, $frameNum);	
+			// All frames will be put in cache/movies/$now			
+			$frameLayer = new FrameLayer($this->zoomLevel, $this->options, $images, $frameNum, $now);	
           	$filename = $tmpdir . $frameNum . '.tif';
 			$frameFile = $frameLayer->getComposite(); 
 
+//			exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $frameFile $filename");
 			copy($frameFile, $filename);
 			array_push($this->images, $filename);
 		}
+
 /*   	    foreach ($closestImages as $image) {
          	$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $image);
           	$filename = $tmpdir . $frameNum . '.tif';
@@ -177,7 +179,7 @@ class ImageSeries
 		    echo $toolkit->getLastError()."<br />";
 			exit();
 		}
-	
+
 		$toolkit->setVideoOutputDimensions(1024, 1024);
 		
 		// set the output parameters (Flash video)
@@ -199,7 +201,7 @@ class ImageSeries
 		    echo $toolkit->getLastError()."<br />\r\n";
 			exit();
 		}
-		
+	
 		// Create a high-quality version as well
 		$hq_filename = "$movieName." . $this->highQualityFiletype;
 		$toolkit->setConstantQuality($this->highQualityLevel);
@@ -232,7 +234,7 @@ class ImageSeries
 			exit();
 		}
 
-		// Clean up images
+		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
 			unlink($image);
 		}	
@@ -289,7 +291,7 @@ class ImageSeries
      */
     /*
      * quickMovie
-     */
+    
     public function quickMovie()
     {
         // Make a temporary directory
@@ -432,7 +434,7 @@ class ImageSeries
 		header('Content-type: application/json');
 		echo json_encode($tmpurl);
 	}
-
+*/
 	/*
 	 * getImageTimes
 	 *
