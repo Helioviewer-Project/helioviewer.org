@@ -6,6 +6,7 @@ require('JP2Image.php');
 
 class SubFieldImage extends JP2Image {
 	private $jp2Filepath;
+	protected $helioCentricOffset;
 
 	/**
 	  * Constructor
@@ -17,7 +18,7 @@ class SubFieldImage extends JP2Image {
 	  * @param object $imageSize is 512 pixels. 
 	  */	
 	
-	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize) {
+	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize, $helioCentricOffset) {
 		$xArray = explode(",", $x);
 		$yArray = explode(",", $y);
 		
@@ -30,6 +31,8 @@ class SubFieldImage extends JP2Image {
         $this->x = $x;
         $this->y = $y;
 		$this->jp2Filepath = $filepath;
+		$this->helioCentricOffset = $helioCentricOffset;
+		
 		// The true/false parameter means whether to display the image or not when finished building it.
 		$this->getImage(false);
 	}

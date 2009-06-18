@@ -259,7 +259,7 @@
 				<!-- Movie button -->
 				<div id='movie-button' title=" Build Movie ">
 					<div class='ui-icon ui-icon-arrow-4-diag'></div>
-				</div>               
+				</div>            
 			</div>
 			<div id="clearfooter"></div>
 		</div>
@@ -274,6 +274,5 @@
 		
         <!-- Usage Dialog -->
         <div id='usage-dialog'></div>
-		
 	</body>
 </html>

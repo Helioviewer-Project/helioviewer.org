@@ -265,9 +265,6 @@ abstract class JP2Image {
 
         // Add desired region
         $cmd .= $this->getRegionString();
-        
-        //echo $cmd;
-        //exit();
    
         // Execute the command
         try {
@@ -399,9 +396,9 @@ abstract class JP2Image {
     }**/
 
 // 6-12-2009 converted from using tile coordinates to pixels.   
-// Tiles are padded depending on what part of the image they are. isTile defaults to true.
-// If the image is a SubFieldImage, isTile is false and the image is padded with -gravity Center instead.  
-    private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y, $isTile = true) {
+// Tiles are padded using tile coordinates (-1,0), etc. isTile defaults to true.
+// If the image is a SubFieldImage, isTile is false and the image is padded using pixel coordinates. 
+    private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y, $isTile = true) {		
 		if($isTile) {
 	        // Determine min and max tile numbers
 	        $imgNumTilesX = max(2, ceil($jp2Width  / $this->tileSize));
@@ -458,8 +455,16 @@ abstract class JP2Image {
 	            }
 	        }
 		}
-		else
-			$gravity = "Center";
+		
+		/* 
+		 * If the item is a subfieldImage, it is assumed that the overall picture is larger than, but contains this image.
+		 * The jp2 image can be divided into 9 regions, 3 along the x-axis and 3 along the y-axis.
+		 * The image has a heliocentric offset and will be padded according to which region the offset falls into. 
+		 */
+		else {
+			$gravity = $this->helioCentricOffset;
+		}
+//		echo "Gravity: $gravity<br />";
         // Construct padding command
         // TEST: use black instead of transparent for background?
         return "-gravity $gravity -extent $tilesize" . "x" . "$tilesize ";

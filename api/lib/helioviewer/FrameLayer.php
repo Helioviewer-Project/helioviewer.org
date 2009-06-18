@@ -13,13 +13,13 @@ class FrameLayer extends CompositeImage {
 	/*
 	 * Constructor
 	 */
-	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId) {
+	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $helioCentricOffset) {
 		$this->frameNum = $frameNum;
 		$this->layerImages = $layerImages;
 		
 		$tmpDir = CONFIG::CACHE_DIR . "movies/";
 
-		parent::__construct($zoomLevel, $options, $tmpDir);
+		parent::__construct($zoomLevel, $options, $tmpDir, $helioCentricOffset);
 
 		// Directory to store all of the final frame images before they are compiled into a video	
 		$this->cacheFileDir = $tmpDir . $folderId . "/";

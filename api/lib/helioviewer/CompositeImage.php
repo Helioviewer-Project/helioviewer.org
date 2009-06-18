@@ -15,6 +15,7 @@ abstract class CompositeImage {
 	protected $layerImages;
 	protected $transImageDir;
 	protected $compositeImageDir;
+	protected $helioCentricOffset;
 
 	/**
 	 * Constructor
@@ -23,7 +24,7 @@ abstract class CompositeImage {
 	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
 	 * @param object $frameNum is the frame number if this belongs to a movie, or an id number if it's a screenshot.
 	 */
-	protected function __construct($zoomLevel, $options, $tmpDir) { 
+	protected function __construct($zoomLevel, $options, $tmpDir, $helioCentricOffset) { 
 		date_default_timezone_set('UTC');
 
 		$this->zoomLevel  	= $zoomLevel;
@@ -32,6 +33,9 @@ abstract class CompositeImage {
 
 		// Default imageSize will be 512 for now. Later on this will be modified to reflect appropriate aspect ratios for movies or screenshots.
 		$this->imageSize  = 512;
+		
+		// This is needed for when the images are padded and put together.
+		$this->helioCentricOffset = $helioCentricOffset;
 
 		// Create the temp directory where images will be stored.
 		// $this->tmpDir is determined in either the FrameLayer or ScreenImage class.
@@ -78,7 +82,7 @@ abstract class CompositeImage {
 				if(!file_exists($jp2filepath))
 					throw new Exception("JP2 image " . $jp2filepath . " does not exist.");
 					
-				$subFieldImage = new SubFieldImage($jp2filepath, $uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize);
+				$subFieldImage = new SubFieldImage($jp2filepath, $uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->helioCentricOffset);
 	
 				$filepath = $subFieldImage->getCacheFilepath();
 
@@ -164,12 +168,20 @@ abstract class CompositeImage {
 		foreach($sortedImages as $image) {
 			$img = $image["image"];
 			$op = $image["opacity"];
-
+			
 			if($op < 100) {
-				$tmpOpImg = $this->transImageDir . substr($img, -60, -27) . "-op.tif";
-				$opacityCmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
-	
-				exec($opacityCmd);
+				// Get the image's uri
+				$imgFilepath = explode("/", $img);
+				$imgUri = array_pop($imgFilepath);
+				
+				$tmpOpImg = $this->transImageDir . substr($imgUri, 0, -4) . "-op" . $op . ".tif";
+				
+				// If it's not in the cache, make it
+				if(!file_exists($tmpOpImg)) {
+					$opacityCmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
+					exec($opacityCmd);
+				}
+				
 				$img = $tmpOpImg;
 			}
 			

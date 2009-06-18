@@ -15,7 +15,7 @@ class ScreenImage extends CompositeImage {
 	/*
 	 * Constructor
 	 */
-	public function __construct($timestamp, $zoomLevel, $options, $layers, $id) {
+	public function __construct($timestamp, $zoomLevel, $options, $layers, $id, $helioCentricOffset) {
 		// $id is the unix timestamp of the current time
 		// $timestamp is the timestamp of the image(s) requested.
 		$this->id = $id;
@@ -30,7 +30,7 @@ class ScreenImage extends CompositeImage {
 		 */
 		$this->layerImages = $this->getLayerInfo($layers);
 
-		parent::__construct($zoomLevel, $options, $tmpDir);
+		parent::__construct($zoomLevel, $options, $tmpDir, $helioCentricOffset);
 		
 		$now = time();
 		// Directory to hold the final screenshot image.

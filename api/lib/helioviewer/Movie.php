@@ -12,7 +12,7 @@ require_once ('DbConnection.php');
 require_once ('lib/phpvideotoolkit/config.php');
 require_once ('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
 
-class ImageSeries
+class Movie
 {
     private $images = array ();
     private $maxFrames;
@@ -42,7 +42,7 @@ class ImageSeries
 	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
 	 */
-    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, /*$xRange, $yRange, */ $options, $timeStep)
+    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $helioCentricOffset)
     {
         date_default_timezone_set('UTC');
 
@@ -61,6 +61,7 @@ class ImageSeries
 		
         // timeStep is in seconds
         $this->timeStep = $timeStep;
+		$this->helioCentricOffset = $helioCentricOffset;
 
         $this->db = new DbConnection();
     }
@@ -145,7 +146,7 @@ class ImageSeries
 				$images[$name] = $image;
 			}	
 			// All frames will be put in cache/movies/$now			
-			$frameLayer = new FrameLayer($this->zoomLevel, $this->options, $images, $frameNum, $now);	
+			$frameLayer = new FrameLayer($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->helioCentricOffset);	
           	$filename = $tmpdir . $frameNum . '.tif';
 			$frameFile = $frameLayer->getComposite(); 
 
@@ -239,10 +240,10 @@ class ImageSeries
 			unlink($image);
 		}	
 			
-		$this->showMovie($tmpurl, 512, 512);
+//		$this->showMovie($tmpurl, 512, 512);
 		
-//		header('Content-type: application/json');
-//		echo json_encode($tmpurl);
+		header('Content-type: application/json');
+		echo json_encode($tmpurl);
 	}
 		
     /*
