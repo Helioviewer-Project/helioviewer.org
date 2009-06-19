@@ -9,6 +9,9 @@
 		<meta http-equiv="Cache-Control" content="No-Cache">
 		<meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
 		<meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, ">
+        
+        <!-- Twitter Jetpack -->
+        <link rel="jetpack" href="lib/jetpack/helioviewer-twitter-jetpack.js" name="Helioviewer.org Twitter Jetpack">
 
 		<!-- YUI CSS Reset -->
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
