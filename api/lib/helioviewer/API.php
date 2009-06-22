@@ -405,7 +405,7 @@ class API {
      */
     private function _buildMovie () {
         require_once('Movie.php');
-       
+      
         // Required parameters
         $startDate = $this->params['startDate'];
         $zoomLevel = $this->params['zoomLevel'];
@@ -417,7 +417,8 @@ class API {
        	$yRange    = explode("/", $this->params['yRange']);
 		$layerName = explode(",", $this->params['layers']);
 
-		$helioCentricOffset = $this->params['hcOffset'];
+		$hcCoords = explode(",", $this->params['hcOffset']);
+		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1], "gravity" => $hcCoords[2]);
 				
         $hqFormat  = $this->params['format'];
 		$opacityValue = explode(",", $this->params['opacity']); 
@@ -449,7 +450,7 @@ class API {
             }
 
 			// Can you just pass imgSeries the $_GET or $_POST array? or put some layer info in one array.
-            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $helioCentricOffset);
+            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset);
             $movie->buildMovie();
 
         } catch(Exception $e) {
@@ -466,7 +467,7 @@ class API {
 	 * @return Returns 1 if the action was completed successfully.
 	 */
 	private function _takeScreenshot() {
-		require_once('ScreenImage.php');
+		require_once('Screenshot.php');
 		
         $obsDate   = $this->params['obsDate'];
         $zoomLevel = $this->params['zoomLevel'];
@@ -476,7 +477,8 @@ class API {
 		$layerName = explode(",", $this->params['layers']);
 		
 		$opacityValue = explode(",", $this->params['opacity']); 
-		$helioCentricOffset = $this->params['hcOffset'];
+		$hcCoords = explode(",", $this->params['hcOffset']);
+		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1], "gravity" => $hcCoords[2]);
 
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
@@ -501,19 +503,19 @@ class API {
 
 			// Give the image a unix timestamp as the id.
 			$id = time();
-			$screenImage = new ScreenImage($obsDate, $zoomLevel, $options, $layers, $id, $helioCentricOffset);	
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $layers, $id, $hcOffset);	
 
-			if(!file_exists($screenImage->getComposite()))
+			if(!file_exists($screenshot->getComposite()))
 				throw new Exception("The requested screenshot is either unavailable or does not exist.");
 
 			if($this->params == $_GET) {				
 				header('Content-type: image/png');
-				echo file_get_contents($screenImage->getComposite());
+				echo file_get_contents($screenshot->getComposite());
 			}
 			
 			else {
 				header('Content-type: application/json');
-				echo json_encode($screenImage->getComposite());
+				echo json_encode($screenshot->getComposite());
 			}
 		}
 		catch(Exception $e) {

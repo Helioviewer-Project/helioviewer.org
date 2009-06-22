@@ -24,7 +24,7 @@ abstract class CompositeImage {
 	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
 	 * @param object $frameNum is the frame number if this belongs to a movie, or an id number if it's a screenshot.
 	 */
-	protected function __construct($zoomLevel, $options, $tmpDir, $helioCentricOffset) { 
+	protected function __construct($zoomLevel, $options, $tmpDir, $hcOffset) { 
 		date_default_timezone_set('UTC');
 
 		$this->zoomLevel  	= $zoomLevel;
@@ -35,7 +35,7 @@ abstract class CompositeImage {
 		$this->imageSize  = 512;
 		
 		// This is needed for when the images are padded and put together.
-		$this->helioCentricOffset = $helioCentricOffset;
+		$this->hcOffset = $hcOffset;
 
 		// Create the temp directory where images will be stored.
 		// $this->tmpDir is determined in either the FrameLayer or ScreenImage class.
@@ -82,7 +82,7 @@ abstract class CompositeImage {
 				if(!file_exists($jp2filepath))
 					throw new Exception("JP2 image " . $jp2filepath . " does not exist.");
 					
-				$subFieldImage = new SubFieldImage($jp2filepath, $uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->helioCentricOffset);
+				$subFieldImage = new SubFieldImage($jp2filepath, $uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
 	
 				$filepath = $subFieldImage->getCacheFilepath();
 

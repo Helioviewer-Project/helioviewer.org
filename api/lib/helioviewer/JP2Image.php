@@ -107,15 +107,18 @@ abstract class JP2Image {
             // Use PNG as intermediate format so that GD can read it in
             $png = substr($filename, 0, -3) . "png";
 			$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD;
-//			echo $cmd;
           
             exec($cmd . " && convert $pgm -depth 8 -quality 10 -type Grayscale $png");
-        
+			
+			// If the image is a subfield image or a screenshot, its extracted region may be much 
+			// larger than the intended image size. Crop to fit.
+//			if(!$isTile) {
+//				exec($cmd . " && convert $png -crop 512x512+0+0 $png");
+//			}        
             // Apply color-lookup table
             if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
                 $clut = $this->getColorTable($this->detector, $this->measurement);
-				exec($cmd . " && convert -clut $png $clut $png");
-//                $this->setColorPalette($png, $clut, $png);
+                $this->setColorPalette($png, $clut, $png);
             }
    
             // IM command for transparency, padding, rescaling, etc.
@@ -134,17 +137,19 @@ abstract class JP2Image {
             // Get dimensions of extracted region
             $extracted = $this->getImageDimensions($pgm);
 	        $relTs = $this->relativeTilesize;
-				
-//echo "relTs: " . $relTs . " width & height: " . $extracted['width'] . ", " . $extracted['height'] . " relW and relH: " . $jp2RelWidth . ", " . $jp2RelHeight . "<br />";	        
+
+			if(!$isTile) {
+				$this->adjustHCOffset($extracted, $jp2RelWidth, $jp2RelHeight);
+			}
+
+//echo "relW: " . $jp2RelWidth . " relTs: " . $relTs . " width & height: " . $extracted['width'] . ", " . $extracted['height'] . " relW and relH: " . $jp2RelWidth . ", " . $jp2RelHeight . "<br />";	  
+//echo "hcOffset: " . $this->hcOffset["x"] . "," . $this->hcOffset["y"] . ", " . $this->hcOffset["gravity"];
+//exit();
 			// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
                 $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"], $isTile) . " $png";
                 exec($pad);
             }        
-//			if($isTile)
-//				$ts = $this->tileSize;
-//			else
-//				$ts = $jp2RelWidth;
 						
             // Resize if necessary (Case 3)
             if ($relTs < $this->tileSize) {
@@ -153,7 +158,7 @@ abstract class JP2Image {
     
             // Refetch dimensions of extracted region
             $tile = $this->getImageDimensions($png);
-           
+          
             // Pad if tile is smaller than it should be (Case 2)
             if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
                 $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"], $isTile);
@@ -162,13 +167,10 @@ abstract class JP2Image {
             if ($this->hasAlphaMask()) {
                 $cmd .= "-compose copy_opacity -composite ";
             }
-    
+ 
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
-            
-            //echo ("$cmd $filename");
-            //exit();
-    
+
             // Execute command
             exec("$cmd $filename", $out, $ret);
             if ($ret != 0)
@@ -265,7 +267,7 @@ abstract class JP2Image {
 
         // Add desired region
         $cmd .= $this->getRegionString();
-   
+
         // Execute the command
         try {
             $line = exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && " . $cmd, $out, $ret);
@@ -301,11 +303,10 @@ abstract class JP2Image {
 		$rangeDiffY = max($this->yRange["end"], $this->relativeTilesize);
 
 		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
-		// The extra statements are temporary until it can grab direct ranges from the javascript classes.
-		$top 	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr(($rangeDiffY-$this->relativeTilesize)/2/$this->jp2Height, 0, $precision) : substr($this->yRange["start"]/$this->jp2Width, 0, $precision);
-		$left 	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr(($rangeDiffX-$this->relativeTilesize)/2/$this->jp2Width, 0, $precision) : substr($this->xRange["start"]/$this->jp2Height, 0, $precision);
-		$height	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr($this->relativeTilesize/$this->jp2Height, 0, $precision) : substr($this->yRange["end"]/$this->jp2Height, 0, $precision);
-		$width 	= ($this->relativeTilesize < $this->tileSize && !$this->isTile) ? substr($this->relativeTilesize/$this->jp2Width, 0, $precision) : substr($this->xRange["end"]/$this->jp2Width, 0, $precision);
+		$top 	= substr($this->yRange["start"]/$this->jp2Height, 0, $precision);	
+		$left 	= substr($this->xRange["start"]/$this->jp2Height, 0, $precision);
+		$height = substr($this->yRange["end"]/$this->jp2Height, 0, $precision);
+		$width 	= substr($this->xRange["end"]/$this->jp2Width, 0, $precision);
 		
         $region = "-region \{$top,$left\},\{$height,$width\}";
 //		echo $region . "<br />";
@@ -454,20 +455,22 @@ abstract class JP2Image {
 	                $gravity = "North";
 	            }
 	        }
+			$offset = " ";
 		}
 		
 		/* 
 		 * If the item is a subfieldImage, it is assumed that the overall picture is larger than, but contains this image.
-		 * The jp2 image can be divided into 9 regions, 3 along the x-axis and 3 along the y-axis.
-		 * The image has a heliocentric offset and will be padded according to which region the offset falls into. 
+		 * The image has a heliocentric offset and will be padded with that offset. 
 		 */
 		else {
-			$gravity = $this->helioCentricOffset;
+			$gravity = $this->hcOffset["gravity"];
+			// Offset the image from the center using the heliocentric offset
+			$offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
 		}
-//		echo "Gravity: $gravity<br />";
+
         // Construct padding command
         // TEST: use black instead of transparent for background?
-        return "-gravity $gravity -extent $tilesize" . "x" . "$tilesize ";
+        return "-gravity $gravity -extent $tilesize" . "x" . "$tilesize" . $offset;
     }
     
     private function getColorTable($detector, $measurement) {
@@ -641,5 +644,59 @@ abstract class JP2Image {
         imagedestroy($gd);
         imagedestroy($ctable);
     }
+	
+	// Adjusts the heliocentric offset to be in terms of pixels on the image, not pixels in the viewport.
+	// One pixel on the viewport is not always one pixel on the image, so this method calculates the adjusted
+	// offset: 
+	// padding = (dist from viewport corner to heliocenter) - (dist from top left image corner to center).
+	// The latter distance is found using the image's relative size.
+	private function adjustHCOffset($extracted, $relWidth, $relHeight) {
+		$centered = ($this->hcOffset["gravity"] == "Center"? true : false);
+		if(!$centered) {
+			$hcxOffset = $this->hcOffset["x"];
+			$hcyOffset = $this->hcOffset["y"];
+
+			// Find the relative xstart and ystart			
+			$xStart = $this->xRange["start"] * $relWidth/$this->jp2Width;
+			$yStart = $this->yRange["start"] * $relHeight/$this->jp2Height;
+
+			// Calculate the distance between the top left corner of image and the center of the image			
+			if($xStart < $relWidth/2)
+				$distX = $relWidth/2  - $xStart;
+			else
+				$distX = $relWidth/2  + $xStart;
+				
+			if($yStart < $relHeight/2)
+				$distY = $relHeight/2 - $yStart;
+			else
+				$distY = $relHeight/2 + $yStart;
+
+			if($hcxOffset < 0) {
+				$xOffset = $hcxOffset + $distX; 
+			}
+			
+			else {
+				$xOffset = $hcxOffset - $distX; 
+			}
+			
+			if($hcyOffset < 0) {
+				$yOffset = $hcyOffset + $distY;
+			}
+			
+			else {
+				$yOffset = $hcyOffset - $distY; 
+			}
+		}
+
+		if($extracted['width'] < $this->relativeTilesize && !$centered)
+			$this->hcOffset["x"] = ($xOffset >= 0? "+" : "") . $xOffset;
+		else
+			$this->hcOffset["x"] = "+0";
+			
+		if($extracted['height'] < $this->relativeTilesize && !$centered)
+			$this->hcOffset["y"] = ($yOffset >= 0? "+" : "") . $yOffset;
+		else
+			$this->hcOffset["y"] = "+0";
+	}
 }
 ?>

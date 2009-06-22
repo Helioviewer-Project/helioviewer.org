@@ -6,20 +6,20 @@
 
 require('CompositeImage.php');
 
-class FrameLayer extends CompositeImage {
+class MovieFrame extends CompositeImage {
 	protected $frameNum;
 	protected $layerImages;
 	protected $cacheFileDir;
 	/*
 	 * Constructor
 	 */
-	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $helioCentricOffset) {
+	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $hcOffset) {
 		$this->frameNum = $frameNum;
 		$this->layerImages = $layerImages;
 		
 		$tmpDir = CONFIG::CACHE_DIR . "movies/";
 
-		parent::__construct($zoomLevel, $options, $tmpDir, $helioCentricOffset);
+		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset);
 
 		// Directory to store all of the final frame images before they are compiled into a video	
 		$this->cacheFileDir = $tmpDir . $folderId . "/";

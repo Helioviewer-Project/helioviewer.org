@@ -18,7 +18,7 @@ class SubFieldImage extends JP2Image {
 	  * @param object $imageSize is 512 pixels. 
 	  */	
 	
-	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize, $helioCentricOffset) {
+	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize, $hcOffset) {
 		$xArray = explode(",", $x);
 		$yArray = explode(",", $y);
 		
@@ -31,7 +31,7 @@ class SubFieldImage extends JP2Image {
         $this->x = $x;
         $this->y = $y;
 		$this->jp2Filepath = $filepath;
-		$this->helioCentricOffset = $helioCentricOffset;
+		$this->hcOffset = $hcOffset;
 		
 		// The true/false parameter means whether to display the image or not when finished building it.
 		$this->getImage(false);
@@ -109,7 +109,7 @@ class SubFieldImage extends JP2Image {
 		if (substr($this->yRange["end"],0,1) == "-")
 			$yEndStr = "-" . str_pad(substr($this->yRange["end"], 1), 2, '0', STR_PAD_LEFT);	
 
-		$filepath .= implode("_", array(substr($this->uri, 0, -4), $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr));
+		$filepath .= implode("_", array(substr($this->uri, 0, -4), $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr, $this->hcOffset["x"], $this->hcOffset["y"]));
 
 		$filepath .= ".tif";
 

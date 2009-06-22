@@ -7,7 +7,7 @@
  *       use "date.getTime() * 1000." (getTime returns the number of miliseconds)
  */
 
-require_once ('FrameLayer.php');
+require_once ('MovieFrame.php');
 require_once ('DbConnection.php');
 require_once ('lib/phpvideotoolkit/config.php');
 require_once ('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
@@ -42,7 +42,7 @@ class Movie
 	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
 	 */
-    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $helioCentricOffset)
+    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset)
     {
         date_default_timezone_set('UTC');
 
@@ -61,7 +61,7 @@ class Movie
 		
         // timeStep is in seconds
         $this->timeStep = $timeStep;
-		$this->helioCentricOffset = $helioCentricOffset;
+		$this->hcOffset = $hcOffset;
 
         $this->db = new DbConnection();
     }
@@ -146,9 +146,9 @@ class Movie
 				$images[$name] = $image;
 			}	
 			// All frames will be put in cache/movies/$now			
-			$frameLayer = new FrameLayer($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->helioCentricOffset);	
+			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset);	
           	$filename = $tmpdir . $frameNum . '.tif';
-			$frameFile = $frameLayer->getComposite(); 
+			$frameFile = $movieFrame->getComposite(); 
 
 //			exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $frameFile $filename");
 			copy($frameFile, $filename);
