@@ -11,7 +11,7 @@
 		<meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, ">
         
         <!-- Twitter Jetpack -->
-        <link rel="jetpack" href="lib/jetpack/helioviewer-twitter-jetpack.js" name="Helioviewer.org Twitter Jetpack">
+        <!-- <link rel="jetpack" href="lib/jetpack/helioviewer-twitter-jetpack.js" name="Helioviewer.org Twitter Jetpack">-->
 
 		<!-- YUI CSS Reset -->
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
@@ -105,13 +105,13 @@
 		<script type="text/javascript">
 			Event.observe(window, 'load', function () {
 				<?php
-					//API Example: index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL
+					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL
 					if ($_GET['layers'])
 						$layers = explode(",", $_GET['layers']);
 				
 					// View
 					$view = array(
-						'obs-date'  => $_GET['obs-date'],
+                        'date'      => $_GET['date'],
 						'img-scale' => $_GET['img-scale'],
 						'layers'    => $layers
 					);
@@ -123,6 +123,7 @@
 					$settings = array(
                         'version'           => Config::BUILD_NUM,
 						'defaultZoomLevel'  => Config::DEFAULT_ZOOM_LEVEL,
+                        'defaultObsTime'    => Config::DEFAULT_OBS_TIME,
                         'minZoomLevel'      => Config::MIN_ZOOM_LEVEL,
                         'maxZoomLevel'      => Config::MAX_ZOOM_LEVEL,
                         'baseZoom'          => Config::BASE_ZOOM_LEVEL,

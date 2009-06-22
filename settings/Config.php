@@ -2,7 +2,7 @@
 /**
  * Helioviewer API Configuration
  * @package Config
- * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
  *  TODO: Switch to ini + APC
  *  TODO: Instead of manually specifying backup servers, simply use any
  *  available tiling server that supports request.
@@ -10,12 +10,12 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/06/03';
-	const BUILD_NUM          = 233;
+	const LAST_UPDATE		 = '2009/06/22';
+	const BUILD_NUM          = 237;
 	
 	// Viewer
-	const DEFAULT_ZOOM_LEVEL = 11;
-	const DEFAULT_OBS_TIME   = 1065312000000;
+	const DEFAULT_OBS_TIME   = '2003-10-05T00:00:00Z';
+  	const DEFAULT_ZOOM_LEVEL = 11;
 	const DEFAULT_TIMESTEP   = 86400;
 	const MIN_ZOOM_LEVEL     = 8;
 	const MAX_ZOOM_LEVEL     = 15;           

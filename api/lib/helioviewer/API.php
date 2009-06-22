@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Helioviewer API
- * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
  *
  * TODO: Move JP2 Image Series functionality to ImageSeries class
  */
@@ -173,6 +173,9 @@ class API {
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
             $src["$field.abbreviation"] = $this->params[$field];
         }
+        
+        // Convert date string to a UNIX timestamp (or strip "Z" and pass datestring to UNIX_TIMESTAMP() directly)
+        // TODO
 
         // file name and location
         $filename = $imgIndex->getJP2Filename($this->params['timestamp'], $src);

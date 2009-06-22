@@ -158,8 +158,8 @@
 					<table class="param-list">
 						<tbody valign="top">
 							<tr>
-								<td width="25%"><b>obs-date</b></td>
-								<td width="35%"><i>Unix Timestamp</i></td>
+								<td width="25%"><b>date</b></td>
+								<td width="35%"><i>ISO 8601 UTC Date</i></td>
 								<td>Date and time to display</td>
 							</tr>
 							<tr>
@@ -179,7 +179,7 @@
 					
 					<span class="example-header">Example:</span>
 					<span class="example-url">
-						<a href="http://www.helioviewer.org/index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL">http://www.helioviewer.org/index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL</a>
+						<a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL">http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL</a>
 					</span>	
 				</div>
 			</div>
@@ -491,6 +491,11 @@
 										<tr>
 											<td><b>timestamp</b></td>
 											<td><i>Unix Timestamp</i></td>
+											<td>Observation time <span style='color:red'>[DEPRICATED]</span></td>
+										</tr>
+                                        <tr>
+											<td><b>date</b></td>
+											<td><i>ISO 8601 UTC Date</i></td>
 											<td>Observation time</td>
 										</tr>
 										<tr>
