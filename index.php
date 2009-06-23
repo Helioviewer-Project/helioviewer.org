@@ -105,7 +105,7 @@
 		<script type="text/javascript">
 			Event.observe(window, 'load', function () {
 				<?php
-					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL
+					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOH_EIT_EIT_171,SOH_LAS_0C2_0WL
 					if ($_GET['layers'])
 						$layers = explode(",", $_GET['layers']);
 				
@@ -156,7 +156,7 @@
 			<!-- Left Column -->
 			<div id="left-col">
 				<div id="left-col-header">
-					<img src="images/logos/simple.png" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
+					<img src="images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
 				</div>
 				<br><br>
 				<div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div> 
@@ -202,6 +202,13 @@
 						<!-- Message Console -->
 						<span id="message-console-spacer" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
 					</div>
+
+                    <!-- Middle Column Header Buttons -->
+                    <div id="middle-col-header-links">
+                        <a id="link-button" class="dark" href="#">Link</a>
+                    </div>
+
+                    <!-- Loading Indicator -->
                     <div id="loading" style="display: none">Loading...</div>
 				</div>
 				<!-- End middle-col-header -->
@@ -244,7 +251,7 @@
         					<a href="help/" class="light" target="_blank">Help</a>
         					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
         					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-        					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank">JHelioviewer</a>
+        					<a href="http://jhelioviewer.org/" class="light" target="_blank">JHelioviewer</a>
         					<a href="wiki/" class="light" target="_blank">Wiki</a>
         					<a href="api/" class="light" target="_blank">API</a>
         					<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>

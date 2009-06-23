@@ -10,8 +10,8 @@
 class Config {
 	
 	// Version Information
-	const LAST_UPDATE		 = '2009/06/22';
-	const BUILD_NUM          = 237;
+	const LAST_UPDATE		 = '2009/06/23';
+	const BUILD_NUM          = 238;
 	
 	// Viewer
 	const DEFAULT_OBS_TIME   = '2003-10-05T00:00:00Z';

@@ -179,7 +179,7 @@
 					
 					<span class="example-header">Example:</span>
 					<span class="example-url">
-						<a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL">http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL</a>
+						<a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOH_EIT_EIT_171,SOH_LAS_0C2_0WL">http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOH_EIT_EIT_171,SOH_LAS_0C2_0WL</a>
 					</span>	
 				</div>
 			</div>
@@ -515,7 +515,7 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&timestamp=1065312000"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&timestamp=1065312000</a>
+									<a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z</a>
 								</span>	
 								
 							</div>
@@ -562,12 +562,12 @@
 										</tr>
 										<tr>
 											<td><b>startTime</b></td>
-											<td><i>Unix Timestamp</i></td>
+											<td><i>ISO 8601 UTC Date</i></td>
 											<td>Movie start time</td>
 										</tr>
 										<tr>
 											<td><b>endTime</b></td>
-											<td><i>Unix Timestamp</i></td>
+											<td><i>ISO 8601 UTC Date</i></td>
 											<td>Movie end time</td>
 										</tr>
 										<tr>
@@ -592,7 +592,7 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1066673880&cadence=27000&format=MJ2"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=1065312000&endTime=1065402792&cadence=1800&format=MJ2</a>
+									<a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=27000&format=JPX"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX</a>
 								</span>								
 							</div>
 						</div>
@@ -631,8 +631,8 @@
 							<p>This appendice contains a list of the identifiers supported by Helioviewer. Many of the identifiers consist of three alphanumeric
 							characters. Where an appropriate abbreviation is short than three characters, 0's are filled in from the left (e.g. "C2" -> "0C2").
 							For some queries, complex identifiers may be built up from the simpler ones below. E.g. to uniquely identify a specific type of
-							image, you must specify a 12-character concatenated set of four identifiers: Observatory, Instrument, Detector, and Measurement.
-							For example, to refer to an EIT 171 image, the identifier <i>SOHEITEIT171</i> is used. Note that not all identifiers follow the
+							image, you must specify a underscore-concatenated set of four identifiers: Observatory, Instrument, Detector, and Measurement.
+							For example, to refer to an EIT 171 image, the identifier <i>SOH_EIT_EIT_171</i> is used. Note that not all identifiers follow the
 							three-character convention. The Feature/Event API identifiers in particular use a different system for naming.</p> 
 							<div class="summary-box" style="background-color: #E3EFFF;">
 							
@@ -847,7 +847,7 @@
 		</div>
 
 		<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-			Last Updated: 2009-02-25 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+			Last Updated: 2009-06-23 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 		</div>
 	
 	</body>

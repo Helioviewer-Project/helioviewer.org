@@ -66,6 +66,14 @@ input, select {background-color:#F4F4F4;}
 #clearfooter{clear:both;height:72px;}
 * > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
 
+/* Header Links */
+#middle-col-header-links {
+    position: absolute;
+    right: 105px;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
 /* Loading Indicator */
 #loading {position: absolute; right: 35px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 

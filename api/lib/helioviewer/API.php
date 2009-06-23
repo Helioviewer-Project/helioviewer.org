@@ -89,8 +89,8 @@ class API {
      * getViewerImage (aka "getCompositeImage")
      *
      * Example usage:
-     *         http://helioviewer.org/api/index.php?action=getViewerImage&layers=SOHEITEIT195&timestamps=1065312000&zoomLevel=10&tileSize=512&xRange=-1,0&yRange=-1,0
-     *         http://helioviewer.org/api/index.php?action=getViewerImage&layers=SOHEITEIT195,SOHLAS0C20WL&timestamps=1065312000,1065312360&zoomLevel=13&tileSize=512&xRange=-1,0&yRange=-1,0&edges=false
+     *         http://helioviewer.org/api/index.php?action=getViewerImage&layers=SOH_EIT_EIT_195&timestamps=1065312000&zoomLevel=10&tileSize=512&xRange=-1,0&yRange=-1,0
+     *         http://helioviewer.org/api/index.php?action=getViewerImage&layers=SOH_EIT_EIT_195,SOH_LAS_0C2_0WL&timestamps=1065312000,1065312360&zoomLevel=13&tileSize=512&xRange=-1,0&yRange=-1,0&edges=false
      * 
      * Notes:
      *         Building a UTC timestamp in javascript
@@ -174,11 +174,16 @@ class API {
             $src["$field.abbreviation"] = $this->params[$field];
         }
         
-        // Convert date string to a UNIX timestamp (or strip "Z" and pass datestring to UNIX_TIMESTAMP() directly)
-        // TODO
+        // Convert date string to a UNIX timestamp
+        // NOTE: Currently supporting deprecated "timestamp" field as well
+        if (isset($this->params['date'])) {
+            $timestamp = $this->getUTCTimestamp($this->params['date']);
+        } else {
+            $timestamp = $this->params['timestamp'];
+        }
 
         // file name and location
-        $filename = $imgIndex->getJP2Filename($this->params['timestamp'], $src);
+        $filename = $imgIndex->getJP2Filename($timestamp, $src);
         $filepath = $this->getFilepath($filename);
 
         // regex for URL construction
@@ -223,8 +228,8 @@ class API {
      *  (See http://us2.php.net/manual/en/function.date-create.php)
      */
     private function _getJP2ImageSeries () {
-        $startTime   = $this->params['startTime'];
-        $endTime     = $this->params['endTime'];
+        $startTime   = $this->getUTCTimestamp($this->params['startTime']);
+        $endTime     = $this->getUTCTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
         
@@ -240,7 +245,7 @@ class API {
             chmod($tmpdir, 0777);
         }
 
-        // Filename
+        // Filename (From,To,By)
         $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence")) . "." . strtolower($format);
         
         // Filepath
@@ -273,8 +278,8 @@ class API {
         //date_default_timezone_set('UTC');
         require_once('ImgIndex.php');
         
-        $startTime   = $this->params['startTime'];
-        $endTime     = $this->params['endTime'];
+        $startTime   = $this->getUTCTimestamp($this->params['startTime']);
+        $endTime     = $this->getUTCTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
 
@@ -599,6 +604,14 @@ class API {
         
         // recombine to construct filepath
         return Config::JP2_DIR . implode("/", $exploded) . "/$uri";
+    }
+    
+    /**
+     * @return int Number of seconds since Jan 1, 1970 UTC
+     * @param string $date ISO 8601 Date string, e.g. "2003-10-05T00:00:00Z"
+     */
+    public static function getUTCTimestamp($date) {
+        return strtotime($date);
     }
 
     /**
