@@ -37,7 +37,7 @@
 	</tr>
 	<tr>
 		<td><strong>&rarr;</strong></td>
-		<td>Pan Right.</td>
+		<td>Pan right.</td>
 	</tr>
 	<tr>
 		<td><strong>&darr;</strong></td>

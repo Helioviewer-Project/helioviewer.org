@@ -384,9 +384,36 @@ Syntax: jQuery</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#displayMailForm">displayMailForm</a></b>()
+								</div>
+								<div class="description">Displays a form to allow the user to mail the current view to someone</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#displayURL">displayURL</a></b>(url)
+								</div>
+								<div class="description">displays a dialog containing a link to the current page</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#generateURL">generateURL</a></b>(level)
+								</div>
+								<div class="description">Builds a URL for the current view</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#loadUserSettings">loadUserSettings</a></b>()
 								</div>
-								<div class="description">Loads user settings from cookies or defaults if no settings have been stored.</div>
+								<div class="description">Loads user settings from URL, cookies, or defaults if no settings have been stored.</div>
 							</td>
 						</tr>
 					
@@ -396,6 +423,15 @@ Syntax: jQuery</div>
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#observe">observe</a></b>(uielement, eventName, eventHandler)
 								</div>
 								<div class="description">Add an event-handler to a given component.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#parseLayerString">parseLayerString</a></b>(The)
+								</div>
+								<div class="description">Breaks up a given layer identifier (e.g.</div>
 							</td>
 						</tr>
 					
@@ -423,6 +459,15 @@ Syntax: jQuery</div>
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#updateDate">updateDate</a></b>(dateStr)
 								</div>
 								<div class="description">Updates the observation date</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#zoomLevelToScale">zoomLevelToScale</a></b>(zoomLevel)
+								</div>
+								<div class="description">Translates a given zoom-level into an image plate scale.</div>
 							</td>
 						</tr>
 					
@@ -745,6 +790,103 @@ Syntax: jQuery
 
 					<hr />
 				
+					<a name="displayMailForm"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>displayMailForm</b>()
+					
+					</div>
+					<div class="description">
+						Displays a form to allow the user to mail the current view to someone
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="displayURL"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>displayURL</b>(url)
+					
+					</div>
+					<div class="description">
+						displays a dialog containing a link to the current page
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>url</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="generateURL"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>generateURL</b>(level)
+					
+					</div>
+					<div class="description">
+						Builds a URL for the current view
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>level</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="loadUserSettings"> </a>
 					<div class="fixedFont">
 					
@@ -753,7 +895,7 @@ Syntax: jQuery
 					
 					</div>
 					<div class="description">
-						Loads user settings from cookies or defaults if no settings have been stored.
+						Loads user settings from URL, cookies, or defaults if no settings have been stored.
 						
 						
 					</div>
@@ -819,6 +961,57 @@ Syntax: jQuery
 							<dt class="heading">See:</dt>
 							
 								<dd><a href="../symbols/UIElement.html">UIElement</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name="parseLayerString"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>parseLayerString</b>(The)
+					
+					</div>
+					<div class="description">
+						Breaks up a given layer identifier (e.g. SOH_LAS_0C2_0WL) into
+             it's component parts and returns a javascript representation.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>The</b>
+									
+								</dt>
+								<dd>layer identifier as an underscore-concatenated string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> a simple javascript object representing the layer params</dd>
+							
+							</dl>
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/LayerManager.html#generateLayerString">LayerManager#generateLayerString</a></dd>
 							
 							</dl>
 						
@@ -931,6 +1124,42 @@ Syntax: jQuery
 						
 						
 
+					<hr />
+				
+					<a name="zoomLevelToScale"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>zoomLevelToScale</b>(zoomLevel)
+					
+					</div>
+					<div class="description">
+						Translates a given zoom-level into an image plate scale.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>zoomLevel</b>
+									
+								</dt>
+								<dd>A zoom level.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
 					
 				
 			
@@ -945,7 +1174,7 @@ Syntax: jQuery
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 03 2009 11:00:23 GMT-0400 (EDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:44 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

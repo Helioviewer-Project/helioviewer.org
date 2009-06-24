@@ -52,15 +52,26 @@
 		<!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
 
 		<!-- ShadowBox -->
-		<!--
-		<script type="text/javascript" src="lib/shadowbox/src/adapter/shadowbox-prototype.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/shadowbox.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/skin/classic/skin.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/player/shadowbox-iframe.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/lang/shadowbox-en.js"></script>
-		<link rel="stylesheet" href="lib/shadowbox/src/skin/classic/skin.css" type="text/css" media="screen">
-		-->
-
+        <link rel="stylesheet" type="text/css" href="lib/shadowbox/shadowbox.css">
+		<script type="text/javascript" src="lib/shadowbox/shadowbox.js"></script>
+		<script type="text/javascript" src="lib/shadowbox/adapters/shadowbox-prototype.js"></script>
+		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-iframe.js"></script>
+   		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-html.js"></script>
+		<script type="text/javascript" src="lib/shadowbox/languages/shadowbox-en.js"></script>
+        <script type="text/javascript">
+            Shadowbox.init({
+                overlayOpacity: 0.5,
+                overlayColor: "#000",
+                onFinish: function () {
+                    //TODO: Possible to setup onFinish handler on a per-dialog basis?
+                    jQuery("#helioviewer-url-input-box").select();
+                    jQuery(".email-input-field").one("click", function(e) {
+                        this.value = "";
+                    });
+                }
+            });
+        </script>
+        
 		<!-- Helioviewer-Specific -->
 		<script src="lib/helioviewer/UIElement.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
@@ -182,8 +193,8 @@
 						<!-- Movie Builder -->
 						<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
 					</div>
-
 				</div>
+
 				<br><br>
 				<div id="tileLayerAccordion"></div>
 				<br><br>
@@ -202,11 +213,6 @@
 						<!-- Message Console -->
 						<span id="message-console-spacer" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
 					</div>
-
-                    <!-- Middle Column Header Buttons -->
-                    <div id="middle-col-header-links">
-                        <a id="link-button" class="dark" href="#">Link</a>
-                    </div>
 
                     <!-- Loading Indicator -->
                     <div id="loading" style="display: none">Loading...</div>
@@ -247,11 +253,17 @@
     
     				<!-- Links -->
     				<div id="footer-links-container-inner">
+                        <div id="social-buttons">
+                            <span id="link-button" class="ui-icon ui-icon-link" style="cursor: pointer; display: inline-block; float: left;"></span>
+                            <span id="email-button" class="ui-icon ui-icon-mail-closed" style="cursor: pointer; display: inline-block; float: left;"></span>
+                            <span style="line-height: 1.6em; margin-left: 3px; font-size: 10px;">
+                                <a href="http://www.jhelioviewer.org/" class="light" target="_blank">J</a>
+                            </span>
+                        </div>
                         <div id="footer-links" class="ui-corner-bottom">
         					<a href="help/" class="light" target="_blank">Help</a>
         					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
         					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-        					<a href="http://jhelioviewer.org/" class="light" target="_blank">JHelioviewer</a>
         					<a href="wiki/" class="light" target="_blank">Wiki</a>
         					<a href="api/" class="light" target="_blank">API</a>
         					<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>

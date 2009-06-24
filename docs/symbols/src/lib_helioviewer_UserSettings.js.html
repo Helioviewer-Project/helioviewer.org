@@ -8,7 +8,7 @@
 	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
 <span class='line'>  2</span>  * @fileOverview Contains the class definition for an UserSettings class.
 <span class='line'>  3</span>  * Syntax: Prototype, jQuery
-<span class='line'>  4</span>  * @author &lt;a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt&lt;/a>
+<span class='line'>  4</span>  * @author &lt;a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt&lt;/a>
 <span class='line'>  5</span>  * @TODO Store either last version of HV or Cookie version to use enable forced updates
 <span class='line'>  6</span>  */</span><span class="WHIT">
 <span class='line'>  7</span> </span><span class="COMM">/*global Class, CookieJar, $H */</span><span class="WHIT">
@@ -18,7 +18,7 @@
 <span class='line'> 11</span> </span><span class="WHIT">	</span><span class="COMM">/**
 <span class='line'> 12</span> 	 * @constructs
 <span class='line'> 13</span> 	 * @description Creates a new UserSettings instance. Because all cookie data is stored as strings, numeric types
-<span class='line'> 14</span> 	 *              must be specified (e.g. in _INTGER_PARAMS) so that the application knows to parse them as such.
+<span class='line'> 14</span> 	 *              must be specified (e.g. in _INTEGER_PARAMS) so that the application knows to parse them as such.
 <span class='line'> 15</span> 	 * @param {Object} controller A reference to the Helioviewer application class
 <span class='line'> 16</span> 	 */</span><span class="WHIT">
 <span class='line'> 17</span> </span><span class="WHIT">	</span><span class="NAME">initialize</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">controller</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -28,7 +28,7 @@
 <span class='line'> 21</span> 		 * @description Default user settings
 <span class='line'> 22</span> 		 */</span><span class="WHIT">
 <span class='line'> 23</span> </span><span class="WHIT">		</span><span class="NAME">this._DEFAULTS</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">$H</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 24</span> </span><span class="WHIT">			</span><span class="STRN">'obs-date'</span><span class="WHIT">			</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1065312000000</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">			</span><span class="STRN">'obs-date'</span><span class="WHIT">			</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">getUTCTimestamp</span><span class="PUNC">(</span><span class="NAME">this.controller.defaultObsTime</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">//1065312000000,</span><span class="WHIT">
 <span class='line'> 25</span> </span><span class="WHIT">			</span><span class="STRN">'zoom-level'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.controller.defaultZoomLevel</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 26</span> </span><span class="WHIT">			</span><span class="STRN">'tile-layers'</span><span class="WHIT">		</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">{</span><span class="WHIT"> </span><span class="NAME">tileAPI</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"api/index.php"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">server</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">observatory</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'SOH'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">instrument</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'EIT'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">detector</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'EIT'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">measurement</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'304'</span><span class="WHIT"> </span><span class="PUNC">}</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 27</span> </span><span class="WHIT">            </span><span class="STRN">'version'</span><span class="WHIT">           </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">this.controller.version</span><span class="PUNC">,</span><span class="WHIT">

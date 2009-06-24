@@ -1,7 +1,7 @@
 <?php
 /**
  * @package JP2Image - JPEG 2000 Image Class
- * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
  * @TODO: Extend Exception class to create more useful objects.
  * @TODO: Use different name for intermediate PNG than final version.
  * @TODO: Forward request to secondary server if it fails for a valid tile?
