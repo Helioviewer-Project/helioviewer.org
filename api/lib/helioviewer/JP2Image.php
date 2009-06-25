@@ -109,12 +109,7 @@ abstract class JP2Image {
 			$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD;
           
             exec($cmd . " && convert $pgm -depth 8 -quality 10 -type Grayscale $png");
-			
-			// If the image is a subfield image or a screenshot, its extracted region may be much 
-			// larger than the intended image size. Crop to fit.
-//			if(!$isTile) {
-//				exec($cmd . " && convert $png -crop 512x512+0+0 $png");
-//			}        
+			      
             // Apply color-lookup table
             if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
                 $clut = $this->getColorTable($this->detector, $this->measurement);
@@ -142,9 +137,6 @@ abstract class JP2Image {
 				$this->adjustHCOffset($extracted, $jp2RelWidth, $jp2RelHeight);
 			}
 
-//echo "relW: " . $jp2RelWidth . " relTs: " . $relTs . " width & height: " . $extracted['width'] . ", " . $extracted['height'] . " relW and relH: " . $jp2RelWidth . ", " . $jp2RelHeight . "<br />";	  
-//echo "hcOffset: " . $this->hcOffset["x"] . "," . $this->hcOffset["y"] . ", " . $this->hcOffset["gravity"];
-//exit();
 			// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
                 $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"], $isTile) . " $png";
@@ -309,7 +301,7 @@ abstract class JP2Image {
 		$width 	= substr($this->xRange["end"]/$this->jp2Width, 0, $precision);
 		
         $region = "-region \{$top,$left\},\{$height,$width\}";
-//		echo $region . "<br />";
+
         return $region;		
 	}    
 
@@ -463,7 +455,7 @@ abstract class JP2Image {
 		 * The image has a heliocentric offset and will be padded with that offset. 
 		 */
 		else {
-			$gravity = $this->hcOffset["gravity"];
+			$gravity = "NorthWest";
 			// Offset the image from the center using the heliocentric offset
 			$offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
 		}
@@ -621,9 +613,6 @@ abstract class JP2Image {
         }
         $ctable = imagecreatefrompng($clut);
         
-        //echo "$input<br> $clut<br> $output";
-        //exit();
-        
         for ($i = 0; $i <= 255; $i++) {
             $rgba = imagecolorsforindex($ctable, $i);
             imagecolorset($gd, $i, $rgba["red"], $rgba["green"], $rgba["blue"]);
@@ -634,7 +623,7 @@ abstract class JP2Image {
         
         //$this->getImageFormat() == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
         //if ($this->getImageFormat() == "jpg")
-        //    imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY);
+            //imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY);
         //else
         imagepng($gd, $output);
 
@@ -645,47 +634,45 @@ abstract class JP2Image {
         imagedestroy($ctable);
     }
 	
-	// Adjusts the heliocentric offset to be in terms of pixels on the image, not pixels in the viewport.
-	// One pixel on the viewport is not always one pixel on the image, so this method calculates the adjusted
-	// offset: 
-	// padding = (dist from viewport corner to heliocenter) - (dist from top left image corner to center).
-	// The latter distance is found using the image's relative size.
+	/* Adjusts the heliocentric offset to be in terms of pixels on the image, not pixels in the viewport.
+	 * One pixel on the viewport is not always one pixel on the image, so this method calculates the adjusted
+	 * offset: 
+	 * padding = (dist from viewport corner to heliocenter) - (dist from top left image corner to center).
+	 * The latter distance is found using the image's relative size.
+	 */
 	private function adjustHCOffset($extracted, $relWidth, $relHeight) {
-		$centered = ($this->hcOffset["gravity"] == "Center"? true : false);
-		if(!$centered) {
-			$hcxOffset = $this->hcOffset["x"];
-			$hcyOffset = $this->hcOffset["y"];
+		$hcxOffset = $this->hcOffset["x"];
+		$hcyOffset = $this->hcOffset["y"];
 
-			// Find the relative xstart and ystart			
-			$xStart = $this->xRange["start"] * $relWidth/$this->jp2Width;
-			$yStart = $this->yRange["start"] * $relHeight/$this->jp2Height;
+		// Find the relative xstart and ystart			
+		$xStart = $this->xRange["start"] * $relWidth/$this->jp2Width;
+		$yStart = $this->yRange["start"] * $relHeight/$this->jp2Height;
 
-			// Calculate the distance between the top left corner of image and the center of the image			
-			if($xStart < $relWidth/2)
-				$distX = $relWidth/2  - $xStart;
-			else
-				$distX = $relWidth/2  + $xStart;
-				
-			if($yStart < $relHeight/2)
-				$distY = $relHeight/2 - $yStart;
-			else
-				$distY = $relHeight/2 + $yStart;
+		// Calculate the distance between the top left corner of image and the center of the image			
+		if($xStart < $relWidth/2)
+			$distX = $relWidth/2  - $xStart;
+		else
+			$distX = $relWidth/2  + $xStart;
+			
+		if($yStart < $relHeight/2)
+			$distY = $relHeight/2 - $yStart;
+		else
+			$distY = $relHeight/2 + $yStart;
 
-			if($hcxOffset < 0) {
-				$xOffset = $hcxOffset + $distX; 
-			}
-			
-			else {
-				$xOffset = $hcxOffset - $distX; 
-			}
-			
-			if($hcyOffset < 0) {
-				$yOffset = $hcyOffset + $distY;
-			}
-			
-			else {
-				$yOffset = $hcyOffset - $distY; 
-			}
+		if($hcxOffset < 0) {
+			$xOffset = $hcxOffset + $distX; 
+		}
+		
+		else {
+			$xOffset = $hcxOffset - $distX; 
+		}
+		
+		if($hcyOffset < 0) {
+			$yOffset = $hcyOffset + $distY;
+		}
+		
+		else {
+			$yOffset = $hcyOffset - $distY; 
 		}
 
 		if($extracted['width'] < $this->relativeTilesize && !$centered)

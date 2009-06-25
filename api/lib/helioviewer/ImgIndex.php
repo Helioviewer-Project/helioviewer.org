@@ -2,7 +2,7 @@
 /**
  * @package ImgIndex
  * @author Patrick Schmiedel <patrick.schmiedel@gmx.net>
- * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
  */
 class ImgIndex {
 	private $dbConnection;

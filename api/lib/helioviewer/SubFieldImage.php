@@ -33,7 +33,7 @@ class SubFieldImage extends JP2Image {
 		$this->jp2Filepath = $filepath;
 		$this->hcOffset = $hcOffset;
 		
-		// The true/false parameter means whether to display the image or not when finished building it.
+		// The true/false parameter means whether to display the image or not when finished building it (used for debugging).
 		$this->getImage(false);
 	}
 	
@@ -47,18 +47,15 @@ class SubFieldImage extends JP2Image {
 		// If it's already cached, just use the cached file
 		if(Config::ENABLE_CACHE && file_exists($filepath)) {
 			$this->image = $filepath;
-//			echo "File exists";
 			if($display)
 				$this->display($filepath);
 		}
 		
 		else {	
-//			echo "Building image with filepath " . $filepath . "...<br />";	
 			// If it's not cached, build it and put it in the cache.
 			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center for now).
 	        $this->image = $this->buildImage($filepath, false);	
 				
-//	        echo "Image: " . $this->image . " (from SubFieldImage->getImage())<br />";
 	        // Display image
 	        if ($display)
 	            $this->display($filepath);

@@ -11,13 +11,14 @@ class Config {
 	// $PATH and $DYLD_LIBRARY_PATH commands so that this will run on Jaclyn's Mac
 	const PATH_CMD			 = "export PATH=\$PATH:/sw/bin:/opt/local/bin:/usr/local/bin:/opt/local/lib:/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin";
 	const DYLD_CMD			 = "export DYLD_LIBRARY_PATH=\$DYLD_LIBRARY_PATH:/Users/beck/kakadu/lib/";
+	
 	// Version Information
-	const LAST_UPDATE		 = '2009/06/03';
-	const BUILD_NUM          = 233;
+	const LAST_UPDATE		 = '2009/06/23';
+	const BUILD_NUM          = 238;
 	
 	// Viewer
 	const DEFAULT_ZOOM_LEVEL = 11;
-	const DEFAULT_OBS_TIME   = 1065312000000;
+	const DEFAULT_OBS_TIME   = '2003-01-01T00:00:10Z';
 	const DEFAULT_TIMESTEP   = 86400;
 	const MIN_ZOOM_LEVEL     = 8;
 	const MAX_ZOOM_LEVEL     = 15;           
@@ -31,7 +32,7 @@ class Config {
 	
 	// Filepaths
 	const WEB_ROOT_DIR       = '/Library/WebServer/Documents/helioviewer';
-	const TMP_ROOT_DIR       = '/Library/WebServer/Documents/helioviewer/tmp'; // '/Users/beck/helioviewer/tmp';
+	const TMP_ROOT_DIR       = '/Library/WebServer/Documents/helioviewer/tmp'; 
 	const CACHE_DIR          = '/Users/beck/helioviewer/cache/';
 	const JP2_DIR            = '/Library/WebServer/Documents/jp2/';
 	const KDU_LIBS_DIR       = '/Users/beck/kakadu/lib/';

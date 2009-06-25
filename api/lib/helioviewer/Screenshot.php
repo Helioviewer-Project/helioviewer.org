@@ -21,7 +21,7 @@ class Screenshot extends CompositeImage {
 		$this->id = $id;
 		$this->timestamp = $timestamp;
 
-		$tmpDir = CONFIG::CACHE_DIR . "screenshots/";
+		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 		
 		/* layerImages is an array of layer information arrays.
 		 * each layer information array has keys "xRange, "yRange", "opacity", and "closestImages" for that particular layer.

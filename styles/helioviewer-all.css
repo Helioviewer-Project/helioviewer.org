@@ -69,6 +69,15 @@ input, select {background-color:#F4F4F4;}
 /* Loading Indicator */
 #loading {position: absolute; right: 35px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 
+/* Link button */
+#link-button {
+
+}
+
+#link-button-icon {
+
+}
+
 /* Observation controls */
 #observation-controls {
     padding: 2px 2px 8px 2px;
@@ -168,6 +177,7 @@ a.dark:hover {
     color: #d18f61;
 	}
 a.light {
+    cursor: pointer;
     text-decoration: none;
     font-weight: bold;
     color: #E8E8E8;
@@ -216,6 +226,47 @@ a.light:hover {
 
 #footer-links > a {
     margin-right: 20px;
+}
+
+#social-buttons {
+    background: url(../images/blackGlass/transparentBG25.png);
+    position: absolute;
+    left: 25px;
+    top:-3px;
+    padding: 0px 8px;
+    border-bottom: 1px solid #262424;
+    border-left: 1px solid #262424;
+    border-right: 1px solid #262424;
+    font-size: 1.0em;
+    height: 18px;
+}
+
+/* URL dialog */
+#helioviewer-url-box {
+    padding: 10px;
+    color: white;
+}
+
+/* Email dialog */
+#helioviewer-url-box > form > label {
+    float:left;
+    display:block;
+}
+#helioviewer-url-box > form > input[type="text"] {
+    display:block;
+}
+
+#helioviewer-url-box > form > label
+{
+    margin-right: 5px;
+    width: 50px;
+}
+
+/* Shadowbox modifications */
+#sb-body, #sb-loading {
+	background: transparent url(/hv/images/blackGlass/transparentBG50.png);
+    border-color: #262424;
+    -moz-border-radius: 10px;
 }
 
 /* updates and to-do list */
@@ -387,7 +438,13 @@ span.fits-sort-btn {
     background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
-span.removeBtn:hover, span#timeBackBtn:hover, span#timeForwardBtn:hover, .accordion-arrow:hover, #full-screen-btn > div:hover {
+span.removeBtn:hover, 
+span#timeBackBtn:hover,
+span#timeForwardBtn:hover,
+#full-screen-btn > div:hover,
+#link-button:hover,
+#email-button:hover,
+.accordion-arrow:hover {
     background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 

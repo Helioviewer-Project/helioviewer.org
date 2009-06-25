@@ -9,6 +9,9 @@
 		<meta http-equiv="Cache-Control" content="No-Cache">
 		<meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
 		<meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, ">
+        
+        <!-- Twitter Jetpack -->
+        <!-- <link rel="jetpack" href="lib/jetpack/helioviewer-twitter-jetpack.js" name="Helioviewer.org Twitter Jetpack">-->
 
 		<!-- YUI CSS Reset -->
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
@@ -49,15 +52,27 @@
 		<!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
 
 		<!-- ShadowBox -->
-	
-		<script type="text/javascript" src="lib/shadowbox/src/adapter/shadowbox-prototype.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/shadowbox.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/skin/classic/skin.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/player/shadowbox-iframe.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/src/lang/shadowbox-en.js"></script>
-		<link rel="stylesheet" href="lib/shadowbox/src/skin/classic/skin.css" type="text/css" media="screen">
-	
-
+        <link rel="stylesheet" type="text/css" href="lib/shadowbox/shadowbox.css">
+		<script type="text/javascript" src="lib/shadowbox/shadowbox.js"></script>
+		<script type="text/javascript" src="lib/shadowbox/adapters/shadowbox-prototype.js"></script>
+		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-iframe.js"></script>
+   		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-html.js"></script>
+   		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-img.js"></script>		
+		<script type="text/javascript" src="lib/shadowbox/languages/shadowbox-en.js"></script>
+        <script type="text/javascript">
+            Shadowbox.init({
+                overlayOpacity: 0.5,
+                overlayColor: "#000",
+                onFinish: function () {
+                    //TODO: Possible to setup onFinish handler on a per-dialog basis?
+                    jQuery("#helioviewer-url-input-box").select();
+                    jQuery(".email-input-field").one("click", function(e) {
+                        this.value = "";
+                    });
+                }
+            });
+        </script>
+        
 		<!-- Helioviewer-Specific -->
 		<script src="lib/helioviewer/UIElement.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
@@ -102,13 +117,13 @@
 		<script type="text/javascript">
 			Event.observe(window, 'load', function () {
 				<?php
-					//API Example: index.php?obs-date=1065512000&img-scale=2.63&layers=SOHEITEIT171,SOHLAS0C20WL
+					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOH_EIT_EIT_171,SOH_LAS_0C2_0WL
 					if ($_GET['layers'])
 						$layers = explode(",", $_GET['layers']);
 				
 					// View
 					$view = array(
-						'obs-date'  => $_GET['obs-date'],
+                        'date'      => $_GET['date'],
 						'img-scale' => $_GET['img-scale'],
 						'layers'    => $layers
 					);
@@ -120,6 +135,7 @@
 					$settings = array(
                         'version'           => Config::BUILD_NUM,
 						'defaultZoomLevel'  => Config::DEFAULT_ZOOM_LEVEL,
+                        'defaultObsTime'    => Config::DEFAULT_OBS_TIME,
                         'minZoomLevel'      => Config::MIN_ZOOM_LEVEL,
                         'maxZoomLevel'      => Config::MAX_ZOOM_LEVEL,
                         'baseZoom'          => Config::BASE_ZOOM_LEVEL,
@@ -152,7 +168,7 @@
 			<!-- Left Column -->
 			<div id="left-col">
 				<div id="left-col-header">
-					<img src="images/logos/simple.png" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
+					<img src="images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
 				</div>
 				<br><br>
 				<div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div> 
@@ -178,8 +194,8 @@
 						<!-- Movie Builder -->
 						<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
 					</div>
-
 				</div>
+
 				<br><br>
 				<div id="tileLayerAccordion"></div>
 				<br><br>
@@ -200,6 +216,8 @@
 						<!-- Message Console -->
 						<span id="message-console-spacer" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
 					</div>
+
+                    <!-- Loading Indicator -->
                     <div id="loading" style="display: none">Loading...</div>
 				</div>
 				<!-- End middle-col-header -->
@@ -238,10 +256,19 @@
     
     				<!-- Links -->
     				<div id="footer-links-container-inner">
+                        <div id="social-buttons">
+                            <span id="link-button" class="ui-icon ui-icon-link" style="cursor: pointer; display: inline-block; float: left;"></span>
+                            <span id="email-button" class="ui-icon ui-icon-mail-closed" style="cursor: pointer; display: inline-block; float: left;"></span>
+							<span id='movie-button' title=" Build Movie " class='ui-icon ui-icon-video' style="cursor:pointer; display: inline-block; float: left;"></span>
+							<span id='screenshot-button' title=" Take Screenshot " class='ui-icon ui-icon-image' style="cursor:pointer; display: inline-block; float: left;"></span>   
+                            <span style="line-height: 1.6em; margin-left: 3px; font-size: 10px;">
+                                <a href="http://www.jhelioviewer.org/" class="light" target="_blank">J</a>
+                            </span>  
+                        </div>
                         <div id="footer-links" class="ui-corner-bottom">
+        					<a href="help/" class="light" target="_blank">Help</a>
         					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
         					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-        					<a href="http://achilles.nascom.nasa.gov/~dmueller/" class="light" target="_blank">JHelioviewer</a>
         					<a href="wiki/" class="light" target="_blank">Wiki</a>
         					<a href="api/" class="light" target="_blank">API</a>
         					<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
@@ -256,10 +283,7 @@
 				</div>
 				-->
 			</div>
-				<!-- Movie button -->
-				<div id='movie-button' title=" Build Movie ">
-					<div class='ui-icon ui-icon-arrow-4-diag'></div>
-				</div>            
+      
 			</div>
 			<div id="clearfooter"></div>
 		</div>

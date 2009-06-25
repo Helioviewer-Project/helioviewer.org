@@ -44,6 +44,8 @@ class Movie
 	 */
     public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset)
     {
+echo "Got here!" ;
+exit();
         date_default_timezone_set('UTC');
 
 		// $layers is an array of layer information arrays, identified by their layer names.
@@ -92,8 +94,6 @@ class Movie
 
     /*
      * buildMovie
-     * @TODO: is it possible to combine getImageTimestamps and getFilePaths so that the combined
-     * function just sets $this->imageTimestamps and $this->images?
      */
     public function buildMovie()
     {
@@ -124,10 +124,10 @@ class Movie
         	$layerInfo = explode("_", $layer["name"]);
 
             // Extract info from $layer
-            $obs 	= $layerInfo[0]; //substr($name, 0, 3);
-            $inst 	= $layerInfo[1]; //substr($name, 3, 3);
-            $det 	= $layerInfo[2]; //substr($name, 6, 3);
-            $meas 	= $layerInfo[3]; //substr($name, 9, 3);
+            $obs 	= $layerInfo[0]; 
+            $inst 	= $layerInfo[1];
+            $det 	= $layerInfo[2]; 
+            $meas 	= $layerInfo[3]; 
 
             $closestImage = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);
 			$layerImages[$layer["name"]] = $closestImage;
@@ -150,7 +150,6 @@ class Movie
           	$filename = $tmpdir . $frameNum . '.tif';
 			$frameFile = $movieFrame->getComposite(); 
 
-//			exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $frameFile $filename");
 			copy($frameFile, $filename);
 			array_push($this->images, $filename);
 		}
@@ -167,7 +166,7 @@ class Movie
 			$frameNum++;
 		}
 */		
-//		echo "Success. Images are located in " . $tmpdir . "<br />";
+
 
 		// Use phpvideotoolkit to compile them
 		$toolkit = new PHPVideoToolkit($tmpdir);

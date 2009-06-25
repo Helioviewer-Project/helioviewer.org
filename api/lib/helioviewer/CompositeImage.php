@@ -4,6 +4,7 @@
  * Last modified May 29, 2009
  * by Keith Hughitt
  */
+
 require 'SubFieldImage.php';
 
 abstract class CompositeImage {
@@ -15,7 +16,7 @@ abstract class CompositeImage {
 	protected $layerImages;
 	protected $transImageDir;
 	protected $compositeImageDir;
-	protected $helioCentricOffset;
+	protected $hcOffset;
 
 	/**
 	 * Constructor
@@ -43,6 +44,7 @@ abstract class CompositeImage {
 			mkdir($this->tmpDir);
 			chmod($this->tmpDir, 0777);
 		}
+
 		// Directory where all intermediate images with opacity levels of < 100 are created and stored		
 		$this->transImageDir = CONFIG::CACHE_DIR . "transparent_images/";
 		if(!file_exists($this->transImageDir)) {
@@ -106,7 +108,8 @@ abstract class CompositeImage {
 		else {
 			// If the image is identified by a frameNum, just copy the image to the movie directory
 			if(isset($this->frameNum)) {
-				exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $builtImages[0] " . $this->cacheFileDir . $this->frameNum . ".tif");
+				//exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $builtImages[0] " . $this->cacheFileDir . $this->frameNum . ".tif");
+				copy($builtImages[0], $this->cacheFileDir . $this->frameNum . ".tif");
 				$this->composite = $this->cacheFileDir . $this->frameNum . ".tif";
 			}
 				
@@ -117,8 +120,7 @@ abstract class CompositeImage {
 				$this->composite = $this->cacheFileDir . $this->id . ".png";
 			}	
 		}
-//		echo $this->composite . "<br />";
-//		exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert -background black $this->composite -extent 512x512 $this->composite");
+
 		//Optional settings
 /*		if ($this->options['enhanceEdges'] == "true")
 			$this->composite->edgeImage(3);
@@ -161,7 +163,7 @@ abstract class CompositeImage {
 			$tmpImg = $this->cacheFileDir . $this->id . ".png";
 			
 		$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && composite -gravity Center";
-		
+//		$prevImg = null;		
 		// It is assumed that the array $images is already in the correct order for opacity groups,
 		// since it was sorted above.
 		$i = 1;
@@ -178,6 +180,11 @@ abstract class CompositeImage {
 				
 				// If it's not in the cache, make it
 				if(!file_exists($tmpOpImg)) {
+					// setImageOpacity does not work on my machine but might elsewhere
+//					copy($img, $tmpOpImg);
+//					$img = new Imagick($tmpOpImg);
+//					$img->setImageOpacity($op/100);
+
 					$opacityCmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
 					exec($opacityCmd);
 				}
@@ -209,6 +216,8 @@ abstract class CompositeImage {
 
 		exec($cmd);
 		exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $tmpImg -background black -alpha off $tmpImg");
+
+
 		//$eit->compositeImage($las, $las->getImageCompose(), 0, 0);
 //		$eit->compositeImage($las, imagick::COMPOSITE_OVER, 0, 0);
 
@@ -305,7 +314,7 @@ abstract class CompositeImage {
 		$min  = str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
 		$sec  = str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
 */
-		if(strlen($uri) != 37) {
+/*		if(strlen($uri) != 37) {
 			echo "Error: supplied uri is not a valid image file path. <br />";
 			exit();
 		} 
@@ -317,7 +326,18 @@ abstract class CompositeImage {
 		$inst = substr($uri, 22, 3);
 		$det = substr($uri, 26, 3);
 		$meas = substr($uri, 30, 3);
-
+*/
+		// Extract the relevant data from the image uri (excluding the .jp2 at the end)
+		$uriData = explode("_", substr($uri, 0, -4));
+		$year 	 = $uriData[0];
+		$month 	 = $uriData[1];
+		$day 	 = $uriData[2];
+		// Skip over the unix timestamp in the middle
+		$obs 	 = $uriData[4];
+		$inst  	 = $uriData[5];
+		$det 	 = $uriData[6];
+		$meas 	 = $uriData[7];
+	
 		$path = CONFIG::JP2_DIR . implode("/", array($year, $month, $day));
 		$path .= "/$obs/$inst/$det/$meas/";
 		$path .= $uri;

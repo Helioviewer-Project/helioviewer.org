@@ -7,7 +7,7 @@
 	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
 	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
 <span class='line'>  2</span>  * @fileoverview Contains the definition of a class for generating and displaying movies.
-<span class='line'>  3</span>  * @author &lt;a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt&lt;/a>
+<span class='line'>  3</span>  * @author &lt;a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt&lt;/a>
 <span class='line'>  4</span>  *
 <span class='line'>  5</span>  */</span><span class="WHIT">
 <span class='line'>  6</span> </span><span class="COMM">/*global MoviesBuilder, Class, UIElement, Event, document, window, Shadowbox, getOS, Ajax */</span><span class="WHIT">
@@ -60,7 +60,7 @@
 <span class='line'> 53</span> </span><span class="WHIT">					</span><span class="NAME">method</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'POST'</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 54</span> </span><span class="WHIT">					</span><span class="NAME">parameters</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 55</span> </span><span class="WHIT">						</span><span class="NAME">action</span><span class="PUNC">:</span><span class="WHIT">    </span><span class="STRN">"buildQuickMovie"</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 56</span> </span><span class="WHIT">	                	</span><span class="NAME">layers</span><span class="PUNC">:</span><span class="WHIT">    </span><span class="STRN">"SOHEITEIT304,SOHLAS0C20WL"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">	                	</span><span class="NAME">layers</span><span class="PUNC">:</span><span class="WHIT">    </span><span class="STRN">"SOH_EIT_EIT_304,SOH_LAS_0C2_0WL"</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 57</span> </span><span class="WHIT">	                	</span><span class="NAME">startDate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">hv.date.getTime</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NUMB">1000</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 58</span> </span><span class="WHIT">	                	</span><span class="NAME">zoomLevel</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">hv.viewport.zoomLevel</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="COMM">//Math.max(hv.viewport.zoomLevel, self.minZoomLevel),</span><span class="WHIT">
 <span class='line'> 59</span> </span><span class="WHIT">	                	</span><span class="NAME">numFrames</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">self.numFrames</span><span class="PUNC">,</span><span class="WHIT">
@@ -85,11 +85,12 @@
 <span class='line'> 78</span> </span><span class="WHIT">					        	</span><span class="NAME">width</span><span class="PUNC">:</span><span class="WHIT">    </span><span class="NUMB">550</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 79</span> </span><span class="WHIT">					        	</span><span class="NAME">content</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">self.url</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'?action=playMovie&format='</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">hqFormat</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'&url='</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">transport.responseJSON</span><span class="WHIT">
 <span class='line'> 80</span> </span><span class="WHIT">							</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 81</span> </span><span class="WHIT">						</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 82</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 83</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 84</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 85</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 86</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 87</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 88</span> </span></pre></body></html>
+<span class='line'> 81</span> </span><span class="WHIT">                            </span><span class="COMM">//jQuery("#helioviewer-url-input-box").select();</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">						</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> </span></pre></body></html>
