@@ -44,8 +44,6 @@ class Movie
 	 */
     public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset)
     {
-echo "Got here!" ;
-exit();
         date_default_timezone_set('UTC');
 
 		// $layers is an array of layer information arrays, identified by their layer names.
