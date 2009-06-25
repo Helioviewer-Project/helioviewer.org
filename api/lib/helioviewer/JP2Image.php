@@ -675,12 +675,12 @@ abstract class JP2Image {
 			$yOffset = $hcyOffset - $distY; 
 		}
 
-		if($extracted['width'] < $this->relativeTilesize && !$centered)
+		if($extracted['width'] < $this->relativeTilesize)
 			$this->hcOffset["x"] = ($xOffset >= 0? "+" : "") . $xOffset;
 		else
 			$this->hcOffset["x"] = "+0";
 			
-		if($extracted['height'] < $this->relativeTilesize && !$centered)
+		if($extracted['height'] < $this->relativeTilesize)
 			$this->hcOffset["y"] = ($yOffset >= 0? "+" : "") . $yOffset;
 		else
 			$this->hcOffset["y"] = "+0";
