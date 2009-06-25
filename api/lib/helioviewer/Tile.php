@@ -2,6 +2,9 @@
 /**
  * @class Tile
  * @author Keith Hughitt
+ * @author Jaclyn Beck
+ * 6-12-2009 The JP2Image class now uses pixels instead of tile coordinates, so this class
+ * 			 has a method to convert its tile coordinates into pixels.
  */
 require('JP2Image.php');
 
@@ -13,6 +16,8 @@ class Tile extends JP2Image {
      * constructor
      */
     public function __construct($uri, $zoomLevel, $x, $y, $tileSize, $display = true) {
+  //  	$pixels = $this->convertTileIndexToPixels($x, $y);
+
         $xRange = array("start" => $x, "end" => $x);
         $yRange = array("start" => $y, "end" => $y);
 
@@ -20,6 +25,8 @@ class Tile extends JP2Image {
 
         $this->x = $x;
         $this->y = $y;
+		
+		$this->convertTileIndexToPixels();
         $this->getTile($display);
     }
 
@@ -129,5 +136,57 @@ class Tile extends JP2Image {
 
         return $filepath;
     }
+
+	/**
+	 * @description Converts tile coordinates such as (-1, 0) into actual pixels. This method
+	 * 				changes xRange and yRange to reflect pixels instead of tile coordinates. 
+	 * @return 
+	 */	
+	function convertTileIndexToPixels() {
+        $jp2Width  = $this->jp2Width;
+        $jp2Height = $this->jp2Height;
+        $ts = $this->relativeTilesize;
+      
+        // Rounding
+        $precision = 6;
+        
+        // Parameters
+        $top = $left = $width = $height = null;
+        
+        // Number of tiles for the entire image
+        $imgNumTilesX = max(2, ceil($jp2Width  / $ts));
+        $imgNumTilesY = max(2, ceil($jp2Height / $ts));
+
+        // Tile placement architecture expects an even number of tiles along each dimension
+        if ($imgNumTilesX % 2 != 0)
+            $imgNumTilesX += 1;
+
+        if ($imgNumTilesY % 2 != 0)
+            $imgNumTilesY += 1;
+                  
+        // Shift so that 0,0 now corresponds to the top-left tile
+        $relX = (0.5 * $imgNumTilesX) + $this->x;
+        $relY = (0.5 * $imgNumTilesY) + $this->y;
+
+        // number of tiles (may be greater than one for movies, etc)
+        $numTilesX = min($imgNumTilesX - $relX, 1);
+        $numTilesY = min($imgNumTilesY - $relY, 1);
+
+        // Number of "inner" tiles
+        $numTilesInsideX = $imgNumTilesX - 2;
+        $numTilesInsideY = $imgNumTilesY - 2;
+      
+        // Dimensions for inner and outer tiles
+        $innerTS = $ts;
+        $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
+
+		// Upper left corner of 'tile'
+		$this->yRange["start"] 	= (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
+		$this->xRange["start"] 	= (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
+
+		// Width and height of 'tile'
+		$this->yRange["end"] 	= (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
+		$this->xRange["end"] 	= (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
+	}
 }
 ?>

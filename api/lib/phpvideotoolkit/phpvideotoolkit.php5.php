@@ -890,6 +890,7 @@
 //<-				exits
 				}
 				$escaped_name = $file;
+
 // 				$escaped_name = escapeshellarg($files[0]);
 				$this->_input_file = $escaped_name;
 				$this->_input_file_id = md5($escaped_name);
@@ -1257,6 +1258,7 @@
 				return $this->_raiseError('prepareImagesForConversionToVideo_one_img');
 //<-			exits
 			}
+			
 //			loop through and validate existence first before making a temporary copy
 			foreach ($images as $key=>$img)
 			{
@@ -1278,14 +1280,17 @@
 			}
 //			get the number of preceding places for the files based on how many files there are to copy
 			$total = count($images);
+
 //			create a temp dir in the temp dir
 			$uniqid = $this->unique();
 			mkdir($this->_tmp_directory.$uniqid, 0777);
+
 //			loop through, copy and rename specified images to the temp dir
 			$ext = false;
 			foreach ($images as $key=>$img)
 			{
-				$file_ext = array_pop(explode('.', $img));
+				$tmp_array = explode('.', $img);
+				$file_ext = array_pop($tmp_array);
 				if($ext !== false && $ext !== $file_ext)
 				{
 					return $this->_raiseError('prepareImagesForConversionToVideo_img_type');
@@ -1293,21 +1298,25 @@
 				}
 				$ext = $file_ext;
 				$tmp_file = $this->_tmp_directory.$uniqid.DS.$this->_tmp_file_prefix.$key.'.'.$ext;
-				if(!@copy($img, $tmp_file))
+
+				if(!copy($img, $tmp_file))
 				{
 					return $this->_raiseError('prepareImagesForConversionToVideo_img_copy', array('img'=>$img, 'tmpfile'=>$tmp_file));
+					echo "Couldn't copy file " . $img . ".";
 //<-				exits
 				}
 //				push the tmp file name into the unlinks so they can be deleted on class destruction
 				array_push($this->_unlink_files, $tmp_file);
 			}
+
 // 			the inputr is a hack for -r to come before the input
 			$this->addCommand('-inputr', $input_frame_rate);
 // 			exit;
 //			add the directory to the unlinks
-			array_push($this->_unlink_dirs, $this->_tmp_directory.$uniqid);
+			array_push($this->_unlink_dirs, $this->_tmp_directory.$uniqid); 
 //			get the input file format
 			$file_iteration = $this->_tmp_file_prefix.'%d.'.$ext;
+
 //			set the input filename
 			return $this->setInputFile($this->_tmp_directory.$uniqid.DS.$file_iteration);
 		}
@@ -2589,7 +2598,8 @@ PHPVIDEOTOOLKIT_MENCODER_BINARY.' -oac copy -ovc copy -idx -o '.$temp_file.' '.i
 			$format = $this->hasCommand('-f');
 			if($format === false)
 			{
-				$extension = strtolower(array_pop(explode('.', $this->_input_file)));
+				$tmp_array = explode('.', $this->_input_file);
+				$extension = strtolower(array_pop($tmp_array));
 				if($extension === 'gif')
 				{
 					$this->addCommand('-pix_fmt', 'rgb24');

@@ -29,10 +29,11 @@ class ImageSeries {
 	/*
 	 * constructor
 	 */
-	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options) {
+	public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options, $timeStep) {
 		date_default_timezone_set('UTC');
 		
-		$this->layers = $layers;
+		$this->layers 	 = $layers;
+		// startTime is a Unix timestamp in seconds.
 		$this->startTime = $startTime;
 		$this->zoomLevel = $zoomLevel;
 		$this->numFrames = $numFrames;
@@ -41,6 +42,8 @@ class ImageSeries {
 		$this->xRange    = $xRange;
 		$this->yRange    = $yRange;		
 		$this->options   = $options;
+		// timeStep is in seconds
+		$this->timeStep  = $timeStep;
 		
 		$this->db = new DbConnection();
 	}
@@ -49,7 +52,7 @@ class ImageSeries {
 	 * toMovie
 	 */
 	public function toMovie() {
-		
+
 	}
 	
 	/*
@@ -68,9 +71,91 @@ class ImageSeries {
 	 
 	 /*
 	  * buildMovie
+	  * @TDOD: is it possible to combine getImageTimestamps and getFilePaths so that the combined
+	  * function just sets $this->imageTimestamps and $this->images?
 	  */
-	private function buildMovie() {
+	public function buildMovie() {
+		// Make a temporary directory to store the movie in.
+		$now = time();
+		$movieName = "Helioviewer-Movie-" . $this->startTime;
+		$tmpdir = Config::TMP_ROOT_DIR . "/$now/";
+		$tmpurl = Config::TMP_ROOT_URL . "/$now/$movieName." . $this->filetype;
+		mkdir($tmpdir);
 		
+		// Build an array with all timestamps needed when requesting images
+		$timeStamps = array();
+		
+		// Calculates unix time stamps, successively increasing by the time step (default step is 86400 seconds, or 1 day)
+		for($time = $this->startTime; $time <= $this->startTime + ($numFrames * $timeStep); $time += $timeStep) {
+			array_push($timeStamps, $time);
+		}
+		
+		foreach($this->layers as $layer) {
+			// Extract info from $layer
+			$obs  = substr($layer, 0, 3);
+			$inst = substr($layer, 3, 3);
+			$det  = substr($layer, 6, 3);
+			$meas = substr($layer, 9, 3);
+			
+			// Array to hold unix timestamps corresponding to each image
+			$imageTimestamps = array();
+			$imageTimestamps = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);	
+			$layerImages = array();
+			/*
+			 * Find filepaths for specific images using times from $imageTimestamps.
+			 * For now this will be done in this class, since there is only one layer, 
+			 * later when composite images come in,
+			 * I will move the method to CompositeImage.php
+			 */
+			foreach($imageTimestamps as $time) {
+				$image = $this->getFilepath($obs, $inst, $det, $meas, $time['unix_timestamp']);
+				array_push($this->images, $image);
+			}
+
+			// Use phpvideotoolkit to compile them
+			
+		}
+	}
+
+	/*
+	 * Queries the database to find the exact timestamps for images nearest each time in $timeStamps
+	 */	
+	private function getImageTimestamps($obs, $inst, $det, $meas, $timeStamps) {
+		$resultArray = array();
+
+		// Go through the array and find the closest image in the database to the given timeStamp
+		if ($timeStamps) {
+			foreach ($timeStamps as $time) {
+				$sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs 
+						FROM image
+							LEFT JOIN measurement on measurementId = measurement.id
+							LEFT JOIN measurementType on measurementTypeId = measurementType.id
+							LEFT JOIN detector on detectorId = detector.id
+							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
+							LEFT JOIN instrument on instrumentId = instrument.id
+							LEFT JOIN observatory on observatoryId = observatory.id
+		             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,1",
+						$time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
+				
+				$result = $this->db->query($sql);
+				$row = mysqli_fetch_array($result, MYSQL_ASSOC);
+	    		array_push($resultArray, $row);
+			}	
+		}
+		
+		return $resultArray;		
+	}
+	
+	private function getFilepath($obs, $inst, $det, $meas, $time) {
+		// Convert unix timestamp back to date and time
+		$date strftime("%Y,%m,%d,%H,%M,%S", $this->startTime);
+		sscanf($date, "%s,%s,%s,%s,%s,%s", $year, $month, $day, $hour, $min, $sec);
+
+		$path = $this->rootDir . implode("/", array($year, $month, $day));
+		$path .= "/$obs/$inst/$det/$meas/";
+		$path .= implode("_", array($year, $month, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
+
+		return $path;
 	}
 	
 	/*

@@ -411,29 +411,42 @@ class API {
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
-    private function _buildQuickMovie () {
-        require_once('ImageSeries.php');
-        
+    private function _buildMovie () {
+        require_once('Movie.php');
+
         // Required parameters
         $startDate = $this->params['startDate'];
         $zoomLevel = $this->params['zoomLevel'];
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
-        
-        $xRange    = $this->params['xRange'];
-        $yRange    = $this->params['yRange'];
+		$timeStep  = $this->params['timeStep'];
+       
+        $xRange    = explode("/", $this->params['xRange']);
+       	$yRange    = explode("/", $this->params['yRange']);
+		$layerName = explode(",", $this->params['layers']);
 
+		$hcCoords = explode(",", $this->params['hcOffset']);
+		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
+				
         $hqFormat  = $this->params['format'];
-
+		$opacityValue = explode(",", $this->params['opacity']); 
+		
         // Optional parameters
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
 
+		// Each array (opacity, xRange, and yRange) should already be in order with the first value of each array corresponding to
+		// the first layer, the second values corresponding to the second layer, and so on. 
+		$layers = array();
+		$i = 0;
+		foreach($layerName as $lname) {
+			$layers[$lname] = array("name" => $lname, "opacityValue" => $opacityValue[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
+			$i++;
+		}
+	
         //Check to make sure values are acceptable
         try {
-            $layers = explode(",", $this->params['layers']);
-
             //Limit number of layers to three
             if ((sizeOf($layers) > 3) || (strlen($this->params['layers']) == 0)) {
                 throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
@@ -444,8 +457,9 @@ class API {
                 throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
 
-            $imgSeries = new ImageSeries($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $xRange, $yRange, $options);
-            $imgSeries->quickMovie();
+			// Can you just pass imgSeries the $_GET or $_POST array? or put some layer info in one array.
+            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset);
+            $movie->buildMovie();
 
         } catch(Exception $e) {
             echo 'Error: ' .$e->getMessage();
@@ -455,6 +469,71 @@ class API {
         return 1;
     }
 
+	/**
+	 * @description Obtains layer information, ranges of pixels visible, and the date being looked at and creates a composite image
+	 * 				(a ScreenImage) of all the layers. 
+	 * @return Returns 1 if the action was completed successfully.
+	 */
+	private function _takeScreenshot() {
+		require_once('Screenshot.php');
+		
+        $obsDate   = $this->params['obsDate'];
+        $zoomLevel = $this->params['zoomLevel'];
+		
+        $xRange    = explode("/", $this->params['xRange']);
+       	$yRange    = explode("/", $this->params['yRange']);
+		$layerName = explode(",", $this->params['layers']);
+		
+		$opacityValue = explode(",", $this->params['opacity']); 
+		$hcCoords = explode(",", $this->params['hcOffset']);
+		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
+
+        $options = array();
+        $options['enhanceEdges'] = $this->params['edges'] || false;
+        $options['sharpen']      = $this->params['sharpen'] || false;    
+
+		// Each array (opacity, xRange, and yRange) should already be in order with the first value of each array corresponding to
+		// the first layer, the second values corresponding to the second layer, and so on. 
+		$layers = array();
+		$i = 0;
+		
+		// Add each layer to the array "layers".
+		// "layers" is an array of layer information arrays, each layer information array is identified by its layer name, and is an array 
+		// with keys "name", "opacityValue", "xRange", and "yRange".
+		foreach($layerName as $lname) {
+			$layers[$lname] = array("name" => $lname, "opacityValue" => $opacityValue[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
+			$i++;
+		}
+		
+		try {
+			if(sizeOf($layers) < 1) 
+				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
+
+			// Give the image a unix timestamp as the id.
+			$id = time();
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $layers, $id, $hcOffset);	
+
+			if(!file_exists($screenshot->getComposite()))
+				throw new Exception("The requested screenshot is either unavailable or does not exist.");
+
+			if($this->params == $_GET) {				
+				header('Content-type: image/png');
+				echo file_get_contents($screenshot->getComposite());
+			}
+			
+			else {
+				header('Content-type: application/json');
+				echo json_encode($screenshot->getComposite());
+			}
+		}
+		catch(Exception $e) {
+			echo 'Error: ' . $e->getMessage();
+			exit();
+		}
+		
+		return 1;
+	}
+	
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
@@ -488,9 +567,9 @@ class API {
                     <!-- / MC Media Player -->
                 </div>
                 <br>
-                <div style="text-align: center;">
+ <!--               <div style="text-align: center;">
                     <a href="<?php print $highQualityVersion;?>" style="text-decoration: none; color: white; font-weight: bold;">High-quality download.</a>
-                </div>
+                </div> -->
             </body>
             </html>
         <?php
@@ -661,8 +740,12 @@ class API {
                 break;
             case "launchJHelioviewer":
                 break;
-            case "buildQuickMovie":
+            case "buildMovie":
                 break;
+			case "playMovie":
+				break;
+			case "takeScreenshot":
+				break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        
         }

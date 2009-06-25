@@ -1,233 +1,120 @@
 <?php
 /**
- * @class SubFieldImage - A simple class to keep track of a specific layer's associated parameters.
+ * @class SubFieldImage - Obtains an extracted region from a jp2 image and saves it as a .tif
  */
 require('JP2Image.php');
 
 class SubFieldImage extends JP2Image {
-	private $observatory;
-	private $instrument;
-	private $detector;
-	private $measurement;
-	private $opacity;
-	private $timestamp;
-	
-	public function __construct($params, $timestamp, $zoomLevel, $xRange, $yRange, $tileSize, $correlate = NULL) {
-		parent::__construct($zoomLevel, $xRange, $yRange, $tileSize);
+	private $jp2Filepath;
+	protected $helioCentricOffset;
 
-		$this->observatory   = substr($params, 0, 3);
-		$this->instrument    = substr($params, 3, 3);
-		$this->detector      = substr($params, 6,3);
-		$this->measurement   = substr($params, 9,3);
-		$this->opacity       = 100;
-		$this->unixTimestamp = $timestamp;
-		$this->timestamp     = $this->parseTimestamp($timestamp);
-		
-		//$this->timestamps  = $this->buildTimestampsArray($startTime, $endTime);
-		$this->buildImage();
-	}
-	
-	public function observatory() {
-		return $this->observatory;
-	}
-	
-	public function instrument() {
-		return $this->instrument;
-	}
-	
-	public function detector() {
-		return $this->detector;
-	}
-	
-	public function measurement() {
-		return $this->measurement;
-	}
-	
-	public function opacity() {
-		return $this->opacity;
-	}
-	
-	private function buildImage () {		
-		// Retrieve meta-information
-		$imageInfo = $this->getMetaInfo();
-
-		// Filepaths (For .tif and .png images)
-		$jp2  = $this->getFilePath("input");
-		$tif = $this->getFilePath("output");
-
-		// If tile already exists in cache, use it
-		//if (file_exists($png)) {
-		//	$this->image = new Imagick($png);
-		//	$this->display();
-		//	exit();
-		//}
-		
-		// kdu_expand command
-		$im = $this->extractRegion($jp2, $tif, $imageInfo["width"], $imageInfo["height"], $imageInfo['imgScaleX'], $this->detector, $this->measurement);
-		//echo $im;
-		//exit();
-		
-		// Store image
-		$this->image = $im;
-		
-		$this->display();
-		
-		//$this->dimensions  = $this->getImageDimensions();
-		
-		// extractRegion($input, $output, $imageWidth, $imageHeight, $imageScale, $colorTable = Null)
-		
-		// Ratio of the desired scale to the actual JP2 image scale
-		//$desiredToActual = $this->desiredScale / $scale;
-		
-		// Number of tiles in scaled image
-		//$imgNumTilesX = ceil($width  / ($desiredToActual * $ts));
-		//$imgNumTilesY = ceil($height / ($desiredToActual * $ts));
-		
-		//print $imgNumTilesX . "<br>";
-		//print $imgNumTilesY . "<br>";
-		
-		// Valid number of tiles for movie
-		//$numTilesX = min($imgNumTilesX, $this->xRange["end"] - $this->xRange["start"] + 1);
-		//$numTilesY = min($imgNumTilesY, $this->yRange["end"] - $this->yRange["start"] + 1);
-		
-		//print "numTilesX: $numTilesX<br>";
-		//print "numTilesY: $numTilesY<br>";
-		
-		// Movie (ROI) Dimensions
-		//$dimensions = array();
-		//$dimensions['width']  = $ts * $numTilesX;
-		//$dimensions['height'] = $ts * $numTilesY;
-		//$dimensions['x'] = (1/2) * ($width  - $dimensions['width']);
-		//$dimensions['y'] = (1/2) * ($height - $dimensions['height']);
-	}
-	
 	/**
-	 * buildTimestampsArray
-	 * @return 
-	 * @param $start Object
-	 * @param $end Object
-	 */
-	private function buildTimestampsArray($startTime, $endTime) {
-		$timestamps = array();
-		
-		// Case 1: A single image
-		if ($startTime == $endTime) {
-			array_push($timestamps, $startTime);
-		}
-		
-		// Case 2: A image series / movie
-		else {
-			
-		}
-		
-		return $timestamps;
-	}
+	  * Constructor
+	  * @param object $filepath a string representing the location of the jp2 image, including subfolders.
+	  * @param object $uri the name of the jp2 image file, in the format 2003_01_31_SOH_EIT_EIT_304.jpg
+	  * @param object $zoomLevel a number between 8-15, default is 10.
+	  * @param object $x the range of tiles viewed, in pixels. 
+	  * @param object $y the range of tiles viewed, in pixels.
+	  * @param object $imageSize is 512 pixels. 
+	  */	
 	
-	/**
-	 * @function
-	 * @description Determine the dimensions for the layer
-	 * @return 
-	 */
-	private function getMetaInfo() {
-		// Layer parameters
-		$obs  = $this->observatory;
-		$inst = $this->instrument;
-		$det  = $this->detector;
-		$meas = $this->measurement;
+	public function __construct($filepath, $uri, $zoomLevel, $x, $y, $imageSize, $hcOffset) {
+		$xArray = explode(",", $x);
+		$yArray = explode(",", $y);
 		
-		// Get full image dimensions
-		$sql = sprintf("SELECT width, height, imgScaleX 
-					FROM image
-						LEFT JOIN measurement on measurementId = measurement.id
-						LEFT JOIN measurementType on measurementTypeId = measurementType.id
-						LEFT JOIN detector on detectorId = detector.id
-						LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
-						LEFT JOIN instrument on instrumentId = instrument.id
-						LEFT JOIN observatory on observatoryId = observatory.id
-	             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' LIMIT 1",
-					mysql_real_escape_string($obs), mysql_real_escape_string($inst), mysql_real_escape_string($det), mysql_real_escape_string($meas));
-					
-		$result = $this->db->query($sql);
-		$meta = mysql_fetch_array($result, MYSQL_ASSOC);
-		
-		return $meta;
-	}
-	
-	private function parseTimestamp ($ts) {
-		$d = getdate($ts);
-		
-		$year = $d['year'];
-		$mon  = str_pad($d['mon'], 2 , "0", STR_PAD_LEFT);
-		$day  = str_pad($d['mday'], 2 , "0", STR_PAD_LEFT);
-		$hour = str_pad($d['hours'], 2 , "0", STR_PAD_LEFT);
-		$min  = str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
-		$sec  = str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
-		
-		return "$year-$mon-$day $hour:$min:$sec";
-	}
-	
-	private function getFilePath($type) {
-		// Date information
-		$year  = substr($this->timestamp,0,4);
-		$month = substr($this->timestamp,5,2);
-		$day   = substr($this->timestamp,8,2);
-		$hour  = substr($this->timestamp,11,2);
-		$min   = substr($this->timestamp,14,2);
-		$sec   = substr($this->timestamp,17,2);
-		
-		// Observation
-		$obs  = $this->observatory;
-		$inst = $this->instrument;
-		$det  = $this->detector;
-		$meas = $this->measurement;
+		// JP2Image constructor expects an array of start and end pixels
+        $xRange = array("start" => $xArray[0], "end" => $xArray[1]);
+        $yRange = array("start" => $yArray[0], "end" => $yArray[1]);
 
-		// JP2 File
-		if ($type == "input") {
-			$filepath  = $this->jp2Dir . implode("/", array($year, $month, $day, $obs, $inst, $det, $meas)) . "/";
-			$filepath .= implode("_", array($year, $month, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
-		}
+        parent::__construct($uri, $zoomLevel, $xRange, $yRange, $imageSize);
 
-		// Output File
-		else {
-			// Starting point
-			$filepath = $this->cacheDir . "movies" . "/";
-			if (!file_exists($filepath))
-				mkdir($filepath);
+        $this->x = $x;
+        $this->y = $y;
+		$this->jp2Filepath = $filepath;
+		$this->hcOffset = $hcOffset;
+		
+		// The true/false parameter means whether to display the image or not when finished building it (used for debugging).
+		$this->getImage(false);
+	}
 	
-			// Create necessary directories
-			$filepath .= $year . "/";
-			if (!file_exists($filepath))
-				mkdir($filepath);
-	
-			$filepath .= $month . "/";
-			if (!file_exists($filepath))
-				mkdir($filepath);
-	
-			$filepath .= $day . "/";
-			if (!file_exists($filepath))
-				mkdir($filepath);
-	
-			// Convert coordinates to strings
-			$xStartStr = "+" . str_pad($this->xRange["start"], 2, '0', STR_PAD_LEFT);
-			if (substr($this->xRange["start"],0,1) == "-")
-				$xStartStr = "-" . str_pad(substr($this->xRange["start"], 1), 2, '0', STR_PAD_LEFT);
-	
-			$yStartStr = "+" . str_pad($this->yRange["start"], 2, '0', STR_PAD_LEFT);
-			if (substr($this->yRange["start"],0,1) == "-")
-				$yStartStr = "-" . str_pad(substr($this->yRange["start"], 1), 2, '0', STR_PAD_LEFT);
+	function getImage($display) {
+		// JPG or PNG
+		$format = $this->getImageFormat();
+
+		// Filepath of image in cache directory
+		$filepath = $this->getFilePath($format);
+
+		// If it's already cached, just use the cached file
+		if(Config::ENABLE_CACHE && file_exists($filepath)) {
+			$this->image = $filepath;
+			if($display)
+				$this->display($filepath);
+		}
+		
+		else {	
+			// If it's not cached, build it and put it in the cache.
+			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center for now).
+	        $this->image = $this->buildImage($filepath, false);	
 				
-			$xEndStr = "+" . str_pad($this->xRange["end"], 2, '0', STR_PAD_LEFT);
-			if (substr($this->xRange["end"],0,1) == "-")
-				$xEndStr = "-" . str_pad(substr($this->xRange["end"], 1), 2, '0', STR_PAD_LEFT);
-	
-			$yEndStr = "+" . str_pad($this->yRange["end"], 2, '0', STR_PAD_LEFT);
-			if (substr($this->yRange["end"],0,1) == "-")
-				$yEndStr = "-" . str_pad(substr($this->yRange["end"], 1), 2, '0', STR_PAD_LEFT);	
-	
-			$filepath .= implode("_", array($this->unixTimestamp, $obs, $inst, $det, $meas, $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr, ".tif"));
+	        // Display image
+	        if ($display)
+	            $this->display($filepath);
 		}
+	}
+	
+	/**
+	 * @description Gets the filepath of where the image will go in the cache directory. 
+	 * @description Filepaths are of the format /var/www/helioviewer/cache/movies/year/month/day/obs/inst/det/meas/image_uri
+	 * @return $filepath
+	 * @param object $format is something like "jpg" or "png"
+	 */	
+	protected function getFilePath($format) {
+        // Base filename
+		$filename = substr($this->uri, 0, -4);
+
+        // Date information
+        $year  = substr($this->timestamp,0,4);
+        $month = substr($this->timestamp,5,2);
+        $day   = substr($this->timestamp,8,2);
+
+        // Create necessary directories		
+		$folders = array($year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
+		$filepath = $this->cacheDir;
+
+		foreach($folders as $folder) {
+			$filepath .= $folder . "/";
+			if(!file_exists($filepath)) {
+				mkdir($filepath);
+				chmod($filepath, 0777);
+			}			
+		}
+
+		// Convert coordinates to strings
+		$xStartStr = "+" . str_pad($this->xRange["start"], 2, '0', STR_PAD_LEFT);
+		if (substr($this->xRange["start"],0,1) == "-")
+			$xStartStr = "-" . str_pad(substr($this->xRange["start"], 1), 2, '0', STR_PAD_LEFT);
+
+		$yStartStr = "+" . str_pad($this->yRange["start"], 2, '0', STR_PAD_LEFT);
+		if (substr($this->yRange["start"],0,1) == "-")
+			$yStartStr = "-" . str_pad(substr($this->yRange["start"], 1), 2, '0', STR_PAD_LEFT);
+			
+		$xEndStr = "+" . str_pad($this->xRange["end"], 2, '0', STR_PAD_LEFT);
+		if (substr($this->xRange["end"],0,1) == "-")
+			$xEndStr = "-" . str_pad(substr($this->xRange["end"], 1), 2, '0', STR_PAD_LEFT);
+
+		$yEndStr = "+" . str_pad($this->yRange["end"], 2, '0', STR_PAD_LEFT);
+		if (substr($this->yRange["end"],0,1) == "-")
+			$yEndStr = "-" . str_pad(substr($this->yRange["end"], 1), 2, '0', STR_PAD_LEFT);	
+
+		$filepath .= implode("_", array(substr($this->uri, 0, -4), $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr, $this->hcOffset["x"], $this->hcOffset["y"]));
+
+		$filepath .= ".tif";
 
 		return $filepath;
+	}
+	
+	function getCacheFilepath() {
+		return $this->image;
 	}
 }
 ?>

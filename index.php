@@ -57,6 +57,7 @@
 		<script type="text/javascript" src="lib/shadowbox/adapters/shadowbox-prototype.js"></script>
 		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-iframe.js"></script>
    		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-html.js"></script>
+   		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-img.js"></script>		
 		<script type="text/javascript" src="lib/shadowbox/languages/shadowbox-en.js"></script>
         <script type="text/javascript">
             Shadowbox.init({
@@ -90,7 +91,7 @@
 		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
-		<!--<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>-->
+		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Helioviewer.js" type="text/javascript"></script>
@@ -199,6 +200,8 @@
 				<div id="tileLayerAccordion"></div>
 				<br><br>
 				<div id="eventAccordion"></div>
+				<br /><br />
+			
 			</div>
 
 			<!-- Right Column -->
@@ -256,9 +259,11 @@
                         <div id="social-buttons">
                             <span id="link-button" class="ui-icon ui-icon-link" style="cursor: pointer; display: inline-block; float: left;"></span>
                             <span id="email-button" class="ui-icon ui-icon-mail-closed" style="cursor: pointer; display: inline-block; float: left;"></span>
+							<span id='movie-button' title=" Build Movie " class='ui-icon ui-icon-video' style="cursor:pointer; display: inline-block; float: left;"></span>
+							<span id='screenshot-button' title=" Take Screenshot " class='ui-icon ui-icon-image' style="cursor:pointer; display: inline-block; float: left;"></span>   
                             <span style="line-height: 1.6em; margin-left: 3px; font-size: 10px;">
                                 <a href="http://www.jhelioviewer.org/" class="light" target="_blank">J</a>
-                            </span>
+                            </span>  
                         </div>
                         <div id="footer-links" class="ui-corner-bottom">
         					<a href="help/" class="light" target="_blank">Help</a>
@@ -270,7 +275,7 @@
         					<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
                         </div>
     				</div>
-			
+
 				<!-- Timeline -->
 				<!--
 				<div style="text-align: center;">
@@ -278,7 +283,7 @@
 				</div>
 				-->
 			</div>
-                
+      
 			</div>
 			<div id="clearfooter"></div>
 		</div>
@@ -293,6 +298,5 @@
 		
         <!-- Usage Dialog -->
         <div id='usage-dialog'></div>
-		
 	</body>
 </html>
