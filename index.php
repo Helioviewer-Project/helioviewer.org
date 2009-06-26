@@ -1,4 +1,6 @@
-<?php $_SERVER['HTTP_HOST'] == "localhost" ? require_once('settings/Config.php') : require_once('settings/Config.Server.php'); ?>
+<?php 
+    $_SERVER['HTTP_HOST'] == "localhost" ? require_once('settings/Config.php') : require_once('settings/Config.Kore.php');
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>

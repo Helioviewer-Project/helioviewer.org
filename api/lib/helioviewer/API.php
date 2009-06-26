@@ -20,7 +20,7 @@ class API {
         $this->params = $params;
         $this->format = $format;
 
-        $_SERVER['HTTP_HOST'] == "localhost" ? require_once('../settings/Config.php') : require_once('../settings/Config.Server.php');
+        $_SERVER['HTTP_HOST'] == "localhost" ? require_once('../settings/Config.php') : require_once('../settings/Config.Kore.php');
 
         try {
             if (!$this->validate($params["action"]))

@@ -25,8 +25,6 @@ class Movie
     private $tileSize = 512;
     private $filetype = "flv";
     private $highQualityLevel = 100;
-	// Watermarking does not work yet, missing module for it on this computer. 
-    private $watermarkURL = "/Library/WebServer/Documents/helioviewer/images/logos/watermark_small_gs.png";
     private $watermarkOptions = "-x 720 -y 965 ";
 
 	/**
@@ -214,7 +212,7 @@ class Movie
 		    $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
 		
 		// Add a watermark
-		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
+		$toolkit->addWatermark(Config::WATERMARK_URL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
 		
 		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 		
@@ -224,8 +222,12 @@ class Movie
 			exit();
 		}
 		
-		// execute the ffmpeg command
+        // execute the ffmpeg command
 		$mp4 = $toolkit->execute(false, true);
+        
+  		
+        //echo $toolkit->getLastCommand();
+        //exit();
 		
 		if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
 		    // 		if there was an error then get it

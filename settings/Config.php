@@ -61,6 +61,7 @@ class Config {
 
 	// Movie Parameters
 	const MAX_MOVIE_FRAMES   = 150;
+    const WATERMARK_URL      = "/var/www/hv/images/logos/watermark_small_gs.png";
 
 	// Image parameters
 	const PNG_COMPRESSION_QUALITY  = 20;
