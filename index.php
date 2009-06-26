@@ -29,6 +29,9 @@
 			jQuery.noConflict();
 		</script>
 
+		<!-- imgAreaSelect jQuery plugin -->
+		<script src="lib/jquery/imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
+		
 		<!-- Prototype and Scriptaculous -->
 		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
@@ -260,7 +263,8 @@
                             <span id="link-button" class="ui-icon ui-icon-link" style="cursor: pointer; display: inline-block; float: left;"></span>
                             <span id="email-button" class="ui-icon ui-icon-mail-closed" style="cursor: pointer; display: inline-block; float: left;"></span>
 							<span id='movie-button' title=" Build Movie " class='ui-icon ui-icon-video' style="cursor:pointer; display: inline-block; float: left;"></span>
-							<span id='screenshot-button' title=" Take Screenshot " class='ui-icon ui-icon-image' style="cursor:pointer; display: inline-block; float: left;"></span>   
+							<span id='screenshot-button' title=" Take Screenshot " class='ui-icon ui-icon-image' style="cursor:pointer; display: inline-block; float: left;"></span>  
+							<span id='select-region-button' title=" Select Image Region " class='ui-icon ui-icon-scissors' style="cursor:pointer; display: inline-block; float: left;"></span> 
                             <span style="line-height: 1.6em; margin-left: 3px; font-size: 10px;">
                                 <a href="http://www.jhelioviewer.org/" class="light" target="_blank">J</a>
                             </span>  
