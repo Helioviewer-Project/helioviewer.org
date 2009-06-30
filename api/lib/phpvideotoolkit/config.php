@@ -1,3 +1,3 @@
 <?php
-    require_once('settings/config.example.php');
+    require_once('config.example.php');
 ?>

@@ -258,6 +258,8 @@ span.ui-icon-hover {
     border-right: 1px solid #262424;
     font-size: 1.0em;
     height: 18px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
 }
 
 /* URL dialog */
