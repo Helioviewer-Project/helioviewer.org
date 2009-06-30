@@ -253,19 +253,40 @@
 					</div>
 				</div>
                 
-             <!-- <div style="height:250px; width:100%; float:left; font-size:0.85em"> -->
         		<div id="footer-links-container-outer">
     
     				<!-- Links -->
     				<div id="footer-links-container-inner">
                         <div id="social-buttons">
-                            <span id="link-button" class="ui-icon ui-icon-link" style="cursor: pointer; display: inline-block; float: left;"></span>
-                            <span id="email-button" class="ui-icon ui-icon-mail-closed" style="cursor: pointer; display: inline-block; float: left;"></span>
-							<span id='movie-button' title=" Build Movie " class='ui-icon ui-icon-video' style="cursor:pointer; display: inline-block; float: left;"></span>
-							<span id='screenshot-button' title=" Take Screenshot " class='ui-icon ui-icon-image' style="cursor:pointer; display: inline-block; float: left;"></span>   
-                            <span style="line-height: 1.6em; margin-left: 3px; font-size: 10px;">
-                                <a href="http://www.jhelioviewer.org/" class="light" target="_blank">J</a>
-                            </span>  
+                            <!-- Link button -->
+                            <div id="link-button" class="text-btn">
+                                <span class="ui-icon ui-icon-link" style="float: left;"></span>
+                                <span style="line-height: 1.6em">Link</span>
+                            </div>
+                            
+                            <!-- Email button -->
+                            <div id="email-button" class="text-btn">
+                                <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
+                                <span style="line-height: 1.6em">Email</span>
+                            </div>
+                            
+                            <!-- Movie button -->
+                            <div id="movie-button" class="text-btn">
+                                <span class="ui-icon ui-icon-video" style="float: left;"></span>
+                                <span style="line-height: 1.6em">Movie</span>
+                            </div>                            
+                            
+                            <!-- Screenshot button -->
+                            <div id="screenshot-button" class="text-btn">
+                                <span class="ui-icon ui-icon-image" style="float: left;"></span>
+                                <span style="line-height: 1.6em">Screenshot</span>
+                            </div>        
+
+                            <!-- JHelioviewer -->
+                            <div id="jhelioviewer-button" class="text-btn">
+                                <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
+                                <span style="line-height: 1.6em">JHelioviewer</span>
+                            </div> 
                         </div>
                         <div id="footer-links" class="ui-corner-bottom">
         					<a href="help/" class="light" target="_blank">Help</a>
