@@ -25,8 +25,6 @@ class Movie
     private $tileSize = 512;
     private $filetype = "flv";
     private $highQualityLevel = 100;
-	// Watermarking does not work yet, missing module for it on this computer. 
-    private $watermarkURL = "/Library/WebServer/Documents/helioviewer/images/logos/watermark_small_gs.png";
     private $watermarkOptions = "-x 720 -y 965 ";
 
 	/**
@@ -45,7 +43,6 @@ class Movie
     public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset)
     {
         date_default_timezone_set('UTC');
-
 		// $layers is an array of layer information arrays, identified by their layer names.
 		// Each layer information array has values for "name", "xRange", "yRange", and "opacityValue"
         $this->layers = $layers;
@@ -101,6 +98,7 @@ class Movie
         $tmpdir = Config::TMP_ROOT_DIR."/$now/";
         $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
         mkdir($tmpdir);
+        //chmod($tmpdir, 0777);
 
         // Build an array with all timestamps needed when requesting images
         $timeStamps = array ();
@@ -165,7 +163,6 @@ class Movie
 		}
 */		
 
-
 		// Use phpvideotoolkit to compile them
 		$toolkit = new PHPVideoToolkit($tmpdir);
 
@@ -199,11 +196,11 @@ class Movie
 		    echo $toolkit->getLastError()."<br />\r\n";
 			exit();
 		}
-	
+
 		// Create a high-quality version as well
 		$hq_filename = "$movieName." . $this->highQualityFiletype;
 		$toolkit->setConstantQuality($this->highQualityLevel);
-		
+	
 		// Use ASF for Windows
 		if ($this->highQualityFiletype == "avi")
 		    $toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
@@ -211,20 +208,24 @@ class Movie
 		// Use MPEG-4 for Mac
 		if ($this->highQualityFiletype == "mov")
 		    $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
-		
+	
 		// Add a watermark
-		$toolkit->addWatermark($this->watermarkURL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
+//		$toolkit->addWatermark(Config::WATERMARK_URL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
 		
 		$ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
-		
+			
 		if (!$ok) {
 		    // if there was an error then get it
 		    echo $toolkit->getLastError()."<br />\r\n";
 			exit();
 		}
 		
-		// execute the ffmpeg command
+        // execute the ffmpeg command
 		$mp4 = $toolkit->execute(false, true);
+        
+  		
+        //echo $toolkit->getLastCommand();
+        //exit();
 		
 		if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
 		    // 		if there was an error then get it
@@ -236,7 +237,7 @@ class Movie
 		foreach($this->images as $image) {
 			unlink($image);
 		}	
-			
+
 //		$this->showMovie($tmpurl, 512, 512);
 		
 		header('Content-type: application/json');

@@ -9,10 +9,11 @@ jp2
 cache
 prototip2.0.5
 log
-settings/Config.php
 *Old.php
 *Old.js
 *Old.php
 *Old.js
 *Old.*
 settings/Config.Jaclyn.php
+[cC]onfig-*.php
+[cC]onfig.*.php

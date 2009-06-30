@@ -11,7 +11,8 @@
 </div>
 
 <div style="font-size: small; margin-top:10px;">
-    <a href="mailto:aa5@umbc.edu" class="light" style="margin-right:10px;">Alen Agheksanterian
+    <a href="mailto:aa5@umbc.edu" class="light" style="margin-right:10px;">Alen Agheksanterian</a>
+	<a href="mailto:jabeck@nmu.edu" class="light" style="margin-right:10px;">Jaclyn Beck</a>
     <a href="mailto:george@esa.nascom.nasa.gov" class="light" style="margin-right:10px;">George Dimitoglou</a>
     <a href="mailto:webmaster@helioviewer.org" class="light" style="margin-right:10px;">Keith Hughitt</a>
     <a href="mailto:Jack.Ireland@nasa.gov" class="light" style="margin-right:10px;">Jack Ireland</a>
