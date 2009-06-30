@@ -95,6 +95,7 @@
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/ImageSelectTool.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Helioviewer.js" type="text/javascript"></script>
