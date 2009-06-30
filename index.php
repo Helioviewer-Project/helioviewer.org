@@ -31,6 +31,9 @@
 			jQuery.noConflict();
 		</script>
 
+		<!-- imgAreaSelect jQuery plugin -->
+		<script src="lib/jquery/imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
+		
 		<!-- Prototype and Scriptaculous -->
 		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
@@ -94,6 +97,7 @@
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/ImageSelectTool.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Helioviewer.js" type="text/javascript"></script>
@@ -257,7 +261,7 @@
     
     				<!-- Links -->
     				<div id="footer-links-container-inner">
-                        <div id="social-buttons">
+                        <div id="social-buttons"> 
                             <!-- Link button -->
                             <div id="link-button" class="text-btn">
                                 <span class="ui-icon ui-icon-link" style="float: left;"></span>
@@ -282,11 +286,18 @@
                                 <span style="line-height: 1.6em">Screenshot</span>
                             </div>        
 
+							<!-- Select region button -->
+							<div id="select-region-button" class="text-btn">
+								<span class='ui-icon ui-icon-scissors' style="float: left;"></span>
+								<span style="line-height: 1.6em">Select Region</span>
+							</div>
+
                             <!-- JHelioviewer -->
                             <div id="jhelioviewer-button" class="text-btn">
                                 <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
                                 <span style="line-height: 1.6em">JHelioviewer</span>
                             </div> 
+
                         </div>
                         <div id="footer-links" class="ui-corner-bottom">
         					<a href="help/" class="light" target="_blank">Help</a>

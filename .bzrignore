@@ -14,5 +14,6 @@ log
 *Old.php
 *Old.js
 *Old.*
+settings/Config.Jaclyn.php
 [cC]onfig-*.php
-
+[cC]onfig.*.php

@@ -108,8 +108,8 @@ abstract class CompositeImage {
 		else {
 			// If the image is identified by a frameNum, just copy the image to the movie directory
 			if(isset($this->frameNum)) {
-				//exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $builtImages[0] " . $this->cacheFileDir . $this->frameNum . ".tif");
-				copy($builtImages[0], $this->cacheFileDir . $this->frameNum . ".tif");
+				exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $builtImages[0] " . $this->cacheFileDir . $this->frameNum . ".tif");
+				//copy($builtImages[0], $this->cacheFileDir . $this->frameNum . ".tif");
 				$this->composite = $this->cacheFileDir . $this->frameNum . ".tif";
 			}
 				
