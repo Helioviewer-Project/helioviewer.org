@@ -186,6 +186,25 @@ a.light:hover {
     color: #d18f61;
 }
 
+/* Text+icon buttons */
+
+div.text-btn {
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    color: white;
+    margin: 0 5px;
+    font-weight: 650;
+}
+
+div.text-btn:hover {
+    color: #d18f61;
+}
+
+span.ui-icon-hover {
+    background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+}
+
 .italic {
     font-style: italic;
 }
@@ -239,6 +258,8 @@ a.light:hover {
     border-right: 1px solid #262424;
     font-size: 1.0em;
     height: 18px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
 }
 
 /* URL dialog */
@@ -442,8 +463,7 @@ span.removeBtn:hover,
 span#timeBackBtn:hover,
 span#timeForwardBtn:hover,
 #full-screen-btn > div:hover,
-#link-button:hover,
-#email-button:hover,
+
 .accordion-arrow:hover {
     background-image: url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
