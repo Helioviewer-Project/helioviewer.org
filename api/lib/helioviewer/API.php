@@ -444,7 +444,7 @@ class API {
 			$layers[$lname] = array("name" => $lname, "opacityValue" => $opacityValue[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
 			$i++;
 		}
-	
+
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
@@ -457,7 +457,6 @@ class API {
                 throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
 
-			// Can you just pass imgSeries the $_GET or $_POST array? or put some layer info in one array.
             $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset);
             $movie->buildMovie();
 

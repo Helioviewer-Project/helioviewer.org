@@ -21,7 +21,7 @@ CREATE TABLE `observatory` (
   `abbreviation` varchar(3) NOT NULL default '',
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
-  PRIMARY KEY  (`id`)
+   PRIMARY KEY (`id`), INDEX (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
 INSERT INTO `observatory` VALUES(1, 'SOH', 'SOHO', 'Solar and Heliospheric Observatory');
@@ -41,7 +41,7 @@ CREATE TABLE `instrument` (
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
   `observatoryId` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`), INDEX (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
 INSERT INTO `instrument` VALUES(1, 'EIT', 'EIT', 'Extreme ultraviolet Imaging Telescope', 1);
@@ -63,7 +63,7 @@ CREATE TABLE `detector` (
   `instrumentId` int(10) unsigned NOT NULL default '0',
   `minZoom` tinyint(4) default NULL,
   `opacityGroupId` int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`), INDEX (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
 INSERT INTO `detector` VALUES(1, '0C2', 'C2', 'LASCO C2', 2, 12, 2);
@@ -85,7 +85,7 @@ CREATE TABLE `measurement` (
   `abbreviation` varchar(3) NOT NULL default '',
   `name` varchar(255) default NULL,
   `description` varchar(255) default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`), INDEX (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
 INSERT INTO `measurement` VALUES(1, 2, 3, '171', '171', '171 Angstrom extreme ultraviolet');
@@ -110,7 +110,7 @@ CREATE TABLE `measurementType` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   `unit` varchar(255) default NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`), INDEX (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
 INSERT INTO `measurementType` VALUES(1, 'other', NULL);
@@ -125,7 +125,7 @@ INSERT INTO `measurementType` VALUES(2, 'wavelength', 'nm');
 CREATE TABLE `opacityGroup` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `description` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`), INDEX (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
 
 
@@ -157,5 +157,5 @@ CREATE TABLE  `image` (
   `height`       int(10) NOT NULL,
   `opacityGrp`   tinyint NOT NULL,
   `uri`          varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`), INDEX (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;

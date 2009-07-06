@@ -4,7 +4,7 @@
  * @description The ScreenImage class is used for screenshots, since the parameters are 
  * 					slightly different from those of a FrameLayer.
  */
-require('CompositeImage.php');
+require_once('CompositeImage.php');
 
 class Screenshot extends CompositeImage {
 	protected $id;
@@ -69,7 +69,7 @@ class Screenshot extends CompositeImage {
 		$this->db = new DbConnection();
 		$time = $this->timestamp;
 
-        $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri, opacityGrp 
+/*        $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri, opacityGrp 
 				FROM image
 					LEFT JOIN measurement on measurementId = measurement.id
 					LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -79,6 +79,10 @@ class Screenshot extends CompositeImage {
 					LEFT JOIN observatory on observatoryId = observatory.id
              	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,1",
         $time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
+*/
+		$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $time AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $time) AS timediffAbs, uri, opacityGrp
+					FROM image WHERE uri LIKE '%_%_%_%_" . mysqli_real_escape_string($this->db->link, $obs) . "_" . mysqli_real_escape_string($this->db->link, $inst) . "_" . mysqli_real_escape_string($this->db->link, $det) . "_" . mysqli_real_escape_string($this->db->link, $meas) . ".jp2' ORDER BY timediffAbs LIMIT 0,1";
+
 		try {
 	        $result = $this->db->query($sql);
 	        $row = mysqli_fetch_array($result, MYSQL_ASSOC);

@@ -73,7 +73,7 @@ abstract class CompositeImage {
 			// Each $image is an array holding values for "xRange", "yRange", "opacity", and "closestImage"
 			// Build each image separately
 			$uri = $image['closestImage']['uri'];
-			$jp2filepath = $this->getFilepath($uri);
+//			$jp2filepath = $this->getFilepath($uri);
 
 			$xRange = $image["xRange"];	
 			$yRange = $image["yRange"];
@@ -81,10 +81,10 @@ abstract class CompositeImage {
 			array_push($opacities["group"], $image['closestImage']['opacityGrp']);
 			
 			try {	
-				if(!file_exists($jp2filepath))
-					throw new Exception("JP2 image " . $jp2filepath . " does not exist.");
+//				if(!file_exists($jp2filepath))
+//					throw new Exception("JP2 image " . $jp2filepath . " does not exist.");
 					
-				$subFieldImage = new SubFieldImage($jp2filepath, $uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
+				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
 	
 				$filepath = $subFieldImage->getCacheFilepath();
 
@@ -104,21 +104,19 @@ abstract class CompositeImage {
 		if (sizeOf($this->layerImages) > 1) {
 			$this->composite = $this->buildComposite($builtImages, $opacities);
 		} 
-
-		else {
-			// If the image is identified by a frameNum, just copy the image to the movie directory
-			if(isset($this->frameNum)) {
-				exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $builtImages[0] " . $this->cacheFileDir . $this->frameNum . ".tif");
-				//copy($builtImages[0], $this->cacheFileDir . $this->frameNum . ".tif");
-				$this->composite = $this->cacheFileDir . $this->frameNum . ".tif";
-			}
+		
+		// If the image is identified by a frameNum, just copy the image to the movie directory
+		elseif (isset($this->frameNum))  {			
+				$cacheImg = $this->cacheFileDir . $this->frameNum . ".tif";
+				copy($builtImages[0], $cacheImg);
+				$this->composite = $cacheImg;
+		}
 				
 			// Otherwise, the image is a screenshot and needs to be converted into a png.
-			else {
-				$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
-				exec($cmd);
-				$this->composite = $this->cacheFileDir . $this->id . ".png";
-			}	
+		else {
+			$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
+			exec($cmd);
+			$this->composite = $this->cacheFileDir . $this->id . ".png";
 		}
 
 		//Optional settings
@@ -130,7 +128,7 @@ abstract class CompositeImage {
 */
 	}
 	
-	protected function buildImage($image) {
+/*	protected function buildImage($image) {
 //		$filepath = $this->getFilepath($image['uri']);
 		
 		// File extension
@@ -146,7 +144,7 @@ abstract class CompositeImage {
 
 		return $image;
 	}
-
+*/
 
 	/*
 	 * buildComposite composites the layers together.
@@ -163,7 +161,7 @@ abstract class CompositeImage {
 			$tmpImg = $this->cacheFileDir . $this->id . ".png";
 			
 		$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && composite -gravity Center";
-//		$prevImg = null;		
+		
 		// It is assumed that the array $images is already in the correct order for opacity groups,
 		// since it was sorted above.
 		$i = 1;

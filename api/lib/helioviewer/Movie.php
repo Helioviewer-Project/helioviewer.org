@@ -141,27 +141,15 @@ class Movie
 				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $opacity, "closestImage" => $layerImages[$name][$frameNum]);
 				$images[$name] = $image;
 			}	
-			// All frames will be put in cache/movies/$now			
+
+			// All frames will be put in cache/movies/$now		
 			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset);	
-          	$filename = $tmpdir . $frameNum . '.tif';
+//          	$filename = $tmpdir . $frameNum . '.tif';
 			$frameFile = $movieFrame->getComposite(); 
 
-			copy($frameFile, $filename);
-			array_push($this->images, $filename);
-		}
-
-/*   	    foreach ($closestImages as $image) {
-         	$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $image);
-          	$filename = $tmpdir . $frameNum . '.tif';
-			$compFile = $compImage->getComposite(); 
-			copy($compFile, $filename);
-			
-			//exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $compFile $filename");
-//           	$compImage->writeImage($filename);
-            array_push($this->images, $filename);
-			$frameNum++;
-		}
-*/		
+//			copy($frameFile, $filename);
+			array_push($this->images, $frameFile);
+		}	
 
 		// Use phpvideotoolkit to compile them
 		$toolkit = new PHPVideoToolkit($tmpdir);
@@ -258,7 +246,8 @@ class Movie
         {
             foreach ($timeStamps as $time)
             {
-                $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri, opacityGrp 
+            	// sprintf takes too long, especially when it is called 40+ times.
+/*                $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri, opacityGrp 
 						FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -268,9 +257,21 @@ class Movie
 							LEFT JOIN observatory on observatoryId = observatory.id
 		             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,1",
                 $time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
+*/
+				$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $time AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $time) AS timediffAbs, uri, opacityGrp
+							FROM image WHERE uri LIKE '%_%_%_%_" . mysqli_real_escape_string($this->db->link, $obs) . "_" . mysqli_real_escape_string($this->db->link, $inst) . "_" . mysqli_real_escape_string($this->db->link, $det) . "_" . mysqli_real_escape_string($this->db->link, $meas) . ".jp2' ORDER BY timediffAbs LIMIT 0,1";
 
-                $result = $this->db->query($sql);
-                $row = mysqli_fetch_array($result, MYSQL_ASSOC);
+				try {
+			        $result = $this->db->query($sql);
+			        $row = mysqli_fetch_array($result, MYSQL_ASSOC);
+					if(!$row)
+						throw new Exception("Could not find the requested image.");
+				}
+				catch (Exception $e) {
+					echo 'Error: ' . $e->getMessage();
+					exit();
+				}
+
                 array_push($resultArray, $row);
             }
         }
