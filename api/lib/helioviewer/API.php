@@ -49,10 +49,12 @@ class API {
 
     /**
      * @return int Returns "1" if the action was completed successfully.
+     * 
+     * TODO: Add a more elegant check for local vs. remote server
      */
     private function _getClosestImage () {
         // TILE_SERVER_1
-        if ($this->params['server'] == 1) {
+        if ($this->params['server'] === 'api/index.php') {
             require_once('ImgIndex.php');
             $imgIndex = new ImgIndex(new DbConnection());
     
@@ -69,6 +71,7 @@ class API {
             } else {
                 echo json_encode($result);
             }
+            
         // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
         } else {
             $obs  = $this->params['observatory'];

@@ -163,14 +163,14 @@
 								<td>Date and time to display</td>
 							</tr>
 							<tr>
-								<td><b>img-scale</b></td>
+								<td><b>imageScale</b></td>
 								<td><i>Float</i></td>
 								<td>Image scale in arc-seconds/pixel</td>
 							</tr>
 							<tr>
-								<td><b>layers</b></td>
-								<td><i>List</i></td>
-								<td>A comma-separated list of the image layers to be displayed</td>
+								<td><b>imageLayers</b></td>
+								<td><i>2d List</i></td>
+								<td>A comma-separated list of the image layers to be displayed. Each image layer should be of the form: [OBSERVATORY,INSTRUMENT,DETECTOR,MEASUREMENT,VISIBLE,OPACITY].</td>
 							</tr>
 						</tbody>
 					</table>
@@ -179,7 +179,7 @@
 					
 					<span class="example-header">Example:</span>
 					<span class="example-url">
-						<a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOH_EIT_EIT_171,SOH_LAS_0C2_0WL">http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOH_EIT_EIT_171,SOH_LAS_0C2_0WL</a>
+						<a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOH,EIT,EIT,171,1,100],[SOH,LAS,0C2,0WL,1,100]">http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOH,EIT,EIT,171,1,100],[SOH,LAS,0C2,0WL,1,100]</a>
 					</span>	
 				</div>
 			</div>
@@ -817,6 +817,11 @@
 										<td>A comma-separated list of some other type, usually strings or integers</td>
 										<td>VSOService::noaa,GOESXRayService::GOESXRay</td>
 									</tr>
+                                    <tr>
+                                        <td>2d List</td>
+                                        <td>This is similar to a list except that each item of the list is a bracket-delineated list itself.</td>
+                                        <td>[SOH,EIT,EIT,171,1,100],[SOH,LAS,0C2,0WL,0,100],[SOH,MDI,MDI,INT,1,50]</td>
+                                    </tr>
 									<tr>
 										<td>Unix Timestamp</td>
 										<td>The number of seconds since January 1, 1970, midnight UTC. (see <a href="#variable-type-resources">[1]</a>)</td>
@@ -841,13 +846,15 @@
 							</div>							
 						</div>						
 					</li>
+                    
+                    <!-- TODO : Appendice C: Image Layers -->
 				</ol>
 			</div>
 					
 		</div>
 
 		<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-			Last Updated: 2009-06-23 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+			Last Updated: 2009-07-06 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 		</div>
 	
 	</body>

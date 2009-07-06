@@ -123,15 +123,17 @@
 		<script type="text/javascript">
 			Event.observe(window, 'load', function () {
 				<?php
-					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&img-scale=2.63&layers=SOH_EIT_EIT_171,SOH_LAS_0C2_0WL
-					if ($_GET['layers'])
-						$layers = explode(",", $_GET['layers']);
+					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOH,EIT,EIT,171,1,70],[SOH,LAS,0C2,0WL,0,100]
+					if ($_GET['imageLayers']) {
+                        $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
+                        $imageLayers = split("\],\[", $imageLayersString);
+                    }
 				
 					// View
 					$view = array(
-                        'date'      => $_GET['date'],
-						'img-scale' => $_GET['img-scale'],
-						'layers'    => $layers
+                        'date'        => $_GET['date'],
+						'imageScale'  => $_GET['imageScale'],
+						'imageLayers' => $imageLayers
 					);
                     printf("var view = %s;\n", json_encode($view));
                
@@ -150,7 +152,7 @@
 	                    'timeIncrementSecs' => Config::DEFAULT_TIMESTEP,
                         'tileServer1'       => Config::TILE_SERVER_1,
                         'tileServer2'       => Config::TILE_SERVER_2,
-                        'backupAPI'         => Config::BACKUP_API,
+                        'backupServer'      => Config::BACKUP_SERVER,
                         'backupEnabled'     => Config::BACKUP_ENABLED,
                         'distributed'       => Config::DISTRIBUTED_TILING_ENABLED
 					);
