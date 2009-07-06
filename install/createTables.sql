@@ -4,6 +4,8 @@
 --
 -- Create schema & user
 --
+CREATE DATABASE IF NOT EXISTS helioviewer;
+GRANT ALL ON helioviewer.* TO 'helioviewer'@'localhost' IDENTIFIED BY 'helioviewer';
 USE helioviewer;
 
 --
