@@ -425,8 +425,7 @@ class API {
 			'frameRate', 
 			'timeStep',
 			'layers',
-			'hcOffset',
-			'hqFormat'
+			'hcOffset'
 		);
 
 		$this->checkForMissingParams($checkArray);
