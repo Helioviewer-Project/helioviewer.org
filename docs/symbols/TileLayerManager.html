@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Math</title>
+		<title>JsDoc Reference - TileLayerManager</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -252,7 +252,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Built-In Namespace Math
+				Class TileLayerManager
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -262,9 +262,32 @@ ul.inheritsList
 				
 				
 				
+					<br /><i>Defined in: </i> <a href="../symbols/src/lib_helioviewer_TileLayerManager.js.html">TileLayerManager.js</a>.
+				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class TileLayerManager.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/TileLayerManager.html">TileLayerManager</a></b>($super, controller)
+							</div>
+							<div class="description">Creates a new TileLayerManager instance</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -274,7 +297,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class Math.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class TileLayerManager.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -285,20 +308,29 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Math.<b><a href="../symbols/Math.html#.lg">lg</a></b>(x)
+								<div class="fixedFont"><b><a href="../symbols/TileLayerManager.html#addNewLayer">addNewLayer</a></b>()
 								</div>
-								<div class="description">Return base-2 logarithm of the given number (Note: log_b(x) = log_c(x) / log_c(b))</div>
+								<div class="description">Adds a layer that is not already displayed</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">Math.<b><a href="../symbols/Math.html#.toPolarCoords">toPolarCoords</a></b>(x, y)
+								<div class="fixedFont"><b><a href="../symbols/TileLayerManager.html#getMaxDimensions">getMaxDimensions</a></b>()
 								</div>
-								<div class="description">Convert from cartesian to polar coordinates</div>
+								<div class="description">Returns the largest width and height of any layers (does not have to be from same layer)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayerManager.html#save">save</a></b>()
+								</div>
+								<div class="description">Updates the list of loaded tile layers stored in cookies</div>
 							</td>
 						</tr>
 					
@@ -313,6 +345,50 @@ ul.inheritsList
 
 <!-- ============================== constructor details ==================== -->		
 			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>TileLayerManager</b>($super, controller)
+				</div>
+				
+				<div class="description">
+					Creates a new TileLayerManager instance
+					
+				</div>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								 <b>$super</b>
+								
+							</dt>
+								<dd></dd>
+						
+							<dt>
+								 <b>controller</b>
+								
+							</dt>
+								<dd></dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
 
 <!-- ============================== field details ========================== -->		
 			
@@ -323,18 +399,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".lg"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="addNewLayer"> </a>
+					<div class="fixedFont">
 					
-					<span class="light">{Number}</span>
-					<span class="light">Math.</span><b>lg</b>(x)
+					
+					<b>addNewLayer</b>()
 					
 					</div>
 					<div class="description">
-						Return base-2 logarithm of the given number (Note: log_b(x) = log_c(x) / log_c(b))
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/lib_helioviewer_HelperFunctions.js.html">HelperFunctions.js</a>.
+						Adds a layer that is not already displayed
 						
 						
 					</div>
@@ -342,16 +415,30 @@ ul.inheritsList
 					
 					
 						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Number}</span> <b>x</b>
-									
-								</dt>
-								<dd>Number</dd>
-							
-							</dl>
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getMaxDimensions"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>getMaxDimensions</b>()
+					
+					</div>
+					<div class="description">
+						Returns the largest width and height of any layers (does not have to be from same layer)
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -360,7 +447,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Number}</span> The base-2 logarithm of the input value</dd>
+								<dd><span class="light fixedFont">{Object}</span> The width and height of the largest layer</dd>
 							
 							</dl>
 						
@@ -369,18 +456,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".toPolarCoords"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="save"> </a>
+					<div class="fixedFont">
 					
-					<span class="light">{Object}</span>
-					<span class="light">Math.</span><b>toPolarCoords</b>(x, y)
+					
+					<b>save</b>()
 					
 					</div>
 					<div class="description">
-						Convert from cartesian to polar coordinates
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/lib_helioviewer_HelperFunctions.js.html">HelperFunctions.js</a>.
+						Updates the list of loaded tile layers stored in cookies
 						
 						
 					</div>
@@ -388,33 +472,9 @@ ul.inheritsList
 					
 					
 						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Int}</span> <b>x</b>
-									
-								</dt>
-								<dd>X coordinate</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Int}</span> <b>y</b>
-									
-								</dt>
-								<dd>Y coordinate</dd>
-							
-							</dl>
 						
 						
 						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Object}</span> Polar coordinates (r, theta) resulting from conversion</dd>
-							
-							</dl>
 						
 						
 						
