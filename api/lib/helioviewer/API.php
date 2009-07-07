@@ -416,6 +416,20 @@ class API {
      */
     private function _buildMovie () {
         require_once('Movie.php');
+		
+		// Check to make sure all required parameters were passed in before proceeding.
+		$checkArray = array(
+			'startDate', 
+			'zoomLevel', 
+			'numFrames', 
+			'frameRate', 
+			'timeStep',
+			'layers',
+			'hcOffset',
+			'hqFormat'
+		);
+
+		$this->checkForMissingParams($checkArray);
 
         // Required parameters
         $startDate = $this->params['startDate'];
@@ -424,34 +438,22 @@ class API {
         $frameRate = $this->params['frameRate'];
 		$timeStep  = $this->params['timeStep'];
        
-        $xRange    = explode("/", $this->params['xRange']);
-       	$yRange    = explode("/", $this->params['yRange']);
-		$layerName = explode(",", $this->params['layers']);
+		$layerStrings = explode("/", $this->params['layers']);
 
 		$hcCoords = explode(",", $this->params['hcOffset']);
 		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 				
         $hqFormat  = $this->params['format'];
-		$opacityValue = explode(",", $this->params['opacity']); 
 		
         // Optional parameters
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
-
-		// Each array (opacity, xRange, and yRange) should already be in order with the first value of each array corresponding to
-		// the first layer, the second values corresponding to the second layer, and so on. 
-		$layers = array();
-		$i = 0;
-		foreach($layerName as $lname) {
-			$layers[$lname] = array("name" => $lname, "opacityValue" => $opacityValue[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
-			$i++;
-		}
-
+				
         //Check to make sure values are acceptable
-        try {
+        try {	
             //Limit number of layers to three
-            if ((sizeOf($layers) > 3) || (strlen($this->params['layers']) == 0)) {
+            if ((sizeOf($layerStrings) > 3) || (strlen($this->params['layers']) == 0)) {
                 throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
             }
 
@@ -459,6 +461,8 @@ class API {
             if (($numFrames < 10) || ($numFrames > Config::MAX_MOVIE_FRAMES)) {
                 throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
+
+			$layers = $this->formatLayerStrings($layerStrings);
 
             $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset);
             $movie->buildMovie();
@@ -479,14 +483,21 @@ class API {
 	private function _takeScreenshot() {
 		require_once('Screenshot.php');
 		
+		// Check to make sure all required parameters were passed in before proceeding.
+		$checkArray = array(
+			'obsDate', 
+			'zoomLevel', 
+			'layers',
+			'hcOffset',
+		);
+
+		$this->checkForMissingParams($checkArray);
+		
         $obsDate   = $this->params['obsDate'];
         $zoomLevel = $this->params['zoomLevel'];
+
+		$layerStrings = explode("/", $this->params['layers']);
 		
-        $xRange    = explode("/", $this->params['xRange']);
-       	$yRange    = explode("/", $this->params['yRange']);
-		$layerName = explode(",", $this->params['layers']);
-		
-		$opacityValue = explode(",", $this->params['opacity']); 
 		$hcCoords = explode(",", $this->params['hcOffset']);
 		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 
@@ -494,25 +505,13 @@ class API {
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
 
-		// Each array (opacity, xRange, and yRange) should already be in order with the first value of each array corresponding to
-		// the first layer, the second values corresponding to the second layer, and so on. 
-		$layers = array();
-		$i = 0;
-		
-		// Add each layer to the array "layers".
-		// "layers" is an array of layer information arrays, each layer information array is identified by its layer name, and is an array 
-		// with keys "name", "opacityValue", "xRange", and "yRange".
-		foreach($layerName as $lname) {
-			$layers[$lname] = array("name" => $lname, "opacityValue" => $opacityValue[$i], "xRange" => $xRange[$i], "yRange" => $yRange[$i]);
-			$i++;
-		}
-		
 		try {
-			if(sizeOf($layers) < 1) 
+			if(sizeOf($layerStrings) < 1) 
 				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
 
 			// Give the image a unix timestamp as the id.
 			$id = time();
+			$layers = $this->formatLayerStrings($layerStrings);
 			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $layers, $id, $hcOffset);	
 
 			if(!file_exists($screenshot->getComposite()))
@@ -711,6 +710,52 @@ class API {
     public static function getUTCTimestamp($date) {
         return strtotime($date);
     }
+
+	/**
+	 * Takes the string representation of a layer from the javascript and formats it so that only useful information is included.
+	 * @return array $formatted -- The array containing properly formatted strings
+	 * @param object $layers -- an array of strings in the format: "obs,inst,det,meas,visible,opacityxxStart,xEnd,yStart,yEnd"
+	 * 					The extra "x" was put in the middle so that the string could be broken in half and parsing one half by itself 
+	 * 					rather than parsing 10 different strings and putting the half that didn't need parsing back together.
+	 */	
+	private function formatLayerStrings($layers) {
+		$formatted = array();
+		foreach($layers as $layer) {
+			$layerInfo = explode("x", $layer);	
+
+			// $ranges is now: "xStart,xSize,yStart,ySize"			
+			$ranges = $layerInfo[1];
+
+			// Extract relevant information from $layerInfo[0]. Get rid of the "visibility" boolean in the middle of the string. Stick opacity on the end.
+			$rawName = explode(",", $layerInfo[0]);
+			$opacity = $rawName[5];
+			array_splice($rawName, 4);
+
+			$name = implode("_", $rawName);
+			$image = $name . "," . $ranges . "," . $opacity;
+			array_push($formatted, $image);
+		}
+		
+		return $formatted;
+	}
+
+	/**
+	 * Checks to make sure all required parameters were passed in.
+	 * @param array $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
+	 */	
+	private function checkForMissingParams($fields) {
+		try{
+			foreach($fields as $field) {
+				if(!isset($this->params[$field])) {
+					throw new Exception("Missing a value for $field.");
+				}
+			}
+		}
+		catch (Exception $e) {
+			echo 'Error: ' . $e->getMessage();
+			exit();
+		}
+	}
 
     /**
      * @return bool Input validity.

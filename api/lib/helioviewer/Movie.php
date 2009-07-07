@@ -29,7 +29,7 @@ class Movie
 
 	/**
 	 * 
-	 * @param object $layers is an array with at least one value, in the format of SOHEITEIT304 (obs, inst, det, meas, no quotation marks).
+	 * @param object $layers is an array with at least one value, in the format of OBS_INST_DET_MEAS,xstart,xsize,ystart,ysize,opacity
 	 * @param object $startTime is a unix timestamp.
 	 * @param object $zoomLevel is a number between 8-15 (for now) with 10 being the default, base zoom level.
 	 * @param object $numFrames is a number between 1 and 150, with the default being 40.
@@ -46,7 +46,7 @@ class Movie
 		// $layers is an array of layer information arrays, identified by their layer names.
 		// Each layer information array has values for "name", "xRange", "yRange", and "opacityValue"
         $this->layers = $layers;
-			
+		
         // startTime is a Unix timestamp in seconds.
         $this->startTime = $startTime;
         $this->zoomLevel = $zoomLevel;
@@ -117,16 +117,13 @@ class Movie
 				
         foreach ($this->layers as $layer)
         {
-        	$layerInfo = explode("_", $layer["name"]);
+        	// $layerInfo will have values Array ("obs_inst_det_meas", xStart, xSize, yStart, ySize, opacity)
+        	$layerInfo = explode(",", $layer);
 
-            // Extract info from $layer
-            $obs 	= $layerInfo[0]; 
-            $inst 	= $layerInfo[1];
-            $det 	= $layerInfo[2]; 
-            $meas 	= $layerInfo[3]; 
+			$name = $layerInfo[0];
 
-            $closestImage = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);
-			$layerImages[$layer["name"]] = $closestImage;
+            $closestImage = $this->getImageTimestamps($name, $timeStamps); //($obs, $inst, $det, $meas, $timeStamps);
+			$layerImages[$name] = $closestImage;
         }
 
 		// For each frame, make a composite image of all layers at that timestamp
@@ -135,19 +132,23 @@ class Movie
 			$images = array();
 			
 			foreach($this->layers as $layer) {
-				$name = $layer["name"];
-				$opacity = $layer["opacityValue"]; 
+				$layerInfo = explode(",", $layer);	
 
-				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $opacity, "closestImage" => $layerImages[$name][$frameNum]);
+				$name = $layerInfo[0];
+				
+				// Chop the name off the array but keep the rest of the information.
+				$ranges = array_slice($layerInfo, 1);
+				
+				$closestImage = $layerImages[$name][$frameNum];
+				// $image is now: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp"
+				$image =  $closestImage['uri'] . "," . implode(",", $ranges) . "," .$closestImage['opacityGrp']; //array("ranges" => $ranges, "closestImage" => $layerImages[$name][$frameNum]);
 				$images[$name] = $image;
 			}	
 
 			// All frames will be put in cache/movies/$now		
 			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset);	
-//          	$filename = $tmpdir . $frameNum . '.tif';
 			$frameFile = $movieFrame->getComposite(); 
 
-//			copy($frameFile, $filename);
 			array_push($this->images, $frameFile);
 		}	
 
@@ -223,7 +224,7 @@ class Movie
 
 		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
-			unlink($image);
+//			unlink($image);
 		}	
 
 //		$this->showMovie($tmpurl, 512, 512);
@@ -237,7 +238,7 @@ class Movie
      * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', and 'uri'
      * for each image.
      */
-    private function getImageTimestamps($obs, $inst, $det, $meas, $timeStamps)
+    private function getImageTimestamps($name, $timeStamps) //($obs, $inst, $det, $meas, $timeStamps)
     {
         $resultArray = array ();
 
@@ -259,8 +260,7 @@ class Movie
                 $time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
 */
 				$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $time AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $time) AS timediffAbs, uri, opacityGrp
-							FROM image WHERE uri LIKE '%_%_%_%_" . mysqli_real_escape_string($this->db->link, $obs) . "_" . mysqli_real_escape_string($this->db->link, $inst) . "_" . mysqli_real_escape_string($this->db->link, $det) . "_" . mysqli_real_escape_string($this->db->link, $meas) . ".jp2' ORDER BY timediffAbs LIMIT 0,1";
-
+							FROM image WHERE uri LIKE '%_%_%_%_" . mysqli_real_escape_string($this->db->link, $name) . ".jp2' ORDER BY timediffAbs LIMIT 0,1";
 				try {
 			        $result = $this->db->query($sql);
 			        $row = mysqli_fetch_array($result, MYSQL_ASSOC);

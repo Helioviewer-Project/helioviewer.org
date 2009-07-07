@@ -1,8 +1,8 @@
 <?php
 /**
  * @author Jaclyn Beck
- * @description The ScreenImage class is used for screenshots, since the parameters are 
- * 					slightly different from those of a FrameLayer.
+ * @description The ScreenImage class is used for screenshot generation, since the parameters are 
+ * 					slightly different from those of a MovieFrame.
  */
 require_once('CompositeImage.php');
 
@@ -12,23 +12,19 @@ class Screenshot extends CompositeImage {
 	protected $timestamp;
 	protected $cacheFileDir;
 
-	/*
+	/**
 	 * Constructor
+	 * @param array $layers  -- an array of layer information strings, with the format: "obs_inst_det_meas,xStart,xEnd,yStart,yEnd,opacity"
+	 * @param int $zoomLevel -- a number between 8 and 15, the zoom level of the viewport.
+	 * @param array $options -- array containing true/false values for "EdgeEnhance" and "Sharpen"
+	 * @param int $timestamp -- the unix timestamp of the observation date in the viewport
+	 * @param int $id -- the unix timestamp of the time the Screenshot was requested
 	 */
 	public function __construct($timestamp, $zoomLevel, $options, $layers, $id, $hcOffset) {
-		// $id is the unix timestamp of the current time
-		// $timestamp is the timestamp of the image(s) requested.
 		$this->id = $id;
 		$this->timestamp = $timestamp;
 
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
-		
-		/* layerImages is an array of layer information arrays.
-		 * each layer information array has keys "xRange, "yRange", "opacity", and "closestImages" for that particular layer.
-		 * "closestImages" one array containing the db info for the image, and "opacity" is an array with keys "opacityValue" (between 0 and 100)
-		 * and "opacityGroup" (between 1 and 4)
-		 */
-		$this->layerImages = $this->getLayerInfo($layers);
 
 		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset);
 		
@@ -41,30 +37,24 @@ class Screenshot extends CompositeImage {
 			chmod($this->cacheFileDir, 0777);
 		}
 
+		$this->layerImages = array();		
+
+		// Find the closest image for each layer, add the layer information string to it
+		foreach($layers as $layer) {
+			$layerInfo = explode(",", $layer);
+			$closestImage = $this->getClosestImage($layerInfo[0]);
+			
+			// Chop the layer name off the array but keep the rest of the information
+			$useful = array_slice($layerInfo, 1);
+			
+			$image = $closestImage['uri'] . "," . implode(",", $useful) . "," . $closestImage['opacityGrp'];
+			array_push($this->layerImages, $image);
+		}
+
 		$this->compileImages();
 	}
 	
-	private function getLayerInfo($layers) {	
-		$layerImages = array();
-		
-		foreach($layers as $layer) {
-			// The layer name is in the format OBS_INST_DET_MEAS to allow for variable-length names.
-			$layerInfo = explode("_", $layer["name"]);
-			$obs = $layerInfo[0];
-			$inst = $layerInfo[1];
-			$det = $layerInfo[2];
-			$meas = $layerInfo[3];
-
-        	$closestImage = $this->getClosestImage($obs, $inst, $det, $meas);	
-
-			$opacity = $layer["opacityValue"]; //array("opacityValue" => $layer["opacityValue"], "opacityGroup" => $closestImage['opacityGrp']);
-
-			array_push($layerImages, array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $opacity, "closestImage" => $closestImage));
-		}
-		return $layerImages;
-	}
-	
-	private function getClosestImage($obs, $inst, $det, $meas) {
+	private function getClosestImage($name) {
 		require_once ('DbConnection.php');
 		$this->db = new DbConnection();
 		$time = $this->timestamp;
@@ -81,7 +71,7 @@ class Screenshot extends CompositeImage {
         $time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
 */
 		$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $time AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $time) AS timediffAbs, uri, opacityGrp
-					FROM image WHERE uri LIKE '%_%_%_%_" . mysqli_real_escape_string($this->db->link, $obs) . "_" . mysqli_real_escape_string($this->db->link, $inst) . "_" . mysqli_real_escape_string($this->db->link, $det) . "_" . mysqli_real_escape_string($this->db->link, $meas) . ".jp2' ORDER BY timediffAbs LIMIT 0,1";
+					FROM image WHERE uri LIKE '%_%_%_%_" . mysqli_real_escape_string($this->db->link, $name) . ".jp2' ORDER BY timediffAbs LIMIT 0,1";
 
 		try {
 	        $result = $this->db->query($sql);

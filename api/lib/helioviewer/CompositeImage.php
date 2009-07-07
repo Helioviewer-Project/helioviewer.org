@@ -22,8 +22,9 @@ abstract class CompositeImage {
 	 * Constructor
 	 * @param object $zoomLevel a number between 8-15, default is 10.
 	 * @param object $options an array with ["edges"] => true/false, ["sharpen"] => true/false
-	 * @param object $image an array with data on each layer: ["timestamp"], ["unix_timestamp"], ["timediff"], ["timediffabs"], ["uri"]
-	 * @param object $frameNum is the frame number if this belongs to a movie, or an id number if it's a screenshot.
+	 * @param object $hcOffset -- an array containing the x-offset (dist from the sun's center from the left margin) 
+	 * 					and the y-offset (dist of center from the top margin)
+	 * @param string $tmpDir -- The temporary directory where images are cached
 	 */
 	protected function __construct($zoomLevel, $options, $tmpDir, $hcOffset) { 
 		date_default_timezone_set('UTC');
@@ -60,7 +61,7 @@ abstract class CompositeImage {
 		
 	}
 
-	/*
+	/**
 	 * Builds each image separately and then composites them together if necessary.
 	 */	
 	protected function compileImages() {
@@ -70,20 +71,17 @@ abstract class CompositeImage {
 		$opacities = array("value" => array(), "group" => array());
 		
 		foreach($this->layerImages as $image) {
-			// Each $image is an array holding values for "xRange", "yRange", "opacity", and "closestImage"
-			// Build each image separately
-			$uri = $image['closestImage']['uri'];
-//			$jp2filepath = $this->getFilepath($uri);
+			// Each $image is a string: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp";
+			// Build each image separately, extract information from the string.
+			$imageInfo = explode(",", $image);
+			$uri = $imageInfo[0];
 
-			$xRange = $image["xRange"];	
-			$yRange = $image["yRange"];
-			array_push($opacities["value"], $image["opacity"]);
-			array_push($opacities["group"], $image['closestImage']['opacityGrp']);
-			
+			$xRange = array("start" => $imageInfo[1], "end" => $imageInfo[2]);
+			$yRange = array("start" => $imageInfo[3], "end" => $imageInfo[4]);
+			array_push($opacities["value"], $imageInfo[5]);
+			array_push($opacities["group"], $imageInfo[6]);
+	
 			try {	
-//				if(!file_exists($jp2filepath))
-//					throw new Exception("JP2 image " . $jp2filepath . " does not exist.");
-					
 				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
 	
 				$filepath = $subFieldImage->getCacheFilepath();
@@ -346,6 +344,36 @@ abstract class CompositeImage {
 	
 	function getComposite() {
 		return $this->composite;
+	}
+	
+	/**
+	 * Parses layer strings, removes unwanted information, and returns an array of the strings.
+	 * @return an array containing all layer information strings
+	 * @param object $layers an array conataining unprocessed layer information strings.
+	 */
+	private function getLayerInfo($layers) {	
+		$layerImages = array();
+		
+		foreach($layers as $layer) {
+        	// $layerInfo will have values Array ([0] => "OBS,INST,DET,MEAS,visible,opacity", [1] => "xStart,xSize,yStart,ySize")
+        	$layerInfo = explode("x", $layer);
+			
+			// $ranges is now: "xStart,xSize,yStart,ySize"			
+			$ranges = $layerInfo[1];
+
+			// Extract relevant information from $layerInfo[0]. Get rid of the "visibility" boolean in the middle of the string
+			$rawName = explode(",", $layerInfo[0]);
+			$opacity = $rawName[5];
+			array_splice($rawName, 4);
+			$name = implode("_", $rawName);
+			
+        	$closestImage = $this->getClosestImage($name);	
+
+			//$opacity = $layer["opacityValue"]; //array("opacityValue" => $layer["opacityValue"], "opacityGroup" => $closestImage['opacityGrp']);
+			$image = $closestImage['uri'] . "," . $opacity . "," .$closestImage['opacityGrp'] . "," . $ranges;
+			array_push($layerImages, $image);
+		}
+		return $layerImages;
 	}
 }
 ?>

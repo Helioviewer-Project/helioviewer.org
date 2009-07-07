@@ -6,7 +6,7 @@ require('JP2Image.php');
 
 class SubFieldImage extends JP2Image {
 	private $jp2Filepath;
-	protected $helioCentricOffset;
+	protected $hcOffset;
 
 	/**
 	  * Constructor
@@ -19,18 +19,18 @@ class SubFieldImage extends JP2Image {
 	  */	
 	
 	public function __construct($uri, $zoomLevel, $x, $y, $imageSize, $hcOffset) {
-		$xArray = explode(",", $x);
-		$yArray = explode(",", $y);
+//		$xArray = explode(",", $x);
+//		$yArray = explode(",", $y);
 		
 		// JP2Image constructor expects an array of start and end pixels
-        $xRange = array("start" => $xArray[0], "end" => $xArray[1]);
-        $yRange = array("start" => $yArray[0], "end" => $yArray[1]);
+//        $xRange = array("start" => $xArray[0], "end" => $xArray[1]);
+//        $yRange = array("start" => $yArray[0], "end" => $yArray[1]);
 
-        parent::__construct($uri, $zoomLevel, $xRange, $yRange, $imageSize);
+        parent::__construct($uri, $zoomLevel, $x, $y, $imageSize);
 
-        $this->x = $x;
-        $this->y = $y;
-//		$this->jp2Filepath = $filepath;
+//        $this->x = $x;
+//        $this->y = $y;
+
 		$this->hcOffset = $hcOffset;
 		
 		// The true/false parameter means whether to display the image or not when finished building it (used for debugging).
