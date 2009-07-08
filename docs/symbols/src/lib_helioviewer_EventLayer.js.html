@@ -146,7 +146,7 @@
 <span class='line'>139</span> </span><span class="WHIT">		
 <span class='line'>140</span> 		</span><span class="COMM">// Update user's stored settings</span><span class="WHIT">
 <span class='line'>141</span> </span><span class="WHIT">		</span><span class="NAME">this.eventAccordion.eventIcons</span><span class="PUNC">[</span><span class="NAME">this.catalog</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"small-"</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">newIcon</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>142</span> </span><span class="WHIT">		</span><span class="NAME">this.viewport.controller.userSettings.set</span><span class="PUNC">(</span><span class="STRN">'event-icons'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.eventAccordion.eventIcons</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>142</span> </span><span class="WHIT">		</span><span class="NAME">this.viewport.controller.userSettings.set</span><span class="PUNC">(</span><span class="STRN">'eventIcons'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.eventAccordion.eventIcons</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>143</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'>144</span> 
 <span class='line'>145</span> </span><span class="WHIT">	</span><span class="COMM">/**
@@ -175,6 +175,12 @@
 <span class='line'>168</span> </span><span class="WHIT">		</span><span class="NAME">this.events.each</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>169</span> </span><span class="WHIT">			</span><span class="NAME">e.refresh</span><span class="PUNC">(</span><span class="NAME">sunRadius</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>170</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>171</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>172</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>173</span> </span></pre></body></html>
+<span class='line'>171</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">    
+<span class='line'>173</span>     </span><span class="COMM">// 2009/07/06 TODO</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">    </span><span class="NAME">toString</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">    
+<span class='line'>176</span>     </span><span class="NAME">toJSON</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>179</span> </span></pre></body></html>

@@ -19,30 +19,20 @@ class SubFieldImage extends JP2Image {
 	  */	
 	
 	public function __construct($uri, $zoomLevel, $x, $y, $imageSize, $hcOffset) {
-//		$xArray = explode(",", $x);
-//		$yArray = explode(",", $y);
-		
-		// JP2Image constructor expects an array of start and end pixels
-//        $xRange = array("start" => $xArray[0], "end" => $xArray[1]);
-//        $yRange = array("start" => $yArray[0], "end" => $yArray[1]);
-
-        parent::__construct($uri, $zoomLevel, $x, $y, $imageSize);
-
-//        $this->x = $x;
-//        $this->y = $y;
-
+        parent::__construct($uri, $zoomLevel, $x, $y, $imageSize, false);
+				
 		$this->hcOffset = $hcOffset;
 		
 		// The true/false parameter means whether to display the image or not when finished building it (used for debugging).
-		$this->getImage(false);
+		$this->_getImage(false);
 	}
 	
-	function getImage($display) {
+	private function _getImage($display) {
 		// JPG or PNG
 		$format = $this->getImageFormat();
 
 		// Filepath of image in cache directory
-		$filepath = $this->getFilePath($format);
+		$filepath = $this->_getFilePath($format);
 
 		// If it's already cached, just use the cached file
 		if(Config::ENABLE_CACHE && file_exists($filepath)) {
@@ -54,7 +44,7 @@ class SubFieldImage extends JP2Image {
 		else {	
 			// If it's not cached, build it and put it in the cache.
 			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center for now).
-	        $this->image = $this->buildImage($filepath, false);	
+	        $this->image = $this->buildImage($filepath);	
 				
 	        // Display image
 	        if ($display)
@@ -68,7 +58,7 @@ class SubFieldImage extends JP2Image {
 	 * @return $filepath
 	 * @param object $format is something like "jpg" or "png"
 	 */	
-	protected function getFilePath($format) {
+	private function _getFilePath($format) {
         // Base filename
 		$filename = substr($this->uri, 0, -4);
 

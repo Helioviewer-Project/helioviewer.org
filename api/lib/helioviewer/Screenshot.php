@@ -11,6 +11,7 @@ class Screenshot extends CompositeImage {
 	protected $layerImages;
 	protected $timestamp;
 	protected $cacheFileDir;
+	protected $imageSize;
 
 	/**
 	 * Constructor
@@ -19,11 +20,12 @@ class Screenshot extends CompositeImage {
 	 * @param array $options -- array containing true/false values for "EdgeEnhance" and "Sharpen"
 	 * @param int $timestamp -- the unix timestamp of the observation date in the viewport
 	 * @param int $id -- the unix timestamp of the time the Screenshot was requested
+	 * @param array $imageSize -- an array holding the with and height of the viewport image
 	 */
-	public function __construct($timestamp, $zoomLevel, $options, $layers, $id, $hcOffset) {
+	public function __construct($timestamp, $zoomLevel, $options, $layers, $id, $hcOffset, $imageSize) {
 		$this->id = $id;
 		$this->timestamp = $timestamp;
-
+		$this->imageSize = $imageSize;
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 
 		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset);
@@ -42,7 +44,7 @@ class Screenshot extends CompositeImage {
 		// Find the closest image for each layer, add the layer information string to it
 		foreach($layers as $layer) {
 			$layerInfo = explode(",", $layer);
-			$closestImage = $this->getClosestImage($layerInfo[0]);
+			$closestImage = $this->_getClosestImage($layerInfo[0]);
 			
 			// Chop the layer name off the array but keep the rest of the information
 			$useful = array_slice($layerInfo, 1);
@@ -54,7 +56,7 @@ class Screenshot extends CompositeImage {
 		$this->compileImages();
 	}
 	
-	private function getClosestImage($name) {
+	private function _getClosestImage($name) {
 		require_once ('DbConnection.php');
 		$this->db = new DbConnection();
 		$time = $this->timestamp;

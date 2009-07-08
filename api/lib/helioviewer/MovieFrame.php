@@ -17,9 +17,10 @@ class MovieFrame extends CompositeImage {
 	 * @param array $options is an array with true/false values for "EdgeEnhance" and "Sharpen"
 	 * @param int $folderId is the unix timestamp of when the movie was requested, and is used to make a folder to store the movie in.
 	 */
-	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $hcOffset) {
-		$this->frameNum = $frameNum;
-		$this->layerImages = $layerImages;
+	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $hcOffset, $imageSize) {
+		$this->frameNum 	= $frameNum;
+		$this->layerImages 	= $layerImages;
+		$this->imageSize 	= $imageSize;
 		
 		$tmpDir = CONFIG::CACHE_DIR . "movies/";
 
