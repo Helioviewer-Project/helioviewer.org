@@ -9,15 +9,13 @@
 require('JP2Image.php');
 
 class Tile extends JP2Image {
-    private $x;
-    private $y;
+    protected $x;
+    protected $y;
 
     /**
      * constructor
      */
     public function __construct($uri, $zoomLevel, $x, $y, $tileSize, $display = true) {
-  //  	$pixels = $this->convertTileIndexToPixels($x, $y);
-
         $xRange = array("start" => $x, "end" => $x);
         $yRange = array("start" => $y, "end" => $y);
 
@@ -25,7 +23,7 @@ class Tile extends JP2Image {
 
         $this->x = $x;
         $this->y = $y;
-		
+	
 		$this->convertTileIndexToPixels();
         $this->getTile($display);
     }
@@ -79,50 +77,18 @@ class Tile extends JP2Image {
         $year  = substr($this->timestamp,0,4);
         $month = substr($this->timestamp,5,2);
         $day   = substr($this->timestamp,8,2);
-        
-        // Create necessary directories
-        $filepath .= $year . "/";
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-        }
 
-        $filepath .= $month . "/";
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-        }
+		$fieldArray = array($year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
+		
+		foreach($fieldArray as $field) {
+			$filepath .= $field . "/";
+			
+	        if (!file_exists($filepath)) {
+	            mkdir($filepath);
+	            chmod($filepath, 0777);
+	        }
+		}    
 
-        $filepath .= $day . "/";
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-        }
-        
-        $filepath .= $this->observatory . "/";
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-         }
-        
-        $filepath .= $this->instrument . "/";
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-         }
-       
-        $filepath .= $this->detector . "/";
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-         }
-
-        $filepath .= $this->measurement . "/";
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-         }
-         
         // Convert coordinates to strings
         $xStr = "+" . str_pad($this->x, 2, '0', STR_PAD_LEFT);
         if (substr($this->x,0,1) == "-")

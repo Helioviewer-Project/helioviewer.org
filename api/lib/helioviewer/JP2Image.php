@@ -61,7 +61,7 @@ abstract class JP2Image {
      * 
      * Also need to determine how functions that use "tilesize" can be handled.
      */
-    protected function __construct($uri, $zoomLevel, $xRange, $yRange, $tileSize) {
+    protected function __construct($uri, $zoomLevel, $xRange, $yRange, $tileSize, $isTile = true) {
         require_once('DbConnection.php');
         date_default_timezone_set('UTC');
         $this->db        = new DbConnection();
@@ -70,7 +70,8 @@ abstract class JP2Image {
         $this->tileSize  = $tileSize;
         $this->xRange    = $xRange;
         $this->yRange    = $yRange;
-   
+   		$this->isTile    = $isTile;
+		
         // Get the image filepath
         $this->jp2 = API::getFilepath($uri);
 
@@ -98,15 +99,14 @@ abstract class JP2Image {
      * 					  they are by default. 
      * @return
      */
-    protected function buildImage($filename, $isTile = true) {
+    protected function buildImage($filename) {
         try {
-        	$this->isTile = $isTile;
             // extract region from JP2
             $pgm = $this->extractRegion($filename);
         
             // Use PNG as intermediate format so that GD can read it in
             $png = substr($filename, 0, -3) . "png";
-			$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD;
+			$cmd = CONFIG::PATH_CMD;
           
             exec($cmd . " && convert $pgm -depth 8 -quality 10 -type Grayscale $png");
 			      
@@ -117,7 +117,7 @@ abstract class JP2Image {
             }
    
             // IM command for transparency, padding, rescaling, etc.
-            $cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black ";
+            $cmd = CONFIG::PATH_CMD . " && convert $png -background black ";
             
             // Apply alpha mask for images with transparent components
             if ($this->hasAlphaMask()) {
@@ -133,13 +133,13 @@ abstract class JP2Image {
             $extracted = $this->getImageDimensions($pgm);
 	        $relTs = $this->relativeTilesize;
 
-			if(!$isTile) {
+			if(!$this->isTile) {
 				$this->adjustHCOffset($extracted, $jp2RelWidth, $jp2RelHeight);
 			}
 
 			// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             if (($relTs < $this->tileSize) && (($extracted['width'] < $relTs) || ($extracted['height'] < $relTs))) {
-                $pad = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"], $isTile) . " $png";
+                $pad = CONFIG::PATH_CMD . " && convert $png -background black " . $this->padImage($jp2RelWidth, $jp2RelHeight, $relTs, $this->xRange["start"], $this->yRange["start"]) . " $png";
                 exec($pad);
             }        
 						
@@ -153,7 +153,7 @@ abstract class JP2Image {
           
             // Pad if tile is smaller than it should be (Case 2)
             if ((($tile['width'] < $this->tileSize) || ($tile['height'] < $this->tileSize)) && ($relTs >= $this->tileSize)) {
-                $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"], $isTile);
+                $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $this->tileSize, $this->xRange["start"], $this->yRange["start"]);
 			}
             
             if ($this->hasAlphaMask()) {
@@ -391,8 +391,11 @@ abstract class JP2Image {
 // 6-12-2009 converted from using tile coordinates to pixels.   
 // Tiles are padded using tile coordinates (-1,0), etc. isTile defaults to true.
 // If the image is a SubFieldImage, isTile is false and the image is padded using pixel coordinates. 
-    private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y, $isTile = true) {		
-		if($isTile) {
+    private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y) {		
+		if($this->isTile) {
+			$x = $this->x;
+			$y = $this->y;
+			
 	        // Determine min and max tile numbers
 	        $imgNumTilesX = max(2, ceil($jp2Width  / $this->tileSize));
 	        $imgNumTilesY = max(2, ceil($jp2Height / $this->tileSize));
@@ -403,17 +406,22 @@ abstract class JP2Image {
 	
 	        if ($imgNumTilesY % 2 != 0)
 	            $imgNumTilesY += 1;
-	/*   
+			// Temporarily went back to using tile coordinates, 07-09-2009
 	        $tileMinX = - ($imgNumTilesX / 2);
 	        $tileMaxX =   ($imgNumTilesX / 2) - 1;
 	        $tileMinY = - ($imgNumTilesY / 2);
 	        $tileMaxY =   ($imgNumTilesY / 2) - 1; 
-	*/
-	 		$tileMinX = 0;
-			$tileMaxX = $this->jp2Width - $this->jp2Width / $imgNumTilesX;     
-			$tileMinY = 0;
-			$tileMaxY = $this->jp2Height - $this->jp2Height / $imgNumTilesY;   
+
+/*
+			$numInnerTilesX = $imgNumTilesX - 2;
+			$numInnerTilesY = $imgNumTilesY - 2;
 	
+	 		$tileMinX = 0;
+			$tileMaxX = ($this->jp2Width  / 2) + ($this->tileSize * $numInnerTilesX / 2);     
+			$tileMinY = 0;
+			$tileMaxY = ($this->jp2Height / 2) + ($this->tileSize * $numInnerTilesY / 2);   
+*/
+
 	        // Determine where the tile is located (where tile should lie in the padding)
 	        $gravity = null;
 	        if ($x == $tileMinX) {
@@ -449,7 +457,7 @@ abstract class JP2Image {
 	        }
 			$offset = " ";
 		}
-		
+	
 		/* 
 		 * If the item is a subfieldImage, it is assumed that the overall picture is larger than, but contains this image.
 		 * The image has a heliocentric offset and will be padded with that offset. 

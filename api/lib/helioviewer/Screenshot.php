@@ -11,6 +11,7 @@ class Screenshot extends CompositeImage {
 	protected $layerImages;
 	protected $timestamp;
 	protected $cacheFileDir;
+	protected $imageSize;
 
 	/**
 	 * Constructor
@@ -19,11 +20,13 @@ class Screenshot extends CompositeImage {
 	 * @param array $options -- array containing true/false values for "EdgeEnhance" and "Sharpen"
 	 * @param int $timestamp -- the unix timestamp of the observation date in the viewport
 	 * @param int $id -- the unix timestamp of the time the Screenshot was requested
+	 * @param array $imageSize -- an array holding the with and height of the viewport image
 	 */
-	public function __construct($timestamp, $zoomLevel, $options, $layers, $id, $hcOffset) {
+	public function __construct($timestamp, $zoomLevel, $options, $layers, $id, $hcOffset, $imageSize) {
 		$this->id = $id;
 		$this->timestamp = $timestamp;
-
+		$this->imageSize = $imageSize;
+		
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 
 		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset);

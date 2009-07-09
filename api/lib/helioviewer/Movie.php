@@ -58,8 +58,9 @@ class Movie
         $this->options = $options;
 		
         // timeStep is in seconds
-        $this->timeStep = $timeStep;
-		$this->hcOffset = $hcOffset;
+        $this->timeStep  = $timeStep;
+		$this->hcOffset  = $hcOffset;
+		$this->imageSize = $imageSize;
 
         $this->db = new DbConnection();
     }
@@ -88,7 +89,7 @@ class Movie
 
     }
 
-    /*
+    /**
      * buildMovie
      */
     public function buildMovie()
@@ -99,7 +100,7 @@ class Movie
         $tmpdir = Config::TMP_ROOT_DIR."/$now/";
         $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
         mkdir($tmpdir);
-        //chmod($tmpdir, 0777);
+        chmod($tmpdir, 0777);
 
         // Build an array with all timestamps needed when requesting images
         $timeStamps = array ();
@@ -142,12 +143,12 @@ class Movie
 				
 				$closestImage = $layerImages[$name][$frameNum];
 				// $image is now: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp"
-				$image =  $closestImage['uri'] . "," . implode(",", $ranges) . "," .$closestImage['opacityGrp']; //array("ranges" => $ranges, "closestImage" => $layerImages[$name][$frameNum]);
+				$image =  $closestImage['uri'] . "," . implode(",", $ranges) . "," .$closestImage['opacityGrp'];
 				$images[$name] = $image;
 			}	
 
 			// All frames will be put in cache/movies/$now		
-			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset);	
+			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset, $this->imageSize);	
 			$frameFile = $movieFrame->getComposite(); 
 
 			array_push($this->images, $frameFile);
@@ -165,7 +166,8 @@ class Movie
 			exit();
 		}
 
-		$toolkit->setVideoOutputDimensions(1024, 1024);
+		//$toolkit->setVideoOutputDimensions(1024, 1024);
+		$toolkit->setVideoOutputDimensions($this->imageSize['width'], $this->imageSize['height']);
 		
 		// set the output parameters (Flash video)
 		$output_filename = "$movieName." . $this->filetype;
@@ -212,10 +214,6 @@ class Movie
 		
         // execute the ffmpeg command
 		$mp4 = $toolkit->execute(false, true);
-        
-  		
-        //echo $toolkit->getLastCommand();
-        //exit();
 		
 		if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
 		    // 		if there was an error then get it
@@ -234,7 +232,7 @@ class Movie
 		echo json_encode($tmpurl);
 	}
 		
-    /*
+    /**
      * Queries the database to find the exact timestamps for images nearest each time in $timeStamps.
      * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', and 'uri'
      * for each image.
@@ -509,7 +507,7 @@ class Movie
 		return $resultArray;
 	}
 
-	/*
+	/**
 	 * showMovie
 	 */
 	public function showMovie($url, $width, $height)
