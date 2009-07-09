@@ -17,3 +17,4 @@ log
 settings/Config.Jaclyn.php
 [cC]onfig-*.php
 [cC]onfig.*.php
+settings/Config.php
