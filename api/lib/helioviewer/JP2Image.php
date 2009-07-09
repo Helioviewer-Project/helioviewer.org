@@ -393,9 +393,6 @@ abstract class JP2Image {
 // If the image is a SubFieldImage, isTile is false and the image is padded using pixel coordinates. 
     private function padImage ($jp2Width, $jp2Height, $tilesize, $x, $y) {		
 		if($this->isTile) {
-			$x = $this->x;
-			$y = $this->y;
-			
 	        // Determine min and max tile numbers
 	        $imgNumTilesX = max(2, ceil($jp2Width  / $this->tileSize));
 	        $imgNumTilesY = max(2, ceil($jp2Height / $this->tileSize));
@@ -406,41 +403,91 @@ abstract class JP2Image {
 	
 	        if ($imgNumTilesY % 2 != 0)
 	            $imgNumTilesY += 1;
-			// Temporarily went back to using tile coordinates, 07-09-2009
+/*			// Temporarily went back to using tile coordinates, 07-09-2009
 	        $tileMinX = - ($imgNumTilesX / 2);
 	        $tileMaxX =   ($imgNumTilesX / 2) - 1;
 	        $tileMinY = - ($imgNumTilesY / 2);
 	        $tileMaxY =   ($imgNumTilesY / 2) - 1; 
-
-/*
-			$numInnerTilesX = $imgNumTilesX - 2;
-			$numInnerTilesY = $imgNumTilesY - 2;
-	
-	 		$tileMinX = 0;
-			$tileMaxX = ($this->jp2Width  / 2) + ($this->tileSize * $numInnerTilesX / 2);     
-			$tileMinY = 0;
-			$tileMaxY = ($this->jp2Height / 2) + ($this->tileSize * $numInnerTilesY / 2);   
 */
 
+			$numInnerTilesX = $imgNumTilesX - 2;
+			$numInnerTilesY = $imgNumTilesY - 2;
+//echo "$imgNumTilesX, $imgNumTilesY, $numInnerTilesX, $numInnerTilesY<br />";	
+	 		$tileMinX = ($this->jp2Width  / 2) - ($tilesize * $numInnerTilesX / 2);
+			$tileMaxX = ($this->jp2Width  / 2) + ($tilesize * $numInnerTilesX / 2);     
+			$tileMinY = ($this->jp2Height / 2) - ($tilesize * $numInnerTilesY / 2); 
+			$tileMaxY = ($this->jp2Height / 2) + ($tilesize * $numInnerTilesY / 2);   
+
+//echo "$x,$y, $tileMinX, $tileMinY, $tileMaxX, $tileMaxY<br />";
 	        // Determine where the tile is located (where tile should lie in the padding)
 	        $gravity = null;
-	        if ($x == $tileMinX) {
-	            if ($y == $tileMinY) {
+			if($y < $tileMinY) {
+				$yGravity = "South";
+			}
+			
+			else if($y == $tileMaxY) {
+				$yGravity = "North";
+			}
+				
+			if($x < $tileMinX) {
+				$xGravity = "East";
+			}
+			
+			else if($x == $tileMaxX) {
+				$xGravity = "West";
+			}
+			
+			else if($x == $tileMinX) {
+				if($y < $tileMinY || $y == $tileMaxY) {
+					$xGravity = "";
+				}
+				
+				else {
+					$xGravity = "East";
+					if($y == $tileMinY) {
+						$yGravity = "South";
+					}
+					else {
+						$yGravity = "North";
+					}
+				}
+			}
+			
+			else {
+				if($y < $tileMinY || $y == $tileMaxY) {
+					$xGravity = "";
+				}
+				
+				else {
+					$xGravity = "West";
+					if($y == $tileMinY) {
+						$yGravity = "South";
+					}
+					else {
+						$yGravity = "North";
+					}
+				}
+			}
+			
+			$gravity = $yGravity . $xGravity;
+
+/*	        if ($x < $tileMinX) {
+	            if ($y < $tileMinY) {
 	                $gravity = "SouthEast";
 	            }
-	            else if ($y == $tileMaxY) {
+	            else if ($y > $tileMaxY) {
 	                $gravity = "NorthEast";
 	            }
 	            else {
 	                $gravity = "East";
 	            }
 	        }
-	        else if ($x == $tileMaxX) {
-	            if ($y == $tileMinY) {
+	        else if ($x > $tileMaxX) {
+	            if ($y < $tileMinY) {
 	                $gravity = "SouthWest";
 	            }
-	            else if ($y == $tileMaxY) {
-	                $gravity = "NorthWest";
+	            else if ($y > $tileMaxY) {
+	                $gravity = "NorthWest"; 
 	            }
 	            else {
 	                $gravity = "West";
@@ -448,13 +495,14 @@ abstract class JP2Image {
 	        }
 	        
 	        else {
-	            if ($y == $tileMinY) {
+	            if ($y < $tileMinY                                                                                                                                                                                         $tileMinY) {
 	                $gravity = "South";
 	            }
 	            else {
 	                $gravity = "North";
 	            }
 	        }
+*/
 			$offset = " ";
 		}
 	
