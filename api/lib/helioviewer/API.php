@@ -425,11 +425,10 @@ class API {
 			'frameRate', 
 			'timeStep',
 			'layers',
-			'hcOffset', 
-			'imageSize'
+			'hcOffset'
 		);
 
-		$this->_checkForMissingParams($checkArray);
+		$this->checkForMissingParams($checkArray);
 
         // Required parameters
         $startDate = $this->params['startDate'];
@@ -442,9 +441,7 @@ class API {
 
 		$hcCoords = explode(",", $this->params['hcOffset']);
 		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
-		$imageCoords = explode(",", $this->params['imageSize']);
-		$imageSize = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
-						
+				
         $hqFormat  = $this->params['format'];
 		
         // Optional parameters
@@ -464,9 +461,9 @@ class API {
                 throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
 
-			$layers = $this->_formatLayerStrings($layerStrings);
+			$layers = $this->formatLayerStrings($layerStrings);
 
-            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset, $imageSize);
+            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset);
             $movie->buildMovie();
 
         } catch(Exception $e) {
@@ -479,7 +476,7 @@ class API {
 
 	/**
 	 * @description Obtains layer information, ranges of pixels visible, and the date being looked at and creates a composite image
-	 * 				(a Screenshot) of all the layers. 
+	 * 				(a ScreenImage) of all the layers. 
 	 * @return Returns 1 if the action was completed successfully.
 	 */
 	private function _takeScreenshot() {
@@ -491,20 +488,17 @@ class API {
 			'zoomLevel', 
 			'layers',
 			'hcOffset',
-			'imageSize'
 		);
 
-		$this->_checkForMissingParams($checkArray);
+		$this->checkForMissingParams($checkArray);
 		
         $obsDate   = $this->params['obsDate'];
         $zoomLevel = $this->params['zoomLevel'];
 
 		$layerStrings = explode("/", $this->params['layers']);
 		
-		$hcCoords  = explode(",", $this->params['hcOffset']);
-		$hcOffset  = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
-		$imgCoords = explode(",", $this->params['imageSize']);
-		$imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
+		$hcCoords = explode(",", $this->params['hcOffset']);
+		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
@@ -516,8 +510,8 @@ class API {
 
 			// Give the image a unix timestamp as the id.
 			$id = time();
-			$layers = $this->_formatLayerStrings($layerStrings);
-			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $layers, $id, $hcOffset, $imageSize);	
+			$layers = $this->formatLayerStrings($layerStrings);
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $layers, $id, $hcOffset);	
 
 			if(!file_exists($screenshot->getComposite()))
 				throw new Exception("The requested screenshot is either unavailable or does not exist.");
@@ -546,8 +540,8 @@ class API {
     private function _playMovie () {
         $url = $this->params['url'];
         $hqFormat  = $this->params['format'];
-        $width  = $this->params['width'];
-        $height = $this->params['height'];
+        $width  = 512;
+        $height = 512;
 
         $highQualityVersion = substr($url, 0, -3) . $hqFormat;
         ?>
@@ -723,7 +717,7 @@ class API {
 	 * 					The extra "x" was put in the middle so that the string could be broken in half and parsing one half by itself 
 	 * 					rather than parsing 10 different strings and putting the half that didn't need parsing back together.
 	 */	
-	private function _formatLayerStrings($layers) {
+	private function formatLayerStrings($layers) {
 		$formatted = array();
 		foreach($layers as $layer) {
 			$layerInfo = explode("x", $layer);	
@@ -747,9 +741,8 @@ class API {
 	/**
 	 * Checks to make sure all required parameters were passed in.
 	 * @param array $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
-	 * @return 1 on success.
 	 */	
-	private function _checkForMissingParams($fields) {
+	private function checkForMissingParams($fields) {
 		try{
 			foreach($fields as $field) {
 				if(!isset($this->params[$field])) {
@@ -761,8 +754,6 @@ class API {
 			echo 'Error: ' . $e->getMessage();
 			exit();
 		}
-		
-		return 1;
 	}
 
     /**

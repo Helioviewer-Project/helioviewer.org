@@ -199,8 +199,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
-	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
-	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
@@ -228,8 +226,6 @@ ul.inheritsList
 	<li><a href="../symbols/TileLayer.html">TileLayer</a></li>
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
-	
-	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
 	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
@@ -315,29 +311,10 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_checkBrowser">_checkBrowser</a></b>()
-								</div>
-								<div class="description">Checks browser support for various features used in Helioviewer
-TODO: Check for IE: localStorage exists in IE8, but works differently</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;private&gt; &nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_createFullscreenBtn">_createFullscreenBtn</a></b>()
 								</div>
 								<div class="description">Creates an HTML button for toggling between regular and fullscreen display
 Syntax: jQuery</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;private&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_createScreenshotButton">_createScreenshotButton</a></b>()
-								</div>
-								<div class="description">Creates a button that allows the user to take screenshots of what is in their viewport.</div>
 							</td>
 						</tr>
 					
@@ -425,27 +402,9 @@ Syntax: jQuery</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#getHCOffset">getHCOffset</a></b>(visibleCoords)
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#generateURL">generateURL</a></b>(level)
 								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#getImageScale">getImageScale</a></b>()
-								</div>
-								<div class="description">Translates a given zoom-level into an image plate scale.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#getViewportInformation">getViewportInformation</a></b>(visibleCoords)
-								</div>
-								<div class="description"></div>
+								<div class="description">Builds a URL for the current view</div>
 							</td>
 						</tr>
 					
@@ -470,6 +429,15 @@ Syntax: jQuery</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#parseLayerString">parseLayerString</a></b>(The)
+								</div>
+								<div class="description">Breaks up a given layer identifier (e.g.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#scaleToZoomLevel">scaleToZoomLevel</a></b>(imgScale)
 								</div>
 								<div class="description">Finds the closest support zoom-level to a given pixel scale (arcseconds per pixel)</div>
@@ -488,18 +456,18 @@ Syntax: jQuery</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#takeScreenshot">takeScreenshot</a></b>(visibleCoords, self)
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#updateDate">updateDate</a></b>(dateStr)
 								</div>
-								<div class="description"></div>
+								<div class="description">Updates the observation date</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#updateDate">updateDate</a></b>(dateStr)
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#zoomLevelToScale">zoomLevelToScale</a></b>(zoomLevel)
 								</div>
-								<div class="description">Updates the observation date</div>
+								<div class="description">Translates a given zoom-level into an image plate scale.</div>
 							</td>
 						</tr>
 					
@@ -597,32 +565,6 @@ Syntax: jQuery</div>
 					Method Detail
 				</div>
 				
-					<a name="_checkBrowser"> </a>
-					<div class="fixedFont">&lt;private&gt; 
-					
-					
-					<b>_checkBrowser</b>()
-					
-					</div>
-					<div class="description">
-						Checks browser support for various features used in Helioviewer
-TODO: Check for IE: localStorage exists in IE8, but works differently
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="_createFullscreenBtn"> </a>
 					<div class="fixedFont">&lt;private&gt; 
 					
@@ -633,31 +575,6 @@ TODO: Check for IE: localStorage exists in IE8, but works differently
 					<div class="description">
 						Creates an HTML button for toggling between regular and fullscreen display
 Syntax: jQuery
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="_createScreenshotButton"> </a>
-					<div class="fixedFont">&lt;private&gt; 
-					
-					
-					<b>_createScreenshotButton</b>()
-					
-					</div>
-					<div class="description">
-						Creates a button that allows the user to take screenshots of what is in their viewport.
 						
 						
 					</div>
@@ -934,15 +851,15 @@ Syntax: jQuery
 
 					<hr />
 				
-					<a name="getHCOffset"> </a>
+					<a name="generateURL"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>getHCOffset</b>(visibleCoords)
+					<b>generateURL</b>(level)
 					
 					</div>
 					<div class="description">
-						
+						Builds a URL for the current view
 						
 						
 					</div>
@@ -954,68 +871,7 @@ Syntax: jQuery
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>visibleCoords</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getImageScale"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getImageScale</b>()
-					
-					</div>
-					<div class="description">
-						Translates a given zoom-level into an image plate scale.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getViewportInformation"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getViewportInformation</b>(visibleCoords)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>visibleCoords</b>
+									<span class="light fixedFont">{Object}</span> <b>level</b>
 									
 								</dt>
 								<dd></dd>
@@ -1111,6 +967,57 @@ Syntax: jQuery
 
 					<hr />
 				
+					<a name="parseLayerString"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>parseLayerString</b>(The)
+					
+					</div>
+					<div class="description">
+						Breaks up a given layer identifier (e.g. SOH_LAS_0C2_0WL) into
+             it's component parts and returns a javascript representation.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>The</b>
+									
+								</dt>
+								<dd>layer identifier as an underscore-concatenated string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> a simple javascript object representing the layer params</dd>
+							
+							</dl>
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/LayerManager.html#generateLayerString">LayerManager#generateLayerString</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
 					<a name="scaleToZoomLevel"> </a>
 					<div class="fixedFont">
 					
@@ -1183,48 +1090,6 @@ Syntax: jQuery
 
 					<hr />
 				
-					<a name="takeScreenshot"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>takeScreenshot</b>(visibleCoords, self)
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>visibleCoords</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>self</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="updateDate"> </a>
 					<div class="fixedFont">
 					
@@ -1259,6 +1124,42 @@ Syntax: jQuery
 						
 						
 
+					<hr />
+				
+					<a name="zoomLevelToScale"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>zoomLevelToScale</b>(zoomLevel)
+					
+					</div>
+					<div class="description">
+						Translates a given zoom-level into an image plate scale.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>zoomLevel</b>
+									
+								</dt>
+								<dd>A zoom level.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
 					
 				
 			
@@ -1273,7 +1174,7 @@ Syntax: jQuery
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Tue Jul 07 2009 11:17:44 GMT-0400 (EDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:44 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

@@ -194,8 +194,6 @@ ul.inheritsList
 	
 	<li><a href="symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
-	<li><a href="symbols/EventLayerManager.html">EventLayerManager</a></li>
-	
 	<li><a href="symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="symbols/EventTimeline.html">EventTimeline</a></li>
@@ -224,8 +222,6 @@ ul.inheritsList
 	
 	<li><a href="symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
-	<li><a href="symbols/TileLayerManager.html">TileLayerManager</a></li>
-	
 	<li><a href="symbols/TimeControls.html">TimeControls</a></li>
 	
 	<li><a href="symbols/UIElement.html">UIElement</a></li>
@@ -247,22 +243,6 @@ ul.inheritsList
 			
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_Calendar.js.html">Calendar.js</a></h2>
-				
-This class extends the base jQuery UI datepicker to provide some basic data-binding and enable the class to work more efficiently with Helioviewer.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
 				<h2><a href="symbols/src/lib_helioviewer_Helioviewer.js.html">Helioviewer.js</a></h2>
 				
 Contains the main application class and controller for Helioviewer.
@@ -279,13 +259,13 @@ Contains the main application class and controller for Helioviewer.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_EventLayerManager.js.html">EventLayerManager.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_Viewport.js.html">Viewport.js</a></h2>
 				
-Contains the class definition for an EventLayerManager class.
+Contains the class definition for an Viewport class.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
 					
 					
 					
@@ -328,11 +308,12 @@ Contains the class definition for an EventLayer class.
 			
 			<div>
 				<h2><a href="symbols/src/lib_helioviewer_MovieBuilder.js.html">MovieBuilder.js</a></h2>
-				Class that builds a movie from a series of images when a button is clicked, and displays the video to the user.
+				
+Contains the definition of a class for generating and displaying movies.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, Jaclyn Beck</dd>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
 					
 					
 					
@@ -342,13 +323,20 @@ Contains the class definition for an EventLayer class.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_Viewport.js.html">Viewport.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_ViewportHandlers.js.html">ViewportHandlers.js</a></h2>
 				
-Contains the class definition for an Viewport class.
+Contains the class definition for an ViewportHandlers class.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
+
+Mouse-dragging:
+
+Two throttles are maintained: one to control how frequently the image is updated on the screen,
+and the other to decide when to update the visible tiles. Since the later is more computationally
+expensive, it should occur less frequently. Whenever the user stops dragging, both should be forced
+to update.</dd>
 					
 					
 					
@@ -454,45 +442,6 @@ This class extends the base Simile Timeline
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_MovieBuilderOld.js.html">MovieBuilderOld.js</a></h2>
-				
-Contains the definition of a class for generating and displaying movies.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_ViewportHandlers.js.html">ViewportHandlers.js</a></h2>
-				
-Contains the class definition for an ViewportHandlers class.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
-
-Mouse-dragging:
-
-Two throttles are maintained: one to control how frequently the image is updated on the screen,
-and the other to decide when to update the visible tiles. Since the later is more computationally
-expensive, it should occur less frequently. Whenever the user stops dragging, both should be forced
-to update.</dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
 				<h2><a href="symbols/src/lib_helioviewer_UIElement.js.html">UIElement.js</a></h2>
 				
 Contains the class definition for an UIElement class.
@@ -573,35 +522,13 @@ Definition of a simple AJAX Request Loading Indicator UI component
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_TileLayerManager.js.html">TileLayerManager.js</a></h2>
-				
-Contains the class definition for an TileLayerManager class.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
 				<h2><a href="symbols/src/lib_helioviewer_UserSettings.js.html">UserSettings.js</a></h2>
 				
 Contains the class definition for an UserSettings class.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
-
-Keith 2009/07/01:
-    There is currently a bug in the Prototype 1.6 series which prevents
-    Firefox 3.5's native JSON functionality from working properly.
-    The issue should be fixed in the upcoming 1.7 series.
-    See: https://prototype.lighthouseapp.com/projects/8886/tickets/730</dd>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
 					
 					
 					
@@ -643,9 +570,13 @@ Contains the class definition for an TimeControls class.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_ImageSelectTool.js.html">../../../lib/helioviewer/ImageSelectTool.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_Calendar.js.html">Calendar.js</a></h2>
 				
+This class extends the base jQuery UI datepicker to provide some basic data-binding and enable the class to work more efficiently with Helioviewer.
 				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
 					
 					
 					
@@ -658,7 +589,7 @@ Contains the class definition for an TimeControls class.
 		</div>
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blankt">JsDoc Toolkit</a> 2.1.0 on Tue Jul 07 2009 11:17:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blankt">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:45 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

@@ -199,8 +199,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
-	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
-	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
@@ -228,8 +226,6 @@ ul.inheritsList
 	<li><a href="../symbols/TileLayer.html">TileLayer</a></li>
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
-	
-	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
 	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
@@ -319,9 +315,81 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#each">each</a></b>(fn)
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#addNewLayer">addNewLayer</a></b>()
 								</div>
-								<div class="description">Iterates through layers</div>
+								<div class="description">Adds a layer that is not already displayed</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#eventLayers">eventLayers</a></b>()
+								</div>
+								<div class="description">Returns only event-layers.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#generateLayerString">generateLayerString</a></b>(A)
+								</div>
+								<div class="description">Generates a string representation of a given set of layer parameters, e.g.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#getLabelVisibility">getLabelVisibility</a></b>()
+								</div>
+								<div class="description">Returns the current label visibility</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#getMaxDimensions">getMaxDimensions</a></b>()
+								</div>
+								<div class="description">Returns the largest width and height of any layers (does not have to be from same layer)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#hasEventCatalog">hasEventCatalog</a></b>(catalog)
+								</div>
+								<div class="description">Checks for presence of a specific event catalog</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#numEventLayers">numEventLayers</a></b>()
+								</div>
+								<div class="description">Gets the number of event layers currently loaded</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#numTileLayers">numTileLayers</a></b>()
+								</div>
+								<div class="description">Gets the number of TileLayers currently loaded</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#refreshSavedTileLayers">refreshSavedTileLayers</a></b>()
+								</div>
+								<div class="description">Updates the list of loaded tile layers stored in cookies</div>
 							</td>
 						</tr>
 					
@@ -355,27 +423,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#size">size</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#tileLayers">tileLayers</a></b>()
 								</div>
-								<div class="description">Gets the number of layers currently loaded</div>
+								<div class="description">Returns only tile-layers.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#toJSON">toJSON</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#toggleLabels">toggleLabels</a></b>()
 								</div>
-								<div class="description">Returns a JSON representation of the layers currently being displayed</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/LayerManager.html#toString">toString</a></b>()
-								</div>
-								<div class="description">Returns a string representation of the layers currently being displayed</div>
+								<div class="description">Toggle event label visibility</div>
 							</td>
 						</tr>
 					
@@ -474,15 +533,72 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="each"> </a>
+					<a name="addNewLayer"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>each</b>(fn)
+					<b>addNewLayer</b>()
 					
 					</div>
 					<div class="description">
-						Iterates through layers
+						Adds a layer that is not already displayed
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="eventLayers"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Array}</span>
+					<b>eventLayers</b>()
+					
+					</div>
+					<div class="description">
+						Returns only event-layers.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> An array containing each of the currently displayed EVENT layers</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="generateLayerString"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/String.html">String</a>}</span>
+					<b>generateLayerString</b>(A)
+					
+					</div>
+					<div class="description">
+						Generates a string representation of a given set of layer parameters, e.g. "SOH_LAS_0C2_0WL".
 						
 						
 					</div>
@@ -494,12 +610,208 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>fn</b>
+									<span class="light fixedFont">{Object}</span> <b>A</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>tilelayer</dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> A string representation of the given layer</dd>
+							
+							</dl>
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/Helioviewer.html#parseLayerString">Helioviewer#parseLayerString</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name="getLabelVisibility"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getLabelVisibility</b>()
+					
+					</div>
+					<div class="description">
+						Returns the current label visibility
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getMaxDimensions"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>getMaxDimensions</b>()
+					
+					</div>
+					<div class="description">
+						Returns the largest width and height of any layers (does not have to be from same layer)
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> The width and height of the largest layer</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="hasEventCatalog"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>hasEventCatalog</b>(catalog)
+					
+					</div>
+					<div class="description">
+						Checks for presence of a specific event catalog
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>catalog</b>
+									
+								</dt>
+								<dd>Catalog ID</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="numEventLayers"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Integer}</span>
+					<b>numEventLayers</b>()
+					
+					</div>
+					<div class="description">
+						Gets the number of event layers currently loaded
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Integer}</span> Number of event layers present.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="numTileLayers"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Integer}</span>
+					<b>numTileLayers</b>()
+					
+					</div>
+					<div class="description">
+						Gets the number of TileLayers currently loaded
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Integer}</span> Number of tile layers present.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="refreshSavedTileLayers"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>refreshSavedTileLayers</b>()
+					
+					</div>
+					<div class="description">
+						Updates the list of loaded tile layers stored in cookies
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -558,8 +870,7 @@ ul.inheritsList
 									<span class="light fixedFont">{Object}</span> <b>The</b>
 									
 								</dt>
-								<dd>layer to remove
-TODO: update sandbox dimensions</dd>
+								<dd>layer to remove</dd>
 							
 							</dl>
 						
@@ -597,15 +908,15 @@ TODO: update sandbox dimensions</dd>
 
 					<hr />
 				
-					<a name="size"> </a>
+					<a name="tileLayers"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Integer}</span>
-					<b>size</b>()
+					<span class="light">{Array}</span>
+					<b>tileLayers</b>()
 					
 					</div>
 					<div class="description">
-						Gets the number of layers currently loaded
+						Returns only tile-layers.
 						
 						
 					</div>
@@ -620,7 +931,7 @@ TODO: update sandbox dimensions</dd>
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Integer}</span> Number of layers present.</dd>
+								<dd><span class="light fixedFont">{Array}</span> An array containing each of the currently displayed TILE layers</dd>
 							
 							</dl>
 						
@@ -629,40 +940,15 @@ TODO: update sandbox dimensions</dd>
 
 					<hr />
 				
-					<a name="toJSON"> </a>
+					<a name="toggleLabels"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>toJSON</b>()
+					<b>toggleLabels</b>()
 					
 					</div>
 					<div class="description">
-						Returns a JSON representation of the layers currently being displayed
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="toString"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>toString</b>()
-					
-					</div>
-					<div class="description">
-						Returns a string representation of the layers currently being displayed
+						Toggle event label visibility
 						
 						
 					</div>
@@ -691,7 +977,7 @@ TODO: update sandbox dimensions</dd>
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Tue Jul 07 2009 11:17:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:44 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

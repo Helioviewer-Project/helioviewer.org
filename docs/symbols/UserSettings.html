@@ -199,8 +199,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
-	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
-	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
@@ -228,8 +226,6 @@ ul.inheritsList
 	<li><a href="../symbols/TileLayer.html">TileLayer</a></li>
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
-	
-	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
 	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
@@ -292,6 +288,34 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class UserSettings.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/UserSettings.html#_DEFAULTS">_DEFAULTS</a></b>
+								</div>
+								<div class="description">Default user settings</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 
 <!-- ============================== methods summary ======================== -->
 			
@@ -312,25 +336,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_exists">_exists</a></b>()
 								</div>
-								<div class="description">Checks to see if there are any existing stored user settings</div>
+								<div class="description">Checks to see if user-settings cookies have been set.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_getDefaults">_getDefaults</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_getDefault">_getDefault</a></b>(setting)
 								</div>
-								<div class="description">Creates a hash containing the default settings to use</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;private&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_initStorage">_initStorage</a></b>()
-								</div>
-								<div class="description">Decides on best storage format to use, and initializes it</div>
+								<div class="description">Gets the default value for a given setting</div>
 							</td>
 						</tr>
 					
@@ -339,16 +354,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_loadDefaults">_loadDefaults</a></b>()
 								</div>
-								<div class="description">Loads defaults user settings</div>
+								<div class="description">Loads defaults if cookies have not been set prior.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_loadSavedSettings">_loadSavedSettings</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_resetSetting">_resetSetting</a></b>(setting)
 								</div>
-								<div class="description">Retrieves the saved user settings and saved them locally</div>
+								<div class="description">Resets a single setting to it's default value</div>
 							</td>
 						</tr>
 					
@@ -357,7 +372,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#_validate">_validate</a></b>(setting, value)
 								</div>
-								<div class="description">Validates a setting (Currently checks observation date and zoomLevel)</div>
+								<div class="description">Validates a setting (Currently checks observation date and zoom-level)</div>
 							</td>
 						</tr>
 					
@@ -373,27 +388,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#parseLayerString">parseLayerString</a></b>(The)
-								</div>
-								<div class="description">Breaks up a given layer identifier (e.g.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#set">set</a></b>(key, value)
 								</div>
 								<div class="description">Saves a specified setting</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UserSettings.html#toURL">toURL</a></b>(level)
-								</div>
-								<div class="description">Builds a URL for the current view</div>
 							</td>
 						</tr>
 					
@@ -418,7 +415,8 @@ ul.inheritsList
 				</div>
 				
 				<div class="description">
-					Creates a new UserSettings instance.
+					Creates a new UserSettings instance. Because all cookie data is stored as strings, numeric types
+             must be specified (e.g. in _INTEGER_PARAMS) so that the application knows to parse them as such.
 					
 				</div>
 				
@@ -449,6 +447,33 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="_DEFAULTS"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_DEFAULTS</b>
+					
+					</div>
+					<div class="description">
+						Default user settings
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -464,7 +489,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Checks to see if there are any existing stored user settings
+						Checks to see if user-settings cookies have been set.
 						
 						
 					</div>
@@ -481,15 +506,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="_getDefaults"> </a>
+					<a name="_getDefault"> </a>
 					<div class="fixedFont">&lt;private&gt; 
 					
 					
-					<b>_getDefaults</b>()
+					<b>_getDefault</b>(setting)
 					
 					</div>
 					<div class="description">
-						Creates a hash containing the default settings to use
+						Gets the default value for a given setting
 						
 						
 					</div>
@@ -497,30 +522,16 @@ ul.inheritsList
 					
 					
 						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="_initStorage"> </a>
-					<div class="fixedFont">&lt;private&gt; 
-					
-					
-					<b>_initStorage</b>()
-					
-					</div>
-					<div class="description">
-						Decides on best storage format to use, and initializes it
-						
-						
-					</div>
-					
-					
-					
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>setting</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
 						
 						
 						
@@ -539,7 +550,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Loads defaults user settings
+						Loads defaults if cookies have not been set prior.
 						
 						
 					</div>
@@ -556,21 +567,32 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="_loadSavedSettings"> </a>
+					<a name="_resetSetting"> </a>
 					<div class="fixedFont">&lt;private&gt; 
 					
 					
-					<b>_loadSavedSettings</b>()
+					<b>_resetSetting</b>(setting)
 					
 					</div>
 					<div class="description">
-						Retrieves the saved user settings and saved them locally
+						Resets a single setting to it's default value
 						
 						
 					</div>
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>setting</b>
+									
+								</dt>
+								<dd>The setting for which the default value should be loaded</dd>
+							
+							</dl>
 						
 						
 						
@@ -589,7 +611,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Validates a setting (Currently checks observation date and zoomLevel)
+						Validates a setting (Currently checks observation date and zoom-level)
 						
 						
 					</div>
@@ -666,57 +688,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="parseLayerString"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Object}</span>
-					<b>parseLayerString</b>(The)
-					
-					</div>
-					<div class="description">
-						Breaks up a given layer identifier (e.g. SOH_LAS_0C2_0WL) into
-             it's component parts and returns a javascript representation.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>The</b>
-									
-								</dt>
-								<dd>layer identifier as an underscore-concatenated string</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Object}</span> a simple javascript object representing the layer params</dd>
-							
-							</dl>
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd>TileLayer.toString</dd>
-							
-							</dl>
-						
-
-					<hr />
-				
 					<a name="set"> </a>
 					<div class="fixedFont">
 					
@@ -757,42 +728,6 @@ ul.inheritsList
 						
 						
 
-					<hr />
-				
-					<a name="toURL"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>toURL</b>(level)
-					
-					</div>
-					<div class="description">
-						Builds a URL for the current view
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>level</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -807,7 +742,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Tue Jul 07 2009 11:17:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:45 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

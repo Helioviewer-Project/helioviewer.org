@@ -34,8 +34,7 @@ abstract class CompositeImage {
 		$this->tmpDir 	   	= $tmpDir;
 
 		// Default imageSize will be 512 for now. Later on this will be modified to reflect appropriate aspect ratios for movies or screenshots.
-		if(!isset($this->imageSize))
-			$this->imageSize = array("width" => 512, "height" => 512);
+		$this->imageSize  = 512;
 		
 		// This is needed for when the images are padded and put together.
 		$this->hcOffset = $hcOffset;
@@ -101,7 +100,7 @@ abstract class CompositeImage {
 
 		// Composite images on top of one another if there are multiple layers.
 		if (sizeOf($this->layerImages) > 1) {
-			$this->composite = $this->_buildComposite($builtImages, $opacities);
+			$this->composite = $this->buildComposite($builtImages, $opacities);
 		} 
 		
 		// If the image is identified by a frameNum, just copy the image to the movie directory
@@ -113,7 +112,7 @@ abstract class CompositeImage {
 				
 			// Otherwise, the image is a screenshot and needs to be converted into a png.
 		else {
-			$cmd = CONFIG::PATH_CMD ./* " && " . CONFIG::DYLD_CMD .*/ " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
+			$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
 			exec($cmd);
 			$this->composite = $this->cacheFileDir . $this->id . ".png";
 		}
@@ -145,28 +144,28 @@ abstract class CompositeImage {
 	}
 */
 
-	/**
+	/*
 	 * buildComposite composites the layers together.
 	 */
-	private function _buildComposite($images, $opacities) {
+	private function buildComposite($images, $opacities) {
 		// Put images into the order they will be composited onto each other. 
 		// sortedImages is an array of image info arrays. Each image info array has the keys
 		// "image" (the filepath of the image) and "opacity" (opacity value of the image)
-		$sortedImages = $this->_sortByOpacityGroup($images, $opacities["group"], $opacities["value"]); 
+		$sortedImages = $this->sortByOpacityGroup($images, $opacities["group"], $opacities["value"]); 
 
 		if(isset($this->frameNum))		
 			$tmpImg = $this->cacheFileDir . $this->frameNum . ".tif";
 		else
 			$tmpImg = $this->cacheFileDir . $this->id . ".png";
 			
-		$cmd = CONFIG::PATH_CMD ./* " && " . CONFIG::DYLD_CMD .*/ " && composite -gravity Center";
+		$cmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && composite -gravity Center";
 		
 		// It is assumed that the array $images is already in the correct order for opacity groups,
 		// since it was sorted above.
 		$i = 1;
 		foreach($sortedImages as $image) {
 			$img = $image["image"];
-			$op  = $image["opacity"];
+			$op = $image["opacity"];
 			
 			if($op < 100) {
 				// Get the image's uri
@@ -182,7 +181,7 @@ abstract class CompositeImage {
 //					$img = new Imagick($tmpOpImg);
 //					$img->setImageOpacity($op/100);
 
-					$opacityCmd = CONFIG::PATH_CMD ./* " && " . CONFIG::DYLD_CMD .*/ " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
+					$opacityCmd = CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
 					exec($opacityCmd);
 				}
 				
@@ -212,7 +211,7 @@ abstract class CompositeImage {
 //		echo "Executing " . $cmd . "<br />";
 
 		exec($cmd);
-		exec(CONFIG::PATH_CMD . /*" && " . CONFIG::DYLD_CMD .*/ " && convert $tmpImg -background black -alpha off $tmpImg");
+		exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $tmpImg -background black -alpha off $tmpImg");
 
 
 		//$eit->compositeImage($las, $las->getImageCompose(), 0, 0);
@@ -227,7 +226,7 @@ abstract class CompositeImage {
 	 * The array is sorted like this: Group 3, Group 2, Group 1(layer order that the user has in their viewport).
 	 * The parameters "$images" and "$opacities" are each an array_reverse of the arrays they came from.
 	 */
-	private function _sortByOpacityGroup($images, $opacityGroups, $opacityValues) {
+	private function sortByOpacityGroup($images, $opacityGroups, $opacityValues) {
 		$sortedImages = array();
 
 //		array_multisort($opacities["group"], SORT_ASC, $opacities["value"], $images);
@@ -345,6 +344,36 @@ abstract class CompositeImage {
 	
 	function getComposite() {
 		return $this->composite;
+	}
+	
+	/**
+	 * Parses layer strings, removes unwanted information, and returns an array of the strings.
+	 * @return an array containing all layer information strings
+	 * @param object $layers an array conataining unprocessed layer information strings.
+	 */
+	private function getLayerInfo($layers) {	
+		$layerImages = array();
+		
+		foreach($layers as $layer) {
+        	// $layerInfo will have values Array ([0] => "OBS,INST,DET,MEAS,visible,opacity", [1] => "xStart,xSize,yStart,ySize")
+        	$layerInfo = explode("x", $layer);
+			
+			// $ranges is now: "xStart,xSize,yStart,ySize"			
+			$ranges = $layerInfo[1];
+
+			// Extract relevant information from $layerInfo[0]. Get rid of the "visibility" boolean in the middle of the string
+			$rawName = explode(",", $layerInfo[0]);
+			$opacity = $rawName[5];
+			array_splice($rawName, 4);
+			$name = implode("_", $rawName);
+			
+        	$closestImage = $this->getClosestImage($name);	
+
+			//$opacity = $layer["opacityValue"]; //array("opacityValue" => $layer["opacityValue"], "opacityGroup" => $closestImage['opacityGrp']);
+			$image = $closestImage['uri'] . "," . $opacity . "," .$closestImage['opacityGrp'] . "," . $ranges;
+			array_push($layerImages, $image);
+		}
+		return $layerImages;
 	}
 }
 ?>
