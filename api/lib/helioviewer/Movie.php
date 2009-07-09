@@ -15,6 +15,7 @@ require_once ('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
 class Movie
 {
     private $images = array ();
+	private $imageSize;
     private $maxFrames;
     private $startTime;
     private $endTime;
@@ -40,7 +41,7 @@ class Movie
 	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
 	 */
-    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset)
+    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset, $imageSize)
     {
         date_default_timezone_set('UTC');
 		// $layers is an array of layer information arrays, identified by their layer names.

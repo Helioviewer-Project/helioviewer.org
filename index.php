@@ -92,6 +92,8 @@
 		<script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventLayerAccordion.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/TileLayerManager.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/EventLayerManager.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Calendar.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
