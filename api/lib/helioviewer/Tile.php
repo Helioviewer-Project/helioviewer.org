@@ -146,7 +146,7 @@ class Tile extends JP2Image {
 	function convertTileIndexToPixels() {
         $jp2Width  = $this->jp2Width;
         $jp2Height = $this->jp2Height;
-        $ts = $this->relativeTilesize;
+        $ts = $this->relativeImageSize['width'];
       
         // Rounding
         $precision = 6;
