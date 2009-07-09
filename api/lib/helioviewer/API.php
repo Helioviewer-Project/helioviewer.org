@@ -422,7 +422,7 @@ class API {
      */
     private function _buildMovie () {
         require_once('Movie.php');
-		
+			
 		// Check to make sure all required parameters were passed in before proceeding.
 		$checkArray = array(
 			'startDate', 
@@ -431,7 +431,7 @@ class API {
 			'frameRate', 
 			'timeStep',
 			'layers',
-			'hcOffset', 
+			'hcOffset',
 			'imageSize'
 		);
 
@@ -450,7 +450,7 @@ class API {
 		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imageCoords = explode(",", $this->params['imageSize']);
 		$imageSize = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
-						
+				
         $hqFormat  = $this->params['format'];
 		
         // Optional parameters
@@ -485,7 +485,7 @@ class API {
 
 	/**
 	 * @description Obtains layer information, ranges of pixels visible, and the date being looked at and creates a composite image
-	 * 				(a Screenshot) of all the layers. 
+	 * 				(a ScreenImage) of all the layers. 
 	 * @return Returns 1 if the action was completed successfully.
 	 */
 	private function _takeScreenshot() {
@@ -507,11 +507,11 @@ class API {
 
 		$layerStrings = explode("/", $this->params['layers']);
 		
-		$hcCoords  = explode(",", $this->params['hcOffset']);
-		$hcOffset  = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
+		$hcCoords = explode(",", $this->params['hcOffset']);
+		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imgCoords = explode(",", $this->params['imageSize']);
 		$imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
-
+		
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
@@ -753,7 +753,6 @@ class API {
 	/**
 	 * Checks to make sure all required parameters were passed in.
 	 * @param array $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
-	 * @return 1 on success.
 	 */	
 	private function _checkForMissingParams($fields) {
 		try{
@@ -767,8 +766,6 @@ class API {
 			echo 'Error: ' . $e->getMessage();
 			exit();
 		}
-		
-		return 1;
 	}
 
     /**
