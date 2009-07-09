@@ -18,3 +18,5 @@ settings/Config.Jaclyn.php
 [cC]onfig-*.php
 [cC]onfig.*.php
 settings/Config.php
+api/lib/phpvideotoolkit/config.php
+
