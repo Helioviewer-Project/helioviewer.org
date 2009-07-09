@@ -15,6 +15,7 @@ require_once ('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
 class Movie
 {
     private $images = array ();
+	private $imageSize;
     private $maxFrames;
     private $startTime;
     private $endTime;
@@ -29,7 +30,7 @@ class Movie
 
 	/**
 	 * 
-	 * @param object $layers is an array with at least one value, in the format of SOHEITEIT304 (obs, inst, det, meas, no quotation marks).
+	 * @param object $layers is an array with at least one value, in the format of OBS_INST_DET_MEAS,xstart,xsize,ystart,ysize,opacity
 	 * @param object $startTime is a unix timestamp.
 	 * @param object $zoomLevel is a number between 8-15 (for now) with 10 being the default, base zoom level.
 	 * @param object $numFrames is a number between 1 and 150, with the default being 40.
@@ -40,13 +41,13 @@ class Movie
 	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
 	 */
-    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset)
+    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset, $imageSize)
     {
         date_default_timezone_set('UTC');
 		// $layers is an array of layer information arrays, identified by their layer names.
 		// Each layer information array has values for "name", "xRange", "yRange", and "opacityValue"
         $this->layers = $layers;
-			
+		
         // startTime is a Unix timestamp in seconds.
         $this->startTime = $startTime;
         $this->zoomLevel = $zoomLevel;
@@ -57,8 +58,9 @@ class Movie
         $this->options = $options;
 		
         // timeStep is in seconds
-        $this->timeStep = $timeStep;
-		$this->hcOffset = $hcOffset;
+        $this->timeStep  = $timeStep;
+		$this->hcOffset  = $hcOffset;
+		$this->imageSize = $imageSize;
 
         $this->db = new DbConnection();
     }
@@ -87,7 +89,7 @@ class Movie
 
     }
 
-    /*
+    /**
      * buildMovie
      */
     public function buildMovie()
@@ -98,7 +100,7 @@ class Movie
         $tmpdir = Config::TMP_ROOT_DIR."/$now/";
         $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
         mkdir($tmpdir);
-        //chmod($tmpdir, 0777);
+        chmod($tmpdir, 0777);
 
         // Build an array with all timestamps needed when requesting images
         $timeStamps = array ();
@@ -117,16 +119,13 @@ class Movie
 				
         foreach ($this->layers as $layer)
         {
-        	$layerInfo = explode("_", $layer["name"]);
+        	// $layerInfo will have values Array ("obs_inst_det_meas", xStart, xSize, yStart, ySize, opacity)
+        	$layerInfo = explode(",", $layer);
 
-            // Extract info from $layer
-            $obs 	= $layerInfo[0]; 
-            $inst 	= $layerInfo[1];
-            $det 	= $layerInfo[2]; 
-            $meas 	= $layerInfo[3]; 
+			$name = $layerInfo[0];
 
-            $closestImage = $this->getImageTimestamps($obs, $inst, $det, $meas, $timeStamps);
-			$layerImages[$layer["name"]] = $closestImage;
+            $closestImage = $this->_getImageTimestamps($name, $timeStamps); 
+			$layerImages[$name] = $closestImage;
         }
 
 		// For each frame, make a composite image of all layers at that timestamp
@@ -135,33 +134,25 @@ class Movie
 			$images = array();
 			
 			foreach($this->layers as $layer) {
-				$name = $layer["name"];
-				$opacity = $layer["opacityValue"]; 
+				$layerInfo = explode(",", $layer);	
 
-				$image = array("xRange" => $layer["xRange"], "yRange" => $layer["yRange"], "opacity" => $opacity, "closestImage" => $layerImages[$name][$frameNum]);
+				$name = $layerInfo[0];
+				
+				// Chop the name off the array but keep the rest of the information.
+				$ranges = array_slice($layerInfo, 1);
+				
+				$closestImage = $layerImages[$name][$frameNum];
+				// $image is now: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp"
+				$image =  $closestImage['uri'] . "," . implode(",", $ranges) . "," .$closestImage['opacityGrp'];
 				$images[$name] = $image;
 			}	
-			// All frames will be put in cache/movies/$now			
-			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset);	
-          	$filename = $tmpdir . $frameNum . '.tif';
+
+			// All frames will be put in cache/movies/$now		
+			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset, $this->imageSize);	
 			$frameFile = $movieFrame->getComposite(); 
 
-			copy($frameFile, $filename);
-			array_push($this->images, $filename);
-		}
-
-/*   	    foreach ($closestImages as $image) {
-         	$compImage = new CompositeImage($this->layers, $this->zoomLevel, $this->xRange, $this->yRange, $this->options, $image);
-          	$filename = $tmpdir . $frameNum . '.tif';
-			$compFile = $compImage->getComposite(); 
-			copy($compFile, $filename);
-			
-			//exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && convert $compFile $filename");
-//           	$compImage->writeImage($filename);
-            array_push($this->images, $filename);
-			$frameNum++;
-		}
-*/		
+			array_push($this->images, $frameFile);
+		}	
 
 		// Use phpvideotoolkit to compile them
 		$toolkit = new PHPVideoToolkit($tmpdir);
@@ -175,8 +166,8 @@ class Movie
 			exit();
 		}
 
-		$toolkit->setVideoOutputDimensions(1024, 1024);
-		
+		//$toolkit->setVideoOutputDimensions(1024, 1024);
+		$toolkit->setVideoOutputDimensions($this->imageSize['width'], $this->imageSize['height']);
 		// set the output parameters (Flash video)
 		$output_filename = "$movieName." . $this->filetype;
 		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
@@ -222,10 +213,6 @@ class Movie
 		
         // execute the ffmpeg command
 		$mp4 = $toolkit->execute(false, true);
-        
-  		
-        //echo $toolkit->getLastCommand();
-        //exit();
 		
 		if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
 		    // 		if there was an error then get it
@@ -244,12 +231,12 @@ class Movie
 		echo json_encode($tmpurl);
 	}
 		
-    /*
+    /**
      * Queries the database to find the exact timestamps for images nearest each time in $timeStamps.
      * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', and 'uri'
      * for each image.
      */
-    private function getImageTimestamps($obs, $inst, $det, $meas, $timeStamps)
+    private function _getImageTimestamps($name, $timeStamps) //($obs, $inst, $det, $meas, $timeStamps)
     {
         $resultArray = array ();
 
@@ -258,7 +245,8 @@ class Movie
         {
             foreach ($timeStamps as $time)
             {
-                $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri, opacityGrp 
+            	// sprintf takes too long, especially when it is called 40+ times.
+/*                $sql = sprintf("SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - %d AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs, uri, opacityGrp 
 						FROM image
 							LEFT JOIN measurement on measurementId = measurement.id
 							LEFT JOIN measurementType on measurementTypeId = measurementType.id
@@ -268,9 +256,20 @@ class Movie
 							LEFT JOIN observatory on observatoryId = observatory.id
 		             	WHERE observatory.abbreviation='%s' AND instrument.abbreviation='%s' AND detector.abbreviation='%s' AND measurement.abbreviation='%s' ORDER BY timediffAbs LIMIT 0,1",
                 $time, $time, mysqli_real_escape_string($this->db->link, $obs), mysqli_real_escape_string($this->db->link, $inst), mysqli_real_escape_string($this->db->link, $det), mysqli_real_escape_string($this->db->link, $meas));
+*/
+				$sql = "SELECT DISTINCT timestamp, UNIX_TIMESTAMP(timestamp) AS unix_timestamp, UNIX_TIMESTAMP(timestamp) - $time AS timediff, ABS(UNIX_TIMESTAMP(timestamp) - $time) AS timediffAbs, uri, opacityGrp
+							FROM image WHERE uri LIKE '%_%_%_%_" . mysqli_real_escape_string($this->db->link, $name) . ".jp2' ORDER BY timediffAbs LIMIT 0,1";
+				try {
+			        $result = $this->db->query($sql);
+			        $row = mysqli_fetch_array($result, MYSQL_ASSOC);
+					if(!$row)
+						throw new Exception("Could not find the requested image.");
+				}
+				catch (Exception $e) {
+					echo 'Error: ' . $e->getMessage();
+					exit();
+				}
 
-                $result = $this->db->query($sql);
-                $row = mysqli_fetch_array($result, MYSQL_ASSOC);
                 array_push($resultArray, $row);
             }
         }
@@ -434,7 +433,7 @@ class Movie
 		echo json_encode($tmpurl);
 	}
 */
-	/*
+	/**
 	 * getImageTimes
 	 *
 	 * Queries the database and returns an array of times of size equal to $this->numFrames.
@@ -507,7 +506,7 @@ class Movie
 		return $resultArray;
 	}
 
-	/*
+	/**
 	 * showMovie
 	 */
 	public function showMovie($url, $width, $height)

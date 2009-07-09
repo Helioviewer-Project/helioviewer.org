@@ -1,3 +1,3 @@
 <?php
-	require_once('Config-Kore.php');
+	require_once('Config.Jaclyn.php');
 ?>

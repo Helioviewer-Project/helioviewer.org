@@ -140,7 +140,7 @@
                     printf("var view = %s;\n", json_encode($view));
                
                     echo "\t\t\t\t";
-					
+
 					// Default settings
 					$settings = array(
                         'version'           => Config::BUILD_NUM,
@@ -158,6 +158,7 @@
                         'backupEnabled'     => Config::BACKUP_ENABLED,
                         'distributed'       => Config::DISTRIBUTED_TILING_ENABLED
 					);
+
                     echo "var defaults = " . json_encode($settings) . ";\n";
                     echo "\t\t\t\t";
                     printf ("var api = '%s';\n", Config::API_BASE_URL);
