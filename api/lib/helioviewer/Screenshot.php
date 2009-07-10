@@ -29,7 +29,7 @@ class Screenshot extends CompositeImage {
 		
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 
-		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset);
+		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset, false);
 		
 		$now = time();
 		// Directory to hold the final screenshot image.

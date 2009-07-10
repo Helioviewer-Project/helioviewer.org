@@ -19,7 +19,8 @@ class Tile extends JP2Image {
         $xRange = array("start" => $x, "end" => $x);
         $yRange = array("start" => $y, "end" => $y);
 
-        parent::__construct($uri, $zoomLevel, $xRange, $yRange, $tileSize);
+		$imageSize = array('width' => $tileSize, 'height' => $tileSize);
+        parent::__construct($uri, $zoomLevel, $xRange, $yRange, $imageSize);
 
         $this->x = $x;
         $this->y = $y;
@@ -111,7 +112,7 @@ class Tile extends JP2Image {
 	function convertTileIndexToPixels() {
         $jp2Width  = $this->jp2Width;
         $jp2Height = $this->jp2Height;
-        $ts = $this->relativeTilesize;
+        $ts 	   = $this->imageRelWidth;
       
         // Rounding
         $precision = 6;

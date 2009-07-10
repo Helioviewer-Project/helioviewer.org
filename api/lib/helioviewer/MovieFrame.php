@@ -25,7 +25,7 @@ class MovieFrame extends CompositeImage {
 		
 		$tmpDir = CONFIG::CACHE_DIR . "movies/";
 
-		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset);
+		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset, false);
 
 		// Directory to store all of the final frame images before they are compiled into a video	
 		$this->cacheFileDir = $tmpDir . $folderId . "/";
