@@ -5,7 +5,6 @@
 require('JP2Image.php');
 
 class SubFieldImage extends JP2Image {
-	private $jp2Filepath;
 	protected $hcOffset;
 
 	/**

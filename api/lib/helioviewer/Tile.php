@@ -24,8 +24,7 @@ class Tile extends JP2Image {
 
         $this->x = $x;
         $this->y = $y;
-	
-		$this->convertTileIndexToPixels();
+
         $this->getTile($display);
     }
 
@@ -33,8 +32,7 @@ class Tile extends JP2Image {
      * getTile
      */
     function getTile($display) {
-       
-        // Tile image format
+		// Tile image format
         $format = $this->getImageFormat();
         
         // Filepaths (for intermediate pgm and final png/jpg image)
@@ -48,7 +46,8 @@ class Tile extends JP2Image {
             }
         }
 
-        // If nothing useful is in the cache, create the tile from scratch
+        // If nothing useful is in the cache, create the tile from scratch		
+		$this->convertTileIndexToPixels();
         $im = $this->buildImage($tile);
 
         // Store image
@@ -110,50 +109,64 @@ class Tile extends JP2Image {
 	 * @return 
 	 */	
 	function convertTileIndexToPixels() {
-        $jp2Width  = $this->jp2Width;
-        $jp2Height = $this->jp2Height;
-        $ts 	   = $this->imageRelWidth;
-      
-        // Rounding
-        $precision = 6;
-        
-        // Parameters
-        $top = $left = $width = $height = null;
-        
-        // Number of tiles for the entire image
-        $imgNumTilesX = max(2, ceil($jp2Width  / $ts));
-        $imgNumTilesY = max(2, ceil($jp2Height / $ts));
-
-        // Tile placement architecture expects an even number of tiles along each dimension
-        if ($imgNumTilesX % 2 != 0)
-            $imgNumTilesX += 1;
-
-        if ($imgNumTilesY % 2 != 0)
-            $imgNumTilesY += 1;
-                  
-        // Shift so that 0,0 now corresponds to the top-left tile
-        $relX = (0.5 * $imgNumTilesX) + $this->x;
-        $relY = (0.5 * $imgNumTilesY) + $this->y;
-
-        // number of tiles (may be greater than one for movies, etc)
-        $numTilesX = min($imgNumTilesX - $relX, 1);
-        $numTilesY = min($imgNumTilesY - $relY, 1);
-
-        // Number of "inner" tiles
-        $numTilesInsideX = $imgNumTilesX - 2;
-        $numTilesInsideY = $imgNumTilesY - 2;
-      
-        // Dimensions for inner and outer tiles
-        $innerTS = $ts;
-        $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
-
-		// Upper left corner of 'tile'
-		$this->yRange["start"] 	= (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
-		$this->xRange["start"] 	= (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
-
-		// Width and height of 'tile'
-		$this->yRange["end"] 	= (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
-		$this->xRange["end"] 	= (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
+		try {
+	        $jp2Width  = $this->jp2Width;
+	        $jp2Height = $this->jp2Height;
+	        $ts 	   = $this->imageRelWidth;
+	      
+	        // Rounding
+	        $precision = 6;
+	        
+	        // Parameters
+	        $top = $left = $width = $height = null;
+	        
+	        // Number of tiles for the entire image
+	        $imgNumTilesX = max(2, ceil($jp2Width  / $ts));
+	        $imgNumTilesY = max(2, ceil($jp2Height / $ts));
+	
+	        // Tile placement architecture expects an even number of tiles along each dimension
+	        if ($imgNumTilesX % 2 != 0)
+	            $imgNumTilesX += 1;
+	
+	        if ($imgNumTilesY % 2 != 0)
+	            $imgNumTilesY += 1;
+	                  
+	        // Shift so that 0,0 now corresponds to the top-left tile
+	        $relX = (0.5 * $imgNumTilesX) + $this->x;
+	        $relY = (0.5 * $imgNumTilesY) + $this->y;
+	
+	        // number of tiles (may be greater than one for movies, etc)
+	        $numTilesX = min($imgNumTilesX - $relX, 1);
+	        $numTilesY = min($imgNumTilesY - $relY, 1);
+	
+	        // Number of "inner" tiles
+	        $numTilesInsideX = $imgNumTilesX - 2;
+	        $numTilesInsideY = $imgNumTilesY - 2;
+	      
+	        // Dimensions for inner and outer tiles
+	        $innerTS = $ts;
+	        $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
+	
+			// Upper left corner of 'tile'
+			$this->yRange['start'] 	= (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
+			$this->xRange['start'] 	= (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
+	
+			// Width and height of 'tile'
+			$this->yRange['end'] 	= (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
+			$this->xRange['end'] 	= (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
+			
+			if($this->xRange['start'] < 0 || $this->yRange['start'] < 0) {
+				throw new Exception("[convertTileIndexToPixels] Invalid start value for xRange or yRange");
+			}
+			if($this->xRange['end'] > $this->jp2Width || $this->yRange['end'] > $this->jp2Height) {
+				throw new Exception("[convertTileIndexToPixels] Invalid end value for xRange or yRange");
+			}
+		}
+		catch(Exception $e) {
+           $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+           file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+		   echo $msg;
+		}
 	}
 }
 ?>

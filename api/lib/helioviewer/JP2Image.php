@@ -102,9 +102,8 @@ abstract class JP2Image {
     
     /**
      * buildImage
-     * @param isTile - If the image is a SubFieldImage, padding must be with -gravity Center because there
-     * 					  are no tiles or parts of images. Tiles are padded with respect to what part of the image
-     * 					  they are by default. 
+     * @description Extracts a region of the jp2 image, converts it into a .png file, and handles
+     * 				any padding, resizing, and transparency
      * @return
      */
     protected function buildImage($filename) {
@@ -159,13 +158,13 @@ abstract class JP2Image {
                 throw new Exception("Unable to apply final processing. Command: $cmd");
     
             // Cleanup
-              if ($this->hasAlphaMask()) {
-                  unlink($mask);
+            if ($this->hasAlphaMask()) {
+                unlink($mask);
             }
             if ($this->getImageFormat() === "jpg") {
                 unlink($png);
             }
-              unlink($pgm);
+            unlink($pgm);
         
             return $filename;
             
@@ -202,7 +201,7 @@ abstract class JP2Image {
      */
     private function getImageDimensions($filename) {
         try {
-            $dimensions = split("x", trim(exec(CONFIG::PATH_CMD . " && " . CONFIG::DYLD_CMD . " && identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
+            $dimensions = split("x", trim(exec(CONFIG::PATH_CMD . " && identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
             if (sizeof($dimensions) < 2)
                 throw new Exception("Unable to extract image dimensions for $filename!");
             else {
@@ -295,92 +294,11 @@ abstract class JP2Image {
         return $region;		
 	}    
 
-/*    private function getRegionString() {
-        $jp2Width  = $this->jp2Width;
-        $jp2Height = $this->jp2Height;
-        $ts = $this->relativeTilesize;
-        
-        // Rounding
-        $precision = 6;
-        
-        // Parameters
-        $top = $left = $width = $height = null;
-        
-        // Number of tiles for the entire image
-        $imgNumTilesX = max(2, ceil($jp2Width  / $ts));
-        $imgNumTilesY = max(2, ceil($jp2Height / $ts));
-        
-        // Tile placement architecture expects an even number of tiles along each dimension
-        if ($imgNumTilesX % 2 != 0)
-            $imgNumTilesX += 1;
-
-        if ($imgNumTilesY % 2 != 0)
-            $imgNumTilesY += 1;
-            
-        // Shift so that 0,0 now corresponds to the top-left tile
-        $relX = (0.5 * $imgNumTilesX) + $this->xRange["start"];
-        $relY = (0.5 * $imgNumTilesY) + $this->yRange["start"];
-
-        // number of tiles (may be greater than one for movies, etc)
-        $numTilesX = min($imgNumTilesX - $relX, $this->xRange["end"] - $this->xRange["start"] + 1);
-        $numTilesY = min($imgNumTilesY - $relY, $this->yRange["end"] - $this->yRange["start"] + 1);
-
-        // Number of "inner" tiles
-        $numTilesInsideX = $imgNumTilesX - 2;
-        $numTilesInsideY = $imgNumTilesY - 2;
-        
-        // Dimensions for inner and outer tiles
-        $innerTS = $ts;
-        $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
-        
-        // <top>
-        $top  = substr((($relY == 0) ? 0 :  $outerTS + ($relY - 1) * $innerTS) / $jp2Height, 0, $precision);
-        
-        // <left>
-        $left = substr((($relX == 0) ? 0 :  $outerTS + ($relX - 1) * $innerTS) / $jp2Width, 0, $precision);
-
-        // <height>
-        $height = substr(((($relY == 0) || ($relY == ($imgNumTilesY -1))) ? $outerTS : $innerTS) / $jp2Height, 0, $precision);
-        
-        // <width>
-        $width  = substr(((($relX == 0) || ($relX == ($imgNumTilesX -1))) ? $outerTS : $innerTS) / $jp2Width, 0, $precision);
-
-        // {<top>,<left>},{<height>,<width>}
-        $region = "-region \{$top,$left\},\{$height,$width\}";
-
-        return $region;
-    }
-*/    
-    /**
-     * padImage
-     */
-    //function padImage($im, $ts, $x, $y) {
-    /**
-    function padImage($tif, $ts, $x, $y, $relTs) {
-        $padx = $ts - $relTs;
-        $pady = $ts - $relTs;
-
-        // top-left
-        if (($x == -1) && ($y == -1))
-            return "-background transparent -gravity SouthEast -extent $ts" . "x" . "$ts ";
-
-        // top-right
-        if (($x == 0) && ($y == -1))
-            return "-background transparent -gravity SouthWest -extent $ts" . "x" . "$ts ";
-
-        // bottom-right
-        if (($x == 0) && ($y == 0))
-            return "-background transparent -gravity NorthWest -extent $ts" . "x" . "$ts ";
-
-        // bottom-left
-        if (($x == -1) && ($y == 0))
-            return "-background transparent -gravity NorthEast -extent $ts" . "x" . "$ts ";
-
-    }**/
-
-// 6-12-2009 converted from using tile coordinates to pixels.   
-// Tiles are padded using tile coordinates (-1,0), etc. isTile defaults to true.
-// If the image is a SubFieldImage, isTile is false and the image is padded using pixel coordinates. 
+	/** 
+	 * 6-12-2009 converted from using tile coordinates to pixels.   
+	 * If the image is a Tile, it is padded according to where it lies in the image.
+	 * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
+	 */ 
     private function padImage ($jp2Width, $jp2Height, $width, $height, $x, $y) {		
 		if($this->isTile) {
 	        // Determine min and max tile numbers
@@ -393,12 +311,7 @@ abstract class JP2Image {
 	
 	        if ($imgNumTilesY % 2 != 0)
 	            $imgNumTilesY += 1;
-/*			// Temporarily went back to using tile coordinates, 07-09-2009
-	        $tileMinX = - ($imgNumTilesX / 2);
-	        $tileMaxX =   ($imgNumTilesX / 2) - 1;
-	        $tileMinY = - ($imgNumTilesY / 2);
-	        $tileMaxY =   ($imgNumTilesY / 2) - 1; 
-*/
+
 			$numInnerTilesX = $imgNumTilesX - 2;
 			$numInnerTilesY = $imgNumTilesY - 2;
 
@@ -409,72 +322,57 @@ abstract class JP2Image {
 
 	        // Determine where the tile is located (where tile should lie in the padding)
 	        $gravity = null;
-			if($y < $tileMinY) {
+
+/*			if($y < $tileMinY) {
 				$yGravity = "South";
-			}
-			
+			}			
 			else if($y == $tileMaxY) {
 				$yGravity = "North";
 			}
-				
+			
 			if($x < $tileMinX) {
 				$xGravity = "East";
 			}
-			
-			else if($x == $tileMaxX) {
+			if($x == $tileMaxX){
 				$xGravity = "West";
 			}
 			
-			else if($x == $tileMinX) {
-				if($y < $tileMinY || $y == $tileMaxY) {
-					$xGravity = "";
-				}
-				
-				else {
-					$xGravity = "East";
-					if($y == $tileMinY) {
-						$yGravity = "South";
-					}
-					else {
-						$yGravity = "North";
-					}
-				}
+			if($x < $tileMinX || $x == $tileMaxX) {
+				$gravity = $yGravity . $xGravity;
 			}
-			
+			else if($y < $tileMinY || $y == $tileMaxY) {
+					$gravity = $yGravity;
+			}
 			else {
-				if($y < $tileMinY || $y == $tileMaxY) {
-					$xGravity = "";
+				$xGravity = "West";
+				if($tileMinX != $tileMaxX && $x == $tileMinX) {
+					$xGravity = "East";
 				}
-				
+				if($y == $tileMinY) {
+					$gravity = "South" . $xGravity;
+				}
 				else {
-					$xGravity = "West";
-					if($y == $tileMinY) {
-						$yGravity = "South";
-					}
-					else {
-						$yGravity = "North";
-					}
+					$gravity = "North" . $xGravity;
 				}
 			}
-			
-			$gravity = $yGravity . $xGravity;
 
-/*	        if ($x < $tileMinX) {
+*/
+	        if ($x < $tileMinX) {
 	            if ($y < $tileMinY) {
 	                $gravity = "SouthEast";
 	            }
-	            else if ($y > $tileMaxY) {
+	            else if ($y == $tileMaxY) {
 	                $gravity = "NorthEast";
 	            }
 	            else {
 	                $gravity = "East";
 	            }
 	        }
-	        else if ($x > $tileMaxX) {
+	        else if ($x == $tileMaxX) {
 	            if ($y < $tileMinY) {
 	                $gravity = "SouthWest";
 	            }
-	            else if ($y > $tileMaxY) {
+	            else if ($y == $tileMaxY) {
 	                $gravity = "NorthWest"; 
 	            }
 	            else {
@@ -483,14 +381,15 @@ abstract class JP2Image {
 	        }
 	        
 	        else {
-	            if ($y < $tileMinY                                                                                                                                                                                         $tileMinY) {
-	                $gravity = "South";
+	            if($y < $tileMinY) {
+	            	$gravity = "South";
 	            }
+
 	            else {
 	                $gravity = "North";
 	            }
 	        }
-*/
+
 			$offset = " ";
 		}
 	
@@ -572,7 +471,7 @@ abstract class JP2Image {
      */
     private function abort($filename) {
         $pgm = substr($filename, 0, -3) . "pgm";
-           $png = substr($filename, 0, -3) . "png";
+		$png = substr($filename, 0, -3) . "png";
         
         // Clean up
         if (file_exists($pgm))
@@ -689,10 +588,10 @@ abstract class JP2Image {
 		$hcyOffset = $this->hcOffset["y"];
 
 		// Find the relative xstart and ystart			
-		$xStart = $this->xRange["start"] * $relWidth/$this->jp2Width;
-		$yStart = $this->yRange["start"] * $relHeight/$this->jp2Height;
+		$xStart = $this->xRange["start"] * $relWidth  / $this->jp2Width;
+		$yStart = $this->yRange["start"] * $relHeight / $this->jp2Height;
 
-		// Calculate the distance between the top left corner of image and the center of the image			
+		// Calculate the relative distance between the top left corner of extracted image and the center of the jp2 image			
 		if($xStart < $relWidth/2)
 			$distX = $relWidth/2  - $xStart;
 		else
@@ -729,7 +628,15 @@ abstract class JP2Image {
 		else
 			$this->hcOffset["y"] = "+0";
 	}
-	
+
+	/**
+	 * @description Checks to see if the extracted image is smaller than it should be, pads it to the correct size, and resizes if necessary.
+	 * @return $cmd -- a string containing the commands to execute, if any
+	 * @param object $extracted -- array containing the width and height of the extracted image
+	 * @param object $jp2RelWidth -- relative width and height of the whole jp2 image in the viewport
+	 * @param object $jp2RelHeight
+	 * @param object $png
+	 */	
 	function resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $png) {
 		$cmd = "";
 		$relWidth  	= $this->imageRelWidth;
@@ -743,7 +650,17 @@ abstract class JP2Image {
 			
             $pad = CONFIG::PATH_CMD . " && convert $png -background black ";
 			$pad .= $this->padImage($jp2RelWidth, $jp2RelHeight, $relWidth, $relHeight, $this->xRange["start"], $this->yRange["start"]) . " $png";
-            exec($pad);
+			try {
+            	exec($pad, $out, $ret);
+				if($ret != 0) {
+					throw new Exception("[pad image] Command: $pad");
+				}
+			}
+			catch(Exception $e) {
+           		$msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+            	file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+				echo $msg;
+			}
         }        
 					
         // Resize if necessary (Case 3)

@@ -124,7 +124,7 @@ class Movie
 
 			$name = $layerInfo[0];
 
-            $closestImage = $this->getImageTimestamps($name, $timeStamps); //($obs, $inst, $det, $meas, $timeStamps);
+            $closestImage = $this->getImageTimestamps($name, $timeStamps);
 			$layerImages[$name] = $closestImage;
         }
 
@@ -162,8 +162,10 @@ class Movie
 		
 		if (!$ok) {
 		    // if there was an error then get it
-		    echo $toolkit->getLastError()."<br />";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 
 		//$toolkit->setVideoOutputDimensions(1024, 1024);
@@ -175,8 +177,10 @@ class Movie
 		
 		if (!$ok) {
 		    // 		if there was an error then get it
-		    echo $toolkit->getLastError()."<br />";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 		
 		// 	execute the ffmpeg command
@@ -185,8 +189,10 @@ class Movie
 		// check the return value in-case of error
 		if ($movie !== PHPVideoToolkit::RESULT_OK) {
 		    // if there was an error then get it
-		    echo $toolkit->getLastError()."<br />\r\n";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 
 		// Create a high-quality version as well
@@ -208,8 +214,10 @@ class Movie
 			
 		if (!$ok) {
 		    // if there was an error then get it
-		    echo $toolkit->getLastError()."<br />\r\n";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 		
         // execute the ffmpeg command
@@ -217,13 +225,15 @@ class Movie
 		
 		if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
 		    // 		if there was an error then get it
-		    echo $toolkit->getLastError()."<br />\r\n";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 
 		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
-//			unlink($image);
+			unlink($image);
 		}	
 
 //		$this->showMovie($tmpurl, 512, 512);
@@ -267,8 +277,10 @@ class Movie
 						throw new Exception("Could not find the requested image.");
 				}
 				catch (Exception $e) {
-					echo 'Error: ' . $e->getMessage();
-					exit();
+		            $error = "[getImageTimestamps][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+		            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+		            print $error;
+					die();
 				}
 
                 array_push($resultArray, $row);
@@ -278,16 +290,6 @@ class Movie
         return $resultArray;
     }
 
-    /*	private function getFilepath($obs, $inst, $det, $meas, $time) {
-     // Convert unix timestamp back to date and time
-     $date = strftime("%Y,%m,%d,%H,%M,%S", $time);
-     sscanf($date, "%s,%s,%s,%s,%s,%s", $year, $month, $day, $hour, $min, $sec);
-     $path = $this->rootDir . implode("/", array($year, $month, $day));
-     $path .= "/$obs/$inst/$det/$meas/";
-     $path .= implode("_", array($year, $month, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
-     return $path;
-     }
-     */
     /*
      * quickMovie
     
@@ -442,7 +444,7 @@ class Movie
 	 * indice of the $times array. Otherwise it will simply return an array of the closest
 	 * times to $this->startTime.
 	 */
-	private function getImageTimes($layer, $times = null)
+/*	private function getImageTimes($layer, $times = null)
 	{
 	    $obs = substr($layer, 0, 3);
 		$inst = substr($layer, 3, 3);

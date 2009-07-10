@@ -32,9 +32,6 @@ abstract class CompositeImage {
 		$this->zoomLevel  	= $zoomLevel;
 		$this->options    	= $options;
 		$this->tmpDir 	   	= $tmpDir;
-
-		// Default imageSize will be 512 for now. Later on this will be modified to reflect appropriate aspect ratios for movies or screenshots.
-//		$this->imageSize  = 512;
 		
 		// This is needed for when the images are padded and put together.
 		$this->hcOffset = $hcOffset;
@@ -68,20 +65,24 @@ abstract class CompositeImage {
 		// builtImages array holds the filepaths for all 'built' images.
 		// opacities array holds the "opacityValue" and "opacityGroup" for each image.
 		$builtImages = array();
-		$opacities = array("value" => array(), "group" => array());
-		
-		foreach($this->layerImages as $image) {
-			// Each $image is a string: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp";
-			// Build each image separately, extract information from the string.
-			$imageInfo = explode(",", $image);
-			$uri = $imageInfo[0];
-
-			$xRange = array("start" => $imageInfo[1], "end" => $imageInfo[2]);
-			$yRange = array("start" => $imageInfo[3], "end" => $imageInfo[4]);
-			array_push($opacities["value"], $imageInfo[5]);
-			array_push($opacities["group"], $imageInfo[6]);
+		$opacities 	 = array("value" => array(), "group" => array());
+		try  {		
+			if(!isset($this->layerImages)) {
+				throw new Exception("Error: No valid layers specified in layerImages[" . $this->layerImages . "]");
+			}
+			
+			foreach($this->layerImages as $image) {
+				// Each $image is a string: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp";
+				// Build each image separately, extract information from the string.
+				$imageInfo = explode(",", $image);
+				$uri = $imageInfo[0];
 	
-			try {	
+				$xRange = array("start" => $imageInfo[1], "end" => $imageInfo[2]);
+				$yRange = array("start" => $imageInfo[3], "end" => $imageInfo[4]);
+				
+				array_push($opacities["value"], $imageInfo[5]);
+				array_push($opacities["group"], $imageInfo[6]);
+		
 				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
 	
 				$filepath = $subFieldImage->getCacheFilepath();
@@ -90,14 +91,14 @@ abstract class CompositeImage {
 					throw new Exception("Cached image $filepath does not exist.");
 					
 				array_push($builtImages, $filepath);
-
-			}	
-			catch(Exception $e) {
-				echo 'Error: ' . $e->getMessage();
-				exit();
 			}
+		}	
+		catch(Exception $e) {
+            $error = "[compileImages][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
-
 		// Composite images on top of one another if there are multiple layers.
 		if (sizeOf($this->layerImages) > 1) {
 			$this->composite = $this->buildComposite($builtImages, $opacities);
@@ -167,6 +168,7 @@ abstract class CompositeImage {
 			$img = $image["image"];
 			$op  = $image["opacity"];
 			
+			// If the image has an opacity level of less than 100, need to set its opacity.
 			if($op < 100) {
 				// Get the image's uri
 				$imgFilepath = explode("/", $img);
@@ -208,15 +210,24 @@ abstract class CompositeImage {
 			$i++;
 		}
 		$cmd .= " -compose dst-over -depth 8 -quality 10 " . $tmpImg;
-//		echo "Executing " . $cmd . "<br />";
 
-		exec($cmd);
-		exec(CONFIG::PATH_CMD . " && convert $tmpImg -background black -alpha off $tmpImg");
-
-
-		//$eit->compositeImage($las, $las->getImageCompose(), 0, 0);
-//		$eit->compositeImage($las, imagick::COMPOSITE_OVER, 0, 0);
-
+		try {
+			exec($cmd, $out, $ret);
+			if($ret != 0) {
+				throw new Exception("Error executing command $cmd.");
+			}
+			
+			exec(CONFIG::PATH_CMD . " && convert $tmpImg -background black -alpha off $tmpImg", $out, $ret);
+			if($ret != 0) {
+				throw new Exception("Error turning alpha channel off on $tmpImg.");
+			}
+		}
+		catch(Exception $e) {
+            $error = "[buildComposite][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
+		}
 		return $tmpImg;	
 	}
 
@@ -297,32 +308,6 @@ abstract class CompositeImage {
 	 * @description Builds a directory string for the given layer
 	 */
 	protected function getFilepath($uri) {
-/*		$d    = getdate($layer->nextTime());
-		$obs  = $layer->observatory();
-		$inst = $layer->instrument();
-		$det  = $layer->detector();
-		$meas = $layer->measurement();
-
-		$year = $d['year'];
-		$mon  = str_pad($d['mon'], 2 , "0", STR_PAD_LEFT);
-		$day  = str_pad($d['mday'], 2 , "0", STR_PAD_LEFT);
-		$hour = str_pad($d['hours'], 2 , "0", STR_PAD_LEFT);
-		$min  = str_pad($d['minutes'], 2 , "0", STR_PAD_LEFT);
-		$sec  = str_pad($d['seconds'], 2 , "0", STR_PAD_LEFT);
-*/
-/*		if(strlen($uri) != 37) {
-			echo "Error: supplied uri is not a valid image file path. <br />";
-			exit();
-		} 
-		
-		$year = substr($uri, 0, 4);
-		$month = substr($uri, 5, 2); 
-		$day = substr($uri, 8, 2);
-		$obs = substr($uri, 18, 3);
-		$inst = substr($uri, 22, 3);
-		$det = substr($uri, 26, 3);
-		$meas = substr($uri, 30, 3);
-*/
 		// Extract the relevant data from the image uri (excluding the .jp2 at the end)
 		$uriData = explode("_", substr($uri, 0, -4));
 		$year 	 = $uriData[0];
@@ -334,10 +319,9 @@ abstract class CompositeImage {
 		$det 	 = $uriData[6];
 		$meas 	 = $uriData[7];
 	
-		$path = CONFIG::JP2_DIR . implode("/", array($year, $month, $day));
+		$path  = CONFIG::JP2_DIR . implode("/", array($year, $month, $day));
 		$path .= "/$obs/$inst/$det/$meas/";
 		$path .= $uri;
-//		$path .= implode("_", array($year, $mon, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
 
 		return $path;
 	}

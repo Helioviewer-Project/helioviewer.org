@@ -479,7 +479,7 @@ class API {
 
 	/**
 	 * @description Obtains layer information, ranges of pixels visible, and the date being looked at and creates a composite image
-	 * 				(a ScreenImage) of all the layers. 
+	 * 				(a Screenshot) of all the layers. 
 	 * @return Returns 1 if the action was completed successfully.
 	 */
 	private function _takeScreenshot() {
@@ -556,7 +556,7 @@ class API {
             <head>
                 <title>Helioviewer.org QuickMovie</title>
             </head>
-            <body style="background-color: #000, color: #FFF">
+            <body style="background-color: #000; color: #FFF; margin: 10px">
                 <!-- MC Media Player -->
                 <div style="text-align: center;">
                     <script type="text/javascript">
@@ -747,6 +747,7 @@ class API {
 	/**
 	 * Checks to make sure all required parameters were passed in.
 	 * @param array $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
+	 * @return 1 on success
 	 */	
 	private function _checkForMissingParams($fields) {
 		try{
@@ -760,6 +761,7 @@ class API {
 			echo 'Error: ' . $e->getMessage();
 			exit();
 		}
+		return 1;
 	}
 
     /**
