@@ -1,1 +1,0 @@
-<h2>What would you like to do with the selected region?</h2>

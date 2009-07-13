@@ -17,3 +17,36 @@ span.fits-sort-btn {
     top:4px;
     cursor: pointer;
 }
+
+#shadowbox-form.ui-widget-content button {
+	background: transparent url(../lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
+	cursor:pointer;
+	float:right;
+	line-height:1.4em;
+	margin:0.5em 0.4em 0.5em 0;
+	overflow:visible;
+	padding:0.2em 0.6em 0.3em;
+	width:auto;
+	font-family:Arial,sans-serif;
+	font-size:12pt;
+}
+
+#shadowbox-form.ui-widget-content button:hover {
+	background: transparent url(../lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
+	border:1px solid #333;
+	color: #d18f61;
+	font-weight:bold;
+	outline-color:-moz-use-text-color;
+	outline-style:none;
+	outline-width:medium;
+}
+
+#shadowbox-form.ui-widget-content button:active {
+	background: transparent url(../lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-bg_highlight-hard_15_0b3e6f_1x100.png) repeat scroll 50% 50%;
+	border:1px solid #052F57;
+	color:#FFFFFF;				
+}
+
+#shadowbox-form h2 {
+	font-size: 14pt;
+}

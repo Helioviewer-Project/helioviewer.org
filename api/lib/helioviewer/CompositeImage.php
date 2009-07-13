@@ -113,8 +113,8 @@ abstract class CompositeImage {
 				
 			// Otherwise, the image is a screenshot and needs to be converted into a png.
 		else {
-			$cmd = CONFIG::PATH_CMD . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
-			exec($cmd);
+			$cmd = CONFIG::PATH_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
+			exec($cmd, $out, $ret);
 			$this->composite = $this->cacheFileDir . $this->id . ".png";
 		}
 

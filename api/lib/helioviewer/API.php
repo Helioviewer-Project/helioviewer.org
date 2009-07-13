@@ -556,7 +556,7 @@ class API {
             <head>
                 <title>Helioviewer.org QuickMovie</title>
             </head>
-            <body style="background-color: #000; color: #FFF; margin: 10px">
+            <body style="background-color: black; color: #FFF;">
                 <!-- MC Media Player -->
                 <div style="text-align: center;">
                     <script type="text/javascript">
