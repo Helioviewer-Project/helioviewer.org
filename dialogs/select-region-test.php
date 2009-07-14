@@ -86,18 +86,26 @@
 			<input id="select-option" name="select-option" type=radio value="Advanced">Advanced</input>
 			<button id="submit-button" class="ui-state-default ui-corner-all">Submit</button>
 			</form>
--->			
+-->	
+	<form>		
 		<div id="accordion">
-<div id="accordion">
-	<h3><a href="#">Default</a></h3>
-	<div>
-		<p>Default options</p>
-	</div>
-	<h3><a href="#">Advanced</a></h3>
-	<div>
-		<p>Advanced Options</p>
-	</div>
+			<h3><a href="#">Default</a></h3>
+			<div>
+				<p>
+					Number of frames: <input type=text name="numFrames" id="numFrames" value=40 size="1" /><br />
+					Time step/cadence (in seconds): <input type=text name="timeStep" id="timeStep" value=8 size="1" /><br />
+					
+					
+				</p>
+			</div>
+			
+			<h3><a href="#">Advanced</a></h3>
+			<div>
+				<p>Advanced Options</p>
+			</div>
 		</div>
+		<input type=submit value="Submit" />
+	</form>
 	</body>
 </html>
 
