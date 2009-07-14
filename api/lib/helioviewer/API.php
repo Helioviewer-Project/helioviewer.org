@@ -188,18 +188,24 @@ class API {
         // file name and location
         $filename = $imgIndex->getJP2Filename($timestamp, $src);
         $filepath = $this->getFilepath($filename);
-
-        // regex for URL construction
-        $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
         
-        // http url
-        if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
+        // http url (relative path)
+        if ((isset($this->params['getRelativeURL'])) && ($this->params['getRelativeURL'] === "true")) {
+            $jp2RootRegex = "/" . preg_replace("/\//", "\/", Config::JP2_DIR) . "/";
+            $url = "/" . preg_replace($jp2RootRegex, "", $filepath);
+            echo $url;
+        }
+        
+        // http url (full path)
+        else if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
+            $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
             $url = preg_replace($webRootRegex, Config::WEB_ROOT_URL, $filepath);
             echo $url;
         }
         
         // jpip url
         else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
+            $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
             $jpip = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $filepath), 4);
             echo $jpip;
         }
