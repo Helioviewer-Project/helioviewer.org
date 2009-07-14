@@ -29,12 +29,36 @@
 		<!-- Theme Modifications -->
 		<link rel="stylesheet" type="text/css" href="../styles/dot-luv.css">
 		<script type="text/javascript">
-			  jQuery(document).ready(function(){
-			    jQuery("#accordion").accordion({
+			var send_email, email_input_field, email_field_visible;
+			jQuery(document).ready(function(){
+				jQuery("#select-options-accordion").accordion({
 					header: 'h3',
+					autoHeight: false,
 					clearStyle: true
 				});
-			  });
+				
+				jQuery("#select-options-tabs").tabs();
+
+				email_field_visible = false;
+				send_email = jQuery('#emailLink');
+				email_input_div = jQuery('#email-input-div');
+				
+				email_input_field = '<span id="email-field" style="padding-left: 2em;">' + 
+									'Email address: &nbsp' + 
+									'<input type=text id="emailAddress" name="emailAddress" value="" />' + 
+									'</span>';
+									
+				send_email.click(function() {
+					email_field_visible = !email_field_visible;
+					if (email_field_visible) {
+						email_input_div.append(email_input_field);	
+					}
+					
+					else {
+						jQuery('#email-field').remove();
+					}
+				});
+			});
 		</script>		
 <!--		<style type="text/css">
 			.ui-widget-content button {
@@ -70,7 +94,7 @@
 			}
 		</style> -->
 	</head>
-	<body style="padding: 10px;"> <!-- class="ui-widget ui-widget-content ui-corner-all"> -->
+	<body style="padding: 10px; margin: 0px"> <!-- class="ui-widget ui-widget-content ui-corner-all"> -->
 <!--		<h2>What would you like to do with the selected region?</h2>
 		<br />
 		<div id="shadowbox-form" class="ui-widget ui-widget-content" style="text-align: left;">
@@ -86,26 +110,134 @@
 			<input id="select-option" name="select-option" type=radio value="Advanced">Advanced</input>
 			<button id="submit-button" class="ui-state-default ui-corner-all">Submit</button>
 			</form>
--->	
-	<form>		
-		<div id="accordion">
-			<h3><a href="#">Default</a></h3>
-			<div>
-				<p>
-					Number of frames: <input type=text name="numFrames" id="numFrames" value=40 size="1" /><br />
-					Time step/cadence (in seconds): <input type=text name="timeStep" id="timeStep" value=8 size="1" /><br />
+-->
+		<div id="shadowbox-form" class="ui-widget ui-widget-content ui-corner-all ui-helper-clearfix" style="padding: 1px; width: 401px;">		
+			<form>	
+				<div id="select-options-tabs">
+					<ul>
+						<li><a href="#default-settings">Default Settings</a></li>
+						<li><a href="#advanced-settings">Advanced Settings</a></li>
+					</ul>
 					
+					<div id="default-settings">
+						<!-- table: 
+								Number of Frames:  	[input]
+								Time step: 			[input]
+						-->
+						<table class="select-options-table">
+							<tr>
+								<td style="font-size: 10pt;">Number of frames: </td>
+								<td><input type=text id="numFrames" name="numFrames" value=40 style="width: 2em;"/></td>
+							</tr>
+							
+							<tr>
+								<td style="font-size: 10pt;">Time step: </td>
+								<!-- option values are the selected time step in seconds -->
+								<td><select id="timeStep" name="timeStep">
+										<option id=1 value=86400>1 day</option>
+										<option id=2 value=43200>12 hours</option>
+										<option id=3 value=3600 >1 hour</option>
+									</select>
+								</td>
+							</tr>
+						</table><br />
+						
+						<!-- table:  Used here because it lines up the checkbox and name horizontally. Otherwise they do not quite match up.
+								Layers Included:
+									[check] <layername>
+									[check] <layername>
+									etc...
+						-->
+						<table>
+							<tr>
+								<td colspan=2>Layers Included: </td>
+							</tr>
+							<tr>
+								<td class="layers-checkbox"><input type=checkbox id="1" name="layers" checked=true /></td>
+								<td class="layers-name">SOHO EIT EIT 304</td>
+							</tr>
+							<tr>
+								<td class="layers-checkbox"><input type=checkbox id="1" name="layers" checked=true /></td>
+								<td class="layers-name">SOHO LASCO C2 WL</td>
+							</tr>
+						</table>
+					</div>
 					
-				</p>
-			</div>
-			
-			<h3><a href="#">Advanced</a></h3>
-			<div>
-				<p>Advanced Options</p>
-			</div>
+					<div id="advanced-settings">
+						<!-- table: 
+								Start Time				End Time
+								Date:	[input]			Date:	 [input]
+								Time:	[input]			Time:	 [input]
+								<empty row>
+								<empty row>
+								Dimensions				Other
+								Width:	[input]			Quality: [input]
+								Height:	[input]			Format:  [input]
+						-->
+						<table class="select-options-table" style="width: 100%;">
+							<tr>
+								<th colspan=2 style="width: 50%;">Start Time</th>
+								<th colspan=2>End Time</th>
+							</tr>
+							
+							<tr>
+								<td class="time-input-field" style="width: 15%;">Date:</td>
+								<td class="time-input-field"><input type=text id="startDate" name="StartDate" value="01/15/2003" /></td>
+								<td class="time-input-field" style="width: 15%;">Date:</td>
+								<td class="time-input-field"><input type=text id="endDate" 	name="endDate"   value="01/15/2003" /></td>
+							</tr>
+							
+							<tr>
+								<td class="time-input-field">Time:</td>
+								<td class="time-input-field"><input type=text id="startTime" name="startTime" value="00:00:00" /></td>
+								<td class="time-input-field">Time:</td>
+								<td class="time-input-field"><input type=text id="endTime"   name="endTime"   value="00:00:00" /></td>
+							</tr>
+							
+							<tr>
+								<td>&nbsp</td>
+							</tr>
+							<tr>
+								<td>&nbsp</td>
+							</tr>
+							
+							<tr>
+								<th colspan=2>Dimensions</th>
+								<th colspan=2>Other</th>
+							</tr>
+							
+							<tr>
+								<td>Width:</td>
+								<td><input type=text id="width" name="width" style="width: 2.6em;" value=512 />&nbsp pixels</td>
+								<td>Quality:</td>
+								<td><input type=text id="quality" name="quality" style="width: 1.4em" value=8 /></td>
+							</tr>
+							
+							<tr>
+								<td>Height: </td>
+								<td><input type=text id="height" name="height" style="width: 2.6em;" value=512 />&nbsp pixels</td>
+								<td>Format:</td>
+								<td>
+									<select id="hqFormat" name="hqFormat" style="padding: 0;">
+										<option id=1 value="mov" >mov</option>
+										<option id=2 value="wmv" >wmv</option>
+										<option id=3 value="mpeg">mpeg</option>
+									</select>
+								</td>						
+							</tr>
+						</table><br /><br />
+
+						Filename: &nbsp<input type=text id="filename" name="filename" value=""/><br /><br />
+
+						<input type=checkbox  id="dataGaps"  name="dataGaps" checked=true value="true"/>&nbsp Show layers even if there are data gaps.<br />
+						<input type=checkbox  id="emailLink" name="emailLink" value="true" />&nbsp Email me a link to the video.<br />
+						<div id="email-input-div">&nbsp</div>
+					</div>
+				</div>
+		
+				<button type=submit class="ui-state-default ui-corner-all">Submit</button>
+			</form>
 		</div>
-		<input type=submit value="Submit" />
-	</form>
 	</body>
 </html>
 
