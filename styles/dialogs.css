@@ -32,10 +32,6 @@ span.fits-sort-btn {
 	border: none;
 	border-bottom: 1px solid #096AC8;
 }
-#select-options-accordion h3 {
-	font-size:100%;
-	font-weight:normal;
-}
 
 .select-options-table td {
 	font-size: 9pt;
@@ -58,7 +54,7 @@ td.layers-name {
 }
 
 td.time-input-field input {
-	width: 5.4em;
+	width: 6em;
 }
 
 #select-options-tabs input, #select-options-tabs select {
