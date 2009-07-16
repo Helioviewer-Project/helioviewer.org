@@ -31,6 +31,10 @@
 			jQuery.noConflict();
 		</script>
 
+        <!-- jGrowl -->
+		<script src="lib/jquery/jGrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
+		<link rel="stylesheet" href="lib/jquery/jGrowl/jquery.jgrowl.css" type="text/css" />	
+
 		<!-- imgAreaSelect jQuery plugin -->
 		<script src="lib/jquery/imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
         
@@ -170,8 +174,9 @@
 	</head>
 	<body>
 		<div id="minHeight"></div>
-		<!-- Message Console -->
-		<div id="message-console" style="display: none;">&nbsp;</div>
+        
+        <!-- Loading Indicator -->
+        <div id="loading" style="display: none">Loading...</div>
 
 		<!-- Header and Content -->
 		<div id="outsideBox">
@@ -202,8 +207,6 @@
 						<select id="timestep-select" name="time-step"></select>
 						<span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title=" - Move the Observation Date/Time backward one time-step"></span>
 						<span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title=" - Move the Observation Date/Time forward one time-step"></span>
-						<!-- Movie Builder -->
-						<!-- <img id="movieBuilder"alt="Show movie." src="images/blackGlass/glass_button_movies.png"  title=" - Quick Movie."> -->
 					</div>
 				</div>
 
@@ -223,13 +226,50 @@
 			<!-- Middle Column -->
 			<div id="middle-col">
 				<div id="middle-col-header">
-					<div style="position: absolute; min-width:550px; top:14px;">
-						<!-- Message Console -->
-						<span id="message-console-spacer" style="width:100%; position: absolute; left:0pt; display:none; font-size:1em;">&nbsp;</span><div style="height:25px;">&nbsp;</div>
-					</div>
-
-                    <!-- Loading Indicator -->
-                    <div id="loading" style="display: none">Loading...</div>
+            		<div id="social-buttons-container-outer">
+        
+        				<!--Social buttons -->
+        				<div id="social-buttons-container-inner">
+                            <div id="social-buttons"> 
+                                <!-- Link button -->
+                                <div id="link-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-link" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Link</span>
+                                </div>
+                                
+                                <!-- Email button -->
+                                <div id="email-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Email</span>
+                                </div>
+                                
+                                <!-- Movie button -->
+                                <div id="movie-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-video" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Movie</span>
+                                </div>                            
+                                
+                                <!-- Screenshot button -->
+                                <div id="screenshot-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-image" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Screenshot</span>
+                                </div>        
+    
+    							<!-- Select region button -->
+    							<div id="select-region-button" class="text-btn">
+    								<span class='ui-icon ui-icon-scissors' style="float: left;"></span>
+    								<span style="line-height: 1.6em">Select Region</span>
+    							</div>
+    
+                                <!-- JHelioviewer -->
+                                <div id="jhelioviewer-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">JHelioviewer</span>
+                                </div> 
+    
+                            </div>
+        				</div>
+    			    </div>
 				</div>
 				<!-- End middle-col-header -->
 
@@ -261,75 +301,33 @@
 
 					</div>
 				</div>
-                
-        		<div id="footer-links-container-outer">
-    
-    				<!-- Links -->
-    				<div id="footer-links-container-inner">
-                        <div id="social-buttons"> 
-                            <!-- Link button -->
-                            <div id="link-button" class="text-btn">
-                                <span class="ui-icon ui-icon-link" style="float: left;"></span>
-                                <span style="line-height: 1.6em">Link</span>
-                            </div>
-                            
-                            <!-- Email button -->
-                            <div id="email-button" class="text-btn">
-                                <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
-                                <span style="line-height: 1.6em">Email</span>
-                            </div>
-                            
-                            <!-- Movie button -->
-                            <div id="movie-button" class="text-btn">
-                                <span class="ui-icon ui-icon-video" style="float: left;"></span>
-                                <span style="line-height: 1.6em">Movie</span>
-                            </div>                            
-                            
-                            <!-- Screenshot button -->
-                            <div id="screenshot-button" class="text-btn">
-                                <span class="ui-icon ui-icon-image" style="float: left;"></span>
-                                <span style="line-height: 1.6em">Screenshot</span>
-                            </div>        
-
-							<!-- Select region button -->
-							<div id="select-region-button" class="text-btn">
-								<span class='ui-icon ui-icon-scissors' style="float: left;"></span>
-								<span style="line-height: 1.6em">Select Region</span>
-							</div>
-
-                            <!-- JHelioviewer -->
-                            <div id="jhelioviewer-button" class="text-btn">
-                                <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
-                                <span style="line-height: 1.6em">JHelioviewer</span>
-                            </div> 
-
-                        </div>
-                        <div id="footer-links" class="ui-corner-bottom">
-        					<a href="help/" class="light" target="_blank">Help</a>
-        					<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
-        					<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-        					<a href="wiki/" class="light" target="_blank">Wiki</a>
-        					<a href="api/" class="light" target="_blank">API</a>
-        					<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
-        					<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
-                        </div>
-    				</div>
-
-				<!-- Timeline -->
-				<!--
-				<div style="text-align: center;">
-					<div id="timeline" style="height: 150px; width: 70%; margin-left: auto; margin-right: auto; border: 1px solid #000"></div>
-				</div>
-				-->
 			</div>
-      
+        	<!-- Timeline -->
+			<!--
+			<div style="text-align: center;">
+				<div id="timeline" style="height: 150px; width: 70%; margin-left: auto; margin-right: auto; border: 1px solid #000"></div>
 			</div>
+			-->
 			<div id="clearfooter"></div>
 		</div>
 		<!-- end outer div -->
 
 		<!-- Footer -->
-		<div id="footer">			
+		<div id="footer">
+            <div id="footer-container-outer">
+                <div id="footer-container-inner">
+                    <!-- Meta links -->
+                    <div id="footer-links">
+                        <a href="help/" class="light" target="_blank">Help</a>
+                    	<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
+            			<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
+            			<a href="wiki/" class="light" target="_blank">Wiki</a>
+            			<a href="api/" class="light" target="_blank">API</a>
+            			<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
+            			<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>	
+                    </div>
+                </div>
+            </div>
 		</div>
 		
 		<!-- About dialog -->
