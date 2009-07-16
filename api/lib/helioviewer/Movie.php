@@ -58,8 +58,9 @@ class Movie
         $this->options = $options;
 		
         // timeStep is in seconds
-        $this->timeStep = $timeStep;
-		$this->hcOffset = $hcOffset;
+        $this->timeStep  = $timeStep;
+		$this->hcOffset  = $hcOffset;
+		$this->imageSize = $imageSize;
 
         $this->db = new DbConnection();
     }
@@ -88,7 +89,7 @@ class Movie
 
     }
 
-    /*
+    /**
      * buildMovie
      */
     public function buildMovie()
@@ -99,7 +100,7 @@ class Movie
         $tmpdir = Config::TMP_ROOT_DIR."/$now/";
         $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
         mkdir($tmpdir);
-        //chmod($tmpdir, 0777);
+        chmod($tmpdir, 0777);
 
         // Build an array with all timestamps needed when requesting images
         $timeStamps = array ();
@@ -123,7 +124,7 @@ class Movie
 
 			$name = $layerInfo[0];
 
-            $closestImage = $this->getImageTimestamps($name, $timeStamps); //($obs, $inst, $det, $meas, $timeStamps);
+            $closestImage = $this->getImageTimestamps($name, $timeStamps);
 			$layerImages[$name] = $closestImage;
         }
 
@@ -142,12 +143,12 @@ class Movie
 				
 				$closestImage = $layerImages[$name][$frameNum];
 				// $image is now: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp"
-				$image =  $closestImage['uri'] . "," . implode(",", $ranges) . "," .$closestImage['opacityGrp']; //array("ranges" => $ranges, "closestImage" => $layerImages[$name][$frameNum]);
+				$image =  $closestImage['uri'] . "," . implode(",", $ranges) . "," .$closestImage['opacityGrp'];
 				$images[$name] = $image;
 			}	
 
 			// All frames will be put in cache/movies/$now		
-			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset);	
+			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset, $this->imageSize);	
 			$frameFile = $movieFrame->getComposite(); 
 
 			array_push($this->images, $frameFile);
@@ -161,11 +162,14 @@ class Movie
 		
 		if (!$ok) {
 		    // if there was an error then get it
-		    echo $toolkit->getLastError()."<br />";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 
-		$toolkit->setVideoOutputDimensions(1024, 1024);
+		//$toolkit->setVideoOutputDimensions(1024, 1024);
+		$toolkit->setVideoOutputDimensions($this->imageSize['width'], $this->imageSize['height']);
 		
 		// set the output parameters (Flash video)
 		$output_filename = "$movieName." . $this->filetype;
@@ -173,8 +177,10 @@ class Movie
 		
 		if (!$ok) {
 		    // 		if there was an error then get it
-		    echo $toolkit->getLastError()."<br />";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 		
 		// 	execute the ffmpeg command
@@ -183,8 +189,10 @@ class Movie
 		// check the return value in-case of error
 		if ($movie !== PHPVideoToolkit::RESULT_OK) {
 		    // if there was an error then get it
-		    echo $toolkit->getLastError()."<br />\r\n";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 
 		// Create a high-quality version as well
@@ -206,26 +214,26 @@ class Movie
 			
 		if (!$ok) {
 		    // if there was an error then get it
-		    echo $toolkit->getLastError()."<br />\r\n";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 		
         // execute the ffmpeg command
 		$mp4 = $toolkit->execute(false, true);
-        
-  		
-        //echo $toolkit->getLastCommand();
-        //exit();
 		
 		if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
 		    // 		if there was an error then get it
-		    echo $toolkit->getLastError()."<br />\r\n";
-			exit();
+            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            print $error;
+			die();
 		}
 
 		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
-//			unlink($image);
+			unlink($image);
 		}	
 
 //		$this->showMovie($tmpurl, 512, 512);
@@ -234,7 +242,7 @@ class Movie
 		echo json_encode($tmpurl);
 	}
 		
-    /*
+    /**
      * Queries the database to find the exact timestamps for images nearest each time in $timeStamps.
      * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', and 'uri'
      * for each image.
@@ -269,8 +277,10 @@ class Movie
 						throw new Exception("Could not find the requested image.");
 				}
 				catch (Exception $e) {
-					echo 'Error: ' . $e->getMessage();
-					exit();
+		            $error = "[getImageTimestamps][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+		            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+		            print $error;
+					die();
 				}
 
                 array_push($resultArray, $row);
@@ -280,16 +290,6 @@ class Movie
         return $resultArray;
     }
 
-    /*	private function getFilepath($obs, $inst, $det, $meas, $time) {
-     // Convert unix timestamp back to date and time
-     $date = strftime("%Y,%m,%d,%H,%M,%S", $time);
-     sscanf($date, "%s,%s,%s,%s,%s,%s", $year, $month, $day, $hour, $min, $sec);
-     $path = $this->rootDir . implode("/", array($year, $month, $day));
-     $path .= "/$obs/$inst/$det/$meas/";
-     $path .= implode("_", array($year, $month, $day, $hour . $min . $sec, $obs, $inst, $det, $meas)) . ".jp2";
-     return $path;
-     }
-     */
     /*
      * quickMovie
     
@@ -444,7 +444,7 @@ class Movie
 	 * indice of the $times array. Otherwise it will simply return an array of the closest
 	 * times to $this->startTime.
 	 */
-	private function getImageTimes($layer, $times = null)
+/*	private function getImageTimes($layer, $times = null)
 	{
 	    $obs = substr($layer, 0, 3);
 		$inst = substr($layer, 3, 3);
@@ -509,7 +509,7 @@ class Movie
 		return $resultArray;
 	}
 
-	/*
+	/**
 	 * showMovie
 	 */
 	public function showMovie($url, $width, $height)

@@ -5,7 +5,6 @@
 require('JP2Image.php');
 
 class SubFieldImage extends JP2Image {
-	private $jp2Filepath;
 	protected $hcOffset;
 
 	/**
@@ -19,17 +18,7 @@ class SubFieldImage extends JP2Image {
 	  */	
 	
 	public function __construct($uri, $zoomLevel, $x, $y, $imageSize, $hcOffset) {
-//		$xArray = explode(",", $x);
-//		$yArray = explode(",", $y);
-		
-		// JP2Image constructor expects an array of start and end pixels
-//        $xRange = array("start" => $xArray[0], "end" => $xArray[1]);
-//        $yRange = array("start" => $yArray[0], "end" => $yArray[1]);
-
-        parent::__construct($uri, $zoomLevel, $x, $y, $imageSize);
-
-//        $this->x = $x;
-//        $this->y = $y;
+        parent::__construct($uri, $zoomLevel, $x, $y, $imageSize, false);
 
 		$this->hcOffset = $hcOffset;
 		
@@ -54,7 +43,7 @@ class SubFieldImage extends JP2Image {
 		else {	
 			// If it's not cached, build it and put it in the cache.
 			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center for now).
-	        $this->image = $this->buildImage($filepath, false);	
+	        $this->image = $this->buildImage($filepath);	
 				
 	        // Display image
 	        if ($display)
