@@ -219,18 +219,19 @@ span.ui-icon-hover {
 }
 
 #social-buttons {
-    background: url(../images/blackGlass/transparentBG50.png);
+    background: url(../images/blackGlass/transparentBG75.png);
     position: absolute;
     right: 25px;
-    bottom:5px;
+    bottom:4px;
     padding: 1px 8px;
-    border-top: 1px solid #262424;
-    border-left: 1px solid #262424;
-    border-right: 1px solid #262424;
+    border-top: 1px solid #2A2A2A;
+    border-bottom: 1px solid #2A2A2A;
+    border-left: 1px solid #2A2A2A;
+    border-right: 1px solid #2A2A2A;
     font-size: 1.0em;
     height: 15px;
-    -moz-border-radius-topleft: 15px;
-    -moz-border-radius-topright: 15px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-topright: 20px;
 }
 
 /** Meta links **/
