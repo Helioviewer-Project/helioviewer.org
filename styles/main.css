@@ -57,9 +57,11 @@ input, select {background-color:#F4F4F4;}
 
 #footer {
     width:100%;
-    clear:both;
-    height:40px;
-    text-align:center;
+    position: absolute;
+    bottom: 0px;
+    clear: both;
+    height: 18px;
+    text-align: center;
 }
 /*needed to make room for footer*/
 /*
@@ -67,16 +69,7 @@ input, select {background-color:#F4F4F4;}
 * > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
 
 /* Loading Indicator */
-#loading {position: absolute; right: 35px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
-
-/* Link button */
-#link-button {
-
-}
-
-#link-button-icon {
-
-}
+#loading {position: absolute; right: 3px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
 
 /* Observation controls */
 #observation-controls {
@@ -127,16 +120,6 @@ input, select {background-color:#F4F4F4;}
 }
 
 /* Message Console */
-#message-console {
-	display: inline;
-    width:100%;
-    position: absolute;
-    height: 17px;
-    text-align: center;
-    padding-top: 8px;
-    font-size:1em;
-}
-
 .message-console-link {
 	text-decoration: none;
 	font-weight: bold;
@@ -213,53 +196,75 @@ span.ui-icon-hover {
 	font-weight: bold;
 }
 
-/* Footer linkbar */
-#footer-links-container-outer {
+/* Shadowbox modifications */
+#sb-body, #sb-loading {
+	background: transparent url(/hv/images/blackGlass/transparentBG50.png);
+    border-color: #262424;
+    -moz-border-radius: 10px;
+}
+
+/* Social & Movie buttons */
+#social-buttons-container-outer {
     height:50px;
     width:100%;
     font-size:0.85em;
 }
 
-#footer-links-container-inner {
-    text-align:right;
-    font-size:100%;
-    height:30px;
-    margin-right: 10px;
-    margin-top: 3px;
+#social-buttons-container-inner {
+    text-align: right;
+    font-size: 100%;
+    height: 30px;
+    margin-right: 24px;
     position: relative;
 }
 
-#footer-links {
-    background: url(../images/blackGlass/transparentBG25.png);
+#social-buttons {
+    background: url(../images/blackGlass/transparentBG75.png);
     position: absolute;
     right: 25px;
-    top:-3px;
-    padding: 4px 8px;
-    border-bottom: 1px solid #262424;
-    border-left: 1px solid #262424;
-    border-right: 1px solid #262424;
+    bottom:4px;
+    padding: 1px 8px;
+    border-top: 1px solid #2A2A2A;
+    border-bottom: 1px solid #2A2A2A;
+    border-left: 1px solid #2A2A2A;
+    border-right: 1px solid #2A2A2A;
     font-size: 1.0em;
-    -moz-border-radius-bottomleft: 20px;
-    -moz-border-radius-bottomright: 20px;
+    height: 15px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-topright: 20px;
+}
+
+/** Meta links **/
+#footer-container-outer {
+    position: relative;    
+}
+
+#footer-container-inner {
+    background-image: url(../images/backgrounds/ui-bg_gloss-wave_20_111111_500x100_transparent_15.png);
+    width: 100%;
+    height: 18px;
+    bottom: 0;
+    background-position: 20px;
+    border-color: #262424;
+    border-width: 1px 0px 0px 0px;
+}
+
+#footer-links {
+    width: 25%;
+    min-width: 450px;
+    margin-left: auto;
+    margin-right: auto;        
 }
 
 #footer-links > a {
+    vertical-align: middle;
+    color: Gainsboro;
+    font-size: 11px;
     margin-right: 20px;
 }
 
-#social-buttons {
-    background: url(../images/blackGlass/transparentBG25.png);
-    position: absolute;
-    left: 25px;
-    top:-3px;
-    padding: 0px 8px;
-    border-bottom: 1px solid #262424;
-    border-left: 1px solid #262424;
-    border-right: 1px solid #262424;
-    font-size: 1.0em;
-    height: 18px;
-    -moz-border-radius-bottomleft: 5px;
-    -moz-border-radius-bottomright: 5px;
+#footer-links > a:hover {
+    color: #d18f61;
 }
 
 /* URL dialog */
@@ -283,23 +288,13 @@ span.ui-icon-hover {
     width: 50px;
 }
 
-/* Shadowbox modifications */
-#sb-body, #sb-loading {
-	background: transparent url(/hv/images/blackGlass/transparentBG50.png);
-    border-color: #262424;
-    -moz-border-radius: 10px;
+/* jGrowl */
+body > div.jGrowl.top-right {
+    top: 36px;
+    right: 56px;
 }
 
-/* updates and to-do list */
-.notes {
-	position:relative;
-	font-size:100%;
-    font-family: "Courier New", Courier, monospace;
-	padding:5px;
-    top:10px;
-    left: 10px;
-    width: 190px;
-    color: #DFE5CF;
-    height:425px;
-    border: 1px solid black;
+div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
+   background-color: Azure;  /* GhostWhite #D18F61; lightBlue;*/
+   color: #262424;
 }
