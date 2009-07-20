@@ -102,6 +102,7 @@
 		<script src="lib/helioviewer/Time.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
+		<script src="lib/helioviewer/MediaSettings.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ImageSelectTool.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
@@ -266,6 +267,11 @@
                                     <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
                                     <span style="line-height: 1.6em">JHelioviewer</span>
                                 </div> 
+								
+								<div id="settings-button" class="text-btn">
+									<span class='ui-icon ui-icon-gear' style="float: left;"></span>
+									<span style="line-height: 1.6em">Media Settings</span>
+								</div>
     
                             </div>
         				</div>
