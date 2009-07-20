@@ -20,3 +20,5 @@ settings/Config.Jaclyn.php
 settings/Config.php
 api/lib/phpvideotoolkit/config.php
 
+*config.jaclyn.*
+*Config.Jaclyn.*

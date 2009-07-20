@@ -55,7 +55,6 @@ abstract class CompositeImage {
 			mkdir($this->compositeImageDir);
 			chmod($this->compositeImageDir, 0777);
 		}
-		
 	}
 
 	/**
@@ -84,7 +83,6 @@ abstract class CompositeImage {
 				array_push($opacities["group"], $imageInfo[6]);
 		
 				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
-	
 				$filepath = $subFieldImage->getCacheFilepath();
 
 				if(!file_exists($filepath))

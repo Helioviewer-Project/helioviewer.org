@@ -15,6 +15,7 @@
 	$date = $startDate[0];
 	$date = str_replace("-", "/", $date);
 	$time = substr($startDate[1], 0, -1);
+	
 	// Default values
 	$numFrames 	= 40;
 	$quality 	= 8;
@@ -61,11 +62,12 @@
 						
 	if($params['mode'] === 'movie') {
 		$contents .=
-							'<!-- table: 
-									Number of Frames:  	[input]
-									Time step: 			[input]
-							-->
-							<table class="select-options-table">
+							/*
+							 * 	table: 
+							 *		Number of Frames:  	[input]
+							 *		Time step: 			[input]
+							 */
+							'<table class="select-options-table">
 								<tr>
 									<td style="font-size: 10pt;">Number of frames: </td>
 									<td><input type=text id="numFrames" name="numFrames" value=' . $numFrames . ' style="width: 2.5em;"/></td>
@@ -110,13 +112,14 @@
 	}
 	
 	$contents .= 
-						'<!-- table:  Used here because it lines up the checkbox and name horizontally. Otherwise they do not quite match up.
-								Layers Included:
-									[check] <layername>
-									[check] <layername>
-									etc...
-						-->
-						<table>
+						/*
+						 * table:  Used here because it lines up the checkbox and name horizontally. Otherwise they do not quite match up.
+						 *		Layers Included:
+						 *			[check] <layername>
+						 *			[check] <layername>
+						 *			etc...
+						 */
+						'<table>
 							<tr>
 								<td colspan=2>Layers Included: </td>
 							</tr>
@@ -131,18 +134,18 @@
 						</table>
 					</div>
 					
-					<div id="advanced-settings" style="width: 400px;">
-						<!-- table: 
-								Start Time				End Time
-								Date:	[input]			Date:	 [input]
-								Time:	[input]			Time:	 [input]
-								<empty row>
-								<empty row>
-								Dimensions				Other
-								Width:	[input]			Quality: [input]
-								Height:	[input]			Format:  [input]
-						-->
-						<table class="select-options-table" style="width: 80%;">';
+					<div id="advanced-settings" style="width: 400px;">';
+						/*
+						 * table: 
+						 *		Start Time				End Time
+						 *		Date:	[input]			Date:	 [input]
+						 *		Time:	[input]			Time:	 [input]
+						 *		<empty row>
+						 *		Dimensions				Other
+						 *		Width:	[input]			Quality: [input]
+						 *		Height:	[input]			Format:  [input]
+						 */
+	$contents .=			'<table class="select-options-table" style="width: 80%;">';
 
 	if($params['mode'] === 'movie') {
 		$contents .= 
