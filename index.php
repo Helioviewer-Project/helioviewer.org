@@ -261,18 +261,18 @@
     								<span class='ui-icon ui-icon-scissors' style="float: left;"></span>
     								<span style="line-height: 1.6em">Select Region</span>
     							</div>
-    
-                                <!-- JHelioviewer -->
-                                <div id="jhelioviewer-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">JHelioviewer</span>
-                                </div> 
-								
+
+								<!-- Media settings button -->								
 								<div id="settings-button" class="text-btn">
 									<span class='ui-icon ui-icon-gear' style="float: left;"></span>
 									<span style="line-height: 1.6em">Media Settings</span>
 								</div>
-    
+								    
+                                <!-- JHelioviewer -->
+                                <div id="jhelioviewer-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">JHelioviewer</span>
+                                </div>     
                             </div>
         				</div>
     			    </div>

@@ -534,7 +534,7 @@ class API {
 			
 			else {
 				header('Content-type: application/json');
-				echo json_encode($screenshot->getComposite());
+				echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $screenshot->getComposite()));
 			}
 		}
 		catch(Exception $e) {
