@@ -12,7 +12,7 @@ div.event-marker {
 	left: -8px;
 	top: -8px;
 	border: none;
-	z-index: 10;
+	z-index: 20;
 }
 
 .Active_Region {background: url(../images/events/activeregion.png);}
