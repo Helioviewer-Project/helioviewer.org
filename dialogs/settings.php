@@ -6,18 +6,23 @@
 
 	$mode 		= $params['mode'];
 	$startDate 	= explode('T', $params['startDate']);
-	$hqformat	= $params['hqformat'];
+	$timeStep	= $params['timeStep'];
+	
 	$width		= $params['width'];
 	$height		= $params['height'];
-	$layers		= $params['layers'];
-	$timeStep	= $params['timeStep'];
+	$numFrames	= $params['numFrames'];
+	
+	$layers		= explode('/', $params['layers']);
+	$hqformat	= $params['hqFormat'];
+	$quality	= $params['quality'];
 
+	$showImgIfGap 	= $params['showImgIfGap'];
+	$emailUser		= $params['emailUser'];
+	$emailAddress 	= $params['emailAddress'];	
+	
 	$date = $startDate[0];
 	$date = str_replace("-", "/", $date);
 	$time = substr($startDate[1], 0, -1);
-	// Default values
-	$numFrames 	= 40;
-	$quality 	= 8;
 	
 //	echo "$startDate, $hqformat, $width, $height, $layers, $timeStep, $date, $time <br />";
 
@@ -61,11 +66,12 @@
 						
 	if($params['mode'] === 'movie') {
 		$contents .=
-							'<!-- table: 
-									Number of Frames:  	[input]
-									Time step: 			[input]
-							-->
-							<table class="select-options-table">
+							/*
+							 * 	table: 
+							 *		Number of Frames:  	[input]
+							 *		Time step: 			[input]
+							 */
+							'<table class="select-options-table">
 								<tr>
 									<td style="font-size: 10pt;">Number of frames: </td>
 									<td><input type=text id="numFrames" name="numFrames" value=' . $numFrames . ' style="width: 2.5em;"/></td>
@@ -110,39 +116,53 @@
 	}
 	
 	$contents .= 
-						'<!-- table:  Used here because it lines up the checkbox and name horizontally. Otherwise they do not quite match up.
-								Layers Included:
-									[check] <layername>
-									[check] <layername>
-									etc...
-						-->
-						<table>
+						/*
+						 * table:  Used here because it lines up the checkbox and name horizontally. Otherwise they do not quite match up.
+						 *		Layers Included:
+						 *			[check] <layername>
+						 *			[check] <layername>
+						 *			etc...
+						 */
+						'<table>
 							<tr>
 								<td colspan=2>Layers Included: </td>
-							</tr>
-							<tr>
-								<td class="layers-checkbox"><input type=checkbox id="1" name="layers" checked=true /></td>
-								<td class="layers-name">SOHO EIT EIT 304</td>
-							</tr>
-							<tr>
-								<td class="layers-checkbox"><input type=checkbox id="1" name="layers" checked=true /></td>
-								<td class="layers-name">SOHO LASCO C2 WL</td>
-							</tr>
-						</table>
+							</tr>';
+
+	foreach($layers as $layer) {
+		// Use $layer as the value of the checkbox, but just use the actual layer name for the label the user sees.
+		// Break the string into pieces (0 = name,opacityGrp,opacity, 1 = xRange,yRange)
+		$info = explode('x', $layer);
+	
+		// Get the piece with the name in it, break that into pieces around the commas
+		$rawName = explode(',', $info[0]);
+		$obs 	 = $rawName[0];
+		$inst 	 = $rawName[1];
+		$det 	 = $rawName[2];
+		$meas 	 = $rawName[3];
+		$name 	 = "$obs $inst $det $meas";
+				
+		$contents .=
+							'<tr>
+								<td class="layers-checkbox"><input type=checkbox name="layers" checked=true value="' . $layer . '"/></td>
+								<td class="layers-name">' . $name . '</td>
+							</tr>';
+	}
+	
+	$contents .=		'</table>
 					</div>
 					
-					<div id="advanced-settings" style="width: 400px;">
-						<!-- table: 
-								Start Time				End Time
-								Date:	[input]			Date:	 [input]
-								Time:	[input]			Time:	 [input]
-								<empty row>
-								<empty row>
-								Dimensions				Other
-								Width:	[input]			Quality: [input]
-								Height:	[input]			Format:  [input]
-						-->
-						<table class="select-options-table" style="width: 80%;">';
+					<div id="advanced-settings" style="width: 400px;">';
+						/*
+						 * table: 
+						 *		Start Time				End Time
+						 *		Date:	[input]			Date:	 [input]
+						 *		Time:	[input]			Time:	 [input]
+						 *		<empty row>
+						 *		Dimensions				Other
+						 *		Width:	[input]			Quality: [input]
+						 *		Height:	[input]			Format:  [input]
+						 */
+	$contents .=			'<table class="select-options-table" style="width: 80%;">';
 
 	if($params['mode'] === 'movie') {
 		$contents .= 
@@ -153,16 +173,16 @@
 								
 								<tr>
 									<td class="time-input-field" style="width: 15%;">Date:</td>
-									<td class="time-input-field"><input type=text id="startDate" name="StartDate" value="01/15/2003" /></td>
+									<td class="time-input-field"><input type=text id="startDate" name="StartDate" value="' . str_replace("/", "-", $date) . '" /></td>
 									<td class="time-input-field" style="width: 15%;">Date:</td>
-									<td class="time-input-field"><input type=text id="endDate" 	name="endDate"   value="01/15/2003" /></td>
+									<td class="time-input-field"><input type=text id="endDate" 	name="endDate"   value="' . $date . '" /></td>
 								</tr>
 								
 								<tr>
 									<td class="time-input-field">Time:</td>
-									<td class="time-input-field"><input type=text id="startTime" name="startTime" value="00:00:00" /></td>
+									<td class="time-input-field"><input type=text id="startTime" name="startTime" value="' . $time . '" /></td>
 									<td class="time-input-field">Time:</td>
-									<td class="time-input-field"><input type=text id="endTime"   name="endTime"   value="00:00:00" /></td>
+									<td class="time-input-field"><input type=text id="endTime"   name="endTime"   value="' . $time . '" /></td>
 								</tr>
 								
 								<tr>
@@ -180,7 +200,7 @@
 								<td>Width:</td>
 								<td><input type=text id="width" name="width" style="width: 3em;" value=' . $width. ' />&nbsp pixels</td>
 								<td>Quality:</td>
-								<td><input type=text id="quality" name="quality" style="width: 2em" value=8 /></td>
+								<td><input type=text id="quality" name="quality" style="width: 2em" value=' . $quality . ' /></td>
 							</tr>
 							
 							<tr>
@@ -191,22 +211,47 @@
 									<select id="hqFormat" name="hqFormat" style="padding: 0;">
 										<option id=1 value="mov" >mov</option>
 										<option id=2 value="asf" >asf</option>
-										<option id=3 value="mp4">mp4</option>
+										<option id=3 value="mp4" >mp4</option>
 									</select>
 								</td>						
 							</tr>
 						</table><br /><br />
 
-						Filename: &nbsp<input type=text id="filename" name="filename" value=""/><br /><br />
+						Filename: &nbsp<input type=text disabled="disabled" id="filename" name="filename" value=""/><br /><br />
 
-						<input type=checkbox  id="dataGaps"  name="dataGaps" checked=true value="true"/>&nbsp Show layers even if there are data gaps.<br />
-						<input type=checkbox  id="emailLink" name="emailLink" value="true" />&nbsp Email me a link to the video.<br />
-						<div id="email-input-div">&nbsp</div>
+						<input type=checkbox  id="dataGaps"  name="dataGaps"';
+	if($showImgIfGap == "true") {
+		$contents .= ' checked=true';
+	} 
+	$contents .=		
+						'/>&nbsp Show layers even if there are data gaps.<br />
+						<input type=checkbox  id="emailLink" name="emailLink"';
+	if($emailUser == "true") {
+		$contents .= ' checked=true';
+		$display = true;
+	}
+	else {
+		$display = false;
+	}		
+	$contents .=			
+						'/>&nbsp Email me a link to the video.<br />
+						<div id="email-input-div">
+							<span id="email-field" style="padding-left: 2em;';
+	if($display == false) {						
+		$contents .= 'display: none;';
+	}
+	$contents .=
+							 '">
+								Email address: &nbsp
+								<input type=text id="emailAddress" name="emailAddress" value="' . $emailAddress . '" /> 
+							</span>
+						</div>
 					</div>
 				</div>
-		
+
+				<input type=hidden name="mode" value="' . $mode . '" />
 				<button id="submit-options-button" class="ui-state-default ui-corner-all">Submit</button>
 	
 		</div>';
-	echo $contents;
+	print $contents;
 ?>

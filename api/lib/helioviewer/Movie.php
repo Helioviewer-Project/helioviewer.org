@@ -233,7 +233,7 @@ class Movie
 
 		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
-			unlink($image);
+//			unlink($image);
 		}	
 
 //		$this->showMovie($tmpurl, 512, 512);

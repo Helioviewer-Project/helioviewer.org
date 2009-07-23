@@ -507,8 +507,8 @@ class API {
 
 		$layerStrings = explode("/", $this->params['layers']);
 		
-		$hcCoords = explode(",", $this->params['hcOffset']);
-		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
+		$hcCoords  = explode(",", $this->params['hcOffset']);
+		$hcOffset  = array	("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imgCoords = explode(",", $this->params['imageSize']);
 		$imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
 		
@@ -520,11 +520,10 @@ class API {
 			if(sizeOf($layerStrings) < 1) 
 				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
 
-			// Give the image a unix timestamp as the id.
-			$id = time();
 			$layers = $this->_formatLayerStrings($layerStrings);
-			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $layers, $id, $hcOffset, $imageSize);	
-
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $hcOffset, $imageSize);	
+			$screenshot->buildImages($layers);
+			
 			if(!file_exists($screenshot->getComposite()))
 				throw new Exception("The requested screenshot is either unavailable or does not exist.");
 
@@ -535,7 +534,7 @@ class API {
 			
 			else {
 				header('Content-type: application/json');
-				echo json_encode($screenshot->getComposite());
+				echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $screenshot->getComposite()));
 			}
 		}
 		catch(Exception $e) {
