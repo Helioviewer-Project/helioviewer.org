@@ -431,7 +431,6 @@ class API {
 			'frameRate', 
 			'timeStep',
 			'layers',
-			'hcOffset',
 			'imageSize'
 		);
 
@@ -446,8 +445,8 @@ class API {
        
 		$layerStrings = explode("/", $this->params['layers']);
 
-		$hcCoords = explode(",", $this->params['hcOffset']);
-		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
+//		$hcCoords = explode(",", $this->params['hcOffset']);
+//		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imageCoords = explode(",", $this->params['imageSize']);
 		$imageSize = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
 				
@@ -472,7 +471,7 @@ class API {
 
 			$layers = $this->_formatLayerStrings($layerStrings);
 
-            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset, $imageSize);
+            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize);
             $movie->buildMovie();
 
         } catch(Exception $e) {
@@ -496,7 +495,6 @@ class API {
 			'obsDate', 
 			'zoomLevel', 
 			'layers',
-			'hcOffset',
 			'imageSize'
 		);
 
@@ -544,7 +542,28 @@ class API {
 		
 		return 1;
 	}
-	
+
+	private function _getJP2Dimensions() {
+        require_once('ImgIndex.php');
+        $imgIndex = new ImgIndex(new DbConnection());
+    
+		$obs = $this->params['observatory'];
+		$inst = $this->params['instrument'];
+		$det = $this->params['detector'];
+		$meas = $this->params['measurement'];
+		
+		$dimensions = $imgIndex->getJP2Dimensions($obs, $inst, $det, $meas);
+		
+		if($this->params == $_POST) {
+			echo json_encode($dimensions);
+		}
+		else {
+			print_r($dimensions);
+		}
+		
+		return 1;
+	}
+		
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
@@ -733,8 +752,8 @@ class API {
 		foreach($layers as $layer) {
 			$layerInfo = explode("x", $layer);	
 
-			// $ranges is now: "xStart,xSize,yStart,ySize"			
-			$ranges = $layerInfo[1];
+			// $meta is now: "xStart,xSize,yStart,ySize'o'hcOffsetx,hcOffsety". the o in the middle stands for offset.			
+			$meta = $layerInfo[1];
 
 			// Extract relevant information from $layerInfo[0]. Get rid of the "visibility" boolean in the middle of the string. Stick opacity on the end.
 			$rawName = explode(",", $layerInfo[0]);
@@ -742,7 +761,7 @@ class API {
 			array_splice($rawName, 4);
 
 			$name = implode("_", $rawName);
-			$image = $name . "," . $ranges . "," . $opacity;
+			$image = $name . "," . $meta . "," . $opacity;
 			array_push($formatted, $image);
 		}
 		
@@ -823,6 +842,8 @@ class API {
             case "sendEmail":
                 break;
 			case "takeScreenshot":
+				break;
+			case "getJP2Dimensions":
 				break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        

@@ -577,56 +577,38 @@ abstract class JP2Image {
         imagedestroy($ctable);
     }
 	
-	/* Adjusts the heliocentric offset to be in terms of pixels on the image, not pixels in the viewport.
-	 * One pixel on the viewport is not always one pixel on the image, so this method calculates the adjusted
-	 * offset: 
-	 * padding = (dist from viewport corner to heliocenter) - (dist from top left image corner to center).
-	 * The latter distance is found using the image's relative size.
+	/** 
+	 * Turns the hcOffsets into strings readable by imagemagick (adding a "+" in front of 
+	 * positive numbers)
 	 */
 	private function adjustHCOffset($extracted, $relWidth, $relHeight) {
-		$hcxOffset = $this->hcOffset["x"];
+/*		$hcxOffset = $this->hcOffset["x"];
 		$hcyOffset = $this->hcOffset["y"];
 
 		// Find the relative xstart and ystart			
 		$xStart = $this->xRange["start"] * $relWidth  / $this->jp2Width;
 		$yStart = $this->yRange["start"] * $relHeight / $this->jp2Height;
 
-		// Calculate the relative distance between the top left corner of extracted image and the center of the jp2 image			
-		if($xStart < $relWidth/2)
-			$distX = $relWidth/2  - $xStart;
-		else
-			$distX = $relWidth/2  + $xStart;
-			
-		if($yStart < $relHeight/2)
-			$distY = $relHeight/2 - $yStart;
-		else
-			$distY = $relHeight/2 + $yStart;
+		// Calculate the relative distance between the top left corner of extracted image and the center of the jp2 image, by converting
+		// xStart and yStart into a heliocentric coordinate (start - center)
+		$distX = $xStart - $relWidth/2;
+		$distY = $yStart - $relWidth/2;
 
-		if($hcxOffset < 0) {
-			$xOffset = $hcxOffset + $distX; 
-		}
-		
-		else {
-			$xOffset = $hcxOffset - $distX; 
-		}
-		
-		if($hcyOffset < 0) {
-			$yOffset = $hcyOffset + $distY;
-		}
-		
-		else {
-			$yOffset = $hcyOffset - $distY; 
-		}
-
-		if($extracted['width'] < $this->imageRelWidth)
+		// Adjust the offset to only include what the extracted image doesn't cover.
+		$xOffset = $hcxOffset - $distX;
+		$yOffset = $hcyOffset - $distY;
+	*/	
+		$xOffset = $this->hcOffset["x"];
+		$yOffset = $this->hcOffset["y"];
+//		if($extracted['width'] < $this->imageRelWidth)
 			$this->hcOffset["x"] = ($xOffset >= 0? "+" : "") . $xOffset;
-		else
-			$this->hcOffset["x"] = "+0";
+//		else
+//			$this->hcOffset["x"] = "+0";
 			
-		if($extracted['height'] < $this->imageRelHeight)
+//		if($extracted['height'] < $this->imageRelHeight)
 			$this->hcOffset["y"] = ($yOffset >= 0? "+" : "") . $yOffset;
-		else
-			$this->hcOffset["y"] = "+0";
+//		else
+//			$this->hcOffset["y"] = "+0";
 	}
 
 	/**

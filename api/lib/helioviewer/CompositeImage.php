@@ -26,7 +26,7 @@ abstract class CompositeImage {
 	 * 					and the y-offset (dist of center from the top margin)
 	 * @param string $tmpDir -- The temporary directory where images are cached
 	 */
-	protected function __construct($zoomLevel, $options, $tmpDir, $hcOffset) { 
+	protected function __construct($zoomLevel, $options, $tmpDir) { 
 		date_default_timezone_set('UTC');
 
 		$this->zoomLevel  	= $zoomLevel;
@@ -34,7 +34,7 @@ abstract class CompositeImage {
 		$this->tmpDir 	   	= $tmpDir;
 		
 		// This is needed for when the images are padded and put together.
-		$this->hcOffset = $hcOffset;
+		//$this->hcOffset = $hcOffset;
 
 		// Create the temp directory where images will be stored.
 		// $this->tmpDir is determined in either the FrameLayer or ScreenImage class.
@@ -71,7 +71,7 @@ abstract class CompositeImage {
 			}
 			
 			foreach($this->layerImages as $image) {
-				// Each $image is a string: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp";
+				// Each $image is a string: "uri,xStart,xSize,yStart,ySize,offsetX,offsetY,opacity,opacityGrp";
 				// Build each image separately, extract information from the string.
 				$imageInfo = explode(",", $image);
 				$uri = $imageInfo[0];
@@ -79,8 +79,9 @@ abstract class CompositeImage {
 				$xRange = array("start" => $imageInfo[1], "end" => $imageInfo[2]);
 				$yRange = array("start" => $imageInfo[3], "end" => $imageInfo[4]);
 				
-				array_push($opacities["value"], $imageInfo[5]);
-				array_push($opacities["group"], $imageInfo[6]);
+				$this->hcOffset = array("x" => $imageInfo[5], "y" => $imageInfo[6]);				
+				array_push($opacities["value"], $imageInfo[7]);
+				array_push($opacities["group"], $imageInfo[8]);
 		
 				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
 				$filepath = $subFieldImage->getCacheFilepath();

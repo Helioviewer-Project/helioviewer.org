@@ -14,17 +14,11 @@ log
 *Old.php
 *Old.js
 *Old.*
-settings/Config.Jaclyn.php
+
 [cC]onfig-*.php
-[cC]onfig.*.php
-settings/Config.php
 api/lib/phpvideotoolkit/config.php
 
-*config.jaclyn.*
 *Config.Jaclyn.*
 *config.jaclyn.*
-*Config.Jaclyn.*
-*Config.Example.*
-*Config.Example.*
-*Config.Example.*
-*config.example.*
+*Config.php*
+*config.php*

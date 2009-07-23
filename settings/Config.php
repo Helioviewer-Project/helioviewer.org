@@ -1,3 +1,3 @@
 <?php
-	require_once('Config.Example.php');
+	require_once('Config.Jaclyn.php');
 ?>
