@@ -3,7 +3,8 @@
 #helioviewer-viewport-container-outer {
   height: 600px;
   border:1px solid black;
-  -moz-border-radius:25px;
+  -moz-border-radius: 25px;
+  -webkit-border-radius: 25px;
 }
 
 #helioviewer-viewport {
@@ -41,9 +42,10 @@
 
 #fullscreen-btn {
     position: absolute;
-    background: transparent url(../images/blackGlass/transparentBG50.png) repeat scroll 0 0;
-    border-bottom:1px solid black;
-    border-left: 1px solid black;
+    background-color: #2A2A2A;
+    border-bottom: 1px solid #262424;
+    border-left  : 1px solid #2A2A2A;
+    padding-top: 1px;
     top:0px;
     right: 0px;
     cursor: pointer;

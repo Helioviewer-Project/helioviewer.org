@@ -70,15 +70,7 @@
 		<script type="text/javascript" src="lib/shadowbox/languages/shadowbox-en.js"></script>
         <script type="text/javascript">
             Shadowbox.init({
-                overlayOpacity: 0.5,
-                overlayColor: "#000",
-                onFinish: function () {
-                    //TODO: Possible to setup onFinish handler on a per-dialog basis?
-                    jQuery("#helioviewer-url-input-box").select();
-                    jQuery(".email-input-field").one("click", function(e) {
-                        this.value = "";
-                    });
-                }
+                overlayOpacity: 0.5
             });
         </script>
         
@@ -185,7 +177,7 @@
 			<!-- Left Column -->
 			<div id="left-col">
 				<div id="left-col-header">
-					<img src="images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;"></img>
+					<img src="images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
 				</div>
 				<br><br>
 				<div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div> 
@@ -227,10 +219,31 @@
 			<!-- Middle Column -->
 			<div id="middle-col">
 				<div id="middle-col-header">
-            		<div id="social-buttons-container-outer">
-        
-        				<!--Social buttons -->
-        				<div id="social-buttons-container-inner">
+				</div>
+				<!-- End middle-col-header -->
+
+				<!-- Viewport -->
+				<div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
+					<div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
+						<div id="helioviewer-viewport"></div>
+
+							<!-- UI COMPONENTS -->
+
+							<!--  Zoom-Level Slider -->
+							<div id="zoomControl">
+								<div id="zoomControlZoomIn" class="sliderPlus" title=" - Zoom in.">+</div>
+								<div id="zoomControlTrack" class="sliderTrack">
+									<div id="zoomControlHandle" class="sliderHandle" title=" - Drag handle to zoom in and out."></div>
+								</div>
+								<div id="zoomControlZoomOut" class="sliderMinus" title=" - Zoom out.">-</div>
+							</div>
+                            
+                            <!-- Center button -->
+                            <div id="center-button">
+                                <span>center</span>
+                            </div>
+                            
+                			<!--Social buttons -->
                             <div id="social-buttons"> 
                                 <!-- Link button -->
                                 <div id="link-button" class="text-btn">
@@ -272,33 +285,8 @@
                                 <div id="jhelioviewer-button" class="text-btn">
                                     <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
                                     <span style="line-height: 1.6em">JHelioviewer</span>
-                                </div>     
-                            </div>
-        				</div>
-    			    </div>
-				</div>
-				<!-- End middle-col-header -->
-
-				<!-- Viewport -->
-				<div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
-					<div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
-						<div id="helioviewer-viewport"></div>
-
-							<!-- UI COMPONENTS -->
-
-							<!--  Zoom-Level Slider -->
-							<div id="zoomControl">
-								<div id="zoomControlZoomIn" class="sliderPlus" title=" - Zoom in.">+</div>
-								<div id="zoomControlTrack" class="sliderTrack">
-									<div id="zoomControlHandle" class="sliderHandle" title=" - Drag handle to zoom in and out."></div>
-								</div>
-								<div id="zoomControlZoomOut" class="sliderMinus" title=" - Zoom out.">-</div>
-							</div>
-                            
-                            <!-- Center button -->
-                            <div id="center-button">
-                                <span>center</span>
-                            </div>
+                                </div> 
+            			    </div>
                             
                             <!-- Fullscreen toggle -->
                             <div id='fullscreen-btn' title=" - Toggle fullscreen display.">

@@ -177,7 +177,6 @@ div.text-btn {
     float: left;
     color: white;
     margin: 0 5px;
-    font-weight: 650;
 }
 
 div.text-btn:hover {
@@ -201,37 +200,24 @@ span.ui-icon-hover {
 	background: transparent url(/hv/images/blackGlass/transparentBG50.png);
     border-color: #262424;
     -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
 }
 
 /* Social & Movie buttons */
-#social-buttons-container-outer {
-    height:50px;
-    width:100%;
-    font-size:0.85em;
-}
-
-#social-buttons-container-inner {
-    text-align: right;
-    font-size: 100%;
-    height: 30px;
-    margin-right: 24px;
-    position: relative;
-}
-
 #social-buttons {
-    background: url(../images/blackGlass/transparentBG75.png);
+    background-color: #2A2A2A;
     position: absolute;
-    right: 25px;
-    bottom:4px;
-    padding: 1px 8px;
-    border-top: 1px solid #2A2A2A;
-    border-bottom: 1px solid #2A2A2A;
-    border-left: 1px solid #2A2A2A;
-    border-right: 1px solid #2A2A2A;
-    font-size: 1.0em;
+    right: 17px;
+    top:0px;
+    padding: 1px 0px 1px 8px;
+    border-top: 0px;
+    border-bottom: 1px solid #262424;
+    border-left: 1px solid #262424;
+    border-right: 0px;
+    font-size: 11px;
     height: 15px;
-    -moz-border-radius-topleft: 20px;
-    -moz-border-radius-topright: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    -webkit-border-bottom-left-radius: 20px;
 }
 
 /** Meta links **/
@@ -258,7 +244,7 @@ span.ui-icon-hover {
 
 #footer-links > a {
     vertical-align: middle;
-    color: Gainsboro;
+    color: #DCDCDC;
     font-size: 11px;
     margin-right: 20px;
 }
