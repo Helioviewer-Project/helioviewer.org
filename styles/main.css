@@ -276,8 +276,8 @@ span.ui-icon-hover {
 
 /* jGrowl */
 body > div.jGrowl.top-right {
-    top: 36px;
-    right: 56px;
+    top: 56px;
+    right: 42px;
 }
 
 div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
