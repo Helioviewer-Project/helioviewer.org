@@ -1,5 +1,10 @@
 <?php 
     require_once('settings/Config.php');
+	error_reporting(E_ALL | E_STRICT);
+	$errorLog = CONFIG::ERROR_LOG;
+	if(!file_exists($errorLog)) {
+		touch($errorLog);
+	}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>

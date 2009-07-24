@@ -25,7 +25,7 @@ class Screenshot extends CompositeImage {
 	public function __construct($timestamp, $zoomLevel, $options, $imageSize) {
 		$this->timestamp = $timestamp;
 		$this->imageSize = $imageSize;
-		
+	
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 
 		parent::__construct($zoomLevel, $options, $tmpDir);

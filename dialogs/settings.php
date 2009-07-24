@@ -173,7 +173,7 @@
 								
 								<tr>
 									<td class="time-input-field" style="width: 15%;">Date:</td>
-									<td class="time-input-field"><input type=text id="startDate" name="StartDate" value="' . str_replace("/", "-", $date) . '" /></td>
+									<td class="time-input-field"><input type=text id="startDate" name="StartDate" value="' . $date . '" /></td>
 									<td class="time-input-field" style="width: 15%;">Date:</td>
 									<td class="time-input-field"><input type=text id="endDate" 	name="endDate"   value="' . $date . '" /></td>
 								</tr>
