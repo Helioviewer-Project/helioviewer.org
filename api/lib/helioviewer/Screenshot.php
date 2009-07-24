@@ -22,13 +22,13 @@ class Screenshot extends CompositeImage {
 	 * @param int $id -- the unix timestamp of the time the Screenshot was requested
 	 * @param array $imageSize -- an array holding the with and height of the viewport image
 	 */
-	public function __construct($timestamp, $zoomLevel, $options, $hcOffset, $imageSize) {
+	public function __construct($timestamp, $zoomLevel, $options, $imageSize) {
 		$this->timestamp = $timestamp;
 		$this->imageSize = $imageSize;
 		
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 
-		parent::__construct($zoomLevel, $options, $tmpDir, $hcOffset, false);
+		parent::__construct($zoomLevel, $options, $tmpDir);
 		
 		$this->id = time();
 		// Directory to hold the final screenshot image.
@@ -50,7 +50,7 @@ class Screenshot extends CompositeImage {
 			
 			// Chop the layer name off the array but keep the rest of the information
 			$useful = array_slice($layerInfo, 1);
-			
+		
 			$image = $closestImage['uri'] . "," . implode(",", $useful) . "," . $closestImage['opacityGrp'];
 			array_push($this->layerImages, $image);
 		}
