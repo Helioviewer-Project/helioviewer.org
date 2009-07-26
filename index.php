@@ -1,5 +1,10 @@
 <?php 
     require_once('settings/Config.php');
+	error_reporting(E_ALL | E_STRICT);
+	$errorLog = CONFIG::ERROR_LOG;
+	if(!file_exists($errorLog)) {
+		touch($errorLog);
+	}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -122,18 +127,23 @@
 		<script type="text/javascript">
 			Event.observe(window, 'load', function () {
 				<?php
+					// View
+					$view = array();
+
 					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOH,EIT,EIT,171,1,70],[SOH,LAS,0C2,0WL,0,100]
-					if ($_GET['imageLayers']) {
+					if (isset($_GET['imageLayers'])) {
                         $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                         $imageLayers = split("\],\[", $imageLayersString);
+                        $view['imageLayers'] = $imageLayers;
                     }
 				
-					// View
-					$view = array(
-                        'date'        => $_GET['date'],
-						'imageScale'  => $_GET['imageScale'],
-						'imageLayers' => $imageLayers
-					);
+                    if (isset($_GET['date']))
+                        $view['date'] = $_GET['date'];
+                        
+                    if (isset($_GET['imageScale']))
+                        $view['imageScale'] = $_GET['imageScale'];
+                        
+                    // Convert to JSON
                     printf("var view = %s;\n", json_encode($view));
                
                     echo "\t\t\t\t";

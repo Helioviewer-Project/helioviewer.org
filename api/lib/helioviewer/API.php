@@ -449,7 +449,7 @@ class API {
 //		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imageCoords = explode(",", $this->params['imageSize']);
 		$imageSize = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
-				
+			
         $hqFormat  = $this->params['format'];
 		
         // Optional parameters
@@ -519,7 +519,7 @@ class API {
 				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
 
 			$layers = $this->_formatLayerStrings($layerStrings);
-			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $hcOffset, $imageSize);	
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize);	
 			$screenshot->buildImages($layers);
 			
 			if(!file_exists($screenshot->getComposite()))
@@ -555,7 +555,7 @@ class API {
 		$dimensions = $imgIndex->getJP2Dimensions($obs, $inst, $det, $meas);
 		
 		if($this->params == $_POST) {
-			echo json_encode($dimensions);
+			echo $dimensions['width'] . 'x' . $dimensions['height'];
 		}
 		else {
 			print_r($dimensions);
@@ -776,8 +776,8 @@ class API {
 	private function _checkForMissingParams($fields) {
 		try{
 			foreach($fields as $field) {
-				if(!isset($this->params[$field])) {
-					throw new Exception("Missing a value for $field.");
+				if(empty($this->params[$field])) {
+					throw new Exception("Invalid value for $field.");
 				}
 			}
 		}
