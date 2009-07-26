@@ -6,15 +6,19 @@
 	height:209px;
 	width:6px;
 	background: url(../images/blackGlass/glass_slider_trough_vertical_white.png) repeat-y;
+    border: none;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
 	text-align:center;
 	z-index:10000;
 	}
 
-.sliderHandle {
+#zoomControlSlider > .ui-slider-handle {
 	left:-8px;
 	width:21px;
 	height:12px;
 	background:url(../images/blackGlass/glass_slider_handle_white.png);
+    border: none;
 	cursor:pointer;
 	text-align:center;
 	font-weight:bold;
@@ -39,14 +43,14 @@
 .sliderPlus  {top:0px;}
 
 /* Opacity Slider */
-.opacity-slider-track{
+.opacity-slider-track {
     margin: 4px 0 9px 0;
     background: url(../images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
     border-left: 1px solid black;
     border-right: 1px solid black;
 	float: left;
 }
-.opacity-slider-handle{
+.opacity-slider-handle {
 	background: url(../lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_glass_20_555555_1x400.png) transparent scroll 0%;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -57,7 +61,7 @@
     top:-6px;	
 }
 
-#zoomControl {
+#zoomControls {
     position: absolute;
     left: 16px;
     top:39px;

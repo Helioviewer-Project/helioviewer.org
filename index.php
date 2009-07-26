@@ -80,7 +80,6 @@
         </script>
         
 		<!-- Helioviewer-Specific -->
-		<script src="lib/helioviewer/UIElement.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
@@ -88,7 +87,7 @@
 		<script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventMarker.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/ZoomControl.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/ZoomControls.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
@@ -239,14 +238,8 @@
 
 							<!-- UI COMPONENTS -->
 
-							<!--  Zoom-Level Slider -->
-							<div id="zoomControl">
-								<div id="zoomControlZoomIn" class="sliderPlus" title=" - Zoom in.">+</div>
-								<div id="zoomControlTrack" class="sliderTrack">
-									<div id="zoomControlHandle" class="sliderHandle" title=" - Drag handle to zoom in and out."></div>
-								</div>
-								<div id="zoomControlZoomOut" class="sliderMinus" title=" - Zoom out.">-</div>
-							</div>
+							<!--  Zoom Controls -->
+							<div id="zoomControls"></div>
                             
                             <!-- Center button -->
                             <div id="center-button">
