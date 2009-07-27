@@ -119,6 +119,14 @@ input, select {background-color:#F4F4F4;}
 	right: 2px;
 }
 
+/* Zoom controls */
+#zoomControls {
+    position: absolute;
+    left: 16px;
+    top:39px;
+    z-index:20;
+}
+
 /* Message Console */
 .message-console-link {
 	text-decoration: none;
