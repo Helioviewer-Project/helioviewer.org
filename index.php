@@ -80,7 +80,6 @@
         </script>
         
 		<!-- Helioviewer-Specific -->
-		<script src="lib/helioviewer/UIElement.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
@@ -88,7 +87,7 @@
 		<script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventMarker.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/ZoomControl.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/ZoomControls.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
@@ -125,20 +124,25 @@
 		<![endif]-->
 		
 		<script type="text/javascript">
-			Event.observe(window, 'load', function () {
+			jQuery(function () {
 				<?php
+					// View
+					$view = array();
+
 					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOH,EIT,EIT,171,1,70],[SOH,LAS,0C2,0WL,0,100]
-					if ($_GET['imageLayers']) {
+					if (isset($_GET['imageLayers'])) {
                         $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                         $imageLayers = split("\],\[", $imageLayersString);
+                        $view['imageLayers'] = $imageLayers;
                     }
 				
-					// View
-					$view = array(
-                        'date'        => $_GET['date'],
-						'imageScale'  => $_GET['imageScale'],
-						'imageLayers' => $imageLayers
-					);
+                    if (isset($_GET['date']))
+                        $view['date'] = $_GET['date'];
+                        
+                    if (isset($_GET['imageScale']))
+                        $view['imageScale'] = $_GET['imageScale'];
+                        
+                    // Convert to JSON
                     printf("var view = %s;\n", json_encode($view));
                
                     echo "\t\t\t\t";
@@ -234,14 +238,8 @@
 
 							<!-- UI COMPONENTS -->
 
-							<!--  Zoom-Level Slider -->
-							<div id="zoomControl">
-								<div id="zoomControlZoomIn" class="sliderPlus" title=" - Zoom in.">+</div>
-								<div id="zoomControlTrack" class="sliderTrack">
-									<div id="zoomControlHandle" class="sliderHandle" title=" - Drag handle to zoom in and out."></div>
-								</div>
-								<div id="zoomControlZoomOut" class="sliderMinus" title=" - Zoom out.">-</div>
-							</div>
+							<!--  Zoom Controls -->
+							<div id="zoomControls"></div>
                             
                             <!-- Center button -->
                             <div id="center-button">
