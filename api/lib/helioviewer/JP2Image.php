@@ -582,33 +582,11 @@ abstract class JP2Image {
 	 * positive numbers)
 	 */
 	private function adjustHCOffset($extracted, $relWidth, $relHeight) {
-/*		$hcxOffset = $this->hcOffset["x"];
-		$hcyOffset = $this->hcOffset["y"];
-
-		// Find the relative xstart and ystart			
-		$xStart = $this->xRange["start"] * $relWidth  / $this->jp2Width;
-		$yStart = $this->yRange["start"] * $relHeight / $this->jp2Height;
-
-		// Calculate the relative distance between the top left corner of extracted image and the center of the jp2 image, by converting
-		// xStart and yStart into a heliocentric coordinate (start - center)
-		$distX = $xStart - $relWidth/2;
-		$distY = $yStart - $relWidth/2;
-
-		// Adjust the offset to only include what the extracted image doesn't cover.
-		$xOffset = $hcxOffset - $distX;
-		$yOffset = $hcyOffset - $distY;
-	*/	
 		$xOffset = $this->hcOffset["x"];
 		$yOffset = $this->hcOffset["y"];
-//		if($extracted['width'] < $this->imageRelWidth)
-			$this->hcOffset["x"] = ($xOffset >= 0? "+" : "") . $xOffset;
-//		else
-//			$this->hcOffset["x"] = "+0";
-			
-//		if($extracted['height'] < $this->imageRelHeight)
-			$this->hcOffset["y"] = ($yOffset >= 0? "+" : "") . $yOffset;
-//		else
-//			$this->hcOffset["y"] = "+0";
+
+		$this->hcOffset["x"] = ($xOffset >= 0? "+" : "") . $xOffset;
+		$this->hcOffset["y"] = ($yOffset >= 0? "+" : "") . $yOffset;
 	}
 
 	/**
@@ -625,11 +603,11 @@ abstract class JP2Image {
 		$relHeight 	= $this->imageRelHeight;
 		$width 		= $this->imageWidth;
 		$height 	= $this->imageHeight;
-	
+
 		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
         if ( (($relWidth < $width) || ($relHeight < $height)) 
 			&& (($extracted['width'] < $relWidth) || ($extracted['height'] < $relHeight)) ) {
-			
+
             $pad = CONFIG::PATH_CMD . " && convert $png -background black ";
 			$pad .= $this->padImage($jp2RelWidth, $jp2RelHeight, $relWidth, $relHeight, $this->xRange["start"], $this->yRange["start"]) . " $png";
 			try {
@@ -656,7 +634,6 @@ abstract class JP2Image {
         // Pad if tile is smaller than it should be (Case 2)
         if ( (($tile['width'] < $width) || ($tile['height'] < $height)) 
 			&& (($relWidth >= $width) || ($relHeight >= $height)) ) {
-			
             $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
 		}
 		return $cmd;

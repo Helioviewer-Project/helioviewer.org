@@ -95,6 +95,7 @@ abstract class CompositeImage {
             print $error;
 			die();
 		}
+		
 		// Composite images on top of one another if there are multiple layers.
 		if (sizeOf($this->layerImages) > 1) {
 			$this->composite = $this->buildComposite($builtImages, $opacities);

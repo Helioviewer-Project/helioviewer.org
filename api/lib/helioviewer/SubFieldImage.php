@@ -5,8 +5,6 @@
 require('JP2Image.php');
 
 class SubFieldImage extends JP2Image {
-	protected $hcOffset;
-
 	/**
 	  * Constructor
 	  * @param object $filepath a string representing the location of the jp2 image, including subfolders.

@@ -59,7 +59,6 @@ class Movie
 		
         // timeStep is in seconds
         $this->timeStep  = $timeStep;
-		$this->hcOffset  = $hcOffset;
 		$this->imageSize = $imageSize;
 		$this->filename	 = $filename;
 
@@ -149,7 +148,7 @@ class Movie
 			}	
 
 			// All frames will be put in cache/movies/$now		
-			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->hcOffset, $this->imageSize);	
+			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->imageSize);	
 			$frameFile = $movieFrame->getComposite(); 
 
 			array_push($this->images, $frameFile);
