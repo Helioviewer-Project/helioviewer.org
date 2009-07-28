@@ -32,9 +32,6 @@ abstract class CompositeImage {
 		$this->zoomLevel  	= $zoomLevel;
 		$this->options    	= $options;
 		$this->tmpDir 	   	= $tmpDir;
-		
-		// This is needed for when the images are padded and put together.
-		//$this->hcOffset = $hcOffset;
 
 		// Create the temp directory where images will be stored.
 		// $this->tmpDir is determined in either the FrameLayer or ScreenImage class.

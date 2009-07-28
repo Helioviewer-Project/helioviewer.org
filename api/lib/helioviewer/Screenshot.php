@@ -22,7 +22,7 @@ class Screenshot extends CompositeImage {
 	 * @param int $id -- the unix timestamp of the time the Screenshot was requested
 	 * @param array $imageSize -- an array holding the with and height of the viewport image
 	 */
-	public function __construct($timestamp, $zoomLevel, $options, $imageSize) {
+	public function __construct($timestamp, $zoomLevel, $options, $imageSize, $filename) {
 		$this->timestamp = $timestamp;
 		$this->imageSize = $imageSize;
 	
@@ -30,7 +30,8 @@ class Screenshot extends CompositeImage {
 
 		parent::__construct($zoomLevel, $options, $tmpDir);
 		
-		$this->id = time();
+		$this->id = $filename;
+
 		// Directory to hold the final screenshot image.
 		$this->cacheFileDir = $this->tmpDir . $this->id . "/";
 		

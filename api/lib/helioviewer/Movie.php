@@ -41,7 +41,7 @@ class Movie
 	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
 	 */
-    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $hcOffset, $imageSize)
+    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename)
     {
         date_default_timezone_set('UTC');
 		// $layers is an array of layer information arrays, identified by their layer names.
@@ -61,6 +61,7 @@ class Movie
         $this->timeStep  = $timeStep;
 		$this->hcOffset  = $hcOffset;
 		$this->imageSize = $imageSize;
+		$this->filename	 = $filename;
 
         $this->db = new DbConnection();
     }
@@ -96,9 +97,9 @@ class Movie
     {
         // Make a temporary directory to store the movie in.
         $now = time();
-        $movieName = "Helioviewer-Movie-".$this->startTime;
-        $tmpdir = Config::TMP_ROOT_DIR."/$now/";
-        $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
+        $movieName = "Helioviewer-Movie-" . $this->filename;
+        $tmpdir = Config::TMP_ROOT_DIR . "/$now/";
+        $tmpurl = Config::TMP_ROOT_URL . "/$now/$movieName." . $this->filetype;
         mkdir($tmpdir);
         chmod($tmpdir, 0777);
 
@@ -106,7 +107,7 @@ class Movie
         $timeStamps = array ();
 
         // Calculates unix time stamps, successively increasing by the time step (default step is 86400 seconds, or 1 day)
-        for ($time = $this->startTime; $time < $this->startTime+($this->numFrames*$this->timeStep); $time += $this->timeStep)
+        for ($time = $this->startTime; $time < $this->startTime + ($this->numFrames * $this->timeStep); $time += $this->timeStep)
         {
             array_push($timeStamps, $time);
         }
@@ -233,7 +234,7 @@ class Movie
 
 		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
-//			unlink($image);
+			unlink($image);
 		}	
 
 //		$this->showMovie($tmpurl, 512, 512);

@@ -431,7 +431,8 @@ class API {
 			'frameRate', 
 			'timeStep',
 			'layers',
-			'imageSize'
+			'imageSize',
+			'filename'
 		);
 
 		$this->_checkForMissingParams($checkArray);
@@ -445,10 +446,9 @@ class API {
        
 		$layerStrings = explode("/", $this->params['layers']);
 
-//		$hcCoords = explode(",", $this->params['hcOffset']);
-//		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imageCoords = explode(",", $this->params['imageSize']);
-		$imageSize = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
+		$imageSize 	 = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
+		$filename  	 = $this->params['filename'];
 			
         $hqFormat  = $this->params['format'];
 		
@@ -471,7 +471,7 @@ class API {
 
 			$layers = $this->_formatLayerStrings($layerStrings);
 
-            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize);
+            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename);
             $movie->buildMovie();
 
         } catch(Exception $e) {
@@ -495,7 +495,8 @@ class API {
 			'obsDate', 
 			'zoomLevel', 
 			'layers',
-			'imageSize'
+			'imageSize',
+			'filename'
 		);
 
 		$this->_checkForMissingParams($checkArray);
@@ -510,6 +511,8 @@ class API {
 		$imgCoords = explode(",", $this->params['imageSize']);
 		$imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
 		
+		$filename  = $this->params['filename'];
+		
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
@@ -519,7 +522,7 @@ class API {
 				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
 
 			$layers = $this->_formatLayerStrings($layerStrings);
-			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize);	
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize, $filename);	
 			$screenshot->buildImages($layers);
 			
 			if(!file_exists($screenshot->getComposite()))
@@ -569,11 +572,11 @@ class API {
      */
     private function _playMovie () {
         $url = $this->params['url'];
-        $hqFormat  = $this->params['format'];
+ //       $hqFormat  = $this->params['format'];
         $width  = $this->params['width'];
         $height = $this->params['height'];
 
-        $highQualityVersion = substr($url, 0, -3) . $hqFormat;
+//        $highQualityVersion = substr($url, 0, -3) . $hqFormat;
         ?>
             <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <html>
@@ -606,6 +609,30 @@ class API {
         return 1;
     }
     
+	/**
+	 * 'Opens' the requested file in the current window as an attachment, which pops up the "Save file as" dialog.
+	 * @return 
+	 */
+	private function _downloadFile() {
+		$url = $this->params['url'];
+
+		if(strlen($url) > 1) {
+			header("Pragma: public"); // required
+			header("Expires: 0");
+			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+			header("Cache-Control: private",false); // required for certain browsers 
+			header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";" );
+			header("Content-Transfer-Encoding: binary");
+			header("Content-Length: " . filesize($url)); 
+	
+			echo file_get_contents($url);
+		}
+		else {
+			print("Error: Problem retrieving file.");
+		}
+		return 1;
+	}
+	
     /**
      * sendEmail
      * TODO: CAPTCHA, Server-side security
@@ -844,6 +871,8 @@ class API {
 			case "takeScreenshot":
 				break;
 			case "getJP2Dimensions":
+				break;
+			case "downloadFile":
 				break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        
