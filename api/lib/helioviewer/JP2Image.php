@@ -51,19 +51,14 @@ abstract class JP2Image {
 	protected $imageRelHeight;
         
     /**
-     * @param uri The image URI/filename
-     * @param int The zoomlevel to work with
-     * @param array An associative array reprenting the desired image width
-     *              in terms of tile x-coordinates.
-     * @param array An associative array reprenting the desired image height
-     *              in terms of tile y-coordinates.
-     * @param int The size of the tile to work with.
+     * @param object uri -- The image URI/filename
+     * @param int zoomLevel -- The zoomlevel to work with
+     * @param array xRange -- an associative array containing "xStart" (starting coordinate) and "xEnd" (width)
+     * @param array yRange -- An associative array containing "yStart" (staring coordinate) and "yEnd" (height)
+     * @param array imageSize -- an associative array containing "width" and "height" of the image
+     * @param boolean isTile -- whether the image is a tile or not
      * 
-     * @TODO: Move away from working in terms of tiles in the "JP2Image" class
-     * and instead use top-left corner, width, and height. The Tile class can
-     * make any neccessary conversions from tile x&y.
-     * 
-     * Also need to determine how functions that use "tilesize" can be handled.
+     * @TODO: change xEnd/yEnd to xSize/ySize
      */
     protected function __construct($uri, $zoomLevel, $xRange, $yRange, $imageSize, $isTile = true) {
         require_once('DbConnection.php');
@@ -171,7 +166,7 @@ abstract class JP2Image {
         } catch(Exception $e) {
             $error = "[buildImage][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
-            print $error;
+            print $e;
                         
             //Clean-up and exit
             $this->abort($filename);

@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - MovieBuilder</title>
+		<title>JsDoc Reference - ImageSelectTool</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
 	
 </ul>
 <hr />
@@ -202,7 +202,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class MovieBuilder
+				Class ImageSelectTool
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -212,13 +212,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_Library_WebServer_Documents_helioviewer_lib_helioviewer_MovieBuilder.js.html">MovieBuilder.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_Library_WebServer_Documents_helioviewer_lib_helioviewer_ImageSelectTool.js.html">ImageSelectTool.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class MovieBuilder.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ImageSelectTool.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -231,9 +231,10 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/MovieBuilder.html#constructor">MovieBuilder</a></b>(controller)
+								<b><a href="../symbols/ImageSelectTool.html#constructor">ImageSelectTool</a></b>(controller)
 							</div>
-							<div class="description">Loads default options, grabs mediaSettings, sets up event listener for the movie button</div>
+							<div class="description">Sets up an event handler for the select region button and finds the divs where
+				the fake transparent image will be inserted</div>
 						</td>
 					</tr>
 				</tbody>
@@ -247,7 +248,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class MovieBuilder.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ImageSelectTool.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -260,36 +261,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#buildMovie">buildMovie</a></b>(self, layers)
+								<div class="fixedFont"><b><a href="../symbols/ImageSelectTool.html#cleanup">cleanup</a></b>(imgContainer, transImg)
 								</div>
-								<div class="description">Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.</div>
+								<div class="description">Removes all divs created by imgAreaSelect.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#checkMovieLayers">checkMovieLayers</a></b>(self, visibleCoords)
+								<div class="fixedFont"><b><a href="../symbols/ImageSelectTool.html#createDialog">createDialog</a></b>(coords, self)
 								</div>
-								<div class="description">Checks to make sure there are 3 or less layers in the movie.</div>
+								<div class="description">Loads a dialog pop-up that asks the user what they would like to do with the region they selected.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#playMovie">playMovie</a></b>(helioviewer, imgWidth, imgHeight, transport)
+								<div class="fixedFont"><b><a href="../symbols/ImageSelectTool.html#selectArea">selectArea</a></b>(self)
 								</div>
-								<div class="description">Calculates what dimensions the image has, whether to scale it or not, and how big Shadowbox should be.</div>
+								<div class="description">Loads the imgAreaSelect plugin and uses it on the transparent image that covers the viewport.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#updateProgress">updateProgress</a></b>(timeout)
+								<div class="fixedFont"><b><a href="../symbols/ImageSelectTool.html#takeScreenshot">takeScreenshot</a></b>(visibleCoords, helioviewer)
 								</div>
-								<div class="description">Displays a percentage, starting at 0, and increments it by one every <timeout> seconds.</div>
+								<div class="description">Gathers all necessary information to generate a screenshot, and then displays the image when it is ready.</div>
 							</td>
 						</tr>
 					
@@ -310,11 +311,12 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>MovieBuilder</b>(controller)
+						<b>ImageSelectTool</b>(controller)
 				</div>
 				
 				<div class="description">
-					Loads default options, grabs mediaSettings, sets up event listener for the movie button
+					Sets up an event handler for the select region button and finds the divs where
+				the fake transparent image will be inserted
 					
 				</div>
 				
@@ -352,17 +354,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="buildMovie"> </a>
+					<a name="cleanup"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>buildMovie</b>(self, layers)
+					<b>cleanup</b>(imgContainer, transImg)
 					
 					</div>
 					<div class="description">
-						Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.
-				Upon completion, it displays a notification that lets the user click to view it in Shadowbox
-				or download the high quality version.
+						Removes all divs created by imgAreaSelect. Also closes Shadowbox.
 						
 						
 					</div>
@@ -374,16 +374,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>self</b>
+									<b>imgContainer</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>-- has all imgAreaSelect divs inside</dd>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>layers</b>
+									<b>transImg</b>
 									
 								</dt>
-								<dd>-- An array of layer strings in the format: "obs,inst,det,meas,visible,opacity'x'XStart,XEnd,YStart,YEnd,offsetX,offsetY"</dd>
+								<dd>-- temporary transparent image that imgAreaSelect is used on.</dd>
 							
 							</dl>
 						
@@ -396,16 +396,62 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="checkMovieLayers"> </a>
+					<a name="createDialog"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>checkMovieLayers</b>(self, visibleCoords)
+					<b>createDialog</b>(coords, self)
 					
 					</div>
 					<div class="description">
-						Checks to make sure there are 3 or less layers in the movie. If there are more, user is presented with
-				pop-up in Shadowbox asking them to pick 3 layers.
+						Loads a dialog pop-up that asks the user what they would like to do with the region they selected.
+				Current options are: "Take Screenshot", "Build Movie", and "Cancel".
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>coords</b>
+									
+								</dt>
+								<dd>-- an array of the heliocentric top, left, right, and bottom coordinates of the selected region, relative to the 
+					viewport coordinates.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>self</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="selectArea"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>selectArea</b>(self)
+					
+					</div>
+					<div class="description">
+						Loads the imgAreaSelect plugin and uses it on the transparent image that covers the viewport.
+				The function imgAreaSelect() returns two variables, "img", which is the original transparent image, and "selection", which
+				is an array describing the selected area. Available data for "selection" is x1, y1, x2, y2, width, and height.
+				See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation.
 						
 						
 					</div>
@@ -421,108 +467,48 @@ ul.inheritsList
 									
 								</dt>
 								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="takeScreenshot"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>takeScreenshot</b>(visibleCoords, helioviewer)
+					
+					</div>
+					<div class="description">
+						Gathers all necessary information to generate a screenshot, and then displays the image when it is ready.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>visibleCoords</b>
 									
 								</dt>
-								<dd>-- An array containing the top, left, bottom, right coordinates of:
-					 1) what is currently visible in the viewport, or
-					 2) a selected region within the viewport.
-					Note that these coordinates are heliocentric, with the center of the sun being (0,0).</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="playMovie"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>playMovie</b>(helioviewer, imgWidth, imgHeight, transport)
-					
-					</div>
-					<div class="description">
-						Calculates what dimensions the image has, whether to scale it or not, and how big Shadowbox should be. 
-				Opens Shadowbox to play the movie.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+								<dd>-- array containing the heliocentric top, left, bottom, and right coordinates of the visible region</dd>
 							
 								<dt>
-									<b>helioviewer</b>
+									<span class="light fixedFont">{Object}</span> <b>helioviewer</b>
 									
 								</dt>
 								<dd></dd>
-							
-								<dt>
-									<b>imgWidth</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>imgHeight</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>transport</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="updateProgress"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>updateProgress</b>(timeout)
-					
-					</div>
-					<div class="description">
-						Displays a percentage, starting at 0, and increments it by one every <timeout> seconds. It is here so users
-				can tell something is going on.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>timeout</b>
-									
-								</dt>
-								<dd>-- a value in miliseconds that was calculated in buildMovie as an estimate of how long the movie 
-								will take to build / 100.</dd>
 							
 							</dl>
 						
@@ -547,7 +533,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Wed Jul 29 2009 16:09:18 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Wed Jul 29 2009 16:11:11 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

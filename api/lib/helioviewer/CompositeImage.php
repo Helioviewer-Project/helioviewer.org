@@ -1,12 +1,15 @@
 <?php
 /*
  * Created on Sep 12, 2008
- * Last modified May 29, 2009
+ * Last modified July 29, 2009 -- Jaclyn Beck
  * by Keith Hughitt
  */
 
 require 'SubFieldImage.php';
 
+/**
+ * @fileoverview Abstract class used for screenshots and movies. Handles most of the functionality and building.
+ */
 abstract class CompositeImage {
 	protected $composite;
 	protected $zoomLevel;
@@ -20,10 +23,9 @@ abstract class CompositeImage {
 
 	/**
 	 * Constructor
+	 * @description Creates folder directories where necessary
 	 * @param object $zoomLevel a number between 8-15, default is 10.
 	 * @param object $options an array with ["edges"] => true/false, ["sharpen"] => true/false
-	 * @param object $hcOffset -- an array containing the x-offset (dist from the sun's center from the left margin) 
-	 * 					and the y-offset (dist of center from the top margin)
 	 * @param string $tmpDir -- The temporary directory where images are cached
 	 */
 	protected function __construct($zoomLevel, $options, $tmpDir) { 
@@ -34,7 +36,7 @@ abstract class CompositeImage {
 		$this->tmpDir 	   	= $tmpDir;
 
 		// Create the temp directory where images will be stored.
-		// $this->tmpDir is determined in either the FrameLayer or ScreenImage class.
+		// $this->tmpDir is determined in either the MovieFrame or Screenshot class.
 		if(!file_exists($this->tmpDir)) {
 			mkdir($this->tmpDir);
 			chmod($this->tmpDir, 0777);
@@ -62,14 +64,17 @@ abstract class CompositeImage {
 		// opacities array holds the "opacityValue" and "opacityGroup" for each image.
 		$builtImages = array();
 		$opacities 	 = array("value" => array(), "group" => array());
+		
+		// At this point, layerImages should be an array of image strings
 		try  {		
-			if(!isset($this->layerImages)) {
+			if(empty($this->layerImages)) {
 				throw new Exception("Error: No valid layers specified in layerImages[" . $this->layerImages . "]");
 			}
 			
+			// For each layer, extract info from the string and create a SubfieldImage out of it.
+			// Add the subfield image to an array and add its opacity levels to another array	
 			foreach($this->layerImages as $image) {
 				// Each $image is a string: "uri,xStart,xSize,yStart,ySize,offsetX,offsetY,opacity,opacityGrp";
-				// Build each image separately, extract information from the string.
 				$imageInfo = explode(",", $image);
 				$uri = $imageInfo[0];
 	
@@ -96,6 +101,7 @@ abstract class CompositeImage {
 			die();
 		}
 		
+		// All layers should be built, and $builtImages should contain all of the subfield images.
 		// Composite images on top of one another if there are multiple layers.
 		if (sizeOf($this->layerImages) > 1) {
 			$this->composite = $this->buildComposite($builtImages, $opacities);
@@ -142,8 +148,8 @@ abstract class CompositeImage {
 	}
 */
 
-	/*
-	 * buildComposite composites the layers together.
+	/**
+	 * buildComposite composites the layers on top of each other after putting them in the right order.
 	 */
 	private function buildComposite($images, $opacities) {
 		// Put images into the order they will be composited onto each other. 
@@ -222,13 +228,13 @@ abstract class CompositeImage {
 		catch(Exception $e) {
             $error = "[buildComposite][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
-            print $error;
+            print $e;
 			die();
 		}
 		return $tmpImg;	
 	}
 
-	/*
+	/**
 	 * Sorts the layers by opacity group. 
 	 * Opacity groups that are used currently are 3 (C3 images), 2 (C2 images), 1 (EIT/MDI images).
 	 * The array is sorted like this: Group 3, Group 2, Group 1(layer order that the user has in their viewport).
@@ -323,6 +329,9 @@ abstract class CompositeImage {
 		return $path;
 	}
 	
+	/**
+	 * Returns the composite image. 
+	 */
 	function getComposite() {
 		return $this->composite;
 	}

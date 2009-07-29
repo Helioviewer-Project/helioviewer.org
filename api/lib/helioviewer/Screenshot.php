@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Jaclyn Beck
- * @description The ScreenImage class is used for screenshot generation, since the parameters are 
+ * @fileoverview The ScreenImage class is used for screenshot generation, since the parameters are 
  * 					slightly different from those of a MovieFrame.
  */
 require_once('CompositeImage.php');
@@ -15,7 +15,7 @@ class Screenshot extends CompositeImage {
 
 	/**
 	 * Constructor
-	 * @param array $layers  -- an array of layer information strings, with the format: "obs_inst_det_meas,xStart,xEnd,yStart,yEnd,opacity"
+	 * @param array $layers  -- an array of layer information strings, with the format: "obs_inst_det_meas,xStart,xEnd,yStart,yEnd,hcOffsetx,hcOffsety,opacity"
 	 * @param int $zoomLevel -- a number between 8 and 15, the zoom level of the viewport.
 	 * @param array $options -- array containing true/false values for "EdgeEnhance" and "Sharpen"
 	 * @param int $timestamp -- the unix timestamp of the observation date in the viewport
@@ -40,25 +40,39 @@ class Screenshot extends CompositeImage {
 			chmod($this->cacheFileDir, 0777);
 		}
 	}
-	
+
+	/**
+	 * @description Gets the closest images for each layer, and does a little more splicing to the layer string so that 
+	 * 				it now includes the actual uri and the opacity group of the image. When done with all layers, calls
+	 * 				compileImages() to finish building.
+	 * @param object $layers -- an array of layer strings in the format: "obs_inst_det_meas,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety"
+	 */	
 	public function buildImages($layers) {
 		$this->layerImages = array();		
 
 		// Find the closest image for each layer, add the layer information string to it
 		foreach($layers as $layer) {
 			$layerInfo = explode(",", $layer);
+			// layerInfo[0] = "obs_inst_det_meas"
 			$closestImage = $this->getClosestImage($layerInfo[0]);
 			
-			// Chop the layer name off the array but keep the rest of the information
+			// Chop the layer name off the array but keep the rest of the information.
+			// layerInfo is now: [xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity]
 			$useful = array_slice($layerInfo, 1);
 		
+			// image is now: "year_month_day_HMS_obs_inst_det_meas.jp2,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity,opacityGrp"
 			$image = $closestImage['uri'] . "," . implode(",", $useful) . "," . $closestImage['opacityGrp'];
 			array_push($this->layerImages, $image);
 		}
 		
 		$this->compileImages();
 	}
-	
+
+	/**
+	 * @description Queries the database to find the closest image to a given timestamp.
+	 * @return array $row -- array containing the image's timestamp, uix_timestamp, timediff, timediffabs, uri, opacityGrp
+	 * @param object $name -- string representing: "obs_inst_det_meas" of the image.
+	 */	
 	private function getClosestImage($name) {
 		require_once ('DbConnection.php');
 		$this->db = new DbConnection();

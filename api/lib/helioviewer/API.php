@@ -418,7 +418,7 @@ class API {
     }
 
     /**
-     * All possible parameters: startDate, zoomLevel, numFrames, frameRate, timeStep, layers, imageSize,
+     * @description All possible parameters: startDate, zoomLevel, numFrames, frameRate, timeStep, layers, imageSize ("x,y"),
      * 	filename, edges, sharpen, format.
      * 
      * API example: http://localhost/helioviewer/api/index.php?action=buildMovie&startDate=1041465600&zoomLevel=13&numFrames=20
@@ -440,7 +440,8 @@ class API {
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
 		$timeStep  = $this->params['timeStep'];
-       
+       	
+		// Layerstrings are separated by "/"
 		$layerStrings = explode("/", $this->params['layers']);
 
 		$imageCoords = explode(",", $this->params['imageSize']);
@@ -521,18 +522,19 @@ class API {
 			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize, $filename);	
 			$screenshot->buildImages($layers);
 			
-			if(!file_exists($screenshot->getComposite()))
+			$composite = $screenshot->getComposite();
+			if(!file_exists($composite))
 				throw new Exception("The requested screenshot is either unavailable or does not exist.");
 
 			if($this->params == $_GET) {				
 				header('Content-type: image/png');
-				echo file_get_contents($screenshot->getComposite());
+				echo file_get_contents($composite);
 			}
 			
 			else {
 				header('Content-type: application/json');
 				// Replace '/var/www/helioviewer', or wherever the directory is, with 'http://localhost/helioviewer' so it can be displayed.
-				echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $screenshot->getComposite()));
+				echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $composite));
 			}
 		}
 		catch(Exception $e) {
@@ -555,9 +557,9 @@ class API {
         require_once('ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
     
-		$obs = $this->params['observatory'];
+		$obs  = $this->params['observatory'];
 		$inst = $this->params['instrument'];
-		$det = $this->params['detector'];
+		$det  = $this->params['detector'];
 		$meas = $this->params['measurement'];
 		
 		$dimensions = $imgIndex->getJP2Dimensions($obs, $inst, $det, $meas);
@@ -568,6 +570,7 @@ class API {
 	}
 		
     /**
+     * @description gets the movie url and loads it into MC Mediaplayer
      * @return int Returns "1" if the action was completed successfully.
      */
     private function _playMovie () {
@@ -608,14 +611,15 @@ class API {
     }
     
 	/**
-	 * 'Opens' the requested file in the current window as an attachment, which pops up the "Save file as" dialog.
-	 * @return 
+	 * @description 'Opens' the requested file in the current window as an attachment, which pops up the "Save file as" dialog.
+	 * @TODO test this to make sure it works in all browsers.
+	 * @return 1 on success.
 	 */
 	private function _downloadFile() {
 		$url = $this->params['url'];
 
 		if(strlen($url) > 1) {
-			header("Pragma: public"); // required
+			header("Pragma: public"); 
 			header("Expires: 0");
 			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 			header("Cache-Control: private",false); // required for certain browsers 
@@ -766,26 +770,29 @@ class API {
     }
 
 	/**
-	 * Takes the string representation of a layer from the javascript and formats it so that only useful information is included.
-	 * @return array $formatted -- The array containing properly formatted strings
-	 * @param object $layers -- an array of strings in the format: "obs,inst,det,meas,visible,opacityxxStart,xEnd,yStart,yEnd"
+	 * @description Takes the string representation of a layer from the javascript and formats it so that only useful/necessary information is included.
+	 * @return {Array} $formatted -- The array containing properly formatted strings
+	 * @param {Array} $layers -- an array of strings in the format: "obs,inst,det,meas,visible,opacityxxStart,xEnd,yStart,yEnd"
 	 * 					The extra "x" was put in the middle so that the string could be broken in half and parsing one half by itself 
 	 * 					rather than parsing 10 different strings and putting the half that didn't need parsing back together.
 	 */	
 	private function _formatLayerStrings($layers) {
 		$formatted = array();
+		
 		foreach($layers as $layer) {
 			$layerInfo = explode("x", $layer);	
 
-			// $meta is now: "xStart,xSize,yStart,ySize'o'hcOffsetx,hcOffsety". the o in the middle stands for offset.			
+			// $meta is now: "xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety"			
 			$meta = $layerInfo[1];
 
-			// Extract relevant information from $layerInfo[0]. Get rid of the "visibility" boolean in the middle of the string. Stick opacity on the end.
+			// Extract relevant information from $layerInfo[0] (obs,inst,det,meas,visible,opacity). 
 			$rawName = explode(",", $layerInfo[0]);
 			$opacity = $rawName[5];
+			//Get rid of the "visibility" boolean in the middle of the string.
 			array_splice($rawName, 4);
 
 			$name = implode("_", $rawName);
+			// Stick opacity on the end. the $image string now looks like: "obs_inst_det_meas,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity"
 			$image = $name . "," . $meta . "," . $opacity;
 			array_push($formatted, $image);
 		}
@@ -794,8 +801,8 @@ class API {
 	}
 
 	/**
-	 * Checks to make sure all required parameters were passed in.
-	 * @param array $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
+	 * @description Checks to make sure all required parameters were passed in.
+	 * @param {Array} $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
 	 * @return 1 on success
 	 */	
 	private function _checkForMissingParams($fields) {
@@ -860,6 +867,7 @@ class API {
                 break;
             case "launchJHelioviewer":
                 break;
+				
             case "buildMovie":
 				// Check to make sure all required parameters were passed in before proceeding.
 				$checkArray = array(
@@ -874,10 +882,12 @@ class API {
 				);
 				$this->_checkForMissingParams($checkArray);
                 break;
+				
 			case "playMovie":
 				break;
             case "sendEmail":
                 break;
+				
 			case "takeScreenshot":
 				// Check to make sure all required parameters were passed in before proceeding.
 				$checkArray = array(
@@ -889,6 +899,7 @@ class API {
 				);
 				$this->_checkForMissingParams($checkArray);
 				break;
+				
 			case "getJP2Dimensions":
 				break;
 			case "downloadFile":
