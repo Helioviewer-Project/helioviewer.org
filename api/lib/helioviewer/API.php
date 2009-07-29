@@ -418,23 +418,21 @@ class API {
     }
 
     /**
+     * All possible parameters: startDate, zoomLevel, numFrames, frameRate, timeStep, layers, imageSize,
+     * 	filename, edges, sharpen, format.
+     * 
+     * API example: http://localhost/helioviewer/api/index.php?action=buildMovie&startDate=1041465600&zoomLevel=13&numFrames=20
+     * 	&frameRate=8&timeStep=86400&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
+     * 	&imageSize=588,556&filename=example&sharpen=false&edges=false
+     * 
+     * Note that filename does NOT have the . extension on it. The reason for this is that in the media settings pop-up dialog,
+     * there is no way of knowing ahead of time whether the image is a .png, .tif, .flv, etc, and in the case of movies, the file is 
+     * both a .flv and .mov/.asf/.mp4
+     * 
      * @return int Returns "1" if the action was completed successfully.
      */
     private function _buildMovie () {
         require_once('Movie.php');
-			
-		// Check to make sure all required parameters were passed in before proceeding.
-		$checkArray = array(
-			'startDate', 
-			'zoomLevel', 
-			'numFrames', 
-			'frameRate', 
-			'timeStep',
-			'layers',
-			'imageSize'
-		);
-
-		$this->_checkForMissingParams($checkArray);
 
         // Required parameters
         $startDate = $this->params['startDate'];
@@ -445,10 +443,9 @@ class API {
        
 		$layerStrings = explode("/", $this->params['layers']);
 
-//		$hcCoords = explode(",", $this->params['hcOffset']);
-//		$hcOffset = array("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imageCoords = explode(",", $this->params['imageSize']);
-		$imageSize = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
+		$imageSize 	 = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
+		$filename  	 = $this->params['filename'];
 			
         $hqFormat  = $this->params['format'];
 		
@@ -460,7 +457,7 @@ class API {
         //Check to make sure values are acceptable
         try {	
             //Limit number of layers to three
-            if ((sizeOf($layerStrings) > 3) || (strlen($this->params['layers']) == 0)) {
+            if (strlen($this->params['layers']) == 0) {
                 throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
             }
 
@@ -471,7 +468,7 @@ class API {
 
 			$layers = $this->_formatLayerStrings($layerStrings);
 
-            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize);
+            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename);
             $movie->buildMovie();
 
         } catch(Exception $e) {
@@ -485,30 +482,31 @@ class API {
 	/**
 	 * @description Obtains layer information, ranges of pixels visible, and the date being looked at and creates a composite image
 	 * 				(a Screenshot) of all the layers. 
+	 * 
+	 * All possible parameters: obsDate, zoomLevel, layers, imageSize, filename, edges, sharpen
+	 * 
+	 * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=1041465600&zoomLevel=13
+	 *	&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
+     * 	&imageSize=588,556&filename=example&sharpen=false&edges=false
+     * 
+     * Note that filename does NOT have the . extension on it. The reason for this is that in the media settings pop-up dialog,
+     * there is no way of knowing ahead of time whether the image is a .png, .tif, .flv, etc, and in the case of movies, the file is 
+     * both a .flv and .mov/.asf/.mp4
+     * 
 	 * @return Returns 1 if the action was completed successfully.
 	 */
 	private function _takeScreenshot() {
 		require_once('Screenshot.php');
-		
-		// Check to make sure all required parameters were passed in before proceeding.
-		$checkArray = array(
-			'obsDate', 
-			'zoomLevel', 
-			'layers',
-			'imageSize'
-		);
-
-		$this->_checkForMissingParams($checkArray);
 		
         $obsDate   = $this->params['obsDate'];
         $zoomLevel = $this->params['zoomLevel'];
 
 		$layerStrings = explode("/", $this->params['layers']);
 		
-		$hcCoords  = explode(",", $this->params['hcOffset']);
-		$hcOffset  = array	("x" => $hcCoords[0], "y" => $hcCoords[1]);
 		$imgCoords = explode(",", $this->params['imageSize']);
 		$imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
+		
+		$filename  = $this->params['filename'];
 		
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
@@ -519,7 +517,8 @@ class API {
 				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
 
 			$layers = $this->_formatLayerStrings($layerStrings);
-			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize);	
+			
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize, $filename);	
 			$screenshot->buildImages($layers);
 			
 			if(!file_exists($screenshot->getComposite()))
@@ -532,6 +531,7 @@ class API {
 			
 			else {
 				header('Content-type: application/json');
+				// Replace '/var/www/helioviewer', or wherever the directory is, with 'http://localhost/helioviewer' so it can be displayed.
 				echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $screenshot->getComposite()));
 			}
 		}
@@ -543,6 +543,14 @@ class API {
 		return 1;
 	}
 
+	/**
+	 * @description Queries the database to get the real jp2 image's width and height for that particular layer. Needed because
+	 * 					the width and height used in tileLayer.js are not the actual height and width and it mixes things up when
+	 * 					trying to align images for screenshots and movies.
+	 * 
+	 * Required parameters: observatory, instrument, detector, measurement.
+	 * @return 1 on success
+	 */
 	private function _getJP2Dimensions() {
         require_once('ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
@@ -554,12 +562,7 @@ class API {
 		
 		$dimensions = $imgIndex->getJP2Dimensions($obs, $inst, $det, $meas);
 		
-		if($this->params == $_POST) {
-			echo $dimensions['width'] . 'x' . $dimensions['height'];
-		}
-		else {
-			print_r($dimensions);
-		}
+		echo $dimensions['width'] . 'x' . $dimensions['height'];
 		
 		return 1;
 	}
@@ -569,11 +572,9 @@ class API {
      */
     private function _playMovie () {
         $url = $this->params['url'];
-        $hqFormat  = $this->params['format'];
         $width  = $this->params['width'];
         $height = $this->params['height'];
 
-        $highQualityVersion = substr($url, 0, -3) . $hqFormat;
         ?>
             <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <html>
@@ -606,6 +607,30 @@ class API {
         return 1;
     }
     
+	/**
+	 * 'Opens' the requested file in the current window as an attachment, which pops up the "Save file as" dialog.
+	 * @return 
+	 */
+	private function _downloadFile() {
+		$url = $this->params['url'];
+
+		if(strlen($url) > 1) {
+			header("Pragma: public"); // required
+			header("Expires: 0");
+			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+			header("Cache-Control: private",false); // required for certain browsers 
+			header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";" );
+			header("Content-Transfer-Encoding: binary");
+			header("Content-Length: " . filesize($url)); 
+	
+			echo file_get_contents($url);
+		}
+		else {
+			print("Error: Problem retrieving file.");
+		}
+		return 1;
+	}
+	
     /**
      * sendEmail
      * TODO: CAPTCHA, Server-side security
@@ -836,14 +861,37 @@ class API {
             case "launchJHelioviewer":
                 break;
             case "buildMovie":
+				// Check to make sure all required parameters were passed in before proceeding.
+				$checkArray = array(
+					'startDate', 
+					'zoomLevel', 
+					'numFrames', 
+					'frameRate', 
+					'timeStep',
+					'layers',
+					'imageSize',
+					'filename'
+				);
+				$this->_checkForMissingParams($checkArray);
                 break;
 			case "playMovie":
 				break;
             case "sendEmail":
                 break;
 			case "takeScreenshot":
+				// Check to make sure all required parameters were passed in before proceeding.
+				$checkArray = array(
+					'obsDate', 
+					'zoomLevel', 
+					'layers',
+					'imageSize',
+					'filename'
+				);
+				$this->_checkForMissingParams($checkArray);
 				break;
 			case "getJP2Dimensions":
+				break;
+			case "downloadFile":
 				break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        

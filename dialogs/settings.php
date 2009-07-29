@@ -19,6 +19,7 @@
 	$showImgIfGap 	= $params['showImgIfGap'];
 	$emailUser		= $params['emailUser'];
 	$emailAddress 	= $params['emailAddress'];	
+	$filename		= $params['filename'];
 	
 	$date = $startDate[0];
 	$date = str_replace("-", "/", $date);
@@ -217,7 +218,7 @@
 							</tr>
 						</table><br /><br />
 
-						Filename: &nbsp<input type=text disabled="disabled" id="filename" name="filename" value=""/><br /><br />
+						Filename: &nbsp<input type=text disabled="disabled" id="filename" name="filename" value="' . $filename . '"/><br /><br />
 
 						<input type=checkbox  id="dataGaps"  name="dataGaps"';
 	if($showImgIfGap == "true") {
