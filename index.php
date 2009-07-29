@@ -35,6 +35,9 @@
 		<script type="text/javascript">
 			jQuery.noConflict();
 		</script>
+        
+        <!-- Mousewheel support -->
+        <script src="lib/jquery/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
 
         <!-- jGrowl -->
 		<script src="lib/jquery/jGrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
@@ -46,7 +49,7 @@
 		<!-- Prototype and Scriptaculous -->
 		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
-		<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>
+		<!--<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>-->
 		
 		<!-- Prototip -->
 		<script src="lib/prototip2.0.5/js/prototip.js" type="text/javascript"></script>
