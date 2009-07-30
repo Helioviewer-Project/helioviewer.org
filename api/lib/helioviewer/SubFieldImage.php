@@ -23,7 +23,11 @@ class SubFieldImage extends JP2Image {
 		// The true/false parameter means whether to display the image or not when finished building it (used for debugging).
 		$this->getImage(false);
 	}
-	
+
+	/**
+	 * Checks the cache to see if the image is already there, and uses it if it is. If not, it builds the image.
+	 * @param object $display -- true or false
+	 */	
 	function getImage($display) {
 		// JPG or PNG
 		$format = $this->getImageFormat();
@@ -40,7 +44,6 @@ class SubFieldImage extends JP2Image {
 		
 		else {	
 			// If it's not cached, build it and put it in the cache.
-			// The true/false parameter means whether the image is a tile or not (tiles are padded, subfieldimages are only padded with -gravity Center for now).
 	        $this->image = $this->buildImage($filepath);	
 				
 	        // Display image
@@ -51,7 +54,7 @@ class SubFieldImage extends JP2Image {
 	
 	/**
 	 * @description Gets the filepath of where the image will go in the cache directory. 
-	 * @description Filepaths are of the format /var/www/helioviewer/cache/movies/year/month/day/obs/inst/det/meas/image_uri
+	 * @description Filepaths are of the format /var/www/helioviewer/cache/movies/fileTimeStamp
 	 * @return $filepath
 	 * @param object $format is something like "jpg" or "png"
 	 */	
@@ -76,7 +79,7 @@ class SubFieldImage extends JP2Image {
 			}			
 		}
 
-		// Convert coordinates to strings
+		// Convert coordinates to strings, padding 0's in the front of single digits
 		$xStartStr = "+" . str_pad($this->xRange["start"], 2, '0', STR_PAD_LEFT);
 		if (substr($this->xRange["start"],0,1) == "-")
 			$xStartStr = "-" . str_pad(substr($this->xRange["start"], 1), 2, '0', STR_PAD_LEFT);
@@ -100,6 +103,9 @@ class SubFieldImage extends JP2Image {
 		return $filepath;
 	}
 	
+	/**
+	 * Returns the filepath of the image, which is in the cache once it is built.
+	 */
 	function getCacheFilepath() {
 		return $this->image;
 	}
