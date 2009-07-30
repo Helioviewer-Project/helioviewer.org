@@ -83,6 +83,7 @@
         </script>
         
 		<!-- Helioviewer-Specific -->
+		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
@@ -91,7 +92,6 @@
 		<script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventMarker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ZoomControls.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventLayerAccordion.js" type="text/javascript"></script>
