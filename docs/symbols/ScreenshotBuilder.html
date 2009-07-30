@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - MovieBuilder</title>
+		<title>JsDoc Reference - ScreenshotBuilder</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 </ul>
 <hr />
@@ -202,7 +202,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class MovieBuilder
+				Class ScreenshotBuilder
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -212,13 +212,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_Library_WebServer_Documents_helioviewer_lib_helioviewer_MovieBuilder.js.html">MovieBuilder.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_Library_WebServer_Documents_helioviewer_lib_helioviewer_ScreenshotBuilder.js.html">ScreenshotBuilder.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class MovieBuilder.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ScreenshotBuilder.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -231,9 +231,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/MovieBuilder.html#constructor">MovieBuilder</a></b>(controller)
+								<b><a href="../symbols/ScreenshotBuilder.html#constructor">ScreenshotBuilder</a></b>(controller)
 							</div>
-							<div class="description">Loads default options, grabs mediaSettings, sets up event listener for the movie button</div>
+							<div class="description">Loads default options, grabs mediaSettings, sets up event listener for the screenshot button</div>
 						</td>
 					</tr>
 				</tbody>
@@ -247,7 +247,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class MovieBuilder.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ScreenshotBuilder.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -260,36 +260,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#buildMovie">buildMovie</a></b>(self, layers)
+								<div class="fixedFont"><b><a href="../symbols/ScreenshotBuilder.html#takeScreenshot">takeScreenshot</a></b>(visibleCoords)
 								</div>
-								<div class="description">Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#checkMovieLayers">checkMovieLayers</a></b>(self, visibleCoords)
-								</div>
-								<div class="description">Checks to make sure there are 3 or less layers in the movie.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#playMovie">playMovie</a></b>(helioviewer, imgWidth, imgHeight, transport)
-								</div>
-								<div class="description">Calculates what dimensions the image has, whether to scale it or not, and how big Shadowbox should be.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MovieBuilder.html#updateProgress">updateProgress</a></b>(timeout)
-								</div>
-								<div class="description">Displays a percentage, starting at 0, and increments it by one every <timeout> seconds.</div>
+								<div class="description">Gathers all necessary information to generate a screenshot, and then displays the image when it is ready.</div>
 							</td>
 						</tr>
 					
@@ -310,11 +283,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>MovieBuilder</b>(controller)
+						<b>ScreenshotBuilder</b>(controller)
 				</div>
 				
 				<div class="description">
-					Loads default options, grabs mediaSettings, sets up event listener for the movie button
+					Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
 					
 				</div>
 				
@@ -352,17 +325,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="buildMovie"> </a>
+					<a name="takeScreenshot"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>buildMovie</b>(self, layers)
+					<b>takeScreenshot</b>(visibleCoords)
 					
 					</div>
 					<div class="description">
-						Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.
-				Upon completion, it displays a notification that lets the user click to view it in Shadowbox
-				or download the high quality version.
+						Gathers all necessary information to generate a screenshot, and then displays the image when it is ready.
 						
 						
 					</div>
@@ -372,157 +343,12 @@ ul.inheritsList
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>self</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>layers</b>
-									
-								</dt>
-								<dd>-- An array of layer strings in the format: "obs,inst,det,meas,visible,opacity'x'XStart,XEnd,YStart,YEnd,offsetX,offsetY"</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="checkMovieLayers"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>checkMovieLayers</b>(self, visibleCoords)
-					
-					</div>
-					<div class="description">
-						Checks to make sure there are 3 or less layers in the movie. If there are more, user is presented with
-				pop-up in Shadowbox asking them to pick 3 layers.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>self</b>
-									
-								</dt>
-								<dd></dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>visibleCoords</b>
 									
 								</dt>
-								<dd>-- An array containing the top, left, bottom, right coordinates of:
-					 1) what is currently visible in the viewport, or
-					 2) a selected region within the viewport.
-					Note that these coordinates are heliocentric, with the center of the sun being (0,0).</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="playMovie"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>playMovie</b>(helioviewer, imgWidth, imgHeight, transport)
-					
-					</div>
-					<div class="description">
-						Calculates what dimensions the image has, whether to scale it or not, and how big Shadowbox should be. 
-				Opens Shadowbox to play the movie.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>helioviewer</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>imgWidth</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>imgHeight</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>transport</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="updateProgress"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>updateProgress</b>(timeout)
-					
-					</div>
-					<div class="description">
-						Displays a percentage, starting at 0, and increments it by one every <timeout> seconds. It is here so users
-				can tell something is going on.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>timeout</b>
-									
-								</dt>
-								<dd>-- a value in miliseconds that was calculated in buildMovie as an estimate of how long the movie 
-								will take to build / 100.</dd>
+								<dd>-- array containing the heliocentric top, left, bottom, and right coordinates of the visible region</dd>
 							
 							</dl>
 						
@@ -547,7 +373,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Thu Jul 30 2009 14:45:21 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Thu Jul 30 2009 14:44:25 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

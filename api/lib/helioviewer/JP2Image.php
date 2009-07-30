@@ -134,10 +134,6 @@ abstract class JP2Image {
             // Get dimensions of extracted region
             $extracted = $this->getImageDimensions($pgm);
 
-			if(!$this->isTile) {
-				$this->adjustHCOffset($extracted, $jp2RelWidth, $jp2RelHeight);
-			}
-
 			$cmd .= $this->resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $png);
 
             if ($this->hasAlphaMask()) {
@@ -275,12 +271,10 @@ abstract class JP2Image {
      */
 	private function getRegionString() {
 		$precision = 6;
-		$rangeDiffX = max($this->xRange["end"], $this->imageRelWidth);
-		$rangeDiffY = max($this->yRange["end"], $this->imageRelHeight);
 
 		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
 		$top 	= substr($this->yRange["start"] / $this->jp2Height, 0, $precision);	
-		$left 	= substr($this->xRange["start"] / $this->jp2Height, 0, $precision);
+		$left 	= substr($this->xRange["start"] / $this->jp2Width,  0, $precision);
 		$height = substr($this->yRange["end"]   / $this->jp2Height, 0, $precision);
 		$width 	= substr($this->xRange["end"]   / $this->jp2Width,  0, $precision);
 		
@@ -318,40 +312,6 @@ abstract class JP2Image {
 	        // Determine where the tile is located (where tile should lie in the padding)
 	        $gravity = null;
 
-/*			if($y < $tileMinY) {
-				$yGravity = "South";
-			}			
-			else if($y == $tileMaxY) {
-				$yGravity = "North";
-			}
-			
-			if($x < $tileMinX) {
-				$xGravity = "East";
-			}
-			if($x == $tileMaxX){
-				$xGravity = "West";
-			}
-			
-			if($x < $tileMinX || $x == $tileMaxX) {
-				$gravity = $yGravity . $xGravity;
-			}
-			else if($y < $tileMinY || $y == $tileMaxY) {
-					$gravity = $yGravity;
-			}
-			else {
-				$xGravity = "West";
-				if($tileMinX != $tileMaxX && $x == $tileMinX) {
-					$xGravity = "East";
-				}
-				if($y == $tileMinY) {
-					$gravity = "South" . $xGravity;
-				}
-				else {
-					$gravity = "North" . $xGravity;
-				}
-			}
-
-*/
 	        if ($x < $tileMinX) {
 	            if ($y < $tileMinY) {
 	                $gravity = "SouthEast";
@@ -363,6 +323,7 @@ abstract class JP2Image {
 	                $gravity = "East";
 	            }
 	        }
+			
 	        else if ($x == $tileMaxX) {
 	            if ($y < $tileMinY) {
 	                $gravity = "SouthWest";
@@ -403,6 +364,12 @@ abstract class JP2Image {
         return "-gravity $gravity -extent " . $width . "x" . $height . $offset;
     }
     
+	/**
+	 * Gets the filepath for the color look-up table that corresponds to the image.
+	 * @return string clut filepath
+	 * @param object $detector
+	 * @param object $measurement
+	 */
     private function getColorTable($detector, $measurement) {
         if ($detector == "EIT") {
             return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_EIT_$measurement.png";
@@ -415,6 +382,10 @@ abstract class JP2Image {
         }        
     }
     
+	/**
+	 * Displays the image on the page
+	 * @param object $filepath[optional]
+	 */
     public function display($filepath=null) {
         try {
             // Cache-Lifetime (in minutes)
@@ -476,17 +447,18 @@ abstract class JP2Image {
         if (file_exists($filename))
             unlink($filename);
             
-          if ($this->hasAlphaMask()) {
-            $mask = substr($filename, 0, -4) . "-mask.tif";
-            if (file_exists($mask))
-                unlink($mask);
+		if ($this->hasAlphaMask()) {
+			$mask = substr($filename, 0, -4) . "-mask.tif";
+			if (file_exists($mask))
+			    unlink($mask);
         }
         
         die();
     }
     
     /**
-     * getMetaInfo
+     * getMetaInfo queries the database to get information about the image: 
+     * 	timestamp, opacitygrp, width, height, imgScaleX, imgScaleY
      * @param $imageId Object
      */
     protected function getMetaInfo() {
@@ -530,6 +502,7 @@ abstract class JP2Image {
     
     /**
      * setColorPalette
+     * Note: input and output are usually the same file.
      */
     private function setColorPalette ($input, $clut, $output) {
         $gd = null;
@@ -545,7 +518,7 @@ abstract class JP2Image {
         } catch(Exception $e) {
             $error = "[gd][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
-            print $error;
+            print $e;
 
             die();
         }
@@ -561,7 +534,7 @@ abstract class JP2Image {
         
         //$this->getImageFormat() == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
         //if ($this->getImageFormat() == "jpg")
-            //imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY);
+        //    imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY);
         //else
         imagepng($gd, $output);
 
@@ -572,18 +545,6 @@ abstract class JP2Image {
         imagedestroy($ctable);
     }
 	
-	/** 
-	 * Turns the hcOffsets into strings readable by imagemagick (adding a "+" in front of 
-	 * positive numbers)
-	 */
-	private function adjustHCOffset($extracted, $relWidth, $relHeight) {
-		$xOffset = $this->hcOffset["x"];
-		$yOffset = $this->hcOffset["y"];
-
-		$this->hcOffset["x"] = ($xOffset >= 0? "+" : "") . $xOffset;
-		$this->hcOffset["y"] = ($yOffset >= 0? "+" : "") . $yOffset;
-	}
-
 	/**
 	 * @description Checks to see if the extracted image is smaller than it should be, pads it to the correct size, and resizes if necessary.
 	 * @return $cmd -- a string containing the commands to execute, if any

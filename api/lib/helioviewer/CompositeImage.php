@@ -118,6 +118,7 @@ abstract class CompositeImage {
 		else {
 			$cmd = CONFIG::PATH_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
 			exec($cmd, $out, $ret);
+
 			$this->composite = $this->cacheFileDir . $this->id . ".png";
 		}
 
@@ -219,7 +220,7 @@ abstract class CompositeImage {
 			if($ret != 0) {
 				throw new Exception("Error executing command $cmd.");
 			}
-			
+
 			exec(CONFIG::PATH_CMD . " && convert $tmpImg -background black -alpha off $tmpImg", $out, $ret);
 			if($ret != 0) {
 				throw new Exception("Error turning alpha channel off on $tmpImg.");

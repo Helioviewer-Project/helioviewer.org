@@ -100,6 +100,7 @@
 		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/MediaSettings.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
+		<script src="lib/helioviewer/ScreenshotBuilder.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ImageSelectTool.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>

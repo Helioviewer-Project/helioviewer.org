@@ -782,8 +782,14 @@ class API {
 		foreach($layers as $layer) {
 			$layerInfo = explode("x", $layer);	
 
-			// $meta is now: "xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety"			
-			$meta = $layerInfo[1];
+			// $meta is now: [xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety]			
+			$meta = split(",", $layerInfo[1]);
+			$offsetX = $meta[4];
+			$offsetY = $meta[5];
+			
+			// Add a "+" in front of positive numbers so that the offsets are readable by imagemagick
+			$meta[4] = ($offsetX >= 0? "+" : "") . $offsetX;
+			$meta[5] = ($offsetY >= 0? "+" : "") . $offsetY;
 
 			// Extract relevant information from $layerInfo[0] (obs,inst,det,meas,visible,opacity). 
 			$rawName = explode(",", $layerInfo[0]);
@@ -793,10 +799,10 @@ class API {
 
 			$name = implode("_", $rawName);
 			// Stick opacity on the end. the $image string now looks like: "obs_inst_det_meas,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity"
-			$image = $name . "," . $meta . "," . $opacity;
+			$image = $name . "," . implode(",", $meta) . "," . $opacity;
 			array_push($formatted, $image);
 		}
-		
+
 		return $formatted;
 	}
 

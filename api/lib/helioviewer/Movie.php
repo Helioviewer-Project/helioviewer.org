@@ -1,7 +1,8 @@
 <?php
 /*
  * Created on Sep 15, 2008
- *
+ * Modified on 7-30-2009 by Jaclyn Beck
+ * 
  * Note: For movies, it is easiest to work with Unix timestamps since that is what is returned
  *       from the database. To get from a javascript Date object to a Unix timestamp, simply
  *       use "date.getTime() * 1000." (getTime returns the number of miliseconds)
@@ -29,23 +30,23 @@ class Movie
     private $watermarkOptions = "-x 720 -y 965 ";
 
 	/**
-	 * 
-	 * @param object $layers is an array with at least one value, in the format of OBS_INST_DET_MEAS,xstart,xsize,ystart,ysize,opacity
+	 * Constructor
+	 * @param object $layers is an array with at least one value, in the format of OBS_INST_DET_MEAS,xstart,xsize,ystart,ysize,hcOffsetx,hcOffsety,opacity
 	 * @param object $startTime is a unix timestamp.
 	 * @param object $zoomLevel is a number between 8-15 (for now) with 10 being the default, base zoom level.
 	 * @param object $numFrames is a number between 1 and 150, with the default being 40.
 	 * @param object $frameRate is almost always 8.
 	 * @param object $hqFormat
-	 * @param object $xRange a 0 or -1 representing which range of tiles are being asked for
-	 * @param object $yRange a 0 or -1 representing which range of tiles are being asked for
 	 * @param object $options is an array with ["edges"] => true/false, ["sharpen"] => true/false
 	 * @param object $timeStep is in seconds. Default is 86400 seconds, or 1 day. 
+	 * @param array $imageSize -- width and height of image
+	 * @param string $filename -- desired filename for the image
 	 */
     public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename)
     {
         date_default_timezone_set('UTC');
 		// $layers is an array of layer information arrays, identified by their layer names.
-		// Each layer information array has values for "name", "xRange", "yRange", and "opacityValue"
+		// Each layer information array has values for "name", "xRange", "yRange", "hcOffset", and "opacityValue"
         $this->layers = $layers;
 		
         // startTime is a Unix timestamp in seconds.
@@ -91,6 +92,9 @@ class Movie
 
     /**
      * buildMovie
+     * Makes a temp directory to store frames in, calculates a timestamp for every frame, gets the closest image to 
+     * each timestamp for each layer. Then takes all layers belonging to one timestamp and makes a movie frame out of it.
+     * When done with all movie frames, phpvideotoolkit is used to compile all the frames into a movie.
      */
     public function buildMovie()
     {
@@ -119,12 +123,18 @@ class Movie
 				
         foreach ($this->layers as $layer)
         {
-        	// $layerInfo will have values Array ("obs_inst_det_meas", xStart, xSize, yStart, ySize, opacity)
+        	// $layerInfo will have values Array ("obs_inst_det_meas", xStart, xSize, yStart, ySize, offsetx, offsety, opacity)
         	$layerInfo = explode(",", $layer);
 
+			// name is now: 'obs_inst_det_meas'
 			$name = $layerInfo[0];
 
+			// closestImage is an associative array the size of numFrames with each entry having: 
+			// Array('timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', 'uri', 'opacityGrp')
             $closestImage = $this->getImageTimestamps($name, $timeStamps);
+			
+			// layerImages is an associative array the size of the number of layers. An example entry would be: 
+			// layerImages['SOH_EIT_EIT_304'] = closestImage array. So each entry has an array of the closest images to each timestamp.
 			$layerImages[$name] = $closestImage;
         }
 
@@ -136,9 +146,11 @@ class Movie
 			foreach($this->layers as $layer) {
 				$layerInfo = explode(",", $layer);	
 
+				// name is 'SOH_EIT_EIT_304'
 				$name = $layerInfo[0];
 				
 				// Chop the name off the array but keep the rest of the information.
+				// ranges is an array: [xStart, xSize, yStart, ySize, offsetX, offsetY, opacity]
 				$ranges = array_slice($layerInfo, 1);
 				
 				$closestImage = $layerImages[$name][$frameNum];
@@ -168,7 +180,6 @@ class Movie
 			die();
 		}
 
-		//$toolkit->setVideoOutputDimensions(1024, 1024);
 		$toolkit->setVideoOutputDimensions($this->imageSize['width'], $this->imageSize['height']);
 		
 		// set the output parameters (Flash video)
@@ -233,7 +244,7 @@ class Movie
 
 		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
-			unlink($image);
+//			unlink($image);
 		}	
 
 //		$this->showMovie($tmpurl, 512, 512);
@@ -244,7 +255,7 @@ class Movie
 		
     /**
      * Queries the database to find the exact timestamps for images nearest each time in $timeStamps.
-     * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', and 'uri'
+     * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', 'uri', and 'opacityGrp'
      * for each image.
      */
     private function getImageTimestamps($name, $timeStamps) //($obs, $inst, $det, $meas, $timeStamps)
@@ -508,7 +519,7 @@ class Movie
 		}
 		return $resultArray;
 	}
-
+*/
 	/**
 	 * showMovie
 	 */
