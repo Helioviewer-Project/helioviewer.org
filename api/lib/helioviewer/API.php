@@ -214,12 +214,13 @@ class API {
         // jp2 image
         else {
             $fp = fopen($filepath, 'r');
-
-            header("Content-Length: " . filesize($filepath));
+			$stat = stat($filepath);
+			
+            header("Content-Length: " . $stat['size']);
             header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));
             header("Content-Disposition: attachment; filename=\"$filename\"");
 
-            $contents = fread($fp, filesize($filepath));
+            $contents = fread($fp, $stat['size']);
 
             echo $contents;
             fclose($fp);
@@ -615,6 +616,12 @@ class API {
 	 */
 	private function _downloadFile() {
 		$url = $this->params['url'];
+		
+		// Convert web url into directory url so stat() works.
+		// Need to use stat() instead of filesize() because filesize fails for every file on Linux
+		// due to security permissions with apache. To get the file size, do $stat['size']
+		$url = str_replace(Config::WEB_ROOT_URL, Config::WEB_ROOT_DIR, $url);
+		$stat = stat($url);
 
 		if(strlen($url) > 1) {
 			header("Pragma: public"); 
@@ -623,8 +630,8 @@ class API {
 			header("Cache-Control: private",false); // required for certain browsers 
 			header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";" );
 			header("Content-Transfer-Encoding: binary");
-			header("Content-Length: " . filesize($url)); 
-	
+			header("Content-Length: " . $stat['size']); 
+
 			echo file_get_contents($url);
 		}
 		else {

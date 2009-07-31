@@ -401,8 +401,9 @@ abstract class JP2Image {
             if (isset($filepath)) {
                 $exploded = explode("/", $filepath);
                 $filename = end($exploded);
-                            
-                header("Content-Length: " . filesize($filepath));
+                
+				$stat = stat($filepath);
+                header("Content-Length: " . $stat['size']);
                 header("Content-Disposition: inline; filename=\"$filename\"");    
             }
     

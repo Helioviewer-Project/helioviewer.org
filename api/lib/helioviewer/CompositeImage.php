@@ -116,6 +116,7 @@ abstract class CompositeImage {
 				
 			// Otherwise, the image is a screenshot and needs to be converted into a png.
 		else {
+			$builtImages[0] = $this->watermark($builtImages[0]);
 			$cmd = CONFIG::PATH_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
 			exec($cmd, $out, $ret);
 
@@ -152,15 +153,20 @@ abstract class CompositeImage {
 	 * @description Composites a watermark (the timestamps of the image) onto the lower left corner.
 	 * 				Layer names are added togeter as one string, and timestamps are added as a separate string,
 	 * 				to line them up nicely.
-	 * 				An example string would be: -annotate 0 '     EIT 304\n     LAS C2 WL\n' (5 spaces in front of each name)
-	 * 										and: -annotate 0 '(30 spaces)2003-01-01 12:00\n(30 spaces)2003-01-01 11:30\n'
+	 * 				An example string would  be: -annotate +20+0 'EIT 304\nLAS C2 WL\n'
+	 * 										and: -annotate +100+0 '2003-01-01 12:00\n2003-01-01 11:30\n'
 	 * 				These two strings are then layered on top of each other and put in the southwest corner of the image.
 	 * @return string $image -- The filepath to the watermarked image
 	 * @param object $image -- Filepath to the image to be watermarked
 	 */
 	private function watermark($image) {
-		$size = $this->imageSize['width'] . "x" . $this->imageSize['height'];
-		$cmd = CONFIG::PATH_CMD . " && convert " . $image . " -fill white -font Times -gravity SouthWest -annotate 0 '";
+		// If the image is too small, text won't fit. Don't put a timestamp on it. 215x215 is very small
+		// and probably will not be requested anyway.
+		if($this->imageSize['width'] < 215) {
+			return $image;
+		}
+		
+		$cmd = CONFIG::PATH_CMD . " && convert " . $image . " -fill white -gravity SouthWest -annotate +20+0 '";
 		$timeCmd = "";
 		
 		// Put the names on first, then put the times on as a separate layer so the times are nicely aligned.
@@ -181,14 +187,14 @@ abstract class CompositeImage {
 				$name = $inst . " " . str_replace("0", "", $det) . " " . str_replace("0", "", $meas);
 			}
 			
-			$cmd .= "     " . $name . "\n"; //"     " . $time . "\n";
+			$cmd .= $name . "\n";
 			
 			// Get rid of seconds, since they don't really matter and it makes time more readable
 			// Add extra spaces between date and time for readability.
 			$time = str_replace(" ", "   ", substr($time, 0, -3));
-			$timeCmd .= str_pad("", 30, " ", STR_PAD_LEFT) . $time . "\n";
+			$timeCmd .= $time . "\n";
 		}
-		$cmd .= "' -annotate 0 '" . $timeCmd . "' -type TrueColor -alpha off " . $image;
+		$cmd .= "' -annotate +100+0 '" . $timeCmd . "' -type TrueColor -alpha off " . $image;
 
 		exec($cmd, $out, $ret);
 
