@@ -2,7 +2,7 @@
  * jQuery UI dot-luv theme modifications
  */
 .ui-datepicker {
-    font-size:1.0em;
+    font-size:11px;
   	z-index: 2000;	
 }
 .ui-datepicker-trigger {

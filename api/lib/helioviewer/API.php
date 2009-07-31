@@ -601,9 +601,6 @@ class API {
                     <!-- / MC Media Player -->
                 </div>
                 <br>
- <!--               <div style="text-align: center;">
-                    <a href="<?php print $highQualityVersion;?>" style="text-decoration: none; color: white; font-weight: bold;">High-quality download.</a>
-                </div> -->
             </body>
             </html>
         <?php

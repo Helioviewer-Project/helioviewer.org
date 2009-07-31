@@ -173,7 +173,7 @@
                     echo "\t\t\t\t";
                     printf ("var api = '%s';\n", Config::API_BASE_URL);
 				?>
-				var helioviewer = new Helioviewer('helioviewer-viewport', api, view, defaults );
+				var helioviewer = new Helioviewer('#helioviewer-viewport', api, view, defaults );
 			});
 		</script>
 
