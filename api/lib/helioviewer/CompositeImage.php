@@ -19,7 +19,6 @@ abstract class CompositeImage {
 	protected $layerImages;
 	protected $transImageDir;
 	protected $compositeImageDir;
-	protected $hcOffset;
 
 	/**
 	 * Constructor
@@ -108,10 +107,11 @@ abstract class CompositeImage {
 		} 
 		
 		// If the image is identified by a frameNum, just copy the image to the movie directory
-		elseif (isset($this->frameNum))  {			
-				$cacheImg = $this->cacheFileDir . $this->frameNum . ".tif";
-				copy($builtImages[0], $cacheImg);
-				$this->composite = $cacheImg;
+		elseif (isset($this->frameNum))  {
+			$builtImages[0] = $this->watermark($builtImages[0]);
+			$cacheImg = $this->cacheFileDir . $this->frameNum . ".tif";
+			copy($builtImages[0], $cacheImg);
+			$this->composite = $cacheImg;
 		}
 				
 			// Otherwise, the image is a screenshot and needs to be converted into a png.
@@ -148,7 +148,53 @@ abstract class CompositeImage {
 		return $image;
 	}
 */
+	/**
+	 * @description Composites a watermark (the timestamps of the image) onto the lower left corner.
+	 * 				Layer names are added togeter as one string, and timestamps are added as a separate string,
+	 * 				to line them up nicely.
+	 * 				An example string would be: -annotate 0 '     EIT 304\n     LAS C2 WL\n' (5 spaces in front of each name)
+	 * 										and: -annotate 0 '(30 spaces)2003-01-01 12:00\n(30 spaces)2003-01-01 11:30\n'
+	 * 				These two strings are then layered on top of each other and put in the southwest corner of the image.
+	 * @return string $image -- The filepath to the watermarked image
+	 * @param object $image -- Filepath to the image to be watermarked
+	 */
+	private function watermark($image) {
+		$size = $this->imageSize['width'] . "x" . $this->imageSize['height'];
+		$cmd = CONFIG::PATH_CMD . " && convert " . $image . " -fill white -font Times -gravity SouthWest -annotate 0 '";
+		$timeCmd = "";
+		
+		// Put the names on first, then put the times on as a separate layer so the times are nicely aligned.
+		foreach($this->timestamps as $key => $time) {
+			$rawName = explode('_', $key);
+			$obs = $rawName[0];
+			$inst = $rawName[1];
+			$det = $rawName[2];
+			$meas = $rawName[3];
+			
+			// Decide what to include in the name. EIT and MDI only need detector and measurement
+			if($inst === $det) {
+				$name = $det . " " . $meas;
+			}
+			
+			// LASCO needs instrument detector and measurement. Take out the 0's in 0C2/0C3 and 0WL
+			else {
+				$name = $inst . " " . str_replace("0", "", $det) . " " . str_replace("0", "", $meas);
+			}
+			
+			$cmd .= "     " . $name . "\n"; //"     " . $time . "\n";
+			
+			// Get rid of seconds, since they don't really matter and it makes time more readable
+			// Add extra spaces between date and time for readability.
+			$time = str_replace(" ", "   ", substr($time, 0, -3));
+			$timeCmd .= str_pad("", 30, " ", STR_PAD_LEFT) . $time . "\n";
+		}
+		$cmd .= "' -annotate 0 '" . $timeCmd . "' -type TrueColor -alpha off " . $image;
 
+		exec($cmd, $out, $ret);
+
+		return $image;
+	}
+	
 	/**
 	 * buildComposite composites the layers on top of each other after putting them in the right order.
 	 */
@@ -229,9 +275,10 @@ abstract class CompositeImage {
 		catch(Exception $e) {
             $error = "[buildComposite][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
-            print $e;
+            print $e->getMessage();
 			die();
 		}
+		$tmpImg = $this->watermark($tmpImg);
 		return $tmpImg;	
 	}
 

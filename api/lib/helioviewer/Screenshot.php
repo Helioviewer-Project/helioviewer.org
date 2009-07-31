@@ -23,9 +23,11 @@ class Screenshot extends CompositeImage {
 	 * @param array $imageSize -- an array holding the with and height of the viewport image
 	 */
 	public function __construct($timestamp, $zoomLevel, $options, $imageSize, $filename) {
-		$this->timestamp = $timestamp;
-		$this->imageSize = $imageSize;
-	
+		$this->timestamp 	= $timestamp;
+		$this->imageSize 	= $imageSize;
+		// this->timestamps will be an associative array with the actual timestamps of each layer, as given by the database
+		$this->timestamps 	= array();
+		
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 
 		parent::__construct($zoomLevel, $options, $tmpDir);
@@ -53,16 +55,19 @@ class Screenshot extends CompositeImage {
 		// Find the closest image for each layer, add the layer information string to it
 		foreach($layers as $layer) {
 			$layerInfo = explode(",", $layer);
-			// layerInfo[0] = "obs_inst_det_meas"
-			$closestImage = $this->getClosestImage($layerInfo[0]);
-			
+			// $name = "obs_inst_det_meas"
+			$name = $layerInfo[0];
+			$closestImage = $this->getClosestImage($name);
+
 			// Chop the layer name off the array but keep the rest of the information.
 			// layerInfo is now: [xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity]
 			$useful = array_slice($layerInfo, 1);
 		
 			// image is now: "year_month_day_HMS_obs_inst_det_meas.jp2,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity,opacityGrp"
 			$image = $closestImage['uri'] . "," . implode(",", $useful) . "," . $closestImage['opacityGrp'];
-			array_push($this->layerImages, $image);
+			$this->layerImages[$name] = $image;
+			
+			$this->timestamps[$name] = $closestImage['timestamp'];
 		}
 		
 		$this->compileImages();
