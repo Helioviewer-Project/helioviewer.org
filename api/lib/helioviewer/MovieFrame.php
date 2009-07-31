@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Jaclyn Beck
- * @description The FrameLayer class is used when generating composite images, or 'frames', for movies.
+ * @fileoverview The MovieFrame class is used when generating composite images, or 'frames', for movies.
  */
 
 require('CompositeImage.php');
@@ -14,9 +14,12 @@ class MovieFrame extends CompositeImage {
 	
 	/**
 	 * Constructor
+	 * @param int $zoomLevel
 	 * @param array $layerImages is an array of layer information strings in the format: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp"
 	 * @param array $options is an array with true/false values for "EdgeEnhance" and "Sharpen"
 	 * @param int $folderId is the unix timestamp of when the movie was requested, and is used to make a folder to store the movie in.
+	 * @param int $frameNum -- which frame this movieFrame belongs to
+	 * @param array $imageSize -- array of width and height of the image
 	 */
 	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $imageSize) {
 		$this->frameNum 	= $frameNum;

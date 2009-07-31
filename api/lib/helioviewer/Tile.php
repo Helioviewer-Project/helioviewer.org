@@ -106,10 +106,13 @@ class Tile extends JP2Image {
 	/**
 	 * @description Converts tile coordinates such as (-1, 0) into actual pixels. This method
 	 * 				changes xRange and yRange to reflect pixels instead of tile coordinates. 
+	 * 				The basic formula for this is: pixels = (num outerTs before start value) * outerTs + (numInnerTiles before start value) * innerTs
+	 * 				The size of the tile (xEnd or yEnd) is either outerTs or innerTs, depending where the tile is in the image.
 	 * @return 
 	 */	
 	function convertTileIndexToPixels() {
 		try {
+			// Making aliases for clarity
 	        $jp2Width  = $this->jp2Width;
 	        $jp2Height = $this->jp2Height;
 	        $ts 	   = $this->imageRelWidth;
