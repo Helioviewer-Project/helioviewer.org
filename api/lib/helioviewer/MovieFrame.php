@@ -20,11 +20,13 @@ class MovieFrame extends CompositeImage {
 	 * @param int $folderId is the unix timestamp of when the movie was requested, and is used to make a folder to store the movie in.
 	 * @param int $frameNum -- which frame this movieFrame belongs to
 	 * @param array $imageSize -- array of width and height of the image
+	 * @param array $timestamps -- Associative array containing the actual timestamps of each layer, obtained from the database
 	 */
-	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $imageSize) {
+	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $imageSize, $timestamps) {
 		$this->frameNum 	= $frameNum;
 		$this->layerImages 	= $layerImages;
 		$this->imageSize 	= $imageSize;
+		$this->timestamps 	= $timestamps;
 		
 		$tmpDir = CONFIG::CACHE_DIR . "movies/";
 

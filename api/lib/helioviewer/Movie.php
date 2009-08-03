@@ -142,6 +142,7 @@ class Movie
 		for($frameNum = 0; $frameNum < $this->numFrames; $frameNum++) {
 			// images array holds one image from each layer (the closest images to a specific timestamp)
 			$images = array();
+			$realTimestamps = array();
 			
 			foreach($this->layers as $layer) {
 				$layerInfo = explode(",", $layer);	
@@ -154,13 +155,15 @@ class Movie
 				$ranges = array_slice($layerInfo, 1);
 				
 				$closestImage = $layerImages[$name][$frameNum];
+				
 				// $image is now: "uri,xStart,xSize,yStart,ySize,opacity,opacityGrp"
 				$image =  $closestImage['uri'] . "," . implode(",", $ranges) . "," .$closestImage['opacityGrp'];
 				$images[$name] = $image;
+				$realTimestamps[$name] = $closestImage['timestamp'];
 			}	
 
 			// All frames will be put in cache/movies/$now		
-			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->imageSize);	
+			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->imageSize, $realTimestamps);	
 			$frameFile = $movieFrame->getComposite(); 
 
 			array_push($this->images, $frameFile);
@@ -244,7 +247,7 @@ class Movie
 
 		// Clean up png/tif images that are no longer needed
 		foreach($this->images as $image) {
-//			unlink($image);
+			unlink($image);
 		}	
 
 //		$this->showMovie($tmpurl, 512, 512);

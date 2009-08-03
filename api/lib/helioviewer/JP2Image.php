@@ -162,7 +162,7 @@ abstract class JP2Image {
         } catch(Exception $e) {
             $error = "[buildImage][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
-            print $e;
+            print $e->getMessage();
                         
             //Clean-up and exit
             $this->abort($filename);
@@ -401,8 +401,9 @@ abstract class JP2Image {
             if (isset($filepath)) {
                 $exploded = explode("/", $filepath);
                 $filename = end($exploded);
-                            
-                header("Content-Length: " . filesize($filepath));
+                
+				$stat = stat($filepath);
+                header("Content-Length: " . $stat['size']);
                 header("Content-Disposition: inline; filename=\"$filename\"");    
             }
     
@@ -518,7 +519,7 @@ abstract class JP2Image {
         } catch(Exception $e) {
             $error = "[gd][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
-            print $e;
+            print $e->getMessage();
 
             die();
         }
@@ -575,7 +576,7 @@ abstract class JP2Image {
 			catch(Exception $e) {
            		$msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             	file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
-				echo $msg;
+				echo $e->getMessage();
 			}
         }        
 					
