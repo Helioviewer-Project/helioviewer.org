@@ -69,7 +69,6 @@ def getArguments():
 					
 	except:
 		usage(parser)
-		sys.exit(2)
 
 	ok = True
 
