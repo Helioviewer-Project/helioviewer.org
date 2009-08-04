@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import os, sys
+import os, sys, math
 from datetime import datetime, timedelta
 from optparse import OptionParser, OptionError, IndentedHelpFormatter
 
@@ -67,7 +67,7 @@ def getArguments():
 		options.postgres = False
 		
 	if options.insertsize == None:
-		options.insertsize = 5
+		options.insertsize = 10
 
 	return options
 			
@@ -94,25 +94,35 @@ def generateSQL(fp, args):
 	p = 0
 	print "Generating SQL...\n0%"
 	
-	# date format 2003-11-11 18:06:05
-
-	for i in range(0, n):
-		fp.write(createEntry(date.strftime("%Y-%m-%d %H:%M:%S"), args.dbname, args.postgres))
-		date = date + delta
-		if (i % (n/100) == 0):
-			p += 1
-			print "%d%%" % p
+	# Create INSERT statements
+	for i in range(0, math.ceil(n / args.insertsize)):
+		# chose syntax
+		if args.postgres:
+			fp.write("INSERT INTO \"%s\".\"image\" VALUES " % args.dbname)
+		else:
+			fp.write("INSERT INTO %s.image VALUES " % args.dbname)
+		
+		# For each entry, add to INSERT statement (Note: Currently, will add extra rows if n % insertsize != 0)
+		for j in range(0, args.insertsize):
+			fp.write(createEntry(date.strftime("%Y-%m-%d %H:%M:%S")))
+			date = date + delta
+			
+			# divider
+			if j == (args.insertsize - 1):
+				fp.write(";\n")
+			else:
+				fp.write(",\n")
+				
+			# Update progress
+			if (i % (n/100) == 0):
+				p += 1
+				print "%d%%" % p
 
 			
 	print "\nDone!"
 	
-def createEntry(date, dbname, postgres):
-	if postgres:
-		sql = "INSERT INTO \"%s\".\"image\" VALUES (NULL,9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2');\n"
-	else:
-		sql = "INSERT INTO %s.image VALUES (NULL,9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2');\n"
-	return sql % (dbname, date)
-
+def createEntry(date):
+	return "(NULL,9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2')" % date
 	
 def printGreeting():
 	''' Prints a greeting to the user'''
