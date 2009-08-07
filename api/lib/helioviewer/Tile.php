@@ -138,10 +138,6 @@ class Tile extends JP2Image {
 	        $relX = (0.5 * $imgNumTilesX) + $this->x;
 	        $relY = (0.5 * $imgNumTilesY) + $this->y;
 	
-	        // number of tiles (may be greater than one for movies, etc)
-	        $numTilesX = min($imgNumTilesX - $relX, 1);
-	        $numTilesY = min($imgNumTilesY - $relY, 1);
-	
 	        // Number of "inner" tiles
 	        $numTilesInsideX = $imgNumTilesX - 2;
 	        $numTilesInsideY = $imgNumTilesY - 2;

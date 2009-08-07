@@ -160,6 +160,21 @@ abstract class CompositeImage {
 	 * @param object $image -- Filepath to the image to be watermarked
 	 */
 	private function watermark($image) {
+		$watermark = CONFIG::WATERMARK_URL;
+
+		// Use only the circle, not the url, and scale it so it fits the image.
+		if($this->imageSize['width'] / 300 < 2) {
+			$watermark = "../images/logos/watermark_circle_small.png";
+			// Scale the watermark to half the size of the image, and covert it to a percentage.
+			$scale = ($this->imageSize['width'] * 100 / 2) / 300;
+			$resize = Config::PATH_CMD . " && convert -scale " . $scale . "% " . $watermark . " " . $this->compositeImageDir . "watermark_scaled.png";
+			
+			exec($resize);
+			$watermark = $this->compositeImageDir . "watermark_scaled.png";
+		}
+		
+		exec(CONFIG::PATH_CMD . " && composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image, $out, $ret);
+
 		// If the image is too small, text won't fit. Don't put a timestamp on it. 215x215 is very small
 		// and probably will not be requested anyway.
 		if($this->imageSize['width'] < 215) {
@@ -205,7 +220,7 @@ abstract class CompositeImage {
 		// Write words in white
 		$cmd .= "' -stroke none -fill white -annotate +100+0 '" . $timeCmd . "' -type TrueColor -alpha off " . $image;
 
-		exec($cmd, $out, $ret);
+		exec($cmd);
 
 		return $image;
 	}

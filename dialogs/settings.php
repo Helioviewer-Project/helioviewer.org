@@ -66,7 +66,10 @@
 							<li><a href="#advanced-settings">Advanced</a></li>
 						</ul>
 						
-						<div id="general-settings" style="height: 180px;">';
+						<div id="general-settings" style="height: 120px;">';
+		$contents .=				'Filename: <br />
+									<input type=text id="filename" name="filename" size=45 value="' . $filename . '"/>&nbsp .png<br /><br />';
+
 						/*
 						 * table:  Used here because it lines up the checkbox and name horizontally. Otherwise they do not quite match up.
 						 *		Layers Included:
@@ -90,8 +93,11 @@
 		$inst 	 = $rawName[1];
 		$det 	 = $rawName[2];
 		$meas 	 = $rawName[3];
+
 		$name 	 = "$obs $inst $det $meas";
-				
+		if($inst == "LAS") {
+			$name = str_replace("0", "", $name);
+		}				
 		$contents .=
 							'<tr>
 								<td class="layers-checkbox"><input type=checkbox name="layers" checked=true value="' . $layer . '"/></td>
@@ -102,7 +108,7 @@
 	$contents .=		'</table>
 					</div>
 						
-					<div id="movie-settings" style="height: 180px;">';
+					<div id="movie-settings" style="height: 120px;">';
 						/*
 						 * 	table: 
 						 *		Number of Frames:  	[input]		Format: 	[input]
@@ -191,7 +197,7 @@
 						</table>
 					</div>		
 							
-					<div id="advanced-settings" style="height: 180;">';
+					<div id="advanced-settings" style="height: 120px;">';
 						/*
 						 *	table: 
 						 *		Dimensions				Other
@@ -223,9 +229,8 @@
 									</select>
 								</td>
 							</tr>
-						</table><br /><br />
+						</table><br />
 
-						Filename: &nbsp<input type=text disabled="disabled" id="filename" name="filename" value="' . $filename . '"/>&nbsp .png<br /><br />
 
 						<input type=checkbox  id="dataGaps"  name="dataGaps"';
 	if($showImgIfGap == "true") {
@@ -242,7 +247,7 @@
 		$display = false;
 	}		
 	$contents .=			
-						'/>&nbsp Email me a link to the video.<br />
+						'/>&nbsp Email me a link to the video.
 						<div id="email-input-div">
 							<span id="email-field" style="padding-left: 2em;';
 	if($display == false) {						
