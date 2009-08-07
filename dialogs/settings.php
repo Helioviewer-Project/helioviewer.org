@@ -1,10 +1,9 @@
 <?php
-	if(isset($_GET['mode']))
+	if(isset($_GET['startDate']))
 		$params = $_GET;
 	else
 		$params = $_POST;
 
-	$mode 		= $params['mode'];
 	$startDate 	= explode('T', $params['startDate']);
 	$timeStep	= $params['timeStep'];
 	
@@ -39,6 +38,7 @@
 	 * 		</ul>
 	 * 
 	 * 		<div tab1, displayed when "General Settings" tab is active>
+	 * 			[Filename]
 	 * 			[Layer names and checkboxes aligned nicely in a table]
 	 * 		</div>
 	 * 
@@ -48,7 +48,6 @@
 	 * 		</div>
 	 * 		<div tab3, displayed when "Advanced" tab is active>
 	 * 			[dimensions and other aligned in a table]
-	 * 			Filename
 	 * 			[checkbox] Show image when data gaps
 	 * 			[checkbox] email me a link
 	 * 				<hidden div, only filled and visible when email checkbox is checked>email address</div>

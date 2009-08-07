@@ -16,8 +16,8 @@ class Tile extends JP2Image {
      * constructor
      */
     public function __construct($uri, $zoomLevel, $x, $y, $tileSize, $display = true) {
-        $xRange = array("start" => $x, "end" => $x);
-        $yRange = array("start" => $y, "end" => $y);
+        $xRange = array("start" => $x, "size" => $x);
+        $yRange = array("start" => $y, "size" => $y);
 
 		$imageSize = array('width' => $tileSize, 'height' => $tileSize);
         parent::__construct($uri, $zoomLevel, $xRange, $yRange, $imageSize);
@@ -107,7 +107,7 @@ class Tile extends JP2Image {
 	 * @description Converts tile coordinates such as (-1, 0) into actual pixels. This method
 	 * 				changes xRange and yRange to reflect pixels instead of tile coordinates. 
 	 * 				The basic formula for this is: pixels = (num outerTs before start value) * outerTs + (numInnerTiles before start value) * innerTs
-	 * 				The size of the tile (xEnd or yEnd) is either outerTs or innerTs, depending where the tile is in the image.
+	 * 				The size of the tile (xSize or ySize) is either outerTs or innerTs, depending where the tile is in the image.
 	 * @return 
 	 */	
 	function convertTileIndexToPixels() {
@@ -151,14 +151,14 @@ class Tile extends JP2Image {
 			$this->xRange['start'] 	= (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
 	
 			// Width and height of 'tile'
-			$this->yRange['end'] 	= (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
-			$this->xRange['end'] 	= (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
+			$this->yRange['size'] 	= (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
+			$this->xRange['size'] 	= (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
 			
 			if($this->xRange['start'] < 0 || $this->yRange['start'] < 0) {
 				throw new Exception("[convertTileIndexToPixels] Invalid start value for xRange or yRange");
 			}
-			if($this->xRange['end'] > $this->jp2Width || $this->yRange['end'] > $this->jp2Height) {
-				throw new Exception("[convertTileIndexToPixels] Invalid end value for xRange or yRange");
+			if($this->xRange['size'] > $this->jp2Width || $this->yRange['size'] > $this->jp2Height) {
+				throw new Exception("[convertTileIndexToPixels] Invalid size value for xRange or yRange");
 			}
 		}
 		catch(Exception $e) {

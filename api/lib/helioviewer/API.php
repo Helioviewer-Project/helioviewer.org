@@ -126,11 +126,11 @@ class API {
 
             $xRange = array();
             $xRange['start'] = $x[0];
-            $xRange['end']   = $x[1];
+            $xRange['size']   = $x[1];
 
             $yRange = array();
             $yRange['start'] = $y[0];
-            $yRange['end']   = $y[1];
+            $yRange['size']   = $y[1];
 
             // Zoom-level & tilesize
             $zoomLevel = $this->params['zoomLevel'];
@@ -777,7 +777,7 @@ class API {
 	/**
 	 * @description Takes the string representation of a layer from the javascript and formats it so that only useful/necessary information is included.
 	 * @return {Array} $formatted -- The array containing properly formatted strings
-	 * @param {Array} $layers -- an array of strings in the format: "obs,inst,det,meas,visible,opacityxxStart,xEnd,yStart,yEnd"
+	 * @param {Array} $layers -- an array of strings in the format: "obs,inst,det,meas,visible,opacityxxStart,xSize,yStart,ySize"
 	 * 					The extra "x" was put in the middle so that the string could be broken in half and parsing one half by itself 
 	 * 					rather than parsing 10 different strings and putting the half that didn't need parsing back together.
 	 */	

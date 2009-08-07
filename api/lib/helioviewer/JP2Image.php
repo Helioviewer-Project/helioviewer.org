@@ -53,12 +53,10 @@ abstract class JP2Image {
     /**
      * @param object uri -- The image URI/filename
      * @param int zoomLevel -- The zoomlevel to work with
-     * @param array xRange -- an associative array containing "xStart" (starting coordinate) and "xEnd" (width)
-     * @param array yRange -- An associative array containing "yStart" (staring coordinate) and "yEnd" (height)
+     * @param array xRange -- an associative array containing "xStart" (starting coordinate) and "xSize" (width)
+     * @param array yRange -- An associative array containing "yStart" (staring coordinate) and "ySize" (height)
      * @param array imageSize -- an associative array containing "width" and "height" of the image
      * @param boolean isTile -- whether the image is a tile or not
-     * 
-     * @TODO: change xEnd/yEnd to xSize/ySize
      */
     protected function __construct($uri, $zoomLevel, $xRange, $yRange, $imageSize, $isTile = true) {
         require_once('DbConnection.php');
@@ -275,8 +273,8 @@ abstract class JP2Image {
 		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
 		$top 	= substr($this->yRange["start"] / $this->jp2Height, 0, $precision);	
 		$left 	= substr($this->xRange["start"] / $this->jp2Width,  0, $precision);
-		$height = substr($this->yRange["end"]   / $this->jp2Height, 0, $precision);
-		$width 	= substr($this->xRange["end"]   / $this->jp2Width,  0, $precision);
+		$height = substr($this->yRange["size"]   / $this->jp2Height, 0, $precision);
+		$width 	= substr($this->xRange["size"]   / $this->jp2Width,  0, $precision);
 		
         $region = "-region \{$top,$left\},\{$height,$width\}";
 
