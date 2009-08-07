@@ -12,6 +12,7 @@ def main(argv):
 	fp = open(args.filename, "w")
 	
 	if (fp):
+		addMetaInfo(fp, argv)
 		generateSQL(fp, args)
 	
 	fp.close()
@@ -27,7 +28,7 @@ def getArguments():
 	parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name (If multiple tables are requested, a number will be affixed to each table).", default="image")
 	parser.add_option("-i", "--insert-size",   dest="insertsize",  help="How many records should be included in each INSERT statement", default=10)
 	parser.add_option("-u", "--num-tables",    dest="numtables",   help="The number of tables to create.", default=1)
-	parser.add_option("-p", "--postgres",      dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
+	parser.add_option("", "--postgres",      dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
 	
 	try:                                
 		options, args = parser.parse_args()
@@ -44,6 +45,27 @@ def getArguments():
 		options.filename = args[0]
 
 	return options
+
+def addMetaInfo(fp, argv):
+	# Command
+	cmd = ""
+	for arg in argv:
+		cmd += " " + arg
+	
+	# Execution time
+	now = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+
+	comment = """--
+-- Helioviewer Database Simulation:
+--  Image Table Generation
+--
+-- Command:
+--  %s
+--
+-- (Executed n %s)
+--
+""" % (cmd, now)
+        fp.write(comment)
 			
 def generateSQL(fp, args):
 	''' Generates a pseudo-SQL dump of a image database. '''
@@ -178,7 +200,7 @@ def printGreeting():
 
 	print "===================================================================="
 	print "= Helioviewer dummy SQL generator                                  ="
-	print "= Last updated: 2009/08/05                                         ="
+	print "= Last updated: 2009/08/07                                         ="
 	print "=                                                                  ="
 	print "= This script generates a SQL file containing an arbitrary number  ="
 	print "= of pseudo-image entries in order to test database performance.   ="
@@ -199,4 +221,4 @@ def usage(parser):
 	print "    \"datagen.py -n100000 -c5 -dhv -timage --postgres --numtables=5 Test.sql\"\n"	
 	
 if __name__ == '__main__':
-	main(sys.argv[1:])
+	main(sys.argv)
