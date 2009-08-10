@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import os, sys, math, time, MySQLdb, pg, timeit
+import os, sys, math, time, MySQLdb, pg, timeit, numpy
 from datetime import datetime, timedelta
 from optparse import OptionParser, OptionError, IndentedHelpFormatter
 from random import randrange
+from socket import gethostname
 
 def main(argv):
     printGreeting()
@@ -13,6 +14,7 @@ def main(argv):
     fp = open(args.filename, "w")
     
     if (fp):
+        print "Processing...",
         addMetaInfo(fp, argv)
         queryDatabase(fp, args)
     
@@ -79,6 +81,12 @@ def queryDatabase(fp, args):
     tname     = args.tablename
     postgres  = args.postgres
     
+    # dbtype
+    if postgres:
+        dbtype = "PostgreSQL"
+    else:
+        dbtype = "MySQL"
+    
     # connect to db
     if postgres:
         db = pg.connect(dbname = dbname, user = dbuser, passwd = dbpass)
@@ -89,21 +97,70 @@ def queryDatabase(fp, args):
     
     # get start and end times
     start, end = getDataRange()
+    
+    # total number of records
+    numrecords = getNumRecords()
+
+    # track quickest and slowest queries (None ~ negative infinity, () ~ positive infinity)
+    min = {"time": (), "query": ""}
+    max = {"time": None, "query": ""}
 
     # generate random list of dates to query
-    #t = timeit.Timer("print randDate()", "from __main__ import randDate")
     dates = []
     for i in range(0, n):
         dates.append(randDate(start, end))
-        
+     
+    times   = []
+    results = []
+
     for d in dates:
         t = timeit.Timer("execQuery()", "from __main__ import execQuery")
-        print t.timeit(1)
+        time = t.timeit(1)
+        times.append(time)
+        results.append({"time": time, "query": d})
+        
+        if time < min["time"]:
+            min = {"time": time, "query": d}
+        
+        if time > max["time"]:
+            max = {"time": time, "query": d}
+    
+    # mean, median, and standard deviation  
+    avg    = sum(times) / len(times)
+    median = numpy.median(times)
+    stdev  = numpy.std(times)
+    
+    fp.write("""
+[Summary]
+Machine : %s
+Database: %s (%s)
+Table   : %s
+Records Total: %d
 
+[Query Statistics]
+n: %d
+mean: %.5fs
+median: %.5fs
+std dev: %.5fs
+
+Fastest Query: %.5fs (%s)
+Slowest Query: %.5fs (%s)
+    """ % (gethostname(), dbname, dbtype, tname, numrecords, n, avg, median, stdev, min["time"], min["query"], max["time"], max["query"]))
+
+    print "Finished!"
     sys.exit(2)
 
 def execQuery():
     cursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp ASC LIMIT 1;" % (tname, d))
+
+def getNumRecords():
+    try:
+        cursor.execute("SELECT COUNT(*) FROM %s;" % tname)
+        total = int(cursor.fetchone()[0])
+    except MySQLdb.Error, e:
+        print "Error: " + e.args[1]
+        
+    return total        
 
 def getDataRange():
     # get data range
@@ -136,12 +193,12 @@ def printGreeting():
 
     print "===================================================================="
     print "= Helioviewer query simulation                                     ="
-    print "= Last updated: 2009/08/07                                         ="
+    print "= Last updated: 2009/08/10                                         ="
     print "=                                                                  ="
     print "= This script simulates a variable number of image queries, and    ="
     print "= records some summary information about the queries to a file.    ="
     print "=                                                                  ="
-    print "= Required: python-mysqldb, python-pygresql                        ="
+    print "= Required: python-mysqldb, python-pygresql, python-numpy          ="
     print "===================================================================="
     
 def usage(parser):
