@@ -99,11 +99,12 @@ def queryDatabase(fp, args):
     cursor = db.cursor()
     
     # get start and end times
-    start, end = getDataRange()
+    start, end = getDataRange(postgres)
     
     # total number of records
     numrecords = getNumRecords()
-
+    #numrecords = 100000000
+    
     # track quickest and slowest queries (None ~ negative infinity, () ~ positive infinity)
     min = {"time": (), "query": ""}
     max = {"time": None, "query": ""}
@@ -182,7 +183,7 @@ def plotResults(x, mu, sigma, output):
     #plt.show()
     plt.savefig(output)
 
-def getDataRange():
+def getDataRange(postgres):
     # get data range
     try:
         cursor.execute("SELECT timestamp FROM %s ORDER BY timestamp ASC LIMIT 1;" % tname)
@@ -193,7 +194,12 @@ def getDataRange():
 
     except MySQLdb.Error, e:
         print "Error: " + e.args[1]
-        
+    
+    # Postgres
+    if postgres: 
+        start = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
+        end = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+    
     return start, end
 
 def randDate(start, end):
