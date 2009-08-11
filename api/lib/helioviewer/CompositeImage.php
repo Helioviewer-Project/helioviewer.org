@@ -166,7 +166,8 @@ abstract class CompositeImage {
 			return $image;
 		}
 		
-		$cmd = CONFIG::PATH_CMD . " && convert " . $image . " -fill white -gravity SouthWest -annotate +20+0 '";
+		$cmd = CONFIG::PATH_CMD . " && convert " . $image . " -gravity SouthWest"; 
+		$nameCmd = "";
 		$timeCmd = "";
 		
 		// Put the names on first, then put the times on as a separate layer so the times are nicely aligned.
@@ -187,14 +188,22 @@ abstract class CompositeImage {
 				$name = $inst . " " . str_replace("0", "", $det) . " " . str_replace("0", "", $meas);
 			}
 			
-			$cmd .= $name . "\n";
+			$nameCmd .= $name . "\n";
 			
 			// Get rid of seconds, since they don't really matter and it makes time more readable
 			// Add extra spaces between date and time for readability.
 			$time = str_replace(" ", "   ", substr($time, 0, -3));
 			$timeCmd .= $time . "\n";
 		}
-		$cmd .= "' -annotate +100+0 '" . $timeCmd . "' -type TrueColor -alpha off " . $image;
+		
+		// Outline words in black
+		$cmd .= " -stroke '#000C' -strokewidth 2 -annotate +20+0 '" . $nameCmd;
+		// Write words in white over outline
+		$cmd .= "' -stroke none -fill white -annotate +20+0 '" . $nameCmd;
+		// Outline words in black
+		$cmd .= "' -stroke '#000C' -strokewidth 2 -annotate +100+0 '" . $timeCmd;
+		// Write words in white
+		$cmd .= "' -stroke none -fill white -annotate +100+0 '" . $timeCmd . "' -type TrueColor -alpha off " . $image;
 
 		exec($cmd, $out, $ret);
 

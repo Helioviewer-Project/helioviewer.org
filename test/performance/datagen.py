@@ -12,6 +12,7 @@ def main(argv):
 	fp = open(args.filename, "w")
 	
 	if (fp):
+		addMetaInfo(fp, argv)
 		generateSQL(fp, args)
 	
 	fp.close()
@@ -26,8 +27,8 @@ def getArguments():
 	parser.add_option("-d", "--database-name", dest="dbname",      help="Database name.", default="helioviewer")
 	parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name (If multiple tables are requested, a number will be affixed to each table).", default="image")
 	parser.add_option("-i", "--insert-size",   dest="insertsize",  help="How many records should be included in each INSERT statement", default=10)
-	parser.add_option("-u", "--num-tables",    dest="numtables",   help="The number of tables to distribute records across.", default=1)
-	parser.add_option("-p", "--postgres",      dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
+	parser.add_option("-u", "--num-tables",    dest="numtables",   help="The number of tables to create.", default=1)
+	parser.add_option("", "--postgres",      dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
 	
 	try:                                
 		options, args = parser.parse_args()
@@ -44,6 +45,27 @@ def getArguments():
 		options.filename = args[0]
 
 	return options
+
+def addMetaInfo(fp, argv):
+	# Command
+	cmd = ""
+	for arg in argv:
+		cmd += " " + arg
+	
+	# Execution time
+	now = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+
+	comment = """--
+-- Helioviewer Database Simulation:
+--  Image Table Generation
+--
+-- Command:
+--  %s
+--
+-- (Executed n %s)
+--
+""" % (cmd, now)
+        fp.write(comment)
 			
 def generateSQL(fp, args):
 	''' Generates a pseudo-SQL dump of a image database. '''
@@ -90,7 +112,7 @@ def createTable(fp, n, cadence, dbname, tname, postgres, inserts):
 		
 		# For each entry, add to INSERT statement (Note: Currently, will add extra rows if n % insertsize != 0)
 		for j in range(0, inserts):
-			fp.write(getEntrySQL(date.strftime("%Y-%m-%d %H:%M:%S")))
+			fp.write(getEntrySQL(date.strftime("%Y-%m-%d %H:%M:%S"), postgres))
 			date = date + delta
 			
 			# divider
@@ -107,9 +129,12 @@ def createTable(fp, n, cadence, dbname, tname, postgres, inserts):
 	print "\nDone!"
 
 
-def getEntrySQL(date):
+def getEntrySQL(date, postgres):
 	''' Returns the SQL statement for a single image record '''
-	return "(NULL,9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2')" % date
+	if postgres:
+		return "(9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2')" % date
+	else:
+		return "(NULL,9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2')" % date
 
 def getTableSQL(tname, postgres):
 	# Postgres
@@ -175,7 +200,7 @@ def printGreeting():
 
 	print "===================================================================="
 	print "= Helioviewer dummy SQL generator                                  ="
-	print "= Last updated: 2009/08/05                                         ="
+	print "= Last updated: 2009/08/07                                         ="
 	print "=                                                                  ="
 	print "= This script generates a SQL file containing an arbitrary number  ="
 	print "= of pseudo-image entries in order to test database performance.   ="
@@ -196,4 +221,4 @@ def usage(parser):
 	print "    \"datagen.py -n100000 -c5 -dhv -timage --postgres --numtables=5 Test.sql\"\n"	
 	
 if __name__ == '__main__':
-	main(sys.argv[1:])
+	main(sys.argv)

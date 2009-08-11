@@ -171,7 +171,7 @@ class Movie
 
 		// Use phpvideotoolkit to compile them
 		$toolkit = new PHPVideoToolkit($tmpdir);
-
+        
 		// compile the image to the tmp dir
 		$ok = $toolkit->prepareImagesForConversionToVideo($this->images, $this->frameRate);
 		

@@ -9,6 +9,7 @@
  * @package Helioviewer API
  */
 error_reporting(E_ALL | E_STRICT | E_NOTICE);
+#error_reporting(0);
 
 class API {
 
@@ -450,7 +451,8 @@ class API {
 		$imageSize 	 = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
 		$filename  	 = $this->params['filename'];
 			
-        $hqFormat  = $this->params['format'];
+        //$hqFormat  = $this->params['format'];
+        $hqFormat = "mp4";
 		
         // Optional parameters
         $options = array();
