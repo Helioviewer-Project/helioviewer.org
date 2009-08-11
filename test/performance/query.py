@@ -34,6 +34,7 @@ def getArguments():
     parser.add_option("-p", "--database-pw",   dest="dbpass",      help="Database password.", default="helioviewer", metavar="Password")
     parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name.", default="image", metavar="Table_Name")
     parser.add_option("-n", "--num-queries",   dest="numqueries",  help="Number of queries to simulate.", default=1000)
+    parser.add_option("-c", "--count",         dest="count",       help="Number of rows in the database (queried with COUNT if not specified, which is slow on transaction safe databases, e.g. postgres)")
     parser.add_option("", "--postgres",        dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
     
     try:                                
@@ -84,6 +85,7 @@ def queryDatabase(fp, args):
     dbpass    = args.dbpass
     tname     = args.tablename
     postgres  = args.postgres
+    count     = args.count
     
     # dbtype
     if postgres:
@@ -103,8 +105,7 @@ def queryDatabase(fp, args):
     start, end = getDataRange(postgres)
     
     # total number of records
-    numrecords = getNumRecords()
-    #numrecords = 100000000
+    numrecords = getNumRecords(count)
     
     # track quickest and slowest queries (None ~ negative infinity, () ~ positive infinity)
     min = {"time": (), "query": ""}
@@ -161,12 +162,15 @@ Slowest Query: %.5fs (%s)
 def execQuery():
     cursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp ASC LIMIT 1;" % (tname, d))
 
-def getNumRecords():
-    try:
-        cursor.execute("SELECT COUNT(*) FROM %s;" % tname)
-        total = int(cursor.fetchone()[0])
-    except MySQLdb.Error, e:
-        print "Error: " + e.args[1]
+def getNumRecords(count):
+    if count == None:
+        try:
+            cursor.execute("SELECT COUNT(*) FROM %s;" % tname)
+            total = int(cursor.fetchone()[0])
+        except MySQLdb.Error, e:
+            print "Error: " + e.args[1]
+    else:
+        total = int(count)
         
     return total        
 
