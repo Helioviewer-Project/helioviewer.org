@@ -7,6 +7,7 @@ from optparse import OptionParser, OptionError, IndentedHelpFormatter
 from random import randrange
 from socket import gethostname
 from numpy import std, median
+from time import clock
 
 
 def main(argv):
@@ -35,6 +36,7 @@ def getArguments():
     parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name.", default="image", metavar="Table_Name")
     parser.add_option("-n", "--num-queries",   dest="numqueries",  help="Number of queries to simulate.", default=1000)
     parser.add_option("-c", "--count",         dest="count",       help="Number of rows in the database (queried with COUNT if not specified, which is slow on transaction safe databases, e.g. postgres)")
+    parser.add_option("", "--timing-method",   dest="timingmethod", help="Timing method, possible options are timeit and now", default="timeit")
     parser.add_option("", "--postgres",        dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
     
     try:                                
@@ -86,6 +88,7 @@ def queryDatabase(fp, args):
     tname     = args.tablename
     postgres  = args.postgres
     count     = args.count
+    timingmethod = args.timingmethod
     
     # dbtype
     if postgres:
@@ -108,8 +111,8 @@ def queryDatabase(fp, args):
     numrecords = getNumRecords(count)
     
     # track quickest and slowest queries (None ~ negative infinity, () ~ positive infinity)
-    min = {"time": (), "query": ""}
-    max = {"time": None, "query": ""}
+    min = {"time": 1000000000, "query": ""}
+    max = {"time": -1.0 , "query": ""}
 
     # generate random list of dates to query
     dates = []
@@ -120,16 +123,28 @@ def queryDatabase(fp, args):
     results = []
 
     for d in dates:
-        t = timeit.Timer("execQuery()", "from __main__ import execQuery")
-        time = t.timeit(1)
-        times.append(time)
-        results.append({"time": time, "query": d})
+        if timingmethod == "now":
+            start = datetime.now()
+            execQuery()
+            end = datetime.now()
+            delta = end - start
+            executiontime = delta.seconds + delta.microseconds / 1000000.0
+        elif timingmethod == "clock":
+            start = clock()
+            execQuery()
+            end = clock()
+            executiontime = end - start
+        else:
+            t = timeit.Timer("execQuery()", "from __main__ import execQuery")
+            executiontime = t.timeit(1)
+        times.append(executiontime)
+        results.append({"time": executiontime, "query": d})
         
-        if time < min["time"]:
-            min = {"time": time, "query": d}
+        if executiontime < min["time"]:
+            min = {"time": executiontime, "query": d}
         
-        if time > max["time"]:
-            max = {"time": time, "query": d}
+        if executiontime > max["time"]:
+            max = {"time": executiontime, "query": d}
     
     # mean, median, and standard deviation  
     avg   = sum(times) / len(times)
