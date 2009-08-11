@@ -88,13 +88,13 @@ class SubFieldImage extends JP2Image {
 		if (substr($this->yRange["start"],0,1) == "-")
 			$yStartStr = "-" . str_pad(substr($this->yRange["start"], 1), 2, '0', STR_PAD_LEFT);
 			
-		$xEndStr = "+" . str_pad($this->xRange["end"], 2, '0', STR_PAD_LEFT);
-		if (substr($this->xRange["end"],0,1) == "-")
-			$xEndStr = "-" . str_pad(substr($this->xRange["end"], 1), 2, '0', STR_PAD_LEFT);
+		$xEndStr = "+" . str_pad($this->xRange["size"], 2, '0', STR_PAD_LEFT);
+		if (substr($this->xRange["size"],0,1) == "-")
+			$xEndStr = "-" . str_pad(substr($this->xRange["size"], 1), 2, '0', STR_PAD_LEFT);
 
-		$yEndStr = "+" . str_pad($this->yRange["end"], 2, '0', STR_PAD_LEFT);
-		if (substr($this->yRange["end"],0,1) == "-")
-			$yEndStr = "-" . str_pad(substr($this->yRange["end"], 1), 2, '0', STR_PAD_LEFT);	
+		$yEndStr = "+" . str_pad($this->yRange["size"], 2, '0', STR_PAD_LEFT);
+		if (substr($this->yRange["size"],0,1) == "-")
+			$yEndStr = "-" . str_pad(substr($this->yRange["size"], 1), 2, '0', STR_PAD_LEFT);	
 
 		$filepath .= implode("_", array(substr($this->uri, 0, -4), $this->zoomLevel, $xStartStr, $xEndStr, $yStartStr, $yEndStr, $this->hcOffset["x"], $this->hcOffset["y"]));
 

@@ -35,7 +35,7 @@ class Screenshot extends CompositeImage {
 		$this->id = $filename;
 
 		// Directory to hold the final screenshot image.
-		$this->cacheFileDir = $this->tmpDir . $this->id . "/";
+		$this->cacheFileDir = $this->tmpDir . time() . "/";
 		
 		if(!file_exists($this->cacheFileDir)) {
 			mkdir($this->cacheFileDir);
