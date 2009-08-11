@@ -16,8 +16,9 @@ def main(argv):
     # open file and specify database to work with
     fp = open(args.filename, "w")
     
+    print "Processing..."
+    
     if (fp):
-        print "Processing...",
         addMetaInfo(fp, argv)
         queryDatabase(fp, args)
     
@@ -152,7 +153,7 @@ Slowest Query: %.5fs (%s)
     """ % (gethostname(), dbname, dbtype, tname, numrecords, n, avg, med, stdev, min["time"], min["query"], max["time"], max["query"]))
     
     # plot histogram of times
-    plotResults(times, avg, stdev, args.filename[0:-4] + "-plot.png")
+    plotResults(times, avg, stdev, args.filename[0:-4] + "-plot.svg")
 
     print "Finished!"
     sys.exit(2)
@@ -171,17 +172,19 @@ def getNumRecords():
 
 def plotResults(x, mu, sigma, output):
     
+    print "...Plotting results"
+    
     # the histogram of the data
-    n, bins, patches = plt.hist(x, bins=50, normed=1, facecolor='aqua', alpha=0.75)
+    n, bins, patches = plt.hist(x, bins=50, normed=False, facecolor='limegreen', alpha=0.75)
     
     plt.xlabel('Query Time')
     plt.ylabel('Number')
-    plt.title(r'$\mathrm{Histogram\ of\ Helioviewer\ Image\ Query\ Time:}\ \mu=%.5fs,\ \sigma=%.5f$' % (mu, sigma))
+    plt.title(r'$\mathrm{Helioviewer\ Image\ Query\ Time:}\ n=%d,\ \mu=%.5fs,\ \sigma=%.5f$' % (len(x), mu, sigma))
     #plt.axis([0, 0.05, 0, 1])
     plt.grid(True)
     
     #plt.show()
-    plt.savefig(output)
+    plt.savefig(output, format="svg")
 
 def getDataRange(postgres):
     # get data range
