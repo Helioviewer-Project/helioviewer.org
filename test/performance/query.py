@@ -1,10 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import os, sys, math, time, MySQLdb, pg, timeit, numpy
+import os, sys, MySQLdb, pgdb, timeit
+import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from optparse import OptionParser, OptionError, IndentedHelpFormatter
 from random import randrange
 from socket import gethostname
+from numpy import std, median
+
 
 def main(argv):
     printGreeting()
@@ -13,8 +16,9 @@ def main(argv):
     # open file and specify database to work with
     fp = open(args.filename, "w")
     
+    print "Processing..."
+    
     if (fp):
-        print "Processing...",
         addMetaInfo(fp, argv)
         queryDatabase(fp, args)
     
@@ -37,7 +41,7 @@ def getArguments():
                     
     except:
         sys.exit(2)
-        
+        x 
     # check for filename
     if len(args) != 1:
         usage(parser)
@@ -89,18 +93,19 @@ def queryDatabase(fp, args):
     
     # connect to db
     if postgres:
-        db = pg.connect(dbname = dbname, user = dbuser, passwd = dbpass)
+        db = pgdb.connect(database = dbname, user = dbuser, password = dbpass)
     else:
         db = MySQLdb.connect(db = dbname, user = dbuser, passwd = dbpass)
     
     cursor = db.cursor()
     
     # get start and end times
-    start, end = getDataRange()
+    start, end = getDataRange(postgres)
     
     # total number of records
     numrecords = getNumRecords()
-
+    #numrecords = 100000000
+    
     # track quickest and slowest queries (None ~ negative infinity, () ~ positive infinity)
     min = {"time": (), "query": ""}
     max = {"time": None, "query": ""}
@@ -126,9 +131,9 @@ def queryDatabase(fp, args):
             max = {"time": time, "query": d}
     
     # mean, median, and standard deviation  
-    avg    = sum(times) / len(times)
-    median = numpy.median(times)
-    stdev  = numpy.std(times)
+    avg   = sum(times) / len(times)
+    med   = median(times)
+    stdev = std(times)
     
     fp.write("""
 [Summary]
@@ -145,7 +150,10 @@ std dev: %.5fs
 
 Fastest Query: %.5fs (%s)
 Slowest Query: %.5fs (%s)
-    """ % (gethostname(), dbname, dbtype, tname, numrecords, n, avg, median, stdev, min["time"], min["query"], max["time"], max["query"]))
+    """ % (gethostname(), dbname, dbtype, tname, numrecords, n, avg, med, stdev, min["time"], min["query"], max["time"], max["query"]))
+    
+    # plot histogram of times
+    plotResults(times, avg, stdev, args.filename[0:-4] + "-plot.svg")
 
     print "Finished!"
     sys.exit(2)
@@ -162,7 +170,23 @@ def getNumRecords():
         
     return total        
 
-def getDataRange():
+def plotResults(x, mu, sigma, output):
+    
+    print "...Plotting results"
+    
+    # the histogram of the data
+    n, bins, patches = plt.hist(x, bins=50, normed=False, facecolor='limegreen', alpha=0.75)
+    
+    plt.xlabel('Query Time')
+    plt.ylabel('Number')
+    plt.title(r'$\mathrm{Helioviewer\ Image\ Query\ Time:}\ n=%d,\ \mu=%.5fs,\ \sigma=%.5f$' % (len(x), mu, sigma))
+    #plt.axis([0, 0.05, 0, 1])
+    plt.grid(True)
+    
+    #plt.show()
+    plt.savefig(output, format="svg")
+
+def getDataRange(postgres):
     # get data range
     try:
         cursor.execute("SELECT timestamp FROM %s ORDER BY timestamp ASC LIMIT 1;" % tname)
@@ -173,7 +197,12 @@ def getDataRange():
 
     except MySQLdb.Error, e:
         print "Error: " + e.args[1]
-        
+    
+    # Postgres
+    if postgres: 
+        start = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
+        end = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+    
     return start, end
 
 def randDate(start, end):
@@ -198,7 +227,8 @@ def printGreeting():
     print "= This script simulates a variable number of image queries, and    ="
     print "= records some summary information about the queries to a file.    ="
     print "=                                                                  ="
-    print "= Required: python-mysqldb, python-pygresql, python-numpy          ="
+    print "= Required: python-mysqldb, python-pygresql, python-numpy,         ="
+    print "=           matplotlib (0.99), python-tz, python-dateutil          ="
     print "===================================================================="
     
 def usage(parser):
