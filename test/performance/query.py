@@ -35,8 +35,10 @@ def getArguments():
     parser.add_option("-p", "--database-pw",   dest="dbpass",      help="Database password.", default="helioviewer", metavar="Password")
     parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name.", default="image", metavar="Table_Name")
     parser.add_option("-n", "--num-queries",   dest="numqueries",  help="Number of queries to simulate.", default=1000)
-    parser.add_option("-c", "--count",         dest="count",       help="Number of rows in the database (queried with COUNT if not specified, which is slow on transaction safe databases, e.g. postgres)")
+    parser.add_option("-c", "--count",         dest="count",       help="Number of rows in the database (queried with COUNT if not specified, which is slow on many transaction safe databases, e.g. postgres)")
     parser.add_option("", "--timing-method",   dest="timingmethod", help="Timing method, possible options are timeit and now", default="timeit")
+    parser.add_option("", "--multiple-connections", dest="multipleconnections", help="Use one connection per query", action="store_true")
+    parser.add_option("", "--print-results",   dest="printresults", help="Print the results of the queries", action="store_true")
     parser.add_option("", "--postgres",        dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
     
     try:                                
@@ -78,7 +80,7 @@ def addMetaInfo(fp, argv):
 
 def queryDatabase(fp, args):
     ''' Simulates a number of image queries, and records results to a file '''
-    global cursor, tname, d
+    global cursor, tname, d, dbname, dbuser, dbpass, postgres, multipleconnections, printresults
     
     # user input
     n         = int(args.numqueries)
@@ -89,6 +91,8 @@ def queryDatabase(fp, args):
     postgres  = args.postgres
     count     = args.count
     timingmethod = args.timingmethod
+    multipleconnections = args.multipleconnections
+    printresults = args.printresults
     
     # dbtype
     if postgres:
@@ -175,7 +179,22 @@ Slowest Query: %.5fs (%s)
     sys.exit(2)
 
 def execQuery():
-    cursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp ASC LIMIT 1;" % (tname, d))
+    if multipleconnections:
+            if postgres:
+                db = pgdb.connect(database = dbname, user = dbuser, password = dbpass)
+            else:
+                db = MySQLdb.connect(db = dbname, user = dbuser, passwd = dbpass)
+            querycursor = db.cursor()
+    else:
+        querycursor = cursor
+
+    querycursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp DESC LIMIT 1;" % (tname, d))
+
+    if printresults:
+        result = querycursor.fetchone()
+        for i in range(0, len(result)):
+            result[i] = str(result[i])
+        print "(" + ",".join(result) + ")"
 
 def getNumRecords(count):
     if count == None:
