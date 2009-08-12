@@ -7,6 +7,7 @@ from optparse import OptionParser, OptionError, IndentedHelpFormatter
 from random import randrange
 from socket import gethostname
 from numpy import std, median
+from time import clock
 
 
 def main(argv):
@@ -34,6 +35,10 @@ def getArguments():
     parser.add_option("-p", "--database-pw",   dest="dbpass",      help="Database password.", default="helioviewer", metavar="Password")
     parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name.", default="image", metavar="Table_Name")
     parser.add_option("-n", "--num-queries",   dest="numqueries",  help="Number of queries to simulate.", default=1000)
+    parser.add_option("-c", "--count",         dest="count",       help="Number of rows in the database (queried with COUNT if not specified, which is slow on many transaction safe databases, e.g. postgres)")
+    parser.add_option("", "--timing-method",   dest="timingmethod", help="Timing method, possible options are timeit and now", default="timeit")
+    parser.add_option("", "--multiple-connections", dest="multipleconnections", help="Use one connection per query", action="store_true")
+    parser.add_option("", "--print-results",   dest="printresults", help="Print the results of the queries", action="store_true")
     parser.add_option("", "--postgres",        dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
     
     try:                                
@@ -61,7 +66,8 @@ def addMetaInfo(fp, argv):
     # Execution time
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
 
-    comment = """###############################################################################
+    comment = \
+"""###############################################################################
 # Helioviewer Database Simulation:
 #  Image Queries
 #
@@ -75,7 +81,7 @@ def addMetaInfo(fp, argv):
 
 def queryDatabase(fp, args):
     ''' Simulates a number of image queries, and records results to a file '''
-    global cursor, tname, d
+    global cursor, tname, d, dbname, dbuser, dbpass, postgres, multipleconnections, printresults
     
     # user input
     n         = int(args.numqueries)
@@ -84,6 +90,10 @@ def queryDatabase(fp, args):
     dbpass    = args.dbpass
     tname     = args.tablename
     postgres  = args.postgres
+    count     = args.count
+    timingmethod = args.timingmethod
+    multipleconnections = args.multipleconnections
+    printresults = args.printresults
     
     # dbtype
     if postgres:
@@ -103,12 +113,11 @@ def queryDatabase(fp, args):
     start, end = getDataRange(postgres)
     
     # total number of records
-    numrecords = getNumRecords()
-    #numrecords = 100000000
+    numrecords = getNumRecords(count)
     
     # track quickest and slowest queries (None ~ negative infinity, () ~ positive infinity)
-    min = {"time": (), "query": ""}
-    max = {"time": None, "query": ""}
+    min = {"time": 1000000000, "query": ""}
+    max = {"time": -1.0 , "query": ""}
 
     # generate random list of dates to query
     dates = []
@@ -119,16 +128,31 @@ def queryDatabase(fp, args):
     results = []
 
     for d in dates:
-        t = timeit.Timer("execQuery()", "from __main__ import execQuery")
-        time = t.timeit(1)
-        times.append(time)
-        results.append({"time": time, "query": d})
+        if timingmethod == "now":
+            start = datetime.now()
+            execQuery()
+            end = datetime.now()
+            delta = end - start
+            executiontime = delta.seconds + delta.microseconds / 1000000.0
+        elif timingmethod == "clock":
+            start = clock()
+            execQuery()
+            end = clock()
+            executiontime = end - start
+        else:
+            t = timeit.Timer("execQuery()", "from __main__ import execQuery")
+            executiontime = t.timeit(1)
+        times.append(executiontime)
+        results.append({"time": executiontime, "query": d})
         
-        if time < min["time"]:
-            min = {"time": time, "query": d}
+        if executiontime < min["time"]:
+            min = {"time": executiontime, "query": d}
         
-        if time > max["time"]:
-            max = {"time": time, "query": d}
+        if executiontime > max["time"]:
+            max = {"time": executiontime, "query": d}
+    
+    # close connection
+    cursor.close()
     
     # mean, median, and standard deviation  
     avg   = sum(times) / len(times)
@@ -159,14 +183,32 @@ Slowest Query: %.5fs (%s)
     sys.exit(2)
 
 def execQuery():
-    cursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp ASC LIMIT 1;" % (tname, d))
+    if multipleconnections:
+            if postgres:
+                db = pgdb.connect(database = dbname, user = dbuser, password = dbpass)
+            else:
+                db = MySQLdb.connect(db = dbname, user = dbuser, passwd = dbpass)
+            querycursor = db.cursor()
+    else:
+        querycursor = cursor
 
-def getNumRecords():
-    try:
-        cursor.execute("SELECT COUNT(*) FROM %s;" % tname)
-        total = int(cursor.fetchone()[0])
-    except MySQLdb.Error, e:
-        print "Error: " + e.args[1]
+    querycursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp DESC LIMIT 1;" % (tname, d))
+
+    if printresults:
+        result = querycursor.fetchone()
+        for i in range(0, len(result)):
+            result[i] = str(result[i])
+        print "(" + ",".join(result) + ")"
+
+def getNumRecords(count):
+    if count == None:
+        try:
+            cursor.execute("SELECT COUNT(*) FROM %s;" % tname)
+            total = int(cursor.fetchone()[0])
+        except MySQLdb.Error, e:
+            print "Error: " + e.args[1]
+    else:
+        total = int(count)
         
     return total        
 
@@ -222,13 +264,13 @@ def printGreeting():
 
     print "===================================================================="
     print "= Helioviewer query simulation                                     ="
-    print "= Last updated: 2009/08/10                                         ="
+    print "= Last updated: 2009/08/11                                         ="
     print "=                                                                  ="
     print "= This script simulates a variable number of image queries, and    ="
     print "= records some summary information about the queries to a file.    ="
     print "=                                                                  ="
     print "= Required: python-mysqldb, python-pygresql, python-numpy,         ="
-    print "=           matplotlib (0.99), python-tz, python-dateutil          ="
+    print "=           matplotlib, python-tz, python-dateutil                 ="
     print "===================================================================="
     
 def usage(parser):
