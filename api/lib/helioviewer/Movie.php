@@ -10,8 +10,8 @@
 
 require_once ('MovieFrame.php');
 require_once ('DbConnection.php');
-require_once ('/var/www/helioviewer/api/lib/phpvideotoolkit/config.php');
-require_once ('/var/www/helioviewer/api/lib/phpvideotoolkit/phpvideotoolkit.php5.php');
+require_once ('lib/phpvideotoolkit/config.php');
+require_once ('lib/phpvideotoolkit/phpvideotoolkit.php5.php');
 
 class Movie
 {

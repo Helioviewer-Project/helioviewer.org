@@ -109,7 +109,7 @@
 								 		$contents .= ' checked=true';
 								 	} 
 		$contents .=				' value="' . $name . '"/></td>
-								<td class="layers-name">' . $name . '</td>
+								<td class="layers-name">' . str_replace(",", " ", $name) . '</td>
 							</tr>';
 	}
 	
