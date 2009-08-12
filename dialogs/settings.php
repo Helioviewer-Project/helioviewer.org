@@ -12,7 +12,7 @@
 	$numFrames	= $params['numFrames'];
 	
 	$layers		= explode('/', $params['layers']);
-	$hqformat	= $params['hqFormat'];
+	$hqFormat	= $params['hqFormat'];
 	$quality	= $params['quality'];
 
 	$showImgIfGap 	= $params['showImgIfGap'];
@@ -24,7 +24,7 @@
 	$date = str_replace("-", "/", $date);
 	$time = substr($startDate[1], 0, -1);
 	
-//	echo "$startDate, $hqformat, $width, $height, $layers, $timeStep, $date, $time <br />";
+//	echo "$startDate, $hqFormat, $width, $height, $layers, $timeStep, $date, $time <br />";
 
 	/**
 	 * The following is all of the html markup necessary to generate the user options form. Default values are inserted in the appropriate places. 
@@ -83,10 +83,10 @@
 
 	foreach($layers as $layer) {
 		// Use $layer as the value of the checkbox, but just use the actual layer name for the label the user sees.
-		// Break the string into pieces (0 = name,opacityGrp,opacity, 1 = xRange,yRange)
-		$info = explode('x', $layer);
+		// Break the string into pieces (0 = name, 1 = checked/unchecked)
+		$info = explode(' ', $layer);
 	
-		// Get the piece with the name in it, break that into pieces around the commas
+/*		// Break name into pieces to see if 0's need to be removed.
 		$rawName = explode(',', $info[0]);
 		$obs 	 = $rawName[0];
 		$inst 	 = $rawName[1];
@@ -96,11 +96,20 @@
 		$name 	 = "$obs $inst $det $meas";
 		if($inst == "LAS") {
 			$name = str_replace("0", "", $name);
-		}				
+		}	*/
+		$name 		= $info[0];
+		$checked	= $info[1]; 
+					
 		$contents .=
 							'<tr>
-								<td class="layers-checkbox"><input type=checkbox name="layers" checked=true value="' . $layer . '"/></td>
-								<td class="layers-name">' . $name . '</td>
+								<td class="layers-checkbox"><input type=checkbox name="layers"';
+									// Cant put 'checked=$checked' because saying 'checked="false"' registers as
+									// checked=true, because putting any string after checked means true.
+								 	if($checked == "true") {
+								 		$contents .= ' checked=true';
+								 	} 
+		$contents .=				' value="' . $name . '"/></td>
+								<td class="layers-name">' . str_replace(",", " ", $name) . '</td>
 							</tr>';
 	}
 	
@@ -119,11 +128,18 @@
 								<td><input type=text id="numFrames" name="numFrames" value=' . $numFrames . ' style="width: 2.5em;"/></td>
 								<td style="font-size: 10pt;">Format: </td>
 								<td>
-									<select id="hqFormat" name="hqFormat" style="padding: 0;">
-										<option id=1 value="mov" >mov</option>
-										<option id=2 value="asf" >asf</option>
-										<option id=3 value="mp4" >mp4</option>
-									</select>
+									<select id="hqFormat" name="hqFormat" style="padding: 0;">';
+	$formats = array("mov", "asf", "mp4");
+	foreach($formats as $format) {
+		$contents .= '<option value="' . $format . '"';
+		if($format == $hqFormat) {
+			$contents .= ' selected="selected"';
+		}
+		$contents .= '>' . $format . '</option>';
+	}
+
+	$contents .=
+									'</select>
 								</td>
 							</tr>
 							

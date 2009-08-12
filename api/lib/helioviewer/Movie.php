@@ -184,7 +184,7 @@ class Movie
 		}
 
 		$toolkit->setVideoOutputDimensions($this->imageSize['width'], $this->imageSize['height']);
-		
+	
 		// set the output parameters (Flash video)
 		$output_filename = "$movieName." . $this->filetype;
 		$ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
@@ -196,10 +196,10 @@ class Movie
             print $error;
 			die();
 		}
-		
+	
 		// 	execute the ffmpeg command
 		$movie = $toolkit->execute(false, true);
-		
+
 		// check the return value in-case of error
 		if ($movie !== PHPVideoToolkit::RESULT_OK) {
 		    // if there was an error then get it
@@ -233,7 +233,7 @@ class Movie
             print $error;
 			die();
 		}
-		
+
         // execute the ffmpeg command
 		$mp4 = $toolkit->execute(false, true);
 		
