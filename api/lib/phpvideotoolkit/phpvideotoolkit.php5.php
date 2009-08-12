@@ -564,6 +564,7 @@
 // 			check to see if this is a static call
 			if(!isset($this))
 			{
+echo "hi<br />", PHOVIDEOTOOLKIT_FFMPEG_BINARY;
 				$toolkit = new PHPVideoToolkit();
 				return $toolkit->getFFmpegInfo();
 			}

@@ -630,6 +630,7 @@ class API {
 			header("Cache-Control: private",false); // required for certain browsers 
 			header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";" );
 			header("Content-Transfer-Encoding: binary");
+
 			header("Content-Length: " . $stat['size']); 
 
 			echo file_get_contents($url);

@@ -6,7 +6,7 @@
 		touch($errorLog);
 	}
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
 <html>
 	<head>
 		<?php printf("<!-- Helioviewer rev. %s, %s-->\n", Config::BUILD_NUM, Config::LAST_UPDATE);?>
@@ -22,7 +22,7 @@
 
 		<!-- YUI CSS Reset -->
 		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
-
+		
 		<!-- jQuery -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
@@ -49,8 +49,9 @@
 		<!-- Prototype and Scriptaculous -->
 		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
-		<!--<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>-->
 		
+		<!--<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>-->
+	
 		<!-- Prototip -->
 		<script src="lib/prototip2.0.5/js/prototip.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="lib/prototip2.0.5/css/prototip.css" type="text/css">
