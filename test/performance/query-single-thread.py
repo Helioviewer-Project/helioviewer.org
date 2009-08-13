@@ -1,14 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import os, sys, MySQLdb, pgdb
+import os, sys, MySQLdb, pgdb, timeit
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from optparse import OptionParser, OptionError, IndentedHelpFormatter
 from random import randrange
 from socket import gethostname
 from numpy import std, median
-from querythread import QueryThread
-from time import sleep
+from time import clock
+
 
 def main(argv):
     printGreeting()
@@ -34,11 +34,11 @@ def getArguments():
     parser.add_option("-u", "--database-user", dest="dbuser",      help="Database username.", default="helioviewer", metavar="Username")
     parser.add_option("-p", "--database-pw",   dest="dbpass",      help="Database password.", default="helioviewer", metavar="Password")
     parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name.", default="image", metavar="Table_Name")
-    parser.add_option("-n", "--num-queries",   dest="numqueries",  help="Number of queries to simulate.", default=100)
-    parser.add_option("-m", "--num-threads",   dest="numthreads",  help="Number of simultaneous threads to execute", default = 1)
+    parser.add_option("-n", "--num-queries",   dest="numqueries",  help="Number of queries to simulate.", default=1000)
     parser.add_option("-c", "--count",         dest="count",       help="Number of rows in the database (queried with COUNT if not specified, which is slow on many transaction safe databases, e.g. postgres)")
     parser.add_option("", "--timing-method",   dest="timingmethod", help="Timing method, possible options are timeit and now", default="timeit")
     parser.add_option("", "--multiple-connections", dest="multipleconnections", help="Use one connection per query", action="store_true")
+    parser.add_option("", "--print-results",   dest="printresults", help="Print the results of the queries", action="store_true")
     parser.add_option("", "--postgres",        dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
     
     try:                                
@@ -81,20 +81,19 @@ def addMetaInfo(fp, argv):
 
 def queryDatabase(fp, args):
     ''' Simulates a number of image queries, and records results to a file '''
-    #global cursor, tname, numthreads, d, dbname, dbuser, dbpass, postgres, multipleconnections
+    global cursor, tname, d, dbname, dbuser, dbpass, postgres, multipleconnections, printresults
     
     # user input
-    n          = int(args.numqueries)
-    numthreads = int(args.numthreads)
-    dbname     = args.dbname
-    dbuser     = args.dbuser
-    dbpass     = args.dbpass
-    tname      = args.tablename
-    postgres   = args.postgres
-    count      = args.count
-    
-    timingmethod        = args.timingmethod
+    n         = int(args.numqueries)
+    dbname    = args.dbname
+    dbuser    = args.dbuser
+    dbpass    = args.dbpass
+    tname     = args.tablename
+    postgres  = args.postgres
+    count     = args.count
+    timingmethod = args.timingmethod
     multipleconnections = args.multipleconnections
+    printresults = args.printresults
     
     # dbtype
     if postgres:
@@ -102,7 +101,7 @@ def queryDatabase(fp, args):
     else:
         dbtype = "MySQL"
     
-    # get date range and count information (same for all threads)
+    # connect to db
     if postgres:
         db = pgdb.connect(database = dbname, user = dbuser, password = dbpass)
     else:
@@ -111,13 +110,14 @@ def queryDatabase(fp, args):
     cursor = db.cursor()
     
     # get start and end times
-    start, end = getDataRange(cursor, tname, postgres)
+    start, end = getDataRange(postgres)
     
     # total number of records
-    numrecords = getNumRecords(cursor, tname, count)
+    numrecords = getNumRecords(count)
     
-    # close connection
-    cursor.close()
+    # track quickest and slowest queries (None ~ negative infinity, () ~ positive infinity)
+    min = {"time": 1000000000, "query": ""}
+    max = {"time": -1.0 , "query": ""}
 
     # generate random list of dates to query
     dates = []
@@ -127,16 +127,32 @@ def queryDatabase(fp, args):
     times   = []
     results = []
 
-    # spawn threads
-    for i in range(numthreads):
-        thread = QueryThread(dbname, dbuser, dbpass, postgres, timingmethod, multipleconnections, tname, dates, times, results)
-        thread.start()
+    for d in dates:
+        if timingmethod == "now":
+            start = datetime.now()
+            execQuery()
+            end = datetime.now()
+            delta = end - start
+            executiontime = delta.seconds + delta.microseconds / 1000000.0
+        elif timingmethod == "clock":
+            start = clock()
+            execQuery()
+            end = clock()
+            executiontime = end - start
+        else:
+            t = timeit.Timer("execQuery()", "from __main__ import execQuery")
+            executiontime = t.timeit(1)
+        times.append(executiontime)
+        results.append({"time": executiontime, "query": d})
         
-    while len(dates) > 0:
-        sleep(0.25)
+        if executiontime < min["time"]:
+            min = {"time": executiontime, "query": d}
         
-    # find fastest and slowest queries
-    min, max = getEdgeValues(results)
+        if executiontime > max["time"]:
+            max = {"time": executiontime, "query": d}
+    
+    # close connection
+    cursor.close()
     
     # mean, median, and standard deviation  
     avg   = sum(times) / len(times)
@@ -166,8 +182,25 @@ Slowest Query: %.5fs (%s)
     print "Finished!"
     sys.exit(2)
 
-def getNumRecords(cursor, tname, count):
-    ''' returns the total number of records in the table '''
+def execQuery():
+    if multipleconnections:
+            if postgres:
+                db = pgdb.connect(database = dbname, user = dbuser, password = dbpass)
+            else:
+                db = MySQLdb.connect(db = dbname, user = dbuser, passwd = dbpass)
+            querycursor = db.cursor()
+    else:
+        querycursor = cursor
+
+    querycursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp DESC LIMIT 1;" % (tname, d))
+
+    if printresults:
+        result = querycursor.fetchone()
+        for i in range(0, len(result)):
+            result[i] = str(result[i])
+        print "(" + ",".join(result) + ")"
+
+def getNumRecords(count):
     if count == None:
         try:
             cursor.execute("SELECT COUNT(*) FROM %s;" % tname)
@@ -195,8 +228,8 @@ def plotResults(x, mu, sigma, output):
     #plt.show()
     plt.savefig(output, format="svg")
 
-def getDataRange(cursor, tname, postgres):
-    ''' Get data range '''
+def getDataRange(postgres):
+    # get data range
     try:
         cursor.execute("SELECT timestamp FROM %s ORDER BY timestamp ASC LIMIT 1;" % tname)
         start = cursor.fetchone()[0]
@@ -213,21 +246,6 @@ def getDataRange(cursor, tname, postgres):
         end = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
     
     return start, end
-
-def getEdgeValues(results):
-    ''' Finds the fastest and slowest queries '''
-    min = {"time": 1000000000, "query": ""}
-    max = {"time": -1.0 , "query": ""}
-
-    for r in results:
-        if r["time"] < min["time"]:
-            min = r
-    
-        if r["time"] > max["time"]:
-            max = r
-            
-    return min, max
-
 
 def randDate(start, end):
     '''
@@ -246,7 +264,7 @@ def printGreeting():
 
     print "===================================================================="
     print "= Helioviewer query simulation                                     ="
-    print "= Last updated: 2009/08/13                                         ="
+    print "= Last updated: 2009/08/11                                         ="
     print "=                                                                  ="
     print "= This script simulates a variable number of image queries, and    ="
     print "= records some summary information about the queries to a file.    ="
