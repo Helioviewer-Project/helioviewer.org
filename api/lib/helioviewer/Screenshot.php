@@ -22,11 +22,12 @@ class Screenshot extends CompositeImage {
 	 * @param int $id -- the unix timestamp of the time the Screenshot was requested
 	 * @param array $imageSize -- an array holding the with and height of the viewport image
 	 */
-	public function __construct($timestamp, $zoomLevel, $options, $imageSize, $filename) {
+	public function __construct($timestamp, $zoomLevel, $options, $imageSize, $filename, $quality) {
 		$this->timestamp 	= $timestamp;
 		$this->imageSize 	= $imageSize;
 		// this->timestamps will be an associative array with the actual timestamps of each layer, as given by the database
 		$this->timestamps 	= array();
+		$this->quality 		= $quality;
 		
 		$tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
 

@@ -42,7 +42,7 @@ class Movie
 	 * @param array $imageSize -- width and height of image
 	 * @param string $filename -- desired filename for the image
 	 */
-    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename)
+    public function __construct($layers, $startTime, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename, $quality)
     {
         date_default_timezone_set('UTC');
 		// $layers is an array of layer information arrays, identified by their layer names.
@@ -54,6 +54,7 @@ class Movie
         $this->zoomLevel = $zoomLevel;
         $this->numFrames = $numFrames;
         $this->frameRate = $frameRate;
+		$this->quality	 = $quality;
 		
         $this->options 	 = $options;
 		
@@ -164,7 +165,7 @@ class Movie
 			}	
 
 			// All frames will be put in cache/movies/$now		
-			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->imageSize, $realTimestamps);	
+			$movieFrame = new MovieFrame($this->zoomLevel, $this->options, $images, $frameNum, $now, $this->imageSize, $realTimestamps, $this->quality);	
 			$frameFile = $movieFrame->getComposite(); 
 
 			array_push($this->images, $frameFile);

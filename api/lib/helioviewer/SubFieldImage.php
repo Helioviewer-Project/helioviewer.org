@@ -15,10 +15,11 @@ class SubFieldImage extends JP2Image {
 	  * @param object $imageSize is 512 pixels. 
 	  */	
 	
-	public function __construct($uri, $zoomLevel, $x, $y, $imageSize, $hcOffset) {
+	public function __construct($uri, $zoomLevel, $x, $y, $imageSize, $hcOffset, $quality) {
         parent::__construct($uri, $zoomLevel, $x, $y, $imageSize, false);
 
 		$this->hcOffset = $hcOffset;
+		$this->quality	= $quality;
 		
 		// The true/false parameter means whether to display the image or not when finished building it (used for debugging).
 		$this->getImage(false);

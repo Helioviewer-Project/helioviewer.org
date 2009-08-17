@@ -84,7 +84,7 @@ abstract class CompositeImage {
 				array_push($opacities["value"], $imageInfo[7]);
 				array_push($opacities["group"], $imageInfo[8]);
 		
-				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
+				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset, $this->quality);
 				$filepath = $subFieldImage->getCacheFilepath();
 
 				if(!file_exists($filepath))
