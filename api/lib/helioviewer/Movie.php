@@ -54,15 +54,16 @@ class Movie
         $this->zoomLevel = $zoomLevel;
         $this->numFrames = $numFrames;
         $this->frameRate = $frameRate;
-        $this->highQualityFiletype = $hqFormat;
 		
-        $this->options = $options;
+        $this->options 	 = $options;
 		
         // timeStep is in seconds
         $this->timeStep  = $timeStep;
 		$this->imageSize = $imageSize;
 		$this->filename	 = $filename;
 
+		$this->padDimensions 		= $this->setAspectRatios();
+		$this->highQualityFiletype 	= $hqFormat;
         $this->db = new DbConnection();
     }
 
@@ -169,6 +170,22 @@ class Movie
 			array_push($this->images, $frameFile);
 		}	
 
+		// Pad to a 16:9 aspect ratio by adding a black border around the image.
+		// This is set up so that width CAN be padded if it's uncommented. Currently it is not padded.
+		foreach($this->images as $image) {
+			//$imgWidth = $this->imageSize["width"];
+			//$width 	= $this->padDimensions["width"];
+			//$widthDiff = ($width - $imgWidth) / 2;
+			
+			$imgHeight = $this->imageSize["height"];
+			$height = $this->padDimensions["height"];
+			$heightDiff = ($height - $imgHeight) / 2;
+			
+			if(/*$widthDiff > 0 || */ $heightDiff > 0) {
+				exec(Config::PATH_CMD . " && convert -bordercolor black -border " . /*$widthDiff*/ 0 . "x" . $heightDiff . " " . $image . " " . $image);
+			}
+		}
+		
 		// Use phpvideotoolkit to compile them
 		$toolkit = new PHPVideoToolkit($tmpdir);
         
@@ -255,7 +272,36 @@ class Movie
 		header('Content-type: application/json');
 		echo json_encode($tmpurl);
 	}
+
+	/**
+	 * @description Checks the ratio of width to height and adjusts each dimension so that the
+	 * 				ratio is 16:9. The movie will be padded with a black background in JP2Image.php
+	 * 				using the new width and height.
+	 */
+	private function setAspectRatios() {
+		$width  = $this->imageSize["width"];
+		$height = $this->imageSize["height"];
 		
+		$ratio = $width / $height;
+
+		// Commented out because padding the width looks funny. 
+		/*
+		// If width needs to be adjusted but height is fine
+		if ($ratio < 16/9) {
+			$adjust = (16/9) * $height / $width;
+			$width *= $adjust;
+		}
+		*/	
+		// Adjust height if necessary
+		if ($ratio > 16/9) {
+			$adjust = (9/16) * $width / $height;
+			$height *= $adjust;
+		}
+		
+		$dimensions = array("width" => $width, "height" => $height);
+		return $dimensions;
+	}
+			
     /**
      * Queries the database to find the exact timestamps for images nearest each time in $timeStamps.
      * Returns an array the size of numFrames that has 'timestamp', 'unix_timestamp', 'timediff', 'timediffAbs', 'uri', and 'opacityGrp'
