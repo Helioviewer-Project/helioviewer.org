@@ -1,5 +1,5 @@
 -- Helioviewer Database Structure --
--- last update: 2009/08/17        --
+-- last update: 2009/08/18        --
 
 --
 -- Create schema & user
@@ -36,13 +36,15 @@ CREATE TABLE `image` (
 -- --------------------------------------------------------
 CREATE TABLE `datasource` (
     `id`            SMALLINT unsigned NOT NULL,
-    `name`          VARCHAR(255) NOT NULL,
+    `name`          VARCHAR(127) NOT NULL,
     `description`   VARCHAR(255),
     `observatoryId` SMALLINT unsigned NOT NULL,
     `instrumentId`  SMALLINT unsigned NOT NULL,
     `detectorId`    SMALLINT unsigned NOT NULL,
     `measurementId` SMALLINT unsigned NOT NULL,
     `layeringOrder` TINYINT NOT NULL,
+    `dateField`		VARCHAR(127) NOT NULL,
+    `dateFormat`	VARCHAR(127) NOT NULL,
   PRIMARY KEY  (`id`), INDEX (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -59,8 +61,9 @@ CREATE TABLE `observatory` (
    PRIMARY KEY (`id`), INDEX (`id`)
 ) DEFAULT CHARSET=utf8;
 
-INSERT INTO `observatory` VALUES(1, 'SOHO', 'Solar and Heliospheric Observatory');
-INSERT INTO `observatory` VALUES(2, 'TRACE', 'The Transition Region and Coronal Explorer');
+INSERT INTO `observatory` VALUES
+	(0, 'SOHO', 'Solar and Heliospheric Observatory'),
+	(1, 'TRACE', 'The Transition Region and Coronal Explorer');
 
 
 -- --------------------------------------------------------
@@ -77,10 +80,11 @@ CREATE TABLE `instrument` (
    PRIMARY KEY (`id`), INDEX (`id`)
 ) DEFAULT CHARSET=utf8;
 
-INSERT INTO `instrument` VALUES(1, 'EIT',   'Extreme ultraviolet Imaging Telescope');
-INSERT INTO `instrument` VALUES(2, 'LASCO', 'The Large Angle Spectrometric Coronagraph');
-INSERT INTO `instrument` VALUES(3, 'MDI',   'Michelson Doppler Imager');
-INSERT INTO `instrument` VALUES(4, 'TRACE', 'TRACE');
+INSERT INTO `instrument` VALUES
+	(0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
+	(1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
+	(2, 'MDI',   'Michelson Doppler Imager'),
+	(3, 'TRACE', 'TRACE');
 
 -- --------------------------------------------------------
 --
@@ -95,11 +99,12 @@ CREATE TABLE `detector` (
    PRIMARY KEY (`id`), INDEX (`id`)
 ) DEFAULT CHARSET=utf8;
 
-INSERT INTO `detector` VALUES(1, 'C2', 'LASCO C2');
-INSERT INTO `detector` VALUES(2, 'C3', 'LASCO C3');
-INSERT INTO `detector` VALUES(3, '', 'EIT');
-INSERT INTO `detector` VALUES(4, '', 'MDI');
-INSERT INTO `detector` VALUES(5, '', 'TRACE');
+INSERT INTO `detector` VALUES
+	(0, '', 'EIT'),
+	(1, 'C2', 'LASCO C2'),
+	(2, 'C3', 'LASCO C3'),
+	(3, '', 'MDI'),
+	(4, '', 'TRACE');
 
 -- --------------------------------------------------------
 --
@@ -116,13 +121,12 @@ CREATE TABLE `measurement` (
    PRIMARY KEY (`id`), INDEX (`id`)
 ) DEFAULT CHARSET=utf8;
 
-INSERT INTO `measurement` VALUES(1, '171', '171 Angstrom extreme ultraviolet', 'nm');
-INSERT INTO `measurement` VALUES(2, '195', '195 Angstrom extreme ultraviolet', 'nm');
-INSERT INTO `measurement` VALUES(3, '284', '284 Angstrom extreme ultraviolet', 'nm');
-INSERT INTO `measurement` VALUES(4, '304', '304 Angstrom extreme ultraviolet', 'nm');
-INSERT INTO `measurement` VALUES(5, '171', '171 Angstrom extreme ultraviolet', 'nm');
-INSERT INTO `measurement` VALUES(6, 'int', 'Intensitygram');
-INSERT INTO `measurement` VALUES(7, 'mag', 'Magnetogram');
-INSERT INTO `measurement` VALUES(8, 'WL', 'White Light');
-INSERT INTO `measurement` VALUES(9, 'WL', 'White Light');
+INSERT INTO `measurement` VALUES
+	(0, '171', '171 Ångström extreme ultraviolet', 'Å'),
+	(1, '195', '195 Ångström extreme ultraviolet', 'Å'),
+	(2, '284', '284 Ångström extreme ultraviolet', 'Å'),
+	(3, '304', '304 Ångström extreme ultraviolet', 'Å'),
+	(4, 'int', 'Intensitygram', 'DN'),
+	(5, 'mag', 'Magnetogram', 'Mx'),
+	(6, 'WL', 'White Light', 'DN');
 

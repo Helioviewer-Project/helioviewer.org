@@ -1,29 +1,30 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import sys, os, math, getpass
+import sys, os, math, getpass, commands
 from datetime import datetime
+from xml.dom.minidom import parseString
 
 def main():
 	printGreeting()
 
 	path = getFilePath()
 	images = traverseDirectory(path)
-
-	print "Found " + str(len(images)) + " JPEG2000 images."
+	
+	if(len(images) == 0):
+		print "No JPEG 2000 images found. Exiting installation."
+		sys.exit(2)
+	else:
+		print "Found " + str(len(images)) + " JPEG2000 images."
 
 	adminuser, adminpass, dbuser, dbpass = getDBInfo()
+	
+	cursor = setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass)
 
-	setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass)
-
-	print "works so far!"
-	sys.exit(2)
-
-
-	# Exiftool location
-
-	if(len(images) > 0):
-		processJPEG2000Images(images, cursor)
+	processJPEG2000Images(images, cursor)
+		
+	# Add Index
+	# CREATE INDEX image_index USING BTREE ON image (timestamp);
 
 	print "Finished!"
 
@@ -45,107 +46,119 @@ def traverseDirectory (path):
 
 def processJPEG2000Images (images, cursor):
 	''' Processes a collection of JPEG2000 Images. '''
-	''' TODO: Multi-inserts '''
-	measurementIds = getMeasurementIds(cursor)
+	INSERTS_PER_QUERY = 500
+	
+	remainder = len(images) % INSERTS_PER_QUERY
+	
+	dataSources = getDataSources(cursor)
+	
+	if len(images) >= INSERTS_PER_QUERY:
+		for x in range(len(images) / INSERTS_PER_QUERY):
+			for y in range(INSERTS_PER_QUERY):
+				img = images.pop()
+				path, uri = os.path.split(img)
+				meta = extractJP2MetaInfo(img, dataSources)
+		
+				# Format date (> Python 2.5 Method)
+				# date = datetime.strptime(meta["date"][0:19], "%Y:%m:%d %H:%M:%S")
+		
+				print "Processing image: " + img
+		
+				# Format date
+				d = meta["date"]
+		
+				# Temporary work-around
+				if d[17:19] == "60":
+					secs = "30"
+				else:
+					secs = d[17:19]
+		
+				date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(secs))
+		
+				# insert into database
+				query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
+					measurementIds[meta["det"] + meta["meas"]],
+					date,
+					meta["centering"],
+					meta["centerX"],
+					meta["centerY"],
+					meta["lengthX"],
+					meta["lengthY"],
+					meta["scaleX"],
+					meta["scaleY"],
+					meta["radius"],
+					meta["width"],
+					meta["height"],
+					meta["opacityGrp"],
+					uri)
+				print query
+		
+				try:
+					cursor.execute(query)
+		
+				except MySQLdb.Error, e:
+					print "Error: " + e.args[1]
 
-	for img in images:
-		path, uri = os.path.split(img)
-		meta = extractJP2MetaInfo(img)
-
-		# Format date (> Python 2.5 Method)
-		# date = datetime.strptime(meta["date"][0:19], "%Y:%m:%d %H:%M:%S")
-
-		print "Image: " + img
-
-		# Format date
-		d = meta["date"]
-
-		# Temporary work-around
-		if d[17:19] == "60":
-			secs = "30"
-		else:
-			secs = d[17:19]
-
-		date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(secs))
-
-		# insert into database
-		query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
-			measurementIds[meta["det"] + meta["meas"]],
-			date,
-			meta["centering"],
-			meta["centerX"],
-			meta["centerY"],
-			meta["lengthX"],
-			meta["lengthY"],
-			meta["scaleX"],
-			meta["scaleY"],
-			meta["radius"],
-			meta["width"],
-			meta["height"],
-			meta["opacityGrp"],
-			uri)
-		print query
-
-		try:
-			cursor.execute(query)
-
-		except MySQLdb.Error, e:
-			print "Error: " + e.args[1]
-
-def extractJP2MetaInfo (img):
+def extractJP2MetaInfo (img, sources):
 	''' Extracts useful meta-information from a given JP2 image and
 		returns a dictionary of that information.'''
-	import commands
-
-	tags = {"date":    "Helioviewer Date Obs",
-			"obs" :    "Helioviewer Observatory",
-			"inst":    "Helioviewer Instrument",
-			"det" :    "Helioviewer Detector",
-			"meas":    "Helioviewer Measurement",
-			"centering" : "Helioviewer Centering",
-			"centerX"   : "Helioviewer Xcen",
-			"lengthX"   : "Helioviewer Xlen",
-			"centerY"   : "Helioviewer Ycen",
-			"lengthY"   : "Helioviewer Ylen",
-			"scaleX"    : "Helioviewer Cdelt 1",
-			"scaleY"    : "Helioviewer Cdelt 2",
-			"radius"    : "Helioviewer Rsun",
-			"height"    : "Image Height",
-			"width"     : "Image Width",
-			"opacityGrp": "Helioviewer Opacity Group"}
 	meta = {}
 
-	cmd = "exiftool %s" % img
-	output = commands.getoutput(cmd)
+	# TODO: (2009/08/18)
+	# Create a method to try and sniff the dataSource type before processing? Or do lazily?
+	
+	# Get XMLBox as DOM
+	dom = parseString(getJP2XMLBox(img, "meta"))
 
-	for (param, tag) in tags.items():
-		for line in output.split("\n"):
-			if (line.find(tag + "  ") != -1):
-				meta[param] = line[34:]
+	# FITS Element
+	fits = dom.getElementsByTagName("fits")[0];
+	
+	# Date
+	
+	#EIT?
+	eitdate = fits.getElementsByTagName("DATE_OBS")
+	if eitdate:
+		datestring = eitdate[0].childNodes[0].nodeValue
+		datestring = datestring[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
+		date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
+		
+	meta["date"] = date
 
 	return meta
 
-def getMeasurementIds(cursor):
-	''' Returns an associative array of the measurement ID's used for the
-		measurement types supported. Uses the combination of detector and
-		measurement (e.g. 195EIT) as a hash key.'''
+def getJP2XMLBox(file, root):
+	''' Given a filename and the name of the root node, extracts
+	    the XML header box from a JP2 image '''
+	fp = open(file, 'rb')
+	
+	xml = ""
+	for line in fp:
+	     xml += line
+	     if line.find("</%s>" % root) != -1:
+	             break
+	xml = xml[xml.find("<%s>" % root):]
+	
+	return xml
 
-	query = "SELECT  detector.abbreviation as detector, measurement.abbreviation as measurement, measurement.id as measurementId FROM measurement LEFT JOIN detector on detectorId = detector.id"
+def getDataSources(cursor):
+	''' Returns a list of the known datasources '''
 
-	try:
-		cursor.execute(query)
-		result_array = cursor.fetchall()
-	except MySQLdb.Error, e:
-		print "Error: " + e.args[1]
+	sql = \
+	''' SELECT
+			datasource.id as id,
+			observatory.name as observatory,
+			instrument.name as instrument,
+			detector.name as detector,
+			measurement.name as measurement
+		FROM datasource
+			LEFT JOIN observatory ON datasource.observatoryId = observatory.id 
+			LEFT JOIN instrument ON datasource.instrumentId = instrument.id 
+			LEFT JOIN detector ON datasource.detectorId = detector.id 
+			LEFT JOIN measurement ON datasource.measurementId = measurement.id;'''
 
-	measurements = {}
+	cursor.execute(sql)
+	return cursor.fetchall()
 
-	# Note: By convention, "0"'s are added in front of any identifier < full size. (e.g. "C2" -> "0C2").
-	for meas in result_array:
-		#measurements[meas[0].rjust(3, "0") + meas[1].rjust(3, "0")] = meas[2]
-		measurements[meas[0] + meas[1]] = meas[2]
-
-	return measurements
 
 def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass):
 	''' Sets up Helioviewer.org database schema '''
@@ -161,18 +174,21 @@ def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass):
 	createDetectorTable(cursor)
 	createMeasurementTable(cursor)
 	createImageTable(cursor)
+	
+	return cursor
 
 def createDB(adminuser, adminpass, dbuser, dbpass):
 	''' Creates database '''
-	db = MySQLdb.connect(host="localhost", user=adminuser, passwd=adminpass)
-	cursor = db.cursor()
+	try:
+		#TODO (2009/08/18) Catch error case when db already exists, and gracefully exit
+		db = MySQLdb.connect(host="localhost", user=adminuser, passwd=adminpass)
+		cursor = db.cursor()
+		cursor.execute("CREATE DATABASE IF NOT EXISTS helioviewer;")
+		cursor.execute("GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbuser, dbpass))
+	except MySQLdb.Error, e:
+		print "Error: " + e.args[1]
+		sys.exit(2)
 
-	sql = \
-	'''CREATE DATABASE IF NOT EXISTS helioviewer;
-	GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';
-	''' % (dbuser, dbpass)
-
-	cursor.execute(sql)
 	cursor.close()
 
 def createImageTable(cursor):
@@ -188,90 +204,105 @@ def createImageTable(cursor):
 	cursor.execute(sql)
 
 def createSourceTable(cursor):
-	sql = \
+	cursor.execute(
 	'''CREATE TABLE `datasource` (
-		`id`			SMALLINT unsigned NOT NULL,
-		`name`			VARCHAR(255) NOT NULL,
-		`description`   VARCHAR(255),
-		`observatoryId` SMALLINT unsigned NOT NULL,
-		`instrumentId`  SMALLINT unsigned NOT NULL,
-		`detectorId`	SMALLINT unsigned NOT NULL,
-        `measurementId` SMALLINT unsigned NOT NULL,
-        `layeringOrder`	TINYINT NOT NULL,
+	    `id`            SMALLINT unsigned NOT NULL,
+	    `name`          VARCHAR(127) NOT NULL,
+	    `description`   VARCHAR(255),
+	    `observatoryId` SMALLINT unsigned NOT NULL,
+	    `instrumentId`  SMALLINT unsigned NOT NULL,
+	    `detectorId`    SMALLINT unsigned NOT NULL,
+	    `measurementId` SMALLINT unsigned NOT NULL,
+	    `layeringOrder` TINYINT NOT NULL,
+	    `dateField`		VARCHAR(127) NOT NULL,
+	    `dateFormat`	VARCHAR(127) NOT NULL,
 	  PRIMARY KEY  (`id`), INDEX (`id`)
-	) DEFAULT CHARSET=utf8;'''
-	cursor.execute(sql)
+	) DEFAULT CHARSET=utf8;''')
+	
+	cursor.execute('''
+	INSERT INTO `datasource` VALUES
+		(0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 0, 1, 'DATE_OBS','')
+	''')
 
 def createObservatoryTable(cursor):
-	sql = \
-	'''CREATE TABLE `observatory` (
+	""" Creates table to store observatory information """
+	
+	cursor.execute('''
+	CREATE TABLE `observatory` (
 	  `id`          SMALLINT unsigned NOT NULL,
 	  `name`        VARCHAR(255) NOT NULL,
 	  `description` VARCHAR(255) NOT NULL,
 	   PRIMARY KEY (`id`), INDEX (`id`)
-	) DEFAULT CHARSET=utf8;'''
+	) DEFAULT CHARSET=utf8;''')	
 
-	cursor.execute(sql)
-
-	inserts = \
-	'''	INSERT INTO `observatory` VALUES(1, 'SOHO', 'Solar and Heliospheric Observatory'),
-	(2, 'TRACE', 'The Transition Region and Coronal Explorer');'''
-
-	cursor.execute(inserts)
-
+	cursor.execute('''
+	INSERT INTO `observatory` VALUES
+		(0, 'SOHO', 'Solar and Heliospheric Observatory'),
+		(1, 'TRACE', 'The Transition Region and Coronal Explorer');
+	''')
 
 def createInstrumentTable(cursor):
-	sql = \
-	'''CREATE TABLE `instrument` (
+	""" Creates table to store instrument information """
+	
+	cursor.execute('''
+	CREATE TABLE `instrument` (
 	  `id`          SMALLINT unsigned NOT NULL,
 	  `name`        VARCHAR(255) NOT NULL,
 	  `description` VARCHAR(255) NOT NULL,
 	   PRIMARY KEY (`id`), INDEX (`id`)
-	) DEFAULT CHARSET=utf8;
+	) DEFAULT CHARSET=utf8;''')
 	
-	INSERT INTO `instrument` VALUES(1, 'EIT',   'Extreme ultraviolet Imaging Telescope');
-	INSERT INTO `instrument` VALUES(2, 'LASCO', 'The Large Angle Spectrometric Coronagraph');
-	INSERT INTO `instrument` VALUES(3, 'MDI',   'Michelson Doppler Imager');
-	INSERT INTO `instrument` VALUES(4, 'TRACE', 'TRACE');'''
+	cursor.execute('''
+	INSERT INTO `instrument` VALUES
+		(0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
+		(1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
+		(2, 'MDI',   'Michelson Doppler Imager'),
+		(3, 'TRACE', 'TRACE');
+	''')
 
-	cursor.execute(sql)
+
 
 def createDetectorTable(cursor):
-	sql = \
-	'''CREATE TABLE `detector` (
+	""" Creates table to store detector information """
+	
+	cursor.execute('''
+	CREATE TABLE `detector` (
 	  `id`          SMALLINT unsigned NOT NULL,
 	  `name`        VARCHAR(255) NOT NULL,
 	  `description` VARCHAR(255) NOT NULL,
 	   PRIMARY KEY (`id`), INDEX (`id`)
-	) DEFAULT CHARSET=utf8;
+	) DEFAULT CHARSET=utf8;''')
 	
-	INSERT INTO `detector` VALUES(1, 'C2', 'LASCO C2');
-	INSERT INTO `detector` VALUES(2, 'C3', 'LASCO C3');
-	INSERT INTO `detector` VALUES(3, '', 'EIT');
-	INSERT INTO `detector` VALUES(4, '', 'MDI');
-	INSERT INTO `detector` VALUES(5, '', 'TRACE');'''
-	cursor.execute(sql)
+	cursor.execute('''
+	INSERT INTO `detector` VALUES
+		(0, '', 'EIT'),
+		(1, 'C2', 'LASCO C2'),
+		(2, 'C3', 'LASCO C3'),
+		(3, '', 'MDI'),
+		(4, '', 'TRACE');''')
+
 
 def createMeasurementTable(cursor):
-	sql = \
-	'''CREATE TABLE `measurement` (
+	""" Creates table to store measurement information """
+	
+	cursor.execute('''
+	CREATE TABLE `measurement` (
 	  `id`          SMALLINT unsigned NOT NULL,
 	  `name`        VARCHAR(255) NOT NULL,
 	  `description` VARCHAR(255) NOT NULL,
 	  `units`       VARCHAR(20)  NOT NULL,
 	   PRIMARY KEY (`id`), INDEX (`id`)
-	) DEFAULT CHARSET=utf8;
+	) DEFAULT CHARSET=utf8;''')
 	
-	INSERT INTO `measurement` VALUES(1, '171', '171 Angstrom extreme ultraviolet', 'nm');
-	INSERT INTO `measurement` VALUES(2, '195', '195 Angstrom extreme ultraviolet', 'nm');
-	INSERT INTO `measurement` VALUES(3, '284', '284 Angstrom extreme ultraviolet', 'nm');
-	INSERT INTO `measurement` VALUES(4, '304', '304 Angstrom extreme ultraviolet', 'nm');
-	INSERT INTO `measurement` VALUES(5, '171', '171 Angstrom extreme ultraviolet', 'nm');
-	INSERT INTO `measurement` VALUES(6, 'int', 'Intensitygram');
-	INSERT INTO `measurement` VALUES(7, 'mag', 'Magnetogram');
-	INSERT INTO `measurement` VALUES(8, 'WL', 'White Light');
-	INSERT INTO `measurement` VALUES(9, 'WL', 'White Light');'''
-	cursor.execute(sql)
+	cursor.execute('''
+	INSERT INTO `measurement` VALUES
+		(0, '171', '171 Ångström extreme ultraviolet', 'Å'),
+		(1, '195', '195 Ångström extreme ultraviolet', 'Å'),
+		(2, '284', '284 Ångström extreme ultraviolet', 'Å'),
+		(3, '304', '304 Ångström extreme ultraviolet', 'Å'),
+		(4, 'int', 'Intensitygram', 'DN'),
+		(5, 'mag', 'Magnetogram', 'Mx'),
+		(6, 'WL', 'White Light', 'DN');''')
 
 
 
@@ -280,8 +311,8 @@ def printGreeting():
 	os.system("clear")
 
 	print "===================================================================="
-	print "= Helioviewer Database Population Script 0.99                      ="
-	print "= Last updated: 2009/08/17                                         ="
+	print "= Helioviewer Database Population Script 0.99.1                    ="
+	print "= Last updated: 2009/08/18                                         ="
 	print "=                                                                  ="
 	print "= This script processes JP2 images, extracts their associated      ="
 	print "= meta-information and stores it away in a database. Currently,    ="
