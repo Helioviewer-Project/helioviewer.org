@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import threading
 import MySQLdb
-import pgdb
 import timeit
 from datetime import datetime, timedelta
 from time import clock

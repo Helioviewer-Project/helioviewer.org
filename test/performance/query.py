@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import os, sys, MySQLdb, pgdb
+import os, sys, MySQLdb
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from optparse import OptionParser, OptionError, IndentedHelpFormatter
@@ -104,7 +104,7 @@ def queryDatabase(fp, args):
     
     # get date range and count information (same for all threads)
     if postgres:
-        db = pgdb.connect(database = dbname, user = dbuser, password = dbpass)
+        sys.exit(2)
     else:
         db = MySQLdb.connect(db = dbname, user = dbuser, passwd = dbpass)
     

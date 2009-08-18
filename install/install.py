@@ -1,20 +1,24 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, math, MySQLdb
+import sys, os, math, getpass
 from datetime import datetime
 
 def main():
 	printGreeting()
+
 	path = getFilePath()
 	images = traverseDirectory(path)
 
 	print "Found " + str(len(images)) + " JPEG2000 images."
 
-	dbname, dbuser, dbpass = getDBInfo()
+	adminuser, adminpass, dbuser, dbpass = getDBInfo()
 
-	db = MySQLdb.connect(host = "localhost", db = dbname, user = dbuser, passwd = dbpass)
-	cursor = db.cursor()
+	setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass)
+
+	print "works so far!"
+	sys.exit(2)
+
 
 	# Exiftool location
 
@@ -41,6 +45,7 @@ def traverseDirectory (path):
 
 def processJPEG2000Images (images, cursor):
 	''' Processes a collection of JPEG2000 Images. '''
+	''' TODO: Multi-inserts '''
 	measurementIds = getMeasurementIds(cursor)
 
 	for img in images:
@@ -110,8 +115,8 @@ def extractJP2MetaInfo (img):
 			"opacityGrp": "Helioviewer Opacity Group"}
 	meta = {}
 
-	cmd   = "exiftool %s" % img
-	output= commands.getoutput(cmd)
+	cmd = "exiftool %s" % img
+	output = commands.getoutput(cmd)
 
 	for (param, tag) in tags.items():
 		for line in output.split("\n"):
@@ -142,13 +147,141 @@ def getMeasurementIds(cursor):
 
 	return measurements
 
+def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass):
+	''' Sets up Helioviewer.org database schema '''
+	createDB(adminuser, adminpass, dbuser, dbpass)
+
+	# connect to helioviewer database
+	db = MySQLdb.connect(host="localhost", db="helioviewer", user=dbuser, passwd=dbpass)
+	cursor = db.cursor()
+
+	createSourceTable(cursor)
+	createObservatoryTable(cursor)
+	createInstrumentTable(cursor)
+	createDetectorTable(cursor)
+	createMeasurementTable(cursor)
+	createImageTable(cursor)
+
+def createDB(adminuser, adminpass, dbuser, dbpass):
+	''' Creates database '''
+	db = MySQLdb.connect(host="localhost", user=adminuser, passwd=adminpass)
+	cursor = db.cursor()
+
+	sql = \
+	'''CREATE DATABASE IF NOT EXISTS helioviewer;
+	GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';
+	''' % (dbuser, dbpass)
+
+	cursor.execute(sql)
+	cursor.close()
+
+def createImageTable(cursor):
+	sql = \
+	'''CREATE TABLE `image` (
+	  `id`			INT unsigned NOT NULL auto_increment,
+	  `uri`			VARCHAR(255) NOT NULL,
+	  `timestamp`	datetime NOT NULL default '0000-00-00 00:00:00',
+	  `sourceId`	SMALLINT unsigned NOT NULL,
+	  `corrupt`		BOOL default 0,
+	  PRIMARY KEY  (`id`), INDEX (`id`)
+	);'''
+	cursor.execute(sql)
+
+def createSourceTable(cursor):
+	sql = \
+	'''CREATE TABLE `datasource` (
+		`id`			SMALLINT unsigned NOT NULL,
+		`name`			VARCHAR(255) NOT NULL,
+		`description`   VARCHAR(255),
+		`observatoryId` SMALLINT unsigned NOT NULL,
+		`instrumentId`  SMALLINT unsigned NOT NULL,
+		`detectorId`	SMALLINT unsigned NOT NULL,
+        `measurementId` SMALLINT unsigned NOT NULL,
+        `layeringOrder`	TINYINT NOT NULL,
+	  PRIMARY KEY  (`id`), INDEX (`id`)
+	) DEFAULT CHARSET=utf8;'''
+	cursor.execute(sql)
+
+def createObservatoryTable(cursor):
+	sql = \
+	'''CREATE TABLE `observatory` (
+	  `id`          SMALLINT unsigned NOT NULL,
+	  `name`        VARCHAR(255) NOT NULL,
+	  `description` VARCHAR(255) NOT NULL,
+	   PRIMARY KEY (`id`), INDEX (`id`)
+	) DEFAULT CHARSET=utf8;'''
+
+	cursor.execute(sql)
+
+	inserts = \
+	'''	INSERT INTO `observatory` VALUES(1, 'SOHO', 'Solar and Heliospheric Observatory'),
+	(2, 'TRACE', 'The Transition Region and Coronal Explorer');'''
+
+	cursor.execute(inserts)
+
+
+def createInstrumentTable(cursor):
+	sql = \
+	'''CREATE TABLE `instrument` (
+	  `id`          SMALLINT unsigned NOT NULL,
+	  `name`        VARCHAR(255) NOT NULL,
+	  `description` VARCHAR(255) NOT NULL,
+	   PRIMARY KEY (`id`), INDEX (`id`)
+	) DEFAULT CHARSET=utf8;
+	
+	INSERT INTO `instrument` VALUES(1, 'EIT',   'Extreme ultraviolet Imaging Telescope');
+	INSERT INTO `instrument` VALUES(2, 'LASCO', 'The Large Angle Spectrometric Coronagraph');
+	INSERT INTO `instrument` VALUES(3, 'MDI',   'Michelson Doppler Imager');
+	INSERT INTO `instrument` VALUES(4, 'TRACE', 'TRACE');'''
+
+	cursor.execute(sql)
+
+def createDetectorTable(cursor):
+	sql = \
+	'''CREATE TABLE `detector` (
+	  `id`          SMALLINT unsigned NOT NULL,
+	  `name`        VARCHAR(255) NOT NULL,
+	  `description` VARCHAR(255) NOT NULL,
+	   PRIMARY KEY (`id`), INDEX (`id`)
+	) DEFAULT CHARSET=utf8;
+	
+	INSERT INTO `detector` VALUES(1, 'C2', 'LASCO C2');
+	INSERT INTO `detector` VALUES(2, 'C3', 'LASCO C3');
+	INSERT INTO `detector` VALUES(3, '', 'EIT');
+	INSERT INTO `detector` VALUES(4, '', 'MDI');
+	INSERT INTO `detector` VALUES(5, '', 'TRACE');'''
+	cursor.execute(sql)
+
+def createMeasurementTable(cursor):
+	sql = \
+	'''CREATE TABLE `measurement` (
+	  `id`          SMALLINT unsigned NOT NULL,
+	  `name`        VARCHAR(255) NOT NULL,
+	  `description` VARCHAR(255) NOT NULL,
+	  `units`       VARCHAR(20)  NOT NULL,
+	   PRIMARY KEY (`id`), INDEX (`id`)
+	) DEFAULT CHARSET=utf8;
+	
+	INSERT INTO `measurement` VALUES(1, '171', '171 Angstrom extreme ultraviolet', 'nm');
+	INSERT INTO `measurement` VALUES(2, '195', '195 Angstrom extreme ultraviolet', 'nm');
+	INSERT INTO `measurement` VALUES(3, '284', '284 Angstrom extreme ultraviolet', 'nm');
+	INSERT INTO `measurement` VALUES(4, '304', '304 Angstrom extreme ultraviolet', 'nm');
+	INSERT INTO `measurement` VALUES(5, '171', '171 Angstrom extreme ultraviolet', 'nm');
+	INSERT INTO `measurement` VALUES(6, 'int', 'Intensitygram');
+	INSERT INTO `measurement` VALUES(7, 'mag', 'Magnetogram');
+	INSERT INTO `measurement` VALUES(8, 'WL', 'White Light');
+	INSERT INTO `measurement` VALUES(9, 'WL', 'White Light');'''
+	cursor.execute(sql)
+
+
+
 def printGreeting():
 	''' Prints a greeting to the user'''
 	os.system("clear")
 
 	print "===================================================================="
-	print "= Helioviewer Database Population Script 0.97                      ="
-	print "= Last updated: 2009/05/26                                         ="
+	print "= Helioviewer Database Population Script 0.99                      ="
+	print "= Last updated: 2009/08/17                                         ="
 	print "=                                                                  ="
 	print "= This script processes JP2 images, extracts their associated      ="
 	print "= meta-information and stores it away in a database. Currently,    ="
@@ -176,10 +309,90 @@ def getFilePath():
 
 def getDBInfo():
 	''' Prompts the user for the required database information '''
-	dbname = raw_input("Database name: ")
-	dbuser = raw_input("Database user: ")
-	dbpass = raw_input("Database password: ")
-	return dbname, dbuser, dbpass
+	adminuser = raw_input("Database admin username [root]: ")
+	adminpass = getpass.getpass("Database admin password: ")
+	dbuser = raw_input("New database username [Helioviewer]: ")
+	dbpass = getpass.getpass("New password [Helioviewer]: ")
+
+	# Default values
+	if adminuser == "":
+		adminuser = "root"
+	if dbuser == "":
+		dbuser = "helioviewer"
+	if dbpass == "":
+		dbpass = "helioviewer"
+
+	return adminuser, adminpass, dbuser, dbpass
+
+def checkModules(modules):
+	''' Checks for module's existence and attempts to suggest a possible solution for any mising module required '''
+	missing = []
+
+	for module in modules:
+		try:
+			exec "import %s" % module
+			exec "del %s" % module
+		except ImportError:
+			missing.append(module)
+
+	# If there are any missing modules, suggest a method for installation and exit
+	if len(missing) > 0:
+		# Error message
+		print "[Error] Unable to find module(s):",
+		for m in missing:
+			print " " + m,
+		print ""
+
+		# Determine OS
+		system = getOS()
+
+		knownpackages = True
+
+		# Fedora
+		if (system == "fedora"):
+			msg = "To install, use the following command:\n"
+			msg += "    su -c \"yum check-update; yum install"
+
+			for m in missing:
+				if m == "MySQLdb":
+					msg += " MySQL-python"
+				else:
+					knownpackages = False
+
+			msg += "\"";
+
+		# Ubuntu	
+		elif (system == "ubuntu"):
+			msg = "To install, use the following command:"
+			msg += "    sudo apt-get update; sudo apt-get install"
+
+			for m in missing:
+				if m == "MySQLdb":
+					msg += " python-mysqldb"
+				else:
+					knownpackages = False
+
+		else:
+			msg = "Please install these modules before continuing."
+
+		if not knownpackages:
+			msg = "Please install these modules before continuing."
+
+		print msg
+		sys.exit(2)
+
+def getOS():
+	''' Determine operating system in order to suggest module installation method '''
+	if (os.uname()[3].lower().find("ubuntu") != -1):
+		return "ubuntu"
+	elif (os.uname()[2].find("fc") != -1):
+		return "fedora"
+	else:
+		return "other"
 
 if __name__ == '__main__':
+	# Attempt to load require modules
+	checkModules(["MySQLdb"])
+	import MySQLdb
+
 	main()
