@@ -443,6 +443,7 @@ class API {
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
 		$timeStep  = $this->params['timeStep'];
+		$quality   = $this->params['quality'];
        	
 		// Layerstrings are separated by "/"
 		$layerStrings = explode("/", $this->params['layers']);
@@ -451,8 +452,8 @@ class API {
 		$imageSize 	 = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
 		$filename  	 = $this->params['filename'];
 			
-        //$hqFormat  = $this->params['format'];
-        $hqFormat = "mp4";
+        $hqFormat  = $this->params['format'];
+        //$hqFormat = "mp4";
 		
         // Optional parameters
         $options = array();
@@ -473,7 +474,7 @@ class API {
 
 			$layers = $this->_formatLayerStrings($layerStrings);
 
-            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename);
+            $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename, $quality);
             $movie->buildMovie();
 
         } catch(Exception $e) {
@@ -505,6 +506,7 @@ class API {
 		
         $obsDate   = $this->params['obsDate'];
         $zoomLevel = $this->params['zoomLevel'];
+		$quality   = $this->params['quality'];
 
 		$layerStrings = explode("/", $this->params['layers']);
 		
@@ -523,7 +525,7 @@ class API {
 
 			$layers = $this->_formatLayerStrings($layerStrings);
 			
-			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize, $filename);	
+			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize, $filename, $quality);	
 			$screenshot->buildImages($layers);
 			
 			$composite = $screenshot->getComposite();

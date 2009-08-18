@@ -84,7 +84,7 @@ abstract class CompositeImage {
 				array_push($opacities["value"], $imageInfo[7]);
 				array_push($opacities["group"], $imageInfo[8]);
 		
-				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset);
+				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset, $this->quality);
 				$filepath = $subFieldImage->getCacheFilepath();
 
 				if(!file_exists($filepath))
@@ -162,7 +162,7 @@ abstract class CompositeImage {
 	private function watermark($image) {
 		$watermark = CONFIG::WATERMARK_URL;
 
-		// Use only the circle, not the url, and scale it so it fits the image.
+		// If the image is too small, use only the circle, not the url, and scale it so it fits the image.
 		if($this->imageSize['width'] / 300 < 2) {
 			$watermark = "../images/logos/watermark_circle_small.png";
 			// Scale the watermark to half the size of the image, and covert it to a percentage.

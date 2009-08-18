@@ -22,11 +22,12 @@ class MovieFrame extends CompositeImage {
 	 * @param array $imageSize -- array of width and height of the image
 	 * @param array $timestamps -- Associative array containing the actual timestamps of each layer, obtained from the database
 	 */
-	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $imageSize, $timestamps) {
+	public function __construct($zoomLevel, $options, $layerImages, $frameNum, $folderId, $imageSize, $timestamps, $quality) {
 		$this->frameNum 	= $frameNum;
 		$this->layerImages 	= $layerImages;
 		$this->imageSize 	= $imageSize;
 		$this->timestamps 	= $timestamps;
+		$this->quality		= $quality;
 		
 		$tmpDir = CONFIG::CACHE_DIR . "movies/";
 
