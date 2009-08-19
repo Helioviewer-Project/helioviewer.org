@@ -16,14 +16,24 @@ class HelioviewerInstallDialog(QtGui.QDialog):
         self.ui = Ui_InstallDialog()
         self.ui.setupUi(self)
         self.initEvents()
-    
+        
     def initEvents(self):
     	QtCore.QObject.connect(self.ui.jp2BrowseBtn, QtCore.SIGNAL("clicked()"), self.openBrowseDialog)
+    	QtCore.QObject.connect(self.ui.startBtn, QtCore.SIGNAL("clicked()"), self.validateFields)
+    	
+    	#QtCore.QObject.connect(self.ui.jp2RootDirInput, QtCore.SIGNAL("textChanged()"), self.checkJP2Dir) Not working?
+    	#QtCore.QObject.connect(self.ui.jp2RootDirInput, QtCore.SIGNAL("textEdited()"), self.openBrowseDialog)
 							   
     def openBrowseDialog(self):
     	fd = QtGui.QFileDialog(self)
-    	directory = open(fd.getOpenFileName()).read()
+    	directory = fd.getExistingDirectory()
     	self.ui.jp2RootDirInput.setText(directory)
+
+    def validateFields(self):
+    	print "Test"
+
+    def checkJP2Dir(self):
+    	print "Directory changed...(check to see if any jp2s found)"
 
 def main(args):
     app = QtGui.QApplication(sys.argv)

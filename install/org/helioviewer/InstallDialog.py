@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'InstallDialog.ui'
 #
-# Created: Wed Aug 19 15:01:47 2009
+# Created: Wed Aug 19 16:27:04 2009
 #      by: PyQt4 UI code generator 4.5.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -105,11 +105,18 @@ class Ui_InstallDialog(object):
         self.progressBar.setProperty("value", QtCore.QVariant(0))
         self.progressBar.setObjectName("progressBar")
         self.verticalLayout.addWidget(self.progressBar)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.buttonBox = QtGui.QDialogButtonBox(InstallDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel)
         self.buttonBox.setObjectName("buttonBox")
-        self.verticalLayout.addWidget(self.buttonBox)
+        self.horizontalLayout_2.addWidget(self.buttonBox)
+        self.startBtn = QtGui.QPushButton(InstallDialog)
+        self.startBtn.setFlat(False)
+        self.startBtn.setObjectName("startBtn")
+        self.horizontalLayout_2.addWidget(self.startBtn)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(InstallDialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), InstallDialog.accept)
@@ -169,4 +176,5 @@ class Ui_InstallDialog(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-style:italic;\">Fill out above items and press \"OK\" to begin.</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.startBtn.setText(QtGui.QApplication.translate("InstallDialog", "Start", None, QtGui.QApplication.UnicodeUTF8))
 
