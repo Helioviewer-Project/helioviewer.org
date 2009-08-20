@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="Logos" >
+    <file>color.png</file>
+    <file>simple.png</file>
+    <file>hv.ico</file>
+  </qresource>
+</RCC>
