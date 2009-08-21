@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import os
+from datetime import datetime
 from xml.dom.minidom import parseString
+from org.helioviewer.db import getDataSources
 
 def traverseDirectory (path):
     ''' Traverses file-tree starting with the specified path and builds a
@@ -28,21 +31,31 @@ def extractJP2MetaInfo (img, sources):
     # Get XMLBox as DOM
     dom = parseString(getJP2XMLBox(img, "meta"))
 
-    # FITS Element
-    fits = dom.getElementsByTagName("fits")[0];
-    
-    # Date
-    
-    #EIT?
-    eitdate = fits.getElementsByTagName("DATE_OBS")
-    if eitdate:
-        datestring = eitdate[0].childNodes[0].nodeValue
-        datestring = datestring[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
-        date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
-        
-    meta["date"] = date
+    # Observatory
+    try:
+        obs = getElementValue(dom, "TELESCOP")
+    except:
+        print "Try next obs..."
 
+    # Date
+    try:
+        date = getElementValue(dom, "DATE_OBS") #EIT
+        datestring = eitdate[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
+        date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
+    except e:
+        print "(Try next date type...)"
+
+    meta["date"] = date
     return meta
+
+def getElementValue(dom, name):
+    ''' Retrieves the value of a unique dom-node element or returns false if element is not found/ more than one '''
+    element = dom.getElementsByTagName(name)
+    
+    if element:
+        return element[0].childNodes[0].nodeValue
+    else:
+        raise Exception("Element not found")
 
 def getJP2XMLBox(file, root):
     ''' Given a filename and the name of the root node, extracts

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys, MySQLdb, pgdb
+
 def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass):
     ''' Sets up Helioviewer.org database schema '''
     createDB(adminuser, adminpass, dbuser, dbpass)
@@ -15,6 +17,20 @@ def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass):
     createImageTable(cursor)
     
     return cursor
+
+def checkDBInfo(adminuser, adminpass, mysql):
+    ''' Validate database login information '''
+    try:
+        if mysql:
+            db = MySQLdb.connect(user=adminuser, passwd=adminpass)
+        else:
+            db = pgdb.connect(database="postgres", user=adminuser, password=adminpass)
+    except MySQLdb.Error, e:
+        print e
+        return False
+
+    db.close()
+    return True
 
 def createDB(adminuser, adminpass, dbuser, dbpass):
     ''' Creates database '''
@@ -60,7 +76,7 @@ def createSourceTable(cursor):
     
     cursor.execute('''
     INSERT INTO `datasource` VALUES
-        (0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 0, 1, 'DATE_OBS','')
+        (0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 0, 1, 'DATE_OBS','TEST')
     ''')
 
 def createObservatoryTable(cursor):

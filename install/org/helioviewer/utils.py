@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+
 def checkModules(modules):
     ''' Checks for module's existence and attempts to suggest a possible solution for any mising module required '''
     missing = []
@@ -68,3 +70,6 @@ def getOS():
         return "fedora"
     else:
         return "other"
+    
+def checkPath(path):
+    return os.path.isdir(path)

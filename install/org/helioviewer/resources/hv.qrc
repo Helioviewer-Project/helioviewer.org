@@ -4,4 +4,8 @@
     <file>simple.png</file>
     <file>hv.ico</file>
   </qresource>
+  <qresource prefix="Databases" >
+    <file>postgres_logo-elephant-64.png</file>
+    <file>mysql_logo.png</file>
+  </qresource>
 </RCC>

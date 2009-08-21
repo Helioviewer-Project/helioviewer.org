@@ -1,46 +1,18 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+
+
+###############################################################################
+# Helioviewer Database Installation Tool
+# Last Updated: 2009/08/21
+###############################################################################
 import sys
-from PyQt4 import QtCore, QtGui
-from org.helioviewer.InstallWizard import Ui_InstallWizard
+from org.helioviewer.HelioviewerInstallWizard import loadGUIInstaller
 from org.helioviewer.jp2 import *
 from org.helioviewer.db  import *
 from org.helioviewer.utils import *
 
-#
-# Main Application Window
-#
-class HelioviewerInstallWizard(QtGui.QWizard):
-    def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        self.ui = Ui_InstallWizard()
-        self.ui.setupUi(self)
-        self.initEvents()
-        
-    def initEvents(self):
-        print "Initializing..."
-        #self.ui.wizardPage1.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/Logos/color.png"))
-        #QtCore.QObject.connect(self.ui.jp2BrowseBtn, QtCore.SIGNAL("clicked()"), self.openBrowseDialog)
-        #QtCore.QObject.connect(self.ui.startBtn, QtCore.SIGNAL("clicked()"), self.validateFields)
-        #QtCore.QObject.connect(self.ui.jp2RootDirInput, QtCore.SIGNAL("textChanged()"), self.checkJP2Dir) Not working?
-        #QtCore.QObject.connect(self.ui.jp2RootDirInput, QtCore.SIGNAL("textEdited()"), self.openBrowseDialog)
-
-    def openBrowseDialog(self):
-        fd = QtGui.QFileDialog(self)
-    	directory = fd.getExistingDirectory()
-    	self.ui.jp2RootDirInput.setText(directory)
-
-    def validateFields(self):
-    	print "Test"
-
-    def checkJP2Dir(self):
-    	print "Directory changed...(check to see if any jp2s found)"
-
 def main(args):
-    app = QtGui.QApplication(sys.argv)
-    win = HelioviewerInstallWizard()
-    win.show()
-    sys.exit(app.exec_())
+    loadGUIInstaller(args)
 
 	#path = getFilePath()
 	#images = traverseDirectory(path)
@@ -93,12 +65,3 @@ def getDBInfo():
 
 if __name__ == '__main__':
 	main(sys.argv)
-
-#
-# Notes:
-#
-# 1. Using Resource files, see http://www.opensubscriber.com/message/pyqt@riverbankcomputing.com/8178240.html
-# 2. Post-compile modifications:
-#    - Add InstallWizard.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/Logos/color.png")) to InstallWizard.py
-#    - change "import hv_rc" to "import resources.hv_rc"#
-#
