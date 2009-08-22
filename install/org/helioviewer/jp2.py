@@ -27,7 +27,7 @@ def extractJP2MetaInfo (img, sources):
 
     # TODO: (2009/08/18)
     # Create a method to try and sniff the dataSource type before processing? Or do lazily?
-    
+
     # Get XMLBox as DOM
     dom = parseString(getJP2XMLBox(img, "meta"))
 
@@ -42,7 +42,7 @@ def extractJP2MetaInfo (img, sources):
         date = getElementValue(dom, "DATE_OBS") #EIT
         datestring = eitdate[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
         date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
-    except e:
+    except:
         print "(Try next date type...)"
 
     meta["date"] = date
@@ -51,7 +51,7 @@ def extractJP2MetaInfo (img, sources):
 def getElementValue(dom, name):
     ''' Retrieves the value of a unique dom-node element or returns false if element is not found/ more than one '''
     element = dom.getElementsByTagName(name)
-    
+
     if element:
         return element[0].childNodes[0].nodeValue
     else:
@@ -61,47 +61,52 @@ def getJP2XMLBox(file, root):
     ''' Given a filename and the name of the root node, extracts
         the XML header box from a JP2 image '''
     fp = open(file, 'rb')
-    
+
     xml = ""
     for line in fp:
          xml += line
          if line.find("</%s>" % root) != -1:
                  break
     xml = xml[xml.find("<%s>" % root):]
-    
+
     return xml
 
-def processJPEG2000Images (images, cursor):
+def processJPEG2000Images (images, cursor, mysql):
     ''' Processes a collection of JPEG2000 Images. '''
+    if mysql:
+        import MySQLdb
+    else:
+        import pgdb
+
     INSERTS_PER_QUERY = 500
-    
+
     remainder = len(images) % INSERTS_PER_QUERY
-    
+
     dataSources = getDataSources(cursor)
-    
+
     if len(images) >= INSERTS_PER_QUERY:
         for x in range(len(images) / INSERTS_PER_QUERY):
             for y in range(INSERTS_PER_QUERY):
                 img = images.pop()
                 path, uri = os.path.split(img)
                 meta = extractJP2MetaInfo(img, dataSources)
-        
+
                 # Format date (> Python 2.5 Method)
                 # date = datetime.strptime(meta["date"][0:19], "%Y:%m:%d %H:%M:%S")
-        
+
                 print "Processing image: " + img
-        
+
                 # Format date
                 d = meta["date"]
-        
+
                 # Temporary work-around
                 if d[17:19] == "60":
                     secs = "30"
                 else:
                     secs = d[17:19]
-        
+
                 date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(secs))
-        
+
                 # insert into database
                 query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
                     measurementIds[meta["det"] + meta["meas"]],
@@ -119,9 +124,9 @@ def processJPEG2000Images (images, cursor):
                     meta["opacityGrp"],
                     uri)
                 print query
-        
+
                 try:
                     cursor.execute(query)
-        
-                except MySQLdb.Error, e:
+
+                except Exception, e:
                     print "Error: " + e.args[1]

@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
-import sys, MySQLdb, pgdb
+import sys
 
-def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass):
+def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
     ''' Sets up Helioviewer.org database schema '''
-    createDB(adminuser, adminpass, dbuser, dbpass)
+    if mysql:
+        import MySQLdb
+        adaptor = MySQLdb
+    else:
+        import pgdb
+        adaptor = pgdb
+
+    createDB(adminuser, adminpass, dbuser, dbpass, mysql, adaptor)
 
     # connect to helioviewer database
-    db = MySQLdb.connect(host="localhost", db="helioviewer", user=dbuser, passwd=dbpass)
+    if mysql:
+        db = MySQLdb.connect(host="localhost", db="helioviewer", user=dbuser, passwd=dbpass)
+    else:
+        db = pgdb.connect(database="helioviewer", user=dbuser, password=dbpass)
     cursor = db.cursor()
 
     createSourceTable(cursor)
@@ -15,15 +25,17 @@ def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass):
     createDetectorTable(cursor)
     createMeasurementTable(cursor)
     createImageTable(cursor)
-    
+
     return cursor
 
 def checkDBInfo(adminuser, adminpass, mysql):
     ''' Validate database login information '''
     try:
         if mysql:
+            import MySQLdb
             db = MySQLdb.connect(user=adminuser, passwd=adminpass)
         else:
+            import pgdb
             db = pgdb.connect(database="postgres", user=adminuser, password=adminpass)
     except MySQLdb.Error, e:
         print e
@@ -32,17 +44,27 @@ def checkDBInfo(adminuser, adminpass, mysql):
     db.close()
     return True
 
-def createDB(adminuser, adminpass, dbuser, dbpass):
-    ''' Creates database '''
-    try:
-        #TODO (2009/08/18) Catch error case when db already exists, and gracefully exit
-        db = MySQLdb.connect(host="localhost", user=adminuser, passwd=adminpass)
-        cursor = db.cursor()
-        cursor.execute("CREATE DATABASE IF NOT EXISTS helioviewer;")
-        cursor.execute("GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbuser, dbpass))
-    except MySQLdb.Error, e:
-        print "Error: " + e.args[1]
-        sys.exit(2)
+def createDB(adminuser, adminpass, dbuser, dbpass, mysql, adaptor):
+    ''' Creates database
+        TODO (2009/08/18) Catch error case when db already exists, and gracefully exit '''
+    if mysql:
+        try:
+           db = adaptor.connect(user=adminuser, passwd=adminpass)
+           cursor = db.cursor()
+           cursor.execute("CREATE DATABASE IF NOT EXISTS helioviewer;")
+           cursor.execute("GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbuser, dbpass))
+        except adaptor.Error, e:
+            print "Error: " + e.args[1]
+            sys.exit(2)
+    else:
+        try:
+            db = adaptor.connect(database="postgres", user=adminuser, password=adminpass)
+            cursor = db.cursor()
+            cursor.execute("CREATE DATABASE IF NOT EXISTS helioviewer;")
+            cursor.execute("GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbuser, dbpass))
+        except Exception, e:
+            print "Error: " + e.args[1]
+            sys.exit(2)
 
     cursor.close()
 
@@ -73,7 +95,7 @@ def createSourceTable(cursor):
         `dateFormat`    VARCHAR(127) NOT NULL,
       PRIMARY KEY  (`id`), INDEX (`id`)
     ) DEFAULT CHARSET=utf8;''')
-    
+
     cursor.execute('''
     INSERT INTO `datasource` VALUES
         (0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 0, 1, 'DATE_OBS','TEST')
@@ -81,14 +103,14 @@ def createSourceTable(cursor):
 
 def createObservatoryTable(cursor):
     """ Creates table to store observatory information """
-    
+
     cursor.execute('''
     CREATE TABLE `observatory` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
        PRIMARY KEY (`id`), INDEX (`id`)
-    ) DEFAULT CHARSET=utf8;''')    
+    ) DEFAULT CHARSET=utf8;''')
 
     cursor.execute('''
     INSERT INTO `observatory` VALUES
@@ -98,7 +120,7 @@ def createObservatoryTable(cursor):
 
 def createInstrumentTable(cursor):
     """ Creates table to store instrument information """
-    
+
     cursor.execute('''
     CREATE TABLE `instrument` (
       `id`          SMALLINT unsigned NOT NULL,
@@ -106,7 +128,7 @@ def createInstrumentTable(cursor):
       `description` VARCHAR(255) NOT NULL,
        PRIMARY KEY (`id`), INDEX (`id`)
     ) DEFAULT CHARSET=utf8;''')
-    
+
     cursor.execute('''
     INSERT INTO `instrument` VALUES
         (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
@@ -119,7 +141,7 @@ def createInstrumentTable(cursor):
 
 def createDetectorTable(cursor):
     """ Creates table to store detector information """
-    
+
     cursor.execute('''
     CREATE TABLE `detector` (
       `id`          SMALLINT unsigned NOT NULL,
@@ -127,7 +149,7 @@ def createDetectorTable(cursor):
       `description` VARCHAR(255) NOT NULL,
        PRIMARY KEY (`id`), INDEX (`id`)
     ) DEFAULT CHARSET=utf8;''')
-    
+
     cursor.execute('''
     INSERT INTO `detector` VALUES
         (0, '', 'EIT'),
@@ -139,7 +161,7 @@ def createDetectorTable(cursor):
 
 def createMeasurementTable(cursor):
     """ Creates table to store measurement information """
-    
+
     cursor.execute('''
     CREATE TABLE `measurement` (
       `id`          SMALLINT unsigned NOT NULL,
@@ -148,7 +170,7 @@ def createMeasurementTable(cursor):
       `units`       VARCHAR(20)  NOT NULL,
        PRIMARY KEY (`id`), INDEX (`id`)
     ) DEFAULT CHARSET=utf8;''')
-    
+
     cursor.execute('''
     INSERT INTO `measurement` VALUES
         (0, '171', '171 ￃﾅngstrￃﾶm extreme ultraviolet', 'ￃﾅ'),
