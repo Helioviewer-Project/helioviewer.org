@@ -2,7 +2,9 @@
 
 ###############################################################################
 # Helioviewer Database Installation Tool
-# Last Updated: 2009/08/24
+# Last Updated: 2009/08/25
+#
+# TODO: (2009/08/25) Log errors to file in same directory (with -d param set)
 ###############################################################################
 import sys
 from optparse import OptionParser, OptionError, IndentedHelpFormatter

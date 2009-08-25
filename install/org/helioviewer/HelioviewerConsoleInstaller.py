@@ -110,6 +110,7 @@ def loadTextInstaller(options):
 
     # Get database information
     admin, adminpass, mysql = app.getDatabaseInfo()
+    mysql = True
     hvuser, hvpass = app.getNewUserInfo()
     
     # Setup database schema
@@ -118,12 +119,9 @@ def loadTextInstaller(options):
     print "Processing Images..."
 
     # Insert image information into database
-    processJPEG2000Images(images, cursor, mysql)
+    processJPEG2000Images(images, path, cursor, mysql)
 
-
-#cursor = setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass)
-
-#processJPEG2000Images(images, cursor)
+    print "Finished!"
     
 # Add Index
 # CREATE INDEX image_index USING BTREE ON image (timestamp);

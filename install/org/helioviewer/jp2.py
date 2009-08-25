@@ -20,33 +20,108 @@ def traverseDirectory (path):
 
     return images
 
-def extractJP2MetaInfo (img, sources):
+def extractJP2MetaInfo (img):
     ''' Extracts useful meta-information from a given JP2 image and
         returns a dictionary of that information.'''
-    meta = {}
-
     # TODO: (2009/08/18)
     # Create a method to try and sniff the dataSource type before processing? Or do lazily?
 
     # Get XMLBox as DOM
     dom = parseString(getJP2XMLBox(img, "meta"))
+    fits = dom.getElementsByTagName("fits")[0]
+    
+    # Meta info (TODO 2009/08/25: support requests to both XML-Box & FITS header, e.g. using pyfits)
+    meta = {
+        "date"       : getObservationDate(fits),
+        "observatory": getObservatory(fits),
+        "instrument" : getInstrument(fits),
+        "detector"   : getDetector(fits),
+        "measurement": getMeasurement(fits)
+    }
+    
+    return meta
 
-    # Observatory
+def getObservationDate(dom):
+    ''' Attempts to retrieve the observation date from the image meta-information '''
     try:
+        # LASCO (yyyy-mm-dd + hh:mm:ss.mmm)
+        t = getElementValue(dom, "TIME_OBS")
+    except:
+        try:
+            # EIT/MDI (yyyy-mm-ddThh:mm:ss.mmmZ)
+            d = getElementValue(dom, "DATE_OBS")
+        except:
+            print "Try next date type... (Not EIT,MDI, or LASCO)"
+        else:
+            datestring = d[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
+            date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
+    else:
+        d = getElementValue(dom, "DATE_OBS")
+        datestring = "%sT%s000Z" % (d, t)
+        date = datetime.strptime(datestring, "%Y/%m/%dT%H:%M:%S.%fZ")
+        
+    return date        
+    
+def getObservatory(dom):
+    ''' Attempts to retrieve the observatory name from the image meta-information '''
+    try:
+        # SOHO
         obs = getElementValue(dom, "TELESCOP")
     except:
-        print "Try next obs..."
-
-    # Date
+        print "Observatory not found."
+        
+    return obs
+    
+def getInstrument(dom):
+    ''' Attempts to retrieve the instrument name from the image meta-information '''
     try:
-        date = getElementValue(dom, "DATE_OBS") #EIT
-        datestring = eitdate[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
-        date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
+        #SOHO
+        inst = getElementValue(dom, "INSTRUME")
     except:
-        print "(Try next date type...)"
+        print "Instrument not found."
+    
+    return inst
+    
+def getDetector(dom):
+    ''' Attempts to retrieve the detector name from the image meta-information '''
+    try:
+        #LASCO
+        det = getElementValue(dom, "DETECTOR")
+    except:
+        try:
+            # EIT,MDI
+            trash = getElementValue(dom, "INSTRUME")
+            det = ""
+        except:
+            print "Try next inst..."
+    
+    return det
+    
+def getMeasurement(dom):
+    ''' Attempts to retrieve the measurement name from the image meta-information '''
+    try:
+        #EIT
+        meas = getElementValue(dom, "WAVELNTH")
+    except:
+        try:
+            inst = getElementValue(dom, "INSTRUME")
 
-    meta["date"] = date
-    return meta
+            #LASCO
+            if inst == "LASCO":
+                meas = "white light"
+            #MDI
+            elif inst == "MDI":
+                dpcobsr = getElementValue(dom, "DPC_OBSR")
+                if dpcobsr.find("Magnetogram") is not -1:
+                    meas = "magnetogram"
+                else:
+                    meas = "continuum"
+            else:
+                print "Try next measurement detector method..."                
+        except:
+            print "Try next measurement detection method..."
+
+    return meas
 
 def getElementValue(dom, name):
     ''' Retrieves the value of a unique dom-node element or returns false if element is not found/ more than one '''
@@ -68,11 +143,14 @@ def getJP2XMLBox(file, root):
          if line.find("</%s>" % root) != -1:
                  break
     xml = xml[xml.find("<%s>" % root):]
+    
+    fp.close()
 
     return xml
 
-def processJPEG2000Images (images, cursor, mysql):
+def processJPEG2000Images (images, rootdir, cursor, mysql):
     ''' Processes a collection of JPEG2000 Images. '''
+    
     if mysql:
         import MySQLdb
     else:
@@ -82,51 +160,55 @@ def processJPEG2000Images (images, cursor, mysql):
 
     remainder = len(images) % INSERTS_PER_QUERY
 
-    dataSources = getDataSources(cursor)
-
+    # Return tree of known data-sources
+    sources = getDataSources(cursor)
+    
+    # Insert images into database, 500 at a time
     if len(images) >= INSERTS_PER_QUERY:
-        for x in range(len(images) / INSERTS_PER_QUERY):
-            for y in range(INSERTS_PER_QUERY):
-                img = images.pop()
-                path, uri = os.path.split(img)
-                meta = extractJP2MetaInfo(img, dataSources)
+        for x in xrange(len(images) / INSERTS_PER_QUERY):
+            insertNImages(images, INSERTS_PER_QUERY, sources, rootdir, cursor, mysql)
+            
+    # Process remaining images
+    insertNImages(images, remainder, sources, rootdir, cursor, mysql)
+    
+def insertNImages(images, n, sources, rootdir, cursor, mysql):
+    query = "INSERT INTO image VALUES "
+    
+    for y in xrange(n):
+        # Grab next image
+        img = images.pop()
+    
+        print "Processing image: " + img
+        
+        path, filename = os.path.split(img)
+        
+        # Remove static part of filepath
+        if rootdir[-1] == "/":
+            rootdir = rootdir[:-1]
+        path = path[len(rootdir):]
+        
+        # Extract header information
+        meta = extractJP2MetaInfo(img)
+    
+        # Source id
+        id = sources[meta["observatory"]][meta["instrument"]][meta["detector"]][meta["measurement"]]
+        
+        # Date
+        date = meta["date"]
+    
+        # insert into database
+        query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, date, id)
+    
+    # Remove trailing comma
+    query = query[:-1] + ";"
+        
+    # print query
+        
+    # Execute query
+    try:
+        cursor.execute(query)
+    
+    except Exception, e:
+        print "Error: " + e.args[1]
 
-                # Format date (> Python 2.5 Method)
-                # date = datetime.strptime(meta["date"][0:19], "%Y:%m:%d %H:%M:%S")
-
-                print "Processing image: " + img
-
-                # Format date
-                d = meta["date"]
-
-                # Temporary work-around
-                if d[17:19] == "60":
-                    secs = "30"
-                else:
-                    secs = d[17:19]
-
-                date = datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(secs))
-
-                # insert into database
-                query = "INSERT INTO image VALUES(NULL, %d, '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
-                    measurementIds[meta["det"] + meta["meas"]],
-                    date,
-                    meta["centering"],
-                    meta["centerX"],
-                    meta["centerY"],
-                    meta["lengthX"],
-                    meta["lengthY"],
-                    meta["scaleX"],
-                    meta["scaleY"],
-                    meta["radius"],
-                    meta["width"],
-                    meta["height"],
-                    meta["opacityGrp"],
-                    uri)
-                print query
-
-                try:
-                    cursor.execute(query)
-
-                except Exception, e:
-                    print "Error: " + e.args[1]
+    
