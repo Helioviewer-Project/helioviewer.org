@@ -8,6 +8,9 @@ class HelioviewerConsoleInstaller():
 
     def __init__(self, options):
         self.options = options
+        self.debugmode = options.debug
+        if debug:
+            self.logfile = file.open("error.log", "w")
         
     def getFilePath(self):
         ''' Prompts the user for the directory information '''
@@ -110,7 +113,6 @@ def loadTextInstaller(options):
 
     # Get database information
     admin, adminpass, mysql = app.getDatabaseInfo()
-    mysql = True
     hvuser, hvpass = app.getNewUserInfo()
     
     # Setup database schema

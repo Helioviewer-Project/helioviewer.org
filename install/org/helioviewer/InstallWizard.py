@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'InstallWizard.ui'
 #
-# Created: Fri Aug 21 14:15:28 2009
+# Created: Wed Aug 26 10:38:58 2009
 #      by: PyQt4 UI code generator 4.5.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -255,14 +255,23 @@ class Ui_InstallWizard(object):
         self.label.setIndent(0)
         self.label.setObjectName("label")
         self.installingPageOuter.addWidget(self.label)
-        self.label_2 = QtGui.QLabel(self.verticalLayoutWidget_2)
-        self.label_2.setIndent(15)
-        self.label_2.setObjectName("label_2")
-        self.installingPageOuter.addWidget(self.label_2)
+        self.statusMsg = QtGui.QLabel(self.verticalLayoutWidget_2)
+        self.statusMsg.setIndent(15)
+        self.statusMsg.setObjectName("statusMsg")
+        self.installingPageOuter.addWidget(self.statusMsg)
         self.installProgress = QtGui.QProgressBar(self.verticalLayoutWidget_2)
+        self.installProgress.setEnabled(True)
         self.installProgress.setProperty("value", QtCore.QVariant(0))
         self.installProgress.setObjectName("installProgress")
         self.installingPageOuter.addWidget(self.installProgress)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem2)
+        self.startProcessingBtn = QtGui.QPushButton(self.verticalLayoutWidget_2)
+        self.startProcessingBtn.setObjectName("startProcessingBtn")
+        self.horizontalLayout.addWidget(self.startProcessingBtn)
+        self.installingPageOuter.addLayout(self.horizontalLayout)
         InstallWizard.addPage(self.installingPage)
         self.finishedPage = QtGui.QWizardPage()
         self.finishedPage.setObjectName("finishedPage")
@@ -299,6 +308,7 @@ class Ui_InstallWizard(object):
         self.installingPage.setTitle(QtGui.QApplication.translate("InstallWizard", "Installing Helioviewer Database Schema", None, QtGui.QApplication.UnicodeUTF8))
         self.installingPage.setSubTitle(QtGui.QApplication.translate("InstallWizard", "Processing JPEG 2000 Archive", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("InstallWizard", "<b>Status:</b>", None, QtGui.QApplication.UnicodeUTF8))
+        self.startProcessingBtn.setText(QtGui.QApplication.translate("InstallWizard", "Start", None, QtGui.QApplication.UnicodeUTF8))
         self.finishedPage.setTitle(QtGui.QApplication.translate("InstallWizard", "Finished!", None, QtGui.QApplication.UnicodeUTF8))
         self.finishedPageDesc.setText(QtGui.QApplication.translate("InstallWizard", "You have successfully installed the Helioviewer database.", None, QtGui.QApplication.UnicodeUTF8))
 

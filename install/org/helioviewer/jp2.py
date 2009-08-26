@@ -4,6 +4,9 @@ from datetime import datetime
 from xml.dom.minidom import parseString
 from org.helioviewer.db import getDataSources
 
+__INSERTS_PER_QUERY__ = 500
+__STEP_FXN_THROTTLE__ = 50
+
 def traverseDirectory (path):
     ''' Traverses file-tree starting with the specified path and builds a
         list of the available images '''
@@ -148,7 +151,7 @@ def getJP2XMLBox(file, root):
 
     return xml
 
-def processJPEG2000Images (images, rootdir, cursor, mysql):
+def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
     ''' Processes a collection of JPEG2000 Images. '''
     
     if mysql:
@@ -156,29 +159,27 @@ def processJPEG2000Images (images, rootdir, cursor, mysql):
     else:
         import pgdb
 
-    INSERTS_PER_QUERY = 500
-
-    remainder = len(images) % INSERTS_PER_QUERY
+    remainder = len(images) % __INSERTS_PER_QUERY__
 
     # Return tree of known data-sources
     sources = getDataSources(cursor)
     
     # Insert images into database, 500 at a time
-    if len(images) >= INSERTS_PER_QUERY:
-        for x in xrange(len(images) / INSERTS_PER_QUERY):
-            insertNImages(images, INSERTS_PER_QUERY, sources, rootdir, cursor, mysql)
+    if len(images) >= __INSERTS_PER_QUERY__:
+        for x in xrange(len(images) / __INSERTS_PER_QUERY__):
+            insertNImages(images, __INSERTS_PER_QUERY__, sources, rootdir, cursor, mysql, stepFxn)
             
     # Process remaining images
-    insertNImages(images, remainder, sources, rootdir, cursor, mysql)
+    insertNImages(images, remainder, sources, rootdir, cursor, mysql, stepFxn)
     
-def insertNImages(images, n, sources, rootdir, cursor, mysql):
+def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     query = "INSERT INTO image VALUES "
     
     for y in xrange(n):
         # Grab next image
         img = images.pop()
     
-        print "Processing image: " + img
+        #print "Processing image: " + img
         
         path, filename = os.path.split(img)
         
@@ -198,6 +199,10 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql):
     
         # insert into database
         query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, date, id)
+        
+        # Progressbar
+        if stepFxn and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
+            stepFxn(filename)
     
     # Remove trailing comma
     query = query[:-1] + ";"
@@ -210,5 +215,4 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql):
     
     except Exception, e:
         print "Error: " + e.args[1]
-
     

@@ -2,9 +2,8 @@
 
 ###############################################################################
 # Helioviewer Database Installation Tool
-# Last Updated: 2009/08/25
+# Last Updated: 2009/08/26
 #
-# TODO: (2009/08/25) Log errors to file in same directory (with -d param set)
 ###############################################################################
 import sys
 from optparse import OptionParser, OptionError, IndentedHelpFormatter
@@ -19,12 +18,13 @@ def main(argv):
         loadTextInstaller(options)
     else:
         from org.helioviewer.HelioviewerInstallWizard import loadGUIInstaller
-        loadGUIInstaller(argv)
+        loadGUIInstaller(argv, options.debug)
         
 def getArguments():
     ''' Gets command-line arguments and handles validation '''
     parser = OptionParser("%prog [options]", formatter=IndentedHelpFormatter(4,80))
     parser.add_option("-t", "--text-install", dest="textinstall", help="launches the text-based installation tool", action="store_true")
+    parser.add_option("-d", "--debug", dest="debug", help="enables logging of errors to a file", action="store_true")
     
     try:                                
         options, args = parser.parse_args()

@@ -13,6 +13,8 @@ __JP2DIR_PAGE__ = 3
 __INSTALL_PAGE__ = 4
 __FINISH_PAGE__ = 5
 
+__STEP_FXN_THROTTLE__ = 50
+
 #
 # Main Application Window
 #
@@ -21,10 +23,17 @@ __FINISH_PAGE__ = 5
 #
 class HelioviewerInstallWizard(QtGui.QWizard):
 
-    def __init__(self, parent=None):
+    def __init__(self, debug, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_InstallWizard()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self)        
+        
+        self.debugmode = debug
+        if debug:
+            self.logfile = file.open("error.log", "w")
+        
+        self.installComplete = False
+        
         self.postSetup()
         self.initEvents()
 
@@ -51,17 +60,29 @@ class HelioviewerInstallWizard(QtGui.QWizard):
 
     def initializePage(self, page):
         if page is __INSTALL_PAGE__:
-            self.processImages()
+            jp2dir = str(self.ui.jp2RootDirInput.text())
+            
+            self.ui.statusMsg.setText("Searching for JPEG 2000 Images...")
+            self.images = traverseDirectory(jp2dir)
+            n = len(self.images)
 
+            if n is 0:
+                print "No JPEG 2000 images found. Exiting installation."
+                sys.exit(2)
+            else:
+                self.ui.installProgress.setMaximum(n / __STEP_FXN_THROTTLE__)
+                self.ui.statusMsg.setText("""\
+Found %d JPEG2000 images.
 
-    #def beginInstall(self):
-
+If this is correct, please press "Start" to begin processing.
+                """ % n)
+            #self.processImages()
 
     def validateCurrentPage(self):
         ''' Validates information for a given page '''
         page = self.currentId()
 
-        print "Validating page %s" % str(page)
+        #print "Validating page %s" % str(page)
 
         # Database type & administrator information
         if page is __DBADMIN_PAGE__:
@@ -80,6 +101,10 @@ class HelioviewerInstallWizard(QtGui.QWizard):
             else:
                 self.ui.jp2ArchiveStatus.clear()
             return pathExists
+        
+        # Install page
+        elif page is __INSTALL_PAGE__:
+            return self.installComplete
 
         # No validation required
         else:
@@ -89,24 +114,21 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         ''' Process JPEG 2000 archive and enter information into the database '''
         admin, adminpass, hvuser, hvpass, jp2dir, mysql = self.getFormFields()
 
-        print "Traversing JP2 Archive..."
-
-        images = traverseDirectory(jp2dir)
-
-        if(len(images) == 0):
-            print "No JPEG 2000 images found. Exiting installation."
-            sys.exit(2)
-        else:
-            self.ui.installProgress.setMaximum(len(images))
-            print "Found " + str(len(images)) + " JPEG2000 images."
-
-        print "Setting up DB Schema..."
+        self.ui.statusMsg.setText("Creating database schema")
 
         cursor = setupDatabaseSchema(admin, adminpass, hvuser, hvpass, mysql)
 
-        print "Processing Images..."
-
-        processJPEG2000Images(images, cursor, mysql)
+        processJPEG2000Images(self.images, jp2dir, cursor, mysql, self.updateProgress)
+    
+        #self.ui.installProgress.setValue(len(images))
+    
+        self.ui.statusMsg.setText("Finished!")
+        self.installComplete = True
+    
+    def updateProgress(self, img):
+        value = self.ui.installProgress.value() + 1
+        self.ui.installProgress.setValue(value)
+        self.ui.statusMsg.setText("Processing image:\n    %s" % img)
 
     def getFormFields(self):
         ''' Grab form information '''
@@ -120,17 +142,17 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         return admin, adminpass, hvuser, hvpass, jp2dir, mysql
 
     def initEvents(self):
-        print "Initializing..."
         QtCore.QObject.connect(self.ui.jp2BrowseBtn, QtCore.SIGNAL("clicked()"), self.openBrowseDialog)
+        QtCore.QObject.connect(self.ui.startProcessingBtn, QtCore.SIGNAL("clicked()"), self.processImages)
 
     def openBrowseDialog(self):
         fd = QtGui.QFileDialog(self)
         directory = fd.getExistingDirectory()
         self.ui.jp2RootDirInput.setText(directory)
 
-def loadGUIInstaller(args):
+def loadGUIInstaller(args, debug):
     ''' Load graphical installer '''
     app = QtGui.QApplication(sys.argv)
-    win = HelioviewerInstallWizard()
+    win = HelioviewerInstallWizard(debug)
     win.show()
     sys.exit(app.exec_())
