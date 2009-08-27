@@ -55,6 +55,59 @@ class ImgIndex {
 	}
 
     /**
+     * Returns a list of the known datasources
+     * @return 
+     */
+    public function getDataSources () {
+        # Query
+        $sql = "
+            SELECT
+                datasource.id as id,
+                observatory.name as observatory,
+                instrument.name as instrument,
+                detector.name as detector,
+                measurement.name as measurement
+            FROM datasource
+                LEFT JOIN observatory ON datasource.observatoryId = observatory.id 
+                LEFT JOIN instrument ON datasource.instrumentId = instrument.id 
+                LEFT JOIN detector ON datasource.detectorId = detector.id 
+                LEFT JOIN measurement ON datasource.measurementId = measurement.id;";
+    
+        # Fetch available data-sources
+        $result = $this->dbConnection->query($sql);
+
+        $sources = array();
+        
+        while ($row = $result->fetch_array(MYSQL_ASSOC)) {
+            array_push($sources, $row);
+        }
+        
+        # Convert results into a more easily traversable tree structure
+        $tree = array();
+        
+        foreach($sources as $source) {
+            
+            # Image parameters
+            $obs  = $source["observatory"];
+            $inst = $source["instrument"];
+            $det  = $source["detector"];
+            $meas = $source["measurement"];
+            $id   = (int) ($source["id"]);
+            
+            # Build tree
+            if (!isset($tree[$obs]))
+                $tree[$obs] = array();
+            if (!isset($tree[$obs][$inst]))
+                $tree[$obs][$inst] = array();
+            if (!isset($tree[$obs][$inst][$det]))
+                $tree[$obs][$inst][$det] = array();
+            $tree[$obs][$inst][$det][$meas] = $id;
+        }
+
+        return $tree; 
+    }
+
+    /**
      * getJP2Filename
      * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
      * @return string $url

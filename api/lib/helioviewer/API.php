@@ -89,6 +89,23 @@ class API {
         }
         return 1;
     }
+    
+    private function _getDataSources () {
+        require('lib/helioviewer/ImgIndex.php');
+        
+        // NOTE: Make sure to remove database specification after testing completed!
+        $imgIndex = new ImgIndex(new DbConnection($dbname = "helioviewer"));
+        $dataSources = json_encode($imgIndex->getDataSources());
+        
+        if ($this->format == "text")
+            header("Content-type: text/plain");
+        else
+            header("Content-type: application/json");
+
+        print $dataSources;
+        
+        return 1;
+    }
 
     /**
      * getViewerImage (aka "getCompositeImage")
@@ -854,6 +871,8 @@ class API {
             case "getTile":
                 break;
             case "getClosestImage":
+                break;
+            case "getDataSources":
                 break;
             case "getViewerImage":
                 if (!isset($this->params["layers"]) or !preg_match($layer_list_regex, $this->params["layers"]))
