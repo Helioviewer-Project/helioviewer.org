@@ -85,7 +85,6 @@
         
 		<!-- Helioviewer-Specific -->
 		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
-		<script src="lib/helioviewer/LoadingIndicator.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Layer.js" type="text/javascript"></script>

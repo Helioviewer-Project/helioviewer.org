@@ -18,8 +18,8 @@
 
 		<!-- concatenate in two-steps to preserve include order -->
 		<concat destfile="${hvlibs}/build/helioviewer-all.js" encoding="UTF-8" eol="lf">
-		    <filelist dir="${hvlibs}" files="LoadingIndicator.js, Layer.js"/>
-			<fileset dir="${hvlibs}" includes="*.js" excludes="LoadingIndicator.js, Layer.js"/>
+		    <filelist dir="${hvlibs}" files="Layer.js"/>
+			<fileset dir="${hvlibs}" includes="*.js" excludes="Layer.js"/>
 		</concat>
 
 		<concat destfile="${cssdir}/helioviewer-all.css" encoding="UTF-8" eol="lf">
