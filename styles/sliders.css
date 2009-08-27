@@ -53,8 +53,9 @@
 .opacity-slider-track {
     margin: 4px 0 9px 0;
     background: url(../images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-style: solid;
+    border-color: black;
+    border-width: 0px 1px;
 	float: left;
 }
 
