@@ -57,7 +57,8 @@
     border-right: 1px solid black;
 	float: left;
 }
-.opacity-slider-handle {
+
+.opacity-slider-track > .ui-slider-handle {
 	background: url(../lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_glass_20_555555_1x400.png) transparent scroll 0%;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
