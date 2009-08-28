@@ -166,7 +166,7 @@ def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
     
     # Insert images into database, 500 at a time
     if len(images) >= __INSERTS_PER_QUERY__:
-        for x in xrange(len(images) / __INSERTS_PER_QUERY__):
+        for x in range(len(images) // __INSERTS_PER_QUERY__):
             insertNImages(images, __INSERTS_PER_QUERY__, sources, rootdir, cursor, mysql, stepFxn)
             
     # Process remaining images
@@ -175,7 +175,7 @@ def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
 def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     query = "INSERT INTO image VALUES "
     
-    for y in xrange(n):
+    for y in range(n):
         # Grab next image
         img = images.pop()
     

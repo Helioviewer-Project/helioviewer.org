@@ -157,11 +157,11 @@ def createDetectorTable(cursor):
 
     cursor.execute('''
     INSERT INTO `detector` VALUES
-        (0, '', 'EIT'),
+        (0, 'EIT', 'EIT'),
         (1, 'C2', 'LASCO C2'),
         (2, 'C3', 'LASCO C3'),
-        (3, '', 'MDI'),
-        (4, '', 'TRACE');''')
+        (3, 'MDI', 'MDI'),
+        (4, 'TRACE', 'TRACE');''')
 
 
 def createMeasurementTable(cursor):

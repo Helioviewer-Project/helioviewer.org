@@ -70,7 +70,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
                 print "No JPEG 2000 images found. Exiting installation."
                 sys.exit(2)
             else:
-                self.ui.installProgress.setMaximum(n / __STEP_FXN_THROTTLE__)
+                self.ui.installProgress.setMaximum(n // __STEP_FXN_THROTTLE__)
                 self.ui.statusMsg.setText("""\
 Found %d JPEG2000 images.
 
