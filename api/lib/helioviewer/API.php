@@ -19,6 +19,7 @@ class API {
      */
     public function __construct ($params, $format) {
     	require_once('DbConnection.php');
+ 
         $this->params = $params;
         $this->format = $format;
 
@@ -28,7 +29,6 @@ class API {
             if (!$this->validate($params["action"]))
                 throw new Exception("Invalid parameters specified for <a href='http://www.helioviewer.org/api/index.php#" . $params['action'] . "'>" . $params['action'] . "</a>.");
 
-            #if (!call_user_func(array("API" ,"_" . $params["action"])))
             if (!$this->{"_" . $params["action"]}() === 1)
                 throw new Exception("Unable to execute " . $params["action"] . ". Please make sure you are using valid input and contact the web-admin if problems persist.");
 
@@ -51,7 +51,7 @@ class API {
 
     /**
      * @return int Returns "1" if the action was completed successfully.
-     * 
+     * http://localhost/hv/api/index.php?action=getClosestImage&timestamp=1065312000&source=0&server=api/index.php
      * TODO: Add a more elegant check for local vs. remote server
      */
     private function _getClosestImage () {
@@ -60,19 +60,22 @@ class API {
             require_once('ImgIndex.php');
             $imgIndex = new ImgIndex(new DbConnection());
     
-            $queryForField = 'abbreviation';
-            foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-                $src["$field.$queryForField"] = $this->params[$field];
+            // Search by source id
+            if (isset($this->params['source'])) {
+                $result = $imgIndex->getClosestImage($this->params['timestamp'], $this->params['source'], true);
             }
-    
-            $result = $imgIndex->getClosestImage($this->params['timestamp'], $src);
-    
-            if ($this->format == "json") {
+            // Search by human-readable parameters
+            else {
+                foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
+                    $parameters["$field"] = $this->params[$field];
+
+                $result = $imgIndex->getClosestImage($this->params['timestamp'], $parameters);
+            }
+                
+            if ($this->format == "json")
                 header('Content-type: application/json');
-                echo json_encode($result);
-            } else {
-                echo json_encode($result);
-            }
+                
+            echo json_encode($result);
             
         // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
         } else {
@@ -90,6 +93,10 @@ class API {
         return 1;
     }
     
+    /**
+     * getDataSources
+     * @return Returns a tree representing the available data sources
+     */
     private function _getDataSources () {
         require('lib/helioviewer/ImgIndex.php');
         
@@ -97,10 +104,8 @@ class API {
         $imgIndex = new ImgIndex(new DbConnection($dbname = "helioviewer"));
         $dataSources = json_encode($imgIndex->getDataSources());
         
-        if ($this->format == "text")
-            header("Content-type: text/plain");
-        else
-            header("Content-type: application/json");
+        if ($this->format == "json")
+            header('Content-type: application/json');
 
         print $dataSources;
         
@@ -110,7 +115,7 @@ class API {
     /**
      * getViewerImage (aka "getCompositeImage")
      *
-     * Example usage:
+     * Example usage: (outdated!)
      *         http://helioviewer.org/api/index.php?action=getViewerImage&layers=SOH_EIT_EIT_195&timestamps=1065312000&zoomLevel=10&tileSize=512&xRange=-1,0&yRange=-1,0
      *         http://helioviewer.org/api/index.php?action=getViewerImage&layers=SOH_EIT_EIT_195,SOH_LAS_0C2_0WL&timestamps=1065312000,1065312360&zoomLevel=13&tileSize=512&xRange=-1,0&yRange=-1,0&edges=false
      * 
@@ -191,11 +196,6 @@ class API {
         require('lib/helioviewer/ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
 
-        // find the closest image
-        foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-            $src["$field.abbreviation"] = $this->params[$field];
-        }
-        
         // Convert date string to a UNIX timestamp
         // NOTE: Currently supporting deprecated "timestamp" field as well
         if (isset($this->params['date'])) {
@@ -204,9 +204,20 @@ class API {
             $timestamp = $this->params['timestamp'];
         }
 
+        // Search by source id
+        if (isset($this->params['source'])) {
+            $filename = $imgIndex->getJP2Filename($timestamp, $this->params['source']);
+        }
+        // Search by human-readable parameters
+        else {
+            foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
+                $parameters["$field"] = $this->params[$field];
+
+            $filename = $imgIndex->getJP2Filename($timestamp, $parameters);
+        }
+
         // file name and location
-        $filename = $imgIndex->getJP2Filename($timestamp, $src);
-        $filepath = $this->getFilepath($filename);
+        $filepath = Config::JP2_DIR . $filename;
         
         // http url (relative path)
         if ((isset($this->params['getRelativeURL'])) && ($this->params['getRelativeURL'] === "true")) {
@@ -771,21 +782,6 @@ class API {
         }
 
         return $values;
-    }
-    
-    /**
-     * @return string filepath to the specified jpeg 2000 image
-     * 
-     * Given a jp2 uri, builds a complete filepath to the image
-     */
-    public static function getFilepath ($uri) {
-        $exploded = explode("_", substr($uri, 0, -4));
-        
-        // remove time portion
-        array_splice($exploded, 3, 1);
-        
-        // recombine to construct filepath
-        return Config::JP2_DIR . implode("/", $exploded) . "/$uri";
     }
     
     /**

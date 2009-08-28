@@ -9,7 +9,7 @@ class HelioviewerConsoleInstaller():
     def __init__(self, options):
         self.options = options
         self.debugmode = options.debug
-        if debug:
+        if options.debug:
             self.logfile = file.open("error.log", "w")
         
     def getFilePath(self):
@@ -61,8 +61,8 @@ class HelioviewerConsoleInstaller():
         ''' Prompts the user for the required database information '''
 
         # Get new user information (Todo 2009/08/24: validate input form)
-        dbuser = raw_input("New database username [Helioviewer]: ")
-        dbpass = raw_input("New password [Helioviewer]: ")
+        dbuser = raw_input("New database username [helioviewer]: ")
+        dbpass = raw_input("New password [helioviewer]: ")
     
         # Default values
         if not dbuser: dbuser = "helioviewer"

@@ -93,8 +93,7 @@ def getDetector(dom):
     except:
         try:
             # EIT,MDI
-            trash = getElementValue(dom, "INSTRUME")
-            det = ""
+            det = getElementValue(dom, "INSTRUME")
         except:
             print "Try next inst..."
     
@@ -179,7 +178,7 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         # Grab next image
         img = images.pop()
     
-        #print "Processing image: " + img
+        print "Processing image: " + img
         
         path, filename = os.path.split(img)
         

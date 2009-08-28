@@ -12,47 +12,55 @@ class ImgIndex {
 		$this->dbConnection = $dbConnection;
 	}
 
-	public function getClosestImage($obsTime, $src) {
-		$query = sprintf("SELECT image.id as mysqlId, image.lengthX as width, image.lengthY as height, image.imgScaleX as naturalImageScale,
-							measurement.abbreviation AS measurement, measurementType.name AS measurementType, unit,
-							CONCAT(instrument.name, \" \", detector.name, \" \", measurement.name) AS name, detector.minZoom as minZoom,
-							detector.abbreviation AS detector, detector.opacityGroupId AS opacityGroupId,
-							opacityGroup.description AS opacityGroupDescription,
-							instrument.abbreviation AS instrument, observatory.abbreviation AS observatory,
-							UNIX_TIMESTAMP(timestamp) AS timestamp,
-								%d - UNIX_TIMESTAMP(timestamp) AS timediff,
-								ABS(%d - UNIX_TIMESTAMP(timestamp)) AS timediffAbs
-							FROM image
-							LEFT JOIN measurement on measurementId = measurement.id
-							LEFT JOIN measurementType on measurementTypeId = measurementType.id
-							LEFT JOIN detector on detectorId = detector.id
-							LEFT JOIN opacityGroup on opacityGroupId = opacityGroup.id
-							LEFT JOIN instrument on instrumentId = instrument.id
-							LEFT JOIN observatory on observatoryId = observatory.id
-				WHERE ", $obsTime, $obsTime);
+	public function getClosestImage($date, $params) {
+        // Fetch source id if not specified
+        if (sizeOf($params) > 1)
+            $id = $this->getSourceId($params->observatory, $params->instrument, $params->detector, $params->measurement);
+        else
+            $id = $params;   
+        
+        $datestr = strftime("%Y-%m-%d %H:%M:%S", $date);
+        
+   		$lhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND timestamp < '%s' ORDER BY timestamp DESC LIMIT 1;", $id, $datestr);
+   		$rhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND timestamp >= '%s' ORDER BY timestamp ASC LIMIT 1;", $id, $datestr);
 
-
-		// Layer-settings
-		$i=0;
-		foreach($src as $key => $value) {
-			if ($i>0) $query .= " AND";
-			$query .= sprintf(" $key='%s'", mysqli_real_escape_string($this->dbConnection->link, $value));
-			$i++;
-		}
-
-		$query .= " ORDER BY timediffAbs LIMIT 0,1";
-		
-        //echo "$query<br><br>";
+        echo "$lhs<br><br>";
+        echo "$rhs<br><br>";
         //exit();
 
-		$result = $this->dbConnection->query($query);
-        $im = mysqli_fetch_array($result, MYSQL_ASSOC);
+		$left = mysqli_fetch_array($this->dbConnection->query($lhs), MYSQL_ASSOC);
+		$right = mysqli_fetch_array($this->dbConnection->query($rhs), MYSQL_ASSOC);
         
-        // get uri
-        $im["uri"] = $this->idToURI($im["mysqlId"]);
-
-		return $im;
+        if (abs($date - $left["timestamp"]) < abs($date - $right["timestamp"]))
+    		return $left;
+        else
+            return $right;
 	}
+    
+    public function getSourceId ($obs, $inst, $det, $meas) {
+        $sql = sprintf("
+            SELECT
+                datasource.id 
+            FROM datasource
+                LEFT JOIN observatory ON datasource.observatoryId = observatory.id 
+                LEFT JOIN instrument ON datasource.instrumentId = instrument.id 
+                LEFT JOIN detector ON datasource.detectorId = detector.id 
+                LEFT JOIN measurement ON datasource.measurementId = measurement.id
+	        WHERE 
+                observatory.name='%s' AND
+                instrument.name='%s' AND
+                detector.name='%s' AND
+                measurement.name='%s';",
+            mysqli_real_escape_string($this->dbConnection->link, $obs), 
+            mysqli_real_escape_string($this->dbConnection->link, $inst),
+            mysqli_real_escape_string($this->dbConnection->link, $det), 
+            mysqli_real_escape_string($this->dbConnection->link, $meas));
+                
+        $result = $this->dbConnection->query($sql);
+    	$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+    
+        return (int) ($result_array["id"]);
+    }
 
     /**
      * Returns a list of the known datasources
@@ -62,7 +70,9 @@ class ImgIndex {
         # Query
         $sql = "
             SELECT
+                datasource.name as name,
                 datasource.id as id,
+                datasource.layeringOrder as layeringOrder,
                 observatory.name as observatory,
                 instrument.name as instrument,
                 detector.name as detector,
@@ -92,6 +102,8 @@ class ImgIndex {
             $inst = $source["instrument"];
             $det  = $source["detector"];
             $meas = $source["measurement"];
+            $name = $source["name"];
+            $ord  = (int) ($source["layeringOrder"]);
             $id   = (int) ($source["id"]);
             
             # Build tree
@@ -101,7 +113,7 @@ class ImgIndex {
                 $tree[$obs][$inst] = array();
             if (!isset($tree[$obs][$inst][$det]))
                 $tree[$obs][$inst][$det] = array();
-            $tree[$obs][$inst][$det][$meas] = $id;
+            $tree[$obs][$inst][$det][$meas] = array("id"=>$id, "name"=>$name, "layeringOrder"=>$ord);
         }
 
         return $tree; 
