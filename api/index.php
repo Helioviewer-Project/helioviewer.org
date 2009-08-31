@@ -496,8 +496,12 @@
                                         <tr>
 											<td><b>date</b></td>
 											<td><i>ISO 8601 UTC Date</i></td>
-											<td>Observation time</td>
+											<td>Observation date and time</td>
 										</tr>
+                                        <tr>
+                                            <td><b>source</b></td>
+                                            <td><i>Integer</i></td>
+                                        </tr>[Optional] The image source ID (can be used in place of observatory, instrument, detector and measurement parameters).
 										<tr>
 											<td><b>getURL</b></td>
 											<td><i>Boolean</i></td>

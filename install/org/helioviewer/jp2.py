@@ -57,6 +57,10 @@ def getObservationDate(dom):
             print "Try next date type... (Not EIT,MDI, or LASCO)"
         else:
             datestring = d[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
+            
+            # work-around (MDI sometimes has an "60" in seconds field)
+            if datestring[17:19] == "60":
+                datestring = datestring[:17] + "30" + datestring[19:]
             date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
     else:
         d = getElementValue(dom, "DATE_OBS")

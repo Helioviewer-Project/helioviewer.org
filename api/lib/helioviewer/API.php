@@ -122,7 +122,7 @@ class API {
      * 
      *         TODO
      *             * If no params are passed, print out API usage description (and possibly a query builder form)...
-     *             * Add support for fuzzy timestamp matching. Could default to exact matching unless user specifically requests fuzzy date-matching.
+     *             * Add support for fuzzy times/var/www/hv/jp2/v2009051tamp matching. Could default to exact matching unless user specifically requests fuzzy date-matching.
      *          * Separate out layer details into a Layer PHP class?
      *
      * @return int Returns "1" if the action was completed successfully.
@@ -194,50 +194,52 @@ class API {
 
         // NOTE: Currently supporting deprecated "timestamp" field as well
         if (isset($this->params['timestamp']))
-            $date = $this->parseUnixTimestamp($this->params['timestamp']);
+            $date = toISOString(parseUnixTimestamp($this->params['timestamp']));
         else
             $date = $this->params['date'];
 
         // Search by source id
         if (isset($this->params['source'])) {
-            $filename = $imgIndex->getJP2Filename($date, $this->params['source']);
+            $filepath = $imgIndex->getJP2FilePath($date, $this->params['source']);
         }
         // Search by human-readable parameters
         else {
             foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
                 $parameters["$field"] = $this->params[$field];
 
-            $filename = $imgIndex->getJP2Filename($date, $parameters);
+            $filepath = $imgIndex->getJP2FilePath($date, $parameters);
         }
 
-        // file name and location
-        $filepath = Config::JP2_DIR . $filename;
+        $uri = Config::JP2_DIR . $filepath;
         
-        // http url (relative path)
+        // http url (relative path)getUTC
         if ((isset($this->params['getRelativeURL'])) && ($this->params['getRelativeURL'] === "true")) {
             $jp2RootRegex = "/" . preg_replace("/\//", "\/", Config::JP2_DIR) . "/";
-            $url = "/" . preg_replace($jp2RootRegex, "", $filepath);
+            $url = preg_replace($jp2RootRegex, "", $uri);
             echo $url;
         }
         
         // http url (full path)
         else if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
-            $url = preg_replace($webRootRegex, Config::WEB_ROOT_URL, $filepath);
+            $url = preg_replace($webRootRegex, Config::WEB_ROOT_URL, $uri);
             echo $url;
         }
         
         // jpip url
         else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
-            $jpip = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $filepath), 4);
+            $jpip = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $uri), 4);
             echo $jpip;
         }
         
         // jp2 image
         else {
-            $fp = fopen($filepath, 'r');
-			$stat = stat($filepath);
+            $fp = fopen($uri, 'r');
+			$stat = stat($uri);
+            
+            $exploded = explode("/", $filepath);
+            $filename = end($exploded);
 			
             header("Content-Length: " . $stat['size']);
             header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));
@@ -262,8 +264,8 @@ class API {
      *  (See http://us2.php.net/manual/en/function.date-create.php)
      */
     private function _getJP2ImageSeries () {
-        $startTime   = $this->getUTCTimestamp($this->params['startTime']);
-        $endTime     = $this->getUTCTimestamp($this->params['endTime']);
+        $startTime   = toUnixTimestamp($this->params['startTime']);
+        $endTime     = toUnixTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
         
@@ -309,11 +311,10 @@ class API {
      * Constructs a JPX/MJ2 image series
      */
     private function buildJP2ImageSeries ($output_file) {
-        //date_default_timezone_set('UTC');
         require_once('ImgIndex.php');
         
-        $startTime   = $this->getUTCTimestamp($this->params['startTime']);
-        $endTime     = $this->getUTCTimestamp($this->params['endTime']);
+        $startTime   = toUnixTimestamp($this->params['startTime']);
+        $endTime     = toUnixTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
 
@@ -336,7 +337,7 @@ class API {
 
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
-            $jp2 = $this->getFilepath($imgIndex->getJP2Filename($time, $src));
+            $jp2 = $this->getFilepath($imgIndex->getJP2FilePath($time, $src));
             array_push($images, $jp2);
             $time += $cadence;
         }
@@ -683,118 +684,6 @@ class API {
         //mail('keith.hughitt@gmail.com', 'My Subject', $message);   
     }    
     
-    /**
-     * @return int Returns "1" if the action was completed successfully.
-     */
-    private function _getLayerAvailability () {
-        $dbConnection = new DbConnection();
-
-        // Layer parameters
-        $obs  = mysqli_real_escape_string($dbConnection->link, $this->params['observatory']);
-        $inst = mysqli_real_escape_string($dbConnection->link, $this->params['instrument']);
-        $det  = mysqli_real_escape_string($dbConnection->link, $this->params['detector']);
-        $meas = mysqli_real_escape_string($dbConnection->link, $this->params['measurement']);
-
-        // Validate new combinations (Note: measurement changes are always valid)
-        if (isset($this->params['changed'])) {
-            $changed  = mysqli_real_escape_string($dbConnection->link, $this->params['changed']);
-            $newValue = mysqli_real_escape_string($dbConnection->link, $this->params['value']);
-
-            // If query returns any matches then the new combination is valid
-            $query = sprintf("SELECT count(*) as count from observatory 
-                                INNER JOIN instrument ON observatory.id = instrument.observatoryId
-                                INNER JOIN detector ON detector.instrumentId = instrument.id
-                                  INNER JOIN measurement ON measurement.detectorId = detector.id
-                                WHERE
-                                observatory.abbreviation = '%s' AND instrument.abbreviation = '%s' and detector.abbreviation='%s' and measurement.abbreviation = '%s';",
-                                $obs, $inst, $det, $meas);
-
-            $result = $dbConnection->query($query);
-            $row = mysqli_fetch_array($result, MYSQL_ASSOC);
-            $valid = $row['count'];
-
-            //If combination is invalid, adjust options to provide a valid combination
-            if (!$valid) {
-                //CASE 1: Observatory changed
-
-                //CASE 2: Instrument changefirst grab a list of valid detectors for the chosen instrumentd
-                if ($changed == "instrument") {
-                    //Find a valid detector for the chosen instrument
-                    $query = sprintf("SELECT detector.abbreviation from detector INNER JOIN instrument ON instrument.id = detector.instrumentId 
-                                      WHERE instrument.abbreviation = '%s' LIMIT 1;", $newValue);
-                    $result = $dbConnection->query($query);
-                    $row = mysqli_fetch_array($result, MYSQL_ASSOC);
-                    $det = $row['abbreviation'];
-
-                    //Measurements will be automatically updated...
-                }
-
-                //CASE 3: Detector changed
-
-                //CASE 4: Measurement change
-                //Do nothing
-            }
-        }
-
-        // Determine appropriate options to display given the current combination of layer parameters
-        $options = array(
-            "observatories" => array(array("name" => "SOHO", "abbreviation" => "SOH")),
-            "instruments" =>   $this->getValidChoices($dbConnection, "observatory", "instrument", $obs),
-            "detectors" =>     $this->getValidChoices($dbConnection, "instrument", "detector", $inst),
-            "measurements" =>  $this->getValidChoices($dbConnection, "detector", "measurement", $det)
-        );
-
-        //Output results
-        if ($this->format == "json")
-            header("Content-type: application/json");
-
-        echo json_encode($options);
-        return 1;
-    }
-    
-     /**
-     *
-     * @return Array Allowed values for given field
-     * @param $db Object MySQL Database connection
-     * @param $f1 String Field Objectof interest
-     * @param $f2 String Limiting field
-     * @param $limit String Limiting field value
-     *
-     * Queries one field based on a limit in another. Performs queries of the sort
-     * "Give me all instruments where observatory equals SOHO."
-     */
-    private function getValidChoices ($db, $f1, $f2, $f1_value) {
-        $values = array();
-        $query = "SELECT $f2.name, $f2.abbreviation from $f2 INNER JOIN $f1 ON $f1.id = $f2.$f1" . "Id" . " WHERE $f1.abbreviation = '$f1_value';";
-
-        if ($this->format === "plaintext")
-            echo "<strong>query:</strong><br>$query<br><br>";
-
-        $result = $db->query($query);
-        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
-            array_push($values, $row);
-        }
-
-        return $values;
-    }
-    
-    /**
-     * @return int Number of seconds since Jan 1, 1970 UTC
-     * @param string $date ISO 8601 Date string, e.g. "2003-10-05T00:00:00Z"
-     */
-    public static function getUTCTimestamp($date) {
-        return strtotime($date);
-    }
-    
-    /**
-     * @return ISO 8601 Date string
-     * @param int Number of seconds since Jan 1, 1970 UTC
-     */
-    public static function parseUnixTimestamp($timestamp) {
-        $dt = new DateTime("@$timestamp");
-        return $dt->format("Y-m-d\TH:i:s\Z");
-    }
-
 	/**
 	 * @description Takes the string representation of a layer from the javascript and formats it so that only useful/necessary information is included.
 	 * @return {Array} $formatted -- The array containing properly formatted strings
@@ -945,4 +834,48 @@ class API {
         return true;
     }
 }
+
+/**
+ * @return int Number of seconds since Jan 1, 1970 UTC
+ * @param string $datestr ISO 8601 Date string, e.g. "2003-10-05T00:00:00Z"
+ */
+function toUnixTimestamp($dateStr) {
+	date_default_timezone_set('UTC');
+    return strtotime($dateStr);
+}
+
+/**
+ * @return DateTime A PHP DateTime object
+ * @param int $timestamp The number of seconds since Jan 1, 1970 UTC
+ */
+function parseUnixTimestamp($timestamp) {
+	date_default_timezone_set('UTC');
+    return new DateTime("@$timestamp");
+}
+
+/**
+ * @return string Returns a date formatted for MySQL queries (2003-10-05 00:00:00)
+ * @param DateTime $date
+ */
+function toMySQLDateString($date) {
+    return $date->format("Y-m-d H:i:s");
+}
+
+/**
+ * Parses an ISO 8601 date string with one formatted for MySQL
+ * @return string
+ * @param object $dateStr
+ */
+function isoDateToMySQL($dateStr) {
+    return str_replace("Z", "", str_replace("T", " ", $dateStr));
+}
+
+/**
+ * @return ISO 8601 Date string (2003-10-05T00:00:00Z)
+ * @param DateTime $date
+ */
+function toISOString($date) {
+    return $date->format("Y-m-d\TH:i:s\Z");
+}
+
 ?>

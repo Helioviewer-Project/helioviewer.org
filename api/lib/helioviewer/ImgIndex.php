@@ -8,24 +8,23 @@ class ImgIndex {
 	private $dbConnection;
 
 	public function __construct($dbConnection) {
-		date_default_timezone_set('UTC');
 		$this->dbConnection = $dbConnection;
 	}
 
 	public function getClosestImage($date, $params) {
         // Fetch source id if not specified
         if (sizeOf($params) > 1)
-            $id = $this->getSourceId($params->observatory, $params->instrument, $params->detector, $params->measurement);
+            $id = $this->getSourceId($params["observatory"], $params["instrument"], $params["detector"], $params["measurement"]);
         else
             $id = $params;   
         
-        $datestr = strftime("%Y-%m-%d %H:%M:%S", $date);
+        $datestr = isoDateToMySQL($date);
         
    		$lhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
    		$rhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
 
-        echo "$lhs<br><br>";
-        echo "$rhs<br><br>";
+        //echo "$lhs<br><br>";
+        //echo "$rhs<br><br>";
         //exit();
 
 		$left = mysqli_fetch_array($this->dbConnection->query($lhs), MYSQL_ASSOC);
@@ -126,62 +125,11 @@ class ImgIndex {
      * @param object $obsTime
      * @param object $src
      * 
-     * Retrieves the URI of the closest JPEG 2000 image to the desired time.
-     * The query is done in two parts- first the image ID is found, then the ID is used
-     * to retrieve the URI. By querying the two pieces separately, a significant amount of time
-     * is saved.
-     * 
      */
-	public function getJP2Filename($obsTime, $src) {
-		// Find ID of JP2
-        $id = $this->getJP2Id($obsTime, $src);
-        
-        // Use ID to find the JP2 URL
-        return $this->idToURI($id);
+	public function getJP2FilePath($obsTime, $params) {
+        $img = $this->getClosestImage($obsTime, $params);
+        return $img["filepath"] . "/" . $img["filename"];
 	}
-    
-     /**
-     * getJP2Id
-     * @return string $id
-     * @param object $obsTime
-     * @param object $src
-     */
-    public function getJP2Id ($obsTime, $src) {
-        $query = sprintf("SELECT image.id as id, ABS(UNIX_TIMESTAMP(date) - %d) AS timediffAbs
-    					FROM image
-    					LEFT JOIN measurement on measurementId = measurement.id
-    					LEFT JOIN detector on detectorId = detector.id
-    					LEFT JOIN instrument on instrumentId = instrument.id
-    					LEFT JOIN observatory on observatoryId = observatory.id
-    			  WHERE ", $obsTime);
-    
-    	// Layer-settings
-    	$i=0;
-    	foreach($src as $key => $value) {
-    		if ($i>0) $query .= " AND";
-    		$query .= sprintf(" $key='%s'", mysqli_real_escape_string($this->dbConnection->link, $value));
-    		$i++;
-    	}
-    	$query .= " ORDER BY timediffAbs LIMIT 0,1";
-    
-    	$result = $this->dbConnection->query($query);
-    	$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
-    
-        return $result_array["id"];
-    }
-    
-    /**
-     * idToURI
-     * @return 
-     * @param object $id
-     */
-    private function idToURI ($id) {
-        $query = "SELECT uri FROM image WHERE id = $id";
-        $result = $this->dbConnection->query($query);
-    	$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
-    
-        return $result_array["uri"];
-    }
 
 	/**
 	 * Queries the database to get the width and height of a jp2 image.

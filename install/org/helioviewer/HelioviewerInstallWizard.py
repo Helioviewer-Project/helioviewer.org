@@ -119,9 +119,6 @@ If this is correct, please press "Start" to begin processing.
         cursor = setupDatabaseSchema(admin, adminpass, hvuser, hvpass, mysql)
 
         processJPEG2000Images(self.images, jp2dir, cursor, mysql, self.updateProgress)
-
-        self.ui.statusMsg.setText("Creating database index")        
-        createDateIndex(cursor)
     
         cursor.close()
         #self.ui.installProgress.setValue(len(images))
