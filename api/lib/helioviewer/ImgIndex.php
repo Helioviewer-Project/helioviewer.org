@@ -21,8 +21,8 @@ class ImgIndex {
         
         $datestr = strftime("%Y-%m-%d %H:%M:%S", $date);
         
-   		$lhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND timestamp < '%s' ORDER BY timestamp DESC LIMIT 1;", $id, $datestr);
-   		$rhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND timestamp >= '%s' ORDER BY timestamp ASC LIMIT 1;", $id, $datestr);
+   		$lhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
+   		$rhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
 
         echo "$lhs<br><br>";
         echo "$rhs<br><br>";
@@ -31,7 +31,7 @@ class ImgIndex {
 		$left = mysqli_fetch_array($this->dbConnection->query($lhs), MYSQL_ASSOC);
 		$right = mysqli_fetch_array($this->dbConnection->query($rhs), MYSQL_ASSOC);
         
-        if (abs($date - $left["timestamp"]) < abs($date - $right["timestamp"]))
+        if (abs($date - $left["date"]) < abs($date - $right["date"]))
     		return $left;
         else
             return $right;
@@ -147,7 +147,7 @@ class ImgIndex {
      * @param object $src
      */
     public function getJP2Id ($obsTime, $src) {
-        $query = sprintf("SELECT image.id as id, ABS(UNIX_TIMESTAMP(timestamp) - %d) AS timediffAbs
+        $query = sprintf("SELECT image.id as id, ABS(UNIX_TIMESTAMP(date) - %d) AS timediffAbs
     					FROM image
     					LEFT JOIN measurement on measurementId = measurement.id
     					LEFT JOIN detector on detectorId = detector.id

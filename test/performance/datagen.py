@@ -3,6 +3,7 @@
 import os, sys, math
 from datetime import datetime, timedelta
 from optparse import OptionParser, OptionError, IndentedHelpFormatter
+from random import randrange
 
 def main(argv):
 	printGreeting()
@@ -106,7 +107,7 @@ def createTable(fp, n, cadence, dbname, tname, postgres, inserts):
 	for i in range(0, int(math.ceil(n / inserts))):
 		# chose syntax
 		if postgres:
-			fp.write('INSERT INTO "%s"."%s" ("measurementId", "timestamp", centering, "centerX", "centerY", "lengthX", "lengthY", "imgScaleX", "imgScaleY", "solarRadius", width, height, "opacityGrp", uri) VALUES ' % (dbname, tname))
+			fp.write('INSERT INTO "%s"."%s" (filepath, filename, date, sourceId) VALUES ' % (dbname, tname))
 		else:
 			fp.write('INSERT INTO %s.%s VALUES ' % (dbname, tname))
 		
@@ -132,9 +133,9 @@ def createTable(fp, n, cadence, dbname, tname, postgres, inserts):
 def getEntrySQL(date, postgres):
 	''' Returns the SQL statement for a single image record '''
 	if postgres:
-		return "(9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2')" % date
+		return "('/1996/07/17/SOH/EIT/EIT/195', '1996_07_17_164310_SOH_EIT_EIT_195.jp2', '%s', %d)" % (date, randrange(0,7))
 	else:
-		return "(NULL,9,'%s',1,588,588,1158,1158,10.52,10.52,93.0784,1176,1176,2,'2003_11_11_180605_SOH_LAS_0C2_0WL.jp2')" % date
+		return "(NULL, '/1996/07/17/SOH/EIT/EIT/195', '1996_07_17_164310_SOH_EIT_EIT_195.jp2', '%s', %d)" % (date, randrange(0,7))
 
 def getTableSQL(tname, postgres):
 	# Postgres
@@ -142,57 +143,36 @@ def getTableSQL(tname, postgres):
 		return """CREATE TABLE %s
 (
   id serial,
-  "measurementId" integer NOT NULL DEFAULT 0,
-  "timestamp" timestamp without time zone NOT NULL,
-  centering smallint NOT NULL,
-  "centerX" double precision NOT NULL,
-  "centerY" double precision NOT NULL,
-  "lengthX" double precision NOT NULL,
-  "lengthY" double precision NOT NULL,
-  "imgScaleX" double precision NOT NULL,
-  "imgScaleY" double precision NOT NULL,
-  "solarRadius" double precision NOT NULL,
-  width integer NOT NULL,
-  height integer NOT NULL,
-  "opacityGrp" smallint NOT NULL,
-  uri character varying(255) NOT NULL,
+  filepath character varying(255) NOT NULL,
+  filename character varying(255) NOT NULL,
+  date timestamp with time zone NOT NULL,
+  sourceId smallint NOT NULL,
   CONSTRAINT %s_pkey PRIMARY KEY (id)
 )
 WITH (OIDS=FALSE);
 ALTER TABLE %s OWNER TO postgres;
 
-CREATE INDEX "timestamp"
+CREATE INDEX "date_index"
   ON %s
   USING btree
-  ("timestamp");
+  ("date");
   
 """ % (tname, tname, tname, tname)
 
         #MySQL
         else:
     	    return """
-CREATE TABLE  `%s` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `measurementId` int(10) unsigned NOT NULL default '0',
-  `timestamp` datetime NOT NULL default '0000-00-00 00:00:00',
-  `centering`    bool NOT NULL,
-  `centerX`      float(6) NOT NULL,
-  `centerY`      float(6) NOT NULL,
-  `lengthX`      float(6) NOT NULL,
-  `lengthY`      float(6) NOT NULL,  
-  `imgScaleX`    float(6) NOT NULL,
-  `imgScaleY`    float(6) NOT NULL,
-  `solarRadius`  float(6) NOT NULL,
-  `width`        int(10) NOT NULL,
-  `height`       int(10) NOT NULL,
-  `opacityGrp`   tinyint NOT NULL,
-  `uri`          varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`), INDEX (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;
-
-CREATE INDEX %s_index USING BTREE ON %s (timestamp);
-
-""" % (tname, tname, tname)
+	CREATE TABLE `%s` (
+		`id`            INT unsigned NOT NULL auto_increment,
+		`filepath`      VARCHAR(255) NOT NULL,
+		`filename`      VARCHAR(255) NOT NULL,
+		`date`			datetime NOT NULL default '0000-00-00 00:00:00',
+		`sourceId`		SMALLINT unsigned NOT NULL,
+		PRIMARY KEY  (`id`), INDEX (`id`)
+	) DEFAULT CHARSET=utf8;
+	
+	CREATE INDEX %s_index USING BTREE ON %s (date);
+		""" % (tname, tname)
 	
 def printGreeting():
 	''' Prints a greeting to the user'''
@@ -200,7 +180,7 @@ def printGreeting():
 
 	print "===================================================================="
 	print "= Helioviewer dummy SQL generator                                  ="
-	print "= Last updated: 2009/08/07                                         ="
+	print "= Last updated: 2009/08/31                                        ="
 	print "=                                                                  ="
 	print "= This script generates a SQL file containing an arbitrary number  ="
 	print "= of pseudo-image entries in order to test database performance.   ="

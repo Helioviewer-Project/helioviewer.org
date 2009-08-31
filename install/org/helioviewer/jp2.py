@@ -170,6 +170,7 @@ def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
             
     # Process remaining images
     insertNImages(images, remainder, sources, rootdir, cursor, mysql, stepFxn)
+
     
 def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     query = "INSERT INTO image VALUES "

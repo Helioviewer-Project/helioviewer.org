@@ -122,10 +122,15 @@ def loadTextInstaller(options):
 
     # Insert image information into database
     processJPEG2000Images(images, path, cursor, mysql)
+    
+    print("Creating database index")        
+    createDateIndex(cursor)
+    
+    cursor.close()
 
     print "Finished!"
     
 # Add Index
-# CREATE INDEX image_index USING BTREE ON image (timestamp);
+# CREATE INDEX date_index USING BTREE ON image (date);
 
 #print "Finished!"

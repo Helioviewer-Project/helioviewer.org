@@ -51,7 +51,7 @@ class API {
 
     /**
      * @return int Returns "1" if the action was completed successfully.
-     * http://localhost/hv/api/index.php?action=getClosestImage&timestamp=1065312000&source=0&server=api/index.php
+     * http://localhost/hv/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&server=api/index.php
      * TODO: Add a more elegant check for local vs. remote server
      */
     private function _getClosestImage () {
@@ -62,14 +62,14 @@ class API {
     
             // Search by source id
             if (isset($this->params['source'])) {
-                $result = $imgIndex->getClosestImage($this->params['timestamp'], $this->params['source'], true);
+                $result = $imgIndex->getClosestImage($this->params['date'], $this->params['source'], true);
             }
             // Search by human-readable parameters
             else {
                 foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
                     $parameters["$field"] = $this->params[$field];
 
-                $result = $imgIndex->getClosestImage($this->params['timestamp'], $parameters);
+                $result = $imgIndex->getClosestImage($this->params['date'], $parameters);
             }
                 
             if ($this->format == "json")
@@ -79,13 +79,9 @@ class API {
             
         // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
         } else {
-            $obs  = $this->params['observatory'];
-            $inst = $this->params['instrument'];
-            $det  = $this->params['detector'];
-            $meas = $this->params['measurement'];
-            $ts   = $this->params['timestamp'];
-            
-            $url =  Config::TILE_SERVER_2 . "?action=getClosestImage&observatory=$obs&instrument=$inst&detector=$det&measurement=$meas&timestamp=$ts&server=1";
+            $source = $this->params['source'];
+            $date   = $this->params['date'];
+            $url =  Config::TILE_SERVER_2 . "?action=getClosestImage&source=$source&date=$date&server=1";
             
             header('Content-Type: application/json');
             echo file_get_contents($url);
@@ -196,24 +192,22 @@ class API {
         require('lib/helioviewer/ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
 
-        // Convert date string to a UNIX timestamp
         // NOTE: Currently supporting deprecated "timestamp" field as well
-        if (isset($this->params['date'])) {
-            $timestamp = $this->getUTCTimestamp($this->params['date']);
-        } else {
-            $timestamp = $this->params['timestamp'];
-        }
+        if (isset($this->params['timestamp']))
+            $date = $this->parseUnixTimestamp($this->params['timestamp']);
+        else
+            $date = $this->params['date'];
 
         // Search by source id
         if (isset($this->params['source'])) {
-            $filename = $imgIndex->getJP2Filename($timestamp, $this->params['source']);
+            $filename = $imgIndex->getJP2Filename($date, $this->params['source']);
         }
         // Search by human-readable parameters
         else {
             foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
                 $parameters["$field"] = $this->params[$field];
 
-            $filename = $imgIndex->getJP2Filename($timestamp, $parameters);
+            $filename = $imgIndex->getJP2Filename($date, $parameters);
         }
 
         // file name and location
@@ -263,7 +257,7 @@ class API {
      * 
      *  Converting timestamp to a PHP DateTime:
      *     $dt = new DateTime("@$startTime");
-     *     echo $dt->format("U");
+     *     echo $dt->format(DATE_ISO8601);
      *     date_add($dt, new DateInterval("T" . $cadence . "S"));
      *  (See http://us2.php.net/manual/en/function.date-create.php)
      */
@@ -790,6 +784,15 @@ class API {
      */
     public static function getUTCTimestamp($date) {
         return strtotime($date);
+    }
+    
+    /**
+     * @return ISO 8601 Date string
+     * @param int Number of seconds since Jan 1, 1970 UTC
+     */
+    public static function parseUnixTimestamp($timestamp) {
+        $dt = new DateTime("@$timestamp");
+        return $dt->format("Y-m-d\TH:i:s\Z");
     }
 
 	/**

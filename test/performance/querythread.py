@@ -81,5 +81,5 @@ class QueryThread ( threading.Thread ):
         else:
             querycursor = cursor
             
-        querycursor.execute("SELECT * FROM %s WHERE timestamp < '%s' ORDER BY timestamp DESC LIMIT 1;" % (tname, d))
+        querycursor.execute("SELECT * FROM %s WHERE date < '%s' ORDER BY date DESC LIMIT 1;" % (tname, d))
         

@@ -25,6 +25,7 @@ def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
     createDetectorTable(cursor)
     createMeasurementTable(cursor)
     createImageTable(cursor)
+    createDateIndex(cursor)
 
     return cursor
 
@@ -74,10 +75,10 @@ def createImageTable(cursor):
       `id`            INT unsigned NOT NULL auto_increment,
       `filepath`      VARCHAR(255) NOT NULL,
       `filename`      VARCHAR(255) NOT NULL,
-      `timestamp`    datetime NOT NULL default '0000-00-00 00:00:00',
+      `date`    datetime NOT NULL default '0000-00-00 00:00:00',
       `sourceId`    SMALLINT unsigned NOT NULL,
       PRIMARY KEY  (`id`), INDEX (`id`)
-    );'''
+    ) DEFAULT CHARSET=utf8;'''
     cursor.execute(sql)
 
 def createSourceTable(cursor):
@@ -185,6 +186,10 @@ def createMeasurementTable(cursor):
         (4, 'continuum', 'Intensitygram', 'DN'),
         (5, 'magnetogram', 'Magnetogram', 'Mx'),
         (6, 'white light', 'White Light', 'DN');''')
+    
+def createDateIndex(cursor):
+    """ Indexes the table on the date field """
+    cursor.execute("CREATE INDEX date_index USING BTREE ON image (date);")
 
 def getDataSources(cursor):
     ''' Returns a list of the known datasources '''
