@@ -87,6 +87,7 @@
 		<script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/TreeSelect.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Layer.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
