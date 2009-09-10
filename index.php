@@ -26,15 +26,19 @@
 		<!-- jQuery -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="lib/jquery/jquery-class-support/jquery.class.js" type="text/javascript"></script>
 		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
         
         <!-- TODO: move jquery-dynaccordion to /lib/helioviewer with rest of custom code -->
         <!-- TODO: Include compiled versions of Kakadu? -->
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/jquery-ui-1.7.1.custom.css" type="text/css" />	
+
+        <!--
 		<script type="text/javascript">
 			jQuery.noConflict();
 		</script>
+        -->
         
         <!-- Mousewheel support -->
         <script src="lib/jquery/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
@@ -47,20 +51,16 @@
 		<script src="lib/jquery/imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
         
 		<!-- Prototype and Scriptaculous -->
-		<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>
-		
-		<!--<script src="lib/prototype/mouse.wheel.js" type="text/javascript"></script>-->
-	
-		<!-- Prototip -->
-		<script src="lib/prototip2.0.5/js/prototip.js" type="text/javascript"></script>
-		<link rel="stylesheet" href="lib/prototip2.0.5/css/prototip.css" type="text/css">
+		<!--<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>-->
 
 		<!-- date.js -->
 		<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 		
 		<!-- CookieJar -->
-		<script src="lib/CookieJar/cookiejar.js" type="text/javascript"></script>
+        <script type="text/javascript" src="lib/Cookiejar/jquery.json.js"></script>
+        <script type="text/javascript" src="lib/Cookiejar/jquery.cookie.js"></script>
+        <script type="text/javascript" src="lib/Cookiejar/jquery.cookiejar.pack.js"></script>
 		
 		<!-- Simile -->
 		<!--<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>-->
@@ -72,7 +72,7 @@
 		<!-- ShadowBox -->
         <link rel="stylesheet" type="text/css" href="lib/shadowbox/shadowbox.css">
 		<script type="text/javascript" src="lib/shadowbox/shadowbox.js"></script>
-		<script type="text/javascript" src="lib/shadowbox/adapters/shadowbox-prototype.js"></script>
+		<script type="text/javascript" src="lib/shadowbox/adapters/shadowbox-jquery.js"></script>
 		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-iframe.js"></script>
    		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-html.js"></script>
    		<script type="text/javascript" src="lib/shadowbox/players/shadowbox-img.js"></script>		
@@ -129,7 +129,7 @@
 		<![endif]-->
 		
 		<script type="text/javascript">
-			jQuery(function () {
+			$(function () {
 				<?php
 					// View
 					$view = array();
