@@ -179,7 +179,7 @@
 					
 					<span class="example-header">Example:</span>
 					<span class="example-url">
-						<a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOH,EIT,EIT,171,1,100],[SOH,LAS,0C2,0WL,1,100]">http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOH,EIT,EIT,171,1,100],[SOH,LAS,0C2,0WL,1,100]</a>
+						<a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,1,100]">http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,1,100]</a>
 					</span>	
 				</div>
 			</div>
@@ -266,9 +266,7 @@
 								<span style="text-decoration: underline;">Notes:</span><br><br>
 								<ul>
 									<li>
-										<p>The identifiers for working with the feature/event API do not follow the three-character used for most of the other API's on
-										Helioviewer. Although it may be switched to follow this convention in the future, the Feature/Event identifiers are currently variable
-										length. Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a> for the specific IDs used.</p>
+										<p>Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a> for the specific IDs used.</p>
 									</li>
 									<li>
 										<p>Results are returned as <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr>. Future versions will provide the ability
@@ -519,7 +517,7 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z</a>
+									<a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z</a>
 								</span>	
 								
 							</div>
@@ -596,7 +594,7 @@
 								
 								<span class="example-header">Example:</span>
 								<span class="example-url">
-									<a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=27000&format=JPX"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOH&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX</a>
+									<a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=27000&format=JPX"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX</a>
 								</span>								
 							</div>
 						</div>
@@ -632,12 +630,9 @@
 					<li>
 						<div id="Identifiers">
 							Supported Identifiers
-							<p>This appendice contains a list of the identifiers supported by Helioviewer. Many of the identifiers consist of three alphanumeric
-							characters. Where an appropriate abbreviation is short than three characters, 0's are filled in from the left (e.g. "C2" -> "0C2").
-							For some queries, complex identifiers may be built up from the simpler ones below. E.g. to uniquely identify a specific type of
-							image, you must specify a underscore-concatenated set of four identifiers: Observatory, Instrument, Detector, and Measurement.
-							For example, to refer to an EIT 171 image, the identifier <i>SOH_EIT_EIT_171</i> is used. Note that not all identifiers follow the
-							three-character convention. The Feature/Event API identifiers in particular use a different system for naming.</p> 
+							<p>This appendice contains a list of the identifiers supported by Helioviewer. For some queries, complex identifiers may be built up from 
+                            the simpler ones below. E.g. to uniquely identify a specific type of image, you must specify a comma-separated set of four identifiers: Observatory, Instrument, Detector, and Measurement.
+							For example, to refer to an EIT 171 image, the identifier <i>SOHO,EIT,EIT,171</i> is used.</p> 
 							<div class="summary-box" style="background-color: #E3EFFF;">
 							
 								<!-- Observatories -->
@@ -648,11 +643,11 @@
 										<td><strong>Description:</strong></td>
 									</tr>
 									<tr>
-										<td>SOH</td>
+										<td>SOHO</td>
 										<td>SOHO (Solar and Heliospheric Observatory)</td>
 									</tr>
 									<tr>
-										<td>TRA</td>
+										<td>TRACE</td>
 										<td>TRACE (Transition Region and Coronal Explorer)</td>
 									</tr>
 								</table>
@@ -679,7 +674,7 @@
 										<td>MDI (The Michelson Doppler Imager)</td>
 									</tr>
 									<tr>
-										<td>TRA</td>
+										<td>TRACE</td>
 										<td>TRACE (Transition Region and Coronal Explorer)</td>
 									</tr>
 								</table>
@@ -694,11 +689,11 @@
 										<td><strong>Description:</strong></td>
 									</tr>
 									<tr>
-										<td>0C2</td>
+										<td>C2</td>
 										<td>LASCO C2</td>
 									</tr>
 									<tr>
-										<td>0C3</td>
+										<td>C3</td>
 										<td>LASCO C3</td>
 									</tr>
 									<tr>
@@ -737,15 +732,15 @@
 										<td>304 Ångström</td>
 									</tr>
 									<tr>
-										<td>0WL</td>
+										<td>white light</td>
 										<td>White-light</td>
 									</tr>
 									<tr>
-										<td>INT</td>
+										<td>continuum</td>
 										<td>Intensity spectrogram</td>
 									</tr>
 									<tr>
-										<td>MAG</td>
+										<td>magnetogram</td>
 										<td>Magnetogram</td>
 									</tr>
 								</table>
@@ -814,7 +809,7 @@
 									<tr>
 										<td>String</td>
 										<td>A string.</td>
-										<td>SOH</td>
+										<td>SOHO</td>
 									</tr>
 									<tr>
 										<td>List</td>
@@ -824,7 +819,7 @@
                                     <tr>
                                         <td>2d List</td>
                                         <td>This is similar to a list except that each item of the list is a bracket-delineated list itself.</td>
-                                        <td>[SOH,EIT,EIT,171,1,100],[SOH,LAS,0C2,0WL,0,100],[SOH,MDI,MDI,INT,1,50]</td>
+                                        <td>[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,0,100],[SOHO,MDI,MDI,continuum,1,50]</td>
                                     </tr>
 									<tr>
 										<td>Unix Timestamp</td>
@@ -858,7 +853,7 @@
 		</div>
 
 		<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-			Last Updated: 2009-07-06 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+			Last Updated: 2009-09-10 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 		</div>
 	
 	</body>

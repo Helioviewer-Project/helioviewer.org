@@ -34,12 +34,6 @@
 		<script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
 		<link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/jquery-ui-1.7.1.custom.css" type="text/css" />	
 
-        <!--
-		<script type="text/javascript">
-			jQuery.noConflict();
-		</script>
-        -->
-        
         <!-- Mousewheel support -->
         <script src="lib/jquery/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
 
@@ -49,18 +43,14 @@
 
 		<!-- imgAreaSelect jQuery plugin -->
 		<script src="lib/jquery/imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
-        
-		<!-- Prototype and Scriptaculous -->
-		<!--<script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js" type="text/javascript"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects,slider,dragdrop,builder" type="text/javascript"></script>-->
 
-		<!-- date.js -->
-		<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
-		
 		<!-- CookieJar -->
         <script type="text/javascript" src="lib/Cookiejar/jquery.json.js"></script>
         <script type="text/javascript" src="lib/Cookiejar/jquery.cookie.js"></script>
         <script type="text/javascript" src="lib/Cookiejar/jquery.cookiejar.pack.js"></script>
+
+		<!-- date.js -->
+		<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 		
 		<!-- Simile -->
 		<!--<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>-->
@@ -134,7 +124,7 @@
 					// View
 					$view = array();
 
-					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,0C2,0WL,0,100]
+					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,WL,0,100]
 					if (isset($_GET['imageLayers'])) {
                         $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                         $imageLayers = split("\],\[", $imageLayersString);

@@ -375,10 +375,10 @@ abstract class JP2Image {
         if ($detector == "EIT") {
             return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_EIT_$measurement.png";
         }
-        else if ($detector == "0C2") {
+        else if ($detector == "C2") {
             return Config::WEB_ROOT_DIR .  "/images/color-tables/ctable_idl_3.png";
         }
-        else if ($detector == "0C3") {
+        else if ($detector == "C3") {
             return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
         }        
     }
