@@ -73,7 +73,7 @@ abstract class JP2Image {
 		$this->imageHeight = $imageSize['height'];
 				
         // Get the image filepath
-        $this->jp2 = API::getFilepath($uri);
+        $this->jp2 = Config::JP2_DIR . $uri;
 
         // Get image meta information
         $this->getMetaInfo();
