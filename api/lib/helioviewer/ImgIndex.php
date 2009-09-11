@@ -34,6 +34,9 @@ class ImgIndex {
     		$img = $left;
         else
             $img = $right;
+            
+        $img["id"] = (int) $img["id"];
+        $img["sourceId"] = (int) $img["sourceId"];
 
         $filename = Config::JP2_DIR . $img["filepath"] . "/" .$img["filename"];
             
@@ -77,7 +80,8 @@ class ImgIndex {
         
         $meta = array(
             "width"  => (int) $dimensions[0],
-            "height" => (int) $dimensions[1]
+            "height" => (int) $dimensions[1],
+            "scale"  => (float) $this->getImagePlateScale($dom)
         );
         
         return $meta;        
@@ -111,6 +115,20 @@ class ImgIndex {
             echo 'Unable to locate image dimensions in header tags!';
         }
         return array($width, $height);
+    }
+    
+    /**
+     * Returns the plate scale for a given image
+     * @return 
+     * @param object $dom
+     */
+    public function getImagePlateScale($dom) {
+        try {
+            $scale = $this->getElementValue($dom, "CDELT1");
+        } catch (Exception $e) {
+            echo 'Unable to locate image dimensions in header tags!';
+        }
+        return $scale;        
     }
 
     /**
