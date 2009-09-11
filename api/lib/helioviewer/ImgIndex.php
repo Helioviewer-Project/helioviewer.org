@@ -112,7 +112,7 @@ class ImgIndex {
                 $tree[$obs][$inst] = array();
             if (!isset($tree[$obs][$inst][$det]))
                 $tree[$obs][$inst][$det] = array();
-            $tree[$obs][$inst][$det][$meas] = array("id"=>$id, "name"=>$name, "layeringOrder"=>$ord);
+            $tree[$obs][$inst][$det][$meas] = array("sourceId"=>$id, "name"=>$name, "layeringOrder"=>$ord);
         }
 
         return $tree; 

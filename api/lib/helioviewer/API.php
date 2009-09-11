@@ -61,8 +61,8 @@ class API {
             $imgIndex = new ImgIndex(new DbConnection());
     
             // Search by source id
-            if (isset($this->params['source'])) {
-                $result = $imgIndex->getClosestImage($this->params['date'], $this->params['source'], true);
+            if (isset($this->params['sourceId'])) {
+                $result = $imgIndex->getClosestImage($this->params['date'], $this->params['sourceId'], true);
             }
             // Search by human-readable parameters
             else {
@@ -79,9 +79,9 @@ class API {
             
         // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
         } else {
-            $source = $this->params['source'];
+            $source = $this->params['sourceId'];
             $date   = $this->params['date'];
-            $url =  Config::TILE_SERVER_2 . "?action=getClosestImage&source=$source&date=$date&server=1";
+            $url =  Config::TILE_SERVER_2 . "?action=getClosestImage&sourceId=$source&date=$date&server=1";
             
             header('Content-Type: application/json');
             echo file_get_contents($url);

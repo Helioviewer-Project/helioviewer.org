@@ -91,13 +91,13 @@
 		<script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/Time.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
-		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/MediaSettings.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ScreenshotBuilder.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/ImageSelectTool.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
+		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/Helioviewer.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/build/helioviewer-all-min.js" type="text/javascript"></script>-->
 
@@ -124,7 +124,7 @@
 					// View
 					$view = array();
 
-					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,WL,0,100]
+					//API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,white light,0,100]
 					if (isset($_GET['imageLayers'])) {
                         $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                         $imageLayers = split("\],\[", $imageLayersString);
