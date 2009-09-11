@@ -31,11 +31,96 @@ class ImgIndex {
 		$right = mysqli_fetch_array($this->dbConnection->query($rhs), MYSQL_ASSOC);
         
         if (abs($date - $left["date"]) < abs($date - $right["date"]))
-    		return $left;
+    		$img = $left;
         else
-            return $right;
+            $img = $right;
+
+        $filename = Config::JP2_DIR . $img["filepath"] . "/" .$img["filename"];
+            
+        return array_merge($img, $this->extractJP2MetaInfo($filename));
 	}
     
+    /**
+     * Given a filename and the name of the root node, extracts
+     * the XML header box from a JP2 image
+     * @param object $filename
+     * @param object $root Name of the XMLBox root node (if known)
+     */
+    public function getJP2XMLBox ($filename, $root) {
+        $fp = fopen($filename, "rb");
+        
+        $xml  = "";
+        
+        $done = False;
+        while (!feof($fp)) {
+            $line = fgets($fp);
+            $xml .= $line;
+            if (strpos($line, "</$root>") !== False)
+                break;        }
+        $xml = substr($xml, strpos($xml, "<$root>"));
+        
+        fclose($fp);
+        
+        return $xml;
+    }
+
+    /**
+     * Extract necessary meta-information from an image
+     * @return 
+     * @param object $img
+     */    
+    public function extractJP2MetaInfo ($img) {
+        $dom = new DOMDocument();
+        $dom->loadXML($this->getJP2XMLBox($img, "fits"));
+        
+        $dimensions = $this->getImageDimensions($dom);
+        
+        $meta = array(
+            "width"  => (int) $dimensions[0],
+            "height" => (int) $dimensions[1]
+        );
+        
+        return $meta;        
+    }
+    
+    /**
+     * Retrieves the value of a unique dom-node element or returns false if element is not found, or more
+     * than one is found.
+     * @param object $dom
+     * @param object $name
+     */  
+    public function getElementValue($dom, $name) {
+        $element = $dom->getElementsByTagName($name);
+        
+        if ($element)
+            return $element->item(0)->childNodes->item(0)->nodeValue;
+        else
+            throw new Exception('Element not found');
+    }
+    
+    /**
+     * Returns the dimensions for a given image
+     * @return 
+     * @param object $dom
+     */
+    public function getImageDimensions($dom) {
+        try {
+            $width  = $this->getElementValue($dom, "NAXIS1");
+            $height = $this->getElementValue($dom, "NAXIS2");
+        } catch (Exception $e) {
+            echo 'Unable to locate image dimensions in header tags!';
+        }
+        return array($width, $height);
+    }
+
+    /**
+     * Returns the sourceId for a given set of parameters.
+     * @return 
+     * @param object $obs
+     * @param object $inst
+     * @param object $det
+     * @param object $meas
+     */    
     public function getSourceId ($obs, $inst, $det, $meas) {
         $sql = sprintf("
             SELECT
