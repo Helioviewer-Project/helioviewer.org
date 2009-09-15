@@ -28,6 +28,7 @@ abstract class JP2Image {
     protected $yRange;
     protected $zoomLevel;
     protected $tileSize;
+	protected $format;
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
@@ -41,7 +42,6 @@ abstract class JP2Image {
     protected $instrument;
     protected $detector;
     protected $measurement;
-    protected $opacityGrp;
     protected $timestamp;
     
     protected $image;
@@ -58,11 +58,9 @@ abstract class JP2Image {
      * @param array imageSize -- an associative array containing "width" and "height" of the image
      * @param boolean isTile -- whether the image is a tile or not
      */
-    protected function __construct($uri, $zoomLevel, $xRange, $yRange, $imageSize, $isTile = true) {
-        require_once('DbConnection.php');
-        date_default_timezone_set('UTC');
-        $this->db        = new DbConnection();
+    protected function __construct($uri, $format, $zoomLevel, $xRange, $yRange, $imageSize, $isTile = true) {
         $this->uri       = $uri;
+		$this->format    = $format;
         $this->zoomLevel = $zoomLevel;
 
         $this->xRange    = $xRange;
@@ -153,7 +151,7 @@ abstract class JP2Image {
             if ($this->hasAlphaMask()) {
                 unlink($mask);
             }
-            if ($this->getImageFormat() === "jpg") {
+            if ($this->format === "jpg") {
                 unlink($png);
             }
             unlink($pgm);
@@ -176,7 +174,7 @@ abstract class JP2Image {
      */
     private function setImageParams() {
         $args = " -quality ";
-        if ($this->getImageFormat() == "png") {
+        if ($this->format == "png") {
             $args .= Config::PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . Config::NUM_COLORS;
         } else {
             $args .= Config::JPEG_COMPRESSION_QUALITY . " -interlace line";
@@ -408,10 +406,7 @@ abstract class JP2Image {
                 header("Content-Disposition: inline; filename=\"$filename\"");    
             }
     
-            // Specify format
-            $format = $this->getImageFormat();
-    
-            if ($format == "png")
+            if ($this->format == "png")
                 header("Content-Type: image/png");
             else
                 header("Content-Type: image/jpeg");
@@ -460,7 +455,7 @@ abstract class JP2Image {
     
     /**
      * getMetaInfo queries the database to get information about the image: 
-     * 	timestamp, opacitygrp, width, height, imgScaleX, imgScaleY
+     * 	timestamp, width, height, imgScaleX, imgScaleY
      * @param $imageId Object
      */
     protected function getMetaInfo() {
@@ -472,7 +467,7 @@ abstract class JP2Image {
         $this->measurement = $exploded[7];
 
         // get the rest of the details from the database
-        $sql  = sprintf("SELECT timestamp, opacityGrp, width, height, imgScaleX, imgScaleY FROM image 
+        $sql  = sprintf("SELECT timestamp, width, height, imgScaleX, imgScaleY FROM image 
                             WHERE image.uri='%s'", $this->uri);
 
         $result = $this->db->query($sql);
@@ -487,19 +482,10 @@ abstract class JP2Image {
             $this->jp2Width    = $meta['width'];
             $this->jp2Height   = $meta['height'];
             $this->jp2Scale    = $meta['imgScaleX'];
-            $this->opacityGrp  = $meta['opacityGrp'];
             $this->timestamp   = $meta['timestamp'];
         }
         else
             return false;
-    }
-    
-    /**
-     * getImageFormat
-     * @return 
-     */
-    protected function getImageFormat() {
-        return ($this->opacityGrp == 1) ? "jpg" : "png";
     }
     
     /**
@@ -534,8 +520,8 @@ abstract class JP2Image {
         // Enable interlacing
         imageinterlace($gd, true);
         
-        //$this->getImageFormat() == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
-        //if ($this->getImageFormat() == "jpg")
+        //$this->format == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
+        //if ($this->format == "jpg")
         //    imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY);
         //else
         imagepng($gd, $output);

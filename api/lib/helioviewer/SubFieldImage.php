@@ -15,8 +15,8 @@ class SubFieldImage extends JP2Image {
 	  * @param object $imageSize is 512 pixels. 
 	  */	
 	
-	public function __construct($uri, $zoomLevel, $x, $y, $imageSize, $hcOffset, $quality) {
-        parent::__construct($uri, $zoomLevel, $x, $y, $imageSize, false);
+	public function __construct($uri, $format, $zoomLevel, $x, $y, $imageSize, $hcOffset, $quality) {
+        parent::__construct($uri, $format, $zoomLevel, $x, $y, $imageSize, false);
 
 		$this->hcOffset = $hcOffset;
 		$this->quality	= $quality;
@@ -30,11 +30,8 @@ class SubFieldImage extends JP2Image {
 	 * @param object $display -- true or false
 	 */	
 	function getImage($display) {
-		// JPG or PNG
-		$format = $this->getImageFormat();
-
 		// Filepath of image in cache directory
-		$filepath = $this->getFilePath($format);
+		$filepath = $this->getFilePath($this->format);
 
 		// If it's already cached, just use the cached file
 		if(Config::ENABLE_CACHE && file_exists($filepath)) {

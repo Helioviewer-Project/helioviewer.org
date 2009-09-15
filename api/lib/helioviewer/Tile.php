@@ -15,12 +15,12 @@ class Tile extends JP2Image {
     /**
      * constructor
      */
-    public function __construct($uri, $zoomLevel, $x, $y, $tileSize, $display = true) {
-        $xRange = array("start" => $x, "size" => $x);
-        $yRange = array("start" => $y, "size" => $y);
-
+    public function __construct($uri, $format, $zoomLevel, $x, $y, $tileSize, $display = true) {
+        $xRange    = array("start" => $x, "size" => $x);
+        $yRange    = array("start" => $y, "size" => $y);
 		$imageSize = array('width' => $tileSize, 'height' => $tileSize);
-        parent::__construct($uri, $zoomLevel, $xRange, $yRange, $imageSize);
+		
+        parent::__construct($uri, $format, $zoomLevel, $xRange, $yRange, $imageSize);
 
         $this->x = $x;
         $this->y = $y;

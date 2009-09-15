@@ -3,9 +3,9 @@
  * Created on Sep 12, 2008
  * Last modified July 29, 2009 -- Jaclyn Beck
  * by Keith Hughitt
- */
+  */
 
-require 'SubFieldImage.php';
+require_once('SubFieldImage.php');
 
 /**
  * @fileoverview Abstract class used for screenshots and movies. Handles most of the functionality and building.
@@ -84,7 +84,7 @@ abstract class CompositeImage {
 				array_push($opacities["value"], $imageInfo[7]);
 				array_push($opacities["group"], $imageInfo[8]);
 		
-				$subFieldImage = new SubFieldImage($uri, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset, $this->quality);
+				$subFieldImage = new SubFieldImage($uri, $this->format, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset, $this->quality);
 				$filepath = $subFieldImage->getCacheFilepath();
 
 				if(!file_exists($filepath))
