@@ -12,6 +12,14 @@
  * 			 calculating padding and regions for kdu_expand. 
  * 			 If a tile is being generated, the Tile.php class converts its tile
  * 			 coordinates into pixels first before sending them here. 
+ * 
+ * @TODO (2009/09/15)
+ * 	  (1) Switch from "xRange" and "yRange" syntax to "top, right" and "bottom, left"... or better still
+ *		  may be to store all sub-field information in Subfield.php: a "JP2Image" class should really just
+ * 		  represent a JP2 image, and not care about sub-fields, meta information, etc.
+ * 
+ * 	  (2) Remove all solar-/tile-specific terminology: provide a more generic "JP2Image" class.
+ * 	  (3) Create "SolarJP2Image" class to deal with solar specific functionality? (e.g. getColorTable)
  */
 abstract class JP2Image {
     protected $kdu_expand   = CONFIG::KDU_EXPAND;
@@ -22,8 +30,6 @@ abstract class JP2Image {
     protected $baseScale    = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
     protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
     
-    protected $db;
-    protected $uri;
     protected $xRange;
     protected $yRange;
     protected $zoomLevel;
@@ -32,49 +38,46 @@ abstract class JP2Image {
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
-    
+	
     protected $jp2;
     protected $jp2Width;
     protected $jp2Height;
     protected $jp2Scale;
-    
-    protected $observatory;
-    protected $instrument;
-    protected $detector;
-    protected $measurement;
-    protected $timestamp;
     
     protected $image;
 	protected $imageWidth;
 	protected $imageHeight;
 	protected $imageRelWidth;
 	protected $imageRelHeight;
+	
+	private $colorTable;
         
     /**
-     * @param object uri -- The image URI/filename
+     * @param object file -- Location of the JPEG 2000 image to work with
      * @param int zoomLevel -- The zoomlevel to work with
      * @param array xRange -- an associative array containing "xStart" (starting coordinate) and "xSize" (width)
      * @param array yRange -- An associative array containing "yStart" (staring coordinate) and "ySize" (height)
      * @param array imageSize -- an associative array containing "width" and "height" of the image
      * @param boolean isTile -- whether the image is a tile or not
      */
-    protected function __construct($uri, $format, $zoomLevel, $xRange, $yRange, $imageSize, $isTile = true) {
-        $this->uri       = $uri;
-		$this->format    = $format;
-        $this->zoomLevel = $zoomLevel;
-
+    protected function __construct($file, $xRange, $yRange, $zoomLevel, $imageSize, $width, $height, $scale, $format, $isTile = true) {
         $this->xRange    = $xRange;
         $this->yRange    = $yRange;
+        $this->zoomLevel = $zoomLevel;
+		$this->jp2Width  = $width;
+		$this->jp2Height = $height;
+		$this->jp2Scale  = $scale;
+		$this->format    = $format;
    		$this->isTile    = $isTile;
 
 		$this->imageWidth  = $imageSize['width'];
 		$this->imageHeight = $imageSize['height'];
 				
         // Get the image filepath
-        $this->jp2 = Config::JP2_DIR . $uri;
+        $this->jp2 = $file;
 
         // Get image meta information
-        $this->getMetaInfo();
+        // $this->getMetaInfo();
 
         // Determine desired image scale
         $this->zoomOffset   = $zoomLevel - $this->baseZoom;
@@ -168,6 +171,13 @@ abstract class JP2Image {
         }
     }
     
+	/**
+	 * Set Color Table
+	 */
+	protected function setColorTable($clut) {
+		$this->colorTable = $clut;	
+	}
+	
     /**
      * Set Image Parameters
      * @return String Image compression and quality related flags.
@@ -364,24 +374,6 @@ abstract class JP2Image {
     }
     
 	/**
-	 * Gets the filepath for the color look-up table that corresponds to the image.
-	 * @return string clut filepath
-	 * @param object $detector
-	 * @param object $measurement
-	 */
-    private function getColorTable($detector, $measurement) {
-        if ($detector == "EIT") {
-            return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_EIT_$measurement.png";
-        }
-        else if ($detector == "C2") {
-            return Config::WEB_ROOT_DIR .  "/images/color-tables/ctable_idl_3.png";
-        }
-        else if ($detector == "C3") {
-            return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
-        }        
-    }
-    
-	/**
 	 * Displays the image on the page
 	 * @param object $filepath[optional]
 	 */
@@ -421,16 +413,8 @@ abstract class JP2Image {
     }
     
     /**
-     * hasAlphaMask
-     * @return string
-     */
-    private function hasAlphaMask() {
-        return $this->measurement === "0WL" ? true : false;
-    }
-    
-    /**
      * Handles clean-up in case something goes wrong to avoid mal-formed tiles from being displayed
-     * @TODO: Clost any open IM/GD file handlers
+     * @TODO: Close any open IM/GD file handlers
      */
     private function abort($filename) {
         $pgm = substr($filename, 0, -3) . "pgm";
@@ -451,41 +435,6 @@ abstract class JP2Image {
         }
         
         die();
-    }
-    
-    /**
-     * getMetaInfo queries the database to get information about the image: 
-     * 	timestamp, width, height, imgScaleX, imgScaleY
-     * @param $imageId Object
-     */
-    protected function getMetaInfo() {
-        // get instrumentation information from the filename
-        $exploded = explode("_", substr($this->uri, 0, -4));
-        $this->observatory = $exploded[4];
-        $this->instrument  = $exploded[5];
-        $this->detector    = $exploded[6];
-        $this->measurement = $exploded[7];
-
-        // get the rest of the details from the database
-        $sql  = sprintf("SELECT timestamp, width, height, imgScaleX, imgScaleY FROM image 
-                            WHERE image.uri='%s'", $this->uri);
-
-        $result = $this->db->query($sql);
-
-        if (!$result) {
-            echo "$sql - failed\n";
-            die (mysqli_error($this->db->link));
-        }
-        else if (mysqli_num_rows($result) > 0) {
-            $meta = mysqli_fetch_array($result, MYSQL_ASSOC);
-            
-            $this->jp2Width    = $meta['width'];
-            $this->jp2Height   = $meta['height'];
-            $this->jp2Scale    = $meta['imgScaleX'];
-            $this->timestamp   = $meta['timestamp'];
-        }
-        else
-            return false;
     }
     
     /**

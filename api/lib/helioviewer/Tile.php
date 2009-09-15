@@ -15,12 +15,12 @@ class Tile extends JP2Image {
     /**
      * constructor
      */
-    public function __construct($uri, $format, $zoomLevel, $x, $y, $tileSize, $display = true) {
+    public function __construct($file, $x, $y, $zoomLevel, $tileSize, $width, $height, $scale, $format, $display = true) {
         $xRange    = array("start" => $x, "size" => $x);
         $yRange    = array("start" => $y, "size" => $y);
 		$imageSize = array('width' => $tileSize, 'height' => $tileSize);
 		
-        parent::__construct($uri, $format, $zoomLevel, $xRange, $yRange, $imageSize);
+        parent::__construct($file, $xRange, $yRange, $zoomLevel, $imageSize, $width, $height, $scale, $format);
 
         $this->x = $x;
         $this->y = $y;
@@ -32,11 +32,8 @@ class Tile extends JP2Image {
      * getTile
      */
     function getTile($display) {
-		// Tile image format
-        $format = $this->getImageFormat();
-        
         // Filepaths (for intermediate pgm and final png/jpg image)
-        $tile = $this->getTileFilepath($format);
+        $tile = $this->getTileFilepath();
         
         // If tile already exists in cache, use it
         if (Config::ENABLE_CACHE && $display) {
@@ -57,51 +54,10 @@ class Tile extends JP2Image {
         if ($display)
             $this->display($tile);
     }
-
-    /**
-     * getTileFilepath
-     * @return
-     */
-    function getTileFilepath($format) {
-        // Base directory
-        $filepath = $this->cacheDir;
-                
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-        }
-        // Base filename
-        $filename = substr($this->uri, 0, -4);
-
-        // Date information
-        $year  = substr($this->timestamp,0,4);
-        $month = substr($this->timestamp,5,2);
-        $day   = substr($this->timestamp,8,2);
-
-		$fieldArray = array($year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
-		
-		foreach($fieldArray as $field) {
-			$filepath .= $field . "/";
-			
-	        if (!file_exists($filepath)) {
-	            mkdir($filepath);
-	            chmod($filepath, 0777);
-	        }
-		}    
-
-        // Convert coordinates to strings
-        $xStr = "+" . str_pad($this->x, 2, '0', STR_PAD_LEFT);
-        if (substr($this->x,0,1) == "-")
-            $xStr = "-" . str_pad(substr($this->x, 1), 2, '0', STR_PAD_LEFT);
-
-        $yStr = "+" . str_pad($this->y, 2, '0', STR_PAD_LEFT);
-        if (substr($this->y,0,1) == "-")
-            $yStr = "-" . str_pad(substr($this->y, 1), 2, '0', STR_PAD_LEFT);
-
-        $filepath .= $filename . "_" . $this->zoomLevel . "_" . $xStr . "_" . $yStr . ".$format";
-
-        return $filepath;
-    }
+	
+	protected function getTileFilepath() {
+		//Virtual	
+	}
 
 	/**
 	 * @description Converts tile coordinates such as (-1, 0) into actual pixels. This method
