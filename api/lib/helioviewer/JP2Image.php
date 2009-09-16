@@ -25,7 +25,6 @@ abstract class JP2Image {
     protected $kdu_expand   = CONFIG::KDU_EXPAND;
     protected $kdu_lib_path = CONFIG::KDU_LIBS_DIR;
     protected $cacheDir     = CONFIG::CACHE_DIR;
-    protected $jp2Dir       = CONFIG::JP2_DIR;
     protected $noImage      = CONFIG::EMPTY_TILE;
     protected $baseScale    = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
     protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
@@ -89,9 +88,6 @@ abstract class JP2Image {
         // Scale Factor
         $this->scaleFactor = log($this->desiredToActual, 2);
    
-        // Relative Tilesize
-		$this->imageRelWidth  = $this->imageWidth  * $this->desiredToActual;
-		$this->imageRelHeight = $this->imageHeight * $this->desiredToActual;      
     }
     
     /**
@@ -171,6 +167,11 @@ abstract class JP2Image {
         }
     }
     
+	/**
+	 * hasAlphaMask
+	 */
+    private function hasAlphaMask() {/** virtual */}
+	
 	/**
 	 * Set Color Table
 	 */
@@ -492,8 +493,9 @@ abstract class JP2Image {
 	 */	
 	function resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $png) {
 		$cmd = "";
-		$relWidth  	= $this->imageRelWidth;
-		$relHeight 	= $this->imageRelHeight;
+		$relWidth  	= $this->imageWidth  * $this->desiredToActual;
+		$relHeight 	= $this->imageHeight * $this->desiredToActual;  
+		
 		$width 		= $this->imageWidth;
 		$height 	= $this->imageHeight;
 

@@ -8,7 +8,7 @@
  */
 require('JP2Image.php');
 
-class Tile extends JP2Image {
+abstract class Tile extends JP2Image {
     protected $x;
     protected $y;
 
@@ -55,7 +55,7 @@ class Tile extends JP2Image {
             $this->display($tile);
     }
 	
-	protected function getTileFilepath() {
+	private function getTileFilepath() {
 		//Virtual	
 	}
 
