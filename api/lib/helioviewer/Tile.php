@@ -6,11 +6,14 @@
  * 6-12-2009 The JP2Image class now uses pixels instead of tile coordinates, so this class
  * 			 has a method to convert its tile coordinates into pixels.
  */
-require('JP2Image.php');
+require('SubFieldImage.php');
 
-abstract class Tile extends JP2Image {
+abstract class Tile extends SubFieldImage {
     protected $x;
     protected $y;
+	protected $tileSize;
+	protected $cacheDir = CONFIG::CACHE_DIR;
+    protected $noImage  = CONFIG::EMPTY_TILE;
 
     /**
      * constructor
