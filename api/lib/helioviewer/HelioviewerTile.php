@@ -1,11 +1,11 @@
 <?php
 /**
- * @class SolarTile
+ * @class HelioviewerTile
  * @author Keith Hughitt
  */
-require('Tile.php');
+require_once('Tile.php');
 
-class SolarTile extends Tile {
+class HelioviewerTile extends Tile {
     private $observatory;
 	private $instrument;
 	private $detector;

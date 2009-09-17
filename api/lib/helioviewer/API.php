@@ -43,9 +43,9 @@ class API {
      * @return int Returns "1" if the action was completed successfully.
      */
     private function _getTile () {
-        require_once("SolarTile.php");
-        $tile = new SolarTile($this->params['uri'], $this->params['x'], $this->params['y'], $this->params['zoom'], $this->params['ts'],
-						 $this->params['width'], $this->params['height'], $this->params['scale'], $this->params['format'],
+        require_once("HelioviewerTile.php");
+        $tile = new HelioviewerTile($this->params['uri'], $this->params['x'], $this->params['y'], $this->params['zoom'], $this->params['ts'],
+						 $this->params['jp2Width'], $this->params['jp2Height'], $this->params['jp2Scale'], $this->params['format'],
 						 $this->params['obs'], $this->params['inst'], $this->params['det'], $this->params['meas'], $this->params['date']);
 
         return 1;
