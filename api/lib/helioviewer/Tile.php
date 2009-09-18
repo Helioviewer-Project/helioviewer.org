@@ -12,21 +12,20 @@ abstract class Tile extends SubFieldImage {
     protected $x;
     protected $y;
 	protected $tileSize;
-	protected $cacheDir = CONFIG::CACHE_DIR;
-    protected $noImage  = CONFIG::EMPTY_TILE;
 
     /**
      * constructor
      */
-    public function __construct($file, $x, $y, $zoomLevel, $tileSize, $width, $height, $scale, $format, $display = true) {
-        $xRange    = array("start" => $x, "size" => $x);
-        $yRange    = array("start" => $y, "size" => $y);
-		$imageSize = array('width' => $tileSize, 'height' => $tileSize);
-		
-        parent::__construct($file, $xRange, $yRange, $zoomLevel, $imageSize, $width, $height, $scale, $format);
-
+    public function __construct($jp2, $tile, $x, $y, $desiredScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format, $display = true) {
         $this->x = $x;
         $this->y = $y;
+		$this->tileSize = $tileSize;
+		
+		$relativeTileSize = $this->getRelativeTileSize($desiredScale, $jp2Scale, $tileSize);
+		
+		$roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $relativeTileSize, $x, $y);
+
+        parent::__construct($jp2, $outputFile, $roi, $format, $jp2Scale, $desiredScale);
 
         $this->getTile($display);
     }
@@ -58,8 +57,12 @@ abstract class Tile extends SubFieldImage {
             $this->display($tile);
     }
 	
-	private function getTileFilepath() {
-		//Virtual	
+	/**
+	 * Returns tilesize relative to scale of image requested
+	 * @return 
+	 */
+	protected function getRelativeTileSize($desiredScale, $jp2Scale, $tileSize) {
+		return $tileSize * ($desiredScale / $jp2Scale);
 	}
 
 	/**
@@ -69,55 +72,60 @@ abstract class Tile extends SubFieldImage {
 	 * 				The size of the tile (xSize or ySize) is either outerTs or innerTs, depending where the tile is in the image.
 	 * @return 
 	 */	
-	function convertTileIndexToPixels() {
-		try {
-			// Making aliases for clarity
-	        $jp2Width  = $this->jp2Width;
-	        $jp2Height = $this->jp2Height;
-	        $ts 	   = $this->imageRelWidth;
-	      
-	        // Rounding
-	        $precision = 6;
-	        
-	        // Parameters
-	        $top = $left = $width = $height = null;
-	        
-	        // Number of tiles for the entire image
-	        $imgNumTilesX = max(2, ceil($jp2Width  / $ts));
-	        $imgNumTilesY = max(2, ceil($jp2Height / $ts));
-	
-	        // Tile placement architecture expects an even number of tiles along each dimension
-	        if ($imgNumTilesX % 2 != 0)
-	            $imgNumTilesX += 1;
-	
-	        if ($imgNumTilesY % 2 != 0)
-	            $imgNumTilesY += 1;
-	                  
-	        // Shift so that 0,0 now corresponds to the top-left tile
-	        $relX = (0.5 * $imgNumTilesX) + $this->x;
-	        $relY = (0.5 * $imgNumTilesY) + $this->y;
-	
-	        // Number of "inner" tiles
-	        $numTilesInsideX = $imgNumTilesX - 2;
-	        $numTilesInsideY = $imgNumTilesY - 2;
-	      
-	        // Dimensions for inner and outer tiles
-	        $innerTS = $ts;
-	        $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
-	
-			// Upper left corner of 'tile'
-			$this->yRange['start'] 	= (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
-			$this->xRange['start'] 	= (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
-	
-			// Width and height of 'tile'
-			$this->yRange['size'] 	= (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
-			$this->xRange['size'] 	= (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
+	function convertTileIndexToPixels($jp2Width, $jp2Height, $relativeTileSize, $x, $y) {
+
+        // Rounding
+        $precision = 6;
+        
+        // Parameters
+        $top = $left = $width = $height = null;
+        
+        // Number of tiles for the entire image
+        $imgNumTilesX = max(2, ceil($jp2Width  /  $relativeTileSize));
+        $imgNumTilesY = max(2, ceil($jp2Height /  $relativeTileSize));
+
+        // Tile placement architecture expects an even number of tiles along each dimension
+        if ($imgNumTilesX % 2 != 0)
+            $imgNumTilesX += 1;
+
+        if ($imgNumTilesY % 2 != 0)
+            $imgNumTilesY += 1;
+                  
+        // Shift so that 0,0 now corresponds to the top-left tile
+        $relX = (0.5 * $imgNumTilesX) + $x;
+        $relY = (0.5 * $imgNumTilesY) + $y;
+
+        // Number of "inner" tiles
+        $numTilesInsideX = $imgNumTilesX - 2;
+        $numTilesInsideY = $imgNumTilesY - 2;
+      
+        // Dimensions for inner and outer tiles
+        $innerTS = $relativeTileSize;
+        $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
+
+		/**
+		// Upper left corner of 'tile'
+		$this->yRange['start'] 	= (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
+		$this->xRange['start'] 	= (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
+		
+		// Width and height of 'tile'
+		$this->yRange['size'] 	= (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
+		$this->xRange['size'] 	= (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);**/
+		
+		// Upper left corner of 'tile'
+		$top  = (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
+		$left = (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
+		
+		// Width and height of 'tile'
+		$bottom = $top  + (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
+		$right	= $left + (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
 			
-			if($this->xRange['start'] < 0 || $this->yRange['start'] < 0) {
-				throw new Exception("[convertTileIndexToPixels] Invalid start value for xRange or yRange");
+		try {
+			if($left < 0 || $top < 0) {
+				throw new Exception("[convertTileIndexToPixels] Invalid start value for top or left values.");
 			}
-			if($this->xRange['size'] > $this->jp2Width || $this->yRange['size'] > $this->jp2Height) {
-				throw new Exception("[convertTileIndexToPixels] Invalid size value for xRange or yRange");
+			if($right > $jp2Width || $bottom > $jp2Height) {
+				throw new Exception("[convertTileIndexToPixels] Invalid size value for right or bottom values.");
 			}
 		}
 		catch(Exception $e) {
@@ -125,6 +133,13 @@ abstract class Tile extends SubFieldImage {
            file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
 		   echo $msg;
 		}
+		
+		return array(
+			"top"    => $top,
+			"left"   => $left,
+			"bottom" => $bottom,
+			"right"  => $right
+		);
 	}
 }
 ?>

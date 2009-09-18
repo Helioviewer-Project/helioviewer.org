@@ -5,38 +5,38 @@
 require('JP2Image.php');
 
 class SubFieldImage {
+	/**
     protected $subfieldFile; //image
 	protected $subfieldWidth; //imageWidth
 	protected $subfieldHeight;
-	protected $subfieldRelWidth; //imageRelWidth
+	protected $subfieldRelWidth; //imageRelWidth ... = $this->imageWidth  * $this->desiredToActual;
 	protected $subfieldRelHeight;
 	protected $region; // {top: , left: , bottom: , right: }
-	
-    protected $baseScale    = 2.63; //Scale of an EIT image at the base zoom-level: 2.63 arcseconds/px
-    protected $baseZoom     = 10;   //Zoom-level at which (EIT) images are of this scale.
-    
-	private  $colorTable;
-    protected $zoomLevel;
-    protected $tileSize;
+	**/
+	protected $sourceJp2;
+	protected $outputFile;
+	protected $roi;
 	protected $format;
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
+	protected $colorTable;
+	protected $alphaMask;
+	protected $quality;
 	
 	/**
+	 * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
+	 * 		  ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
 	  */	
-	public function __construct() {
-        // Determine desired image scale
-        $this->zoomOffset   = $zoomLevel - $this->baseZoom;
-        $this->desiredScale = $this->baseScale * (pow(2, $this->zoomOffset));
-        
-        // Ratio of the desired scale to the actual JP2 image scale
-        $this->desiredToActual = $this->desiredScale / $this->jp2Scale;
-        
-        // Scale Factor
-        $this->scaleFactor = log($this->desiredToActual, 2);
-
-
+	public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Scale, $desiredScale) {
+		//$this->sourceJp2  = $sourceJp2; .. instantiate JP2 object
+		$this->outputFile = $outputFile;
+		$this->roi        = $roi;
+		$this->format     = $format;
+		
+		$this->desiredScale    = $desiredScale;
+		$this->desiredToActual = $desiredScale / $jp2Scale;
+        $this->scaleFactor     = log($this->desiredToActual, 2);
 	}
 	
     /**

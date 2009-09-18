@@ -9,30 +9,36 @@ class HelioviewerTile extends Tile {
     private $observatory;
 	private $instrument;
 	private $detector;
-	private $measurement;    
+	private $measurement;
+	private $cacheDir = CONFIG::CACHE_DIR;
+    private $noImage  = CONFIG::EMPTY_TILE;
 		
  	/**
      * constructor
      */
-    public function __construct($uri, $x, $y, $zoomLevel, $tileSize, $width, $height, $scale, $format, $obs, $inst, $det, $meas, $date, $display = true) {
+    public function __construct($uri, $x, $y, $zoom, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format, $obs, $inst, $det, $meas, $display = true) {
 		$this->observatory = $obs;
 		$this->instrument  = $inst;
 		$this->detector    = $det;
 		$this->measurement = $meas;
-		$this->date        = $date;
+		$this->zoomLevel   = $zoom;
+		
+		$jp2  = Config::JP2_DIR . $uri;
+		
+		$tile = $this->getTileFilepath($jp2, $x, $y, $format);
+		
+		$desiredScale = $this->getImageScale($zoom);
+		
+		parent::__construct($jp2, $tile, $x, $y, $desiredScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format, $display = true);
 	
 		$this->setColorTable($this->getColorTable());
-	
-		$file = Config::JP2_DIR . $uri;
-		
-        parent::__construct($file, $x, $y, $zoomLevel, $tileSize, $width, $height, $scale, $format, $display = true);
     }
 		
     /**
      * getTileFilepath
      * @return
      */
-    private function getTileFilepath() {
+    private function getTileFilepath($jp2, $x, $y, $format) {
         // Base directory
         $filepath = $this->cacheDir . "/";
                 
@@ -42,13 +48,13 @@ class HelioviewerTile extends Tile {
         }
 
         // Base filename
-        $exploded = explode("/", $this->jp2);
+        $exploded = explode("/", $jp2);
         $filename = substr(end($exploded), 0, -4);
 		
         // Date information
-        $year  = substr($this->date, 0, 4);
-        $month = substr($this->date, 5, 2);
-        $day   = substr($this->date, 8, 2);
+        $year  = substr($filename, 0, 4);
+        $month = substr($filename, 5, 2);
+        $day   = substr($filename, 8, 2);
 
 		$fieldArray = array($year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
 		
@@ -63,18 +69,26 @@ class HelioviewerTile extends Tile {
 		}    
 
         // Convert coordinates to strings
-        $xStr = "+" . str_pad($this->x, 2, '0', STR_PAD_LEFT);
-        if (substr($this->x,0,1) == "-")
-            $xStr = "-" . str_pad(substr($this->x, 1), 2, '0', STR_PAD_LEFT);
+        $xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
+        if (substr($x,0,1) == "-")
+            $xStr = "-" . str_pad(substr($x, 1), 2, '0', STR_PAD_LEFT);
 
-        $yStr = "+" . str_pad($this->y, 2, '0', STR_PAD_LEFT);
-        if (substr($this->y,0,1) == "-")
-            $yStr = "-" . str_pad(substr($this->y, 1), 2, '0', STR_PAD_LEFT);
+        $yStr = "+" . str_pad($y, 2, '0', STR_PAD_LEFT);
+        if (substr($y,0,1) == "-")
+            $yStr = "-" . str_pad(substr($y, 1), 2, '0', STR_PAD_LEFT);
 
-        $filepath .= $filename . "_" . $this->zoomLevel . "_" . $xStr . "_" . $yStr . ".$this->format";
+        $filepath .= $filename . "_" . $this->zoomLevel . "_" . $xStr . "_" . $yStr . ".$format";
 
         return $filepath;
     }
+	
+	/**
+	 * @description Translates a given zoom-level into an image plate scale.
+	 */
+	private function getImageScale($zoomLevel) {
+		$zoomOffset = $zoomLevel - Config::BASE_ZOOM_LEVEL;
+        return Config::BASE_IMAGE_SCALE * (pow(2, $zoomOffset));
+	}
 		
 	/**
 	 * Gets the filepath for the color look-up table that corresponds to the image.
