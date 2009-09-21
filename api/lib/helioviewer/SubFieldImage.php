@@ -28,8 +28,8 @@ class SubFieldImage {
 	 * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
 	 * 		  ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
 	  */	
-	public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Scale, $desiredScale) {
-		//$this->sourceJp2  = $sourceJp2; .. instantiate JP2 object
+	public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale) {
+		$this->sourceJp2  = new JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
 		$this->outputFile = $outputFile;
 		$this->roi        = $roi;
 		$this->format     = $format;
@@ -37,27 +37,6 @@ class SubFieldImage {
 		$this->desiredScale    = $desiredScale;
 		$this->desiredToActual = $desiredScale / $jp2Scale;
         $this->scaleFactor     = log($this->desiredToActual, 2);
-	}
-	
-    /**
-     * getRegionString
-     * Build a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
-     * 
-     * NOTE: Because kakadu's internal precision for region strings is less than PHP,
-     * the numbers used are cut off to prevent erronious rounding.
-     */
-	protected function getRegionString() {
-		$precision = 6;
-
-		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
-		$top 	= substr($this->yRange["start"] / $this->jp2Height, 0, $precision);	
-		$left 	= substr($this->xRange["start"] / $this->jp2Width,  0, $precision);
-		$height = substr($this->yRange["size"]   / $this->jp2Height, 0, $precision);
-		$width 	= substr($this->xRange["size"]   / $this->jp2Width,  0, $precision);
-		
-        $region = "-region \{$top,$left\},\{$height,$width\}";
-
-        return $region;		
 	}
 	
     /**

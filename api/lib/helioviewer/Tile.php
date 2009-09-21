@@ -21,11 +21,9 @@ abstract class Tile extends SubFieldImage {
         $this->y = $y;
 		$this->tileSize = $tileSize;
 		
-		$relativeTileSize = $this->getRelativeTileSize($desiredScale, $jp2Scale, $tileSize);
-		
-		$roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $relativeTileSize, $x, $y);
+		$roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y);
 
-        parent::__construct($jp2, $outputFile, $roi, $format, $jp2Scale, $desiredScale);
+        parent::__construct($jp2, $tile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale);
 
         $this->getTile($display);
     }
@@ -34,9 +32,8 @@ abstract class Tile extends SubFieldImage {
      * getTile
      */
     function getTile($display) {
-        // Filepaths (for intermediate pgm and final png/jpg image)
-        $tile = $this->getTileFilepath();
-        
+		$tile = $this->outputFile;
+	   
         // If tile already exists in cache, use it
         if (Config::ENABLE_CACHE && $display) {
             if (file_exists($tile)) {
@@ -46,7 +43,6 @@ abstract class Tile extends SubFieldImage {
         }
 
         // If nothing useful is in the cache, create the tile from scratch		
-		$this->convertTileIndexToPixels();
         $im = $this->buildImage($tile);
 
         // Store image
@@ -61,7 +57,7 @@ abstract class Tile extends SubFieldImage {
 	 * Returns tilesize relative to scale of image requested
 	 * @return 
 	 */
-	protected function getRelativeTileSize($desiredScale, $jp2Scale, $tileSize) {
+	protected function getRelativeTileSize($jp2Scale, $desiredScale, $tileSize) {
 		return $tileSize * ($desiredScale / $jp2Scale);
 	}
 
@@ -72,10 +68,11 @@ abstract class Tile extends SubFieldImage {
 	 * 				The size of the tile (xSize or ySize) is either outerTs or innerTs, depending where the tile is in the image.
 	 * @return 
 	 */	
-	function convertTileIndexToPixels($jp2Width, $jp2Height, $relativeTileSize, $x, $y) {
-
+	function convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y) {
         // Rounding
         $precision = 6;
+		
+		$relativeTileSize = $this->getRelativeTileSize($jp2Scale, $desiredScale, $tileSize);
         
         // Parameters
         $top = $left = $width = $height = null;

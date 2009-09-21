@@ -33,8 +33,7 @@ class Config {
 	const EMPTY_TILE         = 'images/transparent_512.png';
 
 	// Environmental variables
-	const PATH_CMD			 = "export PATH=\$PATH:/usr/local/bin:/usr/local/lib:/usr/bin/:/usr/lib/";
-	const DYLD_CMD			 = "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib/:/usr/lib/";
+	const PATH_CMD			 = "export PATH=\$PATH:/usr/local/bin:/usr/local/lib:/usr/bin/:/usr/lib/ && export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib/:/usr/lib/ && ";
 
 	// URL's
 	const WEB_ROOT_URL       = 'http://localhost/helioviewer';
