@@ -20,8 +20,8 @@ class SubFieldImage {
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
-	protected $colorTable;
-	protected $alphaMask;
+	protected $colorTable = false;
+	protected $alphaMask  = false;
 	protected $quality;
 	
 	/**
@@ -45,53 +45,52 @@ class SubFieldImage {
      * 				any padding, resizing, and transparency
      * @return
      */
-    protected function buildImage($filename) {
+    protected function buildImage() {
         try {
-            // extract region from JP2
-            //$pgm = $this->extractRegion($filename);
+			$grayscale = substr($this->outputFile, 0, -3) . "pgm";
+
+			// Extract region from JP2
+			$this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor, $this->alphaMask);
         
             // Use PNG as intermediate format so that GD can read it in
-            $png = substr($filename, 0, -3) . "png";
+            $intermediate = substr($grayscale, 0, -3) . "png";
 			$cmd = CONFIG::PATH_CMD;
           	
-			if(empty($this->quality)) {
+			if(empty($this->quality))
 				$this->quality = 10;
-			}
-            exec($cmd . " && convert $pgm -depth 8 -quality " . $this->quality . " -type Grayscale $png");
+
+            exec($cmd . " convert $grayscale -depth 8 -quality " . $this->quality . " -type Grayscale $intermediate");
 		      
             // Apply color-lookup table
-            if (($this->detector == "EIT") || ($this->measurement == "0WL")) {
-                $clut = $this->getColorTable($this->detector, $this->measurement);
-                $this->setColorPalette($png, $clut, $png);
-            }
+            if ($this->colorTable)
+				$this->setColorPalette($intermediate, $this->colorTable, $intermediate);                
    
             // IM command for transparency, padding, rescaling, etc.
-            $cmd = CONFIG::PATH_CMD . " && convert $png -background black ";
+            $cmd = CONFIG::PATH_CMD . " convert $intermediate -background black ";
             
             // Apply alpha mask for images with transparent components
             if ($this->hasAlphaMask()) {
-                $mask = substr($filename, 0, -4) . "-mask.tif";
+                $mask = substr($this-outputFile, 0, -4) . "-mask.tif";
                 $cmd .= "$mask ";
             }
             
             // Determine relative size of image at this scale
-            $jp2RelWidth  = $this->jp2Width  /  $this->desiredToActual;
-            $jp2RelHeight = $this->jp2Height /  $this->desiredToActual;
+            $jp2RelWidth  = $this->sourceJp2->getWidth()  /  $this->desiredToActual;
+            $jp2RelHeight = $this->sourceJp2->getHeight() /  $this->desiredToActual;
 
-            // Get dimensions of extracted region
-            $extracted = $this->getImageDimensions($pgm);
+            // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
+            $extracted = $this->getImageDimensions($grayscale);
 
-			$cmd .= $this->resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $png);
+			$cmd .= $this->resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $intermediate);
 
-            if ($this->hasAlphaMask()) {
+            if ($this->hasAlphaMask())
                 $cmd .= "-compose copy_opacity -composite ";
-            }
  
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
             // Execute command
-            exec("$cmd $filename", $out, $ret);
+            exec("$cmd $this->outputFile", $out, $ret);
             if ($ret != 0)
                 throw new Exception("Unable to apply final processing. Command: $cmd");
     
@@ -99,10 +98,10 @@ class SubFieldImage {
             if ($this->hasAlphaMask()) {
                 unlink($mask);
             }
-            if ($this->format === "jpg") {
-                unlink($png);
+            if ($this->outputFile != $intermediate) {
+                unlink($intermediate);
             }
-            unlink($pgm);
+            unlink($grayscale);
         
             return $filename;
             
@@ -112,7 +111,7 @@ class SubFieldImage {
             print $e->getMessage();
                         
             //Clean-up and exit
-            $this->abort($filename);
+            $this->abort($this->outputFile);
         }
     }
 	
@@ -190,7 +189,8 @@ class SubFieldImage {
 			$gravity = "NorthWest";
 			// Offset the image from the center using the heliocentric offset
 			$offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
-		}
+		}cmd;
+			exit();
 
         // Construct padding command
         // TEST: use black instead of transparent for background?
@@ -203,6 +203,17 @@ class SubFieldImage {
 	 */
 	protected function setColorTable($clut) {
 		$this->colorTable = $clut;	
+	}
+	
+	/**
+	 * Enable/Disable alpha mask support
+	 */
+	protected function setAlphaMask($value) {
+		$this->alphaMask = $value;
+	}
+	
+	protected function hasAlphaMask() {
+		return $this->alphaMask;
 	}
 	
     /**
@@ -256,17 +267,18 @@ class SubFieldImage {
 	 */	
 	protected function resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $png) {
 		$cmd = "";
-		$relWidth  	= $this->imageWidth  * $this->desiredToActual;
-		$relHeight 	= $this->imageHeight * $this->desiredToActual;  
 		
-		$width 		= $this->imageWidth;
-		$height 	= $this->imageHeight;
-
+		$width     = $this->roi["right"] - $this->roi["left"];
+		$height	   = $this->roi["bottom"] - $this->roi["top"];
+		
+		$relWidth  = $width  * $this->desiredToActual;
+		$relHeight = $height * $this->desiredToActual;  
+		
 		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
         if ( (($relWidth < $width) || ($relHeight < $height)) 
 			&& (($extracted['width'] < $relWidth) || ($extracted['height'] < $relHeight)) ) {
 
-            $pad = CONFIG::PATH_CMD . " && convert $png -background black ";
+            $pad = CONFIG::PATH_CMD . " convert $png -background black ";
 			$pad .= $this->padImage($jp2RelWidth, $jp2RelHeight, $relWidth, $relHeight, $this->xRange["start"], $this->yRange["start"]) . " $png";
 			try {
             	exec($pad, $out, $ret);
@@ -344,9 +356,8 @@ class SubFieldImage {
 	
 	/**
 	 * Displays the image on the page
-	 * @param object $filepath[optional]
 	 */
-    public function display($filepath=null) {
+    public function display() {
         try {
             // Cache-Lifetime (in minutes)
             $lifetime = 60;
@@ -358,11 +369,11 @@ class SubFieldImage {
             header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
     
             // Filename & Content-length
-            if (isset($filepath)) {
-                $exploded = explode("/", $filepath);
+            if (isset($this->outputFile)) {
+                $exploded = explode("/", $this->outputFile);
                 $filename = end($exploded);
                 
-				$stat = stat($filepath);
+				$stat = stat($this->outputFile);
                 header("Content-Length: " . $stat['size']);
                 header("Content-Disposition: inline; filename=\"$filename\"");    
             }
@@ -372,7 +383,7 @@ class SubFieldImage {
             else
                 header("Content-Type: image/jpeg");
             
-            if (!readfile($filepath)) {
+            if (!readfile($this->outputFile)) {
                 throw new Exception("Error displaying $filename\n");
             }
         } catch (Exception $e) {
@@ -388,7 +399,9 @@ class SubFieldImage {
      */
     private function getImageDimensions($filename) {
         try {
-            $dimensions = split("x", trim(exec(CONFIG::PATH_CMD . " && identify $filename | grep -o \" [0-9]*x[0-9]* \"")));
+        	$cmd = CONFIG::PATH_CMD . " identify $filename | grep -o \" [0-9]*x[0-9]* \"";
+			
+            $dimensions = split("x", trim(exec($cmd)));
             if (sizeof($dimensions) < 2)
                 throw new Exception("Unable to extract image dimensions for $filename!");
             else {

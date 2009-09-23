@@ -24,8 +24,9 @@ abstract class Tile extends SubFieldImage {
 		$roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y);
 
         parent::__construct($jp2, $tile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale);
-
-        $this->getTile($display);
+		
+		if (!(Config::ENABLE_CACHE && file_exists($tile)))
+			$this->buildImage();
     }
 
     /**
@@ -43,14 +44,10 @@ abstract class Tile extends SubFieldImage {
         }
 
         // If nothing useful is in the cache, create the tile from scratch		
-        $im = $this->buildImage($tile);
+
 
         // Store image
         $this->image = $im;
-        
-        // Display image
-        if ($display)
-            $this->display($tile);
     }
 	
 	/**

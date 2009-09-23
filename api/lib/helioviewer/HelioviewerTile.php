@@ -29,9 +29,18 @@ class HelioviewerTile extends Tile {
 		
 		$desiredScale = $this->getImageScale($zoom);
 		
-		parent::__construct($jp2, $tile, $x, $y, $desiredScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format, $display = true);
+		parent::__construct($jp2, $tile, $x, $y, $desiredScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format);
 	
-		$this->setColorTable($this->getColorTable());
+		$colorTable = $this->getColorTable();
+		
+		if ($colorTable)
+			$this->setColorTable($colorTable);
+		
+		if ($this->instrument == "LASCO")
+			$this->setAlphaMask(true);
+		
+        if ($display)
+            $this->display();
     }
 		
     /**
@@ -107,15 +116,17 @@ class HelioviewerTile extends Tile {
         }
         else if ($this->detector == "C3") {
             return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
-        }        
+        }
+		else
+			return false;       
     }
 
     /**
      * hasAlphaMask
      * @return string
      */
-    private function hasAlphaMask() {
-        return $this->measurement === "0WL" ? true : false;
-    }
+    //private function hasAlphaMask() {
+    //    return $this->measurement === "0WL" ? true : false;
+    //}
 }
 ?>

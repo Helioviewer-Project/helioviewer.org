@@ -35,13 +35,21 @@ class JP2Image {
 	public function getScale() {
 		return $this->scale;
 	}
+	
+	public function getWidth() {
+		return $this->width;
+	}
+	
+	public function getHeight() {
+		return $this->height;
+	}
 
     /**
      * Extract a region using kdu_expand
      * @return String - outputFile of the expanded region 
      * @param $outputFile String - JP2 outputFile
      */
-    public function extractRegion($outputFile, $top, $left, $bottom, $right, $reduce = 0, $alphaMask=false) {
+    public function extractRegion($outputFile, $roi, $reduce = 0, $alphaMask=false) {
         // For images with transparent parts, extract a mask as well
         if ($alphaMask) {
             $mask = substr($outputFile, 0, -4) . "-mask.tif";
@@ -64,7 +72,7 @@ class JP2Image {
         // Don't do anything yet...
 
         // Add desired region
-        $cmd .= $this->getRegionString($top, $left, $bottom, $right);
+        $cmd .= $this->getRegionString($roi);
 
         // Execute the command
         try {
@@ -91,13 +99,18 @@ class JP2Image {
      * NOTE: Because kakadu's internal precision for region strings is less than PHP,
      * the numbers used are cut off to prevent erronious rounding.
      */
-	private function getRegionString($top, $left, $bottom, $right) {
+	private function getRegionString($roi) {
 		$precision = 6;
+		
+		$top    = $roi["top"];
+		$left   = $roi["left"];
+		$bottom = $roi["bottom"];
+		$right  = $roi["right"];
 
 		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
 		$scaledTop	  = substr($top / $this->height, 0, $precision);	
 		$scaledLeft   = substr($left / $this->width, 0, $precision);
-		$scaledHeight = substr(($top - $bottom) / $this->height, 0, $precision);
+		$scaledHeight = substr(($bottom - $top) / $this->height, 0, $precision);
 		$scaledWidth  = substr(($right - $left) / $this->width,  0, $precision);
 		
         $region = "-region \{$scaledTop,$scaledLeft\},\{$scaledHeight,$scaledWidth\}";
