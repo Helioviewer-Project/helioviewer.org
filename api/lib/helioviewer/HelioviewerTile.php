@@ -24,13 +24,20 @@ class HelioviewerTile extends Tile {
 		$this->zoomLevel   = $zoom;
 		
 		$jp2  = Config::JP2_DIR . $uri;
-		
 		$tile = $this->getTileFilepath($jp2, $x, $y, $format);
-		
+
+       // If tile already exists in cache, use it
+        if (Config::ENABLE_CACHE && $display) {
+            if (file_exists($tile)) {
+                $this->displayCachedTile($tile);
+                exit();
+            }
+        }
+
 		$desiredScale = $this->getImageScale($zoom);
 		
 		parent::__construct($jp2, $tile, $x, $y, $desiredScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format);
-	
+			
 		$colorTable = $this->getColorTable();
 		
 		if ($colorTable)
@@ -38,6 +45,8 @@ class HelioviewerTile extends Tile {
 		
 		if ($this->instrument == "LASCO")
 			$this->setAlphaMask(true);
+			
+		$this->buildImage();
 		
         if ($display)
             $this->display();
@@ -119,6 +128,43 @@ class HelioviewerTile extends Tile {
         }
 		else
 			return false;       
+    }
+	
+	/**
+	 * Displays the image on the page
+	 * @TODO: Would it be better to make SubFieldImage->display static and call? Or instantiate
+	 * super classes (Tile and SubFieldImage), and then call display normally?
+	 */
+    public function displayCachedTile($tile) {
+        try {
+        	$format = substr($tile, -3);
+			
+            // Cache-Lifetime (in minutes)
+            $lifetime = 60;
+            $exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
+            header("Expires: " . $exp_gmt);
+            header("Cache-Control: public, max-age=" . $lifetime * 60);
+    
+            // Filename & Content-length
+            $exploded = explode("/", $tile);
+            $filename = end($exploded);
+            
+			$stat = stat($tile);
+            header("Content-Length: " . $stat['size']);
+            header("Content-Disposition: inline; filename=\"$filename\"");    
+
+            if ($format == "png")
+                header("Content-Type: image/png");
+            else
+                header("Content-Type: image/jpeg");
+            
+            if (!readfile($tile)) {
+                throw new Exception("Error displaying $filename\n");
+            }
+        } catch (Exception $e) {
+            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+            file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+        }
     }
 
     /**

@@ -22,7 +22,6 @@ class SubFieldImage {
     protected $scaleFactor;
 	protected $colorTable = false;
 	protected $alphaMask  = false;
-	protected $quality;
 	
 	/**
 	 * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
@@ -44,24 +43,22 @@ class SubFieldImage {
      * @description Extracts a region of the jp2 image, converts it into a .png file, and handles
      * 				any padding, resizing, and transparency
      * @return
+     * 
+     * @TODO: Normalize quality scale.
      */
     protected function buildImage() {
         try {
-			$grayscale = substr($this->outputFile, 0, -3) . "pgm";
-
+			$grayscale    = substr($this->outputFile, 0, -3) . "pgm";
+            $intermediate = substr($this->outputFile, 0, -3) . "png"; // GD does not like PGM files
+			
 			// Extract region from JP2
 			$this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor, $this->alphaMask);
-        
-            // Use PNG as intermediate format so that GD can read it in
-            $intermediate = substr($grayscale, 0, -3) . "png";
-			$cmd = CONFIG::PATH_CMD;
-          	
-			if(empty($this->quality))
-				$this->quality = 10;
 
-            exec($cmd . " convert $grayscale -depth 8 -quality " . $this->quality . " -type Grayscale $intermediate");
-		      
-            // Apply color-lookup table
+			$cmd = CONFIG::PATH_CMD;
+
+            exec($cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate");
+				
+            //Apply color-lookup table				
             if ($this->colorTable)
 				$this->setColorPalette($intermediate, $this->colorTable, $intermediate);                
    
@@ -95,15 +92,13 @@ class SubFieldImage {
                 throw new Exception("Unable to apply final processing. Command: $cmd");
     
             // Cleanup
-            if ($this->hasAlphaMask()) {
+            if ($this->hasAlphaMask())
                 unlink($mask);
-            }
-            if ($this->outputFile != $intermediate) {
+
+            if ($this->outputFile != $intermediate)
                 unlink($intermediate);
-            }
+
             unlink($grayscale);
-        
-            return $filename;
             
         } catch(Exception $e) {
             $error = "[buildImage][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
@@ -265,11 +260,14 @@ class SubFieldImage {
 	 * @param object $jp2RelHeight
 	 * @param object $png
 	 */	
-	protected function resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $png) {
+	protected function resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $intermediate) {
 		$cmd = "";
 		
-		$width     = $this->roi["right"] - $this->roi["left"];
-		$height	   = $this->roi["bottom"] - $this->roi["top"];
+		// Width and height here should refer to TILESIZE!
+		//$width     = $this->roi["right"] - $this->roi["left"];
+		//$height	   = $this->roi["bottom"] - $this->roi["top"];
+		$width  = ($this->roi["right"] - $this->roi["left"]) / $this->desiredToActual;
+		$height	= ($this->roi["bottom"] - $this->roi["top"]) / $this->desiredToActual;
 		
 		$relWidth  = $width  * $this->desiredToActual;
 		$relHeight = $height * $this->desiredToActual;  
@@ -278,8 +276,8 @@ class SubFieldImage {
         if ( (($relWidth < $width) || ($relHeight < $height)) 
 			&& (($extracted['width'] < $relWidth) || ($extracted['height'] < $relHeight)) ) {
 
-            $pad = CONFIG::PATH_CMD . " convert $png -background black ";
-			$pad .= $this->padImage($jp2RelWidth, $jp2RelHeight, $relWidth, $relHeight, $this->xRange["start"], $this->yRange["start"]) . " $png";
+            $pad = CONFIG::PATH_CMD . " convert $intermediate -background black ";
+			$pad .= $this->padImage($jp2RelWidth, $jp2RelHeight, $relWidth, $relHeight, $this->xRange["start"], $this->yRange["start"]) . " $intermediate";
 			try {
             	exec($pad, $out, $ret);
 				if($ret != 0) {
@@ -299,7 +297,7 @@ class SubFieldImage {
 		}
 
         // Refetch dimensions of extracted region
-        $tile = $this->getImageDimensions($png);
+        $tile = $this->getImageDimensions($intermediate);
       
         // Pad if tile is smaller than it should be (Case 2)
         if ( (($tile['width'] < $width) || ($tile['height'] < $height)) 
@@ -364,9 +362,6 @@ class SubFieldImage {
             $exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
             header("Expires: " . $exp_gmt);
             header("Cache-Control: public, max-age=" . $lifetime * 60);
-    
-            // Special header for MSIE 5
-            header("Cache-Control: pre-check=" . $lifetime * 60, FALSE);
     
             // Filename & Content-length
             if (isset($this->outputFile)) {

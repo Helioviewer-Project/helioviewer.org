@@ -6,16 +6,21 @@
 		touch($errorLog);
 	}
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
 		<?php printf("<!-- Helioviewer rev. %s, %s-->\n", Config::BUILD_NUM, Config::LAST_UPDATE);?>
 		<title>Helioviewer - Solar and heliospheric image visualization tool</title>
-		<link rel="shortcut icon" href="favicon.ico">
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta http-equiv="Cache-Control" content="No-Cache">
-		<meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
-		<meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, ">
+		<link rel="shortcut icon" href="favicon.ico" />
+		<meta http-equiv="X-UA-Compatible" content="chrome=1">
+		<meta charset="utf-8" />
+		<meta http-equiv="Cache-Control" content="No-Cache" />
+		<meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
+		<meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
+
+		<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
         
         <!-- Twitter Jetpack -->
         <!-- <link rel="jetpack" href="lib/jetpack/helioviewer-twitter-jetpack.js" name="Helioviewer.org Twitter Jetpack">-->
@@ -102,14 +107,14 @@
 		<!--<script src="lib/helioviewer/build/helioviewer-all-min.js" type="text/javascript"></script>-->
 
 		<!-- Helioviewer.org custom styles -->
-		<link rel="stylesheet" type="text/css" href="styles/main.css">
-		<link rel="stylesheet" type="text/css" href="styles/viewport.css">
-		<link rel="stylesheet" type="text/css" href="styles/events.css">
-		<link rel="stylesheet" type="text/css" href="styles/dialogs.css">
-		<link rel="stylesheet" type="text/css" href="styles/tooltips.css">
-		<link rel="stylesheet" type="text/css" href="styles/timenav.css">
-		<link rel="stylesheet" type="text/css" href="styles/accordions.css">
-		<link rel="stylesheet" type="text/css" href="styles/sliders.css">
+		<link rel="stylesheet" type="text/css" href="styles/main.css" />
+		<link rel="stylesheet" type="text/css" href="styles/viewport.css" />
+		<link rel="stylesheet" type="text/css" href="styles/events.css" />
+		<link rel="stylesheet" type="text/css" href="styles/dialogs.css" />
+		<link rel="stylesheet" type="text/css" href="styles/tooltips.css" />
+		<link rel="stylesheet" type="text/css" href="styles/timenav.css" />
+		<link rel="stylesheet" type="text/css" href="styles/accordions.css" />
+		<link rel="stylesheet" type="text/css" href="styles/sliders.css" />
 		
 		<!-- Theme Modifications -->
 		<link rel="stylesheet" type="text/css" href="styles/dot-luv.css">

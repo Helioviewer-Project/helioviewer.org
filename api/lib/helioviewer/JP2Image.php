@@ -65,7 +65,7 @@ class JP2Image {
         // Case 2: JP2 image resolution > desired resolution (use -reduce)        
         //if ($this->jp2Scale < $this->desiredScale)
 		//	$cmd .= "-reduce " . $this->scaleFactor . " ";
-		if ($reduce !== 0)
+		if ($reduce > 0)
             $cmd .= "-reduce $reduce ";
 
         // Case 3: JP2 image resolution < desired resolution (get smaller tile and then enlarge)
