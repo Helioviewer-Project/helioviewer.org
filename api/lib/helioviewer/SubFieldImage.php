@@ -86,6 +86,8 @@ class SubFieldImage {
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
+			//die($cmd . " " . $this->outputFile);
+
             // Execute command
             exec("$cmd $this->outputFile", $out, $ret);
             if ($ret != 0)
@@ -116,7 +118,7 @@ class SubFieldImage {
 	 * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
 	 */ 
     private function padImage ($jp2Width, $jp2Height, $width, $height, $x, $y) {		
-		if($this->isTile) {
+		//if($this->isTile) {
 	        // Determine min and max tile numbers
 	        $imgNumTilesX = max(2, ceil($jp2Width  / $this->imageWidth));
 	        $imgNumTilesY = max(2, ceil($jp2Height / $this->imageHeight));
@@ -174,18 +176,18 @@ class SubFieldImage {
 	        }
 
 			$offset = " ";
-		}
+		//}
 	
 		/* 
 		 * If the item is a subfieldImage, it is assumed that the overall picture is larger than, but contains this image.
 		 * The image has a heliocentric offset and will be padded with that offset. 
 		 */
-		else {
-			$gravity = "NorthWest";
-			// Offset the image from the center using the heliocentric offset
-			$offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
-		}cmd;
-			exit();
+//		else {
+//			$gravity = "NorthWest";
+//			// Offset the image from the center using the heliocentric offset
+//			$offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
+//		}cmd;
+//			exit();
 
         // Construct padding command
         // TEST: use black instead of transparent for background?
@@ -292,18 +294,19 @@ class SubFieldImage {
         }        
 					
         // Resize if necessary (Case 3)
-        if ($relWidth < $width || $relHeight < $height) {
+        if ($relWidth < $width || $relHeight < $height)
             $cmd .= "-geometry " . $width . "x" . $height . "! ";
-		}
 
         // Refetch dimensions of extracted region
-        $tile = $this->getImageDimensions($intermediate);
+        $d = $this->getImageDimensions($intermediate);
       
         // Pad if tile is smaller than it should be (Case 2)
-        if ( (($tile['width'] < $width) || ($tile['height'] < $height)) 
-			&& (($relWidth >= $width) || ($relHeight >= $height)) ) {
-            $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
-		}
+        //if ( (($d['width'] < $width) || ($d['height'] < $height)) && (($relWidth >= $width) || ($relHeight >= $height)) ) {
+        //    $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
+		//}
+		if ($this->desiredToActual > 1)
+			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
+
 		return $cmd;
 	}
 	
