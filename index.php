@@ -2,9 +2,8 @@
     require_once('settings/Config.php');
 	error_reporting(E_ALL | E_STRICT);
 	$errorLog = CONFIG::ERROR_LOG;
-	if(!file_exists($errorLog)) {
+	if(!file_exists($errorLog))
 		touch($errorLog);
-	}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +25,7 @@
         <!-- <link rel="jetpack" href="lib/jetpack/helioviewer-twitter-jetpack.js" name="Helioviewer.org Twitter Jetpack">-->
 
 		<!-- YUI CSS Reset -->
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/reset-fonts/reset-fonts.css"> 
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0/build/reset-fonts/reset-fonts.css"> 
 		
 		<!-- jQuery -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
@@ -102,7 +101,6 @@
 		<script src="lib/helioviewer/ImageSelectTool.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
 		<script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
-		<!--<script src="lib/helioviewer/EventTimeline.js" type="text/javascript"></script>-->
 		<script src="lib/helioviewer/Helioviewer.js" type="text/javascript"></script>
 		<!--<script src="lib/helioviewer/build/helioviewer-all-min.js" type="text/javascript"></script>-->
 

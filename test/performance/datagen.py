@@ -172,7 +172,7 @@ CREATE INDEX "date_index"
 	) DEFAULT CHARSET=utf8;
 	
 	CREATE INDEX %s_index USING BTREE ON %s (date);
-		""" % (tname, tname)
+		""" % (tname, tname, tname)
 	
 def printGreeting():
 	''' Prints a greeting to the user'''

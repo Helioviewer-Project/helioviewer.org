@@ -120,8 +120,8 @@ class SubFieldImage {
     private function padImage ($jp2Width, $jp2Height, $width, $height, $x, $y) {		
 		//if($this->isTile) {
 	        // Determine min and max tile numbers
-	        $imgNumTilesX = max(2, ceil($jp2Width  / $this->imageWidth));
-	        $imgNumTilesY = max(2, ceil($jp2Height / $this->imageHeight));
+	        $imgNumTilesX = max(2, ceil($jp2Width  / $width));
+	        $imgNumTilesY = max(2, ceil($jp2Height / $height));
 	        
 	        // Tile placement architecture expects an even number of tiles along each dimension
 	        if ($imgNumTilesX % 2 != 0)
@@ -133,10 +133,10 @@ class SubFieldImage {
 			$numInnerTilesX = $imgNumTilesX - 2;
 			$numInnerTilesY = $imgNumTilesY - 2;
 
-	 		$tileMinX = ($this->jp2Width  / 2) - ($width  * $numInnerTilesX / 2);
-			$tileMaxX = ($this->jp2Width  / 2) + ($width  * $numInnerTilesX / 2);     
-			$tileMinY = ($this->jp2Height / 2) - ($height * $numInnerTilesY / 2); 
-			$tileMaxY = ($this->jp2Height / 2) + ($height * $numInnerTilesY / 2);   
+	 		$tileMinX = ($jp2Width  / 2) - ($width  * $numInnerTilesX / 2);
+			$tileMaxX = ($jp2Width  / 2) + ($width  * $numInnerTilesX / 2);     
+			$tileMinY = ($jp2Height / 2) - ($height * $numInnerTilesY / 2); 
+			$tileMaxY = ($jp2Height / 2) + ($height * $numInnerTilesY / 2);   
 
 	        // Determine where the tile is located (where tile should lie in the padding)
 	        $gravity = null;
@@ -305,7 +305,7 @@ class SubFieldImage {
         //    $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
 		//}
 		if ($this->desiredToActual > 1)
-			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
+			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->roi["left"], $this->roi["top"]);
 
 		return $cmd;
 	}
