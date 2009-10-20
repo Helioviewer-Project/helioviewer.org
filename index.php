@@ -316,10 +316,10 @@
                         <a href="help/" class="light" target="_blank">Help</a>
                     	<a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
             			<a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-            			<a href="wiki/" class="light" target="_blank">Wiki</a>
+            			<a href="http://helioviewer.org/wiki/" class="light" target="_blank">Wiki</a>
             			<a href="api/" class="light" target="_blank">API</a>
             			<a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
-            			<a href="https://bugs.launchpad.net/helioviewer/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>	
+            			<a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>	
                     </div>
                 </div>
             </div>

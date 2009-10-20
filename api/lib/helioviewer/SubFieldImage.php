@@ -112,8 +112,9 @@ class SubFieldImage {
 	        }
 
 			// Resize if necessary (Case 3)
-            if ($this->subfieldRelWidth < $this->subfieldWidth || $this->subfieldRelHeight < $this->subfieldHeight)
-                $cmd .= "-geometry " . $this->subfieldWidth . "x" . $this->subfieldHeight . "! ";
+			// NOTE 2009/10/20: Final scaling moved to client-side!
+            //if ($this->subfieldRelWidth < $this->subfieldWidth || $this->subfieldRelHeight < $this->subfieldHeight)
+            //    $cmd .= "-geometry " . $this->subfieldWidth . "x" . $this->subfieldHeight . "! ";
 			
 	        // Refetch dimensions of extracted region
 	        //$d = $this->getImageDimensions($intermediate);
@@ -123,9 +124,8 @@ class SubFieldImage {
 	        //    $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
 	        //}
 			
-			// NOTE 2009/10/20: Final scaling moved to client-side! 
-	        //if ($this->desiredToActual > 1)
-	        //    $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
+	        if ($this->desiredToActual > 1)
+	            $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
 				
             //echo($cmd);
 			//exit();
@@ -136,7 +136,7 @@ class SubFieldImage {
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
-			die($cmd . " " . $this->outputFile);
+			//die($cmd . " " . $this->outputFile);
 
             // Execute command
             exec("$cmd $this->outputFile", $out, $ret);
