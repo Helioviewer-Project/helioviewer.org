@@ -20,8 +20,17 @@ class SubFieldImage {
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
-	protected $colorTable = false;
-	protected $alphaMask  = false;
+	protected $subfieldWidth;
+	protected $subfieldHeight;
+    protected $subfieldRelWidth;
+	protected $subfieldRelHeight;
+	protected $jp2Width;
+	protected $jp2Height;
+	protected $jp2RelWidth;
+    protected $jp2RelHeight;
+    protected $alphaMask     = false;
+	protected $colorTable    = false;
+	protected $paddingString = false;
 	
 	/**
 	 * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
@@ -33,15 +42,26 @@ class SubFieldImage {
 		$this->roi        = $roi;
 		$this->format     = $format;
 		
+		$this->jp2Width  = $jp2Width;
+		$this->jp2Height = $jp2Height;
+        $this->subfieldWidth  = $roi["right"] - $roi["left"];
+        $this->subfieldHeight = $roi["bottom"] - $roi["top"];
+
 		$this->desiredScale    = $desiredScale;
 		$this->desiredToActual = $desiredScale / $jp2Scale;
         $this->scaleFactor     = log($this->desiredToActual, 2);
+		
+        $this->subfieldRelWidth  = $this->subfieldWidth  * $this->desiredToActual;
+        $this->subfieldRelHeight = $this->subfieldHeight * $this->desiredToActual;
+        $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
+        $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
 	}
 	
     /**
      * buildImage
      * @description Extracts a region of the jp2 image, converts it into a .png file, and handles
-     * 				any padding, resizing, and transparency
+     * 				any padding, resizing, and transparency. PNG is used as an intermediate format
+     *              due to lack of support for PGM files in GD.
      * @return
      * 
      * @TODO: Normalize quality scale.
@@ -49,13 +69,14 @@ class SubFieldImage {
     protected function buildImage() {
         try {
 			$grayscale    = substr($this->outputFile, 0, -3) . "pgm";
-            $intermediate = substr($this->outputFile, 0, -3) . "png"; // GD does not like PGM files
+            $intermediate = substr($this->outputFile, 0, -3) . "png"; 
 			
-			// Extract region from JP2
+			// Extract region
 			$this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor, $this->alphaMask);
 
 			$cmd = CONFIG::PATH_CMD;
 
+            // Generate grayscale image
             exec($cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate");
 				
             //Apply color-lookup table				
@@ -66,19 +87,48 @@ class SubFieldImage {
             $cmd = CONFIG::PATH_CMD . " convert $intermediate -background black ";
             
             // Apply alpha mask for images with transparent components
-            if ($this->hasAlphaMask()) {
-                $mask = substr($this-outputFile, 0, -4) . "-mask.tif";
-                $cmd .= "$mask ";
-            }
-            
-            // Determine relative size of image at this scale
-            $jp2RelWidth  = $this->sourceJp2->getWidth()  /  $this->desiredToActual;
-            $jp2RelHeight = $this->sourceJp2->getHeight() /  $this->desiredToActual;
+            if ($this->hasAlphaMask())
+                $cmd = substr($this-outputFile, 0, -4) . "-mask.tif ";
 
             // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
             $extracted = $this->getImageDimensions($grayscale);
 
-			$cmd .= $this->resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $intermediate);
+	        // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+	        if ( (($this->subfieldRelWidth < $this->subfieldWidth) || ($this->subfieldRelHeight < $this->subfieldHeight)) 
+	            && (($extracted['width'] < $this->subfieldRelWidth) || ($extracted['height'] < $this->subfieldRelHeight)) ) {
+	
+	            $pad = CONFIG::PATH_CMD . " convert $intermediate -background black ";
+	            $pad .= $this->padImage($this->subfieldRelWidth, $this->subfieldRelHeight, $this->roi["left"], $this->roi["top"]) . " $intermediate";
+	            try {
+	                exec($pad, $out, $ret);
+	                if($ret != 0)
+	                    throw new Exception("[pad image] Command: $pad");
+	            }
+	            catch(Exception $e) {
+	                $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+	                file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+	                echo $e->getMessage();
+	            }
+	        }
+
+			// Resize if necessary (Case 3)
+            if ($this->subfieldRelWidth < $this->subfieldWidth || $this->subfieldRelHeight < $this->subfieldHeight)
+                $cmd .= "-geometry " . $this->subfieldWidth . "x" . $this->subfieldHeight . "! ";
+			
+	        // Refetch dimensions of extracted region
+	        //$d = $this->getImageDimensions($intermediate);
+	      
+	        // Pad if tile is smaller than it should be (Case 2)
+	        //if ( (($d['width'] < $width) || ($d['height'] < $height)) && (($relWidth >= $width) || ($relHeight >= $height)) ) {
+	        //    $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
+	        //}
+			
+			// NOTE 2009/10/20: Final scaling moved to client-side! 
+	        //if ($this->desiredToActual > 1)
+	        //    $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
+				
+            //echo($cmd);
+			//exit();
 
             if ($this->hasAlphaMask())
                 $cmd .= "-compose copy_opacity -composite ";
@@ -86,7 +136,7 @@ class SubFieldImage {
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
-			//die($cmd . " " . $this->outputFile);
+			die($cmd . " " . $this->outputFile);
 
             // Execute command
             exec("$cmd $this->outputFile", $out, $ret);
@@ -111,71 +161,77 @@ class SubFieldImage {
             $this->abort($this->outputFile);
         }
     }
-	
+
 	
 	/** 
 	 * If the image is a Tile, it is padded according to where it lies in the image.
 	 * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
 	 */ 
-    private function padImage ($jp2Width, $jp2Height, $width, $height, $x, $y) {		
-		//if($this->isTile) {
-	        // Determine min and max tile numbers
-	        $imgNumTilesX = max(2, ceil($jp2Width  / $width));
-	        $imgNumTilesY = max(2, ceil($jp2Height / $height));
-	        
-	        // Tile placement architecture expects an even number of tiles along each dimension
-	        if ($imgNumTilesX % 2 != 0)
-	            $imgNumTilesX += 1;
-	
-	        if ($imgNumTilesY % 2 != 0)
-	            $imgNumTilesY += 1;
+    private function padImage ($width, $height, $x, $y) {
+    	//if($this->isTile) {
+		    		
+	    // Determine min and max (i.e. outermost) tile numbers
+        $imgNumTilesX = max(2, ceil($this->jp2RelWidth  / $this->subfieldWidth));
+        $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->subfieldHeight));
+        
+        // Tile placement architecture expects an even number of tiles along each dimension
+        if ($imgNumTilesX % 2 != 0)
+            $imgNumTilesX += 1;
 
-			$numInnerTilesX = $imgNumTilesX - 2;
-			$numInnerTilesY = $imgNumTilesY - 2;
+        if ($imgNumTilesY % 2 != 0)
+            $imgNumTilesY += 1;
 
-	 		$tileMinX = ($jp2Width  / 2) - ($width  * $numInnerTilesX / 2);
-			$tileMaxX = ($jp2Width  / 2) + ($width  * $numInnerTilesX / 2);     
-			$tileMinY = ($jp2Height / 2) - ($height * $numInnerTilesY / 2); 
-			$tileMaxY = ($jp2Height / 2) + ($height * $numInnerTilesY / 2);   
+        // Inner tiles are all tiles except the edge tiles (For four-tile case, all tiles are outer tiles)
+		$numInnerTilesX = $imgNumTilesX - 2;
+		$numInnerTilesY = $imgNumTilesY - 2;
 
-	        // Determine where the tile is located (where tile should lie in the padding)
-	        $gravity = null;
+ 		$tileMinX = ($this->jp2Width - ($this->subfieldRelWidth  * $numInnerTilesX)) / 2;
+		$tileMaxX = ($this->jp2Width + ($this->subfieldRelWidth  * $numInnerTilesX)) / 2;     
+		$tileMinY = ($this->jp2Height - ($this->subfieldRelHeight * $numInnerTilesY)) / 2; 
+		$tileMaxY = ($this->jp2Height + ($this->subfieldRelHeight * $numInnerTilesY)) / 2;
+		
+//		print "x: $x<br> y: $y<br> imgNumTilesX: $imgNumTilesX<br> imgNumTilesY: $imgNumTilesY<br>";
+//		print "tileMinX: $tileMinX, tileMinY: $tileMinY<br>tileMaxX: $tileMaxX, tileMaxY: $tileMaxY";
+//		exit();
+		
+        // Determine where the tile is located (where tile should lie in the padding)
+        $gravity = null;
 
-	        if ($x < $tileMinX) {
-	            if ($y < $tileMinY) {
-	                $gravity = "SouthEast";
-	            }
-	            else if ($y == $tileMaxY) {
-	                $gravity = "NorthEast";
-	            }
-	            else {
-	                $gravity = "East";
-	            }
-	        }
-			
-	        else if ($x == $tileMaxX) {
-	            if ($y < $tileMinY) {
-	                $gravity = "SouthWest";
-	            }
-	            else if ($y == $tileMaxY) {
-	                $gravity = "NorthWest"; 
-	            }
-	            else {
-	                $gravity = "West";
-	            }
-	        }
-	        
-	        else {
-	            if($y < $tileMinY) {
-	            	$gravity = "South";
-	            }
+        if ($x < $tileMinX) {
+            if ($y < $tileMinY) {
+                $gravity = "SouthEast";
+            }
+            else if ($y == $tileMaxY) {
+                $gravity = "NorthEast";
+            }
+            else {
+                $gravity = "East";
+            }
+        }
+		
+        else if ($x == $tileMaxX) {
+            if ($y < $tileMinY) {
+                $gravity = "SouthWest";
+            }
+            else if ($y == $tileMaxY) {
+                $gravity = "NorthWest"; 
+            }
+            else {
+                $gravity = "West";
+            }
+        }
+        
+        else {
+            if($y < $tileMinY) {
+            	$gravity = "South";
+            }
 
-	            else {
-	                $gravity = "North";
-	            }
-	        }
+            else {
+                $gravity = "North";
+            }
+        }
 
-			$offset = " ";
+		$offset = " ";
 		//}
 	
 		/* 
@@ -253,62 +309,6 @@ class SubFieldImage {
         
         die();
     }
-	
-	/**
-	 * @description Checks to see if the extracted image is smaller than it should be, pads it to the correct size, and resizes if necessary.
-	 * @return $cmd -- a string containing the commands to execute, if any
-	 * @param object $extracted -- array containing the width and height of the extracted image
-	 * @param object $jp2RelWidth -- relative width and height of the whole jp2 image in the viewport
-	 * @param object $jp2RelHeight
-	 * @param object $png
-	 */	
-	protected function resizeImage($extracted, $jp2RelWidth, $jp2RelHeight, $intermediate) {
-		$cmd = "";
-		
-		// Width and height here should refer to TILESIZE!
-		//$width     = $this->roi["right"] - $this->roi["left"];
-		//$height	   = $this->roi["bottom"] - $this->roi["top"];
-		$width  = ($this->roi["right"] - $this->roi["left"]) / $this->desiredToActual;
-		$height	= ($this->roi["bottom"] - $this->roi["top"]) / $this->desiredToActual;
-		
-		$relWidth  = $width  * $this->desiredToActual;
-		$relHeight = $height * $this->desiredToActual;  
-		
-		// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-        if ( (($relWidth < $width) || ($relHeight < $height)) 
-			&& (($extracted['width'] < $relWidth) || ($extracted['height'] < $relHeight)) ) {
-
-            $pad = CONFIG::PATH_CMD . " convert $intermediate -background black ";
-			$pad .= $this->padImage($jp2RelWidth, $jp2RelHeight, $relWidth, $relHeight, $this->xRange["start"], $this->yRange["start"]) . " $intermediate";
-			try {
-            	exec($pad, $out, $ret);
-				if($ret != 0) {
-					throw new Exception("[pad image] Command: $pad");
-				}
-			}
-			catch(Exception $e) {
-           		$msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            	file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
-				echo $e->getMessage();
-			}
-        }        
-					
-        // Resize if necessary (Case 3)
-        if ($relWidth < $width || $relHeight < $height)
-            $cmd .= "-geometry " . $width . "x" . $height . "! ";
-
-        // Refetch dimensions of extracted region
-        $d = $this->getImageDimensions($intermediate);
-      
-        // Pad if tile is smaller than it should be (Case 2)
-        //if ( (($d['width'] < $width) || ($d['height'] < $height)) && (($relWidth >= $width) || ($relHeight >= $height)) ) {
-        //    $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
-		//}
-		if ($this->desiredToActual > 1)
-			$cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->roi["left"], $this->roi["top"]);
-
-		return $cmd;
-	}
 	
     /**
      * setColorPalette
