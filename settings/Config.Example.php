@@ -28,7 +28,8 @@ class Config {
 	const WEB_ROOT_DIR       = '/var/www/helioviewer';
 	const TMP_ROOT_DIR       = '/var/www/helioviewer/tmp';
 	const CACHE_DIR          = '/var/www/helioviewer/cache/';
-	const JP2_DIR            = '/var/www/jp2/';
+	const JP2_DIR            = '/var/www/jp2/v20090917';
+    const JP2_ROOT_DIR       = '/var/www/jp2';
 	const KDU_LIBS_DIR       = '/usr/local/lib/kakadu/';
 	const EMPTY_TILE         = 'images/transparent_512.png';
 
@@ -37,6 +38,7 @@ class Config {
 
 	// URL's
 	const WEB_ROOT_URL       = 'http://localhost/helioviewer';
+    const JP2_ROOT_URL       = 'http://localhost/jp2';
 	const TMP_ROOT_URL       = 'http://localhost/helioviewer/tmp';
 	const EVENT_SERVER_URL   = 'http://achilles.nascom.nasa.gov/~wamsler/API/index.php?';
 	const API_BASE_URL       = 'api/index.php';

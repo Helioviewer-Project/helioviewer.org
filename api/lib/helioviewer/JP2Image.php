@@ -49,7 +49,7 @@ class JP2Image {
      * @return String - outputFile of the expanded region 
      * @param $outputFile String - JP2 outputFile
      */
-    public function extractRegion($outputFile, $roi, $reduce = 0, $alphaMask=false) {
+    public function extractRegion($outputFile, $roi, $scaleFactor = 0, $alphaMask=false) {
         // For images with transparent parts, extract a mask as well
         if ($alphaMask) {
             $mask = substr($outputFile, 0, -4) . "-mask.tif";
@@ -63,13 +63,11 @@ class JP2Image {
         // Nothing special to do...
 	
         // Case 2: JP2 image resolution > desired resolution (use -reduce)        
-        //if ($this->jp2Scale < $this->desiredScale)
-		//	$cmd .= "-reduce " . $this->scaleFactor . " ";
-		if ($reduce > 0)
-            $cmd .= "-reduce $reduce ";
+		if ($scaleFactor > 0)
+            $cmd .= "-reduce $scaleFactor ";
 
-        // Case 3: JP2 image resolution < desired resolution (get smaller tile and then enlarge)
-        // Don't do anything yet...
+        // Case 3: JP2 image resolution < desired resolution
+        // Don't do anything...
 
         // Add desired region
         $cmd .= $this->getRegionString($roi);
@@ -86,9 +84,6 @@ class JP2Image {
             $error = "[kdu][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
             print $error;
-            
-            //Clean-up and exit
-            //$this->abort($outputFile);
         }
     }
 	

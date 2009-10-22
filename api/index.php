@@ -506,6 +506,11 @@
 											<td>[Optional] Returns a URL instead of an actual image.</td>
 										</tr>
                                         <tr>
+                                            <td><b>getRelativeURL</b></td>
+                                            <td><i>Boolean</i></td>
+                                            <td>[Optional] Returns a URL relative to the JPEG 2000 archive root directory.</td>
+                                        </tr>
+                                        <tr>
 											<td><b>getJPIP</b></td>
 											<td><i>Boolean</i></td>
 											<td>[Optional] Returns a JPIP URI instead of an actual image.</td>
@@ -515,11 +520,13 @@
 								
 								<br>
 								
-								<span class="example-header">Example:</span>
+								<span class="example-header">Examples:</span>
 								<span class="example-url">
 									<a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z</a>
-								</span>	
-								
+								</span><br />
+								<span class="example-url">
+                                    <a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&getURL=true"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&getURL=true</a>
+                                </span> 								
 							</div>
 						</div>
 					</li>

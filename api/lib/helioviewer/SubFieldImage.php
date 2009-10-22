@@ -110,25 +110,9 @@ class SubFieldImage {
 	                echo $e->getMessage();
 	            }
 	        }
-
-			// Resize if necessary (Case 3)
-			// NOTE 2009/10/20: Final scaling moved to client-side!
-            //if ($this->subfieldRelWidth < $this->subfieldWidth || $this->subfieldRelHeight < $this->subfieldHeight)
-            //    $cmd .= "-geometry " . $this->subfieldWidth . "x" . $this->subfieldHeight . "! ";
-			
-	        // Refetch dimensions of extracted region
-	        //$d = $this->getImageDimensions($intermediate);
-	      
-	        // Pad if tile is smaller than it should be (Case 2)
-	        //if ( (($d['width'] < $width) || ($d['height'] < $height)) && (($relWidth >= $width) || ($relHeight >= $height)) ) {
-	        //    $cmd .= $this->padImage($jp2RelWidth, $jp2RelHeight, $width, $height, $this->xRange["start"], $this->yRange["start"]);
-	        //}
 			
 	        if ($this->desiredToActual > 1)
 	            $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
-				
-            //echo($cmd);
-			//exit();
 
             if ($this->hasAlphaMask())
                 $cmd .= "-compose copy_opacity -composite ";
