@@ -20,8 +20,8 @@ class ImgIndex {
         
         $datestr = isoDateToMySQL($date);
         
-   		$lhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
-   		$rhs = sprintf("SELECT * FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
+   		$lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
+   		$rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
 
         //echo "$lhs<br><br>";
         //echo "$rhs<br><br>";
@@ -35,7 +35,7 @@ class ImgIndex {
         else
             $img = $right;
             
-        $img["id"] = (int) $img["id"];
+        $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
 
         $filename = Config::JP2_DIR . $img["filepath"] . "/" .$img["filename"];
