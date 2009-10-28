@@ -49,16 +49,9 @@ class JP2Image {
      * @return String - outputFile of the expanded region 
      * @param $outputFile String - JP2 outputFile
      */
-    public function extractRegion($outputFile, $roi, $scaleFactor = 0, $alphaMask=false) {
-        // For images with transparent parts, extract a mask as well
-        if ($alphaMask) {
-            $mask = substr($outputFile, 0, -4) . "-mask.tif";
-            $cmd = "$this->kdu_expand_cmd -i $this->file -raw_components -o $outputFile,$mask ";
-        }
-        else {
-            $cmd = "$this->kdu_expand_cmd -i $this->file -o $outputFile ";
-        }
-        
+    public function extractRegion($outputFile, $roi, $scaleFactor = 0) {
+        $cmd = "$this->kdu_expand_cmd -i $this->file -o $outputFile ";
+         
         // Case 1: JP2 image resolution = desired resolution
         // Nothing special to do...
 	

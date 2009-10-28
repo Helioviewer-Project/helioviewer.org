@@ -72,7 +72,7 @@ class SubFieldImage {
             $intermediate = substr($this->outputFile, 0, -3) . "png"; 
 			
 			// Extract region
-			$this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor, $this->alphaMask);
+			$this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor);
 
 			$cmd = CONFIG::PATH_CMD;
 
@@ -88,7 +88,7 @@ class SubFieldImage {
             
             // Apply alpha mask for images with transparent components
             if ($this->hasAlphaMask())
-                $cmd = substr($this-outputFile, 0, -4) . "-mask.tif ";
+                $cmd .= substr($this-outputFile, 0, -4) . "-mask.tif ";
 
             // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
             $extracted = $this->getImageDimensions($grayscale);
