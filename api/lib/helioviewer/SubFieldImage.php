@@ -71,7 +71,6 @@ class SubFieldImage {
      * @return
      * 
      * @TODO: Normalize quality scale.
-     * @TODO: Skip intermediate PNG format if GD not needed (e.g. MDI)
      */
     protected function buildImage() {
         try {
@@ -83,8 +82,6 @@ class SubFieldImage {
 
 			$cmd = CONFIG::PATH_CMD;
 
-            //die($cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate");
-			
             // Generate grayscale image
 			$toIntermediateCmd = $cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale ";
 			
@@ -106,14 +103,19 @@ class SubFieldImage {
                 $cmd .= substr($this-outputFile, 0, -4) . "-mask.tif ";
 
             // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
-            $extracted = $this->getImageDimensions($grayscale);
+            //$extracted = $this->getImageDimensions($grayscale);
+			$extracted = $this->getImageDimensions($intermediate);
+			
+			//var_dump($extracted);
+			//die();
 
 	        // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
 	        if ( (($this->subfieldRelWidth < $this->subfieldWidth) || ($this->subfieldRelHeight < $this->subfieldHeight)) 
-	            && (($extracted['width'] < $this->subfieldRelWidth) || ($extracted['height'] < $this->subfieldRelHeight)) ) {
+	            && (($extracted['width'] < round($this->subfieldRelWidth)) || ($extracted['height'] < round($this->subfieldRelHeight))) ) {
 	
 	            $pad = CONFIG::PATH_CMD . " convert $intermediate -background black ";
 	            $pad .= $this->padImage($this->subfieldRelWidth, $this->subfieldRelHeight, $this->roi["left"], $this->roi["top"]) . " $intermediate";
+				
 	            try {
 	                exec($pad, $out, $ret);
 	                if($ret != 0)
