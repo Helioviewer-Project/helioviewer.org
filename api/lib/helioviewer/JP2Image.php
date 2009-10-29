@@ -48,6 +48,8 @@ class JP2Image {
      * Extract a region using kdu_expand
      * @return String - outputFile of the expanded region 
      * @param $outputFile String - JP2 outputFile
+     * 
+     * @TODO: Should precision of -reduce be limited in same manner as region strings? (e.g. MDI @ zoom-level 9)
      */
     public function extractRegion($outputFile, $roi, $scaleFactor = 0) {
         $cmd = "$this->kdu_expand_cmd -i $this->file -o $outputFile ";
@@ -64,6 +66,9 @@ class JP2Image {
 
         // Add desired region
         $cmd .= $this->getRegionString($roi);
+		
+		//echo $cmd;
+		//exit();
 
         // Execute the command
         try {

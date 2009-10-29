@@ -51,10 +51,16 @@ class SubFieldImage {
 		$this->desiredToActual = $desiredScale / $jp2Scale;
         $this->scaleFactor     = log($this->desiredToActual, 2);
 		
-        $this->subfieldRelWidth  = $this->subfieldWidth  * $this->desiredToActual;
-        $this->subfieldRelHeight = $this->subfieldHeight * $this->desiredToActual;
+        //$this->subfieldRelWidth  = $this->subfieldWidth  * $this->desiredToActual;
+        //$this->subfieldRelHeight = $this->subfieldHeight * $this->desiredToActual;
+		$this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
+        $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
+		
         $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
+		
+		//var_dump($this);
+		//exit();
 	}
 	
     /**
@@ -65,6 +71,7 @@ class SubFieldImage {
      * @return
      * 
      * @TODO: Normalize quality scale.
+     * @TODO: Skip intermediate PNG format if GD not needed (e.g. MDI)
      */
     protected function buildImage() {
         try {
@@ -76,8 +83,16 @@ class SubFieldImage {
 
 			$cmd = CONFIG::PATH_CMD;
 
+            //die($cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate");
+			
             // Generate grayscale image
-            exec($cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate");
+			$toIntermediateCmd = $cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale ";
+			
+			// kdu_expand can only handle whole number values for -reduce
+			if (fmod($this->scaleFactor, 1) != 0)
+				$toIntermediateCmd .= "-resize " . $this->subfieldRelWidth . "x" . $this->subfieldRelHeight . " ";
+				
+            exec($toIntermediateCmd . $intermediate);
 				
             //Apply color-lookup table				
             if ($this->colorTable)
@@ -109,7 +124,11 @@ class SubFieldImage {
 	                file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
 	                echo $e->getMessage();
 	            }
-	        }
+	        } 
+			
+			// Pad if tile is smaller than it should be (Case 2)
+			//if (true) {
+			//}
 			
 	        if ($this->desiredToActual > 1)
 	            $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
