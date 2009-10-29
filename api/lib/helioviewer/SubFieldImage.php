@@ -31,6 +31,7 @@ class SubFieldImage {
     protected $alphaMask     = false;
 	protected $colorTable    = false;
 	protected $paddingString = false;
+	protected $squareImage   = false;
 	
 	/**
 	 * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
@@ -50,9 +51,7 @@ class SubFieldImage {
 		$this->desiredScale    = $desiredScale;
 		$this->desiredToActual = $desiredScale / $jp2Scale;
         $this->scaleFactor     = log($this->desiredToActual, 2);
-		
-        //$this->subfieldRelWidth  = $this->subfieldWidth  * $this->desiredToActual;
-        //$this->subfieldRelHeight = $this->subfieldHeight * $this->desiredToActual;
+
 		$this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
         $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
 		
@@ -87,8 +86,9 @@ class SubFieldImage {
 			
 			// kdu_expand can only handle whole number values for -reduce
 			if (fmod($this->scaleFactor, 1) != 0)
-				$toIntermediateCmd .= "-resize " . $this->subfieldRelWidth . "x" . $this->subfieldRelHeight . " ";
+				$toIntermediateCmd .= "-resize " . $this->subfieldRelWidth . "x" . $this->subfieldRelHeight . "! ";
 				
+			//die($toIntermediateCmd . $intermediate);
             exec($toIntermediateCmd . $intermediate);
 				
             //Apply color-lookup table				
@@ -110,31 +110,32 @@ class SubFieldImage {
 			//die();
 
 	        // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-	        if ( (($this->subfieldRelWidth < $this->subfieldWidth) || ($this->subfieldRelHeight < $this->subfieldHeight)) 
-	            && (($extracted['width'] < round($this->subfieldRelWidth)) || ($extracted['height'] < round($this->subfieldRelHeight))) ) {
-	
-	            $pad = CONFIG::PATH_CMD . " convert $intermediate -background black ";
-	            $pad .= $this->padImage($this->subfieldRelWidth, $this->subfieldRelHeight, $this->roi["left"], $this->roi["top"]) . " $intermediate";
-				
-	            try {
-	                exec($pad, $out, $ret);
-	                if($ret != 0)
-	                    throw new Exception("[pad image] Command: $pad");
-	            }
-	            catch(Exception $e) {
-	                $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-	                file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
-	                echo $e->getMessage();
-	            }
-	        } 
-			
-			// Pad if tile is smaller than it should be (Case 2)
-			//if (true) {
-			//}
-			
+//	        if ( (($this->subfieldRelWidth < $this->subfieldWidth) || ($this->subfieldRelHeight < $this->subfieldHeight)) 
+//	            && (($extracted['width'] < round($this->subfieldRelWidth)) || ($extracted['height'] < round($this->subfieldRelHeight))) ) {
+//	
+//	            $pad = CONFIG::PATH_CMD . " convert $intermediate -background black ";
+//	            $pad .= $this->padImage($this->subfieldRelWidth, $this->subfieldRelHeight, $this->roi["left"], $this->roi["top"]) . " $intermediate";
+//				
+//	            try {
+//	                exec($pad, $out, $ret);
+//	                if($ret != 0)
+//	                    throw new Exception("[pad image] Command: $pad");
+//	            }
+//	            catch(Exception $e) {
+//	                $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+//	                file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+//	                echo $e->getMessage();
+//	            }
+//	        }
+
 	        if ($this->desiredToActual > 1)
 	            $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
-
+			
+			// Temporary (2009/10/29)
+			else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
+               $cmd .= $this->padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
+			}
+				
             if ($this->hasAlphaMask())
                 $cmd .= "-compose copy_opacity -composite ";
  
@@ -167,18 +168,76 @@ class SubFieldImage {
         }
     }
 
-	
-	/** 
-	 * If the image is a Tile, it is padded according to where it lies in the image.
-	 * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
-	 */ 
+    /**
+     * temp work-around 
+     */
+    private function padTile ($jp2Width, $jp2Height, $ts, $x, $y) {
+        // Determine min and max tile numbers
+        $imgNumTilesX = max(2, ceil($this->jp2RelWidth  / $this->tileSize));
+        $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->tileSize));
+
+        // Tile placement architecture expects an even number of tiles along each dimension
+        if ($imgNumTilesX % 2 != 0)
+            $imgNumTilesX += 1;
+
+        if ($imgNumTilesY % 2 != 0)
+            $imgNumTilesY += 1;
+
+        $tileMinX = - ($imgNumTilesX / 2);
+        $tileMaxX =   ($imgNumTilesX / 2) - 1;
+        $tileMinY = - ($imgNumTilesY / 2);
+        $tileMaxY =   ($imgNumTilesY / 2) - 1;
+		
+        // Determine where the tile is located (where tile should lie in the padding)
+        $gravity = null;
+        if ($x == $tileMinX) {
+            if ($y == $tileMinY) {
+                $gravity = "SouthEast";
+            }
+            else if ($y == $tileMaxY) {
+                $gravity = "NorthEast";
+            }
+            else {
+                $gravity = "East";
+            }
+        }
+        else if ($x == $tileMaxX) {
+            if ($y == $tileMinY) {
+                $gravity = "SouthWest";
+            }
+            else if ($y == $tileMaxY) {
+                $gravity = "NorthWest";
+            }
+            else {
+                $gravity = "West";
+            }
+        }
+
+        else {
+            if ($y == $tileMinY) {
+                $gravity = "South";
+            }
+            else {
+                $gravity = "North";
+            }
+        }
+
+        // Construct padding command
+        return "-gravity $gravity -extent $ts" . "x" . "$ts ";
+	}
+	 
+    
+    /** 
+     * If the image is a Tile, it is padded according to where it lies in the image.
+     * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
+     */ 
     private function padImage ($width, $height, $x, $y) {
     	//if($this->isTile) {
 		    		
 	    // Determine min and max (i.e. outermost) tile numbers
         $imgNumTilesX = max(2, ceil($this->jp2RelWidth  / $this->subfieldWidth));
         $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->subfieldHeight));
-        
+		
         // Tile placement architecture expects an even number of tiles along each dimension
         if ($imgNumTilesX % 2 != 0)
             $imgNumTilesX += 1;
@@ -195,8 +254,9 @@ class SubFieldImage {
 		$tileMinY = ($this->jp2Height - ($this->subfieldRelHeight * $numInnerTilesY)) / 2; 
 		$tileMaxY = ($this->jp2Height + ($this->subfieldRelHeight * $numInnerTilesY)) / 2;
 		
+//		var_dump($this);
 //		print "x: $x<br> y: $y<br> imgNumTilesX: $imgNumTilesX<br> imgNumTilesY: $imgNumTilesY<br>";
-//		print "tileMinX: $tileMinX, tileMinY: $tileMinY<br>tileMaxX: $tileMaxX, tileMaxY: $tileMaxY";
+//		print "tileMinX: $tileMinX, tileMinY: $tileMinY<br>tileMaxX: $tileMaxX, tileMaxY: $tileMaxY<br><br>";
 //		exit();
 		
         // Determine where the tile is located (where tile should lie in the padding)
@@ -289,6 +349,15 @@ class SubFieldImage {
         
         return $args;
     }
+	
+	/**
+	 * Set Required Dimensions
+	 * @param object $width
+	 * @param object $height
+	 */
+	protected function setSquareImage($value) {
+		$this->squareImage = $value;
+	}
 	
     /**
      * Handles clean-up in case something goes wrong to avoid mal-formed tiles from being displayed
@@ -409,8 +478,8 @@ class SubFieldImage {
                 throw new Exception("Unable to extract image dimensions for $filename!");
             else {
                 return array (
-                    'width'  => $dimensions[0],
-                    'height' => $dimensions[1]
+                    'width'  => (int)$dimensions[0],
+                    'height' => (int)$dimensions[1]
                 );
             }
         } catch (Exception $e) {

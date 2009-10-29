@@ -24,6 +24,8 @@ abstract class Tile extends SubFieldImage {
 		$roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y);
 		
         parent::__construct($jp2, $tile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale);
+		
+		$this->setSquareImage(true);
     }
 	
 	/**
