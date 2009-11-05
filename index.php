@@ -31,7 +31,8 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
         <script src="lib/jquery/jquery-class-support/jquery.class.js" type="text/javascript"></script>
-		<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
+		<!--<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>-->
+		<script src="lib/jquery/jquery-qtip-1.0.0-rc3091551/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>
         
         <!-- TODO: move jquery-dynaccordion to /lib/helioviewer with rest of custom code -->
         <!-- TODO: Include compiled versions of Kakadu? -->
@@ -205,8 +206,8 @@
 					<div>
 						<div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
 						<select id="timestep-select" name="time-step"></select>
-						<span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title=" - Move the Observation Date/Time backward one time-step"></span>
-						<span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title=" - Move the Observation Date/Time forward one time-step"></span>
+						<span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
+						<span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
 					</div>
 				</div>
 
@@ -240,7 +241,7 @@
 							<div id="zoomControls"></div>
                             
                             <!-- Center button -->
-                            <div id="center-button">
+                            <div id="center-button" title="Center the image on the screen.">
                                 <span>center</span>
                             </div>
                             
@@ -290,7 +291,7 @@
             			    </div>
                             
                             <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn' title=" - Toggle fullscreen display.">
+                            <div id='fullscreen-btn' title="Toggle fullscreen display.">
                                 <div class='ui-icon ui-icon-arrow-4-diag'></div>
                             </div>
 
