@@ -1,5 +1,5 @@
 /* Zoom Level Slider */
-.zoomControlSlider {
+#zoomControlSlider {
     background: transparent none repeat scroll 0 0;
     width: 100%;
     height: 197px;
@@ -9,7 +9,7 @@
     -webkit-border-radius: 0px;
 }
     
-.zoomSliderContainer {
+#zoomSliderContainer {
     position: absolute;
 	left:10px;
 	top:24px;
@@ -20,7 +20,7 @@
 	z-index:10000;
 }
 
-.zoomControlSlider > .ui-slider-handle {
+#zoomControlSlider > .ui-slider-handle {
 	left:-8px;
 	width:21px;
 	height:12px;
