@@ -293,9 +293,8 @@ class API {
         $url = Config::TMP_ROOT_URL . "/movies/" . $filename;
 
         // If the file doesn't exist already, create it
-        if (!file_exists($filepath)) {
+        if (!file_exists($filepath))
             $this->buildJP2ImageSeries($filepath);
-        }
 
         // Output the file/jpip URL
         if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
@@ -322,7 +321,7 @@ class API {
 
         // Layer information
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-          $src["$field.abbreviation"] = $this->params[$field];
+		  $src["$field"] = $this->params[$field];
         }
 
         // Connect to database
@@ -339,11 +338,12 @@ class API {
 
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
-            $jp2 = $this->getFilepath($imgIndex->getJP2FilePath($time, $src));
+			$isoDate = toISOString(parseUnixTimestamp($time));
+			$jp2 = Config::JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src);
             array_push($images, $jp2);
             $time += $cadence;
         }
-        
+
         // Remove redundant entries
         $images = array_unique($images);
 
@@ -363,6 +363,7 @@ class API {
             $cmd .= " -mj2_tracks P:0-@25";
     
         // Execute kdu_merge command
+		echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd);
         exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
 
     }
@@ -372,7 +373,7 @@ class API {
      * NOTE: Add option to specify XML vs. JSON... FITS vs. Entire header?
      */
     private function _getJP2Header () {
-        $filepath = $this->getFilepath($this->params["uri"]);
+        $filepath = Config::JP2_DIR . $this->params["file"];
 
         // Query header information using Exiftool
         $cmd = Config::EXIF_TOOL . " $filepath | grep Fits";
@@ -683,9 +684,9 @@ class API {
         //$message = wordwrap($message, 70);
 
         // Send
-        //mail('keith.hughitt@gmail.com', 'My Subject', $message);   
-    }    
-    
+        //mail('test@mail.com', 'My Subject', $message);   
+    }
+	
 	/**
 	 * @description Takes the string representation of a layer from the javascript and formats it so that only useful/necessary information is included.
 	 * @return {Array} $formatted -- The array containing properly formatted strings
@@ -777,7 +778,7 @@ class API {
                     return false;                
                 break;
             case "getJP2Header":
-                if (!isset($this->params["uri"]))
+                if (!isset($this->params["file"]))
                     return false;
                 break;
             case "getEventCatalogs":

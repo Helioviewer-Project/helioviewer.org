@@ -17,9 +17,9 @@ class ImgIndex {
             $id = $this->getSourceId($params["observatory"], $params["instrument"], $params["detector"], $params["measurement"]);
         else
             $id = $params;   
-        
+		
         $datestr = isoDateToMySQL($date);
-        
+		
    		$lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
    		$rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
 
