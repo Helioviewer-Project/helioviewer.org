@@ -14,17 +14,17 @@ class JHV {
 		header('content-disposition: attachment; filename="JHelioviewer.jnlp"'); 
 		echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 ?>
-<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/" href="JHelioviewer.jnlp">
+<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
 	<information>    
 		<title>JHelioviewer</title>   
 		<vendor>ESA</vendor>   
-		<homepage href="http://achilles.nascom.nasa.gov/~dmueller/" />
+		<homepage href="index.html" />
 		<description>JHelioviewer web launcher</description>   
 		<offline-allowed />  
 	</information> 
 	
 	<resources>    
-		<j2se version="1.4+" initial-heap-size="512M" max-heap-size="1000M"/>     
+		<j2se version="1.5+" initial-heap-size="256M" max-heap-size="1500M"/>     
 		<jar href="JHelioviewer.jar" />  
 	</resources>  
 	
