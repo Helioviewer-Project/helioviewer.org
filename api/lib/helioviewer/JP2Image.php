@@ -22,27 +22,27 @@ class JP2Image {
      * @param string file -- Location of the JPEG 2000 image to work with
      */
     public function __construct($file, $width, $height, $scale) {
-		$this->file   = $file;
-		$this->width  = $width;
-		$this->height = $height;
-		$this->scale  = $scale;
+        $this->file   = $file;
+        $this->width  = $width;
+        $this->height = $height;
+        $this->scale  = $scale;
     }
-	
-	/**
-	 * getScale
-	 * @return 
-	 */
-	public function getScale() {
-		return $this->scale;
-	}
-	
-	public function getWidth() {
-		return $this->width;
-	}
-	
-	public function getHeight() {
-		return $this->height;
-	}
+    
+    /**
+     * getScale
+     * @return 
+     */
+    public function getScale() {
+        return $this->scale;
+    }
+    
+    public function getWidth() {
+        return $this->width;
+    }
+    
+    public function getHeight() {
+        return $this->height;
+    }
 
     /**
      * Extract a region using kdu_expand
@@ -56,9 +56,9 @@ class JP2Image {
          
         // Case 1: JP2 image resolution = desired resolution
         // Nothing special to do...
-	
+    
         // Case 2: JP2 image resolution > desired resolution (use -reduce)        
-		if ($scaleFactor > 0)
+        if ($scaleFactor > 0)
             $cmd .= "-reduce $scaleFactor ";
 
         // Case 3: JP2 image resolution < desired resolution
@@ -66,9 +66,9 @@ class JP2Image {
 
         // Add desired region
         $cmd .= $this->getRegionString($roi);
-		
-		//echo $cmd;
-		//exit();
+        
+        //echo $cmd;
+        //exit();
 
         // Execute the command
         try {
@@ -84,7 +84,7 @@ class JP2Image {
             print $error;
         }
     }
-	
+    
     /**
      * getRegionString
      * Build a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
@@ -92,23 +92,23 @@ class JP2Image {
      * NOTE: Because kakadu's internal precision for region strings is less than PHP,
      * the numbers used are cut off to prevent erronious rounding.
      */
-	private function getRegionString($roi) {
-		$precision = 6;
-		
-		$top    = $roi["top"];
-		$left   = $roi["left"];
-		$bottom = $roi["bottom"];
-		$right  = $roi["right"];
+    private function getRegionString($roi) {
+        $precision = 6;
+        
+        $top    = $roi["top"];
+        $left   = $roi["left"];
+        $bottom = $roi["bottom"];
+        $right  = $roi["right"];
 
-		// Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
-		$scaledTop	  = substr($top / $this->height, 0, $precision);	
-		$scaledLeft   = substr($left / $this->width, 0, $precision);
-		$scaledHeight = substr(($bottom - $top) / $this->height, 0, $precision);
-		$scaledWidth  = substr(($right - $left) / $this->width,  0, $precision);
-		
+        // Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
+        $scaledTop      = substr($top / $this->height, 0, $precision);    
+        $scaledLeft   = substr($left / $this->width, 0, $precision);
+        $scaledHeight = substr(($bottom - $top) / $this->height, 0, $precision);
+        $scaledWidth  = substr(($right - $left) / $this->width,  0, $precision);
+        
         $region = "-region \{$scaledTop,$scaledLeft\},\{$scaledHeight,$scaledWidth\}";
 
-        return $region;		
-	}	
+        return $region;        
+    }    
 }
 ?>

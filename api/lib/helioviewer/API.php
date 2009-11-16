@@ -18,7 +18,7 @@ class API {
      * @param string ["plain-text"|"json"] The format to return results in
      */
     public function __construct ($params, $format) {
-    	require_once('DbConnection.php');
+        require_once('DbConnection.php');
  
         $this->params = $params;
         $this->format = $format;
@@ -45,8 +45,8 @@ class API {
     private function _getTile () {
         require_once("HelioviewerTile.php");
         $tile = new HelioviewerTile($this->params['uri'], $this->params['x'], $this->params['y'], $this->params['zoom'], $this->params['ts'],
-						 $this->params['jp2Width'], $this->params['jp2Height'], $this->params['jp2Scale'], $this->params['format'],
-						 $this->params['obs'], $this->params['inst'], $this->params['det'], $this->params['meas']);
+                         $this->params['jp2Width'], $this->params['jp2Height'], $this->params['jp2Scale'], $this->params['format'],
+                         $this->params['obs'], $this->params['inst'], $this->params['det'], $this->params['meas']);
 
         return 1;
     }
@@ -238,11 +238,11 @@ class API {
         // jp2 image
         else {
             $fp = fopen($uri, 'r');
-			$stat = stat($uri);
+            $stat = stat($uri);
             
             $exploded = explode("/", $filepath);
             $filename = end($exploded);
-			
+            
             header("Content-Length: " . $stat['size']);
             header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));
             header("Content-Disposition: attachment; filename=\"$filename\"");
@@ -321,7 +321,7 @@ class API {
 
         // Layer information
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-		  $src["$field"] = $this->params[$field];
+          $src["$field"] = $this->params[$field];
         }
 
         // Connect to database
@@ -338,8 +338,8 @@ class API {
 
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
-			$isoDate = toISOString(parseUnixTimestamp($time));
-			$jp2 = Config::JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src);
+            $isoDate = toISOString(parseUnixTimestamp($time));
+            $jp2 = Config::JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src);
             array_push($images, $jp2);
             $time += $cadence;
         }
@@ -363,7 +363,7 @@ class API {
             $cmd .= " -mj2_tracks P:0-@25";
     
         // Execute kdu_merge command
-		//echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd);
+        //echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd);
         exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
 
     }
@@ -448,11 +448,11 @@ class API {
 
     /**
      * @description All possible parameters: startDate, zoomLevel, numFrames, frameRate, timeStep, layers, imageSize ("x,y"),
-     * 	filename, edges, sharpen, format.
+     *     filename, edges, sharpen, format.
      * 
      * API example: http://localhost/helioviewer/api/index.php?action=buildMovie&startDate=1041465600&zoomLevel=13&numFrames=20
-     * 	&frameRate=8&timeStep=86400&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
-     * 	&imageSize=588,556&filename=example&sharpen=false&edges=false
+     *     &frameRate=8&timeStep=86400&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
+     *     &imageSize=588,556&filename=example&sharpen=false&edges=false
      * 
      * Note that filename does NOT have the . extension on it. The reason for this is that in the media settings pop-up dialog,
      * there is no way of knowing ahead of time whether the image is a .png, .tif, .flv, etc, and in the case of movies, the file is 
@@ -468,26 +468,26 @@ class API {
         $zoomLevel = $this->params['zoomLevel'];
         $numFrames = $this->params['numFrames'];
         $frameRate = $this->params['frameRate'];
-		$timeStep  = $this->params['timeStep'];
-		$quality   = $this->params['quality'];
-       	
-		// Layerstrings are separated by "/"
-		$layerStrings = explode("/", $this->params['layers']);
+        $timeStep  = $this->params['timeStep'];
+        $quality   = $this->params['quality'];
+           
+        // Layerstrings are separated by "/"
+        $layerStrings = explode("/", $this->params['layers']);
 
-		$imageCoords = explode(",", $this->params['imageSize']);
-		$imageSize 	 = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
-		$filename  	 = $this->params['filename'];
-			
+        $imageCoords = explode(",", $this->params['imageSize']);
+        $imageSize      = array("width" => $imageCoords[0], "height" => $imageCoords[1]);
+        $filename       = $this->params['filename'];
+            
         $hqFormat  = $this->params['format'];
         //$hqFormat = "mp4";
-		
+        
         // Optional parameters
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
-				
+                
         //Check to make sure values are acceptable
-        try {	
+        try {    
             //Limit number of layers to three
             if (strlen($this->params['layers']) == 0) {
                 throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
@@ -498,7 +498,7 @@ class API {
                 throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
             }
 
-			$layers = $this->_formatLayerStrings($layerStrings);
+            $layers = $this->_formatLayerStrings($layerStrings);
 
             $movie = new Movie($layers, $startDate, $zoomLevel, $numFrames, $frameRate, $hqFormat, $options, $timeStep, $imageSize, $filename, $quality);
             $movie->buildMovie();
@@ -511,96 +511,96 @@ class API {
         return 1;
     }
 
-	/**
-	 * @description Obtains layer information, ranges of pixels visible, and the date being looked at and creates a composite image
-	 * 				(a Screenshot) of all the layers. 
-	 * 
-	 * All possible parameters: obsDate, zoomLevel, layers, imageSize, filename, edges, sharpen
-	 * 
-	 * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=1041465600&zoomLevel=13
-	 *	&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
-     * 	&imageSize=588,556&filename=example&sharpen=false&edges=false
+    /**
+     * @description Obtains layer information, ranges of pixels visible, and the date being looked at and creates a composite image
+     *                 (a Screenshot) of all the layers. 
+     * 
+     * All possible parameters: obsDate, zoomLevel, layers, imageSize, filename, edges, sharpen
+     * 
+     * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=1041465600&zoomLevel=13
+     *    &layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
+     *     &imageSize=588,556&filename=example&sharpen=false&edges=false
      * 
      * Note that filename does NOT have the . extension on it. The reason for this is that in the media settings pop-up dialog,
      * there is no way of knowing ahead of time whether the image is a .png, .tif, .flv, etc, and in the case of movies, the file is 
      * both a .flv and .mov/.asf/.mp4
      * 
-	 * @return Returns 1 if the action was completed successfully.
-	 */
-	private function _takeScreenshot() {
-		require_once('Screenshot.php');
-		
+     * @return Returns 1 if the action was completed successfully.
+     */
+    private function _takeScreenshot() {
+        require_once('Screenshot.php');
+        
         $obsDate   = $this->params['obsDate'];
         $zoomLevel = $this->params['zoomLevel'];
-		$quality   = $this->params['quality'];
+        $quality   = $this->params['quality'];
 
-		$layerStrings = explode("/", $this->params['layers']);
-		
-		$imgCoords = explode(",", $this->params['imageSize']);
-		$imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
-		
-		$filename  = $this->params['filename'];
-		
+        $layerStrings = explode("/", $this->params['layers']);
+        
+        $imgCoords = explode(",", $this->params['imageSize']);
+        $imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
+        
+        $filename  = $this->params['filename'];
+        
         $options = array();
         $options['enhanceEdges'] = $this->params['edges'] || false;
         $options['sharpen']      = $this->params['sharpen'] || false;    
 
-		try {
-			if(sizeOf($layerStrings) < 1) 
-				throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
+        try {
+            if(sizeOf($layerStrings) < 1) 
+                throw new Exception("Invalid layer choices! You must specify at least 1 layer.");
 
-			$layers = $this->_formatLayerStrings($layerStrings);
-			
-			$screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize, $filename, $quality);	
-			$screenshot->buildImages($layers);
-			
-			$composite = $screenshot->getComposite();
-			if(!file_exists($composite))
-				throw new Exception("The requested screenshot is either unavailable or does not exist.");
+            $layers = $this->_formatLayerStrings($layerStrings);
+            
+            $screenshot = new Screenshot($obsDate, $zoomLevel, $options, $imageSize, $filename, $quality);    
+            $screenshot->buildImages($layers);
+            
+            $composite = $screenshot->getComposite();
+            if(!file_exists($composite))
+                throw new Exception("The requested screenshot is either unavailable or does not exist.");
 
-			if($this->params == $_GET) {				
-				header('Content-type: image/png');
-				echo file_get_contents($composite);
-			}
-			
-			else {
-				header('Content-type: application/json');
-				// Replace '/var/www/helioviewer', or wherever the directory is, with 'http://localhost/helioviewer' so it can be displayed.
-				echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $composite));
-			}
-		}
-		catch(Exception $e) {
-			echo 'Error: ' . $e->getMessage();
-			exit();
-		}
-		
-		return 1;
-	}
+            if($this->params == $_GET) {                
+                header('Content-type: image/png');
+                echo file_get_contents($composite);
+            }
+            
+            else {
+                header('Content-type: application/json');
+                // Replace '/var/www/helioviewer', or wherever the directory is, with 'http://localhost/helioviewer' so it can be displayed.
+                echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $composite));
+            }
+        }
+        catch(Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+            exit();
+        }
+        
+        return 1;
+    }
 
-	/**
-	 * @description Queries the database to get the real jp2 image's width and height for that particular layer. Needed because
-	 * 					the width and height used in tileLayer.js are not the actual height and width and it mixes things up when
-	 * 					trying to align images for screenshots and movies.
-	 * 
-	 * Required parameters: observatory, instrument, detector, measurement.
-	 * @return 1 on success
-	 */
-	private function _getJP2Dimensions() {
+    /**
+     * @description Queries the database to get the real jp2 image's width and height for that particular layer. Needed because
+     *                     the width and height used in tileLayer.js are not the actual height and width and it mixes things up when
+     *                     trying to align images for screenshots and movies.
+     * 
+     * Required parameters: observatory, instrument, detector, measurement.
+     * @return 1 on success
+     */
+    private function _getJP2Dimensions() {
         require_once('ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
     
-		$obs  = $this->params['observatory'];
-		$inst = $this->params['instrument'];
-		$det  = $this->params['detector'];
-		$meas = $this->params['measurement'];
-		
-		$dimensions = $imgIndex->getJP2Dimensions($obs, $inst, $det, $meas);
-		
-		echo $dimensions['width'] . 'x' . $dimensions['height'];
-		
-		return 1;
-	}
-		
+        $obs  = $this->params['observatory'];
+        $inst = $this->params['instrument'];
+        $det  = $this->params['detector'];
+        $meas = $this->params['measurement'];
+        
+        $dimensions = $imgIndex->getJP2Dimensions($obs, $inst, $det, $meas);
+        
+        echo $dimensions['width'] . 'x' . $dimensions['height'];
+        
+        return 1;
+    }
+        
     /**
      * @description gets the movie url and loads it into MC Mediaplayer
      * @return int Returns "1" if the action was completed successfully.
@@ -639,38 +639,38 @@ class API {
         return 1;
     }
     
-	/**
-	 * @description 'Opens' the requested file in the current window as an attachment, which pops up the "Save file as" dialog.
-	 * @TODO test this to make sure it works in all browsers.
-	 * @return 1 on success.
-	 */
-	private function _downloadFile() {
-		$url = $this->params['url'];
-		
-		// Convert web url into directory url so stat() works.
-		// Need to use stat() instead of filesize() because filesize fails for every file on Linux
-		// due to security permissions with apache. To get the file size, do $stat['size']
-		$url = str_replace(Config::WEB_ROOT_URL, Config::WEB_ROOT_DIR, $url);
-		$stat = stat($url);
+    /**
+     * @description 'Opens' the requested file in the current window as an attachment, which pops up the "Save file as" dialog.
+     * @TODO test this to make sure it works in all browsers.
+     * @return 1 on success.
+     */
+    private function _downloadFile() {
+        $url = $this->params['url'];
+        
+        // Convert web url into directory url so stat() works.
+        // Need to use stat() instead of filesize() because filesize fails for every file on Linux
+        // due to security permissions with apache. To get the file size, do $stat['size']
+        $url = str_replace(Config::WEB_ROOT_URL, Config::WEB_ROOT_DIR, $url);
+        $stat = stat($url);
 
-		if(strlen($url) > 1) {
-			header("Pragma: public"); 
-			header("Expires: 0");
-			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-			header("Cache-Control: private",false); // required for certain browsers 
-			header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";" );
-			header("Content-Transfer-Encoding: binary");
+        if(strlen($url) > 1) {
+            header("Pragma: public"); 
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: private",false); // required for certain browsers 
+            header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";" );
+            header("Content-Transfer-Encoding: binary");
 
-			header("Content-Length: " . $stat['size']); 
+            header("Content-Length: " . $stat['size']); 
 
-			echo file_get_contents($url);
-		}
-		else {
-			print("Error: Problem retrieving file.");
-		}
-		return 1;
-	}
-	
+            echo file_get_contents($url);
+        }
+        else {
+            print("Error: Problem retrieving file.");
+        }
+        return 1;
+    }
+    
     /**
      * sendEmail
      * TODO: CAPTCHA, Server-side security
@@ -686,63 +686,63 @@ class API {
         // Send
         //mail('test@mail.com', 'My Subject', $message);   
     }
-	
-	/**
-	 * @description Takes the string representation of a layer from the javascript and formats it so that only useful/necessary information is included.
-	 * @return {Array} $formatted -- The array containing properly formatted strings
-	 * @param {Array} $layers -- an array of strings in the format: "obs,inst,det,meas,visible,opacityxxStart,xSize,yStart,ySize"
-	 * 					The extra "x" was put in the middle so that the string could be broken in half and parsing one half by itself 
-	 * 					rather than parsing 10 different strings and putting the half that didn't need parsing back together.
-	 */	
-	private function _formatLayerStrings($layers) {
-		$formatted = array();
-		
-		foreach($layers as $layer) {
-			$layerInfo = explode("x", $layer);	
+    
+    /**
+     * @description Takes the string representation of a layer from the javascript and formats it so that only useful/necessary information is included.
+     * @return {Array} $formatted -- The array containing properly formatted strings
+     * @param {Array} $layers -- an array of strings in the format: "obs,inst,det,meas,visible,opacityxxStart,xSize,yStart,ySize"
+     *                     The extra "x" was put in the middle so that the string could be broken in half and parsing one half by itself 
+     *                     rather than parsing 10 different strings and putting the half that didn't need parsing back together.
+     */    
+    private function _formatLayerStrings($layers) {
+        $formatted = array();
+        
+        foreach($layers as $layer) {
+            $layerInfo = explode("x", $layer);    
 
-			// $meta is now: [xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety]			
-			$meta = split(",", $layerInfo[1]);
-			$offsetX = $meta[4];
-			$offsetY = $meta[5];
-			
-			// Add a "+" in front of positive numbers so that the offsets are readable by imagemagick
-			$meta[4] = ($offsetX >= 0? "+" : "") . $offsetX;
-			$meta[5] = ($offsetY >= 0? "+" : "") . $offsetY;
+            // $meta is now: [xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety]            
+            $meta = split(",", $layerInfo[1]);
+            $offsetX = $meta[4];
+            $offsetY = $meta[5];
+            
+            // Add a "+" in front of positive numbers so that the offsets are readable by imagemagick
+            $meta[4] = ($offsetX >= 0? "+" : "") . $offsetX;
+            $meta[5] = ($offsetY >= 0? "+" : "") . $offsetY;
 
-			// Extract relevant information from $layerInfo[0] (obs,inst,det,meas,visible,opacity). 
-			$rawName = explode(",", $layerInfo[0]);
-			$opacity = $rawName[5];
-			//Get rid of the "visibility" boolean in the middle of the string.
-			array_splice($rawName, 4);
+            // Extract relevant information from $layerInfo[0] (obs,inst,det,meas,visible,opacity). 
+            $rawName = explode(",", $layerInfo[0]);
+            $opacity = $rawName[5];
+            //Get rid of the "visibility" boolean in the middle of the string.
+            array_splice($rawName, 4);
 
-			$name = implode("_", $rawName);
-			// Stick opacity on the end. the $image string now looks like: "obs_inst_det_meas,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity"
-			$image = $name . "," . implode(",", $meta) . "," . $opacity;
-			array_push($formatted, $image);
-		}
+            $name = implode("_", $rawName);
+            // Stick opacity on the end. the $image string now looks like: "obs_inst_det_meas,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity"
+            $image = $name . "," . implode(",", $meta) . "," . $opacity;
+            array_push($formatted, $image);
+        }
 
-		return $formatted;
-	}
+        return $formatted;
+    }
 
-	/**
-	 * @description Checks to make sure all required parameters were passed in.
-	 * @param {Array} $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
-	 * @return 1 on success
-	 */	
-	private function _checkForMissingParams($fields) {
-		try{
-			foreach($fields as $field) {
-				if(empty($this->params[$field])) {
-					throw new Exception("Invalid value for $field.");
-				}
-			}
-		}
-		catch (Exception $e) {
-			echo 'Error: ' . $e->getMessage();
-			exit();
-		}
-		return 1;
-	}
+    /**
+     * @description Checks to make sure all required parameters were passed in.
+     * @param {Array} $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
+     * @return 1 on success
+     */    
+    private function _checkForMissingParams($fields) {
+        try{
+            foreach($fields as $field) {
+                if(empty($this->params[$field])) {
+                    throw new Exception("Invalid value for $field.");
+                }
+            }
+        }
+        catch (Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+            exit();
+        }
+        return 1;
+    }
 
     /**
      * @return bool Input validity.
@@ -793,43 +793,43 @@ class API {
                 break;
             case "launchJHelioviewer":
                 break;
-				
+                
             case "buildMovie":
-				// Check to make sure all required parameters were passed in before proceeding.
-				$checkArray = array(
-					'startDate', 
-					'zoomLevel', 
-					'numFrames', 
-					'frameRate', 
-					'timeStep',
-					'layers',
-					'imageSize',
-					'filename'
-				);
-				$this->_checkForMissingParams($checkArray);
+                // Check to make sure all required parameters were passed in before proceeding.
+                $checkArray = array(
+                    'startDate', 
+                    'zoomLevel', 
+                    'numFrames', 
+                    'frameRate', 
+                    'timeStep',
+                    'layers',
+                    'imageSize',
+                    'filename'
+                );
+                $this->_checkForMissingParams($checkArray);
                 break;
-				
-			case "playMovie":
-				break;
+                
+            case "playMovie":
+                break;
             case "sendEmail":
                 break;
-				
-			case "takeScreenshot":
-				// Check to make sure all required parameters were passed in before proceeding.
-				$checkArray = array(
-					'obsDate', 
-					'zoomLevel', 
-					'layers',
-					'imageSize',
-					'filename'
-				);
-				$this->_checkForMissingParams($checkArray);
-				break;
-				
-			case "getJP2Dimensions":
-				break;
-			case "downloadFile":
-				break;
+                
+            case "takeScreenshot":
+                // Check to make sure all required parameters were passed in before proceeding.
+                $checkArray = array(
+                    'obsDate', 
+                    'zoomLevel', 
+                    'layers',
+                    'imageSize',
+                    'filename'
+                );
+                $this->_checkForMissingParams($checkArray);
+                break;
+                
+            case "getJP2Dimensions":
+                break;
+            case "downloadFile":
+                break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");        
         }
@@ -843,7 +843,7 @@ class API {
  * @param string $datestr ISO 8601 Date string, e.g. "2003-10-05T00:00:00Z"
  */
 function toUnixTimestamp($dateStr) {
-	date_default_timezone_set('UTC');
+    date_default_timezone_set('UTC');
     return strtotime($dateStr);
 }
 
@@ -852,7 +852,7 @@ function toUnixTimestamp($dateStr) {
  * @param int $timestamp The number of seconds since Jan 1, 1970 UTC
  */
 function parseUnixTimestamp($timestamp) {
-	date_default_timezone_set('UTC');
+    date_default_timezone_set('UTC');
     return new DateTime("@$timestamp");
 }
 

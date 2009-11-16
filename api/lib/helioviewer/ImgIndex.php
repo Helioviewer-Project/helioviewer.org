@@ -5,33 +5,33 @@
  * @author Keith Hughitt <keith.hughitt@nasa.gov>
  */
 class ImgIndex {
-	private $dbConnection;
+    private $dbConnection;
 
-	public function __construct($dbConnection) {
-		$this->dbConnection = $dbConnection;
-	}
+    public function __construct($dbConnection) {
+        $this->dbConnection = $dbConnection;
+    }
 
-	public function getClosestImage($date, $params) {
+    public function getClosestImage($date, $params) {
         // Fetch source id if not specified
         if (sizeOf($params) > 1)
             $id = $this->getSourceId($params["observatory"], $params["instrument"], $params["detector"], $params["measurement"]);
         else
             $id = $params;   
-		
+        
         $datestr = isoDateToMySQL($date);
-		
-   		$lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
-   		$rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
+        
+           $lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
+           $rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
 
         //echo "$lhs<br><br>";
         //echo "$rhs<br><br>";
         //exit();
 
-		$left = mysqli_fetch_array($this->dbConnection->query($lhs), MYSQL_ASSOC);
-		$right = mysqli_fetch_array($this->dbConnection->query($rhs), MYSQL_ASSOC);
+        $left = mysqli_fetch_array($this->dbConnection->query($lhs), MYSQL_ASSOC);
+        $right = mysqli_fetch_array($this->dbConnection->query($rhs), MYSQL_ASSOC);
         
         if (abs($date - $left["date"]) < abs($date - $right["date"]))
-    		$img = $left;
+            $img = $left;
         else
             $img = $right;
             
@@ -41,7 +41,7 @@ class ImgIndex {
         $filename = Config::JP2_DIR . $img["filepath"] . "/" .$img["filename"];
             
         return array_merge($img, $this->extractJP2MetaInfo($filename));
-	}
+    }
     
     /**
      * Given a filename and the name of the root node, extracts
@@ -148,7 +148,7 @@ class ImgIndex {
                 LEFT JOIN instrument ON datasource.instrumentId = instrument.id 
                 LEFT JOIN detector ON datasource.detectorId = detector.id 
                 LEFT JOIN measurement ON datasource.measurementId = measurement.id
-	        WHERE 
+            WHERE 
                 observatory.name='%s' AND
                 instrument.name='%s' AND
                 detector.name='%s' AND
@@ -159,7 +159,7 @@ class ImgIndex {
             mysqli_real_escape_string($this->dbConnection->link, $meas));
                 
         $result = $this->dbConnection->query($sql);
-    	$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
     
         return (int) ($result_array["id"]);
     }
@@ -229,43 +229,43 @@ class ImgIndex {
      * @param object $src
      * 
      */
-	public function getJP2FilePath($obsTime, $params) {
+    public function getJP2FilePath($obsTime, $params) {
         $img = $this->getClosestImage($obsTime, $params);
         return $img["filepath"] . "/" . $img["filename"];
-	}
+    }
 
-	/**
-	 * Queries the database to get the width and height of a jp2 image.
-	 * @return 
-	 */	
-	public function getJP2Dimensions ($obs, $inst, $det, $meas) {
-		$query = "SELECT width, height FROM image
-					LEFT JOIN measurement on measurementId = measurement.id
-					LEFT JOIN detector on detectorId = detector.id
-					LEFT JOIN instrument on instrumentId = instrument.id
-					LEFT JOIN observatory on observatoryId = observatory.id
-					WHERE measurement.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $meas)
-						 . "' AND detector.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $det)
-						 . "' AND instrument.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $inst)
-						 . "' AND observatory.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $obs)
-						 . "' LIMIT 0,1";
-		try {   
-	    	$result = $this->dbConnection->query($query);
-			if(!$result) {
-				throw new Exception("[getJP2Dimensions][ImgIndex.php] Error executing query: $query");
-			}
-			
-	    	$result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
-			if(sizeOf($result_array) < 1) {
-				throw new Exception("[getJP2Dimensions][ImgIndex.php] Error fetching array from query: $query");
-			}
-			return $result_array;
-		}
-		catch (Exception $e) {
-          		$msg = "[" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            	file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
-				echo $msg;			
-		}
-	}
+    /**
+     * Queries the database to get the width and height of a jp2 image.
+     * @return 
+     */    
+    public function getJP2Dimensions ($obs, $inst, $det, $meas) {
+        $query = "SELECT width, height FROM image
+                    LEFT JOIN measurement on measurementId = measurement.id
+                    LEFT JOIN detector on detectorId = detector.id
+                    LEFT JOIN instrument on instrumentId = instrument.id
+                    LEFT JOIN observatory on observatoryId = observatory.id
+                    WHERE measurement.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $meas)
+                         . "' AND detector.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $det)
+                         . "' AND instrument.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $inst)
+                         . "' AND observatory.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $obs)
+                         . "' LIMIT 0,1";
+        try {   
+            $result = $this->dbConnection->query($query);
+            if(!$result) {
+                throw new Exception("[getJP2Dimensions][ImgIndex.php] Error executing query: $query");
+            }
+            
+            $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+            if(sizeOf($result_array) < 1) {
+                throw new Exception("[getJP2Dimensions][ImgIndex.php] Error fetching array from query: $query");
+            }
+            return $result_array;
+        }
+        catch (Exception $e) {
+                  $msg = "[" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+                file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+                echo $msg;            
+        }
+    }
 }
 ?>
