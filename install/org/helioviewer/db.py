@@ -3,6 +3,11 @@ import sys, os
 
 def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
     ''' Sets up Helioviewer.org database schema '''
+    
+    # Work-around to enable unicode support in older versions of Python
+    reload(sys)
+    sys.setdefaultencoding('utf-8')    
+    
     if mysql:
         import MySQLdb
         adaptor = MySQLdb
