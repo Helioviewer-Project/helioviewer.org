@@ -3,11 +3,6 @@ import sys, os
 
 def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
     ''' Sets up Helioviewer.org database schema '''
-    
-    # Work-around to enable unicode support in older versions of Python
-    reload(sys)
-    sys.setdefaultencoding('utf-8')    
-    
     if mysql:
         import MySQLdb
         adaptor = MySQLdb
@@ -181,16 +176,28 @@ def createMeasurementTable(cursor):
       `units`       VARCHAR(20)  NOT NULL,
        PRIMARY KEY (`id`), INDEX (`id`)
     ) DEFAULT CHARSET=utf8;''')
-
+    
     cursor.execute('''
     INSERT INTO `measurement` VALUES
-      (0, '171', '171 Ångström extreme ultraviolet', 'Å'),
-        (1, '195', '195 Ångström extreme ultraviolet', 'Å'),
-        (2, '284', '284 Ångström extreme ultraviolet', 'Å'),
-        (3, '304', '304 Ångström extreme ultraviolet', 'Å'),
+      (0, '171', '171 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
+        (1, '195', '195 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
+        (2, '284', '284 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
+        (3, '304', '304 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
         (4, 'continuum', 'Intensitygram', 'DN'),
         (5, 'magnetogram', 'Magnetogram', 'Mx'),
         (6, 'white light', 'White Light', 'DN');''')
+
+# Note (11/17/2009) Disabling unicode in order to better support older versions of Python.
+#
+#    cursor.execute('''
+#    INSERT INTO `measurement` VALUES
+#      (0, '171', '171 Ångström extreme ultraviolet', 'Å'),
+#        (1, '195', '195 Ångström extreme ultraviolet', 'Å'),
+#        (2, '284', '284 Ångström extreme ultraviolet', 'Å'),
+#        (3, '304', '304 Ångström extreme ultraviolet', 'Å'),
+#        (4, 'continuum', 'Intensitygram', 'DN'),
+#        (5, 'magnetogram', 'Magnetogram', 'Mx'),
+#        (6, 'white light', 'White Light', 'DN');''')
     
 def createDateIndex(cursor):
     """ Indexes the table on the date field """
