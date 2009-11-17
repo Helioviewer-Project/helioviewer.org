@@ -4,7 +4,7 @@ from org.helioviewer.jp2 import *
 from org.helioviewer.db  import *
 from org.helioviewer.utils import *
 
-class HelioviewerConsoleInstaller():
+class HelioviewerConsoleInstaller:
 
     def __init__(self, options):
         self.options = options
@@ -50,7 +50,11 @@ class HelioviewerConsoleInstaller():
             if not admin: admin = "root"
 
             # MySQL?
-            mysql = True if dbtype is "mysql" else False
+            # mysql = True if dbtype is "mysql" else False
+            if dbtype is "mysql":
+                mysql = True
+            else:
+                mysql = False
             
             if not checkDBInfo(admin, adminpass, mysql):
                 print "Unable to connect to the database. Please check your login information and try again."
@@ -123,8 +127,8 @@ def loadTextInstaller(options):
     # Insert image information into database
     processJPEG2000Images(images, path, cursor, mysql)
     
-    print("Creating database index")        
-    createDateIndex(cursor)
+    #print("Creating database index")        
+    #createDateIndex(cursor)
     
     cursor.close()
 

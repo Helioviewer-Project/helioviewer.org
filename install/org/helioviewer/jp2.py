@@ -61,11 +61,13 @@ def getObservationDate(dom):
             # work-around (MDI sometimes has an "60" in seconds field)
             if datestring[17:19] == "60":
                 datestring = datestring[:17] + "30" + datestring[19:]
-            date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
+            #date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
+            date = parseISODate(datestring)
     else:
         d = getElementValue(dom, "DATE_OBS")
         datestring = "%sT%s000Z" % (d, t)
-        date = datetime.strptime(datestring, "%Y/%m/%dT%H:%M:%S.%fZ")
+        #date = datetime.strptime(datestring, "%Y/%m/%dT%H:%M:%S.%fZ")
+        date = parseISODate(datestring)
         
     return date        
     
@@ -153,6 +155,16 @@ def getJP2XMLBox(file, root):
     fp.close()
 
     return xml
+
+def parseISODate (d):
+    '''
+        In order to support older versions of Python (2.4+), the newer datetime.strptime
+        methods have been replaced with simpler string parsing methods for the time being.
+            Python 2.5 - strptime method added
+            Python 2.6 - %f format switch for microseconds added
+    '''
+    return datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]), int(d[20:26]))
+    
 
 def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
     ''' Processes a collection of JPEG2000 Images. '''
