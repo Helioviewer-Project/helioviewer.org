@@ -7,8 +7,8 @@
 class Config {
 
     // Version Information
-    const LAST_UPDATE        = '2009/11/16';
-    const BUILD_NUM          = 356;
+    const LAST_UPDATE        = '2009/11/18';
+    const BUILD_NUM          = 362;
 
     // Viewer
     const DEFAULT_OBS_TIME   = '2003-10-05T00:00:00Z';
@@ -28,7 +28,7 @@ class Config {
     const WEB_ROOT_DIR       = '/var/www/helioviewer';
     const TMP_ROOT_DIR       = '/var/www/helioviewer/tmp';
     const CACHE_DIR          = '/var/www/helioviewer/cache';
-    const JP2_DIR            = '/var/www/jp2/v20090917';
+    const JP2_DIR            = '/var/www/jp2/v0.5';
     const JP2_ROOT_DIR       = '/var/www/jp2';
     const KDU_LIBS_DIR       = '/usr/local/lib/kakadu';
     const EMPTY_TILE         = 'images/transparent_512.png';

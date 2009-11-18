@@ -205,7 +205,7 @@ span.ui-icon-hover {
 
 /* Shadowbox modifications */
 #sb-body, #sb-loading {
-	background: transparent url(/hv/images/blackGlass/transparentBG50.png);
+	background: transparent url(../images/blackGlass/transparentBG50.png);
     border-color: #262424;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
