@@ -17,8 +17,14 @@ def main(argv):
         from org.helioviewer.HelioviewerConsoleInstaller import loadTextInstaller
         loadTextInstaller(options)
     else:
-        from org.helioviewer.HelioviewerInstallWizard import loadGUIInstaller
-        loadGUIInstaller(argv, options.debug)
+        try:
+            import PyQt4
+        except:
+            from org.helioviewer.HelioviewerConsoleInstaller import loadTextInstaller
+            loadTextInstaller(options)
+        else:
+            from org.helioviewer.HelioviewerInstallWizard import loadGUIInstaller
+            loadGUIInstaller(argv, options.debug)
         
 def getArguments():
     ''' Gets command-line arguments and handles validation '''
