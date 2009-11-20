@@ -79,7 +79,7 @@ class SubFieldImage {
             // Extract region
             $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor);
 
-            $cmd = CONFIG::PATH_CMD;
+            $cmd = HV_PATH_CMD;
 
             // Generate grayscale image
             $toIntermediateCmd = $cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale ";
@@ -96,7 +96,7 @@ class SubFieldImage {
                 $this->setColorPalette($intermediate, $this->colorTable, $intermediate);                
    
             // IM command for transparency, padding, rescaling, etc.
-            $cmd = CONFIG::PATH_CMD . " convert $intermediate -background black ";
+            $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
             
             // Apply alpha mask for images with transparent components
             if ($this->hasAlphaMask())
@@ -113,7 +113,7 @@ class SubFieldImage {
 //            if ( (($this->subfieldRelWidth < $this->subfieldWidth) || ($this->subfieldRelHeight < $this->subfieldHeight)) 
 //                && (($extracted['width'] < round($this->subfieldRelWidth)) || ($extracted['height'] < round($this->subfieldRelHeight))) ) {
 //    
-//                $pad = CONFIG::PATH_CMD . " convert $intermediate -background black ";
+//                $pad = HV_PATH_CMD . " convert $intermediate -background black ";
 //                $pad .= $this->padImage($this->subfieldRelWidth, $this->subfieldRelHeight, $this->roi["left"], $this->roi["top"]) . " $intermediate";
 //                
 //                try {
@@ -123,7 +123,7 @@ class SubFieldImage {
 //                }
 //                catch(Exception $e) {
 //                    $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-//                    file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+//                    file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
 //                    echo $e->getMessage();
 //                }
 //            }
@@ -160,7 +160,7 @@ class SubFieldImage {
             
         } catch(Exception $e) {
             $error = "[buildImage][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $e->getMessage();
                         
             //Clean-up and exit
@@ -341,11 +341,11 @@ class SubFieldImage {
     protected function setImageParams() {
         $args = " -quality ";
         if ($this->format == "png") {
-            $args .= Config::PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . Config::NUM_COLORS;
+            $args .= HV_PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . HV_NUM_COLORS;
         } else {
-            $args .= Config::JPEG_COMPRESSION_QUALITY . " -interlace line";
+            $args .= HV_JPEG_COMPRESSION_QUALITY . " -interlace line";
         }
-        $args .= " -depth " . Config::BIT_DEPTH . " ";
+        $args .= " -depth " . HV_BIT_DEPTH . " ";
         
         return $args;
     }
@@ -401,7 +401,7 @@ class SubFieldImage {
                 
         } catch(Exception $e) {
             $error = "[gd][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $e->getMessage();
 
             die();
@@ -416,9 +416,9 @@ class SubFieldImage {
         // Enable interlacing
         imageinterlace($gd, true);
         
-        //$this->format == "jpg" ? imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
+        //$this->format == "jpg" ? imagejpeg($gd, $output, HV_JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output); 
         //if ($this->format == "jpg")
-        //    imagejpeg($gd, $output, Config::JPEG_COMPRESSION_QUALITY);
+        //    imagejpeg($gd, $output, HV_JPEG_COMPRESSION_QUALITY);
         //else
         imagepng($gd, $output);
 
@@ -460,7 +460,7 @@ class SubFieldImage {
             }
         } catch (Exception $e) {
             $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
         }
     }
     
@@ -471,7 +471,7 @@ class SubFieldImage {
      */
     private function getImageDimensions($filename) {
         try {
-            $cmd = CONFIG::PATH_CMD . " identify $filename | grep -o \" [0-9]*x[0-9]* \"";
+            $cmd = HV_PATH_CMD . " identify $filename | grep -o \" [0-9]*x[0-9]* \"";
             
             $dimensions = split("x", trim(exec($cmd)));
             if (sizeof($dimensions) < 2)
@@ -484,7 +484,7 @@ class SubFieldImage {
             }
         } catch (Exception $e) {
             $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
             $this->abort($filename);
         }
     }

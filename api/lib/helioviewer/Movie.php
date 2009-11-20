@@ -49,13 +49,15 @@ class Movie
         // Each layer information array has values for "name", "xRange", "yRange", "hcOffset", and "opacityValue"
         $this->layers = $layers;
         
+        // working directory
+        $this->tmpdir = substr(getcwd(), 0, -3) + "tmp"; 
+        
         // startTime is a Unix timestamp in seconds.
         $this->startTime = $startTime;
         $this->zoomLevel = $zoomLevel;
         $this->numFrames = $numFrames;
         $this->frameRate = $frameRate;
         $this->quality     = $quality;
-        
         $this->options      = $options;
         
         // timeStep is in seconds
@@ -103,8 +105,8 @@ class Movie
         // Make a temporary directory to store the movie in.
         $now = time();
         $movieName = "Helioviewer-Movie-" . $this->filename;
-        $tmpdir = Config::TMP_ROOT_DIR . "/$now/";
-        $tmpurl = Config::TMP_ROOT_URL . "/$now/$movieName." . $this->filetype;
+        $tmpdir = HV_TMP_ROOT_DIR . "/$now/";
+        $tmpurl = HV_TMP_ROOT_URL . "/$now/$movieName." . $this->filetype;
         mkdir($tmpdir);
         chmod($tmpdir, 0777);
 
@@ -183,7 +185,7 @@ class Movie
             $heightDiff = ($height - $imgHeight) / 2;
             
             if(/*$widthDiff > 0 || */ $heightDiff > 0) {
-                exec(Config::PATH_CMD . " && convert -bordercolor black -border " . /*$widthDiff*/ 0 . "x" . $heightDiff . " " . $image . " " . $image);
+                exec(HV_PATH_CMD . " && convert -bordercolor black -border " . /*$widthDiff*/ 0 . "x" . $heightDiff . " " . $image . " " . $image);
             }
         }
         
@@ -196,7 +198,7 @@ class Movie
         if (!$ok) {
             // if there was an error then get it
             $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $error;
             die();
         }
@@ -210,7 +212,7 @@ class Movie
         if (!$ok) {
             //         if there was an error then get it
             $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $error;
             die();
         }
@@ -222,7 +224,7 @@ class Movie
         if ($movie !== PHPVideoToolkit::RESULT_OK) {
             // if there was an error then get it
             $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $error;
             die();
         }
@@ -240,14 +242,15 @@ class Movie
             $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
     
         // Add a watermark
-//        $toolkit->addWatermark(Config::WATERMARK_URL, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
+        //$watermark = HV_ROOT_DIR . "/images/logos/watermark_small_gs.png"; 
+//        $toolkit->addWatermark($watermark, PHPVIDEOTOOLKIT_FFMPEG_IMLIB2_VHOOK, $this->watermarkOptions);
         
         $ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
             
         if (!$ok) {
             // if there was an error then get it
             $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $error;
             die();
         }
@@ -258,7 +261,7 @@ class Movie
         if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
             //         if there was an error then get it
             $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $error;
             die();
         }
@@ -339,7 +342,7 @@ class Movie
                 }
                 catch (Exception $e) {
                     $error = "[getImageTimestamps][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-                    file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+                    file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
                     print $error;
                     die();
                 }
@@ -359,8 +362,8 @@ class Movie
         // Make a temporary directory
         $now = time();
         $movieName = "Helioviewer-Quick-Movie-".$this->startTime;
-        $tmpdir = Config::TMP_ROOT_DIR."/$now/";
-        $tmpurl = Config::TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
+        $tmpdir = HV_TMP_ROOT_DIR."/$now/";
+        $tmpurl = HV_TMP_ROOT_URL."/$now/$movieName.".$this->filetype;
         mkdir($tmpdir);
 
         // Create an array of the timestamps to use for each layer

@@ -10,9 +10,6 @@
  *        output to the log in case of failure.
  */
 class JP2Image {
-    private $kdu_expand_cmd = CONFIG::KDU_EXPAND;
-    private $kdu_lib_path   = CONFIG::KDU_LIBS_DIR;
-
     private $file;   //$jp2;
     private $width;  //$jp2Width;
     private $height; //$jp2Height;
@@ -52,7 +49,7 @@ class JP2Image {
      * @TODO: Should precision of -reduce be limited in same manner as region strings? (e.g. MDI @ zoom-level 9)
      */
     public function extractRegion($outputFile, $roi, $scaleFactor = 0) {
-        $cmd = "$this->kdu_expand_cmd -i $this->file -o $outputFile ";
+        $cmd = HV_KDU_EXPAND . " -i $this->file -o $outputFile ";
          
         // Case 1: JP2 image resolution = desired resolution
         // Nothing special to do...
@@ -72,7 +69,7 @@ class JP2Image {
 
         // Execute the command
         try {
-            $line = exec(CONFIG::PATH_CMD . $cmd, $out, $ret);
+            $line = exec(HV_PATH_CMD . $cmd, $out, $ret);
             if (($ret != 0) || (sizeof($out) > 5)) {
                 var_dump($out);
                 throw new Exception("COMMAND: $cmd\n\t $line");
@@ -80,7 +77,7 @@ class JP2Image {
                 
         } catch(Exception $e) {
             $error = "[kdu][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $error;
         }
     }

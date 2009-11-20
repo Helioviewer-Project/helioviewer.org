@@ -20,10 +20,11 @@ class API {
     public function __construct ($params, $format) {
         require_once('DbConnection.php');
  
-        $this->params = $params;
-        $this->format = $format;
+        $this->params  = $params;
+        $this->format  = $format;
 
-        require_once('../settings/Config.php');
+        require_once('Config.php');
+        new Config("../settings/Config.ini");
 
         try {
             if (!$this->validate($params["action"]))
@@ -83,7 +84,7 @@ class API {
         } else {
             $source = $this->params['sourceId'];
             $date   = $this->params['date'];
-            $url =  Config::TILE_SERVER_2 . "?action=getClosestImage&sourceId=$source&date=$date&server=1";
+            $url =  HV_TILE_SERVER_2 . "?action=getClosestImage&sourceId=$source&date=$date&server=1";
             
             header('Content-Type: application/json');
             echo file_get_contents($url);
@@ -212,26 +213,26 @@ class API {
             $filepath = $imgIndex->getJP2FilePath($date, $parameters);
         }
 
-        $uri = Config::JP2_DIR . $filepath;
+        $uri = HV_JP2_DIR . $filepath;
         
         // http url (relative path)getUTC
         if ((isset($this->params['getRelativeURL'])) && ($this->params['getRelativeURL'] === "true")) {
-            $jp2RootRegex = "/" . preg_replace("/\//", "\/", Config::JP2_DIR) . "/";
+            $jp2RootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
             $url = preg_replace($jp2RootRegex, "", $uri);
             echo $url;
         }
         
         // http url (full path)
         else if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
-            $url = preg_replace($webRootRegex, Config::WEB_ROOT_URL, $uri);
+            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
+            $url = preg_replace($webRootRegex, HV_WEB_ROOT_URL, $uri);
             echo $url;
         }
         
         // jpip url
         else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
-            $jpip = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $uri), 4);
+            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
+            $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_WEB_ROOT_URL, $uri), 4);
             echo $jpip;
         }
         
@@ -277,7 +278,7 @@ class API {
         $measurement = $this->params['measurement'];
 
         // Create a temporary directory to store image-series (TODO: Move this + other directory creation to installation script)
-        $tmpdir = Config::TMP_ROOT_DIR . "/movies/";
+        $tmpdir = HV_TMP_ROOT_DIR . "/movies/";
         if (!file_exists($tmpdir)) {
             mkdir($tmpdir);
             chmod($tmpdir, 0777);
@@ -290,7 +291,7 @@ class API {
         $filepath = "$tmpdir" . $filename;
 
         // URL
-        $url = Config::TMP_ROOT_URL . "/movies/" . $filename;
+        $url = HV_TMP_ROOT_URL . "/movies/" . $filename;
 
         // If the file doesn't exist already, create it
         if (!file_exists($filepath))
@@ -298,8 +299,8 @@ class API {
 
         // Output the file/jpip URL
         if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", Config::WEB_ROOT_DIR) . "/";
-            $mj2 = "jpip" . substr(preg_replace($webRootRegex, Config::WEB_ROOT_URL, $url), 4);
+            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
+            $mj2 = "jpip" . substr(preg_replace($webRootRegex, HV_WEB_ROOT_URL, $url), 4);
             echo $mj2;
         } else {
             echo $url;
@@ -329,7 +330,7 @@ class API {
 
         // Determine number of frames to grab
         $timeInSecs = $endTime - $startTime;
-        $numFrames  = min(Config::MAX_MOVIE_FRAMES, ceil($timeInSecs / $cadence));
+        $numFrames  = min(HV_MAX_MOVIE_FRAMES, ceil($timeInSecs / $cadence));
         
         // Timer
         $time = $startTime;
@@ -339,7 +340,7 @@ class API {
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
             $isoDate = toISOString(parseUnixTimestamp($time));
-            $jp2 = Config::JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src);
+            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src);
             array_push($images, $jp2);
             $time += $cadence;
         }
@@ -348,7 +349,7 @@ class API {
         $images = array_unique($images);
 
         // Append filepaths to kdu_merge command
-        $cmd = Config::KDU_MERGE_BIN . " -i ";
+        $cmd = HV_KDU_MERGE_BIN . " -i ";
         foreach($images as $jp2) {
             $cmd .= "$jp2,";
         }
@@ -363,8 +364,7 @@ class API {
             $cmd .= " -mj2_tracks P:0-@25";
     
         // Execute kdu_merge command
-        //echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd);
-        exec('export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:' . Config::KDU_LIBS_DIR . "; " . escapeshellcmd($cmd), $output, $return);
+        exec(HV_PATH_CMD . " " . escapeshellcmd($cmd), $output, $return);
 
     }
     
@@ -373,10 +373,10 @@ class API {
      * NOTE: Add option to specify XML vs. JSON... FITS vs. Entire header?
      */
     private function _getJP2Header () {
-        $filepath = Config::JP2_DIR . $this->params["file"];
+        $filepath = HV_JP2_DIR . $this->params["file"];
 
         // Query header information using Exiftool
-        $cmd = Config::EXIF_TOOL . " $filepath | grep Fits";
+        $cmd = HV_EXIF_TOOL . " $filepath | grep Fits";
         exec($cmd, $out, $ret);
 
         $fits = array();
@@ -407,11 +407,11 @@ class API {
     private function _getEventCatalogs () {
         if ($this->format == "text") {
             header("Content-type: text/plain");
-            $url = Config::EVENT_SERVER_URL . $_SERVER["QUERY_STRING"] . "&debug=1";
+            $url = HV_EVENT_SERVER_URL . $_SERVER["QUERY_STRING"] . "&debug=1";
         }
         else {
             header("Content-type: application/json");
-            $url = Config::EVENT_SERVER_URL . "action=getEventCatalogs";
+            $url = HV_EVENT_SERVER_URL . "action=getEventCatalogs";
         }
         echo file_get_contents($url);        
         return 1;
@@ -423,11 +423,11 @@ class API {
     private function _getEvents () {
         if ($this->format == "text") {
             header("Content-type: text/plain");
-            $url = Config::EVENT_SERVER_URL . $_SERVER["QUERY_STRING"] . "&debug=1";
+            $url = HV_EVENT_SERVER_URL . $_SERVER["QUERY_STRING"] . "&debug=1";
         }
         else {
             header("Content-type: application/json");
-            $url = Config::EVENT_SERVER_URL . "action=getEvents&date=" . $this->params["date"] . "&windowSize=" . $this->params["windowSize"] . "&catalogs=" . $this->params["catalogs"];
+            $url = HV_EVENT_SERVER_URL . "action=getEvents&date=" . $this->params["date"] . "&windowSize=" . $this->params["windowSize"] . "&catalogs=" . $this->params["catalogs"];
         }
         echo file_get_contents($url);
         return 1;
@@ -494,8 +494,8 @@ class API {
             }
 
             //Limit number of frames
-            if (($numFrames < 10) || ($numFrames > Config::MAX_MOVIE_FRAMES)) {
-                throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . Config::MAX_MOVIE_FRAMES . ".");
+            if (($numFrames < 10) || ($numFrames > HV_MAX_MOVIE_FRAMES)) {
+                throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . HV_MAX_MOVIE_FRAMES . ".");
             }
 
             $layers = $this->_formatLayerStrings($layerStrings);
@@ -566,7 +566,7 @@ class API {
             else {
                 header('Content-type: application/json');
                 // Replace '/var/www/helioviewer', or wherever the directory is, with 'http://localhost/helioviewer' so it can be displayed.
-                echo json_encode(str_replace(CONFIG::WEB_ROOT_DIR, CONFIG::WEB_ROOT_URL, $composite));
+                echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $composite));
             }
         }
         catch(Exception $e) {
@@ -650,7 +650,7 @@ class API {
         // Convert web url into directory url so stat() works.
         // Need to use stat() instead of filesize() because filesize fails for every file on Linux
         // due to security permissions with apache. To get the file size, do $stat['size']
-        $url = str_replace(Config::WEB_ROOT_URL, Config::WEB_ROOT_DIR, $url);
+        $url = str_replace(HV_WEB_ROOT_URL, HV_ROOT_DIR, $url);
         $stat = stat($url);
 
         if(strlen($url) > 1) {

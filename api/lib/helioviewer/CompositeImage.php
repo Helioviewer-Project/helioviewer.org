@@ -42,13 +42,13 @@ abstract class CompositeImage {
         }
 
         // Directory where all intermediate images with opacity levels of < 100 are created and stored        
-        $this->transImageDir = CONFIG::CACHE_DIR . "transparent_images/";
+        $this->transImageDir = HV_CACHE_DIR . "transparent_images/";
         if(!file_exists($this->transImageDir)) {
             mkdir($this->transImageDir);
             chmod($this->transImageDir, 0777);
         }            
         
-        $this->compositeImageDir = CONFIG::CACHE_DIR . "composite_images/";
+        $this->compositeImageDir = HV_CACHE_DIR . "composite_images/";
         if(!file_exists($this->compositeImageDir)) {
             mkdir($this->compositeImageDir);
             chmod($this->compositeImageDir, 0777);
@@ -95,7 +95,7 @@ abstract class CompositeImage {
         }    
         catch(Exception $e) {
             $error = "[compileImages][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $error;
             die();
         }
@@ -117,7 +117,7 @@ abstract class CompositeImage {
             // Otherwise, the image is a screenshot and needs to be converted into a png.
         else {
             $builtImages[0] = $this->watermark($builtImages[0]);
-            $cmd = CONFIG::PATH_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
+            $cmd = HV_PATH_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
             exec($cmd, $out, $ret);
 
             $this->composite = $this->cacheFileDir . $this->id . ".png";
@@ -160,20 +160,20 @@ abstract class CompositeImage {
      * @param object $image -- Filepath to the image to be watermarked
      */
     private function watermark($image) {
-        $watermark = CONFIG::WATERMARK_URL;
+        $watermark = "../images/logos/watermark_small_gs.png";
 
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if($this->imageSize['width'] / 300 < 2) {
             $watermark = "../images/logos/watermark_circle_small.png";
             // Scale the watermark to half the size of the image, and covert it to a percentage.
             $scale = ($this->imageSize['width'] * 100 / 2) / 300;
-            $resize = Config::PATH_CMD . " && convert -scale " . $scale . "% " . $watermark . " " . $this->compositeImageDir . "watermark_scaled.png";
+            $resize = HV_PATH_CMD . " && convert -scale " . $scale . "% " . $watermark . " " . $this->compositeImageDir . "watermark_scaled.png";
             
             exec($resize);
             $watermark = $this->compositeImageDir . "watermark_scaled.png";
         }
         
-        exec(CONFIG::PATH_CMD . " && composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image, $out, $ret);
+        exec(HV_PATH_CMD . " && composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image, $out, $ret);
 
         // If the image is too small, text won't fit. Don't put a timestamp on it. 235x235 is very small
         // and probably will not be requested anyway.
@@ -181,7 +181,7 @@ abstract class CompositeImage {
             return $image;
         }
         
-        $cmd = CONFIG::PATH_CMD . " && convert " . $image . " -gravity SouthWest"; 
+        $cmd = HV_PATH_CMD . " && convert " . $image . " -gravity SouthWest"; 
         $nameCmd = "";
         $timeCmd = "";
         
@@ -239,7 +239,7 @@ abstract class CompositeImage {
         else
             $tmpImg = $this->cacheFileDir . $this->id . ".png";
             
-        $cmd = CONFIG::PATH_CMD . " && composite -gravity Center";
+        $cmd = HV_PATH_CMD . " && composite -gravity Center";
         
         // It is assumed that the array $images is already in the correct order for opacity groups,
         // since it was sorted above.
@@ -263,7 +263,7 @@ abstract class CompositeImage {
 //                    $img = new Imagick($tmpOpImg);
 //                    $img->setImageOpacity($op/100);
 
-                    $opacityCmd = CONFIG::PATH_CMD . " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
+                    $opacityCmd = HV_PATH_CMD . " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
                     exec($opacityCmd);
                 }
                 
@@ -297,14 +297,14 @@ abstract class CompositeImage {
                 throw new Exception("Error executing command $cmd.");
             }
 
-            exec(CONFIG::PATH_CMD . " && convert $tmpImg -background black -alpha off $tmpImg", $out, $ret);
+            exec(HV_PATH_CMD . " && convert $tmpImg -background black -alpha off $tmpImg", $out, $ret);
             if($ret != 0) {
                 throw new Exception("Error turning alpha channel off on $tmpImg.");
             }
         }
         catch(Exception $e) {
             $error = "[buildComposite][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
             print $e->getMessage();
             die();
         }
@@ -400,7 +400,7 @@ abstract class CompositeImage {
         $det      = $uriData[6];
         $meas      = $uriData[7];
     
-        $path  = CONFIG::JP2_DIR . implode("/", array($year, $month, $day));
+        $path  = HV_JP2_DIR . implode("/", array($year, $month, $day));
         $path .= "/$obs/$inst/$det/$meas/";
         $path .= $uri;
 

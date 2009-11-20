@@ -10,8 +10,8 @@ class HelioviewerTile extends Tile {
     private $instrument;
     private $detector;
     private $measurement;
-    private $cacheDir = CONFIG::CACHE_DIR;
-    private $noImage  = CONFIG::EMPTY_TILE;
+    private $cacheDir = HV_CACHE_DIR;
+    private $noImage  = HV_EMPTY_TILE;
         
      /**
      * constructor
@@ -23,11 +23,11 @@ class HelioviewerTile extends Tile {
         $this->measurement = $meas;
         $this->zoomLevel   = $zoom;
         
-        $jp2  = Config::JP2_DIR . $uri;
+        $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->getTileFilepath($jp2, $x, $y, $format);
 
        // If tile already exists in cache, use it
-        if (Config::ENABLE_CACHE && $display) {
+        if (HV_ENABLE_CACHE && $display) {
             if (file_exists($tile)) {
                 $this->displayCachedTile($tile);
                 exit();
@@ -104,8 +104,8 @@ class HelioviewerTile extends Tile {
      * @description Translates a given zoom-level into an image plate scale.
      */
     private function getImageScale($zoomLevel) {
-        $zoomOffset = $zoomLevel - Config::BASE_ZOOM_LEVEL;
-        return Config::BASE_IMAGE_SCALE * (pow(2, $zoomOffset));
+        $zoomOffset = $zoomLevel - HV_BASE_ZOOM_LEVEL;
+        return HV_BASE_IMAGE_SCALE * (pow(2, $zoomOffset));
     }
         
     /**
@@ -117,14 +117,16 @@ class HelioviewerTile extends Tile {
      * Note (2009/09/15): Would it make sense to return color table when initially looking up image, and pass to tile requests?
      */
     private function getColorTable() {
+        //$rootdir = substr(getcwd(), 0, -4);
+        
         if ($this->detector == "EIT") {
-            return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_EIT_" . $this->measurement . ".png";
+            return HV_ROOT_DIR . "/images/color-tables/ctable_EIT_" . $this->measurement . ".png";
         }
         else if ($this->detector == "C2") {
-            return Config::WEB_ROOT_DIR .  "/images/color-tables/ctable_idl_3.png";
+            return HV_ROOT_DIR .  "/images/color-tables/ctable_idl_3.png";
         }
         else if ($this->detector == "C3") {
-            return Config::WEB_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
+            return HV_ROOT_DIR . "/images/color-tables/ctable_idl_1.png";
         }
         else
             return false;       
@@ -163,7 +165,7 @@ class HelioviewerTile extends Tile {
             }
         } catch (Exception $e) {
             $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
         }
     }
 

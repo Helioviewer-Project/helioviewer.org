@@ -29,7 +29,7 @@ class MovieFrame extends CompositeImage {
         $this->timestamps     = $timestamps;
         $this->quality        = $quality;
         
-        $tmpDir = CONFIG::CACHE_DIR . "movies/";
+        $tmpDir = HV_CACHE_DIR . "movies/";
 
         parent::__construct($zoomLevel, $options, $tmpDir);
 

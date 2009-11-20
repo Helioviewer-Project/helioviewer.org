@@ -5,10 +5,10 @@
  * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
  */
 class DbConnection {
-    private $host     = Config::DB_HOST;
-    private $dbname   = Config::DB_NAME;
-    private $user     = Config::DB_USER;
-    private $password = Config::DB_PASS;
+    private $host     = HV_DB_HOST;
+    private $dbname   = HV_DB_NAME;
+    private $user     = HV_DB_USER;
+    private $password = HV_DB_PASS;
     
     /**
      * @param string [optional] Database name

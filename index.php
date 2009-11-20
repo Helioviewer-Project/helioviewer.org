@@ -1,14 +1,15 @@
 <?php 
-    require_once('settings/Config.php');
+    require_once('api/Config.php');
+    new Config("settings/Config.ini");
     error_reporting(E_ALL | E_STRICT);
-    $errorLog = CONFIG::ERROR_LOG;
+    $errorLog = HV_ERROR_LOG;
     if(!file_exists($errorLog))
         touch($errorLog);
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <?php printf("<!-- Helioviewer rev. %s, %s-->\n", Config::BUILD_NUM, Config::LAST_UPDATE);?>
+        <?php printf("<!-- Helioviewer rev. %s, %s-->\n", HV_BUILD_NUM, HV_LAST_UPDATE);?>
         <title>Helioviewer - Solar and heliospheric image visualization tool</title>
         <link rel="shortcut icon" href="favicon.ico" />
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -148,25 +149,25 @@
 
                     // Default settings
                     $settings = array(
-                        'version'           => Config::BUILD_NUM,
-                        'defaultZoomLevel'  => Config::DEFAULT_ZOOM_LEVEL,
-                        'defaultObsTime'    => Config::DEFAULT_OBS_TIME,
-                        'minZoomLevel'      => Config::MIN_ZOOM_LEVEL,
-                        'maxZoomLevel'      => Config::MAX_ZOOM_LEVEL,
-                        'baseZoom'          => Config::BASE_ZOOM_LEVEL,
-                        'baseScale'         => Config::BASE_IMAGE_SCALE,
-                        'prefetchSize'      => Config::PREFETCH_SIZE,
-                        'timeIncrementSecs' => Config::DEFAULT_TIMESTEP,
-                        'tileServer1'       => Config::TILE_SERVER_1,
-                        'tileServer2'       => Config::TILE_SERVER_2,
-                        'backupServer'      => Config::BACKUP_SERVER,
-                        'backupEnabled'     => Config::BACKUP_ENABLED,
-                        'distributed'       => Config::DISTRIBUTED_TILING_ENABLED
+                        'version'           => HV_BUILD_NUM,
+                        'defaultZoomLevel'  => HV_DEFAULT_ZOOM_LEVEL,
+                        'defaultObsTime'    => HV_DEFAULT_OBS_TIME,
+                        'minZoomLevel'      => HV_MIN_ZOOM_LEVEL,
+                        'maxZoomLevel'      => HV_MAX_ZOOM_LEVEL,
+                        'baseZoom'          => HV_BASE_ZOOM_LEVEL,
+                        'baseScale'         => HV_BASE_IMAGE_SCALE,
+                        'prefetchSize'      => HV_PREFETCH_SIZE,
+                        'timeIncrementSecs' => HV_DEFAULT_TIMESTEP,
+                        'tileServer1'       => HV_TILE_SERVER_1,
+                        'tileServer2'       => HV_TILE_SERVER_2,
+                        'backupServer'      => HV_BACKUP_SERVER,
+                        'backupEnabled'     => HV_BACKUP_ENABLED,
+                        'distributed'       => HV_DISTRIBUTED_TILING_ENABLED
                     );
 
                     echo "var defaults = " . json_encode($settings) . ";\n";
                     echo "\t\t\t\t";
-                    printf ("var api = '%s';\n", Config::API_BASE_URL);
+                    printf ("var api = '%s';\n", HV_API_BASE_URL);
                 ?>
                 var helioviewer = new Helioviewer('#helioviewer-viewport', api, view, defaults );
             });

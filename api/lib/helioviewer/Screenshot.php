@@ -29,7 +29,7 @@ class Screenshot extends CompositeImage {
         $this->timestamps     = array();
         $this->quality         = $quality;
         
-        $tmpDir = CONFIG::TMP_ROOT_DIR . "/screenshots/";
+        $tmpDir = HV_TMP_ROOT_DIR . "/screenshots/";
 
         parent::__construct($zoomLevel, $options, $tmpDir);
         

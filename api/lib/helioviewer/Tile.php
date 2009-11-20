@@ -102,7 +102,7 @@ abstract class Tile extends SubFieldImage {
         }
         catch(Exception $e) {
            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-           file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+           file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
            echo $msg;
         }
         

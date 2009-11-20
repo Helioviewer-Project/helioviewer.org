@@ -38,7 +38,7 @@ class ImgIndex {
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
 
-        $filename = Config::JP2_DIR . $img["filepath"] . "/" .$img["filename"];
+        $filename = HV_JP2_DIR . $img["filepath"] . "/" .$img["filename"];
             
         return array_merge($img, $this->extractJP2MetaInfo($filename));
     }
@@ -263,7 +263,7 @@ class ImgIndex {
         }
         catch (Exception $e) {
                   $msg = "[" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-                file_put_contents(Config::ERROR_LOG, $msg, FILE_APPEND);
+                file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
                 echo $msg;            
         }
     }
