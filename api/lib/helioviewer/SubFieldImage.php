@@ -78,7 +78,7 @@ class SubFieldImage {
             
             // Extract region
             $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor);
-
+            
             $cmd = HV_PATH_CMD;
 
             // Generate grayscale image
@@ -88,8 +88,8 @@ class SubFieldImage {
             if (fmod($this->scaleFactor, 1) != 0)
                 $toIntermediateCmd .= "-resize " . $this->subfieldRelWidth . "x" . $this->subfieldRelHeight . "! ";
                 
-            //die($toIntermediateCmd . $intermediate);
             exec($toIntermediateCmd . $intermediate);
+            //die($toIntermediateCmd . $intermediate);
                 
             //Apply color-lookup table                
             if ($this->colorTable)

@@ -80,7 +80,7 @@ class HelioviewerTile extends Tile {
             $filepath .= $field . "/";
             
             if (!file_exists($filepath)) {
-                echo $filepath . "<br>";
+                //echo $filepath . "<br>";
                 mkdir($filepath);
                 chmod($filepath, 0777);
             }

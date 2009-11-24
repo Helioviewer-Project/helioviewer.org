@@ -50,6 +50,11 @@ class ImgIndex {
      * @param object $root Name of the XMLBox root node (if known)
      */
     public function getJP2XMLBox ($filename, $root) {
+        if (!file_exists($filename)) {
+            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t Unable to extract XMLbox for $filename: file does not exist!\n\n";
+            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
+        }
+        
         $fp = fopen($filename, "rb");
         
         $xml  = "";

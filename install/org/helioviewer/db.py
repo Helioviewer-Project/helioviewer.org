@@ -14,9 +14,9 @@ def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
 
     # connect to helioviewer database
     if mysql:
-        db = MySQLdb.connect(host="localhost", db="helioviewer", user=dbuser, passwd=dbpass)
+        db = MySQLdb.connect(use_unicode=True, charset = "utf8", host="localhost", db="helioviewer", user=dbuser, passwd=dbpass)
     else:
-        db = pgdb.connect(database="helioviewer", user=dbuser, password=dbpass)
+        db = pgdb.connect(use_unicode=True, charset = "utf8", database="helioviewer", user=dbuser, password=dbpass)
     cursor = db.cursor()
 
     createSourceTable(cursor)
@@ -176,28 +176,16 @@ def createMeasurementTable(cursor):
       `units`       VARCHAR(20)  NOT NULL,
        PRIMARY KEY (`id`), INDEX (`id`)
     ) DEFAULT CHARSET=utf8;''')
-    
-    cursor.execute('''
+
+    cursor.execute(u'''
     INSERT INTO `measurement` VALUES
-      (0, '171', '171 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
-        (1, '195', '195 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
-        (2, '284', '284 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
-        (3, '304', '304 &#8491;ngstr&#246;m extreme ultraviolet', '&#8491;'),
+      (0, '171', '171 Ångström extreme ultraviolet', 'Å'),
+        (1, '195', '195 Ångström extreme ultraviolet', 'Å'),
+        (2, '284', '284 Ångström extreme ultraviolet', 'Å'),
+        (3, '304', '304 Ångström extreme ultraviolet', 'Å'),
         (4, 'continuum', 'Intensitygram', 'DN'),
         (5, 'magnetogram', 'Magnetogram', 'Mx'),
         (6, 'white light', 'White Light', 'DN');''')
-
-# Note (11/17/2009) Disabling unicode in order to better support older versions of Python.
-#
-#    cursor.execute('''
-#    INSERT INTO `measurement` VALUES
-#      (0, '171', '171 Ångström extreme ultraviolet', 'Å'),
-#        (1, '195', '195 Ångström extreme ultraviolet', 'Å'),
-#        (2, '284', '284 Ångström extreme ultraviolet', 'Å'),
-#        (3, '304', '304 Ångström extreme ultraviolet', 'Å'),
-#        (4, 'continuum', 'Intensitygram', 'DN'),
-#        (5, 'magnetogram', 'Magnetogram', 'Mx'),
-#        (6, 'white light', 'White Light', 'DN');''')
     
 def createDateIndex(cursor):
     """ Indexes the table on the date field """
