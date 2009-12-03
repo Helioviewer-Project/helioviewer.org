@@ -162,7 +162,8 @@
                         'tileServer2'       => HV_TILE_SERVER_2,
                         'backupServer'      => HV_BACKUP_SERVER,
                         'backupEnabled'     => HV_BACKUP_ENABLED,
-                        'distributed'       => HV_DISTRIBUTED_TILING_ENABLED
+                        'distributed'       => HV_DISTRIBUTED_TILING_ENABLED,
+                        'rootURL'           => HV_WEB_ROOT_URL
                     );
 
                     echo "var defaults = " . json_encode($settings) . ";\n";
