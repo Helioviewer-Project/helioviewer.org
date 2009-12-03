@@ -82,10 +82,13 @@ class ImgIndex {
         $dom->loadXML($this->getJP2XMLBox($img, "fits"));
         
         $dimensions = $this->getImageDimensions($dom);
+        $center     = $this->getImageCenter($dom);
         
         $meta = array(
             "width"  => (int) $dimensions[0],
             "height" => (int) $dimensions[1],
+            "y"      => (float) $center[0],
+            "x"      => (float) $center[1],
             "scale"  => (float) $this->getImagePlateScale($dom)
         );
         
@@ -134,6 +137,21 @@ class ImgIndex {
             echo 'Unable to locate image dimensions in header tags!';
         }
         return $scale;        
+    }
+    
+    /**
+     * Returns the coordinates for the image center
+     * @param object $dom
+     * @return 
+     */
+    public function getImageCenter($dom) {
+        try {
+            $x = $this->getElementValue($dom, "CRPIX1");
+            $y = $this->getElementValue($dom, "CRPIX2");
+        } catch (Exception $e) {
+            echo 'Unable to locate image center in header tags!';
+        }
+        return array($x, $y);
     }
 
     /**
