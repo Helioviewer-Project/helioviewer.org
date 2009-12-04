@@ -46,8 +46,8 @@ class API {
     private function _getTile () {
         require_once("HelioviewerTile.php");
         $tile = new HelioviewerTile($this->params['uri'], $this->params['x'], $this->params['y'], $this->params['zoom'], $this->params['ts'],
-                         $this->params['jp2Width'], $this->params['jp2Height'], $this->params['jp2Scale'], $this->params['format'],
-                         $this->params['obs'], $this->params['inst'], $this->params['det'], $this->params['meas']);
+                         $this->params['jp2Width'], $this->params['jp2Height'], $this->params['jp2Scale'], $this->params['offsetX'], $this->params['offsetY'],
+                         $this->params['format'],  $this->params['obs'], $this->params['inst'], $this->params['det'], $this->params['meas']);
 
         return 1;
     }

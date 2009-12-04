@@ -16,12 +16,14 @@ class HelioviewerTile extends Tile {
      /**
      * constructor
      */
-    public function __construct($uri, $x, $y, $zoom, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format, $obs, $inst, $det, $meas, $display = true) {
+    public function __construct($uri, $x, $y, $zoom, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY, $format, $obs, $inst, $det, $meas, $display = true) {
         $this->observatory = $obs;
         $this->instrument  = $inst;
         $this->detector    = $det;
         $this->measurement = $meas;
         $this->zoomLevel   = $zoom;
+        $this->offsetX     = $offsetX;
+        $this->offsetY     = $offsetY;
         
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->getTileFilepath($jp2, $x, $y, $format);
@@ -130,6 +132,35 @@ class HelioviewerTile extends Tile {
         }
         else
             return false;       
+    }
+    
+    /**
+     * Generates a portion of an ImageMagick convert command to apply an alpha mask
+     * @return The location of the alpha mask to use
+     * Note: Values for radii used to generate the LASCO C2 & C3 alpha masks:
+     *  rocc_outer = 7.7;   // (.9625 * orig)
+     *  rocc_inner = 2.415; // (1.05 * orig)
+     *  
+     *  Generating the alpha masks:
+     *      $rsun       = 80.814221; // solar radius in image pixels
+     *      $rocc_inner = 2.415;
+     *      $rocc_outer = 7.7;
+     *      
+     *      // convert to pixels
+     *      $radius_inner = $rocc_inner * $rsun;
+     *      $radius_outer = $rocc_outer * $rsun;
+     *      $innerCircleY = $crpix2 + $radius_inner;
+     *      $outerCircleY = $crpix2 + $radius_outer;
+     *      
+     *      exec("convert -size 1024x1024 xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\" -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" -type GrayScale LASCO_C2_Mask.png")
+     */
+    public function applyAlphaMask() {
+        if ($this->detector == "C2")
+            $mask = HV_ROOT_DIR . "/images/alpha-masks/LASCO_C2_Mask.png";            
+        else if ($this->detector == "C3")
+            $mask = HV_ROOT_DIR . "/images/alpha-masks/LASCO_C3_Mask.png";
+
+        //$this->scaleFactor 
     }
     
     /**
