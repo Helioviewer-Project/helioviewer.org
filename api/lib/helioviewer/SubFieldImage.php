@@ -99,8 +99,11 @@ class SubFieldImage {
             $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
             
             // Apply alpha mask for images with transparent components
-            if ($this->hasAlphaMask())
-                $cmd .= substr($this-outputFile, 0, -4) . "-mask.tif ";
+            //if ($this->hasAlphaMask())
+            //    $cmd .= substr($this-outputFile, 0, -4) . "-mask.tif ";
+            
+            //if ($this->hasAlphaMask())
+            //    $cmd .= $this->applyAlphaMask($intermediate);
 
             // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
             //$extracted = $this->getImageDimensions($grayscale);
@@ -136,8 +139,8 @@ class SubFieldImage {
                $cmd .= $this->padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
             }
                 
-            if ($this->hasAlphaMask())
-                $cmd .= "-compose copy_opacity -composite ";
+            //if ($this->hasAlphaMask())
+            //    $cmd .= "-compose copy_opacity -composite ";
  
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
@@ -150,8 +153,8 @@ class SubFieldImage {
                 throw new Exception("Unable to apply final processing. Command: $cmd");
     
             // Cleanup
-            if ($this->hasAlphaMask())
-                unlink($mask);
+            //if ($this->hasAlphaMask())
+            //    unlink($mask);
 
             if ($this->outputFile != $intermediate)
                 unlink($intermediate);

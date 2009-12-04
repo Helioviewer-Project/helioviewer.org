@@ -27,8 +27,8 @@ class HelioviewerTile extends Tile {
         
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->getTileFilepath($jp2, $x, $y, $format);
-
-       // If tile already exists in cache, use it
+        
+        // If tile already exists in cache, use it
         if (HV_ENABLE_CACHE && $display) {
             if (file_exists($tile)) {
                 $this->displayCachedTile($tile);
@@ -79,7 +79,7 @@ class HelioviewerTile extends Tile {
         $fieldArray = array($year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
         
         foreach($fieldArray as $field) {
-            $filepath .= $field . "/";
+            $filepath .= str_replace(" ", "_", $field) . "/";
             
             if (!file_exists($filepath)) {
                 //echo $filepath . "<br>";
@@ -154,13 +154,31 @@ class HelioviewerTile extends Tile {
      *      
      *      exec("convert -size 1024x1024 xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\" -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" -type GrayScale LASCO_C2_Mask.png")
      */
-    public function applyAlphaMask() {
+    public function applyAlphaMask($input) {
+        $maskWidth  = 1040;
+        $maskHeight = 1040;
+        
         if ($this->detector == "C2")
             $mask = HV_ROOT_DIR . "/images/alpha-masks/LASCO_C2_Mask.png";            
         else if ($this->detector == "C3")
             $mask = HV_ROOT_DIR . "/images/alpha-masks/LASCO_C3_Mask.png";
 
-        //$this->scaleFactor 
+        // Determine offset
+        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width)  * $this->scaleFactor);
+        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height) * $this->scaleFactor);
+        
+        // Force positive sign for non-negative values
+        if ($offsetX >= 0)
+            $offsetX = "+$offsetX";
+        if ($offsetY >= 0)
+            $offsetY = "+$offsetY";
+            
+        // Covert scale factor to a percentage
+        $scale = (100 * $this->scaleFactor) + "%";
+            
+        $cmd = sprintf(" -geometry %s%s %s %s -scale %s -alpha Off -compose copy_opacity -composite ", $offsetX, $offsetY, $input, $mask, $scale);
+        
+        return $cmd;
     }
     
     /**
