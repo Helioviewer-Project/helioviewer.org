@@ -2,6 +2,9 @@
 /**
  * @class HelioviewerTile
  * @author Keith Hughitt
+ * 
+ * TODO (2009/12/07)
+ *  To improve smoothness of transparency edges, use a larger mask (e.g. 2080x2080 instead of 1040x1040) so that most of scaling will be downwards.
  */
 require_once('Tile.php');
 
@@ -152,7 +155,8 @@ class HelioviewerTile extends Tile {
      *      $innerCircleY = $crpix2 + $radius_inner;
      *      $outerCircleY = $crpix2 + $radius_outer;
      *      
-     *      exec("convert -size 1024x1024 xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\" -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" -type GrayScale LASCO_C2_Mask.png")
+     *      // +antialias turns off anti-aliasing
+     *      exec("convert -size 1024x1024 xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\" -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" +antialias LASCO_C2_Mask.png")
      */
     public function applyAlphaMask($input) {
         $maskWidth  = 1040;
@@ -163,25 +167,26 @@ class HelioviewerTile extends Tile {
         else if ($this->detector == "C3")
             $mask = HV_ROOT_DIR . "/images/alpha-masks/LASCO_C3_Mask.png";
 
+        // Ratio of the original image scale to the desired scale
+        $actualToDesired = 1 / $this->desiredToActual;
+
         // Determine offset
 //        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width)  * $this->scaleFactor);
 //        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height) * $this->scaleFactor);
-        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $this->scaleFactor);
-        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $this->scaleFactor);
+        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
+        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
         
         // Force positive sign for non-negative values
         if ($offsetX >= 0)
             $offsetX = "+$offsetX";
         if ($offsetY >= 0)
             $offsetY = "+$offsetY";
-            
-        // Covert scale factor to a percentage
-        $scale = -100 * $this->scaleFactor;
         
-        $cmd = sprintf(" -geometry %s%s %s -resize '%s%%' %s -alpha Off -compose copy_opacity -composite ", $offsetX, $offsetY, $input, $scale, $mask);
-//        $cmd = sprintf(" %s -scale %s %s -alpha Off -compose copy_opacity -composite ", $input, $scale, $mask);
+        //$cmd = sprintf(" %s -scale %s %s -alpha Off -compose copy_opacity -composite ", $input, $scale, $mask);
+        //$cmd = sprintf(" -geometry %s%s %s \( -resize '%s%%' %s \) -alpha Off -compose copy_opacity -composite ", $offsetX, $offsetY, $input, 100 * $actualToDesired, $mask);
+        $cmd = sprintf(" %s \( -resize '%s%%' -crop 512x512%s%s %s \) -compose copy_opacity -composite -channel A -threshold 50%% ",  $input, 100 * $actualToDesired, $offsetX, $offsetY, $mask);
         
-        die($cmd);
+        //die($cmd);
         
         return $cmd;
     }
