@@ -164,8 +164,10 @@ class HelioviewerTile extends Tile {
             $mask = HV_ROOT_DIR . "/images/alpha-masks/LASCO_C3_Mask.png";
 
         // Determine offset
-        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width)  * $this->scaleFactor);
-        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height) * $this->scaleFactor);
+//        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width)  * $this->scaleFactor);
+//        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height) * $this->scaleFactor);
+        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $this->scaleFactor);
+        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $this->scaleFactor);
         
         // Force positive sign for non-negative values
         if ($offsetX >= 0)
@@ -174,9 +176,12 @@ class HelioviewerTile extends Tile {
             $offsetY = "+$offsetY";
             
         // Covert scale factor to a percentage
-        $scale = (100 * $this->scaleFactor) + "%";
-            
-        $cmd = sprintf(" -geometry %s%s %s %s -scale %s -alpha Off -compose copy_opacity -composite ", $offsetX, $offsetY, $input, $mask, $scale);
+        $scale = -100 * $this->scaleFactor;
+        
+        $cmd = sprintf(" -geometry %s%s %s -resize '%s%%' %s -alpha Off -compose copy_opacity -composite ", $offsetX, $offsetY, $input, $scale, $mask);
+//        $cmd = sprintf(" %s -scale %s %s -alpha Off -compose copy_opacity -composite ", $input, $scale, $mask);
+        
+        die($cmd);
         
         return $cmd;
     }

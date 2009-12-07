@@ -90,71 +90,42 @@ class SubFieldImage {
                 
             exec($toIntermediateCmd . $intermediate);
             //die($toIntermediateCmd . $intermediate);
+            //echo($toIntermediateCmd . $intermediate . "<br><br>");
                 
             //Apply color-lookup table                
             if ($this->colorTable)
                 $this->setColorPalette($intermediate, $this->colorTable, $intermediate);                
    
             // IM command for transparency, padding, rescaling, etc.
-            $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
-            
-            // Apply alpha mask for images with transparent components
-            //if ($this->hasAlphaMask())
-            //    $cmd .= substr($this-outputFile, 0, -4) . "-mask.tif ";
-            
-            //if ($this->hasAlphaMask())
-            //    $cmd .= $this->applyAlphaMask($intermediate);
+            if ($this->hasAlphaMask())
+                $cmd = HV_PATH_CMD . " convert ";
+            else
+                $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
 
             // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
-            //$extracted = $this->getImageDimensions($grayscale);
             $extracted = $this->getImageDimensions($intermediate);
-            
-            //var_dump($extracted);
-            //die();
-
-            // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-//            if ( (($this->subfieldRelWidth < $this->subfieldWidth) || ($this->subfieldRelHeight < $this->subfieldHeight)) 
-//                && (($extracted['width'] < round($this->subfieldRelWidth)) || ($extracted['height'] < round($this->subfieldRelHeight))) ) {
-//    
-//                $pad = HV_PATH_CMD . " convert $intermediate -background black ";
-//                $pad .= $this->padImage($this->subfieldRelWidth, $this->subfieldRelHeight, $this->roi["left"], $this->roi["top"]) . " $intermediate";
-//                
-//                try {
-//                    exec($pad, $out, $ret);
-//                    if($ret != 0)
-//                        throw new Exception("[pad image] Command: $pad");
-//                }
-//                catch(Exception $e) {
-//                    $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-//                    file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
-//                    echo $e->getMessage();
-//                }
-//            }
 
             if ($this->desiredToActual > 1)
                 $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
             
-            // Temporary (2009/10/29)
-            else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
-               $cmd .= $this->padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
+            // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
+//            else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
+            else if ($this->squareImage && ($this->subfieldWidth != $this->subfieldHeight)) {
+                $cmd .= $this->padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
             }
-                
-            //if ($this->hasAlphaMask())
-            //    $cmd .= "-compose copy_opacity -composite ";
+            
+            if ($this->hasAlphaMask())
+                $cmd .= $this->applyAlphaMask($intermediate);
  
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
-            //die($cmd . " " . $this->outputFile);
+            die($cmd . " " . $this->outputFile);
 
             // Execute command
             exec("$cmd $this->outputFile", $out, $ret);
             if ($ret != 0)
                 throw new Exception("Unable to apply final processing. Command: $cmd");
-    
-            // Cleanup
-            //if ($this->hasAlphaMask())
-            //    unlink($mask);
 
             if ($this->outputFile != $intermediate)
                 unlink($intermediate);
@@ -227,6 +198,7 @@ class SubFieldImage {
 
         // Construct padding command
         return "-gravity $gravity -extent $ts" . "x" . "$ts ";
+//   return "-extent $ts" . "x" . "$ts ";
     }
      
     
