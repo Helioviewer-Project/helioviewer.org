@@ -110,7 +110,7 @@ class SubFieldImage {
             
             // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             //else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
-            else if ($this->squareImage && ($this->subfieldWidth != $this->subfieldHeight)) {
+            else if ($this->squareImage && ($this->subfieldWidth != $this->subfieldHeight) ) {
                 $cmd .= $this->padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
             }
             
@@ -120,7 +120,8 @@ class SubFieldImage {
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
-            //die($cmd . " " . $this->outputFile);
+//            var_dump($this);
+//            die($cmd . " " . $this->outputFile);
 
             // Execute command
             exec("$cmd $this->outputFile", $out, $ret);

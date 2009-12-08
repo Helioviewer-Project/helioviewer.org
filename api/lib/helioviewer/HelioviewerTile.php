@@ -171,22 +171,13 @@ class HelioviewerTile extends Tile {
         $actualToDesired = 1 / $this->desiredToActual;
 
         // Determine offset
-//        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width)  * $this->scaleFactor);
-//        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height) * $this->scaleFactor);
         $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
         $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
         
-        // Force positive sign for non-negative values
-        if ($offsetX >= 0)
-            $offsetX = "+$offsetX";
-        if ($offsetY >= 0)
-            $offsetY = "+$offsetY";
-        
         //$cmd = sprintf(" %s -scale %s %s -alpha Off -compose copy_opacity -composite ", $input, $scale, $mask);
         //$cmd = sprintf(" -geometry %s%s %s \( -resize '%s%%' %s \) -alpha Off -compose copy_opacity -composite ", $offsetX, $offsetY, $input, 100 * $actualToDesired, $mask);
-        $cmd = sprintf(" %s \( -resize '%s%%' -crop 512x512%s%s %s \) -compose copy_opacity -composite -channel A -threshold 50%% ",  $input, 100 * $actualToDesired, $offsetX, $offsetY, $mask);
-        
-        //die($cmd);
+        $str = " %s -extent 512x512 \( -resize '%f%%' -crop %fx%f%+f%+f %s \) -compose copy_opacity -composite -channel A -threshold 50%% "; 
+        $cmd = sprintf($str, $input, 100 * $actualToDesired, $this->subfieldRelWidth, $this->subfieldRelHeight , $offsetX, $offsetY, $mask);
         
         return $cmd;
     }
