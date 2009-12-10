@@ -155,7 +155,6 @@ class HelioviewerTile extends Tile {
      *      $innerCircleY = $crpix2 + $radius_inner;
      *      $outerCircleY = $crpix2 + $radius_outer;
      *      
-     *      // +antialias turns off anti-aliasing
      *      exec("convert -size 1024x1024 xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\" -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" +antialias LASCO_C2_Mask.png")
      */
     public function applyAlphaMask($input) {

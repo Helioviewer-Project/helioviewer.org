@@ -120,8 +120,8 @@ class SubFieldImage {
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
-//            var_dump($this);
-//            die($cmd . " " . $this->outputFile);
+            var_dump($this);
+            die($cmd . " " . $this->outputFile);
 
             // Execute command
             exec("$cmd $this->outputFile", $out, $ret);
