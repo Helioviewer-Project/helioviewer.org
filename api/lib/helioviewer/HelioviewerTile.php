@@ -175,8 +175,9 @@ class HelioviewerTile extends Tile {
         
         //$cmd = sprintf(" %s -scale %s %s -alpha Off -compose copy_opacity -composite ", $input, $scale, $mask);
         //$cmd = sprintf(" -geometry %s%s %s \( -resize '%s%%' %s \) -alpha Off -compose copy_opacity -composite ", $offsetX, $offsetY, $input, 100 * $actualToDesired, $mask);
-        $str = " %s -extent 512x512 \( -resize '%f%%' -crop %fx%f%+f%+f %s \) -compose copy_opacity -composite -channel A -threshold 50%% "; 
-        $cmd = sprintf($str, $input, 100 * $actualToDesired, $this->subfieldRelWidth, $this->subfieldRelHeight , $offsetX, $offsetY, $mask);
+        //$str = " %s -extent 512x512 \( -resize '%f%%' -crop %fx%f%+f%+f %s \) -compose copy_opacity -composite -channel A -threshold 50%% "; 
+        $str = " -respect-parenthesis \( %s -gravity SouthWest -background black -extent 512x512 \) \( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity SouthWest -background black -extent 512x512 \) -alpha off -compose copy_opacity -composite ";
+        $cmd = sprintf($str, $input, $mask, 100 * $actualToDesired, $this->subfieldRelWidth, $this->subfieldRelHeight , $offsetX, $offsetY);
         
         return $cmd;
     }
