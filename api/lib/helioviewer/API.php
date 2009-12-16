@@ -224,15 +224,18 @@ class API {
         
         // http url (full path)
         else if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
-            $url = preg_replace($webRootRegex, HV_WEB_ROOT_URL, $uri);
+            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
+        //echo HV_JP2_ROOT_URL . "<br>";
+        //echo $webRootRegex . "<br>";
+        //echo $uri . "<br>";
+            $url = preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri);
             echo $url;
         }
         
         // jpip url
         else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
-            $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_WEB_ROOT_URL, $uri), 4);
+            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
+            $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri), 4);
             echo $jpip;
         }
         
