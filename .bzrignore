@@ -24,3 +24,4 @@ api/lib/phpvideotoolkit/config.php
 .settings
 tags
 settings/Config.ini
+*.log

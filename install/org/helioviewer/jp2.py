@@ -205,20 +205,24 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         path = path[len(rootdir):]
         
         # Extract header information
-        meta = extractJP2MetaInfo(img)
-    
-        # Source id
-        id = sources[meta["observatory"]][meta["instrument"]][meta["detector"]][meta["measurement"]]
+        try:
+            meta = extractJP2MetaInfo(img)
+        except:
+            f = open('error.log', 'a')
+            f.write(filename + "\n")
+        else:
+            # Source id
+            id = sources[meta["observatory"]][meta["instrument"]][meta["detector"]][meta["measurement"]]
         
-        # Date
-        date = meta["date"]
+            # Date
+            date = meta["date"]
     
-        # insert into database
-        query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, date, id)
+            # insert into database
+            query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, date, id)
         
-        # Progressbar
-        if stepFxn and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
-            stepFxn(filename)
+            # Progressbar
+            if stepFxn and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
+                stepFxn(filename)
     
     # Remove trailing comma
     query = query[:-1] + ";"
