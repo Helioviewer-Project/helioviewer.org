@@ -235,7 +235,7 @@ class API {
         // jpip url
         else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-            $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri), 4);
+            $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $uri), 4);
             echo $jpip;
         }
         
