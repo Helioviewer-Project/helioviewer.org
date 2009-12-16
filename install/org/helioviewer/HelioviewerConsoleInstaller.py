@@ -81,7 +81,7 @@ class HelioviewerConsoleInstaller:
         print """\
 ====================================================================
 = Helioviewer Database Population Script                           =
-= Last updated: 2009/11/18                                         =
+= Last updated: 2009/12/16                                         =
 =                                                                  =
 = This script processes JP2 images, extracts their associated      =
 = meta-information and stores it away in a database. Currently,    =
@@ -114,6 +114,9 @@ def loadTextInstaller(options):
         sys.exit(2)
     else:
         print "Found %d JPEG2000 images." % len(images)
+
+    # Setup database schema if needed
+    
 
     # Get database information
     admin, adminpass, mysql = app.getDatabaseInfo()
