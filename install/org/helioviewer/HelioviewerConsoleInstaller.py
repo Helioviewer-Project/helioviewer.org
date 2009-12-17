@@ -36,6 +36,31 @@ class HelioviewerConsoleInstaller:
                 print "Sorry, that is not a valid choice."
             else:
                 return dbtypes[choice]
+            
+    def getDatabasename(self):
+        ''' Prompts the user for the database name '''
+
+        dbname = raw_input("    Database name [helioviewer]: ")
+   
+        # Default values
+        if not dbname: dbname = "helioviewer"
+    
+        return dbname
+                
+    def shouldSetupSchema(self):
+        ''' Prompts the user for the database type '''
+        options = {1: True, 2: False}
+        
+        while True:
+            print "Would you like to create the database schema used by Helioviewer.org?:"
+            print "   [1] Yes"
+            print "   [2] No"
+            choice = int(raw_input("Choice: "))
+            
+            if choice not in [1,2]:
+                print "Sorry, that is not a valid choice."
+            else:
+                return options[choice]
     
     def getDatabaseInfo(self):
         ''' Gets database type and administrator login information '''
@@ -43,11 +68,11 @@ class HelioviewerConsoleInstaller:
         
         while True:  
             dbtype    = self.getDatabaseType()
-            admin     = raw_input("Database admin: ")        
-            adminpass = getpass.getpass("Password: ")
+            dbuser     = raw_input("    Username: ")        
+            dbpass = getpass.getpass("    Password: ")
         
             # Default values
-            if not admin: admin = "root"
+            if not dbuser: dbuser = "root"
 
             # MySQL?
             # mysql = True if dbtype is "mysql" else False
@@ -56,17 +81,17 @@ class HelioviewerConsoleInstaller:
             else:
                 mysql = False
             
-            if not checkDBInfo(admin, adminpass, mysql):
+            if not checkDBInfo(dbuser, dbpass, mysql):
                 print "Unable to connect to the database. Please check your login information and try again."
             else:
-                return admin,adminpass,mysql        
+                return dbuser,dbpass,mysql        
 
     def getNewUserInfo(self):
         ''' Prompts the user for the required database information '''
 
         # Get new user information (Todo 2009/08/24: validate input form)
-        dbuser = raw_input("New database username [helioviewer]: ")
-        dbpass = raw_input("New password [helioviewer]: ")
+        dbuser = raw_input("    Username [helioviewer]: ")
+        dbpass = raw_input("    Password [helioviewer]: ")
     
         # Default values
         if not dbuser: dbuser = "helioviewer"
@@ -116,14 +141,29 @@ def loadTextInstaller(options):
         print "Found %d JPEG2000 images." % len(images)
 
     # Setup database schema if needed
-    
+    if (app.shouldSetupSchema()):
+        print "Please enter new database information:"
+        dbname = app.getDatabasename()
+        hvuser, hvpass = app.getNewUserInfo()
+        
+        print ""
+        
+        # Get database information
+        print "Please enter existing database admin information:"
+        dbuser, dbpass, mysql = app.getDatabaseInfo()
 
-    # Get database information
-    admin, adminpass, mysql = app.getDatabaseInfo()
-    hvuser, hvpass = app.getNewUserInfo()
+        # Setup database schema
+        cursor = setupDatabaseSchema(dbuser, dbpass, dbname, hvuser, hvpass, mysql)
     
-    # Setup database schema
-    cursor = setupDatabaseSchema(admin, adminpass, hvuser, hvpass, mysql)
+    else:
+        # Get database information
+        print "Please enter Helioviewer.org database name"
+        dbname = app.getDatabasename()
+        
+        print "Please enter Helioviewer.org database user information"
+        dbuser, dbpass, mysql = app.getDatabaseInfo()
+        
+        cursor = getDatabaseCursor(dbname, dbuser, dbpass, mysql)
 
     print "Processing Images..."
 

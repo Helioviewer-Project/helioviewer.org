@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys, os
 
-def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
+def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     ''' Sets up Helioviewer.org database schema '''
     if mysql:
         import MySQLdb
@@ -10,14 +10,10 @@ def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
         import pgdb
         adaptor = pgdb
 
-    createDB(adminuser, adminpass, dbuser, dbpass, mysql, adaptor)
+    createDB(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor)
 
     # connect to helioviewer database
-    if mysql:
-        db = MySQLdb.connect(use_unicode=True, charset = "utf8", host="localhost", db="helioviewer", user=dbuser, passwd=dbpass)
-    else:
-        db = pgdb.connect(use_unicode=True, charset = "utf8", database="helioviewer", user=dbuser, password=dbpass)
-    cursor = db.cursor()
+    cursor = getDatabaseCursor(dbname, dbuser, dbpass, mysql)
 
     createSourceTable(cursor)
     createObservatoryTable(cursor)
@@ -28,6 +24,20 @@ def setupDatabaseSchema(adminuser, adminpass, dbuser, dbpass, mysql):
     createDateIndex(cursor)
 
     return cursor
+
+def getDatabaseCursor(dbname, dbuser, dbpass, mysql):
+    ''' Creates a database connection '''
+    if mysql:
+        import MySQLdb
+    else:
+        import pgdb
+    
+    if mysql:
+        db = MySQLdb.connect(use_unicode=True, charset = "utf8", host="localhost", db=dbname, user=dbuser, passwd=dbpass)
+    else:
+        db = pgdb.connect(use_unicode=True, charset = "utf8", database=dbname, user=dbuser, password=dbpass)
+    
+    return db.cursor()
 
 def checkDBInfo(adminuser, adminpass, mysql):
     ''' Validate database login information '''
@@ -45,15 +55,15 @@ def checkDBInfo(adminuser, adminpass, mysql):
     db.close()
     return True
 
-def createDB(adminuser, adminpass, dbuser, dbpass, mysql, adaptor):
+def createDB(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
     ''' Creates database
         TODO (2009/08/18) Catch error case when db already exists, and gracefully exit '''
     if mysql:
         try:
            db = adaptor.connect(user=adminuser, passwd=adminpass)
            cursor = db.cursor()
-           cursor.execute("CREATE DATABASE IF NOT EXISTS helioviewer;")
-           cursor.execute("GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbuser, dbpass))
+           cursor.execute("CREATE DATABASE IF NOT EXISTS %s;" % dbname)
+           cursor.execute("GRANT ALL ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbname, dbuser, dbpass))
         except adaptor.Error, e:
             print "Error: " + e.args[1]
             sys.exit(2)
@@ -61,8 +71,8 @@ def createDB(adminuser, adminpass, dbuser, dbpass, mysql, adaptor):
         try:
             db = adaptor.connect(database="postgres", user=adminuser, password=adminpass)
             cursor = db.cursor()
-            cursor.execute("CREATE DATABASE IF NOT EXISTS helioviewer;")
-            cursor.execute("GRANT ALL ON helioviewer.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbuser, dbpass))
+            cursor.execute("CREATE DATABASE IF NOT EXISTS %s;" % dbname)
+            cursor.execute("GRANT ALL ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbname, dbuser, dbpass))
         except Exception, e:
             print "Error: " + e.args[1]
             sys.exit(2)
