@@ -38,6 +38,7 @@
 	left: 0px;
 	display: block;
 	overflow: visible;
+    -moz-user-select: none;
 }
 
 #fullscreen-btn {

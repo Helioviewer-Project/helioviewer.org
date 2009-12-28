@@ -29,11 +29,15 @@
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0/build/reset-fonts/reset-fonts.css"> 
         
         <!-- jQuery -->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>
+        <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>-->
+        <script src="lib/jquery/jquery-1.4a2.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
         <script src="lib/jquery/jquery-class-support/jquery.class.js" type="text/javascript"></script>
-        <!--<script src="lib/jquery/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>-->
-        <script src="lib/jquery/jquery-qtip-1.0.0-rc3091551/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>
+        <script src="lib/jquery/jquery-qtip-nightly/jquery.qtip.js" type="text/javascript"></script>
+        <script src="lib/jquery/jquery-qtip-nightly/jquery.qtip.tips.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="lib/jquery/jquery-qtip-nightly/jquery.qtip.css">
+        <!--<script src="lib/jquery/jquery-qtip-1.0.0-rc3091551/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>-->
+        
         
         <!-- TODO: move jquery-dynaccordion to /lib/helioviewer with rest of custom code -->
         <!-- TODO: Include compiled versions of Kakadu? -->

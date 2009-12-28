@@ -1,3 +1,22 @@
+.qtip-helioviewer {
+    position: static;
+    text-align: 'left';
+    width: 250px;
+    padding: 8px;
+    color: #FFF;
+    border: 1px solid #6e6e6e;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+.qtip-helioviewer .ui-tooltip-titlebar {
+    background-color: #909A99;
+}
+
+.qtip-helioviewer .ui-tooltip-close {
+    color: #FFF;
+}
+
 .qtip {
     font: 11px Arial, Verdana, Helvetica, sans-serif;
 }
