@@ -101,6 +101,7 @@
         <script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
         <script src="lib/helioviewer/Time.js" type="text/javascript"></script>
         <script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/TooltipHelper.js" type="text/javascript"></script>
         <script src="lib/helioviewer/MediaSettings.js" type="text/javascript"></script>
         <script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
         <script src="lib/helioviewer/ScreenshotBuilder.js" type="text/javascript"></script>

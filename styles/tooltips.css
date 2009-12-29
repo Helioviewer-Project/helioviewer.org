@@ -1,10 +1,13 @@
 .qtip-helioviewer {
-    position: static;
+    position: relative;
     text-align: 'left';
+    top: 8px;
+    left: 12px;
     width: 250px;
     padding: 8px;
     color: #FFF;
     border: 1px solid #6e6e6e;
+    z-index: 6000;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
 }
