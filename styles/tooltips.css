@@ -1,25 +1,92 @@
-.qtip-helioviewer {
+/** Overide jQuery UI settings */
+.ui-tooltip, .qtip {
+    position: absolute;
+    display: none;
+    font: 11px Arial, Verdana, Helvetica, sans-serif;
+    max-width: 600px;
+    min-width: 50px;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 0;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
+.ui-tooltip-content {
+    background: none;
+    border: none;
+    color: #A27D35;
+    position: relative;
+    padding: 5px 9px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.ui-tooltip-titlebar {
+    position: relative;
+    padding: 6px 40px 6px 10px;
+    font-weight: bold;
+}
+
+/**
+.ui-tooltip-titlebar > a.ui-tooltip-close {
+    background: none;
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    padding: 1px;
+    right: 5px;
+    top: 5px;
+    border: none;
+    cursor: pointer;
+    line-height: 0px;
+    font-size: 0px;
+}
+
+.ui-tooltip-titlebar > .ui-tooltip-close > .ui-icon {
+    background: none;
+    height: 16px;
+    width: 16px;
+    display: block;
+} */
+
+/* Default tooltip style */
+div > div.ui-tooltip.qtip {
+    border: 3px solid #A27D35;
+    background: #FBF7AA;
+    color: #A27D35;
+    font-weight: normal;
+}
+
+div.ui-tooltip .ui-tooltip-titlebar{
+    background: #F0DE7D;
+    border: none;
+    color: #A27D35;
+}
+
+/** Custom styles */
+div > div.qtip-helioviewer.qtip {
     position: relative;
     text-align: 'left';
-    top: 8px;
-    left: 12px;
+    top: 8px !important;
+    left: 12px !important;
     width: 250px;
-    padding: 8px;
-    color: #FFF;
-    border: 1px solid #6e6e6e;
+    background: white;
+    border: 6px solid #6e6e6e;
     z-index: 6000;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
 }
 
-.qtip-helioviewer .ui-tooltip-titlebar {
+.qtip-helioviewer .ui-tooltip-content {
+    color: #111111;
+    padding: 8px;
+}
+
+div.qtip-helioviewer .ui-tooltip-titlebar {
     background-color: #909A99;
+    color: white;
 }
 
-.qtip-helioviewer .ui-tooltip-close {
+/*.qtip-helioviewer .ui-tooltip-close {
     color: #FFF;
-}
-
-.qtip {
-    font: 11px Arial, Verdana, Helvetica, sans-serif;
-}
+}*/
