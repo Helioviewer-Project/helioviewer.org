@@ -49,7 +49,7 @@
     display: block;
 } */
 
-/* Default tooltip style */
+/* Overide qTip defaults */
 div > div.ui-tooltip.qtip {
     border: 3px solid #A27D35;
     background: #FBF7AA;
@@ -61,6 +61,11 @@ div.ui-tooltip .ui-tooltip-titlebar{
     background: #F0DE7D;
     border: none;
     color: #A27D35;
+}
+
+div.ui-tooltip-wrapper {
+    border: 0px;
+    background-color: white;
 }
 
 /** Custom styles */

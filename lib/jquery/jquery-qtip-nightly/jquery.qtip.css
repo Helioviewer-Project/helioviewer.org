@@ -29,9 +29,6 @@
 	-moz-border-radius: 0px;
 	-webkit-border-radius: 0px;
 	border-radius: 0;
-
-	border-width: 3px;
-	border-style: solid;
 }
 
 	.ui-tooltip-tip{
@@ -60,6 +57,9 @@
 	.ui-tooltip-wrapper{
 		position: relative;
 		overflow: hidden;
+
+		border-width: 3px;
+		border-style: solid;
 	}
 
 	.ui-tooltip-content{
@@ -98,7 +98,7 @@
 
 
 /* Default tooltip style */
-.ui-tooltip{
+.ui-tooltip-wrapper{
 	border-color: #F9E98E;
 	background-color: #FBF7AA;
 	color: #A27D35;
@@ -115,7 +115,7 @@
 
 
 /* Light tooltip style */
-.ui-tooltip-light{
+.ui-tooltip-light .ui-tooltip-wrapper{
 	border-color: #E2E2E2;
 	background-color: white;
 	color: #454545;
@@ -132,7 +132,7 @@
 
 
 /* Dark tooltip style */
-.ui-tooltip-dark{
+.ui-tooltip-dark .ui-tooltip-wrapper{
 	border-color: #CE6F6F;
 	background-color: #505050;
 	color: #f3f3f3;
@@ -149,7 +149,7 @@
 
 
 /* Red tooltip style */
-.ui-tooltip-red{
+.ui-tooltip-red .ui-tooltip-wrapper{
 	border-color: #CE6F6F;
 	background-color: #F79992;
 	color: #9C2F2F;
@@ -166,7 +166,7 @@
 
 
 /* Green tooltip style */
-.ui-tooltip-green{
+.ui-tooltip-green .ui-tooltip-wrapper{
 	border-color: #A9DB66;
 	background-color: #CDE6AC;
 	color: #58792E;
@@ -183,7 +183,7 @@
 
 
 /* Blue tooltip style */
-.ui-tooltip-blue{
+.ui-tooltip-blue .ui-tooltip-wrapper{
 	border-color: #ADD9ED;
 	background-color: #E5F6FE;
 	color: #4D9FBF;
