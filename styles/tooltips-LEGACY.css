@@ -1,0 +1,10 @@
+.qtip {
+    font: 11px Arial, Verdana, Helvetica, sans-serif;
+    z-index  : 6000 !important;
+    border-width: 0px;
+}
+
+.event > .qtip {
+    top: 8px !important;
+    left: 12px !important;
+}
