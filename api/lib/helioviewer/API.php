@@ -65,7 +65,7 @@ class API {
     
             // Search by source id
             if (isset($this->params['sourceId']))
-                $result = $imgIndex->getClosestImage($this->params['date'], $this->params['sourceId'], true);
+                $result = $imgIndex->getClosestImage($this->params['date'], $this->params['sourceId'], false);
 
                 // Search by human-readable parameters
             else {
