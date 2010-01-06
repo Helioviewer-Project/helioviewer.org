@@ -39,7 +39,6 @@
         
         
         <!-- TODO: move jquery-dynaccordion to /lib/helioviewer with rest of custom code -->
-        <!-- TODO: Include compiled versions of Kakadu? -->
         <script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
         <link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/jquery-ui-1.7.1.custom.css" type="text/css" />    
 
