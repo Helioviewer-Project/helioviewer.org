@@ -72,8 +72,8 @@ div.ui-tooltip-wrapper {
 div > div.qtip-helioviewer.qtip {
     position: relative;
     text-align: 'left';
-    top: 8px !important;
-    left: 12px !important;
+    /**top: 8px !important;
+    left: 12px !important;*/
     width: 250px;
     background: white;
     border: 6px solid #6e6e6e;

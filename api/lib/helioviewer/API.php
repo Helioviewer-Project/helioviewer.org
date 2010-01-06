@@ -280,7 +280,7 @@ class API {
         $detector    = $this->params['detector'];
         $measurement = $this->params['measurement'];
 
-        // Create a temporary directory to store image-series (TODO: Move this + other directory creation to installation script)
+        // Create a temporary directory to store image-  (TODO: Move this + other directory creation to installation script)
         $tmpdir = HV_TMP_ROOT_DIR . "/movies/";
         if (!file_exists($tmpdir)) {
             mkdir($tmpdir);
@@ -365,6 +365,8 @@ class API {
         // MJ2 Creation
         if ($format == "MJ2")
             $cmd .= " -mj2_tracks P:0-@25";
+    
+        die($cmd);
     
         // Execute kdu_merge command
         exec(HV_PATH_CMD . " " . escapeshellcmd($cmd), $output, $return);
