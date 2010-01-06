@@ -499,7 +499,8 @@
                                         <tr>
                                             <td><b>source</b></td>
                                             <td><i>Integer</i></td>
-                                        </tr>[Optional] The image source ID (can be used in place of observatory, instrument, detector and measurement parameters).
+                                            <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and measurement parameters).</td>
+                                        </tr>
                                         <tr>
                                             <td><b>getURL</b></td>
                                             <td><i>Boolean</i></td>
