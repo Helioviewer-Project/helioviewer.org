@@ -487,11 +487,6 @@
                                             <td>Measurement</td>
                                         </tr>
                                         <tr>
-                                            <td><b>timestamp</b></td>
-                                            <td><i>Unix Timestamp</i></td>
-                                            <td>Observation time <span style='color:red'>[DEPRICATED]</span></td>
-                                        </tr>
-                                        <tr>
                                             <td><b>date</b></td>
                                             <td><i>ISO 8601 UTC Date</i></td>
                                             <td>Observation date and time</td>
@@ -594,6 +589,11 @@
                                             <td><b>getJPIP</b></td>
                                             <td><i>Boolean</i></td>
                                             <td>[Optional] Returns a JPIP URI instead of an actual movie.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>links</b></td>
+                                            <td><i>Boolean</i></td>
+                                            <td>[Optional] Returns a linked JPX file containing image pointers instead of data for each individual frame in the series. Currently, only JPX image series support this feature.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -861,7 +861,7 @@
         </div>
 
         <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-            Last Updated: 2009-09-10 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+            Last Updated: 2010-01-06 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
         </div>
     
     </body>

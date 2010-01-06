@@ -64,10 +64,10 @@ class API {
             $imgIndex = new ImgIndex(new DbConnection());
     
             // Search by source id
-            if (isset($this->params['sourceId'])) {
+            if (isset($this->params['sourceId']))
                 $result = $imgIndex->getClosestImage($this->params['date'], $this->params['sourceId'], true);
-            }
-            // Search by human-readable parameters
+
+                // Search by human-readable parameters
             else {
                 foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
                     $parameters["$field"] = $this->params[$field];
@@ -195,11 +195,7 @@ class API {
         require('lib/helioviewer/ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
 
-        // NOTE: Currently supporting deprecated "timestamp" field as well
-        if (isset($this->params['timestamp']))
-            $date = toISOString(parseUnixTimestamp($this->params['timestamp']));
-        else
-            $date = $this->params['date'];
+        $date = $this->params['date'];
 
         // Search by source id
         if (isset($this->params['source'])) {
@@ -216,14 +212,14 @@ class API {
         $uri = HV_JP2_DIR . $filepath;
         
         // http url (relative path)getUTC
-        if ((isset($this->params['getRelativeURL'])) && ($this->params['getRelativeURL'] === "true")) {
+        if ($this->params['getRelativeURL']) {
             $jp2RootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
             $url = preg_replace($jp2RootRegex, "", $uri);
             echo $url;
         }
         
         // http url (full path)
-        else if ((isset($this->params['getURL'])) && ($this->params['getURL'] === "true")) {
+        else if ($this->params['getURL']) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
         //echo HV_JP2_ROOT_URL . "<br>";
         //echo $webRootRegex . "<br>";
@@ -233,7 +229,7 @@ class API {
         }
         
         // jpip url
-        else if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
+        else if ($this->params['getJPIP']) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
             $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $uri), 4);
             echo $jpip;
@@ -274,6 +270,7 @@ class API {
         $endTime     = toUnixTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
+        $jpip        = $this->params['getJPIP'];
         
         $observatory = $this->params['observatory'];
         $instrument  = $this->params['instrument'];
@@ -301,7 +298,7 @@ class API {
             $this->buildJP2ImageSeries($filepath);
 
         // Output the file/jpip URL
-        if ((isset($this->params['getJPIP'])) && ($this->params['getJPIP'] == "true")) {
+        if ($jpip) {        
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
             $mj2 = "jpip" . substr(preg_replace($webRootRegex, HV_WEB_ROOT_URL, $url), 4);
             echo $mj2;
@@ -322,6 +319,7 @@ class API {
         $endTime     = toUnixTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
+        $links       = $this->params['links'];
 
         // Layer information
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
@@ -360,13 +358,17 @@ class API {
         // Drop trailing comma
         $cmd = substr($cmd, 0, -1);
 
+        // Virtual JPX files
+        if ($links)
+            $cmd .= " -links";
+        
         $cmd .= " -o $output_file";
     
         // MJ2 Creation
         if ($format == "MJ2")
             $cmd .= " -mj2_tracks P:0-@25";
     
-        die($cmd);
+        //die($cmd);
     
         // Execute kdu_merge command
         exec(HV_PATH_CMD . " " . escapeshellcmd($cmd), $output, $return);
@@ -748,6 +750,25 @@ class API {
         }
         return 1;
     }
+    
+    /**
+     * Typecast boolean strings or unset optional params to booleans
+     *
+     */
+    private function _fixBools($fields) {
+        foreach($fields as $field) {
+            if (!isset($this->params[$field]))
+                $this->params[$field] = false;
+            else {
+                if (strtolower($this->params[$field]) === "true")
+                    $this->params[$field] = true;
+                else
+                    $this->params[$field] = false;	
+            }
+        }
+        
+        return 1;
+    }
 
     /**
      * @return bool Input validity.
@@ -793,8 +814,16 @@ class API {
             case "getLayerAvailability":
                 break;
             case "getJP2Image":
+            	$bools = array("getURL", "getRelativeURL", "getJPIP");
+            	$this->_fixBools($bools);
                 break;
             case "getJP2ImageSeries":
+            	$bools = array("getJPIP", "links");
+            	$this->_fixBools($bools);
+            	
+            	if ($this->params['links'] && ($this->params['format'] != "JPX"))
+            	   die('<b>Error</b>: Format must be set to "JPX" in order to create a linked image series.');
+            	
                 break;
             case "launchJHelioviewer":
                 break;
