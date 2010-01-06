@@ -320,6 +320,7 @@ class API {
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
         $links       = $this->params['links'];
+        $debug       = $this->params['debug'];
 
         // Layer information
         foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
@@ -341,7 +342,7 @@ class API {
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
             $isoDate = toISOString(parseUnixTimestamp($time));
-            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src);
+            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src, $debug);
             array_push($images, $jp2);
             $time += $cadence;
         }
@@ -818,7 +819,7 @@ class API {
             	$this->_fixBools($bools);
                 break;
             case "getJP2ImageSeries":
-            	$bools = array("getJPIP", "links");
+            	$bools = array("getJPIP", "links", "debug");
             	$this->_fixBools($bools);
             	
             	if ($this->params['links'] && ($this->params['format'] != "JPX"))

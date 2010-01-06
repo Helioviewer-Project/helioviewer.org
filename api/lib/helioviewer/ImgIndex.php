@@ -11,7 +11,7 @@ class ImgIndex {
         $this->dbConnection = $dbConnection;
     }
 
-    public function getClosestImage($date, $params) {
+    public function getClosestImage($date, $params, $debug=false) {
         // Fetch source id if not specified
         if (sizeOf($params) > 1)
             $id = $this->getSourceId($params["observatory"], $params["instrument"], $params["detector"], $params["measurement"]);
@@ -23,9 +23,12 @@ class ImgIndex {
            $lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
            $rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
 
-        //echo "$lhs<br><br>";
-        //echo "$rhs<br><br>";
-        //exit();
+        if ($debug) {
+            echo "$lhs<br><br>";
+            echo "<span style='color: green;'>$rhs</span><br><br>";
+            echo "<hr>";
+            //exit();
+        }
 
         $left = mysqli_fetch_array($this->dbConnection->query($lhs), MYSQL_ASSOC);
         $right = mysqli_fetch_array($this->dbConnection->query($rhs), MYSQL_ASSOC);
@@ -252,8 +255,8 @@ class ImgIndex {
      * @param object $src
      * 
      */
-    public function getJP2FilePath($obsTime, $params) {
-        $img = $this->getClosestImage($obsTime, $params);
+    public function getJP2FilePath($obsTime, $params, $debug=false) {
+        $img = $this->getClosestImage($obsTime, $params, $debug);
         return $img["filepath"] . "/" . $img["filename"];
     }
 
