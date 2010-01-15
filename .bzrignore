@@ -25,3 +25,4 @@ api/lib/phpvideotoolkit/config.php
 tags
 settings/Config.ini
 *.log
+.directory

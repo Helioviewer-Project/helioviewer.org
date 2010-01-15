@@ -134,55 +134,8 @@ class API {
     private function _getViewerImage () {
         require('lib/helioviewer/CompositeImage.php');
 
-        //Process query string
-        try {
-            // Extract timestamps
-            $timestamps = explode(",", $this->params['timestamps']);
-            if (strlen($this->params['timestamps']) == 0) {
-                throw new Exception("Error: Incorrect number of timestamps specified!");
-            }
-
-            // Region of interest
-            $x = explode(",", $this->params['xRange']);
-            $y = explode(",", $this->params['yRange']);
-
-            $xRange = array();
-            $xRange['start'] = $x[0];
-            $xRange['size']   = $x[1];
-
-            $yRange = array();
-            $yRange['start'] = $y[0];
-            $yRange['size']   = $y[1];
-
-            // Zoom-level & tilesize
-            $zoomLevel = $this->params['zoomLevel'];
-            $tileSize  = $this->params['tileSize'];
-
-            // Construct layers
-            $layers = array();
-            $i = 0;
-            foreach (explode(",", $this->params['layers']) as $layer) {
-                array_push($layers, new Layer($layer, $timestamps[$i], $timestamps[$i], $zoomLevel, $xRange, $yRange, $tileSize));
-                $i++;
-            }
-
-            // Limit to 3 layers
-            if ((sizeOf($layers) > 3) || (strlen($this->params['layers']) == 0)) {
-                throw new Exception("Error: Invalid layer choices! You must specify 1-3 command-separate layernames.");
-            }
-
-            // Optional parameters
-            $options = array();
-            $options["edgeEnhance"] = $this->params['edges'];
-            $options["sharpen"]     = $this->params['sharpen'];
-        }
-        catch(Exception $e) {
-            echo 'Error: ' .$e->getMessage();
-            exit();
-        }
-
         //Create and display composite image
-        $img = new CompositeImage($layers, $zoomLevel, $xRange, $yRange, $options);
+        $img = CompositeImage::compositeImageFromQuery($params);
         $img->printImage();
 
         return 1;
