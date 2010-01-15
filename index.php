@@ -29,8 +29,7 @@
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0/build/reset-fonts/reset-fonts.css"> 
         
         <!-- jQuery -->
-        <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>-->
-        <script src="lib/jquery/jquery-1.4a2.js" type="text/javascript"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
         <script src="lib/jquery/jquery-class-support/jquery.class.js" type="text/javascript"></script>
         <!--<script src="lib/jquery/jquery-qtip-nightly/jquery.qtip.js" type="text/javascript"></script>

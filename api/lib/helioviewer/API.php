@@ -4,6 +4,7 @@
  * @author Keith Hughitt <keith.hughitt@nasa.gov>
  *
  * TODO: Move JP2 Image Series functionality to ImageSeries class
+ * TODO: Switch from "timestamp" -> "date" for getClosestImage and getViewerImage.
  */
 /**
  * @package Helioviewer API
@@ -126,7 +127,8 @@ class API {
      *         TODO
      *             * If no params are passed, print out API usage description (and possibly a query builder form)...
      *             * Add support for fuzzy times/var/www/hv/jp2/v2009051tamp matching. Could default to exact matching unless user specifically requests fuzzy date-matching.
-     *          * Separate out layer details into a Layer PHP class?
+     *             * Separate out layer details into a Layer PHP class?
+     *             * Update getViewerImage to use "layers" instead of "layers" + "timestamps"
      *
      * @return int Returns "1" if the action was completed successfully.
      *
