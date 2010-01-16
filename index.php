@@ -85,6 +85,7 @@
         <script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
         <script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
         <script src="lib/helioviewer/EventMarker.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/KeyboardManager.js" type="text/javascript"></script>
         <script src="lib/helioviewer/ZoomControls.js" type="text/javascript"></script>
         <script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
         <script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
