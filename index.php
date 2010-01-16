@@ -1,10 +1,6 @@
 <?php 
     require_once('api/Config.php');
     new Config("settings/Config.ini");
-    error_reporting(E_ALL | E_STRICT);
-    $errorLog = HV_ERROR_LOG;
-    if(!file_exists($errorLog))
-        touch($errorLog);
 ?>
 <!DOCTYPE html>
 <html lang="en">

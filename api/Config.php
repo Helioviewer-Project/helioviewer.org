@@ -8,15 +8,20 @@ class Config {
     
     public function __construct($file) {
         $this->config = parse_ini_file($file);
-        $this->fixTypes();
-        
+
         foreach($this->config as $key => $value)
             define("HV_" . strtoupper($key), $value);
+        
+        $this->setAdditionalParams();
+            
+        $this->setupLogging(true);
+            
+        $this->fixTypes();
             
         $dbconfig = substr($file, 0, strripos($file, "/")) . "/Database.php";
         require_once($dbconfig);
         
-        $this->setAdditionalParams();
+        
     }
     
     /**
@@ -35,6 +40,17 @@ class Config {
         // floats
         foreach($this->floats as $float)
             $this->config[$float] = (float) $this->config[$float];
+    }
+    
+    /**
+     * Makes sure that error log exists and selects desired logging verbosity
+     */
+    private function setupLogging($verbose) {
+    	if ($verbose)
+    	   error_reporting(E_ALL | E_STRICT);
+	    $errorLog = HV_ERROR_LOG;
+	    if(!file_exists($errorLog))
+	        touch($errorLog);
     }
     
     /**
