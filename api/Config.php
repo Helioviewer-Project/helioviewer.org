@@ -8,6 +8,8 @@ class Config {
     
     public function __construct($file) {
         $this->config = parse_ini_file($file);
+        
+        $this->fixTypes();
 
         foreach($this->config as $key => $value)
             define("HV_" . strtoupper($key), $value);
@@ -15,8 +17,6 @@ class Config {
         $this->setAdditionalParams();
             
         $this->setupLogging(true);
-            
-        $this->fixTypes();
             
         $dbconfig = substr($file, 0, strripos($file, "/")) . "/Database.php";
         require_once($dbconfig);
