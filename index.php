@@ -141,6 +141,9 @@
                     if (isset($_GET['imageScale']))
                         $view['imageScale'] = $_GET['imageScale'];
                         
+                    if (isset($_GET['debug']))
+                        $view['debug'] = $_GET['debug'];
+                        
                     // Convert to JSON
                     printf("var view = %s;\n", json_encode($view));
                
