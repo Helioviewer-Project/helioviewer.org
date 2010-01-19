@@ -267,7 +267,7 @@ class API {
      * @param string The filename to use
      * Constructs a JPX/MJ2 image series
      */
-    private function buildJP2ImageSeries ($output_file) {
+    private function ftp serversbuildJP2ImageSeries ($output_file) {
         require_once('ImgIndex.php');
         
         $startTime   = toUnixTimestamp($this->params['startTime']);
@@ -544,10 +544,11 @@ class API {
      * @description Queries the database to get the real jp2 image's width and height for that particular layer. Needed because
      *                     the width and height used in tileLayer.js are not the actual height and width and it mixes things up when
      *                     trying to align images for screenshots and movies.
-     * 
+     *
      * Required parameters: observatory, instrument, detector, measurement.
      * @return 1 on success
      */
+/*
     private function _getJP2Dimensions() {
         require_once('ImgIndex.php');
         $imgIndex = new ImgIndex(new DbConnection());
@@ -563,6 +564,7 @@ class API {
         
         return 1;
     }
+*/    
         
     /**
      * @description gets the movie url and loads it into MC Mediaplayer

@@ -10,7 +10,7 @@ class Proxy {
     }
 	
 	public function query($curl = false) {
-        header("Content-type: application/json");    
+        
 		if ($curl) {
 		    // Fetch Results
 		    $curl_handle=curl_init();
@@ -20,10 +20,10 @@ class Proxy {
 		
 		    $results = curl_exec($curl_handle);
 		    curl_close($curl_handle);
-            echo $results;
+            return $results;
 		}
 		else {
-			echo file_get_contents($this->url);
+			return file_get_contents($this->url);
 		}
 	}
 }
