@@ -4,6 +4,11 @@
 # Helioviewer Database Installation Tool
 # Last Updated: 2009/12/16
 #
+# TODO 01/17/2010:
+#    Let user specify dbname
+#    Add clarification regarding which username is expected and what it's used for
+#    Udpate graphical installer to reflect changes to text installer
+#
 ###############################################################################
 import sys
 from optparse import OptionParser, OptionError, IndentedHelpFormatter

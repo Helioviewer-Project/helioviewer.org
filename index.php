@@ -1,10 +1,6 @@
 <?php 
     require_once('api/Config.php');
     new Config("settings/Config.ini");
-    error_reporting(E_ALL | E_STRICT);
-    $errorLog = HV_ERROR_LOG;
-    if(!file_exists($errorLog))
-        touch($errorLog);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,8 +25,7 @@
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0/build/reset-fonts/reset-fonts.css"> 
         
         <!-- jQuery -->
-        <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript"></script>-->
-        <script src="lib/jquery/jquery-1.4a2.js" type="text/javascript"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
         <script src="lib/jquery/jquery-class-support/jquery.class.js" type="text/javascript"></script>
         <!--<script src="lib/jquery/jquery-qtip-nightly/jquery.qtip.js" type="text/javascript"></script>
@@ -90,6 +85,7 @@
         <script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
         <script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
         <script src="lib/helioviewer/EventMarker.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/KeyboardManager.js" type="text/javascript"></script>
         <script src="lib/helioviewer/ZoomControls.js" type="text/javascript"></script>
         <script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
         <script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
@@ -144,6 +140,9 @@
                         
                     if (isset($_GET['imageScale']))
                         $view['imageScale'] = $_GET['imageScale'];
+                        
+                    if (isset($_GET['debug']))
+                        $view['debug'] = $_GET['debug'];
                         
                     // Convert to JSON
                     printf("var view = %s;\n", json_encode($view));
