@@ -10,9 +10,9 @@ if (!$config = parse_ini_file("settings/Config.ini"))
         <link rel="shortcut icon" href="favicon.ico" />
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
         <meta charset="utf-8" />
-        <meta http-equiv="Cache-Control" content="No-Cache" />
         <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
         <meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
+        <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
 
         <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -77,45 +77,31 @@ if (!$config = parse_ini_file("settings/Config.ini"))
         </script>
         
         <!-- Helioviewer-Specific -->
-        <script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/Config.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/TreeSelect.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/Layer.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/TileLayer.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/EventLayer.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/EventMarker.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/KeyboardManager.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/ZoomControls.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/MessageConsole.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/LayerManager.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/EventLayerAccordion.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/TileLayerManager.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/EventLayerManager.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/TileLayerAccordion.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/Time.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/TimeControls.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/TooltipHelper.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/MediaSettings.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/MovieBuilder.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/ScreenshotBuilder.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/ImageSelectTool.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/IconPicker.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/UserSettings.js" type="text/javascript"></script>
-        <script src="lib/helioviewer/Helioviewer.js" type="text/javascript"></script>
-        <!--<script src="lib/helioviewer/build/helioviewer-all-min.js" type="text/javascript"></script>-->
+        <?php
+            // JavaScript
+            if ($config["compress_js"]) {
+                echo "<script src=\"lib/helioviewer/build/helioviewer-all-min.js\" type=\"text/javascript\"></script>\n\t";
+            }
+            else {
+            	$js = array("Config.js", "Helioviewer.js", "HelperFunctions.js", "IconPicker.js", "Layer.js", "EventLayer.js", "EventLayerAccordion.js", "EventMarker.js",
+                            "ImageSelectTool.js", "KeyboardManager.js", "LayerManager.js", "EventLayerManager.js", "TileLayerManager.js", "MediaSettings.js", "MessageConsole.js",
+                            "MovieBuilder.js", "ScreenshotBuilder.js", "TileLayer.js", "TileLayerAccordion.js", "Time.js", "TimeControls.js", "TooltipHelper.js", "TreeSelect.js", 
+                            "UserSettings.js", "Viewport.js", "ViewportHandlers.js", "ZoomControls.js");
+                foreach($js as $file)
+                    printf("<script src=\"lib/helioviewer/%s\" type=\"text/javascript\"></script>\n\t", $file);
+            }
+            
+            // CSS
+            if ($config["compress_css"]) {
+                echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/helioviewer-all.css\" />\n\t";
+            }
+            else {
+                $css = array("main.css", "accordions.css", "dialogs.css", "events.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
+                foreach($css as $file)
+                    printf("<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/%s\" />\n\t", $file);
+            }
+        ?>
 
-        <!-- Helioviewer.org custom styles -->
-        <link rel="stylesheet" type="text/css" href="styles/main.css" />
-        <link rel="stylesheet" type="text/css" href="styles/viewport.css" />
-        <link rel="stylesheet" type="text/css" href="styles/events.css" />
-        <link rel="stylesheet" type="text/css" href="styles/dialogs.css" />
-        <link rel="stylesheet" type="text/css" href="styles/tooltips.css" />
-        <link rel="stylesheet" type="text/css" href="styles/timenav.css" />
-        <link rel="stylesheet" type="text/css" href="styles/accordions.css" />
-        <link rel="stylesheet" type="text/css" href="styles/sliders.css" />
-        
         <!-- Theme Modifications -->
         <link rel="stylesheet" type="text/css" href="styles/dot-luv.css">
         

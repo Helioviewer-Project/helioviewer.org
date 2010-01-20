@@ -32,7 +32,7 @@ class HelioviewerTile extends Tile {
         $tile = $this->getTileFilepath($jp2, $x, $y, $format);
         
         // If tile already exists in cache, use it
-        if (HV_ENABLE_CACHE && $display) {
+        if (!HV_DISABLE_CACHE && $display) {
             if (file_exists($tile)) {
                 $this->displayCachedTile($tile);
                 exit();
