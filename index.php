@@ -1,11 +1,11 @@
-<?php 
-    require_once('api/Config.php');
-    new Config("settings/Config.ini");
+<?php
+if (!$config = parse_ini_file("settings/Config.ini"))
+    die("Missing config file!"); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <?php printf("<!-- Helioviewer rev. %s, %s-->\n", HV_BUILD_NUM, HV_LAST_UPDATE);?>
+        <?php printf("<!-- Helioviewer rev. %s, %s -->\n", $config["build_num"], $config["last_update"]);?>
         <title>Helioviewer - Solar and heliospheric image visualization tool</title>
         <link rel="shortcut icon" href="favicon.ico" />
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -67,8 +67,8 @@
         <script type="text/javascript" src="lib/shadowbox/shadowbox.js"></script>
         <script type="text/javascript" src="lib/shadowbox/adapters/shadowbox-jquery.js"></script>
         <script type="text/javascript" src="lib/shadowbox/players/shadowbox-iframe.js"></script>
-           <script type="text/javascript" src="lib/shadowbox/players/shadowbox-html.js"></script>
-           <script type="text/javascript" src="lib/shadowbox/players/shadowbox-img.js"></script>        
+        <script type="text/javascript" src="lib/shadowbox/players/shadowbox-html.js"></script>
+        <script type="text/javascript" src="lib/shadowbox/players/shadowbox-img.js"></script>        
         <script type="text/javascript" src="lib/shadowbox/languages/shadowbox-en.js"></script>
         <script type="text/javascript">
             Shadowbox.init({
@@ -78,6 +78,7 @@
         
         <!-- Helioviewer-Specific -->
         <script src="lib/helioviewer/HelperFunctions.js" type="text/javascript"></script>
+        <script src="lib/helioviewer/Config.js" type="text/javascript"></script>
         <script src="lib/helioviewer/Viewport.js" type="text/javascript"></script>
         <script src="lib/helioviewer/ViewportHandlers.js" type="text/javascript"></script>
         <script src="lib/helioviewer/TreeSelect.js" type="text/javascript"></script>
@@ -123,56 +124,38 @@
         <![endif]-->
         
         <script type="text/javascript">
+            var config, state, defaults, defaultsJSON, api;
+            
             $(function () {
                 <?php
-                    // View
-                    $view = array();
+                    printf("defaultsJSON = %s;\n", json_encode($config));
+                    
+                    // Application state
+                    $state = array();
 
                     //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,white light,0,100]
                     if (isset($_GET['imageLayers'])) {
                         $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                         $imageLayers = split("\],\[", $imageLayersString);
-                        $view['imageLayers'] = $imageLayers;
+                        $state['imageLayers'] = $imageLayers;
                     }
                 
                     if (isset($_GET['date']))
-                        $view['date'] = $_GET['date'];
+                        $state['date'] = $_GET['date'];
                         
                     if (isset($_GET['imageScale']))
-                        $view['imageScale'] = $_GET['imageScale'];
+                        $state['imageScale'] = $_GET['imageScale'];
                         
                     if (isset($_GET['debug']))
-                        $view['debug'] = $_GET['debug'];
+                        $state['debug'] = $_GET['debug'];
                         
                     // Convert to JSON
-                    printf("var view = %s;\n", json_encode($view));
-               
-                    echo "\t\t\t\t";
-
-                    // Default settings
-                    $settings = array(
-                        'version'           => HV_BUILD_NUM,
-                        'defaultZoomLevel'  => HV_DEFAULT_ZOOM_LEVEL,
-                        'defaultObsTime'    => HV_DEFAULT_OBS_TIME,
-                        'minZoomLevel'      => HV_MIN_ZOOM_LEVEL,
-                        'maxZoomLevel'      => HV_MAX_ZOOM_LEVEL,
-                        'baseZoom'          => HV_BASE_ZOOM_LEVEL,
-                        'baseScale'         => HV_BASE_IMAGE_SCALE,
-                        'prefetchSize'      => HV_PREFETCH_SIZE,
-                        'timeIncrementSecs' => HV_DEFAULT_TIMESTEP,
-                        'tileServer1'       => HV_TILE_SERVER_1,
-                        'tileServer2'       => HV_TILE_SERVER_2,
-                        'backupServer'      => HV_BACKUP_SERVER,
-                        'backupEnabled'     => HV_BACKUP_ENABLED,
-                        'distributed'       => HV_DISTRIBUTED_TILING_ENABLED,
-                        'rootURL'           => HV_WEB_ROOT_URL
-                    );
-
-                    echo "var defaults = " . json_encode($settings) . ";\n";
-                    echo "\t\t\t\t";
-                    printf ("var api = '%s';\n", HV_API_BASE_URL);
+                    printf("\t\tstate = %s;\n", json_encode($state));
                 ?>
-                var helioviewer = new Helioviewer('#helioviewer-viewport', api, view, defaults );
+                config   = new Config(defaultsJSON);
+                api      = config.getAPIBaseURL(); 
+                defaults = config.toArray();
+                helioviewer = new Helioviewer('#helioviewer-viewport', api, state, defaults );
             });
         </script>
 
