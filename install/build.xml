@@ -1,6 +1,6 @@
 <project name="Helioviewer" default="build" basedir="../">
 	<!-- Helioviewer Apache Ant build.xml. -->
-	<!-- Last updated: March 2009 By Keith -->
+	<!-- Last updated: January 2010 By Keith -->
 	<description>
 		Helioviewer Apache Ant build.xml
     </description>
@@ -18,8 +18,8 @@
 
 		<!-- concatenate in two-steps to preserve include order -->
 		<concat destfile="${hvlibs}/build/helioviewer-all.js" encoding="UTF-8" eol="lf">
-		    <filelist dir="${hvlibs}" files="Layer.js"/>
-			<fileset dir="${hvlibs}" includes="*.js" excludes="Layer.js"/>
+		    <filelist dir="${hvlibs}" files="Layer.js, LayerManager.js"/>
+			<fileset dir="${hvlibs}" includes="*.js" excludes="Layer.js, LayerManager.js"/>
 		</concat>
 
 		<concat destfile="${cssdir}/helioviewer-all.css" encoding="UTF-8" eol="lf">
