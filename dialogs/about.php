@@ -1,10 +1,10 @@
 <?php
-    require_once('../api/Config.php');
-    new Config('../settings/Config.ini');
+if (!$config = parse_ini_file("../settings/Config.ini"))
+    die("Missing config file!"); 
 ?>
 <img src="images/logos/about_white.png" alt="Helioviewer.org Logo"><br>
 <div style="width:100%; text-align: center;">
-    <span style="margin-left: auto; margin-right: auto; font-size:small;"><?php printf("Last Updated: %s (rev. %s)", HV_LAST_UPDATE, HV_BUILD_NUM); ?></span>
+    <span style="margin-left: auto; margin-right: auto; font-size:small;"><?php printf("Last Updated: %s (rev. %s)", $config["last_update"], $config["build_num"]); ?></span>
 </div>
 <br><br>
 
