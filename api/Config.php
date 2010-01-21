@@ -59,12 +59,13 @@ class Config {
      */
     private function setAdditionalParams() {
         //define("HV_ROOT_DIR", substr(getcwd(), 0, -4));
+        //define("HV_WEB_ROOT_URL", "http://" . $_SERVER["SERVER_NAME"] . substr($_SERVER["SCRIPT_NAME"], 0, -14));
         define("HV_TMP_ROOT_DIR", HV_ROOT_DIR . "/tmp");
         define("HV_CACHE_DIR",    HV_ROOT_DIR . "/cache");
         define("HV_ERROR_LOG",    HV_ROOT_DIR . "/log/error");
         define("HV_EMPTY_TILE",   HV_ROOT_DIR . "/images/transparent_512.png");
-        //define("HV_WEB_ROOT_URL", "http://" . $_SERVER["SERVER_NAME"] . substr($_SERVER["SCRIPT_NAME"], 0, -14));
         define("HV_TMP_ROOT_URL", HV_WEB_ROOT_URL . "/tmp");
+        define("HV_CACHE_URL",    HV_WEB_ROOT_URL . "/cache");
     }
 }
 ?>
