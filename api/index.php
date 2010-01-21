@@ -1,5 +1,4 @@
 <?php
-    //error_reporting(0); 
     require_once("lib/helioviewer/API.php");
     if (isset($_GET['action'])) {
         new API($_GET, "text");

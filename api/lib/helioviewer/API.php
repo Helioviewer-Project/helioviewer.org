@@ -9,9 +9,6 @@
 /**
  * @package Helioviewer API
  */
-error_reporting(E_ALL | E_STRICT | E_NOTICE);
-#error_reporting(0);
-
 class API {
 
     /**
