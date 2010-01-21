@@ -38,6 +38,9 @@ class ImgIndex {
         else
             $img = $right;
             
+        // Prepare cache for tiles
+        $this->createImageCacheDir($img["filepath"]);
+            
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
 
@@ -292,6 +295,16 @@ class ImgIndex {
                 file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
                 echo $msg;            
         }
+    }
+    
+    /**
+     * @description Creates the directory structure which will be used to cache generated tiles.
+     */
+    private function createImageCacheDir($filepath) {
+        $dir = HV_CACHE_DIR . $filepath;
+        
+        if (!file_exists($dir))
+           mkdir($dir, 0777, true); 
     }
 }
 ?>
