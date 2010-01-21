@@ -36,23 +36,17 @@ abstract class CompositeImage {
 
         // Create the temp directory where images will be stored.
         // $this->tmpDir is determined in either the MovieFrame or Screenshot class.
-        if(!file_exists($this->tmpDir)) {
-            mkdir($this->tmpDir);
-            chmod($this->tmpDir, 0777);
-        }
+        if(!file_exists($this->tmpDir))
+            mkdir($this->tmpDir, 0777);
 
         // Directory where all intermediate images with opacity levels of < 100 are created and stored        
         $this->transImageDir = HV_CACHE_DIR . "transparent_images/";
-        if(!file_exists($this->transImageDir)) {
-            mkdir($this->transImageDir);
-            chmod($this->transImageDir, 0777);
-        }            
+        if(!file_exists($this->transImageDir))
+            mkdir($this->transImageDir, 0777);
         
         $this->compositeImageDir = HV_CACHE_DIR . "composite_images/";
-        if(!file_exists($this->compositeImageDir)) {
-            mkdir($this->compositeImageDir);
-            chmod($this->compositeImageDir, 0777);
-        }
+        if(!file_exists($this->compositeImageDir))
+            mkdir($this->compositeImageDir, 0777);
     }
 
     /**

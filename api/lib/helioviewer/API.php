@@ -283,10 +283,8 @@ class API {
 
         // Create a temporary directory to store image-  (TODO: Move this + other directory creation to installation script)
         $tmpdir = HV_CACHE_DIR . "/movies/";
-        if (!file_exists($tmpdir)) {
-            mkdir($tmpdir);
-            chmod($tmpdir, 0777);
-        }
+        if (!file_exists($tmpdir))
+            mkdir($tmpdir, 0777);
 
         // Filename (From,To,By)
         $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence")) . "." . strtolower($format);
