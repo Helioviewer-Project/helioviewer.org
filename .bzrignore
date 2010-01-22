@@ -26,3 +26,6 @@ tags
 settings/Config.ini
 *.log
 .directory
+lib/helioviewer/build/helioviewer-all.js
+lib/helioviewer/build/helioviewer-all-min.js
+styles/helioviewer-all.css
