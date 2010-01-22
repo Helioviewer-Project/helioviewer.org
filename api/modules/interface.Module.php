@@ -1,9 +1,10 @@
 <?php 
 
-interface Module {
-	abstract function execute();
-	abstract function validate();
-	abstract function printDoc();
+interface Module 
+{
+	public function execute();
+	public function validate();
+	public static function printDoc();
 }
 
 ?>
