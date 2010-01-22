@@ -38,10 +38,8 @@ class Screenshot extends CompositeImage {
         // Directory to hold the final screenshot image.
         $this->cacheFileDir = $this->tmpDir . time() . "/";
         
-        if(!file_exists($this->cacheFileDir)) {
-            mkdir($this->cacheFileDir);
-            chmod($this->cacheFileDir, 0777);
-        }
+        if(!file_exists($this->cacheFileDir))
+            mkdir($this->cacheFileDir, 0777);
     }
 
     /**

@@ -9,9 +9,6 @@
 /**
  * @package Helioviewer API
  */
-error_reporting(E_ALL | E_STRICT | E_NOTICE);
-#error_reporting(0);
-
 class API {
 
     /**
@@ -268,8 +265,10 @@ class API {
      *  (See http://us2.php.net/manual/en/function.date-create.php)
      */
     private function _getJP2ImageSeries () {
-        $startTime   = toUnixTimestamp($this->params['startTime']);
-        $endTime     = toUnixTimestamp($this->params['endTime']);
+        //$startTime   = toUnixTimestamp($this->params['startTime']);
+        //$endTime     = toUnixTimestamp($this->params['endTime']);
+        $startTime   = str_replace(":", ".", $this->params['startTime']);
+        $endTime     = str_replace(":", ".", $this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
         $jpip        = $this->params['getJPIP'];
@@ -280,20 +279,19 @@ class API {
         $measurement = $this->params['measurement'];
 
         // Create a temporary directory to store image-  (TODO: Move this + other directory creation to installation script)
-        $tmpdir = HV_TMP_ROOT_DIR . "/movies/";
-        if (!file_exists($tmpdir)) {
-            mkdir($tmpdir);
-            chmod($tmpdir, 0777);
-        }
+        $tmpdir = HV_CACHE_DIR . "/movies/";
+        if (!file_exists($tmpdir))
+            mkdir($tmpdir, 0777);
 
         // Filename (From,To,By)
         $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence")) . "." . strtolower($format);
+        $filename = str_replace(" ", "-", $filename);
         
         // Filepath
         $filepath = "$tmpdir" . $filename;
 
         // URL
-        $url = HV_TMP_ROOT_URL . "/movies/" . $filename;
+        $url = HV_CACHE_URL . "/movies/" . $filename;
 
         // If the file doesn't exist already, create it
         if (!file_exists($filepath))

@@ -36,10 +36,8 @@ class MovieFrame extends CompositeImage {
         // Directory to store all of the final frame images before they are compiled into a video    
         $this->cacheFileDir = $tmpDir . $folderId . "/";
         
-        if(!file_exists($this->cacheFileDir)) {
-            mkdir($this->cacheFileDir);
-            chmod($this->cacheFileDir, 0777);
-        }
+        if(!file_exists($this->cacheFileDir))
+            mkdir($this->cacheFileDir, 0777);
         
         $this->compileImages();
     }

@@ -64,11 +64,6 @@ class HelioviewerTile extends Tile {
     private function getTileFilepath($jp2, $x, $y, $format) {
         // Base directory
         $filepath = $this->cacheDir . "/";
-                
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-        }
 
         // Base filename
         $exploded = explode("/", $jp2);
@@ -83,12 +78,6 @@ class HelioviewerTile extends Tile {
         
         foreach($fieldArray as $field) {
             $filepath .= str_replace(" ", "_", $field) . "/";
-            
-            if (!file_exists($filepath)) {
-                //echo $filepath . "<br>";
-                mkdir($filepath);
-                chmod($filepath, 0777);
-            }
         }    
 
         // Convert coordinates to strings
@@ -103,6 +92,13 @@ class HelioviewerTile extends Tile {
         $filepath .= $filename . "_" . $this->zoomLevel . "_" . $xStr . "_" . $yStr . ".$format";
 
         return $filepath;
+    }
+    
+    /**
+     * @description Returns the directory where cached tiles for a given image will be placed
+     */
+    private function getImageCacheDir() {
+    	
     }
     
     /**
