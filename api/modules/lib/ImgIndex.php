@@ -56,6 +56,7 @@ class ImgIndex {
         if (!file_exists($filename)) {
             $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t Unable to extract XMLbox for $filename: file does not exist!\n\n";
             file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
+            exit();
         }
         
         $fp = fopen($filename, "rb");

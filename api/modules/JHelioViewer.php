@@ -158,8 +158,15 @@ class JHelioViewer implements Module
         }
 
         // Filename (From,To,By)
-        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence")) . "." . strtolower($format);
-
+        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence"));
+        
+        // Differentiate linked JPX files
+        if ($links)
+            $filename .= "L";
+        
+        // File extension
+        $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
+        
         // Filepath
         $output_file = "$tmpdir" . $filename;
 
