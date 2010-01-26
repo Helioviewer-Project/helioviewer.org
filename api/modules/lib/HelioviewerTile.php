@@ -30,19 +30,17 @@ class HelioviewerTile extends Tile {
         
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->getTileFilepath($jp2, $x, $y, $format);
-        
+
         // If tile already exists in cache, use it
-        if (!HV_DISABLE_CACHE && $display) {
+        if (HV_DISABLE_CACHE && $display) {
             if (file_exists($tile)) {
                 $this->displayCachedTile($tile);
                 exit();
             }
         }
-
         $desiredScale = $this->getImageScale($zoom);
         
         parent::__construct($jp2, $tile, $x, $y, $desiredScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format);
-            
         $colorTable = $this->getColorTable();
         
         if ($colorTable)
@@ -64,6 +62,11 @@ class HelioviewerTile extends Tile {
     private function getTileFilepath($jp2, $x, $y, $format) {
         // Base directory
         $filepath = $this->cacheDir . "/";
+                
+        if (!file_exists($filepath)) {
+            mkdir($filepath);
+            chmod($filepath, 0777);
+        }
 
         // Base filename
         $exploded = explode("/", $jp2);
@@ -78,6 +81,12 @@ class HelioviewerTile extends Tile {
         
         foreach($fieldArray as $field) {
             $filepath .= str_replace(" ", "_", $field) . "/";
+            
+            if (!file_exists($filepath)) {
+                //echo $filepath . "<br>";
+                mkdir($filepath);
+                chmod($filepath, 0777);
+            }
         }    
 
         // Convert coordinates to strings
@@ -92,13 +101,6 @@ class HelioviewerTile extends Tile {
         $filepath .= $filename . "_" . $this->zoomLevel . "_" . $xStr . "_" . $yStr . ".$format";
 
         return $filepath;
-    }
-    
-    /**
-     * @description Returns the directory where cached tiles for a given image will be placed
-     */
-    private function getImageCacheDir() {
-    	
     }
     
     /**
@@ -205,11 +207,12 @@ class HelioviewerTile extends Tile {
                 header("Content-Type: image/png");
             else
                 header("Content-Type: image/jpeg");
-            
+                
             if (!readfile($tile)) {
                 throw new Exception("Error displaying $filename\n");
             }
         } catch (Exception $e) {
+            header("Content-Type: text/html");
             $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
         }

@@ -1,14 +1,19 @@
 <?php
-    require_once("lib/helioviewer/API.php");
-    if (isset($_GET['action'])) {
-        new API($_GET, "text");
-    }
-    elseif (isset($_POST['action'])) {
-        new API($_POST, "json");
-    } else {
-        
+require_once("Config.php");
+new Config("../settings/Config.ini");
+if (isset($_GET['action'])) {
+    $params = $_GET;
+    select_module($params);
+}
+elseif (isset($_POST['action'])) {
+    $params = $_POST;
+    select_module($params);
+} else {
+
     $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-?>
+
+
+    ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
@@ -863,7 +868,45 @@
         </div>
     
     </body>
-</html>    
-<?php
+</html>
+    <?php
+}
+
+function select_module($params)
+{
+    $valid_actions =
+    array(
+"downloadFile" => "WebClient",
+"getClosestImage" => "WebClient",
+"getDataSources" => "WebClient",
+"getScreenshot" => "WebClient",
+"getJP2Header" => "WebClient",
+"getTile" => "WebClient",
+"launchJHelioViewer" => "WebClient",
+"getEvents" => "Events",
+"getEventCatalogs" => "Events",
+"getJP2Image" => "JHelioViewer",
+"getJPX" => "JHelioViewer",
+"getMJ2" => "JHelioViewer"
+);
+foreach($valid_actions as $action=>$module)
+{
+    if($params['action'] == $action)
+    {
+        require_once('modules/' . $module . ".php");
+        switch($module)
+        {
+            case "WebClient":
+                $client = new WebClient($params);
+                break;
+            case "Events":
+                $events = new Events($params);
+                break;
+            case "JHelioViewer":
+                $viewer = new JHelioViewer($params);
+                break;
+        }
     }
+}
+}
 ?>
