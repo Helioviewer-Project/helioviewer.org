@@ -118,7 +118,18 @@ class JHelioViewer implements Module
 
         return 1;
     }
-
+    
+    public function getJPX ()
+    {
+        $this->params['format'] = 'JPX';
+        $this->buildJP2ImageSeries();
+    }
+    
+    public function getMJ2 ()
+    {
+        $this->params['format'] = 'MJ2';
+        $this->buildJP2ImageSeries();
+    }
 
     /**
      * @return int Returns "1" if the action was completed successfully.

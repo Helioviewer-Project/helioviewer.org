@@ -69,7 +69,7 @@ class WebClient implements Module
      * @TODO test this to make sure it works in all browsers.
      * @return 1 on success.
      */
-    private function downloadFile()
+    public function downloadFile()
     {
         $url = $this->params['url'];
 
@@ -102,7 +102,7 @@ class WebClient implements Module
      * http://localhost/hv/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&server=api/index.php
      * TODO: Add a more elegant check for local vs. remote server
      */
-    private function getClosestImage ()
+    public function getClosestImage ()
     {
         // TILE_SERVER_1
         if ($this->params['server'] === 'api/index.php') {
@@ -143,7 +143,7 @@ class WebClient implements Module
      * getDataSources
      * @return Returns a tree representing the available data sources
      */
-    private function getDataSources ()
+    public function getDataSources ()
     {
         require_once('lib/ImgIndex.php');
         require_once('lib/DbConnection.php');
@@ -163,7 +163,7 @@ class WebClient implements Module
      * @return int Returns "1" if the action was completed successfully.
      * NOTE: Add option to specify XML vs. JSON... FITS vs. Entire header?
      */
-    private function getJP2Header ()
+    public function getJP2Header ()
     {
         $filepath = HV_JP2_DIR . $this->params["file"];
 
@@ -196,7 +196,7 @@ class WebClient implements Module
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
-    private function getTile ()
+    public function getTile ()
     {
         require_once("lib/HelioviewerTile.php");
         $tile = new HelioviewerTile($this->params['uri'], $this->params['x'], $this->params['y'], $this->params['zoom'], $this->params['ts'],
@@ -209,7 +209,7 @@ class WebClient implements Module
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
-    private function launchJHelioviewer ()
+    public function launchJHelioviewer ()
     {
         require_once('lib/JHV.php');
         if ((isset($this->params['files'])) && ($this->params['files'] != "")) {
@@ -225,7 +225,7 @@ class WebClient implements Module
      * TODO: CAPTCHA, Server-side security
      * @return
      */
-    private function sendEmail()
+    public function sendEmail()
     {
         // The message
         //$message = "Line 1\nLine 2\nLine 3";
@@ -254,7 +254,7 @@ class WebClient implements Module
      *
      * @return Returns 1 if the action was completed successfully.
      */
-    private function takeScreenshot()
+    public function takeScreenshot()
     {
         require_once('lib/Screenshot.php');
 
@@ -322,7 +322,7 @@ class WebClient implements Module
      * @return int Returns "1" if the action was completed successfully.
      *
      */
-    private function getViewerImage () {
+    public function getViewerImage () {
         require('lib/CompositeImage.php');
 
         //Create and display composite image
