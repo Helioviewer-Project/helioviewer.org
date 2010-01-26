@@ -197,41 +197,23 @@ class API {
         $date = $this->params['date'];
 
         // Search by source id
-        if (isset($this->params['source'])) {
-            $filepath = $imgIndex->getJP2FilePath($date, $this->params['source']);
-        }
-        // Search by human-readable parameters
-        else {
-            foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
-                $parameters["$field"] = $this->params[$field];
+        if (!isset($this->params['source']))
+        	$this->params['source'] = $imgIndex->getSourceId($this->params['observatory'], $this->params['instrument'], $this->params['detector'], $this->params['measurement']);
 
-            $filepath = $imgIndex->getJP2FilePath($date, $parameters);
-        }
+        $filepath = $imgIndex->getJP2FilePath($date, $this->params['source']);
 
         $uri = HV_JP2_DIR . $filepath;
         
-        // http url (relative path)getUTC
-        if ($this->params['getRelativeURL']) {
-            $jp2RootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-            $url = preg_replace($jp2RootRegex, "", $uri);
-            echo $url;
-        }
-        
         // http url (full path)
-        else if ($this->params['getURL']) {
+        if ($this->params['getURL']) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-        //echo HV_JP2_ROOT_URL . "<br>";
-        //echo $webRootRegex . "<br>";
-        //echo $uri . "<br>";
             $url = preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri);
             echo $url;
         }
         
         // jpip url
         else if ($this->params['getJPIP']) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-            $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $uri), 4);
-            echo $jpip;
+            echo $this->getJPIPURL($uri);
         }
         
         // jp2 image
@@ -254,6 +236,15 @@ class API {
 
         return 1;
     }
+    
+    /**
+     * @description Converts a regular HTTP URL to a JPIP URL
+     */
+    private function getJPIPURL($url) {
+        $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
+        $jpip = preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $url);
+        return $jpip;
+    }
 
     /**
      * @return int Returns "1" if the action was completed successfully.
@@ -265,12 +256,11 @@ class API {
      *  (See http://us2.php.net/manual/en/function.date-create.php)
      */
     private function _getJP2ImageSeries () {
-        //$startTime   = toUnixTimestamp($this->params['startTime']);
-        //$endTime     = toUnixTimestamp($this->params['endTime']);
         $startTime   = str_replace(":", ".", $this->params['startTime']);
         $endTime     = str_replace(":", ".", $this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
+        $links       = $this->params['links'];
         $jpip        = $this->params['getJPIP'];
         
         $observatory = $this->params['observatory'];
@@ -278,33 +268,34 @@ class API {
         $detector    = $this->params['detector'];
         $measurement = $this->params['measurement'];
 
-        // Create a temporary directory to store image-  (TODO: Move this + other directory creation to installation script)
-        $tmpdir = HV_CACHE_DIR . "/movies/";
-        if (!file_exists($tmpdir))
-            mkdir($tmpdir, 0777);
+        $dir = HV_JP2_DIR . "/movies/";
 
         // Filename (From,To,By)
-        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence")) . "." . strtolower($format);
-        $filename = str_replace(" ", "-", $filename);
+        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence"));
+        
+        // Differentiate linked JPX files
+        if ($links)
+            $filename .= "L";
+        
+        // File extension
+        $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
         
         // Filepath
-        $filepath = "$tmpdir" . $filename;
+        $filepath = $dir . $filename;
 
         // URL
-        $url = HV_CACHE_URL . "/movies/" . $filename;
+        $url = HV_JP2_ROOT_URL . "/movies/" . $filename;
 
         // If the file doesn't exist already, create it
         if (!file_exists($filepath))
             $this->buildJP2ImageSeries($filepath);
 
         // Output the file/jpip URL
-        if ($jpip) {        
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
-            $mj2 = "jpip" . substr(preg_replace($webRootRegex, HV_WEB_ROOT_URL, $url), 4);
-            echo $mj2;
-        } else {
+        if ($jpip)   
+            echo $this->getJPIPURL($filepath);
+        else
             echo $url;
-        }
+
         return 1;
     }
     
@@ -315,6 +306,13 @@ class API {
     private function buildJP2ImageSeries ($output_file) {
         require_once('ImgIndex.php');
         
+        // Source params
+        $obs  = $this->params["observatory"];
+        $inst = $this->params["instrument"];
+        $det  = $this->params["detector"];
+        $meas = $this->params["measurement"];
+        
+        // Movie params
         $startTime   = toUnixTimestamp($this->params['startTime']);
         $endTime     = toUnixTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
@@ -322,13 +320,11 @@ class API {
         $links       = $this->params['links'];
         $debug       = $this->params['debug'];
 
-        // Layer information
-        foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-          $src["$field"] = $this->params[$field];
-        }
-
         // Connect to database
         $imgIndex = new ImgIndex(new DbConnection());
+        
+        // Get data source id
+        $source = $imgIndex->getSourceId($obs, $inst, $det, $meas);
 
         // Determine number of frames to grab
         $timeInSecs = $endTime - $startTime;
@@ -342,7 +338,7 @@ class API {
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
             $isoDate = toISOString(parseUnixTimestamp($time));
-            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src, $debug);
+            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $source, $debug);
             array_push($images, $jp2);
             $time += $cadence;
         }
@@ -815,7 +811,7 @@ class API {
             case "getLayerAvailability":
                 break;
             case "getJP2Image":
-            	$bools = array("getURL", "getRelativeURL", "getJPIP");
+            	$bools = array("getURL", "getJPIP");
             	$this->_fixBools($bools);
                 break;
             case "getJP2ImageSeries":
