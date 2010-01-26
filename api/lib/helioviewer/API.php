@@ -204,28 +204,16 @@ class API {
 
         $uri = HV_JP2_DIR . $filepath;
         
-        // http url (relative path)getUTC
-        if ($this->params['getRelativeURL']) {
-            $jp2RootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-            $url = preg_replace($jp2RootRegex, "", $uri);
-            echo $url;
-        }
-        
         // http url (full path)
-        else if ($this->params['getURL']) {
+        if ($this->params['getURL']) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-        //echo HV_JP2_ROOT_URL . "<br>";
-        //echo $webRootRegex . "<br>";
-        //echo $uri . "<br>";
             $url = preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri);
             echo $url;
         }
         
         // jpip url
         else if ($this->params['getJPIP']) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-            $jpip = "jpip" . substr(preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $uri), 4);
-            echo $jpip;
+            echo $this->getJPIPURL($uri);
         }
         
         // jp2 image
@@ -247,6 +235,15 @@ class API {
         }
 
         return 1;
+    }
+    
+    /**
+     * @description Converts a regular HTTP URL to a JPIP URL
+     */
+    private function getJPIPURL($url) {
+        $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
+        $jpip = preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $url);
+        return $jpip;
     }
 
     /**
@@ -294,13 +291,11 @@ class API {
             $this->buildJP2ImageSeries($filepath);
 
         // Output the file/jpip URL
-        if ($jpip) {        
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_ROOT_DIR) . "/";
-            $mj2 = "jpip" . substr(preg_replace($webRootRegex, HV_WEB_ROOT_URL, $url), 4);
-            echo $mj2;
-        } else {
+        if ($jpip)   
+            echo $this->getJPIPURL($filepath);
+        else
             echo $url;
-        }
+
         return 1;
     }
     
@@ -816,7 +811,7 @@ class API {
             case "getLayerAvailability":
                 break;
             case "getJP2Image":
-            	$bools = array("getURL", "getRelativeURL", "getJPIP");
+            	$bools = array("getURL", "getJPIP");
             	$this->_fixBools($bools);
                 break;
             case "getJP2ImageSeries":

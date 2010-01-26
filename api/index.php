@@ -501,11 +501,6 @@
                                             <td>[Optional] Returns a URL instead of an actual image.</td>
                                         </tr>
                                         <tr>
-                                            <td><b>getRelativeURL</b></td>
-                                            <td><i>Boolean</i></td>
-                                            <td>[Optional] Returns a URL relative to the JPEG 2000 archive root directory.</td>
-                                        </tr>
-                                        <tr>
                                             <td><b>getJPIP</b></td>
                                             <td><i>Boolean</i></td>
                                             <td>[Optional] Returns a JPIP URI instead of an actual image.</td>
