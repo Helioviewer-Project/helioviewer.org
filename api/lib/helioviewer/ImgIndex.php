@@ -259,8 +259,8 @@ class ImgIndex {
      * @param object $src
      * 
      */
-    public function getJP2FilePath($obsTime, $params, $debug=false) {
-        $img = $this->getClosestImage($obsTime, $params, $debug);
+    public function getJP2FilePath($obsTime, $source, $debug=false) {
+        $img = $this->getClosestImage($obsTime, $source, $debug);
         return $img["filepath"] . "/" . $img["filename"];
     }
 

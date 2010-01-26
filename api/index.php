@@ -601,8 +601,12 @@
                                 
                                 <span class="example-header">Example:</span>
                                 <span class="example-url">
-                                    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=27000&format=JPX"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX</a>
+                                    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX</a>
+                                </span><br />
+                                <span class="example-url">
+                                    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX&links=true&getJPIP=true"><?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX&links=true&getJPIP=true</a>
                                 </span>                                
+
                             </div>
                         </div>
                         

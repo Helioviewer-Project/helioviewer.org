@@ -197,16 +197,10 @@ class API {
         $date = $this->params['date'];
 
         // Search by source id
-        if (isset($this->params['source'])) {
-            $filepath = $imgIndex->getJP2FilePath($date, $this->params['source']);
-        }
-        // Search by human-readable parameters
-        else {
-            foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
-                $parameters["$field"] = $this->params[$field];
+        if (!isset($this->params['source']))
+        	$this->params['source'] = $imgIndex->getSourceId($this->params['observatory'], $this->params['instrument'], $this->params['detector'], $this->params['measurement']);
 
-            $filepath = $imgIndex->getJP2FilePath($date, $parameters);
-        }
+        $filepath = $imgIndex->getJP2FilePath($date, $this->params['source']);
 
         $uri = HV_JP2_DIR . $filepath;
         
@@ -265,8 +259,6 @@ class API {
      *  (See http://us2.php.net/manual/en/function.date-create.php)
      */
     private function _getJP2ImageSeries () {
-        //$startTime   = toUnixTimestamp($this->params['startTime']);
-        //$endTime     = toUnixTimestamp($this->params['endTime']);
         $startTime   = str_replace(":", ".", $this->params['startTime']);
         $endTime     = str_replace(":", ".", $this->params['endTime']);
         $cadence     = $this->params['cadence'];
@@ -279,10 +271,7 @@ class API {
         $detector    = $this->params['detector'];
         $measurement = $this->params['measurement'];
 
-        // Create a temporary directory to store image-  (TODO: Move this + other directory creation to installation script)
-        $tmpdir = HV_CACHE_DIR . "/movies/";
-        if (!file_exists($tmpdir))
-            mkdir($tmpdir, 0777);
+        $dir = HV_JP2_DIR . "/movies/";
 
         // Filename (From,To,By)
         $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence"));
@@ -295,10 +284,10 @@ class API {
         $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
         
         // Filepath
-        $filepath = "$tmpdir" . $filename;
+        $filepath = $dir . $filename;
 
         // URL
-        $url = HV_CACHE_URL . "/movies/" . $filename;
+        $url = HV_JP2_ROOT_URL . "/movies/" . $filename;
 
         // If the file doesn't exist already, create it
         if (!file_exists($filepath))
@@ -322,6 +311,13 @@ class API {
     private function buildJP2ImageSeries ($output_file) {
         require_once('ImgIndex.php');
         
+        // Source params
+        $obs  = $this->params["observatory"];
+        $inst = $this->params["instrument"];
+        $det  = $this->params["detector"];
+        $meas = $this->params["measurement"];
+        
+        // Movie params
         $startTime   = toUnixTimestamp($this->params['startTime']);
         $endTime     = toUnixTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
@@ -329,13 +325,11 @@ class API {
         $links       = $this->params['links'];
         $debug       = $this->params['debug'];
 
-        // Layer information
-        foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field) {
-          $src["$field"] = $this->params[$field];
-        }
-
         // Connect to database
         $imgIndex = new ImgIndex(new DbConnection());
+        
+        // Get data source id
+        $source = $imgIndex->getSourceId($obs, $inst, $det, $meas);
 
         // Determine number of frames to grab
         $timeInSecs = $endTime - $startTime;
@@ -349,7 +343,7 @@ class API {
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
             $isoDate = toISOString(parseUnixTimestamp($time));
-            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $src, $debug);
+            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $source, $debug);
             array_push($images, $jp2);
             $time += $cadence;
         }
