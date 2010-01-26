@@ -1,5 +1,6 @@
 <?php
-//error_reporting(0);
+require_once("Config.php");
+new Config("../settings/Config.ini");
 if (isset($_GET['action'])) {
     $params = $_GET;
     select_module($params);
@@ -42,8 +43,6 @@ body {
 a {
     text-decoration: none;
     color: #111;
-    T;
-    select_module
     (
 }
 
@@ -129,7 +128,6 @@ div.content h1 {
     <li><a href="index.php#ImageAPI">Image API</a></li>
     <li><a href="index.php#FeatureEventAPI">Feature/Event API</a>
     <ul>
-        T; select_module(
         <li><a href="index.php#getEventCatalogs">Catalogs</a></li>
         <li><a href="index.php#getEvents">Catalog Entries</a></li>
     </ul>
@@ -394,7 +392,7 @@ you wish you query. Both steps are described below.</p>
     </table>
 
     <br>
-    T; select_module( Result:<br>
+    Result:<br>
     <br>
     An array of event objects is returned formatted as JSON. Each event
     object includes 12 required parameters as well as an array,
@@ -484,7 +482,7 @@ you wish you query. Both steps are described below.</p>
                 lists some very basic parameters of the event which vary
                 from catalog to catalog.</td>
             </tr>
-            T; select_module(
+            
             <tr>
                 <td><b>sourceUrl</b></td>
                 <td><i>String</i></td>
@@ -551,7 +549,7 @@ generation of JPEG 2000 Image Series (JPX) and MJ2 Movies.</p>
 <ol style="list-style-type: upper-latin;">
     <!-- JPEG 2000 Image API -->
     <li>
-    <div id="getJP2Image">T; select_module( JP2 Images:
+    <div id="getJP2Image">JP2 Images:
     <p>Returns a single JPEG 2000 (JP2) image. If an image is not
     available for the date request the closest available image is
     returned.</p>
@@ -606,7 +604,6 @@ generation of JPEG 2000 Image Series (JPX) and MJ2 Movies.</p>
                 <td><i>Boolean</i></td>
                 <td>[Optional] Returns a URL instead of an actual image.</td>
             </tr>
-            T; select_module(
             <tr>
                 <td><b>getRelativeURL</b></td>
                 <td><i>Boolean</i></td>
@@ -904,7 +901,7 @@ generation of JPEG 2000 Image Series (JPX) and MJ2 Movies.</p>
     </table>
     </div>
     </div>
-    T; select_module(</li>
+    </li>
 
     <br>
 
@@ -1001,7 +998,6 @@ Last Updated: 2010-01-06 | <a href="mailto:webmaster@helioviewer.org">Questions?
     <?php
 }
 
-
 function select_module($params)
 {
     $valid_actions =
@@ -1010,21 +1006,32 @@ function select_module($params)
 "getClosestImage" => "WebClient",
 "getDataSources" => "WebClient",
 "getScreenshot" => "WebClient",
+"getJP2Header" => "WebClient",
 "getTile" => "WebClient",
-"launchJHelioViewer" => "WebClient"
-    );
-    foreach($valid_actions as $action=>$module)
+"launchJHelioViewer" => "WebClient",
+"getEvents" => "Events",
+"getEventCatalogs" => "Events",
+"getJP2Image" => "JHelioViewer",
+"buildJP2ImageSeries" => "JHelioViewer"
+);
+foreach($valid_actions as $action=>$module)
+{
+    if($params['action'] == $action)
     {
-        if($params['action'] == $action)
+        require_once('modules/' . $module . ".php");
+        switch($module)
         {
-            require_once('modules/' . $module . ".php");
-            switch($module)
-            {
-                case "WebClient":
-                    $client = new WebClient($params);
-                    break;
-            }
+            case "WebClient":
+                $client = new WebClient($params);
+                break;
+            case "Events":
+                $events = new Events($params);
+                break;
+            case "JHelioViewer":
+                $viewer = new JHelioViewer($params);
+                break;
         }
     }
+}
 }
 ?>

@@ -4,25 +4,46 @@ require_once("interface.Module.php");
 
 class Movies implements Module
 {
-    public function __construct() 
+    private $params;
+
+    public function __construct($params)
     {
-        
+        require_once("Helper.php");
+        $this->params = $params;
+
+
+        $this->execute();
+
+    }
+
+    public function execute()
+    {
+        if($this->validate())
+        {
+            $this->{$this->params['action']}();
+        }
+    }
+
+    public function validate()
+    {
+        switch($this->params['action'])
+        {
+            case "buildMovie":
+                Helper::checkForMissingParams(array('startDate', 'zoomLevel', 'numFrames', 'frameRate', 'timeStep', 'quality'), $this->params);
+                break;
+            case "playMovie":
+                break;
+            default:
+                throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");
+        }
+        return true;
+    }
+
+    public static function printDoc()
+    {
+
     }
     
-    public function execute() 
-    {
-        
-    }
-    
-    public function validate() 
-    {
-        
-    }
-    
-    public function printDoc() 
-    {
-        
-    }
     
     /**
      * @description All possible parameters: startDate, zoomLevel, numFrames, frameRate, timeStep, layers, imageSize ("x,y"),
@@ -40,7 +61,7 @@ class Movies implements Module
      */
     private function buildMovie () 
     {
-        require_once('Movie.php');
+        require_once('lib/Movie.php');
 
         // Required parameters
         $startDate = $this->params['startDate'];

@@ -5,53 +5,6 @@ require_once("interface.Module.php");
 
 class Helper
 {
-/*
-    private $params;
-    private $format;
-    private $module;
-    
-     *
-     * @param array An array of parameters relevant to the API call
-     * @param string ["plain-text"|"json"] The format to return results in
-     *
-    
-    public function __construct ($params, $format)
-    {
-        $this->params  = $params;
-        $this->format  = $format;
-
-        require_once('Config.php');
-        new Config("../settings/Config.ini");
-
-    }
-
-    public function execute() 
-    {
-        require_once($this->module . ".php");
-        
-        switch($this->module) {
-            case "WebClient":
-                $mod = new WebClient($this->params);
-                break;
-        }
-    }
-
-    public function validate() 
-    {
-        foreach($this->actions as $action=>$module) {
-            if($this->params['action'] == $action) {
-                $this->module = $module;
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public function printDoc() 
-    {
-        
-    }
-*/
     /**
      * @description Checks to make sure all required parameters were passed in.
      * @param {Array} $fields is an array containing any required fields, such as 'layers', 'zoomLevel', etc.
@@ -76,21 +29,64 @@ class Helper
      * Typecast boolean strings or unset optional params to booleans
      *
      */
-    private static function fixBools($fields) {
+    public static function fixBools($fields, $params) {
         foreach($fields as $field) {
-            if (!isset($this->params[$field]))
-            $this->params[$field] = false;
+            if (!isset($params[$field]))
+            $params[$field] = false;
             else {
-                if (strtolower($this->params[$field]) === "true")
-                $this->params[$field] = true;
+                if (strtolower($params[$field]) === "true")
+                $params[$field] = true;
                 else
-                $this->params[$field] = false;
+                $params[$field] = false;
             }
         }
-
-        return 1;
+        
+        return $params;
     }
 
+}
+
+/**
+ * @return int Number of seconds since Jan 1, 1970 UTC
+ * @param string $datestr ISO 8601 Date string, e.g. "2003-10-05T00:00:00Z"
+ */
+function toUnixTimestamp($dateStr) {
+    date_default_timezone_set('UTC');
+    return strtotime($dateStr);
+}
+
+/**
+ * @return DateTime A PHP DateTime object
+ * @param int $timestamp The number of seconds since Jan 1, 1970 UTC
+ */
+function parseUnixTimestamp($timestamp) {
+    date_default_timezone_set('UTC');
+    return new DateTime("@$timestamp");
+}
+
+/**
+ * @return string Returns a date formatted for MySQL queries (2003-10-05 00:00:00)
+ * @param DateTime $date
+ */
+function toMySQLDateString($date) {
+    return $date->format("Y-m-d H:i:s");
+}
+
+/**
+ * Parses an ISO 8601 date string with one formatted for MySQL
+ * @return string
+ * @param object $dateStr
+ */
+function isoDateToMySQL($dateStr) {
+    return str_replace("Z", "", str_replace("T", " ", $dateStr));
+}
+
+/**
+ * @return ISO 8601 Date string (2003-10-05T00:00:00Z)
+ * @param DateTime $date
+ */
+function toISOString($date) {
+    return $date->format("Y-m-d\TH:i:s\Z");
 }
 
 ?>

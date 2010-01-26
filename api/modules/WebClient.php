@@ -8,21 +8,20 @@ class WebClient implements Module
 
     public function __construct($params)
     {
-        require_once("Base.php");
-        require_once("Config.php");
-        new Config("../settings/Config.ini");
+        require_once("Helper.php");
         $this->params = $params;
 
-        if($this->validate())
-        {
-            $this->execute();
-        }
+
+        $this->execute();
 
     }
 
     public function execute()
     {
-        $this->{$this->params['action']}();
+        if($this->validate())
+        {
+            $this->{$this->params['action']}();
+        }
     }
 
     public function validate()
@@ -33,11 +32,31 @@ class WebClient implements Module
                 Helper::checkForMissingParams(array('url'), $this->params);
                 break;
             case "getClosestImage":
+                if ($this->params['server'] === 'api/index.php') {
+                //    Helper::checkForMissingParams(array('server', 'observatory', 'instrument', 'detector', 'measurement'), $this->params);
+                }
+                else
+                {
+                    Helper::checkForMissingParams(array('sourceId', 'date'), $this->params);
+                }
+                break;
+            case "getDataSources":
+                break;
+            case "getTile":
+                //Note: disabled because of a bug in checkForMissingParams when x=0
+                //Helper::checkForMissingParams(array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width', 'jp2Height', 'jp2Scale',
+                //                                    'offsetX', 'offsetY', 'format', 'obs', 'inst', 'det', 'meas'), $this->params);
+                break;
+            case "getJP2Header":
+                break;
+            case "getViewerImage":
+                break;
+            case "formatLayerString":
                 break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");
         }
-        $this->execute();
+        return true;
     }
 
     public static function printDoc()
@@ -87,7 +106,8 @@ class WebClient implements Module
     {
         // TILE_SERVER_1
         if ($this->params['server'] === 'api/index.php') {
-            require_once('ImgIndex.php');
+            require_once('lib/ImgIndex.php');
+            require_once('lib/DbConnection.php');
             $imgIndex = new ImgIndex(new DbConnection());
 
             // Search by source id
@@ -101,7 +121,7 @@ class WebClient implements Module
                 $result = $imgIndex->getClosestImage($this->params['date'], $parameters);
             }
 
-            if ($this->format == "json")
+            //if ($this->format == "json")
             header('Content-type: application/json');
 
             echo json_encode($result);
@@ -125,14 +145,14 @@ class WebClient implements Module
      */
     private function getDataSources ()
     {
-        require('lib/ImgIndex.php');
+        require_once('lib/ImgIndex.php');
+        require_once('lib/DbConnection.php');
 
         // NOTE: Make sure to remove database specification after testing completed!
         $imgIndex = new ImgIndex(new DbConnection($dbname = "helioviewer"));
         $dataSources = json_encode($imgIndex->getDataSources());
 
-        if ($this->format == "json")
-            header('Content-type: application/json');
+        header('Content-type: application/json');
 
         print $dataSources;
 
@@ -178,7 +198,7 @@ class WebClient implements Module
      */
     private function getTile ()
     {
-        require_once("HelioviewerTile.php");
+        require_once("lib/HelioviewerTile.php");
         $tile = new HelioviewerTile($this->params['uri'], $this->params['x'], $this->params['y'], $this->params['zoom'], $this->params['ts'],
         $this->params['jp2Width'], $this->params['jp2Height'], $this->params['jp2Scale'], $this->params['offsetX'], $this->params['offsetY'],
         $this->params['format'],  $this->params['obs'], $this->params['inst'], $this->params['det'], $this->params['meas']);
@@ -191,7 +211,7 @@ class WebClient implements Module
      */
     private function launchJHelioviewer ()
     {
-        require_once('lib/helioviewer/JHV.php');
+        require_once('lib/JHV.php');
         if ((isset($this->params['files'])) && ($this->params['files'] != "")) {
             $jhv = new JHV($this->params['files']);
         } else {
@@ -236,7 +256,7 @@ class WebClient implements Module
      */
     private function takeScreenshot()
     {
-        require_once('Screenshot.php');
+        require_once('lib/Screenshot.php');
 
         $obsDate   = $this->params['obsDate'];
         $zoomLevel = $this->params['zoomLevel'];
