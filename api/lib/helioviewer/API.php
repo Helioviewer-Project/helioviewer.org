@@ -271,6 +271,7 @@ class API {
         $endTime     = str_replace(":", ".", $this->params['endTime']);
         $cadence     = $this->params['cadence'];
         $format      = $this->params['format'];
+        $links       = $this->params['links'];
         $jpip        = $this->params['getJPIP'];
         
         $observatory = $this->params['observatory'];
@@ -284,8 +285,14 @@ class API {
             mkdir($tmpdir, 0777);
 
         // Filename (From,To,By)
-        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence")) . "." . strtolower($format);
-        $filename = str_replace(" ", "-", $filename);
+        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence"));
+        
+        // Differentiate linked JPX files
+        if ($links)
+            $filename .= "L";
+        
+        // File extension
+        $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
         
         // Filepath
         $filepath = "$tmpdir" . $filename;
