@@ -121,22 +121,23 @@ class WebClient implements Module
                 $result = $imgIndex->getClosestImage($this->params['date'], $parameters);
             }
 
-            //if ($this->format == "json")
-            header('Content-type: application/json');
+	        // Prepare cache for tiles
+	        $this->createImageCacheDir($result["filepath"]);
 
-            echo json_encode($result);
+	        $json = json_encode($result);
 
-            // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
+        // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
         }
         else {
             $source = $this->params['sourceId'];
             $date   = $this->params['date'];
             $url =  HV_TILE_SERVER_2 . "?action=getClosestImage&sourceId=$source&date=$date&server=1";
 
-            header('Content-Type: application/json');
-            echo file_get_contents($url);
+            $json = file_get_contents($url);
         }
-        return 1;
+        
+        header('Content-Type: application/json');
+        echo $json;
     }
 
     /**
@@ -179,18 +180,8 @@ class WebClient implements Module
             array_push($fits, $param . ": " . $value);
         }
 
-        // Sort FITS keys
-        // sort($fits);
-
-        if ($this->format == "json") {
-            header('Content-type: application/json');
-            echo json_encode($fits);
-        }
-        else {
-            echo json_encode($fits);
-        }
-
-        return 1;
+        header('Content-type: application/json');
+        echo json_encode($fits);
     }
 
     /**
@@ -209,7 +200,7 @@ class WebClient implements Module
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
-    public function launchJHelioviewer ()
+    public function launchJHV ()
     {
         require_once('lib/JHV.php');
         if ((isset($this->params['files'])) && ($this->params['files'] != "")) {
@@ -367,6 +358,16 @@ class WebClient implements Module
         }
 
         return $formatted;
+    }
+    
+    /**
+     * @description Creates the directory structure which will be used to cache generated tiles.
+     */
+    private function createImageCacheDir($filepath) {
+        $dir = HV_CACHE_DIR . $filepath;
+        
+        if (!file_exists($dir))
+           mkdir($dir, 0777, true); 
     }
 
 }

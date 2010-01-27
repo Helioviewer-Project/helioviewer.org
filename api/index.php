@@ -1,4 +1,12 @@
 <?php
+/**
+ * TODO 01/27/2010 Unify error logging (create separate class)
+ *                 Discuss with JHV team about using source ID's instead of string identifiers to speed up method calls.
+ *                 Rename JHV Class so as not to confuse with the JHelioviewer module.
+ *                 Add method to WebClient to print config file (e.g. for stand-alone web-client install to connect with)
+ *                 Add getPlugins method to JHelioviewer module (empty function for now)
+ *                 Have getJPX, etc. return file directly instead of a URL? (mimetypes: video/mj2, image/jpx. See http://www.rfc-editor.org/rfc/rfc3745.txt)
+ */
 require_once("Config.php");
 new Config("../settings/Config.ini");
 $validAction = false;
@@ -506,7 +514,7 @@ if (!$validAction) {
                                         <tr>
                                             <td><b>getURL</b></td>
                                             <td><i>Boolean</i></td>
-                                            <td>[Optional] Returns a URL instead of an actual image.</td>
+                                            <td><span style="color: red;">[Deprecated]</span> Returns a URL instead of an actual image. <i>(NOTE: If getJPIP=true is not set, the query will return a file automatically.)</i></td>
                                         </tr>
                                         <tr>
                                             <td><b>getJPIP</b></td>
@@ -523,7 +531,7 @@ if (!$validAction) {
                                     <a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z</a>
                                 </span><br />
                                 <span class="example-url">
-                                    <a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&getURL=true"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&getURL=true</a>
+                                    <a href="<?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&getJPIP=true"><?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&getJPIP=true</a>
                                 </span>                                 
                             </div>
                         </div>

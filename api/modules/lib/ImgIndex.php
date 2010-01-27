@@ -38,45 +38,12 @@ class ImgIndex {
         else
             $img = $right;
             
-        // Prepare cache for tiles
-        $this->createImageCacheDir($img["filepath"]);
-            
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
 
         $filename = HV_JP2_DIR . $img["filepath"] . "/" .$img["filename"];
             
         return array_merge($img, $this->extractJP2MetaInfo($filename));
-    }
-    
-    /**
-     * Given a filename and the name of the root node, extracts
-     * the XML header box from a JP2 image
-     * @param object $filename
-     * @param object $root Name of the XMLBox root node (if known)
-     */
-    public function getJP2XMLBox ($filename, $root) {
-        if (!file_exists($filename)) {
-            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t Unable to extract XMLbox for $filename: file does not exist!\n\n";
-            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
-            exit();
-        }
-        
-        $fp = fopen($filename, "rb");
-        
-        $xml  = "";
-        
-        $done = False;
-        while (!feof($fp)) {
-            $line = fgets($fp);
-            $xml .= $line;
-            if (strpos($line, "</$root>") !== False)
-                break;        }
-        $xml = substr($xml, strpos($xml, "<$root>"));
-        
-        fclose($fp);
-        
-        return $xml;
     }
 
     /**
@@ -85,81 +52,24 @@ class ImgIndex {
      * @param object $img
      */    
     public function extractJP2MetaInfo ($img) {
-        $dom = new DOMDocument();
-        $dom->loadXML($this->getJP2XMLBox($img, "fits"));
-        
-        $dimensions = $this->getImageDimensions($dom);
-        $center     = $this->getImageCenter($dom);
+    	require_once("JP2ImageXMLBox.php");
+    	
+    	$xmlBox = new JP2ImageXMLBox($img);
+    	
+        $dimensions = $xmlBox->getImageDimensions();
+        $center     = $xmlBox->getImageCenter();
         
         $meta = array(
             "width"  => (int) $dimensions[0],
             "height" => (int) $dimensions[1],
             "y"      => (float) $center[0],
             "x"      => (float) $center[1],
-            "scale"  => (float) $this->getImagePlateScale($dom)
+            "scale"  => (float) $xmlBox->getImagePlateScale()
         );
         
         return $meta;        
     }
     
-    /**
-     * Retrieves the value of a unique dom-node element or returns false if element is not found, or more
-     * than one is found.
-     * @param object $dom
-     * @param object $name
-     */  
-    public function getElementValue($dom, $name) {
-        $element = $dom->getElementsByTagName($name);
-        
-        if ($element)
-            return $element->item(0)->childNodes->item(0)->nodeValue;
-        else
-            throw new Exception('Element not found');
-    }
-    
-    /**
-     * Returns the dimensions for a given image
-     * @return 
-     * @param object $dom
-     */
-    public function getImageDimensions($dom) {
-        try {
-            $width  = $this->getElementValue($dom, "NAXIS1");
-            $height = $this->getElementValue($dom, "NAXIS2");
-        } catch (Exception $e) {
-            echo 'Unable to locate image dimensions in header tags!';
-        }
-        return array($width, $height);
-    }
-    
-    /**
-     * Returns the plate scale for a given image
-     * @return 
-     * @param object $dom
-     */
-    public function getImagePlateScale($dom) {
-        try {
-            $scale = $this->getElementValue($dom, "CDELT1");
-        } catch (Exception $e) {
-            echo 'Unable to locate image dimensions in header tags!';
-        }
-        return $scale;        
-    }
-    
-    /**
-     * Returns the coordinates for the image center
-     * @param object $dom
-     * @return 
-     */
-    public function getImageCenter($dom) {
-        try {
-            $x = $this->getElementValue($dom, "CRPIX1");
-            $y = $this->getElementValue($dom, "CRPIX2");
-        } catch (Exception $e) {
-            echo 'Unable to locate image center in header tags!';
-        }
-        return array($x, $y);
-    }
 
     /**
      * Returns the sourceId for a given set of parameters.
@@ -252,7 +162,7 @@ class ImgIndex {
     }
 
     /**
-     * getJP2Filename
+     * getJP2Filepath
      * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
      * @return string $url
      * @param object $obsTime
@@ -262,50 +172,6 @@ class ImgIndex {
     public function getJP2FilePath($obsTime, $source, $debug=false) {
         $img = $this->getClosestImage($obsTime, $source, $debug);
         return $img["filepath"] . "/" . $img["filename"];
-    }
-
-    /**
-     * Queries the database to get the width and height of a jp2 image.
-     * @return 
-     */    
-    public function getJP2Dimensions ($obs, $inst, $det, $meas) {
-        $query = "SELECT width, height FROM image
-                    LEFT JOIN measurement on measurementId = measurement.id
-                    LEFT JOIN detector on detectorId = detector.id
-                    LEFT JOIN instrument on instrumentId = instrument.id
-                    LEFT JOIN observatory on observatoryId = observatory.id
-                    WHERE measurement.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $meas)
-                         . "' AND detector.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $det)
-                         . "' AND instrument.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $inst)
-                         . "' AND observatory.abbreviation='" . mysqli_real_escape_string($this->dbConnection->link, $obs)
-                         . "' LIMIT 0,1";
-        try {   
-            $result = $this->dbConnection->query($query);
-            if(!$result) {
-                throw new Exception("[getJP2Dimensions][ImgIndex.php] Error executing query: $query");
-            }
-            
-            $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
-            if(sizeOf($result_array) < 1) {
-                throw new Exception("[getJP2Dimensions][ImgIndex.php] Error fetching array from query: $query");
-            }
-            return $result_array;
-        }
-        catch (Exception $e) {
-                  $msg = "[" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-                file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
-                echo $msg;            
-        }
-    }
-    
-    /**
-     * @description Creates the directory structure which will be used to cache generated tiles.
-     */
-    private function createImageCacheDir($filepath) {
-        $dir = HV_CACHE_DIR . $filepath;
-        
-        if (!file_exists($dir))
-           mkdir($dir, 0777, true); 
     }
 }
 ?>
