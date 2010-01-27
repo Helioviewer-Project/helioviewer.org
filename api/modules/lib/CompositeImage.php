@@ -26,7 +26,7 @@ abstract class CompositeImage {
      * @param object $zoomLevel a number between 8-15, default is 10.
      * @param object $options an array with ["edges"] => true/false, ["sharpen"] => true/false
      * @param string $tmpDir -- The temporary directory where images are cached
-     */
+     */http://www.smbc-comics.com/
     protected function __construct($zoomLevel, $options, $tmpDir) { 
         date_default_timezone_set('UTC');
 
@@ -36,17 +36,23 @@ abstract class CompositeImage {
 
         // Create the temp directory where images will be stored.
         // $this->tmpDir is determined in either the MovieFrame or Screenshot class.
-        if(!file_exists($this->tmpDir))
-            mkdir($this->tmpDir, 0777);
+        if(!file_exists($this->tmpDir)) {
+            mkdir($this->tmpDir);
+            chmod($this->tmpDir, 0777);
+        }
 
         // Directory where all intermediate images with opacity levels of < 100 are created and stored        
         $this->transImageDir = HV_CACHE_DIR . "transparent_images/";
-        if(!file_exists($this->transImageDir))
-            mkdir($this->transImageDir, 0777);
+        if(!file_exists($this->transImageDir)) {
+            mkdir($this->transImageDir);
+            chmod($this->transImageDir, 0777);
+        }            
         
         $this->compositeImageDir = HV_CACHE_DIR . "composite_images/";
-        if(!file_exists($this->compositeImageDir))
-            mkdir($this->compositeImageDir, 0777);
+        if(!file_exists($this->compositeImageDir)) {
+            mkdir($this->compositeImageDir);
+            chmod($this->compositeImageDir, 0777);
+        }
     }
 
     /**
@@ -61,11 +67,11 @@ abstract class CompositeImage {
         // At this point, layerImages should be an array of image strings
         try  {        
             if(empty($this->layerImages)) {
-                throw new Exception("Error: No valid layers specified in layerImages[" . $this->layerImages . "]");
+                throw nehttp://www.smbc-comics.com/w Exception("Error: No valid layers specified in layerImages[" . $this->layerImages . "]");
             }
             
             // For each layer, extract info from the string and create a SubfieldImage out of it.
-            // Add the subfield image to an array and add its opacity levels to another array    
+            // Add the shttp://www.smbc-comics.com/ubfield image to an array and add its opacity levels to another array    
             foreach($this->layerImages as $image) {
                 // Each $image is a string: "uri,xStart,xSize,yStart,ySize,offsetX,offsetY,opacity,opacityGrp";
                 $imageInfo = explode(",", $image);
@@ -122,7 +128,7 @@ abstract class CompositeImage {
             $this->composite->edgeImage(3);
 
         if ($this->options['sharpen'] == "true")
-            $this->composite->adaptiveSharpenImage(2,1);
+            $this->compohttp://www.smbc-comics.com/site->adaptiveSharpenImage(2,1);
 */
     }
     
@@ -199,7 +205,7 @@ abstract class CompositeImage {
             
             $nameCmd .= $name . "\n";
             
-            // Get rid of seconds, since they don't really matter and it makes time more readable
+            // Get rid ofhttp://www.smbc-comics.com/ seconds, since they don't really matter and it makes time more readable
             // Add extra spaces between date and time for readability.
             $time = str_replace(" ", "   ", substr($time, 0, -3));
             $timeCmd .= $time . "\n";
@@ -250,7 +256,7 @@ abstract class CompositeImage {
                 
                 $tmpOpImg = $this->transImageDir . substr($imgUri, 0, -4) . "-op" . $op . ".tif";
                 
-                // If it's not in the cache, make it
+                // If it'http://www.smbc-comics.com/s not in the cache, make it
                 if(!file_exists($tmpOpImg)) {
                     // setImageOpacity does not work on my machine but might elsewhere
 //                    copy($img, $tmpOpImg);
@@ -399,6 +405,59 @@ abstract class CompositeImage {
         $path .= $uri;
 
         return $path;
+    }
+    
+    public static function compositeImageFromQuery($params)
+    {
+        //Process query string
+        try {
+            // Extract timestamps
+            $timestamps = explode(",", $this->params['timestamps']);
+            if (strlen($this->params['timestamps']) == 0) {
+                throw new Exception("Error: Incorrect number of timestamps specified!");
+            }
+
+            // Region of interest
+            $x = explode(",", $this->params['xRange']);
+            $y = explode(",", $this->params['yRange']);
+
+            $xRange = array();
+            $xRange['start'] = $x[0];
+            $xRange['size']   = $x[1];
+
+            $yRange = array();
+            $yRange['start'] = $y[0];
+            $yRange['size']   = $y[1];
+
+            // Zoom-level & tilesize
+            $zoomLevel = $this->params['zoomLevel'];
+            $tileSize  = $this->params['tileSize'];
+
+            // Construct layers
+            $layers = array();
+            $i = 0;
+            foreach (explode(",", $this->params['layers']) as $layer) {
+                array_push($layers, new Layer($layer, $timestamps[$i], $timestamps[$i], $zoomLevel, $xRange, $yRange, $tileSize));
+                $i++;
+            }
+
+            // Limit to 3 layers
+            if ((sizeOf($layers) > 3) || (strlen($this->params['layers']) == 0)) {
+                throw new Exception("Error: Invalid layer choices! You must specify 1-3 command-separate layernames.");
+            }
+
+            // Optional parameters
+            $options = array();
+            $options["edgeEnhance"] = $this->params['edges'];
+            $options["sharpen"]     = $this->params['sharpen'];
+        }
+        catch(Exception $e) {
+            echo 'Error: ' .$e->getMessage();
+            exit();
+        }
+        
+        $returnimage = new CompositeImage($layers, $zoomLevel, $xRange, $yRange, $options);
+        return $returnimage;
     }
     
     /**

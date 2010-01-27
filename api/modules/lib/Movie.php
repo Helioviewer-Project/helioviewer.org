@@ -107,7 +107,8 @@ class Movie
         $movieName = "Helioviewer-Movie-" . $this->filename;
         $tmpdir = HV_TMP_ROOT_DIR . "/$now/";
         $tmpurl = HV_TMP_ROOT_URL . "/$now/$movieName." . $this->filetype;
-        mkdir($tmpdir, 0777);
+        mkdir($tmpdir);
+        chmod($tmpdir, 0777);
 
         // Build an array with all timestamps needed when requesting images
         $timeStamps = array ();
