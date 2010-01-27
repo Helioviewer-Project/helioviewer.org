@@ -887,7 +887,9 @@ function select_module($params)
 "getEventCatalogs" => "Events",
 "getJP2Image" => "JHelioViewer",
 "getJPX" => "JHelioViewer",
-"getMJ2" => "JHelioViewer"
+"getMJ2" => "JHelioViewer",
+"getJP2ImageSeries" => "JHelioViewer",
+"buildJP2ImageSeries" => "JHelioViewer"
 );
 foreach($valid_actions as $action=>$module)
 {

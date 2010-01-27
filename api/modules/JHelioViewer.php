@@ -29,15 +29,22 @@ class JHelioViewer implements Module
         switch($this->params['action'])
         {
             case "getJP2Image":
+                $bools = array("getURL", "getJPIP");
+                $this->params = Helper::fixBools($bools, $this->params);
                 break;
             case "buildJP2ImageSeries":
-                $bools = array("getURL", "getJPIP");
+                $bools = array("getURL", "getJPIP", "links", "debug");
                 $this->params = Helper::fixBools($bools, $this->params);
 
                 if ($this->params['links'] && ($this->params['format'] != "JPX"))
                 die('<b>Error</b>: Format must be set to "JPX" in order to create a linked image series.');
                 break;
-
+            case "getJPX":
+                break;
+            case "getMJ2":
+                break;
+            case "getJP2ImageSeries":
+                break;
             default:
                 throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");
         }
@@ -47,6 +54,15 @@ class JHelioViewer implements Module
     public static function printDoc()
     {
 
+    }
+
+    /**
+     * @description Converts a regular HTTP URL to a JPIP URL
+     */
+    private function getJPIPURL($url) {
+        $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
+        $jpip = preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $url);
+        return $jpip;
     }
 
     /**
@@ -80,14 +96,6 @@ class JHelioViewer implements Module
             echo $this->getJPIPURL($uri);
         }
          
-        /**
-         * @description Converts a regular HTTP URL to a JPIP URL
-         */
-        private function getJPIPURL($url) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-            $jpip = preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $url);
-            return $jpip;
-        }
         // jp2 image
         else {
             $fp = fopen($uri, 'r');
@@ -112,13 +120,20 @@ class JHelioViewer implements Module
     public function getJPX ()
     {
         $this->params['format'] = 'JPX';
-        $this->buildJP2ImageSeries();
+        $this->params['action'] = 'buildJP2ImageSeries';
+        $this->execute();
     }
 
     public function getMJ2 ()
     {
         $this->params['format'] = 'MJ2';
-        $this->buildJP2ImageSeries();
+        $this->params['action'] = 'buildJP2ImageSeries';
+        $this->execute();
+    }
+    
+    public function getJP2ImageSeries () {
+        $this->params['action'] = 'buildJP2ImageSeries';
+        $this->execute();
     }
 
     /**
@@ -159,7 +174,7 @@ class JHelioViewer implements Module
 
         // Differentiate linked JPX files
         if ($links)
-            $filename .= "L";
+        $filename .= "L";
 
         // File extension
         $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
@@ -225,7 +240,7 @@ class JHelioViewer implements Module
 
         // Output the file/jpip URL
         if ($jpip)
-        echo $this->getJPIPURL($filepath);
+        echo $this->getJPIPURL($output_file);
         else
         echo $url;
 
