@@ -1,5 +1,6 @@
 <?php
-if (!$config = parse_ini_file("settings/Config.ini"))
+$ini = "settings/Config.ini";
+if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!"); 
 ?>
 <!DOCTYPE html>

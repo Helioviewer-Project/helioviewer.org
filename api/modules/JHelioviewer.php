@@ -2,7 +2,7 @@
 
 require_once("interface.Module.php");
 
-class JHelioViewer implements Module
+class JHelioviewer implements Module
 {
     private $params;
 
