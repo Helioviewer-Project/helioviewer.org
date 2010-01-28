@@ -153,7 +153,7 @@ class JHelioviewer implements Module
     private function buildJP2ImageSeries () {
         require_once('lib/ImgIndex.php');
         require_once('lib/DbConnection.php');
-
+    
         $startTime   = toUnixTimestamp($this->params['startTime']);
         $endTime     = toUnixTimestamp($this->params['endTime']);
         $cadence     = $this->params['cadence'];
@@ -170,11 +170,13 @@ class JHelioviewer implements Module
         $dir = HV_JP2_DIR . "/movies/";
 
         // Filename (From,To,By)
-        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$startTime", "T$endTime", "B$cadence"));
+        $from = str_replace(":", ".", $this->params['startTime']);
+        $to   = str_replace(":", ".", $this->params['endTime']);
+        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$from", "T$to", "B$cadence"));
 
         // Differentiate linked JPX files
         if ($links)
-        $filename .= "L";
+            $filename .= "L";
 
         // File extension
         $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
@@ -184,7 +186,7 @@ class JHelioviewer implements Module
 
         // URL
         $url = HV_JP2_ROOT_URL . "/movies/" . $filename;
-
+        
         // If the file doesn't exist already, create it
         if (!file_exists($output_file))
         {
@@ -193,6 +195,9 @@ class JHelioviewer implements Module
 
             // Get data source id
             $source = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
+            
+            //var_dump($source);
+
             // Determine number of frames to grab
             $timeInSecs = $endTime - $startTime;
             $numFrames  = min(HV_MAX_MOVIE_FRAMES, ceil($timeInSecs / $cadence));
