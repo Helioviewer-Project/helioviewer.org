@@ -1,11 +1,15 @@
 <?php
 /**
+ * TODO 01/28/2010
+ *                 Document getDataSources, getJP2Header, and getClosestImage methods. Explain use of sourceId for faster querying.
+ * 
  * TODO 01/27/2010 Unify error logging (create separate class)
  *                 Discuss with JHV team about using source ID's instead of string identifiers to speed up method calls.
  *                 Rename JHV Class so as not to confuse with the JHelioviewer module.
  *                 Add method to WebClient to print config file (e.g. for stand-alone web-client install to connect with)
  *                 Add getPlugins method to JHelioviewer module (empty function for now)
  *                 Have getJPX, etc. return file directly instead of a URL? (mimetypes: video/mj2, image/jpx. See http://www.rfc-editor.org/rfc/rfc3745.txt)
+ *                 
  */
 require_once("Config.php");
 new Config("../settings/Config.ini");
@@ -94,7 +98,7 @@ if (!$validAction) {
     
     <body>
         <img alt="Helioviewer.org Logo" src="../images/logos/about.png"/ style="float:left;">
-        <h1 style="position:relative; top:22px;">API</h1><br>
+        <h1 style="position:relative; top:22px;">API</h1><br />
         
         <!-- Table of contents -->
         <div class='toc'>
@@ -111,7 +115,9 @@ if (!$validAction) {
                 <li><a href="index.php#JPEG2000API">JPEG 2000 API</a>
                     <ul>
                         <li><a href="index.php#getJP2Image">Image API</a></li>
-                        <li><a href="index.php#getJP2ImageSeries">MJ2/Image Series API</a></li>
+                        <li><a href="index.php#getJP2ImageSeries">Image Series API</a></li>
+                        <li><a href="index.php#getJPX">JPX API</a></li>
+                        <li><a href="index.php#getMJ2">MJ2 API</a></li>
                     </ul>
                 </li>
                 <li><a href="index.php#MovieAPI">Movie API</a></li>
@@ -125,7 +131,7 @@ if (!$validAction) {
             </ol>
         </div>
         
-        <br><hr><br>
+        <br /><hr><br />
         
         <!-- Main Content -->
         <div class='content'>
@@ -140,7 +146,7 @@ if (!$validAction) {
                 a particular "view" into Helioviewer. Some of the API's are somewhat more complex, and involve two steps. For example, in order to get a list
                 of events from some catalogs for a certain period of time, first a query is usually made to see which catalogs are available and functional. A second
                 query then returns a list of features/events are fetched using a second query. If you know the ID's for the desired catalogs and are confident that 
-                they are available, you can skip the first query and go straight to the second query. More on that later though.<br><br>
+                they are available, you can skip the first query and go straight to the second query. More on that later though.<br /><br />
                 
                 The general structure of queries is as follows:</p>
                 
@@ -164,11 +170,11 @@ if (!$validAction) {
                 parameters. This is useful for dynamically loading a specific view or observation into Helioviewer using a URL.</p>
                 
                 <div class="summary-box">
-                    <span style="text-decoration: underline;">Usage:</span><br><br>
+                    <span style="text-decoration: underline;">Usage:</span><br /><br />
                     
-                    http://www.helioviewer.org/index.php<br><br>
+                    http://www.helioviewer.org/index.php<br /><br />
                     
-                    Supported Parameters:<br><br>
+                    Supported Parameters:<br /><br />
                     
                     <table class="param-list">
                         <tbody valign="top">
@@ -190,7 +196,7 @@ if (!$validAction) {
                         </tbody>
                     </table>
                     
-                    <br>
+                    <br />
                     
                     <span class="example-header">Example:</span>
                     <span class="example-url">
@@ -199,7 +205,7 @@ if (!$validAction) {
                 </div>
             </div>
             
-            <br>
+            <br />
             
             <!-- Image API -->
             <div id="ImageAPI">
@@ -223,13 +229,13 @@ if (!$validAction) {
                             returned are the "id", the identifier used to query the specific catalog for features/events, and "eventType" which specified
                             the type of feature/event the catalog described, e.g. "CME" or "Active Region."</p>
                             
-                            <br>
+                            <br />
                             
                             <div class="summary-box">
-                                <span style="text-decoration: underline;">Usage:</span><br><br>
-                                <a href="<?php echo $baseURL;?>?action=getEventCatalogs"><?php echo $baseURL;?>?action=getEventCatalogs</a><br><br>
+                                <span style="text-decoration: underline;">Usage:</span><br /><br />
+                                <a href="<?php echo $baseURL;?>?action=getEventCatalogs"><?php echo $baseURL;?>?action=getEventCatalogs</a><br /><br />
                                 
-                                Result:<br><br>
+                                Result:<br /><br />
                                 
                                 An array of catalog objects is returned formatted as JSON. Each catalog object includes the following six parameters:
                                 
@@ -274,11 +280,11 @@ if (!$validAction) {
 
                             </div>
                             
-                            <br>
+                            <br />
                             
                             <!-- Catalog API Notes -->
                             <div class="summary-box" style="background-color: #E3EFFF;">
-                                <span style="text-decoration: underline;">Notes:</span><br><br>
+                                <span style="text-decoration: underline;">Notes:</span><br /><br />
                                 <ul>
                                     <li>
                                         <p>Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a> for the specific IDs used.</p>
@@ -294,7 +300,7 @@ if (!$validAction) {
                         </div>
                     </li>
                     
-                    <br>
+                    <br />
                     
                     <!-- Catalog Entry API -->
                     <li>
@@ -303,11 +309,11 @@ if (!$validAction) {
                             <p></p>
                             
                             <div class="summary-box">
-                                <span style="text-decoration: underline;">Usage:</span><br><br>
+                                <span style="text-decoration: underline;">Usage:</span><br /><br />
                                 
-                                <?php echo $baseURL;?>?action=getEvents<br><br>
+                                <?php echo $baseURL;?>?action=getEvents<br /><br />
                                 
-                                Supported Parameters:<br><br>
+                                Supported Parameters:<br /><br />
                     
                                 <table class="param-list" cellspacing="10">
                                     <tbody valign="top">
@@ -329,12 +335,12 @@ if (!$validAction) {
                                     </tbody>
                                 </table>
                                 
-                                <br>
+                                <br />
                                 
-                                Result:<br><br>
+                                Result:<br /><br />
                                 An array of event objects is returned formatted as JSON. Each event object includes 12 required parameters as well as an array, "properties",
                                 which contains additional parameters which vary from catalog to catalog. Among the 12 required parameters, two of the parameters relating to
-                                the coordinates of the event may vary, but every event object will include a set of coordinates.<br><br>
+                                the coordinates of the event may vary, but every event object will include a set of coordinates.<br /><br />
                                 
                                 <!-- Event Parameter Description -->
                                 <table class="param-list" cellspacing="10">
@@ -427,7 +433,7 @@ if (!$validAction) {
                                     </tbody>
                                 </table>
                                 
-                                <br>
+                                <br />
                                 
                                 <span class="example-header">Example:</span>
                                 <span class="example-url">
@@ -435,11 +441,11 @@ if (!$validAction) {
                                 </span>
                             </div>
                             
-                            <br>
+                            <br />
                             
                             <!-- Catalog Entry API Notes -->
                             <div class="summary-box" style="background-color: #E3EFFF;">
-                                <span style="text-decoration: underline;">Notes:</span><br><br>
+                                <span style="text-decoration: underline;">Notes:</span><br /><br />
                                 <ul>
                                     <li>
                                         <p>The coordinate parameters returned will vary depending on the specific catalog queried. For catalogs which use the "PRINCIPAL_ANGLE"
@@ -454,9 +460,7 @@ if (!$validAction) {
                     </li>
                 </ol>
             </div>
-            
-            
-            
+    
             <!-- JPEG 2000 API -->
             <div id="JPEG2000API">
                 <h1>5. JPEG 2000 API:</h1>
@@ -470,14 +474,14 @@ if (!$validAction) {
                             <p>Returns a single JPEG 2000 (JP2) image. If an image is not available for the date request the closest available
                             image is returned.</p>
                             
-                            <br>
+                            <br />
                             
                             <div class="summary-box">
-                                <span style="text-decoration: underline;">Usage:</span><br><br>
+                                <span style="text-decoration: underline;">Usage:</span><br /><br />
                                 
-                                <?php echo $baseURL;?>?action=getJP2Image<br><br>
+                                <?php echo $baseURL;?>?action=getJP2Image<br /><br />
                                 
-                                Supported Parameters:<br><br>
+                                Supported Parameters:<br /><br />
                     
                                 <table class="param-list">
                                     <tbody valign="top">
@@ -524,7 +528,7 @@ if (!$validAction) {
                                     </tbody>
                                 </table>
                                 
-                                <br>
+                                <br />
                                 
                                 <span class="example-header">Examples:</span>
                                 <span class="example-url">
@@ -537,21 +541,23 @@ if (!$validAction) {
                         </div>
                     </li>
                     
+                    <br />
+                    
                     <!-- JPEG 2000 Image-Series API -->
                     <li>
                         <div id="getJP2ImageSeries">
-                            MJ2/Image Series API:
+                            Image Series API: <span style="color: red;">[Deprecated]</span>
                             <p>Returns either a Motion JPEG 2000 (MJ2) or JPEG 2000 Image Series (JPX) depending on the parameters specified. The movie frames are
                             chosen by matching the closest image available at each step of a specified range of dates and image cadence.</p>
                             
-                            <br>
+                            <br />
                             
                             <div class="summary-box">
-                                <span style="text-decoration: underline;">Usage:</span><br><br>
+                                <span style="text-decoration: underline;">Usage:</span><br /><br />
                                 
-                                <?php echo $baseURL;?>?action=getJP2ImageSeries<br><br>
+                                <?php echo $baseURL;?>?action=getJP2ImageSeries<br /><br />
                                 
-                                Supported Parameters:<br><br>
+                                Supported Parameters:<br /><br />
                     
                                 <table class="param-list">
                                     <tbody valign="top">
@@ -608,7 +614,7 @@ if (!$validAction) {
                                     </tbody>
                                 </table>
                                 
-                                <br>
+                                <br />
                                 
                                 <span class="example-header">Example:</span>
                                 <span class="example-url">
@@ -621,18 +627,180 @@ if (!$validAction) {
                             </div>
                         </div>
                         
-                        <br>
+                        <br />
                         
                         <!-- JPEG 2000 Image-Series API Notes -->
                         <div class="summary-box" style="background-color: #E3EFFF;">
-                            <span style="text-decoration: underline;">Notes:</span><br><br>
+                            <span style="text-decoration: underline;">Notes:</span><br /><br />
                             <ul>
+                                <li>
+                                    <p>This method has been deprecated in favor of the simpler getJPX and getMJ2 methods.</p>
+                                </li>
                                 <li>
                                     <p>During MJ2/JPX movie generation it is possible that for lower cadences some redundent image frames will be used. In order
                                     to avoid this a sufficiently large cadence should be specified.</p>
                                 </li>
                             </ul>
                         </div>
+                    </li>
+                        
+                    <br />    
+                        
+                    <!-- JPX API -->
+                    <li>
+                        <div id="getJPX">
+                            JPX API
+                            <p>Returns a JPEG 2000 Image Series (JPX) file. The movie frames are chosen by matching the closest image available at each step of a specified range of dates and image cadence.</p>
+                            
+                            <br />
+                            
+                            <div class="summary-box">
+                                <span style="text-decoration: underline;">Usage:</span><br /><br />
+                                
+                                <?php echo $baseURL;?>?action=getJPX<br /><br />
+                                
+                                Supported Parameters:<br /><br />
+                    
+                                <table class="param-list">
+                                    <tbody valign="top">
+                                        <tr>
+                                            <td width="25%"><b>observatory</b></td>
+                                            <td width="35%"><i>String</i></td>
+                                            <td>Observatory</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>instrument</b></td>
+                                            <td><i>String</i></td>
+                                            <td>Instrument</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>detector</b></td>
+                                            <td><i>String</i></td>
+                                            <td>Detector</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>measurement</b></td>
+                                            <td><i>String</i></td>
+                                            <td>Measurement</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>startTime</b></td>
+                                            <td><i>ISO 8601 UTC Date</i></td>
+                                            <td>Movie start time</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>endTime</b></td>
+                                            <td><i>ISO 8601 UTC Date</i></td>
+                                            <td>Movie end time</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>cadence</b></td>
+                                            <td><i>Integer</i></td>
+                                            <td>The desired amount of time between each movie-frame, in seconds</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>getJPIP</b></td>
+                                            <td><i>Boolean</i></td>
+                                            <td>[Optional] Returns a JPIP URI instead of an actual movie.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>links</b></td>
+                                            <td><i>Boolean</i></td>
+                                            <td>[Optional] Returns a linked JPX file containing image pointers instead of data for each individual frame in the series. Currently, only JPX image series support this feature.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <br />
+                                
+                                <span class="example-header">Example:</span>
+                                <span class="example-url">
+                                    <a href="<?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800"><?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800</a>
+                                </span><br />
+                                <span class="example-url">
+                                    <a href="<?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&links=true&getJPIP=true"><?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&links=true&getJPIP=true</a>
+                                </span>                                
+
+                            </div>
+                        </div>
+                        
+                        <br />
+                        
+                      <!-- MJ2 API -->
+                    <li>
+                        <div id="getMJ2">
+                            JPX API
+                            <p>Returns Motion JPEG 2000 (MJ2) Movie. The movie frames are chosen by matching the closest image available at each step of a specified range of dates and image cadence.</p>
+                            
+                            <br />
+                            
+                            <div class="summary-box">
+                                <span style="text-decoration: underline;">Usage:</span><br /><br />
+                                
+                                <?php echo $baseURL;?>?action=getMJ2<br /><br />
+                                
+                                Supported Parameters:<br /><br />
+                    
+                                <table class="param-list">
+                                    <tbody valign="top">
+                                        <tr>
+                                            <td width="25%"><b>observatory</b></td>
+                                            <td width="35%"><i>String</i></td>
+                                            <td>Observatory</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>instrument</b></td>
+                                            <td><i>String</i></td>
+                                            <td>Instrument</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>detector</b></td>
+                                            <td><i>String</i></td>
+                                            <td>Detector</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>measurement</b></td>
+                                            <td><i>String</i></td>
+                                            <td>Measurement</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>startTime</b></td>
+                                            <td><i>ISO 8601 UTC Date</i></td>
+                                            <td>Movie start time</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>endTime</b></td>
+                                            <td><i>ISO 8601 UTC Date</i></td>
+                                            <td>Movie end time</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>cadence</b></td>
+                                            <td><i>Integer</i></td>
+                                            <td>The desired amount of time between each movie-frame, in seconds</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>getJPIP</b></td>
+                                            <td><i>Boolean</i></td>
+                                            <td>[Optional] Returns a JPIP URI instead of an actual movie.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <br />
+                                
+                                <span class="example-header">Example:</span>
+                                <span class="example-url">
+                                    <a href="<?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800"><?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800</a>
+                                </span><br />
+                                <span class="example-url">
+                                    <a href="<?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&getJPIP=true"><?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&getJPIP=true</a>
+                                </span>                                
+
+                            </div>
+                        </div>
+                        
+                        <br />
+                      
                     </li>
                 </ol>
             </div>
@@ -658,7 +826,7 @@ if (!$validAction) {
                             <div class="summary-box" style="background-color: #E3EFFF;">
                             
                                 <!-- Observatories -->
-                                <i>Observatories:</i><br><br>
+                                <i>Observatories:</i><br /><br />
                                 <table class="param-list">
                                     <tr>
                                         <td width="140px"><strong>Identifier:</strong></td>
@@ -674,10 +842,10 @@ if (!$validAction) {
                                     </tr>
                                 </table>
                                 
-                                <br>
+                                <br />
                                 
                                 <!-- Instruments -->
-                                <i>Instruments:</i><br><br>
+                                <i>Instruments:</i><br /><br />
                                 <table class="param-list">
                                     <tr>
                                         <td width="140px"><strong>Identifier:</strong></td>
@@ -701,10 +869,10 @@ if (!$validAction) {
                                     </tr>
                                 </table>
                                 
-                                <br>
+                                <br />
                                 
                                 <!-- Detectors -->
-                                <i>Detectors:</i><br><br>
+                                <i>Detectors:</i><br /><br />
                                 <table class="param-list">
                                     <tr>
                                         <td width="140px"><strong>Identifier:</strong></td>
@@ -728,10 +896,10 @@ if (!$validAction) {
                                     </tr>
                                 </table>
                                                                 
-                                <br>
+                                <br />
                                 
                                 <!-- Measurements -->
-                                <i>Measurements:</i><br><br>
+                                <i>Measurements:</i><br /><br />
                                 <table class="param-list">
                                     <tr>
                                         <td width="140px"><strong>Identifier:</strong></td>
@@ -767,10 +935,10 @@ if (!$validAction) {
                                     </tr>
                                 </table>
                                 
-                                <br>
+                                <br />
                                 
                                 <!-- Event Types -->
-                                <i>Event Types:</i><br><br>
+                                <i>Event Types:</i><br /><br />
                                 <table class="param-list">
                                     <tr>
                                         <td width="140px"><strong>Identifier:</strong></td>
@@ -800,7 +968,7 @@ if (!$validAction) {
                         </div>                        
                     </li>
                     
-                    <br>
+                    <br />
                     
                     <!-- Appendix B: Variable Types -->
                     <li>
@@ -810,7 +978,7 @@ if (!$validAction) {
                             <div class="summary-box" style="background-color: #E3EFFF;">
                             
                                 <!-- Observatories -->
-                                <i>Observatories:</i><br><br>
+                                <i>Observatories:</i><br /><br />
                                 <table class="param-list" cellspacing="10">
                                 <tbody valign="top">
                                     <tr>
@@ -856,13 +1024,13 @@ if (!$validAction) {
                                 </tbody>
                                 </table>
                                 
-                                <br><br>
+                                <br /><br />
                                 <div id="variable-type-resources">
-                                    <strong>References:</strong><br><br>
-                                    [1] <a href="http://www.epochconverter.com/">Epoch Converter - Unix Timestamp Converter</a><br>
-                                    [2] <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 - Wikipedia</a><br>
-                                    [3] <a href="http://www.w3.org/TR/NOTE-datetime">Date and Time Formats - W3.org</a><br>
-                                    <br>
+                                    <strong>References:</strong><br /><br />
+                                    [1] <a href="http://www.epochconverter.com/">Epoch Converter - Unix Timestamp Converter</a><br />
+                                    [2] <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 - Wikipedia</a><br />
+                                    [3] <a href="http://www.w3.org/TR/NOTE-datetime">Date and Time Formats - W3.org</a><br />
+                                    <br />
                                 </div>
                             </div>                            
                         </div>                        
