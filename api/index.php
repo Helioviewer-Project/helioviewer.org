@@ -13,20 +13,14 @@
  */
 require_once("Config.php");
 new Config("../settings/Config.ini");
-$validAction = false;
-if (isset($_GET['action'])) {
+
+if (isset($_GET['action']))
     $params = $_GET;
-    if (select_module($params))
-        $validAction = true;
-}
-elseif (isset($_POST['action'])) {
+
+elseif (isset($_POST['action']))
     $params = $_POST;
-    if (select_module($params))
-        $validAction = true;
-}
-
-if (!$validAction) {
-
+    
+if (!(isset($params) && load_module($params))) {
     $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -1043,7 +1037,7 @@ if (!$validAction) {
         </div>
 
         <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-            Last Updated: 2010-01-27 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+            Last Updated: 2010-01-29 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
         </div>
     
     </body>
@@ -1051,46 +1045,35 @@ if (!$validAction) {
     <?php
 }
 
-function select_module($params)
+/**
+ * @param array $params API Request parameters
+ * @return Boolean
+ */
+function load_module($params)
 {
-    $valid_actions =
-    array(
-		"downloadFile"     => "WebClient",
-		"getClosestImage"  => "WebClient",
-		"getDataSources"   => "WebClient",
-		"getScreenshot"    => "WebClient",
-		"getJP2Header"     => "WebClient",
-		"getTile"          => "WebClient",
-		"launchJHV"        => "WebClient",
-		"getEvents"        => "Events",
-		"getEventCatalogs" => "Events",
-		"getJP2Image"      => "JHelioviewer",
-		"getJPX"           => "JHelioviewer",
-		"getMJ2"           => "JHelioviewer",
-		"getJP2ImageSeries"   => "JHelioviewer"
+    $valid_actions = array(
+        "Events"       => "getEvents",
+        "Events"       => "getEventCatalogs",
+        "JHelioviewer" => "getJP2Image",
+        "JHelioviewer" => "getJP2ImageSeries",
+        "JHelioviewer" => "getJPX",
+        "JHelioviewer" => "getMJ2",
+        "WebClient"    => "downloadFile",
+        "WebClient"    => "getClosestImage",
+        "WebClient"    => "getDataSources",
+        "WebClient"    => "getJP2Header",
+        "WebClient"    => "getScreenshot",
+        "WebClient"    => "getTile",
+        "WebClient"    => "launchJHelioviewer"
     );
     
-	foreach($valid_actions as $action=>$module)
-	{
-	    if($params['action'] == $action)
-	    {
-	        require_once('modules/' . $module . ".php");
-	        switch($module)
-	        {
-	            case "WebClient":
-	                $client = new WebClient($params);
-	                break;
-	            case "Events":
-	                $events = new Events($params);
-	                break;
-	            case "JHelioviewer":
-	                $viewer = new JHelioviewer($params);
-	                break;
-	            default:
-	            	return false;
-	        }
-	    }
-	}
-	return true;
+    if (!$module = array_search($params["action"], $valid_actions)) {
+    	return false;
+    }
+    else {
+    	require_once("modules/$module.php");
+    	$obj = new $module($params);
+    	return true;
+    }
 }
 ?>
