@@ -21,18 +21,32 @@ class WebClient implements Module
         }
     }
 
+    /**
+     * Handles input validation
+     */
     public function validate()
     {
         switch($this->params['action'])
         {
             case "downloadFile":
                 Helper::checkForMissingParams(array('url'), $this->params);
+                if (!filter_var($this->params['url'], FILTER_VALIDATE_URL))
+                    return false;
                 break;
             case "getClosestImage":
-                if (isset($this->params["sourceId"]))
+                if (isset($this->params["sourceId"])) {
                     Helper::checkForMissingParams(array('server', 'date', 'sourceId'), $this->params);
-                else
+                    if (!filter_var($this->params['sourceId'], FILTER_VALIDATE_INT))
+                        return false;
+                    //elseif (!filter_var($this->params['sourceId'], FILTER_VALIDATE_INT))
+                }
+                else {
                     Helper::checkForMissingParams(array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement'), $this->params);
+                }
+                if (!validateUTCDate($this->params['date'])) {
+                	echo "Invalid date. Please enter a date of the form 2003-10-06T00:00:00.000Z";
+                    return false;
+                }
                 break;
             case "getDataSources":
                 break;
@@ -164,7 +178,7 @@ class WebClient implements Module
 
         // Query header information using Exiftool
         $cmd = HV_EXIF_TOOL . " $filepath | grep Fits";
-        exec($cmd, $out, $ret);
+        exec(escapeshellcmd($cmd), $out, $ret);
 
         $fits = array();
         foreach ($out as $index => $line) {
@@ -356,12 +370,17 @@ class WebClient implements Module
     
     /**
      * @description Creates the directory structure which will be used to cache generated tiles.
+     * 
+     * Note: mkdir may not set permissions properly due to an issue with umask.
+     *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
     private function createImageCacheDir($filepath) {
         $dir = HV_CACHE_DIR . $filepath;
         
-        if (!file_exists($dir))
-           mkdir($dir, 0777, true); 
+        if (!file_exists($dir)) {
+           mkdir($dir, 0777, true);
+           chmod($dir, 0777);
+        } 
     }
 
 }

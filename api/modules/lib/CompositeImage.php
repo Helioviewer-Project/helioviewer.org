@@ -118,7 +118,7 @@ abstract class CompositeImage {
         else {
             $builtImages[0] = $this->watermark($builtImages[0]);
             $cmd = HV_PATH_CMD . " && convert " . $builtImages[0] . " " . $this->cacheFileDir . $this->id . ".png";
-            exec($cmd, $out, $ret);
+            exec(escapeshellcmd($cmd), $out, $ret);
 
             $this->composite = $this->cacheFileDir . $this->id . ".png";
         }
@@ -169,11 +169,11 @@ abstract class CompositeImage {
             $scale = ($this->imageSize['width'] * 100 / 2) / 300;
             $resize = HV_PATH_CMD . " && convert -scale " . $scale . "% " . $watermark . " " . $this->compositeImageDir . "watermark_scaled.png";
             
-            exec($resize);
+            exec(escapeshellcmd($resize));
             $watermark = $this->compositeImageDir . "watermark_scaled.png";
         }
         
-        exec(HV_PATH_CMD . " && composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image, $out, $ret);
+        exec(escapeshellcmd(HV_PATH_CMD . " && composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image, $out, $ret));
 
         // If the image is too small, text won't fit. Don't put a timestamp on it. 235x235 is very small
         // and probably will not be requested anyway.
@@ -220,7 +220,7 @@ abstract class CompositeImage {
         // Write words in white
         $cmd .= "' -stroke none -fill white -annotate +100+0 '" . $timeCmd . "' -type TrueColor -alpha off " . $image;
 
-        exec($cmd);
+        exec(escapeshellcmd($cmd));
 
         return $image;
     }
@@ -264,7 +264,7 @@ abstract class CompositeImage {
 //                    $img->setImageOpacity($op/100);
 
                     $opacityCmd = HV_PATH_CMD . " && convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
-                    exec($opacityCmd);
+                    exec(escapeshellcmd($opacityCmd));
                 }
                 
                 $img = $tmpOpImg;
@@ -292,12 +292,12 @@ abstract class CompositeImage {
         $cmd .= " -compose dst-over -depth 8 -quality 10 " . $tmpImg;
 
         try {
-            exec($cmd, $out, $ret);
+            exec(escapeshellcmd($cmd), $out, $ret);
             if($ret != 0) {
                 throw new Exception("Error executing command $cmd.");
             }
 
-            exec(HV_PATH_CMD . " && convert $tmpImg -background black -alpha off $tmpImg", $out, $ret);
+            exec(escapeshellcmd(HV_PATH_CMD . " && convert $tmpImg -background black -alpha off $tmpImg"), $out, $ret);
             if($ret != 0) {
                 throw new Exception("Error turning alpha channel off on $tmpImg.");
             }

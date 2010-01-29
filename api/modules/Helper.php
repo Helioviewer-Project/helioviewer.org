@@ -89,4 +89,14 @@ function toISOString($date) {
     return $date->format("Y-m-d\TH:i:s\Z");
 }
 
+/**
+ * e.g. "2003-10-06T00:00:00.000Z"
+ * @param unknown_type $date
+ * @return unknown_type
+ */
+function validateUTCDate($date) {
+	if (preg_match("/^\d{4}[\/-]\d{2}[\/-]\d{2}T\d{2}:\d{2}:\d{2}.\d{0,3}Z?$/i", $date))
+	   return true;
+	return false;	   
+}
 ?>

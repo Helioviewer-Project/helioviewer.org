@@ -63,11 +63,6 @@ class HelioviewerTile extends Tile {
         // Base directory
         $filepath = $this->cacheDir . "/";
                 
-        if (!file_exists($filepath)) {
-            mkdir($filepath);
-            chmod($filepath, 0777);
-        }
-
         // Base filename
         $exploded = explode("/", $jp2);
         $filename = substr(end($exploded), 0, -4);
@@ -79,15 +74,12 @@ class HelioviewerTile extends Tile {
 
         $fieldArray = array($year, $month, $day, $this->observatory, $this->instrument, $this->detector, $this->measurement);
         
-        foreach($fieldArray as $field) {
+        foreach($fieldArray as $field)
             $filepath .= str_replace(" ", "_", $field) . "/";
-            
-            if (!file_exists($filepath)) {
-                //echo $filepath . "<br>";
-                mkdir($filepath);
-                chmod($filepath, 0777);
-            }
-        }    
+
+        //Should already have been done during image request
+		//if (!file_exists($filepath))
+		//    mkdir($filepath, 0777, true);
 
         // Convert coordinates to strings
         $xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
