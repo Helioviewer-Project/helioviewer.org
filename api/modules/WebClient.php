@@ -188,8 +188,8 @@ class WebClient implements Module
         $filepath = HV_JP2_DIR . $this->params["file"];
 
         // Query header information using Exiftool
-        $cmd = HV_EXIF_TOOL . " $filepath | grep Fits";
-        exec(escapeshellcmd($cmd), $out, $ret);
+        $cmd = escapeshellcmd(HV_EXIF_TOOL . " $filepath") . ' | grep Fits';
+        exec($cmd, $out, $ret);
 
         $fits = array();
         foreach ($out as $index => $line) {
