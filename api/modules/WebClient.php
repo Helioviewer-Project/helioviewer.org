@@ -47,6 +47,15 @@ class WebClient implements Module
                 	echo "Invalid date. Please enter a date of the form 2003-10-06T00:00:00.000Z";
                     return false;
                 }
+                // TODO 01/29/2010 Create separate method to fix ints
+                if (filter_var($this->params['server'], FILTER_VALIDATE_INT) === false) {
+                	echo "Error: Invalid server choice.";
+                    return false;
+                }
+                else {
+                    $this->params['server'] = (int) $this->params['server'];
+                }
+
                 break;
             case "getDataSources":
                 break;
@@ -112,8 +121,8 @@ class WebClient implements Module
      */
     public function getClosestImage ()
     {
-        // TILE_SERVER_1
-        if ($this->params['server'] === 'api/index.php') {
+        // Local Tiling Server
+        if ($this->params['server'] === 0) {
             require_once('lib/ImgIndex.php');
             require_once('lib/DbConnection.php');
             $imgIndex = new ImgIndex(new DbConnection());
@@ -134,12 +143,14 @@ class WebClient implements Module
 
 	        $json = json_encode($result);
 
-        // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
+        // Remote Tiling Server
+        // TODO 01/29/2010 Check to see if server number is within valid range of know authenticated servers.
         }
         else {
-            $source = $this->params['sourceId'];
-            $date   = $this->params['date'];
-            $url =  HV_TILE_SERVER_2 . "?action=getClosestImage&sourceId=$source&date=$date&server=1";
+        	$baseURL = constant("HV_TILE_SERVER_" . $this->params['server']);
+            $source  = $this->params['sourceId'];
+            $date    = $this->params['date'];
+            $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=1";
 
             $json = file_get_contents($url);
         }

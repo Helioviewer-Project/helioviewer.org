@@ -7,14 +7,22 @@ class Config
                             "max_movie_frames", "base_zoom_level");
     private $floats = array("base_image_scale");
     
+    public  $servers;
+    
     public function __construct($file) {
         $this->config = parse_ini_file($file);
         
         $this->fixTypes();
 
-        foreach($this->config as $key => $value)
-            define("HV_" . strtoupper($key), $value);
+        foreach($this->config as $key => $value) {
+        	if ($key !== "tile_server")
+                define("HV_" . strtoupper($key), $value);
+        }
         
+        foreach($this->config["tile_server"] as $id => $url) {
+        	define("HV_TILE_SERVER_$id", $url);
+        }
+            
         $this->setAdditionalParams();
             
         $this->setupLogging(true);

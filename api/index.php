@@ -14,7 +14,7 @@
  *    (mimetypes: video/mj2, image/jpx. See http://www.rfc-editor.org/rfc/rfc3745.txt)
  */
 require_once("Config.php");
-new Config("../settings/Config.ini");
+$config = new Config("../settings/Config.ini");
 
 if (isset($_REQUEST['action']))
     $params = $_REQUEST;

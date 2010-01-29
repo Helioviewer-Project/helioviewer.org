@@ -13,7 +13,7 @@ class Helper
     public static function checkForMissingParams($fields, $params) {
         try {
             foreach($fields as $field) {
-                if(empty($params[$field])) {
+                if(!isset($params[$field])) {
                     throw new Exception("Invalid value for $field.");
                 }
             }
