@@ -65,7 +65,6 @@ class Config {
         define("HV_ERROR_LOG",    HV_ROOT_DIR . "/log/error");
         define("HV_EMPTY_TILE",   HV_ROOT_DIR . "/images/transparent_512.png");
         define("HV_TMP_ROOT_URL", HV_WEB_ROOT_URL . "/tmp");
-        define("HV_CACHE_URL",    HV_WEB_ROOT_URL . "/cache");
     }
 }
 ?>

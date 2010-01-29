@@ -200,7 +200,7 @@ class WebClient implements Module
     /**
      * @return int Returns "1" if the action was completed successfully.
      */
-    public function launchJHelioviewer ()
+    public function launchJHV ()
     {
         require_once('lib/JHV.php');
         if ((isset($this->params['files'])) && ($this->params['files'] != "")) {

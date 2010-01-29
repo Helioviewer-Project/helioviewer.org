@@ -14,11 +14,8 @@
 require_once("Config.php");
 new Config("../settings/Config.ini");
 
-if (isset($_GET['action']))
-    $params = $_GET;
-
-elseif (isset($_POST['action']))
-    $params = $_POST;
+if (isset($_REQUEST['action']))
+    $params = $_REQUEST;
     
 if (!(isset($params) && load_module($params))) {
     $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
@@ -1052,25 +1049,26 @@ if (!(isset($params) && load_module($params))) {
 function load_module($params)
 {
     $valid_actions = array(
-        "Events"       => "getEvents",
-        "Events"       => "getEventCatalogs",
-        "JHelioviewer" => "getJP2Image",
-        "JHelioviewer" => "getJP2ImageSeries",
-        "JHelioviewer" => "getJPX",
-        "JHelioviewer" => "getMJ2",
-        "WebClient"    => "downloadFile",
-        "WebClient"    => "getClosestImage",
-        "WebClient"    => "getDataSources",
-        "WebClient"    => "getJP2Header",
-        "WebClient"    => "getScreenshot",
-        "WebClient"    => "getTile",
-        "WebClient"    => "launchJHelioviewer"
+        "downloadFile"     => "WebClient",
+        "getClosestImage"  => "WebClient",
+        "getDataSources"   => "WebClient",
+        "getScreenshot"    => "WebClient",
+        "getJP2Header"     => "WebClient",
+        "getTile"          => "WebClient",
+        "launchJHV"        => "WebClient",
+        "getEvents"        => "Events",
+        "getEventCatalogs" => "Events",
+        "getJP2Image"      => "JHelioviewer",
+        "getJPX"           => "JHelioviewer",
+        "getMJ2"           => "JHelioviewer",
+        "getJP2ImageSeries"=> "JHelioviewer"
     );
     
-    if (!$module = array_search($params["action"], $valid_actions)) {
+    if (!array_key_exists($params["action"], $valid_actions)) {
     	return false;
     }
     else {
+    	$module = $valid_actions[$params["action"]];
     	require_once("modules/$module.php");
     	$obj = new $module($params);
     	return true;
