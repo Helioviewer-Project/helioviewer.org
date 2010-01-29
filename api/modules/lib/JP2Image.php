@@ -69,16 +69,14 @@ class JP2Image {
 
         // Execute the command
         try {
-            $line = exec(HV_PATH_CMD . $cmd, $out, $ret);
-            if (($ret != 0) || (sizeof($out) > 5)) {
-                var_dump($out);
+            $line = exec(HV_PATH_CMD . escapeshellcmd($cmd), $out, $ret);
+            if (($ret != 0) || (sizeof($out) > 5))
                 throw new Exception("COMMAND: $cmd\n\t $line");
-            }
                 
         } catch(Exception $e) {
-            $error = "[kdu][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
+            $error = "[JP2Image.php][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "<br>\n\n";
             file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
-            print $error;
+            die($error);
         }
     }
     
@@ -103,7 +101,7 @@ class JP2Image {
         $scaledHeight = substr(($bottom - $top) / $this->height, 0, $precision);
         $scaledWidth  = substr(($right - $left) / $this->width,  0, $precision);
         
-        $region = "-region \{$scaledTop,$scaledLeft\},\{$scaledHeight,$scaledWidth\}";
+        $region = '-region {' . "$scaledTop,$scaledLeft" . '},{' . "$scaledHeight,$scaledWidth" . '}';
 
         return $region;        
     }    

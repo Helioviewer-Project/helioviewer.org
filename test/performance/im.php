@@ -36,8 +36,8 @@ function using_imagick () {
 
 function using_exec () {
 	global $image, $mask, $clut, $final, $qual;
-	exec("composite -compose CopyOpacity $mask $image -depth 8 -quality $qual intermediate.png");
-	exec("convert intermediate.png -quality $qual -depth 8 $clut -clut $final");
+	exec(escapeshellcmd("composite -compose CopyOpacity $mask $image -depth 8 -quality $qual intermediate.png"));
+	exec(escapeshellcmd("convert intermediate.png -quality $qual -depth 8 $clut -clut $final"));
 }
 
 // Main

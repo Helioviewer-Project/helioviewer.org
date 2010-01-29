@@ -6,14 +6,11 @@ class WebClient implements Module
 {
     private $params;
 
-    public function __construct($params)
+    public function __construct(&$params)
     {
         require_once("Helper.php");
         $this->params = $params;
-
-
         $this->execute();
-
     }
 
     public function execute()
@@ -24,21 +21,41 @@ class WebClient implements Module
         }
     }
 
+    /**
+     * Handles input validation
+     */
     public function validate()
     {
         switch($this->params['action'])
         {
             case "downloadFile":
                 Helper::checkForMissingParams(array('url'), $this->params);
+                if (!filter_var($this->params['url'], FILTER_VALIDATE_URL))
+                    return false;
                 break;
             case "getClosestImage":
-                if ($this->params['server'] === 'api/index.php') {
-                //    Helper::checkForMissingParams(array('server', 'observatory', 'instrument', 'detector', 'measurement'), $this->params);
+                if (isset($this->params["sourceId"])) {
+                    Helper::checkForMissingParams(array('server', 'date', 'sourceId'), $this->params);
+                    if (!filter_var($this->params['sourceId'], FILTER_VALIDATE_INT))
+                        return false;
+                    //elseif (!filter_var($this->params['sourceId'], FILTER_VALIDATE_INT))
                 }
-                else
-                {
-                    Helper::checkForMissingParams(array('sourceId', 'date'), $this->params);
+                else {
+                    Helper::checkForMissingParams(array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement'), $this->params);
                 }
+                if (!validateUTCDate($this->params['date'])) {
+                	echo "Invalid date. Please enter a date of the form 2003-10-06T00:00:00.000Z";
+                    return false;
+                }
+                // TODO 01/29/2010 Create separate method to fix ints
+                if (filter_var($this->params['server'], FILTER_VALIDATE_INT) === false) {
+                	echo "Error: Invalid server choice.";
+                    return false;
+                }
+                else {
+                    $this->params['server'] = (int) $this->params['server'];
+                }
+
                 break;
             case "getDataSources":
                 break;
@@ -104,8 +121,8 @@ class WebClient implements Module
      */
     public function getClosestImage ()
     {
-        // TILE_SERVER_1
-        if ($this->params['server'] === 'api/index.php') {
+        // Local Tiling Server
+        if ($this->params['server'] === 0) {
             require_once('lib/ImgIndex.php');
             require_once('lib/DbConnection.php');
             $imgIndex = new ImgIndex(new DbConnection());
@@ -126,12 +143,14 @@ class WebClient implements Module
 
 	        $json = json_encode($result);
 
-        // TILE_SERVER_2 (Eventually, will need to generalize to support N tile servers)
+        // Remote Tiling Server
+        // TODO 01/29/2010 Check to see if server number is within valid range of know authenticated servers.
         }
         else {
-            $source = $this->params['sourceId'];
-            $date   = $this->params['date'];
-            $url =  HV_TILE_SERVER_2 . "?action=getClosestImage&sourceId=$source&date=$date&server=1";
+        	$baseURL = constant("HV_TILE_SERVER_" . $this->params['server']);
+            $source  = $this->params['sourceId'];
+            $date    = $this->params['date'];
+            $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=1";
 
             $json = file_get_contents($url);
         }
@@ -170,7 +189,7 @@ class WebClient implements Module
 
         // Query header information using Exiftool
         $cmd = HV_EXIF_TOOL . " $filepath | grep Fits";
-        exec($cmd, $out, $ret);
+        exec(escapeshellcmd($cmd), $out, $ret);
 
         $fits = array();
         foreach ($out as $index => $line) {
@@ -362,12 +381,17 @@ class WebClient implements Module
     
     /**
      * @description Creates the directory structure which will be used to cache generated tiles.
+     * 
+     * Note: mkdir may not set permissions properly due to an issue with umask.
+     *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
     private function createImageCacheDir($filepath) {
         $dir = HV_CACHE_DIR . $filepath;
         
-        if (!file_exists($dir))
-           mkdir($dir, 0777, true); 
+        if (!file_exists($dir)) {
+           mkdir($dir, 0777, true);
+           chmod($dir, 0777);
+        } 
     }
 
 }

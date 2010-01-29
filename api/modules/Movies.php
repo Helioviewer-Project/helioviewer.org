@@ -6,7 +6,7 @@ class Movies implements Module
 {
     private $params;
 
-    public function __construct($params)
+    public function __construct(&$params)
     {
         require_once("Helper.php");
         $this->params = $params;

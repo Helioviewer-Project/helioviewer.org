@@ -88,7 +88,7 @@ class SubFieldImage {
             if (fmod($this->scaleFactor, 1) != 0)
                 $toIntermediateCmd .= "-resize " . $this->subfieldRelWidth . "x" . $this->subfieldRelHeight . "! ";
                 
-            exec($toIntermediateCmd . $intermediate);
+            exec(escapeshellcmd($toIntermediateCmd . $intermediate));
             //die($toIntermediateCmd . $intermediate);
             //echo($toIntermediateCmd . $intermediate . "<br><br>");
                 
@@ -124,7 +124,7 @@ class SubFieldImage {
 //            die($cmd . " " . $this->outputFile);
 
             // Execute command
-            exec("$cmd $this->outputFile", $out, $ret);
+            exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
             if ($ret != 0)
                 throw new Exception("Unable to apply final processing. Command: $cmd");
 
@@ -449,7 +449,7 @@ class SubFieldImage {
         try {
             $cmd = HV_PATH_CMD . " identify $filename | grep -o \" [0-9]*x[0-9]* \"";
             
-            $dimensions = split("x", trim(exec($cmd)));
+            $dimensions = split("x", trim(exec(escapeshellcmd($cmd))));
             if (sizeof($dimensions) < 2)
                 throw new Exception("Unable to extract image dimensions for $filename!");
             else {

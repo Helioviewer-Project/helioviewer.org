@@ -1,19 +1,28 @@
 <?php
-class Config {        
+class Config
+{
     private $bools  = array("distributed_tiling_enabled", "backup_enabled", "disable_cache");
     private $ints   = array("build_num", "default_zoom_level", "default_timestep", "min_zoom_level", "max_zoom_level", "prefetch_size",
                             "png_compression_quality", "jpeg_compression_quality", "bit_depth", "num_colors", "tile_pad_width", 
                             "max_movie_frames", "base_zoom_level");
     private $floats = array("base_image_scale");
     
+    public  $servers;
+    
     public function __construct($file) {
         $this->config = parse_ini_file($file);
         
         $this->fixTypes();
 
-        foreach($this->config as $key => $value)
-            define("HV_" . strtoupper($key), $value);
+        foreach($this->config as $key => $value) {
+        	if ($key !== "tile_server")
+                define("HV_" . strtoupper($key), $value);
+        }
         
+        foreach($this->config["tile_server"] as $id => $url) {
+        	define("HV_TILE_SERVER_$id", $url);
+        }
+            
         $this->setAdditionalParams();
             
         $this->setupLogging(true);
@@ -65,7 +74,6 @@ class Config {
         define("HV_ERROR_LOG",    HV_ROOT_DIR . "/log/error");
         define("HV_EMPTY_TILE",   HV_ROOT_DIR . "/images/transparent_512.png");
         define("HV_TMP_ROOT_URL", HV_WEB_ROOT_URL . "/tmp");
-        define("HV_CACHE_URL",    HV_WEB_ROOT_URL . "/cache");
     }
 }
 ?>

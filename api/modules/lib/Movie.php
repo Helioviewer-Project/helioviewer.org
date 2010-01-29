@@ -185,7 +185,7 @@ class Movie
             $heightDiff = ($height - $imgHeight) / 2;
             
             if(/*$widthDiff > 0 || */ $heightDiff > 0) {
-                exec(HV_PATH_CMD . " && convert -bordercolor black -border " . /*$widthDiff*/ 0 . "x" . $heightDiff . " " . $image . " " . $image);
+                exec(HV_PATH_CMD . escapeshellcmd(" && convert -bordercolor black -border " . /*$widthDiff*/ 0 . "x" . $heightDiff . " " . $image . " " . $image));
             }
         }
         
