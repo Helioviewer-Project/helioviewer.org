@@ -6,14 +6,11 @@ class WebClient implements Module
 {
     private $params;
 
-    public function __construct($params)
+    public function __construct(&$params)
     {
         require_once("Helper.php");
         $this->params = $params;
-
-
         $this->execute();
-
     }
 
     public function execute()
@@ -32,13 +29,10 @@ class WebClient implements Module
                 Helper::checkForMissingParams(array('url'), $this->params);
                 break;
             case "getClosestImage":
-                if ($this->params['server'] === 'api/index.php') {
-                //    Helper::checkForMissingParams(array('server', 'observatory', 'instrument', 'detector', 'measurement'), $this->params);
-                }
+                if (isset($this->params["sourceId"]))
+                    Helper::checkForMissingParams(array('server', 'date', 'sourceId'), $this->params);
                 else
-                {
-                    Helper::checkForMissingParams(array('sourceId', 'date'), $this->params);
-                }
+                    Helper::checkForMissingParams(array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement'), $this->params);
                 break;
             case "getDataSources":
                 break;
