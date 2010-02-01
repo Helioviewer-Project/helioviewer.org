@@ -10,6 +10,7 @@
 	<property name="cssdir"  value="styles"/>
 	<property name="dochome" value="install/tools/jsdoc-toolkit/" />
 
+    <!-- Minification and concatenation -->
 	<target name="build">
 		<echo>Building Helioviewer...</echo>
 
@@ -43,4 +44,18 @@
 			<arg line="-jar jsrun.jar app/run.js -a -p -t=templates/jsdoc -d=../../../docs/ ../../../lib/helioviewer/" />
 		</exec>
 	</target>
+	
+	<!--  JSLint -->
+	<property name="rhino.jar" value="/usr/share/java/js.jar"/>  
+    <property name="jslint.js" value="install/tools/JSLint/jslint.js"/>
+    <target name="jslint">
+	    <echo message="Running JSLint..."/>
+		<apply executable="java" parallel="false">
+		    <!--  <filelist dir="${hvlibs}" includes="*.js" />-->
+		    <fileset id="jslint-matches" dir="${hvlibs}" includes="*.js" />
+		    <arg line="-jar"/>
+		    <arg path="${rhino.jar}"/>
+		    <arg path="${jslint.js}"/>
+		</apply>
+    </target>
 </project>

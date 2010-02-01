@@ -502,7 +502,7 @@ if (!(isset($params) && load_module($params))) {
 	                <td>Observation date and time</td>
 	            </tr>
 	            <tr>
-	                <td><b>source</b></td>
+	                <td><b>sourceId</b></td>
 	                <td><i>Integer</i></td>
 	                <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
 	                measurement parameters).</td>
@@ -602,6 +602,12 @@ if (!(isset($params) && load_module($params))) {
 	                <td><i>String</i></td>
 	                <td>[MJ2|JPX] Whether a MJ2 movie or a JPX file should be returned</td>
 	            </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
 	            <tr>
 	                <td><b>getJPIP</b></td>
 	                <td><i>Boolean</i></td>
@@ -708,6 +714,18 @@ if (!(isset($params) && load_module($params))) {
 	                <td><i>Integer</i></td>
 	                <td>The desired amount of time between each movie-frame, in seconds</td>
 	            </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
+                <tr>
+                    <td><b>frames</b></td>
+                    <td><i>Boolean</i></td>
+                    <td>[Optional] Returns a JSON data structure including the JPX URI and also a list of
+                    the timestamps associated with each layer in the file.</td>
+                </tr>
 	            <tr>
 	                <td><b>getJPIP</b></td>
 	                <td><i>Boolean</i></td>
@@ -794,6 +812,12 @@ if (!(isset($params) && load_module($params))) {
 	                <td><i>Integer</i></td>
 	                <td>The desired amount of time between each movie-frame, in seconds</td>
 	            </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
 	            <tr>
 	                <td><b>getJPIP</b></td>
 	                <td><i>Boolean</i></td>

@@ -115,9 +115,7 @@ class WebClient implements Module
     }
 
     /**
-     * @return int Returns "1" if the action was completed successfully.
      * http://localhost/hv/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&server=api/index.php
-     * TODO: Add a more elegant check for local vs. remote server
      */
     public function getClosestImage ()
     {

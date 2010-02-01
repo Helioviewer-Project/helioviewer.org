@@ -148,10 +148,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                     // Convert to JSON
                     printf("\t\tstate = %s;\n", json_encode($state));
                 ?>
-                config   = new Config(defaultsJSON);
-                api      = config.getAPIBaseURL(); 
+                config = new Config(defaultsJSON);
                 defaults = config.toArray();
-                helioviewer = new Helioviewer('#helioviewer-viewport', api, state, defaults );
+                helioviewer = new Helioviewer('#helioviewer-viewport', state, defaults);
             });
         </script>
 

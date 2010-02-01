@@ -29,7 +29,7 @@ class JHelioviewer implements Module
         switch($this->params['action'])
         {
             case "getJP2Image":
-                $bools = array("getURL", "getJPIP");
+                $bools = array("getURL", "getJPIP", "debug");
                 $this->params = Helper::fixBools($bools, $this->params);
                 break;
             case "buildJP2ImageSeries":
@@ -65,7 +65,6 @@ class JHelioviewer implements Module
     }
 
     /**
-     * @return int Returns "1" if the action was completed successfully.
      */
     public function getJP2Image ()
     {
@@ -76,11 +75,11 @@ class JHelioviewer implements Module
         $date = $this->params['date'];
 
         // Search by source id
-        if (!isset($this->params['source']))
-        $this->params['source'] = $imgIndex->getSourceId($this->params['observatory'], $this->params['instrument'], $this->params['detector'], $this->params['measurement']);
+        if (!isset($this->params['sourceId']))
+            $this->params['sourceId'] = $imgIndex->getSourceId($this->params['observatory'], $this->params['instrument'], $this->params['detector'], $this->params['measurement']);
 
-        $filepath = $imgIndex->getJP2FilePath($date, $this->params['source']);
-
+        $filepath = $imgIndex->getJP2FilePath($date, $this->params['sourceId'], $this->params['debug']);
+        
         $uri = HV_JP2_DIR . $filepath;
 
         // http url (full path)
@@ -193,8 +192,10 @@ class JHelioviewer implements Module
             // Connect to database
             $imgIndex = new ImgIndex(new DbConnection());
 
-            // Get data source id
-            $source = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
+            if (!isset($this->params['sourceId']))
+                $source = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
+            else
+                $source = $this->params["sourceId"];
             
             //var_dump($source);
 
