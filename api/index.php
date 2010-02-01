@@ -1067,7 +1067,7 @@ if (!(isset($params) && load_module($params))) {
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-01-29 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-02-01 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>
@@ -1098,7 +1098,10 @@ function load_module($params)
     );
     
     if (!array_key_exists($params["action"], $valid_actions)) {
-    	return false;
+    	require_once("modules/Helper.php");
+    	$url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+    	Helper::printErrorMsg("Invalid action specified. See the <a href='$url'>" .
+    	                      "API Documentation</a> for a list of valid actions.");
     }
     else {
     	$module = $valid_actions[$params["action"]];

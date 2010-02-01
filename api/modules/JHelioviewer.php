@@ -200,7 +200,7 @@ class JHelioviewer implements Module
 
             // Determine number of frames to grab
             $timeInSecs = $endTime - $startTime;
-            $numFrames  = min(HV_MAX_MOVIE_FRAMES, ceil($timeInSecs / $cadence));
+            $numFrames  = min(HV_MAX_JPX_FRAMES, ceil($timeInSecs / $cadence));
 
             // Timer
             $time = $startTime;
@@ -245,11 +245,9 @@ class JHelioviewer implements Module
 
         // Output the file/jpip URL
         if ($jpip)
-        echo $this->getJPIPURL($output_file);
+            $address = $this->getJPIPURL($output_file);
         else
-        echo $url;
-
-        return 1;
+            $address = $url;
     }
 }
 
