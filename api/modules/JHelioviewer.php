@@ -33,11 +33,10 @@ class JHelioviewer implements Module
                 $this->params = Helper::fixBools($bools, $this->params);
                 break;
             case "buildJP2ImageSeries":
-                $bools = array("getURL", "getJPIP", "links", "debug");
+                $bools = array("getURL", "getJPIP", "links", "frames", "debug");
                 $this->params = Helper::fixBools($bools, $this->params);
-
                 if ($this->params['links'] && ($this->params['format'] != "JPX"))
-                die('<b>Error</b>: Format must be set to "JPX" in order to create a linked image series.');
+                    die('<b>Error</b>: Format must be set to "JPX" in order to create a linked image series.');
                 break;
             case "getJPX":
                 break;
@@ -160,6 +159,7 @@ class JHelioviewer implements Module
         $jpip        = $this->params['getJPIP'];
         $format      = $this->params['format'];
         $links       = $this->params['links'];
+        $frames      = $this->params['frames'];
         $debug       = $this->params['debug'];
         $observatory = $this->params['observatory'];
         $instrument  = $this->params['instrument'];
@@ -188,7 +188,7 @@ class JHelioviewer implements Module
         $url = HV_JP2_ROOT_URL . "/movies/" . $filename;
         
         // If the file doesn't exist already, create it
-        if (!file_exists($output_file))
+        if (!file_exists($output_file) || $frames)
         {
             // Connect to database
             $imgIndex = new ImgIndex(new DbConnection());
@@ -217,7 +217,7 @@ class JHelioviewer implements Module
 
             // Remove redundant entries
             $images = array_unique($images);
-
+            
             // Append filepaths to kdu_merge command
             $cmd = HV_KDU_MERGE_BIN . " -i ";
             foreach($images as $jp2) {
@@ -243,11 +243,28 @@ class JHelioviewer implements Module
             exec(HV_PATH_CMD . " " . escapeshellcmd($cmd), $output, $return);
         }
 
-        // Output the file/jpip URL
+        // URL
         if ($jpip)
-            $address = $this->getJPIPURL($output_file);
+            $uri = $this->getJPIPURL($output_file);
         else
-            $address = $url;
+            $uri = $url;
+            
+        // Include image timestamps to speed up streaming
+        if ($frames) {
+        	$timestamps = array();
+        	foreach ($images as $img) {
+                $exploded = explode("/", $img);
+                $dateStr = substr(end($exploded), 0, 24);
+                $regex   = '/(\d+)_(\d+)_(\d+)__(\d+)_(\d+)_(\d+)_(\d+)/';
+                $utcDate = preg_replace($regex, '$1-$2-$3T$4:$5:$6.$7Z', $dateStr);
+                array_push($timestamps, toUnixTimestamp($utcDate));
+        	}
+        	header('Content-Type: application/json');
+        	print json_encode(array("uri" => $uri, "frames" => $timestamps));
+        }
+        else {
+            print $uri;	
+        }        
     }
 }
 

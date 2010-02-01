@@ -620,13 +620,13 @@ if (!(isset($params) && load_module($params))) {
 	
 	    <span class="example-header">Example:</span>
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;format=JPX">
-	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX
+	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;format=JPX">
+	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&format=JPX
 	    </a>
 	    </span><br />
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;format=JPX&amp;links=true&amp;getJPIP=true">
-	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX&links=true&getJPIP=true
+	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;format=JPX&amp;links=true&amp;getJPIP=true">
+	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&format=JPX&links=true&getJPIP=true
 	    </a>
 	    </span></div>
 	    </div>
@@ -726,13 +726,13 @@ if (!(isset($params) && load_module($params))) {
 	
 	    <span class="example-header">Example:</span>
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800">
-	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800
+	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600">
+	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600
 	    </a>
 	    </span><br />
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;links=true&amp;getJPIP=true">
-	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&links=true&getJPIP=true
+	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;links=true&amp;getJPIP=true">
+	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&links=true&getJPIP=true
 	    </a>
 	    </span></div>
 	    </div>
@@ -806,13 +806,13 @@ if (!(isset($params) && load_module($params))) {
 	
 	    <span class="example-header">Example:</span>
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800">
-	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800
+	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600">
+	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600
 	    </a>
 	    </span><br />
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;getJPIP=true">
-	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&getJPIP=true
+	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;getJPIP=true">
+	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&getJPIP=true
 	    </a>
 	    </span></div>
 	    </div>
