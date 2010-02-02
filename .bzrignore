@@ -13,13 +13,6 @@ log
 *Old.php
 *Old.js
 *Old.*
-[cC]onfig-*.php
-settings/Config.php
-api/lib/phpvideotoolkit/config.php
-*config.jaclyn.*
-*Config.Jaclyn.*
-
-settings/Config.php
 api/lib/phpvideotoolkit/config.php
 .settings
 tags
@@ -29,3 +22,4 @@ settings/Config.ini
 lib/helioviewer/build/helioviewer-all.js
 lib/helioviewer/build/helioviewer-all-min.js
 styles/helioviewer-all.css
+api/docs
