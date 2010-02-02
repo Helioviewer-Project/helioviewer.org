@@ -11,36 +11,29 @@ class ImgIndex {
         $this->dbConnection = $dbConnection;
     }
 
-    public function getClosestImage($date, $params, $debug=false) {
-        // Fetch source id if not specified
-        if (sizeOf($params) > 1)
-            $id = $this->getSourceId($params["observatory"], $params["instrument"], $params["detector"], $params["measurement"]);
-        else
-            $id = $params;   
-        
+    public function getClosestImage($date, $id, $debug=false) {
         $datestr = isoDateToMySQL($date);
         
-           $lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
-           $rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
+        // Search left and right side of image database B-Tree separately
+        $lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $id, $datestr);
+        $rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $id, $datestr);
 
-        if ($debug) {
-            echo "$lhs<br><br>";
-            echo "<span style='color: green;'>$rhs</span><br><br>";
-            echo "<hr>";
-            //exit();
-        }
+        if ($debug)
+            die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
 
         $left = mysqli_fetch_array($this->dbConnection->query($lhs), MYSQL_ASSOC);
         $right = mysqli_fetch_array($this->dbConnection->query($rhs), MYSQL_ASSOC);
         
+        // Select closest match
         if (abs($date - $left["date"]) < abs($date - $right["date"]))
             $img = $left;
         else
             $img = $right;
             
+        // Fix types and retrieve extra meta-information from JP2 header
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
-
+        
         $filename = HV_JP2_DIR . $img["filepath"] . "/" .$img["filename"];
             
         return array_merge($img, $this->extractJP2MetaInfo($filename));

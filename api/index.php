@@ -502,7 +502,7 @@ if (!(isset($params) && load_module($params))) {
 	                <td>Observation date and time</td>
 	            </tr>
 	            <tr>
-	                <td><b>source</b></td>
+	                <td><b>sourceId</b></td>
 	                <td><i>Integer</i></td>
 	                <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
 	                measurement parameters).</td>
@@ -602,6 +602,12 @@ if (!(isset($params) && load_module($params))) {
 	                <td><i>String</i></td>
 	                <td>[MJ2|JPX] Whether a MJ2 movie or a JPX file should be returned</td>
 	            </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
 	            <tr>
 	                <td><b>getJPIP</b></td>
 	                <td><i>Boolean</i></td>
@@ -620,13 +626,13 @@ if (!(isset($params) && load_module($params))) {
 	
 	    <span class="example-header">Example:</span>
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;format=JPX">
-	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX
+	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;format=JPX">
+	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&format=JPX
 	    </a>
 	    </span><br />
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;format=JPX&amp;links=true&amp;getJPIP=true">
-	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&format=JPX&links=true&getJPIP=true
+	    <a href="<?php echo $baseURL;?>?action=getJP2ImageSeries&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;format=JPX&amp;links=true&amp;getJPIP=true">
+	    <?php echo $baseURL;?>?action=getJP2ImageSeries&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&format=JPX&links=true&getJPIP=true
 	    </a>
 	    </span></div>
 	    </div>
@@ -708,6 +714,18 @@ if (!(isset($params) && load_module($params))) {
 	                <td><i>Integer</i></td>
 	                <td>The desired amount of time between each movie-frame, in seconds</td>
 	            </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
+                <tr>
+                    <td><b>frames</b></td>
+                    <td><i>Boolean</i></td>
+                    <td>[Optional] Returns a JSON data structure including the JPX URI and also a list of
+                    the timestamps associated with each layer in the file.</td>
+                </tr>
 	            <tr>
 	                <td><b>getJPIP</b></td>
 	                <td><i>Boolean</i></td>
@@ -726,13 +744,13 @@ if (!(isset($params) && load_module($params))) {
 	
 	    <span class="example-header">Example:</span>
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800">
-	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800
+	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600">
+	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600
 	    </a>
 	    </span><br />
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;links=true&amp;getJPIP=true">
-	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&links=true&getJPIP=true
+	    <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;links=true&amp;getJPIP=true">
+	        <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&links=true&getJPIP=true
 	    </a>
 	    </span></div>
 	    </div>
@@ -794,6 +812,12 @@ if (!(isset($params) && load_module($params))) {
 	                <td><i>Integer</i></td>
 	                <td>The desired amount of time between each movie-frame, in seconds</td>
 	            </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td>[Optional] The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
 	            <tr>
 	                <td><b>getJPIP</b></td>
 	                <td><i>Boolean</i></td>
@@ -806,13 +830,13 @@ if (!(isset($params) && load_module($params))) {
 	
 	    <span class="example-header">Example:</span>
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800">
-	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800
+	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600">
+	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600
 	    </a>
 	    </span><br />
 	    <span class="example-url">
-	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=1800&amp;getJPIP=true">
-	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=1800&getJPIP=true
+	    <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;getJPIP=true">
+	        <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&getJPIP=true
 	    </a>
 	    </span></div>
 	    </div>
@@ -1067,7 +1091,7 @@ if (!(isset($params) && load_module($params))) {
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-01-29 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-02-01 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>
@@ -1098,7 +1122,10 @@ function load_module($params)
     );
     
     if (!array_key_exists($params["action"], $valid_actions)) {
-    	return false;
+    	require_once("modules/Helper.php");
+    	$url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+    	Helper::printErrorMsg("Invalid action specified. See the <a href='$url'>" .
+    	                      "API Documentation</a> for a list of valid actions.");
     }
     else {
     	$module = $valid_actions[$params["action"]];

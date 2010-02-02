@@ -4,7 +4,7 @@ class Config
     private $bools  = array("distributed_tiling_enabled", "backup_enabled", "disable_cache");
     private $ints   = array("build_num", "default_zoom_level", "default_timestep", "min_zoom_level", "max_zoom_level", "prefetch_size",
                             "png_compression_quality", "jpeg_compression_quality", "bit_depth", "num_colors", "tile_pad_width", 
-                            "max_movie_frames", "base_zoom_level");
+                            "max_movie_frames", "max_jpx_frames", "base_zoom_level");
     private $floats = array("base_image_scale");
     
     public  $servers;

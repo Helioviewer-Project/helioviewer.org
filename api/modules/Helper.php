@@ -43,7 +43,28 @@ class Helper
         
         return $params;
     }
-
+    
+    /**
+     * Display an error message to the API user
+     */
+    public static function printErrorMsg($msg) {
+    ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Helioviewer.org API - Error</title>
+</head>
+<body>
+    <div style='width: 50%; margin-left: auto; margin-right: auto; margin-top: 250px;
+                text-align: center; font-size: 14px;'>
+    <img src='images/about.png' alt='Helioviewer logo'></img><br>
+    <b>Error:</b> <?php echo $msg;?><br>
+    </div>
+</body>
+</html>
+    <?php
+    exit();
+    }
 }
 
 /**

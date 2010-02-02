@@ -36,13 +36,13 @@ class WebClient implements Module
             case "getClosestImage":
                 if (isset($this->params["sourceId"])) {
                     Helper::checkForMissingParams(array('server', 'date', 'sourceId'), $this->params);
-                    if (!filter_var($this->params['sourceId'], FILTER_VALIDATE_INT))
+                   if (filter_var($this->params['sourceId'], FILTER_VALIDATE_INT) === false)
                         return false;
-                    //elseif (!filter_var($this->params['sourceId'], FILTER_VALIDATE_INT))
                 }
                 else {
                     Helper::checkForMissingParams(array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement'), $this->params);
                 }
+                
                 if (!validateUTCDate($this->params['date'])) {
                 	echo "Invalid date. Please enter a date of the form 2003-10-06T00:00:00.000Z";
                     return false;
@@ -60,9 +60,9 @@ class WebClient implements Module
             case "getDataSources":
                 break;
             case "getTile":
-                //Note: disabled because of a bug in checkForMissingParams when x=0
-                //Helper::checkForMissingParams(array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width', 'jp2Height', 'jp2Scale',
-                //                                    'offsetX', 'offsetY', 'format', 'obs', 'inst', 'det', 'meas'), $this->params);
+                $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width', 'jp2Height', 'jp2Scale',
+                                  'offsetX', 'offsetY', 'format', 'obs', 'inst', 'det', 'meas');
+                Helper::checkForMissingParams($required, $this->params);
                 break;
             case "getJP2Header":
                 break;
@@ -71,7 +71,7 @@ class WebClient implements Module
             case "formatLayerString":
                 break;
             default:
-                throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");
+                break;
         }
         return true;
     }
@@ -115,9 +115,7 @@ class WebClient implements Module
     }
 
     /**
-     * @return int Returns "1" if the action was completed successfully.
      * http://localhost/hv/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&server=api/index.php
-     * TODO: Add a more elegant check for local vs. remote server
      */
     public function getClosestImage ()
     {
@@ -127,16 +125,15 @@ class WebClient implements Module
             require_once('lib/DbConnection.php');
             $imgIndex = new ImgIndex(new DbConnection());
 
-            // Search by source id
-            if (isset($this->params['sourceId']))
-            $result = $imgIndex->getClosestImage($this->params['date'], $this->params['sourceId'], false);
-
-            // Search by human-readable parameters
-            else {
-                foreach(array('observatory', 'instrument', 'detector', 'measurement') as $field)
-                $parameters["$field"] = $this->params[$field];
-                $result = $imgIndex->getClosestImage($this->params['date'], $parameters);
+            // Convert human-readable params to sourceId if needed
+            if (!isset($this->params['sourceId'])) {
+                $this->params['sourceId'] = $imgIndex->getSourceId(
+                    $this->params['observatory'], $this->params['instrument'], 
+                    $this->params['detector'], $this->params['measurement']
+                );
             }
+
+            $result = $imgIndex->getClosestImage($this->params['date'], $this->params['sourceId'], false);
 
 	        // Prepare cache for tiles
 	        $this->createImageCacheDir($result["filepath"]);
@@ -188,8 +185,8 @@ class WebClient implements Module
         $filepath = HV_JP2_DIR . $this->params["file"];
 
         // Query header information using Exiftool
-        $cmd = HV_EXIF_TOOL . " $filepath | grep Fits";
-        exec(escapeshellcmd($cmd), $out, $ret);
+        $cmd = escapeshellcmd(HV_EXIF_TOOL . " $filepath") . ' | grep Fits';
+        exec($cmd, $out, $ret);
 
         $fits = array();
         foreach ($out as $index => $line) {

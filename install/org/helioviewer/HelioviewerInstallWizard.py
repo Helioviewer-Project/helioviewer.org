@@ -116,7 +116,9 @@ If this is correct, please press "Start" to begin processing.
 
         self.ui.statusMsg.setText("Creating database schema")
 
-        cursor = setupDatabaseSchema(admin, adminpass, hvuser, hvpass, mysql)
+        dbname = "helioviewer"
+
+        cursor = setupDatabaseSchema(admin, adminpass, dbname, hvuser, hvpass, mysql)
 
         processJPEG2000Images(self.images, jp2dir, cursor, mysql, self.updateProgress)
     
