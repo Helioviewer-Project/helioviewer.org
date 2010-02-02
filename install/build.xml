@@ -1,17 +1,17 @@
 <project name="Helioviewer" default="build" basedir="../">
 	<!-- Helioviewer Apache Ant build.xml. -->
-	<!-- Last updated: January 2010 By Keith -->
+	<!-- Last updated: February 2010 By Keith -->
 	<description>
 		Helioviewer Apache Ant build.xml
     </description>
 
     <!-- Some useful variables -->
-    <property name="hvlibs"  value="lib/helioviewer"/>
-	<property name="cssdir"  value="styles"/>
-	<property name="dochome" value="install/tools/jsdoc-toolkit/" />
+    <property name="hvlibs"  value="lib/helioviewer"/>	
 
     <!-- Minification and concatenation -->
 	<target name="build">
+        <property name="cssdir"  value="styles"/>
+        
 		<echo>Building Helioviewer...</echo>
 
 		<!-- create build directory -->
@@ -37,18 +37,22 @@
 		<echo>Done!</echo>
 	</target>
 	
-	<!-- Documentation Generation -->
-	<target name="doc">
+	<!-- JavaScript Documentation Generation -->
+	<target name="jsdoc">
 		<echo>Generating documentation...</echo>
-		<exec dir="${dochome}" executable="java">
+		<exec dir="install/tools/jsdoc-toolkit/" executable="java">
 			<arg line="-jar jsrun.jar app/run.js -a -p -t=templates/jsdoc -d=../../../docs/ ../../../lib/helioviewer/" />
 		</exec>
 	</target>
 	
 	<!--  JSLint -->
-	<property name="rhino.jar" value="/usr/share/java/js.jar"/>  
-    <property name="jslint.js" value="install/tools/JSLint/jslint.js"/>
     <target name="jslint">
+        <description>
+            Verifies JavaScript code using the Rhino version of JSLint.
+            Requires Rhino (sudo apt-get install rhino).
+        </description>
+        <property name="rhino.jar" value="/usr/share/java/js.jar"/>  
+        <property name="jslint.js" value="install/tools/JSLint/jslint.js"/>
 	    <echo message="Running JSLint..."/>
 		<apply executable="java" parallel="false">
 		    <!--  <filelist dir="${hvlibs}" includes="*.js" />-->
@@ -57,5 +61,21 @@
 		    <arg path="${rhino.jar}"/>
 		    <arg path="${jslint.js}"/>
 		</apply>
+    </target>
+    
+    <!-- PHP CodeSniffer -->
+    <!-- sudo pear install codesniffer -->
+    <!-- phpcs -n - -standard=pear - -report-width=120 Config.php -->
+    
+    <!-- PHP Documentation Generation -->
+    <target name="phpdoc">
+        <description>
+            Generates PHP Documentation using phpDocumentor.
+            To install, use "sudo pear install phpdocumentor"
+        </description>
+        <echo>Running phpDocumentor...</echo>
+        <exec dir="api/" executable="phpdoc">
+            <arg line="-t docs/ -d modules/" />
+        </exec>
     </target>
 </project>
