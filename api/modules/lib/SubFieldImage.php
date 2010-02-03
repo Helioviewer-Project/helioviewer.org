@@ -449,7 +449,7 @@ class SubFieldImage {
         try {
             $cmd = HV_PATH_CMD . " identify $filename | grep -o \" [0-9]*x[0-9]* \"";
             
-            $dimensions = split("x", trim(exec(escapeshellcmd($cmd))));
+            $dimensions = preg_split("/x/", trim(exec(escapeshellcmd($cmd))));
             if (sizeof($dimensions) < 2)
                 throw new Exception("Unable to extract image dimensions for $filename!");
             else {

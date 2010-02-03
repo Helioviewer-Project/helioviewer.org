@@ -414,7 +414,7 @@ class WebClient implements Module
             $layerInfo = explode("x", $layer);
 
             // $meta is now: [xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety]
-            $meta = split(",", $layerInfo[1]);
+            $meta = preg_split("/,/", $layerInfo[1]);
             $offsetX = $meta[4];
             $offsetY = $meta[5];
 
