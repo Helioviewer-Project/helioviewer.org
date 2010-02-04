@@ -1,6 +1,9 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
+ * Helioviewer Configuration Helper Class Definition
+ */
+/**
  * Helioviewer Configuration Helper
  * 
  * This file defines a class which helps to parse Helioviewer's configuration 

@@ -1,11 +1,14 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
+ * Helioviewer Events Module Class Definition
+ */
+/**
  * Helioviewer Events Module
  * 
  * PHP version 5
  * 
- * @category Configuration
+ * @category Modules
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @author   Jonathan Harper <jwh376@msstate.edu>
@@ -101,3 +104,4 @@ class Events implements Module
         echo file_get_contents($url);
     }
 }
+?>

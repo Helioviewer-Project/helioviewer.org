@@ -1141,18 +1141,23 @@ function loadModule($params)
         "getJP2ImageSeries"=> "JHelioviewer"
     );
     
-    if (!array_key_exists($params["action"], $valid_actions)) {
+    try {
+        if (!array_key_exists($params["action"], $valid_actions)) {
+            $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+            throw new Exception(
+                "Invalid action specified. See the <a href='$url'>" .
+                "API Documentation</a> for a list of valid actions."
+            );
+        } else {
+            $module = $valid_actions[$params["action"]];
+            include_once "modules/$module.php";
+            $obj = new $module($params);
+        }
+    } catch (Exception $e) {
         include_once "modules/Helper.php";
-        $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
-        Helper::printErrorMsg(
-            "Invalid action specified. See the <a href='$url'>" .
-            "API Documentation</a> for a list of valid actions."
-        );
-    } else {
-        $module = $valid_actions[$params["action"]];
-        include_once "modules/$module.php";
-        $obj = new $module($params);
-        return true;
+        Helper::printErrorMsg($e->getMessage());
     }
+    
+    return true;
 }
 ?>

@@ -1,55 +1,94 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ * Helioviewer JHelioviewer Module Class Definition
+ */
+require_once 'interface.Module.php';
 
-require_once("interface.Module.php");
-
+/**
+ * Helioviewer JHelioviewer Module
+ * 
+ * PHP version 5
+ * 
+ * @category Modules
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ */
 class JHelioviewer implements Module
 {
-    private $params;
+    /**
+     * API Request parameters
+     * 
+     * @var mixed
+     */
+    private $_params;
 
     public function __construct(&$params)
     {
         require_once("Helper.php");
-        $this->params = $params;
-
-
+        $this->_params = $params;
         $this->execute();
 
     }
 
     public function execute()
     {
-        if($this->validate())
-        {
-            $this->{$this->params['action']}();
+        if($this->validate()) {
+            $this->{$this->_params['action']}();
         }
     }
 
+    /**
+     * Validate the requested action and input
+     * 
+     * @return void
+     */
     public function validate()
     {
-        switch($this->params['action'])
+        switch($this->_params['action'])
         {
-            case "getJP2Image":
-                $bools = array("getURL", "getJPIP", "debug");
-                $this->params = Helper::fixBools($bools, $this->params);
-                break;
-            case "buildJP2ImageSeries":
-                $bools = array("getURL", "getJPIP", "links", "frames", "debug");
-                $this->params = Helper::fixBools($bools, $this->params);
-                if ($this->params['links'] && ($this->params['format'] != "JPX"))
-                    die('<b>Error</b>: Format must be set to "JPX" in order to create a linked image series.');
-                break;
-            case "getJPX":
-                break;
-            case "getMJ2":
-                break;
-            case "getJP2ImageSeries":
-                break;
-            default:
-                throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");
+        case "getJP2Image":
+            Helper::fixBools(array("getURL", "getJPIP", "debug"), $this->_params);
+            if (isset($this->_params["sourceId"])) {
+                Helper::checkForMissingParams(array('date', 'sourceId'), $this->_params);
+                if (filter_var($this->_params['sourceId'], FILTER_VALIDATE_INT) === false) {
+                    return false;
+                }
+            } else {
+                Helper::checkForMissingParams(
+                    array('date', 'observatory', 'instrument', 'detector', 'measurement'), $this->_params
+                );
+            }
+            if (!validateUTCDate($this->_params['date'])) {
+                throw new Exception("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
+            }
+            break;
+        case "buildJP2ImageSeries":
+            $bools = array("getURL", "getJPIP", "links", "frames", "debug");
+            Helper::fixBools($bools, $this->_params);
+            if ($this->_params['links'] && ($this->_params['format'] != "JPX")) {
+                throw new Exception('Format must be set to "JPX" in order to create a linked image series.');
+            }
+            break;
+        case "getJPX":
+            break;
+        case "getMJ2":
+            break;
+        case "getJP2ImageSeries":
+            break;
+        default:
+            break;
         }
         return true;
     }
 
+    /**
+     * Prints JHelioviewer module documentation
+     * 
+     * @return void
+     */
     public static function printDoc()
     {
 
@@ -72,25 +111,25 @@ class JHelioviewer implements Module
         require_once("lib/DbConnection.php");
         $imgIndex = new ImgIndex(new DbConnection());
 
-        $date = $this->params['date'];
+        $date = $this->_params['date'];
 
         // Search by source id
-        if (!isset($this->params['sourceId']))
-            $this->params['sourceId'] = $imgIndex->getSourceId($this->params['observatory'], $this->params['instrument'], $this->params['detector'], $this->params['measurement']);
+        if (!isset($this->_params['sourceId']))
+            $this->_params['sourceId'] = $imgIndex->getSourceId($this->_params['observatory'], $this->_params['instrument'], $this->_params['detector'], $this->_params['measurement']);
 
-        $filepath = $imgIndex->getJP2FilePath($date, $this->params['sourceId'], $this->params['debug']);
+        $filepath = $imgIndex->getJP2FilePath($date, $this->_params['sourceId'], $this->_params['debug']);
         
         $uri = HV_JP2_DIR . $filepath;
 
         // http url (full path)
-        if ($this->params['getURL']) {
+        if ($this->_params['getURL']) {
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
             $url = preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri);
             echo $url;
         }
 
         // jpip url
-        else if ($this->params['getJPIP']) {
+        else if ($this->_params['getJPIP']) {
             echo $this->getJPIPURL($uri);
         }
          
@@ -117,20 +156,20 @@ class JHelioviewer implements Module
 
     public function getJPX ()
     {
-        $this->params['format'] = 'JPX';
-        $this->params['action'] = 'buildJP2ImageSeries';
+        $this->_params['format'] = 'JPX';
+        $this->_params['action'] = 'buildJP2ImageSeries';
         $this->execute();
     }
 
     public function getMJ2 ()
     {
-        $this->params['format'] = 'MJ2';
-        $this->params['action'] = 'buildJP2ImageSeries';
+        $this->_params['format'] = 'MJ2';
+        $this->_params['action'] = 'buildJP2ImageSeries';
         $this->execute();
     }
     
     public function getJP2ImageSeries () {
-        $this->params['action'] = 'buildJP2ImageSeries';
+        $this->_params['action'] = 'buildJP2ImageSeries';
         $this->execute();
     }
 
@@ -152,25 +191,25 @@ class JHelioviewer implements Module
         require_once('lib/ImgIndex.php');
         require_once('lib/DbConnection.php');
     
-        $startTime   = toUnixTimestamp($this->params['startTime']);
-        $endTime     = toUnixTimestamp($this->params['endTime']);
-        $cadence     = $this->params['cadence'];
-        $jpip        = $this->params['getJPIP'];
-        $format      = $this->params['format'];
-        $links       = $this->params['links'];
-        $frames      = $this->params['frames'];
-        $debug       = $this->params['debug'];
-        $observatory = $this->params['observatory'];
-        $instrument  = $this->params['instrument'];
-        $detector    = $this->params['detector'];
-        $measurement = $this->params['measurement'];
+        $startTime   = toUnixTimestamp($this->_params['startTime']);
+        $endTime     = toUnixTimestamp($this->_params['endTime']);
+        $cadence     = $this->_params['cadence'];
+        $jpip        = $this->_params['getJPIP'];
+        $format      = $this->_params['format'];
+        $links       = $this->_params['links'];
+        $frames      = $this->_params['frames'];
+        $debug       = $this->_params['debug'];
+        $observatory = $this->_params['observatory'];
+        $instrument  = $this->_params['instrument'];
+        $detector    = $this->_params['detector'];
+        $measurement = $this->_params['measurement'];
 
         // Create a temporary directory to store image-  (TODO: Move this + other directory creation to installation script)
         $dir = HV_JP2_DIR . "/movies/";
 
         // Filename (From,To,By)
-        $from = str_replace(":", ".", $this->params['startTime']);
-        $to   = str_replace(":", ".", $this->params['endTime']);
+        $from = str_replace(":", ".", $this->_params['startTime']);
+        $to   = str_replace(":", ".", $this->_params['endTime']);
         $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$from", "T$to", "B$cadence"));
 
         // Differentiate linked JPX files
@@ -192,10 +231,10 @@ class JHelioviewer implements Module
             // Connect to database
             $imgIndex = new ImgIndex(new DbConnection());
 
-            if (!isset($this->params['sourceId']))
+            if (!isset($this->_params['sourceId']))
                 $source = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
             else
-                $source = $this->params["sourceId"];
+                $source = $this->_params["sourceId"];
             
             //var_dump($source);
 

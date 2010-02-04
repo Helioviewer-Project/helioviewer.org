@@ -69,10 +69,8 @@ class WebClient implements Module
                     array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement'), $this->_params
                 );
             }
-
             if (!validateUTCDate($this->_params['date'])) {
-                echo "Invalid date. Please enter a date of the form 2003-10-06T00:00:00.000Z";
-                return false;
+                throw new Exception("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
             }
             // TODO 01/29/2010 Create separate method to fix ints
             if (filter_var($this->_params['server'], FILTER_VALIDATE_INT) === false) {
