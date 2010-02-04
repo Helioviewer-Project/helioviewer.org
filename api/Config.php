@@ -33,6 +33,8 @@ class Config
      * Creates an instance of the Config helper class 
      * 
      * @param string $file Path to configuration file
+     * 
+     * @return void
      */
     public function __construct($file)
     {
@@ -61,6 +63,8 @@ class Config
     
     /**
      * Casts known configuration variables to correct types.
+     * 
+     * @return void
      */
     private function _fixTypes()
     {
@@ -84,6 +88,8 @@ class Config
      * Makes sure that error log exists and selects desired logging verbosity
      * 
      * @param bool $verbose Whether or not to force verbose logging.
+     * 
+     * @return void
      */
     private function _setupLogging($verbose)
     {
@@ -99,6 +105,7 @@ class Config
     /**
      * Some useful values can be determined automatically...
      * 
+     * @return void
      */
     private function _setAdditionalParams()
     {

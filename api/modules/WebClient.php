@@ -21,6 +21,8 @@ class WebClient implements Module
      * Constructor
      * 
      * @param mixed &$params API Request parameters, including the action name.
+     * 
+     * @return void
      */
     public function __construct(&$params)
     {
@@ -32,6 +34,7 @@ class WebClient implements Module
     /**
      * execute 
      *
+     * @return void
      */
     public function execute()
     {
@@ -103,6 +106,8 @@ class WebClient implements Module
 
     /**
      * printDoc
+     * 
+     * @return void
      */
     public static function printDoc()
     {
@@ -114,6 +119,8 @@ class WebClient implements Module
      *  which pops up the "Save file as" dialog.
      * 
      * @TODO test this to make sure it works in all browsers.
+     * 
+     * @return void
      */
     public function downloadFile()
     {
@@ -145,6 +152,8 @@ class WebClient implements Module
     /**
      * http://localhost/hv/api/index.php?action=getClosestImage
      * &date=2003-10-05T00:00:00Z&source=0&server=api/index.php
+     * 
+     * @return void
      */
     public function getClosestImage ()
     {
@@ -207,7 +216,7 @@ class WebClient implements Module
     /**
      * NOTE: Add option to specify XML vs. JSON... FITS vs. Entire header?
      *  
-     * @return int Returns "1" if the action was completed successfully.
+     * @return void
      */
     public function getJP2Header ()
     {
@@ -232,7 +241,7 @@ class WebClient implements Module
     /**
      * getTile
      * 
-     * @return int Returns "1" if the action was completed successfully.
+     * @return void
      */
     public function getTile ()
     {
@@ -251,7 +260,7 @@ class WebClient implements Module
     /**
      * launchJHV
      *  
-     * @return int Returns "1" if the action was completed successfully.
+     * @return void
      */
     public function launchJHV ()
     {
@@ -267,6 +276,8 @@ class WebClient implements Module
     /**
      * sendEmail
      * TODO: CAPTCHA, Server-side security
+     * 
+     * @return void
      */
     public function sendEmail()
     {
@@ -299,7 +310,7 @@ class WebClient implements Module
      * knowing ahead of time whether the image is a .png, .tif, .flv, etc, and 
      * in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      *
-     * @return Returns 1 if the action was completed successfully.
+     * @return void
      */
     public function takeScreenshot()
     {
@@ -382,6 +393,7 @@ class WebClient implements Module
      *     = Separate out layer details into a Layer PHP class?
      *     = Update getViewerImage to use "layers" instead of "layers" + "timestamps"
      *
+     * @return void
      */
     public function getViewerImage ()
     {
@@ -398,13 +410,13 @@ class WebClient implements Module
      * 
      * @param {Array} $layers -- an array of strings in the format: 
      *     "obs,inst,det,meas,visible,opacityxxStart,xSize,yStart,ySize"
-           The extra "x" was put in the middle so that the string could be 
-           broken in half and parsing one half by itself rather than parsing 
-           10 different strings and putting the half that didn't need parsing
-           back together.
+     *      The extra "x" was put in the middle so that the string could be 
+     *      broken in half and parsing one half by itself rather than parsing 
+     *      10 different strings and putting the half that didn't need parsing
+     *      back together.
      *                     
      * @return {Array} $formatted -- The array containing properly
-     *     formatted strings*                     
+     *     formatted strings                
      */
     private function _formatLayerStrings($layers)
     {
@@ -446,6 +458,8 @@ class WebClient implements Module
      * 
      * @param string $filepath Path where tiled data will be stored in the cache
      * 
+     * @return void
+     *  
      * Note: mkdir may not set permissions properly due to an issue with umask.
      *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
@@ -460,3 +474,4 @@ class WebClient implements Module
     }
 
 }
+?>
