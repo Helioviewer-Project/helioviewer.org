@@ -2,11 +2,13 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer Events Module Class Definition
- */
-/**
- * Helioviewer Events Module
  * 
  * PHP version 5
+ */
+require_once 'interface.Module.php';
+
+/**
+ * Helioviewer Events Module
  * 
  * @category Modules
  * @package  Helioviewer
@@ -15,8 +17,6 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'interface.Module.php';
-
 class Events implements Module
 {
     /**
@@ -33,14 +33,15 @@ class Events implements Module
      */
     public function __construct(&$params)
     {
-        include_once 'Helper.php';
         $this->_params = $params;
         $this->execute();
 
     }
 
     /**
-     * execute
+     * execute 
+     *
+     * @return void
      */
     public function execute()
     {
@@ -59,14 +60,13 @@ class Events implements Module
         switch($this->_params['action'])
         {
         case "getEvents":
-            Helper::checkForMissingParams(
-                array('date','windowSize','catalogs'), $this->_params
-            );
+            Helper::checkForMissingParams(array('date','windowSize','catalogs'), $this->_params);
+            Helper::checkUTCDate($this->_params['date']);
+            Helper::checkInts(array('windowSize'), $this->_params);
             break;
         case "getEventCatalogs":
             break;
         default:
-            throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");
             break;
         }
         return true;
@@ -74,6 +74,8 @@ class Events implements Module
 
     /**
      * printDoc
+     * 
+     * @return void
      */
     public static function printDoc()
     {
@@ -83,6 +85,7 @@ class Events implements Module
     /**
      * getEvents
      *
+     * @return void
      */
     public function getEvents ()
     {
@@ -96,6 +99,8 @@ class Events implements Module
 
     /**
      * getEventCatalogs
+     * 
+     * @return void
      */
     public function getEventCatalogs ()
     {

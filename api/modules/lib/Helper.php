@@ -3,8 +3,6 @@
 /**
  * Helioviewer Helper Class
  */
-require_once 'interface.Module.php';
-
 /**
  * Helioviewer Helper Class
  * 
@@ -14,7 +12,7 @@ require_once 'interface.Module.php';
  * 
  * PHP version 5
  * 
- * @category Modules
+ * @category Helper
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
@@ -47,7 +45,7 @@ class Helper
      * 
      * @return void
      */
-    public static function fixBools($bools, &$params)
+    public static function checkBools($bools, &$params)
     {
         foreach ($bools as $bool) {
             if (isset($params[$bool]) && (strtolower($params[$bool]) === "true")) {
@@ -58,6 +56,82 @@ class Helper
         }
     }
     
+    /**
+     * Typecasts validates and fixes types for integer parameters
+     * 
+     * @param array $ints    A list of integer parameters which are used by an action.
+     * @param array &$params The parameters that were passed in
+     * 
+     * @return void
+     */    
+    public static function checkInts($ints, &$params)
+    {
+        foreach ($ints as $int) {
+            if (isset($params[$int])) {
+                if (filter_var($params[$int], FILTER_VALIDATE_INT) === false) {
+                    throw new Exception("Invalid value for $int. Please specify an integer value.");                    
+                } else {
+                    $params[$int] = (int) $params[$int];
+                }
+            }
+        }
+    }
+    
+    /**
+     * Typecasts validates and fixes types for float parameters
+     * 
+     * @param array $floats  A list of float parameters which are used by an action.
+     * @param array &$params The parameters that were passed in
+     * 
+     * @return void
+     */    
+    public static function checkFloats($floats, &$params)
+    {
+        foreach ($floats as $float) {
+            if (isset($params[$float])) {
+                if (filter_var($params[$float], FILTER_VALIDATE_FLOAT) === false) {
+                    throw new Exception("Invalid value for $float. Please specify an float value.");                    
+                } else {
+                    $params[$float] = (float) $params[$float];
+                }
+            }
+        }
+    }
+    
+    /**
+     * Typecasts validates URL parameters
+     * 
+     * @param array $urls    A list of URLs which are used by an action.
+     * @param array &$params The parameters that were passed in
+     * 
+     * @return void
+     */    
+    public static function checkURLs($urls, &$params)
+    {
+        foreach ($urls as $url) {
+            if (isset($params[$url])) {
+                if (!filter_var($params[$url], FILTER_VALIDATE_URL)) {
+                    throw new Exception("Invalid value for $url. Please specify an URL.");                    
+                }
+            }
+        }
+    }
+    
+    /**
+     * Checks to see if a string is a valid ISO 8601 UTC date string of the form
+     * "2003-10-05T00:00:00.000Z" (milliseconds and ending "Z" are optional).
+     *
+     * @param string $date A datestring
+     * 
+     * @return void 
+     */
+    public static function checkUTCDate($date)
+    {
+        if (!preg_match("/^\d{4}[\/-]\d{2}[\/-]\d{2}T\d{2}:\d{2}:\d{2}.\d{0,3}Z?$/i", $date)) {
+            throw new Exception("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
+        }     
+    }
+        
     /**
      * Display an error message to the API user
      * 
@@ -103,6 +177,7 @@ function toUnixTimestamp($dateStr)
  * Converts a unix timestamp to a PHP DateTime instance
  * 
  * @param int $timestamp The number of seconds since Jan 1, 1970 UTC
+ * @see http://us2.php.net/manual/en/function.date-create.php
  * 
  * @return DateTime A PHP DateTime object
  */
@@ -139,6 +214,9 @@ function isoDateToMySQL($dateStr)
 /**
  * Takes a PHP DateTime object and returns an UTC date string
  * 
+ * Similar to:
+ *     echo $date->format(DATE_ISO8601);
+ * 
  * @param DateTime $date A PHP DateTime object
  * 
  * @return string An ISO 8601 Date string (2003-10-05T00:00:00Z)
@@ -146,21 +224,5 @@ function isoDateToMySQL($dateStr)
 function toISOString($date)
 {
     return $date->format("Y-m-d\TH:i:s\Z");
-}
-
-/**
- * Checks to see if a string is a valid ISO 8601 UTC date string
- *
- * @param string $date A datestring
- * 
- * @return bool Returns true if the string represents a date of the form
- *               "2003-10-05T00:00:00.000Z" (milliseconds and ending "Z" are optional).
- */
-function validateUTCDate($date)
-{
-    if (preg_match("/^\d{4}[\/-]\d{2}[\/-]\d{2}T\d{2}:\d{2}:\d{2}.\d{0,3}Z?$/i", $date)) {
-        return true;
-    }
-    return false;   
 }
 ?>

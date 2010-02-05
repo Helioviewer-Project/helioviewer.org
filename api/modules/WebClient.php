@@ -26,7 +26,6 @@ class WebClient implements Module
      */
     public function __construct(&$params)
     {
-        include_once "Helper.php";
         $this->_params = $params;
         $this->execute();
     }
@@ -52,44 +51,33 @@ class WebClient implements Module
     public function validate()
     {
         switch($this->_params['action']) {
+            
         case "downloadFile":
             Helper::checkForMissingParams(array('url'), $this->_params);
-            if (!filter_var($this->_params['url'], FILTER_VALIDATE_URL)) {
-                return false;
-            }
+            Helper::checkURLs(array('url'), $this->_params);
             break;
+            
         case "getClosestImage":
             if (isset($this->_params["sourceId"])) {
                 Helper::checkForMissingParams(array('server', 'date', 'sourceId'), $this->_params);
-                if (filter_var($this->_params['sourceId'], FILTER_VALIDATE_INT) === false) {
-                    return false;
-                }
+                Helper::checkInts(array('sourceId'), $this->_params);
             } else {
-                Helper::checkForMissingParams(
-                    array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement'), $this->_params
-                );
+                $required = array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement');
+                Helper::checkForMissingParams($required, $this->_params);
             }
-            if (!validateUTCDate($this->_params['date'])) {
-                throw new Exception("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
-            }
-            // TODO 01/29/2010 Create separate method to fix ints
-            if (filter_var($this->_params['server'], FILTER_VALIDATE_INT) === false) {
-                echo "Error: Invalid server choice.";
-                return false;
-            } else {
-                $this->_params['server'] = (int) $this->_params['server'];
-            }
-
+            Helper::checkUTCDate($this->_params['date']);
+            Helper::checkInts(array('server'), $this->_params);
             break;
             
         case "getDataSources":
             break;
+            
         case "getTile":
-            $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width', 
-                              'jp2Height', 'jp2Scale', 'offsetX', 'offsetY', 
+            $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width','jp2Height', 'jp2Scale', 'offsetX', 'offsetY', 
                               'format', 'obs', 'inst', 'det', 'meas');
             Helper::checkForMissingParams($required, $this->_params);
             break;
+            
         case "getJP2Header":
             break;
         case "getViewerImage":
@@ -143,7 +131,7 @@ class WebClient implements Module
 
             echo file_get_contents($url);
         } else {
-            print("Error: Problem retrieving file.");
+            throw new Exception("Unable to find the specified requested file.");
         }
     }
 
@@ -327,42 +315,30 @@ class WebClient implements Module
         $options['enhanceEdges'] = $this->_params['edges'] || false;
         $options['sharpen']      = $this->_params['sharpen'] || false;
 
-        try {
-            if (sizeOf($layerStrings) < 1) {
-                throw new Exception(
-                    'Invalid layer choices! You must specify at least 1 layer.'
-                );
-            }
-
-            $layers = $this->_formatLayerStrings($layerStrings);
-
-            $screenshot = new Screenshot(
-                $obsDate, $zoomLevel, $options, $imageSize, $filename, $quality
-            );
-            $screenshot->buildImages($layers);
-
-            $composite = $screenshot->getComposite();
-            if (!file_exists($composite)) {
-                throw new Exception(
-                    'The requested screenshot is either unavailable or does not exist.'
-                );
-            }
-
-            if ($this->_params == $_GET) {
-                header('Content-type: image/png');
-                echo file_get_contents($composite);
-            } else {
-                header('Content-type: application/json');
-                // Replace '/var/www/helioviewer', or wherever the directory is,
-                // with 'http://localhost/helioviewer' so it can be displayed.
-                echo json_encode(
-                    str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $composite)
-                );
-            }
+        if (sizeOf($layerStrings) < 1) {
+            throw new Exception('Invalid layer choices! You must specify at least 1 layer.');
         }
-        catch(Exception $e) {
-            echo 'Error: ' . $e->getMessage();
-            exit();
+
+        $layers = $this->_formatLayerStrings($layerStrings);
+
+        $screenshot = new Screenshot(
+            $obsDate, $zoomLevel, $options, $imageSize, $filename, $quality
+        );
+        $screenshot->buildImages($layers);
+
+        $composite = $screenshot->getComposite();
+        if (!file_exists($composite)) {
+            throw new Exception('The requested screenshot is either unavailable or does not exist.');
+        }
+
+        if ($this->_params == $_GET) {
+            header('Content-type: image/png');
+            echo file_get_contents($composite);
+        } else {
+            header('Content-type: application/json');
+            // Replace '/var/www/helioviewer', or wherever the directory is,
+            // with 'http://localhost/helioviewer' so it can be displayed.
+            echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $composite));
         }
     }
 

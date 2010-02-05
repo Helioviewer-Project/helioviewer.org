@@ -15,7 +15,6 @@
  *  = Explain use of sourceId for faster querying.
  * 
  * TODO 01/27/2010
- *  = Unify error logging (create separate class)
  *  = Discuss with JHV team about using source ID's instead of string 
  *    identifiers to speed up method calls.
  *  = Rename JHV Class so as not to confuse with the JHelioviewer module.
@@ -1141,6 +1140,8 @@ function loadModule($params)
         "getJP2ImageSeries"=> "JHelioviewer"
     );
     
+    include_once "modules/lib/Helper.php";
+    
     try {
         if (!array_key_exists($params["action"], $valid_actions)) {
             $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
@@ -1154,7 +1155,6 @@ function loadModule($params)
             $obj = new $module($params);
         }
     } catch (Exception $e) {
-        include_once "modules/Helper.php";
         Helper::printErrorMsg($e->getMessage());
     }
     

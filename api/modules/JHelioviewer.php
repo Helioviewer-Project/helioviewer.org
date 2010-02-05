@@ -2,11 +2,6 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer JHelioviewer Module Class Definition
- */
-require_once 'interface.Module.php';
-
-/**
- * Helioviewer JHelioviewer Module
  * 
  * PHP version 5
  * 
@@ -15,6 +10,12 @@ require_once 'interface.Module.php';
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
+ */
+require_once 'interface.Module.php';
+
+/**
+ * Helioviewer JHelioviewer Module
+ * 
  */
 class JHelioviewer implements Module
 {
@@ -25,17 +26,28 @@ class JHelioviewer implements Module
      */
     private $_params;
 
+    /**
+     * Creates a JHelioviewer module instance
+     * 
+     * @param array &$params API Request parameters.
+     * 
+     * @return void
+     */
     public function __construct(&$params)
     {
-        require_once("Helper.php");
         $this->_params = $params;
         $this->execute();
 
     }
 
+    /**
+     * execute 
+     *
+     * @return void
+     */
     public function execute()
     {
-        if($this->validate()) {
+        if ($this->validate()) {
             $this->{$this->_params['action']}();
         }
     }
@@ -50,7 +62,7 @@ class JHelioviewer implements Module
         switch($this->_params['action'])
         {
         case "getJP2Image":
-            Helper::fixBools(array("getURL", "getJPIP", "debug"), $this->_params);
+            Helper::checkBools(array("getURL", "getJPIP", "debug"), $this->_params);
             if (isset($this->_params["sourceId"])) {
                 Helper::checkForMissingParams(array('date', 'sourceId'), $this->_params);
                 if (filter_var($this->_params['sourceId'], FILTER_VALIDATE_INT) === false) {
@@ -61,13 +73,12 @@ class JHelioviewer implements Module
                     array('date', 'observatory', 'instrument', 'detector', 'measurement'), $this->_params
                 );
             }
-            if (!validateUTCDate($this->_params['date'])) {
-                throw new Exception("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
-            }
+            Helper::checkUTCDate($this->_params['date']);
+            
             break;
         case "buildJP2ImageSeries":
             $bools = array("getURL", "getJPIP", "links", "frames", "debug");
-            Helper::fixBools($bools, $this->_params);
+            Helper::checkBools($bools, $this->_params);
             if ($this->_params['links'] && ($this->_params['format'] != "JPX")) {
                 throw new Exception('Format must be set to "JPX" in order to create a linked image series.');
             }
@@ -95,27 +106,40 @@ class JHelioviewer implements Module
     }
 
     /**
-     * @description Converts a regular HTTP URL to a JPIP URL
+     * Converts a regular HTTP URL to a JPIP URL
+     * 
+     * @param string $url An HTTP URL.
+     * 
+     * @return string A JPIP URL.
      */
-    private function getJPIPURL($url) {
+    private function _getJPIPURL($url)
+    {
         $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
         $jpip = preg_replace($webRootRegex, HV_JPIP_ROOT_URL, $url);
         return $jpip;
     }
 
     /**
+     * Finds the best match for a single JPEG 2000 image and either prints a link to it or displays
+     * it directly. 
+     *
+     * @return void
      */
     public function getJP2Image ()
     {
-        require_once('lib/ImgIndex.php');
-        require_once("lib/DbConnection.php");
+        include_once 'lib/ImgIndex.php';
+        include_once 'lib/DbConnection.php';
         $imgIndex = new ImgIndex(new DbConnection());
 
         $date = $this->_params['date'];
 
         // Search by source id
-        if (!isset($this->_params['sourceId']))
-            $this->_params['sourceId'] = $imgIndex->getSourceId($this->_params['observatory'], $this->_params['instrument'], $this->_params['detector'], $this->_params['measurement']);
+        if (!isset($this->_params['sourceId'])) {
+            $this->_params['sourceId'] = $imgIndex->getSourceId(
+                $this->_params['observatory'], $this->_params['instrument'],
+                $this->_params['detector'], $this->_params['measurement']
+            );
+        }
 
         $filepath = $imgIndex->getJP2FilePath($date, $this->_params['sourceId'], $this->_params['debug']);
         
@@ -126,15 +150,13 @@ class JHelioviewer implements Module
             $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
             $url = preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri);
             echo $url;
-        }
-
+            
         // jpip url
-        else if ($this->_params['getJPIP']) {
-            echo $this->getJPIPURL($uri);
-        }
-         
+        } else if ($this->_params['getJPIP']) {
+            echo $this->_getJPIPURL($uri);
+            
         // jp2 image
-        else {
+        } else { 
             $fp = fopen($uri, 'r');
             $stat = stat($uri);
 
@@ -150,10 +172,13 @@ class JHelioviewer implements Module
             echo $contents;
             fclose($fp);
         }
-
-        return 1;
     }
 
+    /**
+     * Gets a JPX image series 
+     *
+     * @return void
+     */
     public function getJPX ()
     {
         $this->_params['format'] = 'JPX';
@@ -161,6 +186,11 @@ class JHelioviewer implements Module
         $this->execute();
     }
 
+    /**
+     * Gets a Motion JPEG 2000 (MJ2) movie.
+     * 
+     * @return void
+     */
     public function getMJ2 ()
     {
         $this->_params['format'] = 'MJ2';
@@ -168,28 +198,36 @@ class JHelioviewer implements Module
         $this->execute();
     }
     
-    public function getJP2ImageSeries () {
+    /**
+     * Gets a JPX or MJ2 file
+     * 
+     * @deprecated
+     * @return void
+     */
+    public function getJP2ImageSeries ()
+    {
         $this->_params['action'] = 'buildJP2ImageSeries';
         $this->execute();
     }
 
     /**
-     * @return int Returns "1" if the action was completed successfully.
-     * @param string The filename to use
-     *  Converting timestamp to a PHP DateTime:
-     *     $dt = new DateTime("@$startTime");
-     *     echo $dt->format(DATE_ISO8601);
+     *  Note: It's also possible in PHP 5.3 to increment DateTime
+     *  objects directly:
+     *
      *     date_add($dt, new DateInterval("T" . $cadence . "S"));
-     *  (See http://us2.php.net/manual/en/function.date-create.php)
+     *  
+     *  @return void
      */
 
     /**
-     *
      * Constructs a JPX/MJ2 image series
+     * 
+     * @return void
      */
-    private function buildJP2ImageSeries () {
-        require_once('lib/ImgIndex.php');
-        require_once('lib/DbConnection.php');
+    public function buildJP2ImageSeries ()
+    {
+        include_once 'lib/ImgIndex.php';
+        include_once 'lib/DbConnection.php';
     
         $startTime   = toUnixTimestamp($this->_params['startTime']);
         $endTime     = toUnixTimestamp($this->_params['endTime']);
@@ -204,17 +242,20 @@ class JHelioviewer implements Module
         $detector    = $this->_params['detector'];
         $measurement = $this->_params['measurement'];
 
-        // Create a temporary directory to store image-  (TODO: Move this + other directory creation to installation script)
+        // Create a temporary directory to store image-
+        // TODO: Move this + other directory creation to installation script
         $dir = HV_JP2_DIR . "/movies/";
 
         // Filename (From,To,By)
         $from = str_replace(":", ".", $this->_params['startTime']);
         $to   = str_replace(":", ".", $this->_params['endTime']);
-        $filename = implode("_", array($observatory, $instrument, $detector, $measurement, "F$from", "T$to", "B$cadence"));
+        $filenameParts = array($observatory, $instrument, $detector, $measurement, "F$from", "T$to", "B$cadence");
+        $filename = implode("_", $filenameParts);
 
         // Differentiate linked JPX files
-        if ($links)
+        if ($links) {
             $filename .= "L";
+        }
 
         // File extension
         $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
@@ -226,15 +267,15 @@ class JHelioviewer implements Module
         $url = HV_JP2_ROOT_URL . "/movies/" . $filename;
         
         // If the file doesn't exist already, create it
-        if (!file_exists($output_file) || $frames)
-        {
+        if (!file_exists($output_file) || $frames) {
             // Connect to database
             $imgIndex = new ImgIndex(new DbConnection());
 
-            if (!isset($this->_params['sourceId']))
+            if (!isset($this->_params['sourceId'])) {
                 $source = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
-            else
+            } else {
                 $source = $this->_params["sourceId"];
+            }
             
             //var_dump($source);
 
@@ -260,7 +301,7 @@ class JHelioviewer implements Module
             
             // Append filepaths to kdu_merge command
             $cmd = HV_KDU_MERGE_BIN . " -i ";
-            foreach($images as $jp2) {
+            foreach ($images as $jp2) {
                 $cmd .= "$jp2,";
             }
 
@@ -268,14 +309,16 @@ class JHelioviewer implements Module
             $cmd = substr($cmd, 0, -1);
 
             // Virtual JPX files
-            if ($links)
-            $cmd .= " -links";
+            if ($links) {
+                $cmd .= " -links";
+            }
 
             $cmd .= " -o $output_file";
 
             // MJ2 Creation
-            if ($format == "MJ2")
-            $cmd .= " -mj2_tracks P:0-@25";
+            if ($format == "MJ2") {
+                $cmd .= " -mj2_tracks P:0-@25";
+            }
 
             //die($cmd);
 
@@ -284,26 +327,26 @@ class JHelioviewer implements Module
         }
 
         // URL
-        if ($jpip)
-            $uri = $this->getJPIPURL($output_file);
-        else
+        if ($jpip) {
+            $uri = $this->_getJPIPURL($output_file);
+        } else {
             $uri = $url;
+        }
             
         // Include image timestamps to speed up streaming
         if ($frames) {
-        	$timestamps = array();
-        	foreach ($images as $img) {
+            $timestamps = array();
+            foreach ($images as $img) {
                 $exploded = explode("/", $img);
                 $dateStr = substr(end($exploded), 0, 24);
                 $regex   = '/(\d+)_(\d+)_(\d+)__(\d+)_(\d+)_(\d+)_(\d+)/';
                 $utcDate = preg_replace($regex, '$1-$2-$3T$4:$5:$6.$7Z', $dateStr);
                 array_push($timestamps, toUnixTimestamp($utcDate));
-        	}
-        	header('Content-Type: application/json');
-        	print json_encode(array("uri" => $uri, "frames" => $timestamps));
-        }
-        else {
-            print $uri;	
+            }
+            header('Content-Type: application/json');
+            print json_encode(array("uri" => $uri, "frames" => $timestamps));
+        } else {
+            print $uri;
         }        
     }
 }

@@ -31,13 +31,14 @@ class Movies implements Module
      */
     public function __construct(&$params)
     {
-        include_once 'Helper.php';
         $this->_params = $params;
         $this->execute();
     }
 
     /**
-     * execute
+     * execute 
+     *
+     * @return void
      */
     public function execute()
     {
@@ -71,6 +72,8 @@ class Movies implements Module
 
     /**
      * printDoc
+     * 
+     * @return void
      */
     public static function printDoc()
     {
@@ -94,11 +97,11 @@ class Movies implements Module
      * knowing ahead of time whether the image is a .png, .tif, .flv, etc,
      * and in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      * 
-     * @return int Returns "1" if the action was completed successfully.
+     * @return void
      */
     public function buildMovie () 
     {
-        require_once 'lib/Movie.php';
+        include_once 'lib/Movie.php';
 
         // Required parameters
         $startDate = $this->_params['startDate'];
@@ -154,7 +157,9 @@ class Movies implements Module
     }
     
     /**
-     * Gets the movie url and loads it into MC Mediaplayer    * 
+     * Gets the movie url and loads it into MC Mediaplayer 
+     * 
+     * @return void
      */
     public function playMovie () 
     {

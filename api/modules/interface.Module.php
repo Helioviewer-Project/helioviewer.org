@@ -16,15 +16,21 @@ interface Module
 {
     /**
      * Executes the requested action
+     * 
+     * @return void
      */
     public function execute();
     /**
      * Contains logic neccessary to validate any action supported by a given
      * module
+     * 
+     * @return void
      */
     public function validate();
     /**
      * Prints documentation describe all of the actions provided by the module
+     * 
+     * @return void
      */
     public static function printDoc();
 }
