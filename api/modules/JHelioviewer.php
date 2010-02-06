@@ -62,23 +62,29 @@ class JHelioviewer implements Module
         switch($this->_params['action'])
         {
         case "getJP2Image":
-            Helper::checkBools(array("getURL", "getJPIP", "debug"), $this->_params);
+            $expected = array(
+               "bools" => array("getURL", "getJPIP", "debug"),
+               "dates" => array('date')
+            );
+
             if (isset($this->_params["sourceId"])) {
-                Helper::checkForMissingParams(array('date', 'sourceId'), $this->_params);
-                if (filter_var($this->_params['sourceId'], FILTER_VALIDATE_INT) === false) {
-                    return false;
-                }
+                $expected["required"] = array('date', 'sourceId');
+                $expected["ints"]     = array('sourceId');
             } else {
-                Helper::checkForMissingParams(
-                    array('date', 'observatory', 'instrument', 'detector', 'measurement'), $this->_params
-                );
-            }
-            Helper::checkUTCDate($this->_params['date']);
-            
+                $expected["required"] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
+            }            
             break;
+            
         case "buildJP2ImageSeries":
+            // Need to fix bools now for links check
             $bools = array("getURL", "getJPIP", "links", "frames", "debug");
-            Helper::checkBools($bools, $this->_params);
+            Helper::checkBools($bools, $this->_params); 
+            
+            $expected = array(
+                "dates" => array('startTime', 'endTime'),
+                "ints"  => array('cadence')
+            );
+            
             if ($this->_params['links'] && ($this->_params['format'] != "JPX")) {
                 throw new Exception('Format must be set to "JPX" in order to create a linked image series.');
             }
@@ -92,6 +98,11 @@ class JHelioviewer implements Module
         default:
             break;
         }
+        
+        if (isset($expected)) {
+            Helper::checkInput($expected, $this->_params);
+        }        
+        
         return true;
     }
 

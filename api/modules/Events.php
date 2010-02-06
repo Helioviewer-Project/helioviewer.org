@@ -60,15 +60,22 @@ class Events implements Module
         switch($this->_params['action'])
         {
         case "getEvents":
-            Helper::checkForMissingParams(array('date','windowSize','catalogs'), $this->_params);
-            Helper::checkUTCDate($this->_params['date']);
-            Helper::checkInts(array('windowSize'), $this->_params);
+            $expected = array(
+               "required" => array('date','windowSize','catalogs'),
+               "dates"    => array('date'),
+               "ints"     => array('windowSize')
+            );
             break;
         case "getEventCatalogs":
             break;
         default:
             break;
         }
+        
+        if (isset($expected)) {
+            Helper::checkInput($expected, $this->_params);
+        }
+        
         return true;
     }
 

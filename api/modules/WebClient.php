@@ -43,54 +43,6 @@ class WebClient implements Module
     }
 
     /**
-     * Handles input validation
-     * 
-     * @return bool Returns true if the input is valid with respect to the
-     *              requested action.
-     */
-    public function validate()
-    {
-        switch($this->_params['action']) {
-            
-        case "downloadFile":
-            Helper::checkForMissingParams(array('url'), $this->_params);
-            Helper::checkURLs(array('url'), $this->_params);
-            break;
-            
-        case "getClosestImage":
-            if (isset($this->_params["sourceId"])) {
-                Helper::checkForMissingParams(array('server', 'date', 'sourceId'), $this->_params);
-                Helper::checkInts(array('sourceId'), $this->_params);
-            } else {
-                $required = array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement');
-                Helper::checkForMissingParams($required, $this->_params);
-            }
-            Helper::checkUTCDate($this->_params['date']);
-            Helper::checkInts(array('server'), $this->_params);
-            break;
-            
-        case "getDataSources":
-            break;
-            
-        case "getTile":
-            $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width','jp2Height', 'jp2Scale', 'offsetX', 'offsetY', 
-                              'format', 'obs', 'inst', 'det', 'meas');
-            Helper::checkForMissingParams($required, $this->_params);
-            break;
-            
-        case "getJP2Header":
-            break;
-        case "getViewerImage":
-            break;
-        case "formatLayerString":
-            break;
-        default:
-            break;
-        }
-        return true;
-    }
-
-    /**
      * printDoc
      * 
      * @return void
@@ -376,6 +328,65 @@ class WebClient implements Module
         //Create and display composite image
         $img = CompositeImage::compositeImageFromQuery($params);
         $img->printImage();
+    }
+    
+    /**
+     * Handles input validation
+     * 
+     * @return bool Returns true if the input is valid with respect to the
+     *              requested action.
+     */
+    public function validate()
+    {
+        switch($this->_params['action']) {
+            
+        case "downloadFile":
+            $expected = array(
+               "required" => array('url'),
+               "urls"     => array('url')
+            );
+            break;
+            
+        case "getClosestImage":
+            $expected = array(
+               "dates" => array('date')
+            );
+            
+            if (isset($this->_params["sourceId"])) {
+                $expected["required"] = array('server', 'date', 'sourceId');
+                $expected["ints"]     = array('sourceId', 'server');
+            } else {
+                $expected["required"] = array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement');
+                $expected["ints"]     = array('server');
+            }
+            break;
+            
+        case "getDataSources":
+            break;
+            
+        case "getTile":
+            $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width','jp2Height', 'jp2Scale', 'offsetX', 'offsetY', 
+                              'format', 'obs', 'inst', 'det', 'meas');
+            $expected = array(
+               "required" => $required
+            );
+            break;
+            
+        case "getJP2Header":
+            break;
+        case "getViewerImage":
+            break;
+        case "formatLayerString":
+            break;
+        default:
+            break;
+        }
+        
+        if (isset($expected)) {
+            Helper::checkInput($expected, $this->_params);
+        }
+        
+        return true;
     }
 
     /**

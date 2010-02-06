@@ -21,6 +21,34 @@
 class Helper
 {
     /**
+     * Validates and type-casts API Request parameters
+     *
+     * @param array &$expected Types of checks required for request
+     * @param array &$input    Actual request parameters
+     * 
+     * @return void
+     */
+    public static function checkInput(&$expected, &$input)
+    {
+        // Validation checks
+        $checks = array(
+            "required" => "checkForMissingParams",
+            "ints"     => "checkInts",
+            "floats"   => "checkFloats",
+            "bools"    => "checkBools",  
+            "dates"    => "checkDates", 
+            "urls"     => "checkURLs"
+        );
+        
+        // Run validation checks
+        foreach ($checks as $name => $method) {
+            if (isset($expected[$name])) {
+                Helper::$method($expected[$name], $input);
+            }
+        }
+    }
+    
+    /**
      * Checks to make sure all required parameters were passed in.
      * 
      * @param array $required A list of the required parameters for a given action
@@ -118,6 +146,21 @@ class Helper
     }
     
     /**
+     * Checks an array of UTC dates
+     * 
+     * @param array $dates   dates to check
+     * @param array &$params The parameters that were passed in
+     * 
+     * @return void
+     */
+    public static function checkDates($dates, &$params)
+    {
+        foreach ($dates as $date) {
+            Helper::checkUTCDate($params[$date]);
+        }
+    }
+    
+    /**
      * Checks to see if a string is a valid ISO 8601 UTC date string of the form
      * "2003-10-05T00:00:00.000Z" (milliseconds and ending "Z" are optional).
      *
@@ -177,6 +220,7 @@ function toUnixTimestamp($dateStr)
  * Converts a unix timestamp to a PHP DateTime instance
  * 
  * @param int $timestamp The number of seconds since Jan 1, 1970 UTC
+ * 
  * @see http://us2.php.net/manual/en/function.date-create.php
  * 
  * @return DateTime A PHP DateTime object
