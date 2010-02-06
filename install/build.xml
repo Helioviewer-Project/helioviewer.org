@@ -62,20 +62,4 @@
 		    <arg path="${jslint.js}"/>
 		</apply>
     </target>
-    
-    <!-- PHP CodeSniffer -->
-    <!-- sudo pear install codesniffer -->
-    <!-- phpcs -n - -standard=pear - -report-width=120 Config.php -->
-    
-    <!-- PHP Documentation Generation -->
-    <target name="phpdoc">
-        <description>
-            Generates PHP Documentation using phpDocumentor.
-            To install, use "sudo pear install phpdocumentor"
-        </description>
-        <echo>Running phpDocumentor...</echo>
-        <exec dir="api/" executable="phpdoc">
-            <arg line="-t docs/ -d modules/" />
-        </exec>
-    </target>
 </project>
