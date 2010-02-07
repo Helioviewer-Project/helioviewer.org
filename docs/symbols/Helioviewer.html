@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Calendar.html">Calendar</a></li>
+	<li><a href="../symbols/Config.html">Config</a></li>
 	
 	<li><a href="../symbols/Date.html">Date</a></li>
 	
@@ -199,27 +199,33 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
+	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
 	
 	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
 	
-	<li><a href="../symbols/Helioviewer%23handlers.html">Helioviewer#handlers</a></li>
-	
 	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="../symbols/KeyboardManager.html">KeyboardManager</a></li>
 	
 	<li><a href="../symbols/Layer.html">Layer</a></li>
 	
 	<li><a href="../symbols/LayerManager.html">LayerManager</a></li>
 	
-	<li><a href="../symbols/LoadingIndicator.html">LoadingIndicator</a></li>
-	
 	<li><a href="../symbols/Math.html">Math</a></li>
+	
+	<li><a href="../symbols/MediaSettings.html">MediaSettings</a></li>
 	
 	<li><a href="../symbols/MessageConsole.html">MessageConsole</a></li>
 	
 	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 	<li><a href="../symbols/String.html">String</a></li>
 	
@@ -227,9 +233,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
+	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="../symbols/Time.html">Time</a></li>
+	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
-	<li><a href="../symbols/UIElement.html">UIElement</a></li>
+	<li><a href="../symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="../symbols/TreeSelect.html">TreeSelect</a></li>
 	
 	<li><a href="../symbols/UserSettings.html">UserSettings</a></li>
 	
@@ -237,7 +249,7 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></li>
 	
-	<li><a href="../symbols/ZoomControl.html">ZoomControl</a></li>
+	<li><a href="../symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -253,6 +265,7 @@ ul.inheritsList
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
+				
 				
 			
 				
@@ -277,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Helioviewer.html">Helioviewer</a></b>(options, api, view, defaults)
+								<b><a href="../symbols/Helioviewer.html#constructor">Helioviewer</a></b>(options, view, defaults)
 							</div>
 							<div class="description">Creates a new Helioviewer instance.</div>
 						</td>
@@ -287,11 +300,6 @@ ul.inheritsList
 			
 
 <!-- ============================== properties summary ===================== -->
-			
-				
-				
-				
-				
 			
 
 <!-- ============================== methods summary ======================== -->
@@ -311,10 +319,28 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_checkBrowser">_checkBrowser</a></b>()
+								</div>
+								<div class="description">Checks browser support for various features used in Helioviewer
+TODO: Check for IE: localStorage exists in IE8, but works differently</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_createFullscreenBtn">_createFullscreenBtn</a></b>()
 								</div>
-								<div class="description">Creates an HTML button for toggling between regular and fullscreen display
-Syntax: jQuery</div>
+								<div class="description">Creates an HTML button for toggling between regular and fullscreen display</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_getDataSources">_getDataSources</a></b>()
+								</div>
+								<div class="description">Returns a tree representing available data sources</div>
 							</td>
 						</tr>
 					
@@ -330,18 +356,9 @@ Syntax: jQuery</div>
 						<tr>
 							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initKeyBoardListeners">_initKeyBoardListeners</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initLoadingIndicator">_initLoadingIndicator</a></b>()
 								</div>
-								<div class="description">Initialize keyboard-related event handlers.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;private&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#_initToolTips">_initToolTips</a></b>()
-								</div>
-								<div class="description">Adds tooltips to all elements that are loaded everytime (buttons, etc) using default tooltip options.</div>
+								<div class="description">Sets up a simple AJAX-request loading indicator</div>
 							</td>
 						</tr>
 					
@@ -386,7 +403,10 @@ Syntax: jQuery</div>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#displayMailForm">displayMailForm</a></b>()
 								</div>
-								<div class="description">Displays a form to allow the user to mail the current view to someone</div>
+								<div class="description">Displays a form to allow the user to mail the current view to someone
+
+http://www.w3schools.com/php/php_secure_mail.asp
+http://www.datahelper.com/mailform_demo.phtml</div>
 							</td>
 						</tr>
 					
@@ -402,9 +422,18 @@ Syntax: jQuery</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#generateURL">generateURL</a></b>(level)
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#getDate">getDate</a></b>()
 								</div>
-								<div class="description">Builds a URL for the current view</div>
+								<div class="description">Returns the current observation date as a JavaScript Date object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#getImageScale">getImageScale</a></b>()
+								</div>
+								<div class="description">Translates a given zoom-level into an image plate scale.</div>
 							</td>
 						</tr>
 					
@@ -420,54 +449,9 @@ Syntax: jQuery</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#observe">observe</a></b>(uielement, eventName, eventHandler)
-								</div>
-								<div class="description">Add an event-handler to a given component.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#parseLayerString">parseLayerString</a></b>(The)
-								</div>
-								<div class="description">Breaks up a given layer identifier (e.g.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#scaleToZoomLevel">scaleToZoomLevel</a></b>(imgScale)
 								</div>
 								<div class="description">Finds the closest support zoom-level to a given pixel scale (arcseconds per pixel)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#setDate">setDate</a></b>(date)
-								</div>
-								<div class="description">Sets the desired viewing date and time.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#updateDate">updateDate</a></b>(dateStr)
-								</div>
-								<div class="description">Updates the observation date</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/Helioviewer.html#zoomLevelToScale">zoomLevelToScale</a></b>(zoomLevel)
-								</div>
-								<div class="description">Translates a given zoom-level into an image plate scale.</div>
 							</td>
 						</tr>
 					
@@ -488,7 +472,7 @@ Syntax: jQuery</div>
 				</div>
 				
 				<div class="fixedFont">
-						<b>Helioviewer</b>(options, api, view, defaults)
+						<b>Helioviewer</b>(options, view, defaults)
 				</div>
 				
 				<div class="description">
@@ -511,19 +495,13 @@ Syntax: jQuery</div>
 <br>
 <br><div style='font-size:16px'>Options:</div><br>
 <div style='margin-left:15px'>
-		<b>defaultZoomLevel</b>	- The initial zoom-level to display.<br>
-		<b>defaultPrefetchSize</b> - The radius outside of the visible viewport to prefetch.<br>
-		<b>timeIncrementSecs</b>	- The default amount of time to move when the time navigation arrows are pressed.<br>
-		<b>minZoomLevel</b>		- Minimum zoom level allowed.<br>
-		<b>maxZoomLevel</b>		- Maximum zoom level allowed.<br>
-		<b>api</b>              - Primary API for querying image and event information.
+       <b>defaultZoomLevel</b>    - The initial zoom-level to display.<br>
+       <b>defaultPrefetchSize</b> - The radius outside of the visible viewport to prefetch.<br>
+       <b>timeIncrementSecs</b>   - The default amount of time to move when the time navigation
+                                    arrows are pressed.<br>
+       <b>minZoomLevel</b>        - Minimum zoom level allowed.<br>
+       <b>maxZoomLevel</b>        - Maximum zoom level allowed.<br>
 </div></dd>
-						
-							<dt>
-								 <b>api</b>
-								
-							</dt>
-								<dd></dd>
 						
 							<dt>
 								 <b>view</b>
@@ -565,6 +543,32 @@ Syntax: jQuery</div>
 					Method Detail
 				</div>
 				
+					<a name="_checkBrowser"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_checkBrowser</b>()
+					
+					</div>
+					<div class="description">
+						Checks browser support for various features used in Helioviewer
+TODO: Check for IE: localStorage exists in IE8, but works differently
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="_createFullscreenBtn"> </a>
 					<div class="fixedFont">&lt;private&gt; 
 					
@@ -574,7 +578,31 @@ Syntax: jQuery</div>
 					</div>
 					<div class="description">
 						Creates an HTML button for toggling between regular and fullscreen display
-Syntax: jQuery
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_getDataSources"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_getDataSources</b>()
+					
+					</div>
+					<div class="description">
+						Returns a tree representing available data sources
 						
 						
 					</div>
@@ -616,47 +644,15 @@ Syntax: jQuery
 
 					<hr />
 				
-					<a name="_initKeyBoardListeners"> </a>
+					<a name="_initLoadingIndicator"> </a>
 					<div class="fixedFont">&lt;private&gt; 
 					
 					
-					<b>_initKeyBoardListeners</b>()
+					<b>_initLoadingIndicator</b>()
 					
 					</div>
 					<div class="description">
-						Initialize keyboard-related event handlers.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd>Based off method by <a href="http://www.quirksmode.org/js/events_properties.html#key">PPK</a></dd>
-							
-							</dl>
-						
-
-					<hr />
-				
-					<a name="_initToolTips"> </a>
-					<div class="fixedFont">&lt;private&gt; 
-					
-					
-					<b>_initToolTips</b>()
-					
-					</div>
-					<div class="description">
-						Adds tooltips to all elements that are loaded everytime (buttons, etc) using default tooltip options.
+						Sets up a simple AJAX-request loading indicator
 						
 						
 					</div>
@@ -799,6 +795,9 @@ Syntax: jQuery
 					</div>
 					<div class="description">
 						Displays a form to allow the user to mail the current view to someone
+
+http://www.w3schools.com/php/php_secure_mail.asp
+http://www.datahelper.com/mailform_demo.phtml
 						
 						
 					</div>
@@ -851,15 +850,15 @@ Syntax: jQuery
 
 					<hr />
 				
-					<a name="generateURL"> </a>
+					<a name="getDate"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>generateURL</b>(level)
+					<b>getDate</b>()
 					
 					</div>
 					<div class="description">
-						Builds a URL for the current view
+						Returns the current observation date as a JavaScript Date object
 						
 						
 					</div>
@@ -867,16 +866,30 @@ Syntax: jQuery
 					
 					
 						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>level</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getImageScale"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getImageScale</b>()
+					
+					</div>
+					<div class="description">
+						Translates a given zoom-level into an image plate scale.
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -908,112 +921,6 @@ Syntax: jQuery
 						
 						
 						
-						
-
-					<hr />
-				
-					<a name="observe"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>observe</b>(uielement, eventName, eventHandler)
-					
-					</div>
-					<div class="description">
-						Add an event-handler to a given component.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>uielement</b>
-									
-								</dt>
-								<dd>The UI component to attach the event to</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>eventName</b>
-									
-								</dt>
-								<dd>The name of the event to monitor for</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>eventHandler</b>
-									
-								</dt>
-								<dd>A reference to the event-handler</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd><a href="../symbols/UIElement.html">UIElement</a></dd>
-							
-							</dl>
-						
-
-					<hr />
-				
-					<a name="parseLayerString"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Object}</span>
-					<b>parseLayerString</b>(The)
-					
-					</div>
-					<div class="description">
-						Breaks up a given layer identifier (e.g. SOH_LAS_0C2_0WL) into
-             it's component parts and returns a javascript representation.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>The</b>
-									
-								</dt>
-								<dd>layer identifier as an underscore-concatenated string</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Object}</span> a simple javascript object representing the layer params</dd>
-							
-							</dl>
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd><a href="../symbols/LayerManager.html#generateLayerString">LayerManager#generateLayerString</a></dd>
-							
-							</dl>
 						
 
 					<hr />
@@ -1052,114 +959,6 @@ Syntax: jQuery
 						
 						
 
-					<hr />
-				
-					<a name="setDate"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setDate</b>(date)
-					
-					</div>
-					<div class="description">
-						Sets the desired viewing date and time.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/Date.html">Date</a>}</span> <b>date</b>
-									
-								</dt>
-								<dd>A JavaScript Date object with the new time to use</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="updateDate"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>updateDate</b>(dateStr)
-					
-					</div>
-					<div class="description">
-						Updates the observation date
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>dateStr</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="zoomLevelToScale"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>zoomLevelToScale</b>(zoomLevel)
-					
-					</div>
-					<div class="description">
-						Translates a given zoom-level into an image plate scale.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>zoomLevel</b>
-									
-								</dt>
-								<dd>A zoom level.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -1174,7 +973,7 @@ Syntax: jQuery
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:44 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:43 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

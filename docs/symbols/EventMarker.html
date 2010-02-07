@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Calendar.html">Calendar</a></li>
+	<li><a href="../symbols/Config.html">Config</a></li>
 	
 	<li><a href="../symbols/Date.html">Date</a></li>
 	
@@ -199,27 +199,33 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
+	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
 	
 	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
 	
-	<li><a href="../symbols/Helioviewer%23handlers.html">Helioviewer#handlers</a></li>
-	
 	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="../symbols/KeyboardManager.html">KeyboardManager</a></li>
 	
 	<li><a href="../symbols/Layer.html">Layer</a></li>
 	
 	<li><a href="../symbols/LayerManager.html">LayerManager</a></li>
 	
-	<li><a href="../symbols/LoadingIndicator.html">LoadingIndicator</a></li>
-	
 	<li><a href="../symbols/Math.html">Math</a></li>
+	
+	<li><a href="../symbols/MediaSettings.html">MediaSettings</a></li>
 	
 	<li><a href="../symbols/MessageConsole.html">MessageConsole</a></li>
 	
 	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 	<li><a href="../symbols/String.html">String</a></li>
 	
@@ -227,9 +233,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
+	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="../symbols/Time.html">Time</a></li>
+	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
-	<li><a href="../symbols/UIElement.html">UIElement</a></li>
+	<li><a href="../symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="../symbols/TreeSelect.html">TreeSelect</a></li>
 	
 	<li><a href="../symbols/UserSettings.html">UserSettings</a></li>
 	
@@ -237,7 +249,7 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></li>
 	
-	<li><a href="../symbols/ZoomControl.html">ZoomControl</a></li>
+	<li><a href="../symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -253,6 +265,7 @@ ul.inheritsList
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
+				
 				
 			
 				
@@ -277,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/EventMarker.html">EventMarker</a></b>(eventLayer, event, date, sunRadius, options)
+								<b><a href="../symbols/EventMarker.html#constructor">EventMarker</a></b>(eventLayer, event, date, rsun, options)
 							</div>
 							<div class="description">Creates a new EventMarker</div>
 						</td>
@@ -302,6 +315,16 @@ ul.inheritsList
 						</tr>
 					</thead>
 					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/EventMarker.html#chooseOrientation">chooseOrientation</a></b>()
+								</div>
+								<div class="description">attempts to select an optimal orientation for the event marker popup
+(Not yet fully implemented.</div>
+							</td>
+						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -342,7 +365,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/EventMarker.html#refresh">refresh</a></b>(sunRadius)
+								<div class="fixedFont"><b><a href="../symbols/EventMarker.html#refresh">refresh</a></b>(rsun)
 								</div>
 								<div class="description">Redraws event</div>
 							</td>
@@ -354,15 +377,6 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/EventMarker.html#remove">remove</a></b>()
 								</div>
 								<div class="description">Removes the EventMarker</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/EventMarker.html#togglePopup">togglePopup</a></b>()
-								</div>
-								<div class="description">Toggle event popup visibility</div>
 							</td>
 						</tr>
 					
@@ -383,7 +397,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>EventMarker</b>(eventLayer, event, date, sunRadius, options)
+						<b>EventMarker</b>(eventLayer, event, date, rsun, options)
 				</div>
 				
 				<div class="description">
@@ -417,7 +431,7 @@ ul.inheritsList
 								<dd>The date when the given event occured</dd>
 						
 							<dt>
-								<span class="light fixedFont">{Int}</span>  <b>sunRadius</b>
+								<span class="light fixedFont">{Int}</span>  <b>rsun</b>
 								
 							</dt>
 								<dd>The radius of the sun in pixels</dd>
@@ -448,6 +462,32 @@ ul.inheritsList
 				<div class="sectionTitle">
 					Method Detail
 				</div>
+				
+					<a name="chooseOrientation"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>chooseOrientation</b>()
+					
+					</div>
+					<div class="description">
+						attempts to select an optimal orientation for the event marker popup
+(Not yet fully implemented...)
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
 				
 					<a name="createLabel"> </a>
 					<div class="fixedFont">
@@ -564,7 +604,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>refresh</b>(sunRadius)
+					<b>refresh</b>(rsun)
 					
 					</div>
 					<div class="description">
@@ -580,7 +620,7 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Int}</span> <b>sunRadius</b>
+									<span class="light fixedFont">{Int}</span> <b>rsun</b>
 									
 								</dt>
 								<dd>The updated solar radius, in pixels.</dd>
@@ -619,31 +659,6 @@ ul.inheritsList
 						
 						
 
-					<hr />
-				
-					<a name="togglePopup"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>togglePopup</b>()
-					
-					</div>
-					<div class="description">
-						Toggle event popup visibility
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -658,7 +673,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:44 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:43 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

@@ -2,7 +2,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8"" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		
 		<title>JsDoc Reference - File Index</title>
 		<meta name="generator" content="JsDoc Toolkit" />
@@ -186,7 +186,7 @@ ul.inheritsList
 	
 	<li><i><a href="symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="symbols/Calendar.html">Calendar</a></li>
+	<li><a href="symbols/Config.html">Config</a></li>
 	
 	<li><a href="symbols/Date.html">Date</a></li>
 	
@@ -194,27 +194,33 @@ ul.inheritsList
 	
 	<li><a href="symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
+	<li><a href="symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
 	<li><a href="symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="symbols/EventTimeline.html">EventTimeline</a></li>
 	
 	<li><a href="symbols/Helioviewer.html">Helioviewer</a></li>
 	
-	<li><a href="symbols/Helioviewer%23handlers.html">Helioviewer#handlers</a></li>
-	
 	<li><a href="symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="symbols/KeyboardManager.html">KeyboardManager</a></li>
 	
 	<li><a href="symbols/Layer.html">Layer</a></li>
 	
 	<li><a href="symbols/LayerManager.html">LayerManager</a></li>
 	
-	<li><a href="symbols/LoadingIndicator.html">LoadingIndicator</a></li>
-	
 	<li><a href="symbols/Math.html">Math</a></li>
+	
+	<li><a href="symbols/MediaSettings.html">MediaSettings</a></li>
 	
 	<li><a href="symbols/MessageConsole.html">MessageConsole</a></li>
 	
 	<li><a href="symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 	<li><a href="symbols/String.html">String</a></li>
 	
@@ -222,9 +228,15 @@ ul.inheritsList
 	
 	<li><a href="symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
+	<li><a href="symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="symbols/Time.html">Time</a></li>
+	
 	<li><a href="symbols/TimeControls.html">TimeControls</a></li>
 	
-	<li><a href="symbols/UIElement.html">UIElement</a></li>
+	<li><a href="symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="symbols/TreeSelect.html">TreeSelect</a></li>
 	
 	<li><a href="symbols/UserSettings.html">UserSettings</a></li>
 	
@@ -232,7 +244,7 @@ ul.inheritsList
 	
 	<li><a href="symbols/ViewportHandlers.html">ViewportHandlers</a></li>
 	
-	<li><a href="symbols/ZoomControl.html">ZoomControl</a></li>
+	<li><a href="symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -243,13 +255,29 @@ ul.inheritsList
 			
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_Helioviewer.js.html">Helioviewer.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_KeyboardManager.js.html">KeyboardManager.js</a></h2>
 				
-Contains the main application class and controller for Helioviewer.
+
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_EventTimeline.js.html">EventTimeline.js</a></h2>
+				
+This class extends the base Simile Timeline
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
 					
 					
 					
@@ -275,13 +303,283 @@ Contains the class definition for an Viewport class.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_ZoomControl.js.html">ZoomControl.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_TileLayerAccordion.js.html">TileLayerAccordion.js</a></h2>
 				
-Contains the class definition for an ZoomControl class.
+Contains the class definition for an TileLayerAccordion class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_MediaSettings.js.html">MediaSettings.js</a></h2>
+				
+Contains the definition of a class that stores all settings relating to screenshots and movies.
+                    This class has two jobs: 
+                    1) store media settings, and
+                    2) handle generation of the settings dialog that is created when the user clicks the settings button.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>Jaclyn Beck</dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_Layer.js.html">Layer.js</a></h2>
+				
+"Abstract" Layer class.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
 						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_TooltipHelper.js.html">TooltipHelper.js</a></h2>
+				
+This class acts as a simple wrapper around the qTip library and helps
+to normalize behavior across the 1.0 and 1.1 series.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_TileLayer.js.html">TileLayer.js</a></h2>
+				
+Contains the class definition for an TileLayer class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_EventMarker.js.html">EventMarker.js</a></h2>
+				
+Contains the class definition for an EventMarker class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_ImageSelectTool.js.html">ImageSelectTool.js</a></h2>
+				
+A class that deals with using the imgAreaSelect plugin, which allows the user to click and drag 
+                to select a subregion of the image in the viewport.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>Jaclyn Beck</dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_EventLayerManager.js.html">EventLayerManager.js</a></h2>
+				
+Contains the class definition for an EventLayerManager class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_ScreenshotBuilder.js.html">ScreenshotBuilder.js</a></h2>
+				
+Contains the code for the Screenshot Builder class. Handles event listeners for the screenshot button and
+                 screenshot creation.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd>Jaclyn Beck</dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_LayerManager.js.html">LayerManager.js</a></h2>
+				
+Contains class definition for a simple layer manager
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_MessageConsole.js.html">MessageConsole.js</a></h2>
+				
+Contains the "MessageConsole" class definition.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_TimeControls.js.html">TimeControls.js</a></h2>
+				
+Contains the class definition for an TimeControls class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_UserSettings.js.html">UserSettings.js</a></h2>
+				
+Contains the class definition for an UserSettings class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
+
+Keith 2009/07/01:
+    There is currently a bug in the Prototype 1.6 series which prevents
+    Firefox 3.5's native JSON functionality from working properly.
+    The issue should be fixed in the upcoming 1.7 series.
+    See: https://prototype.lighthouseapp.com/projects/8886/tickets/730</dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_EventLayerAccordion.js.html">EventLayerAccordion.js</a></h2>
+				
+Contains the class definition for an EventLayerAccordion class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_TileLayerManager.js.html">TileLayerManager.js</a></h2>
+				
+Contains the class definition for an TileLayerManager class.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_HelperFunctions.js.html">HelperFunctions.js</a></h2>
+				
+Various helper functions used throughout Helioviewer.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a>TODO: Move helper functions to a separate namespcae? (e.g. $hv)</dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_Time.js.html">Time.js</a></h2>
+				
+This class handles the management of all date and time related
+components in Helioviewer including the input fields, datepicker, and time-forward and
+backward buttons.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
 					
 					
 					
@@ -307,13 +605,29 @@ Contains the class definition for an EventLayer class.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_MovieBuilder.js.html">MovieBuilder.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_Config.js.html">Config.js</a></h2>
 				
-Contains the definition of a class for generating and displaying movies.
+This class handles the creation and validation of basic configuration parameters
 				<dl>
 					
 						<dt class="heading">Author:</dt>
 						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+					
+					
+					
+					
+				</dl>
+			</div>
+			<hr />
+			
+			<div>
+				<h2><a href="symbols/src/lib_helioviewer_IconPicker.js.html">IconPicker.js</a></h2>
+				
+Contains the IconPicker class definition.
+				<dl>
+					
+						<dt class="heading">Author:</dt>
+						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
 					
 					
 					
@@ -346,153 +660,9 @@ to update.</dd>
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_IconPicker.js.html">IconPicker.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_ZoomControls.js.html">ZoomControls.js</a></h2>
 				
-Contains the IconPicker class definition.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_Layer.js.html">Layer.js</a></h2>
-				
-"Abstract" Layer class.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_TileLayerAccordion.js.html">TileLayerAccordion.js</a></h2>
-				
-Contains the class definition for an TileLayerAccordion class.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_LayerManager.js.html">LayerManager.js</a></h2>
-				
-Contains class definition for a simple layer manager
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_HelperFunctions.js.html">HelperFunctions.js</a></h2>
-				
-Various helper functions used throughout Helioviewer.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>, <a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_EventTimeline.js.html">EventTimeline.js</a></h2>
-				
-This class extends the base Simile Timeline
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_UIElement.js.html">UIElement.js</a></h2>
-				
-Contains the class definition for an UIElement class.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_EventMarker.js.html">EventMarker.js</a></h2>
-				
-Contains the class definition for an EventMarker class.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_MessageConsole.js.html">MessageConsole.js</a></h2>
-				
-Contains the "MessageConsole" class definition.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_TileLayer.js.html">TileLayer.js</a></h2>
-				
-Contains the class definition for an TileLayer class.
+Contains the class definition for an ZoomControls class.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
@@ -506,25 +676,11 @@ Contains the class definition for an TileLayer class.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_LoadingIndicator.js.html">LoadingIndicator.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_TreeSelect.js.html">TreeSelect.js</a></h2>
 				
-Definition of a simple AJAX Request Loading Indicator UI component
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>, <a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_UserSettings.js.html">UserSettings.js</a></h2>
-				
-Contains the class definition for an UserSettings class.
+Contains the definition for a Hierarchical or "Tree Select" class which links
+several select form elements together based off a given tree structure such changes at any level automatically
+determine valid options for select items at lower levels.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
@@ -538,13 +694,13 @@ Contains the class definition for an UserSettings class.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_EventLayerAccordion.js.html">EventLayerAccordion.js</a></h2>
+				<h2><a href="symbols/src/lib_helioviewer_Helioviewer.js.html">Helioviewer.js</a></h2>
 				
-Contains the class definition for an EventLayerAccordion class.
+Contains the main application class and controller for Helioviewer.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a></dd>
 					
 					
 					
@@ -554,29 +710,13 @@ Contains the class definition for an EventLayerAccordion class.
 			<hr />
 			
 			<div>
-				<h2><a href="symbols/src/lib_helioviewer_TimeControls.js.html">TimeControls.js</a></h2>
-				
-Contains the class definition for an TimeControls class.
+				<h2><a href="symbols/src/lib_helioviewer_MovieBuilder.js.html">MovieBuilder.js</a></h2>
+				Class that builds a movie from a series of images when a button is clicked, and displays the video to the user.
+Contains the definition of a class for generating and displaying movies.
 				<dl>
 					
 						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a></dd>
-					
-					
-					
-					
-				</dl>
-			</div>
-			<hr />
-			
-			<div>
-				<h2><a href="symbols/src/lib_helioviewer_Calendar.js.html">Calendar.js</a></h2>
-				
-This class extends the base jQuery UI datepicker to provide some basic data-binding and enable the class to work more efficiently with Helioviewer.
-				<dl>
-					
-						<dt class="heading">Author:</dt>
-						<dd><a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a></dd>
+						<dd><a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>, Jaclyn Beck</dd>
 					
 					
 					
@@ -589,7 +729,7 @@ This class extends the base jQuery UI datepicker to provide some basic data-bind
 		</div>
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blankt">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:45 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

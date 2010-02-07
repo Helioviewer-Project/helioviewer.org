@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Calendar.html">Calendar</a></li>
+	<li><a href="../symbols/Config.html">Config</a></li>
 	
 	<li><a href="../symbols/Date.html">Date</a></li>
 	
@@ -199,27 +199,33 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
+	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
 	
 	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
 	
-	<li><a href="../symbols/Helioviewer%23handlers.html">Helioviewer#handlers</a></li>
-	
 	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="../symbols/KeyboardManager.html">KeyboardManager</a></li>
 	
 	<li><a href="../symbols/Layer.html">Layer</a></li>
 	
 	<li><a href="../symbols/LayerManager.html">LayerManager</a></li>
 	
-	<li><a href="../symbols/LoadingIndicator.html">LoadingIndicator</a></li>
-	
 	<li><a href="../symbols/Math.html">Math</a></li>
+	
+	<li><a href="../symbols/MediaSettings.html">MediaSettings</a></li>
 	
 	<li><a href="../symbols/MessageConsole.html">MessageConsole</a></li>
 	
 	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 	<li><a href="../symbols/String.html">String</a></li>
 	
@@ -227,9 +233,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
+	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="../symbols/Time.html">Time</a></li>
+	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
-	<li><a href="../symbols/UIElement.html">UIElement</a></li>
+	<li><a href="../symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="../symbols/TreeSelect.html">TreeSelect</a></li>
 	
 	<li><a href="../symbols/UserSettings.html">UserSettings</a></li>
 	
@@ -237,7 +249,7 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></li>
 	
-	<li><a href="../symbols/ZoomControl.html">ZoomControl</a></li>
+	<li><a href="../symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -253,6 +265,7 @@ ul.inheritsList
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
+				
 				
 			
 				
@@ -277,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/TileLayer.html">TileLayer</a></b>(viewport, options)
+								<b><a href="../symbols/TileLayer.html#constructor">TileLayer</a></b>(viewport, params)
 							</div>
 							<div class="description">Creates a new TileLayer</div>
 						</td>
@@ -332,11 +345,39 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#_loadStaticProperties">_loadStaticProperties</a></b>()
+								</div>
+								<div class="description">Sets up image properties that are not dependent on the specfic image,
+but only on the type (source) of the image.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#_setupEventHandlers">_setupEventHandlers</a></b>()
+								</div>
+								<div class="description">Sets up event-handlers to deal with viewport motion</div>
+							</td>
+						</tr>
+					
+						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#computeValidTiles">computeValidTiles</a></b>()
 								</div>
 								<div class="description">Creates a 2d array representing the range of valid (potentially data-containing) tiles</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#getDimensions">getDimensions</a></b>()
+								</div>
+								<div class="description">Returns an array container the values of the positions for each edge of the TileLayer.</div>
 							</td>
 						</tr>
 					
@@ -361,9 +402,28 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#getTileURL">getTileURL</a></b>(serverId, x, y)
+								</div>
+								<div class="description">Returns a formatted string representing a query for a single tile</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#getValidTileRange">getValidTileRange</a></b>()
 								</div>
 								<div class="description">Determines the boundaries for the valid tile range</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#insideCircle">insideCircle</a></b>(radius, center, left, top, width, height)
+								</div>
+								<div class="description">Tests all four corners of the visible image area to see if they are within the 
+             transparent circle region of LASCO C2 and LASCO C3 images.</div>
 							</td>
 						</tr>
 					
@@ -433,24 +493,6 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#setImage">setImage</a></b>(uri)
-								</div>
-								<div class="description">Associates an image with the TileLayer and fetches some meta information relating to that image</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#setImageProperties">setImageProperties</a></b>(imageProperties)
-								</div>
-								<div class="description">Store retrieved image properties</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#setInitialOpacity">setInitialOpacity</a></b>()
 								</div>
 								<div class="description">Sets the opacity for the layer, taking into account layers which overlap one another.</div>
@@ -472,6 +514,24 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#toggleSharpening">toggleSharpening</a></b>()
 								</div>
 								<div class="description">Toggle image sharpening</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#toJSON">toJSON</a></b>()
+								</div>
+								<div class="description">Returns a JSON representation of the tile layer for use by the UserSettings manager</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayer.html#toString">toString</a></b>()
+								</div>
+								<div class="description">Returns a stringified version of the tile layer for use in URLs, etc</div>
 							</td>
 						</tr>
 					
@@ -501,7 +561,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>TileLayer</b>(viewport, options)
+						<b>TileLayer</b>(viewport, params)
 				</div>
 				
 				<div class="description">
@@ -524,16 +584,18 @@ ul.inheritsList
 <br>
 <br><div style='font-size:16px'>Options:</div><br>
 <div style='margin-left:15px'>
-		<b>type</b>	       - The type of the layer (used by layer manager to differentiate event vs. tile layers)<br>
-     <b>tileSize</b>	   - Tilesize to use<br>
-		<b>source</b>      - Tile source ["database" | "filesystem"]<br>
-     <b>opacity</b>	   - Default opacity (adjusted automatically when layer is added)<br>
-		<b>autoOpaicty</b> - Whether or not the opacity should be automatically determined when the image properties are loaded<br>
-		<b>startOpened</b> - Whether or not the layer menu entry should initially be open or closed<br>
+     <b>type</b>        - The type of the layer (used by layer manager to differentiate event vs.
+                          tile layers)<br>
+     <b>tileSize</b>    - Tilesize to use<br>
+     <b>source</b>      - Tile source ["database" | "filesystem"]<br>
+     <b>opacity</b>     - Default opacity (adjusted automatically when layer is added)<br>
+     <b>autoOpaicty</b> - Whether or not the opacity should be automatically determined when the image
+                          properties are loaded<br>
+     <b>startOpened</b> - Whether or not the layer menu entry should initially be open or closed<br>
 </div></dd>
 						
 							<dt>
-								 <b>options</b>
+								 <b>params</b>
 								
 							</dt>
 								<dd></dd>
@@ -586,6 +648,59 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
+					<a name="_loadStaticProperties"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_loadStaticProperties</b>()
+					
+					</div>
+					<div class="description">
+						Sets up image properties that are not dependent on the specfic image,
+but only on the type (source) of the image.
+
+IE7: Want z-indices < 1 to ensure event icon visibility
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="_setupEventHandlers"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_setupEventHandlers</b>()
+					
+					</div>
+					<div class="description">
+						Sets up event-handlers to deal with viewport motion
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="computeValidTiles"> </a>
 					<div class="fixedFont">
 					
@@ -595,6 +710,31 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Creates a 2d array representing the range of valid (potentially data-containing) tiles
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getDimensions"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getDimensions</b>()
+					
+					</div>
+					<div class="description">
+						Returns an array container the values of the positions for each edge of the TileLayer.
 						
 						
 					</div>
@@ -651,7 +791,10 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> URL to retrieve the requested tile</dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> URL to retrieve the requested tile
+
+IE: CSS opacities do not behave properly with absolutely positioned elements. Opacity is therefor 
+set at tile-level.</dd>
 							
 							</dl>
 						
@@ -683,9 +826,57 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Array}</span> An array containing pointers to all of the tiles currently loaded</dd>
+								<dd><span class="light fixedFont">{Array}</span> An array containing pointgetDimensions: ers to all of the tiles currently loaded</dd>
 							
 							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getTileURL"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getTileURL</b>(serverId, x, y)
+					
+					</div>
+					<div class="description">
+						Returns a formatted string representing a query for a single tile
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>serverId</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
 						
 						
 						
@@ -716,6 +907,82 @@ ul.inheritsList
 							<dt class="heading">Returns:</dt>
 							
 								<dd><span class="light fixedFont">{Array}</span> An array containing the tile boundaries</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="insideCircle"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>insideCircle</b>(radius, center, left, top, width, height)
+					
+					</div>
+					<div class="description">
+						Tests all four corners of the visible image area to see if they are within the 
+             transparent circle region of LASCO C2 and LASCO C3 images. It uses the distance
+             formula: d = sqrt( (x2 - x1)^2 + (y2 - y1)^2 ) to find the distance from the center to 
+             each corner, and if that distance is less than the radius, it is inside the circle region.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>radius</b>
+									
+								</dt>
+								<dd>-- The radius of the circle region in the jp2 image</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>center</b>
+									
+								</dt>
+								<dd>-- The center coordinate of the jp2 image (jp2Width / 2).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>left</b>
+									
+								</dt>
+								<dd>-- Left coordinate of the selected region</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>top</b>
+									
+								</dt>
+								<dd>-- Top coordinate of the selected region</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>width</b>
+									
+								</dt>
+								<dd>-- width of the selected region</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>height</b>
+									
+								</dt>
+								<dd>-- height of the selected region</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>false as soon as it finds a distance outside the radius, or true if it doesn't.</dd>
 							
 							</dl>
 						
@@ -932,78 +1199,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setImage"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setImage</b>(uri)
-					
-					</div>
-					<div class="description">
-						Associates an image with the TileLayer and fetches some meta information relating to that image
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>uri</b>
-									
-								</dt>
-								<dd>The URI of the image to be tiled</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setImageProperties"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setImageProperties</b>(imageProperties)
-					
-					</div>
-					<div class="description">
-						Store retrieved image properties
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>imageProperties</b>
-									
-								</dt>
-								<dd>Properties of the image associated with the TileLayer</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="setInitialOpacity"> </a>
 					<div class="fixedFont">
 					
@@ -1090,6 +1285,70 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="toJSON"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>toJSON</b>()
+					
+					</div>
+					<div class="description">
+						Returns a JSON representation of the tile layer for use by the UserSettings manager
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>JSON A JSON representation of the tile layer</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="toString"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>toString</b>()
+					
+					</div>
+					<div class="description">
+						Returns a stringified version of the tile layer for use in URLs, etc
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>string String representation of the tile layer</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name="viewportMove"> </a>
 					<div class="fixedFont">
 					
@@ -1127,7 +1386,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:44 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

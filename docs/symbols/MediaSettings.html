@@ -191,7 +191,65 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
+	<li><a href="../symbols/Config.html">Config</a></li>
+	
+	<li><a href="../symbols/Date.html">Date</a></li>
+	
+	<li><a href="../symbols/EventLayer.html">EventLayer</a></li>
+	
+	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
+	
+	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
+	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
+	
+	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
+	
+	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
+	
+	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="../symbols/KeyboardManager.html">KeyboardManager</a></li>
+	
+	<li><a href="../symbols/Layer.html">Layer</a></li>
+	
+	<li><a href="../symbols/LayerManager.html">LayerManager</a></li>
+	
+	<li><a href="../symbols/Math.html">Math</a></li>
+	
 	<li><a href="../symbols/MediaSettings.html">MediaSettings</a></li>
+	
+	<li><a href="../symbols/MessageConsole.html">MessageConsole</a></li>
+	
+	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
+	
+	<li><a href="../symbols/String.html">String</a></li>
+	
+	<li><a href="../symbols/TileLayer.html">TileLayer</a></li>
+	
+	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
+	
+	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="../symbols/Time.html">Time</a></li>
+	
+	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
+	
+	<li><a href="../symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="../symbols/TreeSelect.html">TreeSelect</a></li>
+	
+	<li><a href="../symbols/UserSettings.html">UserSettings</a></li>
+	
+	<li><a href="../symbols/Viewport.html">Viewport</a></li>
+	
+	<li><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></li>
+	
+	<li><a href="../symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -208,11 +266,12 @@ ul.inheritsList
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				
 			
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_Library_WebServer_Documents_helioviewer_lib_helioviewer_MediaSettings.js.html">MediaSettings.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/lib_helioviewer_MediaSettings.js.html">MediaSettings.js</a>.
 				
 			</p>
 
@@ -233,7 +292,8 @@ ul.inheritsList
 							<div class="fixedFont">
 								<b><a href="../symbols/MediaSettings.html#constructor">MediaSettings</a></b>(controller)
 							</div>
-							<div class="description">Loads default options, and creates a set of settings based on what is currently in the viewport.</div>
+							<div class="description">Loads default options, and creates a set of settings based on what is currently in 
+             the viewport.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -288,6 +348,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/MediaSettings.html#checkLayers">checkLayers</a></b>()
+								</div>
+								<div class="description">Layers have to stay in the order they appear in the viewport.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/MediaSettings.html#getHCOffset">getHCOffset</a></b>(visibleCoords)
 								</div>
 								<div class="description">How far away the heliocenter is from the top left corner of the viewport, and in which direction.</div>
@@ -299,18 +368,18 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/MediaSettings.html#getImageInformation">getImageInformation</a></b>(visibleCoords, vpWidth, vpHeight)
 								</div>
-								<div class="description">Finds the jp2 image width/height, relative width/height, image coordinates, and hcOffset for each layer, 
-				and adds those layers that are visible to an array.</div>
+								<div class="description">Finds the jp2 image width/height, relative width/height, image coordinates, 
+             and hcOffset for each layer, and adds those layers that are visible to an array.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/MediaSettings.html#getImgCoords">getImgCoords</a></b>(xStart, xSize, yStart, ySize, jp2Width, jp2Height, relWidth, relHeight)
+								<div class="fixedFont"><b><a href="../symbols/MediaSettings.html#getImgCoords">getImgCoords</a></b>(xRange, yRange, jp2Width, jp2Height, relWidth, relHeight)
 								</div>
-								<div class="description">Finds the image coordinates of the biggest layer in the set, since all other layers will be padded according
-				to the biggest layer's coordinates.</div>
+								<div class="description">Finds the image coordinates of the biggest layer in the set, since all other layers will
+                be padded according to the biggest layer's coordinates.</div>
 							</td>
 						</tr>
 					
@@ -319,7 +388,8 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/MediaSettings.html#getSettings">getSettings</a></b>(visibleCoords)
 								</div>
-								<div class="description">Pulls all necessary information from the viewport and time controls so that the user can customize them if they want to.</div>
+								<div class="description">Pulls all necessary information from the viewport and time controls so that the user can customize
+             them if they want to.</div>
 							</td>
 						</tr>
 					
@@ -371,8 +441,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="description">
-					Loads default options, and creates a set of settings based on what is currently in the viewport. Also
-				creates an event handler for the settings button.
+					Loads default options, and creates a set of settings based on what is currently in 
+             the viewport. Also creates an event handler for the settings button.
+             Currently customizable options are: numFrames, timeStep, layers (which ones), start date/time, 
+             end date/time, image width, image height, quality, format, filename, show layers if data gap,
+             email link, and email address.
 					
 				</div>
 				
@@ -387,7 +460,7 @@ ul.inheritsList
 								<span class="light fixedFont">{Object}</span>  <b>controller</b>
 								
 							</dt>
-								<dd></dd>
+								<dd>-- helioviewer</dd>
 						
 						</dl>
 					
@@ -415,7 +488,22 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Default options that user cannot change without opening media settings. These are loaded upon class creation.
+						Default options that user cannot change without opening media settings. 
+These are loaded upon class creation.
+Settings that are not affected by a change in the viewport: timeStep, url, numFrames, frameRate,
+sharpen, edgeEnhance, movie format, showImgIfGap, emailUser, emailAddress, quality, image format.
+Settings that ARE affected when the viewport changes: startTime/EndTime, layers, filename.
+
+TimeStep currently sticks with whatever the user picks. If they change it in the viewport,
+MediaSettings.timeStep is not changed or affected. May need to change this.
+startTime/endTime are determined by the viewport settings, not the user's. 
+Layers are pulled from the viewport. Whether they are checked/included or not depends on what the user entered.
+Filename is changed every time the viewport changes. 
+
+Settings that are stored but not functional yet: frameRate, sharpen, edgeEnhance,
+image format, showImgIfGap, emailUser, emailAddress, startdate/enddate, filename
+
+Maybe add a setting: "Keep user settings even if change in viewport"?
 						
 						
 					</div>
@@ -436,6 +524,34 @@ ul.inheritsList
 				<div class="sectionTitle">
 					Method Detail
 				</div>
+				
+					<a name="checkLayers"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>checkLayers</b>()
+					
+					</div>
+					<div class="description">
+						Layers have to stay in the order they appear in the viewport. 
+This function checks to see if any layers that exist in this.layerNames are 
+marked as "false" in this.layers. If they are, save them as "false". Otherwise,
+save the layer as "true".
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
 				
 					<a name="getHCOffset"> </a>
 					<div class="fixedFont">
@@ -485,8 +601,9 @@ the heliocenter is above the top-left corner.
 					
 					</div>
 					<div class="description">
-						Finds the jp2 image width/height, relative width/height, image coordinates, and hcOffset for each layer, 
-				and adds those layers that are visible to an array. Returns the array of layers.
+						Finds the jp2 image width/height, relative width/height, image coordinates, 
+             and hcOffset for each layer, and adds those layers that are visible to an array. Returns the array 
+             of layers. The filename is also built here from each layer's detector and measurement.
 						
 						
 					</div>
@@ -501,7 +618,8 @@ the heliocenter is above the top-left corner.
 									<span class="light fixedFont">{Array}</span> <b>visibleCoords</b>
 									
 								</dt>
-								<dd>-- heliocentric top, left, bottom, and right coordinates of either the viewport or the selected region</dd>
+								<dd>-- heliocentric top, left, bottom, and right coordinates of either the viewport 
+                                or the selected region</dd>
 							
 								<dt>
 									<span class="light fixedFont">{int}</span> <b>vpWidth</b>
@@ -524,7 +642,8 @@ the heliocenter is above the top-left corner.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Array}</span> layers -- array of all visible layers in string format: "obs,inst,det,meas,visible,opacity'x'XStart,XEnd,YStart,YEnd,offsetX,offsetY"</dd>
+								<dd><span class="light fixedFont">{Array}</span> layers -- array of all visible layers in string format: "obs,inst,det,meas,visible,opacity'
+                          x'XStart,XEnd,YStart,YEnd,offsetX,offsetY"</dd>
 							
 							</dl>
 						
@@ -537,14 +656,15 @@ the heliocenter is above the top-left corner.
 					<div class="fixedFont">
 					
 					
-					<b>getImgCoords</b>(xStart, xSize, yStart, ySize, jp2Width, jp2Height, relWidth, relHeight)
+					<b>getImgCoords</b>(xRange, yRange, jp2Width, jp2Height, relWidth, relHeight)
 					
 					</div>
 					<div class="description">
-						Finds the image coordinates of the biggest layer in the set, since all other layers will be padded according
-				to the biggest layer's coordinates. 
-				This is done because in cases where the user selects a region that is larger than the actual image, the image will
-				crop by centering around the actual image. See <picture> for a more detailed explanation.
+						Finds the image coordinates of the biggest layer in the set, since all other layers will
+                be padded according to the biggest layer's coordinates. 
+                This is done because in cases where the user selects a region that is larger than the actual
+                image, the image willcrop by centering around the actual image. See <picture> 
+                for a more detailed explanation.
 						
 						
 					</div>
@@ -556,28 +676,16 @@ the heliocenter is above the top-left corner.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>xStart</b>
+									<span class="light fixedFont">{Array}</span> <b>xRange</b>
 									
 								</dt>
-								<dd>-- starting x coordinate of biggest layer</dd>
+								<dd>-- xRange of biggest layer. [start, size]</dd>
 							
 								<dt>
-									<span class="light fixedFont">{int}</span> <b>xSize</b>
+									<span class="light fixedFont">{Array}</span> <b>yRange</b>
 									
 								</dt>
-								<dd>-- width of biggest layer</dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>yStart</b>
-									
-								</dt>
-								<dd>-- starting y coordinate of biggest layer</dd>
-							
-								<dt>
-									<span class="light fixedFont">{int}</span> <b>ySize</b>
-									
-								</dt>
-								<dd>-- height of biggest layer</dd>
+								<dd>-- yRange of biggest layer. [start, size]</dd>
 							
 								<dt>
 									<span class="light fixedFont">{int}</span> <b>jp2Width</b>
@@ -622,12 +730,11 @@ the heliocenter is above the top-left corner.
 					
 					</div>
 					<div class="description">
-						Pulls all necessary information from the viewport and time controls so that the user can customize them if they want to.
-				Currently customizable options are: numFrames, timeStep, layers (which ones), start date/time, end date/time, image width, 
-				image height, quality, format, filename, show layers if data gap, email link, and email address. 
+						Pulls all necessary information from the viewport and time controls so that the user can customize
+             them if they want to. These are all settings that will change whenever the viewport changes.
 
-Once the information is gathered, it is stored in this object. This method is called by takeScreenshot, buildMovie, and by clicking
-the settings button.
+Once the information is gathered, it is stored in this object. This method is called by takeScreenshot, 
+buildMovie, and by clicking the settings button.
 						
 						
 					</div>
@@ -642,7 +749,8 @@ the settings button.
 									<span class="light fixedFont">{Array}</span> <b>visibleCoords</b>
 									
 								</dt>
-								<dd>-- heliocentric top, left, right, and bottom coordinates of either the entire viewport or a selected region.</dd>
+								<dd>-- heliocentric top, left, right, and bottom coordinates of either the entire 
+viewport or a selected region.</dd>
 							
 							</dl>
 						
@@ -700,8 +808,9 @@ When done, it passes the markup to printContent to open Shadowbox.
 					
 					</div>
 					<div class="description">
-						Opens shadowbox and displays the html markup sent to it. Shadowbox then runs an event handler for when the 'submit'
-button is pushed. It grabs all of the values from the input fields in the form and sends them off to buildMovie.
+						Opens shadowbox and displays the html markup sent to it. Shadowbox then runs an event 
+handler for when the 'submit' button is pushed. It grabs all of the values from the input fields in 
+the form and sends them off to buildMovie.
 						
 						
 					</div>
@@ -783,7 +892,7 @@ button is pushed. It grabs all of the values from the input fields in the form a
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Thu Jul 30 2009 14:45:07 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:44 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

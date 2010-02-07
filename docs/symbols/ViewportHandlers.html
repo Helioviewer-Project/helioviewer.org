@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Calendar.html">Calendar</a></li>
+	<li><a href="../symbols/Config.html">Config</a></li>
 	
 	<li><a href="../symbols/Date.html">Date</a></li>
 	
@@ -199,27 +199,33 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
+	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
 	
 	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
 	
-	<li><a href="../symbols/Helioviewer%23handlers.html">Helioviewer#handlers</a></li>
-	
 	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="../symbols/KeyboardManager.html">KeyboardManager</a></li>
 	
 	<li><a href="../symbols/Layer.html">Layer</a></li>
 	
 	<li><a href="../symbols/LayerManager.html">LayerManager</a></li>
 	
-	<li><a href="../symbols/LoadingIndicator.html">LoadingIndicator</a></li>
-	
 	<li><a href="../symbols/Math.html">Math</a></li>
+	
+	<li><a href="../symbols/MediaSettings.html">MediaSettings</a></li>
 	
 	<li><a href="../symbols/MessageConsole.html">MessageConsole</a></li>
 	
 	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 	<li><a href="../symbols/String.html">String</a></li>
 	
@@ -227,9 +233,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
+	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="../symbols/Time.html">Time</a></li>
+	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
-	<li><a href="../symbols/UIElement.html">UIElement</a></li>
+	<li><a href="../symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="../symbols/TreeSelect.html">TreeSelect</a></li>
 	
 	<li><a href="../symbols/UserSettings.html">UserSettings</a></li>
 	
@@ -237,7 +249,7 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></li>
 	
-	<li><a href="../symbols/ZoomControl.html">ZoomControl</a></li>
+	<li><a href="../symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -253,6 +265,7 @@ ul.inheritsList
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
+				
 				
 			
 				
@@ -277,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></b>(viewport)
+								<b><a href="../symbols/ViewportHandlers.html#constructor">ViewportHandlers</a></b>(viewport)
 							</div>
 							<div class="description">Contains a collection of event-handlers for dealing with Viewport-related events</div>
 						</td>
@@ -304,6 +317,24 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#_initEvents">_initEvents</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#computeMouseCoords">computeMouseCoords</a></b>(screenX, screenY)
+								</div>
+								<div class="description">Computes the scaled mouse coordinates relative to the size and center of the Sun.</div>
+							</td>
+						</tr>
+					
+						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#doubleClick">doubleClick</a></b>(e)
@@ -324,24 +355,6 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#keyPress">keyPress</a></b>(e)
-								</div>
-								<div class="description">Keyboard-related event-handlers</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#keyRelease">keyRelease</a></b>(event)
-								</div>
-								<div class="description">Fired when a keyboard key is released</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#mouseDown">mouseDown</a></b>(event)
 								</div>
 								<div class="description">Fired when a mouse is pressed</div>
@@ -351,7 +364,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#mouseMove">mouseMove</a></b>(event)
+								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#mouseMove">mouseMove</a></b>(an)
 								</div>
 								<div class="description">Handle drag events</div>
 							</td>
@@ -369,7 +382,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#mouseWheel">mouseWheel</a></b>(event)
+								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#mouseWheel">mouseWheel</a></b>(event, delta)
 								</div>
 								<div class="description">Handles mouse-wheel movements</div>
 							</td>
@@ -380,7 +393,22 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#toggleMouseCoords">toggleMouseCoords</a></b>()
 								</div>
-								<div class="description">Toggles mouse-coords visibility</div>
+								<div class="description">Toggles mouse-coords visibility
+
+TODO (2009/07/27) Disable mouse-coords display during drag & drop</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/ViewportHandlers.html#updateShadows">updateShadows</a></b>()
+								</div>
+								<div class="description">Adds an animated text shadow based on the position and size of the Sun (Firefox 3.5+)
+Added 2009/06/26
+TODO: Apply to other text based on it's position on screen? Adjust blue based on zoom-level?
+      Use viewport size to determine appropriate scales for X & Y offsets (normalize)
+      Re-use computeCoordinates?</div>
 							</td>
 						</tr>
 					
@@ -450,6 +478,90 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
+					<a name="_initEvents"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_initEvents</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="computeMouseCoords"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>computeMouseCoords</b>(screenX, screenY)
+					
+					</div>
+					<div class="description">
+						Computes the scaled mouse coordinates relative to the size and center of the Sun.
+
+ Explanation:
+
+   X = location of mouse-pointer
+   V = viewport top-left corner
+   S = sandbox top-left corner
+   M = moving container top-let corner
+   
+ Each of the two-letter abbreviations represents the vector <x,y> going from one
+ location to the other. See wiki documentation below for more details.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>screenX</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>screenY</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd>http://helioviewer.org/wiki/index.php?title=Co-ordinate_System_I</dd>
+							
+							</dl>
+						
+
+					<hr />
+				
 					<a name="doubleClick"> </a>
 					<div class="fixedFont">
 					
@@ -473,7 +585,7 @@ ul.inheritsList
 									<span class="light fixedFont">{Event}</span> <b>e</b>
 									
 								</dt>
-								<dd>Prototype Event class</dd>
+								<dd>Event class</dd>
 							
 							</dl>
 						
@@ -528,78 +640,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="keyPress"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>keyPress</b>(e)
-					
-					</div>
-					<div class="description">
-						Keyboard-related event-handlers
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>e</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="keyRelease"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>keyRelease</b>(event)
-					
-					</div>
-					<div class="description">
-						Fired when a keyboard key is released
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>event</b>
-									
-								</dt>
-								<dd>Prototype Event object</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="mouseDown"> </a>
 					<div class="fixedFont">
 					
@@ -640,7 +680,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>mouseMove</b>(event)
+					<b>mouseMove</b>(an)
 					
 					</div>
 					<div class="description">
@@ -656,10 +696,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>event</b>
+									<span class="light fixedFont">{Object}</span> <b>an</b>
 									
 								</dt>
-								<dd>Prototype Event object</dd>
+								<dd>Event object</dd>
 							
 							</dl>
 						
@@ -695,7 +735,7 @@ ul.inheritsList
 									<span class="light fixedFont">{Event}</span> <b>event</b>
 									
 								</dt>
-								<dd>Prototype Event object</dd>
+								<dd>Event object</dd>
 							
 							</dl>
 						
@@ -712,7 +752,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>mouseWheel</b>(event)
+					<b>mouseWheel</b>(event, delta)
 					
 					</div>
 					<div class="description">
@@ -731,7 +771,13 @@ ul.inheritsList
 									<span class="light fixedFont">{Event}</span> <b>event</b>
 									
 								</dt>
-								<dd>Prototype Event class</dd>
+								<dd>Event class</dd>
+							
+								<dt>
+									<b>delta</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -753,6 +799,37 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Toggles mouse-coords visibility
+
+TODO (2009/07/27) Disable mouse-coords display during drag & drop
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="updateShadows"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateShadows</b>()
+					
+					</div>
+					<div class="description">
+						Adds an animated text shadow based on the position and size of the Sun (Firefox 3.5+)
+Added 2009/06/26
+TODO: Apply to other text based on it's position on screen? Adjust blue based on zoom-level?
+      Use viewport size to determine appropriate scales for X & Y offsets (normalize)
+      Re-use computeCoordinates?
 						
 						
 					</div>
@@ -781,7 +858,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:45 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Calendar.html">Calendar</a></li>
+	<li><a href="../symbols/Config.html">Config</a></li>
 	
 	<li><a href="../symbols/Date.html">Date</a></li>
 	
@@ -199,27 +199,33 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
+	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
 	
 	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
 	
-	<li><a href="../symbols/Helioviewer%23handlers.html">Helioviewer#handlers</a></li>
-	
 	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="../symbols/KeyboardManager.html">KeyboardManager</a></li>
 	
 	<li><a href="../symbols/Layer.html">Layer</a></li>
 	
 	<li><a href="../symbols/LayerManager.html">LayerManager</a></li>
 	
-	<li><a href="../symbols/LoadingIndicator.html">LoadingIndicator</a></li>
-	
 	<li><a href="../symbols/Math.html">Math</a></li>
+	
+	<li><a href="../symbols/MediaSettings.html">MediaSettings</a></li>
 	
 	<li><a href="../symbols/MessageConsole.html">MessageConsole</a></li>
 	
 	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 	<li><a href="../symbols/String.html">String</a></li>
 	
@@ -227,9 +233,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
+	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="../symbols/Time.html">Time</a></li>
+	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
-	<li><a href="../symbols/UIElement.html">UIElement</a></li>
+	<li><a href="../symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="../symbols/TreeSelect.html">TreeSelect</a></li>
 	
 	<li><a href="../symbols/UserSettings.html">UserSettings</a></li>
 	
@@ -237,7 +249,7 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></li>
 	
-	<li><a href="../symbols/ZoomControl.html">ZoomControl</a></li>
+	<li><a href="../symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -253,6 +265,7 @@ ul.inheritsList
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
+				
 				
 			
 				
@@ -277,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/Viewport.html">Viewport</a></b>(controller, options)
+								<b><a href="../symbols/Viewport.html#constructor">Viewport</a></b>(controller, options)
 							</div>
 							<div class="description">Creates a new Viewport</div>
 						</td>
@@ -332,6 +345,15 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
+							<td class="attributes">&lt;private&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Viewport.html#_updateDimensions">_updateDimensions</a></b>()
+								</div>
+								<div class="description">Updates the viewport dimensions</div>
+							</td>
+						</tr>
+					
+						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Viewport.html#center">center</a></b>()
@@ -373,7 +395,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Viewport.html#endMoving">endMoving</a></b>()
 								</div>
-								<div class="description">Event handler fired after dragging</div>
+								<div class="description">Event handler triggered after dragging</div>
 							</td>
 						</tr>
 					
@@ -391,7 +413,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Viewport.html#getContainerPos">getContainerPos</a></b>()
 								</div>
-								<div class="description">Get the current coordinates of the moving container</div>
+								<div class="description">Get the current coordinates of the moving container (relative to the sandbox)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Viewport.html#getDimensions">getDimensions</a></b>()
+								</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -407,9 +438,28 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Viewport.html#getImageScale">getImageScale</a></b>()
+								</div>
+								<div class="description">Returns the current image scale (in arc-seconds/px) for which the tiles should be matched to.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Viewport.html#getRSun">getRSun</a></b>()
+								</div>
+								<div class="description">Returns the current solar radius in pixels.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Viewport.html#helioCenter">helioCenter</a></b>()
 								</div>
-								<div class="description">Another alias for getContainerPos: returns the pixel coorindates of the HelioCenter relative to the viewport top-left corner.</div>
+								<div class="description">Another alias for getContainerPos: returns the pixel coorindates of the 
+             HelioCenter relative to the viewport top-left corner.</div>
 							</td>
 						</tr>
 					
@@ -446,6 +496,24 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/Viewport.html#startMoving">startMoving</a></b>()
 								</div>
 								<div class="description">Event-handler for a mouse-drag start.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Viewport.html#toJSON">toJSON</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Viewport.html#toString">toString</a></b>()
+								</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -513,12 +581,11 @@ ul.inheritsList
 <br>
 <br><div style='font-size:16px'>Options:</div><br>
 <div style='margin-left:15px'>
-		<b>zoomLevel</b> - The default zoomlevel to display (should be passed in from Helioviewer).<br>
-		<b>headerId</b>  - Helioviewer header section id.<br>
-		<b>footerId</b>	 - Helioviewer footer section id.<br>
-		<b>tileSize</b>	 - Size of tiles.<br> 
-		<b>debug</b>     - Display additional information for debugging purposes.<br>
-		<b>prefetch</b>	 - The radius outside of the visible viewport to prefetch.<br>
+        <b>zoomLevel</b> - The default zoomlevel to display (should be passed in from Helioviewer).<br>
+       <b>headerId</b>  - Helioviewer header section id.<br>
+       <b>footerId</b>     - Helioviewer footer section id.<br>
+       <b>tileSize</b>     - Size of tiles.<br> 
+       <b>prefetch</b>     - The radius outside of the visible viewport to prefetch.<br>
 </div></dd>
 						
 						</dl>
@@ -568,6 +635,31 @@ ul.inheritsList
 				<div class="sectionTitle">
 					Method Detail
 				</div>
+				
+					<a name="_updateDimensions"> </a>
+					<div class="fixedFont">&lt;private&gt; 
+					
+					
+					<b>_updateDimensions</b>()
+					
+					</div>
+					<div class="description">
+						Updates the viewport dimensions
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
 				
 					<a name="center"> </a>
 					<div class="fixedFont">
@@ -693,7 +785,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Event handler fired after dragging
+						Event handler triggered after dragging
 						
 						
 					</div>
@@ -750,7 +842,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Get the current coordinates of the moving container
+						Get the current coordinates of the moving container (relative to the sandbox)
 						
 						
 					</div>
@@ -768,6 +860,31 @@ ul.inheritsList
 								<dd><span class="light fixedFont">{Object}</span> The X & Y coordinates of the viewport's top-left corner</dd>
 							
 							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getDimensions"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getDimensions</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
 						
 						
 						
@@ -806,6 +923,57 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="getImageScale"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getImageScale</b>()
+					
+					</div>
+					<div class="description">
+						Returns the current image scale (in arc-seconds/px) for which the tiles should be matched to.
+TODO (12/3/2009): Compute once and store when zoom-level is changed.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getRSun"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getRSun</b>()
+					
+					</div>
+					<div class="description">
+						Returns the current solar radius in pixels.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="helioCenter"> </a>
 					<div class="fixedFont">
 					
@@ -814,7 +982,8 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Another alias for getContainerPos: returns the pixel coorindates of the HelioCenter relative to the viewport top-left corner.
+						Another alias for getContainerPos: returns the pixel coorindates of the 
+             HelioCenter relative to the viewport top-left corner.
 						
 						
 					</div>
@@ -972,6 +1141,56 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="toJSON"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>toJSON</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="toString"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>toString</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="updateSandbox"> </a>
 					<div class="fixedFont">
 					
@@ -1045,7 +1264,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:45 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

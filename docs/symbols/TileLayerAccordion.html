@@ -191,7 +191,7 @@ ul.inheritsList
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Calendar.html">Calendar</a></li>
+	<li><a href="../symbols/Config.html">Config</a></li>
 	
 	<li><a href="../symbols/Date.html">Date</a></li>
 	
@@ -199,27 +199,33 @@ ul.inheritsList
 	
 	<li><a href="../symbols/EventLayerAccordion.html">EventLayerAccordion</a></li>
 	
+	<li><a href="../symbols/EventLayerManager.html">EventLayerManager</a></li>
+	
 	<li><a href="../symbols/EventMarker.html">EventMarker</a></li>
 	
 	<li><a href="../symbols/EventTimeline.html">EventTimeline</a></li>
 	
 	<li><a href="../symbols/Helioviewer.html">Helioviewer</a></li>
 	
-	<li><a href="../symbols/Helioviewer%23handlers.html">Helioviewer#handlers</a></li>
-	
 	<li><a href="../symbols/IconPicker.html">IconPicker</a></li>
+	
+	<li><a href="../symbols/ImageSelectTool.html">ImageSelectTool</a></li>
+	
+	<li><a href="../symbols/KeyboardManager.html">KeyboardManager</a></li>
 	
 	<li><a href="../symbols/Layer.html">Layer</a></li>
 	
 	<li><a href="../symbols/LayerManager.html">LayerManager</a></li>
 	
-	<li><a href="../symbols/LoadingIndicator.html">LoadingIndicator</a></li>
-	
 	<li><a href="../symbols/Math.html">Math</a></li>
+	
+	<li><a href="../symbols/MediaSettings.html">MediaSettings</a></li>
 	
 	<li><a href="../symbols/MessageConsole.html">MessageConsole</a></li>
 	
 	<li><a href="../symbols/MovieBuilder.html">MovieBuilder</a></li>
+	
+	<li><a href="../symbols/ScreenshotBuilder.html">ScreenshotBuilder</a></li>
 	
 	<li><a href="../symbols/String.html">String</a></li>
 	
@@ -227,9 +233,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></li>
 	
+	<li><a href="../symbols/TileLayerManager.html">TileLayerManager</a></li>
+	
+	<li><a href="../symbols/Time.html">Time</a></li>
+	
 	<li><a href="../symbols/TimeControls.html">TimeControls</a></li>
 	
-	<li><a href="../symbols/UIElement.html">UIElement</a></li>
+	<li><a href="../symbols/TooltipHelper.html">TooltipHelper</a></li>
+	
+	<li><a href="../symbols/TreeSelect.html">TreeSelect</a></li>
 	
 	<li><a href="../symbols/UserSettings.html">UserSettings</a></li>
 	
@@ -237,7 +249,7 @@ ul.inheritsList
 	
 	<li><a href="../symbols/ViewportHandlers.html">ViewportHandlers</a></li>
 	
-	<li><a href="../symbols/ZoomControl.html">ZoomControl</a></li>
+	<li><a href="../symbols/ZoomControls.html">ZoomControls</a></li>
 	
 </ul>
 <hr />
@@ -253,6 +265,7 @@ ul.inheritsList
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
+				
 				
 			
 				
@@ -277,7 +290,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/TileLayerAccordion.html">TileLayerAccordion</a></b>(layerManager, containerId)
+								<b><a href="../symbols/TileLayerAccordion.html#constructor">TileLayerAccordion</a></b>(tileLayers, containerId)
 							</div>
 							<div class="description">Creates a new TileLayerAccordion</div>
 						</td>
@@ -309,15 +322,6 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#_buildEntryBody">_buildEntryBody</a></b>(layer)
 								</div>
 								<div class="description">Builds the body section of a single TileLayerAccordion entry.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;private&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#_onLayerSelectChange">_onLayerSelectChange</a></b>(layer, changed, The)
-								</div>
-								<div class="description">Checks to make sure the new layer settings are valid.</div>
 							</td>
 						</tr>
 					
@@ -360,18 +364,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;private&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#_showFITS">_showFITS</a></b>(event, layer)
+								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#_showFITS">_showFITS</a></b>(layer)
 								</div>
 								<div class="description">Displays the FITS header information associated with a given image</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;private&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#_updateOptions">_updateOptions</a></b>(id, field, newOptions)
-								</div>
-								<div class="description">Updates options for a single SELECT element.</div>
 							</td>
 						</tr>
 					
@@ -387,9 +382,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#getLayerSettings">getLayerSettings</a></b>(id)
+								</div>
+								<div class="description">Returns the layer settings associated with the given layer id</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#hasId">hasId</a></b>(id)
 								</div>
 								<div class="description">Checks to see if the given layer is listed in the accordion</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/TileLayerAccordion.html#removeLayerSettings">removeLayerSettings</a></b>(id)
+								</div>
+								<div class="description">Removes layer settings associated with given id</div>
 							</td>
 						</tr>
 					
@@ -437,7 +450,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>TileLayerAccordion</b>(layerManager, containerId)
+						<b>TileLayerAccordion</b>(tileLayers, containerId)
 				</div>
 				
 				<div class="description">
@@ -453,7 +466,7 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>layerManager</b>
+								<span class="light fixedFont">{Object}</span>  <b>tileLayers</b>
 								
 							</dt>
 								<dd>Reference to the application layer manager</dd>
@@ -462,7 +475,8 @@ ul.inheritsList
 								<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span>  <b>containerId</b>
 								
 							</dt>
-								<dd>ID for the outermost continer where the layer  manager user interface should be constructed</dd>
+								<dd>ID for the outermost continer where the layer 
+manager user interface should be constructed</dd>
 						
 						</dl>
 					
@@ -493,7 +507,8 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Builds the body section of a single TileLayerAccordion entry. NOTE: width and height must be hardcoded for slider to function properly.
+						Builds the body section of a single TileLayerAccordion entry. NOTE: width and height 
+must be hardcoded for slider to function properly.
 						
 						
 					</div>
@@ -521,59 +536,10 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">See:</dt>
 							
-								<dd><a href="http://groups.google.com/group/Prototypejs/browse_thread/thread/60a2676a0d62cf4f">This discussion thread</a> for explanation.</dd>
+								<dd><a href="http://groups.google.com/group/Prototypejs/browse_thread/thread/60a2676a0d62cf4f">
+This discussion thread</a> for explanation.</dd>
 							
 							</dl>
-						
-
-					<hr />
-				
-					<a name="_onLayerSelectChange"> </a>
-					<div class="fixedFont">&lt;private&gt; 
-					
-					
-					<b>_onLayerSelectChange</b>(layer, changed, The)
-					
-					</div>
-					<div class="description">
-						Checks to make sure the new layer settings are valid. If the new combination of
-choices are not compatable, change values to right of most-recently changed parameter to valid
-settings. Once the combination is acceptable, reload the tile layer.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/TileLayer.html">TileLayer</a>}</span> <b>layer</b>
-									
-								</dt>
-								<dd>The layer to which the changes have been made</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>changed</b>
-									
-								</dt>
-								<dd>The field altered</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>The</b>
-									
-								</dt>
-								<dd>new value chosen</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
 						
 
 					<hr />
@@ -715,7 +681,7 @@ settings. Once the combination is acceptable, reload the tile layer.
 					<div class="fixedFont">&lt;private&gt; 
 					
 					
-					<b>_showFITS</b>(event, layer)
+					<b>_showFITS</b>(layer)
 					
 					</div>
 					<div class="description">
@@ -731,64 +697,10 @@ settings. Once the combination is acceptable, reload the tile layer.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>event</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
 									<span class="light fixedFont">{Object}</span> <b>layer</b>
 									
 								</dt>
 								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="_updateOptions"> </a>
-					<div class="fixedFont">&lt;private&gt; 
-					
-					
-					<b>_updateOptions</b>(id, field, newOptions)
-					
-					</div>
-					<div class="description">
-						Updates options for a single SELECT element.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>id</b>
-									
-								</dt>
-								<dd>The ID of the layer whose parameters were adjusted</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/String.html">String</a>}</span> <b>field</b>
-									
-								</dt>
-								<dd>The field to adjust</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array}</span> <b>newOptions</b>
-									
-								</dt>
-								<dd>updated choices</dd>
 							
 							</dl>
 						
@@ -837,6 +749,42 @@ settings. Once the combination is acceptable, reload the tile layer.
 
 					<hr />
 				
+					<a name="getLayerSettings"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>getLayerSettings</b>(id)
+					
+					</div>
+					<div class="description">
+						Returns the layer settings associated with the given layer id
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>id</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="hasId"> </a>
 					<div class="fixedFont">
 					
@@ -861,6 +809,42 @@ settings. Once the combination is acceptable, reload the tile layer.
 									
 								</dt>
 								<dd>ID of the layer being checked</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeLayerSettings"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeLayerSettings</b>(id)
+					
+					</div>
+					<div class="description">
+						Removes layer settings associated with given id
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>id</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -1005,7 +989,7 @@ settings. Once the combination is acceptable, reload the tile layer.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://www.jsdoctoolkit.org/" target="_blank">JsDoc Toolkit</a> 2.1.0 on Wed Jun 24 2009 16:15:45 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Sun Feb 07 2010 16:13:44 GMT-0500 (EST)
 		</div>
 	</body>
 </html>
