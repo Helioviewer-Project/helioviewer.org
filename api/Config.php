@@ -2,15 +2,25 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer Configuration Helper Class Definition
- */
-/**
- * Helioviewer Configuration Helper
  * 
  * This file defines a class which helps to parse Helioviewer's configuration 
  * file, create global constants which can be used to access those configuration
  * parameters, and fix data types for known parameters.
  * 
  * PHP version 5
+ * 
+ * @category Configuration
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ */
+/**
+ * Helioviewer Configuration Helper
+ * 
+ * A helper class created to assist in parsing Helioviewer's configuration 
+ * file. It creates global constants which can be used to access those configuration
+ * parameters, and fix data types for known parameters.
  * 
  * @category Configuration
  * @package  Helioviewer

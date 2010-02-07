@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Helioviewer WebClient Module
+ * Helioviewer WebClient Module class definition.
  * 
  * PHP version 5
  * 
@@ -13,6 +13,16 @@
  */
 require_once "interface.Module.php";
 
+/**
+ * Defines methods used by Helioviewer.org to interact with a JPEG 2000 archive.
+ * 
+ * @category Application
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ *
+ */
 class WebClient implements Module
 {
     private $_params;

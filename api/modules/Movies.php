@@ -1,7 +1,7 @@
 <?php 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Helioviewer Movies Module
+ * Helioviewer Movies Module class definition
  * 
  * PHP version 5
  * 
@@ -9,12 +9,22 @@
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @author   Jaclyn Beck <jabeck@nmu.edu>
- * @author   Jonathan Harper <jwh376@msstate.edu>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'interface.Module.php';
 
+/**
+ * Movie generation and display.
+ * 
+ * @category Configuration
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ *
+ */
 class Movies implements Module
 {
     /**
@@ -57,16 +67,26 @@ class Movies implements Module
         switch($this->_params['action'])
         {
         case "buildMovie":
-            Helper::checkForMissingParams(
-                array('startDate', 'zoomLevel', 'numFrames', 'frameRate', 
-                      'timeStep', 'quality'), $this->_params
+            $expected = array(
+                "required" => array('startDate', 'zoomLevel', 'numFrames', 'frameRate', 'timeStep', 'quality'),
+                "dates"    => array('startDate'),
+                "ints"     => array('zoomLevel, numFrames, frameRate, timeStep, quality')
             );
             break;
         case "playMovie":
-            break;
+            // Temporarily disabled. 
+            // TODO: Before re-enabling, validate file input.
+            // Allow only filename specification.
+            return false;
         default:
-            throw new Exception("Invalid action specified. See the <a href='http://www.helioviewer.org/api/'>API Documentation</a> for a list of valid actions.");
+            break;
         }
+        
+        // Check input
+        if (isset($expected)) {
+            Helper::checkInput($expected, $this->_params);
+        }
+        
         return true;
     }
 
@@ -89,7 +109,8 @@ class Movies implements Module
      * 
      * API example: http://localhost/helioviewer/api/index.php?action=buildMovie
      *     &startDate=1041465600&zoomLevel=13&numFrames=20&frameRate=8
-     *     &timeStep=86400&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
+     *     &timeStep=86400&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215
+     *     /SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
      *     &imageSize=588,556&filename=example&sharpen=false&edges=false
      * 
      * Note that filename does NOT have the . extension on it. The reason for 
@@ -132,12 +153,15 @@ class Movies implements Module
         try {
             //Limit number of layers to three
             if (strlen($this->_params['layers']) == 0) {
-                throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
+                $msg = "Invalid layer choices! You must specify 1-3 command-separate layernames.";
+                throw new Exception($msg);
             }
 
             //Limit number of frames
             if (($numFrames < 10) || ($numFrames > HV_MAX_MOVIE_FRAMES)) {
-                throw new Exception("Invalid number of frames. Number of frames should be at least 10 and no more than " . HV_MAX_MOVIE_FRAMES . ".");
+                $msg = "Invalid number of frames. Number of frames should be " .
+                "at least 10 and no more than " . HV_MAX_MOVIE_FRAMES . ".";
+                throw new Exception($msg);
             }
 
             $layers = $this->_formatLayerStrings($layerStrings);

@@ -4,6 +4,13 @@
  * Helioviewer Events Module Class Definition
  * 
  * PHP version 5
+ * 
+ * @category Modules
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @author   Jonathan Harper <jwh376@msstate.edu>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'interface.Module.php';
 

@@ -14,7 +14,14 @@
 require_once 'interface.Module.php';
 
 /**
- * Helioviewer JHelioviewer Module
+ * Provides methods for assisting JHelioviewer such as JPEG 2000 archive
+ * searching and JPX file generation
+ * 
+ * @category Modules
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
  * 
  */
 class JHelioviewer implements Module
@@ -162,12 +169,12 @@ class JHelioviewer implements Module
             $url = preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri);
             echo $url;
             
-        // jpip url
         } else if ($this->_params['getJPIP']) {
+            // jpip url
             echo $this->_getJPIPURL($uri);
-            
-        // jp2 image
+
         } else { 
+            // jp2 image
             $fp = fopen($uri, 'r');
             $stat = stat($uri);
 

@@ -1,0 +1,47 @@
+<project name="Helioviewer" default="cs" basedir="../">
+    <!-- Helioviewer Back-end Apache Ant build.xml. -->
+    <!-- Last updated: February  06, 2010 By Keith -->
+    <description>
+        Helioviewer Back-end Apache Ant build.xml
+    </description>
+	
+	<!-- Prerequisites -->
+	<available file="/usr/local/bin/phpcs" type="file" property="phpcs.found" />
+	<available file="/usr/local/bin/phpdoc" type="file" property="phpdoc.found" />
+	
+	<!-- Check for PHP Codesniffer -->	
+	<target name="phpcs_prereqs" unless="phpcs.found">
+	   <echo>Unable to find PHP CodeSniffer.</echo>
+	   <echo>To install, run:</echo>
+	   <echo>   sudo pear install PHP_CodeSniffer</echo>
+	</target>
+	
+    <!-- PHP CodeSniffer -->
+	<target name="cs" depends="phpcs_prereqs" if="phpcs.found">
+		<description>
+            Checks code against a specified coding standard.
+        </description>
+		<echo>Checking coding standards</echo>
+		<exec executable="phpcs" error="/dev/null">
+			<arg line="-n --standard=pear --report-width=120 modules/" />
+		</exec>
+	</target>
+	
+	<!-- Check for phpDocumentor -->
+    <target name="phpdoc_prereqs" unless="phpdoc.found">
+       <echo>Unable to find phpDocumentor</echo>
+       <echo>To install, run:</echo>
+       <echo>   sudo pear install --alldeps PhpDocumentor</echo>
+    </target>
+    
+    <!-- PHP Documentation Generation -->
+    <target name="doc" depends="phpdoc_prereqs" if="phpdoc.found">
+        <description>
+            Generates PHP Documentation using phpDocumentor.
+        </description>
+        <echo>Running phpDocumentor...</echo>
+        <exec executable="phpdoc">
+            <arg line="-t docs/ -d modules/" />
+        </exec>
+    </target>
+</project>
