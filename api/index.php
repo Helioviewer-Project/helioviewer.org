@@ -25,7 +25,7 @@
  *    Mimetypes: video/mj2, image/jpx. 
  *    (See http://www.rfc-editor.org/rfc/rfc3745.txt)
  */
-require_once "Config.php";
+require_once "lib/Config.php";
 $config = new Config("../settings/Config.ini");
 
 if (isset($_REQUEST['action'])) {
@@ -47,13 +47,13 @@ if (!(isset($params) && loadModule($params))) {
     <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
     <meta name="keywords" content="Helioviewer, hv, solar image viewer, sun, solar, heliosphere,
                                       solar physics, viewer, visualization, space, astronomy, API">
-    <link rel="stylesheet" type="text/css" href="styles/api.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/api.css" />
 </head>
 
 <body>
 
 <!-- Logo -->
-<img alt="Helioviewer Logo" src="images/about.png" style="float: left;">
+<img alt="Helioviewer Logo" src="resources/images/about.png" style="float: left;">
 <h1 style="position: relative; top: 22px;">API</h1>
 <br />
 
@@ -1140,7 +1140,7 @@ function loadModule($params)
         "getJP2ImageSeries"=> "JHelioviewer"
     );
     
-    include_once "modules/lib/Helper.php";
+    include_once "lib/Helper.php";
     
     try {
         if (!array_key_exists($params["action"], $valid_actions)) {
@@ -1151,8 +1151,9 @@ function loadModule($params)
             );
         } else {
             $module = $valid_actions[$params["action"]];
-            include_once "modules/$module.php";
-            $obj = new $module($params);
+            include_once "lib/Module/$module.php";
+            $className = "Module_" . $module;
+            $obj = new $className($params);
         }
     } catch (Exception $e) {
         Helper::printErrorMsg($e->getMessage());
