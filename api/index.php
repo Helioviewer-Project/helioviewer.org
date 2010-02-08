@@ -1140,7 +1140,7 @@ function loadModule($params)
         "getJP2ImageSeries"=> "JHelioviewer"
     );
     
-    include_once "lib/Helper.php";
+    include_once "lib/Validation/InputValidator.php";
     
     try {
         if (!array_key_exists($params["action"], $valid_actions)) {
@@ -1156,9 +1156,36 @@ function loadModule($params)
             $obj = new $className($params);
         }
     } catch (Exception $e) {
-        Helper::printErrorMsg($e->getMessage());
+        printErrorMsg($e->getMessage());
     }
     
     return true;
+}
+
+/**
+ * Display an error message to the API user
+ * 
+ * @param string $msg Error message to display to the user
+ * 
+ * @return void
+ */
+function printErrorMsg($msg)
+    {
+    ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Helioviewer.org API - Error</title>
+</head>
+<body>
+    <div style='width: 50%; margin-left: auto; margin-right: auto; margin-top: 250px;
+                text-align: center; font-size: 14px;'>
+    <img src='images/about.png' alt='Helioviewer logo'></img><br>
+    <b>Error:</b> <?php echo $msg;?><br>
+    </div>
+</body>
+</html>
+    <?php
+    exit();
 }
 ?>

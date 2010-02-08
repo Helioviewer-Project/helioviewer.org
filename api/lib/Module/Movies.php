@@ -84,7 +84,7 @@ class Module_Movies implements Module
         
         // Check input
         if (isset($expected)) {
-            Helper::checkInput($expected, $this->_params);
+            Validation_InputValidator::checkInput($expected, $this->_params);
         }
         
         return true;
