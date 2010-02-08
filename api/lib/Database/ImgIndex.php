@@ -12,6 +12,8 @@ class Database_ImgIndex {
     }
 
     public function getClosestImage($date, $id, $debug=false) {
+        include_once 'lib/Helper/DateTimeConversions.php';
+                
         $datestr = isoDateToMySQL($date);
         
         // Search left and right side of image database B-Tree separately

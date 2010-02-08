@@ -419,7 +419,7 @@ class Module_WebClient implements Module
         }
         
         if (isset($expected)) {
-            Helper::checkInput($expected, $this->_params);
+            Validation_InputValidator::checkInput($expected, $this->_params);
         }
         
         return true;

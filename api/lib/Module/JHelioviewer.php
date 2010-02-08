@@ -85,7 +85,7 @@ class Module_JHelioviewer implements Module
         case "buildJP2ImageSeries":
             // Need to fix bools now for links check
             $bools = array("getURL", "getJPIP", "links", "frames", "debug");
-            Helper::checkBools($bools, $this->_params); 
+            Validation_InputValidator::checkBools($bools, $this->_params); 
             
             $expected = array(
                 "dates" => array('startTime', 'endTime'),
@@ -107,7 +107,7 @@ class Module_JHelioviewer implements Module
         }
         
         if (isset($expected)) {
-            Helper::checkInput($expected, $this->_params);
+            Validation_InputValidator::checkInput($expected, $this->_params);
         }        
         
         return true;
@@ -246,6 +246,7 @@ class Module_JHelioviewer implements Module
     {
         include_once 'lib/Database/ImgIndex.php';
         include_once 'lib/Database/DbConnection.php';
+        include_once 'lib/Helper/DateTimeConversions.php';
     
         $startTime   = toUnixTimestamp($this->_params['startTime']);
         $endTime     = toUnixTimestamp($this->_params['endTime']);
@@ -306,6 +307,8 @@ class Module_JHelioviewer implements Module
 
             $images = array();
 
+            include_once 'lib/Helper/DateTimeConversions.php';
+            
             // Get nearest JP2 images to each time-step
             for ($i = 0; $i < $numFrames; $i++) {
                 $isoDate = toISOString(parseUnixTimestamp($time));

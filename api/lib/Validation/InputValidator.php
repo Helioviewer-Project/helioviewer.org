@@ -1,14 +1,12 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Helioviewer Helper Class
+ * Helioviewer InputValidator Class
  */
 /**
- * Helioviewer Helper Class
+ * Helioviewer InputValidator Class
  * 
- * This file defines a class which includes various helper methods
- * for dealing with things like time conversions, type-casting, and
- * validation.
+ * This file defines a class which helps to validate and type-case input
  * 
  * PHP version 5
  * 
@@ -18,7 +16,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Helper
+class Validation_InputValidator
 {
     /**
      * Validates and type-casts API Request parameters
@@ -43,7 +41,7 @@ class Helper
         // Run validation checks
         foreach ($checks as $name => $method) {
             if (isset($expected[$name])) {
-                Helper::$method($expected[$name], $input);
+                Validation_InputValidator::$method($expected[$name], $input);
             }
         }
     }
@@ -156,7 +154,7 @@ class Helper
     public static function checkDates($dates, &$params)
     {
         foreach ($dates as $date) {
-            Helper::checkUTCDate($params[$date]);
+            Validation_InputValidator::checkUTCDate($params[$date]);
         }
     }
     
@@ -174,99 +172,5 @@ class Helper
             throw new Exception("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
         }     
     }
-        
-    /**
-     * Display an error message to the API user
-     * 
-     * @param string $msg Error message to display to the user
-     * 
-     * @return void
-     */
-    public static function printErrorMsg($msg)
-    {
-    ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Helioviewer.org API - Error</title>
-</head>
-<body>
-    <div style='width: 50%; margin-left: auto; margin-right: auto; margin-top: 250px;
-                text-align: center; font-size: 14px;'>
-    <img src='images/about.png' alt='Helioviewer logo'></img><br>
-    <b>Error:</b> <?php echo $msg;?><br>
-    </div>
-</body>
-</html>
-    <?php
-    exit();
-    }
-}
-
-/**
- * Converts an ISO 8601 UTC date string into a unix timestep
- * 
- * @param string $dateStr ISO 8601 Date string, e.g. "2003-10-05T00:00:00Z"
- * 
- * @return int Number of seconds since Jan 1, 1970 UTC
- */
-function toUnixTimestamp($dateStr)
-{
-    date_default_timezone_set('UTC');
-    return strtotime($dateStr);
-}
-
-/**
- * Converts a unix timestamp to a PHP DateTime instance
- * 
- * @param int $timestamp The number of seconds since Jan 1, 1970 UTC
- * 
- * @see http://us2.php.net/manual/en/function.date-create.php
- * 
- * @return DateTime A PHP DateTime object
- */
-function parseUnixTimestamp($timestamp)
-{
-    date_default_timezone_set('UTC');
-    return new DateTime("@$timestamp");
-}
-
-/**
- * Outputs a date string formatted for use in MySQL queries
- * 
- * @param DateTime $date A PHP DateTime object
- * 
- * @return string Returns a date formatted for MySQL queries (2003-10-05 00:00:00)
- */
-function toMySQLDateString($date)
-{
-    return $date->format("Y-m-d H:i:s");
-}
-
-/**
- * Parses an ISO 8601 date string with one formatted for MySQL 
- *
- * @param string $dateStr A ISO 8601 date string
- * 
- * @return string Returns a date formatted for MySQL queries (2003-10-05 00:00:00)
- */
-function isoDateToMySQL($dateStr)
-{
-    return str_replace("Z", "", str_replace("T", " ", $dateStr));
-}
-
-/**
- * Takes a PHP DateTime object and returns an UTC date string
- * 
- * Similar to:
- *     echo $date->format(DATE_ISO8601);
- * 
- * @param DateTime $date A PHP DateTime object
- * 
- * @return string An ISO 8601 Date string (2003-10-05T00:00:00Z)
- */
-function toISOString($date)
-{
-    return $date->format("Y-m-d\TH:i:s\Z");
 }
 ?>
