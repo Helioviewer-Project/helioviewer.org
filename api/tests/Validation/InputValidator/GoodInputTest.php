@@ -29,6 +29,8 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
     protected $inputValidator;
     
     /**
+     * Sets up test environment
+     * 
      * @return void
      */
     protected function setUp()
@@ -40,7 +42,8 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
      * Tests method which checks for required parameters
      * 
      * @param array $required A list of the required parameters for a given action
-     * @param array $params  The parameters that were passed in
+     * @param array $params   The parameters that were passed in
+     * 
      * @test
      * @dataProvider checkForMissingParamsProvider
      * 
@@ -68,6 +71,55 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
             array(
                 array("required", "zero", "bool"),
                 array("required" => "string", "zero" => "0", "bool" => "false", "optional" => "test")
+            ),
+            array(
+                array("int", "float", "bool"),
+                array("int" => "-42", "float" => "3.14", "bool" => "true")
+            )
+        );   
+    }
+    
+    /**
+     * Tests method which attempts to validate and cast boolean input values
+     * 
+     * @param array $bools  The simulated boolean user input
+     * @param array $params The parameters that were passed in
+     * 
+     * @test
+     * @dataProvider checkBoolsProvider
+     * 
+     * @return void
+     */
+    public function checkBools($bools, $params)
+    {
+        // Check proper input
+        try {
+            Validation_InputValidator::checkBools($bools, $params);
+        }
+        catch (Exception $ex) {
+            $this->fail("Unexpected exception thrown: " . $ex->getMessage());
+        }
+    }
+    
+    /**
+     * Data provider for checkBools
+     * 
+     * @return array Acceptable input test cases
+     */
+    public function checkBoolsProvider()
+    {
+        return array(
+            array(
+                array(),
+                array()
+            ),
+            array(
+                array("one", "two", "three", "four"),
+                array("one" => "true", "two" => "False", "three" => "1", "four" => "0")
+            ),
+            array(
+                array("not_specified"),
+                array()
             )
         );   
     }

@@ -1,54 +1,84 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * @package DbConnection
- * @author Patrick Schmiedel <patrick.schmiedel@gmx.net>
- * @author Keith Hughitt <Vincent.K.Hughitt@nasa.gov>
+ * Database connection helper
+ * 
+ * PHP version 5
+ * 
+ * @category Database
+ * @package  Helioviewer
+ * @author   Patrick Schmiedel <patrick.schmiedel@gmx.net>
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
  */
-class Database_DbConnection {
-    private $host     = HV_DB_HOST;
-    private $dbname   = HV_DB_NAME;
-    private $user     = HV_DB_USER;
-    private $password = HV_DB_PASS;
-    
+/**
+ * Database connection helper class
+ * 
+ * @category Database
+ * @package  Helioviewer
+ * @author   Patrick Schmiedel <patrick.schmiedel@gmx.net>
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ */
+class Database_DbConnection
+{
+    private $_host     = HV_DB_HOST;
+    private $_dbname   = HV_DB_NAME;
+    private $_user     = HV_DB_USER;
+    private $_password = HV_DB_PASS;
+
     /**
-     * @param string [optional] Database name
-     * @param string [optional] Database user
-     * @param string [optional] Database password
-     * @param string [optional] Database hostname
+     * Create a DbConnection instance
+     * 
+     * @param string $dbname   [Optional] Database name
+     * @param string $user     [Optional] Database user
+     * @param string $password [Optional] Database password
+     * @param string $host     [Optional] Database hostname
+     * 
+     * @return void
      */
-    public function __construct($dbname = null, $user = null, $password = null, $host = null) {
+    public function __construct($dbname = null, $user = null, $password = null, $host = null)
+    {
         if ($user) {
-            $this->user = $user;    
+            $this->_user = $user;    
         }
         if ($password) {
-            $this->password = $password;
+            $this->_password = $password;
         }
         if ($host) {
-            $this->host = $host;
+            $this->_host = $host;
         }
         if ($dbname) {
-            $this->dbname = $dbname;
+            $this->_dbname = $dbname;
         }
         $this->connect();
     }
-    
+
     /**
-     * connect 
+     * Connects to database and sets timezone to UTC
+     * 
+     * @return void
      */
-    public function connect() {
-        if (!$this->link = mysqli_connect($this->host, $this->user, $this->password)) {
+    public function connect()
+    {
+        if (!$this->link = mysqli_connect($this->_host, $this->_user, $this->_password)) {
             die('Error connecting to data base: ' . mysqli_error($this->link));
         }
-        mysqli_select_db($this->link, $this->dbname);
+        mysqli_select_db($this->link, $this->_dbname);
         mysqli_query($this->link, "SET @@session.time_zone = '+00:00'");
     }
 
     /**
-     * query
-     * @param string SQL
+     * Queries database
+     * 
+     * @param string $query SQL query
+     * 
      * @return mixed Query result
      */    
-    public function query($query) {
+    public function query($query)
+    {
         $result = mysqli_query($this->link, $query);
         if (!$result) {
             die("Error executing query:<br>\n$query <br>\n " . mysqli_error($this->link));
