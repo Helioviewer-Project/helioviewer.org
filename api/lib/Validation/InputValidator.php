@@ -20,6 +20,9 @@ class Validation_InputValidator
 {
     /**
      * Validates and type-casts API Request parameters
+     * 
+     * TODO 02/09/2009: Create more informative exception classes:
+     *  InvalidInputException, MissingRequiredParameterException, etc.
      *
      * @param array &$expected Types of checks required for request
      * @param array &$input    Actual request parameters

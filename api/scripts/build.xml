@@ -8,6 +8,27 @@
 	<!-- Prerequisites -->
 	<available file="/usr/local/bin/phpcs" type="file" property="phpcs.found" />
 	<available file="/usr/local/bin/phpdoc" type="file" property="phpdoc.found" />
+	<available file="/usr/local/bin/phpunit" type="file" property="phpunit.found" />
+	
+	<!-- TODO: target = all -->
+	
+    <!-- Check for PHPUnit -->  
+    <target name="phpunit_prereqs" unless="phpunit.found">
+       <echo>Unable to find PHPUnit.</echo>
+       <echo>To install, follow instructions at:</echo>
+       <echo>   http://www.phpunit.de/manual/3.4/en/installation.html</echo>
+    </target>
+    
+    <!-- PHPUnit -->
+    <target name="test" depends="phpunit_prereqs" if="phpunit.found">
+        <description>
+            Runs PHPUnit tests.
+        </description>
+        <echo>Running PHPUnit tests...</echo>
+        <exec executable="phpunit" error="/dev/null">
+            <arg line="tests/" />
+        </exec>
+    </target>
 	
 	<!-- Check for PHP Codesniffer -->	
 	<target name="phpcs_prereqs" unless="phpcs.found">
@@ -23,7 +44,7 @@
         </description>
 		<echo>Checking coding standards</echo>
 		<exec executable="phpcs" error="/dev/null">
-			<arg line="-n --standard=pear --report-width=120 modules/" />
+			<arg line="-n --standard=pear --report-width=120 lib/" />
 		</exec>
 	</target>
 	
@@ -41,7 +62,7 @@
         </description>
         <echo>Running phpDocumentor...</echo>
         <exec executable="phpdoc">
-            <arg line="-t docs/ -d modules/" />
+            <arg line="-t docs/ -d lib/" />
         </exec>
     </target>
 </project>
