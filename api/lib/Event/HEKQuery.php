@@ -1,99 +1,133 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * @package Helioviewer API
- * @author Jonathan Harper <jwh376@msstate.edu>
+ * HEKQuery Class Definition
  * 
+ * PHP version 5
  * 
+ * @category Event
+ * @package  Helioviewer
+ * @author   Jonathan Harper <jwh376@msstate.edu>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
  */
-
-error_reporting(E_ALL | E_STRICT | E_NOTICE);
-
 define("HEK_BASE_URL", "http://www.lmsal.com/her/dev/search-hpkb/hek?");
-require_once("lib/Net/Proxy.php");
+require_once 'lib/Net/Proxy.php';
 
-
-class Event_HEKQuery {
-    private $query_type;
-    private $event_type;
-    private $start_time;
-    private $end_time;
-    private $x1;
-    private $y1;
-    private $x2;
-    private $y2;
-    private $return_format;
+/**
+ * A class to provide support for querying feature/event information through
+ * the Heliophysics Event Knowledgebase (HEK).
+ * 
+ * @category Event
+ * @package  Helioviewer
+ * @author   Jonathan Harper <jwh376@msstate.edu>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ * @see      http://www.lmsal.com/helio-informatics/hpkb/
+ */
+class Event_HEKQuery
+{
+    private $_queryType;
+    private $_eventType;
+    private $_startTime;
+    private $_endTime;
+    private $_x1;
+    private $_y1;
+    private $_x2;
+    private $_y2;
+    private $_returnFormat;
     
-    public $query_string;
+    public $queryString;
     
     /**
-     * Constructor
-     * @desc Builds an initial query string
-     * @param string $query_type Indicates the purpose of the query.  'search' searches for all events in the region, 'sources' returns a list of frm_names
-     * @param string $event_type A two letter abbreviation for the type of event (or more than one, comma delimited), or ** for all events.
-     * @param object $start_time Date and time for the beginning of the window.  YYYY-MM-DDTHH:MM:SS
-     * @param object $end_time Date and time for the end of the window. YYYY-MM-DDTHH:MM:SS
-     * @param object $x1 First X coordinate for the window.1
-     * @param object $y1 First Y coordinate for the window.
-     * @param object $x2 Second X coordinate for the window.
-     * @param object $y2 Second Y coordinate for the window.
+     * Builds an initial query string
+     * 
+     * @param string $queryType Indicates the purpose of the query. 'search' searches for all events in the region, 
+     *                          'sources' returns a list of frm_names
+     * @param string $eventType A two letter abbreviation for the type of event (or more than one, comma delimited), 
+     *                          or ** for all events.
+     * @param object $startTime Date and time for the beginning of the window.  YYYY-MM-DDTHH:MM:SS
+     * @param object $endTime   Date and time for the end of the window. YYYY-MM-DDTHH:MM:SS
+     * @param object $x1        First X coordinate for the window.1
+     * @param object $x2        Second X coordinate for the window.
+     * @param object $y1        First Y coordinate for the window.
+     * @param object $y2        Second Y coordinate for the window.
+     * 
+     * @return void
      */
-    public function __construct($query_type = "sources", 
-                                $event_type = NULL, $start_time = NULL, $end_time = NULL, $x1 = "-1200", $x2 = "1200", $y1 = "-1200", $y2 = "1200")
-    {
-        $this->query_type = $query_type;
-        $this->event_type = $event_type;
-        $this->start_time = $start_time;
-        $this->end_time = $end_time;
-        $this->x1 = $x1;
-        $this->y1 = $y1;
-        $this->x2 = $x2;
-        $this->y2 = $y2;
+    public function __construct($queryType = "sources", $eventType = null, $startTime = null, $endTime = null,
+        $x1 = "-1200", $x2 = "1200", $y1 = "-1200", $y2 = "1200"
+    ) {
+        $this->_queryType = $queryType;
+        $this->_eventType = $eventType;
+        $this->_startTime = $startTime;
+        $this->_endTime = $endTime;
+        $this->_x1 = $x1;
+        $this->_x2 = $x2;
+        $this->_y1 = $y1;
+        $this->_y2 = $y2;
         
     }
     
-    private function build_query()
+    /**
+     * (Add description)
+     * 
+     * @return void
+     */
+    private function _buildQuery()
     {
-        if($this->query_type == "sources")
-        {
-            $this->query_string="cmd=view-attributes";    
-        }
-        
-        else 
-        {
-            $this->query_string="cmd=search&type=column&event_type=" . $this->event_type . "&event_starttime=" . $this->start_time . "&event_endtime=" . $this->end_time . "&event_coordsys=helioprojective&x1=" . $this->x1 . "&x2=" . $this->x2 . "&y1=" . $this->y1 . "&y2=" . $this->y2;
+        if ($this->_queryType == "sources") {
+            $this->queryString="cmd=view-attributes";    
+        } else {
+            $this->queryString="cmd=search&type=column&eventType=" . $this->_eventType . "&event_starttime=" . 
+                $this->_startTime . "&event_endtime=" . $this->_endTime . "&event_coordsys=helioprojective&x1=" . 
+                $this->_x1 . "&x2=" . $this->_x2 . "&y1=" . $this->_y1 . "&y2=" . $this->_y2;
         }
     }
     
-    public function retrieve_results($brief)
+    /**
+     * (Add description)
+     * 
+     * @param ? $brief ...
+     *
+     * @return void
+     */
+    public function retrieveResults($brief)
     {
-        $this->build_query($this->query_type);
-        $this->query_string = $this->query_string . "&cosec=2";
-        if($brief)
-        {
-            $this->query_string = $this->query_string . "&return=required";
+        $this->_buildQuery($this->_queryType);
+        $this->queryString = $this->queryString . "&cosec=2";
+        
+        if ($brief) {
+            $this->queryString = $this->queryString . "&return=required";
         }
-        $proxy = new Net_Proxy(HEK_BASE_URL, $this->query_string);
-        if($this->query_type == "sources")
-        {
-            $this->parse_sources('frm_name', $proxy->query(true));
-        }
-        else
-        {
+        
+        $proxy = new Net_Proxy(HEK_BASE_URL, $this->queryString);
+        
+        if ($this->_queryType == "sources") {
+            $this->_parseSources('frm_name', $proxy->query(true));
+        } else {
             header("Content-type: application/json");
             echo $proxy->query(true);
         }
     }
     
-    private function parse_sources($variable, $hek_reply)
+    /**
+     * (Add description)
+     * 
+     * @param ? $variable  ...
+     * @param ? $hek_reply ...
+     * 
+     * @return void
+     */
+    private function _parseSources($variable, $hek_reply)
     {
         //header("Content-type: application/json");
         $hek_reply = json_decode($hek_reply, true);
         $hek_reply = json_encode($hek_reply{'FRM_Name'});
         $hek_reply = json_decode($hek_reply, true);
         $new = array();
-        foreach($hek_reply as $key=>$value)
-        {
-            array_push($new,$key);
+        foreach ($hek_reply as $key=>$value) {
+            array_push($new, $key);
         }
         //print json_encode($hek_reply->{'FRM_Name'});
         var_dump($new);
@@ -101,5 +135,5 @@ class Event_HEKQuery {
 }
 
 $query = new Event_HEKQuery();
-$query->retrieve_results(false);
+$query->retrieveResults(false);
 ?>

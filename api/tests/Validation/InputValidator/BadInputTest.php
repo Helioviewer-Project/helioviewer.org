@@ -29,6 +29,8 @@ class InputValidator_BadInputTest extends PHPUnit_Framework_TestCase
     protected $inputValidator;
     
     /**
+     * Sets up test environment
+     * 
      * @return void
      */
     protected function setUp()
@@ -40,7 +42,8 @@ class InputValidator_BadInputTest extends PHPUnit_Framework_TestCase
      * Tests method which checks for required parameters
      * 
      * @param array $required A list of the required parameters for a given action
-     * @param array $params  The parameters that were passed in
+     * @param array $params   The parameters that were passed in
+     * 
      * @test
      * @dataProvider missingParameterProvider
      * @expectedException Exception
@@ -63,6 +66,10 @@ class InputValidator_BadInputTest extends PHPUnit_Framework_TestCase
             array(
                 array("required", "zero", "bool"),
                 array("required" => "string", "zero" => "0", "forgot" => "boolean")
+            ),
+            array(
+                array("required", "zero", "bool"),
+                array()
             )
         );   
     }

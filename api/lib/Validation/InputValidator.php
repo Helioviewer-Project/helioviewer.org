@@ -77,8 +77,14 @@ class Validation_InputValidator
     public static function checkBools($bools, &$params)
     {
         foreach ($bools as $bool) {
-            if (isset($params[$bool]) && (strtolower($params[$bool]) === "true")) {
-                $params[$bool] = true;
+            if (isset($params[$bool])) {
+                if ((strtolower($params[$bool]) === "true") || $params[$bool] === "1") {
+                    $params[$bool] = true;
+                } elseif ((strtolower($params[$bool]) === "false") || $params[$bool] === "0") {
+                    $params[$bool] = false;
+                } else {
+                    throw new Exception("Invalid value for $bool. Please specify a boolean value.");
+                }
             } else {
                 $params[$bool] = false;
             }
