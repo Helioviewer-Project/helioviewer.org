@@ -8,7 +8,7 @@
  * @category Image
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @author   Jaclyn Beck
+ * @author   Jaclyn Beck <jabeck@nmu.edu>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -23,11 +23,12 @@ require 'JPEG2000/JP2Image.php';
  * @category Image
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @author   Jaclyn Beck
+ * @author   Jaclyn Beck <jabeck@nmu.edu>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_SubFieldImage {
+class Image_SubFieldImage
+{
     /**
     protected $subfieldFile; //image
     protected $subfieldWidth; //imageWidth
@@ -57,10 +58,22 @@ class Image_SubFieldImage {
     protected $squareImage   = false;
 
     /**
+     * Creates an Image_SubFieldImage instance
+     * 
+     * @param string $sourceJp2    Original JP2 image from which the subfield should be derrived
+     * @param string $outputFile   Location to output the subfield image to
+     * @param array	 $roi          Subfield region of interest
+     * @param string $format       File format to use when saving the subfield image
+     * @param int    $jp2Width     Width of the JP2 image at it's natural resolution
+     * @param int    $jp2Height    Height of the JP2 image at it's natural resolution
+     * @param float  $jp2Scale     Pixel scale of the original JP2 image
+     * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
+     * 
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *           ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale) {
+    public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale)
+    {
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
         $this->outputFile = $outputFile;
         $this->roi        = $roi;
@@ -80,21 +93,21 @@ class Image_SubFieldImage {
 
         $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
-
-        //var_dump($this);
-        //exit();
     }
 
     /**
-     * buildImage
-     * @description Extracts a region of the jp2 image, converts it into a .png file, and handles
-     *                 any padding, resizing, and transparency. PNG is used as an intermediate format
-     *              due to lack of support for PGM files in GD.
-     * @return
+     * Builds the requested subfield image.
+     * 
+     * Extracts a region of the JP2 image, converts it into a .png file, and handles
+     * any padding, resizing, and transparency. PNG is used as an intermediate format
+     * due to lack of support for PGM files in GD.
      *
      * @TODO: Normalize quality scale.
+     * 
+     * @return void
      */
-    protected function buildImage() {
+    protected function buildImage()
+    {
         try {
             $grayscale    = substr($this->outputFile, 0, -3) . "pgm";
             $intermediate = substr($this->outputFile, 0, -3) . "png";
@@ -108,57 +121,62 @@ class Image_SubFieldImage {
             $toIntermediateCmd = $cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale ";
 
             // kdu_expand can only handle whole number values for -reduce
-            if (fmod($this->scaleFactor, 1) != 0)
+            if (fmod($this->scaleFactor, 1) != 0) {
                 $toIntermediateCmd .= "-resize " . $this->subfieldRelWidth . "x" . $this->subfieldRelHeight . "! ";
+            }
 
             exec(escapeshellcmd($toIntermediateCmd . $intermediate));
             //die($toIntermediateCmd . $intermediate);
             //echo($toIntermediateCmd . $intermediate . "<br><br>");
 
             //Apply color-lookup table
-            if ($this->colorTable)
+            if ($this->colorTable) {
                 $this->setColorPalette($intermediate, $this->colorTable, $intermediate);
+            }
 
             // IM command for transparency, padding, rescaling, etc.
-            if ($this->hasAlphaMask())
+            if ($this->hasAlphaMask()) {
                 $cmd = HV_PATH_CMD . " convert ";
-            else
+            } else {
                 $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
+            }
 
             // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
             $extracted = $this->getImageDimensions($intermediate);
 
-            if ($this->desiredToActual > 1)
-                $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
-
+            // if ($this->desiredToActual > 1) {
+            //    $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
+            // } else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
+            
             // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-            //else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
-            else if ($this->squareImage && ($this->subfieldWidth != $this->subfieldHeight) ) {
+            if ($this->desiredToActual > 1) {
+                $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
+            } else if ($this->squareImage && ($this->subfieldWidth != $this->subfieldHeight) ) {
                 $cmd .= $this->padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
             }
 
-            if ($this->hasAlphaMask())
+            if ($this->hasAlphaMask()) {
                 $cmd .= $this->applyAlphaMask($intermediate);
+            }
 
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
-//            var_dump($this);
-//            die($cmd . " " . $this->outputFile);
-
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
-            if ($ret != 0)
+            if ($ret != 0) {
                 throw new Exception("Unable to apply final processing. Command: $cmd");
+            }
 
-            if ($this->outputFile != $intermediate)
+            if ($this->outputFile != $intermediate) {
                 unlink($intermediate);
+            }
 
             unlink($grayscale);
 
         } catch(Exception $e) {
             $error = "[buildImage][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
             print $e->getMessage();
 
             //Clean-up and exit
@@ -167,19 +185,32 @@ class Image_SubFieldImage {
     }
 
     /**
-     * temp work-around
+     * Pads a tile to the desired dimensions
+     * 
+     * @param int $jp2Width  JP2 base width
+     * @param int $jp2Height JP2 base height
+     * @param int $ts        Tilesize in pixelss
+     * @param int $x         Tile x-coordinate
+     * @param int $y         Tile y-coordinate
+     * 
+     * TODO: Move to Tile class
+     * 
+     * @return string Command to pad tile
      */
-    private function padTile ($jp2Width, $jp2Height, $ts, $x, $y) {
+    private function _padTile ($jp2Width, $jp2Height, $ts, $x, $y)
+    {
         // Determine min and max tile numbers
         $imgNumTilesX = max(2, ceil($this->jp2RelWidth  / $this->tileSize));
         $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->tileSize));
 
         // Tile placement architecture expects an even number of tiles along each dimension
-        if ($imgNumTilesX % 2 != 0)
+        if ($imgNumTilesX % 2 != 0) {
             $imgNumTilesX += 1;
+        }
 
-        if ($imgNumTilesY % 2 != 0)
+        if ($imgNumTilesY % 2 != 0) {
             $imgNumTilesY += 1;
+        }
 
         $tileMinX = - ($imgNumTilesX / 2);
         $tileMaxX =   ($imgNumTilesX / 2) - 1;
@@ -191,46 +222,50 @@ class Image_SubFieldImage {
         if ($x == $tileMinX) {
             if ($y == $tileMinY) {
                 $gravity = "SouthEast";
-            }
-            else if ($y == $tileMaxY) {
+            } else if ($y == $tileMaxY) {
                 $gravity = "NorthEast";
-            }
-            else {
+            } else {
                 $gravity = "East";
             }
-        }
-        else if ($x == $tileMaxX) {
+        } else if ($x == $tileMaxX) {
             if ($y == $tileMinY) {
                 $gravity = "SouthWest";
-            }
-            else if ($y == $tileMaxY) {
+            } else if ($y == $tileMaxY) {
                 $gravity = "NorthWest";
-            }
-            else {
+            } else {
                 $gravity = "West";
             }
-        }
-
-        else {
+        } else {
             if ($y == $tileMinY) {
                 $gravity = "South";
-            }
-            else {
+            } else {
                 $gravity = "North";
             }
         }
 
         // Construct padding command
         return "-gravity $gravity -extent $ts" . "x" . "$ts ";
-//   return "-extent $ts" . "x" . "$ts ";
+        //   return "-extent $ts" . "x" . "$ts ";
     }
 
 
     /**
+     * Pads the subfield image
+     * 
+     * TODO: Move to relevent sub-classes (e.g. Tile and Screenshot)
+     * 
      * If the image is a Tile, it is padded according to where it lies in the image.
      * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
+     * 
+     * @param int $width  Width to pad to
+     * @param int $height Height to pad to
+     * @param int $x      Tile x-coordinate
+     * @param int $y      Tile y-coordinate
+     * 
+     * @return string Command to pad subfield image
      */
-    private function padImage ($width, $height, $x, $y) {
+    private function _padImage ($width, $height, $x, $y)
+    {
         //if($this->isTile) {
 
         // Determine min and max (i.e. outermost) tile numbers
@@ -238,25 +273,27 @@ class Image_SubFieldImage {
         $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->subfieldHeight));
 
         // Tile placement architecture expects an even number of tiles along each dimension
-        if ($imgNumTilesX % 2 != 0)
+        if ($imgNumTilesX % 2 != 0) {
             $imgNumTilesX += 1;
+        }
 
-        if ($imgNumTilesY % 2 != 0)
+        if ($imgNumTilesY % 2 != 0) {
             $imgNumTilesY += 1;
+        }
 
         // Inner tiles are all tiles except the edge tiles (For four-tile case, all tiles are outer tiles)
         $numInnerTilesX = $imgNumTilesX - 2;
         $numInnerTilesY = $imgNumTilesY - 2;
 
-         $tileMinX = ($this->jp2Width - ($this->subfieldRelWidth  * $numInnerTilesX)) / 2;
+        $tileMinX = ($this->jp2Width - ($this->subfieldRelWidth  * $numInnerTilesX)) / 2;
         $tileMaxX = ($this->jp2Width + ($this->subfieldRelWidth  * $numInnerTilesX)) / 2;
         $tileMinY = ($this->jp2Height - ($this->subfieldRelHeight * $numInnerTilesY)) / 2;
         $tileMaxY = ($this->jp2Height + ($this->subfieldRelHeight * $numInnerTilesY)) / 2;
 
-//        var_dump($this);
-//        print "x: $x<br> y: $y<br> imgNumTilesX: $imgNumTilesX<br> imgNumTilesY: $imgNumTilesY<br>";
-//        print "tileMinX: $tileMinX, tileMinY: $tileMinY<br>tileMaxX: $tileMaxX, tileMaxY: $tileMaxY<br><br>";
-//        exit();
+        //        var_dump($this);
+        //        print "x: $x<br> y: $y<br> imgNumTilesX: $imgNumTilesX<br> imgNumTilesY: $imgNumTilesY<br>";
+        //        print "tileMinX: $tileMinX, tileMinY: $tileMinY<br>tileMaxX: $tileMaxX, tileMaxY: $tileMaxY<br><br>";
+        //        exit();
 
         // Determine where the tile is located (where tile should lie in the padding)
         $gravity = null;
@@ -264,33 +301,23 @@ class Image_SubFieldImage {
         if ($x < $tileMinX) {
             if ($y < $tileMinY) {
                 $gravity = "SouthEast";
-            }
-            else if ($y == $tileMaxY) {
+            } else if ($y == $tileMaxY) {
                 $gravity = "NorthEast";
-            }
-            else {
+            } else {
                 $gravity = "East";
             }
-        }
-
-        else if ($x == $tileMaxX) {
+        } else if ($x == $tileMaxX) {
             if ($y < $tileMinY) {
                 $gravity = "SouthWest";
-            }
-            else if ($y == $tileMaxY) {
+            } else if ($y == $tileMaxY) {
                 $gravity = "NorthWest";
-            }
-            else {
+            } else {
                 $gravity = "West";
             }
-        }
-
-        else {
-            if($y < $tileMinY) {
+        } else {
+            if ($y < $tileMinY) {
                 $gravity = "South";
-            }
-
-            else {
+            } else {
                 $gravity = "North";
             }
         }
@@ -302,12 +329,12 @@ class Image_SubFieldImage {
          * If the item is a subfieldImage, it is assumed that the overall picture is larger than, but contains this image.
          * The image has a heliocentric offset and will be padded with that offset.
          */
-//        else {
-//            $gravity = "NorthWest";
-//            // Offset the image from the center using the heliocentric offset
-//            $offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
-//        }cmd;
-//            exit();
+        //        else {
+        //            $gravity = "NorthWest";
+        //            // Offset the image from the center using the heliocentric offset
+        //            $offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
+        //        }cmd;
+        //            exit();
 
         // Construct padding command
         // TEST: use black instead of transparent for background?
@@ -316,28 +343,46 @@ class Image_SubFieldImage {
 
 
     /**
-     * Set Color Table
+     * Sets the subfield image color lookup table (CLUT)
+     * 
+     * @param string $clut Location of the lookup table to use
+     * 
+     * @return void
      */
-    protected function setColorTable($clut) {
+    protected function setColorTable($clut)
+    {
         $this->colorTable = $clut;
     }
 
     /**
      * Enable/Disable alpha mask support
+     * 
+     * @param string $value Locatation of the base image to use for an alpha mask
+     * 
+     * @return void
      */
-    protected function setAlphaMask($value) {
+    protected function setAlphaMask($value)
+    {
         $this->alphaMask = $value;
     }
 
-    protected function hasAlphaMask() {
+    /**
+     * Returns true if the image has an associated alpha mask
+     * 
+     * @return bool Whether or not the subfield image uses an associated alpha mask for transparent regions.
+     */
+    protected function hasAlphaMask()
+    {
         return $this->alphaMask;
     }
 
     /**
      * Set Image Parameters
-     * @return String Image compression and quality related flags.
+     * 
+     * @return string Image compression and quality related flags.
      */
-    protected function setImageParams() {
+    protected function setImageParams()
+    {
         $args = " -quality ";
         if ($this->format == "png") {
             $args .= HV_PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . HV_NUM_COLORS;
@@ -350,57 +395,80 @@ class Image_SubFieldImage {
     }
 
     /**
-     * Set Required Dimensions
-     * @param object $width
-     * @param object $height
+     * Specify the subfield image is square
+     * 
+     * @param bool $value Whether or not the subfield is a square image
+     * 
+     * @return void
      */
-    protected function setSquareImage($value) {
+    protected function setSquareImage($value)
+    {
         $this->squareImage = $value;
     }
 
     /**
      * Handles clean-up in case something goes wrong to avoid mal-formed tiles from being displayed
+     * 
+     * @param string $filename Filename for aborted subfield image
+     * 
      * @TODO: Close any open IM/GD file handlers
+     * 
+     * @return void
      */
-    private function abort($filename) {
+    private function _abort($filename)
+    {
         $pgm = substr($filename, 0, -3) . "pgm";
         $png = substr($filename, 0, -3) . "png";
 
         // Clean up
-        if (file_exists($pgm))
+        if (file_exists($pgm)) {
             unlink($pgm);
-        if (file_exists($png))
+        }
+        if (file_exists($png)) {
             unlink($png);
-        if (file_exists($filename))
+        }
+        if (file_exists($filename)) {
             unlink($filename);
+        }
 
         if ($this->hasAlphaMask()) {
             $mask = substr($filename, 0, -4) . "-mask.tif";
-            if (file_exists($mask))
-                unlink($mask);
+        }
+        if (file_exists($mask)) {
+            unlink($mask);
         }
 
         die();
     }
 
     /**
-     * setColorPalette
+     * Applies the specified color lookup table to the image using GD
+     * 
      * Note: input and output are usually the same file.
+     * 
+     * @param string $input  Location of input image
+     * @param string $clut   Location of the color lookup table to use
+     * @param string $output Location to save new image to
+     * 
+     * @return void
      */
-    private function setColorPalette ($input, $clut, $output) {
+    private function _setColorPalette ($input, $clut, $output)
+    {
         $gd = null;
         try {
-            if (file_exists($input))
+            if (file_exists($input)) {
                 $gd = imagecreatefrompng($input);
-            else
+            } else {
                 throw new Exception("Unable to apply color-table: $input does not exist.");
+            }
 
-            if (!$gd)
+            if (!$gd) {
                 throw new Exception("Unable to apply color-table: $input is not a valid image.");
+            }
 
         } catch(Exception $e) {
             $error = "[gd][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error,FILE_APPEND);
+            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
             print $e->getMessage();
 
             die();
@@ -422,16 +490,20 @@ class Image_SubFieldImage {
         imagepng($gd, $output);
 
         // Cleanup
-        if ($input != $output)
+        if ($input != $output) {
             unlink($input);
+        }
         imagedestroy($gd);
         imagedestroy($ctable);
     }
 
     /**
      * Displays the image on the page
+     * 
+     * @return void
      */
-    public function display() {
+    public function display()
+    {
         try {
             // Cache-Lifetime (in minutes)
             $lifetime = 60;
@@ -449,10 +521,11 @@ class Image_SubFieldImage {
                 header("Content-Disposition: inline; filename=\"$filename\"");
             }
 
-            if ($this->format == "png")
+            if ($this->format == "png") {
                 header("Content-Type: image/png");
-            else
+            } else {
                 header("Content-Type: image/jpeg");
+            }
 
             if (!readfile($this->outputFile)) {
                 throw new Exception("Error displaying $filename\n");
@@ -464,18 +537,21 @@ class Image_SubFieldImage {
     }
 
     /**
-     * Call's the identify command in order to determine an image's dimensions
-     * @return Object the width and height of the given image
-     * @param $filename String - The image filepath
+     * Calls the identify command in order to determine an image dimensions
+     * 
+     * @param string $filename The image filepath
+     * 
+     * @return array the width and height of the given image
      */
-    private function getImageDimensions($filename) {
+    private function _getImageDimensions($filename)
+    {
         try {
             $cmd = HV_PATH_CMD . " identify $filename | grep -o \" [0-9]*x[0-9]* \"";
 
             $dimensions = preg_split("/x/", trim(exec(escapeshellcmd($cmd))));
-            if (sizeof($dimensions) < 2)
+            if (sizeof($dimensions) < 2) {
                 throw new Exception("Unable to extract image dimensions for $filename!");
-            else {
+            } else {
                 return array (
                     'width'  => (int)$dimensions[0],
                     'height' => (int)$dimensions[1]
@@ -484,9 +560,8 @@ class Image_SubFieldImage {
         } catch (Exception $e) {
             $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
             file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
-            $this->abort($filename);
+            $this->_abort($filename);
         }
     }
-
 }
 ?>

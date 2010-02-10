@@ -266,7 +266,7 @@
 		 */
 		public function toGDImage()
 		{
-			$this->_generateGDImageFromResource()
+			$this->_generateGDImageFromResource();
 			return $this->_gd_resource;
 		}
 		
