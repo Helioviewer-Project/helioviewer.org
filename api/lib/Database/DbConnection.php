@@ -2,9 +2,9 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Database connection helper
- * 
+ *
  * PHP version 5
- * 
+ *
  * @category Database
  * @package  Helioviewer
  * @author   Patrick Schmiedel <patrick.schmiedel@gmx.net>
@@ -14,7 +14,7 @@
  */
 /**
  * Database connection helper class
- * 
+ *
  * @category Database
  * @package  Helioviewer
  * @author   Patrick Schmiedel <patrick.schmiedel@gmx.net>
@@ -31,18 +31,18 @@ class Database_DbConnection
 
     /**
      * Create a DbConnection instance
-     * 
+     *
      * @param string $dbname   [Optional] Database name
      * @param string $user     [Optional] Database user
      * @param string $password [Optional] Database password
      * @param string $host     [Optional] Database hostname
-     * 
+     *
      * @return void
      */
     public function __construct($dbname = null, $user = null, $password = null, $host = null)
     {
         if ($user) {
-            $this->_user = $user;    
+            $this->_user = $user;
         }
         if ($password) {
             $this->_password = $password;
@@ -58,7 +58,7 @@ class Database_DbConnection
 
     /**
      * Connects to database and sets timezone to UTC
-     * 
+     *
      * @return void
      */
     public function connect()
@@ -72,11 +72,11 @@ class Database_DbConnection
 
     /**
      * Queries database
-     * 
+     *
      * @param string $query SQL query
-     * 
+     *
      * @return mixed Query result
-     */    
+     */
     public function query($query)
     {
         $result = mysqli_query($this->link, $query);
