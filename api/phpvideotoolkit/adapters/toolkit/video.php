@@ -308,10 +308,12 @@
 		
 		public function save($filename, $multi_pass_encode=false, $overwrite_mode=PHPVideoToolkit::OVERWRITE_FAIL)
 		{
-			$output_directory, $output_name, 
-			$path_info = pathinfo($filename);
+			//$output_directory, $output_name, 
+			//$path_info = pathinfo($filename);
+			$path_parts = pathinfo($filename);
 // 			set the output
-			$this->_toolkit->setOutput($path_info['dirname'], $path_parts['basename'], $overwrite_mode);
+			//$this->_toolkit->setOutput($path_info['dirname'], $path_parts['basename'], $overwrite_mode);
+			$this->_toolkit->setOutput($path_parts['dirname'], $path_parts['basename'], $overwrite_mode);
 			return $this->_toolkit->execute($multi_pass_encode, false);
 		}
 		
@@ -348,7 +350,7 @@
 // 			generate a unique name
 			$this->_toolkit->setOutput($this->_tmp_directory, $this->_toolkit->unique().'-%timecode.jpg', PHPVideoToolkit::OVERWRITE_EXISTING);
 // 			extract the frame and check the extract is ok
-			if(!($result = $this->_toolkit->extractFrame($frame_number, $frame_rate, '%ft'))
+			if(!($result = $this->_toolkit->extractFrame($frame_number, $frame_rate, '%ft')))
 			{
 				return $result;
 			}
