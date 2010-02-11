@@ -1,0 +1,63 @@
+<project name="Helioviewer" default="build" basedir="../">
+	<!-- Helioviewer Apache Ant build.xml. -->
+	<!-- Last updated: February 2010 By Keith -->
+	<description>
+		Helioviewer Apache Ant build.xml
+    </description>
+
+    <!-- Some useful variables -->
+    <property name="hvlibs"  value="lib/helioviewer"/>	
+
+    <!-- Minification and concatenation -->
+	<target name="build">
+        <property name="cssdir"  value="styles"/>
+        
+		<echo>Building Helioviewer...</echo>
+
+		<!-- create build directory -->
+		<mkdir dir="${hvlibs}/build"/>
+
+		<!-- concatenate in two-steps to preserve include order -->
+		<concat destfile="${hvlibs}/build/helioviewer-all.js" encoding="UTF-8" eol="lf">
+		    <filelist dir="${hvlibs}" files="Layer.js, LayerManager.js"/>
+			<fileset dir="${hvlibs}" includes="*.js" excludes="Layer.js, LayerManager.js"/>
+		</concat>
+
+		<concat destfile="${cssdir}/helioviewer-all.css" encoding="UTF-8" eol="lf">
+			<filelist dir="${cssdir}" files="main.css"/>
+		    <fileset dir="${cssdir}" includes="*.css" excludes="blackGlass.css, carbon.css, carbon-white.css, main-ie.css, helioviewer-all.css, main.css, main-timeline.css"/>
+		</concat>		
+
+		<!-- minify-->
+		<exec dir="scripts/jsmin" executable="jsmin.py" input="${hvlibs}/build/helioviewer-all.js" 
+		  output="${hvlibs}/build/helioviewer-all-min.js" resolveexecutable="true" />
+		  
+		<echo>Done!</echo>
+	</target>
+	
+	<!-- JavaScript Documentation Generation -->
+	<target name="jsdoc">
+		<echo>Generating documentation...</echo>
+		<exec dir="scripts/jsdoc-toolkit/" executable="java">
+			<arg line="-jar jsrun.jar app/run.js -a -p -t=templates/jsdoc -d=../../docs/ ../../lib/helioviewer/" />
+		</exec>
+	</target>
+	
+	<!--  JSLint -->
+    <target name="jslint">
+        <description>
+            Verifies JavaScript code using the Rhino version of JSLint.
+            Requires Rhino (sudo apt-get install rhino).
+        </description>
+        <property name="rhino.jar" value="/usr/share/java/js.jar"/>  
+        <property name="jslint.js" value="scripts/jslint/jslint.js"/>
+	    <echo message="Running JSLint..."/>
+		<apply executable="java" parallel="false">
+		    <!--  <filelist dir="${hvlibs}" includes="*.js" />-->
+		    <fileset id="jslint-matches" dir="${hvlibs}" includes="*.js" />
+		    <arg line="-jar"/>
+		    <arg path="${rhino.jar}"/>
+		    <arg path="${jslint.js}"/>
+		</apply>
+    </target>
+</project>

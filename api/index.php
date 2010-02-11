@@ -15,7 +15,6 @@
  *  = Explain use of sourceId for faster querying.
  * 
  * TODO 01/27/2010
- *  = Unify error logging (create separate class)
  *  = Discuss with JHV team about using source ID's instead of string 
  *    identifiers to speed up method calls.
  *  = Rename JHV Class so as not to confuse with the JHelioviewer module.
@@ -26,7 +25,7 @@
  *    Mimetypes: video/mj2, image/jpx. 
  *    (See http://www.rfc-editor.org/rfc/rfc3745.txt)
  */
-require_once "Config.php";
+require_once "lib/Config.php";
 $config = new Config("../settings/Config.ini");
 
 if (isset($_REQUEST['action'])) {
@@ -48,13 +47,13 @@ if (!(isset($params) && loadModule($params))) {
     <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
     <meta name="keywords" content="Helioviewer, hv, solar image viewer, sun, solar, heliosphere,
                                       solar physics, viewer, visualization, space, astronomy, API">
-    <link rel="stylesheet" type="text/css" href="styles/api.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/api.css" />
 </head>
 
 <body>
 
 <!-- Logo -->
-<img alt="Helioviewer Logo" src="images/about.png" style="float: left;">
+<img alt="Helioviewer Logo" src="resources/images/about.png" style="float: left;">
 <h1 style="position: relative; top: 22px;">API</h1>
 <br />
 
@@ -1141,18 +1140,52 @@ function loadModule($params)
         "getJP2ImageSeries"=> "JHelioviewer"
     );
     
-    if (!array_key_exists($params["action"], $valid_actions)) {
-        include_once "modules/Helper.php";
-        $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
-        Helper::printErrorMsg(
-            "Invalid action specified. See the <a href='$url'>" .
-            "API Documentation</a> for a list of valid actions."
-        );
-    } else {
-        $module = $valid_actions[$params["action"]];
-        include_once "modules/$module.php";
-        $obj = new $module($params);
-        return true;
+    include_once "lib/Validation/InputValidator.php";
+    
+    try {
+        if (!array_key_exists($params["action"], $valid_actions)) {
+            $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+            throw new Exception(
+                "Invalid action specified. See the <a href='$url'>" .
+                "API Documentation</a> for a list of valid actions."
+            );
+        } else {
+            $module = $valid_actions[$params["action"]];
+            include_once "lib/Module/$module.php";
+            $className = "Module_" . $module;
+            $obj = new $className($params);
+        }
+    } catch (Exception $e) {
+        printErrorMsg($e->getMessage());
     }
+    
+    return true;
+}
+
+/**
+ * Display an error message to the API user
+ * 
+ * @param string $msg Error message to display to the user
+ * 
+ * @return void
+ */
+function printErrorMsg($msg)
+    {
+    ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Helioviewer.org API - Error</title>
+</head>
+<body>
+    <div style='width: 50%; margin-left: auto; margin-right: auto; margin-top: 250px;
+                text-align: center; font-size: 14px;'>
+    <img src='images/about.png' alt='Helioviewer logo'></img><br>
+    <b>Error:</b> <?php echo $msg;?><br>
+    </div>
+</body>
+</html>
+    <?php
+    exit();
 }
 ?>

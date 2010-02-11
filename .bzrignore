@@ -23,3 +23,4 @@ lib/helioviewer/build/helioviewer-all.js
 lib/helioviewer/build/helioviewer-all-min.js
 styles/helioviewer-all.css
 api/docs
+.buildpath
