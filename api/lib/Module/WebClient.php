@@ -217,33 +217,33 @@ class Module_WebClient implements Module
         echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 
         ?>
-<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
-    <information>    
-        <title>JHelioviewer</title>   
-        <vendor>ESA</vendor>   
-        <homepage href="index.html" />
-        <description>JHelioviewer web launcher</description>   
-        <offline-allowed />  
-    </information> 
-    
-    <resources>    
-        <j2se version="1.5+" initial-heap-size="256M" max-heap-size="1500M"/>     
-        <jar href="JHelioviewer.jar" />  
-    </resources>  
-    
-    <security>    
-        <all-permissions />  
-    </security> 
-    
-    <application-desc main-class="org.helioviewer.JavaHelioViewer">
-        <?php
-        
+        <jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
+            <information>    
+                <title>JHelioviewer</title>   
+                <vendor>ESA</vendor>   
+                <homepage href="index.html" />
+                <description>JHelioviewer web launcher</description>   
+                <offline-allowed />  
+            </information> 
+            
+            <resources>    
+                <j2se version="1.5+" initial-heap-size="256M" max-heap-size="1500M"/>     
+                <jar href="JHelioviewer.jar" />  
+            </resources>  
+            
+            <security>    
+                <all-permissions />  
+            </security> 
+            
+            <application-desc main-class="org.helioviewer.JavaHelioViewer">
+                <?php
+                
         if ((isset($this->_params['files'])) && ($this->_params['files'] != "")) {
             echo "        <argument>$this->files</argument>\n";
         }
-        ?>
-    </application-desc>
-</jnlp>
+                ?>
+            </application-desc>
+        </jnlp>
     <?php        
     }
 
@@ -362,7 +362,7 @@ class Module_WebClient implements Module
         include_once 'lib/Image/CompositeImage.php';
 
         //Create and display composite image
-        $img = Image_CompositeImage::compositeImageFromQuery($params);
+        $img = Image_CompositeImage::compositeImageFromQuery($this->_params);
         $img->printImage();
     }
     

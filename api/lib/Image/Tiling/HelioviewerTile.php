@@ -10,13 +10,21 @@
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
+ */
+require_once 'Tile.php';
+/**
+ * A Helioviewer-specific tile class
+ * 
+ * @category WebClient
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
  * 
  * TODO (2009/12/07)
  *  To improve smoothness of transparency edges, use a larger mask (e.g. 
  *  2080x2080  instead of 1040x1040) so that most of scaling will be downwards
  */
-require_once 'Tile.php';
-
 class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
 {
     private $_observatory;

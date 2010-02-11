@@ -131,7 +131,7 @@ class Image_SubFieldImage
 
             //Apply color-lookup table
             if ($this->colorTable) {
-                $this->setColorPalette($intermediate, $this->colorTable, $intermediate);
+                $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
 
             // IM command for transparency, padding, rescaling, etc.
@@ -142,7 +142,7 @@ class Image_SubFieldImage
             }
 
             // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
-            $extracted = $this->getImageDimensions($intermediate);
+            $extracted = $this->_getImageDimensions($intermediate);
 
             // if ($this->desiredToActual > 1) {
             //    $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
@@ -150,9 +150,9 @@ class Image_SubFieldImage
             
             // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             if ($this->desiredToActual > 1) {
-                $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
+                $cmd .= $this->_padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
             } else if ($this->squareImage && ($this->subfieldWidth != $this->subfieldHeight) ) {
-                $cmd .= $this->padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
+                $cmd .= $this->_padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
             }
 
             if ($this->hasAlphaMask()) {
