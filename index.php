@@ -1,7 +1,7 @@
 <?php
 $ini = "settings/Config.ini";
 if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
-    die("Missing config file!"); 
+    die("Missing config file!");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -132,7 +132,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                     //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,white light,0,100]
                     if (isset($_GET['imageLayers'])) {
                         $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
-                        $imageLayers = split("\],\[", $imageLayersString);
+                        $imageLayers = preg_split("/\],\[/", $imageLayersString);
                         $state['imageLayers'] = $imageLayers;
                     }
                 
