@@ -543,7 +543,8 @@ class Image_SubFieldImage
      *
      * @return array the width and height of the given image
      */
-    private function _getImageDimensions($filename) {
+    private function _getImageDimensions($filename)
+    {
         if (list($width, $height, $type, $attr) = getimagesize($filename)) {
             return array (
                 'width'  => $width,
