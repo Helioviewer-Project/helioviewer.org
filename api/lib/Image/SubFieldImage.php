@@ -70,7 +70,7 @@ class Image_SubFieldImage
      * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
      *
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
-     *           ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
+     *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
     public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale)
     {
@@ -112,12 +112,12 @@ class Image_SubFieldImage
             $grayscale    = substr($this->outputFile, 0, -3) . "pgm";
             $intermediate = substr($this->outputFile, 0, -3) . "png";
 
-            // Extract region
+            // Extract region (PGM)
             $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor);
 
             $cmd = HV_PATH_CMD;
 
-            // Generate grayscale image
+            // Generate ImageMagick-readable grayscale image (PNG)
             $toIntermediateCmd = $cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale ";
 
             // kdu_expand can only handle whole number values for -reduce
@@ -134,7 +134,7 @@ class Image_SubFieldImage
                 $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
 
-            // IM command for transparency, padding, rescaling, etc.
+            // IM commands for transparency, padding, rescaling, etc.
             if ($this->hasAlphaMask()) {
                 $cmd = HV_PATH_CMD . " convert ";
             } else {
