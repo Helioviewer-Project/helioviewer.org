@@ -2,9 +2,9 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer Events Module Class Definition
- * 
+ *
  * PHP version 5
- * 
+ *
  * @category Modules
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -16,7 +16,7 @@ require_once 'interface.Module.php';
 
 /**
  * Helioviewer Events Module
- * 
+ *
  * @category Modules
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -28,14 +28,14 @@ class Module_Events implements Module
 {
     /**
      * API Request parameters
-     * 
+     *
      * @var mixed
      */
     private $_params;
 
     /**
      * Events module constructor
-     * 
+     *
      * @param mixed &$params API request parameters
      */
     public function __construct(&$params)
@@ -46,7 +46,7 @@ class Module_Events implements Module
     }
 
     /**
-     * execute 
+     * execute
      *
      * @return void
      */
@@ -59,7 +59,7 @@ class Module_Events implements Module
 
     /**
      * validate
-     * 
+     *
      * @return bool Returns true if input parameters are valid
      */
     public function validate()
@@ -78,17 +78,17 @@ class Module_Events implements Module
         default:
             break;
         }
-        
+
         if (isset($expected)) {
             Validation_InputValidator::checkInput($expected, $this->_params);
         }
-        
+
         return true;
     }
 
     /**
      * printDoc
-     * 
+     *
      * @return void
      */
     public static function printDoc()
@@ -104,23 +104,31 @@ class Module_Events implements Module
     public function getEvents ()
     {
         header("Content-type: application/json");
-        $url = HV_EVENT_SERVER_URL . "action=getEvents&date=" 
-             . $this->_params["date"] . "&windowSize=" 
+        $url = HV_EVENT_SERVER_URL . "action=getEvents&date="
+             . $this->_params["date"] . "&windowSize="
              . $this->_params["windowSize"] . "&catalogs="
              . $this->_params["catalogs"];
-        echo file_get_contents($url);
+        if ($events = file_get_contents($url)) {
+            echo $events;
+        } else {
+            echo "[]";
+        }
     }
 
     /**
      * getEventCatalogs
-     * 
+     *
      * @return void
      */
     public function getEventCatalogs ()
     {
         header("Content-type: application/json");
         $url = HV_EVENT_SERVER_URL . "action=getEventCatalogs";
-        echo file_get_contents($url);
+        if ($catalogs = file_get_contents($url)) {
+            echo $catalogs;
+        } else {
+            echo "[]";
+        }
     }
 }
 ?>
