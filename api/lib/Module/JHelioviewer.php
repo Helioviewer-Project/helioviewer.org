@@ -262,9 +262,13 @@ class Module_JHelioviewer implements Module
         $detector    = $this->_params['detector'];
         $measurement = $this->_params['measurement'];
 
+        $warning     = null;
+
         // Create a temporary directory to store image-
         // TODO: Move this + other directory creation to installation script
         $dir = HV_JP2_DIR . "/movies/";
+
+        // TODO 02/13/10 Create separate method to compute filename
 
         // Filename (From,To,By)
         $from = str_replace(":", ".", $this->_params['startTime']);
@@ -297,11 +301,19 @@ class Module_JHelioviewer implements Module
                 $source = $this->_params["sourceId"];
             }
 
-            //var_dump($source);
-
             // Determine number of frames to grab
             $timeInSecs = $endTime - $startTime;
-            $numFrames  = min(HV_MAX_JPX_FRAMES, ceil($timeInSecs / $cadence));
+            $numFrames  = ceil($timeInSecs / $cadence);
+
+            // If the requested number of movie frames would exceed maximum allowed, decrease cadence to span
+            // request window and grab the maximum number of frames at that cadence
+            // TODO 02/13/2010 Adjust filename to reflect actual cadence... perform this before file_exists check?
+            if ($numFrames > HV_MAX_JPX_FRAMES) {
+                $cadence   = $cadence * ($numFrames / HV_MAX_JPX_FRAMES);
+                $numFrames = HV_MAX_JPX_FRAMES;
+                $warning   = "Warning: Movie cadence has been increased to one image every $cadence seconds in order
+                              to avoid exceeding the maximum allowed number of frames (" . HV_MAX_JPX_FRAMES . ").";
+            }
 
             // Timer
             $time = $startTime;
@@ -355,18 +367,29 @@ class Module_JHelioviewer implements Module
             $uri = $url;
         }
 
-        // Include image timestamps to speed up streaming
-        if ($frames) {
-            $timestamps = array();
-            foreach ($images as $img) {
-                $exploded = explode("/", $img);
-                $dateStr = substr(end($exploded), 0, 24);
-                $regex   = '/(\d+)_(\d+)_(\d+)__(\d+)_(\d+)_(\d+)_(\d+)/';
-                $utcDate = preg_replace($regex, '$1-$2-$3T$4:$5:$6.$7Z', $dateStr);
-                array_push($timestamps, toUnixTimestamp($utcDate));
+        // JSON output
+        if ($frames || $verbose) {
+            $output = array("uri" => $uri);
+
+            // Include image timestamps to speed up streaming
+            if ($frames) {
+                $timestamps = array();
+                foreach ($images as $img) {
+                    $exploded = explode("/", $img);
+                    $dateStr = substr(end($exploded), 0, 24);
+                    $regex   = '/(\d+)_(\d+)_(\d+)__(\d+)_(\d+)_(\d+)_(\d+)/';
+                    $utcDate = preg_replace($regex, '$1-$2-$3T$4:$5:$6.$7Z', $dateStr);
+                    array_push($timestamps, toUnixTimestamp($utcDate));
+                }
+                $output["frames"] = $timestamps;
+            }
+
+            // Verbose mode
+            if ($verbose) {
+                $output["message"] = $warning;
             }
             header('Content-Type: application/json');
-            print json_encode(array("uri" => $uri, "frames" => $timestamps));
+            print json_encode($output);
         } else {
             print $uri;
         }
