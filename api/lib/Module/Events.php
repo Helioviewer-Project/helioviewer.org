@@ -41,7 +41,6 @@ class Module_Events implements Module
     public function __construct(&$params)
     {
         $this->_params = $params;
-        $this->execute();
 
     }
 
