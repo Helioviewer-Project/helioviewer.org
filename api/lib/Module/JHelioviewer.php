@@ -3,6 +3,13 @@
 /**
  * Helioviewer JHelioviewer Module Class Definition
  *
+ * = 02/13/2010 =
+ * MJ2 Creation has been removed since it is not currently being used.
+ * To add support back in the future simply follow the same steps as for JPX
+ * generation, but pass kdu_merge the additional sub-command:
+ *
+ *     -mj2_tracks P:0-@25
+ *
  * PHP version 5
  *
  * @category Modules
@@ -68,7 +75,7 @@ class Module_JHelioviewer implements Module
         {
         case "getJP2Image":
             $expected = array(
-               "bools" => array("getURL", "getJPIP", "debug"),
+               "bools" => array("getJPIP", "debug"),
                "dates" => array('date')
             );
 
@@ -80,25 +87,12 @@ class Module_JHelioviewer implements Module
             }
             break;
 
-        case "buildJP2ImageSeries":
-            // Need to fix bools now for linked jpx check below
-            $bools = array("getURL", "getJPIP", "links", "frames", "verbose", "debug");
-            Validation_InputValidator::checkBools($bools, $this->_params);
-
+        case "getJPX":
             $expected = array(
+                "bools" => array("getJPIP", "frames", "verbose", "links", "debug"),
                 "dates" => array('startTime', 'endTime'),
                 "ints"  => array('cadence')
             );
-
-            if ($this->_params['links'] && ($this->_params['format'] != "JPX")) {
-                throw new Exception('Format must be set to "JPX" in order to create a linked image series.');
-            }
-            break;
-        case "getJPX":
-            break;
-        case "getMJ2":
-            break;
-        case "getJP2ImageSeries":
             break;
         default:
             break;
@@ -146,8 +140,7 @@ class Module_JHelioviewer implements Module
     public function getJP2Image ()
     {
         include_once 'lib/Database/ImgIndex.php';
-        include_once 'lib/Database/DbConnection.php';
-        $imgIndex = new Database_ImgIndex(new Database_DbConnection());
+        $imgIndex = new Database_ImgIndex();
 
         $date = $this->_params['date'];
 
@@ -159,100 +152,82 @@ class Module_JHelioviewer implements Module
             );
         }
 
-        $filepath = $imgIndex->getJP2FilePath($date, $this->_params['sourceId'], $this->_params['debug']);
+        $relativePath = $imgIndex->getJP2FilePath($date, $this->_params['sourceId'], $this->_params['debug']);
 
-        $uri = HV_JP2_DIR . $filepath;
+        $filepath = HV_JP2_DIR . $relativePath;
 
-        // http url (full path)
-        if ($this->_params['getURL']) {
-            $webRootRegex = "/" . preg_replace("/\//", "\/", HV_JP2_DIR) . "/";
-            $url = preg_replace($webRootRegex, HV_JP2_ROOT_URL, $uri);
-            echo $url;
-
-        } else if ($this->_params['getJPIP']) {
-            // jpip url
-            echo $this->_getJPIPURL($uri);
-
+        if ($this->_params['getJPIP']) {
+            echo $this->_getJPIPURL($filepath);
         } else {
-            // jp2 image
-            $fp = fopen($uri, 'r');
-            $stat = stat($uri);
-
-            $exploded = explode("/", $filepath);
-            $filename = end($exploded);
-
-            header("Content-Length: " . $stat['size']);
-            header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));
-            header("Content-Disposition: attachment; filename=\"$filename\"");
-
-            $contents = fread($fp, $stat['size']);
-
-            echo $contents;
-            fclose($fp);
+            $this->_displayJP2($filepath);
         }
     }
 
     /**
-     * Gets a JPX image series
+     * Prints a JP2 image to the screen
+     *
+     * @param string $filepath The location of the image to be displayed.
+     *
+     * @return void
+     */
+    private function _displayJP2($filepath)
+    {
+        $fp   = fopen($filepath, 'r');
+        $stat = stat($filepath);
+
+        $exploded = explode("/", $filepath);
+        $filename = end($exploded);
+
+        header("Content-Length: " . $stat['size']);
+        header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+
+        $contents = fread($fp, $stat['size']);
+
+        echo $contents;
+        fclose($fp);
+    }
+
+    /**
+     * Prints a JPX image to the screen
+     *
+     * @param string $filepath The location of the jpx file to be displayed.
+     *
+     * @return void
+     */
+    private function _displayJPX($filepath)
+    {
+        $fp   = fopen($filepath, 'r');
+        $stat = stat($filepath);
+
+        $exploded = explode("/", $filepath);
+        $filename = end($exploded);
+
+        header("Content-Length: " . $stat['size']);
+        header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JPX));
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+
+        $contents = fread($fp, $stat['size']);
+
+        echo $contents;
+        fclose($fp);
+    }
+
+    /**
+     * Constructs a JPX image series
+     *
+     * TODO 02/13/2010: Create new classes (e.g. JPEG2000/ImageSeries.php and/or JPEG2000/JPX.php)
+     * and move some of the below complexity into those classes. That way it will also be easier to
+     * test some of the methods that are private here (e.g. _getJPIPURL).
      *
      * @return void
      */
     public function getJPX ()
     {
-        $this->_params['format'] = 'JPX';
-        $this->_params['action'] = 'buildJP2ImageSeries';
-        $this->execute();
-    }
-
-    /**
-     * Gets a Motion JPEG 2000 (MJ2) movie.
-     *
-     * @return void
-     */
-    public function getMJ2 ()
-    {
-        $this->_params['format'] = 'MJ2';
-        $this->_params['action'] = 'buildJP2ImageSeries';
-        $this->execute();
-    }
-
-    /**
-     * Gets a JPX or MJ2 file
-     *
-     * @deprecated
-     * @return void
-     */
-    public function getJP2ImageSeries ()
-    {
-        $this->_params['action'] = 'buildJP2ImageSeries';
-        $this->execute();
-    }
-
-    /**
-     *  Note: It's also possible in PHP 5.3 to increment DateTime
-     *  objects directly:
-     *
-     *     date_add($dt, new DateInterval("T" . $cadence . "S"));
-     *
-     *  @return void
-     */
-
-    /**
-     * Constructs a JPX/MJ2 image series
-     *
-     * @return void
-     */
-    public function buildJP2ImageSeries ()
-    {
-        include_once 'lib/Database/ImgIndex.php';
-        include_once 'lib/Database/DbConnection.php';
-        include_once 'lib/Helper/DateTimeConversions.php';
-
-        $startTime   = toUnixTimestamp($this->_params['startTime']);
-        $endTime     = toUnixTimestamp($this->_params['endTime']);
+        $startTime   = $this->_params['startTime'];
+        $endTime     = $this->_params['endTime'];
         $cadence     = $this->_params['cadence'];
         $jpip        = $this->_params['getJPIP'];
-        $format      = $this->_params['format'];
         $links       = $this->_params['links'];
         $frames      = $this->_params['frames'];
         $verbose     = $this->_params['verbose'];
@@ -262,38 +237,30 @@ class Module_JHelioviewer implements Module
         $detector    = $this->_params['detector'];
         $measurement = $this->_params['measurement'];
 
-        $warning     = null;
+        $message     = null;
 
-        // Create a temporary directory to store image-
-        // TODO: Move this + other directory creation to installation script
-        $dir = HV_JP2_DIR . "/movies/";
-
-        // TODO 02/13/10 Create separate method to compute filename
-
-        // Filename (From,To,By)
-        $from = str_replace(":", ".", $this->_params['startTime']);
-        $to   = str_replace(":", ".", $this->_params['endTime']);
-        $filenameParts = array($observatory, $instrument, $detector, $measurement, "F$from", "T$to", "B$cadence");
-        $filename = implode("_", $filenameParts);
-
-        // Differentiate linked JPX files
-        if ($links) {
-            $filename .= "L";
-        }
-
-        // File extension
-        $filename = str_replace(" ", "-", $filename) . "." . strtolower($format);
+        // Filename
+        $filename = $this->getJPXFilename(
+            $startTime, $endTime, $cadence, $observatory, $instrument, $detector, $measurement, $links
+        );
 
         // Filepath
-        $output_file = $dir . $filename;
+        $filepath = HV_JP2_DIR . '/movies/' . $filename;
 
         // URL
-        $url = HV_JP2_ROOT_URL . "/movies/" . $filename;
+        if ($jpip) {
+            $url = $this->_getJPIPURL($filepath);
+        } else {
+            $url = HV_JP2_ROOT_URL . "/movies/" . $filename;
+        }
 
         // If the file doesn't exist already, create it
-        if (!file_exists($output_file) || $frames) {
+        if (!file_exists($filepath) || $frames) {
+            include_once 'lib/Database/ImgIndex.php';
+            include_once 'lib/Helper/DateTimeConversions.php';
+
             // Connect to database
-            $imgIndex = new Database_ImgIndex(new Database_DbConnection());
+            $imgIndex = new Database_ImgIndex();
 
             if (!isset($this->_params['sourceId'])) {
                 $source = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
@@ -302,7 +269,7 @@ class Module_JHelioviewer implements Module
             }
 
             // Determine number of frames to grab
-            $timeInSecs = $endTime - $startTime;
+            $timeInSecs = toUnixTimestamp($endTime) - toUnixTimestamp($startTime);
             $numFrames  = ceil($timeInSecs / $cadence);
 
             // If the requested number of movie frames would exceed maximum allowed, decrease cadence to span
@@ -311,65 +278,22 @@ class Module_JHelioviewer implements Module
             if ($numFrames > HV_MAX_JPX_FRAMES) {
                 $cadence   = $cadence * ($numFrames / HV_MAX_JPX_FRAMES);
                 $numFrames = HV_MAX_JPX_FRAMES;
-                $warning   = "Warning: Movie cadence has been increased to one image every $cadence seconds in order
+                $message   = "Warning: Movie cadence has been increased to one image every $cadence seconds in order
                               to avoid exceeding the maximum allowed number of frames (" . HV_MAX_JPX_FRAMES . ").";
             }
 
-            // Timer
-            $time = $startTime;
+            // Get JPX image frames
+            $images = $this->getJPXImageFrames(
+                toUnixTimestamp($startTime), $numFrames, $cadence, $source, $imgIndex, $debug
+            );
 
-            $images = array();
-
-            include_once 'lib/Helper/DateTimeConversions.php';
-
-            // Get nearest JP2 images to each time-step
-            for ($i = 0; $i < $numFrames; $i++) {
-                $isoDate = toISOString(parseUnixTimestamp($time));
-                $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $source, $debug);
-                array_push($images, $jp2);
-                $time += $cadence;
-            }
-
-            // Remove redundant entries
-            $images = array_unique($images);
-
-            // Append filepaths to kdu_merge command
-            $cmd = HV_KDU_MERGE_BIN . " -i ";
-            foreach ($images as $jp2) {
-                $cmd .= "$jp2,";
-            }
-
-            // Drop trailing comma
-            $cmd = substr($cmd, 0, -1);
-
-            // Virtual JPX files
-            if ($links) {
-                $cmd .= " -links";
-            }
-
-            $cmd .= " -o $output_file";
-
-            // MJ2 Creation
-            if ($format == "MJ2") {
-                $cmd .= " -mj2_tracks P:0-@25";
-            }
-
-            //die($cmd);
-
-            // Execute kdu_merge command
-            exec(HV_PATH_CMD . " " . escapeshellcmd($cmd), $output, $return);
-        }
-
-        // URL
-        if ($jpip) {
-            $uri = $this->_getJPIPURL($output_file);
-        } else {
-            $uri = $url;
+            // Build JPX
+            $this->buildJPXImage($images, $links, $filepath);
         }
 
         // JSON output
         if ($frames || $verbose) {
-            $output = array("uri" => $uri);
+            $output = array("uri" => $url);
 
             // Include image timestamps to speed up streaming
             if ($frames) {
@@ -386,13 +310,99 @@ class Module_JHelioviewer implements Module
 
             // Verbose mode
             if ($verbose) {
-                $output["message"] = $warning;
+                $output["message"] = $message;
             }
             header('Content-Type: application/json');
             print json_encode($output);
+        } elseif (!$jpip) {
+            echo $url;
         } else {
-            print $uri;
+            $this->_displayJPX($filepath);
         }
+    }
+
+    /**
+     * Given a set of JP2 images, runs kdu_merge to build a single JPX image from them
+     *
+     * @param array  $frames A list of JP2 filepaths
+     * @param bool   $links  If true, then a linked JPX file will be created
+     * @param string $outputFile Location to output file to
+     *
+     * @return void
+     */
+    public function buildJPXImage($frames, $links, $outputFile)
+    {
+        //Append filepaths to kdu_merge command
+        $cmd = HV_KDU_MERGE_BIN . " -i ";
+
+        foreach ($frames as $jp2) {
+            $cmd .= "$jp2,";
+        }
+
+        // Drop trailing comma
+        $cmd = substr($cmd, 0, -1);
+
+        // Virtual JPX files
+        if ($links) {
+            $cmd .= " -links";
+        }
+
+        $cmd .= " -o $outputFile";
+
+        // Execute kdu_merge command
+        exec(HV_PATH_CMD . " " . escapeshellcmd($cmd), $output, $return);
+    }
+
+    /**
+     * Returns a list of JP2 files to use for JPX generation
+     *
+     * @param int $startTime JPX Start time unix timestamp
+     *
+     * @return array List of filepaths to use for JPX generation
+     */
+    public function getJPXImageFrames($startTime, $numFrames, $cadence, $source, $imgIndex, $debug)
+    {
+        // Timer
+        $time = $startTime;
+
+        $images = array();
+
+        // Get nearest JP2 images to each time-step
+        for ($i = 0; $i < $numFrames; $i++) {
+            $isoDate = toISOString(parseUnixTimestamp($time));
+            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $source, $debug);
+            array_push($images, $jp2);
+            $time += $cadence;
+        }
+
+        // Remove redundant entries and return
+        return array_unique($images);
+    }
+
+    public function printJSON($frames, $message)
+    {
+
+    }
+
+    /**
+     * Determines filename to use for storing generated JPX image. Filenames are of the form:
+     *
+     *  Obs_Inst_Det_Meas_FROM_TO_BY(L).jpx
+     *
+     * @return string Filename to use for generated JPX image
+     */
+    public function getJPXFilename($startTime, $endTime, $cadence, $obs, $inst, $det, $meas, $links)
+    {
+        $from = str_replace(":", ".", $startTime);
+        $to   = str_replace(":", ".", $endTime);
+        $filename = implode("_", array($obs, $inst, $det, $meas, "F$from", "T$to", "B$cadence"));
+
+        // Differentiate linked JPX files
+        if ($links) {
+            $filename .= "L";
+        }
+
+        return str_replace(" ", "-", $filename) . ".jpx";
     }
 }
 

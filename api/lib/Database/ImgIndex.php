@@ -29,13 +29,12 @@ class Database_ImgIndex
     /**
      * Creates an ImgIndex instance
      *
-     * @param resource $dbConnection A valid database connect handler
-     *
      * @return void
      */
-    public function __construct($dbConnection)
+    public function __construct()
     {
-        $this->_dbConnection = $dbConnection;
+        require_once 'DbConnection.php';
+        $this->_dbConnection = new Database_DbConnection();
     }
 
     /**
