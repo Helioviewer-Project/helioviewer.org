@@ -107,8 +107,7 @@ class Module_WebClient implements Module
         // Local Tiling Server
         if ($this->_params['server'] === 0) {
             include_once 'lib/Database/ImgIndex.php';
-            include_once 'lib/Database/DbConnection.php';
-            $imgIndex = new Database_ImgIndex(new Database_DbConnection());
+            $imgIndex = new Database_ImgIndex();
 
             // Convert human-readable params to sourceId if needed
             if (!isset($this->_params['sourceId'])) {
@@ -149,10 +148,8 @@ class Module_WebClient implements Module
     public function getDataSources ()
     {
         include_once 'lib/Database/ImgIndex.php';
-        include_once 'lib/Database/DbConnection.php';
 
-        // NOTE: Make sure to remove database specification after testing completed!
-        $imgIndex = new Database_ImgIndex(new Database_DbConnection($dbname = "helioviewer"));
+        $imgIndex = new Database_ImgIndex();
         $dataSources = json_encode($imgIndex->getDataSources());
 
         header('Content-type: application/json');

@@ -17,13 +17,9 @@
  * TODO 01/27/2010
  *  = Discuss with JHV team about using source ID's instead of string
  *    identifiers to speed up method calls.
- *  = Rename JHV Class so as not to confuse with the JHelioviewer module.
  *  = Add method to WebClient to print config file (e.g. for stand-alone
  *    web-client install to connect with)
  *  = Add getPlugins method to JHelioviewer module (empty function for now)
- *  = Have getJPX, etc. return file directly instead of a URL?
- *    Mimetypes: video/mj2, image/jpx.
- *    (See http://www.rfc-editor.org/rfc/rfc3745.txt)
  */
 require_once "lib/Config.php";
 $config = new Config("../settings/Config.ini");
@@ -75,7 +71,6 @@ if (!(isset($params) && loadModule($params))) {
         <ul>
             <li><a href="index.php#getJP2Image">Image API</a></li>
             <li><a href="index.php#getJPX">JPX API</a></li>
-            <li><a href="index.php#getMJ2">MJ2 API</a></li>
         </ul>
     </li>
     <li><a href="index.php#MovieAPI">Movie API</a></li>
@@ -467,7 +462,7 @@ if (!(isset($params) && loadModule($params))) {
 <div id="JPEG2000API">
     <h1>5. JPEG 2000 API:</h1>
     <p>Helioviewer's JPEG 2000 API's enable access to the raw JPEG 2000 images used to generate the tiles seen on the
-    site, as well as real-time generation of JPEG 2000 Image Series (JPX) and MJ2 Movies.</p>
+    site, as well as real-time generation of JPEG 2000 Image Series (JPX).</p>
     <ol style="list-style-type: upper-latin;">
         <!-- JPEG 2000 Image API -->
         <li>
@@ -519,13 +514,6 @@ if (!(isset($params) && loadModule($params))) {
                     <td><i>Integer</i></td>
                     <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
                     measurement parameters).</td>
-                </tr>
-                <tr>
-                    <td><b>getURL</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><span style="color: red;">[Deprecated]</span>
-                    Returns a URL instead of an actual image. <i>(NOTE: If getJPIP=true is not set, the query will
-                    return a file automatically.)</i></td>
                 </tr>
                 <tr>
                     <td><b>getJPIP</b></td>
@@ -707,109 +695,6 @@ if (!(isset($params) && loadModule($params))) {
         </div>
 
         <br />
-
-        <!-- MJ2 API -->
-        <li>
-        <div id="getMJ2">MJ2 API
-        <p>Returns Motion JPEG 2000 (MJ2) Movie. The movie frames are chosen by matching the closest image available
-        at each step of a specified range of dates and image cadence.</p>
-
-        <br />
-
-        <div class="summary-box"><span
-            style="text-decoration: underline;">Usage:</span><br />
-        <br />
-
-        <?php echo $baseURL;?>?action=getMJ2<br />
-        <br />
-
-        Supported Parameters:<br />
-        <br />
-
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="25%"><b>observatory</b></td>
-                    <td width="35%"><i>String</i></td>
-                    <td>Observatory</td>
-                </tr>
-                <tr>
-                    <td><b>instrument</b></td>
-                    <td><i>String</i></td>
-                    <td>Instrument</td>
-                </tr>
-                <tr>
-                    <td><b>detector</b></td>
-                    <td><i>String</i></td>
-                    <td>Detector</td>
-                </tr>
-                <tr>
-                    <td><b>measurement</b></td>
-                    <td><i>String</i></td>
-                    <td>Measurement</td>
-                </tr>
-                <tr>
-                    <td><b>startTime</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Movie start time</td>
-                </tr>
-                <tr>
-                    <td><b>endTime</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Movie end time</td>
-                </tr>
-                <tr>
-                    <td><b>cadence</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The desired amount of time between each movie-frame, in seconds</td>
-                </tr>
-                <tr>
-                    <td><b>sourceId</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
-                    measurement parameters).</td>
-                </tr>
-                <tr>
-                    <td><b>frames</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> Returns individual movie-frame timestamps along with the file URI
-                    as JSON.</td>
-                </tr>
-                <tr>
-                    <td><b>verbose</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> In addition to the MJ2 file URI, returns any warning or
-                    error messages generated during the request. Result is displayed as JSON.</td>
-                </tr>
-                <tr>
-                    <td><b>getJPIP</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> Returns a JPIP URI instead of an actual movie.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-
-        <span class="example-header">Example:</span>
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600">
-            <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600
-        </a>
-        </span><br />
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getMJ2&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;getJPIP=true">
-            <?php echo $baseURL;?>?action=getMJ2&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&getJPIP=true
-        </a>
-        </span></div>
-        </div>
-
-        <br />
-
-        </li>
-        </li>
-    </ol>
-</div>
 
 <!-- Movie API -->
 <div id="MovieAPI">
@@ -1083,9 +968,7 @@ function loadModule($params)
         "getEvents"        => "Events",
         "getEventCatalogs" => "Events",
         "getJP2Image"      => "JHelioviewer",
-        "getJPX"           => "JHelioviewer",
-        "getMJ2"           => "JHelioviewer",
-        "getJP2ImageSeries"=> "JHelioviewer"
+        "getJPX"           => "JHelioviewer"
     );
 
     include_once "lib/Validation/InputValidator.php";

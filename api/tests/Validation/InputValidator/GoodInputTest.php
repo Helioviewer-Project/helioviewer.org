@@ -1,10 +1,10 @@
-<?php 
+<?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer InputValidator Good Input Tests
- * 
+ *
  * PHP version 5
- * 
+ *
  * @category Helper
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -15,9 +15,9 @@ require_once 'PHPUnit/Framework.php';
 require_once 'lib/Validation/InputValidator.php';
 /**
  * Helioviewer InputValidator Tests
- * 
+ *
  * PHP version 5
- * 
+ *
  * @category Helper
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -27,26 +27,27 @@ require_once 'lib/Validation/InputValidator.php';
 class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
 {
     protected $inputValidator;
-    
+
     /**
      * Sets up test environment
-     * 
+     *
      * @return void
      */
     protected function setUp()
     {
         $this->inputValidator = new Validation_InputValidator();
     }
-    
+
     /**
      * Tests method which checks for required parameters
-     * 
+     *
      * @param array $required A list of the required parameters for a given action
      * @param array $params   The parameters that were passed in
-     * 
+     *
      * @test
+     * @covers Validation_InputValidator::checkForMissingParams
      * @dataProvider checkForMissingParamsProvider
-     * 
+     *
      * @return void
      */
     public function checkForMissingParams($required, $params)
@@ -62,7 +63,7 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
 
     /**
      * Data provider for checkForMissingParams
-     * 
+     *
      * @return array Acceptable input test cases
      */
     public function checkForMissingParamsProvider()
@@ -76,18 +77,19 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
                 array("int", "float", "bool"),
                 array("int" => "-42", "float" => "3.14", "bool" => "true")
             )
-        );   
+        );
     }
-    
+
     /**
      * Tests method which attempts to validate and cast boolean input values
-     * 
+     *
      * @param array $bools  The simulated boolean user input
      * @param array $params The parameters that were passed in
-     * 
+     *
      * @test
+     * @covers Validation_InputValidator::checkBools
      * @dataProvider checkBoolsProvider
-     * 
+     *
      * @return void
      */
     public function checkBools($bools, $params)
@@ -100,10 +102,10 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
             $this->fail("Unexpected exception thrown: " . $ex->getMessage());
         }
     }
-    
+
     /**
      * Data provider for checkBools
-     * 
+     *
      * @return array Acceptable input test cases
      */
     public function checkBoolsProvider()
@@ -121,7 +123,7 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
                 array("not_specified"),
                 array()
             )
-        );   
+        );
     }
 }
 ?>
