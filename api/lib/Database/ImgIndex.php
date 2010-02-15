@@ -33,7 +33,7 @@ class Database_ImgIndex
      */
     public function __construct()
     {
-        require_once 'DbConnection.php';
+        include_once 'DbConnection.php';
         $this->_dbConnection = new Database_DbConnection();
     }
 
@@ -42,11 +42,10 @@ class Database_ImgIndex
      *
      * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
      * @param int    $sourceId An identifier specifying the image type or source requested.
-     * @param bool   $debug    [Optional] Provides extra information about the request.
      *
      * @return array Information about the image match including it's location, time, scale, and dimensions.
      */
-    public function getClosestImage($date, $sourceId, $debug=false)
+    public function getClosestImage($date, $sourceId)
     {
         include_once 'lib/Helper/DateTimeConversions.php';
 
@@ -56,9 +55,7 @@ class Database_ImgIndex
         $lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
         $rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
 
-        if ($debug) {
-            die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
-        }
+        //die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
 
         $left = mysqli_fetch_array($this->_dbConnection->query($lhs), MYSQL_ASSOC);
         $right = mysqli_fetch_array($this->_dbConnection->query($rhs), MYSQL_ASSOC);
@@ -211,14 +208,13 @@ class Database_ImgIndex
      *
      * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
      * @param int    $sourceId An identifier specifying the image type or source requested.
-     * @param bool   $debug    [Optional] Provides extra information about the request.
      *
      * @return string Local filepath for the JP2 image.
      *
      */
-    public function getJP2FilePath($date, $sourceId, $debug=false)
+    public function getJP2FilePath($date, $sourceId)
     {
-        $img = $this->getClosestImage($date, $sourceId, $debug);
+        $img = $this->getClosestImage($date, $sourceId);
         return $img["filepath"] . "/" . $img["filename"];
     }
 }
