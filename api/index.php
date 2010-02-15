@@ -627,7 +627,7 @@ if (!(isset($params) && loadModule($params))) {
                     <td><i>[Optional]</i> Returns a JPIP URI instead of an actual movie.</td>
                 </tr>
                 <tr>
-                    <td><b>links</b></td>
+                    <td><b>linked</b></td>
                     <td><i>Boolean</i></td>
                     <td><i>[Optional]</i> Returns a linked JPX file containing image pointers instead of data for each
                     individual frame in the series. Currently, only JPX image series support this feature.</td>
@@ -672,8 +672,8 @@ if (!(isset($params) && loadModule($params))) {
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;links=true&amp;getJPIP=true">
-            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&links=true&getJPIP=true
+        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;getJPIP=true">
+            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&getJPIP=true
         </a>
         </span></div>
         </div>
