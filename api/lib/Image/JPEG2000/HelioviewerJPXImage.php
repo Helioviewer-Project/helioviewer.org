@@ -27,10 +27,10 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
     private $_instrument;
     private $_detector;
     private $_measurement;
+    private $_sourceId;
     private $_startTime;
     private $_endTime;
     private $_cadence;
-    private $_linked;
     private $_message;
     private $_summaryFile;
     private $_url;
@@ -70,10 +70,11 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         $this->_summaryFile = substr($filepath, 0, -3) . "json";
 
         parent::__construct($filepath);
-
+        
         // If the file doesn't exist already, create it
         if (!file_exists($filepath)) {
-            list ($images, $timestamps) = $this->__queryJPXImageFrames();
+            list ($images, $timestamps) = $this->_queryJPXImageFrames();
+            
             $this->_timestamps = $timestamps;
             $this->buildJPXImage($images, $linked);
             $this->_writeFileGenerationReport();
@@ -104,7 +105,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
 
         // Timer
         $time = toUnixTimestamp($this->_startTime);
-
+        
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $this->_numFrames; $i++) {
             // Get next image
@@ -150,16 +151,17 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         $end   = toUnixTimestamp($this->_endTime);
 
         // Determine number of frames to grab
-        $this->_numFrames  = ceil($end - $start / $this->_cadence);
+        $this->_numFrames  = ceil(($end - $start) / $this->_cadence);
 
         // If the requested number of movie frames would exceed maximum allowed, decrease cadence to span
         // request window and grab the maximum number of frames at that cadence
         if ($this->_numFrames > HV_MAX_JPX_FRAMES) {
+            $oldCadence       = $this->_cadence;
             $this->_cadence   = $this->_cadence * ($this->_numFrames / HV_MAX_JPX_FRAMES);
             $this->_numFrames = HV_MAX_JPX_FRAMES;
-            $this->_message   = "Warning: Movie cadence has been changed to one image every {$this->_cadence} " .
-                                "seconds in order to avoid exceeding the maximum allowed number of " .
-                                "frames (" . HV_MAX_JPX_FRAMES . ").";
+            $this->_message   = "Warning: Movie cadence has been changed from one image every $oldCadence seconds " .
+                                "to one image every {$this->_cadence} seconds in order to avoid exceeding the " .
+                                "maximum allowed number of frames (" . HV_MAX_JPX_FRAMES . ").";
         }
     }
 
@@ -254,7 +256,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      *
      * @return string A JPIP URL.
      */
-    private function _getJPIPURL($jp2Dir = HV_JP2_DIR, $jpipBaseURL = HV_JPIP_ROOT_URL)
+    public function getJPIPURL($jp2Dir = HV_JP2_DIR, $jpipBaseURL = HV_JPIP_ROOT_URL)
     {
         $webRootRegex = "/" . preg_replace("/\//", "\/", $jp2Dir) . "/";
         $jpip = preg_replace($webRootRegex, $jpipBaseURL, $this->outputFile);
@@ -281,7 +283,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
 
         // JPIP URL
         if ($jpip) {
-            $output["uri"] = $this->_getJPIPURL();
+            $output["uri"] = $this->getJPIPURL();
         } else {
             $output["uri"] = $this->_url;
         }
@@ -292,7 +294,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         }
 
         // Print
-        //header('Content-Type: application/json');
+        header('Content-Type: application/json');
         print json_encode($output);
     }
 }
