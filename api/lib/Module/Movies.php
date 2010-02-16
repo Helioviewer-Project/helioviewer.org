@@ -1,10 +1,10 @@
-<?php 
+<?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer Movies Module class definition
- * 
+ *
  * PHP version 5
- * 
+ *
  * @category Configuration
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -16,7 +16,7 @@ require_once 'interface.Module.php';
 
 /**
  * Movie generation and display.
- * 
+ *
  * @category Configuration
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -29,24 +29,23 @@ class Module_Movies implements Module
 {
     /**
      * API Request parameters
-     * 
+     *
      * @var mixed
      */
     private $_params;
 
     /**
      * Movie module constructor
-     * 
+     *
      * @param mixed &$params API request parameters
      */
     public function __construct(&$params)
     {
         $this->_params = $params;
-        $this->execute();
     }
 
     /**
-     * execute 
+     * execute
      *
      * @return void
      */
@@ -59,7 +58,7 @@ class Module_Movies implements Module
 
     /**
      * validate
-     * 
+     *
      * @return bool Returns true if input parameters are valid
      */
     public function validate()
@@ -74,53 +73,53 @@ class Module_Movies implements Module
             );
             break;
         case "playMovie":
-            // Temporarily disabled. 
+            // Temporarily disabled.
             // TODO: Before re-enabling, validate file input.
             // Allow only filename specification.
             return false;
         default:
             break;
         }
-        
+
         // Check input
         if (isset($expected)) {
             Validation_InputValidator::checkInput($expected, $this->_params);
         }
-        
+
         return true;
     }
 
     /**
      * printDoc
-     * 
+     *
      * @return void
      */
     public static function printDoc()
     {
 
     }
-    
-    
+
+
     /**
      * buildMovie
-     * 
-     * All possible parameters: startDate, zoomLevel, numFrames, frameRate, 
+     *
+     * All possible parameters: startDate, zoomLevel, numFrames, frameRate,
      * timeStep, layers, imageSize ("x,y"), filename, edges, sharpen, format.
-     * 
+     *
      * API example: http://localhost/helioviewer/api/index.php?action=buildMovie
      *     &startDate=1041465600&zoomLevel=13&numFrames=20&frameRate=8
      *     &timeStep=86400&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215
      *     /SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
      *     &imageSize=588,556&filename=example&sharpen=false&edges=false
-     * 
-     * Note that filename does NOT have the . extension on it. The reason for 
-     * this is that in the media settings pop-up dialog, there is no way of 
+     *
+     * Note that filename does NOT have the . extension on it. The reason for
+     * this is that in the media settings pop-up dialog, there is no way of
      * knowing ahead of time whether the image is a .png, .tif, .flv, etc,
      * and in the case of movies, the file is both a .flv and .mov/.asf/.mp4
-     * 
+     *
      * @return void
      */
-    public function buildMovie () 
+    public function buildMovie ()
     {
         include_once 'lib/Movie/HelioviewerMovie.php';
 
@@ -131,7 +130,7 @@ class Module_Movies implements Module
         $frameRate = $this->_params['frameRate'];
         $timeStep  = $this->_params['timeStep'];
         $quality   = $this->_params['quality'];
-           
+
         // Layerstrings are separated by "/"
         $layerStrings = explode("/", $this->_params['layers']);
 
@@ -140,15 +139,15 @@ class Module_Movies implements Module
             "width"  => $imageCoords[0],
             "height" => $imageCoords[1]
         );
-        $filename    = $this->_params['filename'];      
+        $filename    = $this->_params['filename'];
         $hqFormat    = $this->_params['format'];
         //$hqFormat = "mp4";
-        
+
         // Optional parameters
         $options = array();
         $options['enhanceEdges'] = $this->_params['edges']   || false;
-        $options['sharpen']      = $this->_params['sharpen'] || false;    
-                
+        $options['sharpen']      = $this->_params['sharpen'] || false;
+
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
@@ -167,7 +166,7 @@ class Module_Movies implements Module
             $layers = $this->_formatLayerStrings($layerStrings);
 
             $movie = new Movie_HelioviewerMovie(
-                $layers, $startDate, $zoomLevel, $numFrames, $frameRate, 
+                $layers, $startDate, $zoomLevel, $numFrames, $frameRate,
                 $hqFormat, $options, $timeStep, $imageSize, $filename, $quality
             );
             $movie->buildMovie();
@@ -179,13 +178,13 @@ class Module_Movies implements Module
 
         return 1;
     }
-    
+
     /**
-     * Gets the movie url and loads it into MC Mediaplayer 
-     * 
+     * Gets the movie url and loads it into MC Mediaplayer
+     *
      * @return void
      */
-    public function playMovie () 
+    public function playMovie ()
     {
         $url = $this->_params['url'];
         $width  = $this->_params['width'];

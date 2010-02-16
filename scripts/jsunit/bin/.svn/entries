@@ -1,34 +1,0 @@
-9
-
-dir
-1335
-https://jsunit.svn.sourceforge.net/svnroot/jsunit/trunk/jsunit/bin
-https://jsunit.svn.sourceforge.net/svnroot/jsunit
-
-
-
-2008-01-16T01:04:30.411400Z
-1324
-ehanson
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-9c957974-bd0e-0410-960b-faf4f3e8a3c7
-
-mac
-dir
-
-unix
-dir
-

@@ -59,7 +59,7 @@ class Image_SubFieldImage
 
     /**
      * Creates an Image_SubFieldImage instance
-     * 
+     *
      * @param string $sourceJp2    Original JP2 image from which the subfield should be derrived
      * @param string $outputFile   Location to output the subfield image to
      * @param array	 $roi          Subfield region of interest
@@ -68,9 +68,9 @@ class Image_SubFieldImage
      * @param int    $jp2Height    Height of the JP2 image at it's natural resolution
      * @param float  $jp2Scale     Pixel scale of the original JP2 image
      * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
-     * 
+     *
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
-     *           ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
+     *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
     public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale)
     {
@@ -97,13 +97,13 @@ class Image_SubFieldImage
 
     /**
      * Builds the requested subfield image.
-     * 
+     *
      * Extracts a region of the JP2 image, converts it into a .png file, and handles
      * any padding, resizing, and transparency. PNG is used as an intermediate format
      * due to lack of support for PGM files in GD.
      *
      * @TODO: Normalize quality scale.
-     * 
+     *
      * @return void
      */
     protected function buildImage()
@@ -112,12 +112,12 @@ class Image_SubFieldImage
             $grayscale    = substr($this->outputFile, 0, -3) . "pgm";
             $intermediate = substr($this->outputFile, 0, -3) . "png";
 
-            // Extract region
+            // Extract region (PGM)
             $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor);
 
             $cmd = HV_PATH_CMD;
 
-            // Generate grayscale image
+            // Generate ImageMagick-readable grayscale image (PNG)
             $toIntermediateCmd = $cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale ";
 
             // kdu_expand can only handle whole number values for -reduce
@@ -134,7 +134,7 @@ class Image_SubFieldImage
                 $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
 
-            // IM command for transparency, padding, rescaling, etc.
+            // IM commands for transparency, padding, rescaling, etc.
             if ($this->hasAlphaMask()) {
                 $cmd = HV_PATH_CMD . " convert ";
             } else {
@@ -147,7 +147,7 @@ class Image_SubFieldImage
             // if ($this->desiredToActual > 1) {
             //    $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
             // } else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
-            
+
             // Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
             if ($this->desiredToActual > 1) {
                 $cmd .= $this->_padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
@@ -186,15 +186,15 @@ class Image_SubFieldImage
 
     /**
      * Pads a tile to the desired dimensions
-     * 
+     *
      * @param int $jp2Width  JP2 base width
      * @param int $jp2Height JP2 base height
      * @param int $ts        Tilesize in pixelss
      * @param int $x         Tile x-coordinate
      * @param int $y         Tile y-coordinate
-     * 
+     *
      * TODO: Move to Tile class
-     * 
+     *
      * @return string Command to pad tile
      */
     private function _padTile ($jp2Width, $jp2Height, $ts, $x, $y)
@@ -251,17 +251,17 @@ class Image_SubFieldImage
 
     /**
      * Pads the subfield image
-     * 
+     *
      * TODO: Move to relevent sub-classes (e.g. Tile and Screenshot)
-     * 
+     *
      * If the image is a Tile, it is padded according to where it lies in the image.
      * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
-     * 
+     *
      * @param int $width  Width to pad to
      * @param int $height Height to pad to
      * @param int $x      Tile x-coordinate
      * @param int $y      Tile y-coordinate
-     * 
+     *
      * @return string Command to pad subfield image
      */
     private function _padImage ($width, $height, $x, $y)
@@ -344,9 +344,9 @@ class Image_SubFieldImage
 
     /**
      * Sets the subfield image color lookup table (CLUT)
-     * 
+     *
      * @param string $clut Location of the lookup table to use
-     * 
+     *
      * @return void
      */
     protected function setColorTable($clut)
@@ -356,9 +356,9 @@ class Image_SubFieldImage
 
     /**
      * Enable/Disable alpha mask support
-     * 
+     *
      * @param string $value Locatation of the base image to use for an alpha mask
-     * 
+     *
      * @return void
      */
     protected function setAlphaMask($value)
@@ -368,7 +368,7 @@ class Image_SubFieldImage
 
     /**
      * Returns true if the image has an associated alpha mask
-     * 
+     *
      * @return bool Whether or not the subfield image uses an associated alpha mask for transparent regions.
      */
     protected function hasAlphaMask()
@@ -378,7 +378,7 @@ class Image_SubFieldImage
 
     /**
      * Set Image Parameters
-     * 
+     *
      * @return string Image compression and quality related flags.
      */
     protected function setImageParams()
@@ -396,9 +396,9 @@ class Image_SubFieldImage
 
     /**
      * Specify the subfield image is square
-     * 
+     *
      * @param bool $value Whether or not the subfield is a square image
-     * 
+     *
      * @return void
      */
     protected function setSquareImage($value)
@@ -408,11 +408,11 @@ class Image_SubFieldImage
 
     /**
      * Handles clean-up in case something goes wrong to avoid mal-formed tiles from being displayed
-     * 
+     *
      * @param string $filename Filename for aborted subfield image
-     * 
+     *
      * @TODO: Close any open IM/GD file handlers
-     * 
+     *
      * @return void
      */
     private function _abort($filename)
@@ -443,13 +443,13 @@ class Image_SubFieldImage
 
     /**
      * Applies the specified color lookup table to the image using GD
-     * 
+     *
      * Note: input and output are usually the same file.
-     * 
+     *
      * @param string $input  Location of input image
      * @param string $clut   Location of the color lookup table to use
      * @param string $output Location to save new image to
-     * 
+     *
      * @return void
      */
     private function _setColorPalette ($input, $clut, $output)
@@ -499,7 +499,7 @@ class Image_SubFieldImage
 
     /**
      * Displays the image on the page
-     * 
+     *
      * @return void
      */
     public function display()
@@ -537,29 +537,20 @@ class Image_SubFieldImage
     }
 
     /**
-     * Calls the identify command in order to determine an image dimensions
-     * 
+     * Returns the image's width and height
+     *
      * @param string $filename The image filepath
-     * 
+     *
      * @return array the width and height of the given image
      */
     private function _getImageDimensions($filename)
     {
-        try {
-            $cmd = HV_PATH_CMD . " identify $filename | grep -o \" [0-9]*x[0-9]* \"";
-
-            $dimensions = preg_split("/x/", trim(exec(escapeshellcmd($cmd))));
-            if (sizeof($dimensions) < 2) {
-                throw new Exception("Unable to extract image dimensions for $filename!");
-            } else {
-                return array (
-                    'width'  => (int)$dimensions[0],
-                    'height' => (int)$dimensions[1]
-                );
-            }
-        } catch (Exception $e) {
-            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
+        if (list($width, $height, $type, $attr) = getimagesize($filename)) {
+            return array (
+                'width'  => $width,
+                'height' => $height
+            );
+        } else {
             $this->_abort($filename);
         }
     }

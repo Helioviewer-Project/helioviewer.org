@@ -2,9 +2,9 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Helioviewer WebClient Module class definition.
- * 
+ *
  * PHP version 5
- * 
+ *
  * @category Application
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -15,7 +15,7 @@ require_once "interface.Module.php";
 
 /**
  * Defines methods used by Helioviewer.org to interact with a JPEG 2000 archive.
- * 
+ *
  * @category Application
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
@@ -29,19 +29,18 @@ class Module_WebClient implements Module
 
     /**
      * Constructor
-     * 
+     *
      * @param mixed &$params API Request parameters, including the action name.
-     * 
+     *
      * @return void
      */
     public function __construct(&$params)
     {
         $this->_params = $params;
-        $this->execute();
     }
 
     /**
-     * execute 
+     * execute
      *
      * @return void
      */
@@ -54,7 +53,7 @@ class Module_WebClient implements Module
 
     /**
      * printDoc
-     * 
+     *
      * @return void
      */
     public static function printDoc()
@@ -65,9 +64,9 @@ class Module_WebClient implements Module
     /**
      * 'Opens' the requested file in the current window as an attachment,
      *  which pops up the "Save file as" dialog.
-     * 
+     *
      * @TODO test this to make sure it works in all browsers.
-     * 
+     *
      * @return void
      */
     public function downloadFile()
@@ -75,7 +74,7 @@ class Module_WebClient implements Module
         $url = $this->_params['url'];
 
         // Convert web url into directory url so stat() works.
-        // Need to use stat() instead of filesize() because filesize fails 
+        // Need to use stat() instead of filesize() because filesize fails
         // for every file on Linux due to security permissions with apache.
         // To get the file size, do $stat['size']
         $url = str_replace(HV_WEB_ROOT_URL, HV_ROOT_DIR, $url);
@@ -100,7 +99,7 @@ class Module_WebClient implements Module
     /**
      * http://localhost/hv/api/index.php?action=getClosestImage
      * &date=2003-10-05T00:00:00Z&source=0&server=api/index.php
-     * 
+     *
      * @return void
      */
     public function getClosestImage ()
@@ -108,13 +107,12 @@ class Module_WebClient implements Module
         // Local Tiling Server
         if ($this->_params['server'] === 0) {
             include_once 'lib/Database/ImgIndex.php';
-            include_once 'lib/Database/DbConnection.php';
-            $imgIndex = new Database_ImgIndex(new Database_DbConnection());
+            $imgIndex = new Database_ImgIndex();
 
             // Convert human-readable params to sourceId if needed
             if (!isset($this->_params['sourceId'])) {
                 $this->_params['sourceId'] = $imgIndex->getSourceId(
-                    $this->_params['observatory'], $this->_params['instrument'], 
+                    $this->_params['observatory'], $this->_params['instrument'],
                     $this->_params['detector'], $this->_params['measurement']
                 );
             }
@@ -128,7 +126,7 @@ class Module_WebClient implements Module
 
         } else {
             // Remote Tiling Server
-            // TODO 01/29/2010 Check to see if server number is within valid 
+            // TODO 01/29/2010 Check to see if server number is within valid
             //                 range of know authenticated servers.
             $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
             $source  = $this->_params['sourceId'];
@@ -137,23 +135,21 @@ class Module_WebClient implements Module
 
             $json = file_get_contents($url);
         }
-        
+
         header('Content-Type: application/json');
         echo $json;
     }
 
     /**
      * getDataSources
-     * 
+     *
      * @return JSON Returns a tree representing the available data sources
      */
     public function getDataSources ()
     {
         include_once 'lib/Database/ImgIndex.php';
-        include_once 'lib/Database/DbConnection.php';
 
-        // NOTE: Make sure to remove database specification after testing completed!
-        $imgIndex = new Database_ImgIndex(new Database_DbConnection($dbname = "helioviewer"));
+        $imgIndex = new Database_ImgIndex();
         $dataSources = json_encode($imgIndex->getDataSources());
 
         header('Content-type: application/json');
@@ -163,7 +159,7 @@ class Module_WebClient implements Module
 
     /**
      * NOTE: Add option to specify XML vs. JSON... FITS vs. Entire header?
-     *  
+     *
      * @return void
      */
     public function getJP2Header ()
@@ -188,69 +184,69 @@ class Module_WebClient implements Module
 
     /**
      * getTile
-     * 
+     *
      * @return void
      */
     public function getTile ()
     {
         include_once 'lib/Image/Tiling/HelioviewerTile.php';
         $tile = new Image_Tiling_HelioviewerTile(
-            $this->_params['uri'], $this->_params['x'], $this->_params['y'], 
-            $this->_params['zoom'], $this->_params['ts'], 
-            $this->_params['jp2Width'], $this->_params['jp2Height'], 
-            $this->_params['jp2Scale'], $this->_params['offsetX'], 
-            $this->_params['offsetY'], $this->_params['format'], 
-            $this->_params['obs'], $this->_params['inst'], 
+            $this->_params['uri'], $this->_params['x'], $this->_params['y'],
+            $this->_params['zoom'], $this->_params['ts'],
+            $this->_params['jp2Width'], $this->_params['jp2Height'],
+            $this->_params['jp2Scale'], $this->_params['offsetX'],
+            $this->_params['offsetY'], $this->_params['format'],
+            $this->_params['obs'], $this->_params['inst'],
             $this->_params['det'], $this->_params['meas']
         );
     }
 
     /**
      * launchJHV
-     *  
+     *
      * @return void
      */
     public function launchJHV ()
     {
         header('content-type: application/x-java-jnlp-file');
-        header('content-disposition: attachment; filename="JHelioviewer.jnlp"'); 
+        header('content-disposition: attachment; filename="JHelioviewer.jnlp"');
         echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 
         ?>
         <jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
-            <information>    
-                <title>JHelioviewer</title>   
-                <vendor>ESA</vendor>   
+            <information>
+                <title>JHelioviewer</title>
+                <vendor>ESA</vendor>
                 <homepage href="index.html" />
-                <description>JHelioviewer web launcher</description>   
-                <offline-allowed />  
-            </information> 
-            
-            <resources>    
-                <j2se version="1.5+" initial-heap-size="256M" max-heap-size="1500M"/>     
-                <jar href="JHelioviewer.jar" />  
-            </resources>  
-            
-            <security>    
-                <all-permissions />  
-            </security> 
-            
+                <description>JHelioviewer web launcher</description>
+                <offline-allowed />
+            </information>
+
+            <resources>
+                <j2se version="1.5+" initial-heap-size="256M" max-heap-size="1500M"/>
+                <jar href="JHelioviewer.jar" />
+            </resources>
+
+            <security>
+                <all-permissions />
+            </security>
+
             <application-desc main-class="org.helioviewer.JavaHelioViewer">
                 <?php
-                
+
         if ((isset($this->_params['files'])) && ($this->_params['files'] != "")) {
             echo "        <argument>$this->files</argument>\n";
         }
                 ?>
             </application-desc>
         </jnlp>
-    <?php        
+    <?php
     }
 
     /**
      * sendEmail
      * TODO: CAPTCHA, Server-side security
-     * 
+     *
      * @return void
      */
     public function sendEmail()
@@ -258,7 +254,7 @@ class Module_WebClient implements Module
         // The message
         //$message = "Line 1\nLine 2\nLine 3";
 
-        // In case any of our lines are larger than 70 characters, we should 
+        // In case any of our lines are larger than 70 characters, we should
         // use wordwrap()
         //$message = wordwrap($message, 70);
 
@@ -268,10 +264,10 @@ class Module_WebClient implements Module
 
 
     /**
-     * Obtains layer information, ranges of pixels visible, and the date being 
+     * Obtains layer information, ranges of pixels visible, and the date being
      * looked at and creates a composite image (a Screenshot) of all the layers.
      *
-     * All possible parameters: obsDate, zoomLevel, layers, imageSize, 
+     * All possible parameters: obsDate, zoomLevel, layers, imageSize,
      * filename, edges, sharpen
      *
      * API example: http://localhost/helioviewer/api/index.php
@@ -279,9 +275,9 @@ class Module_WebClient implements Module
      *     &layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
      *     &imageSize=588,556&filename=example&sharpen=false&edges=false
      *
-     * Note that filename does NOT have the . extension on it. The reason for 
-     * this is that in the media settings pop-up dialog, there is no way of 
-     * knowing ahead of time whether the image is a .png, .tif, .flv, etc, and 
+     * Note that filename does NOT have the . extension on it. The reason for
+     * this is that in the media settings pop-up dialog, there is no way of
+     * knowing ahead of time whether the image is a .png, .tif, .flv, etc, and
      * in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      *
      * @return void
@@ -348,10 +344,10 @@ class Module_WebClient implements Module
      *         var unix_ts = d.getTime() * 1000;
      *
      * TODO
-     *     = If no params are passed, print out API usage description 
+     *     = If no params are passed, print out API usage description
      *       (and possibly a query builder form)...
-     *     = Add support for fuzzy timestamp matching. Could default to exact 
-     *       matching unless user specifically requests fuzzy date-matching. 
+     *     = Add support for fuzzy timestamp matching. Could default to exact
+     *       matching unless user specifically requests fuzzy date-matching.
      *     = Separate out layer details into a Layer PHP class?
      *     = Update getViewerImage to use "layers" instead of "layers" + "timestamps"
      *
@@ -365,29 +361,29 @@ class Module_WebClient implements Module
         $img = Image_CompositeImage::compositeImageFromQuery($this->_params);
         $img->printImage();
     }
-    
+
     /**
      * Handles input validation
-     * 
+     *
      * @return bool Returns true if the input is valid with respect to the
      *              requested action.
      */
     public function validate()
     {
         switch($this->_params['action']) {
-            
+
         case "downloadFile":
             $expected = array(
                "required" => array('url'),
                "urls"     => array('url')
             );
             break;
-            
+
         case "getClosestImage":
             $expected = array(
                "dates" => array('date')
             );
-            
+
             if (isset($this->_params["sourceId"])) {
                 $expected["required"] = array('server', 'date', 'sourceId');
                 $expected["ints"]     = array('sourceId', 'server');
@@ -396,18 +392,18 @@ class Module_WebClient implements Module
                 $expected["ints"]     = array('server');
             }
             break;
-            
+
         case "getDataSources":
             break;
-            
+
         case "getTile":
-            $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width','jp2Height', 'jp2Scale', 'offsetX', 'offsetY', 
+            $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width','jp2Height', 'jp2Scale', 'offsetX', 'offsetY',
                               'format', 'obs', 'inst', 'det', 'meas');
             $expected = array(
                "required" => $required
             );
             break;
-            
+
         case "getJP2Header":
             break;
         case "getViewerImage":
@@ -417,27 +413,27 @@ class Module_WebClient implements Module
         default:
             break;
         }
-        
+
         if (isset($expected)) {
             Validation_InputValidator::checkInput($expected, $this->_params);
         }
-        
+
         return true;
     }
 
     /**
-     * Takes the string representation of a layer from the javascript and 
+     * Takes the string representation of a layer from the javascript and
      * formats it so that only useful/necessary information is included.
-     * 
-     * @param {Array} $layers -- an array of strings in the format: 
+     *
+     * @param {Array} $layers -- an array of strings in the format:
      *     "obs,inst,det,meas,visible,opacityxxStart,xSize,yStart,ySize"
-     *      The extra "x" was put in the middle so that the string could be 
-     *      broken in half and parsing one half by itself rather than parsing 
+     *      The extra "x" was put in the middle so that the string could be
+     *      broken in half and parsing one half by itself rather than parsing
      *      10 different strings and putting the half that didn't need parsing
      *      back together.
-     *                     
+     *
      * @return {Array} $formatted -- The array containing properly
-     *     formatted strings                
+     *     formatted strings
      */
     private function _formatLayerStrings($layers)
     {
@@ -451,12 +447,12 @@ class Module_WebClient implements Module
             $offsetX = $meta[4];
             $offsetY = $meta[5];
 
-            // Add a "+" in front of positive numbers so that the offsets 
+            // Add a "+" in front of positive numbers so that the offsets
             // are readable by imagemagick
             $meta[4] = ($offsetX >= 0? "+" : "") . $offsetX;
             $meta[5] = ($offsetY >= 0? "+" : "") . $offsetY;
 
-            // Extract relevant information from $layerInfo[0] 
+            // Extract relevant information from $layerInfo[0]
             // (obs,inst,det,meas,visible,opacity).
             $rawName = explode(",", $layerInfo[0]);
             $opacity = $rawName[5];
@@ -464,7 +460,7 @@ class Module_WebClient implements Module
             array_splice($rawName, 4);
 
             $name = implode("_", $rawName);
-            // Stick opacity on the end. the $image string now looks like: 
+            // Stick opacity on the end. the $image string now looks like:
             // "obs_inst_det_meas,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity"
             $image = $name . "," . implode(",", $meta) . "," . $opacity;
             array_push($formatted, $image);
@@ -472,26 +468,26 @@ class Module_WebClient implements Module
 
         return $formatted;
     }
-    
+
     /**
-     * Creates the directory structure which will be used to cache 
+     * Creates the directory structure which will be used to cache
      * generated tiles.
-     * 
+     *
      * @param string $filepath Path where tiled data will be stored in the cache
-     * 
+     *
      * @return void
-     *  
+     *
      * Note: mkdir may not set permissions properly due to an issue with umask.
      *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
     private function _createImageCacheDir($filepath)
     {
         $dir = HV_CACHE_DIR . $filepath;
-        
+
         if (!file_exists($dir)) {
             mkdir($dir, 0777, true);
             chmod($dir, 0777);
-        } 
+        }
     }
 
 }
