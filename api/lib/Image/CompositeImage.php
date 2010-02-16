@@ -55,7 +55,7 @@ abstract class Image_CompositeImage
         // Create the temp directory where images will be stored.
         // $this->tmpDir is determined in either the MovieFrame or Screenshot class.
         if (!file_exists($this->tmpDir)) {
-            mkdir($this->tmpDir);
+            mkdir($this->tmpDir, 0777, true);
             chmod($this->tmpDir, 0777);
         }
 

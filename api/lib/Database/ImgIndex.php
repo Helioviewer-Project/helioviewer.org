@@ -29,13 +29,12 @@ class Database_ImgIndex
     /**
      * Creates an ImgIndex instance
      *
-     * @param resource $dbConnection A valid database connect handler
-     *
      * @return void
      */
-    public function __construct($dbConnection)
+    public function __construct()
     {
-        $this->_dbConnection = $dbConnection;
+        include_once 'DbConnection.php';
+        $this->_dbConnection = new Database_DbConnection();
     }
 
     /**
@@ -43,11 +42,10 @@ class Database_ImgIndex
      *
      * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
      * @param int    $sourceId An identifier specifying the image type or source requested.
-     * @param bool   $debug    [Optional] Provides extra information about the request.
      *
      * @return array Information about the image match including it's location, time, scale, and dimensions.
      */
-    public function getClosestImage($date, $sourceId, $debug=false)
+    public function getClosestImage($date, $sourceId)
     {
         include_once 'lib/Helper/DateTimeConversions.php';
 
@@ -57,9 +55,7 @@ class Database_ImgIndex
         $lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
         $rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
 
-        if ($debug) {
-            die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
-        }
+        //die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
 
         $left = mysqli_fetch_array($this->_dbConnection->query($lhs), MYSQL_ASSOC);
         $right = mysqli_fetch_array($this->_dbConnection->query($rhs), MYSQL_ASSOC);
@@ -97,11 +93,11 @@ class Database_ImgIndex
         $center     = $xmlBox->getSunCenter();
 
         $meta = array(
-            "width"  => (int) $dimensions[0],
-            "height" => (int) $dimensions[1],
-            "y"      => (float) $center[0],
-            "x"      => (float) $center[1],
-            "scale"  => (float) $xmlBox->getImagePlateScale()
+            "width"   => (int) $dimensions[0],
+            "height"  => (int) $dimensions[1],
+            "centerX" => (float) $center[0],
+            "centerY" => (float) $center[1],
+            "scale"   => (float) $xmlBox->getImagePlateScale()
         );
 
         return $meta;
@@ -212,14 +208,13 @@ class Database_ImgIndex
      *
      * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
      * @param int    $sourceId An identifier specifying the image type or source requested.
-     * @param bool   $debug    [Optional] Provides extra information about the request.
      *
      * @return string Local filepath for the JP2 image.
      *
      */
-    public function getJP2FilePath($date, $sourceId, $debug=false)
+    public function getJP2FilePath($date, $sourceId)
     {
-        $img = $this->getClosestImage($date, $sourceId, $debug);
+        $img = $this->getClosestImage($date, $sourceId);
         return $img["filepath"] . "/" . $img["filename"];
     }
 }

@@ -50,7 +50,7 @@ class Image_Screenshot extends Image_CompositeImage
         $this->timestamps     = array();
         $this->quality         = $quality;
 
-        $tmpDir = HV_TMP_ROOT_DIR . "/screenshots/";
+        $tmpDir = HV_TMP_DIR . "/screenshots/";
 
         parent::__construct($zoomLevel, $options, $tmpDir);
 

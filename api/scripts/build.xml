@@ -5,21 +5,22 @@
         Helioviewer Back-end Apache Ant build.xml
     </description>
 	
-	<!-- Prerequisites -->
-	<available file="/usr/local/bin/phpcs" type="file" property="phpcs.found" />
-	<available file="/usr/local/bin/phpdoc" type="file" property="phpdoc.found" />
-	<available file="/usr/local/bin/phpunit" type="file" property="phpunit.found" />
-	
 	<!-- TODO: target = all -->
 	
-    <!-- Check for PHPUnit -->  
+    <!-- PHPUnit -->
+    <condition property="phpunit.found">
+       <or>
+           <available file="/usr/local/bin/phpunit" type="file" />
+           <available file="/usr/bin/phpunit" type="file" />
+       </or>
+    </condition>
+
     <target name="phpunit_prereqs" unless="phpunit.found">
        <echo>Unable to find PHPUnit.</echo>
        <echo>To install, follow instructions at:</echo>
        <echo>   http://www.phpunit.de/manual/3.4/en/installation.html</echo>
     </target>
     
-    <!-- PHPUnit -->
     <target name="test" depends="phpunit_prereqs" if="phpunit.found">
         <description>
             Runs PHPUnit tests.
@@ -30,14 +31,20 @@
         </exec>
     </target>
 	
-	<!-- Check for PHP Codesniffer -->	
+	<!-- PHP CodeSniffer -->
+    <condition property="phpcs.found">
+       <or>
+           <available file="/usr/local/bin/phpcs" type="file" />
+           <available file="/usr/bin/phpcs" type="file" />
+       </or>
+    </condition>
+    
 	<target name="phpcs_prereqs" unless="phpcs.found">
 	   <echo>Unable to find PHP CodeSniffer.</echo>
 	   <echo>To install, run:</echo>
 	   <echo>   sudo pear install PHP_CodeSniffer</echo>
 	</target>
-	
-    <!-- PHP CodeSniffer -->
+
 	<target name="phpcs" depends="phpcs_prereqs" if="phpcs.found">
 		<description>
             Checks code against a specified coding standard.
@@ -48,14 +55,14 @@
 		</exec>
 	</target>
 	
-	<!-- Check for phpDocumentor -->
-    <target name="phpdoc_prereqs" unless="phpdoc.found">
-       <echo>Unable to find phpDocumentor</echo>
-       <echo>To install, run:</echo>
-       <echo>   sudo pear install --alldeps PhpDocumentor</echo>
-    </target>
+    <!-- PHP Documentor -->
+    <condition property="phpdoc.found">
+       <or>
+           <available file="/usr/local/bin/phpdoc" type="file" />
+           <available file="/usr/bin/phpdoc" type="file" />
+       </or>
+    </condition>
     
-    <!-- PHP Documentation Generation -->
     <target name="phpdoc" depends="phpdoc_prereqs" if="phpdoc.found">
         <description>
             Generates PHP Documentation using phpDocumentor.
@@ -65,4 +72,11 @@
             <arg line="-t docs/ -d lib/" />
         </exec>
     </target>
+    
+    <target name="phpdoc_prereqs" unless="phpdoc.found">
+       <echo>Unable to find phpDocumentor</echo>
+       <echo>To install, run:</echo>
+       <echo>   sudo pear install --alldeps PhpDocumentor</echo>
+    </target>
+    
 </project>

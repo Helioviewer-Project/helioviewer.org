@@ -9,7 +9,7 @@
 
     <property
             name="browserFileNames"
-            value="firefox,opera"
+            value=""
             description="browserFileNames is a comma-separated list of browsers in which to run tests when StandaloneTest is invoked on this host. Each value can be a semi-colon separated list, with the second value being the program to run to shut down the browser and the third value being the display name of the browser. The second and third values are optional. For a JsUnit Server, this is a mandatory property. For example: 'c:\program files\internet explorer\iexplore.exe;c:\program files\killie.bat;Internet Explorer 6.0,c:\program files\netscape\netscape7.1\netscp.exe,c:\program files\Opera\runopera.bat'"
             />
 
@@ -44,7 +44,7 @@
     <property
             id="port"
             name="port"
-            value="8081"
+            value=""
             description="port is the port on which the JsUnitStandardServer runs. This is not a mandatory property. If not specified, 8080 is assumed. For exapmle: '8080'"
             />
 
@@ -68,26 +68,20 @@
             value=""
             description="timeoutSeconds is the number of seconds to wait before timing out a browser during a test run. This is not a mandatory property. If not specified, 60 is assumed. For example: '60'"
             />
-	<!-- submitResults=#&amp; -->
+
     <property
             id="url"
             name="url"
-            value="http://localhost/hv/lib/jsunit/testRunner.html?testPage=http://localhost/hv/test/testUserSettings.html"
+            value=""
             description="url is the URL (HTTP or file protocol) to open in the browser. For a JsUnit Server, this is a mandatory property for a test run if the server is not passed the 'url' parameter. For example: 'http://myhost.mycompany.com:8080/jsunit/testRunner.html?testPage=http://myhost.mycompany.com:8080/jsunit/tests/jsUnitTestSuite.html'"
             />
 
     <property name="bin" location="java/bin"/>
     <property name="lib" location="java/lib"/>
-    <property name="morelibs" location="/usr/share/java"/>
-    
     <property name="loggingPropertiesFile" location="logging.properties"/>
 
     <path id="classpath">
         <fileset dir="${lib}">
-            <include name="*.jar"/>
-            <include name="*/*.jar"/>
-        </fileset>
-        <fileset dir="${morelibs}">
             <include name="*.jar"/>
             <include name="*/*.jar"/>
         </fileset>
