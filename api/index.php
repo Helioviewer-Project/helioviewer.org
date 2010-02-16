@@ -516,7 +516,7 @@ if (!(isset($params) && loadModule($params))) {
                     measurement parameters).</td>
                 </tr>
                 <tr>
-                    <td><b>getJPIP</b></td>
+                    <td><b>jpip</b></td>
                     <td><i>Boolean</i></td>
                     <td><i>[Optional]</i> Returns a JPIP URI instead of an actual image.</td>
                 </tr>
@@ -532,8 +532,8 @@ if (!(isset($params) && loadModule($params))) {
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white light&amp;date=2003-10-05T00:00:00Z&amp;getJPIP=true">
-        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&getJPIP=true
+        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
+        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&jpip=true
         </a>
         </span>
         </div>
@@ -622,7 +622,7 @@ if (!(isset($params) && loadModule($params))) {
                     the timestamps associated with each layer in the file.</td>
                 </tr>
                 <tr>
-                    <td><b>getJPIP</b></td>
+                    <td><b>jpip</b></td>
                     <td><i>Boolean</i></td>
                     <td><i>[Optional]</i> Returns a JPIP URI instead of an actual movie.</td>
                 </tr>
@@ -672,8 +672,8 @@ if (!(isset($params) && loadModule($params))) {
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;getJPIP=true">
-            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&getJPIP=true
+        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;jpip=true">
+            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&jpip=true
         </a>
         </span></div>
         </div>
@@ -1014,7 +1014,7 @@ function printErrorMsg($msg)
 <body>
     <div style='width: 50%; margin-left: auto; margin-right: auto; margin-top: 250px;
                 text-align: center; font-size: 14px;'>
-    <img src='images/about.png' alt='Helioviewer logo'></img><br>
+    <img src='resources/images/about.png' alt='Helioviewer logo'></img><br>
     <b>Error:</b> <?php echo $msg;?><br>
     </div>
 </body>
