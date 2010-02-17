@@ -12,8 +12,8 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'PHPUnit/Framework.php';
-require_once "lib/Config.php";
-require_once 'lib/Module/JHelioviewer.php';
+require_once "src/Config.php";
+require_once 'src/Module/JHelioviewer.php';
 /**
  * JHelioviewer Module Tests
  *
