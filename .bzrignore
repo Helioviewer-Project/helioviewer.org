@@ -8,6 +8,8 @@ __MACOSX
 *.pyc
 api/docs
 api/lib/phpvideotoolkit/config.php
+build/css/*
+build/*.js
 cache/*
 log/*
 install/tools/icons

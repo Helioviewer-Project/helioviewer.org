@@ -1,0 +1,63 @@
+/* Events */
+.event-layer {
+	position: absolute;
+}
+.event {
+	position: absolute;
+}
+div.event-marker {
+	position: absolute;
+	height: 16px;
+	width: 16px;
+	left: -8px;
+	top: -8px;
+	border: none;
+	z-index: 20;
+}
+
+.Active_Region {background: url(../../resources/images/events/activeregion.png);}
+.CME {background: url(../../resources/images/events/cme.png);}
+.Type_II_Radio_Burst {background: url(../../resources/images/events/typeII_radioburst.png);}
+.Solar_Flare {background: url(../../resources/images/events/flare.png);}
+
+div.event-label {
+	background: #4a4a4a;
+	position: absolute;
+	top: 15px;
+	left: 5px;
+	z-index: 10;
+}
+div.event-popup {
+	color: #000;
+	cursor: default;
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	z-index: 11;
+}
+
+a.event-popup-close-btn {
+	position: absolute;
+	cursor: pointer;
+	color: #4673b2;
+	padding: 0px;
+	font-family: sans-serif;
+	font-size: 14px;
+	right: 60px;
+	top: 35px;
+}
+
+a.event-popup-close-btn:hover {
+	font-weight: bold;
+	color: #b24673;
+}
+
+a.event-url {
+	text-decoration: none;
+	color: #4673b2;
+}
+
+a.event-url:hover {
+	text-decoration: underline;
+	color: #b24673;
+}

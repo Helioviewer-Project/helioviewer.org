@@ -12,7 +12,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'PHPUnit/Framework.php';
-require_once 'lib/Validation/InputValidator.php';
+require_once 'src/Validation/InputValidator.php';
 /**
  * Helioviewer InputValidator Tests
  *
