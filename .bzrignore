@@ -24,3 +24,5 @@ lib/helioviewer/build/helioviewer-all-min.js
 styles/helioviewer-all.css
 api/docs
 .buildpath
+Database.php
+Database.php
