@@ -21,7 +21,7 @@
  *    web-client install to connect with)
  *  = Add getPlugins method to JHelioviewer module (empty function for now)
  */
-require_once "lib/Config.php";
+require_once "src/Config.php";
 $config = new Config("../settings/Config.ini");
 
 if (isset($_REQUEST['action'])) {
@@ -971,7 +971,7 @@ function loadModule($params)
         "getJPX"           => "JHelioviewer"
     );
 
-    include_once "lib/Validation/InputValidator.php";
+    include_once "src/Validation/InputValidator.php";
 
     try {
         if (!array_key_exists($params["action"], $valid_actions)) {
@@ -984,7 +984,7 @@ function loadModule($params)
             $moduleName = $valid_actions[$params["action"]];
             $className  = "Module_" . $moduleName;
 
-            include_once "lib/Module/$moduleName.php";
+            include_once "src/Module/$moduleName.php";
 
             $module = new $className($params);
             $module->execute();

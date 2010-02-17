@@ -6,31 +6,28 @@
     </description>
 
     <!-- Some useful variables -->
-    <property name="hvlibs"  value="lib/helioviewer"/>	
+    <property name="hvlibs"  value="src"/>	
 
     <!-- Minification and concatenation -->
 	<target name="build">
-        <property name="cssdir"  value="styles"/>
+        <property name="cssdir"  value="resources/css"/>
         
 		<echo>Building Helioviewer...</echo>
 
-		<!-- create build directory -->
-		<mkdir dir="${hvlibs}/build"/>
-
 		<!-- concatenate in two-steps to preserve include order -->
-		<concat destfile="${hvlibs}/build/helioviewer-all.js" encoding="UTF-8" eol="lf">
+		<concat destfile="build/helioviewer.js" encoding="UTF-8" eol="lf">
 		    <filelist dir="${hvlibs}" files="Layer.js, LayerManager.js"/>
 			<fileset dir="${hvlibs}" includes="*.js" excludes="Layer.js, LayerManager.js"/>
 		</concat>
 
-		<concat destfile="${cssdir}/helioviewer-all.css" encoding="UTF-8" eol="lf">
+		<concat destfile="build/css/helioviewer.css" encoding="UTF-8" eol="lf">
 			<filelist dir="${cssdir}" files="main.css"/>
-		    <fileset dir="${cssdir}" includes="*.css" excludes="blackGlass.css, carbon.css, carbon-white.css, main-ie.css, helioviewer-all.css, main.css, main-timeline.css"/>
+		    <fileset dir="${cssdir}" includes="*.css" excludes="main.css, main-ie.css"/>
 		</concat>		
 
 		<!-- minify-->
-		<exec dir="scripts/jsmin" executable="jsmin.py" input="${hvlibs}/build/helioviewer-all.js" 
-		  output="${hvlibs}/build/helioviewer-all-min.js" resolveexecutable="true" />
+		<exec dir="scripts/jsmin" executable="jsmin.py" input="build/helioviewer.js" 
+		  output="build/helioviewer.min.js" resolveexecutable="true" />
 		  
 		<echo>Done!</echo>
 	</target>
@@ -39,7 +36,7 @@
 	<target name="jsdoc">
 		<echo>Generating documentation...</echo>
 		<exec dir="scripts/jsdoc-toolkit/" executable="java">
-			<arg line="-jar jsrun.jar app/run.js -a -p -t=templates/jsdoc -d=../../docs/ ../../lib/helioviewer/" />
+			<arg line="-jar jsrun.jar app/run.js -a -p -t=templates/jsdoc -d=../../docs/ ../../src" />
 		</exec>
 	</target>
 	

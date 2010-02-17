@@ -1,0 +1,294 @@
+/**
+ * Helioviewer.org Custom Styles
+ *
+ * Three-column layout based off of Paul O'Bs design (http://www.pmob.co.uk/temp/3colfixedtest_4.htm).
+ *
+ * Adjusting size of layout elements:
+ * 1. Adjusting size of left & right sidebars
+ *    To adjust the size of either sidebar, add/subtract the desired amount from the width and margin-left/right
+ *    properties of [#outsideBox, #leftCol, and #rightCol].
+ *
+ * 2. Adjusting the size of the header and footer elements
+ *    The header is currently broken up and set individually in each of the three columns. The footer, however,
+ *    is stored as a single continuous div.
+ */
+
+
+/* HTML ELEMENTS */
+html, body    {height:100%; background: url(../../resources/images/backgrounds/gradient_v5-optimized.png);}
+h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
+button        {cursor:pointer}
+strong    	  {font-weight:bold;}
+input, select {background-color:#F4F4F4;}
+
+/* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
+#outsideBox {
+  margin-left   : 280px;
+  margin-right  : 20px; /* (1) margin-right  : 250px;*/
+  margin-bottom :-72px;
+  min-height    : 100%;
+}
+
+#left-col-header, #middle-col-header, #right-col-header { height:25px; width: 100%; }
+#left-col-header   {left: -1px; height: 50px;}
+#right-col-header  {left: 1px}
+
+#left-col {
+    position:relative;/*ie needs this to show float */
+    width:280px;
+    float:left;
+    margin-left:-279px;/*must be 1px less than width otherwise won't push footer down */
+    z-index:100;
+    left:-1px;
+}
+
+#right-col {
+    position:relative;/*ie needs this to show float */
+    width:20px; /* (2) width:250px;*/
+    float:right;
+    margin-right: -19px; /* (3) margin-right:-249px;*//*must be 1px less than width otherwise won't push footer down */
+    left:1px;
+    color: #000;
+}
+
+#middle-col {
+  min-width:280px;
+}
+
+#footer {
+    width:100%;
+    position: absolute;
+    bottom: 0px;
+    clear: both;
+    height: 18px;
+    text-align: center;
+}
+/*needed to make room for footer*/
+/*
+#clearfooter{clear:both;height:72px;}
+* > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
+
+/* Loading Indicator */
+#loading {position: absolute; right: 3px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
+
+/* Observation controls */
+#observation-controls {
+    padding: 2px 2px 8px 2px;
+    margin: 0px 5px 0px 5px;
+    border: 1px solid black;
+    color: white;
+    font-size: 0.95em;
+}
+
+#observation-controls > div > input, #observation-controls > div > select {
+    border: 1px solid #5c5c5c;
+}
+
+/* Center button */
+#center-button {
+    background: transparent url(../../resources/images/blackGlass/transparentBGWhite.png);
+    font-size: 0.8em;
+	width:54px;
+	height:16px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	text-align:center;
+	cursor: pointer;
+}
+
+#center-button > span {
+	color: #E8E8E8;
+    font-weight: bold;
+    vertical-align: top;
+    line-height: 1.0;
+}
+
+/* Coordinates */
+#mouse-coords {
+	background: transparent;
+	color: white;
+    font-size: 13px;
+	font-weight: 600;
+	width: 160px;
+	height: 16px;
+	position: absolute;
+    bottom: 6px;
+	right: 2px;
+}
+
+/* Zoom controls */
+#zoomControls {
+    position: absolute;
+    left: 16px;
+    top:39px;
+    z-index:20;
+}
+
+/* Message Console */
+.message-console-link {
+	text-decoration: none;
+	font-weight: bold;
+	color: #3d76e0;
+}
+
+.message-console-link:hover {
+	text-decoration: underline;
+	color: #e03d76;
+}
+
+/* Calendar */
+#date {
+	width:80px;
+    vertical-align: top;
+	margin-right: 2px;
+    margin-top: 1px;
+}
+
+/* Movie Builder */
+img#movieBuilder {
+	position: relative;
+	cursor: pointer;
+	margin: 2px;
+	vertical-align: middle;
+	top: -4px;
+}
+
+/* MISC TEXT-RELATED */
+.centered {display: block; margin-left:auto; margin-right: auto;}
+
+a.dark {
+	text-decoration: none;
+	font-weight: bold;
+	color: #262424;
+	}
+a.dark:hover {
+    color: #d18f61;
+	}
+a.light {
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    color: #E8E8E8;
+}
+a.light:hover {
+    color: #d18f61;
+}
+
+/* Text+icon buttons */
+
+div.text-btn {
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    color: white;
+    margin: 0 5px;
+}
+
+div.text-btn:hover {
+    color: #d18f61;
+}
+
+span.ui-icon-hover {
+    background-image: url(/lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.section-header {
+	font-weight: bold;
+}
+
+/* Shadowbox modifications */
+#sb-body, #sb-loading {
+	background: transparent url(../../resources/images/blackGlass/transparentBG50.png);
+    border-color: #262424;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+
+/* Social & Movie buttons */
+#social-buttons {
+    background-color: #2A2A2A;
+    position: absolute;
+    right: 17px;
+    top:0px;
+    padding: 1px 0px 1px 8px;
+    border-top: 0px;
+    border-bottom: 1px solid #262424;
+    border-left: 1px solid #262424;
+    border-right: 0px;
+    font-size: 11px;
+    height: 15px;
+    -moz-border-radius-bottomleft: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+}
+
+/** Meta links **/
+#footer-container-outer {
+    position: relative;    
+}
+
+#footer-container-inner {
+    background-image: url(../../resources/images/backgrounds/ui-bg_gloss-wave_20_111111_500x100_transparent_15.png);
+    width: 100%;
+    height: 18px;
+    bottom: 0;
+    background-position: 20px;
+    border-color: #262424;
+    border-width: 1px 0px 0px 0px;
+}
+
+#footer-links {
+    width: 25%;
+    min-width: 450px;
+    margin-left: auto;
+    margin-right: auto;        
+}
+
+#footer-links > a {
+    vertical-align: middle;
+    color: #DCDCDC;
+    font-size: 11px;
+    margin-right: 20px;
+}
+
+#footer-links > a:hover {
+    color: #d18f61;
+}
+
+/* URL dialog */
+#helioviewer-url-box {
+    padding: 10px;
+    color: white;
+}
+
+/* Email dialog */
+#helioviewer-url-box > form > label {
+    float:left;
+    display:block;
+}
+#helioviewer-url-box > form > input[type="text"] {
+    display:block;
+}
+
+#helioviewer-url-box > form > label
+{
+    margin-right: 5px;
+    width: 50px;
+}
+
+/* jGrowl */
+body > div.jGrowl.top-right {
+    top: 56px;
+    right: 42px;
+}
+
+div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
+   background-color: Azure;  /* GhostWhite #D18F61; lightBlue;*/
+   color: #262424;
+}

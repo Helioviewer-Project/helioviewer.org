@@ -18,9 +18,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-        
-        <!-- Twitter Jetpack -->
-        <!-- <link rel="jetpack" href="lib/jetpack/helioviewer-twitter-jetpack.js" name="Helioviewer.org Twitter Jetpack">-->
 
         <!-- YUI CSS Reset -->
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0/build/reset-fonts/reset-fonts.css"> 
@@ -28,25 +25,25 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <!-- jQuery -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
-        <script src="lib/jquery/jquery-class-support/jquery.class.js" type="text/javascript"></script>
-        <!--<script src="lib/jquery/jquery-qtip-nightly/jquery.qtip.js" type="text/javascript"></script>
-        <script src="lib/jquery/jquery-qtip-nightly/jquery.qtip.tips.js" type="text/javascript"></script>-->
-        <script src="lib/jquery/jquery-qtip-1.0.0-rc3091551/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>
+        <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
+        <!--<script src="lib/jquery.qtip-nightly/jquery.qtip.js" type="text/javascript"></script>
+        <script src="lib/jquery.qtip-nightly/jquery.qtip.tips.js" type="text/javascript"></script>-->
+        <script src="lib/jquery.qtip-1.0.0-rc3091551/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>
         
+        <!-- TODO: move jquery.dynaccordion to /src with rest of custom code -->
+        <script src="lib/jquery.dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
         
-        <!-- TODO: move jquery-dynaccordion to /lib/helioviewer with rest of custom code -->
-        <script src="lib/jquery/jquery-dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
-        <link rel="stylesheet" href="lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/jquery-ui-1.7.1.custom.css" type="text/css" />    
+        <link rel="stylesheet" href="lib/jquery.ui-1.7.1/css/dot-luv-modified/jquery-ui-1.7.1.custom.css" type="text/css" />    
 
         <!-- Mousewheel support -->
-        <script src="lib/jquery/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
+        <script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
 
         <!-- jGrowl -->
-        <script src="lib/jquery/jGrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
-        <link rel="stylesheet" href="lib/jquery/jGrowl/jquery.jgrowl.css" type="text/css" />    
+        <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" type="text/css" />    
 
         <!-- imgAreaSelect jQuery plugin -->
-        <script src="lib/jquery/imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
+        <script src="lib/jquery.imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
 
         <!-- CookieJar -->
         <script type="text/javascript" src="lib/Cookiejar/jquery.json.js"></script>
@@ -60,7 +57,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <!--<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>-->
         
         <!-- Pixastic -->
-        <!-- jQuery("img.tile[src!=images/transparent_512.gif]"); -->
+        <!-- $("img.tile[src!=resources/images/transparent_512.gif]"); -->
         <!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
 
         <!-- ShadowBox -->
@@ -81,10 +78,10 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <?php
             // JavaScript
             if ($config["compress_js"]) {
-            	$compressed = "lib/helioviewer/build/helioviewer-all-min.js";
+            	$compressed = "build/helioviewer.min.js";
             	if (!file_exists($compressed)) {
             	   $error = "<div style='position: absolute; width: 100%; text-align: center; top: 50%; font-size: 14px;'>
-            	             <img src='images/logos/about.png' alt='helioviewer logo'></img><br>
+            	             <img src='resources/images/logos/about.png' alt='helioviewer logo'></img><br>
             	             <b>Configuration:</b> Unable to find compressed JavaScript files.
             	             If you haven't already, use Apache Ant with the included build.xml file to generate compressed files.</div></body></html>";
             	   die($error);
@@ -98,25 +95,25 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                             "MovieBuilder.js", "ScreenshotBuilder.js", "TileLayer.js", "TileLayerAccordion.js", "Time.js", "TimeControls.js", "TooltipHelper.js", "TreeSelect.js", 
                             "UserSettings.js", "Viewport.js", "ViewportHandlers.js", "ZoomControls.js");
                 foreach($js as $file)
-                    printf("<script src=\"lib/helioviewer/%s\" type=\"text/javascript\"></script>\n\t", $file);
+                    printf("<script src=\"src/%s\" type=\"text/javascript\"></script>\n\t", $file);
             }
             
             // CSS
             if ($config["compress_css"]) {
-                echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/helioviewer-all.css\" />\n\t";
+                echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"build/css/helioviewer.css\" />\n\t";
             }
             else {
                 $css = array("main.css", "accordions.css", "dialogs.css", "events.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
                 foreach($css as $file)
-                    printf("<link rel=\"stylesheet\" type=\"text/css\" href=\"styles/%s\" />\n\t", $file);
+                    printf("<link rel=\"stylesheet\" type=\"text/css\" href=\"resources/css/%s\" />\n\t", $file);
             }
         ?>
 
         <!-- Theme Modifications -->
-        <link rel="stylesheet" type="text/css" href="styles/dot-luv.css">
+        <link rel="stylesheet" type="text/css" href="resources/css/dot-luv.css">
         
         <!--[if IE]>
-            <link href="styles/main-ie.css" rel="stylesheet" type="text/css" />
+            <link href="resources/css/main-ie.css" rel="stylesheet" type="text/css" />
         <![endif]-->
         
         <script type="text/javascript">
@@ -167,7 +164,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             <!-- Left Column -->
             <div id="left-col">
                 <div id="left-col-header">
-                    <img src="images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
+                    <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
                 </div>
                 <br><br>
                 <div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div> 
