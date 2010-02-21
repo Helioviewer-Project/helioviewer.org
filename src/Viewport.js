@@ -17,12 +17,12 @@ var Viewport = Class.extend(
      * @param {Int} prefetch Prefetch any tiles that fall within this many pixels outside the physical viewport
      */ 
     defaultOptions: {
-        zoomLevel: 0,
-        headerId : '#middle-col-header',
-        footerId : '#footer',
-        tileSize : 512,
-        minHeight: 450,
-        prefetch : 0
+        imageScale : 0,
+        headerId   : '#middle-col-header',
+        footerId   : '#footer',
+        tileSize   : 512,
+        minHeight  : 450,
+        prefetch   : 0
     },
     isMoving: false,
     dimensions: { width: 0, height: 0 },
@@ -35,11 +35,11 @@ var Viewport = Class.extend(
      * <br>
      * <br><div style='font-size:16px'>Options:</div><br>
      * <div style='margin-left:15px'>
-     *         <b>zoomLevel</b> - The default zoomlevel to display (should be passed in from Helioviewer).<br>
-     *        <b>headerId</b>  - Helioviewer header section id.<br>
-     *        <b>footerId</b>     - Helioviewer footer section id.<br>
-     *        <b>tileSize</b>     - Size of tiles.<br> 
-     *        <b>prefetch</b>     - The radius outside of the visible viewport to prefetch.<br>
+     *       <b>imageScale</b> - The default image scale to display tiles at (should be passed in from Helioviewer).<br>
+     *       <b>headerId</b>   - Helioviewer header section id.<br>
+     *       <b>footerId</b>   - Helioviewer footer section id.<br>
+     *       <b>tileSize</b>   - Size of tiles.<br> 
+     *       <b>prefetch</b>   - The radius outside of the visible viewport to prefetch.<br>
      * </div>
      */
     init: function (controller, options) {
@@ -55,8 +55,8 @@ var Viewport = Class.extend(
         this.mouseCoords        = "disabled";
         this.viewportHandlers   = new ViewportHandlers(this);
         
-        // Solar radius at zoom-level 0
-        this.rsun0 = 94 * (Math.pow(2, 12)); // 94  * (1 << 12),
+        // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
+        this.rsun = 959.705;
 
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height() + 9;
@@ -308,11 +308,11 @@ var Viewport = Class.extend(
     },
 
     /**
-     * @description Zooms To a specified zoom-level.
-     * @param {Int} zoomLevel The desired zoomLevel
+     * @description Zooms To a specified image scale.
+     * @param {Float} imageScale The desired image scale
      */
-    zoomTo: function (zoomLevel) {
-        this.zoomLevel = zoomLevel;
+    zoomTo: function (imageScale) {
+        this.imageScale = imageScale;
         
         // reset the layers
         this.checkTiles();
@@ -323,7 +323,7 @@ var Viewport = Class.extend(
         this.updateSandbox();
         
         // store new value
-        this.controller.userSettings.set('zoomLevel', zoomLevel);
+        this.controller.userSettings.set('imageScale', imageScale);
     },
 
     /**
@@ -378,15 +378,14 @@ var Viewport = Class.extend(
      * @description Returns the current solar radius in pixels.
      */
     getRSun: function () {
-        return (this.rsun0 / Math.pow(2, this.zoomLevel)); //this.rsun0 >> this.viewport.zoomLevel;
+        return this.rsun / this.imageScale;
     },
     
     /**
      * @description Returns the current image scale (in arc-seconds/px) for which the tiles should be matched to.
-     * TODO (12/3/2009): Compute once and store when zoom-level is changed.
      */
     getImageScale: function () {
-        return (this.controller.baseScale * Math.pow(2, this.zoomLevel - this.controller.baseZoom));
+        return this.imageScale;
     },
     
     getDimensions: function () {

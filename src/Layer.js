@@ -10,8 +10,8 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var Layer = Class.extend(
     /** @lends Layer.prototype */
     {
-    maxZoomLevel: 20, // ZoomLevel where FullSize = 1px
-    minZoomLevel: 10,
+    //maxZoomLevel: 20, // ZoomLevel where FullSize = 1px
+    //minZoomLevel: 10,
     visible: true,
 
     /**
@@ -21,8 +21,6 @@ var Layer = Class.extend(
      * <br>
      * <br><div style='font-size:16px'>Options:</div><br>
      * <div style='margin-left:15px'>
-     *         <b>maxZoomLevel</b>    -  Maximum zoom level supported by the layer<br>
-     *      <b>minZoomLevel</b>    - Minimum zoom level supported by the layer<br>
      *        <b>visible</b> - The default layer visibility<br>
      * </div>
      */
