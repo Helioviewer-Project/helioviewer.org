@@ -22,7 +22,7 @@ var ZoomControls = Class.extend(
         $.extend(this, options);
         this.controller = controller;
         this.domNode = $(this.id);
-        this.offset  = this.minZoomLevel + this.maxZoomLevel;
+        this.offset  = this.minImageScale + this.maxImageScale;
        
         var self = this;
         
@@ -33,10 +33,10 @@ var ZoomControls = Class.extend(
             slide: function (event, slider) {
                 self._onSlide(slider.value);
             },
-            min: this.minZoomLevel,
-            max: this.maxZoomLevel,
+            min: this.minImageScale,
+            max: this.maxImageScale,
             orientation: 'vertical',
-            value: this.offset - this.zoomLevel
+            value: this.offset - this.imageScale
         });
 
         this._setupTooltips();
@@ -50,7 +50,7 @@ var ZoomControls = Class.extend(
     zoomButtonClicked: function (dir) {
         var v = this.zoomSlider.slider("value") + dir;
         this.zoomSlider.slider("value", v);
-        this._setZoomLevel(v);
+        this._setImageScale(v);
     },
     
     /**
@@ -71,14 +71,14 @@ var ZoomControls = Class.extend(
      * @param {Integer} v The new zoom value.
      */
     _onSlide: function (v) {
-        this._setZoomLevel(v);
+        this._setImageScale(v);
     },
     
     /**
      * @description Translates from jQuery slider values to zoom-levels, and updates the zoom-level.
      * @param {Object} v jQuery slider value
      */
-    _setZoomLevel: function (v) {
+    _setImageScale: function (v) {
         this.controller.viewport.zoomTo(this.offset - v);      
     },
     
@@ -102,7 +102,7 @@ var ZoomControls = Class.extend(
         // Zoom-in button
         this.zoomInBtn.bind("click", {zoomControl: this}, function (e) {
             var val = e.data.zoomControl.zoomSlider.slider("value");
-            if (val < e.data.zoomControl.maxZoomLevel) {
+            if (val < e.data.zoomControl.maxImageScale) {
                 e.data.zoomControl.zoomButtonClicked(1);
             }
         });
@@ -110,7 +110,7 @@ var ZoomControls = Class.extend(
         // Zoom-out button
         this.zoomOutBtn.bind("click", {zoomControl: this}, function (e) {
             var val = e.data.zoomControl.zoomSlider.slider("value");
-            if (val > e.data.zoomControl.minZoomLevel) {
+            if (val > e.data.zoomControl.minImageScale) {
                 e.data.zoomControl.zoomButtonClicked(-1);
             }
         });

@@ -244,19 +244,19 @@ var MovieBuilder = Class.extend(
 
         // Ajax Request Parameters
         params = {
-            action    : "buildMovie",
-            layers    : layers.join("/"),
-            startDate : mediaSettings.startTime,
-            timeStep  : mediaSettings.timeStep,
-            zoomLevel : mediaSettings.zoomLevel,
-            numFrames : mediaSettings.numFrames,
-            frameRate : mediaSettings.frameRate,
-            edges     : mediaSettings.edgeEnhance,
-            sharpen   : mediaSettings.sharpen,
-            format    : mediaSettings.hqFormat,
-            imageSize : imgWidth + "," + imgHeight,
-            filename  : mediaSettings.filename,
-            quality   : mediaSettings.quality
+            action     : "buildMovie",
+            layers     : layers.join("/"),
+            startDate  : mediaSettings.startTime,
+            timeStep   : mediaSettings.timeStep,
+            imageScale : mediaSettings.imageScale,
+            numFrames  : mediaSettings.numFrames,
+            frameRate  : mediaSettings.frameRate,
+            edges      : mediaSettings.edgeEnhance,
+            sharpen    : mediaSettings.sharpen,
+            format     : mediaSettings.hqFormat,
+            imageSize  : imgWidth + "," + imgHeight,
+            filename   : mediaSettings.filename,
+            quality    : mediaSettings.quality
         };
 
         $.post(this.url, params, callback, "json");

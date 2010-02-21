@@ -207,7 +207,7 @@ var TileLayer = Layer.extend(
                 }
 
                 if (visible[i][j] && this.validTiles[i][j]) {
-                    tile = this.getTile(i, j, this.viewport.zoomLevel);
+                    tile = this.getTile(i, j, this.viewport.imageScale);
                     this.domNode.append(tile);
     
                     if (!this.tiles[i]) {
@@ -421,7 +421,7 @@ var TileLayer = Layer.extend(
                 }
                 if (visible[i][j] && (!this.tiles[i][j]) && this.validTiles[i][j]) {
                     //console.log("Loading new tile");
-                    this.tiles[i][j] = this.getTile(i, j, this.viewport.zoomLevel).appendTo(this.domNode);
+                    this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
                 }
             }
         }
@@ -437,12 +437,12 @@ var TileLayer = Layer.extend(
      * set at tile-level.
      */
     getTile: function (x, y) {
-        var top, left, zoom, ts, img, rf, emptyTile, uri, self  = this;
+        var top, left, imageScale, ts, img, rf, emptyTile, uri, self  = this;
 
-        left     = x * this.tileSize;
-        top      = y * this.tileSize;
-        zoom     = this.viewport.zoomLevel;
-        ts       = this.tileSize;
+        left       = x * this.tileSize;
+        top        = y * this.tileSize;
+        imageScale = this.viewport.imageScale;
+        ts         = this.tileSize;
         
         rf = function () {
             return false;
@@ -498,9 +498,9 @@ var TileLayer = Layer.extend(
         // Load tile
         img.attr("src", this.getTileURL(this.server, x, y));
         
-        if (this.controller.debug && (typeof console !== "undefined")) {
+        //if (this.controller.debug && (typeof console !== "undefined")) {
             console.log(this.getTileURL(this.server, x, y));
-        }
+        //}
         
         return img;
     },
@@ -509,15 +509,15 @@ var TileLayer = Layer.extend(
      * @description Returns a formatted string representing a query for a single tile
      */
     getTileURL: function (serverId, x, y) {
-        var uri, zoomLevel, format, src, offsetX, offsetY, baseURL;
+        var uri, imageScale, format, src, offsetX, offsetY, baseURL;
         
         baseURL = this.controller.tileServers[serverId];
         
         uri    = this.filepath + "/" + this.filename;        
         format = (this.layeringOrder === 1 ? "jpg" : "png");
-        zoomLevel = this.viewport.zoomLevel;
+        imageScale = this.viewport.imageScale;
         
-        src = baseURL + '?action=getTile&uri=' + uri + '&x=' + x + '&y=' + y + '&zoom=' + zoomLevel;
+        src = baseURL + '?action=getTile&uri=' + uri + '&x=' + x + '&y=' + y + '&tileScale=' + imageScale;
         src += '&ts=' + this.tileSize + '&jp2Width=' + this.width + '&jp2Height=' + this.height + '&jp2Scale=';
         src += this.scale + '&offsetX=' + this.offsetX + '&offsetY=' + this.offsetY + '&format=' + format;
         src += '&obs=' + this.observatory + '&inst=' + this.instrument + '&det=' + this.detector;

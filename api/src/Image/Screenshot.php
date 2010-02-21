@@ -33,14 +33,14 @@ class Image_Screenshot extends Image_CompositeImage
     /**
      * Create an instance of Image_Screenshot
      *
-     * @param int    $timestamp The unix timestamp of the observation date in the viewport
-     * @param int    $zoomLevel A number between 8 and 15, the zoom level of the viewport.
-     * @param array  $options   An array containing true/false values for "EdgeEnhance" and "Sharpen"
-     * @param array  $imageSize An array holding the with and height of the viewport image
-     * @param string $filename  Location where the screenshot will be stored
-     * @param int    $quality   Screenshot compression quality
+     * @param int    $timestamp  The unix timestamp of the observation date in the viewport
+     * @param int    $imageScale Requested image scale
+     * @param array  $options    An array containing true/false values for "EdgeEnhance" and "Sharpen"
+     * @param array  $imageSize  An array holding the with and height of the viewport image
+     * @param string $filename   Location where the screenshot will be stored
+     * @param int    $quality    Screenshot compression quality
      */
-    public function __construct($timestamp, $zoomLevel, $options, $imageSize, $filename, $quality)
+    public function __construct($timestamp, $imageScale, $options, $imageSize, $filename, $quality)
     {
         $this->timestamp     = $timestamp;
         $this->imageSize     = $imageSize;
@@ -52,7 +52,7 @@ class Image_Screenshot extends Image_CompositeImage
 
         $tmpDir = HV_TMP_DIR . "/screenshots/";
 
-        parent::__construct($zoomLevel, $options, $tmpDir);
+        parent::__construct($imageScale, $options, $tmpDir);
 
         $this->id = $filename;
 
