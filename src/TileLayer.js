@@ -499,7 +499,7 @@ var TileLayer = Layer.extend(
         img.attr("src", this.getTileURL(this.server, x, y));
         
         //if (this.controller.debug && (typeof console !== "undefined")) {
-        //console.log(this.getTileURL(this.server, x, y));
+        console.log(this.getTileURL(this.server, x, y));
         //}
         
         return img;

@@ -31,6 +31,8 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
     private $_instrument;
     private $_detector;
     private $_measurement;
+    private $_offsetX;
+    private $_offsetY;
     private $_cacheDir = HV_CACHE_DIR;
     private $_noImage  = HV_EMPTY_TILE;
 
@@ -64,8 +66,8 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $this->_instrument  = $inst;
         $this->_detector    = $det;
         $this->_measurement = $meas;
-        $this->offsetX      = $offsetX;
-        $this->offsetY      = $offsetY;
+        $this->_offsetX     = $offsetX;
+        $this->_offsetY     = $offsetY;
 
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->_getTileFilepath($jp2, $x, $y, $tileScale, $format);
@@ -132,9 +134,9 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             $year, $month, $day, $this->_observatory, $this->_instrument,
             $this->_detector, $this->_measurement
         );
-
+        
         foreach ($fieldArray as $field) {
-            $filepath .= str_replace(" ", "_", $field) . "/";
+            $filepath .= str_replace(" ", "-", $field) . "/";
         }
 
         // Convert coordinates to strings
@@ -216,8 +218,8 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $actualToDesired = 1 / $this->desiredToActual;
 
         // Determine offset
-        $offsetX = $this->offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
-        $offsetY = $this->offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
+        $offsetX = $this->_offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
+        $offsetY = $this->_offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
 
         /**
             $cmd = sprintf(" %s -scale %s %s -alpha Off -compose copy_opacity -composite ", $input, $scale, $mask);
