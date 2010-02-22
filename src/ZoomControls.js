@@ -18,41 +18,16 @@ var ZoomControls = Class.extend(
      * @param {Object} controller A Reference to the Helioviewer application class
      * @param {Object} options Custom ZoomControl settings
      */
-    init: function (controller, options) {
+    init: function (controller, options) {       
         $.extend(this, options);
         this.controller = controller;
-        this.domNode = $(this.id);
-        this.offset  = this.minZoomLevel + this.maxZoomLevel;
-       
-        var self = this;
-        
-        this._buildUI();
-       
-        // Initialize slider
-        this.zoomSlider.slider({
-            slide: function (event, slider) {
-                self._onSlide(slider.value);
-            },
-            min: this.minZoomLevel,
-            max: this.maxZoomLevel,
-            orientation: 'vertical',
-            value: this.offset - this.zoomLevel
-        });
 
+        this._buildUI();
+        this._initSlider();
         this._setupTooltips();
         this._initEvents();
     },
 
-    /**
-     * @description Increases or decreases zoom level in response to pressing the plus/minus buttons.
-     * @param {Integer} dir The amount to adjust the zoom level by (+1 or -1).              
-     */
-    zoomButtonClicked: function (dir) {
-        var v = this.zoomSlider.slider("value") + dir;
-        this.zoomSlider.slider("value", v);
-        this._setZoomLevel(v);
-    },
-    
     /**
      * @description Sets up tooltips for zoom controls
      */
@@ -71,15 +46,15 @@ var ZoomControls = Class.extend(
      * @param {Integer} v The new zoom value.
      */
     _onSlide: function (v) {
-        this._setZoomLevel(v);
+        this._setImageScale(v);
     },
     
     /**
      * @description Translates from jQuery slider values to zoom-levels, and updates the zoom-level.
      * @param {Object} v jQuery slider value
      */
-    _setZoomLevel: function (v) {
-        this.controller.viewport.zoomTo(this.offset - v);      
+    _setImageScale: function (v) {
+        this.controller.viewport.zoomTo(this.increments[v]);      
     },
     
     /**
@@ -92,27 +67,65 @@ var ZoomControls = Class.extend(
 
         var sliderContainer = $('<div id="zoomSliderContainer"></div>').append(this.zoomSlider);
 
-        this.domNode.append(this.zoomInBtn).append(sliderContainer).append(this.zoomOutBtn);
+        $(this.id).append(this.zoomInBtn).append(sliderContainer).append(this.zoomOutBtn);
+    },
+    
+    /**
+     * @description Initializes zoom level slider
+     */
+    _initSlider: function () {
+        var i, self = this;
+        
+        // Zoom-level steps
+        this. increments = [];
+        for (i = this.minImageScale; i <= this.maxImageScale; i = i * 2) {
+            this.increments.push(i);
+        }
+        
+        // Reverse orientation so that moving slider up zooms in
+        this.increments.reverse();
+       
+        // Initialize slider
+        this.zoomSlider.slider({
+            slide: function (event, slider) {
+                self._onSlide(slider.value);
+            },
+            min: 0,
+            max: this.increments.length - 1,
+            orientation: 'vertical',
+            value: $.inArray(this.imageScale, this.increments)
+        });
+    },
+
+    /**
+     * @description Responds to zoom in button click
+     */    
+    _onZoomInBtnClick: function () {
+        var index = this.zoomSlider.slider("value") + 1;
+        
+        if (this.increments[index] >= this.minImageScale) {
+            this.zoomSlider.slider("value", index);
+            this._setImageScale(index);
+        }
+    },
+    
+    /**
+     * @description Responds to zoom out button click
+     */        
+    _onZoomOutBtnClick: function () {
+        var index = this.zoomSlider.slider("value") - 1;
+        
+        if (this.increments[index] <= this.maxImageScale) {
+            this.zoomSlider.slider("value", index);
+            this._setImageScale(index);
+        }
     },
     
     /**
      * @description Initializes zoom control-related event-handlers
      */
     _initEvents: function () {
-        // Zoom-in button
-        this.zoomInBtn.bind("click", {zoomControl: this}, function (e) {
-            var val = e.data.zoomControl.zoomSlider.slider("value");
-            if (val < e.data.zoomControl.maxZoomLevel) {
-                e.data.zoomControl.zoomButtonClicked(1);
-            }
-        });
-        
-        // Zoom-out button
-        this.zoomOutBtn.bind("click", {zoomControl: this}, function (e) {
-            var val = e.data.zoomControl.zoomSlider.slider("value");
-            if (val > e.data.zoomControl.minZoomLevel) {
-                e.data.zoomControl.zoomButtonClicked(-1);
-            }
-        });
+        this.zoomInBtn.click($.proxy(this._onZoomInBtnClick, this));
+        this.zoomOutBtn.click($.proxy(this._onZoomOutBtnClick, this));
     }
 });

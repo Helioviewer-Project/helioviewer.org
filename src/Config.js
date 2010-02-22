@@ -17,10 +17,9 @@ var Config = Class.extend(
         this.params = params;
         
         this.bools  = ["distributed_tiling_enabled", "backup_enabled", "disable_cache"];
-        this.ints   = ["build_num", "default_zoom_level", "default_timestep", "min_zoom_level",  
-                       "max_zoom_level", "prefetch_size", "png_compression_quality", "jpeg_compression_quality",    
-                       "bit_depth", "num_colors", "tile_pad_width", "max_movie_frames", "base_zoom_level"];
-        this.floats = ["base_image_scale"];
+        this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
+                       "jpeg_compression_quality", "bit_depth", "num_colors", "tile_pad_width", "max_movie_frames"];
+        this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
         
         this.fixTypes();
     },
@@ -60,12 +59,10 @@ var Config = Class.extend(
     toArray: function () {
         return {
             'version'           : this.params["build_num"],
-            'defaultZoomLevel'  : this.params["default_zoom_level"],
             'defaultObsTime'    : this.params["default_obs_time"],
-            'minZoomLevel'      : this.params["min_zoom_level"],
-            'maxZoomLevel'      : this.params["max_zoom_level"],
-            'baseZoom'          : this.params["base_zoom_level"],
-            'baseScale'         : this.params["base_image_scale"],
+            'defaultImageScale' : this.params["default_image_scale"],
+            'minImageScale'     : this.params["min_image_scale"],
+            'maxImageScale'     : this.params["max_image_scale"],
             'prefetchSize'      : this.params["prefetch_size"],
             'timeIncrementSecs' : this.params["default_timestep"],
             'tileServers'       : this.params["tile_server"],

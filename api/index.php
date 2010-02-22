@@ -516,6 +516,11 @@ if (!(isset($params) && loadModule($params))) {
                     measurement parameters).</td>
                 </tr>
                 <tr>
+                    <td><b>getJPIP</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><b style="color: red;">[Deprecated]</b> Old-style way of specifying that a JPIP URL should be returned.</td>
+                </tr>
+                <tr>
                     <td><b>jpip</b></td>
                     <td><i>Boolean</i></td>
                     <td><i>[Optional]</i> Returns a JPIP URI instead of an actual image.</td>
