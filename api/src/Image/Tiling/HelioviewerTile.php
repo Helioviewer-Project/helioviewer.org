@@ -109,6 +109,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      * @param string $jp2    The location of the tile's source JP2 image.
      * @param int    $x      Tile x-coordinate
      * @param int    $y      Tile y-coordinate
+     * @param float  $scale  Image scale of requested tile
      * @param string $format The file format used by the tile
      *
      * @return string The path in the cache where the tile should be stored
