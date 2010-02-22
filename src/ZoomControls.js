@@ -18,41 +18,41 @@ var ZoomControls = Class.extend(
      * @param {Object} controller A Reference to the Helioviewer application class
      * @param {Object} options Custom ZoomControl settings
      */
-    init: function (controller, options) {
+    init: function (controller, options) {       
         $.extend(this, options);
         this.controller = controller;
         this.domNode = $(this.id);
         this.offset  = this.minImageScale + this.maxImageScale;
-       
-        var self = this;
         
+        var self = this;
+
         this._buildUI();
+        
+        // Zoom-level steps
+        // TODO 02/22/2010: Limit precision in decimal place?
+        this. increments = [];
+        for (i=this.minImageScale; i <= this.maxImageScale; i = i * 2) {
+            this.increments.push(i);
+        }
+        
+        // Reverse orientation so that moving slider up zooms in
+        this.increments.reverse();
        
         // Initialize slider
         this.zoomSlider.slider({
             slide: function (event, slider) {
                 self._onSlide(slider.value);
             },
-            min: this.minImageScale,
-            max: this.maxImageScale,
+            min: 0,
+            max: this.increments.length - 1,
             orientation: 'vertical',
-            value: this.offset - this.imageScale
+            value: $.inArray(this.imageScale, this.increments)
         });
 
         this._setupTooltips();
         this._initEvents();
     },
 
-    /**
-     * @description Increases or decreases zoom level in response to pressing the plus/minus buttons.
-     * @param {Integer} dir The amount to adjust the zoom level by (+1 or -1).              
-     */
-    zoomButtonClicked: function (dir) {
-        var v = this.zoomSlider.slider("value") + dir;
-        this.zoomSlider.slider("value", v);
-        this._setImageScale(v);
-    },
-    
     /**
      * @description Sets up tooltips for zoom controls
      */
@@ -79,7 +79,7 @@ var ZoomControls = Class.extend(
      * @param {Object} v jQuery slider value
      */
     _setImageScale: function (v) {
-        this.controller.viewport.zoomTo(this.offset - v);      
+        this.controller.viewport.zoomTo(this.increments[v]);      
     },
     
     /**
@@ -96,21 +96,31 @@ var ZoomControls = Class.extend(
     },
     
     /**
+     * @description Increases or decreases zoom level in response to pressing the plus/minus buttons.
+     * @param {Integer} dir The amount to adjust the zoom level by (+1 or -1).              
+     */
+    zoomButtonClicked: function (dir) {
+        var v = this.zoomSlider.slider("value") + dir;
+        this.zoomSlider.slider("value", v);
+        this._setImageScale(v);
+    },
+    
+    /**
      * @description Initializes zoom control-related event-handlers
      */
     _initEvents: function () {
         // Zoom-in button
         this.zoomInBtn.bind("click", {zoomControl: this}, function (e) {
-            var val = e.data.zoomControl.zoomSlider.slider("value");
-            if (val < e.data.zoomControl.maxImageScale) {
+            var index = e.data.zoomControl.zoomSlider.slider("value");
+            if (e.data.zoomControl.increments[index] > e.data.zoomControl.minImageScale) {
                 e.data.zoomControl.zoomButtonClicked(1);
             }
         });
         
         // Zoom-out button
         this.zoomOutBtn.bind("click", {zoomControl: this}, function (e) {
-            var val = e.data.zoomControl.zoomSlider.slider("value");
-            if (val > e.data.zoomControl.minImageScale) {
+            var index = e.data.zoomControl.zoomSlider.slider("value");
+            if (e.data.zoomControl.increments[index] < e.data.zoomControl.maxImageScale) {
                 e.data.zoomControl.zoomButtonClicked(-1);
             }
         });

@@ -136,6 +136,10 @@ var ViewportHandlers = Class.extend(
      
     /**
      * @description Handles mouse-wheel movements
+     * 
+     * TODO 02/22/2010: Prevent browser window from scrolling on smaller screens when 
+     * wheel is used in viewport
+     * 
      * @param {Event} event Event class
      */
     mouseWheel: function (e, delta) {
