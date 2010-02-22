@@ -70,7 +70,7 @@ var UserSettings = Class.extend(
      * @TODO: Make into a static method for use by Jetpack, etc? http://www.ruby-forum.com/topic/154386
      */
     toURL: function () {
-        var url, date, zoom, imageLayers;
+        var url, date, imageScale, imageLayers;
         
         // Base URL
         //url = "http://www.helioviewer.org/?";
@@ -79,14 +79,14 @@ var UserSettings = Class.extend(
         // Add timestamp
         date = this.controller.date.toISOString();
     
-        // Add zoomlevel
-        zoom = this.controller.getImageScale();
+        // Add image scale
+        imageScale = this.controller.getImageScale();
         
         // Image layers
         imageLayers = this.controller.tileLayers.toString();
         
         // Build URL
-        url += "date=" + date + "&imageScale=" + zoom + "&imageLayers=" + imageLayers;
+        url += "date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
 
         return url;
     },
@@ -145,7 +145,7 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * @description Validates a setting (Currently checks observation date and zoomLevel)
+     * @description Validates a setting (Currently checks observation date and image scale)
      * @param {String} setting The setting to be validated
      * @param {String} value The value of the setting to check
      */
@@ -156,8 +156,8 @@ var UserSettings = Class.extend(
                 return false;
             }
             break;
-        case "zoomLevel":
-            if ((isNaN(value)) || (value < this.controller.minZoomLevel) || (value > this.controller.maxZoomLevel)) {
+        case "imageScale":
+            if ((isNaN(value)) || (value < this.controller.minImageScale) || (value > this.controller.maxImageScale)) {
                 return false;
             }
             break;
@@ -215,11 +215,11 @@ var UserSettings = Class.extend(
     _getDefaults: function () {
         return {
             date            : getUTCTimestamp(this.controller.defaultObsTime),
-            zoomLevel        : this.controller.defaultZoomLevel,
+            imageScale      : this.controller.defaultImageScale,
             version         : this.controller.version,
-            warnZoomLevel    : false,
+            warnZoomLevel   : false,
             warnMouseCoords : false,
-            tileLayers        : [{
+            tileLayers : [{
                 server     : 0,
                 observatory: 'SOHO',
                 instrument : 'EIT',

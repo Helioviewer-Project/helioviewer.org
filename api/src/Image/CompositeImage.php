@@ -26,7 +26,7 @@ require_once 'SubFieldImage.php';
 abstract class Image_CompositeImage
 {
     protected $composite;
-    protected $zoomLevel;
+    protected $imageScale;
     protected $options;
     protected $imageSize;
     protected $tmpDir;
@@ -40,17 +40,17 @@ abstract class Image_CompositeImage
      * TODO 02/10/2010: In order to keep the composite image class as generic as possible, zoom-level
      * and other helioviewer- or solar-specific items should be handled else by child classes.
      *
-     * @param int    $zoomLevel The requested zoom-level for the sub-field image.
-     * @param array  $options   An array with ["edges"] => true/false, ["sharpen"] => true/false
-     * @param string $tmpDir    The temporary directory where images are cached
+     * @param int    $imageScale The requested image scale.
+     * @param array  $options    An array with ["edges"] => true/false, ["sharpen"] => true/false
+     * @param string $tmpDir     The temporary directory where images are cached
      */
-    protected function __construct($zoomLevel, $options, $tmpDir)
+    protected function __construct($imageScale, $options, $tmpDir)
     {
         //date_default_timezone_set('UTC');
 
-        $this->zoomLevel = $zoomLevel;
-        $this->options   = $options;
-        $this->tmpDir    = $tmpDir;
+        $this->imageScale = $imageScale;
+        $this->options    = $options;
+        $this->tmpDir     = $tmpDir;
 
         // Create the temp directory where images will be stored.
         // $this->tmpDir is determined in either the MovieFrame or Screenshot class.
@@ -105,7 +105,7 @@ abstract class Image_CompositeImage
                 array_push($opacities["value"], $imageInfo[7]);
                 array_push($opacities["group"], $imageInfo[8]);
 
-                $subFieldImage = new Image_SubFieldImage($uri, $this->format, $this->zoomLevel, $xRange, $yRange, $this->imageSize, $this->hcOffset, $this->quality);
+                $subFieldImage = new Image_SubFieldImage($uri, $this->format, $this->imageScale, $xRange, $yRange, $this->imageSize, $this->hcOffset, $this->quality);
                 $filepath = $subFieldImage->getCacheFilepath();
 
                 if (!file_exists($filepath)) {
@@ -469,14 +469,14 @@ abstract class Image_CompositeImage
             $yRange['size']   = $y[1];
 
             // Zoom-level & tilesize
-            $zoomLevel = $this->params['zoomLevel'];
+            $imageScale = $this->params['imageScale'];
             $tileSize  = $this->params['tileSize'];
 
             // Construct layers
             $layers = array();
             $i = 0;
             foreach (explode(",", $this->params['layers']) as $layer) {
-                array_push($layers, new Layer($layer, $timestamps[$i], $timestamps[$i], $zoomLevel, $xRange, $yRange, $tileSize));
+                array_push($layers, new Layer($layer, $timestamps[$i], $timestamps[$i], $imageScale, $xRange, $yRange, $tileSize));
                 $i++;
             }
 
@@ -495,7 +495,7 @@ abstract class Image_CompositeImage
             exit();
         }
 
-        $returnimage = new Image_CompositeImage($layers, $zoomLevel, $xRange, $yRange, $options);
+        $returnimage = new Image_CompositeImage($layers, $imageScale, $xRange, $yRange, $options);
         return $returnimage;
     }
 

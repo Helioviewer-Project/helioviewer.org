@@ -25,7 +25,7 @@ var EventMarker = Class.extend(
         
         this.eventLayer = eventLayer;
         this.appDate    = date;
-        this.rsun  = rsun;
+        this.rsun       = rsun;
         
         //Determine event type and catalog
         var catalogs = eventLayer.eventAccordion.eventCatalogs;

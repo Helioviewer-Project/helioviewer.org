@@ -24,7 +24,7 @@ var ViewportHandlers = Class.extend(
     moveCounter         : 0,
     imageUpdateThrottle : 3,
     tileUpdateThrottle  : 9,
-    rSunArcSeconds      : 975,
+    //rSunArcSeconds      : 975,
     animatedTextShadow  : true,
 
     /**
@@ -112,9 +112,9 @@ var ViewportHandlers = Class.extend(
     doubleClick: function (e) {
         var pos, viewport = this.viewport;
           
-        //check to make sure that you are not already at the minimum/maximum zoom-level
-        if ((e.shiftKey || (viewport.zoomLevel > viewport.controller.minZoomLevel)) && 
-            (viewport.zoomLevel < viewport.controller.maxZoomLevel)) {
+        //check to make sure that you are not already at the minimum/maximum image scale
+        if ((e.shiftKey || (viewport.imageScale > viewport.controller.minImageScale)) && 
+            (viewport.imageScale < viewport.controller.maxImageScale)) {
             pos = this.getRelativeCoords(e.pageX, e.pageY);
                
             viewport.center();                    
@@ -136,6 +136,10 @@ var ViewportHandlers = Class.extend(
      
     /**
      * @description Handles mouse-wheel movements
+     * 
+     * TODO 02/22/2010: Prevent browser window from scrolling on smaller screens when 
+     * wheel is used in viewport
+     * 
      * @param {Event} event Event class
      */
     mouseWheel: function (e, delta) {
@@ -273,7 +277,7 @@ var ViewportHandlers = Class.extend(
                 } else {
                     polar = Math.toPolarCoords(cartesian.x, -cartesian.y);     
                     
-                    mouseCoordsX.html(((polar.r / self.rSunArcSeconds) + "").substring(0, 5) +
+                    mouseCoordsX.html(((polar.r / self.controller.rsun) + "").substring(0, 5) +
                         " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
                     mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
                 }
@@ -320,9 +324,7 @@ var ViewportHandlers = Class.extend(
         };
           
         //scale
-        scale = this.viewport.controller.baseScale * Math.pow(
-                2, this.viewport.zoomLevel - this.viewport.controller.baseZoom
-        );
+        scale = this.viewport.imageScale;
         x = Math.round((scale * MX.x));
         y = - Math.round((scale * MX.y));
         

@@ -192,7 +192,7 @@ class Module_WebClient implements Module
         include_once 'src/Image/Tiling/HelioviewerTile.php';
         $tile = new Image_Tiling_HelioviewerTile(
             $this->_params['uri'], $this->_params['x'], $this->_params['y'],
-            $this->_params['zoom'], $this->_params['ts'],
+            $this->_params['tileScale'], $this->_params['ts'],
             $this->_params['jp2Width'], $this->_params['jp2Height'],
             $this->_params['jp2Scale'], $this->_params['offsetX'],
             $this->_params['offsetY'], $this->_params['format'],
@@ -267,11 +267,11 @@ class Module_WebClient implements Module
      * Obtains layer information, ranges of pixels visible, and the date being
      * looked at and creates a composite image (a Screenshot) of all the layers.
      *
-     * All possible parameters: obsDate, zoomLevel, layers, imageSize,
+     * All possible parameters: obsDate, imageScale, layers, imageSize,
      * filename, edges, sharpen
      *
      * API example: http://localhost/helioviewer/api/index.php
-     *     ?action=takeScreenshot&obsDate=1041465600&zoomLevel=13
+     *     ?action=takeScreenshot&obsDate=1041465600&imageScale=5.26
      *     &layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
      *     &imageSize=588,556&filename=example&sharpen=false&edges=false
      *
@@ -286,9 +286,9 @@ class Module_WebClient implements Module
     {
         include_once 'src/Image/Screenshot.php';
 
-        $obsDate   = $this->_params['obsDate'];
-        $zoomLevel = $this->_params['zoomLevel'];
-        $quality   = $this->_params['quality'];
+        $obsDate    = $this->_params['obsDate'];
+        $imageScale = $this->_params['imageLevel'];
+        $quality    = $this->_params['quality'];
         $layerStrings = explode("/", $this->_params['layers']);
 
         $imgCoords = explode(",", $this->_params['imageSize']);
@@ -306,7 +306,7 @@ class Module_WebClient implements Module
         $layers = $this->_formatLayerStrings($layerStrings);
 
         $screenshot = new Image_Screenshot(
-            $obsDate, $zoomLevel, $options, $imageSize, $filename, $quality
+            $obsDate, $imageScale, $options, $imageSize, $filename, $quality
         );
         $screenshot->buildImages($layers);
 
@@ -331,11 +331,11 @@ class Module_WebClient implements Module
      *
      * Example usage: (outdated!)
      *     http://helioviewer.org/api/index.php?action=getViewerImage
-     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&zoomLevel=10
+     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&imageScale=2.63
      *         &tileSize=512&xRange=-1,0&yRange=-1,0
      *     http://helioviewer.org/api/index.php?action=getViewerImage
      *         &layers=SOH_EIT_EIT_195,SOH_LAS_0C2_0WL
-     *         &timestamps=1065312000,1065312360&zoomLevel=13
+     *         &timestamps=1065312000,1065312360&imageScale=5.26
      *         &tileSize=512&xRange=-1,0&yRange=-1,0&edges=false
      *
      * Notes:
@@ -397,8 +397,8 @@ class Module_WebClient implements Module
             break;
 
         case "getTile":
-            $required = array('uri', 'x', 'y', 'zoom', 'ts', 'jp2Width','jp2Height', 'jp2Scale', 'offsetX', 'offsetY',
-                              'format', 'obs', 'inst', 'det', 'meas');
+            $required = array('uri', 'x', 'y', 'tileScale', 'ts', 'jp2Width','jp2Height', 'jp2Scale',
+                              'offsetX', 'offsetY', 'format', 'obs', 'inst', 'det', 'meas');
             $expected = array(
                "required" => $required
             );

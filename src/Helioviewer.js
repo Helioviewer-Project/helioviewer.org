@@ -20,12 +20,9 @@ var Helioviewer = Class.extend(
      * <br>
      * <br><div style='font-size:16px'>Options:</div><br>
      * <div style='margin-left:15px'>
-     *        <b>defaultZoomLevel</b>    - The initial zoom-level to display.<br>
      *        <b>defaultPrefetchSize</b> - The radius outside of the visible viewport to prefetch.<br>
      *        <b>timeIncrementSecs</b>   - The default amount of time to move when the time navigation
      *                                     arrows are pressed.<br>
-     *        <b>minZoomLevel</b>        - Minimum zoom level allowed.<br>
-     *        <b>maxZoomLevel</b>        - Maximum zoom level allowed.<br>
      * </div>
      * @see Helioviewer#defaultOptions for a list of the available parameters.
      */
@@ -58,10 +55,10 @@ var Helioviewer = Class.extend(
         this._initUI();
         this._initEvents();
         
-        this.mediaSettings          = new MediaSettings(this);                
-        this.movieBuilder          = new MovieBuilder(this);
-        this.imageSelectTool     = new ImageSelectTool(this);
-        this.screenshotBuilder     = new ScreenshotBuilder(this);
+        this.mediaSettings     = new MediaSettings(this);                
+        this.movieBuilder      = new MovieBuilder(this);
+        this.imageSelectTool   = new ImageSelectTool(this);
+        this.screenshotBuilder = new ScreenshotBuilder(this);
     },
     
     /**
@@ -83,9 +80,9 @@ var Helioviewer = Class.extend(
         //Zoom-controls
         this.zoomControls = new ZoomControls(this, {
             id: '#zoomControls',
-            zoomLevel:    this.userSettings.get('zoomLevel'),
-            minZoomLevel: this.minZoomLevel,
-            maxZoomLevel: this.maxZoomLevel
+            imageScale    : this.userSettings.get('imageScale'),
+            minImageScale : this.minImageScale,
+            maxImageScale : this.maxImageScale
         });
 
         //Time-navigation controls
@@ -242,7 +239,7 @@ var Helioviewer = Class.extend(
         }
 
         if (this.load.imageScale) {
-            this.userSettings.set('zoomLevel', this.scaleToZoomLevel(this.load.imageScale));
+            this.userSettings.set('imageScale', this.load.imageScale);
         }
 
         // Process and load and layer strings specified
@@ -391,7 +388,7 @@ var Helioviewer = Class.extend(
     _initViewport: function () {
         this.viewport =    new Viewport(this, {
             id: this.viewportId,
-            zoomLevel: this.userSettings.get('zoomLevel'),
+            imageScale: this.userSettings.get('imageScale'),
             prefetch: this.prefetchSize,
             debug: false
         });
@@ -470,20 +467,10 @@ var Helioviewer = Class.extend(
     },
 
     /**
-     * @description Finds the closest support zoom-level to a given pixel scale (arcseconds per pixel)
-     * @param {Float} imgScale The image scale in arcseconds per pixel
-     */
-    scaleToZoomLevel: function (imgScale) {
-        var zoomOffset = Math.round(Math.lg((imgScale / this.baseScale)));
-        return this.baseZoom + zoomOffset;
-    },
-    
-    /**
      * @description Translates a given zoom-level into an image plate scale.
      */
     getImageScale: function () {
-        var zoomOffset = this.viewport.zoomLevel - this.baseZoom;
-        return this.baseScale * (Math.pow(2, zoomOffset));
+        return this.viewport.imageScale;
     },
     
     /**

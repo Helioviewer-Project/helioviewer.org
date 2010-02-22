@@ -59,15 +59,15 @@ var ScreenshotBuilder = Class.extend(
         self = this;
         
         params = {
-            action        : "takeScreenshot",
-            layers        : (mediaSettings.layerNames).join("/"),
-            obsDate        : mediaSettings.startTime,
-            zoomLevel    : mediaSettings.zoomLevel,
-            edges        : mediaSettings.edgeEnhance,
-            sharpen        : mediaSettings.sharpen,
-            imageSize    : imgWidth + "," + imgHeight,
-            filename    : mediaSettings.filename,
-            quality        : mediaSettings.quality
+            action     : "takeScreenshot",
+            layers     : (mediaSettings.layerNames).join("/"),
+            obsDate    : mediaSettings.startTime,
+            imageScale : mediaSettings.imageScale,
+            edges      : mediaSettings.edgeEnhance,
+            sharpen    : mediaSettings.sharpen,
+            imageSize  : imgWidth + "," + imgHeight,
+            filename   : mediaSettings.filename,
+            quality    : mediaSettings.quality
         };
         
         callback = function (url) {

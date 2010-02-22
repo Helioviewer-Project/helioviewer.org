@@ -97,7 +97,7 @@ var MediaSettings = Class.extend(
         this.startTime  = helioviewer.date.getTime() / 1000;
 
         this.dateString = helioviewer.date.toISOString();
-        this.zoomLevel     = helioviewer.viewport.zoomLevel;
+        this.imageScale  = helioviewer.viewport.imageScale;
         
         // reset the filename. It will be built in getImageInformation()
         this.filename = "";
@@ -246,8 +246,8 @@ var MediaSettings = Class.extend(
             }
         });
 
-        // Filename should now be: "det1_meas1_det2_meas2_zZoomlevel_widthxheight"
-        self.filename += "z" + self.zoomLevel + "_" + self.width + "x" + self.height;
+        // Filename should now be: "det1_meas1_det2_meas2_zimageScale_widthxheight"
+        self.filename += "z" + self.imageScale + "_" + self.width + "x" + self.height;
 
         // Cannot do this function until the largest layer is found, so let the above loop finish and start a new one.
         // This loop finds each layer's hcOffset and then pushes all the layer info into a string.
