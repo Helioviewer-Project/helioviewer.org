@@ -56,7 +56,7 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
         $this->relativeTileSize = $tileSize * ($desiredScale / $jp2Scale);
         
         $roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y);
-        
+
         parent::__construct($jp2, $tile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale);
         
         $padding = $this->computePadding();
@@ -74,6 +74,20 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
      * For outer tiles (corner and side tiles), it may be necessary to pad the extracted subfield region
      * in order to guarantee that a square tile is returned and also, in the case where the extracted region
      * is already at the desired scale, to prevent the browser from resizing the tile to be larger than it should be.
+     * 
+     * How big should the final tile be? (Assuming browser can resize up or down as long as requested
+     * region is exactly represented in tile).
+     * 
+     *     $desiredToActual * $tileSize
+     *     
+     * For example, if the user is viewing a tiled JP2 image with original scale of 2.63, and the requested scale
+     * is 1.315, then the 512x512 that the user sees is actually only 256x256 at the JP2's natural image scale.
+     * So the resulting tile that is returned to the user should be:
+     * 
+     *   = $desiredToActual * tileSize
+     *   = (1.315 / 2.63) * 512
+     *   = 0.5 * 512
+     *   = 256
      *
      * @return mixed Returns an array with dimentions and gravity to use for padding, or false if none is needed
      */
@@ -127,18 +141,14 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
                 return false;
             }
         }
-
-        // Construct padding command
-        //return "-gravity $gravity -extent $ts" . "x" . "$ts ";
-        
+       
         // Length of side in padded tile 
-        // 02/22/2010 TEST: Need to avoid padding excessively for EIT @ 10.52 ''/px
-        if ($this->scaleFactor < 1) {
-            $side = $this->relativeTileSize;
+        if ($this->reduce > 0) {
+            $side = ($this->relativeTileSize / (2 * $this->reduce));
         } else {
-            $side = $this->tileSize;
+            $side = $this->relativeTileSize;
         }
-        
+
         return array(
             "gravity" => $gravity,
             "width"   => $side,

@@ -209,7 +209,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $maskHeight = 1040;
 
         if ($this->_detector == "C2") {
-            $mask = "resources/images/alpha-masks/LASCO_C2_Mask.png";
+            $mask = "/var/www/hv/api/resources/images/alpha-masks/LASCO_C2_Mask.png";
         } else if ($this->_detector == "C3") {
             $mask = "resources/images/alpha-masks/LASCO_C3_Mask.png";
         }

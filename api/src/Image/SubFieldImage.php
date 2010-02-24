@@ -93,6 +93,7 @@ class Image_SubFieldImage
         $this->desiredScale    = $desiredScale;
         $this->desiredToActual = $desiredScale / $jp2Scale;
         $this->scaleFactor     = log($this->desiredToActual, 2);
+        $this->reduce          = max(0, floor($this->scaleFactor));
 
         $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
         $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
@@ -138,70 +139,46 @@ class Image_SubFieldImage
             $intermediate = substr($this->outputFile, 0, -3) . "png";
 
             // Extract region (PGM)
-            $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->scaleFactor);
+            $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
 
-            $cmd = HV_PATH_CMD;
-            
             // Generate GD-readable grayscale image (PNG)
-            $toIntermediateCmd = $cmd . " convert $grayscale -depth 8 -quality 10 -type Grayscale ";
+            $toIntermediateCmd = HV_PATH_CMD . "convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate";
+            exec(escapeshellcmd($toIntermediateCmd));
 
-// kdu_expand can only handle whole number values for -reduce
-// AS LONG AS EXTRACTED REGION (+ padding) REPRESENTS REQUESTED REGION, RETURNED SIZE DOESN'T MATTER!
-//if (fmod($this->scaleFactor, 1) != 0) {
-//    $toIntermediateCmd .= "-resize " . $this->subfieldRelWidth . "x" . $this->subfieldRelHeight . "! ";
-//}
-            exec(escapeshellcmd($toIntermediateCmd . $intermediate));
+            //Apply color-lookup table
+            if ($this->colorTable) {
+                $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
+            }
 
-//Apply color-lookup table
-if ($this->colorTable) {
-    $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
-}
-
-// IM commands for transparency, padding, rescaling, etc.
-//if ($this->hasAlphaMask()) {
-//   $cmd = HV_PATH_CMD . " convert ";
-//} else {
-            $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
-//}
-
-            // Get dimensions of extracted region (TODO: simpler to compute using roi + scaleFactor?)
-            //$extracted = $this->_getImageDimensions($intermediate);
-
-            // if ($this->desiredToActual > 1) {
-            //    $cmd .= $this->padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
-            // } else if ($this->squareImage && (($this->subfieldWidth != $this->subfieldHeight) || (fmod($this->scaleFactor, 1) != 0))) {
-
-// Pad up the the relative tilesize (in cases where region extracted for outer tiles is smaller than for inner tiles)
-//if ($this->desiredToActual > 1) {
-//    $cmd .= $this->_padImage($this->subfieldWidth, $this->subfieldHeight, $this->roi["left"], $this->roi["top"]);
-                
-// !!! Only catches non-corner edge tiles!
-//} else if ($this->squareImage && ($this->subfieldWidth != $this->subfieldHeight) ) {
-//    $cmd .= $this->_padTile($this->jp2Width, $this->jp2Height, $this->tileSize, $this->x, $this->y);
-//}
-
-//if ($this->hasAlphaMask()) {
-//    $cmd .= $this->applyAlphaMask($intermediate);
-//}
+            // IM commands for transparency, padding, rescaling, etc.
+            if ($this->hasAlphaMask()) {
+               $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
+            } else {
+               $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
+            }
 
             // Compression settings & Interlacing
-//$cmd .= $this->setImageParams();
+            //$cmd .= $this->setImageParams();
 
             if ($this->padding) {
                 $cmd .= $this->_getPaddingString();
             }
             
+            // 02/23/10
+            // ONLY WANT TO RESIZE DOWN TO 512x512 WHEN IMAGE IS BIGGER (Same numbers used in padding last step tell
+            // you how big tile is at this point).
             //if (!$this->skipResize) {
             //    $cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}! ";    
             //}
             
             //var_dump($this);
+            //var_dump(file_exists("resources/images/alpha-masks/LASCO_C2_Mask.png"));
             //die ("$cmd $this->outputFile");
 
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
             if ($ret != 0) {
-                throw new Exception("Unable to apply final processing. Command: $cmd");
+                throw new Exception("Unable to apply final processing. Command: $cmd $this->outputFile");
             }
 
             if ($this->outputFile != $intermediate) {
