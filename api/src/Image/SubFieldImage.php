@@ -140,16 +140,16 @@ class Image_SubFieldImage
 
             // Extract region (PGM)
             $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
-
+            
             // Generate GD-readable grayscale image (PNG)
             $toIntermediateCmd = HV_PATH_CMD . "convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate";
             exec(escapeshellcmd($toIntermediateCmd));
-
+            
             //Apply color-lookup table
             if ($this->colorTable) {
                 $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
-
+            
             // IM commands for transparency, padding, rescaling, etc.
             if ($this->hasAlphaMask()) {
                $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
@@ -172,8 +172,7 @@ class Image_SubFieldImage
             //}
             
             //var_dump($this);
-            //var_dump(file_exists("resources/images/alpha-masks/LASCO_C2_Mask.png"));
-            //die ("$cmd $this->outputFile");
+            //die (escapeshellcmd("$cmd $this->outputFile"));
 
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
@@ -193,7 +192,7 @@ class Image_SubFieldImage
             print $e->getMessage();
 
             //Clean-up and exit
-            $this->abort($this->outputFile);
+            $this->_abort($this->outputFile);
         }
     }
 

@@ -181,12 +181,20 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
 
     /**
      * Generates a portion of an ImageMagick convert command to apply an alpha mask
-     * Note: Values for radii used to generate the LASCO C2 & C3 alpha masks:
+     * 
+     * Note: More accurate values for radii used to generate the LASCO C2 & C3 alpha masks:
      *  rocc_outer = 7.7;   // (.9625 * orig)
      *  rocc_inner = 2.415; // (1.05 * orig)
-     *
+     *  
+     *  LASCO C2 Image Scale
+     *      $lascoC2Scale = 11.9;
+     *  
+     *  Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
+     *      $rsunArcSeconds = 959.705;
+     *      $rsun           = $rsunArcSeconds / $lascoC2Scale; 
+     *                      = 80.647 // Previously, used hard-coded value of 80.814221
+     *                      
      *  Generating the alpha masks:
-     *      $rsun       = 80.814221; // solar radius in image pixels
      *      $rocc_inner = 2.415;
      *      $rocc_outer = 7.7;
      *
@@ -199,6 +207,8 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      *      exec("convert -size 1024x1024 xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\"
      *          -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" +antialias LASCO_C2_Mask.png")
      *
+     *  Masks have been pregenerated and stored in order to improve performance.
+     *
      * @param string $input image filepath
      *
      * @return string An imagemagick sub-command for generating the necessary alpha mask
@@ -209,31 +219,51 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $maskHeight = 1040;
 
         if ($this->_detector == "C2") {
-            $mask = "/var/www/hv/api/resources/images/alpha-masks/LASCO_C2_Mask.png";
+            $mask = "resources/images/alpha-masks/LASCO_C2_Mask.png";
         } else if ($this->_detector == "C3") {
             $mask = "resources/images/alpha-masks/LASCO_C3_Mask.png";
         }
+        
+        // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
+        // the original JP2 scale / (2 * $reduce)
+        if ($this->reduce > 0) {
+            $subfieldScale = ($this->sourceJp2->getScale() / (2 * $this->reduce));
+        } else {
+            $subfieldScale = $this->sourceJp2->getScale();
+        }
+        
+        // Ratio of the subfield image scale to the JP2's natural image scale
+        $maskScaleFactor = $subfieldScale / $this->sourceJp2->getScale();
 
         // Ratio of the original image scale to the desired scale
-        $actualToDesired = 1 / $this->desiredToActual;
+        //$actualToDesired = 1 / $this->desiredToActual;
 
         // Determine offset
-        $offsetX = $this->_offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
-        $offsetY = $this->_offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
+        //$offsetX = $this->_offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
+        //$offsetY = $this->_offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
+        
+        $offsetX  = $this->_offsetX + ($maskWidth  - $this->jp2Width);
+        $offsetY  = $this->_offsetY + ($maskHeight - $this->jp2Height);
+        
+        $maskTopLeftX = $offsetX + ($this->roi["left"]  * $maskScaleFactor);
+        $maskTopLeftY = $offsetY + ($this->roi["top"]   * $maskScaleFactor);
+        
+        // Length of side in padded tile 
+        $side = $this->relativeTileSize * $maskScaleFactor;
 
-        /**
-            $cmd = sprintf(" %s -scale %s %s -alpha Off -compose copy_opacity -composite ", $input, $scale, $mask);
-            $str = " -geometry %s%s %s \( -resize '%s%%' %s \) -alpha Off -compose copy_opacity -composite ";
-            $cmd = sprintf($str, $offsetX, $offsetY, $input, 100 * $actualToDesired, $mask);
-            $str = " %s -extent 512x512 \( -resize '%f%%' -crop %fx%f%+f%+f %s \) -compose copy_opacity " .
-                   "-composite -channel A -threshold 50%% ";
-        */
-        $str = " -respect-parenthesis \( %s -gravity SouthWest -background black -extent 512x512 \) " .
-               "\( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity SouthWest " .
-               "-background black -extent 512x512 \) -alpha off -compose copy_opacity -composite ";
+        $str = " -respect-parenthesis ( %s -gravity SouthWest -background black -extent %fx%f ) " .
+               "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity SouthWest " .
+               "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite ";
+        //$cmd = sprintf(
+        //    $str, $input, $side, $side, $mask, 100 * $actualToDesired,
+        //    $this->subfieldRelWidth, $this->subfieldRelHeight, $offsetX, $offsetY, $side, $side
+        //);
+        
+        //var_dump($this);
+        
         $cmd = sprintf(
-            $str, $input, $mask, 100 * $actualToDesired,
-            $this->subfieldRelWidth, $this->subfieldRelHeight, $offsetX, $offsetY
+            $str, $input, $side, $side, $mask, 100 * $maskScaleFactor,
+            $this->subfieldRelWidth, $this->subfieldRelHeight, $maskTopLeftX, $maskTopLeftY, $side, $side
         );
 
         return $cmd;

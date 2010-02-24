@@ -83,6 +83,7 @@ var TileLayer = Layer.extend(
      * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
      */
     reset: function (zoomLevelChanged) {
+        // TODO 02/24: Handle precision in getImageScale method...
         this.scaleFactor  = parseFloat((this.scale / this.viewport.getImageScale()).toPrecision(8));  
         
         // Update relevant dimensions
@@ -91,15 +92,15 @@ var TileLayer = Layer.extend(
         
         // Offset image
         this.offsetX = parseFloat(
-                ((parseFloat((this.width  / 2) - this.centerX).toPrecision(8)) * this.scaleFactor).toPrecision(8)
+                ((parseFloat(this.centerX - (this.width  / 2)).toPrecision(8)) * this.scaleFactor).toPrecision(8)
         );
         this.offsetY = parseFloat(
-                ((parseFloat((this.height / 2) - this.centerY).toPrecision(8)) * this.scaleFactor).toPrecision(8)
+                ((parseFloat(this.centerY - (this.height / 2)).toPrecision(8)) * this.scaleFactor).toPrecision(8)
         );
         
         this.domNode.css({
-            "left": this.offsetX,
-            "top" : this.offsetY
+            "left": - this.offsetX,
+            "top" : - this.offsetY
         });
     
         // Update layer dimensions (only magnitude is important)
@@ -499,7 +500,7 @@ var TileLayer = Layer.extend(
         img.attr("src", this.getTileURL(this.server, x, y));
         
         //if (this.controller.debug && (typeof console !== "undefined")) {
-        console.log(this.getTileURL(this.server, x, y));
+        //console.log(this.getTileURL(this.server, x, y));
         //}
         
         return img;
