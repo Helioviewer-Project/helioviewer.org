@@ -151,11 +151,11 @@ class Image_SubFieldImage
             }
             
             // IM commands for transparency, padding, rescaling, etc.
-            if ($this->hasAlphaMask()) {
-               $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
-            } else {
+            //if ($this->hasAlphaMask()) {
+            //   $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
+            //} else {
                $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
-            }
+            //}
 
             // Compression settings & Interlacing
             //$cmd .= $this->setImageParams();
@@ -259,100 +259,6 @@ class Image_SubFieldImage
         return "-gravity $gravity -extent $ts" . "x" . "$ts ";
         //   return "-extent $ts" . "x" . "$ts ";
     }
-
-
-//    /**
-//     * Pads the subfield image
-//     *
-//     * TODO: Move to relevent sub-classes (e.g. Tile and Screenshot)
-//     *
-//     * If the image is a Tile, it is padded according to where it lies in the image.
-//     * If the image is a SubFieldImage, the image is padded with an offset from the NW corner.
-//     *
-//     * @param int $width  Width to pad to
-//     * @param int $height Height to pad to
-//     * @param int $x      Tile x-coordinate
-//     * @param int $y      Tile y-coordinate
-//     *
-//     * @return string Command to pad subfield image
-//     */
-//    private function _padImage ($width, $height, $x, $y)
-//    {
-//        //if($this->isTile) {
-//
-//        // Determine min and max (i.e. outermost) tile numbers
-//        $imgNumTilesX = max(2, ceil($this->jp2RelWidth  / $this->subfieldWidth));
-//        $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->subfieldHeight));
-//
-//        // Tile placement architecture expects an even number of tiles along each dimension
-//        if ($imgNumTilesX % 2 != 0) {
-//            $imgNumTilesX += 1;
-//        }
-//
-//        if ($imgNumTilesY % 2 != 0) {
-//            $imgNumTilesY += 1;
-//        }
-//
-//        // Inner tiles are all tiles except the edge tiles (For four-tile case, all tiles are outer tiles)
-//        $numInnerTilesX = $imgNumTilesX - 2;
-//        $numInnerTilesY = $imgNumTilesY - 2;
-//
-//        $tileMinX = ($this->jp2Width - ($this->subfieldRelWidth  * $numInnerTilesX)) / 2;
-//        $tileMaxX = ($this->jp2Width + ($this->subfieldRelWidth  * $numInnerTilesX)) / 2;
-//        $tileMinY = ($this->jp2Height - ($this->subfieldRelHeight * $numInnerTilesY)) / 2;
-//        $tileMaxY = ($this->jp2Height + ($this->subfieldRelHeight * $numInnerTilesY)) / 2;
-//
-//        //        var_dump($this);
-//        //        print "x: $x<br> y: $y<br> imgNumTilesX: $imgNumTilesX<br> imgNumTilesY: $imgNumTilesY<br>";
-//        //        print "tileMinX: $tileMinX, tileMinY: $tileMinY<br>tileMaxX: $tileMaxX, tileMaxY: $tileMaxY<br><br>";
-//        //        exit();
-//
-//        // Determine where the tile is located (where tile should lie in the padding)
-//        $gravity = null;
-//
-//        if ($x < $tileMinX) {
-//            if ($y < $tileMinY) {
-//                $gravity = "SouthEast";
-//            } else if ($y == $tileMaxY) {
-//                $gravity = "NorthEast";
-//            } else {
-//                $gravity = "East";
-//            }
-//        } else if ($x == $tileMaxX) {
-//            if ($y < $tileMinY) {
-//                $gravity = "SouthWest";
-//            } else if ($y == $tileMaxY) {
-//                $gravity = "NorthWest";
-//            } else {
-//                $gravity = "West";
-//            }
-//        } else {
-//            if ($y < $tileMinY) {
-//                $gravity = "South";
-//            } else {
-//                $gravity = "North";
-//            }
-//        }
-//
-//        $offset = " ";
-//        //}
-//
-//        /*
-//         * If the item is a subfieldImage, it is assumed that the overall picture is larger than, but contains this image.
-//         * The image has a heliocentric offset and will be padded with that offset.
-//         */
-//        //        else {
-//        //            $gravity = "NorthWest";
-//        //            // Offset the image from the center using the heliocentric offset
-//        //            $offset  = $this->hcOffset["x"] . $this->hcOffset["y"] . " ";
-//        //        }cmd;
-//        //            exit();
-//
-//        // Construct padding command
-//        // TEST: use black instead of transparent for background?
-//        return "-gravity $gravity -extent " . $width . "x" . $height . $offset;
-//    }
-
 
     /**
      * Sets the subfield image color lookup table (CLUT)
