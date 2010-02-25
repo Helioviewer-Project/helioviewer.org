@@ -24,6 +24,11 @@ require_once 'Tile.php';
  * TODO (2009/12/07)
  *  To improve smoothness of transparency edges, use a larger mask (e.g.
  *  2080x2080  instead of 1040x1040) so that most of scaling will be downwards
+ *  
+ * = 02/25/2010 =
+ * To improve the tile rendering when resizing is required on the browser-side, a couple things could be done:
+ *  1. Create a ts x ts empty div and place in each tile spot until the image is ready to be loaded
+ *  2. Hide all tiles until all are ready to be displayed (similar to when zooming in and out)
  */
 class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
 {

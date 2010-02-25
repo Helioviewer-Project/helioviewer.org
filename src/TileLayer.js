@@ -83,32 +83,34 @@ var TileLayer = Layer.extend(
      * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
      */
     reset: function (zoomLevelChanged) {
-        // TODO 02/24: Handle precision in getImageScale method...
-        this.scaleFactor  = parseFloat((this.scale / this.viewport.getImageScale()).toPrecision(8));  
+        var origSunCenterOffsetX, origSunCenterOffsetY;
+        
+        // Ratio of original JP2 image scale to the viewport/desired image scale
+        this.scaleFactor = this.jp2Scale / this.viewport.getImageScale();
         
         // Update relevant dimensions
-        this.relWidth  = this.width  * this.scaleFactor;
-        this.relHeight = this.height * this.scaleFactor;
+        this.relWidth  = this.jp2Width  * this.scaleFactor;
+        this.relHeight = this.jp2Height * this.scaleFactor;
+        
+        // Sun center offset at the original JP2 image scale
+        origSunCenterOffsetX = parseFloat((this.sunCenterX - (this.jp2Width  / 2)).toPrecision(8));
+        origSunCenterOffsetY = parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
         
         // Offset image
-        this.offsetX = parseFloat(
-                ((parseFloat(this.centerX - (this.width  / 2)).toPrecision(8)) * this.scaleFactor).toPrecision(8)
-        );
-        this.offsetY = parseFloat(
-                ((parseFloat(this.centerY - (this.height / 2)).toPrecision(8)) * this.scaleFactor).toPrecision(8)
-        );
+        this.sunCenterOffsetX = parseFloat((origSunCenterOffsetX * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetY = parseFloat((origSunCenterOffsetY * this.scaleFactor).toPrecision(8));
         
         this.domNode.css({
-            "left": - this.offsetX,
-            "top" : - this.offsetY
+            "left": - this.sunCenterOffsetX,
+            "top" : - this.sunCenterOffsetY
         });
     
         // Update layer dimensions (only magnitude is important)
         this.dimensions = {
-            "left"   : (this.relWidth  / 2) + this.offsetX,
-            "top"    : (this.relHeight / 2) + this.offsetY,
-            "bottom" : (this.relHeight / 2) - this.offsetY,
-            "right"  : (this.relWidth  / 2) - this.offsetX
+            "left"   : (this.relWidth  / 2) + this.sunCenterOffsetX,
+            "top"    : (this.relHeight / 2) + this.sunCenterOffsetY,
+            "bottom" : (this.relHeight / 2) - this.sunCenterOffsetY,
+            "right"  : (this.relWidth  / 2) - this.sunCenterOffsetX
         };
     
         this.refreshUTCDate();
@@ -128,7 +130,18 @@ var TileLayer = Layer.extend(
             date:     this.controller.date.toISOString()
         };
         
-        // Ajax responder
+        /**
+         * @description Gets information to the best match for a requested image
+         * 
+         * The AJAX request returns a JSON object with the following properties:
+         * 
+         *    jp2Width
+         *    jp2Height
+         *    jp2Scale
+         *    sunCenterX
+         *    sunCenterY
+         * 
+         */
         callback = function (image) {
             var hv = self.controller;
 
@@ -510,7 +523,7 @@ var TileLayer = Layer.extend(
      * @description Returns a formatted string representing a query for a single tile
      */
     getTileURL: function (serverId, x, y) {
-        var uri, imageScale, format, src, offsetX, offsetY, baseURL;
+        var uri, imageScale, format, src, baseURL;
         
         baseURL = this.controller.tileServers[serverId];
         
@@ -519,9 +532,9 @@ var TileLayer = Layer.extend(
         imageScale = this.viewport.imageScale;
         
         src = baseURL + '?action=getTile&uri=' + uri + '&x=' + x + '&y=' + y + '&tileScale=' + imageScale;
-        src += '&ts=' + this.tileSize + '&jp2Width=' + this.width + '&jp2Height=' + this.height + '&jp2Scale=';
-        src += this.scale + '&offsetX=' + this.offsetX + '&offsetY=' + this.offsetY + '&format=' + format;
-        src += '&obs=' + this.observatory + '&inst=' + this.instrument + '&det=' + this.detector;
+        src += '&ts=' + this.tileSize + '&jp2Width=' + this.jp2Width + '&jp2Height=' + this.jp2Height + '&jp2Scale=';
+        src += this.jp2Scale + '&offsetX=' + this.sunCenterOffsetX + '&offsetY=' + this.sunCenterOffsetY + '&format=';
+        src += format + '&obs=' + this.observatory + '&inst=' + this.instrument + '&det=' + this.detector;
         src += '&meas=' + this.measurement;
         
         //console.log(src);
