@@ -36,43 +36,43 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
     private $_instrument;
     private $_detector;
     private $_measurement;
-    private $_offsetX;
-    private $_offsetY;
+    private $_sunCenterOffsetX;
+    private $_sunCenterOffsetY;
     private $_cacheDir = HV_CACHE_DIR;
     private $_noImage  = HV_EMPTY_TILE;
 
     /**
      * Helioviewer Tile Constructor
      *
-     * @param string $uri       URI for the original JPEG 2000 image
-     * @param int    $x         Helioviewer.org tile x-coordinate
-     * @param int    $y         Helioviewer.org tile y-coordinate
-     * @param float  $tileScale Requested image scale to use for tile
-     * @param int    $tileSize  Requested tile size (width and height)
-     * @param int    $jp2Width  Width of the original JP2 image
-     * @param int    $jp2Height Height of the original JP2 image
-     * @param float  $jp2Scale  Plate scale (arc-seconds/pixal) of original image
-     * @param float  $offsetX   Amount original image is offset from sun center (x)
-     * @param float  $offsetY   Amount original image is offset from sun center (y)
-     * @param string $format    Desired format for resulting tile image
-     * @param string $obs       Observatory
-     * @param string $inst      Instrument
-     * @param string $det       Detector
-     * @param string $meas      Measurement
-     * @param bool   $display   Display the tile immediately or generate only
+     * @param string $uri              URI for the original JPEG 2000 image
+     * @param int    $x                Helioviewer.org tile x-coordinate
+     * @param int    $y                Helioviewer.org tile y-coordinate
+     * @param float  $tileScale        Requested image scale to use for tile
+     * @param int    $tileSize         Requested tile size (width and height)
+     * @param int    $jp2Width         Width of the original JP2 image
+     * @param int    $jp2Height        Height of the original JP2 image
+     * @param float  $jp2Scale         Plate scale (arc-seconds/pixal) of original image
+     * @param float  $sunCenterOffsetX Amount original image is offset from sun center (x)
+     * @param float  $sunCenterOffsetY Amount original image is offset from sun center (y)
+     * @param string $format           Desired format for resulting tile image
+     * @param string $obs              Observatory
+     * @param string $inst             Instrument
+     * @param string $det              Detector
+     * @param string $meas             Measurement
+     * @param bool   $display          Display the tile immediately or generate only
      *
      * @return void
      */
     public function __construct(
         $uri, $x, $y, $tileScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale,
-        $offsetX, $offsetY, $format, $obs, $inst, $det, $meas, $display = true
+        $sunCenterOffsetX, $sunCenterOffsetY, $format, $obs, $inst, $det, $meas, $display = true
     ) {
-        $this->_observatory = $obs;
-        $this->_instrument  = $inst;
-        $this->_detector    = $det;
-        $this->_measurement = $meas;
-        $this->_offsetX     = $offsetX;
-        $this->_offsetY     = $offsetY;
+        $this->_observatory      = $obs;
+        $this->_instrument       = $inst;
+        $this->_detector         = $det;
+        $this->_measurement      = $meas;
+        $this->_sunCenterOffsetX = $sunCenterOffsetX;
+        $this->_sunCenterOffsetY = $sunCenterOffsetY;
 
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->_getTileFilepath($jp2, $x, $y, $tileScale, $format);
@@ -232,23 +232,23 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
         // the original JP2 scale / (2 * $reduce)
         if ($this->reduce > 0) {
-            $subfieldScale = ($this->sourceJp2->getScale() / (2 * $this->reduce));
+            $maskScaleFactor = 1 / (2 * $this->reduce);
         } else {
-            $subfieldScale = $this->sourceJp2->getScale();
+            $maskScaleFactor = 1;
         }
         
         // Ratio of the subfield image scale to the JP2's natural image scale
-        $maskScaleFactor = $subfieldScale / $this->sourceJp2->getScale();
+        //$maskScaleFactor = $subfieldScale / $this->sourceJp2->getScale();
 
         // Ratio of the original image scale to the desired scale
         //$actualToDesired = 1 / $this->desiredToActual;
 
         // Determine offset
-        //$offsetX = $this->_offsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
-        //$offsetY = $this->_offsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
+        //$offsetX = $this->_sunCenterOffsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
+        //$offsetY = $this->_sunCenterOffsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
         
-        $offsetX  = $this->_offsetX + ($maskWidth  - $this->jp2Width);
-        $offsetY  = $this->_offsetY + ($maskHeight - $this->jp2Height);
+        $offsetX  = $this->_sunCenterOffsetX + ($maskWidth  - $this->jp2Width);
+        $offsetY  = $this->_sunCenterOffsetY + ($maskHeight - $this->jp2Height);
         
         $maskTopLeftX = $offsetX + ($this->roi["left"]  * $maskScaleFactor);
         $maskTopLeftY = $offsetY + ($this->roi["top"]   * $maskScaleFactor);
@@ -318,13 +318,5 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
         }
     }
-
-    /**
-     * hasAlphaMask
-     * @return string
-     */
-    //private function hasAlphaMask() {
-    //    return $this->_measurement === "0WL" ? true : false;
-    //}
 }
 ?>
