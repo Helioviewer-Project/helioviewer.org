@@ -104,6 +104,9 @@ class Image_JPEG2000_JP2ImageXMLBox
 
     /**
      * Returns the coordinates for the center of the sun in the image.
+     * 
+     * NOTE: The values for CRPIX1 and CRPIX2 reflect the x and y coordinates with the origin
+     * at the bottom-left corner of the image, not the top-left corner.
      *
      * @return array Pixel coordinates of the solar center
      */

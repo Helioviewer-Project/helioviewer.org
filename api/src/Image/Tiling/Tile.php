@@ -211,15 +211,6 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
         $innerTS = $relativeTileSize;
         $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
 
-        /**
-        // Upper left corner of 'tile'
-        $this->yRange['start']     = (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
-        $this->xRange['start']     = (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
-        
-        // Width and height of 'tile'
-        $this->yRange['size']     = (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
-        $this->xRange['size']     = (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);**/
-        
         // Upper left corner of 'tile'
         $top  = (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
         $left = (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);

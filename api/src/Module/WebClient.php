@@ -194,8 +194,8 @@ class Module_WebClient implements Module
             $this->_params['uri'], $this->_params['x'], $this->_params['y'],
             $this->_params['tileScale'], $this->_params['ts'],
             $this->_params['jp2Width'], $this->_params['jp2Height'],
-            $this->_params['jp2Scale'], $this->_params['offsetX'],
-            $this->_params['offsetY'], $this->_params['format'],
+            $this->_params['jp2Scale'], $this->_params['sunCenterOffsetX'],
+            $this->_params['sunCenterOffsetY'], $this->_params['format'],
             $this->_params['obs'], $this->_params['inst'],
             $this->_params['det'], $this->_params['meas']
         );
@@ -398,7 +398,7 @@ class Module_WebClient implements Module
 
         case "getTile":
             $required = array('uri', 'x', 'y', 'tileScale', 'ts', 'jp2Width','jp2Height', 'jp2Scale',
-                              'offsetX', 'offsetY', 'format', 'obs', 'inst', 'det', 'meas');
+                              'sunCenterOffsetX', 'sunCenterOffsetY', 'format', 'obs', 'inst', 'det', 'meas');
             $expected = array(
                "required" => $required
             );
