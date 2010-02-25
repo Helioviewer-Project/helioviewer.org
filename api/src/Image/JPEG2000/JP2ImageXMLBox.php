@@ -117,6 +117,28 @@ class Image_JPEG2000_JP2ImageXMLBox
         }
         return array($x, $y);
     }
+    
+    /**
+     * Returns true if the image was rotated 180 degrees
+     * 
+     * Note that while the image data may have been rotated to make it easier to line
+     * up different data sources, the meta-information regarding the sun center, etc. are
+     * not adjusted, and thus must be manually adjusted to account for any rotation.
+     *
+     * @return boolean True if the image has been rotated
+     */
+    public function getImageRotationStatus()
+    {
+        try {
+            $rotation = $this->_getElementValue("CROTA1");
+            if (abs($rotation) > 170) {
+                return true;
+            }
+        } catch (Exception $e) {
+            // MDI and EIT do their own rotation
+            return false;
+        }        
+    }
 
     /**
      * Retrieves the value of a unique dom-node element or returns false if element is not found, or more
@@ -131,9 +153,10 @@ class Image_JPEG2000_JP2ImageXMLBox
         $element = $this->_xml->getElementsByTagName($name);
 
         if ($element) {
-            return $element->item(0)->childNodes->item(0)->nodeValue;
-        } else {
-            throw new Exception('Element not found');
+            if (!is_null($element->item(0))) {
+                return $element->item(0)->childNodes->item(0)->nodeValue;
+            }
         }
+        throw new Exception('Element not found');
     }
 }
