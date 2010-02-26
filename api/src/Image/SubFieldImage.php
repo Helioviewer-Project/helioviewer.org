@@ -158,7 +158,7 @@ class Image_SubFieldImage
             }
 
             // Compression settings & Interlacing
-            //$cmd .= $this->setImageParams();
+            $cmd .= $this->setImageParams();
 
             if ($this->padding && !$this->hasAlphaMask()) {
                 $cmd .= $this->_getPaddingString();
@@ -170,6 +170,11 @@ class Image_SubFieldImage
             //if (!$this->skipResize) {
             //    $cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}! ";    
             //}
+            
+            // For resize to match requested tilesize. Once a suitable solution is found to improve rendering of
+            // client-side rescaled tiles, this can be removed (02/26/2010)
+            $cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
+            
             
             //var_dump($this);
             //die (escapeshellcmd("$cmd $this->outputFile"));
