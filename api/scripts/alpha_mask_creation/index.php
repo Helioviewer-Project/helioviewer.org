@@ -30,8 +30,8 @@
     $c3 = array(
         "filename"   => "LASCO_C3_Mask.png",
         "imageScale" => 56.0,
-        "roccInner"  => 4.4,
-        "roccOuter"  => 31.5
+        "roccInner"  => 4.62,    // 1.05 * orig
+        "roccOuter"  => 30.31875 // 0.9625 * orig
     );
     
     // Create masks
