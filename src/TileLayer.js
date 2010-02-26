@@ -150,7 +150,7 @@ var TileLayer = Layer.extend(
         };
         
         /**
-         * @description Gets information to the best match for a requested image
+         * Gets information to the best match for a requested image
          * 
          * The AJAX request returns a JSON object with the following properties:
          * 
@@ -160,6 +160,7 @@ var TileLayer = Layer.extend(
          *    rotated    Whether or not the original image was rotated 180 degrees
          *    sunCenterX X-coordinate for the center of the sun in the original image
          *    sunCenterY Y-coordinate for the center of the sun in the original image
+         *    
          */
         callback = function (image) {
             var hv = self.controller;
@@ -544,13 +545,13 @@ var TileLayer = Layer.extend(
      * TODO 02/25/2010: What would be performance loss from re-fetching meta information on server-side?
      */
     getTileURL: function (serverId, x, y) {
-        var url, file, format;
+        var url, file, format, params;
         
         url    = this.controller.tileServers[serverId];
         file   = this.filepath + "/" + this.filename;
         format = (this.layeringOrder === 1 ? "jpg" : "png");
 
-        var params = {
+        params = {
             "action"           : "getTile",
             "uri"              : file,
             "x"                : x,

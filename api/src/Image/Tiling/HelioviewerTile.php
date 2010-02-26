@@ -231,13 +231,14 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      */
     public function applyAlphaMask($input)
     {
-        $maskWidth  = 1040;
-        $maskHeight = 1040;
-
         if ($this->_detector == "C2") {
             $mask = "resources/images/alpha-masks/LASCO_C2_Mask.png";
+            $maskWidth  = 1040;
+            $maskHeight = 1040;
         } else if ($this->_detector == "C3") {
             $mask = "resources/images/alpha-masks/LASCO_C3_Mask.png";
+            $maskWidth  = 1040;
+            $maskHeight = 1040;
         }
         
         // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
