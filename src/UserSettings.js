@@ -1,12 +1,6 @@
 /**
  * @fileOverview Contains the class definition for an UserSettings class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * 
- * Keith 2009/07/01:
- *     There is currently a bug in the Prototype 1.6 series which prevents
- *     Firefox 3.5's native JSON functionality from working properly.
- *     The issue should be fixed in the upcoming 1.7 series.
- *     See: https://prototype.lighthouseapp.com/projects/8886/tickets/730
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -16,9 +10,25 @@ var UserSettings = Class.extend(
     /** @lends UserSettings.prototype */
     {
     /**
+     * Class to manage user preferences.<br><br>
+     * 
+     * Creates a class which handles the storing the retrieving of custom user settings. This includes things
+     * like the requested observation time, image zoom level, and the layers currently loaded. The UserSettings
+     * class has the ability to use both HTML5 local storage and cookies for saving information. In addition, 
+     * when supported, objects are stored as JSON objects rather than strings.<br><br>
+     * 
+     * <div style="color: gray;">
+     *    Keith 2009/07/01: 
+     *    
+     *    There is currently a bug in the Prototype 1.6 series which prevents
+     *    Firefox 3.5's native JSON functionality from working properly.
+     *    The issue should be fixed in the upcoming 1.7 series.
+     *    See: https://prototype.lighthouseapp.com/projects/8886/tickets/730
+     * </div>
+     *    
      * @constructs
-     * @description Creates a new UserSettings instance.
      * @param {Object} controller A reference to the Helioviewer application class
+     * @see <a href="https://developer.mozilla.org/en/DOM/Storage">https://developer.mozilla.org/en/DOM/Storage</a>
      */
     init: function (controller) {
         this.controller = controller;
@@ -28,9 +38,10 @@ var UserSettings = Class.extend(
     },
 
     /**
-     * @description Saves a specified setting
-     * @param {String} key The setting to update
-     * @param {JSON} value The new value for the setting
+     * Saves a specified setting
+     * 
+     * @param {String} key   The setting to update
+     * @param {Object} value The new value for the setting
      */
     set: function (key, value) {
         if (this._validate(key, value)) {
@@ -55,19 +66,23 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * @description Gets a specified setting
+     * Gets a specified setting
+     * 
      * @param {String} key The setting to retrieve
-     * @returns {JSON} The value of the desired setting
+     * 
+     * @returns {Object} The value of the desired setting
      */
     get: function (key) {
         return this.settings[key];
     },
     
     /**
-     * @description Builds a URL for the current view
-     * @param {Object} level
+     * Builds a URL for the current view
+     *
      * @TODO: Add support for viewport offset, event layers, opacity
      * @TODO: Make into a static method for use by Jetpack, etc? http://www.ruby-forum.com/topic/154386
+     * 
+     * @returns {String} A URL representing the current state of Helioviewer.org.
      */
     toURL: function () {
         var url, date, imageScale, imageLayers;
@@ -92,11 +107,13 @@ var UserSettings = Class.extend(
     },
 
     /**
-     * @description Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white light) into
-     *              its component parts and returns a javascript representation.
+     * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white light) into its component parts and returns 
+     * a javascript representation.
+     * 
      * @param {String} The layer identifier as an underscore-concatenated string
-     * @returns {Object} a simple javascript object representing the layer params
      * @see TileLayer.toString
+     * 
+     * @returns {Object} A simple javascript object representing the layer params
      */
     parseLayerString: function (str) {
         var params = str.split(",");
@@ -112,7 +129,9 @@ var UserSettings = Class.extend(
     },
 
     /**
-     * @description Checks to see if there are any existing stored user settings
+     * Checks to see if there are any existing stored user settings
+     * 
+     * @returns {Boolean} Returns true if stored Helioviewer.org settings are detected
      */
     _exists: function () {
         //return ($.support.localStorage ? (localStorage.getItem("settings") !== null) 
@@ -122,7 +141,7 @@ var UserSettings = Class.extend(
     },
         
     /**
-     * @description Decides on best storage format to use, and initializes it
+     * Decides on best storage format to use, and initializes it
      */
     _initStorage: function () {
         // Initialize CookieJar if localStorage isn't supported
@@ -145,9 +164,12 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * @description Validates a setting (Currently checks observation date and image scale)
+     * Validates a setting (Currently checks observation date and image scale)
+     * 
      * @param {String} setting The setting to be validated
-     * @param {String} value The value of the setting to check
+     * @param {String} value   The value of the setting to check
+     * 
+     * @returns {Boolean} Returns true if the setting is valid
      */
     _validate: function (setting, value) {
         switch (setting) {
@@ -168,7 +190,7 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * @description Loads defaults user settings
+     * Loads defaults user settings
      */
     _loadDefaults: function () {
         var defaults = this._getDefaults();
@@ -210,7 +232,9 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * @description Creates a hash containing the default settings to use
+     * Creates a hash containing the default settings to use
+     * 
+     * @returns {Object} The default Helioviewer.org settings
      */
     _getDefaults: function () {
         return {
