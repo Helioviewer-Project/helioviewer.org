@@ -192,7 +192,7 @@ div.text-btn:hover {
 }
 
 span.ui-icon-hover {
-    background-image: url(/lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../../lib/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .italic {

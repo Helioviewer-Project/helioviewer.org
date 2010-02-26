@@ -28,7 +28,7 @@ span.fits-sort-btn {
 }
 
 #select-options-tabs ul {
-	background: transparent url(/lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
+	background: transparent url(../../lib/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
 	border: none;
 	border-bottom: 1px solid #096AC8;
 }
@@ -65,7 +65,7 @@ td.time-input-field input {
 }
 
 #shadowbox-form button {
-	background: transparent url(/lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
+	background: transparent url(../../lib/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
 	cursor:pointer;
 	float:right;
 	line-height:1.4em;
@@ -78,7 +78,7 @@ td.time-input-field input {
 }
 
 #shadowbox-form button:hover {
-	background: transparent url(/lib/jquery/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
+	background: transparent url(../../lib/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
 	border:1px solid #333;
 	color: #d18f61;
 	font-weight:bold;
@@ -88,7 +88,7 @@ td.time-input-field input {
 }
 
 #shadowbox-form button:active {
-	background: transparent url(/lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-bg_highlight-hard_15_0b3e6f_1x100.png) repeat scroll 50% 50%;
+	background: transparent url(../../lib/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-bg_highlight-hard_15_0b3e6f_1x100.png) repeat scroll 50% 50%;
 	border:1px solid #052F57;
 	color:#FFFFFF;				
 }
