@@ -243,12 +243,6 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             $maskScaleFactor = 1;
         }
         
-        //$offsetX  = $this->_sunCenterOffsetX + ($maskWidth  - $this->jp2Width);
-        //$offsetY  = $this->_sunCenterOffsetY + ($maskHeight - $this->jp2Height);
-        
-        //$maskTopLeftX = $offsetX + ($this->roi["left"]  * $maskScaleFactor);
-        //$maskTopLeftY = $offsetY + ($this->roi["top"]   * $maskScaleFactor);
-        
         $maskTopLeftX = ($this->roi['left'] + ($maskWidth - $this->jp2Width) - $this->_sunCenterOffsetX)   * $maskScaleFactor;
         $maskTopLeftY = ($this->roi['top'] +  ($maskHeight - $this->jp2Height) - $this->_sunCenterOffsetY) * $maskScaleFactor;
         
@@ -264,11 +258,6 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             $side    = $this->relativeTileSize * $maskScaleFactor;
             $gravity = "SouthWest";
         }
-
-        //Simpler? (padded sections?)
-        //$str = " -respect-parenthesis %s " .
-        //       "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity SouthWest " .
-        //       "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite ";
 
         $str = " -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
                "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
