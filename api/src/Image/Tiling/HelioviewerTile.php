@@ -213,6 +213,17 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      *          -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" +antialias LASCO_C2_Mask.png")
      *
      *  Masks have been pregenerated and stored in order to improve performance.
+     *  
+     *  Note on offsets:
+     *  
+     *   The original CRPIX1 and CRPIX2 values used to determine the location of the center of the sun in the image
+     *   are specified with respect to a bottom-left corner origin. The values passed in to this method from the tile
+     *   request, however, specify the offset with respect to a top-left corner origin. This simply makes things
+     *   a bit easier since ImageMagick also treats images as having a top-left corner origin.
+     *   
+     *  Region of interest:
+     *  
+     *    The region of interest (ROI) below is specified at the original JP2 image scale.
      *
      * @param string $input image filepath
      *
@@ -237,38 +248,36 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             $maskScaleFactor = 1;
         }
         
-        // Ratio of the subfield image scale to the JP2's natural image scale
-        //$maskScaleFactor = $subfieldScale / $this->sourceJp2->getScale();
-
-        // Ratio of the original image scale to the desired scale
-        //$actualToDesired = 1 / $this->desiredToActual;
-
-        // Determine offset
-        //$offsetX = $this->_sunCenterOffsetX + (($maskWidth  - $this->jp2Width  + $this->roi["left"])  * $actualToDesired);
-        //$offsetY = $this->_sunCenterOffsetY + (($maskHeight - $this->jp2Height + $this->roi["top"]) * $actualToDesired);
+        //$offsetX  = $this->_sunCenterOffsetX + ($maskWidth  - $this->jp2Width);
+        //$offsetY  = $this->_sunCenterOffsetY + ($maskHeight - $this->jp2Height);
         
-        $offsetX  = $this->_sunCenterOffsetX + ($maskWidth  - $this->jp2Width);
-        $offsetY  = $this->_sunCenterOffsetY + ($maskHeight - $this->jp2Height);
+        //$maskTopLeftX = $offsetX + ($this->roi["left"]  * $maskScaleFactor);
+        //$maskTopLeftY = $offsetY + ($this->roi["top"]   * $maskScaleFactor);
         
-        $maskTopLeftX = $offsetX + ($this->roi["left"]  * $maskScaleFactor);
-        $maskTopLeftY = $offsetY + ($this->roi["top"]   * $maskScaleFactor);
+        $maskTopLeftX = $this->roi['left'] + ($maskWidth - $this->jp2Width) - $this->_sunCenterOffsetX;
+        $maskTopLeftY = $this->roi['top'] +  ($maskHeight - $this->jp2Height) - $this->_sunCenterOffsetY;
         
-        // Length of side in padded tile 
-        $side = $this->relativeTileSize * $maskScaleFactor;
+        // Length of tile edge and gravity
+        if ($this->padding) {
+            $side    = $this->padding["width"];
+            $gravity = $this->padding["gravity"];
+        } else {
+            $side    = $this->relativeTileSize * $maskScaleFactor;
+            $gravity = "SouthWest";
+        }
 
-        $str = " -respect-parenthesis ( %s -gravity SouthWest -background black -extent %fx%f ) " .
-               "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity SouthWest " .
+        //Simpler? (padded sections?)
+        //$str = " -respect-parenthesis %s " .
+        //       "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity SouthWest " .
+        //       "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite ";
+
+        $str = " -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
+               "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
                "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite ";
-        //$cmd = sprintf(
-        //    $str, $input, $side, $side, $mask, 100 * $actualToDesired,
-        //    $this->subfieldRelWidth, $this->subfieldRelHeight, $offsetX, $offsetY, $side, $side
-        //);
-        
-        //var_dump($this);
         
         $cmd = sprintf(
-            $str, $input, $side, $side, $mask, 100 * $maskScaleFactor,
-            $this->subfieldRelWidth, $this->subfieldRelHeight, $maskTopLeftX, $maskTopLeftY, $side, $side
+            $str, $input, $gravity, $side, $side, $mask, 100 * $maskScaleFactor,
+            $this->subfieldWidth, $this->subfieldHeight, $maskTopLeftX, $maskTopLeftY, $gravity, $side, $side
         );
 
         return $cmd;
