@@ -97,8 +97,7 @@ var TileLayer = Layer.extend(
      *    
      */
     reset: function (zoomLevelChanged) {
-        var origSunCenterOffsetX, origSunCenterOffsetY;
-        
+
         // Ratio of original JP2 image scale to the viewport/desired image scale
         this.scaleFactor = this.jp2Scale / this.viewport.getImageScale();
         
@@ -107,12 +106,12 @@ var TileLayer = Layer.extend(
         this.relHeight = this.jp2Height * this.scaleFactor;
         
         // Sun center offset at the original JP2 image scale (with respect to top-left origin)
-        origSunCenterOffsetX =   parseFloat((this.sunCenterX - (this.jp2Width  / 2)).toPrecision(8));
-        origSunCenterOffsetY = - parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
+        this.origSunCenterOffsetX =   parseFloat((this.sunCenterX - (this.jp2Width  / 2)).toPrecision(8));
+        this.origSunCenterOffsetY = - parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
         
         // Offset image
-        this.sunCenterOffsetX = parseFloat((origSunCenterOffsetX * this.scaleFactor).toPrecision(8));
-        this.sunCenterOffsetY = parseFloat((origSunCenterOffsetY * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetX = parseFloat((this.origSunCenterOffsetX * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetY = parseFloat((this.origSunCenterOffsetY * this.scaleFactor).toPrecision(8));
         
         // Account for rotation (02/25/2010: Image is rotated about center of the sun, not the image center!)
         //if (this.rotated) {
@@ -566,8 +565,8 @@ var TileLayer = Layer.extend(
             "inst"             : this.instrument,
             "det"              : this.detector,
             "meas"             : this.measurement,
-            "sunCenterOffsetX" : this.sunCenterOffsetX,
-            "sunCenterOffsetY" : this.sunCenterOffsetY                        
+            "sunCenterOffsetX" : this.origSunCenterOffsetX,
+            "sunCenterOffsetY" : this.origSunCenterOffsetY                        
         };
         
         return url + "?" + $.param(params);

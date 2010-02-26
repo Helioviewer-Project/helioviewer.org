@@ -151,19 +151,19 @@ class Image_SubFieldImage
             }
             
             // IM commands for transparency, padding, rescaling, etc.
-            //if ($this->hasAlphaMask()) {
-            //   $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
-            //} else {
+            if ($this->hasAlphaMask()) {
+               $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
+            } else {
                $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
-            //}
+            }
 
             // Compression settings & Interlacing
             //$cmd .= $this->setImageParams();
 
-            if ($this->padding) {
+            if ($this->padding && !$this->hasAlphaMask()) {
                 $cmd .= $this->_getPaddingString();
             }
-            
+
             // 02/23/10
             // ONLY WANT TO RESIZE DOWN TO 512x512 WHEN IMAGE IS BIGGER (Same numbers used in padding last step tell
             // you how big tile is at this point).
