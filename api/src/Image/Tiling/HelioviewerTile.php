@@ -231,15 +231,9 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      */
     public function applyAlphaMask($input)
     {
-        if ($this->_detector == "C2") {
-            $mask = "resources/images/alpha-masks/LASCO_C2_Mask.png";
-            $maskWidth  = 1040;
-            $maskHeight = 1040;
-        } else if ($this->_detector == "C3") {
-            $mask = "resources/images/alpha-masks/LASCO_C3_Mask.png";
-            $maskWidth  = 1040;
-            $maskHeight = 1040;
-        }
+        $maskWidth  = 1040;
+        $maskHeight = 1040;
+        $mask       = "resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
         
         // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
         // the original JP2 scale / (2 * $reduce)
@@ -255,8 +249,12 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         //$maskTopLeftX = $offsetX + ($this->roi["left"]  * $maskScaleFactor);
         //$maskTopLeftY = $offsetY + ($this->roi["top"]   * $maskScaleFactor);
         
-        $maskTopLeftX = $this->roi['left'] + ($maskWidth - $this->jp2Width) - $this->_sunCenterOffsetX;
-        $maskTopLeftY = $this->roi['top'] +  ($maskHeight - $this->jp2Height) - $this->_sunCenterOffsetY;
+        $maskTopLeftX = ($this->roi['left'] + ($maskWidth - $this->jp2Width) - $this->_sunCenterOffsetX)   * $maskScaleFactor;
+        $maskTopLeftY = ($this->roi['top'] +  ($maskHeight - $this->jp2Height) - $this->_sunCenterOffsetY) * $maskScaleFactor;
+        
+        // Crop dimensions
+        $cropWidth  = $this->subfieldWidth  * $maskScaleFactor;
+        $cropHeight = $this->subfieldHeight * $maskScaleFactor;
         
         // Length of tile edge and gravity
         if ($this->padding) {
@@ -278,7 +276,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         
         $cmd = sprintf(
             $str, $input, $gravity, $side, $side, $mask, 100 * $maskScaleFactor,
-            $this->subfieldWidth, $this->subfieldHeight, $maskTopLeftX, $maskTopLeftY, $gravity, $side, $side
+            $cropWidth, $cropHeight, $maskTopLeftX, $maskTopLeftY, $gravity, $side, $side
         );
 
         return $cmd;
