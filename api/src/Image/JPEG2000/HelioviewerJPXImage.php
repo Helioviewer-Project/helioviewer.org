@@ -110,6 +110,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         for ($i = 0; $i < $this->_numFrames; $i++) {
             // Get next image
             $isoDate = toISOString(parseUnixTimestamp($time));
+
             $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $sourceId);
 
             // Ignore redundant images
@@ -157,7 +158,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         // request window and grab the maximum number of frames at that cadence
         if ($this->_numFrames > HV_MAX_JPX_FRAMES) {
             $oldCadence       = $this->_cadence;
-            $this->_cadence   = $this->_cadence * ($this->_numFrames / HV_MAX_JPX_FRAMES);
+            $this->_cadence   = floor($this->_cadence * ($this->_numFrames / HV_MAX_JPX_FRAMES));
             $this->_numFrames = HV_MAX_JPX_FRAMES;
             $this->_message   = "Warning: Movie cadence has been changed from one image every $oldCadence seconds " .
                                 "to one image every {$this->_cadence} seconds in order to avoid exceeding the " .

@@ -16,3 +16,6 @@ install/tools/icons
 settings/Config.ini
 settings/Database.php
 tags
+docs/files.html
+docs/index.html
+docs/symbols

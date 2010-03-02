@@ -81,33 +81,55 @@ var TileLayer = Layer.extend(
     /**
      * @description Reload the tile layer
      * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
+     * 
+     * Notes:
+     * 
+     * 1. Rotation:
+     *   Currently, EIT and MDI images are prerotated, and their corresponding meta-information
+     *   is guaranteed to be accurate. LASCO images on the other hand are rotated during FITS -> JP2
+     *   conversion. The meta-information from the FITS header is not modified, however, and reflects
+     *   the original unrotated image. Therefor, when rotated = true, the coordinates should be flipped
+     *   to reflect the rotation that was already done to the image itself.
+     *   
+     * 2. Center offset:
+     *   The values for origSunCenterOffsetX and origSunCenterOffsetY reflect the x and y coordinates with the origin
+     *   at the bottom-left corner of the image, not the top-left corner.
+     *    
      */
     reset: function (zoomLevelChanged) {
-        this.scaleFactor  = parseFloat((this.scale / this.viewport.getImageScale()).toPrecision(8));  
+
+        // Ratio of original JP2 image scale to the viewport/desired image scale
+        this.scaleFactor = this.jp2Scale / this.viewport.getImageScale();
         
         // Update relevant dimensions
-        this.relWidth  = this.width  * this.scaleFactor;
-        this.relHeight = this.height * this.scaleFactor;
+        this.relWidth  = this.jp2Width  * this.scaleFactor;
+        this.relHeight = this.jp2Height * this.scaleFactor;
+        
+        // Sun center offset at the original JP2 image scale (with respect to top-left origin)
+        this.origSunCenterOffsetX =   parseFloat((this.sunCenterX - (this.jp2Width  / 2)).toPrecision(8));
+        this.origSunCenterOffsetY = - parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
         
         // Offset image
-        this.offsetX = parseFloat(
-                ((parseFloat((this.width  / 2) - this.centerX).toPrecision(8)) * this.scaleFactor).toPrecision(8)
-        );
-        this.offsetY = parseFloat(
-                ((parseFloat((this.height / 2) - this.centerY).toPrecision(8)) * this.scaleFactor).toPrecision(8)
-        );
+        this.sunCenterOffsetX = parseFloat((this.origSunCenterOffsetX * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetY = parseFloat((this.origSunCenterOffsetY * this.scaleFactor).toPrecision(8));
+        
+        // Account for rotation (02/25/2010: Image is rotated about center of the sun, not the image center!)
+        //if (this.rotated) {
+        //  this.sunCenterOffsetX = - this.sunCenterOffsetX; // 02/25/2010: Is sun mirrored instead of rotated?
+        //  this.sunCenterOffsetY = - this.sunCenterOffsetY;
+        //}
         
         this.domNode.css({
-            "left": this.offsetX,
-            "top" : this.offsetY
+            "left": - this.sunCenterOffsetX,
+            "top" : - this.sunCenterOffsetY
         });
     
         // Update layer dimensions (only magnitude is important)
         this.dimensions = {
-            "left"   : (this.relWidth  / 2) + this.offsetX,
-            "top"    : (this.relHeight / 2) + this.offsetY,
-            "bottom" : (this.relHeight / 2) - this.offsetY,
-            "right"  : (this.relWidth  / 2) - this.offsetX
+            "left"   : (this.relWidth  / 2) + this.sunCenterOffsetX,
+            "top"    : (this.relHeight / 2) + this.sunCenterOffsetY,
+            "bottom" : (this.relHeight / 2) + this.sunCenterOffsetY,
+            "right"  : (this.relWidth  / 2) + this.sunCenterOffsetX
         };
     
         this.refreshUTCDate();
@@ -127,7 +149,19 @@ var TileLayer = Layer.extend(
             date:     this.controller.date.toISOString()
         };
         
-        // Ajax responder
+        /**
+         * Gets information to the best match for a requested image
+         * 
+         * The AJAX request returns a JSON object with the following properties:
+         * 
+         *    jp2Width   Width of the original image
+         *    jp2Height  Height of the original image
+         *    jp2Scale   Pixel scale (in arcseconds per pixel) of the original image
+         *    rotated    Whether or not the original image was rotated 180 degrees
+         *    sunCenterX X-coordinate for the center of the sun in the original image
+         *    sunCenterY Y-coordinate for the center of the sun in the original image
+         *    
+         */
         callback = function (image) {
             var hv = self.controller;
 
@@ -507,24 +541,36 @@ var TileLayer = Layer.extend(
     
     /**
      * @description Returns a formatted string representing a query for a single tile
+     * 
+     * TODO 02/25/2010: What would be performance loss from re-fetching meta information on server-side?
      */
     getTileURL: function (serverId, x, y) {
-        var uri, imageScale, format, src, offsetX, offsetY, baseURL;
+        var url, file, format, params;
         
-        baseURL = this.controller.tileServers[serverId];
-        
-        uri    = this.filepath + "/" + this.filename;        
+        url    = this.controller.tileServers[serverId];
+        file   = this.filepath + "/" + this.filename;
         format = (this.layeringOrder === 1 ? "jpg" : "png");
-        imageScale = this.viewport.imageScale;
+
+        params = {
+            "action"           : "getTile",
+            "uri"              : file,
+            "x"                : x,
+            "y"                : y,
+            "format"           : format,
+            "tileScale"        : this.viewport.imageScale,
+            "ts"               : this.tileSize,
+            "jp2Width"         : this.jp2Width,
+            "jp2Height"        : this.jp2Height,
+            "jp2Scale"         : this.jp2Scale,
+            "obs"              : this.observatory,
+            "inst"             : this.instrument,
+            "det"              : this.detector,
+            "meas"             : this.measurement,
+            "sunCenterOffsetX" : this.origSunCenterOffsetX,
+            "sunCenterOffsetY" : this.origSunCenterOffsetY                        
+        };
         
-        src = baseURL + '?action=getTile&uri=' + uri + '&x=' + x + '&y=' + y + '&tileScale=' + imageScale;
-        src += '&ts=' + this.tileSize + '&jp2Width=' + this.width + '&jp2Height=' + this.height + '&jp2Scale=';
-        src += this.scale + '&offsetX=' + this.offsetX + '&offsetY=' + this.offsetY + '&format=' + format;
-        src += '&obs=' + this.observatory + '&inst=' + this.instrument + '&det=' + this.detector;
-        src += '&meas=' + this.measurement;
-        
-        //console.log(src);
-        return src;
+        return url + "?" + $.param(params);
     },
 
     /**

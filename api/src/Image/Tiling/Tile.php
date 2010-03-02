@@ -30,6 +30,7 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
     protected $x;
     protected $y;
     protected $tileSize;
+    protected $relativeTileSize;
 
     /**
      * Abstract tile class setup
@@ -52,26 +53,107 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
         $this->x = $x;
         $this->y = $y;
         $this->tileSize = $tileSize;
+        $this->relativeTileSize = $tileSize * ($desiredScale / $jp2Scale);
         
         $roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y);
-        
+
         parent::__construct($jp2, $tile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale);
         
-        $this->setSquareImage(true);
+        $padding = $this->computePadding();
+        $this->setPadding($padding);
+        
+        // Allow browser to rescale tiles which are not larger than the requested size
+        if (!($padding && ($padding['width'] > $tileSize))) {
+            $this->setSkipResize(true);
+        }
     }
     
     /**
-     * Returns tilesize relative to scale of image requested
+     * Pads a tile to the desired dimensions
      * 
-     * @param float $jp2Scale     Natural pixel scale of the source JP2 image
-     * @param float $desiredScale Pixel scale (arc-seconds/pixel) for which the tile should be scaled to
-     * @param int   $tileSize     Length of a side of the (square) tile in pixels
+     * For outer tiles (corner and side tiles), it may be necessary to pad the extracted subfield region
+     * in order to guarantee that a square tile is returned and also, in the case where the extracted region
+     * is already at the desired scale, to prevent the browser from resizing the tile to be larger than it should be.
      * 
-     * @return float Size of a single natural-scale tile  at the requested scale
+     * How big should the final tile be? (Assuming browser can resize up or down as long as requested
+     * region is exactly represented in tile).
+     * 
+     *     $desiredToActual * $tileSize
+     *     
+     * For example, if the user is viewing a tiled JP2 image with original scale of 2.63, and the requested scale
+     * is 1.315, then the 512x512 that the user sees is actually only 256x256 at the JP2's natural image scale.
+     * So the resulting tile that is returned to the user should be:
+     * 
+     *   = $desiredToActual * tileSize
+     *   = (1.315 / 2.63) * 512
+     *   = 0.5 * 512
+     *   = 256
+     *
+     * @return mixed Returns an array with dimentions and gravity to use for padding, or false if none is needed
      */
-    protected function getRelativeTileSize($jp2Scale, $desiredScale, $tileSize)
+    protected function computePadding ()
     {
-        return $tileSize * ($desiredScale / $jp2Scale);
+        $x = $this->x;
+        $y = $this->y;
+        
+        // Determine min and max tile numbers
+        $imgNumTilesX = max(2, ceil($this->jp2RelWidth  / $this->tileSize));
+        $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->tileSize));
+
+        // Tile placement architecture expects an even number of tiles along each dimension
+        if ($imgNumTilesX % 2 != 0) {
+            $imgNumTilesX += 1;
+        }
+
+        if ($imgNumTilesY % 2 != 0) {
+            $imgNumTilesY += 1;
+        }
+
+        $tileMinX = - ($imgNumTilesX / 2);
+        $tileMaxX =   ($imgNumTilesX / 2) - 1;
+        $tileMinY = - ($imgNumTilesY / 2);
+        $tileMaxY =   ($imgNumTilesY / 2) - 1;
+
+        // Determine where the tile is located (where tile should lie in the padding)
+        $gravity = null;
+        if ($x == $tileMinX) {
+            if ($y == $tileMinY) {
+                $gravity = "SouthEast";
+            } else if ($y == $tileMaxY) {
+                $gravity = "NorthEast";
+            } else {
+                $gravity = "East";
+            }
+        } else if ($x == $tileMaxX) {
+            if ($y == $tileMinY) {
+                $gravity = "SouthWest";
+            } else if ($y == $tileMaxY) {
+                $gravity = "NorthWest";
+            } else {
+                $gravity = "West";
+            }
+        } else {
+            if ($y == $tileMinY) {
+                $gravity = "South";
+            } else if ($y == $tileMaxY) {
+                $gravity = "North";
+            } else {
+                return false;
+            }
+        }
+       
+        // Length of side in padded tile 
+        if ($this->reduce > 0) {
+            $side = ($this->relativeTileSize / (2 * $this->reduce));
+        } else {
+            $side = $this->relativeTileSize;
+        }
+
+        return array(
+            "gravity" => $gravity,
+            "width"   => $side,
+            "height"  => $side
+        );
     }
 
     /**
@@ -99,7 +181,7 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
         // Rounding
         $precision = 6;
         
-        $relativeTileSize = $this->getRelativeTileSize($jp2Scale, $desiredScale, $tileSize);
+        $relativeTileSize = $this->relativeTileSize;
         
         // Parameters
         $top = $left = $width = $height = null;
@@ -121,7 +203,7 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
         $relX = (0.5 * $imgNumTilesX) + $x;
         $relY = (0.5 * $imgNumTilesY) + $y;
 
-        // Number of "inner" tiles
+        // Number of "inner" (non-edge) tiles
         $numTilesInsideX = $imgNumTilesX - 2;
         $numTilesInsideY = $imgNumTilesY - 2;
       
@@ -129,15 +211,6 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
         $innerTS = $relativeTileSize;
         $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
 
-        /**
-        // Upper left corner of 'tile'
-        $this->yRange['start']     = (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
-        $this->xRange['start']     = (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);
-        
-        // Width and height of 'tile'
-        $this->yRange['size']     = (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
-        $this->xRange['size']     = (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);**/
-        
         // Upper left corner of 'tile'
         $top  = (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS);
         $left = (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS);

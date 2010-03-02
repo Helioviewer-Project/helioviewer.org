@@ -108,18 +108,15 @@ class Image_JPEG2000_JP2Image
         // Add desired region
         $cmd .= $this->_getRegionString($roi);
 
-        //echo $cmd;
-        //exit();
-
         // Execute the command
         try {
             $line = exec(HV_PATH_CMD . escapeshellcmd($cmd), $out, $ret);
             if (($ret != 0) || (sizeof($out) > 5)) {
-                throw new Exception("COMMAND: $cmd\n\t $line");
+                throw new Exception("Error extracting JPEG 2000 subfield region! <br>\nCOMMAND: $cmd\n\t $line");
             }
 
         } catch(Exception $e) {
-            $error = "[JP2Image.php][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "<br>\n\n";
+            $error = "[JP2Image.php][" . date("Y/m/d H:i:s") . "]\n\t " . escapeshellcmd($e->getMessage()) . "<br>\n\n";
             file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
             die($error);
         }
