@@ -93,11 +93,13 @@ class Database_ImgIndex
         $center     = $xmlBox->getSunCenter();
 
         $meta = array(
-            "width"   => (int) $dimensions[0],
-            "height"  => (int) $dimensions[1],
-            "centerX" => (float) $center[0],
-            "centerY" => (float) $center[1],
-            "scale"   => (float) $xmlBox->getImagePlateScale()
+            "jp2Scale"   => (float) $xmlBox->getImagePlateScale(),
+            "jp2Width"   => (int) $dimensions[0],
+            "jp2Height"  => (int) $dimensions[1],
+            "rotated"    => (bool) $xmlBox->getImageRotationStatus(),
+            "sunCenterX" => (float) $center[0],
+            "sunCenterY" => (float) $center[1],
+            
         );
 
         return $meta;

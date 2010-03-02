@@ -104,6 +104,9 @@ class Image_JPEG2000_JP2ImageXMLBox
 
     /**
      * Returns the coordinates for the center of the sun in the image.
+     * 
+     * NOTE: The values for CRPIX1 and CRPIX2 reflect the x and y coordinates with the origin
+     * at the bottom-left corner of the image, not the top-left corner.
      *
      * @return array Pixel coordinates of the solar center
      */
@@ -116,6 +119,28 @@ class Image_JPEG2000_JP2ImageXMLBox
             echo 'Unable to locate image center in header tags!';
         }
         return array($x, $y);
+    }
+    
+    /**
+     * Returns true if the image was rotated 180 degrees
+     * 
+     * Note that while the image data may have been rotated to make it easier to line
+     * up different data sources, the meta-information regarding the sun center, etc. are
+     * not adjusted, and thus must be manually adjusted to account for any rotation.
+     *
+     * @return boolean True if the image has been rotated
+     */
+    public function getImageRotationStatus()
+    {
+        try {
+            $rotation = $this->_getElementValue("CROTA1");
+            if (abs($rotation) > 170) {
+                return true;
+            }
+        } catch (Exception $e) {
+            // MDI and EIT do their own rotation
+            return false;
+        }        
     }
 
     /**
@@ -131,9 +156,10 @@ class Image_JPEG2000_JP2ImageXMLBox
         $element = $this->_xml->getElementsByTagName($name);
 
         if ($element) {
-            return $element->item(0)->childNodes->item(0)->nodeValue;
-        } else {
-            throw new Exception('Element not found');
+            if (!is_null($element->item(0))) {
+                return $element->item(0)->childNodes->item(0)->nodeValue;
+            }
         }
+        throw new Exception('Element not found');
     }
 }

@@ -12,12 +12,12 @@
 }
 
 .ui-state-hover-bgonly {
-    background-image: url(/lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-bg_dots-small_40_00498f_2x2.png);
+    background-image: url(../../lib/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-bg_dots-small_40_00498f_2x2.png);
     background-color: #00498f;
 }
 
 .ui-state-hover-icononly {
-    background-image: url(/lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../../lib/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 span.removeBtn:hover, 
@@ -26,7 +26,7 @@ span#timeForwardBtn:hover,
 #full-screen-btn > div:hover,
 
 .accordion-arrow:hover {
-    background-image: url(/lib/jquery/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+    background-image: url(../../lib/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
 .layerManagerBtn.visible:hover {
