@@ -272,7 +272,9 @@ class Image_SubFieldImage
     {
         $args = " -quality ";
         if ($this->format == "png") {
-            $args .= HV_PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . HV_NUM_COLORS;
+            // 03/02/2010: -colors 256 does not work well with older versions of IM (<6.5.1)
+            //$args .= HV_PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . HV_NUM_COLORS;
+            $args .= HV_PNG_COMPRESSION_QUALITY . " -interlace plane";
         } else {
             $args .= HV_JPEG_COMPRESSION_QUALITY . " -interlace line";
         }
