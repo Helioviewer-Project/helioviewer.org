@@ -38,7 +38,8 @@ class Database_ImgIndex
     }
 
     /**
-     * Finds the closest available image to the requested one.
+     * Finds the closest available image to the requested one, and returns information from
+     * database and XML box.
      *
      * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
      * @param int    $sourceId An identifier specifying the image type or source requested.
@@ -47,6 +48,19 @@ class Database_ImgIndex
      */
     public function getClosestImage($date, $sourceId)
     {
+        $img      = $this->_getImageFromDatabase($date, $sourceId);
+        $filename = HV_JP2_DIR . $img["filepath"] . "/" .$img["filename"];
+        $xmlBox   = $this->extractJP2MetaInfo($filename);
+
+        return array_merge($img, $xmlBox);
+    }
+    
+    /**
+     * Queries database and finds the best matching image. 
+     * 
+     * @return array Array including the image id, filepath, filename, date, and sourceId.
+     */
+    private function _getImageFromDatabase($date, $sourceId) {
         include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
@@ -70,11 +84,10 @@ class Database_ImgIndex
         // Fix types and retrieve extra meta-information from JP2 header
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
-
-        $filename = HV_JP2_DIR . $img["filepath"] . "/" .$img["filename"];
-
-        return array_merge($img, $this->extractJP2MetaInfo($filename));
+        
+        return $img;
     }
+
 
     /**
      * Extract necessary meta-information from an image
@@ -86,21 +99,24 @@ class Database_ImgIndex
     public function extractJP2MetaInfo ($img)
     {
         include_once "src/Image/JPEG2000/JP2ImageXMLBox.php";
-
-        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($img);
-
-        $dimensions = $xmlBox->getImageDimensions();
-        $center     = $xmlBox->getSunCenter();
-
-        $meta = array(
-            "jp2Scale"   => (float) $xmlBox->getImagePlateScale(),
-            "jp2Width"   => (int) $dimensions[0],
-            "jp2Height"  => (int) $dimensions[1],
-            "rotated"    => (bool) $xmlBox->getImageRotationStatus(),
-            "sunCenterX" => (float) $center[0],
-            "sunCenterY" => (float) $center[1],
-            
-        );
+        
+        try {
+            $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($img);
+    
+            $dimensions = $xmlBox->getImageDimensions();
+            $center     = $xmlBox->getSunCenter();
+    
+            $meta = array(
+                "jp2Scale"   => (float) $xmlBox->getImagePlateScale(),
+                "jp2Width"   => (int) $dimensions[0],
+                "jp2Height"  => (int) $dimensions[1],
+                "rotated"    => (bool) $xmlBox->getImageRotationStatus(),
+                "sunCenterX" => (float) $center[0],
+                "sunCenterY" => (float) $center[1],
+            );
+        } catch (Exception $e) {
+            logErrorMsg($img['filename'] . ": " . $e->getMessage(), true);
+        }
 
         return $meta;
     }
@@ -216,7 +232,7 @@ class Database_ImgIndex
      */
     public function getJP2FilePath($date, $sourceId)
     {
-        $img = $this->getClosestImage($date, $sourceId);
+        $img = $this->_getImageFromDatabase($date, $sourceId);
         return $img["filepath"] . "/" . $img["filename"];
     }
 }

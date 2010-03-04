@@ -47,9 +47,9 @@ class Image_JPEG2000_JP2ImageXMLBox
     public function getXMLBox ($root)
     {
         if (!file_exists($this->_file)) {
-            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t Unable to extract XMLbox for " . $this->_file . ": file does not exist!\n\n";
-            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
-            exit();
+            $msg = "Unable to extract XMLbox for {$this->_file}. File does not exist!";
+            logErrorMsg($msg, true);
+            throw new Exception("Unable to find file: {$this->_file}.");
         }
 
         $fp = fopen($this->_file, "rb");
@@ -97,7 +97,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         try {
             $scale = $this->_getElementValue("CDELT1");
         } catch (Exception $e) {
-            echo 'Unable to locate image dimensions in header tags!';
+            echo 'Unable to locate image scale in header tags!';
         }
         return $scale;
     }
@@ -116,7 +116,7 @@ class Image_JPEG2000_JP2ImageXMLBox
             $x = $this->_getElementValue("CRPIX1");
             $y = $this->_getElementValue("CRPIX2");
         } catch (Exception $e) {
-            echo 'Unable to locate image center in header tags!';
+            echo 'Unable to locate sun center center in header tags!';
         }
         return array($x, $y);
     }

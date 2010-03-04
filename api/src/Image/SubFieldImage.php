@@ -182,7 +182,7 @@ class Image_SubFieldImage
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
             if ($ret != 0) {
-                throw new Exception("Unable to apply final processing. Command: $cmd $this->outputFile");
+                throw new Exception("Unable to build subfield image.\n\tCommand: $cmd $this->outputFile");
             }
 
             if ($this->outputFile != $intermediate) {
@@ -192,10 +192,8 @@ class Image_SubFieldImage
             unlink($grayscale);
 
         } catch(Exception $e) {
-            $error = "[buildImage][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $e->getMessage();
-
+            logErrorMsg($e->getMessage, true);
+            
             //Clean-up and exit
             $this->_abort($this->outputFile);
         }
@@ -344,11 +342,7 @@ class Image_SubFieldImage
             }
 
         } catch(Exception $e) {
-            $error = "[gd][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $e->getMessage();
-
-            die();
+            logErrorMsg($e->getMessage(), true);
         }
         $ctable = imagecreatefrompng($clut);
 
@@ -405,11 +399,10 @@ class Image_SubFieldImage
             }
 
             if (!readfile($this->outputFile)) {
-                throw new Exception("Error displaying $filename\n");
+                throw new Exception("Unable to display file $filename.");
             }
         } catch (Exception $e) {
-            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
+            logErrorMsg($error, true);
         }
     }
 

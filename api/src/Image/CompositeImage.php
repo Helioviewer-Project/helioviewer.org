@@ -116,10 +116,8 @@ abstract class Image_CompositeImage
             }
         }
         catch(Exception $e) {
-            $error = "[compileImages][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $error;
-            die();
+            $error = "Unable to compile composite image layers: {$e->getMessage()}";
+            logErrorMsg($error, true);
         }
 
         // All layers should be built, and $builtImages should contain all of the subfield images.
@@ -306,10 +304,7 @@ abstract class Image_CompositeImage
             }
         }
         catch(Exception $e) {
-            $error = "[buildComposite][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $e->getMessage();
-            die();
+           logErrorMsg($e->getMessage(), true);
         }
         $tmpImg = $this->_watermark($tmpImg);
         return $tmpImg;

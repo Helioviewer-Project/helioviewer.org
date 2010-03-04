@@ -1,0 +1,7 @@
+JQUERY IS REQUIRED FOR THIS PLUGIN TO WORK!!!
+
+You can grab the latest version here: http://jquery.com/
+
+We recommend version 1.3.2 due to its significant speed increases in several areas. qTip has also been reported to work well with v1.2.6 but it is _not_ officially supported.
+
+For more information, visit http://craigworks.com/projects/qtip/docs/

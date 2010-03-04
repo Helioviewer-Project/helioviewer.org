@@ -110,15 +110,14 @@ class Image_JPEG2000_JP2Image
 
         // Execute the command
         try {
-            $line = exec(HV_PATH_CMD . escapeshellcmd($cmd), $out, $ret);
+            $result = exec(HV_PATH_CMD . escapeshellcmd($cmd), $out, $ret);
             if (($ret != 0) || (sizeof($out) > 5)) {
-                throw new Exception("Error extracting JPEG 2000 subfield region! <br>\nCOMMAND: $cmd\n\t $line");
+                $msg = "Error extracting JPEG 2000 subfield region!\n\tCommand: \"" . escapeshellcmd($cmd) . "\".\n\tResult: $result";
+                throw new Exception($msg);
             }
 
         } catch(Exception $e) {
-            $error = "[JP2Image.php][" . date("Y/m/d H:i:s") . "]\n\t " . escapeshellcmd($e->getMessage()) . "<br>\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            die($error);
+            logErrorMsg($e->getMessage(), true);
         }
     }
 
