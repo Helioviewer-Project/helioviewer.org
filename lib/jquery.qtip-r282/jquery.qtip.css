@@ -31,6 +31,29 @@
 	border-radius: 0;
 }
 
+	.ui-tooltip-tip{
+		position: absolute;
+		height: 14px;
+		width: 14px;
+		margin: 0 auto;
+
+		line-height: 0.1px;
+		font-size: 1px;
+
+		background: transparent !important;
+		border: 0px !important;
+	}
+
+		.ui-tooltip-tip *{
+			line-height: 0.1px;
+			font-size: 0.1px;
+		}
+
+		.ui-tooltip-tip div.ui-tooltip-tip-inner{
+			background: transparent !important;
+			border: 0px solid transparent;
+		}
+
 	.ui-tooltip-wrapper{
 		position: relative;
 		overflow: hidden;
@@ -49,12 +72,11 @@
 
 	.ui-tooltip-titlebar{
 		position: relative;
-		padding: 6px 35px 6px 10px;
+		padding: 6px 40px 6px 10px;
 
 		font-weight: bold;
 	}
 
-		/*! Default close button class */
 		.ui-tooltip-close{
 			position: absolute;
 			height: 16px;
@@ -74,13 +96,8 @@
 				display: block;
 			}
 
-		/*! Custom button class */
-		.ui-tooltip-button{
-			float: right;
-		}
 
-
-/*! Default tooltip style */
+/* Default tooltip style */
 .ui-tooltip-wrapper{
 	border-color: #F9E98E;
 	background-color: #FBF7AA;
@@ -89,30 +106,15 @@
 
 	.ui-tooltip .ui-tooltip-titlebar{
 		background-color: #F0DE7D;
+		color: #A27D35;
 	}
 
 	.ui-tooltip .ui-tooltip-close .ui-icon{
 		background: #A27D35 url('images/close.png') no-repeat 50% 50%;
 	}
 
-/*! Plain tooltip style */
-.ui-tooltip-plain .ui-tooltip-wrapper{
-	border-color: black;
-	border-width: 1px;
 
-	background-color: white;
-	color: black;
-}
-
-	.ui-tooltip-plain .ui-tooltip-titlebar{
-		background-color: white;
-	}
-
-	.ui-tooltip-plain .ui-tooltip-close .ui-icon{
-		background: black;
-	}
-
-/*! Light tooltip style */
+/* Light tooltip style */
 .ui-tooltip-light .ui-tooltip-wrapper{
 	border-color: #E2E2E2;
 	background-color: white;
@@ -121,6 +123,7 @@
 
 	.ui-tooltip-light .ui-tooltip-titlebar{
 		background-color: #f1f1f1;
+		color: #454545;
 	}
 
 	.ui-tooltip-light .ui-tooltip-close .ui-icon{
@@ -128,15 +131,16 @@
 	}
 
 
-/*! Dark tooltip style */
+/* Dark tooltip style */
 .ui-tooltip-dark .ui-tooltip-wrapper{
-	border-color: #303030;
+	border-color: #CE6F6F;
 	background-color: #505050;
 	color: #f3f3f3;
 }
 
 	.ui-tooltip-dark .ui-tooltip-titlebar{
 		background-color: #404040;
+		color: #f3f3f3;
 	}
 
 	.ui-tooltip-dark .ui-tooltip-close .ui-icon{
@@ -144,15 +148,16 @@
 	}
 
 
-/*! Red tooltip style */
+/* Red tooltip style */
 .ui-tooltip-red .ui-tooltip-wrapper{
-	border-color: #D95252;
-	background-color: #F78B83;
-	color: #912323;
+	border-color: #CE6F6F;
+	background-color: #F79992;
+	color: #9C2F2F;
 }
 
 	.ui-tooltip-red .ui-tooltip-titlebar{
-		background-color: #F06D65;
+		background-color: #f28279;
+		color: #9C2F2F;
 	}
 
 	.ui-tooltip-red .ui-tooltip-close .ui-icon{
@@ -160,15 +165,16 @@
 	}
 
 
-/*! Green tooltip style */
+/* Green tooltip style */
 .ui-tooltip-green .ui-tooltip-wrapper{
-	border-color: #90D93F;
-	background-color: #CAED9E;
-	color: #3F6219;
+	border-color: #A9DB66;
+	background-color: #CDE6AC;
+	color: #58792E;
 }
 
 	.ui-tooltip-green .ui-tooltip-titlebar{
-		background-color: #B0DE78;
+		background-color: #b9db8c;
+		color: #58792E;
 	}
 
 	.ui-tooltip-green .ui-tooltip-close .ui-icon{
@@ -176,66 +182,18 @@
 	}
 
 
-/*! Blue tooltip style */
+/* Blue tooltip style */
 .ui-tooltip-blue .ui-tooltip-wrapper{
 	border-color: #ADD9ED;
 	background-color: #E5F6FE;
-	color: #5E99BD;
+	color: #4D9FBF;
 }
 
 	.ui-tooltip-blue .ui-tooltip-titlebar{
 		background-color: #D0E9F5;
+		color: #5E99BD;
 	}
 
 	.ui-tooltip-blue .ui-tooltip-close .ui-icon{
 		background: #4D9FBF url('images/close-blue.png') no-repeat 50% 50%;
 	}
-
-
-/*!
- * Tips plugin
- */
-.ui-tooltip-tip{
-	position: absolute;
-	height: 14px;
-	width: 14px;
-	margin: 0 auto;
-
-	line-height: 0.1px;
-	font-size: 1px;
-
-	background: transparent !important;
-	border: 0px !important;
-}
-
-	.ui-tooltip-tip *{
-		line-height: 0.1px;
-		font-size: 0.1px;
-	}
-
-	.ui-tooltip-tip div.ui-tooltip-tip-inner{
-		background: transparent !important;
-		border: 0px solid transparent;
-	}
-
-
-/*!
- * Modal plugin
- */
-#qtip-blanket{
-	position: absolute;
-	left: -1000em;
-	top: -1000em;
-
-	display: none;
-	background-color: black;
-	cursor: pointer;
-
-	/* Set this to any below 15000 (default starting z-index for qTips) */
-	z-index: 14999;
-
-	opacity: 0.7;
-	filter:alpha('opacity=70');
-	-moz-opacity: 0.7;
-	-webkit-opacity: 0.7;
-}

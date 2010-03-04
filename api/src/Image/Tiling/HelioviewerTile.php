@@ -307,12 +307,11 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             }
 
             if (!readfile($tile)) {
-                throw new Exception("Error displaying $filename\n");
+                throw new Exception("Unable to read tile from cache: $filename");
             }
         } catch (Exception $e) {
             header("Content-Type: text/html");
-            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
+            logErrorMsg($e->getMessage(), true);
         }
     }
 }
