@@ -50,12 +50,13 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         self.ui.hvDatabaseSetupPage.registerField("hvPassword*", self.ui.hvPassword)
 
         alphanum = QtGui.QRegExpValidator(QtCore.QRegExp("[\w]*"), self)
+        passwd   = QtGui.QRegExpValidator(QtCore.QRegExp("[\w!@#\$%\^&\*\(\)_\+\.,\?'\"]*"), self)
 
         # DB Admin Info
         self.ui.dbAdminUserName.setValidator(alphanum)
-        self.ui.dbAdminPassword.setValidator(alphanum)
+        self.ui.dbAdminPassword.setValidator(passwd)
         self.ui.hvUserName.setValidator(alphanum)
-        self.ui.hvPassword.setValidator(alphanum)
+        self.ui.hvPassword.setValidator(passwd)
 
 
     def initializePage(self, page):
