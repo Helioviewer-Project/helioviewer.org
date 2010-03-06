@@ -221,16 +221,15 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
             
         try {
             if ($left < 0 || $top < 0) {
-                throw new Exception("[convertTileIndexToPixels] Invalid start value for top or left values.");
+                $msg = "Unable to convert from tile to pixel coordinates: Invalid start value for top or left values.";
+                throw new Exception($msg);
             }
             if ($right > $jp2Width || $bottom > $jp2Height) {
-                throw new Exception("[convertTileIndexToPixels] Invalid size value for right or bottom values.");
+                throw new Exception("Unable to convert from tile to pixel coordinates: Invalid size value for right or bottom values.");
             }
         }
         catch(Exception $e) {
-            $msg = "[PHP][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $msg, FILE_APPEND);
-            echo $msg;
+            logErrorMsg($e->getMessage(), true);
         }
         
         return array(

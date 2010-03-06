@@ -45,7 +45,7 @@ var Helioviewer = Class.extend(
         this._getDataSources();
         
         // Tooltip helper
-        this.tooltips = new TooltipHelper(true);
+        this.tooltips = new TooltipHelper();
 
         // Layer Managers
         this.tileLayers  = new TileLayerManager(this);

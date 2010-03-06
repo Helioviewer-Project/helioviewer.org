@@ -1009,7 +1009,7 @@ function loadModule($params)
  * @return void
  */
 function printErrorMsg($msg)
-    {
+{
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1027,4 +1027,22 @@ function printErrorMsg($msg)
     <?php
     exit();
 }
+
+/**
+ * Logs an error message to the log whose location is specified in Config.ini
+ * 
+ * @param string $msg The body of the error message to be logged.
+ * @param bool   $url If true, the request URL will be included in the error message.
+ * 
+ * @return void 
+ */
+function logErrorMsg($msg, $url=false)
+{
+    $error = "(" . date("Y/m/d H:i:s") . ") $msg\n";
+    if ($url) {
+        $error .= "\t{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}\n";
+    }
+    file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
+}
+
 ?>

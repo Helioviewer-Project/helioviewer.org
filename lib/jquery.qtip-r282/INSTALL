@@ -5,18 +5,6 @@ Installing qTip is relatively straight forward. Simply include the both the jQue
 
 Notice the jQuery library is included BEFORE qTip. This is ABSOLUTELY ESSENTIAL for correct functioning of the plugin.
 
-
-
-You may also wish to include some other plugin files, such as Speech Bubble Tips support or modal dialogue support:
-
-<script type="text/javascript" src="jquery.qtip.min.js"></script>
-<script type="text/javascript" src="jquery.qtip.tips.js"></script>
-<script type="text/javascript" src="jquery.qtip.modal.js"></script>
-
-Notice these includes MUST GO BELOW the qTip library include, not above.
-
-
-
 It is HIGHLY RECOMMENDED that all JavaScript includes like the one above be placed after all your content at the footer of the page, just before the end </body> tag.
 This ensures that all content is loaded before manipulation of the DOM occurs.
 

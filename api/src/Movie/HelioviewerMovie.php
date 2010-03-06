@@ -233,10 +233,7 @@ class Movie_HelioviewerMovie
 
         if (!$ok) {
             // if there was an error then get it
-            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $error;
-            die();
+            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
         }
 
         $toolkit->setVideoOutputDimensions($this->_imageSize['width'], $this->_imageSize['height']);
@@ -247,10 +244,7 @@ class Movie_HelioviewerMovie
 
         if (!$ok) {
             //         if there was an error then get it
-            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $error;
-            die();
+            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
         }
 
         //     execute the ffmpeg command
@@ -259,10 +253,7 @@ class Movie_HelioviewerMovie
         // check the return value in-case of error
         if ($movie !== PHPVideoToolkit::RESULT_OK) {
             // if there was an error then get it
-            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $error;
-            die();
+            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
         }
 
         // Create a high-quality version as well
@@ -287,10 +278,7 @@ class Movie_HelioviewerMovie
 
         if (!$ok) {
             // if there was an error then get it
-            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $error;
-            die();
+            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
         }
 
         // execute the ffmpeg command
@@ -298,10 +286,7 @@ class Movie_HelioviewerMovie
 
         if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
             //         if there was an error then get it
-            $error = "[PHPVideotoolkit][" . date("Y/m/d H:i:s") . "]\n\t " . $toolkit->getLastError() . "\n\n";
-            file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-            print $error;
-            die();
+            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
         }
 
         // Clean up png/tif images that are no longer needed
@@ -394,10 +379,7 @@ class Movie_HelioviewerMovie
                     }
                 }
                 catch (Exception $e) {
-                    $error = "[getImageTimestamps][" . date("Y/m/d H:i:s") . "]\n\t " . $e->getMessage() . "\n\n";
-                    file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
-                    print $error;
-                    die();
+                    logErrorMsg($e->getMessage);
                 }
 
                 array_push($resultArray, $row);
