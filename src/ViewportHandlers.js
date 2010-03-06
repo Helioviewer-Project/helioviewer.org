@@ -123,11 +123,13 @@ var ViewportHandlers = Class.extend(
             //adjust for zoom
             if (e.shiftKey) {
                 viewport.moveBy(0.5 * pos.x, 0.5 * pos.y);
-                viewport.controller.zoomControls.zoomButtonClicked(-1);
+                //viewport.controller.zoomControls.zoomButtonClicked(-1);
+                $("#zoomControlZoomOut").click();
             }
             else {
                 viewport.moveBy(2 * pos.x, 2 * pos.y);
-                viewport.controller.zoomControls.zoomButtonClicked(1);
+                //viewport.controller.zoomControls.zoomButtonClicked(1);
+                $("#zoomControlZoomIn").click();
             }
             
             this.viewport.endMoving();

@@ -117,7 +117,7 @@ class Module_WebClient implements Module
                 );
             }
 
-            $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId'], false);
+            $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
 
             // Prepare cache for tiles
             $this->_createImageCacheDir($result["filepath"]);
