@@ -376,30 +376,36 @@ class Image_SubFieldImage
     public function display()
     {
         try {
-            // Cache-Lifetime (in minutes)
-            $lifetime = 60;
-            $exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
-            header("Expires: " . $exp_gmt);
-            header("Cache-Control: public, max-age=" . $lifetime * 60);
+            //header("Cache-Control: public, max-age=" . $lifetime * 60);
+            $headers = apache_request_headers();
+            
+            // Enable caching of images served by PHP
+            // http://us.php.net/manual/en/function.header.php#61903
+            $lastModified = 'Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($this->outputFile)).' GMT';
+            if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($this->outputFile))) {
+                // Cache is current (304)
+                header($lastModified, true, 304);    
+            } else {
+                // Image not in cache or out of date (200)
+                header($lastModified, true, 200);
 
-            // Filename & Content-length
-            if (isset($this->outputFile)) {
+                header('Content-Length: '.filesize($this->outputFile));
+
+                if ($this->format == "png") {
+                    header("Content-Type: image/png");
+                } else {
+                    header("Content-Type: image/jpeg");
+                }
+
+                // Filename & Content-length
                 $exploded = explode("/", $this->outputFile);
                 $filename = end($exploded);
-
-                $stat = stat($this->outputFile);
-                header("Content-Length: " . $stat['size']);
                 header("Content-Disposition: inline; filename=\"$filename\"");
-            }
+                
+                if (!readfile($this->outputFile)) {
+                    throw new Exception("Unable to read tile from cache: $filename");
+                }
 
-            if ($this->format == "png") {
-                header("Content-Type: image/png");
-            } else {
-                header("Content-Type: image/jpeg");
-            }
-
-            if (!readfile($this->outputFile)) {
-                throw new Exception("Unable to display file $filename.");
             }
         } catch (Exception $e) {
             logErrorMsg($error, true);
