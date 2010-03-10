@@ -284,30 +284,37 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
     public function displayCachedTile($tile)
     {
         try {
-            $format = substr($tile, -3);
-
-            // Cache-Lifetime (in minutes)
-            $lifetime = 60;
-            $exp_gmt = gmdate("D, d M Y H:i:s", time() + $lifetime * 60) ." GMT";
-            header("Expires: " . $exp_gmt);
-            header("Cache-Control: public, max-age=" . $lifetime * 60);
-
-            // Filename & Content-length
-            $exploded = explode("/", $tile);
-            $filename = end($exploded);
-
-            $stat = stat($tile);
-            header("Content-Length: " . $stat['size']);
-            header("Content-Disposition: inline; filename=\"$filename\"");
-
-            if ($format == "png") {
-                header("Content-Type: image/png");
+            //header("Cache-Control: public, max-age=" . $lifetime * 60);
+            $headers = apache_request_headers();
+            
+            // Enable caching of images served by PHP
+            // http://us.php.net/manual/en/function.header.php#61903
+            $lastModified = 'Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($tile)).' GMT';
+            if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($tile))) {
+                // Cache is current (304)
+                header($lastModified, true, 304);    
             } else {
-                header("Content-Type: image/jpeg");
-            }
+                // Image not in cache or out of date (200)
+                header($lastModified, true, 200);
 
-            if (!readfile($tile)) {
-                throw new Exception("Unable to read tile from cache: $filename");
+                header('Content-Length: '.filesize($tile));
+
+                $format = substr($tile, -3);
+                if ($format == "png") {
+                    header("Content-Type: image/png");
+                } else {
+                    header("Content-Type: image/jpeg");
+                }
+
+                // Filename & Content-length
+                $exploded = explode("/", $tile);
+                $filename = end($exploded);
+                header("Content-Disposition: inline; filename=\"$filename\"");
+                
+                if (!readfile($tile)) {
+                    throw new Exception("Unable to read tile from cache: $filename");
+                }
+
             }
         } catch (Exception $e) {
             header("Content-Type: text/html");
