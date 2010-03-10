@@ -74,9 +74,6 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         // If the file doesn't exist already, create it
         if (!file_exists($filepath)) {
             list ($images, $timestamps) = $this->_queryJPXImageFrames();
-            var_dump($timestamps);
-            var_dump($images);
-            die();
             $this->_timestamps = $timestamps;
             $this->buildJPXImage($images, $linked);
             $this->_writeFileGenerationReport();
@@ -113,12 +110,13 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             // Get next image
             $isoDate = toISOString(parseUnixTimestamp($time));
 
-            $jp2 = HV_JP2_DIR . $imgIndex->getJP2FilePath($isoDate, $sourceId);
+            $img = $imgIndex->getImageFromDatabase($isoDate, $sourceId);
+            $jp2 = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
 
             // Ignore redundant images
             if (end($images) != $jp2) {
                 array_push($images, $jp2);
-                array_push($dates, $time);
+                array_push($dates, toUnixTimestamp($img['date'])); // WRONG TIME!
             }
             $time += $this->_cadence;
         }

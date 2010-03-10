@@ -48,7 +48,7 @@ class Database_ImgIndex
      */
     public function getClosestImage($date, $sourceId)
     {
-        $img      = $this->_getImageFromDatabase($date, $sourceId);
+        $img      = $this->getImageFromDatabase($date, $sourceId);
         $filename = HV_JP2_DIR . $img["filepath"] . "/" .$img["filename"];
         $xmlBox   = $this->extractJP2MetaInfo($filename);
 
@@ -60,7 +60,7 @@ class Database_ImgIndex
      * 
      * @return array Array including the image id, filepath, filename, date, and sourceId.
      */
-    private function _getImageFromDatabase($date, $sourceId) {
+    public function getImageFromDatabase($date, $sourceId) {
         include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
@@ -81,7 +81,7 @@ class Database_ImgIndex
             $img = $right;
         }
 
-        // Fix types and retrieve extra meta-information from JP2 header
+        // Fix types
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
         
@@ -232,7 +232,7 @@ class Database_ImgIndex
      */
     public function getJP2FilePath($date, $sourceId)
     {
-        $img = $this->_getImageFromDatabase($date, $sourceId);
+        $img = $this->getImageFromDatabase($date, $sourceId);
         return $img["filepath"] . "/" . $img["filename"];
     }
 }
