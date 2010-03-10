@@ -77,6 +77,8 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <!-- Helioviewer-Specific -->
         <?php
             // JavaScript
+            $version = "rev={$config['build_num']}";
+            
             if ($config["compress_js"]) {
             	$compressed = "build/helioviewer.min.js";
             	if (!file_exists($compressed)) {
@@ -87,7 +89,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             	   die($error);
             	}
 
-            	echo "<script src=\"$compressed\" type=\"text/javascript\"></script>\n\t";
+            	echo "<script src=\"$compressed?$version\" type=\"text/javascript\"></script>\n\t";
             }
             else {
             	$js = array("Config.js", "Helioviewer.js", "HelperFunctions.js", "IconPicker.js", "Layer.js", "EventLayer.js", "EventLayerAccordion.js", "EventMarker.js",
@@ -95,17 +97,17 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                             "MovieBuilder.js", "ScreenshotBuilder.js", "TileLayer.js", "TileLayerAccordion.js", "Time.js", "TimeControls.js", "TooltipHelper.js", "TreeSelect.js", 
                             "UserSettings.js", "Viewport.js", "ViewportHandlers.js", "ZoomControls.js");
                 foreach($js as $file)
-                    printf("<script src=\"src/%s\" type=\"text/javascript\"></script>\n\t", $file);
+                    printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
             }
             
             // CSS
             if ($config["compress_css"]) {
-                echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"build/css/helioviewer.css\" />\n\t";
+                echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"build/css/helioviewer.css?$version\" />\n\t";
             }
             else {
                 $css = array("main.css", "accordions.css", "dialogs.css", "events.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
                 foreach($css as $file)
-                    printf("<link rel=\"stylesheet\" type=\"text/css\" href=\"resources/css/%s\" />\n\t", $file);
+                    printf("<link rel=\"stylesheet\" type=\"text/css\" href=\"resources/css/%s?$version\" />\n\t", $file);
             }
         ?>
 
