@@ -74,7 +74,9 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         // If the file doesn't exist already, create it
         if (!file_exists($filepath)) {
             list ($images, $timestamps) = $this->_queryJPXImageFrames();
-            
+            var_dump($timestamps);
+            var_dump($images);
+            die();
             $this->_timestamps = $timestamps;
             $this->buildJPXImage($images, $linked);
             $this->_writeFileGenerationReport();
