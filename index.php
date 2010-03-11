@@ -76,9 +76,15 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         
         <!-- Helioviewer-Specific -->
         <?php
-            // JavaScript
-            $version = "rev={$config['build_num']}";
             
+            if ($config['disable_cache']) {
+                $signature = time();
+            } else {
+                $signature = $config['build_num'];
+            }
+            $version = "rev=$signature";
+            
+            // JavaScript
             if ($config["compress_js"]) {
             	$compressed = "build/helioviewer.min.js";
             	if (!file_exists($compressed)) {
