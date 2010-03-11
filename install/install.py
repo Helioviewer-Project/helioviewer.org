@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 ###############################################################################
 # Helioviewer Database Installation Tool
@@ -21,6 +22,9 @@ def main(argv):
     if options.textinstall:
         from org.helioviewer.HelioviewerConsoleInstaller import loadTextInstaller
         loadTextInstaller(options)
+    elif options.update:
+        #from org.helioviewer.HelioviewerConsoleInstaller import loadUpdater
+        print options.files
     else:
         try:
             import PyQt4
@@ -33,15 +37,27 @@ def main(argv):
         
 def getArguments():
     ''' Gets command-line arguments and handles validation '''
-    parser = OptionParser("%prog [options]", formatter=IndentedHelpFormatter(4,80))
+    parser = OptionParser("%prog [options] [file1 file2 file3...]", formatter=IndentedHelpFormatter(4,80))
     parser.add_option("-t", "--text-install", dest="textinstall", help="launches the text-based installation tool", action="store_true")
-    parser.add_option("-d", "--debug", dest="debug", help="enables logging of errors to a file", action="store_true")
+    parser.add_option("--update", dest="update", help="adds images to an existing database", action="store_true")
+    parser.add_option("-d", "--database-name", dest="dbname", help="Database to insert images into")
+    parser.add_option("-u", "--database-user", dest="dbuser", help="Helioviewer.org database user")
+    parser.add_option("-p", "--database-pass", dest="dbpass", help="Helioviewer.org database password")
+    parser.add_option("--debug", dest="debug", help="enables logging of errors to a file", action="store_true")
     
     try:                                
         options, args = parser.parse_args()
                     
     except:
         sys.exit(2)
+        
+    # update-mode
+    if options.update:
+        if len(args) == 0:
+            print "No files to process. Exiting installer."
+            sys.exit(2)
+        else:
+            options.files = args
 
     return options
 

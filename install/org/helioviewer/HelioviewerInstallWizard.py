@@ -30,7 +30,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         
         self.debugmode = debug
         if debug:
-            self.logfile = file.open("error.log", "w")
+            self.logfile = open("error.log", "w")
         
         self.installComplete = False
         
