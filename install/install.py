@@ -3,7 +3,7 @@
 
 ###############################################################################
 # Helioviewer Database Installation Tool
-# Last Updated: 2009/12/16
+# Last Updated: 2009/03/11
 #
 # TODO 01/17/2010:
 #    Let user specify dbname
@@ -23,8 +23,8 @@ def main(argv):
         from org.helioviewer.HelioviewerConsoleInstaller import loadTextInstaller
         loadTextInstaller(options)
     elif options.update:
-        #from org.helioviewer.HelioviewerConsoleInstaller import loadUpdater
-        print options.files
+        from org.helioviewer.HelioviewerConsoleInstaller import loadUpdater
+        loadUpdater(options)
     else:
         try:
             import PyQt4
@@ -33,17 +33,19 @@ def main(argv):
             loadTextInstaller(options)
         else:
             from org.helioviewer.HelioviewerInstallWizard import loadGUIInstaller
-            loadGUIInstaller(argv, options.debug)
+            loadGUIInstaller(argv)
         
 def getArguments():
     ''' Gets command-line arguments and handles validation '''
-    parser = OptionParser("%prog [options] [file1 file2 file3...]", formatter=IndentedHelpFormatter(4,80))
-    parser.add_option("-t", "--text-install", dest="textinstall", help="launches the text-based installation tool", action="store_true")
+    parser = OptionParser("%prog [options] [file1 file2 file3...]", formatter=IndentedHelpFormatter(4,100))
+    
+    parser.add_option("-t", "--text-install",  dest="textinstall", help="launches the text-based installation tool", action="store_true")
+    parser.add_option("-m", "--database-type", dest="dbtype",      help="Database type [mysql|postgres]", default="mysql")
+    parser.add_option("-d", "--database-name", dest="dbname",      help="Database to insert images into")
+    parser.add_option("-u", "--database-user", dest="dbuser",      help="Helioviewer.org database user")
+    parser.add_option("-p", "--database-pass", dest="dbpass",      help="Helioviewer.org database password")
+    parser.add_option("-b", "--base-dir",      dest="basedir",     help="Base directory containing files to process")
     parser.add_option("--update", dest="update", help="adds images to an existing database", action="store_true")
-    parser.add_option("-d", "--database-name", dest="dbname", help="Database to insert images into")
-    parser.add_option("-u", "--database-user", dest="dbuser", help="Helioviewer.org database user")
-    parser.add_option("-p", "--database-pass", dest="dbpass", help="Helioviewer.org database password")
-    parser.add_option("--debug", dest="debug", help="enables logging of errors to a file", action="store_true")
     
     try:                                
         options, args = parser.parse_args()
