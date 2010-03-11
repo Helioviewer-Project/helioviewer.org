@@ -26,9 +26,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/jquery-ui.min.js" type="text/javascript"></script>
         <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
-        <script src="lib/jquery.qtip-nightly/jquery.qtip.js" type="text/javascript"></script>
-        <script src="lib/jquery.qtip-nightly/jquery.qtip.tips.js" type="text/javascript"></script>
-        <!--<script src="lib/jquery.qtip-1.0.0-rc3091551/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>-->
+        <!--<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.js" type="text/javascript"></script>
+        <script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
+        <script src="lib/jquery.qtip-1.0-r34/jquery.qtip-1.0.min.js" type="text/javascript"></script>
         
         <!-- TODO: move jquery.dynaccordion to /src with rest of custom code -->
         <script src="lib/jquery.dynaccordion/ui.dynaccordion.js" type="text/javascript"></script>
