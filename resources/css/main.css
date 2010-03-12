@@ -35,6 +35,7 @@ input, select {background-color:#F4F4F4;}
 
 #left-col {
     position:relative;/*ie needs this to show float */
+    text-align: left;
     width:280px;
     float:left;
     margin-left:-279px;/*must be 1px less than width otherwise won't push footer down */
