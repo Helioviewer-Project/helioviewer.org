@@ -161,142 +161,132 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
     </head>
     <body>
-        <div id="minHeight"></div>
-        
-        <!-- Loading Indicator -->
-        <div id="loading" style="display: none">Loading...</div>
+    <!-- Loading Indicator -->
+    <div id="loading" style="display: none">Loading...</div>
 
-        <!-- Header and Content -->
-        <div id="outsideBox">
-
-            <!-- Left Column -->
-            <div id="left-col">
-                <div id="left-col-header">
-                    <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
-                </div>
-                <br><br>
-                <div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div> 
-                <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
-                    <!--  Observation Date -->
-                    <div style="margin-bottom: 4px; position: relative;">
-                        <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
-                        <input type="text" id="date" name="date" value="">
+    <!-- Header and Content -->
+    <div id="doc3">
+        <div id="hd"><!-- header --></div> 
+        <div id="bd">
+            <div class="yui-gb">
+                <!-- Left Column -->
+                <div id="left-col" class="yui-u first">
+                    <div id="left-col-header">
+                        <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
                     </div>
-
-                    <!-- Observation Time -->
-                    <div style="margin-bottom: 8px;">
-                        <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
-                        <input type="text" id="time" name="time" value="" style="width:80px">
+                    <br><br>
+                    <div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div> 
+                    <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
+                        <!--  Observation Date -->
+                        <div style="margin-bottom: 4px; position: relative;">
+                            <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
+                            <input type="text" id="date" name="date" value="">
+                        </div>
+    
+                        <!-- Observation Time -->
+                        <div style="margin-bottom: 8px;">
+                            <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
+                            <input type="text" id="time" name="time" value="" style="width:80px">
+                        </div>
+                        
+                        <!-- Time Navigation Buttons & Time Increment selector -->
+                        <div>
+                            <div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
+                            <select id="timestep-select" name="time-step"></select>
+                            <span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
+                            <span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
+                        </div>
                     </div>
-                    
-                    <!-- Time Navigation Buttons & Time Increment selector -->
-                    <div>
-                        <div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
-                        <select id="timestep-select" name="time-step"></select>
-                        <span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
-                        <span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
+    
+                    <br><br>
+                    <div id="tileLayerAccordion"></div>
+                    <br><br>
+                    <div id="eventAccordion"></div>
+                    <br /><br />
+                
+                </div>
+    
+                <!-- Middle Column -->
+                <div id="middle-col" class="yui-u second">
+                    <div id="middle-col-header">
                     </div>
-                </div>
-
-                <br><br>
-                <div id="tileLayerAccordion"></div>
-                <br><br>
-                <div id="eventAccordion"></div>
-                <br /><br />
-            
-            </div>
-
-            <!-- Right Column -->
-            <div id="right-col">
-                <div id="right-col-header"></div>
-            </div>
-
-            <!-- Middle Column -->
-            <div id="middle-col">
-                <div id="middle-col-header">
-                </div>
-                <!-- End middle-col-header -->
-
-                <!-- Viewport -->
-                <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
-                    <div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
-                        <div id="helioviewer-viewport"></div>
-
-                            <!-- UI COMPONENTS -->
-
-                            <!--  Zoom Controls -->
-                            <div id="zoomControls"></div>
-                            
-                            <!-- Center button -->
-                            <div id="center-button" title="Center the image on the screen.">
-                                <span>center</span>
-                            </div>
-                            
-                            <!--Social buttons -->
-                            <div id="social-buttons"> 
-                                <!-- Link button -->
-                                <div id="link-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-link" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Link</span>
+                    <!-- End middle-col-header -->
+    
+                    <!-- Viewport -->
+                    <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
+                        <div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
+                            <div id="helioviewer-viewport"></div>
+    
+                                <!-- UI COMPONENTS -->
+    
+                                <!--  Zoom Controls -->
+                                <div id="zoomControls"></div>
+                                
+                                <!-- Center button -->
+                                <div id="center-button" title="Center the image on the screen.">
+                                    <span>center</span>
                                 </div>
                                 
-                                <!-- Email button -->
-                                <!--<div id="email-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Email</span>
-                                </div>-->
-                                
-                                <!-- Movie button -->
-                                <!--<div id="movie-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-video" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Movie</span>
-                                </div>-->                            
-                                
-                                <!-- Screenshot button -->
-                                <!--<div id="screenshot-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-image" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Screenshot</span>
-                                </div>-->        
-    
-                                <!-- Select region button -->
-                                <!--<div id="select-region-button" class="text-btn">
-                                    <span class='ui-icon ui-icon-scissors' style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Select Region</span>
-                                </div>-->
-
-                                <!-- Media settings button -->                                
-                                <!--<div id="settings-button" class="text-btn">
-                                    <span class='ui-icon ui-icon-gear' style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Media Settings</span>
-                                </div>-->
+                                <!--Social buttons -->
+                                <div id="social-buttons"> 
+                                    <!-- Link button -->
+                                    <div id="link-button" class="text-btn">
+                                        <span class="ui-icon ui-icon-link" style="float: left;"></span>
+                                        <span style="line-height: 1.6em">Link</span>
+                                    </div>
                                     
-                                <!-- JHelioviewer -->
-                                <div id="jhelioviewer-button" class="text-btn">
-                                    <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
-                                    <span style="line-height: 1.6em">JHelioviewer</span>
-                                </div> 
+                                    <!-- Email button -->
+                                    <!--<div id="email-button" class="text-btn">
+                                        <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
+                                        <span style="line-height: 1.6em">Email</span>
+                                    </div>-->
+                                    
+                                    <!-- Movie button -->
+                                    <!--<div id="movie-button" class="text-btn">
+                                        <span class="ui-icon ui-icon-video" style="float: left;"></span>
+                                        <span style="line-height: 1.6em">Movie</span>
+                                    </div>-->                            
+                                    
+                                    <!-- Screenshot button -->
+                                    <!--<div id="screenshot-button" class="text-btn">
+                                        <span class="ui-icon ui-icon-image" style="float: left;"></span>
+                                        <span style="line-height: 1.6em">Screenshot</span>
+                                    </div>-->        
+        
+                                    <!-- Select region button -->
+                                    <!--<div id="select-region-button" class="text-btn">
+                                        <span class='ui-icon ui-icon-scissors' style="float: left;"></span>
+                                        <span style="line-height: 1.6em">Select Region</span>
+                                    </div>-->
+    
+                                    <!-- Media settings button -->                                
+                                    <!--<div id="settings-button" class="text-btn">
+                                        <span class='ui-icon ui-icon-gear' style="float: left;"></span>
+                                        <span style="line-height: 1.6em">Media Settings</span>
+                                    </div>-->
+                                        
+                                    <!-- JHelioviewer -->
+                                    <div id="jhelioviewer-button" class="text-btn">
+                                        <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
+                                        <span style="line-height: 1.6em">JHelioviewer</span>
+                                    </div> 
+                                </div>
+                                
+                                <!-- Fullscreen toggle -->
+                                <div id='fullscreen-btn' title="Toggle fullscreen display.">
+                                    <div class='ui-icon ui-icon-arrow-4-diag'></div>
+                                </div>
                             </div>
-                            
-                            <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn' title="Toggle fullscreen display.">
-                                <div class='ui-icon ui-icon-arrow-4-diag'></div>
-                            </div>
-
-                    </div>
+                        </div>
                 </div>
-            </div>
-            <!-- Timeline -->
-            <!--
-            <div style="text-align: center;">
-                <div id="timeline" style="height: 150px; width: 70%; margin-left: auto; margin-right: auto; border: 1px solid #000"></div>
-            </div>
-            -->
-            <div id="clearfooter"></div>
+                <!-- Right Column -->
+                <div id="right-col" class="yui-u third">
+                    <div id="right-col-header"></div>
+                </div>
+            </div> 
         </div>
-        <!-- end outer div -->
-
         <!-- Footer -->
-        <div id="footer">
+        <div id="ft">
             <div id="footer-container-outer">
                 <div id="footer-container-inner">
                     <!-- Meta links -->
@@ -312,11 +302,13 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 </div>
             </div>
         </div>
-        
-        <!-- About dialog -->
-        <div id='about-dialog'></div>
-        
-        <!-- Usage Dialog -->
-        <div id='usage-dialog'></div>
+    </div>
+    <!-- end outer div -->
+
+    <!-- About dialog -->
+    <div id='about-dialog'></div>
+    
+    <!-- Usage Dialog -->
+    <div id='usage-dialog'></div>
     </body>
 </html>
