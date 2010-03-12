@@ -20,7 +20,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <![endif]-->
 
         <!-- YUI CSS Reset -->
-        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0/build/reset-fonts/reset-fonts.css"> 
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts-grids/reset-fonts-grids.css" /> 
         
         <!-- jQuery -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
