@@ -107,7 +107,7 @@ class Image_JPEG2000_JP2Image
 
         // Add desired region
         $cmd .= $this->_getRegionString($roi);
-
+        
         // Execute the command
         try {
             $result = exec(HV_PATH_CMD . escapeshellcmd($cmd), $out, $ret);

@@ -238,7 +238,8 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
         // the original JP2 scale / (2 * $reduce)
         if ($this->reduce > 0) {
-            $maskScaleFactor = 1 / (2 * $this->reduce);
+            //$maskScaleFactor = 1 / (2 * $this->reduce);
+            $maskScaleFactor = 1 / pow(2, $this->reduce);
         } else {
             $maskScaleFactor = 1;
         }
