@@ -208,10 +208,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     
                 <!-- Middle Column -->
                 <div id="middle-col" class="yui-u second">
-                    <div id="middle-col-header">
-                    </div>
-                    <!-- End middle-col-header -->
-    
+   
                     <!-- Viewport -->
                     <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
                         <div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
