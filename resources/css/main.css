@@ -1,73 +1,34 @@
 /**
  * Helioviewer.org Custom Styles
- *
- * Three-column layout based off of Paul O'Bs design (http://www.pmob.co.uk/temp/3colfixedtest_4.htm).
- *
- * Adjusting size of layout elements:
- * 1. Adjusting size of left & right sidebars
- *    To adjust the size of either sidebar, add/subtract the desired amount from the width and margin-left/right
- *    properties of [#outsideBox, #leftCol, and #rightCol].
- *
- * 2. Adjusting the size of the header and footer elements
- *    The header is currently broken up and set individually in each of the three columns. The footer, however,
- *    is stored as a single continuous div.
- */
-
+*/
 
 /* HTML ELEMENTS */
-html, body    {height:100%; background: url(../../resources/images/backgrounds/gradient_v5-optimized.png);}
+html, body    {background: url(../../resources/images/backgrounds/gradient_v5-optimized.png);}
 h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}
 
-/* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
-#outsideBox {
-  margin-left   : 280px;
-  margin-right  : 20px; /* (1) margin-right  : 250px;*/
-  margin-bottom :-72px;
-  min-height    : 100%;
+/** Grid Modifications */
+#doc3 {
+    min-width: 972px;
 }
+#bd > .yui-gb > .yui-u.first {
+    width: 15%;
+}
+
+#bd > .yui-gb > .yui-u.second {
+    width: 80%;
+}
+
+#bd > .yui-gb > .yui-u.third {
+    width: 0%;
+} 
+#ft {height: 18px; text-align: center; margin: 0 -10px; }
 
 #left-col-header, #middle-col-header, #right-col-header { height:25px; width: 100%; }
 #left-col-header   {left: -1px; height: 50px;}
 #right-col-header  {left: 1px}
-
-#left-col {
-    position:relative;/*ie needs this to show float */
-    text-align: left;
-    width:280px;
-    float:left;
-    margin-left:-279px;/*must be 1px less than width otherwise won't push footer down */
-    z-index:100;
-    left:-1px;
-}
-
-#right-col {
-    position:relative;/*ie needs this to show float */
-    width:20px; /* (2) width:250px;*/
-    float:right;
-    margin-right: -19px; /* (3) margin-right:-249px;*//*must be 1px less than width otherwise won't push footer down */
-    left:1px;
-    color: #000;
-}
-
-#middle-col {
-  min-width:280px;
-}
-
-#footer {
-    width:100%;
-    position: absolute;
-    bottom: 0px;
-    clear: both;
-    height: 18px;
-    text-align: center;
-}
-/*needed to make room for footer*/
-/*
-#clearfooter{clear:both;height:72px;}
-* > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
 
 /* Loading Indicator */
 #loading {position: absolute; right: 3px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}

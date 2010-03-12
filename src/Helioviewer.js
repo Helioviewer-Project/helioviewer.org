@@ -270,21 +270,21 @@ var Helioviewer = Class.extend(
      * @description Creates an HTML button for toggling between regular and fullscreen display
      */
     _createFullscreenBtn: function () {
-        var btn, footer, header, vp, sb, speed, marginSize, meta, panels, outsideBox, origOutsideMarginLeft, 
+        var btn, footer, header, vp, sb, speed, marginSize, meta, panels, doc3, origOutsideMarginLeft, 
             origOutsideMarginRight, origHeaderHeight, origViewportHeight, $_fx_step_default, self, body;
         
         // get dom-node
         btn = $("#fullscreen-btn");
         
         // CSS Selectors
-        outsideBox = $('#outsideBox');
-        body       = $('body');
-        vp         = $('#helioviewer-viewport-container-outer');
-        sb         = $('#sandbox');
-        footer     = $('#footer-links-container-outer');
-        meta       = $('#footer-container-outer');
-        header     = $('#middle-col-header');
-        panels     = $("#left-col, #right-col, #footer-links-container-outer, #social-buttons-container-outer");
+        doc3   = $('#doc3');
+        body   = $('body');
+        vp     = $('#helioviewer-viewport-container-outer');
+        sb     = $('#sandbox');
+        footer = $('#footer-links-container-outer');
+        meta   = $('#footer-container-outer');
+        header = $('#middle-col-header');
+        panels = $("#left-col, #right-col, #footer-links-container-outer, #social-buttons-container-outer");
        
         // animation speed
         speed = 500;
@@ -309,13 +309,13 @@ var Helioviewer = Class.extend(
             if (!btn.hasClass('requests-disabled')) {
                             
                 // toggle fullscreen class
-                outsideBox.toggleClass('fullscreen-mode');
+                doc3.toggleClass('fullscreen-mode');
                 
                 // make sure action finishes before starting a new one
                 btn.addClass('requests-disabled');
                 
                 // fullscreen mode
-                if (outsideBox.hasClass('fullscreen-mode')) {
+                if (doc3.hasClass('fullscreen-mode')) {
                     
                     // hide overflow
                     body.css('overflow', 'hidden');
@@ -323,12 +323,12 @@ var Helioviewer = Class.extend(
                     meta.hide();
     
                     // keep track of original dimensions
-                    origOutsideMarginLeft  = outsideBox.css("margin-left");
-                    origOutsideMarginRight = outsideBox.css("margin-right");
+                    origOutsideMarginLeft  = doc3.css("margin-left");
+                    origOutsideMarginRight = doc3.css("margin-right");
                     origHeaderHeight       = header.height();
                     origViewportHeight     = vp.height();
                     
-                    outsideBox.animate({ 
+                    doc3.animate({ 
                         marginLeft:  marginSize,
                         marginRight: marginSize
                     }, speed,
@@ -356,7 +356,7 @@ var Helioviewer = Class.extend(
                 } else {
                     panels.show();
                         
-                    outsideBox.animate({ 
+                    doc3.animate({ 
                         marginLeft:  origOutsideMarginLeft,
                         marginRight: origOutsideMarginRight
                     }, speed,
