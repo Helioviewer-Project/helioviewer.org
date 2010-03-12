@@ -11,8 +11,9 @@ input, select {background-color:#F4F4F4;}
 
 /** Grid Modifications */
 #doc3 {
-    min-width: 972px;
+    min-width: 972px; margin: auto;
 }
+#hd { height: 20px; }
 #bd > .yui-gb > .yui-u.first {
     width: 15%;
 }
@@ -24,11 +25,9 @@ input, select {background-color:#F4F4F4;}
 #bd > .yui-gb > .yui-u.third {
     width: 0%;
 } 
-#ft {height: 18px; text-align: center; margin: 0 -10px; }
+#ft { height: 28px; text-align: center; }
 
-#left-col-header, #middle-col-header, #right-col-header { height:25px; width: 100%; }
-#left-col-header   {left: -1px; height: 50px;}
-#right-col-header  {left: 1px}
+#left-col-header   {height: 50px;}
 
 /* Loading Indicator */
 #loading {position: absolute; right: 3px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
