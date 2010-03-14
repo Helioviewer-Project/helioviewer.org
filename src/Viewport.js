@@ -18,8 +18,8 @@ var Viewport = Class.extend(
      */ 
     defaultOptions: {
         imageScale : 0,
-        headerId   : '#hd',
-        footerId   : '#ft',
+        headerId   : '#header',
+        footerId   : '#footer',
         tileSize   : 512,
         minHeight  : 450,
         prefetch   : 0
@@ -335,8 +335,11 @@ var Viewport = Class.extend(
         // Get dimensions
         oldDimensions = this.dimensions;
         
+        // Optimize viewport width
+        $("#middle-col").width($(document).width() - $("#left-col").width() - 25);
+        
         // Make room for footer and header if not in fullscreen mode
-        if (!$('#doc3').hasClass('fullscreen-mode')) {
+        if (!$('#container').hasClass('fullscreen-mode')) {
             padHeight = this.headerAndFooterHeight;
         }
         else {
