@@ -23,7 +23,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts/reset-fonts.css" />
 
         <!-- Layout -->
-        <link rel="stylesheet" href="resources/css/holy-grail-no-quirks-mode.css" type="text/css" />
+        <link rel="stylesheet" href="resources/css/layout.css" type="text/css" />
 
         <!-- jQuery -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
@@ -175,7 +175,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                     <div id="col1">
                         <!-- Viewport -->
                         <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
-                            <div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
+                            <div id="helioviewer-viewport-container-inner" style="top:3%; width:97%; height:94%">
                                 <div id="helioviewer-viewport"></div>
 
                                     <!-- UI COMPONENTS -->
@@ -307,6 +307,8 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         </div>
     </div>
     <!-- end Footer -->
+
+    <!-- TODO: Create dialog and loading indicator nodes on the fly -->
 
     <!-- Loading Indicator -->
     <div id="loading" style="display: none">Loading...</div>
