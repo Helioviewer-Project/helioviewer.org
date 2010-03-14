@@ -1,11 +1,13 @@
+/**
+ * http://matthewjamestaylor.com/blog/holy-grail-no-quirks-mode.htm
+ */
 body {
     margin:0;
     padding:0;
     width:100%;
     background:#fff;
-    min-width:600px;        /* Minimum width of layout - remove line if not required */
-                    /* The min-width property does not work in old versions of Internet Explorer */
-    font-size:90%;
+    min-width:972px;   /* Minimum width of layout - remove line if not required */
+                       /* The min-width property does not work in old versions of Internet Explorer */
 }
 
 #header {
@@ -72,7 +74,4 @@ body {
 	height: 28px;
     padding:0;
     margin:0;
-}
-#footer p {
-    padding:.5em 15px;
 }

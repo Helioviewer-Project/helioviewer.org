@@ -9,7 +9,6 @@ button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}
 
-
 #left-col-header {height: 50px; margin-top: -24px;}
 
 /** 03/14/2010: Temporary fix for datepicker. TODO: upgrade jQuery UI */
@@ -102,9 +101,6 @@ img#movieBuilder {
 	vertical-align: middle;
 	top: -4px;
 }
-
-/* MISC TEXT-RELATED */
-.centered {display: block; margin-left:auto; margin-right: auto;}
 
 a.dark {
 	text-decoration: none;

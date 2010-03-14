@@ -270,14 +270,14 @@ var Helioviewer = Class.extend(
      * @description Creates an HTML button for toggling between regular and fullscreen display
      */
     _createFullscreenBtn: function () {
-        var btn, footer, vp, sb, speed, marginSize, meta, panels, container, origOutsideMarginLeft, 
-            origOutsideMarginRight, origViewportHeight, $_fx_step_default, self, body;
+        var btn, footer, vp, sb, speed, marginSize, meta, panels, container, origContainerWidth,
+            origViewportHeight, $_fx_step_default, self, body;
         
         // get dom-node
         btn = $("#fullscreen-btn");
         
         // CSS Selectors
-        container   = $('#container');
+        container   = $('#colmid');
         body   = $('body');
         vp     = $('#helioviewer-viewport-container-outer');
         sb     = $('#sandbox');
@@ -321,13 +321,11 @@ var Helioviewer = Class.extend(
                     meta.hide();
     
                     // keep track of original dimensions
-                    origOutsideMarginLeft  = container.css("margin-left");
-                    origOutsideMarginRight = container.css("margin-right");
-                    origViewportHeight     = vp.height();
+                    origContainerWidth = container.width();
+                    origViewportHeight = vp.height();
                     
                     container.animate({ 
-                        marginLeft:  marginSize,
-                        marginRight: marginSize
+                        width: body.width() - (2 * marginSize)
                     }, speed,
                     function () {
                         self.viewport.checkTiles();
@@ -350,8 +348,7 @@ var Helioviewer = Class.extend(
                     panels.show();
                         
                     container.animate({ 
-                        marginLeft:  origOutsideMarginLeft,
-                        marginRight: origOutsideMarginRight
+                        width:  origContainerWidth
                     }, speed,
                     function () {
                         btn.removeClass('requests-disabled');    
