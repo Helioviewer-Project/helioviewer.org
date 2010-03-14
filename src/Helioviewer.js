@@ -270,19 +270,19 @@ var Helioviewer = Class.extend(
      * @description Creates an HTML button for toggling between regular and fullscreen display
      */
     _createFullscreenBtn: function () {
-        var btn, footer, vp, sb, speed, marginSize, meta, panels, doc3, origOutsideMarginLeft, 
+        var btn, footer, vp, sb, speed, marginSize, meta, panels, container, origOutsideMarginLeft, 
             origOutsideMarginRight, origViewportHeight, $_fx_step_default, self, body;
         
         // get dom-node
         btn = $("#fullscreen-btn");
         
         // CSS Selectors
-        doc3   = $('#doc3');
+        container   = $('#container');
         body   = $('body');
         vp     = $('#helioviewer-viewport-container-outer');
         sb     = $('#sandbox');
         meta   = $('#footer-container-outer');
-        panels = $("#left-col, #right-col, #hd, #ft");
+        panels = $("#left-col, #right-col, #header, #footer");
        
         // animation speed
         speed = 500;
@@ -307,13 +307,13 @@ var Helioviewer = Class.extend(
             if (!btn.hasClass('requests-disabled')) {
                             
                 // toggle fullscreen class
-                doc3.toggleClass('fullscreen-mode');
+                container.toggleClass('fullscreen-mode');
                 
                 // make sure action finishes before starting a new one
                 btn.addClass('requests-disabled');
                 
                 // fullscreen mode
-                if (doc3.hasClass('fullscreen-mode')) {
+                if (container.hasClass('fullscreen-mode')) {
                     
                     // hide overflow
                     body.css('overflow', 'hidden');
@@ -321,11 +321,11 @@ var Helioviewer = Class.extend(
                     meta.hide();
     
                     // keep track of original dimensions
-                    origOutsideMarginLeft  = doc3.css("margin-left");
-                    origOutsideMarginRight = doc3.css("margin-right");
+                    origOutsideMarginLeft  = container.css("margin-left");
+                    origOutsideMarginRight = container.css("margin-right");
                     origViewportHeight     = vp.height();
                     
-                    doc3.animate({ 
+                    container.animate({ 
                         marginLeft:  marginSize,
                         marginRight: marginSize
                     }, speed,
@@ -349,7 +349,7 @@ var Helioviewer = Class.extend(
                 } else {
                     panels.show();
                         
-                    doc3.animate({ 
+                    container.animate({ 
                         marginLeft:  origOutsideMarginLeft,
                         marginRight: origOutsideMarginRight
                     }, speed,

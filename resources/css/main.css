@@ -3,31 +3,59 @@
 */
 
 /* HTML ELEMENTS */
-html, body    {background: url(../../resources/images/backgrounds/gradient_v5-optimized.png);}
+html, body    {
+	background: url(../../resources/images/backgrounds/gradient_v5-optimized.png);
+    margin:0;
+    padding:0;
+    height:100%;
+}
 h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}
 
-/** Grid Modifications */
-#doc3 {
-    min-width: 972px; margin: auto;
-}
-#hd { height: 20px; }
-#bd > .yui-gb > .yui-u.first {
-    width: 15%;
+/** Outside layout */
+#container {
+    min-height: 100%;
+	min-width: 972px;
+    position: relative;
 }
 
-#bd > .yui-gb > .yui-u.second {
-    width: 80%;
+#header {
+    padding:12px;
+}
+#body {
+    padding:0px;
+	text-align: left;
+    padding-bottom:28px;    /* Height of the footer */
+}
+#footer {
+    position:absolute;
+	text-align: center;
+    bottom:0;
+    width:100%;
+    height:28px;            /* Height of the footer */
 }
 
-#bd > .yui-gb > .yui-u.third {
+#left-col {
+    width: 280px;
+}
+
+#middle-col {}
+
+#right-col {
     width: 0%;
 } 
-#ft { height: 28px; text-align: center; }
 
-#left-col-header   {height: 50px;}
+#left-col-header   {height: 50px; margin-top: -24px;}
+
+/** Grid overwrites */
+.yui-gb .yui-u, .yui-g .yui-gb .yui-u, .yui-gb .yui-g, .yui-gb .yui-gb, .yui-gb .yui-gc, .yui-gb .yui-gd, .yui-gb .yui-ge, .yui-gb .yui-gf, .yui-gc .yui-u, .yui-gc .yui-g, .yui-gd .yui-u {
+    margin-left: 4px;	
+}
+
+/** 03/14/2010: Temporary fix for datepicker. TODO: upgrade jQuery UI */
+#ui-datepicker-div {display:none;}
 
 /* Loading Indicator */
 #loading {position: absolute; right: 3px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
@@ -196,10 +224,10 @@ span.ui-icon-hover {
 
 #footer-container-inner {
     background-image: url(../../resources/images/backgrounds/ui-bg_gloss-wave_20_111111_500x100_transparent_15.png);
+	position: absolute;
     width: 100%;
     height: 18px;
-    bottom: 0;
-    background-position: 20px;
+	top: 10px;
     border-color: #262424;
     border-width: 1px 0px 0px 0px;
 }
