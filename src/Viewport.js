@@ -59,8 +59,8 @@ var Viewport = Class.extend(
         this.rsun = 959.705;
 
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
-        this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height();
-
+        this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height() + 2;
+        
         // Resize to fit screen
         this.resize();
         

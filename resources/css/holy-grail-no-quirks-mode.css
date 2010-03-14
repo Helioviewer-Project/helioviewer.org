@@ -34,7 +34,7 @@ body {
     width:100%;
     position:relative;
     left:50%;
-    margin-left:-568px;
+    margin-left:-288px;
 }
 #col1wrap {
     float:right;
@@ -43,7 +43,7 @@ body {
     right:100%;
 }
 #col1pad {
-    margin:0 2px 0 570px;
+    margin:0 16px 0 290px;
     overflow:hidden;
 }
 #col1 {
@@ -55,12 +55,12 @@ body {
     width:280px;
     position:relative;
     margin-left:-50%;
-    left:286px;
+    left:4px;
     overflow:hidden;
 }
 #col3 {
     float:left;
-    width:280px;
+    width:0px;
     position:relative;
     left:2px;
     overflow:hidden;
@@ -69,6 +69,7 @@ body {
     clear:both;
     float:left;
     width:100%;
+	height: 28px;
     padding:0;
     margin:0;
 }
