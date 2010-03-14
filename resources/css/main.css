@@ -3,56 +3,14 @@
 */
 
 /* HTML ELEMENTS */
-html, body    {
-	background: url(../../resources/images/backgrounds/gradient_v5-optimized.png);
-    margin:0;
-    padding:0;
-    height:100%;
-}
+html, body    {background: url(../../resources/images/backgrounds/gradient_v5-optimized.png); font-size: 13px;}
 h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}
 
-/** Outside layout */
-#container {
-    min-height: 100%;
-	min-width: 972px;
-    position: relative;
-}
 
-#header {
-    padding:12px;
-}
-#body {
-    padding:0px;
-	text-align: left;
-    padding-bottom:28px;    /* Height of the footer */
-}
-#footer {
-    position:absolute;
-	text-align: center;
-    bottom:0;
-    width:100%;
-    height:28px;            /* Height of the footer */
-}
-
-#left-col {
-    width: 280px;
-}
-
-#middle-col {}
-
-#right-col {
-    width: 0%;
-} 
-
-#left-col-header   {height: 50px; margin-top: -24px;}
-
-/** Grid overwrites */
-.yui-gb .yui-u, .yui-g .yui-gb .yui-u, .yui-gb .yui-g, .yui-gb .yui-gb, .yui-gb .yui-gc, .yui-gb .yui-gd, .yui-gb .yui-ge, .yui-gb .yui-gf, .yui-gc .yui-u, .yui-gc .yui-g, .yui-gd .yui-u {
-    margin-left: 4px;	
-}
+#left-col-header {height: 50px; margin-top: -24px;}
 
 /** 03/14/2010: Temporary fix for datepicker. TODO: upgrade jQuery UI */
 #ui-datepicker-div {display:none;}

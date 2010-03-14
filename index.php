@@ -20,7 +20,10 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <![endif]-->
 
         <!-- YUI CSS Reset -->
-        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts-grids/reset-fonts-grids.css" />
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts/reset-fonts.css" />
+
+        <!-- Layout -->
+        <link rel="stylesheet" href="resources/css/holy-grail-no-quirks-mode.css" type="text/css" />
 
         <!-- jQuery -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
@@ -74,14 +77,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             });
         </script>
 
-        <!--[if lt IE 7]>
-        <style media="screen" type="text/css">
-        #container {
-            height:100%;
-        }
-        </style>
-        <![endif]-->
-
         <!-- Helioviewer-Specific -->
         <?php
 
@@ -128,10 +123,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <!-- Theme Modifications -->
         <link rel="stylesheet" type="text/css" href="resources/css/dot-luv.css">
 
-        <!--[if IE]>
-            <link href="resources/css/main-ie.css" rel="stylesheet" type="text/css" />
-        <![endif]-->
-
         <script type="text/javascript">
             var config, state, defaults, defaultsJSON, api;
 
@@ -169,16 +160,91 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
     </head>
     <body>
-    <!-- Loading Indicator -->
-    <div id="loading" style="display: none">Loading...</div>
 
-    <!-- Header and Content -->
-    <div id="container">
-        <div id="header"><!-- header --></div>
-        <div id="body">
-            <div class="yui-gb">
+    <!-- Header -->
+    <div id="header"></div>
+
+    <!-- Body -->
+    <div id="colmask">
+        <div id="colmid">
+            <div id="colright">
+
+            <!-- Middle Column -->
+            <div id="col1wrap">
+                <div id="col1pad">
+                    <div id="col1">
+                        <!-- Viewport -->
+                        <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
+                            <div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
+                                <div id="helioviewer-viewport"></div>
+
+                                    <!-- UI COMPONENTS -->
+
+                                    <!--  Zoom Controls -->
+                                    <div id="zoomControls"></div>
+
+                                    <!-- Center button -->
+                                    <div id="center-button" title="Center the image on the screen.">
+                                        <span>center</span>
+                                    </div>
+
+                                    <!--Social buttons -->
+                                    <div id="social-buttons">
+                                        <!-- Link button -->
+                                        <div id="link-button" class="text-btn">
+                                            <span class="ui-icon ui-icon-link" style="float: left;"></span>
+                                            <span style="line-height: 1.6em">Link</span>
+                                        </div>
+
+                                        <!-- Email button -->
+                                        <!--<div id="email-button" class="text-btn">
+                                            <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
+                                            <span style="line-height: 1.6em">Email</span>
+                                        </div>-->
+
+                                        <!-- Movie button -->
+                                        <!--<div id="movie-button" class="text-btn">
+                                            <span class="ui-icon ui-icon-video" style="float: left;"></span>
+                                            <span style="line-height: 1.6em">Movie</span>
+                                        </div>-->
+
+                                        <!-- Screenshot button -->
+                                        <!--<div id="screenshot-button" class="text-btn">
+                                            <span class="ui-icon ui-icon-image" style="float: left;"></span>
+                                            <span style="line-height: 1.6em">Screenshot</span>
+                                        </div>-->
+
+                                        <!-- Select region button -->
+                                        <!--<div id="select-region-button" class="text-btn">
+                                            <span class='ui-icon ui-icon-scissors' style="float: left;"></span>
+                                            <span style="line-height: 1.6em">Select Region</span>
+                                        </div>-->
+
+                                        <!-- Media settings button -->
+                                        <!--<div id="settings-button" class="text-btn">
+                                            <span class='ui-icon ui-icon-gear' style="float: left;"></span>
+                                            <span style="line-height: 1.6em">Media Settings</span>
+                                        </div>-->
+
+                                        <!-- JHelioviewer -->
+                                        <div id="jhelioviewer-button" class="text-btn">
+                                            <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
+                                            <span style="line-height: 1.6em">JHelioviewer</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Fullscreen toggle -->
+                                    <div id='fullscreen-btn' title="Toggle fullscreen display.">
+                                        <div class='ui-icon ui-icon-arrow-4-diag'></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Left Column -->
-                <div id="left-col" class="yui-u first">
+                <div id="col2">
                     <div id="left-col-header">
                         <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
                     </div>
@@ -214,101 +280,36 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
                 </div>
 
-                <!-- Middle Column -->
-                <div id="middle-col" class="yui-u second">
-
-                    <!-- Viewport -->
-                    <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
-                        <div id="helioviewer-viewport-container-inner" class="centered" style="top:3%; width:97%; height:94%">
-                            <div id="helioviewer-viewport"></div>
-
-                                <!-- UI COMPONENTS -->
-
-                                <!--  Zoom Controls -->
-                                <div id="zoomControls"></div>
-
-                                <!-- Center button -->
-                                <div id="center-button" title="Center the image on the screen.">
-                                    <span>center</span>
-                                </div>
-
-                                <!--Social buttons -->
-                                <div id="social-buttons">
-                                    <!-- Link button -->
-                                    <div id="link-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-link" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Link</span>
-                                    </div>
-
-                                    <!-- Email button -->
-                                    <!--<div id="email-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Email</span>
-                                    </div>-->
-
-                                    <!-- Movie button -->
-                                    <!--<div id="movie-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-video" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Movie</span>
-                                    </div>-->
-
-                                    <!-- Screenshot button -->
-                                    <!--<div id="screenshot-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-image" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Screenshot</span>
-                                    </div>-->
-
-                                    <!-- Select region button -->
-                                    <!--<div id="select-region-button" class="text-btn">
-                                        <span class='ui-icon ui-icon-scissors' style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Select Region</span>
-                                    </div>-->
-
-                                    <!-- Media settings button -->
-                                    <!--<div id="settings-button" class="text-btn">
-                                        <span class='ui-icon ui-icon-gear' style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Media Settings</span>
-                                    </div>-->
-
-                                    <!-- JHelioviewer -->
-                                    <div id="jhelioviewer-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">JHelioviewer</span>
-                                    </div>
-                                </div>
-
-                                <!-- Fullscreen toggle -->
-                                <div id='fullscreen-btn' title="Toggle fullscreen display.">
-                                    <div class='ui-icon ui-icon-arrow-4-diag'></div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
                 <!-- Right Column -->
-                <div id="right-col" class="yui-u third">
+                <div id="col3">
                     <div id="right-col-header"></div>
                 </div>
             </div>
         </div>
-        <!-- Footer -->
-        <div id="footer">
-            <div id="footer-container-outer">
-                <div id="footer-container-inner">
-                    <!-- Meta links -->
-                    <div id="footer-links">
-                        <!--<a href="help/" class="light" target="_blank">Help</a>-->
-                        <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
-                        <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-                        <a href="http://helioviewer.org/wiki/" class="light" target="_blank">Wiki</a>
-                        <a href="api/" class="light" target="_blank">API</a>
-                        <a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
-                        <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
-                    </div>
+    </div>
+    <!-- end Body -->
+
+    <!-- Footer -->
+    <div id="footer">
+        <div id="footer-container-outer">
+            <div id="footer-container-inner">
+                <!-- Meta links -->
+                <div id="footer-links">
+                    <!--<a href="help/" class="light" target="_blank">Help</a>-->
+                    <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
+                    <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
+                    <a href="http://helioviewer.org/wiki/" class="light" target="_blank">Wiki</a>
+                    <a href="api/" class="light" target="_blank">API</a>
+                    <a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
+                    <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
                 </div>
             </div>
         </div>
     </div>
-    <!-- end outer div -->
+    <!-- end Footer -->
+
+    <!-- Loading Indicator -->
+    <div id="loading" style="display: none">Loading...</div>
 
     <!-- About dialog -->
     <div id='about-dialog'></div>
