@@ -282,7 +282,7 @@ var Helioviewer = Class.extend(
         vp     = $('#helioviewer-viewport-container-outer');
         sb     = $('#sandbox');
         meta   = $('#footer-container-outer');
-        panels = $("#left-col, #right-col, #header, #footer");
+        panels = $("#col2, #col3, #header, #footer");
        
         // animation speed
         speed = 500;

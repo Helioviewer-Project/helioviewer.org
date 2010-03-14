@@ -335,9 +335,6 @@ var Viewport = Class.extend(
         // Get dimensions
         oldDimensions = this.dimensions;
         
-        // Optimize viewport width
-        $("#middle-col").width($(document).width() - $("#left-col").width() - 25);
-        
         // Make room for footer and header if not in fullscreen mode
         if (!$('#container').hasClass('fullscreen-mode')) {
             padHeight = this.headerAndFooterHeight;

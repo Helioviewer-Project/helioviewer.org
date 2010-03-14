@@ -1,0 +1,77 @@
+body {
+    margin:0;
+    padding:0;
+    width:100%;
+    background:#fff;
+    min-width:600px;        /* Minimum width of layout - remove line if not required */
+                    /* The min-width property does not work in old versions of Internet Explorer */
+    font-size:90%;
+}
+
+#header {
+    float:left;
+    width:100%;
+    padding:0;
+    margin:0;
+    height: 24px;
+}
+
+#colmask {
+    position:relative;  /* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;         /* width of whole page */
+    overflow:hidden;        /* This chops off any overhanging divs */
+}
+#colmid {
+    float:left;
+    width:200%;
+    position:relative;
+    left:284px;
+}
+#colright {
+    float:left;
+    width:100%;
+    position:relative;
+    left:50%;
+    margin-left:-568px;
+}
+#col1wrap {
+    float:right;
+    width:50%;
+    position:relative;
+    right:100%;
+}
+#col1pad {
+    margin:0 2px 0 570px;
+    overflow:hidden;
+}
+#col1 {
+    width:100%;
+    overflow:hidden;
+}
+#col2 {
+    float:left;
+    width:280px;
+    position:relative;
+    margin-left:-50%;
+    left:286px;
+    overflow:hidden;
+}
+#col3 {
+    float:left;
+    width:280px;
+    position:relative;
+    left:2px;
+    overflow:hidden;
+}
+#footer {
+    clear:both;
+    float:left;
+    width:100%;
+    padding:0;
+    margin:0;
+}
+#footer p {
+    padding:.5em 15px;
+}
