@@ -18,7 +18,7 @@ var Config = Class.extend(
         
         this.bools  = ["distributed_tiling_enabled", "backup_enabled", "disable_cache"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
-                       "jpeg_compression_quality", "bit_depth", "num_colors", "tile_pad_width", "max_movie_frames"];
+                       "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
         
         this.fixTypes();

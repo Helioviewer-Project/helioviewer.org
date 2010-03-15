@@ -191,7 +191,7 @@ class Image_SubFieldImage
             unlink($grayscale);
 
         } catch(Exception $e) {
-            logErrorMsg($e->getMessage, true);
+            logErrorMsg($e->getMessage(), true);
             
             //Clean-up and exit
             $this->_abort($this->outputFile);
