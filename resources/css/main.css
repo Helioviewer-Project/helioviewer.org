@@ -187,6 +187,7 @@ span.ui-icon-hover {
 }
 
 #footer-links {
+    text-align: center;
     width: 25%;
     min-width: 450px;
     margin-left: auto;
