@@ -175,7 +175,6 @@ class Image_SubFieldImage
             // client-side rescaled tiles, this can be removed (02/26/2010)
             $cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
             
-            
             //var_dump($this);
             //die (escapeshellcmd("$cmd $this->outputFile"));
 

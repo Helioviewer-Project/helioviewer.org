@@ -236,16 +236,17 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $mask       = "resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
         
         // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
-        // the original JP2 scale / (2 * $reduce)
+        // the original JP2 scale / (2 ^ $reduce)
         if ($this->reduce > 0) {
-            $maskScaleFactor = 1 / (2 * $this->reduce);
+            $maskScaleFactor = 1 / pow(2, $this->reduce);
         } else {
             $maskScaleFactor = 1;
         }
         
-        $maskTopLeftX = ($this->roi['left'] + ($maskWidth - $this->jp2Width) - $this->_sunCenterOffsetX)   * $maskScaleFactor;
-        $maskTopLeftY = ($this->roi['top'] +  ($maskHeight - $this->jp2Height) - $this->_sunCenterOffsetY) * $maskScaleFactor;
-        
+        //var_dump($this);
+        $maskTopLeftX = ($this->roi['left'] + ($maskWidth - $this->jp2Width)/2 - $this->_sunCenterOffsetX)   * $maskScaleFactor;
+        $maskTopLeftY = ($this->roi['top'] +  ($maskHeight - $this->jp2Height)/2 - $this->_sunCenterOffsetY) * $maskScaleFactor;
+
         // Crop dimensions
         $cropWidth  = $this->subfieldWidth  * $maskScaleFactor;
         $cropHeight = $this->subfieldHeight * $maskScaleFactor;

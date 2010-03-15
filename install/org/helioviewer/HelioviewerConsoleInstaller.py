@@ -8,9 +8,7 @@ class HelioviewerConsoleInstaller:
 
     def __init__(self, options):
         self.options = options
-        self.debugmode = options.debug
-        if options.debug:
-            self.logfile = file.open("error.log", "w")
+        self.logfile = open("error.log", "w")
         
     def getFilePath(self):
         ''' Prompts the user for the directory information '''
@@ -106,20 +104,11 @@ class HelioviewerConsoleInstaller:
         print """\
 ====================================================================
 = Helioviewer Database Population Script                           =
-= Last updated: 2009/12/16                                         =
+= Last updated: 2009/03/11                                         =
 =                                                                  =
 = This script processes JP2 images, extracts their associated      =
-= meta-information and stores it away in a database. Currently,    =
-= it is assumed that the database strucuture has already been      =
-= created (See createTables.sql). Please make sure the images      =
-= are placed in their permanent home (within the server) before    =
-= running the installation script.                                 =
+= meta-information and stores it away in a database.               =
 =                                                                  =
-= The script requires several pieces of information to function:   =
-=   (1) The location of a directory containing JP2 images.         =
-=   (2) The name of the database schema to populate.               =
-=   (3) The name of the database user with appropriate access.     =
-=   (4) The password for the specified database user.              =
 ===================================================================="""
 
 def loadTextInstaller(options):
@@ -172,6 +161,27 @@ def loadTextInstaller(options):
     
     #print("Creating database index")        
     #createDateIndex(cursor)
+    
+    cursor.close()
+
+    print "Finished!"
+    
+def loadUpdater(options):
+    ''' Loads the text-based installation tool and runs it in update-mode '''
+    app = HelioviewerConsoleInstaller(options)
+    
+    # MySQL?
+    if options.dbtype == "mysql":
+        mysql = True
+    else:
+        mysql = False
+        
+    cursor = getDatabaseCursor(options.dbname, options.dbuser, options.dbpass, mysql)
+
+    print "Processing Images..."
+
+    # Insert image information into database
+    processJPEG2000Images(options.files, options.basedir, cursor, mysql)
     
     cursor.close()
 

@@ -23,14 +23,12 @@ __STEP_FXN_THROTTLE__ = 50
 #
 class HelioviewerInstallWizard(QtGui.QWizard):
 
-    def __init__(self, debug, parent=None):
+    def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_InstallWizard()
         self.ui.setupUi(self)        
         
-        self.debugmode = debug
-        if debug:
-            self.logfile = file.open("error.log", "w")
+        self.logfile = open("error.log", "w")
         
         self.installComplete = False
         
@@ -154,9 +152,9 @@ If this is correct, please press "Start" to begin processing.
         directory = fd.getExistingDirectory()
         self.ui.jp2RootDirInput.setText(directory)
 
-def loadGUIInstaller(args, debug):
+def loadGUIInstaller(args):
     ''' Load graphical installer '''
     app = QtGui.QApplication(sys.argv)
-    win = HelioviewerInstallWizard(debug)
+    win = HelioviewerInstallWizard()
     win.show()
     sys.exit(app.exec_())

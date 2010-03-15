@@ -101,6 +101,9 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
 
         // Check cadence
         $this->_checkRequestedCadence();
+        
+        // Check request start and end dates
+        $this->_checkRequestDates();
 
         // Timer
         $time = toUnixTimestamp($this->_startTime);
@@ -120,20 +123,6 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             }
             $time += $this->_cadence;
         }
-
-        // Drop redundant images
-        //$images = array_unique($images);
-
-        // Get frame timestamps
-        /**
-        $timestamps = array();
-        foreach ($images as $img) {
-            $exploded = explode("/", $img);
-            $dateStr = substr(end($exploded), 0, 24);
-            $regex   = '/(\d+)_(\d+)_(\d+)__(\d+)_(\d+)_(\d+)_(\d+)/';
-            $utcDate = preg_replace($regex, '$1-$2-$3T$4:$5:$6.$7Z', $dateStr);
-            array_push($timestamps, toUnixTimestamp($utcDate));
-        }*/
 
         return array($images, $dates);
     }
@@ -164,6 +153,20 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
                                 "to one image every {$this->_cadence} seconds in order to avoid exceeding the " .
                                 "maximum allowed number of frames (" . HV_MAX_JPX_FRAMES . ").";
         }
+    }
+    
+    /**
+     * Checks the request start and end dates. If either are outside of the range of available data, then
+     * they are adjust so that they fall within the available data range. If the request range falls completely
+     * outside of the range of available data then no movie is generated.     * 
+     * 
+     * @return 
+     */
+    private function _checkRequestDates() {
+        // Retrieve first and last date for requested data source
+        // Update start and end date to ensure that it is within range
+        // Record a message if neccessary
+        // If the range is completely outside, discontinue JPX generation                
     }
 
     /**
@@ -213,7 +216,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
 
         return str_replace(" ", "-", $filename) . ".jpx";
     }
-
+    
     /**
      * Creates a summary file for the generated JPX file including the filepath, image timestamps, and any
      * warning or error messages encountered during the creation process.
