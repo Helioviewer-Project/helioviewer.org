@@ -18,7 +18,7 @@ var Viewport = Class.extend(
      */ 
     defaultOptions: {
         imageScale : 0,
-        headerId   : '#middle-col-header',
+        headerId   : '#header',
         footerId   : '#footer',
         tileSize   : 512,
         minHeight  : 450,
@@ -59,8 +59,8 @@ var Viewport = Class.extend(
         this.rsun = 959.705;
 
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
-        this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height() + 9;
-
+        this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height() + 2;
+        
         // Resize to fit screen
         this.resize();
         
@@ -331,12 +331,12 @@ var Viewport = Class.extend(
      */
     resize: function () {
         var oldDimensions, h, padHeight;
-
+        
         // Get dimensions
         oldDimensions = this.dimensions;
         
         // Make room for footer and header if not in fullscreen mode
-        if (!$('#outsideBox').hasClass('fullscreen-mode')) {
+        if (!$('#container').hasClass('fullscreen-mode')) {
             padHeight = this.headerAndFooterHeight;
         }
         else {

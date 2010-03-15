@@ -1,72 +1,18 @@
 /**
  * Helioviewer.org Custom Styles
- *
- * Three-column layout based off of Paul O'Bs design (http://www.pmob.co.uk/temp/3colfixedtest_4.htm).
- *
- * Adjusting size of layout elements:
- * 1. Adjusting size of left & right sidebars
- *    To adjust the size of either sidebar, add/subtract the desired amount from the width and margin-left/right
- *    properties of [#outsideBox, #leftCol, and #rightCol].
- *
- * 2. Adjusting the size of the header and footer elements
- *    The header is currently broken up and set individually in each of the three columns. The footer, however,
- *    is stored as a single continuous div.
- */
-
+*/
 
 /* HTML ELEMENTS */
-html, body    {height:100%; background: url(../../resources/images/backgrounds/gradient_v5-optimized.png);}
+html, body    {background: url(../../resources/images/backgrounds/gradient_v5-optimized.png); font-size: 13px;}
 h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}
 
-/* THREE-COLUMN FLEXIBLE LAYOUT STRUCTURAL COMPONENTS */
-#outsideBox {
-  margin-left   : 280px;
-  margin-right  : 20px; /* (1) margin-right  : 250px;*/
-  margin-bottom :-72px;
-  min-height    : 100%;
-}
+#left-col-header {height: 50px; margin-top: -24px;}
 
-#left-col-header, #middle-col-header, #right-col-header { height:25px; width: 100%; }
-#left-col-header   {left: -1px; height: 50px;}
-#right-col-header  {left: 1px}
-
-#left-col {
-    position:relative;/*ie needs this to show float */
-    width:280px;
-    float:left;
-    margin-left:-279px;/*must be 1px less than width otherwise won't push footer down */
-    z-index:100;
-    left:-1px;
-}
-
-#right-col {
-    position:relative;/*ie needs this to show float */
-    width:20px; /* (2) width:250px;*/
-    float:right;
-    margin-right: -19px; /* (3) margin-right:-249px;*//*must be 1px less than width otherwise won't push footer down */
-    left:1px;
-    color: #000;
-}
-
-#middle-col {
-  min-width:280px;
-}
-
-#footer {
-    width:100%;
-    position: absolute;
-    bottom: 0px;
-    clear: both;
-    height: 18px;
-    text-align: center;
-}
-/*needed to make room for footer*/
-/*
-#clearfooter{clear:both;height:72px;}
-* > html #clearfooter {float:left;width:100%;}*/ /* ie mac styles */
+/** 03/14/2010: Temporary fix for datepicker. TODO: upgrade jQuery UI */
+#ui-datepicker-div {display:none;}
 
 /* Loading Indicator */
 #loading {position: absolute; right: 3px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
@@ -156,9 +102,6 @@ img#movieBuilder {
 	top: -4px;
 }
 
-/* MISC TEXT-RELATED */
-.centered {display: block; margin-left:auto; margin-right: auto;}
-
 a.dark {
 	text-decoration: none;
 	font-weight: bold;
@@ -235,10 +178,10 @@ span.ui-icon-hover {
 
 #footer-container-inner {
     background-image: url(../../resources/images/backgrounds/ui-bg_gloss-wave_20_111111_500x100_transparent_15.png);
+	position: absolute;
     width: 100%;
     height: 18px;
-    bottom: 0;
-    background-position: 20px;
+	top: 10px;
     border-color: #262424;
     border-width: 1px 0px 0px 0px;
 }
