@@ -270,27 +270,30 @@ var Helioviewer = Class.extend(
      * @description Creates an HTML button for toggling between regular and fullscreen display
      */
     _createFullscreenBtn: function () {
-        var btn, footer, header, vp, sb, speed, marginSize, meta, panels, outsideBox, origOutsideMarginLeft, 
-            origOutsideMarginRight, origHeaderHeight, origViewportHeight, $_fx_step_default, self, body;
+        var btn, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,
+            origViewportHeight, origColMidLeft, origColRightMarginLeft, origCol1PadMarginRight, 
+            origCol1PadMarginLeft, origCol2Left, origCol2Width, origHeaderHeight, $_fx_step_default, self, body;
         
         // get dom-node
         btn = $("#fullscreen-btn");
         
         // CSS Selectors
-        outsideBox = $('#outsideBox');
-        body       = $('body');
-        vp         = $('#helioviewer-viewport-container-outer');
-        sb         = $('#sandbox');
-        footer     = $('#footer-links-container-outer');
-        meta       = $('#footer-container-outer');
-        header     = $('#middle-col-header');
-        panels     = $("#left-col, #right-col, #footer-links-container-outer, #social-buttons-container-outer");
+        colmid   = $('#colmid');
+        colright = $('#colright');
+        col1pad  = $('#col1pad');
+        col2     = $('#col2');
+        body     = $('body');
+        vp       = $('#helioviewer-viewport-container-outer');
+        sb       = $('#sandbox');
+        header   = $('#header');
+        meta     = $('#footer-container-outer');
+        panels   = $("#col2, #col3, #header, #footer");
        
         // animation speed
         speed = 500;
         
         // margin-size
-        marginSize = 5;
+        marginSize = 4;
 
         // Overide jQuery's animation method
         // http://acko.net/blog/abusing-jquery-animate-for-fun-and-profit-and-bacon
@@ -309,28 +312,31 @@ var Helioviewer = Class.extend(
             if (!btn.hasClass('requests-disabled')) {
                             
                 // toggle fullscreen class
-                outsideBox.toggleClass('fullscreen-mode');
+                colmid.toggleClass('fullscreen-mode');
                 
                 // make sure action finishes before starting a new one
                 btn.addClass('requests-disabled');
                 
                 // fullscreen mode
-                if (outsideBox.hasClass('fullscreen-mode')) {
+                if (colmid.hasClass('fullscreen-mode')) {
                     
                     // hide overflow
                     body.css('overflow', 'hidden');
                     
                     meta.hide();
-    
+   
                     // keep track of original dimensions
-                    origOutsideMarginLeft  = outsideBox.css("margin-left");
-                    origOutsideMarginRight = outsideBox.css("margin-right");
+                    origColMidLeft         = colmid.css("left");
+                    origColRightMarginLeft = colright.css("margin-left");
+                    origCol1PadMarginLeft  = col1pad.css("margin-left");
+                    origCol1PadMarginRight = col1pad.css("margin-right");
+                    origCol2Left           = col2.css("left");
+                    origCol2Width          = col2.width();
                     origHeaderHeight       = header.height();
                     origViewportHeight     = vp.height();
                     
-                    outsideBox.animate({ 
-                        marginLeft:  marginSize,
-                        marginRight: marginSize
+                    colmid.animate({ 
+                        left: 0
                     }, speed,
                     function () {
                         self.viewport.checkTiles();
@@ -339,15 +345,30 @@ var Helioviewer = Class.extend(
                         panels.hide();
                         btn.removeClass('requests-disabled');
                     });
-                       
-                    header.animate({
-                        height: marginSize
+                    
+                    colright.animate({
+                        "margin-left": 0
                     }, speed);
-    
+                    
+                    col1pad.animate({
+                        "margin-left" : 4,
+                        "margin-right": 4,
+                        "margin-top":   4
+                    }, speed);
+                    
+                    col2.animate({
+                        "left": -(parseInt(origCol2Left, 10) + origCol2Width)
+                    }, speed);
+                    
+                    header.animate({
+                        "height": 0
+                    }, speed);
+                       
                     vp.animate({
                         height: $(window).height() - (marginSize * 3)
                     }, speed);
      
+                    // Keep sandbox up to date
                     sb.animate({
                         right: 1 // Trash
                     }, speed);                
@@ -356,9 +377,8 @@ var Helioviewer = Class.extend(
                 } else {
                     panels.show();
                         
-                    outsideBox.animate({ 
-                        marginLeft:  origOutsideMarginLeft,
-                        marginRight: origOutsideMarginRight
+                    colmid.animate({ 
+                        left:  origColMidLeft
                     }, speed,
                     function () {
                         btn.removeClass('requests-disabled');    
@@ -367,16 +387,33 @@ var Helioviewer = Class.extend(
                         // show overflow
                         body.css('overflow', 'visible');
                     });
+                    
+                    colright.animate({
+                        "margin-left": origColRightMarginLeft
+                    }, speed);
+                    
+                    col1pad.animate({
+                        "margin-left" : origCol1PadMarginLeft,
+                        "margin-right": origCol1PadMarginRight,
+                        "margin-top"  : 0
+                    }, speed);
+                    
+                    col2.animate({
+                        left: origCol2Left
+                    }, speed);
+                    
+                    header.animate({
+                        "height": origHeaderHeight
+                    }, speed);
     
                     vp.animate({
                         height: origViewportHeight
                     }, speed);
-                    header.animate({
-                        height: origHeaderHeight
-                    }, speed);
                     sb.animate({
                         right: 0
                     }, speed);
+                    
+                    // Resize in case browser size changed?
                 }
             }
         });
