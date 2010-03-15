@@ -74,8 +74,10 @@ class Database_ImgIndex
         $left = mysqli_fetch_array($this->_dbConnection->query($lhs), MYSQL_ASSOC);
         $right = mysqli_fetch_array($this->_dbConnection->query($rhs), MYSQL_ASSOC);
 
+        $dateTimestamp = toUnixTimestamp($date);
+
         // Select closest match
-        if (abs($date - $left["date"]) < abs($date - $right["date"])) {
+        if (abs($dateTimestamp - toUnixTimestamp($left["date"])) < abs($dateTimestamp - toUnixTimestamp($right["date"]))) {
             $img = $left;
         } else {
             $img = $right;
