@@ -239,7 +239,7 @@ var Helioviewer = Class.extend(
         }
 
         if (this.load.imageScale) {
-            this.userSettings.set('imageScale', this.load.imageScale);
+            this.userSettings.set('imageScale', parseFloat(this.load.imageScale));
         }
 
         // Process and load and layer strings specified
