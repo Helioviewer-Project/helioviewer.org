@@ -32,7 +32,7 @@ class Config
 {
     private $_bools  = array("distributed_tiling_enabled", "backup_enabled", "disable_cache");
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
-                             "png_compression_quality", "tile_pad_width", "jpeg_compression_quality", "max_jpx_frames",
+                             "png_compression_quality", "jpeg_compression_quality", "max_jpx_frames",
                              "max_movie_frames");
     private $_floats = array("default_image_scale", "min_image_scale", "max_image_scale");
 
