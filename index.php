@@ -65,16 +65,12 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
 
         <!-- ShadowBox -->
-        <link rel="stylesheet" type="text/css" href="lib/shadowbox/shadowbox.css">
-        <script type="text/javascript" src="lib/shadowbox/shadowbox.js"></script>
-        <script type="text/javascript" src="lib/shadowbox/adapters/shadowbox-jquery.js"></script>
-        <script type="text/javascript" src="lib/shadowbox/players/shadowbox-iframe.js"></script>
-        <script type="text/javascript" src="lib/shadowbox/players/shadowbox-html.js"></script>
-        <script type="text/javascript" src="lib/shadowbox/players/shadowbox-img.js"></script>
-        <script type="text/javascript" src="lib/shadowbox/languages/shadowbox-en.js"></script>
+        <link rel="stylesheet" type="text/css" href="lib/shadowbox-3.0.3/shadowbox.css">
+        <script type="text/javascript" src="lib/shadowbox-3.0.3/shadowbox.js"></script>
         <script type="text/javascript">
             Shadowbox.init({
-                overlayOpacity: 0.5
+                overlayOpacity: 0.5,
+                troubleElements: ["object", "embed"]
             });
         </script>
 
