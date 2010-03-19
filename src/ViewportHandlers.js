@@ -279,7 +279,7 @@ var ViewportHandlers = Class.extend(
                 } else {
                     polar = Math.toPolarCoords(cartesian.x, -cartesian.y);     
                     
-                    mouseCoordsX.html(((polar.r / self.controller.rsun) + "").substring(0, 5) +
+                    mouseCoordsX.html(((polar.r / self.viewport.rsun) + "").substring(0, 5) +
                         " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
                     mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
                 }
