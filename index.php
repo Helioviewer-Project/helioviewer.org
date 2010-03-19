@@ -8,8 +8,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <head>
         <?php printf("<!-- Helioviewer rev. %s, %s -->\n", $config["build_num"], $config["last_update"]);?>
         <title>Helioviewer - Solar and heliospheric image visualization tool</title>
+        <meta http-equiv="X-UA-Compatible" content="ie=8" />
+        <meta http-equiv="X-UA-Compatible" content="chrome=1" />
         <link rel="shortcut icon" href="favicon.ico" />
-        <meta http-equiv="X-UA-Compatible" content="chrome=1">
         <meta charset="utf-8" />
         <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
         <meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
@@ -249,7 +250,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
                     </div>
                     <br><br>
-                    <div class="section-header" style="margin-left:5px; margin-top: 15px;">Observation</div>
+                    <div class="section-header" style="margin-left:5px; margin-top: 15px;">Time</div>
                     <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
                         <!--  Observation Date -->
                         <div style="margin-bottom: 4px; position: relative;">

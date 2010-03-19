@@ -268,6 +268,12 @@ var Helioviewer = Class.extend(
     
     /**
      * @description Creates an HTML button for toggling between regular and fullscreen display
+     * 
+     * TODO 03/15/2010:
+     *  Instead of storing the original dimensions and then simply reverting to them later, a better
+     *  approach might be to compute write methods to compute what those values should be for any given
+     *  screen size. This way if a user switches to full screen mode, resizes the browser window, and then
+     *  switches back to normal view-mode, the viewport will be optimized for the new window size.
      */
     _createFullscreenBtn: function () {
         var btn, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,

@@ -365,6 +365,7 @@ var ViewportHandlers = Class.extend(
           // Mouse-wheel
         vp.mousewheel(function (e, delta) {
             self.mouseWheel(e, delta);
+            return false;
         });
     }
 });
