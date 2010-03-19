@@ -150,6 +150,13 @@ span.ui-icon-hover {
 #sb-body, #sb-loading {
 	background: transparent url(../../resources/images/blackGlass/transparentBG50.png);
     border-color: #262424;
+	border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+
+#sb-wrapper-inner {
+	 border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
 }
@@ -167,6 +174,7 @@ span.ui-icon-hover {
     border-right: 0px;
     font-size: 11px;
     height: 15px;
+	border-bottom-left-radius: 20px;
     -moz-border-radius-bottomleft: 20px;
     -webkit-border-bottom-left-radius: 20px;
 }
