@@ -5,6 +5,7 @@
     height: 197px;
     margin-top: -1px;
     border: none;
+	border-radius: 0px;
     -moz-border-radius: 0px;
     -webkit-border-radius: 0px;
 }
@@ -61,6 +62,7 @@
 
 .opacity-slider-track > .ui-slider-handle {
 	background: url(../../lib/jquery.ui-1.7.1/css/ui-darkness/images/ui-bg_glass_20_555555_1x400.png) transparent scroll 0%;
+	border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 	border: 1px solid black;

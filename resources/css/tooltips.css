@@ -78,6 +78,7 @@ div > div.qtip-helioviewer.qtip {
     background: white;
     border: 6px solid #6e6e6e;
     z-index: 6000;
+	border-radius: 6px;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
 }

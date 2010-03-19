@@ -60,6 +60,7 @@ td.time-input-field input {
 #select-options-tabs input, #select-options-tabs select {
 	font-size: 8pt;
 	padding: 1px;
+	border-radius: 4px;
 	-moz-border-radius: 4px; 
 	-webkit-border-radius: 4px;
 }
