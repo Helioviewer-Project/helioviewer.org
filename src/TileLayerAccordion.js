@@ -264,7 +264,7 @@ var TileLayerAccordion = Layer.extend(
         var title, addLayerBtn, self = this;
         
         // Create a top-level header and an "add layer" button
-        title = $('<span class="section-header">Overlays</span>').css({'float': 'left'});
+        title = $('<span class="section-header">Images</span>').css({'float': 'left'});
         addLayerBtn = $('<a href=# class=dark>[Add]</a>').css({'margin-right': '14px'});
         this.container.append($('<div></div>').css('text-align', 'right').append(title).append(addLayerBtn));
         this.container.append($('<div id="TileLayerAccordion-Container"></div>'));
