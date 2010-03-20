@@ -8,17 +8,18 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <head>
         <?php printf("<!-- Helioviewer rev. %s, %s -->\n", $config["build_num"], $config["last_update"]);?>
         <title>Helioviewer - Solar and heliospheric image visualization tool</title>
+        <meta http-equiv="X-UA-Compatible" content="ie=9" />
         <meta http-equiv="X-UA-Compatible" content="ie=8" />
         <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+        <!--[if IE]>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+        <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
         <link rel="shortcut icon" href="favicon.ico" />
         <meta charset="utf-8" />
         <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
         <meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
         <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
-
-        <!--[if IE]>
-        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
 
         <!-- YUI CSS Reset -->
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts/reset-fonts.css" />

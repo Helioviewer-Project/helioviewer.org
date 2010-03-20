@@ -64,7 +64,6 @@ var EventLayer = Layer.extend(
         };
         
         callback = function (data) {
-            self.clear();
             if (data) {
                 self.displayEvents(data);
             }
@@ -145,6 +144,7 @@ var EventLayer = Layer.extend(
      * @description Reload event-layer
      */
     reload: function () {
+        this.clear();
         this.queryEvents();
     },
 
