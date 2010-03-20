@@ -11,6 +11,10 @@
 	position: relative;
 }
 
+.ui-corner-all {
+	border-radius: 4px;
+}
+
 .ui-state-hover-bgonly {
     background-image: url(../../lib/jquery.ui-1.7.1/css/dot-luv-modified/images/ui-bg_dots-small_40_00498f_2x2.png);
     background-color: #00498f;
