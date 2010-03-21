@@ -8,6 +8,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <head>
         <?php printf("<!-- Helioviewer rev. %s, %s -->\n", $config["build_num"], $config["last_update"]);?>
         <title>Helioviewer - Solar and heliospheric image visualization tool</title>
+        <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="ie=9" />
         <meta http-equiv="X-UA-Compatible" content="ie=8" />
         <meta http-equiv="X-UA-Compatible" content="chrome=1" />
@@ -16,7 +17,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <link rel="shortcut icon" href="favicon.ico" />
-        <meta charset="utf-8" />
+
         <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
         <meta name="keywords" content="Helioviewer, hv, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
         <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
@@ -293,7 +294,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             <div id="footer-container-inner">
                 <!-- Meta links -->
                 <div id="footer-links">
-                    <!--<a href="help/" class="light" target="_blank">Help</a>-->
+                    <a href="http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
                     <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                     <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                     <a href="http://helioviewer.org/wiki/" class="light" target="_blank">Wiki</a>
