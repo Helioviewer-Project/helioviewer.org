@@ -1,0 +1,32 @@
+                    
+                    RELEASE NOTES
+
+Helioviewer.org 2.0.0
+======================
+ 
+Helioviewer.org 2.0.0 is a major rewrite of the original version of 
+Helioviewer.org including a large number of changes to both the server-side and
+front-end componenets. The main difference between this version and earlier 
+version of Helioviewer are the JPEG 2000 (JP2) tiling engine. While previous 
+versions had very strict requirements regarding the properties of the images to
+be processed (which required many images to be rescaled and padded and also
+include additional derrived header information), this release is able to accept
+a much wider range of images for input.
+
+In addition to the modifications to the tiling engine, other major changes
+include:
+
+ * Modular server-side capable of running only the desired set of components.
+ * Front-end rewritten entirely in jQuery.
+ * Improved support for Internet Explorer (IE), Safari, Chrome, and Opera
+   web browsers.
+ * Better JHelioviewer integration.
+ * New layout.
+ * Database performance boost.
+ * Easier setup and configuration including a graphical installer.
+ * Easier sharing.
+ * More secure.
+ 
+This release also includes a number of bug fixes to the earlier version
+including a long-standing tiling bug which would occasionally result in missing
+tiles.
