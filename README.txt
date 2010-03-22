@@ -40,3 +40,9 @@ INSTALLATION:
 Instructions for installing Helioviewer.org are available online at
 http://helioviewer.org/wiki/index.php?title=Installing_Helioviewer.org
 
+LICENSE:
+
+Helioviewer.org is licensed under the Mozilla Public License. Software
+libraries used by Helioviewer.org and included with this distribution may
+include their own licenses. Please consult the documentation of the particular
+dependency for the details of it's licensing.
