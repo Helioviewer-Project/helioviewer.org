@@ -152,7 +152,7 @@ var TimeControls = Class.extend(
             dateFormat     : 'yy/mm/dd',
             mandatory      : true,
             showOn         : 'button',
-            yearRange      : '1993:2009',
+            yearRange      : '1993:2010',
             onSelect       : function (dateStr) {
                 window.setTimeout(function () {
                     self.controller.date.updateDate(dateStr);
