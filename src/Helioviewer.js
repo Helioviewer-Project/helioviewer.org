@@ -29,7 +29,7 @@ var Helioviewer = Class.extend(
     init: function (viewportId, view, defaults) {
         $.extend(this, defaults);
         this.load        = view;
-        this.api         = this.tileServers[0];
+        this.api         = "api/index.php";
         this.viewportId  = viewportId;
 
         // Determine browser support
