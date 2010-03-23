@@ -229,10 +229,10 @@ var ViewportHandlers = Class.extend(
         }
           
         // Warn once
-        if (this.viewport.controller.userSettings.get('warnMouseCoords') === false) {
+        if (this.viewport.controller.userSettings.get('warnMouseCoords') === true) {
             warning = "<b>Note:</b> Mouse-coordinates should not be used for science operations!";
             this.viewport.controller.messageConsole.log(warning);
-            this.viewport.controller.userSettings.set('warnMouseCoords', true);
+            this.viewport.controller.userSettings.set('warnMouseCoords', false);
         }
           
         // Cartesian & Polar coords

@@ -241,8 +241,8 @@ var UserSettings = Class.extend(
             date            : getUTCTimestamp(this.controller.defaultObsTime),
             imageScale      : this.controller.defaultImageScale,
             version         : this.controller.version,
-            warnZoomLevel   : false,
-            warnMouseCoords : false,
+            warnMouseCoords : true,
+            showWelcomeMsg  : true,
             tileLayers : [{
                 server     : 0,
                 observatory: 'SOHO',
