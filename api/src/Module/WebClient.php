@@ -104,8 +104,10 @@ class Module_WebClient implements Module
      */
     public function getClosestImage ()
     {
+        $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+
         // Local Tiling Server
-        if ($this->_params['server'] === 0) {
+        if ($baseURL == "api/index.php") {
             include_once 'src/Database/ImgIndex.php';
             $imgIndex = new Database_ImgIndex();
 
@@ -128,10 +130,12 @@ class Module_WebClient implements Module
             // Remote Tiling Server
             // TODO 01/29/2010 Check to see if server number is within valid
             //                 range of know authenticated servers.
-            $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
             $source  = $this->_params['sourceId'];
             $date    = $this->_params['date'];
-            $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=1";
+
+            // 03/23/2010: This assumes that server 0 is self!
+            // Find a better way to handle servers which only use remote sources?
+            $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
 
             $json = file_get_contents($url);
         }
