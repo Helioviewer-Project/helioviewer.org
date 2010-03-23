@@ -76,7 +76,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
 
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->_getTileFilepath($jp2, $x, $y, $tileScale, $format);
-
+        
         // If tile already exists in cache, use it
         // TODO: Once a smarter caching system is in place, take advantage of
         //       which data we know will be cached (e.g. most recent 2 weeks), and
@@ -135,14 +135,41 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $month = substr($filename, 5, 2);
         $day   = substr($filename, 8, 2);
 
+        /**
         $fieldArray = array(
             $year, $month, $day, $this->_observatory, $this->_instrument,
             $this->_detector, $this->_measurement
         );
-        
-        foreach ($fieldArray as $field) {
-            $filepath .= str_replace(" ", "-", $field) . "/";
+        */
+       
+        // Work-around 03/23/2010
+        // Nicknames not currently included in filename or query. Hard-coding future
+        // versions of JP2 images are modified to include nicknames
+        if ($this->_instrument == "EIT") {
+            if ($this->_measurement == "171") {
+                $filepath .= "EIT/171";
+            } else if ($this->_measurement == "195") {
+                $filepath .= "EIT/195";
+            } else if ($this->_measurement == "284") {
+                $filepath .= "EIT/284";
+            } else {
+                $filepath .= "EIT/304";
+            }
+        } else if ($this->_instrument == "MDI") {
+            if ($this->_measurement == "continuum") {
+                $filepath .= "MDI/continuum";
+            } else {
+                $filepath .= "MDI/magnetogram";
+            }
+        } else {
+            if ($this->_detector == "C2") {
+                $filepath .= "LASCO-C2/white-light";
+            } else {
+                $filepath .= "LASCO-C3/white-light";
+            }
         }
+        
+        $filepath .= "/$year/$month/$day/";
 
         // Convert coordinates to strings
         $xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
