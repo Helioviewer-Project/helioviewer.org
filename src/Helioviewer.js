@@ -59,6 +59,15 @@ var Helioviewer = Class.extend(
         this.movieBuilder      = new MovieBuilder(this);
         this.imageSelectTool   = new ImageSelectTool(this);
         this.screenshotBuilder = new ScreenshotBuilder(this);
+        
+        // Display welcome message on user's first visit
+        if (this.userSettings.get('showWelcomeMsg')) {
+            this.messageConsole.info("<b>Welcome to Helioviewer.org</b>, A solar data browser." + 
+            " First time here? Be sure to check out our <a class=\"message-console-link\" " +
+            "href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" target=\"_blank\">" +
+            "User Guide</a>.", {life: 15000});
+            this.userSettings.set('showWelcomeMsg', false);
+        }
     },
     
     /**
