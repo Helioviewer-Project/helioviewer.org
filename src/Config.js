@@ -16,7 +16,7 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["distributed_tiling_enabled", "disable_cache"];
+        this.bools  = ["local_tiling_enabled", "distributed_tiling_enabled", "disable_cache"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
                        "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
@@ -51,6 +51,9 @@ var Config = Class.extend(
         $.each(this.floats, function () {
             self.params[this] = parseFloat(self.params[this]);
         });
+        
+        // Tiling Servers
+        this.params["tile_server"].unshift("api/index.php");
     },
     
     /**
@@ -58,16 +61,17 @@ var Config = Class.extend(
      */
     toArray: function () {
         return {
-            'version'           : this.params["build_num"],
-            'defaultObsTime'    : this.params["default_obs_time"],
-            'defaultImageScale' : this.params["default_image_scale"],
-            'minImageScale'     : this.params["min_image_scale"],
-            'maxImageScale'     : this.params["max_image_scale"],
-            'prefetchSize'      : this.params["prefetch_size"],
-            'timeIncrementSecs' : this.params["default_timestep"],
-            'tileServers'       : this.params["tile_server"],
-            'distributed'       : this.params["distributed_tiling_enabled"],
-            'rootURL'           : this.params["web_root_url"]
+            'version'             : this.params["build_num"],
+            'defaultObsTime'      : this.params["default_obs_time"],
+            'defaultImageScale'   : this.params["default_image_scale"],
+            'minImageScale'       : this.params["min_image_scale"],
+            'maxImageScale'       : this.params["max_image_scale"],
+            'prefetchSize'        : this.params["prefetch_size"],
+            'timeIncrementSecs'   : this.params["default_timestep"],
+            'tileServers'         : this.params["tile_server"],
+            'localQueriesEnabled' : this.params["local_tiling_enabled"],
+            'distributed'         : this.params["distributed_tiling_enabled"],
+            'rootURL'             : this.params["web_root_url"]
         };
     }
 });

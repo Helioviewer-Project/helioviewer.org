@@ -382,8 +382,9 @@ var TileLayerAccordion = Layer.extend(
         
         // Request parameters
         params = {
-            action: "getJP2Header",
-            file: layer.filepath + "/" + layer.filename
+            action : "getJP2Header",
+            file   : layer.filepath + "/" + layer.filename,
+            server : layer.server
         };
         
         $.post("api/index.php", params, callback, "json");

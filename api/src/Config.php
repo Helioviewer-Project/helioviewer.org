@@ -30,7 +30,7 @@
  */
 class Config
 {
-    private $_bools  = array("distributed_tiling_enabled", "disable_cache");
+    private $_bools  = array("local_tiling_enabled", "distributed_tiling_enabled", "disable_cache");
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
                              "png_compression_quality", "jpeg_compression_quality", "max_jpx_frames",
                              "max_movie_frames");
@@ -57,8 +57,9 @@ class Config
             }
         }
 
+        define("HV_TILE_SERVER_0", "api/index.php");
         foreach ($this->config["tile_server"] as $id => $url) {
-            define("HV_TILE_SERVER_$id", $url);
+            define("HV_TILE_SERVER_" . ($id + 1), $url);
         }
 
         $this->_setAdditionalParams();

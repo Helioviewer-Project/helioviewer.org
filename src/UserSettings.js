@@ -244,7 +244,7 @@ var UserSettings = Class.extend(
             warnMouseCoords : true,
             showWelcomeMsg  : true,
             tileLayers : [{
-                server     : 0,
+                server     : this.controller.selectTilingServer(),
                 observatory: 'SOHO',
                 instrument : 'EIT',
                 detector   : 'EIT',

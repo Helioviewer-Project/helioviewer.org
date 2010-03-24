@@ -123,11 +123,11 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <link rel="stylesheet" type="text/css" href="resources/css/dot-luv.css">
 
         <script type="text/javascript">
-            var config, state, defaults, defaultsJSON, api;
+            var config, state, settings, settingsJSON, api;
 
             $(function () {
                 <?php
-                    printf("defaultsJSON = %s;\n", json_encode($config));
+                    printf("settingsJSON = %s;\n", json_encode($config));
 
                     // Application state
                     $state = array();
@@ -151,9 +151,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                     // Convert to JSON
                     printf("\t\tstate = %s;\n", json_encode($state));
                 ?>
-                config = new Config(defaultsJSON);
-                defaults = config.toArray();
-                helioviewer = new Helioviewer('#helioviewer-viewport', state, defaults);
+                config = new Config(settingsJSON);
+                settings = config.toArray();
+                helioviewer = new Helioviewer('#helioviewer-viewport', state, settings);
             });
         </script>
 
