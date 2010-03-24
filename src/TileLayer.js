@@ -507,19 +507,7 @@ var TileLayer = Layer.extend(
         // If loading fails...
         img.error(function (e) {
             img.unbind("error");
-            
-            if (self.controller.backupEnabled) {
-            
-                // If it still doesn't work, load the transparent tile
-                $(this).error(function () {
-                    $(this).attr("src", emptyTile);
-                });
-                
-                $(this).attr("src", self.getTileURL(self.controller.backupServer, x, y));
-                
-            } else {
-                $(this).attr("src", emptyTile);
-            }
+            $(this).attr("src", emptyTile);
         });
         
         // Wait until image is done loading specify dimensions in order to prevent Firefox from displaying place-holders
