@@ -557,7 +557,6 @@ var TileLayer = Layer.extend(
             "sunCenterOffsetX" : this.origSunCenterOffsetX,
             "sunCenterOffsetY" : this.origSunCenterOffsetY                        
         };
-        
         return url + "?" + $.param(params);
     },
 
