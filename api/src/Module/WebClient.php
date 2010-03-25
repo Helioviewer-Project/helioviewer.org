@@ -47,7 +47,14 @@ class Module_WebClient implements Module
     public function execute()
     {
         if ($this->validate()) {
-            $this->{$this->_params['action']}();
+            try {
+                $this->{$this->_params['action']}();
+            } catch (Exception $e) {
+                // Output plain-text for browser requests to make Firebug debugging easier
+                include_once "lib/FirePHPCore/fb.php";
+                FB::error($e->getMessage());
+                exit();
+            }
         }
     }
 
