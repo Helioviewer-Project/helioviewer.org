@@ -83,6 +83,14 @@ class Database_ImgIndex
             $img = $right;
         }
 
+        // Check to make sure a match was found
+        if (is_null($img)) {
+            $sql = "SELECT name FROM datasource WHERE id=$sourceId";
+            $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+            $source = $result["name"];  
+            throw new Exception("No images of the requested type ($source) were found in the database.");
+        }
+
         // Fix types
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
