@@ -296,12 +296,13 @@ var Helioviewer = Class.extend(
      *  switches back to normal view-mode, the viewport will be optimized for the new window size.
      */
     _createFullscreenBtn: function () {
-        var btn, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,
+        var btn, icon, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,
             origViewportHeight, origColMidLeft, origColRightMarginLeft, origCol1PadMarginRight, 
             origCol1PadMarginLeft, origCol2Left, origCol2Width, origHeaderHeight, $_fx_step_default, self, body;
         
-        // get dom-node
-        btn = $("#fullscreen-btn");
+        // get dom-nodes
+        btn  = $("#fullscreen-btn");
+        icon = btn.find(".ui-icon");
         
         // CSS Selectors
         colmid   = $('#colmid');
@@ -442,6 +443,10 @@ var Helioviewer = Class.extend(
                     // Resize in case browser size changed?
                 }
             }
+        }).hover(function () {
+            icon.addClass('ui-icon-hover');
+        }, function () {
+            icon.removeClass('ui-icon-hover');
         });
     },
 
