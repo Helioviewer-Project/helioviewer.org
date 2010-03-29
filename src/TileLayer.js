@@ -564,7 +564,7 @@ var TileLayer = Layer.extend(
      * @description Returns a stringified version of the tile layer for use in URLs, etc
      * @return string String representation of the tile layer
      */
-    toString: function () {
+    serialize: function () {
         return this.observatory + "," + this.instrument + "," + this.detector + "," + this.measurement + "," +
             (this.visible ? "1" : "0") + "," + this.opacity;
     },
