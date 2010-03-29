@@ -61,7 +61,7 @@
 }
 
 .opacity-slider-track > .ui-slider-handle {
-	background: url(../../lib/jquery.ui-1.8/css/ui-darkness/images/ui-bg_glass_20_555555_1x400.png) transparent scroll 0%;
+    background-color: #565656;
 	border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
