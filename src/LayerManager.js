@@ -74,11 +74,11 @@ var LayerManager = Class.extend(
     /**
      * @description Returns a string representation of the layers currently being displayed
      */
-    toString: function () {
+    serialize: function () {
         var layers = "";
 
         $.each(this._layers, function () {
-            layers += "[" + this.toString() + "],";
+            layers += "[" + this.serialize() + "],";
         });
         
         // Remove trailing comma

@@ -98,7 +98,7 @@ var UserSettings = Class.extend(
         imageScale = this.controller.getImageScale();
         
         // Image layers
-        imageLayers = this.controller.tileLayers.toString();
+        imageLayers = this.controller.tileLayers.serialize();
         
         // Build URL
         url += "date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;

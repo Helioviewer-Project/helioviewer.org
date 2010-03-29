@@ -53,7 +53,6 @@ class Module_WebClient implements Module
                 // Output plain-text for browser requests to make Firebug debugging easier
                 include_once "lib/FirePHPCore/fb.php";
                 FB::error($e->getMessage());
-                exit();
             }
         }
     }
