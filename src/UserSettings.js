@@ -98,7 +98,7 @@ var UserSettings = Class.extend(
         imageScale = this.controller.getImageScale();
         
         // Image layers
-        imageLayers = this.controller.tileLayers.toString();
+        imageLayers = this.controller.tileLayers.serialize();
         
         // Build URL
         url += "date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
@@ -244,7 +244,7 @@ var UserSettings = Class.extend(
             warnMouseCoords : true,
             showWelcomeMsg  : true,
             tileLayers : [{
-                server     : 0,
+                server     : this.controller.selectTilingServer(),
                 observatory: 'SOHO',
                 instrument : 'EIT',
                 detector   : 'EIT',

@@ -47,7 +47,14 @@ class Module_WebClient implements Module
     public function execute()
     {
         if ($this->validate()) {
-            $this->{$this->_params['action']}();
+            try {
+                $this->{$this->_params['action']}();
+            } catch (Exception $e) {
+                // Output plain-text for browser requests to make Firebug debugging easier
+                include_once "lib/FirePHPCore/fb.php";
+                FB::error($e->getMessage());
+                throw new Exception($e->getMessage());
+            }
         }
     }
 
@@ -100,14 +107,14 @@ class Module_WebClient implements Module
      * http://localhost/hv/api/index.php?action=getClosestImage
      * &date=2003-10-05T00:00:00Z&source=0&server=api/index.php
      *
+     * TODO 01/29/2010 Check to see if server number is within valid range of know authenticated servers.
+     *
      * @return void
      */
     public function getClosestImage ()
     {
-        $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
-
-        // Local Tiling Server
-        if ($baseURL == "api/index.php") {
+        // Tile locally
+        if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
             include_once 'src/Database/ImgIndex.php';
             $imgIndex = new Database_ImgIndex();
 
@@ -125,21 +132,25 @@ class Module_WebClient implements Module
             $this->_createImageCacheDir($result["filepath"]);
 
             $json = json_encode($result);
-
         } else {
-            // Remote Tiling Server
-            // TODO 01/29/2010 Check to see if server number is within valid
-            //                 range of know authenticated servers.
-            $source  = $this->_params['sourceId'];
-            $date    = $this->_params['date'];
-
-            // 03/23/2010: This assumes that server 0 is self!
-            // Find a better way to handle servers which only use remote sources?
-            $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
-
-            $json = file_get_contents($url);
+            if (HV_DISTRIBUTED_TILING_ENABLED) {
+                // Redirect request to remote server
+                if ($this->_params['server'] != 0) {
+                    $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+                    $source  = $this->_params['sourceId'];
+                    $date    = $this->_params['date'];
+                    $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
+                    $json = file_get_contents($url);
+                } else {
+                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini " .
+                           "for more information";
+                    throw new Exception($msg);
+                }
+            } else {
+                $err = "Both local and remote tiling is disabled on the server.";
+                throw new Exception($err);
+            }
         }
-
         header('Content-Type: application/json');
         echo $json;
     }
@@ -168,22 +179,42 @@ class Module_WebClient implements Module
      */
     public function getJP2Header ()
     {
-        $filepath = HV_JP2_DIR . $this->_params["file"];
+        // Retrieve header locally
+        if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
+            $filepath = HV_JP2_DIR . $this->_params["file"];
 
-        // Query header information using Exiftool
-        $cmd = escapeshellcmd(HV_EXIF_TOOL . " $filepath") . ' | grep Fits';
-        exec($cmd, $out, $ret);
+            // Query header information using Exiftool
+            $cmd = escapeshellcmd(HV_EXIF_TOOL . " $filepath") . ' | grep Fits';
+            exec($cmd, $out, $ret);
 
-        $fits = array();
-        foreach ($out as $index => $line) {
-            $data = explode(":", $line);
-            $param = substr(strtoupper(str_replace(" ", "", $data[0])), 8);
-            $value = $data[1];
-            array_push($fits, $param . ": " . $value);
+            $fits = array();
+            foreach ($out as $index => $line) {
+                $data = explode(":", $line);
+                $param = substr(strtoupper(str_replace(" ", "", $data[0])), 8);
+                $value = $data[1];
+                array_push($fits, $param . ": " . $value);
+            }
+            $json = json_encode($fits);
+        } else {
+            if (HV_DISTRIBUTED_TILING_ENABLED) {
+                // Redirect request to remote server
+                if ($this->_params['server'] != 0) {
+                    $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+                    $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";
+                    $json    = file_get_contents($url);
+                } else {
+                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini" .
+                           "for more information";
+                    throw new Exception($msg);
+                }
+            } else {
+                $err = "Both local and remote tiling is disabled on the server.";
+                throw new Exception($err);
+            }
         }
 
         header('Content-type: application/json');
-        echo json_encode($fits);
+        echo $json;
     }
 
     /**
@@ -389,10 +420,10 @@ class Module_WebClient implements Module
             );
 
             if (isset($this->_params["sourceId"])) {
-                $expected["required"] = array('server', 'date', 'sourceId');
+                $expected["required"] = array('date', 'sourceId');
                 $expected["ints"]     = array('sourceId', 'server');
             } else {
-                $expected["required"] = array('server', 'date', 'observatory', 'instrument', 'detector', 'measurement');
+                $expected["required"] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
                 $expected["ints"]     = array('server');
             }
             break;
