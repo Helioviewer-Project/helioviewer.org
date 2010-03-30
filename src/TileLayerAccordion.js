@@ -44,9 +44,13 @@ var TileLayerAccordion = Layer.extend(
      * @description Adds a new entry to the tile layer accordion
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (layer) {
+    addLayer: function (layer, index) {
         // Create accordion entry header
         var visibilityBtn, removeBtn, hidden, head, body, slider, ids, selected, obs, inst, det, meas, self = this;
+        
+        if (typeof(index) === "undefined") {
+            index = 1000;
+        }
         
         // initial visibility
         hidden = (layer.visible ? "" : " hidden");
@@ -68,6 +72,7 @@ var TileLayerAccordion = Layer.extend(
             id:     layer.htmlId,
             header: head,
             cell:   body,
+            index:  index,
             open:   layer.startOpened
         });
 
@@ -402,7 +407,9 @@ var TileLayerAccordion = Layer.extend(
      * @param {String} id
      */
     _removeTooltips: function (id) {
-        $("#visibilityBtn-" + id + ", #removeBtn-" + id).qtip("destroy");
+        //$("#visibilityBtn-" + id + ", #removeBtn-" + id).qtip("destroy");
+        $("#visibilityBtn-" + id).qtip("destroy");
+        $("#removeBtn-"     + id).qtip("destroy");
     },
 
     
