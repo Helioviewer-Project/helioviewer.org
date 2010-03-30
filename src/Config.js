@@ -18,7 +18,8 @@ var Config = Class.extend(
         
         this.bools  = ["local_tiling_enabled", "distributed_tiling_enabled", "disable_cache"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
-                       "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames"];
+                       "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames",
+                       "max_tile_layers"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
         
         this.fixTypes();
@@ -66,6 +67,7 @@ var Config = Class.extend(
             'defaultImageScale'   : this.params["default_image_scale"],
             'minImageScale'       : this.params["min_image_scale"],
             'maxImageScale'       : this.params["max_image_scale"],
+            'maxTileLayers'       : this.params["max_tile_layers"],
             'prefetchSize'        : this.params["prefetch_size"],
             'timeIncrementSecs'   : this.params["default_timestep"],
             'tileServers'         : this.params["tile_server"],
