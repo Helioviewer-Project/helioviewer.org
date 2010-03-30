@@ -16,36 +16,46 @@ $.widget("ui.dynaccordion", {
     },
     
 	init: function() {
-		var options = this.options;	
 		return this.element;
 	},
 	
 	updateHeader: function (o) {
-		$('#' + this.element[0].id + '> .dynaccordion-section#' + o.id + ' > div.dynaccordion-tab').text(o.content);
+	    $(this.element).find('#' + o.id + ' > .dynaccordion-tab').text(o.content);
 	},
 	updateCell: function (o) {
-		$('#' + this.element[0].id + ' > .dynaccordion-section#' + o.id + ' > div.dynaccordion-cell').text(o.content);
+	    $(this.element).find('#' + o.id + ' > .dynaccordion-cell').text(o.content);
 	},
 	removeSection: function (o) {
-		$('#' + this.element[0].id + ' > .dynaccordion-section#' + o.id).remove();
+	    $(this.element).find('#' + o.id).remove();
 	},
 	addSection: function (o) {
-		var inputID = o.id;
+		var index, id, arrow, header, body, domNode, container, sections, self = this;; 
+		
+		id        = o.id;
+		container = $(this.element);
+        sections  = container.find(".dynaccordion-section");
 
         // Open/closed arrow
-		var arrow = "";
 		if (this.options.displayArrows) {
 			if (o.open)
 				arrow = "<div class='accordion-arrow ui-icon ui-icon-triangle-1-s'></div>";
 			else
 				arrow = "<div class='accordion-arrow ui-icon ui-icon-triangle-1-e'></div>";
+		} else {
+		    arrow = "";
 		}
         
         // Build HTML
-        var header = $('<div class="dynaccordion-tab">' + arrow + o.header + '</div>');
-        var body   = $('<div class="dynaccordion-cell ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-corner-top">' + o.cell +'</div>');
-        var domNode = $('<div class="dynaccordion-section" id="' + inputID + '"></div>').append(header).append(body);
-		$('#' + this.element[0].id).append(domNode);
+        header  = $('<div class="dynaccordion-tab">' + arrow + o.header + '</div>');
+        body    = $('<div class="dynaccordion-cell ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-corner-top">' + o.cell +'</div>');
+        domNode = $('<div class="dynaccordion-section" id="' + id + '"></div>').append(header).append(body);
+           
+        // Add new section to appropriate location
+        if ((o.index !== "undefined") && (o.index < sections.length)) {
+            $(container.find(".dynaccordion-section")[o.index]).before(domNode);
+        } else {
+            container.append(domNode);
+        }
         
         // Mouse-over effects
         header.find(".layer-Head").hover(
@@ -58,8 +68,7 @@ $.widget("ui.dynaccordion", {
         );
 
         // Open/Close animation
-		var self = this;
-		$('#' + inputID + ' > div.dynaccordion-tab').unbind().click(function() {
+		$('#' + id + ' > div.dynaccordion-tab').unbind().click(function() {
 			if (self.options.displayArrows) {
 				var arrowIcon = $(this).find('.accordion-arrow')[0]; 
 				$(arrowIcon).toggleClass('ui-icon-triangle-1-s');
@@ -70,7 +79,7 @@ $.widget("ui.dynaccordion", {
 		
         // Chose initial view
 		if (this.options.startClosed && (!o.open)) {
-            $('#' + inputID + ' > div.dynaccordion-cell').hide();
+            $('#' + id + ' > div.dynaccordion-cell').hide();
         };
 	}
 });
