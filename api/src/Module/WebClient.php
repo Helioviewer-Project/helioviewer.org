@@ -53,6 +53,7 @@ class Module_WebClient implements Module
                 // Output plain-text for browser requests to make Firebug debugging easier
                 include_once "lib/FirePHPCore/fb.php";
                 FB::error($e->getMessage());
+                throw new Exception($e->getMessage());
             }
         }
     }
@@ -107,7 +108,7 @@ class Module_WebClient implements Module
      * &date=2003-10-05T00:00:00Z&source=0&server=api/index.php
      *
      * TODO 01/29/2010 Check to see if server number is within valid range of know authenticated servers.
-     *  
+     *
      * @return void
      */
     public function getClosestImage ()
@@ -137,8 +138,8 @@ class Module_WebClient implements Module
                 if ($this->_params['server'] != 0) {
                     $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
                     $source  = $this->_params['sourceId'];
-                    $date    = $this->_params['date'];            
-                    $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";            
+                    $date    = $this->_params['date'];
+                    $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
                     $json = file_get_contents($url);
                 } else {
                     $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini " .
@@ -181,11 +182,11 @@ class Module_WebClient implements Module
         // Retrieve header locally
         if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
             $filepath = HV_JP2_DIR . $this->_params["file"];
-    
+
             // Query header information using Exiftool
             $cmd = escapeshellcmd(HV_EXIF_TOOL . " $filepath") . ' | grep Fits';
             exec($cmd, $out, $ret);
-    
+
             $fits = array();
             foreach ($out as $index => $line) {
                 $data = explode(":", $line);
@@ -199,7 +200,7 @@ class Module_WebClient implements Module
                 // Redirect request to remote server
                 if ($this->_params['server'] != 0) {
                     $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
-                    $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";            
+                    $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";
                     $json    = file_get_contents($url);
                 } else {
                     $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini" .
