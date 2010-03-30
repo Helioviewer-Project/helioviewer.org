@@ -49,6 +49,13 @@ var TileLayerManager = LayerManager.extend(
     addNewLayer: function () {
         var currentLayers, next, rand, layerSettings, queue, defaultLayer = "SOHO,EIT,EIT,171";
         
+        // If new layer exceeds the maximum number of layers allowed, display a message to the user
+        if (this.size() >= this.controller.maxTileLayers) {
+            this.controller.messageConsole.warn("Maximum number of layers reached. " +
+            		                            "Please remove an existing layer before adding a new one.");
+            return;
+        }
+        
         queue = this._queue;
         
         // current layers in above form
@@ -71,13 +78,7 @@ var TileLayerManager = LayerManager.extend(
         layerSettings = this.controller.userSettings.parseLayerString(next + ",1,100");
         
         // Select tiling server if distributed tiling is enabling
-        if ((this.controller.distributed === true) && ((this.size() % 2) === 0)) {
-            rand = Math.floor(Math.random() * (this.controller.tileServers.length - 1)) + 1;
-            layerSettings.server = rand;
-        }
-        else {
-            layerSettings.server = 0;
-        }
+        layerSettings.server = this.controller.selectTilingServer();
 
         // Open menu by default
         layerSettings.startOpened = true;

@@ -54,10 +54,10 @@ class Database_ImgIndex
 
         return array_merge($img, $xmlBox);
     }
-    
+
     /**
-     * Queries database and finds the best matching image. 
-     * 
+     * Queries database and finds the best matching image.
+     *
      * @return array Array including the image id, filepath, filename, date, and sourceId.
      */
     public function getImageFromDatabase($date, $sourceId) {
@@ -83,10 +83,18 @@ class Database_ImgIndex
             $img = $right;
         }
 
+        // Check to make sure a match was found
+        if (is_null($img)) {
+            $sql = "SELECT name FROM datasource WHERE id=$sourceId";
+            $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+            $source = $result["name"];
+            throw new Exception("No images of the requested type ($source) were found in the database.");
+        }
+
         // Fix types
         $img["imageId"]  = (int) $img["imageId"];
         $img["sourceId"] = (int) $img["sourceId"];
-        
+
         return $img;
     }
 
@@ -101,13 +109,13 @@ class Database_ImgIndex
     public function extractJP2MetaInfo ($img)
     {
         include_once "src/Image/JPEG2000/JP2ImageXMLBox.php";
-        
+
         try {
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($img);
-    
+
             $dimensions = $xmlBox->getImageDimensions();
             $center     = $xmlBox->getSunCenter();
-    
+
             $meta = array(
                 "jp2Scale"   => (float) $xmlBox->getImagePlateScale(),
                 "jp2Width"   => (int) $dimensions[0],

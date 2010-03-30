@@ -26,8 +26,8 @@ var Helioviewer = Class.extend(
      * </div>
      * @see Helioviewer#defaultOptions for a list of the available parameters.
      */
-    init: function (viewportId, view, defaults) {
-        $.extend(this, defaults);
+    init: function (viewportId, view, settings) {
+        $.extend(this, settings);
         this.load        = view;
         this.api         = "api/index.php";
         this.viewportId  = viewportId;
@@ -226,6 +226,25 @@ var Helioviewer = Class.extend(
             return false; 
         });
     },
+    
+    /**
+     * Selects a server to handle all tiling and image requests for a given layer
+     */
+    selectTilingServer: function () {
+        // Choose server to use
+        if (this.distributed === true) {
+            if (this.localQueriesEnabled) {
+                rand = Math.floor(Math.random() * (this.tileServers.length));
+            } else {
+                rand = Math.floor(Math.random() * (this.tileServers.length - 1)) + 1;
+            }                    
+            return rand;                    
+        }
+        // If distribted tiling is disabled, local tiling must be enabled
+        else {
+            return 0;
+        }
+    },
 
     /**
      * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
@@ -256,16 +275,8 @@ var Helioviewer = Class.extend(
             layers = [];
             
             $.each(this.load.imageLayers, function () {
-                layerSettings = self.userSettings.parseLayerString(this);
-                
-                // Choose server to use
-                if ((self.distributed === true) && ((layers.length % 2) === 0)) {
-                    rand = Math.floor(Math.random() * (self.load.imageLayers.length - 1)) + 1;
-                    layerSettings.server = rand;
-                }
-                else {
-                    layerSettings.server = 0;
-                }
+                layerSettings        = self.userSettings.parseLayerString(this);
+                layerSettings.server = self.selectTilingServer();
                 
                 // Load layer
                 layers.push(layerSettings);
@@ -285,12 +296,13 @@ var Helioviewer = Class.extend(
      *  switches back to normal view-mode, the viewport will be optimized for the new window size.
      */
     _createFullscreenBtn: function () {
-        var btn, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,
+        var btn, icon, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,
             origViewportHeight, origColMidLeft, origColRightMarginLeft, origCol1PadMarginRight, 
             origCol1PadMarginLeft, origCol2Left, origCol2Width, origHeaderHeight, $_fx_step_default, self, body;
         
-        // get dom-node
-        btn = $("#fullscreen-btn");
+        // get dom-nodes
+        btn  = $("#fullscreen-btn");
+        icon = btn.find(".ui-icon");
         
         // CSS Selectors
         colmid   = $('#colmid');
@@ -431,6 +443,10 @@ var Helioviewer = Class.extend(
                     // Resize in case browser size changed?
                 }
             }
+        }).hover(function () {
+            icon.addClass('ui-icon-hover');
+        }, function () {
+            icon.removeClass('ui-icon-hover');
         });
     },
 

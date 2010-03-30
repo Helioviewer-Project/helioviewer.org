@@ -507,19 +507,7 @@ var TileLayer = Layer.extend(
         // If loading fails...
         img.error(function (e) {
             img.unbind("error");
-            
-            if (self.controller.backupEnabled) {
-            
-                // If it still doesn't work, load the transparent tile
-                $(this).error(function () {
-                    $(this).attr("src", emptyTile);
-                });
-                
-                $(this).attr("src", self.getTileURL(self.controller.backupServer, x, y));
-                
-            } else {
-                $(this).attr("src", emptyTile);
-            }
+            $(this).attr("src", emptyTile);
         });
         
         // Wait until image is done loading specify dimensions in order to prevent Firefox from displaying place-holders
@@ -569,7 +557,6 @@ var TileLayer = Layer.extend(
             "sunCenterOffsetX" : this.origSunCenterOffsetX,
             "sunCenterOffsetY" : this.origSunCenterOffsetY                        
         };
-        
         return url + "?" + $.param(params);
     },
 
@@ -577,7 +564,7 @@ var TileLayer = Layer.extend(
      * @description Returns a stringified version of the tile layer for use in URLs, etc
      * @return string String representation of the tile layer
      */
-    toString: function () {
+    serialize: function () {
         return this.observatory + "," + this.instrument + "," + this.detector + "," + this.measurement + "," +
             (this.visible ? "1" : "0") + "," + this.opacity;
     },
