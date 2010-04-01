@@ -137,7 +137,19 @@ var TooltipHelper = Class.extend(
             style: {
                 name: 'simple',
                 "tip" : tip
+            },
+            hide: {
+                effect: { length: 350 }
+            },
+            api: {
+                onRender: function () { 
+                    var self = this;
+                    self.elements.target.click(function() {
+                        self.hide();
+                    }); 
+                }
             }
+
         });
     },
 

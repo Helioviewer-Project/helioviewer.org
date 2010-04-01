@@ -203,8 +203,7 @@ var TimeControls = Class.extend(
         this._timeInput.bind('change', this, function (e) {
             var self = e.data;
             self.controller.date.updateTime(e.target.value);
-        });
-        
+        });        
         
         //Date field change
         this._dateInput.bind('change', this, function (e) {
