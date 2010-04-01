@@ -244,3 +244,7 @@ div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
    background-color: Azure;  /* GhostWhite #D18F61; lightBlue;*/
    color: #262424;
 }
+
+/* Google Chrome Frame Installer */
+.chromeFrameOverlayContent  {border:1px solid #303030;}
+.chromeFrameOverlayUnderlay {background: #000; opacity: 0.5;}
