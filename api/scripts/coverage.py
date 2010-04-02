@@ -62,19 +62,19 @@ def getFrequencies(cursor, name, id):
     
 def plotFrequencies(name, dates, freqs):
     # mean, median, and standard deviation  
-    mu    = sum(freqs) / len(freqs)
+    avg   = sum(freqs) / len(freqs)
     med   = median(freqs)
     sigma = std(freqs)
 
     # plot results
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.plot(dates, freqs)
+    ax.plot(dates, freqs, color='limegreen')
     fig.autofmt_xdate()
    
-    plt.xlabel('Day')
-    plt.ylabel('Number of Images')
-    plt.title(r'$\mathrm{%s\ Coverage:}\ n=%d,\ \bar{x}=%.5f,\ x_{1/2}=%.5f,\ \hat{\sigma}=%.5f$' % (name, len(freqs), mu, med, sigma))
+    plt.xlabel('Time')
+    plt.ylabel('Number of Images (per day)')
+    plt.title(r'$\mathrm{%s\ Coverage:}\ n=%d,\ \bar{x}=%.5f,\ x_{1/2}=%.5f,\ \hat{\sigma}=%.5f$' % (name, len(freqs), avg, med, sigma))
     #plt.axis([0, 0.05, 0, 1])
     plt.grid(True)
 
