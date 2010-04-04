@@ -16,7 +16,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
         <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-    
+
         <link rel="shortcut icon" href="favicon.ico" />
 
         <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
@@ -52,8 +52,8 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <script src="lib/jquery.imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
 
         <!-- CookieJar -->
-        <script type="text/javascript" src="lib/Cookiejar/jquery.json.js"></script>
-        <script type="text/javascript" src="lib/Cookiejar/jquery.cookie.js"></script>
+        <script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.cookie/jquery.cookie.js"></script>
         <script type="text/javascript" src="lib/Cookiejar/jquery.cookiejar.pack.js"></script>
 
         <!-- date.js -->
@@ -118,7 +118,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
         <script type="text/javascript">
             var config, state, settings, settingsJSON, api;
-            
+
             Shadowbox.init({
                 overlayOpacity: 0.5,
                 troubleElements: ["object", "embed"]
@@ -128,7 +128,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 if ($.browser.msie && ($.browser.version < 8)) {
                     CFInstall.check({mode: "overlay"});
                 }
-                
+
                 <?php
                     printf("settingsJSON = %s;\n", json_encode($config));
 

@@ -407,7 +407,6 @@ var TileLayerAccordion = Layer.extend(
      * @param {String} id
      */
     _removeTooltips: function (id) {
-        //$("#visibilityBtn-" + id + ", #removeBtn-" + id).qtip("destroy");
         $("#visibilityBtn-" + id).qtip("destroy");
         $("#removeBtn-"     + id).qtip("destroy");
     },
