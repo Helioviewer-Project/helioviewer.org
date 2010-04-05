@@ -304,7 +304,7 @@ abstract class Image_CompositeImage
             }
         }
         catch(Exception $e) {
-           logErrorMsg($e->getMessage(), true);
+            logErrorMsg($e->getMessage(), true);
         }
         $tmpImg = $this->_watermark($tmpImg);
         return $tmpImg;
