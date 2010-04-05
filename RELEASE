@@ -1,5 +1,27 @@
                     
                     RELEASE NOTES
+                    
+Helioviewer.org 2.0.1
+======================
+
+Helioviewer.org 2.0.1 is an incremental release which in addition to adding
+backwards support for SOHO v0.6 JPEG 2000 data also includes the following
+changes:
+
+ * Fixed bug #541883: Helper tooltips remain open even after clicking button
+ * Fixed bug #357217: Image layers from previous sessions are sometimes loaded 
+   in wrong order
+ * Fixed bug #391581: Number of layers allowed at any given time should be
+   limited
+ * Fixed bug #539848: IE8 Link button does not generate a valid link
+ * Fixed an issue preventing Chrome Frame Installer from displaying in IE
+ * Updated jQuery UI 1.7.1 => 1.8
+ * Updated jQuery.json => 2.2 (Better native JSON support)
+ * Improved support for running in distributed-mode.
+ * Added support for outputting messages from PHP to Firebug via the FirePHP
+   library
+ * Removed deprecated backup server functionality (no longer necessary)
+
 
 Helioviewer.org 2.0.0
 ======================
