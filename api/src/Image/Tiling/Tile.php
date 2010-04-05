@@ -144,7 +144,7 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
        
         // Length of side in padded tile 
         if ($this->reduce > 0) {
-            $side = ($this->relativeTileSize / pow(2 , $this->reduce));
+            $side = ($this->relativeTileSize / pow(2, $this->reduce));
         } else {
             $side = $this->relativeTileSize;
         }

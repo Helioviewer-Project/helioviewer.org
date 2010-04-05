@@ -546,6 +546,7 @@ var TileLayer = Layer.extend(
             "x"                : x,
             "y"                : y,
             "format"           : format,
+            "date"             : this.date,
             "tileScale"        : this.viewport.imageScale,
             "ts"               : this.tileSize,
             "jp2Width"         : this.jp2Width,

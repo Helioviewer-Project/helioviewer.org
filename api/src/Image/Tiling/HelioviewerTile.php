@@ -45,6 +45,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      * Helioviewer Tile Constructor
      *
      * @param string $uri              URI for the original JPEG 2000 image
+     * @param string $date             The date of the source JP2 image
      * @param int    $x                Helioviewer.org tile x-coordinate
      * @param int    $y                Helioviewer.org tile y-coordinate
      * @param float  $tileScale        Requested image scale to use for tile
@@ -64,7 +65,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      * @return void
      */
     public function __construct(
-        $uri, $x, $y, $tileScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale,
+        $uri, $date, $x, $y, $tileScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale,
         $sunCenterOffsetX, $sunCenterOffsetY, $format, $obs, $inst, $det, $meas, $display = true
     ) {
         $this->_observatory      = $obs;
@@ -75,7 +76,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $this->_sunCenterOffsetY = $sunCenterOffsetY;
 
         $jp2  = HV_JP2_DIR . $uri;
-        $tile = $this->_getTileFilepath($jp2, $x, $y, $tileScale, $format);
+        $tile = $this->_getTileFilepath($jp2, $date, $x, $y, $tileScale, $format);
         
         // If tile already exists in cache, use it
         // TODO: Once a smarter caching system is in place, take advantage of
@@ -114,6 +115,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      * getTileFilePath
      *
      * @param string $jp2    The location of the tile's source JP2 image.
+     * @param string $date   The date of the source JP2 image (e.g. "2003-11-08 01:19:35")
      * @param int    $x      Tile x-coordinate
      * @param int    $y      Tile y-coordinate
      * @param float  $scale  Image scale of requested tile
@@ -121,7 +123,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      *
      * @return string The path in the cache where the tile should be stored
      */
-    private function _getTileFilepath($jp2, $x, $y, $scale, $format)
+    private function _getTileFilepath($jp2, $date, $x, $y, $scale, $format)
     {
         // Base directory
         $filepath = $this->_cacheDir . "/";
@@ -131,9 +133,9 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $filename = substr(end($exploded), 0, -4);
 
         // Date information
-        $year  = substr($filename, 0, 4);
-        $month = substr($filename, 5, 2);
-        $day   = substr($filename, 8, 2);
+        $year  = substr($date, 0, 4);
+        $month = substr($date, 5, 2);
+        $day   = substr($date, 8, 2);
 
         /**
         $fieldArray = array(

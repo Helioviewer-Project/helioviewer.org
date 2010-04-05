@@ -57,10 +57,14 @@ class Database_ImgIndex
 
     /**
      * Queries database and finds the best matching image.
+     * 
+     * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
+     * @param int    $sourceId An identifier specifying the image type or source requested.
      *
      * @return array Array including the image id, filepath, filename, date, and sourceId.
      */
-    public function getImageFromDatabase($date, $sourceId) {
+    public function getImageFromDatabase($date, $sourceId)
+    {
         include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);

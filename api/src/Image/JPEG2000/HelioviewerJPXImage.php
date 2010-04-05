@@ -157,12 +157,13 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
     
     /**
      * Checks the request start and end dates. If either are outside of the range of available data, then
-     * they are adjust so that they fall within the available data range. If the request range falls completely
-     * outside of the range of available data then no movie is generated.     * 
+     * they are adjusted so that they fall within the available data range. If the request range falls completely
+     * outside of the range of available data then no movie is generated. 
      * 
-     * @return 
+     * @return void 
      */
-    private function _checkRequestDates() {
+    private function _checkRequestDates()
+    {
         // Retrieve first and last date for requested data source
         // Update start and end date to ensure that it is within range
         // Record a message if neccessary
