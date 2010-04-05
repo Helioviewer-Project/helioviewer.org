@@ -152,9 +152,9 @@ class Image_SubFieldImage
             
             // IM commands for transparency, padding, rescaling, etc.
             if ($this->hasAlphaMask()) {
-               $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
+                $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
             } else {
-               $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
+                $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
             }
 
             // Compression settings & Interlacing
@@ -212,6 +212,10 @@ class Image_SubFieldImage
     
     /**
      * Set true to skip final resizing and return unscaled subfield image
+     * 
+     * @param bool $value Whether or not the resizing step should be skipped
+     * 
+     * @return void
      */
     protected function setSkipResize($value)
     {
@@ -232,6 +236,10 @@ class Image_SubFieldImage
     
     /**
      * Sets parameters (gravity and size) for any padding which should be applied to extracted subfield image
+     * 
+     * @param array $padding An associative array containing the width,height, and gravity values to use during padding.
+     * 
+     * @return void
      */
     protected function setPadding($padding)
     {

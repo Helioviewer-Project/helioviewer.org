@@ -33,6 +33,21 @@ var LayerManager = Class.extend(
     size: function () {
         return this._layers.length;
     },
+    
+    /**
+     * Returns the index of the given layer if it exists, and -1 otherwise
+     */
+    indexOf: function (id) {
+        var index = -1;
+        
+        $.each(this._layers, function (i, item) {
+            if (item.id === id) {
+                index = i;
+            }
+        });
+        
+        return index;
+    },
 
     /**
      * @description Removes a layer
