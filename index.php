@@ -84,7 +84,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             if ($config["compress_js"]) {
             	$compressed = "build/helioviewer.min.js";
             	if (!file_exists($compressed)) {
-            	   $error = "<div style='position: absolute; width: 100%; text-align: center; top: 50%; font-size: 14px;'>
+            	   $error = "<div style='position: absolute; width: 100%; text-align: center; top: 40%; font-size: 14px;'>
             	             <img src='resources/images/logos/about.png' alt='helioviewer logo'></img><br>
             	             <b>Configuration:</b> Unable to find compressed JavaScript files.
             	             If you haven't already, use Apache Ant with the included build.xml file to generate compressed files.</div></body></html>";

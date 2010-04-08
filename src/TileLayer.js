@@ -497,7 +497,6 @@ var TileLayer = Layer.extend(
         img.onselectstart = rf;
         img.galleryimg    = 'no';
 
-        
         img = $(img).addClass("tile").css({"left": left, "top": top}).attr("alt", "");
 
         // IE
