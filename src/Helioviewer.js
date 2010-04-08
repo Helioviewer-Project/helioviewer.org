@@ -106,7 +106,7 @@ var Helioviewer = Class.extend(
         this.eventLayerAccordion = new EventLayerAccordion(this, '#eventAccordion');
 
         //Fullscreen button
-        this._createFullscreenBtn();
+        this.fullScreenMode = new FullscreenControl(this, "#fullscreen-btn", 500);
             
         //Mouse coordinates
         mouseCoords = $('<div id="mouse-coords" style="display: none;"></div>').appendTo(this.viewport.innerNode);
@@ -125,7 +125,7 @@ var Helioviewer = Class.extend(
 
         // Timeline
         //this.timeline = new EventTimeline(this, "timeline");
-    },
+    },   
     
     /**
      * @description Checks browser support for various features used in Helioviewer
@@ -284,170 +284,6 @@ var Helioviewer = Class.extend(
             this.userSettings.set('tileLayers', layers);
         }
 
-    },
-    
-    /**
-     * @description Creates an HTML button for toggling between regular and fullscreen display
-     * 
-     * TODO 03/15/2010:
-     *  Instead of storing the original dimensions and then simply reverting to them later, a better
-     *  approach might be to compute write methods to compute what those values should be for any given
-     *  screen size. This way if a user switches to full screen mode, resizes the browser window, and then
-     *  switches back to normal view-mode, the viewport will be optimized for the new window size.
-     */
-    _createFullscreenBtn: function () {
-        var btn, icon, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,
-            origViewportHeight, origColMidLeft, origColRightMarginLeft, origCol1PadMarginRight, 
-            origCol1PadMarginLeft, origCol2Left, origCol2Width, origHeaderHeight, $_fx_step_default, self, body;
-        
-        // get dom-nodes
-        btn  = $("#fullscreen-btn");
-        icon = btn.find(".ui-icon");
-        
-        // CSS Selectors
-        colmid   = $('#colmid');
-        colright = $('#colright');
-        col1pad  = $('#col1pad');
-        col2     = $('#col2');
-        body     = $('body');
-        vp       = $('#helioviewer-viewport-container-outer');
-        sb       = $('#sandbox');
-        header   = $('#header');
-        meta     = $('#footer-container-outer');
-        panels   = $("#col2, #col3, #header, #footer");
-       
-        // animation speed
-        speed = 500;
-        
-        // margin-size
-        marginSize = 4;
-
-        // Overide jQuery's animation method
-        // http://acko.net/blog/abusing-jquery-animate-for-fun-and-profit-and-bacon
-        self  = this;
-        $_fx_step_default = $.fx.step._default;
-        $.fx.step._default = function (fx) {
-            if (fx.elem.id !== "sandbox") {
-                return $_fx_step_default(fx);
-            }
-            self.viewport.updateSandbox();
-            fx.elem.updated = true;
-        };
-        
-        // setup event-handler
-        btn.click(function () {
-            if (!btn.hasClass('requests-disabled')) {
-                            
-                // toggle fullscreen class
-                colmid.toggleClass('fullscreen-mode');
-                
-                // make sure action finishes before starting a new one
-                btn.addClass('requests-disabled');
-                
-                // fullscreen mode
-                if (colmid.hasClass('fullscreen-mode')) {
-                    
-                    // hide overflow
-                    body.css('overflow', 'hidden');
-                    
-                    meta.hide();
-   
-                    // keep track of original dimensions
-                    origColMidLeft         = colmid.css("left");
-                    origColRightMarginLeft = colright.css("margin-left");
-                    origCol1PadMarginLeft  = col1pad.css("margin-left");
-                    origCol1PadMarginRight = col1pad.css("margin-right");
-                    origCol2Left           = col2.css("left");
-                    origCol2Width          = col2.width();
-                    origHeaderHeight       = header.height();
-                    origViewportHeight     = vp.height();
-                    
-                    colmid.animate({ 
-                        left: 0
-                    }, speed,
-                    function () {
-                        self.viewport.checkTiles();
-                        self.tileLayers.resetLayers();
-                        self.eventLayers.resetLayers();
-                        panels.hide();
-                        btn.removeClass('requests-disabled');
-                    });
-                    
-                    colright.animate({
-                        "margin-left": 0
-                    }, speed);
-                    
-                    col1pad.animate({
-                        "margin-left" : 4,
-                        "margin-right": 4,
-                        "margin-top":   4
-                    }, speed);
-                    
-                    col2.animate({
-                        "left": -(parseInt(origCol2Left, 10) + origCol2Width)
-                    }, speed);
-                    
-                    header.animate({
-                        "height": 0
-                    }, speed);
-                       
-                    vp.animate({
-                        height: $(window).height() - (marginSize * 3)
-                    }, speed);
-     
-                    // Keep sandbox up to date
-                    sb.animate({
-                        right: 1 // Trash
-                    }, speed);                
-               
-                // regular mode      
-                } else {
-                    panels.show();
-                        
-                    colmid.animate({ 
-                        left:  origColMidLeft
-                    }, speed,
-                    function () {
-                        btn.removeClass('requests-disabled');    
-                        meta.show();
-                        
-                        // show overflow
-                        body.css('overflow', 'visible');
-                    });
-                    
-                    colright.animate({
-                        "margin-left": origColRightMarginLeft
-                    }, speed);
-                    
-                    col1pad.animate({
-                        "margin-left" : origCol1PadMarginLeft,
-                        "margin-right": origCol1PadMarginRight,
-                        "margin-top"  : 0
-                    }, speed);
-                    
-                    col2.animate({
-                        left: origCol2Left
-                    }, speed);
-                    
-                    header.animate({
-                        "height": origHeaderHeight
-                    }, speed);
-    
-                    vp.animate({
-                        height: origViewportHeight
-                    }, speed);
-                    sb.animate({
-                        right: 0
-                    }, speed);
-                    
-                    // Resize in case browser size changed?
-                }
-            }
-        }).hover(function () {
-            icon.addClass('ui-icon-hover');
-        }, function () {
-            icon.removeClass('ui-icon-hover');
-        });
     },
 
     /**
