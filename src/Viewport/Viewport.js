@@ -336,11 +336,11 @@ var Viewport = Class.extend(
         oldDimensions = this.dimensions;
         
         // Make room for footer and header if not in fullscreen mode
-        if (!$('#container').hasClass('fullscreen-mode')) {
-            padHeight = this.headerAndFooterHeight;
+        if (this.controller.fullScreenMode && this.controller.fullScreenMode.isEnabled()) {
+            padHeight = 0;
         }
         else {
-            padHeight = 0;
+            padHeight = this.headerAndFooterHeight;
         }
         
         // Ensure minimum height

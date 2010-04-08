@@ -99,8 +99,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         "Tiling/LayerManager.js", "Events/EventLayerManager.js", "Tiling/TileLayerManager.js", 
                         "Movies/MediaSettings.js", "UI/MessageConsole.js", "Movies/MovieBuilder.js", "Utility/Time.js",
                          "UI/ScreenshotBuilder.js", "Tiling/TileLayer.js", "Tiling/TileLayerAccordion.js", 
-                        "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", "Viewport/Viewport.js",
-                        "Viewport/ViewportHandlers.js", "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js");
+                        "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
+                        "Viewport/FullscreenControl.js", "Viewport/Viewport.js", "Viewport/ViewportHandlers.js", 
+                        "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js");
             foreach($js as $file)
                 printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
         }

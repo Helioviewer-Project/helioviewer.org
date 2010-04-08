@@ -36,7 +36,7 @@ var ImageSelectTool = Class.extend(
             // Otherwise, turn it on.
             else {
                 // Disable keyboard shortcuts for fullscreen mode
-                $("#fullscreen-btn").addClass('requests-disabled');
+                $("body").addClass('disable-fullscreen-mode');
                 self.active = true;
                 helioviewer = self.controller;
                 
@@ -174,6 +174,6 @@ var ImageSelectTool = Class.extend(
         $('#imgContainer, #transparent-image').remove();
         
         this.active = false;
-        $("#fullscreen-btn").removeClass('requests-disabled');
+        $("body").removeClass('disable-fullscreen-mode');
     }
 });
