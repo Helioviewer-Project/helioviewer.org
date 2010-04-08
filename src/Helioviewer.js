@@ -513,28 +513,6 @@ var Helioviewer = Class.extend(
     },
 
     /**
-     * @description Adds a tooltip with specified settings to a given component.
-     * @param {String} CSS selector of th element to add ToolTip to.
-     * @param {Hash}   A hash containing any options configuration parameters to use.
-     */
-    addToolTip: function (id, params) {
-        var options = params || [],
-            classname = "tooltip-" + (options.position || "bottomleft") + "-" + (options.tooltipSize || "medium");
-
-        $(id).tooltip({
-            delay: (options.delay ? options.delay : 1000),
-            track: (options.track ? options.track : false),
-            showURL: false,
-            opacity: 1,
-            fixPNG: true,
-            showBody: " - ",
-            extraClass: classname,
-            top:  (options.yOffset ? options.yOffset : 0),
-            left: (options.xOffset ? options.xOffset : 12)
-        });
-    },
-
-    /**
      * @description Translates a given zoom-level into an image plate scale.
      */
     getImageScale: function () {
