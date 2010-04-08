@@ -102,16 +102,11 @@ var Helioviewer = Class.extend(
         this.messageConsole = new MessageConsole(this);
 
         //Tile & Event Layer Accordions (accordions must come before LayerManager instance...)
-        this.tileLayerAccordion  = new TileLayerAccordion(this, '#tileLayerAccordion');
+        this.tileLayerAccordion  = new TileLayerAccordion(this,  '#tileLayerAccordion');
         this.eventLayerAccordion = new EventLayerAccordion(this, '#eventAccordion');
 
         //Fullscreen button
         this.fullScreenMode = new FullscreenControl(this, "#fullscreen-btn", 500);
-            
-        //Mouse coordinates
-        mouseCoords = $('<div id="mouse-coords" style="display: none;"></div>').appendTo(this.viewport.innerNode);
-        mouseCoords.append('<div id="mouse-coords-x" style="width: 50%; float: left;"></div>');
-        mouseCoords.append('<div id="mouse-coords-y" style="width: 50%; float: left;"></div>');
 
         // Setup dialog event listeners
         this._setupDialogs();
