@@ -243,6 +243,12 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                                 <div id='fullscreen-btn' title="Toggle fullscreen display.">
                                     <span class='ui-icon ui-icon-arrow-4-diag'></span>
                                 </div>
+                                
+                                <!-- Mouse coordinates display -->
+                                <div id="mouse-coords" style="display: none;">
+                                    <div id="mouse-coords-x"></div>
+                                    <div id="mouse-coords-y"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
