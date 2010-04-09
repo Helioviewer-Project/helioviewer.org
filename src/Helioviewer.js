@@ -288,6 +288,8 @@ var Helioviewer = Class.extend(
             prefetch: this.prefetchSize,
             debug: false
         });
+        
+        this.updateShadows();
     },
 
     /**
@@ -299,28 +301,13 @@ var Helioviewer = Class.extend(
         // Initiallize keyboard shortcut manager
         this.keyboard = new KeyboardManager(this);
         
-        $('#center-button').click(function () {
-            self.viewport.center.call(self.viewport);
-        });
-        
-        // Link button
-        $('#link-button').click(function () {
-            self.displayURL();
-        });
-        
-        // Email button
-        $('#email-button').click(function () {
-            self.displayMailForm();
-        });
-        
-        // JHelioviewer button
-        $('#jhelioviewer-button').click(function () {
-            //console.log(self.tileLayers.toURIString());
-            window.open("http://www.jhelioviewer.org", "_blank");
-        });
+        $('#center-button').click($.proxy(this.viewport.center, this.viewport));
+        $('#link-button'  ).click($.proxy(this.displayURL, this));
+        $('#email-button' ).click($.proxy(this.displayMailForm, this));
+        $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
 
         // Hover effect for text/icon buttons        
-        $('.text-btn').hover(function () {
+        $('#social-buttons .text-btn').hover(function () {
             $(this).children(".ui-icon").addClass("ui-icon-hover");
         },
             function () {
@@ -334,8 +321,8 @@ var Helioviewer = Class.extend(
     _initLoadingIndicator: function () {
         $(document).ajaxStart(function () {
             $('#loading').show();
-        });
-        $(document).ajaxStop(function () {
+        })
+        .ajaxStop(function () {
             $('#loading').hide();
         });  
     },
@@ -420,6 +407,50 @@ var Helioviewer = Class.extend(
             height:     455,
             width:      400
         });
+    },
+    
+    /**
+     * Launches an instance of JHelioviewer
+     */
+    launchJHelioviewer: function () {
+        window.open("http://www.jhelioviewer.org", "_blank");
+    },
+    
+    /**
+     * @description Adds an animated text shadow based on the position and size of the Sun (Firefox 3.5+)
+     * Added 2009/06/26
+     * TODO: Apply to other text based on it's position on screen? Adjust blue based on zoom-level?
+     *       Use viewport size to determine appropriate scales for X & Y offsets (normalize)
+     *       Re-use computeCoordinates?
+     */
+    updateShadows: function () {
+        // Not supported in older versions of Firefox, or in IE
+        if (!$.support.textShadow) {
+            return;
+        }
+        
+        var viewportOffset, sunCenterOffset, coords, viewportCenter, offsetX, offsetY;
+        
+        viewportOffset  = $("#helioviewer-viewport").offset();
+        sunCenterOffset = $("#moving-container").offset();
+
+        // Compute coordinates of heliocenter relative to top-left corner of the viewport
+        coords = {
+            x: sunCenterOffset.left - viewportOffset.left,
+            y: sunCenterOffset.top - viewportOffset.top
+        };
+        
+        // Coordinates of heliocenter relative to the viewport center
+        viewportCenter = this.viewport.getCenter();
+        coords.x = coords.x - viewportCenter.x;
+        coords.y = coords.y - viewportCenter.y;
+        
+        // Shadow offset
+        offsetX = ((500 - coords.x) / 100) + "px";
+        offsetY = ((500 - coords.y) / 150) + "px";
+
+        //console.log("x: " + coords.x + ", y: " + coords.y);
+        $("#footer-links > .light").css("text-shadow", offsetX + " " + offsetY + " 3px #000");
     },
     
     /**

@@ -1,5 +1,5 @@
 /**
- * @fileOverview Contains the class definition for an ViewportHandlers class.
+ * @fileOverview Contains the class definition for an ViewportController class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
  * 
@@ -15,16 +15,14 @@
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, document, $ */
 "use strict";
-var ViewportHandlers = Class.extend(
-    /** @lends ViewportHandlers.prototype */
+var ViewportController = Class.extend(
+    /** @lends ViewportController.prototype */
     {
     mouseStartingPosition: { x: 0, y: 0 },
     mouseCurrentPosition : { x: 0, y: 0 },
-    mouseCoords          : { x: 0, y: 0 },
     moveCounter         : 0,
     imageUpdateThrottle : 3,
     tileUpdateThrottle  : 9,
-    //rSunArcSeconds      : 975,
     animatedTextShadow  : true,
 
     /**
@@ -35,6 +33,9 @@ var ViewportHandlers = Class.extend(
      */
     init: function (viewport) {
         this.viewport = viewport;
+        this.mouseCoords  = "disabled";
+        this.mouseCoordsX = $('#mouse-coords-x');
+        this.mouseCoordsY = $('#mouse-coords-y');
         this._initEvents();
     },
 
@@ -86,7 +87,7 @@ var ViewportHandlers = Class.extend(
         };
 
         // Update text-shadows
-        //this.updateShadows();
+        //this.viewport.controller.updateShadows();
 
         this.viewport.moveBy(this.mouseStartingPosition.x - this.mouseCurrentPosition.x,
                              this.mouseStartingPosition.y - this.mouseCurrentPosition.y);
@@ -167,65 +168,28 @@ var ViewportHandlers = Class.extend(
     },
      
     /**
-     * @description Adds an animated text shadow based on the position and size of the Sun (Firefox 3.5+)
-     * Added 2009/06/26
-     * TODO: Apply to other text based on it's position on screen? Adjust blue based on zoom-level?
-     *       Use viewport size to determine appropriate scales for X & Y offsets (normalize)
-     *       Re-use computeCoordinates?
-     */
-    updateShadows: function () {
-        // Not supported in older versions of Firefox, or in IE
-        if (!$.support.textShadow) {
-            return;
-        }
-        
-        var viewportOffset, sunCenterOffset, coords, viewportCenter, offsetX, offsetY;
-        
-        viewportOffset  = $("#helioviewer-viewport").offset();
-        sunCenterOffset = $("#moving-container").offset();
-
-        // Compute coordinates of heliocenter relative to top-left corner of the viewport
-        coords = {
-            x: sunCenterOffset.left - viewportOffset.left,
-            y: sunCenterOffset.top - viewportOffset.top
-        };
-        
-        // Coordinates of heliocenter relative to the viewport center
-        viewportCenter = this.viewport.getCenter();
-        coords.x = coords.x - viewportCenter.x;
-        coords.y = coords.y - viewportCenter.y;
-        
-        // Shadow offset
-        offsetX = ((500 - coords.x) / 100) + "px";
-        offsetY = ((500 - coords.y) / 150) + "px";
-
-        //console.log("x: " + coords.x + ", y: " + coords.y);
-        $("#footer-links > .light").css("text-shadow", offsetX + " " + offsetY + " 3px #000");
-    },
-    
-    /**
      * @description Toggles mouse-coords visibility
      * 
      * TODO (2009/07/27) Disable mouse-coords display during drag & drop
      */
     toggleMouseCoords: function () {
-        var vp, mouseCoordsX, mouseCoordsY, updateMouseCoords, warning, self = this;
+        var vp, mouseCoordsX, mouseCoordsY, updateMouseCoords, warning;
         
         // Case 1: Disabled -> Arcseconds 
-        if (this.viewport.mouseCoords === "disabled") {
-            this.viewport.mouseCoords = "arcseconds";
+        if (this.mouseCoords === "disabled") {
+            this.mouseCoords = "arcseconds";
             $('#mouse-coords').toggle();
         }
 
         // Case 2: Arcseconds -> Polar Coords
-        else if (this.viewport.mouseCoords === "arcseconds") {
-            this.viewport.mouseCoords = "polar";
+        else if (this.mouseCoords === "arcseconds") {
+            this.mouseCoords = "polar";
         }
 
         // Case 3: Polar Coords -> Disabled
         else {
             $('#mouse-coords').toggle();
-            this.viewport.mouseCoords = "disabled";
+            this.mouseCoords = "disabled";
         }
           
         // Warn once
@@ -236,61 +200,55 @@ var ViewportHandlers = Class.extend(
         }
           
         // Cartesian & Polar coords
-        if (this.viewport.mouseCoords !== "disabled") {
-            mouseCoordsX = $('#mouse-coords-x');
-            mouseCoordsY = $('#mouse-coords-y');
-               
+        if (this.mouseCoords !== "disabled") {
+
             // Clear old values
-            mouseCoordsX.empty();
-            mouseCoordsY.empty();
+            this.mouseCoordsX.empty();
+            this.mouseCoordsY.empty();
 
             // Remove existing event handler if switching from cartesian -> polar
-            if (this.viewport.mouseCoords === "polar") {
-                $('#moving-container').unbind('mousemove', updateMouseCoords);
+            if (this.mouseCoords === "polar") {
+                $('#moving-container').unbind('mousemove', this.updateMouseCoords);
             }
                
-            /**
-             * @description Event-handler for displaying mouse-coords
-             * @param {Event} e
-             */
-            updateMouseCoords = function (e) {
-                var cartesian, polar;
-                                        
-                // Store current mouse-coordinates
-                self.mouseCoords = {x: e.pageX, y: e.pageY};
-                
-                // Threshold
-                self.moveCounter = self.moveCounter + 1;
-                if ((self.moveCounter % self.imageUpdateThrottle) !== 0) {
-                    return;
-                }
-
-                self.moveCounter = self.moveCounter % self.tileUpdateThrottle;
-                    
-                // Compute coordinates relative to top-left corner of the viewport
-                cartesian = self.computeMouseCoords(e.pageX, e.pageY);
-                                    
-                // Arc-seconds
-                if (self.viewport.mouseCoords === "arcseconds") {
-                    mouseCoordsX.html("x: " + cartesian.x + " &prime;&prime;");
-                    mouseCoordsY.html("y: " + cartesian.y + " &prime;&prime;");
-                         
-                // Polar coords
-                } else {
-                    polar = Math.toPolarCoords(cartesian.x, -cartesian.y);     
-                    
-                    mouseCoordsX.html(((polar.r / self.viewport.rsun) + "").substring(0, 5) +
-                        " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
-                    mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
-                }
-            };
-            $('#moving-container').bind('mousemove', updateMouseCoords);     
+            $('#moving-container').bind('mousemove', $.proxy(this.updateMouseCoords, this));     
                
-            // Execute handler once immediately to show new coords
-            updateMouseCoords({pageX: this.mouseCoords.x, pageY: this.mouseCoords.y});
-               
+            // TODO: Execute handler once immediately if mouse is over viewport to show new coords     
+            // Use trigger to fire mouse move event and then check to make sure mouse is within viewport?         
         } else {
-            $('#moving-container').unbind('mousemove', updateMouseCoords);
+            $('#moving-container').unbind('mousemove', this.updateMouseCoords);
+        }
+    },
+    
+    /**
+     * updateMouseCoords
+     */
+    updateMouseCoords: function (event) {
+        var cartesian, polar;
+        
+        // Threshold
+        this.moveCounter = this.moveCounter + 1;
+        if ((this.moveCounter % this.imageUpdateThrottle) !== 0) {
+            return;
+        }
+
+        this.moveCounter = this.moveCounter % this.tileUpdateThrottle;
+            
+        // Compute coordinates relative to top-left corner of the viewport
+        cartesian = this.computeMouseCoords(event.pageX, event.pageY);
+                            
+        // Arc-seconds
+        if (this.mouseCoords === "arcseconds") {
+            this.mouseCoordsX.html("x: " + cartesian.x + " &prime;&prime;");
+            this.mouseCoordsY.html("y: " + cartesian.y + " &prime;&prime;");
+                 
+        // Polar coords
+        } else {
+            polar = Math.toPolarCoords(cartesian.x, -cartesian.y);     
+            
+             this.mouseCoordsX.html(((polar.r / this.viewport.rsun) + "").substring(0, 5) +
+                " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
+             this.mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
         }
     },
     
