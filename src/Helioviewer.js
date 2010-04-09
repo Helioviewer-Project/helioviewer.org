@@ -61,7 +61,7 @@ var Helioviewer = Class.extend(
             " First time here? Be sure to check out our <a class=\"message-console-link\" " +
             "href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" target=\"_blank\">" +
             "User Guide</a>.", {life: 15000});
-            this.userSettings.set('showWelcomeMsg', false);
+            $(document).trigger("save-setting", ["showWelcomeMsg", false]);
         }
     },
     
@@ -255,11 +255,11 @@ var Helioviewer = Class.extend(
         // Load any view parameters specified via API
         if (this.load.date) {
             timestamp = getUTCTimestamp(this.load.date);
-            this.userSettings.set('date', timestamp);
+            $(document).trigger("save-setting", ["date", timestamp]);
         }
 
         if (this.load.imageScale) {
-            this.userSettings.set('imageScale', parseFloat(this.load.imageScale));
+            $(document).trigger("save-setting", ["imageScale", parseFloat(this.load.imageScale)]);
         }
 
         // Process and load and layer strings specified
@@ -273,7 +273,7 @@ var Helioviewer = Class.extend(
                 // Load layer
                 layers.push(layerSettings);
             });
-            this.userSettings.set('tileLayers', layers);
+            $(document).trigger("save-setting", ["tileLayers", layers]);
         }
 
     },

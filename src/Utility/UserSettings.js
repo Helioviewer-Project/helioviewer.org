@@ -31,6 +31,7 @@ var UserSettings = Class.extend(
                 
         // Initialize storage
         this._initStorage();
+        this._setupEventHandlers();
     },
 
     /**
@@ -105,6 +106,17 @@ var UserSettings = Class.extend(
         if (this.get('version') !== this._defaults.version) {
             this._loadDefaults();
         }
+    },
+    
+    /**
+     * Sets up event-handlers
+     */
+    _setupEventHandlers: function () {
+        var self = this;
+        
+        $(document).bind("save-setting", function(event, key, value) {
+            self.set(key, value);
+        });
     },
     
     /**

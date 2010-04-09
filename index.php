@@ -30,7 +30,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <link rel="stylesheet" href="resources/css/layout.css" type="text/css" />
 
     <!-- jQuery -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
     <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
     <!--<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.js" type="text/javascript"></script>
