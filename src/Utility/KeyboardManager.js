@@ -60,11 +60,10 @@ var KeyboardManager = Class.extend(
             // Arrow keys
             if (key === 37 || key === 38 || key === 39 || key === 40) {
                 vp.startMoving();
-                vp.viewportController.moveCounter += 1; // Threshold
-                //if ((vp.viewportController.moveCounter % vp.viewportController.imageUpdateThrottle) !== 0)
+                vp.moveCounter += 1; // Threshold
+                //if ((vp.moveCounter % vp.imageUpdateThrottle) !== 0)
                 //    return;
-                vp.viewportController.moveCounter = 
-                    vp.viewportController.moveCounter % vp.viewportController.tileUpdateThrottle;
+                vp.moveCounter = vp.moveCounter % vp.tileUpdateThrottle;
                 
                 //Right-arrow
                 if (key === 37) {
@@ -94,7 +93,7 @@ var KeyboardManager = Class.extend(
                 $("#center-button").click();
             }
             else if (character === "m") {
-                vp.viewportController.toggleMouseCoords();
+                vp.toggleMouseCoords();
             }
             else if (character === "-" || character === "_") {
                 $("#zoomControlZoomOut").click();
