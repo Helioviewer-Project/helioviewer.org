@@ -73,28 +73,6 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white light) into its component parts and returns 
-     * a javascript representation.
-     * 
-     * @param {String} The layer identifier as an underscore-concatenated string
-     * @see TileLayer.toString
-     * 
-     * @returns {Object} A simple javascript object representing the layer params
-     */
-    parseLayerString: function (str) {
-        var params = str.split(",");
-        return {
-            observatory: params[0],
-            instrument : params[1],
-            detector   : params[2],
-            measurement: params[3],
-            visible    : Boolean(parseInt(params[4], 10)),
-            opacity    : parseInt(params[5], 10),
-            server     : parseInt(params[6], 10) || 0
-        };
-    },
-
-    /**
      * Checks to see if there are any existing stored user settings
      * 
      * @returns {Boolean} Returns true if stored Helioviewer.org settings are detected

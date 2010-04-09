@@ -267,7 +267,7 @@ var Helioviewer = Class.extend(
             layers = [];
             
             $.each(this.load.imageLayers, function () {
-                layerSettings        = self.userSettings.parseLayerString(this);
+                layerSettings        = TileLayerManager.parseLayerString(this);
                 layerSettings.server = self.selectTilingServer();
                 
                 // Load layer
