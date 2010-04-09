@@ -16,15 +16,6 @@ var UserSettings = Class.extend(
      * like the requested observation time, image zoom level, and the layers currently loaded. The UserSettings
      * class has the ability to use both HTML5 local storage and cookies for saving information. In addition, 
      * when supported, objects are stored as JSON objects rather than strings.<br><br>
-     * 
-     * <div style="color: gray;">
-     *    Keith 2009/07/01: 
-     *    
-     *    There is currently a bug in the Prototype 1.6 series which prevents
-     *    Firefox 3.5's native JSON functionality from working properly.
-     *    The issue should be fixed in the upcoming 1.7 series.
-     *    See: https://prototype.lighthouseapp.com/projects/8886/tickets/730
-     * </div>
      *    
      * @constructs
      * @param {Object} controller A reference to the Helioviewer application class
@@ -76,36 +67,6 @@ var UserSettings = Class.extend(
         return this.settings[key];
     },
     
-    /**
-     * Builds a URL for the current view
-     *
-     * @TODO: Add support for viewport offset, event layers, opacity
-     * @TODO: Make into a static method for use by Jetpack, etc? http://www.ruby-forum.com/topic/154386
-     * 
-     * @returns {String} A URL representing the current state of Helioviewer.org.
-     */
-    toURL: function () {
-        var url, date, imageScale, imageLayers;
-        
-        // Base URL
-        //url = "http://www.helioviewer.org/?";
-        url = this.controller.rootURL + "/?";
-        
-        // Add timestamp
-        date = this.controller.date.toISOString();
-    
-        // Add image scale
-        imageScale = this.controller.getImageScale();
-        
-        // Image layers
-        imageLayers = this.controller.tileLayers.serialize();
-        
-        // Build URL
-        url += "date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
-
-        return url;
-    },
-
     /**
      * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white light) into its component parts and returns 
      * a javascript representation.
