@@ -14,17 +14,12 @@ var Helioviewer = Class.extend(
     /** @lends Helioviewer.prototype */
     {
     /**
+     * Creates a new Helioviewer instance.
      * @constructs
-     * @description Creates a new Helioviewer instance.
-     * @param {Object} options Custom application settings.
-     * <br>
-     * <br><div style='font-size:16px'>Options:</div><br>
-     * <div style='margin-left:15px'>
-     *        <b>defaultPrefetchSize</b> - The radius outside of the visible viewport to prefetch.<br>
-     *        <b>timeIncrementSecs</b>   - The default amount of time to move when the time navigation
-     *                                     arrows are pressed.<br>
-     * </div>
-     * @see Helioviewer#defaultOptions for a list of the available parameters.
+     * 
+     * @param {String} viewportId Viewport container selector.
+     * @param {Object} view       Client-specified settings to load
+     * @param {Object} settings   Server settings
      */
     init: function (viewportId, view, settings) {
         $.extend(this, settings);
@@ -36,7 +31,7 @@ var Helioviewer = Class.extend(
         this._checkBrowser();
         
         // Load user-settings
-        this.loadUserSettings();
+        this._loadUserSettings();
         
         // Loading indicator
         this._initLoadingIndicator();
@@ -244,7 +239,7 @@ var Helioviewer = Class.extend(
     /**
      * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
      */
-    loadUserSettings: function () {
+    _loadUserSettings: function () {
         var timestamp, layerSettings, layers, rand, self = this;
         
         // Optional debugging information
@@ -358,7 +353,7 @@ var Helioviewer = Class.extend(
         var url, w;
         
         // Get URL
-        url = this.userSettings.toURL();
+        url = this.toURL();
         
         // Shadowbox width
         w = $('html').width() * 0.5;
@@ -391,7 +386,7 @@ var Helioviewer = Class.extend(
      */
     displayMailForm: function () {
         // Get URL
-        var url = this.userSettings.toURL();
+        var url = this.toURL();
         
         Shadowbox.open({
             content:    '<div id="helioviewer-url-box">' +
@@ -423,6 +418,32 @@ var Helioviewer = Class.extend(
             height:     455,
             width:      400
         });
+    },
+    
+    /**
+     * Builds a URL for the current view
+     *
+     * @TODO: Add support for viewport offset, event layers, opacity
+     * @TODO: Make into a static method for use by Jetpack, etc? http://www.ruby-forum.com/topic/154386
+     * 
+     * @returns {String} A URL representing the current state of Helioviewer.org.
+     */
+    toURL: function () {
+        var url, date, imageScale, imageLayers;
+        
+        // Add timestamp
+        date = this.date.toISOString();
+    
+        // Add image scale
+        imageScale = this.getImageScale();
+        
+        // Image layers
+        imageLayers = this.tileLayers.serialize();
+        
+        // Build URL
+        url = this.rootURL + "/?date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
+
+        return url;
     }
 });
 
