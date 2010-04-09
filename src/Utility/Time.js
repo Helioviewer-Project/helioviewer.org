@@ -93,7 +93,7 @@ var Time = Class.extend(
             this.setDate(utcDate);
         }
         else {
-            this.controller.messageConsole.warn('Invalid date. Please enter a date of the form YYYY/MM/DD.');
+            $(document).trigger("message-console-warn", ["Invalid date. Please enter a date of the form YYYY/MM/DD."]); 
         }
     },
 
@@ -122,7 +122,7 @@ var Time = Class.extend(
             this.setDate(this._date);
         }
         else {
-            this.controller.messageConsole.warn('Invalid time. Please enter a time of the form HH:MM:SS.');
+            $(document).trigger("message-console-warn", ["Invalid time. Please enter a time of the form HH:MM:SS."]);
         }
     }
 });

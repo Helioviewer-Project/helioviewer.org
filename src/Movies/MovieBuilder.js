@@ -149,7 +149,8 @@ var MovieBuilder = Class.extend(
                             else {
                                 // clear out finalLayers and try again
                                 finalLayers = [];
-                                self.controller.messageConsole.error("Please select between 1 and 3 layer choices.");
+                                var msg = "Please select between 1 and 3 layer choices.";
+                                $(document).trigger("message-console-error", [msg]);
                             }
                         });
                     }
@@ -234,11 +235,11 @@ var MovieBuilder = Class.extend(
                 };
 
                 // Make the jGrowl notification with the options above.
-                helioviewer.messageConsole.info("<div id='watch-" + mediaSettings.filename +
+                $(document).trigger("message-console-info", ["<div id='watch-" + mediaSettings.filename +
                     "' style='cursor: pointer'>Click here to watch it</div>" +
                     "-or-<br />" + 
                     "<div id='download-" + mediaSettings.filename +
-                    "' style='cursor: pointer'>Click here to download a high-quality version.</div>", options);
+                    "' style='cursor: pointer'>Click here to download a high-quality version.</div>", options]);
             } 
         };
 
@@ -315,7 +316,7 @@ var MovieBuilder = Class.extend(
         });
         
         if (this.percent <= 100) {
-            this.controller.messageConsole.progress('Movie loading: ' + this.percent + '%');
+            //this.controller.messageConsole.progress('Movie loading: ' + this.percent + '%');
             this.percent += 1;
             // call this function after <timeout> seconds.
             setTimeout(function (thisObj) {
