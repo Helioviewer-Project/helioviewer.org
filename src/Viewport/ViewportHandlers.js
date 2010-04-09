@@ -232,7 +232,7 @@ var ViewportHandlers = Class.extend(
         if (this.viewport.controller.userSettings.get('warnMouseCoords') === true) {
             warning = "<b>Note:</b> Mouse-coordinates should not be used for science operations!";
             this.viewport.controller.messageConsole.log(warning);
-            this.viewport.controller.userSettings.set('warnMouseCoords', false);
+            $(document).trigger("save-setting", ["warnMouseCoords", false]);
         }
           
         // Cartesian & Polar coords

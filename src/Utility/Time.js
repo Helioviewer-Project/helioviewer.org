@@ -38,7 +38,7 @@ var Time = Class.extend(
         this._date = date;
         var ts = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
                           date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-        this.controller.userSettings.set('date', parseInt(ts, 10));
+        $(document).trigger("save-setting", ["date", parseInt(ts, 10)]);
         this.controller.tileLayers.reloadLayers();
         this.controller.eventLayers.reloadLayers();
     },

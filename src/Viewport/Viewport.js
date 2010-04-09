@@ -323,7 +323,7 @@ var Viewport = Class.extend(
         this.updateSandbox();
         
         // store new value
-        this.controller.userSettings.set('imageScale', imageScale);
+        $(document).trigger("save-setting", ["imageScale", imageScale]);
     },
 
     /**

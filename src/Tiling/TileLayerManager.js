@@ -40,7 +40,7 @@ var TileLayerManager = LayerManager.extend(
      */
     save: function () {
         var layers = this.toJSON();        
-        this.controller.userSettings.set('tileLayers', layers);
+        $(document).trigger("save-setting", ["tileLayers", layers]);        
     },
     
     /**

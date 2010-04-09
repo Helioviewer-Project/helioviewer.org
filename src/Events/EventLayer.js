@@ -127,7 +127,7 @@ var EventLayer = Layer.extend(
         
         // Update user's stored settings
         this.eventAccordion.eventIcons[this.catalog] = "small-" + newIcon;
-        this.viewport.controller.userSettings.set('eventIcons', this.eventAccordion.eventIcons);
+        $(document).trigger("save-setting", ["eventIcons", this.eventAccordion.eventIcons]);
     },
 
     /**
