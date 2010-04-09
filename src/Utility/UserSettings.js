@@ -17,12 +17,17 @@ var UserSettings = Class.extend(
      * class has the ability to use both HTML5 local storage and cookies for saving information. In addition, 
      * when supported, objects are stored as JSON objects rather than strings.<br><br>
      *    
+     * TODO 2010/04/09: Generalize the validation step by passing in an array of validation criteria instead
+     * of passing in parameters individually.
+     *    
      * @constructs
-     * @param {Object} controller A reference to the Helioviewer application class
+     * 
      * @see <a href="https://developer.mozilla.org/en/DOM/Storage">https://developer.mozilla.org/en/DOM/Storage</a>
      */
-    init: function (controller) {
-        this.controller = controller;
+    init: function (defaults, minImageScale, maxImageScale) {
+        this._defaults      = defaults;
+        this._minImageScale = minImageScale;
+        this._maxImageScale = maxImageScale;        
                 
         // Initialize storage
         this._initStorage();
@@ -119,7 +124,7 @@ var UserSettings = Class.extend(
         }
             
         // If version is out of date, reset settings
-        if (this.get('version') !== this.controller.version) {
+        if (this.get('version') !== this._defaults.version) {
             this._loadDefaults();
         }
     },
@@ -140,7 +145,7 @@ var UserSettings = Class.extend(
             }
             break;
         case "imageScale":
-            if ((isNaN(value)) || (value < this.controller.minImageScale) || (value > this.controller.maxImageScale)) {
+            if ((isNaN(value)) || (value < this._minImageScale) || (value > this._maxImageScale)) {
                 return false;
             }
             break;
@@ -154,23 +159,21 @@ var UserSettings = Class.extend(
      * Loads defaults user settings
      */
     _loadDefaults: function () {
-        var defaults = this._getDefaults();
-        
         if ($.support.localStorage) {
             localStorage.clear();
             
             if ($.support.nativeJSON) {
-                localStorage.setObject("settings", defaults);
+                localStorage.setObject("settings", this._defaults);
             }
             else { 
-                localStorage.setItem("settings", $.toJSON(defaults));
+                localStorage.setItem("settings", $.toJSON(this._defaults));
             }
         }
         else {
-            this.cookies.set("settings", defaults);
+            this.cookies.set("settings", this._defaults);
         }
             
-        this.settings = defaults;
+        this.settings = this._defaults;
     },
     
     /**
@@ -190,34 +193,5 @@ var UserSettings = Class.extend(
         else {
             this.settings = this.cookies.get("settings");
         }
-    },
-    
-    /**
-     * Creates a hash containing the default settings to use
-     * 
-     * @returns {Object} The default Helioviewer.org settings
-     */
-    _getDefaults: function () {
-        return {
-            date            : getUTCTimestamp(this.controller.defaultObsTime),
-            imageScale      : this.controller.defaultImageScale,
-            version         : this.controller.version,
-            warnMouseCoords : true,
-            showWelcomeMsg  : true,
-            tileLayers : [{
-                server     : this.controller.selectTilingServer(),
-                observatory: 'SOHO',
-                instrument : 'EIT',
-                detector   : 'EIT',
-                measurement: '304',
-                visible    : true,
-                opacity    : 100
-            }],
-            eventIcons      : {
-                'VSOService::noaa'         : 'small-blue-circle',
-                'GOESXRayService::GOESXRay': 'small-green-diamond',
-                'VSOService::cmelist'      : 'small-yellow-square'
-            }
-        };
-    } 
+    }
 });
