@@ -57,10 +57,10 @@ var Helioviewer = Class.extend(
         
         // Display welcome message on user's first visit
         if (this.userSettings.get('showWelcomeMsg')) {
-            this.messageConsole.info("<b>Welcome to Helioviewer.org</b>, a solar data browser." + 
+            $(document).trigger("message-console-info", ["<b>Welcome to Helioviewer.org</b>, a solar data browser." + 
             " First time here? Be sure to check out our <a class=\"message-console-link\" " +
             "href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" target=\"_blank\">" +
-            "User Guide</a>.", {life: 15000});
+            "User Guide</a>.", {life: 15000}]);
             $(document).trigger("save-setting", ["showWelcomeMsg", false]);
         }
     },
@@ -94,7 +94,7 @@ var Helioviewer = Class.extend(
                                              '#timeBackBtn', '#timeForwardBtn');
 
         //Message console
-        this.messageConsole = new MessageConsole(this);
+        this.messageConsole = new MessageConsole();
 
         //Tile & Event Layer Accordions (accordions must come before LayerManager instance...)
         this.tileLayerAccordion  = new TileLayerAccordion(this,  '#tileLayerAccordion');

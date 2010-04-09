@@ -28,7 +28,7 @@ var ScreenshotBuilder = Class.extend(
         var self = this, visibleCoords;
         this.button.click(function () {
             if (self.building) {
-                self.messageConsole.info("A link to your screenshot will be available shortly.");
+                $(document).trigger("message-console-log", ["A link to your screenshot will be available shortly."]);
             }
             else {
                 visibleCoords = self.viewport.getHCViewportPixelCoords();
@@ -94,8 +94,8 @@ var ScreenshotBuilder = Class.extend(
                 };
 
                 // Create the jGrowl notification.
-                helioviewer.messageConsole.info("<div id='screenshot-" + filename +
-                "' style='cursor: pointer'>Click here to download. </div>", options);
+                $(document).trigger("message-console-info", ["<div id='screenshot-" + filename +
+                "' style='cursor: pointer'>Click here to download. </div>", options]);
             }
         };
 

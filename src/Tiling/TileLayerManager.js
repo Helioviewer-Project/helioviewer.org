@@ -51,8 +51,8 @@ var TileLayerManager = LayerManager.extend(
         
         // If new layer exceeds the maximum number of layers allowed, display a message to the user
         if (this.size() >= this.controller.maxTileLayers) {
-            this.controller.messageConsole.warn("Maximum number of layers reached. " +
-            		                            "Please remove an existing layer before adding a new one.");
+            $(document).trigger("message-console-warn", ["Maximum number of layers reached. " +
+                                                "Please remove an existing layer before adding a new one."]);
             return;
         }
         
