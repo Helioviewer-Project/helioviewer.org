@@ -240,7 +240,7 @@ var Helioviewer = Class.extend(
      * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
      */
     _loadUserSettings: function () {
-        var timestamp, layerSettings, layers, rand, self = this;
+        var defaults, timestamp, layerSettings, layers, rand, self = this;
         
         // Optional debugging information
         // TODO 01/20/2010: Provide finer control over what should be logged, e.g. "debug=[tiles,keyboard]"
@@ -248,7 +248,9 @@ var Helioviewer = Class.extend(
             this.debug = true;
         }
         
-        this.userSettings = new UserSettings(this);
+        defaults = this._getDefaultUserSettings();
+        
+        this.userSettings = new UserSettings(defaults, this.minImageScale, this.maxImageScale);
         
         // Load any view parameters specified via API
         if (this.load.date) {
@@ -418,6 +420,35 @@ var Helioviewer = Class.extend(
             height:     455,
             width:      400
         });
+    },
+    
+    /**
+     * Creates a hash containing the default settings to use
+     * 
+     * @returns {Object} The default Helioviewer.org settings
+     */
+    _getDefaultUserSettings: function () {
+        return {
+            date            : getUTCTimestamp(this.defaultObsTime),
+            imageScale      : this.defaultImageScale,
+            version         : this.version,
+            warnMouseCoords : true,
+            showWelcomeMsg  : true,
+            tileLayers : [{
+                server     : this.selectTilingServer(),
+                observatory: 'SOHO',
+                instrument : 'EIT',
+                detector   : 'EIT',
+                measurement: '304',
+                visible    : true,
+                opacity    : 100
+            }],
+            eventIcons      : {
+                'VSOService::noaa'         : 'small-blue-circle',
+                'GOESXRayService::GOESXRay': 'small-green-diamond',
+                'VSOService::cmelist'      : 'small-yellow-square'
+            }
+        };
     },
     
     /**
