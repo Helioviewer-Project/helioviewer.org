@@ -2,11 +2,11 @@
  * @fileOverview Contains the class definition for an Viewport class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
- * @see ViewportHandlers
+ * @see ViewportController
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, ViewportHandlers, document, window */
+/*global Class, $, viewportController, document, window */
 "use strict";
 var Viewport = Class.extend(
     /** @lends Viewport.prototype */
@@ -46,14 +46,11 @@ var Viewport = Class.extend(
         $.extend(this, this.defaultOptions);
         $.extend(this, options);
         
-        var center, centerBox, self = this;
-
         this.domNode            = $(this.id);
         this.innerNode          = $(this.id + '-container-inner');
         this.outerNode          = $(this.id + '-container-outer');
         this.controller         = controller;
-        this.mouseCoords        = "disabled";
-        this.viewportHandlers   = new ViewportHandlers(this);
+        this.viewportController = new ViewportController(this);
         
         // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
         this.rsun = 959.705;
@@ -65,23 +62,19 @@ var Viewport = Class.extend(
         this.resize();
         
         // Determine center of viewport
-        center = this.getCenter();
+        var center = this.getCenter();
         
         // Create a container to limit how far the layers can be moved
         this.sandbox = $('<div id="sandbox" style="position: absolute; width: 0; height: 0; left: ' +
                          center.x + 'px; top: ' + center.y + 'px;"></div>');
-        this.domNode.append(this.sandbox);
         
         // Create a master container to make it easy to manipulate all layers at once
         this.movingContainer = $('<div id="moving-container" style="left: 0; top: 0"></div>').appendTo(this.sandbox);
         
-           // Dynamically resize the viewport when the browser window is resized.
-        $(window).resize(function (e) {
-            self.resize();
-        });
+        this.domNode.append(this.sandbox);
         
-        // Set initial text-shadowing
-        this.viewportHandlers.updateShadows();
+        // Dynamically resize the viewport when the browser window is resized.
+        $(window).resize($.proxy(this.resize, this));
     },
     
     /**
@@ -103,7 +96,7 @@ var Viewport = Class.extend(
         });
 
         // Check throttle
-        if (this.viewportHandlers.moveCounter === 0) {
+        if (this.viewportController.moveCounter === 0) {
             this.domNode.trigger('viewport-move');
         }
     },
@@ -126,7 +119,7 @@ var Viewport = Class.extend(
         });
         
         // Check throttle
-        if (this.viewportHandlers.moveCounter === 0) {
+        if (this.viewportController.moveCounter === 0) {
             this.domNode.trigger('viewport-move');
         }
     },
@@ -169,23 +162,6 @@ var Viewport = Class.extend(
         };
     },
     
-    /**
-     * @description Alias for getContainerPos function
-     * @returns {Object} The X & Y coordinates of the viewport's top-left corner
-     */
-    currentPosition: function () {
-        return this.getContainerPos();
-    },
-    
-    /**
-     * @description Another alias for getContainerPos: returns the pixel coorindates of the 
-     *              HelioCenter relative to the viewport top-left corner.
-     * @returns {Object} The X & Y coordinates of the viewport's top-left corner
-     */
-    helioCenter: function () {
-        return this.getContainerPos();
-    },
-
     /**
      * @description Algorithm for determining which tiles should be displayed at
      *              a given time. Uses the Heliocentric coordinates of the viewport's
