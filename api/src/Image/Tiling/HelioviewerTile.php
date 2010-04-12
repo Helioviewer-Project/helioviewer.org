@@ -163,12 +163,18 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             } else {
                 $filepath .= "MDI/magnetogram";
             }
-        } else {
+        } else if ($this->_instrument == "LASCO") {
             if ($this->_detector == "C2") {
                 $filepath .= "LASCO-C2/white-light";
             } else {
                 $filepath .= "LASCO-C3/white-light";
             }
+        } else if ($this->_instrument == "AIA") {
+            if ($this->_measurement == "171") {
+                $filepath .= "AIA/171";
+            }
+        } else {
+            throw new Exception("Unrecognized image type.");
         }
         
         $filepath .= "/$year/$month/$day/";
@@ -200,14 +206,14 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      */
     private function _getColorTable()
     {
-        //$rootdir = substr(getcwd(), 0, -4);
-
         if ($this->_detector == "EIT") {
             return "resources/images/color-tables/ctable_EIT_{$this->_measurement}.png";
         } else if ($this->_detector == "C2") {
             return "resources/images/color-tables/ctable_idl_3.png";
         } else if ($this->_detector == "C3") {
             return "resources/images/color-tables/ctable_idl_1.png";
+        } else if ($this->_detector == "AIA") {
+            return "resources/images/color-tables/ctable_EIT_{$this->_measurement}.png"; // 2010/04/12 Temp work-around
         } else {
             return false;
         }
