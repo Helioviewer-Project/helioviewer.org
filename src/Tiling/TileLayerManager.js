@@ -23,6 +23,7 @@ var TileLayerManager = LayerManager.extend(
         this._super(controller);
         this._layers = [];
         this._queue  = [
+            "SDO,AIA,AIA,171",
             "SOHO,EIT,EIT,304",
             "SOHO,LASCO,C2,white light",
             "SOHO,LASCO,C3,white light",

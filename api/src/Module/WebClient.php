@@ -545,6 +545,8 @@ class Module_WebClient implements Module
             $filepath .= "MDI/magnetogram";
         } else if ($sourceId == 7 ) {
             $filepath .= "MDI/continuum";
+        } else if ($sourceId == 8) {
+            $filepath .= "AIA/171";
         }
         
         $filepath .= "/$year/$month/$day/";
