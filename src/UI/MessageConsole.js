@@ -64,7 +64,7 @@ var MessageConsole = Class.extend(
         
         events = "message-console-log message-console-info message-console-warn message-console-error";
         
-        $(document).bind(events, function(event, msg, options) {
+        $(document).bind(events, function (event, msg, options) {
             if (typeof options === "undefined") {
                 options = {};
             }

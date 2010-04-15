@@ -5,10 +5,10 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Calendar, EventLayerAccordion, EventLayerManager, EventTimeline, KeyboardManager, ImageSelectTool, 
-  LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer, TileLayerAccordion, 
-  TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, ScreenshotBuilder,
-  document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
+/*global Class, $, Calendar, EventLayerAccordion, EventLayerManager, EventTimeline, FullscreenControl, 
+  KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
+  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, 
+  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
 "use strict";
 var Helioviewer = Class.extend(
     /** @lends Helioviewer.prototype */
@@ -221,6 +221,8 @@ var Helioviewer = Class.extend(
      * Selects a server to handle all tiling and image requests for a given layer
      */
     selectTilingServer: function () {
+        var rand;
+        
         // Choose server to use
         if (this.distributed === true) {
             if (this.localQueriesEnabled) {
@@ -302,8 +304,8 @@ var Helioviewer = Class.extend(
         this.keyboard = new KeyboardManager(this);
         
         $('#center-button').click($.proxy(this.viewport.center, this.viewport));
-        $('#link-button'  ).click($.proxy(this.displayURL, this));
-        $('#email-button' ).click($.proxy(this.displayMailForm, this));
+        $('#link-button').click($.proxy(this.displayURL, this));
+        $('#email-button').click($.proxy(this.displayMailForm, this));
         $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
 
         // Hover effect for text/icon buttons        

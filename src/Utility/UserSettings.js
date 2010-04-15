@@ -114,7 +114,7 @@ var UserSettings = Class.extend(
     _setupEventHandlers: function () {
         var self = this;
         
-        $(document).bind("save-setting", function(event, key, value) {
+        $(document).bind("save-setting", function (event, key, value) {
             self.set(key, value);
         });
     },
