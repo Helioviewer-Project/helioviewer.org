@@ -28,6 +28,13 @@ var Layer = Class.extend(
         this.controller = controller;
         this.viewport   = controller.viewport;
         this.id = 'layer' + Math.floor(Math.random() * 100000 + 1);
+        
+        this.dimensions = {
+            "left"   : 0,
+            "top"    : 0,
+            "bottom" : 0,
+            "right"  : 0
+        };
     },
 
     /**

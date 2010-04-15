@@ -192,28 +192,41 @@ var Viewport = Class.extend(
     },
     
     /**
-     * @description Update the size and location of the movement-constraining box.
+     * Determines the 
      */
-    updateSandbox: function () {
-        var maxDimensions, old, center, newSize, change, movingContainerOldPos, 
-            newHCLeft, newHCTop, padHeight, shiftTop;
+    getSandboxDimensions: function () {
+        var maxTileLayerDimensions, maxEventLayerDimensions, maxWidth, maxHeight;
         
         this._updateDimensions();
         
-        maxDimensions = this.controller.tileLayers.getMaxDimensions();
+        maxTileLayerDimensions  = this.controller.tileLayers.getMaxDimensions();
+        maxEventLayerDimensions = this.controller.eventLayers.getMaxDimensions();
+        
+        maxWidth  = Math.max(maxTileLayerDimensions.width, maxEventLayerDimensions.width);
+        maxHeight = Math.max(maxTileLayerDimensions.height, maxEventLayerDimensions.height);
+        
+        // New sandbox dimensions
+        return {
+            width : Math.max(0, maxWidth  - this.dimensions.width),
+            height: Math.max(0, maxHeight - this.dimensions.height)
+        };
+    },
+    
+    /**
+     * @description Update the size and location of the movement-constraining box.
+     */
+    updateSandbox: function () {
+        var old, center, newSize, change, movingContainerOldPos, newHCLeft, newHCTop, padHeight, shiftTop;
         
         old = {
             width : this.sandbox.width(),
             height: this.sandbox.height()
         };
+        
         center = this.getCenter();
         
-        // New sandbox dimensions
-        newSize = {
-            width : Math.max(0, maxDimensions.width  - this.dimensions.width),
-            height: Math.max(0, maxDimensions.height - this.dimensions.height)
-        };
-        
+        newSize = this.getSandboxDimensions();
+  
         // Difference
         change = {
             x: newSize.width  - old.width,
