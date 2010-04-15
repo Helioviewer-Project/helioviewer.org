@@ -90,31 +90,6 @@ var TileLayerManager = LayerManager.extend(
     },
      
     /**
-     * @description Returns the largest width and height of any layers (does not have to be from same layer)
-     * @return {Object} The width and height of the largest layer
-     */
-    getMaxDimensions: function () {
-        var maxLeft   = 0,
-            maxTop    = 0,
-            maxBottom = 0,
-            maxRight  = 0;
-        
-        $.each(this._layers, function () {
-            // Ignore if the relative dimensions haven't been retrieved yet
-            if ($.isNumber(this.relWidth)) {
-                var d = this.getDimensions();
-                
-                maxLeft   = Math.max(maxLeft, d.left);
-                maxTop    = Math.max(maxTop, d.top);
-                maxBottom = Math.max(maxBottom, d.bottom);
-                maxRight  = Math.max(maxRight, d.right);
-            }
-        });
-        
-        return {width: maxLeft + maxRight, height: maxTop + maxBottom};
-    },
-
-    /**
      * @description Gets the maximum relative width and height of all visible layers, according to jp2 image sizes,
      *              not tilelayer sizes. Used when generating movies and screenshots, because tilelayer size is 
      *              slightly smaller than jp2 image size and images will not align properly with tilelayer sizes.

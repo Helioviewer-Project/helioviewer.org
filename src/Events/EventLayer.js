@@ -49,6 +49,13 @@ var EventLayer = Layer.extend(
         
         this.queryEvents();
     },
+    
+    /**
+     * @description Returns an array container the values of the positions for each edge of the EventLayer.
+     */
+    getDimensions: function () {
+        return this.dimensions;
+    },
 
     /**
      * @description Sends an AJAX request to get a list of events.
@@ -66,6 +73,10 @@ var EventLayer = Layer.extend(
         callback = function (data) {
             if (data) {
                 self.displayEvents(data);
+                self.updateDimensions();
+                
+                // Update viewport sandbox if necessary
+                self.viewport.updateSandbox();
             }
         };
         
@@ -147,16 +158,39 @@ var EventLayer = Layer.extend(
         this.clear();
         this.queryEvents();
     },
+    
+    /**
+     * Sets the layers dimensions so that all events are contained within those boundaries. An additional
+     * padding is added to ensure that event dialog bubbles are visible as well.
+     */
+    updateDimensions: function () {
+        var maxTop = 0, maxLeft = 0, EVENT_DIALOG_WIDTH = 262, EVENT_DIALOG_HEIGHT = 200;   
+             
+        $.each(this.events, function () {
+            maxTop  = Math.max(maxTop,  Math.abs(this.pos.y));
+            maxLeft = Math.max(maxLeft, Math.abs(this.pos.x));
+        });
+        
+        // Update layer dimensions (sandbox must be rectangular so only the magnitude is important)
+        this.dimensions = {
+            "left"   : maxLeft + EVENT_DIALOG_WIDTH,
+            "top"    : maxTop  + EVENT_DIALOG_HEIGHT,
+            "bottom" : maxTop  + EVENT_DIALOG_HEIGHT,
+            "right"  : maxLeft + EVENT_DIALOG_WIDTH
+        };
+    },
 
     /**
      * @description Reset event-layer
      */
     reset: function () {
-        var rsun = this.viewport.getRSun();
-
+        var rsun = this.viewport.getRSun();   
+             
         $.each(this.events, function () {
             this.refresh(rsun);
         });
+        
+        this.updateDimensions();
     },
     
     // 2009/07/06 TODO
