@@ -11,6 +11,11 @@
  * @author   Jaclyn Beck <jabeck@nmu.edu>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
+ * 
+ * TODO 2010/04/15: Write our own wrapper around FFmpeg? Development of PVT seems to have
+ * stopped and since operations we perform are relatively simple, may be easier to write our
+ * own wrapper. One consideration is whether or not PVT currently uses the FFmpeg PHP module
+ * for any of the methods we call, in which case it may be beneficial for us to do the same.
  */
 require_once 'interface.Module.php';
 

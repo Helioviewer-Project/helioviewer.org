@@ -25,9 +25,9 @@ var TileLayerManager = LayerManager.extend(
         this._queue  = [
             "SDO,AIA,AIA,171",
             "SOHO,EIT,EIT,304",
-            "SOHO,LASCO,C2,white light",
-            "SOHO,LASCO,C3,white light",
-            "SOHO,LASCO,C2,white light",
+            "SOHO,LASCO,C2,white-light",
+            "SOHO,LASCO,C3,white-light",
+            "SOHO,LASCO,C2,white-light",
             "SOHO,MDI,MDI,magnetogram",
             "SOHO,MDI,MDI,continuum",
             "SOHO,EIT,EIT,171",
@@ -152,7 +152,7 @@ var TileLayerManager = LayerManager.extend(
 });
 
 /**
- * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white light) into its component parts and returns 
+ * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its component parts and returns 
  * a javascript representation.
  * 
  * @static

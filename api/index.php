@@ -168,8 +168,8 @@ if (!(isset($params) && loadModule($params))) {
         <br />
 
         <span class="example-header">Example:</span> <span class="example-url">
-        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,1,100]">
-           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,1,100]
+        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
         </a>
         </span>
     </div>
@@ -537,8 +537,8 @@ if (!(isset($params) && loadModule($params))) {
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
-        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&jpip=true
+        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
+        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
         </a>
         </span>
         </div>
@@ -819,7 +819,7 @@ if (!(isset($params) && loadModule($params))) {
                 <td>304 Ångström</td>
             </tr>
             <tr>
-                <td>white light</td>
+                <td>white-light</td>
                 <td>White-light</td>
             </tr>
             <tr>
@@ -905,7 +905,7 @@ if (!(isset($params) && loadModule($params))) {
                     <td>2d List</td>
                     <td>This is similar to a list except that each item of the list is a bracket-delineated list
                     itself.</td>
-                    <td>[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,0,100],[SOHO,MDI,MDI,continuum,1,50]</td>
+                    <td>[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,0,100],[SOHO,MDI,MDI,continuum,1,50]</td>
                 </tr>
                 <tr>
                     <td>Unix Timestamp</td>
@@ -943,7 +943,7 @@ if (!(isset($params) && loadModule($params))) {
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-02-13 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-04-15 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>

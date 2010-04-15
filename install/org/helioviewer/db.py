@@ -200,7 +200,7 @@ def createMeasurementTable(cursor):
         (3, '304', '304 Ångström extreme ultraviolet', 'Å'),
         (4, 'continuum', 'Intensitygram', 'DN'),
         (5, 'magnetogram', 'Magnetogram', 'Mx'),
-        (6, 'white light', 'White Light', 'DN');
+        (6, 'white-light', 'White Light', 'DN');
     ''')
     
 def createDateIndex(cursor):
