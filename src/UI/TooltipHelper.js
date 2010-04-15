@@ -144,7 +144,7 @@ var TooltipHelper = Class.extend(
             api: {
                 onRender: function () { 
                     var self = this;
-                    self.elements.target.click(function() {
+                    self.elements.target.click(function () {
                         self.hide();
                     }); 
                 }

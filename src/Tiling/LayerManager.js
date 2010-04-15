@@ -80,7 +80,7 @@ var LayerManager = Class.extend(
         this._layers = $.grep(this._layers, function (e, i) {
             return (e.id !== layer.id);
         });
-        delete layer;
+        layer = null;
         this.controller.viewport.updateSandbox();
     },
     

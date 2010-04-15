@@ -172,4 +172,4 @@ TileLayerManager.parseLayerString = function (str) {
         opacity    : parseInt(params[5], 10),
         server     : parseInt(params[6], 10) || 0
     };
-}
+};

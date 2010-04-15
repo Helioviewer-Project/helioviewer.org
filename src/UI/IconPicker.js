@@ -26,8 +26,7 @@ var IconPicker = Class.extend(
         
         // Don't build until requested
         this.loaded = false;
-    },
-    
+    },    
     
     /**
      * @description Sets up the list of available icons to chose from

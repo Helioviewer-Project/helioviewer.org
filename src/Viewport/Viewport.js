@@ -594,9 +594,9 @@ var Viewport = Class.extend(
         } else {
             polar = Math.toPolarCoords(cartesian.x, -cartesian.y);     
             
-             this.mouseCoordsX.html(((polar.r / this.rsun) + "").substring(0, 5) +
-                " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
-             this.mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
+            this.mouseCoordsX.html(((polar.r / this.rsun) + "").substring(0, 5) +
+                 " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
+            this.mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
         }
     },
     
