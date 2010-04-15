@@ -135,7 +135,7 @@ def getMeasurement(dom):
 
             #LASCO
             if inst == "LASCO":
-                meas = "white light"
+                meas = "white-light"
             #MDI
             elif inst == "MDI":
                 dpcobsr = getElementValue(dom, "DPC_OBSR")
