@@ -143,12 +143,6 @@ class Module_JHelioviewer implements Module
     /**
      * Constructs a JPX image series
      *
-     * TODO 02/15/2010: Let jhv team know param change: "links" -> "linked"
-     *
-     * TODO 02/13/2010: Create new classes (e.g. JPEG2000/ImageSeries.php and/or JPEG2000/JPX.php)
-     * and move some of the below complexity into those classes. That way it will also be easier to
-     * test some of the methods that are private here (e.g. _getJPIPURL).
-     *
      * @return void
      */
     public function getJPX ()
@@ -190,27 +184,27 @@ class Module_JHelioviewer implements Module
     {
         switch($this->_params['action'])
         {
-        case "getJP2Image":
+        case 'getJP2Image':
             $expected = array(
-               "bools" => array("jpip", "getJPIP"),
-               "dates" => array('date')
+               'bools' => array('jpip', 'getJPIP'),
+               'dates' => array('date')
             );
 
-            if (isset($this->_params["sourceId"])) {
-                $expected["required"] = array('date', 'sourceId');
-                $expected["ints"]     = array('sourceId');
+            if (isset($this->_params['sourceId'])) {
+                $expected['required'] = array('date', 'sourceId');
+                $expected['ints']     = array('sourceId');
             } else {
-                $expected["required"] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
+                $expected['required'] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
             }
             break;
 
-        case "getJPX":
+        case 'getJPX':
             $expected = array(
-                "required" => array("startTime", "endTime", "cadence"),
-                "optional" => array("sourceId"),
-                "bools"    => array("jpip", "getJPIP", "frames", "verbose", "linked"),
-                "dates"    => array('startTime', 'endTime'),
-                "ints"     => array('cadence')
+                'required' => array('startTime', 'endTime'),
+                'optional' => array('sourceId', 'cadence'),
+                'bools'    => array('jpip', 'getJPIP', 'frames', 'verbose', 'linked'),
+                'dates'    => array('startTime', 'endTime'),
+                'ints'     => array('cadence')
             );
 
             break;

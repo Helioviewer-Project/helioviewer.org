@@ -96,20 +96,80 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         // Get image sourceId
         $sourceId = $this->_getSourceId($imgIndex);
 
-        $images = array();
-        $dates  = array();
-
-        // Check cadence
-        $this->_checkRequestedCadence();
-        
         // Check request start and end dates
         $this->_checkRequestDates();
+        
+        $start = toUnixTimestamp($this->_startTime);
+        $end   = toUnixTimestamp($this->_endTime);
+        
+        // If cadence is manually specified check to make sure it is reasonable
+        if ($this->_cadence) {
+            $numFrames = floor(($end - $start) / $this->_cadence);
+            if ($numFrames > HV_MAX_JPX_FRAMES) {
+                $oldCadence = $this->_cadence;
+                $this->_cadence = floor(($end - $start) / HV_MAX_JPX_FRAMES);
+                $numFrames      = HV_MAX_JPX_FRAMES;
+                $this->_message = "Warning: Movie cadence has been changed from one image every $oldCadence " .
+                                    "seconds to one image every {$this->_cadence} seconds in order to avoid " .
+                                    "exceeding the maximum allowed number of frames (" . HV_MAX_JPX_FRAMES . ").";
+            }
+        } else {
+            // Chose an optimal cadence
+            // If possible, all images between the start and end dates will be included in the jpx.  
+            // If the number of images in the date range exceeds the maximum number of frames allowed, a lower 
+            // cadence (increased time between images) is chosen.
+            $count = $imgIndex->getImageCount($this->_startTime, $this->_endTime, $sourceId);
+            
+            if ($count > HV_MAX_JPX_FRAMES) {
+                $this->_cadence  = floor(($end - $start) / HV_MAX_JPX_FRAMES);
+                $numFrames       = HV_MAX_JPX_FRAMES;    
+            } else {
+                return $this->_queryJPXImageFramesByRange($imgIndex, $sourceId);
+            }
+        }
 
+        return $this->_queryJPXImageFramesByCadence($imgIndex, $sourceId, $numFrames);
+    }
+    
+    /**
+     * Retrieves filepaths and timestamps of all images of a given type between the start and end dates specified
+     * 
+     * @return array Returns list of filepaths to images to use during JPX generation
+     *               and also a list of the times for each image in the series.
+     */
+    private function _queryJPXImageFramesByRange($imgIndex, $sourceId) {
+        $images = array();
+        $dates  = array();
+        
+        $results = $imgIndex->getImageRange($this->_startTime, $this->_endTime, $sourceId);
+        
+        foreach($results as $img) {
+            $filepath = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
+            array_push($images, $filepath);
+            array_push($dates, toUnixTimestamp($img['date']));
+        }
+        
+        return array($images, $dates);
+    }
+    
+    /**
+     * Retrieves filepaths and timestamps for images at a specified cadence of a given type between 
+     * the start and end dates specified
+     * 
+     * @param int $sourceId  Image source id
+     * 
+     * @return array Returns list of filepaths to images to use during JPX generation
+     *               and also a list of the times for each image in the series.
+     */
+    private function _queryJPXImageFramesByCadence($imgIndex, $sourceId, $numFrames) {
+        $images = array();
+        $dates  = array();
+        
         // Timer
         $time = toUnixTimestamp($this->_startTime);
-        
+       
         // Get nearest JP2 images to each time-step
-        for ($i = 0; $i < $this->_numFrames; $i++) {
+        for ($i = 0; $i < $numFrames; $i++) {
             // Get next image
             $isoDate = toISOString(parseUnixTimestamp($time));
 
@@ -119,42 +179,14 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             // Ignore redundant images
             if (end($images) != $jp2) {
                 array_push($images, $jp2);
-                array_push($dates, toUnixTimestamp($img['date'])); // WRONG TIME!
+                array_push($dates, toUnixTimestamp($img['date']));
             }
             $time += $this->_cadence;
         }
-
+        
         return array($images, $dates);
     }
 
-    /**
-     * Checks the requested cadence, and modifies it if it would exceed the maximum number of frames allowed
-     * For convenience, _numFrames and _message are also currently set in this method.
-     *
-     * @return void
-     */
-    private function _checkRequestedCadence()
-    {
-        include_once 'src/Helper/DateTimeConversions.php';
-
-        $start = toUnixTimestamp($this->_startTime);
-        $end   = toUnixTimestamp($this->_endTime);
-
-        // Determine number of frames to grab
-        $this->_numFrames  = ceil(($end - $start) / $this->_cadence);
-
-        // If the requested number of movie frames would exceed maximum allowed, decrease cadence to span
-        // request window and grab the maximum number of frames at that cadence
-        if ($this->_numFrames > HV_MAX_JPX_FRAMES) {
-            $oldCadence       = $this->_cadence;
-            $this->_cadence   = floor($this->_cadence * ($this->_numFrames / HV_MAX_JPX_FRAMES));
-            $this->_numFrames = HV_MAX_JPX_FRAMES;
-            $this->_message   = "Warning: Movie cadence has been changed from one image every $oldCadence seconds " .
-                                "to one image every {$this->_cadence} seconds in order to avoid exceeding the " .
-                                "maximum allowed number of frames (" . HV_MAX_JPX_FRAMES . ").";
-        }
-    }
-    
     /**
      * Checks the request start and end dates. If either are outside of the range of available data, then
      * they are adjusted so that they fall within the available data range. If the request range falls completely
@@ -208,7 +240,12 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
     {
         $from = str_replace(":", ".", $startTime);
         $to   = str_replace(":", ".", $endTime);
-        $filename = implode("_", array($obs, $inst, $det, $meas, "F$from", "T$to", "B$cadence"));
+        $filename = implode("_", array($obs, $inst, $det, $meas, "F$from", "T$to"));
+
+        // If cadence was manually specified include it in the filename
+        if ($cadence) {
+            $filename .= "B$cadence";
+        }
 
         // Differentiate linked JPX files
         if ($linked) {

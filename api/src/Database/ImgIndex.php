@@ -101,7 +101,49 @@ class Database_ImgIndex
 
         return $img;
     }
-
+    
+    /**
+     * Returns the number of images in the database for a given source and time range
+     * 
+     * @param datetime $start    Query start time
+     * @param datetime $end      Query end time
+     * @param int      $sourceId The sourceId to query
+     * 
+     * @return int The number of images in the database within the specified constraints
+     */
+    public function getImageCount($start, $end, $sourceId) {
+        include_once 'src/Helper/DateTimeConversions.php';
+        $startDate = isoDateToMySQL($start);
+        $endDate   = isoDateToMySQL($end);
+        
+        $sql = "SELECT COUNT(*) FROM image WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql));
+        return (int) $result[0];
+    }
+    
+    /**
+     * Returns an array containing all images for a given source and time range
+     * 
+     * @param datetime $start    Query start time
+     * @param datetime $end      Query end time
+     * @param int      $sourceId The sourceId to query
+     * 
+     * @return int The number of images in the database within the specified constraints
+     */
+    public function getImageRange($start, $end, $sourceId) {
+        include_once 'src/Helper/DateTimeConversions.php';
+        $startDate = isoDateToMySQL($start);
+        $endDate   = isoDateToMySQL($end);
+        
+        $images = array();
+        $sql = "SELECT * FROM image WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
+        $result = $this->_dbConnection->query($sql);
+        
+        while ($image = $result->fetch_array(MYSQL_ASSOC)) {
+            array_push($images, $image);
+        }
+        return $images;
+    }
 
     /**
      * Extract necessary meta-information from an image
@@ -166,7 +208,6 @@ class Database_ImgIndex
             mysqli_real_escape_string($this->_dbConnection->link, $det),
             mysqli_real_escape_string($this->_dbConnection->link, $meas)
         );
-
         $result = $this->_dbConnection->query($sql);
         $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
 
