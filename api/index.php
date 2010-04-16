@@ -551,7 +551,7 @@ if (!(isset($params) && loadModule($params))) {
         <li>
         <div id="getJPX">JPX API
         <p>Returns a JPEG 2000 Image Series (JPX) file. The movie frames are chosen by matching the closest image
-        available at each step of a specified range of dates and image cadence.</p>
+        available at each step within the specified range of dates.</p>
 
         <br />
 
@@ -600,7 +600,8 @@ if (!(isset($params) && loadModule($params))) {
                 <tr>
                     <td><b>cadence</b></td>
                     <td><i>Integer</i></td>
-                    <td>The desired amount of time between each movie-frame, in seconds</td>
+                    <td><i>[Optional]</i> The desired amount of time between each movie-frame, in seconds. If no 
+                    cadence is specified, the server will attempt to select an optimal cadence.</td>
                 </tr>
                 <tr>
                     <td><b>sourceId</b></td>
@@ -672,8 +673,8 @@ if (!(isset($params) && loadModule($params))) {
 
         <span class="example-header">Example:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600">
-            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600
+        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
+            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
         </a>
         </span><br />
         <span class="example-url">
@@ -693,8 +694,7 @@ if (!(isset($params) && loadModule($params))) {
 
         <ul>
             <li>
-            <p>During JPX movie generation it is possible that for lower cadences some redundent image frames
-            will be used. In order to avoid this a sufficiently large cadence should be specified.</p>
+            <p>If no cadence is specified Helioviewer.org attempts to choose an optimal cadence for the requested range and data source.</p>
             </li>
         </ul>
         </div>
