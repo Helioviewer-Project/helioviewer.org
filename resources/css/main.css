@@ -65,6 +65,11 @@ input, select {background-color:#F4F4F4;}
 	right: 2px;
 }
 
+#mouse-coords-x, #mouse-coords-y {
+    width: 50%;
+    float: left;
+}
+
 /* Zoom controls */
 #zoomControls {
     position: absolute;

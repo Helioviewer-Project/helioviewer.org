@@ -66,6 +66,9 @@ class Image_JPEG2000_JP2ImageXMLBox
         $xml = substr($xml, strpos($xml, "<$root>"));
 
         fclose($fp);
+        
+        // TEMP Work-around 2010/04/12 for AIA Invalid XML
+        $xml = str_replace("&", "&amp;", $xml);
 
         $this->_xml = new DOMDocument();
         $this->_xml->loadXML($xml);
@@ -97,7 +100,9 @@ class Image_JPEG2000_JP2ImageXMLBox
         try {
             $scale = $this->_getElementValue("CDELT1");
         } catch (Exception $e) {
-            echo 'Unable to locate image scale in header tags!';
+            // TEMP Work-around 2010/04/12: Include support for AIA 171
+            $scale =  0.6075; // ESTIMATE        
+            //echo 'Unable to locate image scale in header tags!';            
         }
         return $scale;
     }
@@ -116,7 +121,10 @@ class Image_JPEG2000_JP2ImageXMLBox
             $x = $this->_getElementValue("CRPIX1");
             $y = $this->_getElementValue("CRPIX2");
         } catch (Exception $e) {
-            echo 'Unable to locate sun center center in header tags!';
+            // TEMP Work-around 2010/04/12: Include support for AIA 171
+            $x = 2048;
+            $y = 2048;
+            //echo 'Unable to locate sun center center in header tags!';
         }
         return array($x, $y);
     }
@@ -138,7 +146,7 @@ class Image_JPEG2000_JP2ImageXMLBox
                 return true;
             }
         } catch (Exception $e) {
-            // MDI and EIT do their own rotation
+            // AIA, EIT, and MDI do their own rotation
             return false;
         }        
     }

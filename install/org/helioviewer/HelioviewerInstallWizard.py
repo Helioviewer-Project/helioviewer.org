@@ -28,7 +28,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         self.ui = Ui_InstallWizard()
         self.ui.setupUi(self)        
         
-        self.logfile = open("error.log", "w")
+        self.logfile = open("error.log", "a")
         
         self.installComplete = False
         

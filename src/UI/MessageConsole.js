@@ -17,18 +17,17 @@ var MessageConsole = Class.extend(
      * messages of different natures: "log" for generic unstyled messages, or for debbuging
      * use, "info" to inform the user of some interesting change or event, and "warning" and
      * "error" for getting the user's attention.
-     * @param {Object} controller A reference to the Helioviewer (controller)
      */
-    init: function (controller) {
-        this.controller = controller;
+    init: function () {
+        this._setupEventHandlers();
     },
     
     /**
      * @description Logs a message to the message-console
      * @param {String} msg Message to display
      */
-    log: function (msg) {
-        $.jGrowl(msg);
+    log: function (msg, options) {
+        $.jGrowl(msg, options);
     },
     
     /**
@@ -39,46 +38,45 @@ var MessageConsole = Class.extend(
     info: function (msg, options) {
         $.jGrowl(msg, options);
     },
-
-
-    progress: function (msg) {
-        $.jGrowl(msg);    
-    },
     
     /**
      * @description Displays a warning message in the message console
      * @param {String} msg Message to display
      */
-    warn: function (msg) {
-        $.jGrowl(msg);
+    warn: function (msg, options) {
+        $.jGrowl(msg, options);
     },
     
     /**
      * @description Displays an error message in the message console
      * @param {String} msg Message to display
      */
-    error: function (msg) {
-        $.jGrowl(msg);
+    error: function (msg, options) {
+        $.jGrowl(msg, options);
         $("#helioviewer-viewport-container-outer").effect("shake", { times: 1 });
     },
     
     /**
-     * @description Displays message along with a hyperlink in the message console
-     * @param {String} msg Message to display
-     * @param {String} Hyperlink text
-     * Note: Event-handler should be used to handle hyperlink clicks. The link address thus is set to "#".
+     * Sets up event-handlers
      */
-    link: function (msg, linkText) {
-        var linkId, html;
-            
-        // Generate a temporary id
-        linkId = 'link-' + this.controller.date.getTime() / 1000;
+    _setupEventHandlers: function () {
+        var events, self = this;
         
-        // Html
-        html = "<a href='#' id='" + linkId + "' class='message-console-link'>" + linkText + "</a>" + msg;
+        events = "message-console-log message-console-info message-console-warn message-console-error";
         
-        $.jGrowl(html, {sticky: true});
-        
-        return linkId;
+        $(document).bind(events, function (event, msg, options) {
+            if (typeof options === "undefined") {
+                options = {};
+            }
+            if (event.type === "message-console-log") {
+                self.log(msg, options);
+            } else if (event.type === "message-console-info") {
+                self.info(msg, options);
+            } else if (event.type === "message-console-warn") {
+                self.warn(msg, options);
+            } else if (event.type === "message-console-error") {
+                self.error(msg, options);
+            }            
+        });
     }
 });

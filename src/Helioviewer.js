@@ -5,26 +5,21 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Calendar, EventLayerAccordion, EventLayerManager, EventTimeline, KeyboardManager, ImageSelectTool, 
-  LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer, TileLayerAccordion, 
-  TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, ScreenshotBuilder,
-  document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
+/*global Class, $, Calendar, EventLayerAccordion, EventLayerManager, EventTimeline, FullscreenControl, 
+  KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
+  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, 
+  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
 "use strict";
 var Helioviewer = Class.extend(
     /** @lends Helioviewer.prototype */
     {
     /**
+     * Creates a new Helioviewer instance.
      * @constructs
-     * @description Creates a new Helioviewer instance.
-     * @param {Object} options Custom application settings.
-     * <br>
-     * <br><div style='font-size:16px'>Options:</div><br>
-     * <div style='margin-left:15px'>
-     *        <b>defaultPrefetchSize</b> - The radius outside of the visible viewport to prefetch.<br>
-     *        <b>timeIncrementSecs</b>   - The default amount of time to move when the time navigation
-     *                                     arrows are pressed.<br>
-     * </div>
-     * @see Helioviewer#defaultOptions for a list of the available parameters.
+     * 
+     * @param {String} viewportId Viewport container selector.
+     * @param {Object} view       Client-specified settings to load
+     * @param {Object} settings   Server settings
      */
     init: function (viewportId, view, settings) {
         $.extend(this, settings);
@@ -36,7 +31,7 @@ var Helioviewer = Class.extend(
         this._checkBrowser();
         
         // Load user-settings
-        this.loadUserSettings();
+        this._loadUserSettings();
         
         // Loading indicator
         this._initLoadingIndicator();
@@ -62,11 +57,11 @@ var Helioviewer = Class.extend(
         
         // Display welcome message on user's first visit
         if (this.userSettings.get('showWelcomeMsg')) {
-            this.messageConsole.info("<b>Welcome to Helioviewer.org</b>, a solar data browser." + 
+            $(document).trigger("message-console-info", ["<b>Welcome to Helioviewer.org</b>, a solar data browser." + 
             " First time here? Be sure to check out our <a class=\"message-console-link\" " +
             "href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" target=\"_blank\">" +
-            "User Guide</a>.", {life: 15000});
-            this.userSettings.set('showWelcomeMsg', false);
+            "User Guide</a>.", {life: 15000}]);
+            $(document).trigger("save-setting", ["showWelcomeMsg", false]);
         }
     },
     
@@ -99,19 +94,14 @@ var Helioviewer = Class.extend(
                                              '#timeBackBtn', '#timeForwardBtn');
 
         //Message console
-        this.messageConsole = new MessageConsole(this);
+        this.messageConsole = new MessageConsole();
 
         //Tile & Event Layer Accordions (accordions must come before LayerManager instance...)
-        this.tileLayerAccordion  = new TileLayerAccordion(this, '#tileLayerAccordion');
+        this.tileLayerAccordion  = new TileLayerAccordion(this,  '#tileLayerAccordion');
         this.eventLayerAccordion = new EventLayerAccordion(this, '#eventAccordion');
 
         //Fullscreen button
-        this._createFullscreenBtn();
-            
-        //Mouse coordinates
-        mouseCoords = $('<div id="mouse-coords" style="display: none;"></div>').appendTo(this.viewport.innerNode);
-        mouseCoords.append('<div id="mouse-coords-x" style="width: 50%; float: left;"></div>');
-        mouseCoords.append('<div id="mouse-coords-y" style="width: 50%; float: left;"></div>');
+        this.fullScreenMode = new FullscreenControl(this, "#fullscreen-btn", 500);
 
         // Setup dialog event listeners
         this._setupDialogs();
@@ -125,7 +115,7 @@ var Helioviewer = Class.extend(
 
         // Timeline
         //this.timeline = new EventTimeline(this, "timeline");
-    },
+    },   
     
     /**
      * @description Checks browser support for various features used in Helioviewer
@@ -231,6 +221,8 @@ var Helioviewer = Class.extend(
      * Selects a server to handle all tiling and image requests for a given layer
      */
     selectTilingServer: function () {
+        var rand;
+        
         // Choose server to use
         if (this.distributed === true) {
             if (this.localQueriesEnabled) {
@@ -249,8 +241,8 @@ var Helioviewer = Class.extend(
     /**
      * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
      */
-    loadUserSettings: function () {
-        var timestamp, layerSettings, layers, rand, self = this;
+    _loadUserSettings: function () {
+        var defaults, timestamp, layerSettings, layers, rand, self = this;
         
         // Optional debugging information
         // TODO 01/20/2010: Provide finer control over what should be logged, e.g. "debug=[tiles,keyboard]"
@@ -258,16 +250,18 @@ var Helioviewer = Class.extend(
             this.debug = true;
         }
         
-        this.userSettings = new UserSettings(this);
+        defaults = this._getDefaultUserSettings();
+        
+        this.userSettings = new UserSettings(defaults, this.minImageScale, this.maxImageScale);
         
         // Load any view parameters specified via API
         if (this.load.date) {
             timestamp = getUTCTimestamp(this.load.date);
-            this.userSettings.set('date', timestamp);
+            $(document).trigger("save-setting", ["date", timestamp]);
         }
 
         if (this.load.imageScale) {
-            this.userSettings.set('imageScale', parseFloat(this.load.imageScale));
+            $(document).trigger("save-setting", ["imageScale", parseFloat(this.load.imageScale)]);
         }
 
         // Process and load and layer strings specified
@@ -275,179 +269,15 @@ var Helioviewer = Class.extend(
             layers = [];
             
             $.each(this.load.imageLayers, function () {
-                layerSettings        = self.userSettings.parseLayerString(this);
+                layerSettings        = TileLayerManager.parseLayerString(this);
                 layerSettings.server = self.selectTilingServer();
                 
                 // Load layer
                 layers.push(layerSettings);
             });
-            this.userSettings.set('tileLayers', layers);
+            $(document).trigger("save-setting", ["tileLayers", layers]);
         }
 
-    },
-    
-    /**
-     * @description Creates an HTML button for toggling between regular and fullscreen display
-     * 
-     * TODO 03/15/2010:
-     *  Instead of storing the original dimensions and then simply reverting to them later, a better
-     *  approach might be to compute write methods to compute what those values should be for any given
-     *  screen size. This way if a user switches to full screen mode, resizes the browser window, and then
-     *  switches back to normal view-mode, the viewport will be optimized for the new window size.
-     */
-    _createFullscreenBtn: function () {
-        var btn, icon, vp, sb, speed, marginSize, meta, panels, colmid, colright, col1pad, col2, header,
-            origViewportHeight, origColMidLeft, origColRightMarginLeft, origCol1PadMarginRight, 
-            origCol1PadMarginLeft, origCol2Left, origCol2Width, origHeaderHeight, $_fx_step_default, self, body;
-        
-        // get dom-nodes
-        btn  = $("#fullscreen-btn");
-        icon = btn.find(".ui-icon");
-        
-        // CSS Selectors
-        colmid   = $('#colmid');
-        colright = $('#colright');
-        col1pad  = $('#col1pad');
-        col2     = $('#col2');
-        body     = $('body');
-        vp       = $('#helioviewer-viewport-container-outer');
-        sb       = $('#sandbox');
-        header   = $('#header');
-        meta     = $('#footer-container-outer');
-        panels   = $("#col2, #col3, #header, #footer");
-       
-        // animation speed
-        speed = 500;
-        
-        // margin-size
-        marginSize = 4;
-
-        // Overide jQuery's animation method
-        // http://acko.net/blog/abusing-jquery-animate-for-fun-and-profit-and-bacon
-        self  = this;
-        $_fx_step_default = $.fx.step._default;
-        $.fx.step._default = function (fx) {
-            if (fx.elem.id !== "sandbox") {
-                return $_fx_step_default(fx);
-            }
-            self.viewport.updateSandbox();
-            fx.elem.updated = true;
-        };
-        
-        // setup event-handler
-        btn.click(function () {
-            if (!btn.hasClass('requests-disabled')) {
-                            
-                // toggle fullscreen class
-                colmid.toggleClass('fullscreen-mode');
-                
-                // make sure action finishes before starting a new one
-                btn.addClass('requests-disabled');
-                
-                // fullscreen mode
-                if (colmid.hasClass('fullscreen-mode')) {
-                    
-                    // hide overflow
-                    body.css('overflow', 'hidden');
-                    
-                    meta.hide();
-   
-                    // keep track of original dimensions
-                    origColMidLeft         = colmid.css("left");
-                    origColRightMarginLeft = colright.css("margin-left");
-                    origCol1PadMarginLeft  = col1pad.css("margin-left");
-                    origCol1PadMarginRight = col1pad.css("margin-right");
-                    origCol2Left           = col2.css("left");
-                    origCol2Width          = col2.width();
-                    origHeaderHeight       = header.height();
-                    origViewportHeight     = vp.height();
-                    
-                    colmid.animate({ 
-                        left: 0
-                    }, speed,
-                    function () {
-                        self.viewport.checkTiles();
-                        self.tileLayers.resetLayers();
-                        self.eventLayers.resetLayers();
-                        panels.hide();
-                        btn.removeClass('requests-disabled');
-                    });
-                    
-                    colright.animate({
-                        "margin-left": 0
-                    }, speed);
-                    
-                    col1pad.animate({
-                        "margin-left" : 4,
-                        "margin-right": 4,
-                        "margin-top":   4
-                    }, speed);
-                    
-                    col2.animate({
-                        "left": -(parseInt(origCol2Left, 10) + origCol2Width)
-                    }, speed);
-                    
-                    header.animate({
-                        "height": 0
-                    }, speed);
-                       
-                    vp.animate({
-                        height: $(window).height() - (marginSize * 3)
-                    }, speed);
-     
-                    // Keep sandbox up to date
-                    sb.animate({
-                        right: 1 // Trash
-                    }, speed);                
-               
-                // regular mode      
-                } else {
-                    panels.show();
-                        
-                    colmid.animate({ 
-                        left:  origColMidLeft
-                    }, speed,
-                    function () {
-                        btn.removeClass('requests-disabled');    
-                        meta.show();
-                        
-                        // show overflow
-                        body.css('overflow', 'visible');
-                    });
-                    
-                    colright.animate({
-                        "margin-left": origColRightMarginLeft
-                    }, speed);
-                    
-                    col1pad.animate({
-                        "margin-left" : origCol1PadMarginLeft,
-                        "margin-right": origCol1PadMarginRight,
-                        "margin-top"  : 0
-                    }, speed);
-                    
-                    col2.animate({
-                        left: origCol2Left
-                    }, speed);
-                    
-                    header.animate({
-                        "height": origHeaderHeight
-                    }, speed);
-    
-                    vp.animate({
-                        height: origViewportHeight
-                    }, speed);
-                    sb.animate({
-                        right: 0
-                    }, speed);
-                    
-                    // Resize in case browser size changed?
-                }
-            }
-        }).hover(function () {
-            icon.addClass('ui-icon-hover');
-        }, function () {
-            icon.removeClass('ui-icon-hover');
-        });
     },
 
     /**
@@ -460,6 +290,8 @@ var Helioviewer = Class.extend(
             prefetch: this.prefetchSize,
             debug: false
         });
+        
+        this.updateShadows();
     },
 
     /**
@@ -471,28 +303,13 @@ var Helioviewer = Class.extend(
         // Initiallize keyboard shortcut manager
         this.keyboard = new KeyboardManager(this);
         
-        $('#center-button').click(function () {
-            self.viewport.center.call(self.viewport);
-        });
-        
-        // Link button
-        $('#link-button').click(function () {
-            self.displayURL();
-        });
-        
-        // Email button
-        $('#email-button').click(function () {
-            self.displayMailForm();
-        });
-        
-        // JHelioviewer button
-        $('#jhelioviewer-button').click(function () {
-            //console.log(self.tileLayers.toURIString());
-            window.open("http://www.jhelioviewer.org", "_blank");
-        });
+        $('#center-button').click($.proxy(this.viewport.center, this.viewport));
+        $('#link-button').click($.proxy(this.displayURL, this));
+        $('#email-button').click($.proxy(this.displayMailForm, this));
+        $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
 
         // Hover effect for text/icon buttons        
-        $('.text-btn').hover(function () {
+        $('#social-buttons .text-btn').hover(function () {
             $(this).children(".ui-icon").addClass("ui-icon-hover");
         },
             function () {
@@ -506,32 +323,10 @@ var Helioviewer = Class.extend(
     _initLoadingIndicator: function () {
         $(document).ajaxStart(function () {
             $('#loading').show();
-        });
-        $(document).ajaxStop(function () {
+        })
+        .ajaxStop(function () {
             $('#loading').hide();
         });  
-    },
-
-    /**
-     * @description Adds a tooltip with specified settings to a given component.
-     * @param {String} CSS selector of th element to add ToolTip to.
-     * @param {Hash}   A hash containing any options configuration parameters to use.
-     */
-    addToolTip: function (id, params) {
-        var options = params || [],
-            classname = "tooltip-" + (options.position || "bottomleft") + "-" + (options.tooltipSize || "medium");
-
-        $(id).tooltip({
-            delay: (options.delay ? options.delay : 1000),
-            track: (options.track ? options.track : false),
-            showURL: false,
-            opacity: 1,
-            fixPNG: true,
-            showBody: " - ",
-            extraClass: classname,
-            top:  (options.yOffset ? options.yOffset : 0),
-            left: (options.xOffset ? options.xOffset : 12)
-        });
     },
 
     /**
@@ -549,7 +344,7 @@ var Helioviewer = Class.extend(
         var url, w;
         
         // Get URL
-        url = this.userSettings.toURL();
+        url = this.toURL();
         
         // Shadowbox width
         w = $('html').width() * 0.5;
@@ -582,7 +377,7 @@ var Helioviewer = Class.extend(
      */
     displayMailForm: function () {
         // Get URL
-        var url = this.userSettings.toURL();
+        var url = this.toURL();
         
         Shadowbox.open({
             content:    '<div id="helioviewer-url-box">' +
@@ -614,6 +409,105 @@ var Helioviewer = Class.extend(
             height:     455,
             width:      400
         });
+    },
+    
+    /**
+     * Launches an instance of JHelioviewer
+     */
+    launchJHelioviewer: function () {
+        window.open("http://www.jhelioviewer.org", "_blank");
+    },
+    
+    /**
+     * @description Adds an animated text shadow based on the position and size of the Sun (Firefox 3.5+)
+     * Added 2009/06/26
+     * TODO: Apply to other text based on it's position on screen? Adjust blue based on zoom-level?
+     *       Use viewport size to determine appropriate scales for X & Y offsets (normalize)
+     *       Re-use computeCoordinates?
+     */
+    updateShadows: function () {
+        // Not supported in older versions of Firefox, or in IE
+        if (!$.support.textShadow) {
+            return;
+        }
+        
+        var viewportOffset, sunCenterOffset, coords, viewportCenter, offsetX, offsetY;
+        
+        viewportOffset  = $("#helioviewer-viewport").offset();
+        sunCenterOffset = $("#moving-container").offset();
+
+        // Compute coordinates of heliocenter relative to top-left corner of the viewport
+        coords = {
+            x: sunCenterOffset.left - viewportOffset.left,
+            y: sunCenterOffset.top - viewportOffset.top
+        };
+        
+        // Coordinates of heliocenter relative to the viewport center
+        viewportCenter = this.viewport.getCenter();
+        coords.x = coords.x - viewportCenter.x;
+        coords.y = coords.y - viewportCenter.y;
+        
+        // Shadow offset
+        offsetX = ((500 - coords.x) / 100) + "px";
+        offsetY = ((500 - coords.y) / 150) + "px";
+
+        //console.log("x: " + coords.x + ", y: " + coords.y);
+        $("#footer-links > .light").css("text-shadow", offsetX + " " + offsetY + " 3px #000");
+    },
+    
+    /**
+     * Creates a hash containing the default settings to use
+     * 
+     * @returns {Object} The default Helioviewer.org settings
+     */
+    _getDefaultUserSettings: function () {
+        return {
+            date            : getUTCTimestamp(this.defaultObsTime),
+            imageScale      : this.defaultImageScale,
+            version         : this.version,
+            warnMouseCoords : true,
+            showWelcomeMsg  : true,
+            tileLayers : [{
+                server     : this.selectTilingServer(),
+                observatory: 'SOHO',
+                instrument : 'EIT',
+                detector   : 'EIT',
+                measurement: '304',
+                visible    : true,
+                opacity    : 100
+            }],
+            eventIcons      : {
+                'VSOService::noaa'         : 'small-blue-circle',
+                'GOESXRayService::GOESXRay': 'small-green-diamond',
+                'VSOService::cmelist'      : 'small-yellow-square'
+            }
+        };
+    },
+    
+    /**
+     * Builds a URL for the current view
+     *
+     * @TODO: Add support for viewport offset, event layers, opacity
+     * @TODO: Make into a static method for use by Jetpack, etc? http://www.ruby-forum.com/topic/154386
+     * 
+     * @returns {String} A URL representing the current state of Helioviewer.org.
+     */
+    toURL: function () {
+        var url, date, imageScale, imageLayers;
+        
+        // Add timestamp
+        date = this.date.toISOString();
+    
+        // Add image scale
+        imageScale = this.getImageScale();
+        
+        // Image layers
+        imageLayers = this.tileLayers.serialize();
+        
+        // Build URL
+        url = this.rootURL + "/?date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
+
+        return url;
     }
 });
 

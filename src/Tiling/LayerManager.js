@@ -48,17 +48,40 @@ var LayerManager = Class.extend(
         
         return index;
     },
+    
+    /**
+     * @description Returns the largest width and height of any layers (does not have to be from same layer)
+     * @return {Object} The width and height of the largest layer
+     */
+    getMaxDimensions: function () {
+        var maxLeft   = 0,
+            maxTop    = 0,
+            maxBottom = 0,
+            maxRight  = 0;
+        
+        $.each(this._layers, function () {
+            var d = this.getDimensions();
+            
+            maxLeft   = Math.max(maxLeft, d.left);
+            maxTop    = Math.max(maxTop, d.top);
+            maxBottom = Math.max(maxBottom, d.bottom);
+            maxRight  = Math.max(maxRight, d.right);
+        });
+        
+        return {width: maxLeft + maxRight, height: maxTop + maxBottom};
+    },
 
     /**
      * @description Removes a layer
      * @param {Object} The layer to remove
-     * TODO: update sandbox dimensions
      */
     removeLayer: function (layer) {
         layer.domNode.remove();
         this._layers = $.grep(this._layers, function (e, i) {
             return (e.id !== layer.id);
         });
+        layer = null;
+        this.controller.viewport.updateSandbox();
     },
     
     /**

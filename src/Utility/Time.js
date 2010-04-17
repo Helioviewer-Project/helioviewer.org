@@ -38,7 +38,7 @@ var Time = Class.extend(
         this._date = date;
         var ts = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
                           date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-        this.controller.userSettings.set('date', parseInt(ts, 10));
+        $(document).trigger("save-setting", ["date", parseInt(ts, 10)]);
         this.controller.tileLayers.reloadLayers();
         this.controller.eventLayers.reloadLayers();
     },
@@ -93,7 +93,7 @@ var Time = Class.extend(
             this.setDate(utcDate);
         }
         else {
-            this.controller.messageConsole.warn('Invalid date. Please enter a date of the form YYYY/MM/DD.');
+            $(document).trigger("message-console-warn", ["Invalid date. Please enter a date of the form YYYY/MM/DD."]); 
         }
     },
 
@@ -122,7 +122,7 @@ var Time = Class.extend(
             this.setDate(this._date);
         }
         else {
-            this.controller.messageConsole.warn('Invalid time. Please enter a time of the form HH:MM:SS.');
+            $(document).trigger("message-console-warn", ["Invalid time. Please enter a time of the form HH:MM:SS."]);
         }
     }
 });

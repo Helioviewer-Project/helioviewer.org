@@ -1,12 +1,9 @@
 <project name="Helioviewer" default="build" basedir="../">
 	<!-- Helioviewer Apache Ant build.xml. -->
-	<!-- Last updated: February 2010 By Keith -->
+	<!-- Last updated: April 2010 By Keith -->
 	<description>
 		Helioviewer Apache Ant build.xml
     </description>
-
-    <!-- Some useful variables -->
-    <property name="hvlibs"  value="src"/>	
 
     <!-- Minification and concatenation -->
 	<target name="build">
@@ -16,8 +13,8 @@
 
 		<!-- concatenate in two-steps to preserve include order -->
 		<concat destfile="build/helioviewer.js" encoding="UTF-8" eol="lf">
-		    <filelist dir="${hvlibs}" files="Layer.js, LayerManager.js"/>
-			<fileset dir="${hvlibs}" includes="*.js" excludes="Layer.js, LayerManager.js"/>
+			<fileset dir="src/" includes="Utility/Config.js, Tiling/Layer.js, Tiling/LayerManager.js" />
+			<fileset dir="src/" includes="**/*.js" excludes="Config.js, Layer.js, LayerManager.js" />
 		</concat>
 
 		<concat destfile="build/css/helioviewer.css" encoding="UTF-8" eol="lf">
@@ -50,8 +47,7 @@
         <property name="jslint.js" value="scripts/jslint/jslint.js"/>
 	    <echo message="Running JSLint..."/>
 		<apply executable="java" parallel="false">
-		    <!--  <filelist dir="${hvlibs}" includes="*.js" />-->
-		    <fileset id="jslint-matches" dir="${hvlibs}" includes="*.js" />
+		    <fileset dir="src/" includes="**/*.js" />
 		    <arg line="-jar"/>
 		    <arg path="${rhino.jar}"/>
 		    <arg path="${jslint.js}"/>
