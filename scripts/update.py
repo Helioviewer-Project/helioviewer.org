@@ -59,14 +59,24 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
         getNewImages(dir, tmpdir)
         
     # Create a list of files to process
-    images = traverseDirectory(tmpdir).replace(tmpdir, destination)
+    allImages = traverseDirectory(tmpdir).replace(tmpdir, destination)
+    
+    numImages = len(allImages.split(" "))
+    print "Adding %d images the image archive."
     
     # Move files to main archive (shutil.move will not merge directories)
     status, output = commands.getstatusoutput("cp -r %s/* %s/" % (tmpdir, destination))
     
-    # Process
-    cmd = "python %s --update -d %s -u %s -p %s -m %s -b %s %s" % (installer, dbname, dbuser, dbpass, dbtype, destination, images)
-    status, output = commands.getstatusoutput(cmd)
+    # If a large number of files are to be processed break-up to avoid exceeding command-line character limit
+    if (numImages > 1000):
+        images = chunks(allImages.split(" "), 1000)        
+    else:
+        images = [allImages]
+        
+    # Add to database
+    for imageStr in images:
+        cmd = "python %s --update -d %s -u %s -p %s -m %s -b %s %s" % (installer, dbname, dbuser, dbpass, dbtype, destination, imageStr)
+        status, output = commands.getstatusoutput(cmd)
 
     # Remove tmpdir
     shutil.rmtree(tmpdir)
@@ -97,6 +107,11 @@ def traverseDirectory(path):
                 images += node + " "
 
     return images
+
+def chunks(l, n):
+    """ http://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks-in-python """
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
 
 if __name__ == '__main__':
     main(sys.argv)
