@@ -3,7 +3,7 @@
 
 ###############################################################################
 # Helioviewer.org JPEG 2000 Ingestion Tool
-# Last Updated: 2009/04/16
+# Last Updated: 2009/04/17
 #
 # This script is intended to help with the automated processing of new images
 # for Helioviewer.org. The updater tool works by scanning a directory or set 
@@ -62,10 +62,12 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     allImages = traverseDirectory(tmpdir).replace(tmpdir, destination)
     
     numImages = len(allImages.split(" "))
-    print "Adding %d images the image archive."
+    print "Found %d images." % numImages
     
     # Move files to main archive (shutil.move will not merge directories)
     status, output = commands.getstatusoutput("cp -r %s/* %s/" % (tmpdir, destination))
+    
+    print "Adding images to database."
     
     # If a large number of files are to be processed break-up to avoid exceeding command-line character limit
     if (numImages > 1000):
@@ -80,6 +82,8 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
 
     # Remove tmpdir
     shutil.rmtree(tmpdir)
+    
+    print "Done!"
 
 def getNewImages(incoming, tmpdir):
     ''' Finds any new images and move them to a specified working directory to be processed '''
