@@ -114,7 +114,8 @@ def createSourceTable(cursor):
         (4, 'LASCO C2', 'SOHO LASCO C2', 0, 1, 1, 6, 2),
         (5, 'LASCO C3', 'SOHO LASCO C3', 0, 1, 2, 6, 3),
         (6, 'MDI Mag', 'SOHO MDI Mag', 0, 2, 3, 5, 1),
-        (7, 'MDI Int', 'SOHO MDI Int', 0, 2, 3, 4, 1);        
+        (7, 'MDI Int', 'SOHO MDI Int', 0, 2, 3, 4, 1),
+        (8, 'AIA 171', 'SDO AIA 171',  2, 4, 5, 0, 1);
     ''')
 
 def createObservatoryTable(cursor):
@@ -131,7 +132,8 @@ def createObservatoryTable(cursor):
     cursor.execute('''
     INSERT INTO `observatory` VALUES
         (0, 'SOHO', 'Solar and Heliospheric Observatory'),
-        (1, 'TRACE', 'The Transition Region and Coronal Explorer');
+        (1, 'TRACE', 'The Transition Region and Coronal Explorer'),
+        (2, 'SDO', 'Solar Dynamics Observatory');        
     ''')
 
 def createInstrumentTable(cursor):
@@ -150,7 +152,8 @@ def createInstrumentTable(cursor):
         (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
         (1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
         (2, 'MDI',   'Michelson Doppler Imager'),
-        (3, 'TRACE', 'TRACE');
+        (3, 'TRACE', 'TRACE'),
+        (4, 'AIA',   'Atmospheric Imaging Assembly');
     ''')
 
 
@@ -168,11 +171,13 @@ def createDetectorTable(cursor):
 
     cursor.execute('''
     INSERT INTO `detector` VALUES
-        (0, 'EIT', 'EIT'),
-        (1, 'C2', 'LASCO C2'),
-        (2, 'C3', 'LASCO C3'),
-        (3, 'MDI', 'MDI'),
-        (4, 'TRACE', 'TRACE');''')
+        (0, 'EIT',   'EIT'),
+        (1, 'C2',    'LASCO C2'),
+        (2, 'C3',    'LASCO C3'),
+        (3, 'MDI',   'MDI'),
+        (4, 'TRACE', 'TRACE'),
+        (5, 'AIA',   'AIA');
+    ''')
 
 
 def createMeasurementTable(cursor):
@@ -189,13 +194,14 @@ def createMeasurementTable(cursor):
 
     cursor.execute(u'''
     INSERT INTO `measurement` VALUES
-      (0, '171', '171 Ångström extreme ultraviolet', 'Å'),
+        (0, '171', '171 Ångström extreme ultraviolet', 'Å'),
         (1, '195', '195 Ångström extreme ultraviolet', 'Å'),
         (2, '284', '284 Ångström extreme ultraviolet', 'Å'),
         (3, '304', '304 Ångström extreme ultraviolet', 'Å'),
         (4, 'continuum', 'Intensitygram', 'DN'),
         (5, 'magnetogram', 'Magnetogram', 'Mx'),
-        (6, 'white light', 'White Light', 'DN');''')
+        (6, 'white-light', 'White Light', 'DN');
+    ''')
     
 def createDateIndex(cursor):
     """ Indexes the table on the date field """

@@ -168,8 +168,8 @@ if (!(isset($params) && loadModule($params))) {
         <br />
 
         <span class="example-header">Example:</span> <span class="example-url">
-        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,1,100]">
-           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,1,100]
+        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
         </a>
         </span>
     </div>
@@ -537,8 +537,8 @@ if (!(isset($params) && loadModule($params))) {
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
-        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white light&date=2003-10-05T00:00:00Z&jpip=true
+        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
+        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
         </a>
         </span>
         </div>
@@ -551,7 +551,7 @@ if (!(isset($params) && loadModule($params))) {
         <li>
         <div id="getJPX">JPX API
         <p>Returns a JPEG 2000 Image Series (JPX) file. The movie frames are chosen by matching the closest image
-        available at each step of a specified range of dates and image cadence.</p>
+        available at each step within the specified range of dates.</p>
 
         <br />
 
@@ -600,7 +600,8 @@ if (!(isset($params) && loadModule($params))) {
                 <tr>
                     <td><b>cadence</b></td>
                     <td><i>Integer</i></td>
-                    <td>The desired amount of time between each movie-frame, in seconds</td>
+                    <td><i>[Optional]</i> The desired amount of time between each movie-frame, in seconds. If no 
+                    cadence is specified, the server will attempt to select an optimal cadence.</td>
                 </tr>
                 <tr>
                     <td><b>sourceId</b></td>
@@ -672,8 +673,8 @@ if (!(isset($params) && loadModule($params))) {
 
         <span class="example-header">Example:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600">
-            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600
+        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
+            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
         </a>
         </span><br />
         <span class="example-url">
@@ -693,8 +694,7 @@ if (!(isset($params) && loadModule($params))) {
 
         <ul>
             <li>
-            <p>During JPX movie generation it is possible that for lower cadences some redundent image frames
-            will be used. In order to avoid this a sufficiently large cadence should be specified.</p>
+            <p>If no cadence is specified Helioviewer.org attempts to choose an optimal cadence for the requested range and data source.</p>
             </li>
         </ul>
         </div>
@@ -819,7 +819,7 @@ if (!(isset($params) && loadModule($params))) {
                 <td>304 Ångström</td>
             </tr>
             <tr>
-                <td>white light</td>
+                <td>white-light</td>
                 <td>White-light</td>
             </tr>
             <tr>
@@ -905,7 +905,7 @@ if (!(isset($params) && loadModule($params))) {
                     <td>2d List</td>
                     <td>This is similar to a list except that each item of the list is a bracket-delineated list
                     itself.</td>
-                    <td>[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white light,0,100],[SOHO,MDI,MDI,continuum,1,50]</td>
+                    <td>[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,0,100],[SOHO,MDI,MDI,continuum,1,50]</td>
                 </tr>
                 <tr>
                     <td>Unix Timestamp</td>
@@ -943,7 +943,7 @@ if (!(isset($params) && loadModule($params))) {
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-02-13 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-04-15 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>

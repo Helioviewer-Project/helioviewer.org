@@ -1,9 +1,9 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
 
 ###############################################################################
 # Helioviewer Database Installation Tool
-# Last Updated: 2009/03/11
+# Last Updated: 2009/04/12
 #
 # TODO 01/17/2010:
 #    Let user specify dbname

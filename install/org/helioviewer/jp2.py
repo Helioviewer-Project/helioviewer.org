@@ -30,8 +30,11 @@ def extractJP2MetaInfo (img):
     # Create a method to try and sniff the dataSource type before processing? Or do lazily?
 
     # Get XMLBox as DOM
-    dom = parseString(getJP2XMLBox(img, "meta"))
-    fits = dom.getElementsByTagName("fits")[0]
+    try:
+        dom = parseString(getJP2XMLBox(img, "meta"))
+        fits = dom.getElementsByTagName("fits")[0]
+    except:
+        print "Error retrieving JP2 XML Box."
     
     # Meta info (TODO 2009/08/25: support requests to both XML-Box & FITS header, e.g. using pyfits)
     meta = {
@@ -51,11 +54,15 @@ def getObservationDate(dom):
         t = getElementValue(dom, "TIME_OBS")
     except:
         try:
-            # EIT/MDI (yyyy-mm-ddThh:mm:ss.mmmZ)
+            # AIA/EIT/MDI (yyyy-mm-ddThh:mm:ss.mmmZ)
             d = getElementValue(dom, "DATE_OBS")
         except:
-            print "Try next date type... (Not EIT,MDI, or LASCO)"
+            print "Unable to find image date... (Not AIA, EIT, MDI, or LASCO)"
         else:
+            # If SDO, first convert to same format as SOHO (yyyy-mm-ddThh:mm:ss.mZ => yyyy-mm-ddThh:mm:ss.mmmZ)
+            if d[21] == "Z":
+                d = d[0:-1] + "00Z"
+            
             datestring = d[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
             
             # work-around (MDI sometimes has an "60" in seconds field)
@@ -76,6 +83,10 @@ def getObservatory(dom):
     try:
         # SOHO
         obs = getElementValue(dom, "TELESCOP")
+        
+        # SDO
+        if obs[0:3] == "SDO":
+            obs = "SDO"
     except:
         print "Observatory not found."
         
@@ -84,8 +95,12 @@ def getObservatory(dom):
 def getInstrument(dom):
     ''' Attempts to retrieve the instrument name from the image meta-information '''
     try:
-        #SOHO
+        #SOHO (LASCO,MDI,EIT)
         inst = getElementValue(dom, "INSTRUME")
+        
+        #AIA
+        if inst[0:3] == "AIA":
+            inst = "AIA"
     except:
         print "Instrument not found."
     
@@ -98,17 +113,21 @@ def getDetector(dom):
         det = getElementValue(dom, "DETECTOR")
     except:
         try:
-            # EIT,MDI
+            # EIT,MDI,AIA
             det = getElementValue(dom, "INSTRUME")
+            
+            #AIA
+            if det[0:3] == "AIA":
+                det = "AIA"
         except:
-            print "Try next inst..."
+            print "Try next Detector..."
     
     return det
     
 def getMeasurement(dom):
     ''' Attempts to retrieve the measurement name from the image meta-information '''
     try:
-        #EIT
+        #AIA/EIT
         meas = getElementValue(dom, "WAVELNTH")
     except:
         try:
@@ -116,7 +135,7 @@ def getMeasurement(dom):
 
             #LASCO
             if inst == "LASCO":
-                meas = "white light"
+                meas = "white-light"
             #MDI
             elif inst == "MDI":
                 dpcobsr = getElementValue(dom, "DPC_OBSR")
@@ -125,7 +144,7 @@ def getMeasurement(dom):
                 else:
                     meas = "continuum"
             else:
-                print "Try next measurement detector method..."                
+                print "Try next measurement detection method..."                
         except:
             print "Try next measurement detection method..."
 
@@ -154,7 +173,8 @@ def getJP2XMLBox(file, root):
     
     fp.close()
 
-    return xml
+    # 2010/04/12 TEMP Work-around for AIA invalid XML
+    return xml.replace("&", "&amp;")
 
 def parseISODate (d):
     '''
@@ -226,8 +246,6 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     
     # Remove trailing comma
     query = query[:-1] + ";"
-        
-    # print query
         
     # Execute query
     try:

@@ -51,7 +51,7 @@ class JHelioviewerTest extends PHPUnit_Framework_TestCase
             'observatory' => 'SOHO',
             'instrument'  => 'LASCO',
             'detector'    => 'C2',
-            'measurement' => 'white light',
+            'measurement' => 'white-light',
             'date'        => '2003-10-05T00:00:00Z',
             'getJPIP'     => 'true'
         );

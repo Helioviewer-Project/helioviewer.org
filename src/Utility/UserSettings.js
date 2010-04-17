@@ -16,25 +16,22 @@ var UserSettings = Class.extend(
      * like the requested observation time, image zoom level, and the layers currently loaded. The UserSettings
      * class has the ability to use both HTML5 local storage and cookies for saving information. In addition, 
      * when supported, objects are stored as JSON objects rather than strings.<br><br>
-     * 
-     * <div style="color: gray;">
-     *    Keith 2009/07/01: 
      *    
-     *    There is currently a bug in the Prototype 1.6 series which prevents
-     *    Firefox 3.5's native JSON functionality from working properly.
-     *    The issue should be fixed in the upcoming 1.7 series.
-     *    See: https://prototype.lighthouseapp.com/projects/8886/tickets/730
-     * </div>
+     * TODO 2010/04/09: Generalize the validation step by passing in an array of validation criteria instead
+     * of passing in parameters individually.
      *    
      * @constructs
-     * @param {Object} controller A reference to the Helioviewer application class
+     * 
      * @see <a href="https://developer.mozilla.org/en/DOM/Storage">https://developer.mozilla.org/en/DOM/Storage</a>
      */
-    init: function (controller) {
-        this.controller = controller;
+    init: function (defaults, minImageScale, maxImageScale) {
+        this._defaults      = defaults;
+        this._minImageScale = minImageScale;
+        this._maxImageScale = maxImageScale;        
                 
         // Initialize storage
         this._initStorage();
+        this._setupEventHandlers();
     },
 
     /**
@@ -77,58 +74,6 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * Builds a URL for the current view
-     *
-     * @TODO: Add support for viewport offset, event layers, opacity
-     * @TODO: Make into a static method for use by Jetpack, etc? http://www.ruby-forum.com/topic/154386
-     * 
-     * @returns {String} A URL representing the current state of Helioviewer.org.
-     */
-    toURL: function () {
-        var url, date, imageScale, imageLayers;
-        
-        // Base URL
-        //url = "http://www.helioviewer.org/?";
-        url = this.controller.rootURL + "/?";
-        
-        // Add timestamp
-        date = this.controller.date.toISOString();
-    
-        // Add image scale
-        imageScale = this.controller.getImageScale();
-        
-        // Image layers
-        imageLayers = this.controller.tileLayers.serialize();
-        
-        // Build URL
-        url += "date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
-
-        return url;
-    },
-
-    /**
-     * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white light) into its component parts and returns 
-     * a javascript representation.
-     * 
-     * @param {String} The layer identifier as an underscore-concatenated string
-     * @see TileLayer.toString
-     * 
-     * @returns {Object} A simple javascript object representing the layer params
-     */
-    parseLayerString: function (str) {
-        var params = str.split(",");
-        return {
-            observatory: params[0],
-            instrument : params[1],
-            detector   : params[2],
-            measurement: params[3],
-            visible    : Boolean(parseInt(params[4], 10)),
-            opacity    : parseInt(params[5], 10),
-            server     : parseInt(params[6], 10) || 0
-        };
-    },
-
-    /**
      * Checks to see if there are any existing stored user settings
      * 
      * @returns {Boolean} Returns true if stored Helioviewer.org settings are detected
@@ -158,9 +103,20 @@ var UserSettings = Class.extend(
         }
             
         // If version is out of date, reset settings
-        if (this.get('version') !== this.controller.version) {
+        if (this.get('version') !== this._defaults.version) {
             this._loadDefaults();
         }
+    },
+    
+    /**
+     * Sets up event-handlers
+     */
+    _setupEventHandlers: function () {
+        var self = this;
+        
+        $(document).bind("save-setting", function (event, key, value) {
+            self.set(key, value);
+        });
     },
     
     /**
@@ -179,7 +135,7 @@ var UserSettings = Class.extend(
             }
             break;
         case "imageScale":
-            if ((isNaN(value)) || (value < this.controller.minImageScale) || (value > this.controller.maxImageScale)) {
+            if ((isNaN(value)) || (value < this._minImageScale) || (value > this._maxImageScale)) {
                 return false;
             }
             break;
@@ -193,23 +149,21 @@ var UserSettings = Class.extend(
      * Loads defaults user settings
      */
     _loadDefaults: function () {
-        var defaults = this._getDefaults();
-        
         if ($.support.localStorage) {
             localStorage.clear();
             
             if ($.support.nativeJSON) {
-                localStorage.setObject("settings", defaults);
+                localStorage.setObject("settings", this._defaults);
             }
             else { 
-                localStorage.setItem("settings", $.toJSON(defaults));
+                localStorage.setItem("settings", $.toJSON(this._defaults));
             }
         }
         else {
-            this.cookies.set("settings", defaults);
+            this.cookies.set("settings", this._defaults);
         }
             
-        this.settings = defaults;
+        this.settings = this._defaults;
     },
     
     /**
@@ -229,34 +183,5 @@ var UserSettings = Class.extend(
         else {
             this.settings = this.cookies.get("settings");
         }
-    },
-    
-    /**
-     * Creates a hash containing the default settings to use
-     * 
-     * @returns {Object} The default Helioviewer.org settings
-     */
-    _getDefaults: function () {
-        return {
-            date            : getUTCTimestamp(this.controller.defaultObsTime),
-            imageScale      : this.controller.defaultImageScale,
-            version         : this.controller.version,
-            warnMouseCoords : true,
-            showWelcomeMsg  : true,
-            tileLayers : [{
-                server     : this.controller.selectTilingServer(),
-                observatory: 'SOHO',
-                instrument : 'EIT',
-                detector   : 'EIT',
-                measurement: '304',
-                visible    : true,
-                opacity    : 100
-            }],
-            eventIcons      : {
-                'VSOService::noaa'         : 'small-blue-circle',
-                'GOESXRayService::GOESXRay': 'small-green-diamond',
-                'VSOService::cmelist'      : 'small-yellow-square'
-            }
-        };
-    } 
+    }
 });

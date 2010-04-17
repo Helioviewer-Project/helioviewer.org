@@ -24,9 +24,9 @@ var TileLayerManager = LayerManager.extend(
         this._layers = [];
         this._queue  = [
             "SOHO,EIT,EIT,304",
-            "SOHO,LASCO,C2,white light",
-            "SOHO,LASCO,C3,white light",
-            "SOHO,LASCO,C2,white light",
+            "SOHO,LASCO,C2,white-light",
+            "SOHO,LASCO,C3,white-light",
+            "SOHO,LASCO,C2,white-light",
             "SOHO,MDI,MDI,magnetogram",
             "SOHO,MDI,MDI,continuum",
             "SOHO,EIT,EIT,171",
@@ -40,7 +40,7 @@ var TileLayerManager = LayerManager.extend(
      */
     save: function () {
         var layers = this.toJSON();        
-        this.controller.userSettings.set('tileLayers', layers);
+        $(document).trigger("save-setting", ["tileLayers", layers]);        
     },
     
     /**
@@ -51,8 +51,8 @@ var TileLayerManager = LayerManager.extend(
         
         // If new layer exceeds the maximum number of layers allowed, display a message to the user
         if (this.size() >= this.controller.maxTileLayers) {
-            this.controller.messageConsole.warn("Maximum number of layers reached. " +
-            		                            "Please remove an existing layer before adding a new one.");
+            $(document).trigger("message-console-warn", ["Maximum number of layers reached. " +
+                                                "Please remove an existing layer before adding a new one."]);
             return;
         }
         
@@ -75,7 +75,7 @@ var TileLayerManager = LayerManager.extend(
         
         // Pull off the next layer on the queue
         next = queue[0] || defaultLayer;
-        layerSettings = this.controller.userSettings.parseLayerString(next + ",1,100");
+        layerSettings = TileLayerManager.parseLayerString(next + ",1,100");
         
         // Select tiling server if distributed tiling is enabling
         layerSettings.server = this.controller.selectTilingServer();
@@ -88,31 +88,6 @@ var TileLayerManager = LayerManager.extend(
         this.save();
     },
      
-    /**
-     * @description Returns the largest width and height of any layers (does not have to be from same layer)
-     * @return {Object} The width and height of the largest layer
-     */
-    getMaxDimensions: function () {
-        var maxLeft   = 0,
-            maxTop    = 0,
-            maxBottom = 0,
-            maxRight  = 0;
-        
-        $.each(this._layers, function () {
-            // Ignore if the relative dimensions haven't been retrieved yet
-            if ($.isNumber(this.relWidth)) {
-                var d = this.getDimensions();
-                
-                maxLeft   = Math.max(maxLeft, d.left);
-                maxTop    = Math.max(maxTop, d.top);
-                maxBottom = Math.max(maxBottom, d.bottom);
-                maxRight  = Math.max(maxRight, d.right);
-            }
-        });
-        
-        return {width: maxLeft + maxRight, height: maxTop + maxBottom};
-    },
-
     /**
      * @description Gets the maximum relative width and height of all visible layers, according to jp2 image sizes,
      *              not tilelayer sizes. Used when generating movies and screenshots, because tilelayer size is 
@@ -174,3 +149,26 @@ var TileLayerManager = LayerManager.extend(
         return str;
     }    
 });
+
+/**
+ * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its component parts and returns 
+ * a javascript representation.
+ * 
+ * @static
+ * @param {String} The layer identifier as an underscore-concatenated string
+ * @see TileLayer.toString
+ * 
+ * @returns {Object} A simple javascript object representing the layer params
+ */
+TileLayerManager.parseLayerString = function (str) {
+    var params = str.split(",");
+    return {
+        observatory: params[0],
+        instrument : params[1],
+        detector   : params[2],
+        measurement: params[3],
+        visible    : Boolean(parseInt(params[4], 10)),
+        opacity    : parseInt(params[5], 10),
+        server     : parseInt(params[6], 10) || 0
+    };
+};

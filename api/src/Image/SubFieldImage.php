@@ -144,12 +144,13 @@ class Image_SubFieldImage
             // Generate GD-readable grayscale image (PNG)
             $toIntermediateCmd = HV_PATH_CMD . "convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate";
             exec(escapeshellcmd($toIntermediateCmd));
-            
+
             //Apply color-lookup table
+            //if ($this->colorTable && ($_GET["det"] != "AIA")) {
             if ($this->colorTable) {
                 $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
-            
+
             // IM commands for transparency, padding, rescaling, etc.
             if ($this->hasAlphaMask()) {
                 $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);

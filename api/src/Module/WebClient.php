@@ -258,7 +258,7 @@ class Module_WebClient implements Module
             </information>
 
             <resources>
-                <j2se version="1.5+" initial-heap-size="256M" max-heap-size="1500M"/>
+                <j2se version="1.5+" max-heap-size="1000M"/>
                 <jar href="JHelioviewer.jar" />
             </resources>
 
@@ -545,6 +545,8 @@ class Module_WebClient implements Module
             $filepath .= "MDI/magnetogram";
         } else if ($sourceId == 7 ) {
             $filepath .= "MDI/continuum";
+        } else if ($sourceId == 8) {
+            $filepath .= "AIA/171";
         }
         
         $filepath .= "/$year/$month/$day/";
