@@ -1,6 +1,22 @@
                     
                     RELEASE NOTES
                     
+Helioviewer.org 2.0.2
+======================
+
+Helioviewer.org 2.0.2 is an incremental release adds initial support for
+processing and displaying SDO AIA images. Other changes include:
+
+ * Fixed bug #541880: "ie8: Manually entering time or date triggers 
+   icon-picker"
+ * Fixed bug #334085: "Pop-up sometimes not completely viewable"
+ * Fixed bug #322857: "Sandbox dimensions do not update right away when 
+   layers are removed."
+ * Fixed bug #532141: "Add option to get all frames instead of specifying a 
+   cadence"
+ * Added scripts/update.py - A new tool for routine ingestion of new data.
+
+                    
 Helioviewer.org 2.0.1
 ======================
 
@@ -52,3 +68,4 @@ include:
 This release also includes a number of bug fixes to the earlier version
 including a long-standing tiling bug which would occasionally result in missing
 tiles.
+
