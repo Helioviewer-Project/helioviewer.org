@@ -80,6 +80,11 @@ class Module_JHelioviewer implements Module
 
         $date = $this->_params['date'];
 
+        // TEMP Work-around
+        if ($this->_params['measurement'] == "white light") {
+            $this->_params['measurement'] = "white-light";
+        }
+
         // Search by source id
         if (!isset($this->_params['sourceId'])) {
             $this->_params['sourceId'] = $imgIndex->getSourceId(
@@ -148,6 +153,11 @@ class Module_JHelioviewer implements Module
     public function getJPX ()
     {
         include_once 'src/Image/JPEG2000/HelioviewerJPXImage.php';
+
+        // TEMP Work-around
+        if ($this->_params['measurement'] == "white light") {
+            $this->_params['measurement'] = "white-light";
+        }
 
         // Create JPX image instance
         $jpx = new Image_JPEG2000_HelioviewerJPXImage(
