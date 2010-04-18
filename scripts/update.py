@@ -3,7 +3,7 @@
 
 ###############################################################################
 # Helioviewer.org JPEG 2000 Ingestion Tool
-# Last Updated: 2009/04/17
+# Last Updated: 2009/04/18
 #
 # This script is intended to help with the automated processing of new images
 # for Helioviewer.org. The updater tool works by scanning a directory or set 
@@ -76,10 +76,16 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
         images = [allImages]
         
     # Add to database
-    for imageStr in images:
-        cmd = "python %s --update -d %s -u %s -p %s -m %s -b %s %s" % (installer, dbname, dbuser, dbpass, dbtype, destination, imageStr)
+    for imageArr in images:
+        #from subprocess import Popen, PIPE
+        #cmd = ["python ", installer, "--update", "-d", dbname, "-u", dbuser, "-p", dbpass, "-m", dbtype, "-b", destination]
+        #cmd.extend(imageArr)
+        #proc   = Popen(cmd, stdout=PIPE, shell=False)
+        #output = proc.communicate()
+        imageStr = " ".join(imageArr)
+        cmd = "python %s --update -d %s -u %s -p %s -m %s -b %s %s" % (installer, dbname, dbuser, dbpass.replace("$", "\$"), dbtype, destination, imageStr)
         status, output = commands.getstatusoutput(cmd)
-
+        
     # Remove tmpdir
     shutil.rmtree(tmpdir)
     
