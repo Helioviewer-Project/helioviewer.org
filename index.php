@@ -266,13 +266,13 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                     <!--  Observation Date -->
                     <div style="margin-bottom: 4px; position: relative;">
                         <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
-                        <input type="date" id="date" name="date" value="">
+                        <input type="text" id="date" name="date" value="">
                     </div>
 
                     <!-- Observation Time -->
                     <div style="margin-bottom: 8px;">
                         <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
-                        <input type="time" id="time" name="time" value="" style="width:80px">
+                        <input type="text" id="time" name="time" value="" style="width:80px">
                     </div>
 
                     <!-- Time Navigation Buttons & Time Increment selector -->

@@ -91,8 +91,8 @@ var TileLayerAccordion = Layer.extend(
             layer.detector    = $(det).attr("value");
             layer.measurement = $(meas).attr("value");
             
-            layer.sourceId = leaf.sourceId;
-            layer.name     = leaf.name;
+            layer.sourceId      = leaf.sourceId;
+            layer.name          = leaf.name;
             layer.layeringOrder = leaf.layeringOrder;
             
             layer.reload();

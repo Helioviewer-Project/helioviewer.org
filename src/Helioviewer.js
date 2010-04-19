@@ -18,12 +18,12 @@ var Helioviewer = Class.extend(
      * @constructs
      * 
      * @param {String} viewportId Viewport container selector.
-     * @param {Object} view       Client-specified settings to load
+     * @param {Object} urlParams  Client-specified settings to load
      * @param {Object} settings   Server settings
      */
-    init: function (viewportId, view, settings) {
+    init: function (viewportId, urlParams, settings) {
         $.extend(this, settings);
-        this.load        = view;
+        this.load        = urlParams;
         this.api         = "api/index.php";
         this.viewportId  = viewportId;
 
@@ -122,9 +122,9 @@ var Helioviewer = Class.extend(
      * TODO: Check for IE: localStorage exists in IE8, but works differently
      */
     _checkBrowser: function () {
-        // Native JSON (2009/07/02: Temporarily disabled: see notes in UserSettings.js)
-        //$.support.nativeJSON = (typeof(JSON) !== "undefined") ? true: false;
-        $.support.nativeJSON = false;
+       // Native JSON (2009/07/02: Temporarily disabled: see notes in UserSettings.js)
+       $.support.nativeJSON = (typeof(JSON) !== "undefined") ? true: false;
+       // $.support.nativeJSON = false;
         
         // Web storage (local)
         $.support.localStorage = !!window.localStorage;
@@ -384,10 +384,10 @@ var Helioviewer = Class.extend(
                         'Who would you like to send this page to?<br>' + 
                         '<form style="margin-top:15px;">' +
                         '<label>From:</label>' +
-                        '<input type="email" class="email-input-field" id="email-from" value="Your Email Address">' +
-                        '</input><br>' +
+                        '<input type="email" placeholder="from@example.com" class="email-input-field" ' +
+                        'id="email-from" value="Your Email Address"></input><br>' +
                         '<label>To:</label>' +
-                        '<input type="email" class="email-input-field" id="email-from" ' + 
+                        '<input type="email" placeholder="to@example.com" class="email-input-field" id="email-from" ' + 
                         'value="Recipient\'s Email Address"></input>' +
                         '<label style="float:none; margin-top: 10px;">Message: </label>' + 
                         '<textarea style="width: 370px; height: 270px; margin-top: 8px;">Check this out:\n\n' + url +

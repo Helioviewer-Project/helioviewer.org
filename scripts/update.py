@@ -75,14 +75,17 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     else:
         images = [allImages]
         
-    # Add to database
+    '''
     for imageArr in images:
-        #from subprocess import Popen, PIPE
-        #cmd = ["python ", installer, "--update", "-d", dbname, "-u", dbuser, "-p", dbpass, "-m", dbtype, "-b", destination]
-        #cmd.extend(imageArr)
-        #proc   = Popen(cmd, stdout=PIPE, shell=False)
-        #output = proc.communicate()
-        imageStr = " ".join(imageArr)
+        from subprocess import Popen, PIPE
+        cmd = ["python ", installer, "--update", "-d", dbname, "-u", dbuser, "-p", dbpass, "-m", dbtype, "-b", destination]
+        cmd.extend(imageArr)
+        proc   = Popen(cmd, stdout=PIPE, shell=False)
+        output = proc.communicate()
+    '''
+        
+    # Add to database
+    for imageStr in images:
         cmd = "python %s --update -d %s -u %s -p %s -m %s -b %s %s" % (installer, dbname, dbuser, dbpass.replace("$", "\$"), dbtype, destination, imageStr)
         status, output = commands.getstatusoutput(cmd)
         
