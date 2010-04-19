@@ -384,10 +384,10 @@ var Helioviewer = Class.extend(
                         'Who would you like to send this page to?<br>' + 
                         '<form style="margin-top:15px;">' +
                         '<label>From:</label>' +
-                        '<input type="text" class="email-input-field" id="email-from" value="Your Email Address">' +
+                        '<input type="email" class="email-input-field" id="email-from" value="Your Email Address">' +
                         '</input><br>' +
                         '<label>To:</label>' +
-                        '<input type="text" class="email-input-field" id="email-from" ' + 
+                        '<input type="email" class="email-input-field" id="email-from" ' + 
                         'value="Recipient\'s Email Address"></input>' +
                         '<label style="float:none; margin-top: 10px;">Message: </label>' + 
                         '<textarea style="width: 370px; height: 270px; margin-top: 8px;">Check this out:\n\n' + url +
