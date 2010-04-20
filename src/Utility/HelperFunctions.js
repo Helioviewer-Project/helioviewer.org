@@ -31,24 +31,14 @@ Date.prototype.toUTCTimeString = function () {
 };
 
 /**
- * @description Takes a localized javascript date and returns a date set to the UTC time.
+ * Takes a localized javascript date and returns a date set to the UTC time.
  * 
- * NOTE (11/03/2009) Sign for numsecs below should be reversed?
  */
 Date.prototype.toUTCDate = function () {
-    var utcOffset = this.getUTCOffset(),
-        sign = utcOffset[0],
-        hours = parseInt(utcOffset.substr(1, 2), 10),
-        mins = parseInt(utcOffset.substr(3, 4), 10),
-    
-        numSecs = (3600 * hours) + (60 * mins);
-    
-    if (sign === "+") {
-        numSecs = - numSecs;
-    }
-    
-    this.addSeconds(numSecs);
-};
+    return new Date(Date.UTC(
+        this.getFullYear(), this.getMonth(), this.getDate(),this.getHours(), this.getMinutes(), this.getSeconds()
+    ));
+}
 
 /**
  * @description Pads a string to the left.
@@ -61,19 +51,6 @@ String.prototype.padLeft = function (padding, minLength) {
         pad = '' + padding;
     while (str.length < minLength) {
         str = pad + str;
-    }
-    return str;
-};
-/**
- * @description Trims a string from the left.
- * @param {String} padding Character to trim.
- * @returns {String} The resulting string.
- */
-String.prototype.trimLeft = function (padding) {
-    var str = this,
-        pad = '' + padding;
-    while (str[0] === pad) {
-        str = str.substr(1);
     }
     return str;
 };

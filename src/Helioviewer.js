@@ -69,7 +69,7 @@ var Helioviewer = Class.extend(
      * @description Returns the current observation date as a JavaScript Date object
      */
     getDate: function () {
-        return this.date.getDate();  
+        return this.timeControls.getDate();  
     },
 
     /**
@@ -77,9 +77,6 @@ var Helioviewer = Class.extend(
      */
     _initUI: function () {
         var mouseCoords;
-
-        // Observation date & controls
-        this.date = new Time(this);
 
         //Zoom-controls
         this.zoomControls = new ZoomControls(this, {
@@ -90,8 +87,8 @@ var Helioviewer = Class.extend(
         });
 
         //Time-navigation controls
-        this.timeControls = new TimeControls(this, this.timeIncrementSecs, '#date', '#time', '#timestep-select',
-                                             '#timeBackBtn', '#timeForwardBtn');
+        this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs,  
+                                             '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
 
         //Message console
         this.messageConsole = new MessageConsole();
@@ -107,7 +104,7 @@ var Helioviewer = Class.extend(
         this._setupDialogs();
         
         // Tooltips
-        this.tooltips.createTooltip($("#timeBackBtn, #timeForwardBtn, #center-button"));
+        this.tooltips.createTooltip($("#timeBackBtn, #timeForwardBtn, #center-button, #observation-controls .ui-datepicker-trigger"));
         this.tooltips.createTooltip($("#fullscreen-btn"), "topRight");
         
         //Movie builder
@@ -122,14 +119,10 @@ var Helioviewer = Class.extend(
      * TODO: Check for IE: localStorage exists in IE8, but works differently
      */
     _checkBrowser: function () {
-       // Native JSON (2009/07/02: Temporarily disabled: see notes in UserSettings.js)
-       $.support.nativeJSON = (typeof(JSON) !== "undefined") ? true: false;
-       // $.support.nativeJSON = false;
-        
-        // Web storage (local)
+        $.support.nativeJSON   = (typeof(JSON) !== "undefined") ? true: false;
         $.support.localStorage = !!window.localStorage;
         
-        // (2009/07/02) Temporarily disabled on IE (works differently)
+        // (2009/07/02) Local storage temporarily disabled on IE (behaves differently)
         if ($.browser.msie) {
             $.support.localStorage = false;
         }
@@ -138,14 +131,12 @@ var Helioviewer = Class.extend(
         // (2009/07/16 Temporarily disabled while re-arranging social buttons & meta links)
         //$.support.textShadow = 
         //    ((navigator.userAgent.search(/Firefox\/[1-3]\.[0-1]/) === -1) && (!$.browser.msie)) ? true : false;
-        $.support.textShadow = false;
-        
+        $.support.textShadow = false;        
 
         // Add JSON support to local storage
         if ($.support.nativeJSON && $.support.localStorage) {
             extendLocalStorage();
         }
-
     },
     
     /**
@@ -496,7 +487,7 @@ var Helioviewer = Class.extend(
         var url, date, imageScale, imageLayers;
         
         // Add timestamp
-        date = this.date.toISOString();
+        date = this.timeControls.toISOString();
     
         // Add image scale
         imageScale = this.getImageScale();

@@ -17,6 +17,7 @@ var LayerManager = Class.extend(
     init: function (controller) {
         this.controller = controller;
         this._layers    = [];
+        $(document).bind("observation-time-changed", $.proxy(this.reloadLayers, this));
     },
 
     /**
