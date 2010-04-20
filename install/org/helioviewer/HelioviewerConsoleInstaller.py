@@ -8,7 +8,6 @@ class HelioviewerConsoleInstaller:
 
     def __init__(self, options):
         self.options = options
-        self.logfile = open("error.log", "a")
         
     def getFilePath(self):
         ''' Prompts the user for the directory information '''

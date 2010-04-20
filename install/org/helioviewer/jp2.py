@@ -211,6 +211,8 @@ def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
 def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     query = "INSERT INTO image VALUES "
     
+    error = ""
+    
     for y in range(n):
         # Grab next image
         img = images.pop()
@@ -228,8 +230,7 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         try:
             meta = extractJP2MetaInfo(img)
         except:
-            f = open('error.log', 'a')
-            f.write(filename + "\n")
+            error += filename + "\n"
         else:
             # Source id
             id = sources[meta["observatory"]][meta["instrument"]][meta["detector"]][meta["measurement"]]
@@ -243,6 +244,12 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
             # Progressbar
             if stepFxn and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
                 stepFxn(filename)
+                
+    # Log any errors encountered
+    if error:
+        import time
+        f = open('error.log', 'a')
+        f.write(time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime()) + "\n" + error)
     
     # Remove trailing comma
     query = query[:-1] + ";"
