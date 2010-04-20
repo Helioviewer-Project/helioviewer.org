@@ -132,7 +132,6 @@ var TileLayer = Layer.extend(
             "right"  : (this.relWidth  / 2) + this.sunCenterOffsetX
         };
     
-        this.refreshUTCDate();
         this.refreshTiles(zoomLevelChanged);
     },
     
@@ -146,7 +145,7 @@ var TileLayer = Layer.extend(
             action:   'getClosestImage',
             server:   this.server,
             sourceId: this.sourceId,
-            date:     this.controller.date.toISOString()
+            date:     this.controller.timeControls.toISOString()
         };
 
         this._loadStaticProperties();
@@ -291,15 +290,6 @@ var TileLayer = Layer.extend(
         });
         
         return tiles;
-    },
-
-    /**
-     * @description Update TileLayer date
-     */
-    refreshUTCDate: function () {
-        var date = new Date(this.timestamp * 1000);
-        date.toUTCDate();
-        this.utcDate = date;
     },
 
     /**

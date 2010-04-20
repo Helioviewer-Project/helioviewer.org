@@ -97,7 +97,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         "Tiling/Layer.js", "Events/EventLayer.js", "Events/EventLayerAccordion.js", "UI/TreeSelect.js",
                         "Events/EventMarker.js", "UI/ImageSelectTool.js", "Utility/KeyboardManager.js", 
                         "Tiling/LayerManager.js", "Events/EventLayerManager.js", "Tiling/TileLayerManager.js", 
-                        "Movies/MediaSettings.js", "UI/MessageConsole.js", "Movies/MovieBuilder.js", "Utility/Time.js",
+                        "Movies/MediaSettings.js", "UI/MessageConsole.js", "Movies/MovieBuilder.js",
                          "UI/ScreenshotBuilder.js", "Tiling/TileLayer.js", "Tiling/TileLayerAccordion.js", 
                         "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
                         "Viewport/FullscreenControl.js", "Viewport/Viewport.js", 

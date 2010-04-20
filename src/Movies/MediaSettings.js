@@ -94,9 +94,9 @@ var MediaSettings = Class.extend(
             
         // startTime is in unix timestamp format in seconds. date.getTime() returns milliseconds
         // so it needs to be divided by 1000.
-        this.startTime  = helioviewer.date.getTime() / 1000;
+        this.startTime  = helioviewer.timeControls.getTimestamp() / 1000;
 
-        this.dateString = helioviewer.date.toISOString();
+        this.dateString = helioviewer.timeControls.toISOString();
         this.imageScale  = helioviewer.viewport.imageScale;
         
         // reset the filename. It will be built in getImageInformation()
