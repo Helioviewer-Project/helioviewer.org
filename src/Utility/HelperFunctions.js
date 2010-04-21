@@ -56,20 +56,6 @@ String.prototype.padLeft = function (padding, minLength) {
 };
 
 /**
- * @description Allows JSON objects to be stored in Storage for browsers that have support for native JSON
- * http://hacks.mozilla.org/2009/06/localstorage/
- */
-var extendLocalStorage = function () {
-    Storage.prototype.setObject = function (key, value) {
-        this.setItem(key, JSON.stringify(value));
-    };
-     
-    Storage.prototype.getObject = function (key) {
-        return JSON.parse(this.getItem(key));
-    };   
-};
-
-/**
  * @description Dynamically loads a CSS file
  */
 var loadCSS = function (filename) {

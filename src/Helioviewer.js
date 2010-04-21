@@ -116,27 +116,16 @@ var Helioviewer = Class.extend(
     
     /**
      * @description Checks browser support for various features used in Helioviewer
-     * TODO: Check for IE: localStorage exists in IE8, but works differently
+     * 
+     * Note 2009/07/16:
+     * CSS3 text-shadows temporarily disabled while re-arranging social buttons & meta links
      */
     _checkBrowser: function () {
         $.support.nativeJSON   = (typeof(JSON) !== "undefined") ? true: false;
         $.support.localStorage = !!window.localStorage;
-        
-        // (2009/07/02) Local storage temporarily disabled on IE (behaves differently)
-        if ($.browser.msie) {
-            $.support.localStorage = false;
-        }
-        
-        // CSS3 text-shadows
-        // (2009/07/16 Temporarily disabled while re-arranging social buttons & meta links)
+        $.support.textShadow   = false;
         //$.support.textShadow = 
         //    ((navigator.userAgent.search(/Firefox\/[1-3]\.[0-1]/) === -1) && (!$.browser.msie)) ? true : false;
-        $.support.textShadow = false;        
-
-        // Add JSON support to local storage
-        if ($.support.nativeJSON && $.support.localStorage) {
-            extendLocalStorage();
-        }
     },
     
     /**
