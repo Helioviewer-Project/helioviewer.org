@@ -12,7 +12,7 @@ processing and displaying SDO AIA images. Other changes include:
  * Fixed bug #334085: "Pop-up sometimes not completely viewable"
  * Fixed bug #322857: "Sandbox dimensions do not update right away when 
    layers are removed."
- * Fixed bug #532141: "Add option to get all frames instead of specifing a 
+ * Fixed bug #532141: "Add option to get all frames instead of specifying a 
    cadence"
  * Added scripts/update.py - A new tool for routine ingestion of new data.
 

@@ -65,7 +65,7 @@ var EventLayer = Layer.extend(
         
         params = {
             action     : 'getEvents',
-            date       : this.viewport.controller.date.toISOString(),
+            date       : this.viewport.controller.timeControls.toISOString(),
             windowSize : this.windowSize,
             catalogs   : this.catalog
         };
