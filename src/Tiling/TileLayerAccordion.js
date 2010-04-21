@@ -91,8 +91,8 @@ var TileLayerAccordion = Layer.extend(
             layer.detector    = $(det).attr("value");
             layer.measurement = $(meas).attr("value");
             
-            layer.sourceId = leaf.sourceId;
-            layer.name     = leaf.name;
+            layer.sourceId      = leaf.sourceId;
+            layer.name          = leaf.name;
             layer.layeringOrder = leaf.layeringOrder;
             
             layer.reload();
@@ -420,7 +420,7 @@ var TileLayerAccordion = Layer.extend(
         var domNode, date, timeDiff, timestep;
         
         date     = new Date(getUTCTimestamp(layer.date));
-        timeDiff = (date.getTime() - this.controller.date.getTime()) / 1000;
+        timeDiff = (date.getTime() - this.controller.timeControls.getTimestamp()) / 1000;
         timestep = this.controller.timeIncrementSecs;
         
         domNode = $("#" + layer.htmlId).find('.timestamp').html(layer.date.replace(/-/g, "/"));

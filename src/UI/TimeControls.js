@@ -16,50 +16,42 @@ var TimeControls = Class.extend(
     /**
      * @constructs
      * @description Creates a new TimeControl component
-     * @param {Object} controller Reference to the Helioviewer application class/controller
-     * @param {Int} increment The amount of time to jump, in seconds, each time the back button or forward 
-     *              button is pressed
-     * @param {String} dateId The ID of the date form field associated with the Time.
-     * @param {String} timeId The ID of the time form field associated with the Time.
-     * @param {String} incrementSelect ID for the HTML element for selecting the time increment
-     * @param {String} backBtn ID for the time "Back" button
-     * @param {String} forwardBtn ID for the time "Forward" button
+     * @param {Int} initialDate        Timestamp of the initial date to use
+     * @param {Int}    increment       The initial amount of time to move forward or backwards, in seconds.
+     * @param {String} dateId          The id of the date form field associated with the Time.
+     * @param {String} timeId          The id of the time form field associated with the Time.
+     * @param {String} incrementSelect The id of the HTML element for selecting the time increment
+     * @param {String} backBtn         The id of the time "Back" button
+     * @param {String} forwardBtn      The id of the time "Forward" button
      */
-    init : function (controller, increment, dateInput, timeInput, incrementSelect, backBtn, forwardBtn) {
-        this.controller = controller;
-        
-        // UI components
-        this._dateInput  = $(dateInput);
-        this._timeInput  = $(timeInput);
-        this._backBtn    = $(backBtn);
-        this._forwardBtn = $(forwardBtn);
-        this._incrementSelect = $(incrementSelect);
-        
-        // Initial time increment 
+    init : function (timestamp, increment, dateInput, timeInput, incrementSelect, backBtn, forwardBtn) {
+        this._date          = new Date(timestamp);
         this._timeIncrement = increment;
-        
-        // Update input fields
-        this._updateInputFields();
-        
-        // Initialize datepicker
-        this._initDatePicker();
 
-        // Initialize event listeners
-        this._initEvents();
-                
-        // Populate select box
+        this._dateInput       = $(dateInput);
+        this._timeInput       = $(timeInput);
+        this._backBtn         = $(backBtn);
+        this._forwardBtn      = $(forwardBtn);
+        this._incrementSelect = $(incrementSelect);
+
         this._addTimeIncrements();
+        this._updateInputFields();
+        this._initDatePicker();
+        this._initEvents();
     },
 
     /**
-     * @description Updates the HTML form fields associated with the time manager.
+     * @description Returns the current observation date as a JavaScript Date object
+     */    
+    getDate: function () {
+        return this._date; 
+    },
+    
+    /**
+     * @description Returns a unix timestamp for the current observation time
      */
-    _updateInputFields: function () {
-        var date = this.controller.getDate();
-
-        // Set text-field to the new date
-        this._dateInput.val(date.toUTCDateString());
-        this._timeInput.val(date.toUTCTimeString());
+    getTimestamp: function () {
+        return this._date.getTime();  
     },
     
     /**
@@ -75,23 +67,64 @@ var TimeControls = Class.extend(
     getTimeField: function () {
         return this._timeInput.val();  
     },
+    
+    /**
+     * @description Returns the time increment currently displayed in the viewport.
+     * @return {int} this._timeIncrement -- time increment in secons
+     */
+    getTimeIncrement: function () {
+        return this._timeIncrement;
+    },
+    
+    /**
+     * @description Sets the desired viewing date and time.
+     * @param {Date} date A JavaScript Date object with the new time to use
+     */
+    setDate: function (date) {
+        this._date = date;
+        this._onDateChange();
+    },
       
    /**
     * @description Move back one time incremement
     */
     timePrevious: function () {
-        var newDate = this.controller.date.addSeconds(-this._timeIncrement);
-        this.controller.date.setDate(newDate);
-        this._updateInputFields();
+        this._addSeconds(-this._timeIncrement);
     },
     
     /**
      * @function Move forward one time increment
      */
     timeNext: function () {
-        var newDate = this.controller.date.addSeconds(this._timeIncrement);
-        this.controller.date.setDate(newDate);
-        this._updateInputFields();
+        this._addSeconds(this._timeIncrement);
+    },
+    
+    /**
+     * @description Gets an ISO 8601 string representation of the current observation time
+     */
+    toISOString: function () {
+        // Work-around: In Firefox 3.1+ (and Webkit), Date.toISOString() Returns single-quoted strings
+        // http://code.google.com/p/datejs/issues/detail?id=54
+        return this._date.toISOString().replace(/"/g, '');
+    },
+    
+    /**
+     * @descriptional Initialize date and Time-related events
+     */
+    _initEvents: function () {
+        this._backBtn.bind('click', $.proxy(this.timePrevious, this));
+        this._forwardBtn.bind('click', $.proxy(this.timeNext, this));
+        this._timeInput.bind('change', $.proxy(this._onTextFieldChange, this));
+        this._dateInput.bind('change', $.proxy(this._onTextFieldChange, this));
+    },
+    
+    /**
+     * Adds or subtracts a number of seconds to the current date 
+     * @param {int} seconds The number of seconds to adjust the date by
+     */
+    _addSeconds: function (seconds) {
+        this._date.addSeconds(seconds);
+        this._onDateChange();
     },
     
     /**
@@ -122,24 +155,14 @@ var TimeControls = Class.extend(
             select.append(opt);
         });
         
-        // Select default timestep
-        $('#timestep-select').find("[value = " + this._timeIncrement + "]").attr("selected", "selected");
-
-        // Event-handler
-        select.bind('change', this, function (e) {
-            var self = e.data;
-            self._onChange(e);
-        });
+        // Select default timestep and bind event listener
+        select.bind('change', $.proxy(this._onTimeIncrementChange, this))
+              .find("[value = " + this._timeIncrement + "]").attr("selected", "selected");
     },
     
-   /**
-    * @description Time-incremenet change event handler
-    * @param {Event} e Prototype Event Object
-    */
-    _onChange: function (e) {
-        this._timeIncrement = parseInt(e.target.value, 10);
-    },
-
+    /**
+     * Initializes the observation time datepicker
+     */
     _initDatePicker: function () {
         var btn, self = this;
         
@@ -155,70 +178,97 @@ var TimeControls = Class.extend(
             yearRange      : '1993:2010',
             onSelect       : function (dateStr) {
                 window.setTimeout(function () {
-                    self.controller.date.updateDate(dateStr);
+                    self._onTextFieldChange();
                 }, 500);
             }
         });
         
-        // Set datepicker icon
-        btn = $('.ui-datepicker-trigger');
+        // Datepicker icon
+        btn = $('#observation-controls .ui-datepicker-trigger');
 
-        // Add tooltip
-        btn.attr("title", "Select an observation date.");
-        this.controller.tooltips.createTooltip($('.ui-datepicker-trigger'));
-        
-        btn.click(function () {
-            $('.ui-datepicker-trigger').qtip("hide");
-        });
-        
-        // Mouse-over effect
         btn.hover(
             function () {
-                btn.attr("src", "resources/images/blackGlass/calendar_small-hover.png");
+                this.src = "resources/images/blackGlass/calendar_small-hover.png";
             },
             function () {
-                btn.attr("src", "resources/images/blackGlass/calendar_small.png");                
+                this.src = "resources/images/blackGlass/calendar_small.png";              
             }
-        );  
-    },
-
-    /**
-     * @descriptional Initialize date and Time-related events
-     */
-    _initEvents: function () {
-        
-        // Time backward button
-        this._backBtn.bind('click', this, function (e) {
-            var self = e.data;
-            self.timePrevious();
-        });
-        
-        // Time forward button
-        this._forwardBtn.bind('click', this, function (e) {
-            var self = e.data;
-            self.timeNext();
-        });
-        
-        // Time field change
-        this._timeInput.bind('change', this, function (e) {
-            var self = e.data;
-            self.controller.date.updateTime(e.target.value);
-            return false; // IE8: Prevent default button click from being triggered
-        });        
-        
-        //Date field change
-        this._dateInput.bind('change', this, function (e) {
-            var self = e.data;
-            self.controller.date.updateDate(e.target.value);
-            return false;
+        ).attr("title", "Select an observation date.")
+         .click(function () {
+             btn.qtip("hide");
         });
     },
     
     /**
-     * @description Returns the time increment currently displayed in the viewport.
-     * @return {int} this._timeIncrement -- time increment in secons
+     * Updates form fields and let's other interested objects know about new time
      */
-    getTimeIncrement: function () {
-        return this._timeIncrement;
+    _onDateChange: function () {
+        this._updateInputFields();
+        $(document).trigger("save-setting", ["date", this._date.getTime()])
+                   .trigger("observation-time-changed", [this._date]);
+    },
+    
+    /**
+     * Handles changes to date and time text fields
+     */
+    _onTextFieldChange: function () {
+        if (this._validateDate() && this._validateTime()) {
+            this.setDate(this._timeFieldsToDateObj());
+        }
+        // IE8: Prevent default button click from being triggered
+        return false;
+    },
+    
+   /**
+    * @description Time-incremenet change event handler
+    * @param {Event} e Prototype Event Object
+    */
+    _onTimeIncrementChange: function (e) {
+        this._timeIncrement = parseInt(e.target.value, 10);
+    },
+    
+    /**
+     * Returns a JavaScript Date object with the user's local timezone offset factored out
+     */
+    _timeFieldsToDateObj: function () {
+        return Date.parse(this.getDateField() + " " + this.getTimeField()).toUTCDate();
+    },
+    
+    /**
+     * @description Updates the HTML form fields associated with the time manager.
+     */
+    _updateInputFields: function () {
+        this._dateInput.val(this._date.toUTCDateString());
+        this._timeInput.val(this._date.toUTCTimeString());
+    },
+    
+    /**
+     * Returns true if the date input field is a valid date and displays a warning message to
+     * the user otherwise
+     */
+    _validateDate: function () {
+        var dateString = this.getDateField();
+        
+        if (dateString.match(/^\d{4}\/\d{2}\/\d{2}?/) && (dateString.length === 10)) {
+            return true;
+        } else {
+            $(document).trigger("message-console-warn", ["Invalid date. Please enter a date of the form YYYY/MM/DD."]);
+            return false;
+        }
+    },
+    
+    /**
+     * Returns true if the time input field is a valid date and displays a warning message to
+     * the user otherwise
+     */
+    _validateTime: function () {
+        var timeString = this.getTimeField();
+        
+        if (timeString.match(/^\d{2}:\d{2}:\d{2}?/) && (timeString.length === 8)) {
+            return true;
+        } else {
+            $(document).trigger("message-console-warn", ["Invalid time. Please enter a time of the form HH:MM:SS."]);
+            return false;
+        }
     }
 });

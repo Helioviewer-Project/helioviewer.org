@@ -57,7 +57,7 @@ class Database_ImgIndex
 
     /**
      * Queries database and finds the best matching image.
-     * 
+     *
      * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
      * @param int    $sourceId An identifier specifying the image type or source requested.
      *
@@ -101,44 +101,44 @@ class Database_ImgIndex
 
         return $img;
     }
-    
+
     /**
      * Returns the number of images in the database for a given source and time range
-     * 
+     *
      * @param datetime $start    Query start time
      * @param datetime $end      Query end time
      * @param int      $sourceId The sourceId to query
-     * 
+     *
      * @return int The number of images in the database within the specified constraints
      */
     public function getImageCount($start, $end, $sourceId) {
         include_once 'src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
-        
+
         $sql = "SELECT COUNT(*) FROM image WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
         $result = mysqli_fetch_array($this->_dbConnection->query($sql));
         return (int) $result[0];
     }
-    
+
     /**
      * Returns an array containing all images for a given source and time range
-     * 
+     *
      * @param datetime $start    Query start time
      * @param datetime $end      Query end time
      * @param int      $sourceId The sourceId to query
-     * 
+     *
      * @return int The number of images in the database within the specified constraints
      */
     public function getImageRange($start, $end, $sourceId) {
         include_once 'src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
-        
+
         $images = array();
         $sql = "SELECT * FROM image WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
         $result = $this->_dbConnection->query($sql);
-        
+
         while ($image = $result->fetch_array(MYSQL_ASSOC)) {
             array_push($images, $image);
         }
