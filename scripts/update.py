@@ -59,9 +59,13 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
         getNewImages(dir, tmpdir)
         
     # Create a list of files to process
-    allImages = traverseDirectory(tmpdir).replace(tmpdir, destination)
+    allImages = traverseDirectory(tmpdir)
     
-    numImages = len(allImages.split(" ")) - 1
+    # Update paths to reflect desination
+    for i, filename in enumerate(allImages): 
+        allImages[i] = filename.replace(tmpdir, destination)
+    
+    numImages = len(allImages)
     print "Found %d images." % numImages
     
     if numImages is 0:
@@ -74,7 +78,7 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     print "Adding images to database."
     
     # If a large number of files are to be processed break-up to avoid exceeding command-line character limit
-    images = chunks(allImages.split(" "), 1000)        
+    images = chunks(allImages, 1000)        
         
     '''
     for imageArr in images:
@@ -108,18 +112,18 @@ def getNewImages(incoming, tmpdir):
         shutil.move(incoming + "/" + subdir, tmpdir + "/" + subdir)
     
 def traverseDirectory(path):
-    ''' Traverses file-tree starting with the specified path and builds  
-        space-separated string containing the list of files matched '''
-    images = ""
+    ''' Traverses file-tree starting with the specified path and builds a
+        list of the available images '''
+    images = []
 
     for child in os.listdir(path):
         node = os.path.join(path, child)
         if os.path.isdir(node):
             newImgs = traverseDirectory(node)
-            images += newImgs
+            images.extend(newImgs)
         else:
             if node[-3:] == "jp2":
-                images += node + " "
+                images.append(node)
 
     return images
 
