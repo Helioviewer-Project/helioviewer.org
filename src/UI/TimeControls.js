@@ -100,10 +100,10 @@ var TimeControls = Class.extend(
     },
     
     /**
-     * @description Gets an ISO 8601 string representation of the current observation time
+     * Gets an ISO 8601 string representation of the current observation time
      */
     toISOString: function () {
-        // Work-around: In Firefox 3.1+ (and Webkit), Date.toISOString() Returns single-quoted strings
+        // Work-around: Browsers with native support for toISOString return a quoted date string
         // http://code.google.com/p/datejs/issues/detail?id=54
         return this._date.toISOString().replace(/"/g, '');
     },

@@ -70,10 +70,7 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     print "Adding images to database."
     
     # If a large number of files are to be processed break-up to avoid exceeding command-line character limit
-    if (numImages > 1000):
-        images = chunks(allImages.split(" "), 1000)        
-    else:
-        images = [allImages]
+    images = chunks(allImages.split(" "), 1000)        
         
     '''
     for imageArr in images:
@@ -85,7 +82,8 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     '''
         
     # Add to database
-    for imageStr in images:
+    for imageArr in images:
+        imageStr = " ".join(imageArr)
         cmd = "python %s --update -d %s -u %s -p %s -m %s -b %s %s" % (installer, dbname, dbuser, dbpass.replace("$", "\$"), dbtype, destination, imageStr)
         status, output = commands.getstatusoutput(cmd)
         

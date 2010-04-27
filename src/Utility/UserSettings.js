@@ -158,7 +158,7 @@ var UserSettings = Class.extend(
      * Retrieves the saved user settings and saved them locally
      */
     _loadSavedSettings: function () {
-        if ($.support.localStorage && $.support.nativeJSON) {
+        if ($.support.localStorage) {
             this.settings = $.evalJSON(localStorage.getItem("settings"));
         }
         // Otherwise, check type and return
