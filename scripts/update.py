@@ -61,8 +61,12 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     # Create a list of files to process
     allImages = traverseDirectory(tmpdir).replace(tmpdir, destination)
     
-    numImages = len(allImages.split(" "))
+    numImages = len(allImages.split(" ")) - 1
     print "Found %d images." % numImages
+    
+    if numImages is 0:
+        print "Nothing to process. Exiting software..."
+        sys.exit()
     
     # Move files to main archive (shutil.move will not merge directories)
     status, output = commands.getstatusoutput("cp -r %s/* %s/" % (tmpdir, destination))
