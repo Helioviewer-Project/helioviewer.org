@@ -20,7 +20,8 @@ var TileLayerManager = LayerManager.extend(
     * @description Creates a new TileLayerManager instance
     */
     init: function (controller) {
-        this._super(controller);
+        this._super();
+        this.controller = controller;
         this._layers = [];
         this._queue  = [
             "SOHO,EIT,EIT,304",
@@ -33,6 +34,8 @@ var TileLayerManager = LayerManager.extend(
             "SOHO,EIT,EIT,284",
             "SOHO,EIT,EIT,195"
         ];
+        
+		$(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this));
     },
    
     /**
@@ -47,7 +50,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, rand, layerSettings, queue, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, rand, meta, queue, defaultLayer = "SOHO,EIT,EIT,171";
         
         // If new layer exceeds the maximum number of layers allowed, display a message to the user
         if (this.size() >= this.controller.maxTileLayers) {
@@ -61,7 +64,7 @@ var TileLayerManager = LayerManager.extend(
         // current layers in above form
         currentLayers = [];
         $.each(this._layers, function () {
-            currentLayers.push(this.observatory + "," + this.instrument + "," + this.detector + "," + this.measurement);
+            currentLayers.push(this.meta.observatory + "," + this.meta.instrument + "," + this.meta.detector + "," + this.meta.measurement);
         });
         
         // remove existing layers from queue
@@ -75,62 +78,16 @@ var TileLayerManager = LayerManager.extend(
         
         // Pull off the next layer on the queue
         next = queue[0] || defaultLayer;
-        layerSettings = TileLayerManager.parseLayerString(next + ",1,100");
-        
-        // Select tiling server if distributed tiling is enabling
-        layerSettings.server = this.controller.selectTilingServer();
 
-        // Open menu by default
-        layerSettings.startOpened = true;
+        meta = TileLayerManager.parseLayerString(next + ",1,100");
+       
+        meta.server = this.controller.selectTilingServer();
+
+        $.extend(meta, this.controller.dataSources[meta.observatory][meta.instrument][meta.detector][meta.measurement]);
         
         // Add the layer
-        this.addLayer(new TileLayer(this.controller, layerSettings));
+        this.addLayer(new TileLayer(this.controller, this.controller.getDate(), meta));
         this.save();
-    },
-     
-    /**
-     * @description Gets the maximum relative width and height of all visible layers, according to jp2 image sizes,
-     *              not tilelayer sizes. Used when generating movies and screenshots, because tilelayer size is 
-     *              slightly smaller than jp2 image size and images will not align properly with tilelayer sizes.
-     * @return {Array} dimensions -- maximum width and height found.
-     * 
-     * NOTE 02/01/2010: This may longer necessary since the actual JP2 dimensions are now
-     * returned during each getClosestImage request?
-     */
-    getMaxJP2Dimensions: function (left, top, width, height) {
-        var dimensions, insideCircleC2, insideCircleC3, sizeOffset, relWidth, relHeight,
-            maxWidth = 0, maxHeight = 0;
-        
-        $.each(this._layers, function () {
-            if (this.visible) {
-                insideCircleC2 = this.insideCircle(216, this.width / 2, left, top, width, height);
-                insideCircleC3 = this.insideCircle(104, this.width / 2, left, top, width, height);
-                
-                if (this.detector.toString === "C2" && insideCircleC2) {
-                    // Do nothing
-                }
-                if (this.detector.toString === "C3" && insideCircleC3) {
-                    // Do nothing
-                }
-                
-                else {
-                    sizeOffset = this.width / this.relWidth;
-                    
-                    relWidth  = this.width  / sizeOffset;
-                    relHeight = this.height / sizeOffset;
-                    
-                    maxWidth = Math.max(maxWidth, relWidth);
-                    maxHeight = Math.max(maxHeight, relHeight);
-                }
-            }
-        });
-
-        dimensions = {
-            width  : maxWidth,
-            height : maxHeight
-        };
-
-        return dimensions;
     },
     
     /**

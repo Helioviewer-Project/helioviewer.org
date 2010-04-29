@@ -12,12 +12,10 @@ var LayerManager = Class.extend(
     /**
      * @constructs
      * @description Creates a new LayerManager
-     * @param {Object} A Rseference to the main application controller
      */
-    init: function (controller) {
-        this.controller = controller;
+    init: function () {
         this._layers    = [];
-        $(document).bind("observation-time-changed", $.proxy(this.reloadLayers, this));
+        this._maxLayerDimensions = {width: 0, height: 0};
     },
 
     /**
@@ -51,25 +49,52 @@ var LayerManager = Class.extend(
     },
     
     /**
+     * Updates the stored maximum dimensions. If the specified dimensions for updated are {0,0}, e.g. after
+     * a layer is removed, then all layers will be checked
+     */
+    updateMaxDimensions: function (event, updated) {
+        var type, old = this._maxLayerDimensions;
+
+        this._maxLayerDimensions = {
+            width : Math.max(old.width,  updated.width),
+            height: Math.max(old.height, updated.height)
+        };
+        
+        if ((this._maxLayerDimensions.width !==old.width) || (this._maxLayerDimensions.height !== old.height)) {
+        	type = event.type.split("-")[0];
+        	$(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
+        }
+    },
+    
+    /**
+     * Recheck maximum dimensions after a layer is removed
+     */
+    refreshMaxDimensions: function (type) {
+        var maxWidth = 0, maxHeight = 0;
+        
+        $.each(this._layers, function () {
+            var d = this.getDimensions();
+                
+            maxWidth  = Math.max(maxWidth, d.width);
+            maxHeight = Math.max(maxHeight, d.height);
+        });
+        
+        this._maxLayerDimensions = {
+            width : maxWidth,
+            height: maxHeight
+        };
+        
+        console.dir(this._maxLayerDimensions);
+        
+        $(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
+    },
+    
+    /**
      * @description Returns the largest width and height of any layers (does not have to be from same layer)
      * @return {Object} The width and height of the largest layer
      */
     getMaxDimensions: function () {
-        var maxLeft   = 0,
-            maxTop    = 0,
-            maxBottom = 0,
-            maxRight  = 0;
-        
-        $.each(this._layers, function () {
-            var d = this.getDimensions();
-            
-            maxLeft   = Math.max(maxLeft, d.left);
-            maxTop    = Math.max(maxTop, d.top);
-            maxBottom = Math.max(maxBottom, d.bottom);
-            maxRight  = Math.max(maxRight, d.right);
-        });
-        
-        return {width: maxLeft + maxRight, height: maxTop + maxBottom};
+    	return this._maxLayerDimensions;
     },
 
     /**
@@ -77,29 +102,23 @@ var LayerManager = Class.extend(
      * @param {Object} The layer to remove
      */
     removeLayer: function (layer) {
+        var type = layer.id.split("-")[0];
+        
         layer.domNode.remove();
         this._layers = $.grep(this._layers, function (e, i) {
             return (e.id !== layer.id);
         });
         layer = null;
-        this.controller.viewport.updateSandbox();
+        
+        this.refreshMaxDimensions(type);
     },
     
     /**
-     * @description Reload layers (For tile layers, finds closest image)
+     * @description Refreshes each of the layers
      */
-    reloadLayers: function () {
+    refreshLayers: function () {
         $.each(this._layers, function () {
-            this.reload();
-        });
-    },
-
-    /**
-     * @description Resets each of the layers
-     */
-    resetLayers: function () {
-        $.each(this._layers, function () {
-            this.reset(true);
+            this.refresh(true);
         });
     },
     

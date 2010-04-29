@@ -94,11 +94,10 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         }
         else {
         	$js = array("Utility/Config.js", "Helioviewer.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
-                        "Tiling/Layer.js", "Events/EventLayer.js", "Events/EventLayerAccordion.js", "UI/TreeSelect.js",
-                        "Events/EventMarker.js", "UI/ImageSelectTool.js", "Utility/KeyboardManager.js", 
-                        "Tiling/LayerManager.js", "Events/EventLayerManager.js", "Tiling/TileLayerManager.js", 
-                        "Movies/MediaSettings.js", "UI/MessageConsole.js", "Movies/MovieBuilder.js",
-                         "UI/ScreenshotBuilder.js", "Tiling/TileLayer.js", "Tiling/TileLayerAccordion.js", 
+                        "Tiling/Layer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js", "Utility/KeyboardManager.js", 
+                        "Tiling/LayerManager.js", "Tiling/TileLayerManager.js", "Movies/MediaSettings.js", 
+                        "UI/MessageConsole.js", "Movies/MovieBuilder.js", "UI/ScreenshotBuilder.js", 
+                        "Tiling/TileLayer.js", "Tiling/TileLayerAccordion.js", 
                         "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
                         "Viewport/FullscreenControl.js", "Viewport/Viewport.js", 
                         "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js");
@@ -111,7 +110,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"build/css/helioviewer.css?$version\" />\n\t";
         }
         else {
-            $css = array("main.css", "accordions.css", "dialogs.css", "events.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
+            $css = array("main.css", "accordions.css", "dialogs.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
             foreach($css as $file)
                 printf("<link rel=\"stylesheet\" type=\"text/css\" href=\"resources/css/%s?$version\" />\n\t", $file);
         }
@@ -182,120 +181,122 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                     <!-- Viewport -->
                     <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
                         <div id="helioviewer-viewport-container-inner" style="top:3%; width:97%; height:94%">
-                            <div id="helioviewer-viewport"></div>
+                            <div id="helioviewer-viewport">
+                                <div id="sandbox" style="position: absolute;">
+                                    <div id="moving-container" style="left: 0; top: 0"></div>
+                                </div>
+                            </div>
 
-                                <!-- UI COMPONENTS -->
+                            <!-- UI COMPONENTS -->
 
-                                <!--  Zoom Controls -->
-                                <div id="zoomControls"></div>
+                            <!--  Zoom Controls -->
+                            <div id="zoomControls"></div>
 
-                                <!-- Center button -->
-                                <div id="center-button" title="Center the image on the screen.">
-                                    <span>center</span>
+                            <!-- Center button -->
+                            <div id="center-button" title="Center the image on the screen.">
+                               <span>center</span>
+                            </div>
+
+                            <!--Social buttons -->
+                            <div id="social-buttons">
+                                <!-- Link button -->
+                                <div id="link-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-link" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Link</span>
                                 </div>
 
-                                <!--Social buttons -->
-                                <div id="social-buttons">
-                                    <!-- Link button -->
-                                    <div id="link-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-link" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Link</span>
-                                    </div>
+                                <!-- Email button -->
+                                <!--<div id="email-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Email</span>
+                                </div>-->
 
-                                    <!-- Email button -->
-                                    <!--<div id="email-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Email</span>
-                                    </div>-->
+                                <!-- Movie button -->
+                                <!--<div id="movie-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-video" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Movie</span>
+                                </div>-->
 
-                                    <!-- Movie button -->
-                                    <!--<div id="movie-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-video" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Movie</span>
-                                    </div>-->
+                                <!-- Screenshot button -->
+                                <!--<div id="screenshot-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-image" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Screenshot</span>
+                                </div>-->
 
-                                    <!-- Screenshot button -->
-                                    <!--<div id="screenshot-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-image" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Screenshot</span>
-                                    </div>-->
+                                <!-- Select region button -->
+                                <!--<div id="select-region-button" class="text-btn">
+                                    <span class='ui-icon ui-icon-scissors' style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Select Region</span>
+                                </div>-->
 
-                                    <!-- Select region button -->
-                                    <!--<div id="select-region-button" class="text-btn">
-                                        <span class='ui-icon ui-icon-scissors' style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Select Region</span>
-                                    </div>-->
+                                <!-- Media settings button -->
+                                <!--<div id="settings-button" class="text-btn">
+                                    <span class='ui-icon ui-icon-gear' style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Media Settings</span>
+                                </div>-->
 
-                                    <!-- Media settings button -->
-                                    <!--<div id="settings-button" class="text-btn">
-                                        <span class='ui-icon ui-icon-gear' style="float: left;"></span>
-                                        <span style="line-height: 1.6em">Media Settings</span>
-                                    </div>-->
-
-                                    <!-- JHelioviewer -->
-                                    <div id="jhelioviewer-button" class="text-btn">
-                                        <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
-                                        <span style="line-height: 1.6em">JHelioviewer</span>
-                                    </div>
+                                <!-- JHelioviewer -->
+                                <div id="jhelioviewer-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">JHelioviewer</span>
                                 </div>
+                            </div>
 
-                                <!-- Fullscreen toggle -->
-                                <div id='fullscreen-btn' title="Toggle fullscreen display.">
-                                    <span class='ui-icon ui-icon-arrow-4-diag'></span>
-                                </div>
-                                
-                                <!-- Mouse coordinates display -->
-                                <div id="mouse-coords" style="display: none;">
-                                    <div id="mouse-coords-x"></div>
-                                    <div id="mouse-coords-y"></div>
-                                </div>
+                            <!-- Fullscreen toggle -->
+                            <div id='fullscreen-btn' title="Toggle fullscreen display.">
+                                <span class='ui-icon ui-icon-arrow-4-diag'></span>
+                            </div>
+
+                            <!-- Mouse coordinates display -->
+                            <div id="mouse-coords" style="display: none;">
+                                <div id="mouse-coords-x"></div>
+                                <div id="mouse-coords-y"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Left Column -->
-            <div id="col2">
-                <div id="left-col-header">
-                    <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
-                </div>
-                <br><br>
-                <div class="section-header" style="margin-left:5px; margin-top: 15px;">Time</div>
-                <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
-                    <!--  Observation Date -->
-                    <div style="margin-bottom: 4px; position: relative;">
-                        <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
-                        <input type="text" id="date" name="date" value="">
-                    </div>
-
-                    <!-- Observation Time -->
-                    <div style="margin-bottom: 8px;">
-                        <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
-                        <input type="text" id="time" name="time" value="" style="width:80px">
-                    </div>
-
-                    <!-- Time Navigation Buttons & Time Increment selector -->
-                    <div>
-                        <div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
-                        <select id="timestep-select" name="time-step"></select>
-                        <span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
-                        <span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
-                    </div>
+        <!-- Left Column -->
+        <div id="col2">
+            <div id="left-col-header">
+                <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
+            </div>
+            <br><br>
+            <div class="section-header" style="margin-left:5px; margin-top: 15px;">Time</div>
+            <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
+                <!--  Observation Date -->
+                <div style="margin-bottom: 4px; position: relative;">
+                    <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
+                    <input type="text" id="date" name="date" value="">
                 </div>
 
-                <br><br>
-                <div id="tileLayerAccordion"></div>
-                <br><br>
-                <div id="eventAccordion"></div>
-                <br /><br />
+                <!-- Observation Time -->
+                <div style="margin-bottom: 8px;">
+                    <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
+                    <input type="text" id="time" name="time" value="" style="width:80px">
+                </div>
 
+                <!-- Time Navigation Buttons & Time Increment selector -->
+                <div>
+                    <div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
+                    <select id="timestep-select" name="time-step"></select>
+                    <span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
+                    <span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
+                </div>
             </div>
 
-            <!-- Right Column -->
-            <div id="col3">
-                <div id="right-col-header"></div>
-            </div>
+            <br><br>
+            <div id="tileLayerAccordion"></div>
+            <br><br>
+
+        </div>
+
+        <!-- Right Column -->
+        <div id="col3">
+            <div id="right-col-header"></div>
+        </div>
         </div>
     </div>
 </div>
