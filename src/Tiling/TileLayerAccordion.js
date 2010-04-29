@@ -55,12 +55,12 @@ var TileLayerAccordion = Layer.extend(
         // initial visibility
         hidden = (layer.visible ? "" : " hidden");
         
-        visibilityBtn = "<span class='layerManagerBtn visible" + hidden + "' id='visibilityBtn-" + layer.htmlId +
+        visibilityBtn = "<span class='layerManagerBtn visible" + hidden + "' id='visibilityBtn-" + layer.id +
                         "' title='Toggle layer visibility'></span>";
-        removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + layer.htmlId +
+        removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + layer.id +
                     "' title='Remove layer'></span>";
         head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all'>" + 
-               "<span class=tile-accordion-header-left>" + layer.name +
+               "<span class=tile-accordion-header-left>" + layer.meta.name +
                "</span><span class=tile-accordion-header-right><span class=timestamp></span>" + 
                "<span class=accordion-header-divider>|</span>" + visibilityBtn + removeBtn + "</span></div>";
         
@@ -69,7 +69,7 @@ var TileLayerAccordion = Layer.extend(
         
         //Add to accordion
         this.domNode.dynaccordion("addSection", {
-            id:     layer.htmlId,
+            id:     layer.id,
             header: head,
             cell:   body,
             index:  index,
@@ -77,29 +77,29 @@ var TileLayerAccordion = Layer.extend(
         });
 
         // SELECT id's
-        obs  = "#observatory-select-" + layer.htmlId;
-        inst = "#instrument-select-" + layer.htmlId;
-        det  = "#detector-select-" + layer.htmlId;
-        meas = "#measurement-select-" + layer.htmlId;
+        obs  = "#observatory-select-" + layer.id;
+        inst = "#instrument-select-" + layer.id;
+        det  = "#detector-select-" + layer.id;
+        meas = "#measurement-select-" + layer.id;
         ids = [obs, inst, det, meas];
 
         // Initialize TreeSelect
-        selected  = [layer.observatory, layer.instrument, layer.detector, layer.measurement];
+        selected  = [layer.meta.observatory, layer.meta.instrument, layer.meta.detector, layer.meta.measurement];
         this.selectMenus = new TreeSelect(ids, this.controller.dataSources, selected, function (leaf) {
-            layer.observatory = $(obs).attr("value");
-            layer.instrument  = $(inst).attr("value");
-            layer.detector    = $(det).attr("value");
-            layer.measurement = $(meas).attr("value");
-            
-            layer.sourceId      = leaf.sourceId;
-            layer.name          = leaf.name;
-            layer.layeringOrder = leaf.layeringOrder;
-            
-            layer.reload();
+        	layer.updateDataSource({
+        		observatory   : $(obs).attr("value"),
+        		instrument    : $(inst).attr("value"),
+        		detector      : $(det).attr("value"),
+        		measurement   : $(meas).attr("value"),
+        		sourceId      : leaf.sourceId,
+        		name          : leaf.name,
+        		layeringOrder : leaf.layeringOrder
+        	});
+
             self.tileLayers.save();
         });
 
-        slider = $("#opacity-slider-track-" + layer.htmlId).slider({
+        slider = $("#opacity-slider-track-" + layer.id).slider({
             value: layer.opacity,
             min  : 0,
             max  : 100,
@@ -176,78 +176,31 @@ var TileLayerAccordion = Layer.extend(
      * This discussion thread</a> for explanation.
      */
     _buildEntryBody: function (layer) {
-        var id, options, opacitySlide, obs, inst, det, meas, fits;
-        
-        id = layer.htmlId;
-        options = this.options;
+        var opacitySlide, obs, inst, det, meas, fits;
         
         // Opacity slider placeholder
         opacitySlide = "<div class='layer-select-label'>Opacity: </div>";
-        opacitySlide += "<div class='opacity-slider-track' id='opacity-slider-track-" + id;
+        opacitySlide += "<div class='opacity-slider-track' id='opacity-slider-track-" + layer.id;
         opacitySlide += "' style='width: 120px; height: 8px;'>";
         opacitySlide += "</div>";
                 
         // Populate list of available observatories
         obs = "<div class=layer-select-label>Observatory: </div> ";
-        obs += "<select name=observatory class=layer-select id='observatory-select-" + id + "'></select>";
-        
-        /**
-        $.each(options.observatories, function (i, o) {
-            obs += "<option value='" + o.abbreviation + "'";
-            if (layer.observatory === o.abbreviation) {
-                obs += " selected='selected'";
-            }                 
-            obs += ">" + o.name + "</option>";            
-        });
-        obs += "</select><br>";
-        */
+        obs += "<select name=observatory class=layer-select id='observatory-select-" + layer.id + "'></select>";
        
         // Populate list of available instruments
         inst = "<div class=layer-select-label>Instrument: </div> ";
-        inst += "<select name=instrument class=layer-select id='instrument-select-" + id + "'></select>";
-        
-        /**
-        $.each(options.instruments, function (i, o) {
-            inst += "<option value='" + o.abbreviation + "'";
-            if (layer.instrument === o.abbreviation) {
-                inst += " selected='selected'";
-            }
-            inst += ">" + o.name + "</option>";            
-        });
-        inst += "</select><br>";
-        */
-        
+        inst += "<select name=instrument class=layer-select id='instrument-select-" + layer.id + "'></select>";
+
         // Populate list of available Detectors
         det = "<div class=layer-select-label>Detector: </div> ";
-        det += "<select name=detector class=layer-select id='detector-select-" + id + "'></select>";
-        
-        /**
-        $.each(options.detectors, function (i, o) {
-            det += "<option value='" + o.abbreviation + "'";
-            if (layer.detector === o.abbreviation) {
-                det += " selected='selected'";
-            }
-            det += ">" + (o.name === "" ? o.abbreviation : o.name) + "</option>";        
-        });
-        det += "</select><br>";
-        */
+        det += "<select name=detector class=layer-select id='detector-select-" + layer.id + "'></select>";
         
         // Populate list of available Detectors
         meas = "<div class=layer-select-label>Measurement: </div> ";
-        meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'></select><br><br>";
+        meas += "<select name=measurement class=layer-select id='measurement-select-" + layer.id + "'></select><br><br>";
         
-        /**
-        $.each(options.measurements, function (i, o) {
-            meas += "<option value='" + o.abbreviation + "'";
-            if (layer.measurement === o.abbreviation) {
-                meas += " selected='selected'";
-            }
-            meas += ">" + o.name + "</option>";        
-        });
-        meas += "</select><br><br>";
-        */
-        
-        fits = "<a href='#' id='showFITSBtn-" + id +
+        fits = "<a href='#' id='showFITSBtn-" + layer.id +
                "' style='margin-left:170px; color: white; text-decoration: none;'>FITS Header</a><br>";
         
         return (opacitySlide + obs + inst + det + meas + fits);
@@ -286,14 +239,14 @@ var TileLayerAccordion = Layer.extend(
      */
     _setupEventHandlers: function (layer) {
         var toggleVisibility, removeLayer, visible, accordion, ids, self = this,
-            visibilityBtn = $("#visibilityBtn-" + layer.htmlId),
-            removeBtn     = $("#removeBtn-" + layer.htmlId),
-            fitsBtn       = $("#showFITSBtn-" + layer.htmlId);
+            visibilityBtn = $("#visibilityBtn-" + layer.id),
+            removeBtn     = $("#removeBtn-" + layer.id),
+            fitsBtn       = $("#showFITSBtn-" + layer.id);
 
         // Function for toggling layer visibility
         toggleVisibility = function (e) {
             visible = layer.toggleVisibility();
-            $("#visibilityBtn-" + layer.htmlId).toggleClass('hidden');
+            $("#visibilityBtn-" + layer.id).toggleClass('hidden');
             self.tileLayers.save();
             e.stopPropagation();
         };
@@ -303,9 +256,9 @@ var TileLayerAccordion = Layer.extend(
             accordion = e.data;
             self.tileLayers.removeLayer(layer);
             
-            accordion._removeTooltips(layer.htmlId);
+            accordion._removeTooltips(layer.id);
             
-            accordion.domNode.dynaccordion('removeSection', {id: layer.htmlId});
+            accordion.domNode.dynaccordion('removeSection', {id: layer.id});
             accordion.removeLayerSettings(layer.id);
             self.tileLayers.save();
 
@@ -313,8 +266,8 @@ var TileLayerAccordion = Layer.extend(
             e.stopPropagation();
         };
         
-        ids = ["#observatory-select-" + layer.htmlId, "#instrument-select-" + layer.htmlId, "#detector-select-" +
-              layer.htmlId, "#measurement-select-" + layer.htmlId];
+        ids = ["#observatory-select-" + layer.id, "#instrument-select-" + layer.id, "#detector-select-" +
+              layer.id, "#measurement-select-" + layer.id];
 
         // Display FITS header
         fitsBtn.bind('click', function () {
@@ -332,7 +285,7 @@ var TileLayerAccordion = Layer.extend(
     _showFITS: function (layer) {
         var dialogId, sortBtn, formatted, params, callback;
         
-        dialogId = "fits-header-" + layer.htmlId;
+        dialogId = "fits-header-" + layer.id;
         
         // Check to see if a dialog already exists
         if ($("#" + dialogId).length !== 0) {
@@ -378,7 +331,7 @@ var TileLayerAccordion = Layer.extend(
                             
             $("#" + dialogId).dialog({
                 autoOpen: true,
-                title: "FITS Header: " + layer.name,
+                title: "FITS Header: " + layer.meta.name,
                 width: 400,
                 height: 350,
                 draggable: true
@@ -388,8 +341,8 @@ var TileLayerAccordion = Layer.extend(
         // Request parameters
         params = {
             action : "getJP2Header",
-            file   : layer.filepath + "/" + layer.filename,
-            server : layer.server
+            file   : layer.image.filepath + "/" + layer.image.filename,
+            server : layer.meta.server
         };
         
         $.post("api/index.php", params, callback, "json");
@@ -419,11 +372,11 @@ var TileLayerAccordion = Layer.extend(
     updateTimeStamp: function (layer) {
         var domNode, date, timeDiff, timestep;
         
-        date     = new Date(getUTCTimestamp(layer.date));
+        date     = new Date(getUTCTimestamp(layer.image.date));
         timeDiff = (date.getTime() - this.controller.timeControls.getTimestamp()) / 1000;
         timestep = this.controller.timeIncrementSecs;
         
-        domNode = $("#" + layer.htmlId).find('.timestamp').html(layer.date.replace(/-/g, "/"));
+        domNode = $("#" + layer.id).find('.timestamp').html(layer.image.date.replace(/-/g, "/"));
         domNode.removeClass("timeAhead timeBehind timeSignificantlyOff");
         
         if (Math.abs(timeDiff) > (4 * timestep)) {

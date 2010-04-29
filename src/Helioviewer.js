@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Calendar, EventLayerAccordion, EventLayerManager, EventTimeline, FullscreenControl, 
+/*global Class, $, Calendar, FullscreenControl, 
   KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
   TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, 
   ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
@@ -44,11 +44,10 @@ var Helioviewer = Class.extend(
 
         // Layer Managers
         this.tileLayers  = new TileLayerManager(this);
-        this.eventLayers = new EventLayerManager(this);
         
         this._initViewport();
         this._initUI();
-        this._initEvents();
+        this._initEventHandlers();
         
         this.mediaSettings     = new MediaSettings(this);                
         this.movieBuilder      = new MovieBuilder(this);
@@ -93,9 +92,8 @@ var Helioviewer = Class.extend(
         //Message console
         this.messageConsole = new MessageConsole();
 
-        //Tile & Event Layer Accordions (accordions must come before LayerManager instance...)
+        //Tile Layer Accordion (accordion must come before LayerManager instance...)
         this.tileLayerAccordion  = new TileLayerAccordion(this,  '#tileLayerAccordion');
-        this.eventLayerAccordion = new EventLayerAccordion(this, '#eventAccordion');
 
         //Fullscreen button
         this.fullScreenMode = new FullscreenControl(this, "#fullscreen-btn", 500);
@@ -134,12 +132,13 @@ var Helioviewer = Class.extend(
     _getDataSources: function () {
         var callback, self = this;
         
-        callback = function (data) {
-            self.dataSources = data;
+        callback = function (dataSources) {
+            self.dataSources = dataSources;
             
             // Add initial layers
-            $.each(self.userSettings.get('tileLayers'), function () {
-                self.tileLayers.addLayer(new TileLayer(self, this));
+            $.each(self.userSettings.get('tileLayers'), function (index, layer) {
+            	$.extend(layer, dataSources[layer.observatory][layer.instrument][layer.detector][layer.measurement]);
+                self.tileLayers.addLayer(new TileLayer(self, self.getDate(), layer));
             });
         };
         $.post(this.api, {action: "getDataSources"}, callback, "json");
@@ -212,7 +211,7 @@ var Helioviewer = Class.extend(
             }                    
             return rand;                    
         }
-        // If distribted tiling is disabled, local tiling must be enabled
+        // If distributed tiling is disabled, local tiling must be enabled
         else {
             return 0;
         }
@@ -264,20 +263,20 @@ var Helioviewer = Class.extend(
      * @description Initialize Helioviewer's viewport(s).
      */
     _initViewport: function () {
-        this.viewport =    new Viewport(this, {
-            id: this.viewportId,
-            imageScale: this.userSettings.get('imageScale'),
-            prefetch: this.prefetchSize,
-            debug: false
+        this.viewport = new Viewport(this, {
+            id             : this.viewportId,
+            imageScale     : this.userSettings.get('imageScale'),
+            prefetch       : this.prefetchSize,
+            warnMouseCoords: this.userSettings.get('warnMouseCoords') 
         });
         
-        this.updateShadows();
+        //this.updateShadows();
     },
 
     /**
      * @description Initialize event-handlers for UI components controlled by the Helioviewer class
      */
-    _initEvents: function () {
+    _initEventHandlers: function () {
         var self = this;
         
         // Initiallize keyboard shortcut manager
