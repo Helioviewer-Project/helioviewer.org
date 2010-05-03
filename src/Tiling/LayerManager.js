@@ -52,25 +52,16 @@ var LayerManager = Class.extend(
      * Updates the stored maximum dimensions. If the specified dimensions for updated are {0,0}, e.g. after
      * a layer is removed, then all layers will be checked
      */
-    updateMaxDimensions: function (event, updated) {
-        var type, old = this._maxLayerDimensions;
-
-        this._maxLayerDimensions = {
-            width : Math.max(old.width,  updated.width),
-            height: Math.max(old.height, updated.height)
-        };
-        
-        if ((this._maxLayerDimensions.width !==old.width) || (this._maxLayerDimensions.height !== old.height)) {
-        	type = event.type.split("-")[0];
-        	$(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
-        }
+    updateMaxDimensions: function (event) {
+        var type = event.type.split("-")[0];
+        this.refreshMaxDimensions(type);
     },
     
     /**
      * Recheck maximum dimensions after a layer is removed
      */
     refreshMaxDimensions: function (type) {
-        var maxWidth = 0, maxHeight = 0;
+        var maxWidth = 0, maxHeight = 0,  old = this._maxLayerDimensions;
         
         $.each(this._layers, function () {
             var d = this.getDimensions();
@@ -84,9 +75,9 @@ var LayerManager = Class.extend(
             height: maxHeight
         };
         
-        console.dir(this._maxLayerDimensions);
-        
-        $(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
+        if ((this._maxLayerDimensions.width !==old.width) || (this._maxLayerDimensions.height !== old.height)) {
+            $(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
+        }
     },
     
     /**
