@@ -58,7 +58,7 @@ var LayerManager = Class.extend(
     },
     
     /**
-     * Recheck maximum dimensions after a layer is removed
+     * Rechecks maximum dimensions after a layer is removed
      */
     refreshMaxDimensions: function (type) {
         var maxWidth = 0, maxHeight = 0,  old = this._maxLayerDimensions;

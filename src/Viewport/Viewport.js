@@ -642,7 +642,7 @@ var Viewport = Class.extend(
      */
     updateMaxLayerDimensions: function (event, type, dimensions) {
         if (type === "tile") {
-            this.maxTileLayerDimensions    = dimensions;
+            this.maxTileLayerDimensions  = dimensions;
         } else {
             this.maxEventLayerDimensions = dimensions;
         }
@@ -650,8 +650,8 @@ var Viewport = Class.extend(
         var old = this.maxLayerDimensions;
         
         this.maxLayerDimensions = {
-            width : Math.max(old.width,  dimensions.width),
-            height: Math.max(old.height, dimensions.height)
+            width : Math.max(this.maxTileLayerDimensions.width,  this.maxEventLayerDimensions.width),
+            height: Math.max(this.maxTileLayerDimensions.height, this.maxEventLayerDimensions.height)
         }
         
         if ((this.maxLayerDimensions.width !== old.width) || (this.maxLayerDimensions.height !== old.height)) {
