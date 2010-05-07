@@ -20,6 +20,8 @@ var TileLayerManager = LayerManager.extend(
     * @description Creates a new TileLayerManager instance
     */
     init: function (controller) {
+        var self = this;
+        
         this._super();
         this.controller = controller;
         this._layers = [];
@@ -35,7 +37,10 @@ var TileLayerManager = LayerManager.extend(
             "SOHO,EIT,EIT,195"
         ];
         
-		$(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this));
+        $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
+                   .bind('remove-tile-layer', function (event, id) {
+                        self.removeLayer(id);
+                    });
     },
    
     /**
@@ -50,7 +55,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, rand, params, queue, ds, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, rand, params, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
         
         // If new layer exceeds the maximum number of layers allowed, display a message to the user
         if (this.size() >= this.controller.maxTileLayers) {
@@ -58,8 +63,6 @@ var TileLayerManager = LayerManager.extend(
                                                 "Please remove an existing layer before adding a new one."]);
             return;
         }
-        
-        queue = this._queue;
         
         // current layers in above form
         currentLayers = [];
@@ -69,27 +72,25 @@ var TileLayerManager = LayerManager.extend(
         });
         
         // remove existing layers from queue
-        queue = $.grep(queue, function (item, i) {
+        queue = $.grep(this._queue, function (item, i) {
             return ($.inArray(item, currentLayers) === -1);
         });
-        
-        //$.each(currentLayers, function() {
-        //    queue = queue.without(this);
-        //});
         
         // Pull off the next layer on the queue
         next = queue[0] || defaultLayer;
 
         params = TileLayerManager.parseLayerString(next + ",1,100");
-       
-        params.server = this.controller.selectTilingServer();
+        server = this.controller.selectTilingServer();
+        
         ds = this.controller.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
         
         // Add the layer
         this.addLayer(
             new TileLayer(this.controller, this.controller.getDate(), this.controller.viewport.tileSize, 
-                          this.controller.api, this.controller.tileServers[params.server], params)
+                          this.controller.api, this.controller.tileServers[params.server], params.observatory, 
+                          params.instrument, params.detector, params.measurement, params.sourceId, params.name, 
+                          params.visible, params.opacity, params.layeringOrder, server)
         );
         this.save();
     },
