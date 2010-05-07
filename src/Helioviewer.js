@@ -141,7 +141,9 @@ var Helioviewer = Class.extend(
                 $.extend(layer, dataSources[layer.observatory][layer.instrument][layer.detector][layer.measurement]);
                 self.tileLayers.addLayer(
                     new TileLayer(self, self.getDate(), self.viewport.tileSize, self.api, 
-                                  self.tileServers[layer.server], layer)
+                                  self.tileServers[layer.server], layer.observatory, layer.instrument, layer.detector,  
+                                  layer.measurement, layer.sourceId, layer.name, layer.visible, layer.opacity,
+                                  layer.layeringOrder, layer.server)
                 );
             });
         };

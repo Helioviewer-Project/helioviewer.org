@@ -35,134 +35,102 @@ var TileLayerAccordion = Layer.extend(
         //Initialize accordion
         this.domNode = $('#TileLayerAccordion-Container');
         this.domNode.dynaccordion({startClosed: true});
-        
-        //Individual layer menus
-        this.layerSettings = [];
     },
 
     /**
      * @description Adds a new entry to the tile layer accordion
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (layer, index ) {
-        // Create accordion entry header
-        var visibilityBtn, removeBtn, hidden, head, body, slider, ids, selected, obs, inst, det, meas, self = this;
-        
+    addLayer: function (index, id, name, observatory, instrument, detector, measurement, date, 
+                        startOpened, opacity, visible, onOpacityChange) {
         if (typeof(index) === "undefined") {
             index = 1000;
         }
         
-        // initial visibility
-        hidden = (layer.visible ? "" : " hidden");
+        this._createAccordionEntry(index, id, name, visible, startOpened);
+        this._initTreeSelect(id, observatory, instrument, detector, measurement);
+        this._initOpacitySlider(id, opacity, onOpacityChange);        
+        this._setupEventHandlers(id);
+        this.updateTimeStamp(id, date);
+        this._setupTooltips(id);
+    },
+
+    /**
+     *
+     */
+    _createAccordionEntry: function (index, id, name, visible, startOpened) {
+        var visibilityBtn, removeBtn, hidden, head, body;
         
-        visibilityBtn = "<span class='layerManagerBtn visible" + hidden + "' id='visibilityBtn-" + layer.id +
+        // initial visibility
+        hidden = (visible ? "" : " hidden");
+        
+        visibilityBtn = "<span class='layerManagerBtn visible" + hidden + "' id='visibilityBtn-" + id +
                         "' title='Toggle layer visibility'></span>";
-        removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + layer.id +
+        removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + id +
                     "' title='Remove layer'></span>";
         head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all'>" + 
-               "<span class=tile-accordion-header-left>" + layer.name +
+               "<span class=tile-accordion-header-left>" + name +
                "</span><span class=tile-accordion-header-right><span class=timestamp></span>" + 
                "<span class=accordion-header-divider>|</span>" + visibilityBtn + removeBtn + "</span></div>";
         
         // Create accordion entry body
-        body = this._buildEntryBody(layer);
+        body = this._buildEntryBody(id);
         
         //Add to accordion
         this.domNode.dynaccordion("addSection", {
-            id:     layer.id,
+            id:     id,
             header: head,
             cell:   body,
             index:  index,
-            open:   layer.startOpened
-        });
-
+            open:   startOpened
+        });  
+    },
+    
+    /**
+     * 
+     */
+    _initTreeSelect: function (id, observatory, instrument, detector, measurement) {
+        var ids, selected, obs, inst, det, meas, self = this;
+        
         // SELECT id's
-        obs  = "#observatory-select-" + layer.id;
-        inst = "#instrument-select-" + layer.id;
-        det  = "#detector-select-" + layer.id;
-        meas = "#measurement-select-" + layer.id;
-        ids = [obs, inst, det, meas];
+        obs  = "#observatory-select-" + id;
+        inst = "#instrument-select-"  + id;
+        det  = "#detector-select-"    + id;
+        meas = "#measurement-select-" + id;
 
-        // Initialize TreeSelect
-        selected  = [layer.image.observatory, layer.image.instrument, layer.image.detector, layer.image.measurement];
+        ids       = [obs, inst, det, meas];
+        selected  = [observatory, instrument, detector, measurement];
+        
         this.selectMenus = new TreeSelect(ids, this.controller.dataSources, selected, function (leaf) {
-            layer.updateDataSource($(obs).attr("value"), $(inst).attr("value"), 
-                                   $(det).attr("value"), $(meas).attr("value"),
-                                   leaf.sourceId, leaf.name, leaf.layeringOrder
-            );
-
-            self.tileLayers.save();
+            $(document).trigger("tile-layer-data-source-changed",
+                [id, $(obs).attr("value"), $(inst).attr("value"), $(det).attr("value"), $(meas).attr("value"), 
+                leaf.sourceId, leaf.name, leaf.layeringOrder]
+             );
         });
-
-        slider = $("#opacity-slider-track-" + layer.id).slider({
-            value: layer.opacity,
+    },
+    
+    /**
+     * 
+     */
+    _initOpacitySlider: function (id, opacity, onOpacityChange) {
+        var self = this;
+        
+        $("#opacity-slider-track-" + id).slider({
+            value: opacity,
             min  : 0,
             max  : 100,
             slide: function (e, ui) {
                 if ((ui.value % 2) === 0) {
-                    layer.setOpacity(ui.value);
+                    onOpacityChange(ui.value);
                 }
             },
             change: function (e, ui) {
-                layer.setOpacity(ui.value);
+                onOpacityChange(ui.value);
                 self.tileLayers.save();
             }
         });
-        
-        // Keep a reference to the dom-node
-        //this.menuEntries.push({id: layer.id, header: head, cell: body});
-        this.layerSettings.push({
-            id    : layer.id,
-            header: head,
-            body  : body,
-            opacitySlider: slider
-        });
-        
-        // Event-handlers
-        this._setupEventHandlers(layer);
-        
-        // Update timestamp
-        this.updateTimeStamp(layer.id, layer.image.date);
-            
-        // Setup tooltips
-        // Note: disabling until event-handler issues can be worked out
-        // See http://dev.jquery.com/ticket/4591
-        this._setupTooltips(layer.id);
     },
 
-    /**
-     * @description Returns the layer settings associated with the given layer id
-     * @param {Object} id
-     */
-    getLayerSettings: function (id) {
-        var matched = $.grep(this.layerSettings, function (layer) {
-            return layer.id === id;
-        });
-        if (matched.length > 0) {
-            return matched.pop();
-        }
-        else {
-            return false;
-        }
-    },
-
-    /**
-     * @description Checks to see if the given layer is listed in the accordion
-     * @param {String} id ID of the layer being checked 
-     */
-    hasId: function (id) {
-        return (this.getLayerSettings(id) ? true : false);
-    },
-    
-    /**
-     * @description Removes layer settings associated with given id
-     */
-    removeLayerSettings: function (id) {
-        this.layerSettings = $.grep(this.layerSettings, function (layer) {
-            return layer.id !== id;
-        });
-    },    
-    
     /**
      * @description Builds the body section of a single TileLayerAccordion entry. NOTE: width and height 
      * must be hardcoded for slider to function properly.
@@ -170,45 +138,36 @@ var TileLayerAccordion = Layer.extend(
      * @see <a href="http://groups.google.com/group/Prototypejs/browse_thread/thread/60a2676a0d62cf4f">
      * This discussion thread</a> for explanation.
      */
-    _buildEntryBody: function (layer) {
+    _buildEntryBody: function (id) {
         var opacitySlide, obs, inst, det, meas, fits;
         
         // Opacity slider placeholder
         opacitySlide = "<div class='layer-select-label'>Opacity: </div>";
-        opacitySlide += "<div class='opacity-slider-track' id='opacity-slider-track-" + layer.id;
+        opacitySlide += "<div class='opacity-slider-track' id='opacity-slider-track-" + id;
         opacitySlide += "' style='width: 120px; height: 8px;'>";
         opacitySlide += "</div>";
                 
         // Populate list of available observatories
         obs = "<div class=layer-select-label>Observatory: </div> ";
-        obs += "<select name=observatory class=layer-select id='observatory-select-" + layer.id + "'></select>";
+        obs += "<select name=observatory class=layer-select id='observatory-select-" + id + "'></select>";
        
         // Populate list of available instruments
         inst = "<div class=layer-select-label>Instrument: </div> ";
-        inst += "<select name=instrument class=layer-select id='instrument-select-" + layer.id + "'></select>";
+        inst += "<select name=instrument class=layer-select id='instrument-select-" + id + "'></select>";
 
         // Populate list of available Detectors
         det = "<div class=layer-select-label>Detector: </div> ";
-        det += "<select name=detector class=layer-select id='detector-select-" + layer.id + "'></select>";
+        det += "<select name=detector class=layer-select id='detector-select-" + id + "'></select>";
         
         // Populate list of available Detectors
         meas = "<div class=layer-select-label>Measurement: </div> ";
-        meas += "<select name=measurement class=layer-select id='measurement-select-" + layer.id + "'>";
+        meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'>";
         meas += "</select><br><br>";
         
-        fits = "<a href='#' id='showFITSBtn-" + layer.id +
+        fits = "<a href='#' id='showFITSBtn-" + id +
                "' style='margin-left:170px; color: white; text-decoration: none;'>FITS Header</a><br>";
         
         return (opacitySlide + obs + inst + det + meas + fits);
-    },
-    
-    /**
-     * @description Makes sure the slider is set to the right value
-     * @param {Object} id ID of the TileLayer whose opacity should be adjusted
-     * @param {Object} opacity The new opacity value
-     */
-    updateOpacitySlider: function (id, opacity) {
-        this.getLayerSettings(id).opacitySlider.slider("value", opacity);
     },
 
     /**
@@ -233,63 +192,71 @@ var TileLayerAccordion = Layer.extend(
      * @description Sets up event-handlers for a TileLayerAccordion entry
      * @param {Object} layer The layer being added
      */
-    _setupEventHandlers: function (layer) {
+    _setupEventHandlers: function (id) {
         var toggleVisibility, removeLayer, visible, accordion, ids, self = this,
-            visibilityBtn = $("#visibilityBtn-" + layer.id),
-            removeBtn     = $("#removeBtn-" + layer.id),
-            fitsBtn       = $("#showFITSBtn-" + layer.id);
+            visibilityBtn = $("#visibilityBtn-" + id),
+            removeBtn     = $("#removeBtn-" + id);
 
         // Function for toggling layer visibility
         toggleVisibility = function (e) {
-            visible = layer.toggleVisibility();
-            $("#visibilityBtn-" + layer.id).toggleClass('hidden');
-            self.tileLayers.save();
+            $(document).trigger("toggle-layer-visibility", [id]);
+            $("#visibilityBtn-" + id).toggleClass('hidden');
             e.stopPropagation();
         };
 
         // Function for handling layer remove button
         removeLayer = function (e) {
-            accordion = e.data;
-            self.tileLayers.removeLayer(layer);
-            
-            accordion._removeTooltips(layer.id);
-            
-            accordion.domNode.dynaccordion('removeSection', {id: layer.id});
-            accordion.removeLayerSettings(layer.id);
+            $(document).trigger("remove-tile-layer", [id]);
+            self._removeTooltips(id);
+            self.domNode.dynaccordion('removeSection', {id: id});
             self.tileLayers.save();
-
-            //accordion.layers = accordion.layers.without(layer.id);
             e.stopPropagation();
         };
         
-        ids = ["#observatory-select-" + layer.id, "#instrument-select-" + layer.id, "#detector-select-" +
-              layer.id, "#measurement-select-" + layer.id];
-
-        // Display FITS header
-        fitsBtn.bind('click', function () {
-            self._showFITS(layer);
-        });
+        ids = ["#observatory-select-" + id, "#instrument-select-" + id, "#detector-select-" +
+              id, "#measurement-select-" + id];
 
         visibilityBtn.bind('click', this, toggleVisibility);
-        removeBtn.bind('click', this, removeLayer);
+        removeBtn.bind('click', removeLayer);
+        
+        // New entries
+        $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
+                   .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this));
+    },
+    
+    /**
+     * 
+     */
+    _updateAccordionEntry: function (event, id, name, opacity, date, filepath, filename, server) {
+        var entry = $("#" + id), self = this;
+        
+        this.updateTimeStamp(id, date);
+        
+        entry.find(".tile-accordion-header-left").html(name);
+        entry.find("#opacity-slider-track-" + id).slider("value", opacity);
+        
+        // Display FITS header
+        entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
+            self._showFITS(id, name, filepath, filename, server);
+        });
     },
     
     /**
      * @description Displays the FITS header information associated with a given image
      * @param {Object} layer
      */
-    _showFITS: function (layer) {
-        var dialogId, sortBtn, formatted, params, callback;
+    _showFITS: function (id, name, filepath, filename, server) {
+        var sortBtn, formatted, params, callback, dialog;
         
-        dialogId = "fits-header-" + layer.id;
+        dialog = $("#fits-header-" + id);
         
         // Check to see if a dialog already exists
-        if ($("#" + dialogId).length !== 0) {
-            if (!$("#" + dialogId).dialog("isOpen")) {
-                $("#" + dialogId).dialog("open");
+        if (dialog.length !== 0) {
+            if (!dialog.dialog("isOpen")) {
+                dialog.dialog("open");
             }
             else {
-                $("#" + dialogId).dialog("close");
+                dialog.dialog("close");
             }
                 
             return;
@@ -299,7 +266,7 @@ var TileLayerAccordion = Layer.extend(
         callback = function (response) {
 
             // Format results
-            formatted =  "<div id='" + dialogId + "' style='overflow: auto; position: relative; padding:0px'>";
+            formatted =  "<div id='fits-header-" + id + "' style='overflow: auto; position: relative; padding:0px'>";
             formatted += "<div class='fits-regular'>";
             $.each(response, function () {
                 formatted += this + "<br>";
@@ -318,16 +285,16 @@ var TileLayerAccordion = Layer.extend(
 
             // Button to toggle sorting
             sortBtn = "<span class='fits-sort-btn'>Abc</span>";
-            $("#" + dialogId).append(sortBtn);    
-            $("#" + dialogId + " > span").click(function () {
+            dialog.append(sortBtn);    
+            dialog.children("span").click(function () {
                 $(this).toggleClass("italic");
-                $("#" + dialogId + " .fits-sorted").toggle();
-                $("#" + dialogId + " .fits-regular").toggle();
+                dialog.children(".fits-sorted").toggle();
+                dialog.children(".fits-regular").toggle();
             });
                             
-            $("#" + dialogId).dialog({
+            dialog.dialog({
                 autoOpen: true,
-                title: "FITS Header: " + layer.name,
+                title: "FITS Header: " + name,
                 width: 400,
                 height: 350,
                 draggable: true
@@ -337,8 +304,8 @@ var TileLayerAccordion = Layer.extend(
         // Request parameters
         params = {
             action : "getJP2Header",
-            file   : layer.image.filepath + "/" + layer.image.filename,
-            server : layer.image.server
+            file   : filepath + "/" + filename,
+            server : server
         };
         
         $.post("api/index.php", params, callback, "json");
@@ -384,15 +351,6 @@ var TileLayerAccordion = Layer.extend(
         else if (timeDiff > 0) {
             domNode.addClass("timeAhead");
         }
-    },
-    
-    /**
-     * @description Updates the description for a given tile layer
-     * @param {String} id Layer id
-     * @param {String} desc New description to use 
-     */
-    updateLayerDesc: function (id, desc) {
-        $(id).find(".tile-accordion-header-left").html(desc);
-    }    
+    }
 });
 

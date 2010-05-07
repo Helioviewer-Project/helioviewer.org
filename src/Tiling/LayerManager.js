@@ -90,10 +90,12 @@ var LayerManager = Class.extend(
 
     /**
      * @description Removes a layer
-     * @param {Object} The layer to remove
+     * @param {string} The id of the layer to remove
      */
-    removeLayer: function (layer) {
-        var type = layer.id.split("-")[0];
+    removeLayer: function (id) {
+        var type  = id.split("-")[0],
+            index = this.indexOf(id), 
+            layer = this._layers[index];
         
         layer.domNode.remove();
         this._layers = $.grep(this._layers, function (e, i) {

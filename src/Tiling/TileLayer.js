@@ -41,25 +41,25 @@ var TileLayer = Layer.extend(
      *      <b>startOpened</b> - Whether or not the layer menu entry should initially be open or closed<br>
      * </div>
      */
-    init: function (controller, date, tileSize, api, baseURL, meta) {
+    init: function (controller, date, tileSize, api, baseURL, observatory, instrument, detector, measurement, 
+                    sourceId, name, visible, opacity, layeringOrder, server) {
         $.extend(this, this.defaultOptions);
         this._super();
         
         this._requestDate = date;
-        
-        // TODO PASSING IN USING INDIVIDUAL VARIABLES INSTEAD OF ARRAYS FOR BETTER READABILITY
+
         this.controller = controller;
         this.tileLayers = controller.tileLayers;
         this.viewport   = controller.viewport;
         this.tileSize   = tileSize;
         
-        this.layeringOrder = meta.layeringOrder;
-        this.visible       = meta.visible;
-        this.opacity       = meta.opacity;
+        this.layeringOrder = layeringOrder;
+        this.visible       = visible;
+        this.opacity       = opacity;
         this.baseURL       = baseURL;
-        this.name          = meta.name;
+        this.name          = name;
         
-        this.id = "tile-layer-" + meta.sourceId;
+        this.id = "tile-layer-" + sourceId;
 
         this.domNode = $('<div class="tile-layer-container" />').appendTo(
             this.viewport.movingContainer
@@ -69,8 +69,18 @@ var TileLayer = Layer.extend(
 
         this.tiles = [];
         this._loadStaticProperties();
-        this.image = new JP2Image(meta.observatory, meta.instrument, meta.detector, meta.measurement, meta.sourceId, 
-                                  date, meta.server, api, $.proxy(this.onLoadImage, this));
+        
+        var index = this.tileLayers.indexOf(this.id);
+        
+        $(document).trigger("create-tile-layer-accordion-entry", 
+            [index, this.id, this.name, this.image.observatory, this.image.instrument, this.image.detector, 
+             this.image.measurement, this.image.date, this.startOpened, this.opacity, this.visible,
+             $.proxy(this.setOpacity, this)
+            ]
+        );
+        
+        this.image = new JP2Image(observatory, instrument, detector, measurement, sourceId, 
+                                  date, server, api, $.proxy(this.onLoadImage, this));
     },
     
     /**
@@ -130,21 +140,9 @@ var TileLayer = Layer.extend(
         
         // Update viewport sandbox if necessary
         $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]).
-                    trigger("update-tile-layer-accordion", [this.id, this.name, this.opacity, this.image.date]);
-        
-
-        // Add to tileLayer Accordion if it's not already there
-        if (!accordion.hasId(this.id)) {
-            index = this.tileLayers.indexOf(this.id);
-            accordion.addLayer(this, index);
-        }
-                        
-        // Otherwise update the accordion entry information
-        else {
-            accordion.updateTimeStamp(this.id, this.image.date);
-            accordion.updateLayerDesc("#" + this.id, this.name);
-            accordion.updateOpacitySlider(this.id, this.opacity);
-        }
+                    trigger("update-tile-layer-accordion-entry", 
+                           [this.id, this.name, this.opacity, this.image.date, 
+                            this.image.filepath, this.image.filename, this.image.server]);
     },        
     
     /**
@@ -557,6 +555,21 @@ var TileLayer = Layer.extend(
      * @description Sets up event-handlers to deal with viewport motion
      */
     _setupEventHandlers: function () {
-        $(document).bind('viewport-move', $.proxy(this.viewportMove, this));
+        var self = this;
+        
+        $(document).bind('viewport-move', $.proxy(this.viewportMove, this))
+                   .bind('toggle-layer-visibility', function (event, id) {
+                        if (self.id === id) {
+                            self.toggleVisibility();
+                            self.tileLayers.save();
+                        }
+                    })
+                   .bind('tile-layer-data-source-changed',
+                       function (event, id, obs, inst, det, meas, sourceId, name, layeringOrder) {
+                            if (self.id === id) {
+                                self.updateDataSource(obs, inst, det, meas, sourceId, name, layeringOrder);
+                                self.tileLayers.save();
+                            }
+                        });
     }
 });
