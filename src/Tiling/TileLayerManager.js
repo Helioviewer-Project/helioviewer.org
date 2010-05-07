@@ -87,7 +87,10 @@ var TileLayerManager = LayerManager.extend(
         $.extend(params, ds);
         
         // Add the layer
-        this.addLayer(new TileLayer(this.controller, this.controller.getDate(), params));
+        this.addLayer(
+            new TileLayer(this.controller, this.controller.getDate(), this.controller.viewport.tileSize, 
+                          this.controller.api, this.controller.tileServers[params.server], params)
+        );
         this.save();
     },
     
