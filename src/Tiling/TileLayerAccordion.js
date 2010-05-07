@@ -44,7 +44,7 @@ var TileLayerAccordion = Layer.extend(
      * @description Adds a new entry to the tile layer accordion
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (layer, index) {
+    addLayer: function (layer, index ) {
         // Create accordion entry header
         var visibilityBtn, removeBtn, hidden, head, body, slider, ids, selected, obs, inst, det, meas, self = this;
         
@@ -122,7 +122,7 @@ var TileLayerAccordion = Layer.extend(
         this._setupEventHandlers(layer);
         
         // Update timestamp
-        this.updateTimeStamp(layer);
+        this.updateTimeStamp(layer.id, layer.image.date);
             
         // Setup tooltips
         // Note: disabling until event-handler issues can be worked out
@@ -365,14 +365,14 @@ var TileLayerAccordion = Layer.extend(
      * @description Updates the displayed timestamp for a given tile layer
      * @param {Object} layer The layer being updated
      */
-    updateTimeStamp: function (layer) {
+    updateTimeStamp: function (id, dateString) {
         var domNode, date, timeDiff, timestep;
         
-        date     = new Date(getUTCTimestamp(layer.image.date));
+        date     = new Date(getUTCTimestamp(dateString));
         timeDiff = (date.getTime() - this.controller.timeControls.getTimestamp()) / 1000;
         timestep = this.controller.timeIncrementSecs;
         
-        domNode = $("#" + layer.id).find('.timestamp').html(layer.image.date.replace(/-/g, "/"));
+        domNode = $("#" + id).find('.timestamp').html(dateString.replace(/-/g, "/"));
         domNode.removeClass("timeAhead timeBehind timeSignificantlyOff");
         
         if (Math.abs(timeDiff) > (4 * timestep)) {

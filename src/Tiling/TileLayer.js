@@ -41,7 +41,7 @@ var TileLayer = Layer.extend(
      *      <b>startOpened</b> - Whether or not the layer menu entry should initially be open or closed<br>
      * </div>
      */
-    init: function (controller, date, meta) {
+    init: function (controller, date, tileSize, api, baseURL, meta) {
         $.extend(this, this.defaultOptions);
         this._super();
         
@@ -51,11 +51,12 @@ var TileLayer = Layer.extend(
         this.controller = controller;
         this.tileLayers = controller.tileLayers;
         this.viewport   = controller.viewport;
-        this.tileSize   = controller.viewport.tileSize;
+        this.tileSize   = tileSize;
         
         this.layeringOrder = meta.layeringOrder;
         this.visible       = meta.visible;
         this.opacity       = meta.opacity;
+        this.baseURL       = baseURL;
         this.name          = meta.name;
         
         this.id = "tile-layer-" + meta.sourceId;
@@ -69,7 +70,7 @@ var TileLayer = Layer.extend(
         this.tiles = [];
         this._loadStaticProperties();
         this.image = new JP2Image(meta.observatory, meta.instrument, meta.detector, meta.measurement, meta.sourceId, 
-                                  date, meta.server, this.controller.api, $.proxy(this.onLoadImage, this));
+                                  date, meta.server, api, $.proxy(this.onLoadImage, this));
     },
     
     /**
@@ -128,7 +129,9 @@ var TileLayer = Layer.extend(
         this.refresh(false);
         
         // Update viewport sandbox if necessary
-        $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
+        $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]).
+                    trigger("update-tile-layer-accordion", [this.id, this.name, this.opacity, this.image.date]);
+        
 
         // Add to tileLayer Accordion if it's not already there
         if (!accordion.hasId(this.id)) {
@@ -138,7 +141,7 @@ var TileLayer = Layer.extend(
                         
         // Otherwise update the accordion entry information
         else {
-            accordion.updateTimeStamp(this);
+            accordion.updateTimeStamp(this.id, this.image.date);
             accordion.updateLayerDesc("#" + this.id, this.name);
             accordion.updateOpacitySlider(this.id, this.opacity);
         }
@@ -461,9 +464,8 @@ var TileLayer = Layer.extend(
      * TODO 02/25/2010: What would be performance loss from re-fetching meta information on server-side?
      */
     getTileURL: function (serverId, x, y) {
-        var url, file, format, params;
-        
-        url    = this.controller.tileServers[serverId];
+        var file, format, params;
+
         file   = this.image.filepath + "/" + this.image.filename;
         format = (this.layeringOrder === 1 ? "jpg" : "png");
 
@@ -486,7 +488,7 @@ var TileLayer = Layer.extend(
             "sunCenterOffsetX" : this.image.offsetX,
             "sunCenterOffsetY" : this.image.offsetY                        
         };
-        return url + "?" + $.param(params);
+        return this.baseURL + "?" + $.param(params);
     },
 
     /**
