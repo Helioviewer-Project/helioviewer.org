@@ -35,6 +35,10 @@
   top: 0px;
 }
 
+.tile-layer-container {
+    position: absolute;
+}
+
 .tile
 {
 	border: 0px;

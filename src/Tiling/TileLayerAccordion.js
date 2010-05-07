@@ -60,7 +60,7 @@ var TileLayerAccordion = Layer.extend(
         removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + layer.id +
                     "' title='Remove layer'></span>";
         head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all'>" + 
-               "<span class=tile-accordion-header-left>" + layer.meta.name +
+               "<span class=tile-accordion-header-left>" + layer.name +
                "</span><span class=tile-accordion-header-right><span class=timestamp></span>" + 
                "<span class=accordion-header-divider>|</span>" + visibilityBtn + removeBtn + "</span></div>";
         
@@ -84,17 +84,12 @@ var TileLayerAccordion = Layer.extend(
         ids = [obs, inst, det, meas];
 
         // Initialize TreeSelect
-        selected  = [layer.meta.observatory, layer.meta.instrument, layer.meta.detector, layer.meta.measurement];
+        selected  = [layer.image.observatory, layer.image.instrument, layer.image.detector, layer.image.measurement];
         this.selectMenus = new TreeSelect(ids, this.controller.dataSources, selected, function (leaf) {
-        	layer.updateDataSource({
-        		observatory   : $(obs).attr("value"),
-        		instrument    : $(inst).attr("value"),
-        		detector      : $(det).attr("value"),
-        		measurement   : $(meas).attr("value"),
-        		sourceId      : leaf.sourceId,
-        		name          : leaf.name,
-        		layeringOrder : leaf.layeringOrder
-        	});
+            layer.updateDataSource($(obs).attr("value"), $(inst).attr("value"), 
+                                   $(det).attr("value"), $(meas).attr("value"),
+                                   leaf.sourceId, leaf.name, leaf.layeringOrder
+            );
 
             self.tileLayers.save();
         });
@@ -198,7 +193,8 @@ var TileLayerAccordion = Layer.extend(
         
         // Populate list of available Detectors
         meas = "<div class=layer-select-label>Measurement: </div> ";
-        meas += "<select name=measurement class=layer-select id='measurement-select-" + layer.id + "'></select><br><br>";
+        meas += "<select name=measurement class=layer-select id='measurement-select-" + layer.id + "'>";
+        meas += "</select><br><br>";
         
         fits = "<a href='#' id='showFITSBtn-" + layer.id +
                "' style='margin-left:170px; color: white; text-decoration: none;'>FITS Header</a><br>";
@@ -331,7 +327,7 @@ var TileLayerAccordion = Layer.extend(
                             
             $("#" + dialogId).dialog({
                 autoOpen: true,
-                title: "FITS Header: " + layer.meta.name,
+                title: "FITS Header: " + layer.name,
                 width: 400,
                 height: 350,
                 draggable: true
@@ -342,7 +338,7 @@ var TileLayerAccordion = Layer.extend(
         params = {
             action : "getJP2Header",
             file   : layer.image.filepath + "/" + layer.image.filename,
-            server : layer.meta.server
+            server : layer.image.server
         };
         
         $.post("api/index.php", params, callback, "json");

@@ -75,7 +75,7 @@ var LayerManager = Class.extend(
             height: maxHeight
         };
         
-        if ((this._maxLayerDimensions.width !==old.width) || (this._maxLayerDimensions.height !== old.height)) {
+        if ((this._maxLayerDimensions.width !== old.width) || (this._maxLayerDimensions.height !== old.height)) {
             $(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
         }
     },
@@ -85,7 +85,7 @@ var LayerManager = Class.extend(
      * @return {Object} The width and height of the largest layer
      */
     getMaxDimensions: function () {
-    	return this._maxLayerDimensions;
+        return this._maxLayerDimensions;
     },
 
     /**

@@ -36,9 +36,9 @@ Date.prototype.toUTCTimeString = function () {
  */
 Date.prototype.toUTCDate = function () {
     return new Date(Date.UTC(
-        this.getFullYear(), this.getMonth(), this.getDate(),this.getHours(), this.getMinutes(), this.getSeconds()
+        this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds()
     ));
-}
+};
 
 /**
  * @description Pads a string to the left.

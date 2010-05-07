@@ -8,7 +8,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, Layer, $, Image, console */
+/*global Class, Layer, $, JP2Image, Image, console */
 "use strict";
 var TileLayer = Layer.extend( 
     /** @lends TileLayer.prototype */
@@ -47,150 +47,83 @@ var TileLayer = Layer.extend(
         
         this._requestDate = date;
         
-        this.tileLayers  = controller.tileLayers;
-        this.tileSize    = controller.viewport.tileSize;
-        this.controller  = controller;
-        this.viewport = controller.viewport;
+        // TODO PASSING IN USING INDIVIDUAL VARIABLES INSTEAD OF ARRAYS FOR BETTER READABILITY
+        this.controller = controller;
+        this.tileLayers = controller.tileLayers;
+        this.viewport   = controller.viewport;
+        this.tileSize   = controller.viewport.tileSize;
         
-        this.meta  = meta;
-        this.image = {};
-        
-        this.visible = meta.visible;
-        this.opacity = meta.opacity;
+        this.layeringOrder = meta.layeringOrder;
+        this.visible       = meta.visible;
+        this.opacity       = meta.opacity;
+        this.name          = meta.name;
         
         this.id = "tile-layer-" + meta.sourceId;
 
-        //TODO: move styles out
-        this.domNode = $('<div class="tile-layer-container" style="position: absolute;"></div>').appendTo(
+        this.domNode = $('<div class="tile-layer-container" />').appendTo(
             this.viewport.movingContainer
         );
         
         this._setupEventHandlers();
 
         this.tiles = [];
-        this.loadClosestImage();
+        this._loadStaticProperties();
+        this.image = new JP2Image(meta.observatory, meta.instrument, meta.detector, meta.measurement, meta.sourceId, 
+                                  date, meta.server, this.controller.api, $.proxy(this.onLoadImage, this));
     },
     
     /**
      * Changes data source and fetches image for new source
      */
-    updateDataSource: function (dataSource) {
-    	$.extend(this.meta, dataSource);
-    	this.loadClosestImage();
+    updateDataSource: function (observatory, instrument, detector, measurement, sourceId, name, layeringOrder) {
+        this.name = name;
+        this.layeringOrder = layeringOrder;
+        
+        this.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
     },
     
     /**
-     * @description Updates time and loads closest match
-     */
-    updateTime: function (event, requestDate) {
-    	this._requestDate = requestDate;
-        this.loadClosestImage();
-    },
-
-    /**
-     * @function Remove TileLayer tiles
-     */
-    removeTiles: function () {
-        this.tiles = [];
-    },
-
-    /**
-     * @description Reset the tile layer
+     * @description Refresh the tile layer
      * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
      * 
-     * Notes:
-     * 
-     * 1. Rotation:
-     *   Currently, EIT and MDI images are prerotated, and their corresponding meta-information
+     * Rotation:
+     *   Currently, EIT and MDI images are pre-rotated, and their corresponding meta-information
      *   is guaranteed to be accurate. LASCO images on the other hand are rotated during FITS -> JP2
      *   conversion. The meta-information from the FITS header is not modified, however, and reflects
-     *   the original unrotated image. Therefor, when rotated = true, the coordinates should be flipped
+     *   the original unrotated image. Therefore, when rotated = true, the coordinates should be flipped
      *   to reflect the rotation that was already done to the image itself.
      *   
-     * 2. Center offset:
-     *   The values for origSunCenterOffsetX and origSunCenterOffsetY reflect the x and y coordinates with the origin
-     *   at the bottom-left corner of the image, not the top-left corner.
-     *    
+     *   if (this.rotated) {
+     *       this.sunCenterOffsetX = - this.sunCenterOffsetX;
+     *       this.sunCenterOffsetY = - this.sunCenterOffsetY;
+     *    }
+     *   
      */
     refresh: function (zoomLevelChanged) {
-
         // Ratio of original JP2 image scale to the viewport/desired image scale
-        this.image.scaleFactor = this.image.jp2Scale / this.viewport.getImageScale();
+        this.scaleFactor = this.image.scale / this.viewport.getImageScale();
         
-        // Update relevant dimensions
-        this.image.relWidth  = this.image.jp2Width  * this.image.scaleFactor;
-        this.image.relHeight = this.image.jp2Height * this.image.scaleFactor;
-        
-        // Sun center offset at the original JP2 image scale (with respect to top-left origin)
-        this.image.origSunCenterOffsetX =   parseFloat((this.image.sunCenterX - (this.image.jp2Width  / 2)).toPrecision(8));
-        this.image.origSunCenterOffsetY = - parseFloat((this.image.sunCenterY - (this.image.jp2Height / 2)).toPrecision(8));
+        this.width  = this.image.width  * this.scaleFactor;
+        this.height = this.image.height * this.scaleFactor;
         
         // Offset image
-        this.image.sunCenterOffsetX = parseFloat((this.image.origSunCenterOffsetX * this.image.scaleFactor).toPrecision(8));
-        this.image.sunCenterOffsetY = parseFloat((this.image.origSunCenterOffsetY * this.image.scaleFactor).toPrecision(8));
-        
-        // Account for rotation (02/25/2010: Image is rotated about center of the sun, not the image center!)
-        //if (this.rotated) {
-        //  this.sunCenterOffsetX = - this.sunCenterOffsetX; // 02/25/2010: Is sun mirrored instead of rotated?
-        //  this.sunCenterOffsetY = - this.sunCenterOffsetY;
-        //}
+        this.sunCenterOffsetX = parseFloat((this.image.offsetX * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetY = parseFloat((this.image.offsetY * this.scaleFactor).toPrecision(8));
         
         this.domNode.css({
-            "left": - this.image.sunCenterOffsetX,
-            "top" : - this.image.sunCenterOffsetY
+            "left": - this.sunCenterOffsetX,
+            "top" : - this.sunCenterOffsetY
         });
-    
-        // Update layer dimensions (only magnitude is important)
-        this.dimensions = {
-            "width" : this.image.relWidth  + this.image.sunCenterOffsetX,
-            "height": this.image.relHeight + this.image.sunCenterOffsetY
-        };
         
         this.refreshTiles(zoomLevelChanged);
     },
     
     /**
-     * @description Loads the closest image in time to that requested
-     */
-    loadClosestImage: function () {
-        var callback, params, self = this;
-
-        params = {
-            action:   'getClosestImage',
-            server:   this.meta.server,
-            sourceId: this.meta.sourceId,
-            date:     this._requestDate.toISOString().replace(/"/g, '')
-        };
-
-        this._loadStaticProperties();
-        
-        // Ajax request
-        $.post(this.controller.api, params, $.proxy(this.onLoadImage, this), "json");
-    },
-    
-    /**
-     * Gets information to the best match for a requested image
      * 
-     * The AJAX request returns a JSON object with the following properties:
-     * 
-     *    jp2Width   Width of the original image
-     *    jp2Height  Height of the original image
-     *    jp2Scale   Pixel scale (in arcseconds per pixel) of the original image
-     *    rotated    Whether or not the original image was rotated 180 degrees
-     *    sunCenterX X-coordinate for the center of the sun in the original image
-     *    sunCenterY Y-coordinate for the center of the sun in the original image
-     *    
      */
-    onLoadImage: function (image) {
+    onLoadImage: function () {
         var index, accordion = this.controller.tileLayerAccordion;
 
-        //Only load image if it is different form what is currently displayed
-        if (image.filename === this.image.filename) {
-            return;
-        }
-        
-        this.image = image;
- 
         this.viewport.checkTiles(true);
         this.refresh(false);
         
@@ -221,7 +154,8 @@ var TileLayer = Layer.extend(
         visible = this.viewport.visible;
 
         this.computeValidTiles();
-        this.removeTiles();
+        this.tiles = [];
+        
         old = this.getTileArray();
 
         // When zooming, remove old tiles right away to avoid visual glitches
@@ -242,7 +176,6 @@ var TileLayer = Layer.extend(
             if (numTilesLoaded === numTiles) {
                 if (!zoomLevelChanged) {
                     self.removeTileDomNodes(old);
-                    //$('#loading').hide();
                 }
             }
         };
@@ -289,7 +222,10 @@ var TileLayer = Layer.extend(
      * @description Returns an array container the values of the positions for each edge of the TileLayer.
      */
     getDimensions: function () {
-        return this.dimensions;
+        return {
+            "width" : this.width  + this.sunCenterOffsetX,
+            "height": this.height + this.sunCenterOffsetY
+        };
     },
     
     /**
@@ -336,8 +272,8 @@ var TileLayer = Layer.extend(
         var numTilesX, numTilesY, boundaries, ts = this.tileSize;
         
         // Number of tiles for the entire image
-        numTilesX = Math.max(2, Math.ceil(this.image.relWidth  / ts));
-        numTilesY = Math.max(2, Math.ceil(this.image.relHeight  / ts));
+        numTilesX = Math.max(2, Math.ceil(this.width  / ts));
+        numTilesY = Math.max(2, Math.ceil(this.height  / ts));
         
         // Tile placement architecture expects an even number of tiles along each dimension
         if ((numTilesX % 2) !== 0) {
@@ -367,9 +303,8 @@ var TileLayer = Layer.extend(
             opacity = 1,
             counter = 0;
 
-        //Note: No longer adjust other layer's opacities... only the new layer's (don't want to overide user settings).
         this.tileLayers.each(function () {
-            if (parseInt(this.layeringOrder, 10) === parseInt(self.meta.layeringOrder, 10)) {
+            if (parseInt(this.layeringOrder, 10) === parseInt(self.layeringOrder, 10)) {
                 counter += 1;
             }
         });
@@ -409,7 +344,7 @@ var TileLayer = Layer.extend(
      * IE7: Want z-indices < 1 to ensure event icon visibility
      */
     _loadStaticProperties: function () {
-    	this.domNode.css("z-index", parseInt(this.meta.layeringOrder, 10) - 10);
+        this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
         
         // opacity
         if (this.opacity !== 100) {
@@ -449,7 +384,6 @@ var TileLayer = Layer.extend(
         visible = this.viewport.visible;
         indices = this.viewport.visibleRange;    
 
-        //console.log("Checking tiles from " + indices.xStart + " to " + indices.xEnd);
         for (i = indices.xStart; i <= indices.xEnd; i += 1) {
             for (j = indices.yStart; j <= indices.yEnd; j += 1) {
                 if (!this.tiles[i]) {
@@ -459,7 +393,6 @@ var TileLayer = Layer.extend(
                     this.validTiles[i] = [];
                 }
                 if (visible[i][j] && (!this.tiles[i][j]) && this.validTiles[i][j]) {
-                    //console.log("Loading new tile");
                     this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
                 }
             }
@@ -503,30 +436,21 @@ var TileLayer = Layer.extend(
 
         img = $(img).addClass("tile").css({"left": left, "top": top}).attr("alt", "");
 
-        // IE
+        // IE (can only adjust opacity at the image level)
         if (!$.support.opacity) {
             img.css("opacity", this.opacity / 100);
         }
-
-        // If loading fails...
-        img.error(function (e) {
-            img.unbind("error");
-            $(this).attr("src", emptyTile);
-        });
         
-        // Wait until image is done loading specify dimensions in order to prevent Firefox from displaying place-holders
-        img.load(function () {
-            $(this).width(512).height(512);
-        });
-
         uri = this.image.filepath + "/" + this.image.filename;
 
         // Load tile
-        img.attr("src", this.getTileURL(this.meta.server, x, y));
-        
-        //if (this.controller.debug && (typeof console !== "undefined")) {
-        //console.log(this.getTileURL(this.server, x, y));
-        //}
+        img.error(function (e) {
+            img.unbind("error");
+            $(this).attr("src", emptyTile);
+        }).load(function () {
+            $(this).width(512).height(512); // Wait until image is done loading specify dimensions in order to prevent 
+                                            // Firefox from displaying place-holders
+        }).attr("src", this.getTileURL(this.image.server, x, y));
         
         return img;
     },
@@ -541,7 +465,7 @@ var TileLayer = Layer.extend(
         
         url    = this.controller.tileServers[serverId];
         file   = this.image.filepath + "/" + this.image.filename;
-        format = (this.meta.layeringOrder === 1 ? "jpg" : "png");
+        format = (this.layeringOrder === 1 ? "jpg" : "png");
 
         params = {
             "action"           : "getTile",
@@ -552,44 +476,19 @@ var TileLayer = Layer.extend(
             "date"             : this.image.date,
             "tileScale"        : this.viewport.imageScale,
             "ts"               : this.tileSize,
-            "jp2Width"         : this.image.jp2Width,
-            "jp2Height"        : this.image.jp2Height,
-            "jp2Scale"         : this.image.jp2Scale,
-            "obs"              : this.meta.observatory,
-            "inst"             : this.meta.instrument,
-            "det"              : this.meta.detector,
-            "meas"             : this.meta.measurement,
-            "sunCenterOffsetX" : this.image.origSunCenterOffsetX,
-            "sunCenterOffsetY" : this.image.origSunCenterOffsetY                        
+            "jp2Width"         : this.image.width,
+            "jp2Height"        : this.image.height,
+            "jp2Scale"         : this.image.scale,
+            "obs"              : this.image.observatory,
+            "inst"             : this.image.instrument,
+            "det"              : this.image.detector,
+            "meas"             : this.image.measurement,
+            "sunCenterOffsetX" : this.image.offsetX,
+            "sunCenterOffsetY" : this.image.offsetY                        
         };
         return url + "?" + $.param(params);
     },
 
-    /**
-     * @description Returns a stringified version of the tile layer for use in URLs, etc
-     * @return string String representation of the tile layer
-     */
-    serialize: function () {
-        return this.meta.observatory + "," + this.meta.instrument + "," + this.meta.detector + "," +
-               this.meta.measurement + "," + (this.visible ? "1" : "0") + "," + this.opacity;
-    },
-    
-    /**
-     * @description Returns a JSON representation of the tile layer for use by the UserSettings manager
-     * @return JSON A JSON representation of the tile layer     
-     */
-    toJSON: function () {
-        return {
-            "server"     : this.meta.server,
-            "observatory": this.meta.observatory,
-            "instrument" : this.meta.instrument,
-            "detector"   : this.meta.detector,
-            "measurement": this.meta.measurement,
-            "visible"    : this.visible,
-            "opacity"    : this.opacity
-        };
-    },
-    
     /**
      * @description Tests all four corners of the visible image area to see if they are within the 
      *              transparent circle region of LASCO C2 and LASCO C3 images. It uses the distance
@@ -628,10 +527,34 @@ var TileLayer = Layer.extend(
     },
     
     /**
+     * @description Returns a stringified version of the tile layer for use in URLs, etc
+     * @return string String representation of the tile layer
+     */
+    serialize: function () {
+        return this.image.observatory + "," + this.image.instrument + "," + this.image.detector + "," +
+               this.image.measurement + "," + (this.visible ? "1" : "0") + "," + this.opacity;
+    },
+    
+    /**
+     * @description Returns a JSON representation of the tile layer for use by the UserSettings manager
+     * @return JSON A JSON representation of the tile layer     
+     */
+    toJSON: function () {
+        return {
+            "server"     : this.image.server,
+            "observatory": this.image.observatory,
+            "instrument" : this.image.instrument,
+            "detector"   : this.image.detector,
+            "measurement": this.image.measurement,
+            "visible"    : this.visible,
+            "opacity"    : this.opacity
+        };
+    },
+    
+    /**
      * @description Sets up event-handlers to deal with viewport motion
      */
     _setupEventHandlers: function () {
-        $(document).bind('viewport-move', $.proxy(this.viewportMove, this))
-        		   .bind("observation-time-changed", $.proxy(this.updateTime, this));
+        $(document).bind('viewport-move', $.proxy(this.viewportMove, this));
     }
 });

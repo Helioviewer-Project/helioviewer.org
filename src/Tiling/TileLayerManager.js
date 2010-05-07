@@ -50,7 +50,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, rand, meta, queue, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, rand, params, queue, ds, defaultLayer = "SOHO,EIT,EIT,171";
         
         // If new layer exceeds the maximum number of layers allowed, display a message to the user
         if (this.size() >= this.controller.maxTileLayers) {
@@ -64,7 +64,8 @@ var TileLayerManager = LayerManager.extend(
         // current layers in above form
         currentLayers = [];
         $.each(this._layers, function () {
-            currentLayers.push(this.meta.observatory + "," + this.meta.instrument + "," + this.meta.detector + "," + this.meta.measurement);
+            currentLayers.push(this.image.observatory + "," + this.image.instrument + "," + 
+                               this.image.detector + "," + this.image.measurement);
         });
         
         // remove existing layers from queue
@@ -79,14 +80,14 @@ var TileLayerManager = LayerManager.extend(
         // Pull off the next layer on the queue
         next = queue[0] || defaultLayer;
 
-        meta = TileLayerManager.parseLayerString(next + ",1,100");
+        params = TileLayerManager.parseLayerString(next + ",1,100");
        
-        meta.server = this.controller.selectTilingServer();
-
-        $.extend(meta, this.controller.dataSources[meta.observatory][meta.instrument][meta.detector][meta.measurement]);
+        params.server = this.controller.selectTilingServer();
+        ds = this.controller.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
+        $.extend(params, ds);
         
         // Add the layer
-        this.addLayer(new TileLayer(this.controller, this.controller.getDate(), meta));
+        this.addLayer(new TileLayer(this.controller, this.controller.getDate(), params));
         this.save();
     },
     
