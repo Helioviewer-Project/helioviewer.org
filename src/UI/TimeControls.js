@@ -195,8 +195,8 @@ var TimeControls = Class.extend(
             }
         ).attr("title", "Select an observation date.")
          .click(function () {
-             btn.qtip("hide");
-        });
+                btn.qtip("hide");
+            });
     },
     
     /**

@@ -102,7 +102,8 @@ var Helioviewer = Class.extend(
         this._setupDialogs();
         
         // Tooltips
-        this.tooltips.createTooltip($("#timeBackBtn, #timeForwardBtn, #center-button, #observation-controls .ui-datepicker-trigger"));
+        this.tooltips.createTooltip($("#timeBackBtn, #timeForwardBtn, #center-button, " +
+                                      "#observation-controls .ui-datepicker-trigger"));
         this.tooltips.createTooltip($("#fullscreen-btn"), "topRight");
         
         //Movie builder
@@ -137,7 +138,7 @@ var Helioviewer = Class.extend(
             
             // Add initial layers
             $.each(self.userSettings.get('tileLayers'), function (index, layer) {
-            	$.extend(layer, dataSources[layer.observatory][layer.instrument][layer.detector][layer.measurement]);
+                $.extend(layer, dataSources[layer.observatory][layer.instrument][layer.detector][layer.measurement]);
                 self.tileLayers.addLayer(new TileLayer(self, self.getDate(), layer));
             });
         };

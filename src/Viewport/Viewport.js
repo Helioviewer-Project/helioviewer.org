@@ -443,7 +443,7 @@ var Viewport = Class.extend(
         
         //check to make sure that you are not already at the minimum/maximum image scale
         if (!(e.shiftKey || (this.imageScale > this.controller.minImageScale)) ||
-            !(this.imageScale < this.controller.maxImageScale)) {
+             (this.imageScale >= this.controller.maxImageScale)) {
             return;
         }
         
@@ -455,8 +455,8 @@ var Viewport = Class.extend(
         
         // Distance between point of mouse-click and the center of the viewport
         diff = {
-                x: pos.x - center.x,
-                y: pos.y - center.y
+            x: pos.x - center.x,
+            y: pos.y - center.y
         };
 
         this.startMoving();
@@ -652,7 +652,7 @@ var Viewport = Class.extend(
         this.maxLayerDimensions = {
             width : Math.max(this.maxTileLayerDimensions.width,  this.maxEventLayerDimensions.width),
             height: Math.max(this.maxTileLayerDimensions.height, this.maxEventLayerDimensions.height)
-        }
+        };
         
         if ((this.maxLayerDimensions.width !== old.width) || (this.maxLayerDimensions.height !== old.height)) {
             this.updateSandbox();
