@@ -36,7 +36,6 @@ var Viewport = Class.extend(
     /**
      * @constructs
      * @description Creates a new Viewport
-     * @param {Object} controller A Reference to the Helioviewer application class
      * @param {Object} options Custom Viewport settings
      * <br>
      * <br><div style='font-size:16px'>Options:</div><br>
@@ -48,10 +47,9 @@ var Viewport = Class.extend(
      *       <b>prefetch</b>   - The radius outside of the visible viewport to prefetch.<br>
      * </div>
      */
-    init: function (controller, options) {
+    init: function (options) {
         $.extend(this, this.defaultOptions);
         $.extend(this, options);
-        this.controller = controller;
                         
         this.domNode   = $(this.id);
         this.innerNode = $(this.id + '-container-inner');
@@ -69,8 +67,12 @@ var Viewport = Class.extend(
 
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height() + 2;
-        
+
         this.resize();
+
+        var center = this.getCenter();
+        this.sandbox.css({"left": center.x, "top": center.y});
+        
         this._initEventHandlers();
     },
     
@@ -171,15 +173,15 @@ var Viewport = Class.extend(
                 this.visible[i][j] = true;
             }
         }
+        
+        $(document).trigger("refresh-tile-layers", this.visible);
     },
     
     /**
-     * Determines the 
+     * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
+     * contents around in order to see all layers
      */
     getSandboxDimensions: function () {
-        //this._updateDimensions();
-        
-        // New sandbox dimensions
         return {
             width : Math.max(0, this.maxLayerDimensions.width  - this.dimensions.width),
             height: Math.max(0, this.maxLayerDimensions.height - this.dimensions.height)
@@ -297,7 +299,6 @@ var Viewport = Class.extend(
         
         // reset the layers
         this.checkTiles();
-        this.controller.tileLayers.refreshLayers();
 
         // scale layer dimensions
         this.scaleLayerDimensions(oldScale / imageScale);
@@ -331,7 +332,7 @@ var Viewport = Class.extend(
         oldDimensions = this.dimensions;
         
         // Make room for footer and header if not in fullscreen mode
-        if (this.controller.fullScreenMode && this.controller.fullScreenMode.isEnabled()) {
+        if (this.domNode.hasClass("fullscreen-mode")) {
             padHeight = 0;
         }
         else {
@@ -351,11 +352,8 @@ var Viewport = Class.extend(
         this.dimensions.height += this.prefetch;
         
         if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
-            if (this.controller.tileLayers.size() > 0) {
-                this.updateSandbox();
-                this.checkTiles();
-                this.controller.tileLayers.refreshLayers();
-            }
+            this.updateSandbox();
+            this.checkTiles();
         }
     },
     
@@ -439,8 +437,8 @@ var Viewport = Class.extend(
         var pos, center, diff;
         
         //check to make sure that you are not already at the minimum/maximum image scale
-        if (!(e.shiftKey || (this.imageScale > this.controller.minImageScale)) ||
-             (this.imageScale >= this.controller.maxImageScale)) {
+        if (!(e.shiftKey || (this.imageScale > this.minImageScale)) ||
+             (this.imageScale >= this.maxImageScale)) {
             return;
         }
         
@@ -664,7 +662,9 @@ var Viewport = Class.extend(
         $(document).mousemove($.proxy(this.mouseMove, this))
                    .mouseup($.proxy(this.mouseUp, this))
                    .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
-                   .bind("set-image-scale", $.proxy(this.zoomTo, this));
+                   .bind("set-image-scale", $.proxy(this.zoomTo, this))
+                   .bind("recompute-tile-visibility", $.proxy(this.checkTiles, this))
+                   .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this));
         
         this.domNode.mousedown($.proxy(this.mouseDown, this))
                     .dblclick($.proxy(this.doubleClick, this))
