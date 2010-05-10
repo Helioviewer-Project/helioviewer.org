@@ -38,7 +38,8 @@ var TileLayerManager = LayerManager.extend(
         ];
         
         $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
-                   .bind('remove-tile-layer', function (event, id) {
+                   .bind("save-tile-layers", $.proxy(this.save, this))
+                   .bind("remove-tile-layer", function (event, id) {
                         self.removeLayer(id);
                     });
     },
