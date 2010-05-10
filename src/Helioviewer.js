@@ -54,10 +54,11 @@ var Helioviewer = Class.extend(
         this.messageConsole     = new MessageConsole();
         this.tileLayerAccordion = new TileLayerAccordion(this, '#tileLayerAccordion');
         this.fullScreenMode     = new FullscreenControl("#fullscreen-btn", 500);
-        this.mediaSettings      = new MediaSettings(this);
-        this.movieBuilder       = new MovieBuilder(this);
-        this.imageSelectTool    = new ImageSelectTool(this);
-        this.screenshotBuilder  = new ScreenshotBuilder(this);
+        
+        //this.mediaSettings      = new MediaSettings(this);
+        //this.movieBuilder       = new MovieBuilder(this);
+        //this.imageSelectTool    = new ImageSelectTool(this);
+        //this.screenshotBuilder  = new ScreenshotBuilder(this);
     },
 
     /**

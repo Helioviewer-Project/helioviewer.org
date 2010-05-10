@@ -182,9 +182,8 @@ var TileLayer = Layer.extend(
                 }
 
                 if (visible[i][j] && this.validTiles[i][j]) {
-                    tile = this.getTile(i, j, this.viewport.imageScale);
-                    this.domNode.append(tile);
-    
+                    tile = this.getTile(i, j).appendTo(this.domNode);
+                                        
                     if (!this.tiles[i]) {
                         this.tiles[i] = [];
                     }
@@ -199,6 +198,32 @@ var TileLayer = Layer.extend(
                 }
             }
         }        
+    },
+    
+    /**
+     * @description Check to see if all visible tiles have been loaded
+     */
+    viewportMove: function () {
+        var visible, indices, i, j;
+        
+        this.viewport.checkTiles();
+        
+        visible = this.viewport.visible;
+        indices = this.viewport.visibleRange;    
+
+        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
+            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
+                if (!this.tiles[i]) {
+                    this.tiles[i] = [];
+                }
+                if (!this.validTiles[i]) {
+                    this.validTiles[i] = [];
+                }
+                if (visible[i][j] && (!this.tiles[i][j]) && this.validTiles[i][j]) {
+                    this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
+                }
+            }
+        }
     },
     
     /**
@@ -368,32 +393,6 @@ var TileLayer = Layer.extend(
     },
 
     /**
-     * @description Check to see if all visible tiles have been loaded
-     */
-    viewportMove: function () {
-        var visible, indices, i, j;
-        
-        this.viewport.checkTiles();
-        
-        visible = this.viewport.visible;
-        indices = this.viewport.visibleRange;    
-
-        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
-            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
-                if (!this.tiles[i]) {
-                    this.tiles[i] = [];
-                }
-                if (!this.validTiles[i]) {
-                    this.validTiles[i] = [];
-                }
-                if (visible[i][j] && (!this.tiles[i][j]) && this.validTiles[i][j]) {
-                    this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
-                }
-            }
-        }
-    },
-
-    /**
      * @description Generates URL to retrieve a single Tile and displays the transparent tile if request fails
      * @param {Int} x Tile X-coordinate
      * @param {Int} y Tile Y-coordinate
@@ -557,14 +556,14 @@ var TileLayer = Layer.extend(
                    .bind('toggle-layer-visibility', function (event, id) {
                         if (self.id === id) {
                             self.toggleVisibility();
-                            self.tileLayers.save();
+                            $(document).trigger("save-tile-layers");
                         }
                     })
                    .bind('tile-layer-data-source-changed',
                        function (event, id, obs, inst, det, meas, sourceId, name, layeringOrder) {
                             if (self.id === id) {
                                 self.updateDataSource(obs, inst, det, meas, sourceId, name, layeringOrder);
-                                self.tileLayers.save();
+                                $(document).trigger("save-tile-layers");
                             }
                         });
     }

@@ -173,8 +173,6 @@ var Viewport = Class.extend(
                 this.visible[i][j] = true;
             }
         }
-        
-        $(document).trigger("refresh-tile-layers", this.visible);
     },
     
     /**
@@ -261,10 +259,10 @@ var Viewport = Class.extend(
 
         // Indices to display (one subtracted from ends to account for "0th" tiles).
         this.visibleRange = {
-            xStart: vp.left   / ts,
-            xEnd:   (vp.right  / ts) - 1,
-            yStart: vp.top    / ts,
-            yEnd:     (vp.bottom / ts) - 1
+            xStart : vp.left   / ts,
+            xEnd   : (vp.right  / ts) - 1,
+            yStart : vp.top    / ts,
+            yEnd   : (vp.bottom / ts) - 1
         };
     
         return this.visibleRange;
@@ -299,6 +297,7 @@ var Viewport = Class.extend(
         
         // reset the layers
         this.checkTiles();
+        $(document).trigger("refresh-tile-layers", this.visible);
 
         // scale layer dimensions
         this.scaleLayerDimensions(oldScale / imageScale);
@@ -354,6 +353,7 @@ var Viewport = Class.extend(
         if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
             this.updateSandbox();
             this.checkTiles();
+            $(document).trigger("refresh-tile-layers", this.visible);
         }
     },
     
@@ -658,12 +658,17 @@ var Viewport = Class.extend(
      * @description
      */
     _initEventHandlers: function () {
+        var self = this;
+        
         $(window).resize($.proxy(this.resize, this));
         $(document).mousemove($.proxy(this.mouseMove, this))
                    .mouseup($.proxy(this.mouseUp, this))
                    .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
                    .bind("set-image-scale", $.proxy(this.zoomTo, this))
-                   .bind("recompute-tile-visibility", $.proxy(this.checkTiles, this))
+                   .bind("recompute-tile-visibility", function() {
+                       self.checkTiles();
+                       $(document).trigger("refresh-tile-layers", this.visible);                       
+                   })
                    .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this));
         
         this.domNode.mousedown($.proxy(this.mouseDown, this))
