@@ -551,6 +551,9 @@ var TileLayer = Layer.extend(
         var self = this;
         
         $(document).bind('viewport-move', $.proxy(this.viewportMove, this))
+                   .bind('refresh-tile-layers', function () {
+                        self.refresh(false);
+                    })
                    .bind('toggle-layer-visibility', function (event, id) {
                         if (self.id === id) {
                             self.toggleVisibility();

@@ -20,7 +20,7 @@ var Helioviewer = Class.extend(
      * @param {Object} urlParams  Client-specified settings to load
      * @param {Object} settings   Server settings
      */
-        init : function(urlParams, settings) {
+    init: function (urlParams, settings) {
         $.extend(this, settings);
         this.api = "api/index.php";
 
@@ -45,7 +45,7 @@ var Helioviewer = Class.extend(
         this._displayGreeting();
 
         // User Interface components
-        this.zoomControls = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),                        
+        this.zoomControls = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
                                              this.minImageScale, this.maxImageScale);
 
         this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
@@ -53,7 +53,7 @@ var Helioviewer = Class.extend(
 
         this.messageConsole     = new MessageConsole();
         this.tileLayerAccordion = new TileLayerAccordion(this, '#tileLayerAccordion');
-        this.fullScreenMode     = new FullscreenControl(this, "#fullscreen-btn", 500);
+        this.fullScreenMode     = new FullscreenControl("#fullscreen-btn", 500);
         this.mediaSettings      = new MediaSettings(this);
         this.movieBuilder       = new MovieBuilder(this);
         this.imageSelectTool    = new ImageSelectTool(this);
@@ -64,7 +64,7 @@ var Helioviewer = Class.extend(
      * @description Returns the current observation date as a JavaScript
      *              Date object
      */
-    getDate : function() {
+    getDate: function () {
         return this.timeControls.getDate();
     },
 
@@ -72,7 +72,7 @@ var Helioviewer = Class.extend(
      * @description Checks browser support for various features used in
      *              Helioviewer
      */
-    _checkBrowser : function() {
+    _checkBrowser: function () {
         $.support.nativeJSON = (typeof (JSON) !== "undefined") ? true : false;
         $.support.localStorage = !!window.localStorage;
     },
@@ -232,9 +232,11 @@ var Helioviewer = Class.extend(
      * @description Initialize Helioviewer's viewport.
      */
     _initViewport: function () {
-        this.viewport = new Viewport(this, {
+        this.viewport = new Viewport({
             id             : '#helioviewer-viewport',
             imageScale     : this.userSettings.get('imageScale'),
+            minImageScale  : this.minImageScale, 
+            maxImageScale  : this.maxImageScale, 
             prefetch       : this.prefetchSize,
             warnMouseCoords: this.userSettings.get('warnMouseCoords') 
         });
