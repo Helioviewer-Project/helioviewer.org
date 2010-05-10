@@ -20,7 +20,6 @@ var TileLayer = Layer.extend(
         type        : 'TileLayer',
         opacity     : 100,
         autoOpacity : true,
-        startOpened : false,
         sharpen     : false
     },
 
@@ -38,10 +37,9 @@ var TileLayer = Layer.extend(
      *      <b>opacity</b>     - Default opacity (adjusted automatically when layer is added)<br>
      *      <b>autoOpaicty</b> - Whether or not the opacity should be automatically determined when the image
      *                           properties are loaded<br>
-     *      <b>startOpened</b> - Whether or not the layer menu entry should initially be open or closed<br>
      * </div>
      */
-    init: function (controller, date, tileSize, api, baseURL, observatory, instrument, detector, measurement, 
+    init: function (controller, index, date, tileSize, api, baseURL, observatory, instrument, detector, measurement, 
                     sourceId, name, visible, opacity, layeringOrder, server) {
         $.extend(this, this.defaultOptions);
         this._super();
@@ -70,11 +68,8 @@ var TileLayer = Layer.extend(
         this.tiles = [];
         this._loadStaticProperties();
         
-        var index = this.tileLayers.indexOf(this.id);
-        
         $(document).trigger("create-tile-layer-accordion-entry", 
-            [index, this.id, this.name, this.image.observatory, this.image.instrument, this.image.detector, 
-             this.image.measurement, this.image.date, this.startOpened, this.opacity, this.visible,
+            [index, this.id, name, observatory, instrument, detector, measurement, date, false, opacity, visible,
              $.proxy(this.setOpacity, this)
             ]
         );
@@ -133,15 +128,13 @@ var TileLayer = Layer.extend(
      * 
      */
     onLoadImage: function () {
-        var index, accordion = this.controller.tileLayerAccordion;
-
         this.viewport.checkTiles(true);
         this.refresh(false);
         
         // Update viewport sandbox if necessary
         $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]).
                     trigger("update-tile-layer-accordion-entry", 
-                           [this.id, this.name, this.opacity, this.image.date, 
+                           [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
                             this.image.filepath, this.image.filename, this.image.server]);
     },        
     

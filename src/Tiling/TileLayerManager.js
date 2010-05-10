@@ -59,8 +59,8 @@ var TileLayerManager = LayerManager.extend(
         
         // If new layer exceeds the maximum number of layers allowed, display a message to the user
         if (this.size() >= this.controller.maxTileLayers) {
-            $(document).trigger("message-console-warn", ["Maximum number of layers reached. " +
-                                                "Please remove an existing layer before adding a new one."]);
+            $(document).trigger("message-console-warn",
+                    ["Maximum number of layers reached. Please remove an existing layer before adding a new one."]);
             return;
         }
         
@@ -87,10 +87,11 @@ var TileLayerManager = LayerManager.extend(
         
         // Add the layer
         this.addLayer(
-            new TileLayer(this.controller, this.controller.getDate(), this.controller.viewport.tileSize, 
-                          this.controller.api, this.controller.tileServers[params.server], params.observatory, 
-                          params.instrument, params.detector, params.measurement, params.sourceId, params.name, 
-                          params.visible, params.opacity, params.layeringOrder, server)
+            new TileLayer(this.controller, this._layers.length, this.controller.getDate(), 
+                          this.controller.viewport.tileSize, 
+                          this.controller.api, this.controller.tileServers[params.server],
+                          params.observatory, params.instrument, params.detector, params.measurement, 
+                          params.sourceId, params.name, params.visible, params.opacity, params.layeringOrder, server)
         );
         this.save();
     },

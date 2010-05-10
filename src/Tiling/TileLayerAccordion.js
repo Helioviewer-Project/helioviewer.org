@@ -35,13 +35,17 @@ var TileLayerAccordion = Layer.extend(
         //Initialize accordion
         this.domNode = $('#TileLayerAccordion-Container');
         this.domNode.dynaccordion({startClosed: true});
+        
+        // Event-handlers
+        $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
+                   .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this));
     },
 
     /**
      * @description Adds a new entry to the tile layer accordion
      * @param {Object} layer The new layer to add
      */
-    addLayer: function (index, id, name, observatory, instrument, detector, measurement, date, 
+    addLayer: function (event, index, id, name, observatory, instrument, detector, measurement, date, 
                         startOpened, opacity, visible, onOpacityChange) {
         if (typeof(index) === "undefined") {
             index = 1000;
@@ -218,10 +222,6 @@ var TileLayerAccordion = Layer.extend(
 
         visibilityBtn.bind('click', this, toggleVisibility);
         removeBtn.bind('click', removeLayer);
-        
-        // New entries
-        $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
-                   .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this));
     },
     
     /**
@@ -332,14 +332,14 @@ var TileLayerAccordion = Layer.extend(
      * @description Updates the displayed timestamp for a given tile layer
      * @param {Object} layer The layer being updated
      */
-    updateTimeStamp: function (id, dateString) {
+    updateTimeStamp: function (id, date) {
         var domNode, date, timeDiff, timestep;
         
-        date     = new Date(getUTCTimestamp(dateString));
+        //date     = new Date(getUTCTimestamp(dateString));
         timeDiff = (date.getTime() - this.controller.timeControls.getTimestamp()) / 1000;
         timestep = this.controller.timeIncrementSecs;
         
-        domNode = $("#" + id).find('.timestamp').html(dateString.replace(/-/g, "/"));
+        domNode = $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString());
         domNode.removeClass("timeAhead timeBehind timeSignificantlyOff");
         
         if (Math.abs(timeDiff) > (4 * timestep)) {
