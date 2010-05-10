@@ -45,7 +45,7 @@ var Helioviewer = Class.extend(
         this._displayGreeting();
 
         // User Interface components
-        this.zoomControls = new ZoomControls(this, '#zoomControls', this.userSettings.get('imageScale'),                        
+        this.zoomControls = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),                        
                                              this.minImageScale, this.maxImageScale);
 
         this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 

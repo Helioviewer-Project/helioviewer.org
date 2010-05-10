@@ -290,7 +290,7 @@ var Viewport = Class.extend(
      * @description Zooms To a specified image scale.
      * @param {Float} imageScale The desired image scale
      */
-    zoomTo: function (imageScale) {
+    zoomTo: function (event, imageScale) {
         var oldScale = this.imageScale;
         
         this.imageScale = imageScale;
@@ -663,7 +663,8 @@ var Viewport = Class.extend(
         $(window).resize($.proxy(this.resize, this));
         $(document).mousemove($.proxy(this.mouseMove, this))
                    .mouseup($.proxy(this.mouseUp, this))
-                   .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this));
+                   .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
+                   .bind("set-image-scale", $.proxy(this.zoomTo, this));
         
         this.domNode.mousedown($.proxy(this.mouseDown, this))
                     .dblclick($.proxy(this.doubleClick, this))
