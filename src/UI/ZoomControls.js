@@ -15,11 +15,8 @@ var ZoomControls = Class.extend(
     /**
      * @constructs
      * @description Creates a new ZoomControl
-     * @param {Object} controller A Reference to the Helioviewer application class
-     * @param {Object} options Custom ZoomControl settings
      */
-    init: function (controller, id, imageScale, minImageScale, maxImageScale) {       
-        this.controller    = controller;
+    init: function (id, imageScale, minImageScale, maxImageScale) {       
         this.id            = id;
         this.imageScale    = imageScale;
         this.minImageScale = minImageScale;
@@ -57,7 +54,7 @@ var ZoomControls = Class.extend(
      * @param {Object} v jQuery slider value
      */
     _setImageScale: function (v) {
-        this.controller.viewport.zoomTo(this.increments[v]);      
+        $(document).trigger('set-image-scale', [this.increments[v]]);
     },
     
     /**
