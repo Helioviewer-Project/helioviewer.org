@@ -315,7 +315,7 @@ var TileLayerAccordion = Layer.extend(
      * @description Initialize custom tooltips for each icon in the accordion
      */
     _setupTooltips: function (id) {
-        this.controller.tooltips.createTooltip($("#visibilityBtn-tile-" + id + ", #removeBtn-tile-" + id));
+        $(document).trigger('create-tooltip', ["#visibilityBtn-tile-" + id + ", #removeBtn-tile-" + id]);
     },
     
     /**

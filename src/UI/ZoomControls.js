@@ -18,9 +18,12 @@ var ZoomControls = Class.extend(
      * @param {Object} controller A Reference to the Helioviewer application class
      * @param {Object} options Custom ZoomControl settings
      */
-    init: function (controller, options) {       
-        $.extend(this, options);
-        this.controller = controller;
+    init: function (controller, id, imageScale, minImageScale, maxImageScale) {       
+        this.controller    = controller;
+        this.id            = id;
+        this.imageScale    = imageScale;
+        this.minImageScale = minImageScale;
+        this.maxImageScale = maxImageScale;
 
         this._buildUI();
         this._initSlider();
@@ -38,7 +41,7 @@ var ZoomControls = Class.extend(
         $("#zoomControlSlider > .ui-slider-handle").attr("title", description);
         
         targets = "#zoomControlZoomOut, #zoomControlZoomIn, #zoomControlHandle, #zoomControlSlider > .ui-slider-handle";
-        this.controller.tooltips.createTooltip($(targets));
+        $(document).trigger('create-tooltip', [targets]);
     },
   
     /**

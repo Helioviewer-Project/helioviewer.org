@@ -164,7 +164,7 @@ var TimeControls = Class.extend(
      * Initializes the observation time datepicker
      */
     _initDatePicker: function () {
-        var btn, self = this;
+        var btnId, btn, self = this;
         
         // Initialize datepicker
         this.cal = this._dateInput.datepicker({
@@ -184,7 +184,8 @@ var TimeControls = Class.extend(
         });
         
         // Datepicker icon
-        btn = $('#observation-controls .ui-datepicker-trigger');
+        btnId = '#observation-controls .ui-datepicker-trigger';
+        btn   = $(btnId);
 
         btn.hover(
             function () {
@@ -197,6 +198,9 @@ var TimeControls = Class.extend(
          .click(function () {
                 btn.qtip("hide");
             });
+        
+        // Tooltips
+        $(document).trigger('create-tooltip', [btnId]);
     },
     
     /**

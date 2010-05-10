@@ -20,96 +20,70 @@ var Helioviewer = Class.extend(
      * @param {Object} urlParams  Client-specified settings to load
      * @param {Object} settings   Server settings
      */
-    init: function (urlParams, settings) {
+        init : function(urlParams, settings) {
         $.extend(this, settings);
         this.api = "api/index.php";
 
         // Determine browser support
         this._checkBrowser();
-        
+
         // Load saved user settings
         this._loadSavedSettings();
         this._loadURLSettings(urlParams);
-        
-        // Loading indicator
+
         this._initLoadingIndicator();
-        
+        this._initTooltips();
+
         // Get available data sources
         this._getDataSources();
         
-        // Tooltip helper
-        this.tooltips = new TooltipHelper(true);
-
-        // Layer Managers
-        this.tileLayers  = new TileLayerManager(this);
+        this.tileLayers = new TileLayerManager(this);
         
         this._initViewport();
-        this._initUI();
+        this._setupDialogs();
         this._initEventHandlers();
-        
-        this.mediaSettings     = new MediaSettings(this);                
-        this.movieBuilder      = new MovieBuilder(this);
-        this.imageSelectTool   = new ImageSelectTool(this);
-        this.screenshotBuilder = new ScreenshotBuilder(this);
-        
         this._displayGreeting();
-    },
-    
-    /**
-     * @description Returns the current observation date as a JavaScript Date object
-     */
-    getDate: function () {
-        return this.timeControls.getDate();  
-    },
 
-    /**
-     * @description Initialize Helioviewer's user interface (UI) components
-     */
-    _initUI: function () {
-        var mouseCoords;
+        // User Interface components
+        this.zoomControls = new ZoomControls(this, '#zoomControls', this.userSettings.get('imageScale'),                        
+                                             this.minImageScale, this.maxImageScale);
 
-        //Zoom-controls
-        this.zoomControls = new ZoomControls(this, {
-            id: '#zoomControls',
-            imageScale    : this.userSettings.get('imageScale'),
-            minImageScale : this.minImageScale,
-            maxImageScale : this.maxImageScale
-        });
-
-        //Time-navigation controls
-        this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs,  
+        this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
                                              '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
 
-        //Message console
-        this.messageConsole = new MessageConsole();
+        this.messageConsole     = new MessageConsole();
+        this.tileLayerAccordion = new TileLayerAccordion(this, '#tileLayerAccordion');
+        this.fullScreenMode     = new FullscreenControl(this, "#fullscreen-btn", 500);
+        this.mediaSettings      = new MediaSettings(this);
+        this.movieBuilder       = new MovieBuilder(this);
+        this.imageSelectTool    = new ImageSelectTool(this);
+        this.screenshotBuilder  = new ScreenshotBuilder(this);
+    },
 
-        //Tile Layer Accordion (accordion must come before LayerManager instance...)
-        this.tileLayerAccordion  = new TileLayerAccordion(this,  '#tileLayerAccordion');
+    /**
+     * @description Returns the current observation date as a JavaScript
+     *              Date object
+     */
+    getDate : function() {
+        return this.timeControls.getDate();
+    },
 
-        //Fullscreen button
-        this.fullScreenMode = new FullscreenControl(this, "#fullscreen-btn", 500);
-
-        // Setup dialog event listeners
-        this._setupDialogs();
-        
-        // Tooltips
-        this.tooltips.createTooltip($("#timeBackBtn, #timeForwardBtn, #center-button, " +
-                                      "#observation-controls .ui-datepicker-trigger"));
-        this.tooltips.createTooltip($("#fullscreen-btn"), "topRight");
-        
-        //Movie builder
-        //this.movieBuilder = new MovieBuilder({id: 'movieBuilder', controller: this});
-
-        // Timeline
-        //this.timeline = new EventTimeline(this, "timeline");
-    },   
+    /**
+     * @description Checks browser support for various features used in
+     *              Helioviewer
+     */
+    _checkBrowser : function() {
+        $.support.nativeJSON = (typeof (JSON) !== "undefined") ? true : false;
+        $.support.localStorage = !!window.localStorage;
+    },
     
     /**
-     * @description Checks browser support for various features used in Helioviewer
+     * Initializes tooltip manager and adds custom tooltips for basic navigation elements
      */
-    _checkBrowser: function () {
-        $.support.nativeJSON   = (typeof(JSON) !== "undefined") ? true: false;
-        $.support.localStorage = !!window.localStorage;
+    _initTooltips: function () {
+        this.tooltips = new TooltipHelper(true);
+        $(document).trigger('create-tooltip', ["#timeBackBtn, #timeForwardBtn, #center-button"])
+                   .trigger('create-tooltip', ["#fullscreen-btn", "topRight"]);
     },
     
     /**
@@ -270,8 +244,6 @@ var Helioviewer = Class.extend(
      * @description Initialize event-handlers for UI components controlled by the Helioviewer class
      */
     _initEventHandlers: function () {
-        var self = this;
-        
         // Initialize keyboard shortcut manager
         this.keyboard = new KeyboardManager(this);
         
