@@ -414,9 +414,6 @@ var Viewport = Class.extend(
 
         this.moveCounter = this.moveCounter % this.tileUpdateThrottle;
 
-        // Update text-shadows
-        //this.controller.updateShadows();
-
         this.moveBy(this.mouseStartingPosition.x - event.pageX,
                     this.mouseStartingPosition.y - event.pageY);
     },
