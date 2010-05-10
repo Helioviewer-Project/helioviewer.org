@@ -17,21 +17,19 @@ var Helioviewer = Class.extend(
      * Creates a new Helioviewer instance.
      * @constructs
      * 
-     * @param {String} viewportId Viewport container selector.
      * @param {Object} urlParams  Client-specified settings to load
      * @param {Object} settings   Server settings
      */
-    init: function (viewportId, urlParams, settings) {
+    init: function (urlParams, settings) {
         $.extend(this, settings);
-        this.load        = urlParams;
-        this.api         = "api/index.php";
-        this.viewportId  = viewportId;
+        this.api = "api/index.php";
 
         // Determine browser support
         this._checkBrowser();
         
-        // Load user-settings
-        this._loadUserSettings();
+        // Load saved user settings
+        this._loadSavedSettings();
+        this._loadURLSettings(urlParams);
         
         // Loading indicator
         this._initLoadingIndicator();
@@ -54,14 +52,7 @@ var Helioviewer = Class.extend(
         this.imageSelectTool   = new ImageSelectTool(this);
         this.screenshotBuilder = new ScreenshotBuilder(this);
         
-        // Display welcome message on user's first visit
-        if (this.userSettings.get('showWelcomeMsg')) {
-            $(document).trigger("message-console-info", ["<b>Welcome to Helioviewer.org</b>, a solar data browser." + 
-            " First time here? Be sure to check out our <a class=\"message-console-link\" " +
-            "href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" target=\"_blank\">" +
-            "User Guide</a>.", {life: 15000}]);
-            $(document).trigger("save-setting", ["showWelcomeMsg", false]);
-        }
+        this._displayGreeting();
     },
     
     /**
@@ -129,19 +120,27 @@ var Helioviewer = Class.extend(
         
         callback = function (dataSources) {
             self.dataSources = dataSources;
-            
-            // Add initial layers
-            $.each(self.userSettings.get('tileLayers'), function (index, layer) {
-                $.extend(layer, dataSources[layer.observatory][layer.instrument][layer.detector][layer.measurement]);
-                self.tileLayers.addLayer(
-                    new TileLayer(self, index, self.getDate(), self.viewport.tileSize, self.api, 
-                                  self.tileServers[layer.server], layer.observatory, layer.instrument, layer.detector,  
-                                  layer.measurement, layer.sourceId, layer.name, layer.visible, layer.opacity,
-                                  layer.layeringOrder, layer.server)
-                );
-            });
+            self._loadStartingLayers();
         };
         $.post(this.api, {action: "getDataSources"}, callback, "json");
+    },
+    
+    /**
+     * Loads initial layers
+     */
+    _loadStartingLayers: function () {
+        var layer, basicParams, self = this;
+
+        $.each(this.userSettings.get('tileLayers'), function (index, params) {
+            basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
+            $.extend(params, basicParams);
+            layer = new TileLayer(self, index, self.getDate(), self.viewport.tileSize, self.api, 
+                    self.tileServers[params.server], params.observatory, params.instrument, params.detector,  
+                    params.measurement, params.sourceId, params.name, params.visible, params.opacity,
+                    params.layeringOrder, params.server);
+
+            self.tileLayers.addLayer(layer);
+        });
     },
     
     /**
@@ -151,8 +150,10 @@ var Helioviewer = Class.extend(
         
         // About dialog
         $("#helioviewer-about").click(function () {
-            if ($(this).hasClass("dialog-loaded")) {
-                var d = $('#about-dialog');
+            var d   = $('#about-dialog'),
+                btn = $(this);
+            
+            if (btn.hasClass("dialog-loaded")) {
                 if (d.dialog('isOpen')) {
                     d.dialog('close');
                 }
@@ -160,22 +161,23 @@ var Helioviewer = Class.extend(
                     d.dialog('open');
                 }
             } else {
-                $('#about-dialog').load(this.href).dialog({
+                d.load(this.href).dialog({
                     autoOpen: true,
                     title: "Helioviewer - About",
                     width: 480,
                     height: 300,
                     draggable: true
                 });
-                $(this).addClass("dialog-loaded");
+                btn.addClass("dialog-loaded");
             }
             return false; 
         });
 
         //Keyboard shortcuts dialog
         $("#helioviewer-usage").click(function () {
-            if ($(this).hasClass("dialog-loaded")) {
-                var d = $('#usage-dialog');
+            var d   = $('#usage-dialog'),
+                btn = $(this);
+            if (btn.hasClass("dialog-loaded")) {
                 if (d.dialog('isOpen')) {
                     d.dialog('close');
                 }
@@ -183,14 +185,14 @@ var Helioviewer = Class.extend(
                     d.dialog('open');
                 }
             } else {
-                $('#usage-dialog').load(this.href).dialog({
+                d.load(this.href).dialog({
                     autoOpen: true,
                     title: "Helioviewer - Usage Tips",
                     width: 480,
                     height: 480,
                     draggable: true
                 });
-                $(this).addClass("dialog-loaded");
+                btn.addClass("dialog-loaded");
             }
             return false; 
         });
@@ -220,51 +222,44 @@ var Helioviewer = Class.extend(
     /**
      * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
      */
-    _loadUserSettings: function () {
-        var defaults, timestamp, layerSettings, layers, rand, self = this;
+    _loadSavedSettings: function () {
+        this.userSettings = new UserSettings(this._getDefaultUserSettings(), this.minImageScale, this.maxImageScale);
+    },
+    
+    /**
+     * Loads any parameters specified in the URL
+     */
+    _loadURLSettings: function (urlParams) {
+        var timestamp, layerSettings, layers, self = this;
         
-        // Optional debugging information
-        // TODO 01/20/2010: Provide finer control over what should be logged, e.g. "debug=[tiles,keyboard]"
-        if (this.load.debug && (this.load.debug.toLowerCase() === "true")) {
-            this.debug = true;
-        }
-        
-        defaults = this._getDefaultUserSettings();
-        
-        this.userSettings = new UserSettings(defaults, this.minImageScale, this.maxImageScale);
-        
-        // Load any view parameters specified via API
-        if (this.load.date) {
-            timestamp = getUTCTimestamp(this.load.date);
+        if (urlParams.date) {
+            timestamp = getUTCTimestamp(urlParams.date);
             $(document).trigger("save-setting", ["date", timestamp]);
         }
 
-        if (this.load.imageScale) {
-            $(document).trigger("save-setting", ["imageScale", parseFloat(this.load.imageScale)]);
+        if (urlParams.imageScale) {
+            $(document).trigger("save-setting", ["imageScale", parseFloat(urlParams.imageScale)]);
         }
 
         // Process and load and layer strings specified
-        if (this.load.imageLayers) {
+        if (urlParams.imageLayers) {
             layers = [];
             
-            $.each(this.load.imageLayers, function () {
+            $.each(urlParams.imageLayers, function () {
                 layerSettings        = TileLayerManager.parseLayerString(this);
                 layerSettings.server = self.selectTilingServer();
-                
-                // Load layer
                 layers.push(layerSettings);
             });
             $(document).trigger("save-setting", ["tileLayers", layers]);
         }
-
     },
 
     /**
-     * @description Initialize Helioviewer's viewport(s).
+     * @description Initialize Helioviewer's viewport.
      */
     _initViewport: function () {
         this.viewport = new Viewport(this, {
-            id             : this.viewportId,
+            id             : '#helioviewer-viewport',
             imageScale     : this.userSettings.get('imageScale'),
             prefetch       : this.prefetchSize,
             warnMouseCoords: this.userSettings.get('warnMouseCoords') 
@@ -277,7 +272,7 @@ var Helioviewer = Class.extend(
     _initEventHandlers: function () {
         var self = this;
         
-        // Initiallize keyboard shortcut manager
+        // Initialize keyboard shortcut manager
         this.keyboard = new KeyboardManager(this);
         
         $('#center-button').click($.proxy(this.viewport.center, this.viewport));
@@ -324,7 +319,7 @@ var Helioviewer = Class.extend(
         url = this.toURL();
         
         // Shadowbox width
-        w = $('html').width() * 0.5;
+        w = $('html').width() * 0.7;
         
         Shadowbox.open({
             content:    '<div id="helioviewer-url-box">' +
@@ -393,6 +388,21 @@ var Helioviewer = Class.extend(
      */
     launchJHelioviewer: function () {
         window.open("http://www.jhelioviewer.org", "_blank");
+    },
+
+    /**
+     * Displays welcome message on user's first visit
+     */
+    _displayGreeting: function () {
+        if (!this.userSettings.get('showWelcomeMsg')) {
+            return;
+        }
+        
+        $(document).trigger("message-console-info", 
+            ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to check out our " +
+             "<a href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" " +
+             "class=\"message-console-link\" target=\"_blank\"> User Guide</a>.", {life: 15000}]
+        ).trigger("save-setting", ["showWelcomeMsg", false]);
     },
     
     /**

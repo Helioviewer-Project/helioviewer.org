@@ -333,7 +333,7 @@ var TileLayerAccordion = Layer.extend(
      * @param {Object} layer The layer being updated
      */
     updateTimeStamp: function (id, date) {
-        var domNode, date, timeDiff, timestep;
+        var domNode, timeDiff, timestep;
         
         //date     = new Date(getUTCTimestamp(dateString));
         timeDiff = (date.getTime() - this.controller.timeControls.getTimestamp()) / 1000;

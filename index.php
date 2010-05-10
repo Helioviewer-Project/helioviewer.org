@@ -136,30 +136,27 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 printf("settingsJSON = %s;\n", json_encode($config));
 
                 // Application state
-                $state = array();
+                $urlParams = array();
 
                 //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,white light,0,100]
                 if (isset($_GET['imageLayers'])) {
                     $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                     $imageLayers = preg_split("/\],\[/", $imageLayersString);
-                    $state['imageLayers'] = $imageLayers;
+                    $urlParams['imageLayers'] = $imageLayers;
                 }
 
                 if (isset($_GET['date']))
-                    $state['date'] = $_GET['date'];
+                    $urlParams['date'] = $_GET['date'];
 
                 if (isset($_GET['imageScale']))
-                    $state['imageScale'] = $_GET['imageScale'];
-
-                if (isset($_GET['debug']))
-                    $state['debug'] = $_GET['debug'];
+                    $urlParams['imageScale'] = $_GET['imageScale'];
 
                 // Convert to JSON
-                printf("\t\tstate = %s;\n", json_encode($state));
+                printf("\t\turlParams = %s;\n", json_encode($urlParams));
             ?>
             config = new Config(settingsJSON);
             settings = config.toArray();
-            helioviewer = new Helioviewer('#helioviewer-viewport', state, settings);
+            helioviewer = new Helioviewer(urlParams, settings);
         });
     </script>
 
