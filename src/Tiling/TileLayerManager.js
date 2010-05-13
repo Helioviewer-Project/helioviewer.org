@@ -56,7 +56,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, rand, params, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, rand, params, opacity, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
         
         // If new layer exceeds the maximum number of layers allowed, display a message to the user
         if (this.size() >= this.controller.maxTileLayers) {
@@ -81,10 +81,14 @@ var TileLayerManager = LayerManager.extend(
         next = queue[0] || defaultLayer;
 
         params = TileLayerManager.parseLayerString(next + ",1,100");
+        
         server = this.controller.selectTilingServer();
+        
         
         ds = this.controller.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
+        
+        opacity = this._computeLayerStartingOpacity(params.layeringOrder);
         
         // Add the layer
         this.addLayer(
@@ -92,9 +96,27 @@ var TileLayerManager = LayerManager.extend(
                           this.controller.viewport.tileSize, 
                           this.controller.api, this.controller.tileServers[params.server],
                           params.observatory, params.instrument, params.detector, params.measurement, 
-                          params.sourceId, params.name, params.visible, params.opacity, params.layeringOrder, server)
+                          params.sourceId, params.name, params.visible, opacity, params.layeringOrder, server)
         );
         this.save();
+    },
+    
+    /**
+     * Determines initial opacity to use for a new layer based on which layers are currently loaded
+     */
+    /**
+     * @description Sets the opacity for the layer, taking into account layers which overlap one another.
+     */
+    _computeLayerStartingOpacity: function (layeringOrder) {
+        var counter = 1;
+
+        $.each(this._layers, function () {
+            if (this.layeringOrder === layeringOrder) {
+                counter += 1;
+            }
+        });
+
+        return 100 / counter;
     },
     
     /**
