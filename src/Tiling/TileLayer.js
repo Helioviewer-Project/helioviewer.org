@@ -19,7 +19,6 @@ var TileLayer = Layer.extend(
     defaultOptions: {
         type        : 'TileLayer',
         opacity     : 100,
-        autoOpacity : true,
         sharpen     : false
     },
 
@@ -34,9 +33,7 @@ var TileLayer = Layer.extend(
      *                           tile layers)<br>
      *      <b>tileSize</b>    - Tilesize to use<br>
      *      <b>source</b>      - Tile source ["database" | "filesystem"]<br>
-     *      <b>opacity</b>     - Default opacity (adjusted automatically when layer is added)<br>
-     *      <b>autoOpaicty</b> - Whether or not the opacity should be automatically determined when the image
-     *                           properties are loaded<br>
+     *      <b>opacity</b>     - Default opacity<br>
      * </div>
      */
     init: function (controller, index, date, tileSize, api, baseURL, observatory, instrument, detector, measurement, 
@@ -46,7 +43,6 @@ var TileLayer = Layer.extend(
         
         this._requestDate = date;
 
-        this.controller = controller;
         this.tileLayers = controller.tileLayers;
         this.viewport   = controller.viewport;
         this.tileSize   = tileSize;
@@ -202,6 +198,8 @@ var TileLayer = Layer.extend(
     
     /**
      * @description Check to see if all visible tiles have been loaded
+     * 
+     * => onMove
      */
     viewportMove: function () {
         var visible, indices, i, j;
@@ -315,29 +313,6 @@ var TileLayer = Layer.extend(
     },
 
     /**
-     * @description Sets the opacity for the layer, taking into account layers which overlap one another.
-     */
-    setInitialOpacity: function () {
-        var self = this,
-            opacity = 1,
-            counter = 0;
-
-        this.tileLayers.each(function () {
-            if (parseInt(this.layeringOrder, 10) === parseInt(self.layeringOrder, 10)) {
-                counter += 1;
-            }
-        });
-        
-        //Do no need to adjust opacity if there is only one image
-        if (counter > 1) {
-            opacity = opacity / counter;
-            this.setOpacity(opacity * 100);
-        }
-        
-        this.autoOpacity = false;
-    },
-
-    /**
      * @description Update the tile layer's opacity
      * @param {int} Percent opacity to use
      */
@@ -369,10 +344,7 @@ var TileLayer = Layer.extend(
         if (this.opacity !== 100) {
             this.setOpacity(this.opacity);
         }
-        else if (this.autoOpacity) {
-            this.setInitialOpacity();
-        }
-        
+
         // visibility
         if (!this.visible) {
             this.setVisibility(false);

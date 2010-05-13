@@ -17,8 +17,6 @@ var Viewport = Class.extend(
      */ 
     defaultOptions: {
         imageScale : 0,
-        headerId   : '#header',
-        footerId   : '#footer',
         tileSize   : 512,
         minHeight  : 450,
         prefetch   : 0
@@ -41,8 +39,6 @@ var Viewport = Class.extend(
      * <br><div style='font-size:16px'>Options:</div><br>
      * <div style='margin-left:15px'>
      *       <b>imageScale</b> - The default image scale to display tiles at (should be passed in from Helioviewer).<br>
-     *       <b>headerId</b>   - Helioviewer header section id.<br>
-     *       <b>footerId</b>   - Helioviewer footer section id.<br>
      *       <b>tileSize</b>   - Size of tiles.<br> 
      *       <b>prefetch</b>   - The radius outside of the visible viewport to prefetch.<br>
      * </div>
@@ -66,7 +62,7 @@ var Viewport = Class.extend(
         this.rsun = 959.705;
 
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
-        this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height() + 2;
+        this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;
 
         this.resize();
 
