@@ -21,11 +21,12 @@ var TileLayerAccordion = Layer.extend(
      * @param {String} containerId ID for the outermost continer where the layer 
      * manager user interface should be constructed
      */
-    init: function (controller, containerId) {
-        this.controller = controller;
-        this.tileLayers = controller.tileLayers;
-        this.container  = $(containerId);
-        this.queryURL   = "api/index.php";
+    init: function (containerId, dataSources, observationDate, timeIncrement) {
+        this.container        = $(containerId);
+        this.queryURL         = "api/index.php";
+        this._dataSources     = dataSources;
+        this._observationDate = observationDate;
+        this._timeIncrement   = timeIncrement;
 
         this.options = {};
 
@@ -38,7 +39,9 @@ var TileLayerAccordion = Layer.extend(
         
         // Event-handlers
         $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
-                   .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this));
+                   .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
+                   .bind("observation-time-change", $.proxy(this._onObservationTimeChange, this))
+                   .bind("time-step-changed", $.proxy(this._onTimeIncrementChange, this));
     },
 
     /**
@@ -105,7 +108,7 @@ var TileLayerAccordion = Layer.extend(
         ids       = [obs, inst, det, meas];
         selected  = [observatory, instrument, detector, measurement];
         
-        this.selectMenus = new TreeSelect(ids, this.controller.dataSources, selected, function (leaf) {
+        this.selectMenus = new TreeSelect(ids, this._dataSources, selected, function (leaf) {
             $(document).trigger("tile-layer-data-source-changed",
                 [id, $(obs).attr("value"), $(inst).attr("value"), $(det).attr("value"), $(meas).attr("value"), 
                 leaf.sourceId, leaf.name, leaf.layeringOrder]
@@ -130,7 +133,7 @@ var TileLayerAccordion = Layer.extend(
             },
             change: function (e, ui) {
                 onOpacityChange(ui.value);
-                self.tileLayers.save();
+                $(document).trigger("save-tile-layers");
             }
         });
     },
@@ -188,7 +191,7 @@ var TileLayerAccordion = Layer.extend(
         
         // Event-handlers
         addLayerBtn.click(function () {
-            self.tileLayers.addNewLayer();
+            $(document).trigger("add-new-tile-layer");
         });
     },
 
@@ -213,7 +216,7 @@ var TileLayerAccordion = Layer.extend(
             $(document).trigger("remove-tile-layer", [id]);
             self._removeTooltips(id);
             self.domNode.dynaccordion('removeSection', {id: id});
-            self.tileLayers.save();
+            $(document).trigger("save-tile-layers");
             e.stopPropagation();
         };
         
@@ -319,7 +322,7 @@ var TileLayerAccordion = Layer.extend(
     },
     
     /**
-     * @description Unbinds event-hanlders relating to accordion header tooltips
+     * @description Unbinds event-handlers relating to accordion header tooltips
      * @param {String} id
      */
     _removeTooltips: function (id) {
@@ -327,6 +330,19 @@ var TileLayerAccordion = Layer.extend(
         $("#removeBtn-"     + id).qtip("destroy");
     },
 
+    /**
+     * Keeps track of requested date to use when styling timestamps
+     */
+    _onObservationTimeChange: function (event, date) {
+        this._observationDate = date;
+    },
+    
+    /**
+     * Keeps track of time increment to use when styling timestamps
+     */
+    _onTimeIncrementChange: function (event, timeIncrement) {
+        this._timeIncrement = timeIncrement;
+    },
     
     /**
      * @description Updates the displayed timestamp for a given tile layer
@@ -336,8 +352,8 @@ var TileLayerAccordion = Layer.extend(
         var domNode, timeDiff, timestep;
         
         //date     = new Date(getUTCTimestamp(dateString));
-        timeDiff = (date.getTime() - this.controller.timeControls.getTimestamp()) / 1000;
-        timestep = this.controller.timeIncrementSecs;
+        timeDiff = (date.getTime() - this._observationDate.getTime()) / 1000;
+        timestep = this._timeIncrement;
         
         domNode = $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString());
         domNode.removeClass("timeAhead timeBehind timeSignificantlyOff");
