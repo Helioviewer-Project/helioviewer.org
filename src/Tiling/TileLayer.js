@@ -43,7 +43,6 @@ var TileLayer = Layer.extend(
         
         this._requestDate = date;
 
-        this.tileLayers = controller.tileLayers;
         this.viewport   = controller.viewport;
         this.tileSize   = tileSize;
         
@@ -55,9 +54,7 @@ var TileLayer = Layer.extend(
         
         this.id = "tile-layer-" + sourceId;
 
-        this.domNode = $('<div class="tile-layer-container" />').appendTo(
-            this.viewport.movingContainer
-        );
+        this.domNode = $('<div class="tile-layer-container" />').appendTo("#moving-container");
         
         this._setupEventHandlers();
 
@@ -86,7 +83,7 @@ var TileLayer = Layer.extend(
     
     /**
      * @description Refresh the tile layer
-     * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
+     * @param {Boolean} removeOldTilesFirst Should be removed before or after new ones are loaded?
      * 
      * Rotation:
      *   Currently, EIT and MDI images are pre-rotated, and their corresponding meta-information
@@ -101,7 +98,7 @@ var TileLayer = Layer.extend(
      *    }
      *   
      */
-    refresh: function (zoomLevelChanged) {
+    refresh: function (removeOldTilesFirst) {
         // Ratio of original JP2 image scale to the viewport/desired image scale
         this.scaleFactor = this.image.scale / this.viewport.getImageScale();
         
@@ -117,7 +114,7 @@ var TileLayer = Layer.extend(
             "top" : - this.sunCenterOffsetY
         });
         
-        this.refreshTiles(zoomLevelChanged);
+        this.refreshTiles(removeOldTilesFirst);
     },
     
     /**
@@ -136,9 +133,10 @@ var TileLayer = Layer.extend(
     
     /**
      * @description Refresh displayed tiles
-     * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
+     * @param {Boolean} removeOldTilesFirst Whether or not old tiles should be removed before or after new ones are
+     *                                      loaded.
      */
-    refreshTiles: function (zoomLevelChanged) {
+    refreshTiles: function (removeOldTilesFirst) {
         var i, j, old, numTiles, numTilesLoaded, indices, tile, onLoadComplete, visible, self = this;
         
         visible = this.viewport.visible;
@@ -149,7 +147,7 @@ var TileLayer = Layer.extend(
         old = this.getTileArray();
 
         // When zooming, remove old tiles right away to avoid visual glitches
-        if (zoomLevelChanged) {
+        if (removeOldTilesFirst) {
             this.removeTileDomNodes(old);
         }
         
@@ -164,7 +162,7 @@ var TileLayer = Layer.extend(
 
             // After all tiles have loaded, stop indicator (and remove old-tiles if haven't already)
             if (numTilesLoaded === numTiles) {
-                if (!zoomLevelChanged) {
+                if (!removeOldTilesFirst) {
                     self.removeTileDomNodes(old);
                 }
             }

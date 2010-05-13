@@ -229,6 +229,7 @@ var TimeControls = Class.extend(
     */
     _onTimeIncrementChange: function (e) {
         this._timeIncrement = parseInt(e.target.value, 10);
+        $(document).trigger("time-step-changed", [this._timeIncrement]);
     },
     
     /**
