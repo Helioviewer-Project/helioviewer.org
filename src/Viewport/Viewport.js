@@ -661,10 +661,10 @@ var Viewport = Class.extend(
                    .mouseup($.proxy(this.mouseUp, this))
                    .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
                    .bind("set-image-scale", $.proxy(this.zoomTo, this))
-                   .bind("recompute-tile-visibility", function() {
-                       self.checkTiles();
-                       $(document).trigger("refresh-tile-layers", this.visible);                       
-                   })
+                   .bind("recompute-tile-visibility", function () {
+                        self.checkTiles();
+                        $(document).trigger("refresh-tile-layers", this.visible);                       
+                    })
                    .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this));
         
         this.domNode.mousedown($.proxy(this.mouseDown, this))

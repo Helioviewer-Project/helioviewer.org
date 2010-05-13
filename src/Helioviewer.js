@@ -22,7 +22,8 @@ var Helioviewer = Class.extend(
      */
     init: function (urlParams, settings) {
         $.extend(this, settings);
-        this.api = "api/index.php";
+        this.api      = "api/index.php";
+        this.tileSize = 512;
 
         // Determine browser support
         this._checkBrowser();
@@ -43,8 +44,6 @@ var Helioviewer = Class.extend(
         
         // Get available data sources
         this._getDataSources();
-        
-        this.tileLayers = new TileLayerManager(this);
         
         this._initViewport();
         this._setupDialogs();
@@ -96,6 +95,9 @@ var Helioviewer = Class.extend(
             self.dataSources = dataSources;
             self.tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources,
                                           self.timeControls.getDate(), self.timeControls.getTimeIncrement());
+            
+            self.tileLayers = new TileLayerManager(self, self.api, self.timeControls.getDate(), dataSources, 
+                                                   self.tileSize, self.tileServers, self.maxTileLayers);
             self._loadStartingLayers();
         };
         $.post(this.api, {action: "getDataSources"}, callback, "json");
