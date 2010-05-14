@@ -36,14 +36,14 @@ var TileLayer = Layer.extend(
      *      <b>opacity</b>     - Default opacity<br>
      * </div>
      */
-    init: function (controller, index, date, tileSize, api, baseURL, observatory, instrument, detector, measurement, 
+    init: function (viewport, index, date, tileSize, api, baseURL, observatory, instrument, detector, measurement, 
                     sourceId, name, visible, opacity, layeringOrder, server) {
         $.extend(this, this.defaultOptions);
         this._super();
         
         this._requestDate = date;
 
-        this.viewport   = controller.viewport;
+        this.viewport   = viewport;
         this.tileSize   = tileSize;
         
         this.layeringOrder = layeringOrder;

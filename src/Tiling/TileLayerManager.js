@@ -20,11 +20,11 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (controller, api, observationDate, dataSources, tileSize, maxTileLayers, 
+    init: function (viewport, api, observationDate, dataSources, tileSize, maxTileLayers, 
                     tileServers, savedLayers, urlLayers) {
 
         this._super();
-        this.controller = controller;
+        this.viewport = viewport;
 
         this.api           = api;
         this.dataSources   = dataSources;
@@ -102,7 +102,7 @@ var TileLayerManager = LayerManager.extend(
 
         // Add the layer
         this.addLayer(
-            new TileLayer(this.controller, this._layers.length, this._observationDate, this.tileSize, this.api,
+            new TileLayer(this.viewport, this._layers.length, this._observationDate, this.tileSize, this.api,
                 this.tileServers[params.server], params.observatory, params.instrument, params.detector,
                 params.measurement, params.sourceId, params.name, params.visible, opacity, params.layeringOrder, server
         ));
@@ -159,7 +159,7 @@ var TileLayerManager = LayerManager.extend(
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
-            layer = new TileLayer(self.controller, index, self._observationDate, self.tileSize, self.api, 
+            layer = new TileLayer(self.viewport, index, self._observationDate, self.tileSize, self.api, 
                     self.tileServers[params.server], params.observatory, params.instrument, params.detector,  
                     params.measurement, params.sourceId, params.name, params.visible, params.opacity,
                     params.layeringOrder, params.server);

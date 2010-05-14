@@ -22,15 +22,16 @@ var Helioviewer = Class.extend(
      */
     init: function (urlParams, settings) {
         $.extend(this, settings);
-        this.api      = "api/index.php";
-        this.tileSize = 512;
+        this.api       = "api/index.php";
+        this.urlParams = urlParams;
+        this.tileSize  = 512;
 
         // Determine browser support
         this._checkBrowser();
 
         // Load saved user settings
         this._loadSavedSettings();
-        this._loadURLSettings(urlParams);
+        this._loadURLSettings();
 
         this._initLoadingIndicator();
         this._initTooltips();
@@ -43,9 +44,8 @@ var Helioviewer = Class.extend(
                                              '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
         
         // Get available data sources
-        this._getDataSources(urlParams);
+        this._getDataSources();
         
-        this._initViewport();
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
@@ -88,19 +88,39 @@ var Helioviewer = Class.extend(
     /**
      * @description Returns a tree representing available data sources
      */
-    _getDataSources: function (urlParams) {
-        var callback, self = this;
+    _getDataSources: function () {
+        var callback, date, timestep, self = this;
+        
+        date     = this.timeControls.getDate();
+        timestep = this.timeControls.getTimeIncrement();
         
         callback = function (dataSources) {
             self.dataSources = dataSources;
-            self.tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources,
-                                          self.timeControls.getDate(), self.timeControls.getTimeIncrement());
-            
-            self.tileLayers = new TileLayerManager(self, self.api, self.timeControls.getDate(), dataSources, 
-                                                   self.tileSize, self.maxTileLayers, self.tileServers,   
-                                                   self.userSettings.get('tileLayers'), urlParams.imageLayers);
+            self.tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date, timestep);            
+            self._initViewport(date);
         };
         $.post(this.api, {action: "getDataSources"}, callback, "json");
+    },
+    
+    /**
+     * Initializes Helioviewer's viewport
+     */
+    _initViewport: function (date) {
+        this.viewport = new Viewport({
+            api            : this.api,
+            id             : '#helioviewer-viewport',
+            requestDate    : date,
+            dataSources    : this.dataSources,
+            tileServers    : this.tileServers,
+            tileLayers     : this.userSettings.get('tileLayers'),
+            urlStringLayers: this.urlParams.imageLayers,
+            maxTileLayers  : this.maxTileLayers,
+            imageScale     : this.userSettings.get('imageScale'),
+            minImageScale  : this.minImageScale, 
+            maxImageScale  : this.maxImageScale, 
+            prefetch       : this.prefetchSize,
+            warnMouseCoords: this.userSettings.get('warnMouseCoords') 
+        });
     },
     
     /**
@@ -168,31 +188,17 @@ var Helioviewer = Class.extend(
     /**
      * Loads any parameters specified in the URL
      */
-    _loadURLSettings: function (urlParams) {
+    _loadURLSettings: function () {
         var timestamp, layerSettings, layers, self = this;
         
-        if (urlParams.date) {
-            timestamp = getUTCTimestamp(urlParams.date);
+        if (this.urlParams.date) {
+            timestamp = getUTCTimestamp(this.urlParams.date);
             $(document).trigger("save-setting", ["date", timestamp]);
         }
 
-        if (urlParams.imageScale) {
-            $(document).trigger("save-setting", ["imageScale", parseFloat(urlParams.imageScale)]);
+        if (this.urlParams.imageScale) {
+            $(document).trigger("save-setting", ["imageScale", parseFloat(this.urlParams.imageScale)]);
         }
-    },
-
-    /**
-     * @description Initialize Helioviewer's viewport.
-     */
-    _initViewport: function () {
-        this.viewport = new Viewport({
-            id             : '#helioviewer-viewport',
-            imageScale     : this.userSettings.get('imageScale'),
-            minImageScale  : this.minImageScale, 
-            maxImageScale  : this.maxImageScale, 
-            prefetch       : this.prefetchSize,
-            warnMouseCoords: this.userSettings.get('warnMouseCoords') 
-        });
     },
 
     /**
@@ -202,7 +208,6 @@ var Helioviewer = Class.extend(
         // Initialize keyboard shortcut manager
         this.keyboard = new KeyboardManager(this);
         
-        $('#center-button').click($.proxy(this.viewport.center, this.viewport));
         $('#link-button').click($.proxy(this.displayURL, this));
         $('#email-button').click($.proxy(this.displayMailForm, this));
         $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
