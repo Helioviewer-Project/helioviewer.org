@@ -97,30 +97,10 @@ var Helioviewer = Class.extend(
                                           self.timeControls.getDate(), self.timeControls.getTimeIncrement());
             
             self.tileLayers = new TileLayerManager(self, self.api, self.timeControls.getDate(), dataSources, 
-                                                   self.tileSize, self.maxTileLayers, self.distributed,  
-                                                   self.tileServers, urlParams.imageLayers);
-            
-            self._loadStartingLayers();
+                                                   self.tileSize, self.maxTileLayers, self.tileServers,   
+                                                   self.userSettings.get('tileLayers'), urlParams.imageLayers);
         };
         $.post(this.api, {action: "getDataSources"}, callback, "json");
-    },
-    
-    /**
-     * Loads initial layers
-     */
-    _loadStartingLayers: function () {
-        var layer, basicParams, self = this;
-
-        $.each(this.userSettings.get('tileLayers'), function (index, params) {
-            basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
-            $.extend(params, basicParams);
-            layer = new TileLayer(self, index, self.getDate(), self.viewport.tileSize, self.api, 
-                    self.tileServers[params.server], params.observatory, params.instrument, params.detector,  
-                    params.measurement, params.sourceId, params.name, params.visible, params.opacity,
-                    params.layeringOrder, params.server);
-
-            self.tileLayers.addLayer(layer);
-        });
     },
     
     /**

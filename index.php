@@ -120,7 +120,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <link rel="stylesheet" type="text/css" href="resources/css/dot-luv.css">
 
     <script type="text/javascript">
-        var config, state, settings, settingsJSON, api;
+        var config, settingsJSON, urlParams, api;
 
         Shadowbox.init({
             overlayOpacity: 0.5,
@@ -154,9 +154,8 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 // Convert to JSON
                 printf("\t\turlParams = %s;\n", json_encode($urlParams));
             ?>
-            config = new Config(settingsJSON);
-            settings = config.toArray();
-            helioviewer = new Helioviewer(urlParams, settings);
+            config      = new Config(settingsJSON).toArray();
+            helioviewer = new Helioviewer(urlParams, config);
         });
     </script>
 
