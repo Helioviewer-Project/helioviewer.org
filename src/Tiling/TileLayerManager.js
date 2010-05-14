@@ -20,9 +20,8 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (controller, api, observationDate, dataSources, tileSize, maxTileLayers, distributed, 
-                    tileServers, urlLayers) {
-        var self = this;
+    init: function (controller, api, observationDate, dataSources, tileSize, maxTileLayers, 
+                    tileServers, savedLayers, urlLayers) {
 
         this._super();
         this.controller = controller;
@@ -32,9 +31,7 @@ var TileLayerManager = LayerManager.extend(
         this.tileSize      = tileSize;
         this.maxTileLayers = maxTileLayers;
         
-        this.distributed         = distributed;
-        this.tileServers         = tileServers;
-        
+        this.tileServers      = tileServers;        
         this._observationDate = observationDate;
 
         this._layers = [];
@@ -48,7 +45,10 @@ var TileLayerManager = LayerManager.extend(
                    .bind("observation-time-change",     $.proxy(this._onObservationTimeChange, this))
                    .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this));
         
-        this._loadURLStringLayers(urlLayers);            
+        
+        var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
+        
+        this._loadStartingLayers(startingLayers);
     },
 
     /**
@@ -132,7 +132,7 @@ var TileLayerManager = LayerManager.extend(
     /**
      * Loads any layers which were set via URL string
      */
-    _loadURLStringLayers: function (urlLayers) {
+    _parseURLStringLayers: function (urlLayers) {
         if (!urlLayers) {
             return;
         }
@@ -146,6 +146,26 @@ var TileLayerManager = LayerManager.extend(
             layers.push(layerSettings);
         });
         $(document).trigger("save-setting", ["tileLayers", layers]);
+        
+        return layers;
+    },
+    
+    /**
+     * Loads initial layers either from URL parameters, saved user settings, or the defaults.
+     */
+    _loadStartingLayers: function (layers) {
+        var layer, basicParams, self = this;
+
+        $.each(layers, function (index, params) {
+            basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
+            $.extend(params, basicParams);
+            layer = new TileLayer(self.controller, index, self._observationDate, self.tileSize, self.api, 
+                    self.tileServers[params.server], params.observatory, params.instrument, params.detector,  
+                    params.measurement, params.sourceId, params.name, params.visible, params.opacity,
+                    params.layeringOrder, params.server);
+
+            self.addLayer(layer);
+        });
     },
     
     /**
@@ -166,13 +186,7 @@ var TileLayerManager = LayerManager.extend(
      * Selects a server to handle all tiling and image requests for a given layer
      */
     _selectTilingServer: function () {
-        // Choose server to use
-        if (this.distributed === true) {
-            return Math.floor(Math.random() * (this.tileServers.length));                    
-        }
-
-        // If distributed tiling is disabled, local tiling must be enabled
-        return 0;
+        return Math.floor(Math.random() * (this.tileServers.length));                    
     },
 
     /**
