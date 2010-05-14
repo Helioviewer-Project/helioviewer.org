@@ -20,7 +20,8 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (controller, api, observationDate, dataSources, tileSize, tileServers, maxTileLayers) {
+    init: function (controller, api, observationDate, dataSources, tileSize, maxTileLayers, distributed, 
+                    tileServers, urlLayers) {
         var self = this;
 
         this._super();
@@ -29,8 +30,10 @@ var TileLayerManager = LayerManager.extend(
         this.api           = api;
         this.dataSources   = dataSources;
         this.tileSize      = tileSize;
-        this.tileServers   = tileServers;
         this.maxTileLayers = maxTileLayers;
+        
+        this.distributed         = distributed;
+        this.tileServers         = tileServers;
         
         this._observationDate = observationDate;
 
@@ -44,6 +47,8 @@ var TileLayerManager = LayerManager.extend(
                    .bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
                    .bind("observation-time-change",     $.proxy(this._onObservationTimeChange, this))
                    .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this));
+        
+        this._loadURLStringLayers(urlLayers);            
     },
 
     /**
@@ -86,9 +91,9 @@ var TileLayerManager = LayerManager.extend(
         // Pull off the next layer on the queue
         next = queue[0] || defaultLayer;
 
-        params = TileLayerManager.parseLayerString(next + ",1,100");
+        params = this.parseLayerString(next + ",1,100");
 
-        server = this.controller.selectTilingServer();
+        server = this._selectTilingServer();
 
         ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
@@ -125,6 +130,25 @@ var TileLayerManager = LayerManager.extend(
     },
     
     /**
+     * Loads any layers which were set via URL string
+     */
+    _loadURLStringLayers: function (urlLayers) {
+        if (!urlLayers) {
+            return;
+        }
+        
+        var self = this;
+        layers = [];
+        
+        $.each(urlLayers, function () {
+            layerSettings        = this.parseLayerString(this);
+            layerSettings.server = self._selectTilingServer();
+            layers.push(layerSettings);
+        });
+        $(document).trigger("save-setting", ["tileLayers", layers]);
+    },
+    
+    /**
      * Keeps track of requested date to use when styling timestamps
      */
     _onObservationTimeChange: function (event, date) {
@@ -136,6 +160,40 @@ var TileLayerManager = LayerManager.extend(
      */
     _onLayerRemove: function (event, id) {
         this.removeLayer(id);
+    },
+    
+    /**
+     * Selects a server to handle all tiling and image requests for a given layer
+     */
+    _selectTilingServer: function () {
+        // Choose server to use
+        if (this.distributed === true) {
+            return Math.floor(Math.random() * (this.tileServers.length));                    
+        }
+
+        // If distributed tiling is disabled, local tiling must be enabled
+        return 0;
+    },
+
+    /**
+     * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
+     * component parts and returns a JavaScript representation.
+     *
+     * @param {String} The layer identifier as an underscore-concatenated string
+     * 
+     * @returns {Object} A simple JavaScript object representing the layer parameters
+     */
+    parseLayerString: function (str) {
+        var params = str.split(",");
+        return {
+            observatory : params[0],
+            instrument  : params[1],
+            detector    : params[2],
+            measurement : params[3],
+            visible     : Boolean(parseInt(params[4], 10)),
+            opacity     : parseInt(params[5], 10),
+            server      : parseInt(params[6], 10) || 0
+        };
     },
     
     /**
@@ -154,27 +212,3 @@ var TileLayerManager = LayerManager.extend(
         return str;
     }
 });
-
-/**
- * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
- * component parts and returns a javascript representation.
- * 
- * @static
- * @param {String}
- *            The layer identifier as an underscore-concatenated string
- * @see TileLayer.toString
- * 
- * @returns {Object} A simple javascript object representing the layer params
- */
-TileLayerManager.parseLayerString = function (str) {
-    var params = str.split(",");
-    return {
-        observatory : params[0],
-        instrument  : params[1],
-        detector    : params[2],
-        measurement : params[3],
-        visible     : Boolean(parseInt(params[4], 10)),
-        opacity     : parseInt(params[5], 10),
-        server      : parseInt(params[6], 10) || 0
-    };
-};

@@ -54,7 +54,9 @@ var Config = Class.extend(
         });
         
         // Tiling Servers
-        this.params["tile_server"].unshift("api/index.php");
+        if (this.params["local_tiling_enabled"]) {
+            this.params["tile_server"].unshift("api/index.php");
+        }
     },
     
     /**
@@ -71,7 +73,6 @@ var Config = Class.extend(
             'prefetchSize'        : this.params["prefetch_size"],
             'timeIncrementSecs'   : this.params["default_timestep"],
             'tileServers'         : this.params["tile_server"],
-            'localQueriesEnabled' : this.params["local_tiling_enabled"],
             'distributed'         : this.params["distributed_tiling_enabled"],
             'rootURL'             : this.params["web_root_url"]
         };

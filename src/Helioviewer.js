@@ -43,7 +43,7 @@ var Helioviewer = Class.extend(
                                              '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
         
         // Get available data sources
-        this._getDataSources();
+        this._getDataSources(urlParams);
         
         this._initViewport();
         this._setupDialogs();
@@ -88,7 +88,7 @@ var Helioviewer = Class.extend(
     /**
      * @description Returns a tree representing available data sources
      */
-    _getDataSources: function () {
+    _getDataSources: function (urlParams) {
         var callback, self = this;
         
         callback = function (dataSources) {
@@ -97,7 +97,9 @@ var Helioviewer = Class.extend(
                                           self.timeControls.getDate(), self.timeControls.getTimeIncrement());
             
             self.tileLayers = new TileLayerManager(self, self.api, self.timeControls.getDate(), dataSources, 
-                                                   self.tileSize, self.tileServers, self.maxTileLayers);
+                                                   self.tileSize, self.maxTileLayers, self.distributed,  
+                                                   self.tileServers, urlParams.imageLayers);
+            
             self._loadStartingLayers();
         };
         $.post(this.api, {action: "getDataSources"}, callback, "json");
@@ -175,27 +177,6 @@ var Helioviewer = Class.extend(
             return false; 
         });
     },
-    
-    /**
-     * Selects a server to handle all tiling and image requests for a given layer
-     */
-    selectTilingServer: function () {
-        var rand;
-        
-        // Choose server to use
-        if (this.distributed === true) {
-            if (this.localQueriesEnabled) {
-                rand = Math.floor(Math.random() * (this.tileServers.length));
-            } else {
-                rand = Math.floor(Math.random() * (this.tileServers.length - 1)) + 1;
-            }                    
-            return rand;                    
-        }
-        // If distributed tiling is disabled, local tiling must be enabled
-        else {
-            return 0;
-        }
-    },
 
     /**
      * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
@@ -217,18 +198,6 @@ var Helioviewer = Class.extend(
 
         if (urlParams.imageScale) {
             $(document).trigger("save-setting", ["imageScale", parseFloat(urlParams.imageScale)]);
-        }
-
-        // Process and load and layer strings specified
-        if (urlParams.imageLayers) {
-            layers = [];
-            
-            $.each(urlParams.imageLayers, function () {
-                layerSettings        = TileLayerManager.parseLayerString(this);
-                layerSettings.server = self.selectTilingServer();
-                layers.push(layerSettings);
-            });
-            $(document).trigger("save-setting", ["tileLayers", layers]);
         }
     },
 
@@ -396,7 +365,7 @@ var Helioviewer = Class.extend(
             warnMouseCoords : true,
             showWelcomeMsg  : true,
             tileLayers : [{
-                server     : this.selectTilingServer(),
+                server     : 0,
                 observatory: 'SOHO',
                 instrument : 'EIT',
                 detector   : 'EIT',
