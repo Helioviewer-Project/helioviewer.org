@@ -69,6 +69,10 @@ var Viewport = Class.extend(
         var center = this.getCenter();
         this.sandbox.css({"left": center.x, "top": center.y});
         
+        // Initialize tile layers
+        this.tileLayerManager = new TileLayerManager(this, this.api, this.requestDate, this.dataSources, 
+                this.tileSize, this.maxTileLayers, this.tileServers, this.tileLayers, this.urlStringLayers);
+        
         this._initEventHandlers();
     },
     
@@ -666,6 +670,8 @@ var Viewport = Class.extend(
                         $(document).trigger("refresh-tile-layers", this.visible);                       
                     })
                    .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this));
+        
+        $('#center-button').click($.proxy(this.center, this));
         
         this.domNode.mousedown($.proxy(this.mouseDown, this))
                     .dblclick($.proxy(this.doubleClick, this))
