@@ -42,9 +42,7 @@ var TileLayerManager = LayerManager.extend(
         $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
                    .bind("save-tile-layers",            $.proxy(this.save, this))
                    .bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
-                   .bind("observation-time-change",     $.proxy(this._onObservationTimeChange, this))
                    .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this));
-        
         
         var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
         
@@ -169,13 +167,6 @@ var TileLayerManager = LayerManager.extend(
     },
     
     /**
-     * Keeps track of requested date to use when styling timestamps
-     */
-    _onObservationTimeChange: function (event, date) {
-        this._observationDate = date;
-    },
-    
-    /**
      * Remove a specified layer
      */
     _onLayerRemove: function (event, id) {
@@ -187,6 +178,16 @@ var TileLayerManager = LayerManager.extend(
      */
     _selectTilingServer: function () {
         return Math.floor(Math.random() * (this.tileServers.length));                    
+    },
+    
+    /**
+     * Handles observation time changes
+     */
+    updateRequestTime: function (date) {
+        this._observationDate = date;
+        $.each(this._layers, function (i, layer) {
+            this.updateRequestTime(date);
+        });
     },
 
     /**
