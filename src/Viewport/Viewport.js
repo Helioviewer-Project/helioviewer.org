@@ -70,7 +70,7 @@ var Viewport = Class.extend(
         this.sandbox.css({"left": center.x, "top": center.y});
         
         // Initialize tile layers
-        this.tileLayerManager = new TileLayerManager(this, this.api, this.requestDate, this.dataSources, 
+        this._tileLayerManager = new TileLayerManager(this, this.api, this.requestDate, this.dataSources, 
                 this.tileSize, this.maxTileLayers, this.tileServers, this.tileLayers, this.urlStringLayers);
         
         this._initEventHandlers();
@@ -655,6 +655,13 @@ var Viewport = Class.extend(
     },
     
     /**
+     * _onObservationTimeChange
+     */
+    _onObservationTimeChange: function (event, date) {
+        this._tileLayerManager.updateRequestTime(date);
+    },
+    
+    /**
      * @description
      */
     _initEventHandlers: function () {
@@ -665,11 +672,12 @@ var Viewport = Class.extend(
                    .mouseup($.proxy(this.mouseUp, this))
                    .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
                    .bind("set-image-scale", $.proxy(this.zoomTo, this))
+                   .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this))
+                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
                    .bind("recompute-tile-visibility", function () {
                         self.checkTiles();
                         $(document).trigger("refresh-tile-layers", this.visible);                       
-                    })
-                   .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this));
+                    });
         
         $('#center-button').click($.proxy(this.center, this));
         

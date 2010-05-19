@@ -24,8 +24,6 @@ var JP2Image = Class.extend(
         this.api         = api;
         this._onChange   = onChange;
         
-        $(document).bind("observation-time-changed", $.proxy(this.updateTime, this));
-        
         this._requestImage();
     },
     
@@ -59,7 +57,7 @@ var JP2Image = Class.extend(
     /**
      * Updates time and loads closest match
      */
-    updateTime: function (event, requestDate) {
+    updateTime: function (requestDate) {
         this.requestDate = requestDate;
         this._requestImage();
     },

@@ -129,7 +129,14 @@ var TileLayer = Layer.extend(
                     trigger("update-tile-layer-accordion-entry", 
                            [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
                             this.image.filepath, this.image.filename, this.image.server]);
-    },        
+    },
+    
+    /**
+     * Handles time changes
+     */
+    updateRequestTime: function (date) {
+        this.image.updateTime(date);
+    },
     
     /**
      * @description Refresh displayed tiles
