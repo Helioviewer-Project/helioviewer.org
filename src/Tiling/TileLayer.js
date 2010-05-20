@@ -121,7 +121,7 @@ var TileLayer = Layer.extend(
      * 
      */
     onLoadImage: function () {
-        this.viewport.checkTiles(true);
+        //this.viewport.checkTiles(true);
         this.refresh(false);
         
         // Update viewport sandbox if necessary
@@ -206,13 +206,10 @@ var TileLayer = Layer.extend(
      * 
      * => onMove
      */
-    viewportMove: function () {
-        var visible, indices, i, j;
-        
-        this.viewport.checkTiles();
+    _onTileVisibilityChange: function (event, indices) {
+        var visible, i, j;
         
         visible = this.viewport.visible;
-        indices = this.viewport.visibleRange;    
 
         for (i = indices.xStart; i <= indices.xEnd; i += 1) {
             for (j = indices.yStart; j <= indices.yEnd; j += 1) {
@@ -526,7 +523,7 @@ var TileLayer = Layer.extend(
     _setupEventHandlers: function () {
         var self = this;
         
-        $(document).bind('viewport-move', $.proxy(this.viewportMove, this))
+        $(document).bind('tile-visibility-matrix-changed', $.proxy(this._onTileVisibilityChange, this))
                    .bind('refresh-tile-layers', function () {
                         self.refresh(false);
                     })

@@ -84,11 +84,8 @@ var Viewport = Class.extend(
             left: 0.5 * this.sandbox.width()  + 'px',
             top:  0.5 * this.sandbox.height() + 'px'    
         });
-
-        // Check throttle
-        if (this.moveCounter === 0) {
-            $(document).trigger('viewport-move');
-        }
+        
+        this.checkTiles();
     },
 
     /**
@@ -108,10 +105,7 @@ var Viewport = Class.extend(
             top:  pos.y + 'px'    
         });
         
-        // Check throttle
-        if (this.moveCounter === 0) {
-            $(document).trigger('viewport-move');
-        }
+        this.checkTiles();
     },
     
     /**
@@ -127,7 +121,7 @@ var Viewport = Class.extend(
      */
     endMoving: function () {
         this.isMoving = false;
-        $(document).trigger('viewport-move');
+        this.checkTiles();
     },
     
     /**
@@ -158,8 +152,9 @@ var Viewport = Class.extend(
      *              TOP-LEFT and BOTTOM-RIGHT corners to determine range to display.
      */
     checkTiles: function () {
-        var i, j, indices;
+        var i, j, indices, beforeCheck;
         
+        beforeCheck = this.visible;
         this.visible = [];
         
         indices = this.displayRange();
@@ -172,6 +167,10 @@ var Viewport = Class.extend(
                 }
                 this.visible[i][j] = true;
             }
+        }
+        
+        if (this.visible !== beforeCheck) {
+            $(document).trigger("tile-visibility-matrix-changed", indices);
         }
     },
     
@@ -296,7 +295,6 @@ var Viewport = Class.extend(
         this.imageScale = imageScale;
         
         // reset the layers
-        this.checkTiles();
         $(document).trigger("refresh-tile-layers", this.visible);
 
         // scale layer dimensions
@@ -353,7 +351,6 @@ var Viewport = Class.extend(
         if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
             this.updateSandbox();
             this.checkTiles();
-            $(document).trigger("refresh-tile-layers", this.visible);
         }
     },
     
@@ -674,10 +671,7 @@ var Viewport = Class.extend(
                    .bind("set-image-scale", $.proxy(this.zoomTo, this))
                    .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this))
                    .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("recompute-tile-visibility", function () {
-                        self.checkTiles();
-                        $(document).trigger("refresh-tile-layers", this.visible);                       
-                    });
+                   .bind("recompute-tile-visibility", $.proxy(this.checkTiles, this));
         
         $('#center-button').click($.proxy(this.center, this));
         
