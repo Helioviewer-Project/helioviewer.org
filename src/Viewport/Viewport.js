@@ -30,6 +30,8 @@ var Viewport = Class.extend(
     moveCounter             : 0,
     imageUpdateThrottle     : 3,
     tileUpdateThrottle      : 9,
+    visible                 : {},
+    visibleRange            : {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0},
 
     /**
      * @constructs
@@ -152,27 +154,56 @@ var Viewport = Class.extend(
      *              TOP-LEFT and BOTTOM-RIGHT corners to determine range to display.
      */
     checkTiles: function () {
-        var i, j, indices, beforeCheck;
+        var i, j, oldVisibleRange, numTilesBefore, numTilesAfter;
         
-        beforeCheck = this.visible;
-        this.visible = [];
+        oldVisibleRange = this.visibleRange;
+        this._updateTileVisibilityRange();
         
-        indices = this.displayRange();
+        // If visibility range hasn't changed then stop here
+        if (this._checkVisibilityRangeEquality(oldVisibleRange, this.visibleRange)) {
+            return;
+        }
         
-        // Update visible array
-        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
-            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
+        numTilesBefore  = this._getNumberOfVisibleTiles(this.visible);
+        
+        // Update visibility matrix
+        for (i = this.visibleRange.xStart; i <= this.visibleRange.xEnd; i += 1) {
+            for (j = this.visibleRange.yStart; j <= this.visibleRange.yEnd; j += 1) {
                 if (!this.visible[i]) {
-                    this.visible[i] = [];
+                    this.visible[i] = {};
                 }
                 this.visible[i][j] = true;
             }
         }
+
+        numTilesAfter = this._getNumberOfVisibleTiles(this.visible);
         
-        if (this.visible !== beforeCheck) {
-            $(document).trigger("tile-visibility-matrix-changed", indices);
+        // Only update tiles if the visibility matrix has changed
+        if (numTilesBefore !== numTilesAfter) {
+            $(document).trigger("tile-visibility-matrix-changed", this.visibleRange);
         }
     },
+    
+    /**
+     * Gets a count of the number of tiles which have fallen within the viewport since the last refresh
+     */
+    _getNumberOfVisibleTiles: function (matrix) {
+       var total = 0;
+        $.each(matrix, function (i, x) {
+            $.each(x, function (j, y) {
+                total += 1;
+            });
+        })
+        return total;
+    },
+    
+    /**
+     * Compares two sets of indices indicating the current scope or range of tile visibility
+     */
+    _checkVisibilityRangeEquality: function (r1, r2) {
+        return ((r1.xStart === r2.xStart) && (r1.xEnd === r2.xEnd) && 
+                (r1.yStart === r2.yStart) && (r1.yEnd === r2.yEnd));         
+    },    
     
     /**
      * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
@@ -241,7 +272,8 @@ var Viewport = Class.extend(
      * @description Returns the range of indices for the tiles to be displayed.
      * @returns {Object} The range of tiles which should be displayed
      */
-    displayRange: function () {
+    //displayRange: function () {
+    _updateTileVisibilityRange: function () {
         var vp, ts;
         
         // Get heliocentric viewport coordinates
@@ -263,8 +295,6 @@ var Viewport = Class.extend(
             yStart : vp.top    / ts,
             yEnd   : (vp.bottom / ts) - 1
         };
-    
-        return this.visibleRange;
     },
 
     /**
