@@ -154,19 +154,28 @@ var Viewport = Class.extend(
      *              TOP-LEFT and BOTTOM-RIGHT corners to determine range to display.
      */
     checkTiles: function () {
-        var i, j, oldVisibleRange, numTilesBefore, numTilesAfter;
+        var numTilesBefore, numTilesAfter, 
+            oldVisibleRange = this.visibleRange;
         
-        oldVisibleRange = this.visibleRange;
         this._updateTileVisibilityRange();
         
-        // If visibility range hasn't changed then stop here
         if (this._checkVisibilityRangeEquality(oldVisibleRange, this.visibleRange)) {
             return;
         }
+
+        numTilesBefore = this._getNumberOfVisibleTiles(this.visible);
+        this._updateTileVisibilityMatrix();
+        numTilesAfter = this._getNumberOfVisibleTiles(this.visible);
         
-        numTilesBefore  = this._getNumberOfVisibleTiles(this.visible);
-        
-        // Update visibility matrix
+        if (numTilesBefore !== numTilesAfter) {
+            $(document).trigger("tile-visibility-matrix-changed", this.visibleRange);
+        }
+    },
+    
+    /**
+     * Updates the tile visibility matrix
+     */
+    _updateTileVisibilityMatrix: function () {
         for (i = this.visibleRange.xStart; i <= this.visibleRange.xEnd; i += 1) {
             for (j = this.visibleRange.yStart; j <= this.visibleRange.yEnd; j += 1) {
                 if (!this.visible[i]) {
@@ -174,13 +183,6 @@ var Viewport = Class.extend(
                 }
                 this.visible[i][j] = true;
             }
-        }
-
-        numTilesAfter = this._getNumberOfVisibleTiles(this.visible);
-        
-        // Only update tiles if the visibility matrix has changed
-        if (numTilesBefore !== numTilesAfter) {
-            $(document).trigger("tile-visibility-matrix-changed", this.visibleRange);
         }
     },
     
@@ -323,6 +325,10 @@ var Viewport = Class.extend(
         var oldScale = this.imageScale;
         
         this.imageScale = imageScale;
+
+        this.visible = {};
+        this._updateTileVisibilityRange();
+        this._updateTileVisibilityMatrix();
         
         // reset the layers
         $(document).trigger("refresh-tile-layers", this.visible);
