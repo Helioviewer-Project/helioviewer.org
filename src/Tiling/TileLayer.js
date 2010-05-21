@@ -36,15 +36,17 @@ var TileLayer = Layer.extend(
      *      <b>opacity</b>     - Default opacity<br>
      * </div>
      */
-    init: function (viewport, index, date, tileSize, api, baseURL, observatory, instrument, detector, measurement, 
-                    sourceId, name, visible, opacity, layeringOrder, server) {
+    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, api, baseURL, observatory, instrument, 
+                    detector, measurement, sourceId, name, visible, opacity, layeringOrder, server) {
         $.extend(this, this.defaultOptions);
         this._super();
         
+        this.loaded = false;
+        
         this._requestDate = date;
 
-        this.viewport   = viewport;
-        this.tileSize   = tileSize;
+        this.tileSize           = tileSize;
+        this.viewportScale = viewportScale;
         
         this.layeringOrder = layeringOrder;
         this.visible       = visible;
@@ -52,13 +54,15 @@ var TileLayer = Layer.extend(
         this.baseURL       = baseURL;
         this.name          = name;
         
+        this.tileVisibilityRange  = tileVisibilityRange;
+        
         this.id = "tile-layer-" + sourceId;
 
         this.domNode = $('<div class="tile-layer-container" />').appendTo("#moving-container");
         
         this._setupEventHandlers();
 
-        this.tiles = [];
+        this.tiles = {};
         this._loadStaticProperties();
         
         $(document).trigger("create-tile-layer-accordion-entry", 
@@ -82,6 +86,38 @@ var TileLayer = Layer.extend(
     },
     
     /**
+     * 
+     */
+    updateTileVisibilityRange: function (range) {
+        this.tileVisibilityRange = range;
+        
+        if (this.loaded) {
+            this._checkTiles();
+        }
+    },
+    
+    /**
+     * 
+     */
+    _checkTiles: function () {
+        var i, j;
+
+        for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
+            for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
+                if (!this.tiles[i]) {
+                    this.tiles[i] = {};
+                }
+                if (!this.validTiles[i]) {
+                    this.validTiles[i] = {};
+                }
+                if (!this.tiles[i][j] && this.validTiles[i][j]) {
+                    this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
+                }
+            }
+        }
+    },
+    
+    /**
      * @description Refresh the tile layer
      * @param {Boolean} removeOldTilesFirst Should be removed before or after new ones are loaded?
      * 
@@ -100,7 +136,7 @@ var TileLayer = Layer.extend(
      */
     refresh: function (removeOldTilesFirst) {
         // Ratio of original JP2 image scale to the viewport/desired image scale
-        this.scaleFactor = this.image.scale / this.viewport.getImageScale();
+        this.scaleFactor = this.image.scale / this.viewportScale;
         
         this.width  = this.image.width  * this.scaleFactor;
         this.height = this.image.height * this.scaleFactor;
@@ -120,8 +156,17 @@ var TileLayer = Layer.extend(
     /**
      * 
      */
+    updateImageScale: function (scale, tileVisibilityRange) {
+        this.viewportScale  = scale;
+        this.tileVisibilityRange = tileVisibilityRange;
+        this.refresh(true);
+    },
+    
+    /**
+     * 
+     */
     onLoadImage: function () {
-        //this.viewport.checkTiles(true);
+        this.loaded = true;
         this.refresh(false);
         
         // Update viewport sandbox if necessary
@@ -140,16 +185,13 @@ var TileLayer = Layer.extend(
     
     /**
      * @description Refresh displayed tiles
-     * @param {Boolean} removeOldTilesFirst Whether or not old tiles should be removed before or after new ones are
-     *                                      loaded.
+     * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
      */
     refreshTiles: function (removeOldTilesFirst) {
-        var i, j, old, numTiles, numTilesLoaded, indices, tile, onLoadComplete, visible, self = this;
+        var i, j, old, numTiles, numTilesLoaded, tile, onLoadComplete, self = this;
         
-        visible = this.viewport.visible;
-
         this.computeValidTiles();
-        this.tiles = [];
+        this.tiles = {};
         
         old = this.getTileArray();
 
@@ -160,8 +202,6 @@ var TileLayer = Layer.extend(
         
         numTiles = 0;
         numTilesLoaded = 0;
-    
-        indices = this.viewport.visibleRange;
         
         // When stepping forward or back in time remove old times only after all new ones have been added
         onLoadComplete = function () {
@@ -176,17 +216,17 @@ var TileLayer = Layer.extend(
         };
         
         // Load tiles that lie within the current viewport
-        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
-            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
+        for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
+            for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
                 if (!this.validTiles[i]) {
-                    this.validTiles[i] = [];
+                    this.validTiles[i] = {};
                 }
 
-                if (visible[i][j] && this.validTiles[i][j]) {
+                if (this.validTiles[i][j]) {
                     tile = this.getTile(i, j).appendTo(this.domNode);
                                         
                     if (!this.tiles[i]) {
-                        this.tiles[i] = [];
+                        this.tiles[i] = {};
                     }
     
                     this.tiles[i][j] = {};
@@ -199,31 +239,6 @@ var TileLayer = Layer.extend(
                 }
             }
         }        
-    },
-    
-    /**
-     * @description Check to see if all visible tiles have been loaded
-     * 
-     * => onMove
-     */
-    _onTileVisibilityChange: function (event, indices) {
-        var visible, i, j;
-        
-        visible = this.viewport.visible;
-
-        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
-            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
-                if (!this.tiles[i]) {
-                    this.tiles[i] = [];
-                }
-                if (!this.validTiles[i]) {
-                    this.validTiles[i] = [];
-                }
-                if (visible[i][j] && (!this.tiles[i][j]) && this.validTiles[i][j]) {
-                    this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
-                }
-            }
-        }
     },
     
     /**
@@ -270,13 +285,13 @@ var TileLayer = Layer.extend(
         indices = this.getValidTileRange();
         
         // Reset array
-        this.validTiles = [];
+        this.validTiles = {};
         
         // Update validTiles array
         for (i = indices.xStart; i <= indices.xEnd; i += 1) {
             for (j = indices.yStart; j <= indices.yEnd; j += 1) {
                 if (!this.validTiles[i]) {
-                    this.validTiles[i] = [];
+                    this.validTiles[i] = {};
                 }
                 this.validTiles[i][j] = true;
             }
@@ -376,11 +391,10 @@ var TileLayer = Layer.extend(
      * set at tile-level.
      */
     getTile: function (x, y) {
-        var top, left, imageScale, ts, img, rf, emptyTile, uri, self  = this;
+        var top, left, ts, img, rf, emptyTile, uri, self  = this;
 
         left       = x * this.tileSize;
         top        = y * this.tileSize;
-        imageScale = this.viewport.imageScale;
         ts         = this.tileSize;
         
         rf = function () {
@@ -440,7 +454,7 @@ var TileLayer = Layer.extend(
             "y"                : y,
             "format"           : format,
             "date"             : this.image.date,
-            "tileScale"        : this.viewport.imageScale,
+            "tileScale"        : this.viewportScale,
             "ts"               : this.tileSize,
             "jp2Width"         : this.image.width,
             "jp2Height"        : this.image.height,
@@ -523,11 +537,7 @@ var TileLayer = Layer.extend(
     _setupEventHandlers: function () {
         var self = this;
         
-        $(document).bind('tile-visibility-matrix-changed', $.proxy(this._onTileVisibilityChange, this))
-                   .bind('refresh-tile-layers', function () {
-                        self.refresh(false);
-                    })
-                   .bind('toggle-layer-visibility', function (event, id) {
+        $(document).bind('toggle-layer-visibility', function (event, id) {
                         if (self.id === id) {
                             self.toggleVisibility();
                             $(document).trigger("save-tile-layers");

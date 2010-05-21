@@ -30,8 +30,7 @@ var Viewport = Class.extend(
     moveCounter             : 0,
     imageUpdateThrottle     : 3,
     tileUpdateThrottle      : 9,
-    visible                 : {},
-    visibleRange            : {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0},
+    tileVisibilityRange     : {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0},
 
     /**
      * @constructs
@@ -66,14 +65,17 @@ var Viewport = Class.extend(
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;
 
-        this.resize();
+        //this.resize();
 
         var center = this.getCenter();
         this.sandbox.css({"left": center.x, "top": center.y});
         
         // Initialize tile layers
-        this._tileLayerManager = new TileLayerManager(this, this.api, this.requestDate, this.dataSources, 
-                this.tileSize, this.maxTileLayers, this.tileServers, this.tileLayers, this.urlStringLayers);
+        this._tileLayerManager = new TileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
+                                                      this.imageScale, this.maxTileLayers, this.tileServers, 
+                                                      this.tileLayers, this.urlStringLayers);
+        
+        this.resize();
         
         this._initEventHandlers();
     },
@@ -87,7 +89,7 @@ var Viewport = Class.extend(
             top:  0.5 * this.sandbox.height() + 'px'    
         });
         
-        this.checkTiles();
+        this.checkTileVisibility();
     },
 
     /**
@@ -107,7 +109,7 @@ var Viewport = Class.extend(
             top:  pos.y + 'px'    
         });
         
-        this.checkTiles();
+        this.checkTileVisibility();
     },
     
     /**
@@ -123,7 +125,7 @@ var Viewport = Class.extend(
      */
     endMoving: function () {
         this.isMoving = false;
-        this.checkTiles();
+        this.checkTileVisibility();
     },
     
     /**
@@ -153,50 +155,42 @@ var Viewport = Class.extend(
      *              a given time. Uses the Heliocentric coordinates of the viewport's
      *              TOP-LEFT and BOTTOM-RIGHT corners to determine range to display.
      */
-    checkTiles: function () {
-        var numTilesBefore, numTilesAfter, 
-            oldVisibleRange = this.visibleRange;
+    checkTileVisibility: function () {
+        var oldTileVisibilityRange = this.tileVisibilityRange;
         
         this._updateTileVisibilityRange();
         
-        if (this._checkVisibilityRangeEquality(oldVisibleRange, this.visibleRange)) {
-            return;
+        if (!this._checkVisibilityRangeEquality(oldTileVisibilityRange, this.tileVisibilityRange)) {
+            this._tileLayerManager.updateTileVisibilityRange(this.tileVisibilityRange);
         }
-
-        numTilesBefore = this._getNumberOfVisibleTiles(this.visible);
-        this._updateTileVisibilityMatrix();
-        numTilesAfter = this._getNumberOfVisibleTiles(this.visible);
+    },
+    
+    /**
+     * @description Returns the range of indices for the tiles to be displayed.
+     * @returns {Object} The range of tiles which should be displayed
+     */
+    _updateTileVisibilityRange: function () {
+        var vp, ts;
         
-        if (numTilesBefore !== numTilesAfter) {
-            $(document).trigger("tile-visibility-matrix-changed", this.visibleRange);
-        }
-    },
-    
-    /**
-     * Updates the tile visibility matrix
-     */
-    _updateTileVisibilityMatrix: function () {
-        for (i = this.visibleRange.xStart; i <= this.visibleRange.xEnd; i += 1) {
-            for (j = this.visibleRange.yStart; j <= this.visibleRange.yEnd; j += 1) {
-                if (!this.visible[i]) {
-                    this.visible[i] = {};
-                }
-                this.visible[i][j] = true;
-            }
-        }
-    },
-    
-    /**
-     * Gets a count of the number of tiles which have fallen within the viewport since the last refresh
-     */
-    _getNumberOfVisibleTiles: function (matrix) {
-       var total = 0;
-        $.each(matrix, function (i, x) {
-            $.each(x, function (j, y) {
-                total += 1;
-            });
-        })
-        return total;
+        // Get heliocentric viewport coordinates
+        vp = this.getHCViewportPixelCoords();
+
+        // Expand to fit tile increment
+        ts = this.tileSize;
+        vp = {
+            top:    vp.top    - ts - (vp.top  % ts),
+            left:   vp.left   - ts - (vp.left % ts),
+            bottom: vp.bottom + ts - (vp.bottom % ts),
+            right:  vp.right  + ts - (vp.right % ts)
+        };
+
+        // Indices to display (one subtracted from ends to account for "0th" tiles).
+        this.tileVisibilityRange = {
+            xStart : vp.left / ts,
+            yStart : vp.top  / ts,
+            xEnd   : (vp.right  / ts) - 1,
+            yEnd   : (vp.bottom / ts) - 1
+        };
     },
     
     /**
@@ -271,35 +265,6 @@ var Viewport = Class.extend(
     },
     
     /**
-     * @description Returns the range of indices for the tiles to be displayed.
-     * @returns {Object} The range of tiles which should be displayed
-     */
-    //displayRange: function () {
-    _updateTileVisibilityRange: function () {
-        var vp, ts;
-        
-        // Get heliocentric viewport coordinates
-        vp = this.getHCViewportPixelCoords();
-
-        // Expand to fit tile increment
-        ts = this.tileSize;
-        vp = {
-            top:    vp.top    - ts - (vp.top  % ts),
-            left:   vp.left   - ts - (vp.left % ts),
-            bottom: vp.bottom + ts - (vp.bottom % ts),
-            right:  vp.right  + ts - (vp.right % ts)
-        };
-
-        // Indices to display (one subtracted from ends to account for "0th" tiles).
-        this.visibleRange = {
-            xStart : vp.left   / ts,
-            xEnd   : (vp.right  / ts) - 1,
-            yStart : vp.top    / ts,
-            yEnd   : (vp.bottom / ts) - 1
-        };
-    },
-
-    /**
      * @description Returns the heliocentric coordinates of the upper-left and bottom-right corners of the viewport
      * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
      */
@@ -326,18 +291,16 @@ var Viewport = Class.extend(
         
         this.imageScale = imageScale;
 
-        this.visible = {};
-        this._updateTileVisibilityRange();
-        this._updateTileVisibilityMatrix();
-        
-        // reset the layers
-        $(document).trigger("refresh-tile-layers", this.visible);
-
         // scale layer dimensions
         this.scaleLayerDimensions(oldScale / imageScale);
         
         // update sandbox
         this.updateSandbox();
+        
+        this._updateTileVisibilityRange();
+        
+        // reset the layers
+        this._tileLayerManager.adjustImageScale(imageScale, this.tileVisibilityRange);
         
         // store new value
         $(document).trigger("save-setting", ["imageScale", imageScale]);
@@ -386,7 +349,7 @@ var Viewport = Class.extend(
         
         if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
             this.updateSandbox();
-            this.checkTiles();
+            this.checkTileVisibility();
         }
     },
     
@@ -707,7 +670,7 @@ var Viewport = Class.extend(
                    .bind("set-image-scale", $.proxy(this.zoomTo, this))
                    .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this))
                    .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("recompute-tile-visibility", $.proxy(this.checkTiles, this));
+                   .bind("recompute-tile-visibility", $.proxy(this.checkTileVisibility, this));
         
         $('#center-button').click($.proxy(this.center, this));
         

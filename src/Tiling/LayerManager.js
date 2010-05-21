@@ -107,15 +107,6 @@ var LayerManager = Class.extend(
     },
     
     /**
-     * @description Refreshes each of the layers
-     */
-    refreshLayers: function () {
-        $.each(this._layers, function () {
-            this.refresh(true);
-        });
-    },
-    
-    /**
      * @description Iterates through layers
      */
     each: function (fn) {
