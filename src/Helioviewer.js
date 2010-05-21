@@ -96,7 +96,7 @@ var Helioviewer = Class.extend(
         
         callback = function (dataSources) {
             self.dataSources = dataSources;
-            self.tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date, timestep);            
+            self.tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date, timestep);
             self._initViewport(date);
         };
         $.post(this.api, {action: "getDataSources"}, callback, "json");

@@ -20,16 +20,18 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (viewport, api, observationDate, dataSources, tileSize, maxTileLayers, 
+    init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
                     tileServers, savedLayers, urlLayers) {
 
         this._super();
-        this.viewport = viewport;
 
         this.api           = api;
         this.dataSources   = dataSources;
         this.tileSize      = tileSize;
+        this.viewportScale = viewportScale;
         this.maxTileLayers = maxTileLayers;
+        
+        this.tileVisibilityRange  = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
         
         this.tileServers      = tileServers;        
         this._observationDate = observationDate;
@@ -100,11 +102,34 @@ var TileLayerManager = LayerManager.extend(
 
         // Add the layer
         this.addLayer(
-            new TileLayer(this.viewport, this._layers.length, this._observationDate, this.tileSize, this.api,
-                this.tileServers[params.server], params.observatory, params.instrument, params.detector,
-                params.measurement, params.sourceId, params.name, params.visible, opacity, params.layeringOrder, server
-        ));
+            new TileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
+                          this.tileVisibilityRange, this.api, this.tileServers[params.server], params.observatory, 
+                          params.instrument, params.detector, params.measurement, params.sourceId, params.name, 
+                          params.visible, opacity, params.layeringOrder, server)
+        );
         this.save();
+    },
+    
+    /**
+     * 
+     */
+    updateTileVisibilityRange: function (tileVisibilityRange) {
+        this.tileVisibilityRange = tileVisibilityRange;
+        
+        $.each(this._layers, function () {
+            this.updateTileVisibilityRange(tileVisibilityRange); 
+        });
+    },
+    
+    /**
+     * 
+     */
+    adjustImageScale: function (scale, tileVisibilityRange) {
+        this.viewportScale = scale;
+        
+        $.each(this._layers, function () {
+            this.updateImageScale(scale, tileVisibilityRange);
+        });
     },
 
     /**
@@ -135,8 +160,7 @@ var TileLayerManager = LayerManager.extend(
             return;
         }
         
-        var self = this;
-        layers = [];
+        var layerSettings, layers = [], self = this;
         
         $.each(urlLayers, function () {
             layerSettings        = this.parseLayerString(this);
@@ -157,10 +181,11 @@ var TileLayerManager = LayerManager.extend(
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
-            layer = new TileLayer(self.viewport, index, self._observationDate, self.tileSize, self.api, 
-                    self.tileServers[params.server], params.observatory, params.instrument, params.detector,  
-                    params.measurement, params.sourceId, params.name, params.visible, params.opacity,
-                    params.layeringOrder, params.server);
+            layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
+                                  self.tileVisibilityRange, self.api, self.tileServers[params.server], 
+                                  params.observatory, params.instrument, params.detector, params.measurement, 
+                                  params.sourceId, params.name, params.visible, params.opacity, params.layeringOrder, 
+                                  params.server);
 
             self.addLayer(layer);
         });
