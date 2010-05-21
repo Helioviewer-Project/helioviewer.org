@@ -60,14 +60,6 @@ var Helioviewer = Class.extend(
     },
 
     /**
-     * @description Returns the current observation date as a JavaScript
-     *              Date object
-     */
-    getDate: function () {
-        return this.timeControls.getDate();
-    },
-
-    /**
      * @description Checks browser support for various features used in
      *              Helioviewer
      */
@@ -232,13 +224,6 @@ var Helioviewer = Class.extend(
             $('#loading').hide();
         });  
     },
-
-    /**
-     * @description Translates a given zoom-level into an image plate scale.
-     */
-    getImageScale: function () {
-        return this.viewport.imageScale;
-    },
     
     /**
      * displays a dialog containing a link to the current page
@@ -381,7 +366,7 @@ var Helioviewer = Class.extend(
         date = this.timeControls.toISOString();
     
         // Add image scale
-        imageScale = this.getImageScale();
+        imageScale = this.viewport.getImageScale();
         
         // Image layers
         imageLayers = this.tileLayers.serialize();
