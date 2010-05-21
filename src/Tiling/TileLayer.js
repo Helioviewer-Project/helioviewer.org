@@ -45,7 +45,7 @@ var TileLayer = Layer.extend(
         
         this._requestDate = date;
 
-        this.tileSize           = tileSize;
+        this.tileSize      = tileSize;
         this.viewportScale = viewportScale;
         
         this.layeringOrder = layeringOrder;
@@ -188,7 +188,7 @@ var TileLayer = Layer.extend(
      * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
      */
     refreshTiles: function (removeOldTilesFirst) {
-        var i, j, old, numTiles, numTilesLoaded, tile, onLoadComplete, self = this;
+        var i, j, old, numTiles = 0, numTilesLoaded = 0, tile, onLoadComplete, self = this;
         
         this.computeValidTiles();
         this.tiles = {};
@@ -199,9 +199,6 @@ var TileLayer = Layer.extend(
         if (removeOldTilesFirst) {
             this.removeTileDomNodes(old);
         }
-        
-        numTiles = 0;
-        numTilesLoaded = 0;
         
         // When stepping forward or back in time remove old times only after all new ones have been added
         onLoadComplete = function () {
