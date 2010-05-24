@@ -25,10 +25,17 @@
 
 #timeBackBtn, #timeForwardBtn {
     cursor: pointer;
+	float: left;
 }
 
-#timeBackBtn {
-    float: left;
+#timeNowBtn {
+	margin-left: 5px;
+	font-size: 11px;
+	cursor: pointer;
+	font-weight: 700;
+}
+#timeNowBtn:hover {
+	color: #D18F61;
 }
 
 #timestep-select {
