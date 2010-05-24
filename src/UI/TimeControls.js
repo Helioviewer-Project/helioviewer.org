@@ -76,6 +76,10 @@ var TimeControls = Class.extend(
         return this._timeIncrement;
     },
     
+    goToPresent: function () {
+    	this.setDate(new Date());
+    },
+    
     /**
      * @description Sets the desired viewing date and time.
      * @param {Date} date A JavaScript Date object with the new time to use
@@ -116,6 +120,7 @@ var TimeControls = Class.extend(
         this._forwardBtn.bind('click', $.proxy(this.timeNext, this));
         this._timeInput.bind('change', $.proxy(this._onTextFieldChange, this));
         this._dateInput.bind('change', $.proxy(this._onTextFieldChange, this));
+        $("#timeNowBtn").click($.proxy(this.goToPresent, this));
     },
     
     /**
