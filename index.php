@@ -99,7 +99,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         "UI/MessageConsole.js", "Movies/MovieBuilder.js", "UI/ScreenshotBuilder.js", 
                         "Image/JP2Image.js", "Tiling/TileLayer.js", "Tiling/TileLayerAccordion.js", 
                         "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
-                        "Viewport/FullscreenControl.js", "Viewport/Viewport.js", 
+                        "Viewport/FullscreenControl.js", "Viewport/MouseCoordinates.js", "Viewport/Viewport.js", 
                         "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js");
             foreach($js as $file)
                 printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);

@@ -93,7 +93,7 @@ var KeyboardManager = Class.extend(
                 $("#center-button").click();
             }
             else if (character === "m") {
-                vp.toggleMouseCoords();
+                vp.mouseCoords.toggleMouseCoords();
             }
             else if (character === "-" || character === "_") {
                 $("#zoomControlZoomOut").click();
