@@ -281,6 +281,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         <select id="timestep-select" name="time-step"></select>
                         <span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
                         <span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
+                        <span id="timeNowBtn" title="Move the  Observation Date/Time to the present time.">Now</span> 
                     </div>
                 </div>
 
