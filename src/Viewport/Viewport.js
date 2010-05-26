@@ -466,24 +466,6 @@ var Viewport = Class.extend(
     },
      
     /**
-     * @description Handles mouse-wheel movements
-     * 
-     * TODO 02/22/2010: Prevent browser window from scrolling on smaller screens when 
-     * wheel is used in viewport
-     * 
-     * @param {Event} event Event class
-     */
-    mouseWheel: function (e, delta) {
-        if (delta > 0) {
-            $("#zoomControlZoomIn").click();
-        } else {
-            $("#zoomControlZoomOut").click();
-        }
-        return false;
-    },
-
-    
-    /**
      * Updates the stored values for the maximum tile and event layer dimensions. This is used in computing the optimal
      * sandbox size.
      */
@@ -531,8 +513,7 @@ var Viewport = Class.extend(
         $('#center-button').click($.proxy(this.center, this));
         
         this.domNode.mousedown($.proxy(this.mouseDown, this))
-                    .dblclick($.proxy(this.doubleClick, this))
-                    .mousewheel(this.mouseWheel);
+                    .dblclick($.proxy(this.doubleClick, this));
         
     },
     
