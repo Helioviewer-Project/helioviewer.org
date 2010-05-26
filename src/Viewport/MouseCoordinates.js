@@ -14,8 +14,9 @@ var MouseCoordinates = Class.extend(
     /**
      * @constructs
      */
-    init: function (imageScale, showMouseCoordsWarning) {
+    init: function (imageScale, rsun, showMouseCoordsWarning) {
     	this.imageScale      = imageScale;
+    	this.rsun            = rsun;
     	this.warnMouseCoords = showMouseCoordsWarning;
     	
     	this.container       = $('#mouse-coords');
@@ -46,7 +47,7 @@ var MouseCoordinates = Class.extend(
      * @param {Int} screeny Y-dimensions of the user's screen
      */
     getRelativeCoords: function (screenx, screeny) {
-        var offset = this.innerViewport.position();
+    	var offset = this.innerViewport.offset();
         
         return {
             x: screenx - offset.left - 1,
@@ -76,15 +77,15 @@ var MouseCoordinates = Class.extend(
             this.container.toggle();
             this.mouseCoords = "disabled";
         }
-          
-        // Warn once
-        if (this.warnMouseCoords === true) {
-            var warning = "<b>Note:</b> Mouse-coordinates should not be used for science operations!";
-            $(document).trigger("message-console-log", [warning])
-                       .trigger("save-setting", ["warnMouseCoords", false]);
-            this.warnMouseCoords = false;
-        }
-          
+        
+        this._checkWarning();
+        this._reassignEventHandlers();
+    },
+    
+    /**
+     * Determines which event handler should be used, if any, to display mouse coordinates to the user
+     */
+    _reassignEventHandlers: function () {
         // Cartesian & Polar coords
         if (this.mouseCoords !== "disabled") {
 
@@ -103,6 +104,19 @@ var MouseCoordinates = Class.extend(
             // Use trigger to fire mouse move event and then check to make sure mouse is within viewport?         
         } else {
             this.movingContainer.unbind('mousemove', this.updateMouseCoords);
+        }
+    },
+    
+    /**
+     * Checks to see whether a warning message should be displayed to the user
+     */
+    _checkWarning: function () {
+        // Warn once
+        if (this.warnMouseCoords === true) {
+            var warning = "<b>Note:</b> Mouse-coordinates should not be used for science operations!";
+            $(document).trigger("message-console-log", [warning])
+                       .trigger("save-setting", ["warnMouseCoords", false]);
+            this.warnMouseCoords = false;
         }
     },
     

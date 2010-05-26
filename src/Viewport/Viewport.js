@@ -73,7 +73,7 @@ var Viewport = Class.extend(
         
         this.resize();
         
-        this.mouseCoords = new MouseCoordinates(this.imageScale, this.warnMouseCoords);
+        this.mouseCoords = new MouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
         
         this._initEventHandlers();
     },
@@ -432,7 +432,7 @@ var Viewport = Class.extend(
      * @param {Event} e Event class
      */
     doubleClick: function (e) {
-        var pos, center, diff;
+        var pos, center, diff, scaleFactor;
         
         //check to make sure that you are not already at the minimum/maximum image scale
         if (!(e.shiftKey || (this.imageScale > this.minImageScale)) ||
@@ -446,23 +446,25 @@ var Viewport = Class.extend(
         // Coordinates of viewport center relative to top-left
         center = this.getCenter();
         
+        //adjust for zoom
+        if (e.shiftKey) {
+        	scaleFactor = 0.5;
+            $("#zoomControlZoomOut").click(); 
+        }
+        else {
+        	scaleFactor = 2;
+            $("#zoomControlZoomIn").click();
+        }
+        
         // Distance between point of mouse-click and the center of the viewport
         diff = {
-            x: pos.x - center.x,
-            y: pos.y - center.y
+            x: (pos.x - center.x) * scaleFactor,
+            y: (pos.y - center.y) * scaleFactor
         };
-
+        
         this.startMoving();
         this.moveBy(diff.x, diff.y);
         this.endMoving();
-
-        //adjust for zoom
-        if (e.shiftKey) {
-            //$("#zoomControlZoomOut").click();
-        }
-        else {
-            //$("#zoomControlZoomIn").click();
-        }
     },
      
     /**
