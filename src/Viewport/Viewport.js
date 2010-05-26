@@ -505,7 +505,7 @@ var Viewport = Class.extend(
     getRelativeCoords: function (screenx, screeny) {
         var offset, mouseCoords;
          
-        offset = $('#helioviewer-viewport-container-inner').position();
+        offset = $('#helioviewer-viewport-container-inner').offset();
 
         mouseCoords = {
             x: screenx - offset.left - 1,

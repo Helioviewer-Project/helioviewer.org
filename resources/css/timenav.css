@@ -25,12 +25,18 @@
 
 #timeBackBtn, #timeForwardBtn {
     cursor: pointer;
+}
+
+#timeBackBtn {
 	float: left;
 }
 
 #timeNowBtn {
-	margin-left: 5px;
+	position: absolute;
+	top: 7px;
+	right: 50px;
 	font-size: 11px;
+	font-style: italic;
 	cursor: pointer;
 	font-weight: 700;
 }
