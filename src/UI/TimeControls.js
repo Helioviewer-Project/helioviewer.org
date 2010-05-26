@@ -69,7 +69,7 @@ var TimeControls = Class.extend(
     },
     
     /**
-     * @description Returns the time increment currently displayed in the viewport.
+     * @description Returns the time increment currently displayed in Helioviewer.
      * @return {int} this._timeIncrement -- time increment in secons
      */
     getTimeIncrement: function () {
