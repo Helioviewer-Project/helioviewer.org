@@ -30,10 +30,10 @@ class Image_JPEG2000_JP2ImageXMLBox
      *
      * @param string $file JPEG 2000 Image location
      */
-    public function __construct($file)
+    public function __construct($file, $root = "fits")
     {
         $this->_file = $file;
-        $this->getXMLBox("fits");
+        $this->getXMLBox($root);
     }
 
     /**
@@ -69,9 +69,16 @@ class Image_JPEG2000_JP2ImageXMLBox
         
         // TEMP Work-around 2010/04/12 for AIA Invalid XML
         $xml = str_replace("&", "&amp;", $xml);
+        
+        $this->_xmlString = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
 
         $this->_xml = new DOMDocument();
-        $this->_xml->loadXML($xml);
+        $this->_xml->loadXML($this->_xmlString);
+    }
+    
+    public function printXMLBox () {
+    	header('Content-type: text/xml');
+    	echo $this->_xmlString;
     }
 
     /**
