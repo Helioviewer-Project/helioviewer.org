@@ -330,60 +330,18 @@ var TileLayerAccordion = Layer.extend(
      * @param {Object} layer
      */
     _showFITS: function (layer) {
-        var dialogId, sortBtn, formatted, params, callback;
-        
-        dialogId = "fits-header-" + layer.htmlId;
+        var params, self = this, dialog = $("#fits-header-" + layer.htmlId);
         
         // Check to see if a dialog already exists
-        if ($("#" + dialogId).length !== 0) {
-            if (!$("#" + dialogId).dialog("isOpen")) {
-                $("#" + dialogId).dialog("open");
+        if (dialog.length !== 0) {
+            if (!dialog.dialog("isOpen")) {
+                dialog.dialog("open");
             }
             else {
-                $("#" + dialogId).dialog("close");
+                dialog.dialog("close");
             }
-                
             return;
         }
-        
-        // Ajax Responder
-        callback = function (response) {
-
-            // Format results
-            formatted =  "<div id='" + dialogId + "' style='overflow: auto; position: relative; padding:0px'>";
-            formatted += "<div class='fits-regular'>";
-            $.each(response, function () {
-                formatted += this + "<br>";
-            });
-            formatted += "</div>";
-            
-            // Store a sort version as well
-            formatted += "<div class='fits-sorted' style='display: none;'>";
-            $.each(response.sort(), function () {
-                formatted += this + "<br>";
-            });
-            
-            formatted += "</div></div>";
-            
-            $("body").append(formatted);
-
-            // Button to toggle sorting
-            sortBtn = "<span class='fits-sort-btn'>Abc</span>";
-            $("#" + dialogId).append(sortBtn);    
-            $("#" + dialogId + " > span").click(function () {
-                $(this).toggleClass("italic");
-                $("#" + dialogId + " .fits-sorted").toggle();
-                $("#" + dialogId + " .fits-regular").toggle();
-            });
-                            
-            $("#" + dialogId).dialog({
-                autoOpen: true,
-                title: "FITS Header: " + layer.name,
-                width: 400,
-                height: 350,
-                draggable: true
-            });
-        };
         
         // Request parameters
         params = {
@@ -392,7 +350,52 @@ var TileLayerAccordion = Layer.extend(
             server : layer.server
         };
         
-        $.post("api/index.php", params, callback, "json");
+        $.post("api/index.php", params, function (response) {
+            self._buildFITSHeaderDialog(layer.name, layer.htmlId, response);
+        });
+    },
+    
+    /**
+     * Creates a dialog to display a JP2 image XML Box/FITS header
+     */
+    _buildFITSHeaderDialog: function (name, id, response) {
+        var sortBtn, unsorted, sorted, tags, tag, dialog, json = $.xml2json(response);
+    
+        // Format results
+        dialog =  $("<div id='fits-header-" + id + "' class='fits-header-dialog' />");
+        
+        tags = [];
+        
+        // Unsorted list
+        unsorted = "<div class='fits-regular'>";
+        $.each(json, function (key, value) {
+            tag = key + ": " + value;
+            tags.push(tag);
+            unsorted += tag + "<br>";
+        });
+        unsorted += "</div>";
+        
+        // Sorted list
+        sorted = "<div class='fits-sorted' style='display: none;'>";
+        $.each(tags.sort(), function () {
+            sorted += this + "<br>";
+        });
+        sorted += "</div>";
+        
+        // Button to toggle sorting
+        sortBtn = $("<span class='fits-sort-btn'>Abc</span>").click(function () {
+            $(this).toggleClass("italic");
+            dialog.find(".fits-sorted").toggle();
+            dialog.find(".fits-regular").toggle();
+        });
+        
+        dialog.append(unsorted + sorted).append(sortBtn).appendTo("body").dialog({
+            autoOpen: true,
+            title: "FITS Header: " + name,
+            width: 400,
+            height: 350,
+            draggable: true
+        });        
     },
     
     /**
