@@ -56,7 +56,10 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
     <!-- date.js -->
     <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
-
+    
+    <!-- XML to JSON -->
+    <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
+    
     <!-- Simile -->
     <!--<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>-->
 

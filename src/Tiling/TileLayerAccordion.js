@@ -249,9 +249,7 @@ var TileLayerAccordion = Layer.extend(
      * @param {Object} layer
      */
     _showFITS: function (id, name, filepath, filename, server) {
-        var sortBtn, formatted, params, callback, dialog;
-        
-        dialog = $("#fits-header-" + id);
+        var params, self = this, dialog = $("#fits-header-" + id);
         
         // Check to see if a dialog already exists
         if (dialog.length !== 0) {
@@ -261,48 +259,8 @@ var TileLayerAccordion = Layer.extend(
             else {
                 dialog.dialog("close");
             }
-                
             return;
         }
-        
-        // Ajax Responder
-        callback = function (response) {
-
-            // Format results
-            formatted =  "<div id='fits-header-" + id + "' style='overflow: auto; position: relative; padding:0px'>";
-            formatted += "<div class='fits-regular'>";
-            $.each(response, function () {
-                formatted += this + "<br>";
-            });
-            formatted += "</div>";
-            
-            // Store a sort version as well
-            formatted += "<div class='fits-sorted' style='display: none;'>";
-            $.each(response.sort(), function () {
-                formatted += this + "<br>";
-            });
-            
-            formatted += "</div></div>";
-            
-            $("body").append(formatted);
-
-            // Button to toggle sorting
-            sortBtn = "<span class='fits-sort-btn'>Abc</span>";
-            dialog.append(sortBtn);    
-            dialog.children("span").click(function () {
-                $(this).toggleClass("italic");
-                dialog.children(".fits-sorted").toggle();
-                dialog.children(".fits-regular").toggle();
-            });
-                            
-            dialog.dialog({
-                autoOpen: true,
-                title: "FITS Header: " + name,
-                width: 400,
-                height: 350,
-                draggable: true
-            });
-        };
         
         // Request parameters
         params = {
@@ -311,9 +269,53 @@ var TileLayerAccordion = Layer.extend(
             server : server
         };
         
-        $.post("api/index.php", params, callback, "json");
+        $.post("api/index.php", params, function (response) {
+            self._buildFITSHeaderDialog(name, id, response);
+        });
     },
     
+    /**
+     * Creates a dialog to display a JP2 image XML Box/FITS header
+     */
+    _buildFITSHeaderDialog: function (name, id, response) {
+        var sortBtn, unsorted, sorted, tags, tag, dialog, json = $.xml2json(response);
+    
+        // Format results
+        dialog =  $("<div id='fits-header-" + id + "' class='fits-header-dialog' />");
+        
+        tags = [];
+        
+        // Unsorted list
+        unsorted = "<div class='fits-regular'>";
+        $.each(json, function (key, value) {
+            tag = key + ": " + value;
+            tags.push(tag);
+            unsorted += tag + "<br>";
+        });
+        unsorted += "</div>";
+        
+        // Sorted list
+        sorted = "<div class='fits-sorted' style='display: none;'>";
+        $.each(tags.sort(), function () {
+            sorted += this + "<br>";
+        });
+        sorted += "</div>";
+        
+        // Button to toggle sorting
+        sortBtn = $("<span class='fits-sort-btn'>Abc</span>").click(function () {
+            $(this).toggleClass("italic");
+            dialog.find(".fits-sorted").toggle();
+            dialog.find(".fits-regular").toggle();
+        });
+        
+        dialog.append(unsorted + sorted).append(sortBtn).appendTo("body").dialog({
+            autoOpen: true,
+            title: "FITS Header: " + name,
+            width: 400,
+            height: 350,
+            draggable: true
+        });        
+    },
     /**
      * @description Initialize custom tooltips for each icon in the accordion
      */
