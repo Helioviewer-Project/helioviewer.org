@@ -97,3 +97,9 @@ td.time-input-field input {
 #shadowbox-form h2 {
 	font-size: 14pt;
 }
+
+.fits-header-dialog {
+    overflow: auto;
+    position: relative;
+    padding:0px;
+}

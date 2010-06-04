@@ -181,27 +181,17 @@ class Module_WebClient implements Module
     {
         // Retrieve header locally
         if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
-            $filepath = HV_JP2_DIR . $this->_params["file"];
-
-            // Query header information using Exiftool
-            $cmd = escapeshellcmd(HV_EXIF_TOOL . " $filepath") . ' | grep Fits';
-            exec($cmd, $out, $ret);
-
-            $fits = array();
-            foreach ($out as $index => $line) {
-                $data = explode(":", $line);
-                $param = substr(strtoupper(str_replace(" ", "", $data[0])), 8);
-                $value = $data[1];
-                array_push($fits, $param . ": " . $value);
-            }
-            $json = json_encode($fits);
+        	include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
+            $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"]);
+            $xmlBox->printXMLBox();
         } else {
             if (HV_DISTRIBUTED_TILING_ENABLED) {
                 // Redirect request to remote server
                 if ($this->_params['server'] != 0) {
                     $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
                     $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";
-                    $json    = file_get_contents($url);
+                    header('Content-type: text/xml');
+                    echo file_get_contents($url);
                 } else {
                     $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini" .
                            "for more information";
@@ -212,9 +202,6 @@ class Module_WebClient implements Module
                 throw new Exception($err);
             }
         }
-
-        header('Content-type: application/json');
-        echo $json;
     }
 
     /**
