@@ -124,19 +124,12 @@ var getOS = function () {
  * @returns {Object} Polar coordinates (r, theta) resulting from conversion 
  */
 Math.toPolarCoords = function (x, y) {
-    var radians = Math.atan(y / x);
-    
-    if  ((x > 0) && (y < 0)) {
-        radians += (2 * Math.PI);
-    }
-    else if (x < 0) {
-        radians += Math.PI;
-    }
-    else if ((x === 0) && (y > 0)) {
-        radians = Math.PI / 2;
-    }
-    else if ((x === 0) && (y < 0)) {
-        radians = (3 * Math.PI) / 2;
+    var radians = Math.atan(-x/y);
+
+    if (y < 0) {
+    	radians += (Math.PI);
+    } else if ((x >= 0) && (y >= 0)) {
+    	radians += (2 * Math.PI);
     }
         
     return {
