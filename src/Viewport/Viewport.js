@@ -149,12 +149,44 @@ var Viewport = Class.extend(
     /**
      * @description Get the coordinates of the viewport center
      * @returns {Object} The X & Y coordinates of the viewport's center
+     * 
+     * TODO 06/07/2010: getCenter should probably be with respect to the Sandbox, and not the viewport
+     * since that is more meaningful in terms of positioning and movement.
      */
     getCenter: function () {
         return {
             x: Math.round(this.domNode.width()  / 2),
             y: Math.round(this.domNode.height() / 2)
         };
+    },
+    
+    /**
+     * TODO Re-work this, getCenter, etc to simplify viewport movement and coordinates
+     * ALSO- be careful to differentiate between pixel coordinates and other units of measurement
+     * 
+     * NEXT- look at moveTo() and find difference between the current position and center.
+     * Double/halve this 
+     */
+    getSandboxCenter: function () {
+    	return {
+    		x: 0.5 * this.sandbox.width(), 
+    		y: 0.5 * this.sandbox.height()
+    	}
+    },
+    
+    /**
+     * Returns the horizontal and vertical displacement of the sun from the center of the viewport
+     */
+    getOffsetFromCenter: function () {
+    	var sandboxCenter, sunCenter;
+    	
+    	sandboxCenter = this.getSandboxCenter();
+    	sunCenter     = this.getContainerPos();
+    	
+    	return {
+    		x: sunCenter.x - sandboxCenter.x,
+    		y: sunCenter.y - sandboxCenter.y
+    	}
     },
     
     /**
@@ -307,15 +339,40 @@ var Viewport = Class.extend(
      * @param {Float} imageScale The desired image scale
      */
     zoomTo: function (imageScale) {
-        this.imageScale = imageScale;
+    	var sunCenter, originalSandboxWidth, originalSandboxHeight,  
+    		sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale = this.imageScale;
+    	
+        // get offset and sandbox dimensions
+        sunCenter             = this.getContainerPos();
+        originalSandboxWidth  = this.sandbox.width(); 
+        originalSandboxHeight = this.sandbox.height();
         
-        // reset the layers
-        this.checkTiles();
+        // Adjust image scale and reload layers
+        this.imageScale = imageScale;
+
+        //this.checkTiles();
         this.controller.tileLayers.resetLayers();
         this.controller.eventLayers.resetLayers();
     
         // update sandbox
         this.updateSandbox();
+        
+        // ratio of old sandbox dimensions to new ones
+        sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
+        sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
+        
+        // make sure center of viewport is focused on same point as before
+//        if (imageScale > originalScale) {
+//        	this.moveTo(sunCenter.x / 2, sunCenter.y / 2);
+//        } else {
+//        	this.moveTo(sunCenter.x * 2, sunCenter.y * 2);
+//        }
+        this.moveTo(sunCenter.x * sandboxWidthScaleFactor, sunCenter.y * sandboxHeightScaleFactor);
+        
+        this.checkTiles();
+        // WORK-AROUND (first call needed to update dimensions in order to resize sandbox)
+        this.controller.tileLayers.resetLayers();
+        this.controller.eventLayers.resetLayers();
         
         // store new value
         $(document).trigger("save-setting", ["imageScale", imageScale]);
