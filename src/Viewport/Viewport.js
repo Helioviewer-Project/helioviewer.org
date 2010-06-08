@@ -342,10 +342,16 @@ var Viewport = Class.extend(
     	var sunCenter, originalSandboxWidth, originalSandboxHeight,  
     		sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale = this.imageScale;
     	
-        // get offset and sandbox dimensions
-        sunCenter             = this.getContainerPos();
-        originalSandboxWidth  = this.sandbox.width(); 
-        originalSandboxHeight = this.sandbox.height();
+        // get offset
+        sunCenter = this.getContainerPos();
+        
+        // when going from a zero dimension to something larger, center the sun along that dimension
+        sunCenter.x = sunCenter.x || 0.5;
+        sunCenter.y = sunCenter.y || 0.5;
+        
+        // get original sandbox dimensions
+        originalSandboxWidth  = this.sandbox.width()  || 1;
+        originalSandboxHeight = this.sandbox.height() || 1;
         
         // Adjust image scale and reload layers
         this.imageScale = imageScale;
@@ -382,10 +388,7 @@ var Viewport = Class.extend(
      * @description Adjust viewport dimensions when window is resized.
      */
     resize: function () {
-        var oldDimensions, h, padHeight;
-        
-        // Get dimensions
-        oldDimensions = this.dimensions;
+        var height, padHeight;
         
         // Make room for footer and header if not in fullscreen mode
         if (this.controller.fullScreenMode && this.controller.fullScreenMode.isEnabled()) {
@@ -396,10 +399,10 @@ var Viewport = Class.extend(
         }
         
         // Ensure minimum height
-        h = Math.max(this.minHeight, $(window).height() - padHeight);
+        height = Math.max(this.minHeight, $(window).height() - padHeight);
 
         //Update viewport height
-        this.outerNode.height(h);
+        this.outerNode.height(height);
 
         // Update viewport dimensions
         this._updateDimensions();
@@ -407,12 +410,10 @@ var Viewport = Class.extend(
         this.dimensions.width  += this.prefetch;
         this.dimensions.height += this.prefetch;
         
-        if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
-            if (this.controller.tileLayers.size() > 0) {
-                this.updateSandbox();
-                this.checkTiles();
-                this.controller.tileLayers.resetLayers();
-            }
+        if (this.controller.tileLayers.size() > 0) {
+            this.updateSandbox();
+            this.checkTiles();
+            this.controller.tileLayers.resetLayers();
         }
     },
     
