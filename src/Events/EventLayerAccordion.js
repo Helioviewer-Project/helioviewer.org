@@ -99,19 +99,19 @@ var EventLayerAccordion = Layer.extend(
                 });
                 
                 //Initial catalogs to load
-                lm.addLayer(new EventLayer(self.controller, {
-                    catalog: "VSOService::cmelist",
-                    eventAccordion: self
-                }));
-                lm.addLayer(new EventLayer(self.controller, {
-                    catalog: "GOESXRayService::GOESXRay",
-                    eventAccordion: self
-                }));
-                lm.addLayer(new EventLayer(self.controller, {
-                    catalog: "VSOService::noaa",
-                    eventAccordion: self,
-                    windowSize: 86400
-                }));
+//                lm.addLayer(new EventLayer(self.controller, {
+//                    catalog: "VSOService::cmelist",
+//                    eventAccordion: self
+//                }));
+//                lm.addLayer(new EventLayer(self.controller, {
+//                    catalog: "GOESXRayService::GOESXRay",
+//                    eventAccordion: self
+//                }));
+//                lm.addLayer(new EventLayer(self.controller, {
+//                    catalog: "VSOService::noaa",
+//                    eventAccordion: self,
+//                    windowSize: 86400
+//                }));
             } else {
                 self._catalogsUnavailable();
             }
