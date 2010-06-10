@@ -30,7 +30,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         );
         
 		$imageMeta = new Image_ImageMetaInformation($width, $height, $imageScale);
-        $layerMetaArray = $this->_createMetaInformation(
+
+        $layerArray = $this->_createMetaInformation(
         	$params['layers'],
         	$imageScale, $width, $height
         );
@@ -42,7 +43,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         	$params['quality']
         );
         
-        $screenshot->buildImages($layerMetaArray);
+        $screenshot->buildImages($layerArray);
 
         return $this->_displayScreenshot($screenshot->getComposite(), $params);
 	}
@@ -72,14 +73,24 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         
         $metaArray = array();
         foreach ($layers as $layer) {
-            list($obs, $inst, $det, $meas) = explode(",", $layer);
-        	array_push($metaArray, new Image_HelioviewerImageMetaInformation(
-        		$params['width'], 
-        		$params['height'],
-				$params['imageScale'], 
-				$obs, $inst, $det, $meas, 
-				$roi, 0, 0
-        	));
+        	$layerArray = explode(",", $layer);
+	        if(sizeOf($layerArray) > 1) {
+				list($observatory, $instrument, $detector, $measurement) = $layerArray;
+				$sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
+	        } else 
+	        {
+				$sourceId = $layer;
+	        }
+            $layerInfoArray = array(
+            	'sourceId' 	 => $sourceId,
+            	'width' 	 => $params['width'],
+            	'height'	 => $params['height'],
+            	'imageScale' => $params['imageScale'],
+            	'roi' 		 => $roi,
+            	'offsetX' 	 => 0,
+            	'offsetY' 	 => 0
+            );
+            array_push($metaArray, $layerInfoArray);
         }
         
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
@@ -98,10 +109,9 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      * Takes the string representation of a layer from the javascript creates meta information for
      * each layer. 
      *
-     * @param {Array} $layers -- an array of strings in the format:
-     *     "obs,inst,det,meas,visible,opacityxxStart,xSize,yStart,ySize"
-     *      The extra "x" was put in the middle so that the string could be
-     *      broken in half to make parsing easier. 
+     * @param {Array} $layers -- a string of layers in the format:
+     *     "sourceId,visible,opacity,xStart,xSize,yStart,ySize,offsetX,offsetY", 
+     *     layers are separated by "/"
      * @param {float} $imageScale
      * @param {int} $width
      * @param {int} $height
@@ -119,20 +129,41 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         }
         
         foreach ($layerStrings as $layer) {
-            $layerInfo = explode("x", $layer);
-
-            list($xStart, $xSize, $yStart, $ySize, $offsetX, $offsetY) = explode(",", $layerInfo[1]);
-            list($obs, $inst, $det, $meas, $visible, $opacity) = explode(",", $layerInfo[0]);
-
+        	$layerArray = explode(",", $layer);
+        	if(sizeOf($layerArray) > 10) {
+				list(
+					$observatory, $instrument, $detector, $measurement, $visible, $opacity,
+					$xStart, $xSize, $yStart, $ySize, $offsetX, $offsetY
+				) = $layerArray;
+				$sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
+        	}
+        	
+        	else 
+        	{
+           		list(
+           			$sourceId, $visible, $opacity, $xStart, $xSize, $yStart, $ySize, 
+           			$offsetX, $offsetY
+           		) = $layerArray;
+        	}
+        	
 			$roi = array(
             	'top' 	 => $yStart,
             	'left' 	 => $xStart,
             	'bottom' => $yStart + $ySize,
             	'right'	 => $xStart + $xSize
             );
-            $metaObject = new Image_HelioviewerImageMetaInformation($width, $height, $imageScale, $obs, $inst, $det, $meas, $roi, $offsetX, $offsetY);
+            //$metaObject = new Image_HelioviewerImageMetaInformation($width, $height, $imageScale, $obs, $inst, $det, $meas, $roi, $offsetX, $offsetY);
 
-            array_push($metaArray, $metaObject);
+            $layerInfoArray = array(
+            	'sourceId' 	 => $sourceId,
+            	'width' 	 => $xSize,
+            	'height'	 => $ySize,
+            	'imageScale' => $imageScale,
+            	'roi' 		 => $roi,
+            	'offsetX' 	 => $offsetX,
+            	'offsetY' 	 => $offsetY
+            );
+            array_push($metaArray, $layerInfoArray);
         }
 
         return $metaArray;
@@ -150,16 +181,25 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             throw new Exception('The requested screenshot is either unavailable or does not exist.');
         }
 
-        if ($params == $_GET) {
+       /* if ($params == $_GET) {
             header('Content-type: image/png');
             echo file_get_contents($composite);
-        } else if ($params == $_POST) {
+        }*/ if ($params == $_POST) {
             header('Content-type: application/json');
             // Replace '/var/www/helioviewer', or wherever the directory is,
             // with 'http://localhost/helioviewer' so it can be displayed.
             echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $composite));
-        } else { // So tests will pass.
-        	return $composite;
+        } else {
+			header('Content-type: image/png');
+            echo file_get_contents($composite);;
         }
+    }
+    
+    private function _getSourceId($obs, $inst, $det, $meas)
+    {
+        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
+        $imgIndex = new Database_ImgIndex();
+   		$result = $imgIndex->getSourceId($obs, $inst, $det, $meas);
+        return $result;    	
     }
 }

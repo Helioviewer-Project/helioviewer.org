@@ -40,4 +40,9 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
 	{
 		return "MDI/$meas";
 	}
+	
+	public function getWaterMarkName() 
+	{
+		return "MDI $this->_measurement\n";
+	}
 }

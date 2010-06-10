@@ -67,7 +67,7 @@ class ScreenshotTest extends PHPUnit_Framework_TestCase
 		$params = array(
 			'obsDate' 	 => $this->time,
 			'imageScale' => 10.52,
-			'layers' 	 => "SOHO,EIT,EIT,171,true,100x0,1024,0,1024,0,0/SOHO,LASCO,C2,white-light,true,100x0,1024,0,1024,0,0",
+			'layers' 	 => "0,true,100,0,1024,0,1024,0,0/4,true,100,0,1024,0,1024,0,0",
 			'width'  	 => 1024,
 			'height'	 => 1024,
 			'filename' 	 => 'testScreenshot' . time() . '.png',
@@ -87,7 +87,7 @@ class ScreenshotTest extends PHPUnit_Framework_TestCase
 			'imageScale' => 21.04,
 			'width' 	 => 512,
 			'height'	 => 512,
-			'layers'	 => "SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light"
+			'layers'	 => "2/4"
 		);
 		$module = new Module_WebClient($params);
 		$screenshot = $module->takeFullImageScreenshot();
