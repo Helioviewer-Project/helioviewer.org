@@ -12,6 +12,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require 'src/Image/CompositeImage.php';
+
 /**
  * Class is used when generating composite images, or 'frames', for movies.
  *

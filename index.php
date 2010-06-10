@@ -47,7 +47,8 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" type="text/css" />
 
     <!-- imgAreaSelect jQuery plugin -->
-    <script src="lib/jquery.imgareaselect-0.8/jquery.imgareaselect-0.8.js" type="text/javascript"></script>
+    <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
 
     <!-- CookieJar -->
     <script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>

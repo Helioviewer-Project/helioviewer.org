@@ -285,67 +285,49 @@ class Module_WebClient implements Module
     }
 
 
+
+
     /**
      * Obtains layer information, ranges of pixels visible, and the date being
      * looked at and creates a composite image (a Screenshot) of all the layers.
      *
-     * All possible parameters: obsDate, imageScale, layers, imageSize,
-     * filename, edges, sharpen
-     *
-     * API example: http://localhost/helioviewer/api/index.php
-     *     ?action=takeScreenshot&obsDate=1041465600&imageScale=5.26
-     *     &layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215/SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
-     *     &imageSize=588,556&filename=example&sharpen=false&edges=false
+     * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z
+     * &imageScale=21.04&quality=10&layers=SOHO,EIT,EIT,304,1,100x0,1024,0,1024,0,0/SOHO,LASCO,C2,white-light,1,100x0,1024,0,1024,0,0
+     * &width=512&height=512&filename=example&sharpen=false&edges=false
      *
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of
      * knowing ahead of time whether the image is a .png, .tif, .flv, etc, and
      * in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      *
-     * @return void
+     * @return image/png or JSON
      */
     public function takeScreenshot()
     {
-        include_once 'src/Image/Screenshot.php';
-
-        $obsDate    = $this->_params['obsDate'];
-        $imageScale = $this->_params['imageLevel'];
-        $quality    = $this->_params['quality'];
-        $layerStrings = explode("/", $this->_params['layers']);
-
-        $imgCoords = explode(",", $this->_params['imageSize']);
-        $imageSize = array("width" => $imgCoords[0], "height" => $imgCoords[1]);
-        $filename  = $this->_params['filename'];
-
-        $options = array();
-        $options['enhanceEdges'] = $this->_params['edges'] || false;
-        $options['sharpen']      = $this->_params['sharpen'] || false;
-
-        if (sizeOf($layerStrings) < 1) {
-            throw new Exception('Invalid layer choices! You must specify at least 1 layer.');
-        }
-
-        $layers = $this->_formatLayerStrings($layerStrings);
-
-        $screenshot = new Image_Screenshot(
-            $obsDate, $imageScale, $options, $imageSize, $filename, $quality
-        );
-        $screenshot->buildImages($layers);
-
-        $composite = $screenshot->getComposite();
-        if (!file_exists($composite)) {
-            throw new Exception('The requested screenshot is either unavailable or does not exist.');
-        }
-
-        if ($this->_params == $_GET) {
-            header('Content-type: image/png');
-            echo file_get_contents($composite);
-        } else {
-            header('Content-type: application/json');
-            // Replace '/var/www/helioviewer', or wherever the directory is,
-            // with 'http://localhost/helioviewer' so it can be displayed.
-            echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $composite));
-        }
+        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        
+        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        return $builder->takeScreenshot($this->_params);
+    }
+    
+    /**
+     * Does the same basic thing as takeScreenshot() but with fewer parameters, and assumes user
+     * wants a full image rather than a piece of it. 
+     * 
+     * $_params[layers] must be in the format: "obs,inst,det,meas/obs,inst,det,meas...". Not necessary
+     * to specify offsets or region of interest.
+     * 
+     * @return image/png or JSON
+     * 
+     * Example api call: http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light
+     *
+     */
+    public function takeFullImageScreenshot()
+    {
+        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        
+        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        return $builder->takeFullImageScreenshot($this->_params);
     }
 
     /**
@@ -430,8 +412,26 @@ class Module_WebClient implements Module
             break;
         case "getViewerImage":
             break;
-        case "formatLayerString":
-            break;
+        case "takeScreenshot":
+        	$required = array('obsDate', 'imageScale', 'layers', 'width', 'height', 'quality');
+        	$optional = array('edges', 'sharpen', 'filename');
+        	$expected = array(
+        		'required' => $required, 
+        		'optional' => $optional,
+        		'floats'   => array('imageScale'),
+        		'dates'	   => array('obsDate'),
+        		'ints'	   => array('width', 'height')
+        	);
+        	break;
+        case "takeFullImageScreenshot":
+        	$required = array('obsDate', 'imageScale', 'width', 'height', 'layers');
+        	$expected = array(
+        		'required' 	=> $required,
+        		'floats'	=> array('imageScale'),
+        		'ints'		=> array('width', 'height'),
+        		'dates'		=> array('obsDate'),
+        	);
+        	break;
         default:
             break;
         }
@@ -441,54 +441,6 @@ class Module_WebClient implements Module
         }
 
         return true;
-    }
-
-    /**
-     * Takes the string representation of a layer from the javascript and
-     * formats it so that only useful/necessary information is included.
-     *
-     * @param {Array} $layers -- an array of strings in the format:
-     *     "obs,inst,det,meas,visible,opacityxxStart,xSize,yStart,ySize"
-     *      The extra "x" was put in the middle so that the string could be
-     *      broken in half and parsing one half by itself rather than parsing
-     *      10 different strings and putting the half that didn't need parsing
-     *      back together.
-     *
-     * @return {Array} $formatted -- The array containing properly
-     *     formatted strings
-     */
-    private function _formatLayerStrings($layers)
-    {
-        $formatted = array();
-
-        foreach ($layers as $layer) {
-            $layerInfo = explode("x", $layer);
-
-            // $meta is now: [xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety]
-            $meta = preg_split("/,/", $layerInfo[1]);
-            $offsetX = $meta[4];
-            $offsetY = $meta[5];
-
-            // Add a "+" in front of positive numbers so that the offsets
-            // are readable by imagemagick
-            $meta[4] = ($offsetX >= 0? "+" : "") . $offsetX;
-            $meta[5] = ($offsetY >= 0? "+" : "") . $offsetY;
-
-            // Extract relevant information from $layerInfo[0]
-            // (obs,inst,det,meas,visible,opacity).
-            $rawName = explode(",", $layerInfo[0]);
-            $opacity = $rawName[5];
-            //Get rid of the "visibility" boolean in the middle of the string.
-            array_splice($rawName, 4);
-
-            $name = implode("_", $rawName);
-            // Stick opacity on the end. the $image string now looks like:
-            // "obs_inst_det_meas,xStart,xSize,yStart,ySize,hcOffsetx,hcOffsety,opacity"
-            $image = $name . "," . implode(",", $meta) . "," . $opacity;
-            array_push($formatted, $image);
-        }
-
-        return $formatted;
     }
 
     /**

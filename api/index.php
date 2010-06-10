@@ -963,6 +963,7 @@ if (!(isset($params) && loadModule($params))) {
 function loadModule($params)
 {
     $valid_actions = array(
+        "takeFullImageScreenshot" => "WebClient",
         "downloadFile"     => "WebClient",
         "getClosestImage"  => "WebClient",
         "getDataSources"   => "WebClient",
@@ -970,10 +971,13 @@ function loadModule($params)
         "getJP2Header"     => "WebClient",
         "getTile"          => "WebClient",
         "launchJHV"        => "WebClient",
+    	"takeScreenshot"   => "WebClient",
         "getEvents"        => "Events",
         "getEventCatalogs" => "Events",
         "getJP2Image"      => "JHelioviewer",
-        "getJPX"           => "JHelioviewer"
+        "getJPX"           => "JHelioviewer",
+    	"buildMovie"	   => "Movies",
+    	"buildQuickMovie"  => "Movies"
     );
 
     include_once "src/Validation/InputValidator.php";
