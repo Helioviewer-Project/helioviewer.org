@@ -124,12 +124,12 @@ var TileLayer = Layer.extend(
             "top" : - this.sunCenterOffsetY
         });
     
-        // Update layer dimensions (only magnitude is important)
+        // Update layer dimensions
         this.dimensions = {
-            "left"   : (this.relWidth  / 2) + this.sunCenterOffsetX,
-            "top"    : (this.relHeight / 2) + this.sunCenterOffsetY,
-            "bottom" : (this.relHeight / 2) + this.sunCenterOffsetY,
-            "right"  : (this.relWidth  / 2) + this.sunCenterOffsetX
+            "left"   : Math.max(this.relWidth  / 2, (this.relWidth  / 2) - this.sunCenterOffsetX),
+            "top"    : Math.max(this.relHeight / 2, (this.relHeight / 2) - this.sunCenterOffsetY),
+            "bottom" : Math.max(this.relHeight / 2, (this.relHeight / 2) + this.sunCenterOffsetY),
+            "right"  : Math.max(this.relWidth  / 2, (this.relWidth  / 2) + this.sunCenterOffsetX)
         };
     
         this.refreshTiles(zoomLevelChanged);
