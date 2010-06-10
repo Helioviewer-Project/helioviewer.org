@@ -12,7 +12,6 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
-require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerImageMetaInformation.php';
 require_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovie.php';
 require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
 
@@ -23,7 +22,7 @@ class Movie_HelioviewerMovieBuilder
 	{
 	}
 	
-	public function buildMovie($params) 
+	public function buildMovie($params, $quickMovie = false) 
 	{
 		$this->_params = $params;
 		
@@ -67,7 +66,7 @@ class Movie_HelioviewerMovieBuilder
 				$movieMeta
         	);
         
-        	$images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startDate, $timeStep, $numFrames);
+        	$images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startDate, $timeStep, $numFrames, $quickMovie);
         	$url 	= $movie->buildMovie($images);
         	
             return $this->_displayMovie($url, $movie);
@@ -76,55 +75,9 @@ class Movie_HelioviewerMovieBuilder
             echo 'Error: ' .$e->getMessage();
             exit();
         }
-	}
-	
-	public function buildQuickMovie($params) 
-	{
-		$this->_params = $params;
-		
-        $width  	= $this->_params['width'];
-        $height 	= $this->_params['height'];
-        $imageScale = $this->_params['imageScale'];   
-        $options 	= array(
-        	'enhanceEdges'	=> false,
-        	'sharpen' 		=> false
-        );
-        
-		$movieMeta = new Image_ImageMetaInformation($width, $height, $imageScale);
-
-        //Check to make sure values are acceptable
-        try {
-            //Limit number of layers to three
-            $layers = explode("/", $this->_params['layers']);
-            if (sizeOf($layers) == 0 || sizeOf($layers) > 3) {
-                $msg = "Invalid layer choices! You must specify 1-3 comma-separated layernames.";
-                throw new Exception($msg);
-            }
-			
-            $numFrames = 20;
-            $startDate = toUnixTimestamp($this->_params['startDate']);
-            $timeStep  = 86400;
-
-        	$movie = new Movie_HelioviewerMovie(
-				$startDate, $numFrames,
-				8, "mp4", $options, $timeStep,
-				"example", 10, $movieMeta
-        	);
-        
-        	$images = $this->_buildDefaultFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startDate, $timeStep, $numFrames);
-        	$url 	= $movie->buildMovie($images);
-        	
-            return $this->_displayMovie($url, $movie);
-
-        } catch(Exception $e) {
-            echo 'Error: ' .$e->getMessage();
-            exit();
-        }
-
-        return 1;    	
 	}
     
-    private function _buildFramesFromMetaInformation($movieMeta, $layers, $startDate, $timeStep, $numFrames) 
+    private function _buildFramesFromMetaInformation($movieMeta, $layers, $startDate, $timeStep, $numFrames, $quickMovie) 
     {
 		$builder 	= new Image_Screenshot_HelioviewerScreenshotBuilder();
         $images 	= array();
@@ -140,6 +93,7 @@ class Movie_HelioviewerMovieBuilder
         $frameNum = 0;
         foreach ($timestamps as $time) {
         	$isoTime = toISOString(parseUnixTimestamp($time));
+        	$image = 
         	$params = array(
         		'width'  	 => $width,
         		'height'	 => $height,
@@ -148,49 +102,18 @@ class Movie_HelioviewerMovieBuilder
         		'layers' 	 => $layers,
         		'filename'	 => "frame" . $frameNum++ . ".png",
         		'quality'	 => $this->_params['quality'],
-        		'sharpen'	 => $this->_params['sharpen'] || false,
-        		'edges'		 => $this->_params['edges'] || false
+        		'sharpen'	 => $this->_params['sharpen'],
+        		'edges'		 => $this->_params['edges']
         	);
         	
-        	$image = $builder->takeScreenshot($params);
+        	if($quickMovie)
+        		$image = $builder->takeFullImageScreenshot($params);
+        	else
+        		$image = $builder->takeScreenshot($params);
         	array_push($images, $image);
         }
     	
         return $images;
-    }
-
-    /*
-     * @TODO: Temporary duplication of code. Will fix soon.
-     */
-    private function _buildDefaultFramesFromMetaInformation($movieMeta, $layers, $startDate, $timeStep, $numFrames) 
-    {
-		$builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $images = array();
-        $timestamps = array();
-        
-        $width  = $movieMeta->width();
-        $height = $movieMeta->height();
-        $scale  = $movieMeta->imageScale();
-        
-        for ($time = $startDate; $time < $startDate + $numFrames * $timeStep; $time += $timeStep) {
-        	array_push($timestamps, $time);
-        }
-        
-        foreach ($timestamps as $time) {
-        	$isoTime = toISOString(parseUnixTimestamp($time));
-        	$params = array(
-        		'width'  	 => $width,
-        		'height'	 => $height,
-        		'imageScale' => $scale,
-        		'obsDate' 	 => $isoTime,
-        		'layers' 	 => $layers,
-        	);
-
-        	$image = $builder->takeFullImageScreenshot($params);
-        	array_push($images, $image);
-        }
-    	
-        return $images;    	
     }
     
     private function _displayMovie($url, $movie) 

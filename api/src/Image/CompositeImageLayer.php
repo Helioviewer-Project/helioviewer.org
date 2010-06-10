@@ -4,13 +4,16 @@
 
 abstract class Image_CompositeImageLayer //extends Image_SubFieldImage
 {
-	protected $metaInfo;
+	protected $outputFile;
 	protected $timestamp;
+	protected $image;
 	protected $_cacheDir = HV_CACHE_DIR;
 	
-	public function __construct($timestamp)
+	public function __construct($timestamp, $image, $outputFile)
 	{
-		$this->timestamp = $timestamp;
+		$this->timestamp 	= $timestamp;
+		$this->outputFile 	= $outputFile;
+		$this->image		= $image;
 	}
 	
 	public function getFilePathString() 
@@ -20,7 +23,7 @@ abstract class Image_CompositeImageLayer //extends Image_SubFieldImage
 	
 	public function getImageDimensions()
 	{
-		return $this->_image->_getImageDimensions($this->getFilePathString());
+		return $this->image->_getImageDimensions($this->getFilePathString());
 	}
 	
 	public function setNewFilePath($filePath) 
