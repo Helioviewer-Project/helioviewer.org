@@ -72,9 +72,11 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startDate', 'zoomLevel', 'numFrames', 'frameRate', 'timeStep', 'quality'),
+                "required" => array('startDate', 'imageScale', 'width', 'height', 'numFrames', 'frameRate', 'timeStep', 'quality', 'hqFormat', 'filename'),
+            	"optional" => array('edges', 'sharpen'),
                 "dates"    => array('startDate'),
-                "ints"     => array('zoomLevel, numFrames, frameRate, timeStep, quality')
+                "ints"     => array('numFrames, frameRate, timeStep, quality', 'width', 'height'),
+            	"floats"   => array('imageScale')
             );
             break;
         case "playMovie":
@@ -82,6 +84,14 @@ class Module_Movies implements Module
             // TODO: Before re-enabling, validate file input.
             // Allow only filename specification.
             return false;
+        case "buildQuickMovie":
+        	$expected = array(
+        		"required"  => array('startDate', 'imageScale', 'width', 'height', 'layers'),
+        		"dates"		=> array('startDate'),
+        		"ints"		=> array('width', 'height'),
+        		"floats"	=> array('imageScale')
+        	);
+        	break;
         default:
             break;
         }
@@ -108,14 +118,14 @@ class Module_Movies implements Module
     /**
      * buildMovie
      *
-     * All possible parameters: startDate, zoomLevel, numFrames, frameRate,
-     * timeStep, layers, imageSize ("x,y"), filename, edges, sharpen, format.
+     * All possible parameters: startDate, imageScale, numFrames, frameRate,
+     * timeStep, layers, imageSize ("x,y"), filename, edges, sharpen, format, quality.
      *
      * API example: http://localhost/helioviewer/api/index.php?action=buildMovie
-     *     &startDate=1041465600&zoomLevel=13&numFrames=20&frameRate=8
-     *     &timeStep=86400&layers=SOH,EIT,EIT,304,1,100x0,1034,0,1034,-230,-215
-     *     /SOH,LAS,0C2,0WL,1,100x0,1174,28,1110,-1,0
-     *     &imageSize=588,556&filename=example&sharpen=false&edges=false
+     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&numFrames=20&frameRate=8
+     *     &timeStep=86400&layers=SOHO,EIT,EIT,304,1,100x0,1024,0,1024,0,0
+     *     /SOHO,LASCO,C2,white-light,1,100x0,1024,0,1024,0,0
+     *     &width=512&height=512&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4
      *
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of
@@ -126,62 +136,26 @@ class Module_Movies implements Module
      */
     public function buildMovie ()
     {
-        include_once 'src/Movie/HelioviewerMovie.php';
+		include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+		$builder = new Movie_HelioviewerMovieBuilder();
+		return $builder->buildMovie($this->_params);
+    }
 
-        // Required parameters
-        $startDate = $this->_params['startDate'];
-        $zoomLevel = $this->_params['zoomLevel'];
-        $numFrames = $this->_params['numFrames'];
-        $frameRate = $this->_params['frameRate'];
-        $timeStep  = $this->_params['timeStep'];
-        $quality   = $this->_params['quality'];
-
-        // Layerstrings are separated by "/"
-        $layerStrings = explode("/", $this->_params['layers']);
-
-        $imageCoords = explode(",", $this->_params['imageSize']);
-        $imageSize   = array(
-            "width"  => $imageCoords[0],
-            "height" => $imageCoords[1]
-        );
-        $filename    = $this->_params['filename'];
-        $hqFormat    = $this->_params['format'];
-        //$hqFormat = "mp4";
-
-        // Optional parameters
-        $options = array();
-        $options['enhanceEdges'] = $this->_params['edges']   || false;
-        $options['sharpen']      = $this->_params['sharpen'] || false;
-
-        //Check to make sure values are acceptable
-        try {
-            //Limit number of layers to three
-            if (strlen($this->_params['layers']) == 0) {
-                $msg = "Invalid layer choices! You must specify 1-3 command-separate layernames.";
-                throw new Exception($msg);
-            }
-
-            //Limit number of frames
-            if (($numFrames < 10) || ($numFrames > HV_MAX_MOVIE_FRAMES)) {
-                $msg = "Invalid number of frames. Number of frames should be " .
-                "at least 10 and no more than " . HV_MAX_MOVIE_FRAMES . ".";
-                throw new Exception($msg);
-            }
-
-            $layers = $this->_formatLayerStrings($layerStrings);
-
-            $movie = new Movie_HelioviewerMovie(
-                $layers, $startDate, $zoomLevel, $numFrames, $frameRate,
-                $hqFormat, $options, $timeStep, $imageSize, $filename, $quality
-            );
-            $movie->buildMovie();
-
-        } catch(Exception $e) {
-            echo 'Error: ' .$e->getMessage();
-            exit();
-        }
-
-        return 1;
+    /**
+     * buildQuickMovie
+     *
+     * Similar to buildMovie but with less parameters and more defaults.
+     * All possible parameters: startDate, imageScale, layers, width, height.
+     * API example: http://localhost/helioviewer/api/index.php?action=buildQuickMovie
+     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304/SOHO,LASCO,C2,white-light&width=512&height=512
+     *
+     * @return void
+     */
+    public function buildQuickMovie() 
+    {
+    	include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+ 		$builder = new Movie_HelioviewerMovieBuilder();
+ 		return $builder->buildQuickMovie($this->_params);
     }
 
     /**

@@ -1,0 +1,16 @@
+[10-Jun-2010 09:33:18] PHP Warning:  require_once(/var/www/hv/api/lib/phpvideotoolkit/config.php) [<a href='function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /var/www/hv/api/src/Movie/HelioviewerMovie.php on line 15
+[10-Jun-2010 09:33:18] PHP Stack trace:
+[10-Jun-2010 09:33:18] PHP   1. {main}() /var/www/hv/api/index.php:0
+[10-Jun-2010 09:33:18] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[10-Jun-2010 09:33:18] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:999
+[10-Jun-2010 09:33:18] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[10-Jun-2010 09:33:18] PHP   5. include_once() /var/www/hv/api/src/Module/Movies.php:139
+[10-Jun-2010 09:33:18] PHP   6. require_once() /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php:16
+[10-Jun-2010 09:33:18] PHP Fatal error:  require_once() [<a href='function.require'>function.require</a>]: Failed opening required '/var/www/hv/api/lib/phpvideotoolkit/config.php' (include_path='.:/usr/share/php:/usr/share/pear') in /var/www/hv/api/src/Movie/HelioviewerMovie.php on line 15
+[10-Jun-2010 09:33:18] PHP Stack trace:
+[10-Jun-2010 09:33:18] PHP   1. {main}() /var/www/hv/api/index.php:0
+[10-Jun-2010 09:33:18] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[10-Jun-2010 09:33:18] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:999
+[10-Jun-2010 09:33:18] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[10-Jun-2010 09:33:18] PHP   5. include_once() /var/www/hv/api/src/Module/Movies.php:139
+[10-Jun-2010 09:33:18] PHP   6. require_once() /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php:16
