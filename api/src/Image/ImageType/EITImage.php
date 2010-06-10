@@ -45,4 +45,9 @@ class Image_ImageType_EITImage extends Image_SubFieldImage
 	{
 		return "EIT/" . $meas;
 	}
+	
+	public function getWaterMarkName() 
+	{
+		return "EIT $this->_measurement\n";
+	}
 }

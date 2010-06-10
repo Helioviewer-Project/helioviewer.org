@@ -5,12 +5,12 @@
 abstract class Image_CompositeImageLayer //extends Image_SubFieldImage
 {
 	protected $metaInfo;
+	protected $timestamp;
 	protected $_cacheDir = HV_CACHE_DIR;
 	
-	public function __construct($metadata)
+	public function __construct($timestamp)
 	{
-		$this->metaInfo = $metadata;
-		//parent::__construct($sourceJp2, $outputFile, $metadata->ROI(), $format, $jp2Width, $jp2Height, $jp2Scale, $this->metaInfo->imageScale());
+		$this->timestamp = $timestamp;
 	}
 	
 	public function getFilePathString() 
@@ -26,6 +26,11 @@ abstract class Image_CompositeImageLayer //extends Image_SubFieldImage
 	public function setNewFilePath($filePath) 
 	{
 		$this->outputFile = $filePath;
+	}
+	
+	public function timestamp() 
+	{
+		return $this->timestamp;
 	}
 }
 ?>

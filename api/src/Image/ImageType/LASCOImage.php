@@ -62,6 +62,11 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
 		return "LASCO-$det/$meas";
 	}
 	
+	public function getWaterMarkName() 
+	{
+		return "LASCO $this->_detector\n";
+	}
+	
     /**
      * Generates a portion of an ImageMagick convert command to apply an alpha mask
      * 

@@ -48,20 +48,25 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
      *
      * @return void
      */
-    public function buildImages($layerMetaInfoArray)
+    public function buildImages($layerInfoArray)
     {
         $this->layerImages = array();
 
         // Find the closest image for each layer, add the layer information string to it
-        foreach ($layerMetaInfoArray as $meta) {
-            $closestImage = $this->_getClosestImage($meta);
+        foreach ($layerInfoArray as $layer) {
+            $closestImage = $this->_getClosestImage($layer['sourceId']);
+			$obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
             
            	$pathToFile 	= $this->_getJP2Path($closestImage);
            	$tmpOutputFile 	= $this->_getTmpOutputPath($closestImage);
            	
             $image = new Image_HelioviewerCompositeImageLayer(
-            	$pathToFile, $tmpOutputFile, 'png', $meta, 
-            	$closestImage['width'], $closestImage['height'], $closestImage['scale'], $closestImage['date']
+            	$pathToFile, $tmpOutputFile, 'png', 
+            	$layer['width'], $layer['height'],		$layer['imageScale'], 
+            	$layer['roi'], 	 $obsInfo['instrument'], $obsInfo['detector'],
+            	$obsInfo['measurement'], $layer['offsetX'], $layer['offsetY'], 
+            	$closestImage['width'], $closestImage['height'], 
+				$closestImage['scale'], $closestImage['date']
             );
             array_push($this->layerImages, $image);
         }
@@ -84,14 +89,21 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
      *
      * @return array closestImg, an array with the image's id, filepath, filename, date
      */
-    private function _getClosestImage($meta)
+    private function _getClosestImage($sourceId)
     {
         include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();
-        $time = $this->timestamp;
-
-        $closestImg = $imgIndex->getClosestImage($time, $imgIndex->getSourceId($meta->observatory(), $meta->instrument(), $meta->detector(), $meta->measurement()));
+        
+        $closestImg = $imgIndex->getClosestImage($this->timestamp, $sourceId);
         return $closestImg;
+    }
+    
+    private function _getObservatoryInformation($sourceId)
+    {
+        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
+        $imgIndex = new Database_ImgIndex();
+   		$result = $imgIndex->getDatasourceInformationFromSourceId($sourceId);
+        return $result;    	
     }
 }
 ?>
