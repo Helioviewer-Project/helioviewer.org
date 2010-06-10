@@ -32,14 +32,9 @@ require_once 'Tile.php';
  */
 class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
 {
-    private $_observatory;
-    private $_instrument;
-    private $_detector;
-    private $_measurement;
-    private $_sunCenterOffsetX;
-    private $_sunCenterOffsetY;
     private $_cacheDir = HV_CACHE_DIR;
     private $_noImage  = HV_EMPTY_TILE;
+    protected $_image;
 
     /**
      * Helioviewer Tile Constructor
@@ -66,17 +61,14 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
      */
     public function __construct(
         $uri, $date, $x, $y, $tileScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale,
-        $sunCenterOffsetX, $sunCenterOffsetY, $format, $obs, $inst, $det, $meas, $display = true
+        $solarCenterOffsetX, $solarCenterOffsetY, $format, $obs, $inst, $det, $meas, $display = true
     ) {
-        $this->_observatory      = $obs;
-        $this->_instrument       = $inst;
-        $this->_detector         = $det;
-        $this->_measurement      = $meas;
-        $this->_sunCenterOffsetX = $sunCenterOffsetX;
-        $this->_sunCenterOffsetY = $sunCenterOffsetY;
-
+        $type 		= strtoupper($inst) . "Image";
+        $classname	= "Image_ImageType_$type";
+        require_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
+        
         $jp2  = HV_JP2_DIR . $uri;
-        $tile = $this->_getTileFilepath($jp2, $date, $x, $y, $tileScale, $format);
+        $tile = $this->getTileFilepath($jp2, $date, $x, $y, $tileScale, $format, $classname, $det, $meas);
         
         // If tile already exists in cache, use it
         // TODO: Once a smarter caching system is in place, take advantage of
@@ -88,223 +80,31 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
                 exit();
             }
         }
-
+          
         // Now we are ready to call the base Tile constructor
         parent::__construct(
-            $jp2, $tile, $x, $y, $tileScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format
+            $tileScale, $tileSize, $jp2Scale, $x, $y
         );
 
-        $colorTable = $this->_getColorTable();
-
-        if ($colorTable) {
-            $this->setColorTable($colorTable);
-        }
-
-        if ($this->_instrument == "LASCO") {
-            $this->setAlphaMask(true);
-        }
-
-        $this->buildImage();
+        $roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $tileScale, $tileSize, $this->relativeTileSize, $x, $y);
+             
+        // Dynamically generate a class that corresponds to the type of image. Current classes available:
+        // EITImage, MDIImage, LASCOImage
+		$this->_image = new $classname(
+			$tileSize, $tileSize, $date, $jp2, $roi, $format, $jp2Width, $jp2Height, 
+			$jp2Scale, $tileScale, $det, $meas, $solarCenterOffsetX, $solarCenterOffsetY, $tile
+		);
+		
+		// Padding is calculated in the tile and not in the xxxImage because padding is done differently between tiles and
+		// CompositeImageLayers. 
+		$padding = $this->computePadding();
+		$this->_image->setPadding($padding);
+		$this->_image->setTileSize($tileSize);
+		$this->_image->build();
 
         if ($display) {
-            $this->display();
-        }
-    }
-
-    /**
-     * getTileFilePath
-     *
-     * @param string $jp2    The location of the tile's source JP2 image.
-     * @param string $date   The date of the source JP2 image (e.g. "2003-11-08 01:19:35")
-     * @param int    $x      Tile x-coordinate
-     * @param int    $y      Tile y-coordinate
-     * @param float  $scale  Image scale of requested tile
-     * @param string $format The file format used by the tile
-     *
-     * @return string The path in the cache where the tile should be stored
-     */
-    private function _getTileFilepath($jp2, $date, $x, $y, $scale, $format)
-    {
-        // Base directory
-        $filepath = $this->_cacheDir . "/";
-
-        // Base filename
-        $exploded = explode("/", $jp2);
-        $filename = substr(end($exploded), 0, -4);
-
-        // Date information
-        $year  = substr($date, 0, 4);
-        $month = substr($date, 5, 2);
-        $day   = substr($date, 8, 2);
-
-        /**
-        $fieldArray = array(
-            $year, $month, $day, $this->_observatory, $this->_instrument,
-            $this->_detector, $this->_measurement
-        );
-        */
-       
-        // Work-around 03/23/2010
-        // Nicknames not currently included in filename or query. Hard-coding future
-        // versions of JP2 images are modified to include nicknames
-        if ($this->_instrument == "EIT") {
-            if ($this->_measurement == "171") {
-                $filepath .= "EIT/171";
-            } else if ($this->_measurement == "195") {
-                $filepath .= "EIT/195";
-            } else if ($this->_measurement == "284") {
-                $filepath .= "EIT/284";
-            } else {
-                $filepath .= "EIT/304";
-            }
-        } else if ($this->_instrument == "MDI") {
-            if ($this->_measurement == "continuum") {
-                $filepath .= "MDI/continuum";
-            } else {
-                $filepath .= "MDI/magnetogram";
-            }
-        } else if ($this->_instrument == "LASCO") {
-            if ($this->_detector == "C2") {
-                $filepath .= "LASCO-C2/white-light";
-            } else {
-                $filepath .= "LASCO-C3/white-light";
-            }
-        } else if ($this->_instrument == "AIA") {
-            if ($this->_measurement == "171") {
-                $filepath .= "AIA/171";
-            }
-        } else {
-            throw new Exception("Unrecognized image type.");
-        }
-        
-        $filepath .= "/$year/$month/$day/";
-
-        // Convert coordinates to strings
-        $xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
-        if (substr($x, 0, 1) == "-") {
-            $xStr = "-" . str_pad(substr($x, 1), 2, '0', STR_PAD_LEFT);
-        }
-
-        $yStr = "+" . str_pad($y, 2, '0', STR_PAD_LEFT);
-        if (substr($y, 0, 1) == "-") {
-            $yStr = "-" . str_pad(substr($y, 1), 2, '0', STR_PAD_LEFT);
-        }
-
-        $filepath .= $filename . "_" . $scale . "_" . $xStr . "_" . $yStr . ".$format";
-
-        return $filepath;
-    }
-
-    /**
-     * Gets the filepath for the color look-up table that corresponds to the image.
-     *
-     * Note 2009/09/15: Would it make sense to return color table when initially
-     * looking up image, and pass to tile requests?
-     *
-     * @return string|bool Returns the filepath for the color lookup table, or false
-     *                     if none is found.
-     */
-    private function _getColorTable()
-    {
-        if ($this->_detector == "EIT") {
-            return "resources/images/color-tables/ctable_EIT_{$this->_measurement}.png";
-        } else if ($this->_detector == "C2") {
-            return "resources/images/color-tables/ctable_idl_3.png";
-        } else if ($this->_detector == "C3") {
-            return "resources/images/color-tables/ctable_idl_1.png";
-        } else if ($this->_detector == "AIA") {
-            return "resources/images/color-tables/ctable_EIT_{$this->_measurement}.png"; // 2010/04/12 Temp work-around
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Generates a portion of an ImageMagick convert command to apply an alpha mask
-     * 
-     * Note: More accurate values for radii used to generate the LASCO C2 & C3 alpha masks:
-     *  rocc_outer = 7.7;   // (.9625 * orig)
-     *  rocc_inner = 2.415; // (1.05 * orig)
-     *  
-     *  LASCO C2 Image Scale
-     *      $lascoC2Scale = 11.9;
-     *  
-     *  Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
-     *      $rsunArcSeconds = 959.705;
-     *      $rsun           = $rsunArcSeconds / $lascoC2Scale; 
-     *                      = 80.647 // Previously, used hard-coded value of 80.814221
-     *                      
-     *  Generating the alpha masks:
-     *      $rocc_inner = 2.415;
-     *      $rocc_outer = 7.7;
-     *
-     *      // convert to pixels
-     *      $radius_inner = $rocc_inner * $rsun;
-     *      $radius_outer = $rocc_outer * $rsun;
-     *      $innerCircleY = $crpix2 + $radius_inner;
-     *      $outerCircleY = $crpix2 + $radius_outer;
-     *
-     *      exec("convert -size 1024x1024 xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\"
-     *          -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" +antialias LASCO_C2_Mask.png")
-     *
-     *  Masks have been pregenerated and stored in order to improve performance.
-     *  
-     *  Note on offsets:
-     *  
-     *   The original CRPIX1 and CRPIX2 values used to determine the location of the center of the sun in the image
-     *   are specified with respect to a bottom-left corner origin. The values passed in to this method from the tile
-     *   request, however, specify the offset with respect to a top-left corner origin. This simply makes things
-     *   a bit easier since ImageMagick also treats images as having a top-left corner origin.
-     *   
-     *  Region of interest:
-     *  
-     *    The region of interest (ROI) below is specified at the original JP2 image scale.
-     *
-     * @param string $input image filepath
-     *
-     * @return string An imagemagick sub-command for generating the necessary alpha mask
-     */
-    public function applyAlphaMask($input)
-    {
-        $maskWidth  = 1040;
-        $maskHeight = 1040;
-        $mask       = "resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
-        
-        // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
-        // the original JP2 scale / (2 ^ $reduce)
-        if ($this->reduce > 0) {
-            $maskScaleFactor = 1 / pow(2, $this->reduce);
-        } else {
-            $maskScaleFactor = 1;
-        }
-        
-        //var_dump($this);
-        $maskTopLeftX = ($this->roi['left'] + ($maskWidth - $this->jp2Width)/2 - $this->_sunCenterOffsetX)   * $maskScaleFactor;
-        $maskTopLeftY = ($this->roi['top'] +  ($maskHeight - $this->jp2Height)/2 - $this->_sunCenterOffsetY) * $maskScaleFactor;
-
-        // Crop dimensions
-        $cropWidth  = $this->subfieldWidth  * $maskScaleFactor;
-        $cropHeight = $this->subfieldHeight * $maskScaleFactor;
-        
-        // Length of tile edge and gravity
-        if ($this->padding) {
-            $side    = $this->padding["width"];
-            $gravity = $this->padding["gravity"];
-        } else {
-            $side    = $this->relativeTileSize * $maskScaleFactor;
-            $gravity = "SouthWest";
-        }
-
-        $str = " -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
-               "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
-               "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite ";
-        
-        $cmd = sprintf(
-            $str, $input, $gravity, $side, $side, $mask, 100 * $maskScaleFactor,
-            $cropWidth, $cropHeight, $maskTopLeftX, $maskTopLeftY, $gravity, $side, $side
-        );
-
-        return $cmd;
+            $this->_image->display();
+        } 
     }
 
     /**
@@ -357,5 +157,58 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             logErrorMsg($e->getMessage(), true);
         }
     }
+  
+    
+    /**
+     * getTileFilePath
+     *
+     * @param string $jp2    The location of the tile's source JP2 image.
+     * @param string $date   The date of the source JP2 image (e.g. "2003-11-08 01:19:35")
+     * @param int    $x      Tile x-coordinate
+     * @param int    $y      Tile y-coordinate
+     * @param float  $scale  Image scale of requested tile
+     * @param string $format The file format used by the tile
+     *
+     * @return string The path in the cache where the tile should be stored
+     */
+    protected function getTileFilepath($jp2, $date, $x, $y, $scale, $format, $classname, $det, $meas)
+    {
+        // Base directory
+        $filepath = $this->_cacheDir . "/";
+
+        // Base filename
+        $exploded = explode("/", $jp2);
+        $filename = substr(end($exploded), 0, -4);
+
+        // Date information
+        $year  = substr($date, 0, 4);
+        $month = substr($date, 5, 2);
+        $day   = substr($date, 8, 2);
+
+        /**
+        $fieldArray = array(
+            $year, $month, $day, $this->_observatory, $this->_instrument,
+            $this->_detector, $this->_measurement
+        );
+        */
+		$filepath .= $classname::getFilePathNickName($det, $meas);
+        
+        $filepath .= "/$year/$month/$day/";
+
+        // Convert coordinates to strings
+        $xStr = "+" . str_pad($x, 2, '0', STR_PAD_LEFT);
+        if (substr($x, 0, 1) == "-") {
+            $xStr = "-" . str_pad(substr($x, 1), 2, '0', STR_PAD_LEFT);
+        }
+
+        $yStr = "+" . str_pad($y, 2, '0', STR_PAD_LEFT);
+        if (substr($y, 0, 1) == "-") {
+            $yStr = "-" . str_pad(substr($y, 1), 2, '0', STR_PAD_LEFT);
+        }
+
+        $filepath .= $filename . "_" . $scale . "_" . $xStr . "_" . $yStr . ".$format";
+
+        return $filepath;
+    }	
 }
 ?>
