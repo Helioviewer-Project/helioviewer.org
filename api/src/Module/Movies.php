@@ -72,7 +72,7 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startDate', 'imageScale', 'width', 'height', 'numFrames', 'frameRate', 'timeStep', 'quality', 'hqFormat', 'filename'),
+                "required" => array('startDate', 'layers', 'imageScale', 'width', 'height', 'numFrames', 'frameRate', 'timeStep', 'quality', 'hqFormat', 'filename'),
             	"optional" => array('edges', 'sharpen'),
                 "dates"    => array('startDate'),
                 "ints"     => array('numFrames, frameRate, timeStep, quality', 'width', 'height'),
@@ -123,8 +123,16 @@ class Module_Movies implements Module
      *
      * API example: http://localhost/helioviewer/api/index.php?action=buildMovie
      *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&numFrames=20&frameRate=8
-     *     &timeStep=86400&layers=SOHO,EIT,EIT,304,1,100x0,1024,0,1024,0,0
-     *     /SOHO,LASCO,C2,white-light,1,100x0,1024,0,1024,0,0
+     *     &timeStep=86400&layers=3,1,100,0,1024,0,1024,0,0/4,1,100,0,1024,0,1024,0,0
+     *     &width=512&height=512&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4
+     * 
+     * The first number of each layer represents the layer's source id in the database. Alternatively,
+     * you can pass in the layer's name instead of the source id:
+     * 
+     * http://localhost/helioviewer/api/index.php?action=buildMovie
+     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&numFrames=20&frameRate=8
+     *     &timeStep=86400&layers=SOHO,EIT,EIT,304,1,100,0,1024,0,1024,0,0
+     *     /SOHO,LASCO,C2,white-light,1,100,0,1024,0,1024,0,0
      *     &width=512&height=512&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4
      *
      * Note that filename does NOT have the . extension on it. The reason for
@@ -147,8 +155,14 @@ class Module_Movies implements Module
      * Similar to buildMovie but with less parameters and more defaults.
      * All possible parameters: startDate, imageScale, layers, width, height.
      * API example: http://localhost/helioviewer/api/index.php?action=buildQuickMovie
-     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304/SOHO,LASCO,C2,white-light&width=512&height=512
+     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3/4t&width=512&height=512
      *
+     * The number for each layer represents the layer's source id in the database. Alternatively,
+     * you can pass in the layer name instead of the source id:
+     *  
+     * http://localhost/helioviewer/api/index.php?action=buildQuickMovie
+     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304/SOHO,LASCO,C2,white-light&width=512&height=512
+     *     
      * @return void
      */
     public function buildQuickMovie() 

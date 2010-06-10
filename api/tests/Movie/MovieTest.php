@@ -102,7 +102,7 @@ class MovieTest extends PHPUnit_Framework_TestCase
 			'hqFormat'	 => "mp4",
 			'quality'	 => 10,
 			'filename'	 => "test",
-			'layers'	 => "SOHO,EIT,EIT,284,true,100x0,1024,0,1024,0,0/SOHO,LASCO,C2,white-light,true,100x0,1024,0,1024,0,0"
+			'layers'	 => "3,true,100,0,1024,0,1024,0,0/4,true,100,0,1024,0,1024,0,0"
 		);
 		$movieClient = new Module_Movies($params);
 		$file = $movieClient->buildMovie();
@@ -116,7 +116,7 @@ class MovieTest extends PHPUnit_Framework_TestCase
 			'height' 	 => 512,
 			'imageScale' => 21.04,
 			'startDate'  => $this->startTime,
-			'layers'	 => "SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light"
+			'layers'	 => "1/4"
 		);
 		
 		$movieClient = new Module_Movies($params);
