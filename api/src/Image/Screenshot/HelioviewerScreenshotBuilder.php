@@ -12,7 +12,6 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'HelioviewerScreenshot.php';
-require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerImageMetaInformation.php';
 
 class Image_Screenshot_HelioviewerScreenshotBuilder 
 {
@@ -39,7 +38,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
         	$params['obsDate'], 
         	$imageMeta, $options, 
-        	$params['filename'], 
+        	$params['filename'] . ".png", 
         	$params['quality']
         );
         
@@ -88,7 +87,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             	'imageScale' => $params['imageScale'],
             	'roi' 		 => $roi,
             	'offsetX' 	 => 0,
-            	'offsetY' 	 => 0
+            	'offsetY' 	 => 0,
+            	'opacity'	 => 100
             );
             array_push($metaArray, $layerInfoArray);
         }
@@ -146,24 +146,26 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
            		) = $layerArray;
         	}
         	
-			$roi = array(
-            	'top' 	 => $yStart,
-            	'left' 	 => $xStart,
-            	'bottom' => $yStart + $ySize,
-            	'right'	 => $xStart + $xSize
-            );
-            //$metaObject = new Image_HelioviewerImageMetaInformation($width, $height, $imageScale, $obs, $inst, $det, $meas, $roi, $offsetX, $offsetY);
-
-            $layerInfoArray = array(
-            	'sourceId' 	 => $sourceId,
-            	'width' 	 => $xSize,
-            	'height'	 => $ySize,
-            	'imageScale' => $imageScale,
-            	'roi' 		 => $roi,
-            	'offsetX' 	 => $offsetX,
-            	'offsetY' 	 => $offsetY
-            );
-            array_push($metaArray, $layerInfoArray);
+        	if($visible) {
+				$roi = array(
+	            	'top' 	 => $yStart,
+	            	'left' 	 => $xStart,
+	            	'bottom' => $yStart + $ySize,
+	            	'right'	 => $xStart + $xSize
+	            );
+	            
+	            $layerInfoArray = array(
+	            	'sourceId' 	 => $sourceId,
+	            	'width' 	 => $xSize,
+	            	'height'	 => $ySize,
+	            	'imageScale' => $imageScale,
+	            	'roi' 		 => $roi,
+	            	'offsetX' 	 => $offsetX,
+	            	'offsetY' 	 => $offsetY, 
+	            	'opacity'	 => $opacity
+	            );
+	            array_push($metaArray, $layerInfoArray);
+        	}
         }
 
         return $metaArray;
@@ -181,17 +183,16 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             throw new Exception('The requested screenshot is either unavailable or does not exist.');
         }
 
-       /* if ($params == $_GET) {
+        if ($params == $_GET) {
             header('Content-type: image/png');
             echo file_get_contents($composite);
-        }*/ if ($params == $_POST) {
+        } else if ($params == $_POST) {
             header('Content-type: application/json');
             // Replace '/var/www/helioviewer', or wherever the directory is,
             // with 'http://localhost/helioviewer' so it can be displayed.
             echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $composite));
         } else {
-			header('Content-type: image/png');
-            echo file_get_contents($composite);;
+			return $composite;
         }
     }
     

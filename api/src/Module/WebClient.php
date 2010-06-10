@@ -298,6 +298,7 @@ class Module_WebClient implements Module
      * The first number in each layer is the source id of the image. 
      * 
      * Alternatively, you can send it this message, which uses observatory information instead of source ids: 
+     * 
      * http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z
      * &imageScale=21.04&quality=10&layers=SOHO,EIT,EIT,171,1,100,0,1024,0,1024,0,0/SOHO,LASCO,C2,white-light,1,100,0,1024,0,1024,0,0
      * &width=512&height=512&filename=example&sharpen=false&edges=false
@@ -327,13 +328,15 @@ class Module_WebClient implements Module
      * @return image/png or JSON
      * 
      * Example api call: 
-     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=2/4
+     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z
+     * &width=512&height=512&imageScale=21.04&layers=2/4
      * 
      * The number for each layer is the layer's source id.
      * 
      * Alternatively you can include the layer names instead of the source id, in this format:
      * 
-     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light
+     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z
+     * &width=512&height=512&imageScale=21.04&layers=SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light
      *
      */
     public function takeFullImageScreenshot()

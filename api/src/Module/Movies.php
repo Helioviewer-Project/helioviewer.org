@@ -168,8 +168,20 @@ class Module_Movies implements Module
     public function buildQuickMovie() 
     {
     	include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+    	$defaults = array(
+    		'numFrames' => 20,
+    		'frameRate' => 8,
+    		'timeStep'  => HV_DEFAULT_TIMESTEP,
+    		'filename'	=> "movie" . time(),
+    		'sharpen'	=> false,
+    		'edges'		=> false,
+    		'quality'	=> 10,
+    		'hqFormat'	=> "mp4",
+    	);
+    	
+    	$this->_params = array_merge($defaults, $this->_params);
  		$builder = new Movie_HelioviewerMovieBuilder();
- 		return $builder->buildQuickMovie($this->_params);
+ 		return $builder->buildMovie($this->_params, true);
     }
 
     /**

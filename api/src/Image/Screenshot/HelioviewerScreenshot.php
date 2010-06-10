@@ -44,7 +44,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
     /**
      * Builds the screenshot.
      *
-     * @param {Array} layerMetaInfoArray -- An array of HelioviewerImageMetaInformation objects, one for each layer
+     * @param {Array} layerMetaInfoArray -- An associative array of 
+     * 	sourceId,width,height,imageScale,roi,offsetX,offsetY for each layer
      *
      * @return void
      */
@@ -64,7 +65,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
             	$pathToFile, $tmpOutputFile, 'png', 
             	$layer['width'], $layer['height'],		$layer['imageScale'], 
             	$layer['roi'], 	 $obsInfo['instrument'], $obsInfo['detector'],
-            	$obsInfo['measurement'], $layer['offsetX'], $layer['offsetY'], 
+            	$obsInfo['measurement'], $obsInfo['layeringOrder'], 
+            	$layer['offsetX'], $layer['offsetY'], $layer['opacity'],
             	$closestImage['width'], $closestImage['height'], 
 				$closestImage['scale'], $closestImage['date']
             );
@@ -79,13 +81,14 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
     }
     
     private function _getTmpOutputPath($closestImage) {
-    	return $this->extractedDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . $this->metaInfo->width() . "x" . $this->metaInfo->height() . ".png";
+    	return $this->extractedDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
+    		$this->metaInfo->imageScale() . "_" . $this->metaInfo->width() . "x" . $this->metaInfo->height() . ".png";
     }
 
     /**
      * Queries the database to find the closest image to a given timestamp.
      *
-     * @param HelioviewerImageMetaInformation meta
+     * @param int $sourceId
      *
      * @return array closestImg, an array with the image's id, filepath, filename, date
      */
