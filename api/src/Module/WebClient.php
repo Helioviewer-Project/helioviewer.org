@@ -292,9 +292,16 @@ class Module_WebClient implements Module
      * looked at and creates a composite image (a Screenshot) of all the layers.
      *
      * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z
-     * &imageScale=21.04&quality=10&layers=SOHO,EIT,EIT,304,1,100x0,1024,0,1024,0,0/SOHO,LASCO,C2,white-light,1,100x0,1024,0,1024,0,0
+     * &imageScale=21.04&quality=10&layers=1,1,100,0,1024,0,1024,0,0/4,1,100,0,1024,0,1024,0,0
      * &width=512&height=512&filename=example&sharpen=false&edges=false
      *
+     * The first number in each layer is the source id of the image. 
+     * 
+     * Alternatively, you can send it this message, which uses observatory information instead of source ids: 
+     * http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z
+     * &imageScale=21.04&quality=10&layers=SOHO,EIT,EIT,171,1,100,0,1024,0,1024,0,0/SOHO,LASCO,C2,white-light,1,100,0,1024,0,1024,0,0
+     * &width=512&height=512&filename=example&sharpen=false&edges=false
+     * 
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of
      * knowing ahead of time whether the image is a .png, .tif, .flv, etc, and
@@ -319,7 +326,14 @@ class Module_WebClient implements Module
      * 
      * @return image/png or JSON
      * 
-     * Example api call: http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light
+     * Example api call: 
+     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=2/4
+     * 
+     * The number for each layer is the layer's source id.
+     * 
+     * Alternatively you can include the layer names instead of the source id, in this format:
+     * 
+     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light
      *
      */
     public function takeFullImageScreenshot()

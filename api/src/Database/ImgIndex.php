@@ -176,7 +176,39 @@ class Database_ImgIndex
         return $meta;
     }
 
+    /**
+     * Takes in a source id and returns the corresponding 
+     * observatory, instrument, detector, measurement, and
+     * layeringOrder information.
+     * @param {int} $id  Source Id
+     * @return {Array} $result_array  Contains values for 
+     * "observatory", "instrument", "detector", "measurement", 
+     * and "layeringOrder"
+     */
+	public function getDatasourceInformationFromSourceId ($id)
+	{
+		$sql = sprintf(
+            "SELECT
+                observatory.name AS observatory,
+                instrument.name AS instrument,
+                detector.name AS detector,
+                measurement.name AS measurement,
+                datasource.layeringOrder AS layeringOrder
+            FROM datasource
+                LEFT JOIN observatory ON datasource.observatoryId = observatory.id
+                LEFT JOIN instrument ON datasource.instrumentId = instrument.id
+                LEFT JOIN detector ON datasource.detectorId = detector.id
+                LEFT JOIN measurement ON datasource.measurementId = measurement.id
+            WHERE
+                datasource.id='%s'",
+            mysqli_real_escape_string($this->_dbConnection->link, $id)
+        );
+        $result = $this->_dbConnection->query($sql);
+        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
 
+        return $result_array;		
+	}
+	
     /**
      * Returns the sourceId for a given set of parameters.
      *

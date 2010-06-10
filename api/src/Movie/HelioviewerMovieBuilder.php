@@ -27,10 +27,10 @@ class Movie_HelioviewerMovieBuilder
 	{
 		$this->_params = $params;
 		
-       	$width  = $this->_params['width'];
-        $height = $this->_params['height'];
+       	$width  	= $this->_params['width'];
+        $height 	= $this->_params['height'];
         $imageScale = $this->_params['imageScale'];   
-        $options = array(
+        $options 	= array(
         	'enhanceEdges'	=> $this->_params['edges'] || false,
         	'sharpen' 		=> $this->_params['sharpen'] || false
         );
@@ -68,7 +68,7 @@ class Movie_HelioviewerMovieBuilder
         	);
         
         	$images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startDate, $timeStep, $numFrames);
-        	$url = $movie->buildMovie($images);
+        	$url 	= $movie->buildMovie($images);
         	
             return $this->_displayMovie($url, $movie);
 
@@ -81,10 +81,11 @@ class Movie_HelioviewerMovieBuilder
 	public function buildQuickMovie($params) 
 	{
 		$this->_params = $params;
-        $width  = $this->_params['width'];
-        $height = $this->_params['height'];
+		
+        $width  	= $this->_params['width'];
+        $height 	= $this->_params['height'];
         $imageScale = $this->_params['imageScale'];   
-        $options = array(
+        $options 	= array(
         	'enhanceEdges'	=> false,
         	'sharpen' 		=> false
         );
@@ -111,7 +112,7 @@ class Movie_HelioviewerMovieBuilder
         	);
         
         	$images = $this->_buildDefaultFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startDate, $timeStep, $numFrames);
-        	$url = $movie->buildMovie($images);
+        	$url 	= $movie->buildMovie($images);
         	
             return $this->_displayMovie($url, $movie);
 
@@ -125,8 +126,8 @@ class Movie_HelioviewerMovieBuilder
     
     private function _buildFramesFromMetaInformation($movieMeta, $layers, $startDate, $timeStep, $numFrames) 
     {
-		$builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $images = array();
+		$builder 	= new Image_Screenshot_HelioviewerScreenshotBuilder();
+        $images 	= array();
         $timestamps = array();
         
         $width  = $movieMeta->width();
@@ -198,13 +199,13 @@ class Movie_HelioviewerMovieBuilder
             throw new Exception('The requested movie is either unavailable or does not exist.');
         }
 
-        if ($this->_params == $_GET) {
+       /* if ($this->_params == $_GET) {
             return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL,$url), $movie->width(), $movie->height());
-        } else if ($this->_params == $_POST) {
+        }*/ if ($this->_params == $_POST) {
         	header('Content-type: application/json');
         	echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL,$url));
-        } else { // So tests will pass.
-        	return $url;
+        } else {
+        	return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL,$url), $movie->width(), $movie->height());
         }
     }
 }
