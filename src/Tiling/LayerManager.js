@@ -53,6 +53,11 @@ var LayerManager = Class.extend(
     /**
      * @description Returns the largest width and height of any layers (does not have to be from same layer)
      * @return {Object} The width and height of the largest layer
+     * 
+     * In order to allow Helioviewer to fully display all layers, a simple solution is to determine the
+     * "maximum dimensions" for all layers. That is, if you were to flatten all layers into a single one,
+     * what would it's dimensions be? If the viewport is able to view this entire layer, then all of it's component
+     * layers will be fully-navigable. 
      */
     getMaxDimensions: function () {
         var maxLeft   = 0,
