@@ -191,7 +191,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             $this->_detector, $this->_measurement
         );
         */
-		$filepath .= $classname::getFilePathNickName($det, $meas);
+		$filepath .= call_user_func($classname . '::getFilePathNickName', $det, $meas);
         
         $filepath .= "/$year/$month/$day/";
 

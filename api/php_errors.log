@@ -14,3 +14,19 @@
 [10-Jun-2010 09:33:18] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
 [10-Jun-2010 09:33:18] PHP   5. include_once() /var/www/hv/api/src/Module/Movies.php:139
 [10-Jun-2010 09:33:18] PHP   6. require_once() /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php:16
+[10-Jun-2010 11:20:40] PHP Strict standards:  Non-static method Image_ImageType_EITImage::getFilePathNickName() should not be called statically, assuming $this from incompatible context in /var/www/hv/api/src/Image/Tiling/HelioviewerTile.php on line 194
+[10-Jun-2010 11:20:40] PHP Stack trace:
+[10-Jun-2010 11:20:40] PHP   1. {main}() /var/www/hv/api/index.php:0
+[10-Jun-2010 11:20:40] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[10-Jun-2010 11:20:40] PHP   3. Module_WebClient->execute() /var/www/hv/api/index.php:999
+[10-Jun-2010 11:20:40] PHP   4. Module_WebClient->getTile() /var/www/hv/api/src/Module/WebClient.php:51
+[10-Jun-2010 11:20:40] PHP   5. Image_Tiling_HelioviewerTile->__construct() /var/www/hv/api/src/Module/WebClient.php:223
+[10-Jun-2010 11:20:40] PHP   6. Image_Tiling_HelioviewerTile->getTileFilepath() /var/www/hv/api/src/Image/Tiling/HelioviewerTile.php:71
+[10-Jun-2010 11:23:42] PHP Fatal error:  Call to undefined function getFilePathNickName() in /var/www/hv/api/src/Image/Tiling/HelioviewerTile.php on line 194
+[10-Jun-2010 11:23:42] PHP Stack trace:
+[10-Jun-2010 11:23:42] PHP   1. {main}() /var/www/hv/api/index.php:0
+[10-Jun-2010 11:23:42] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[10-Jun-2010 11:23:42] PHP   3. Module_WebClient->execute() /var/www/hv/api/index.php:999
+[10-Jun-2010 11:23:42] PHP   4. Module_WebClient->getTile() /var/www/hv/api/src/Module/WebClient.php:51
+[10-Jun-2010 11:23:42] PHP   5. Image_Tiling_HelioviewerTile->__construct() /var/www/hv/api/src/Module/WebClient.php:223
+[10-Jun-2010 11:23:42] PHP   6. Image_Tiling_HelioviewerTile->getTileFilepath() /var/www/hv/api/src/Image/Tiling/HelioviewerTile.php:71
