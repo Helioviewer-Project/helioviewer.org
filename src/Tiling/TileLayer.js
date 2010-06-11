@@ -77,63 +77,7 @@ var TileLayer = Layer.extend(
     removeTiles: function () {
         this.tiles = [];
     },
-
-    /**
-     * @description Reload the tile layer
-     * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
-     * 
-     * Notes:
-     * 
-     * 1. Rotation:
-     *   Currently, EIT and MDI images are prerotated, and their corresponding meta-information
-     *   is guaranteed to be accurate. LASCO images on the other hand are rotated during FITS -> JP2
-     *   conversion. The meta-information from the FITS header is not modified, however, and reflects
-     *   the original unrotated image. Therefor, when rotated = true, the coordinates should be flipped
-     *   to reflect the rotation that was already done to the image itself.
-     *   
-     * 2. Center offset:
-     *   The values for origSunCenterOffsetX and origSunCenterOffsetY reflect the x and y coordinates with the origin
-     *   at the bottom-left corner of the image, not the top-left corner.
-     *    
-     */
-    reset: function (zoomLevelChanged) {
-
-        // Ratio of original JP2 image scale to the viewport/desired image scale
-        this.scaleFactor = this.jp2Scale / this.viewport.getImageScale();
-        
-        // Update relevant dimensions
-        this.relWidth  = this.jp2Width  * this.scaleFactor;
-        this.relHeight = this.jp2Height * this.scaleFactor;
-        
-        // Sun center offset at the original JP2 image scale (with respect to top-left origin)
-        this.origSunCenterOffsetX =   parseFloat((this.sunCenterX - (this.jp2Width  / 2)).toPrecision(8));
-        this.origSunCenterOffsetY = - parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
-        
-        // Offset image
-        this.sunCenterOffsetX = parseFloat((this.origSunCenterOffsetX * this.scaleFactor).toPrecision(8));
-        this.sunCenterOffsetY = parseFloat((this.origSunCenterOffsetY * this.scaleFactor).toPrecision(8));
-        
-        // Account for rotation (02/25/2010: Image is rotated about center of the sun, not the image center!)
-        //if (this.rotated) {
-        //  this.sunCenterOffsetX = - this.sunCenterOffsetX; // 02/25/2010: Is sun mirrored instead of rotated?
-        //  this.sunCenterOffsetY = - this.sunCenterOffsetY;
-        //}
-        
-        this.domNode.css({
-            "left": - this.sunCenterOffsetX,
-            "top" : - this.sunCenterOffsetY
-        });
     
-        // Update layer dimensions
-        this.dimensions = {
-            "left"   : Math.max(this.relWidth  / 2, (this.relWidth  / 2) - this.sunCenterOffsetX),
-            "top"    : Math.max(this.relHeight / 2, (this.relHeight / 2) - this.sunCenterOffsetY),
-            "bottom" : Math.max(this.relHeight / 2, (this.relHeight / 2) + this.sunCenterOffsetY),
-            "right"  : Math.max(this.relWidth  / 2, (this.relWidth  / 2) + this.sunCenterOffsetX)
-        };
-    
-        this.refreshTiles(zoomLevelChanged);
-    },
     
     /**
      * @description Loads the closest image in time to that requested
@@ -178,7 +122,17 @@ var TileLayer = Layer.extend(
         $.extend(this, image);
  
         this.viewport.checkTiles(true);
-        this.reset(false);
+        
+        //TEMP (06/11/2010): Temporarily simplifying in order to debug centering during zoom
+        this.sunCenterX = this.jp2Width/2;
+        this.sunCenterY = this.jp2Height/2;
+        
+        // Sun center offset at the original JP2 image scale (with respect to top-left origin)
+        this.origSunCenterOffsetX =   parseFloat((this.sunCenterX - (this.jp2Width  / 2)).toPrecision(8));
+        this.origSunCenterOffsetY = - parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
+        
+        this._computeRelativeParameters();        
+        this.refreshTiles(false);
                    
         // Update viewport sandbox if necessary
         this.viewport.updateSandbox();
@@ -197,6 +151,58 @@ var TileLayer = Layer.extend(
         }
     },        
     
+
+    /**
+     * @description Handles zoom level changes
+     */
+    onZoomLevelChange: function () {
+        this._computeRelativeParameters();        
+        this.refreshTiles(true);
+    },
+    
+    /**
+     * Computes layer parameters relative to the current viewport image scale
+     * 
+     * Notes:
+     * 
+     * 1. Rotation:
+     *   Currently, EIT and MDI images are prerotated, and their corresponding meta-information
+     *   is guaranteed to be accurate. LASCO images on the other hand are rotated during FITS -> JP2
+     *   conversion. The meta-information from the FITS header is not modified, however, and reflects
+     *   the original unrotated image. Therefor, when rotated = true, the coordinates should be flipped
+     *   to reflect the rotation that was already done to the image itself.
+     *   
+     * 2. Center offset:
+     *   The values for origSunCenterOffsetX and origSunCenterOffsetY reflect the x and y coordinates with the origin
+     *   at the bottom-left corner of the image, not the top-left corner.
+     */
+    _computeRelativeParameters: function () {
+        // Ratio of original JP2 image scale to the viewport/desired image scale
+        this.scaleFactor = this.jp2Scale / this.viewport.getImageScale();
+        
+        // Update relevant dimensions
+        this.relWidth  = this.jp2Width  * this.scaleFactor;
+        this.relHeight = this.jp2Height * this.scaleFactor;
+        
+        // Offset image
+        this.sunCenterOffsetX = parseFloat((this.origSunCenterOffsetX * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetY = parseFloat((this.origSunCenterOffsetY * this.scaleFactor).toPrecision(8));
+        
+        // Update layer dimensions
+        this.dimensions = {
+            "left"   : Math.max(this.relWidth  / 2, (this.relWidth  / 2) - this.sunCenterOffsetX),
+            "top"    : Math.max(this.relHeight / 2, (this.relHeight / 2) - this.sunCenterOffsetY),
+            "bottom" : Math.max(this.relHeight / 2, (this.relHeight / 2) + this.sunCenterOffsetY),
+            "right"  : Math.max(this.relWidth  / 2, (this.relWidth  / 2) + this.sunCenterOffsetX)
+        };
+        
+        // Center of the tile layer
+        this.domNode.css({
+            "left": - this.sunCenterOffsetX,
+            "top" : - this.sunCenterOffsetY
+        });
+    },
+
     /**
      * @description Refresh displayed tiles
      * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed

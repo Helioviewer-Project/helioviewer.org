@@ -102,9 +102,9 @@ var LayerManager = Class.extend(
     /**
      * @description Resets each of the layers
      */
-    resetLayers: function () {
+    onZoomLevelChange: function () {
         $.each(this._layers, function () {
-            this.reset(true);
+            this.onZoomLevelChange();
         });
     },
     
