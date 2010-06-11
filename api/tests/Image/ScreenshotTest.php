@@ -39,6 +39,7 @@ class ScreenshotTest extends PHPUnit_Framework_TestCase
 		$this->time = "2010-03-01T12:12:12Z"; // ISO String
 	}
 /*
+ * outdated. No longer use HelioviewerImageMetaInformation
 	public function testSingleLayerScreenshotCreation() {
 		require_once 'api/src/Image/Screenshot/HelioviewerScreenshot.php';
 		$meta = new Image_HelioviewerImageMetaInformation(1024, 1024, 1, "SOHO", "EIT", "EIT", 171, $this->roi, 0, 0);

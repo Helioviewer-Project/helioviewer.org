@@ -20,6 +20,10 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
     protected $layerImages;
     protected $timestamp;
     protected $imageSize;
+    protected $offsetLeft;
+    protected $offsetRight;
+    protected $offsetBottom;
+    protected $offsetTop;
 
     /**
      * Create an instance of Image_Screenshot
@@ -29,10 +33,14 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
      * @param string $filename   Location where the screenshot will be stored
      * @param int    $quality    Screenshot compression quality
      */
-    public function __construct($timestamp, $meta, $options, $filename, $quality)
+    public function __construct($timestamp, $meta, $options, $filename, $quality, $offsets)
     {
         $this->timestamp     = $timestamp;
         $this->quality       = $quality;
+        $this->offsetLeft	 = $offsets['left'];
+        $this->offsetTop	 = $offsets['top'];
+        $this->offsetBottom	 = $offsets['bottom'];
+        $this->offsetRight	 = $offsets['right'];
 
         $tmpDir = HV_CACHE_DIR . "/screenshots";
         $this->extractedDir = HV_CACHE_DIR . "/extracted_images";
@@ -44,7 +52,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
     /**
      * Builds the screenshot.
      *
-     * @param {Array} layerMetaInfoArray -- An array of HelioviewerImageMetaInformation objects, one for each layer
+     * @param {Array} layerMetaInfoArray -- An associative array of 
+     * 	sourceId,width,height,imageScale,roi,offsetX,offsetY for each layer
      *
      * @return void
      */
@@ -60,11 +69,16 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
            	$pathToFile 	= $this->_getJP2Path($closestImage);
            	$tmpOutputFile 	= $this->_getTmpOutputPath($closestImage);
            	
+           	$roi 	 = $this->_convertArcSecondsToImagePixels($closestImage);
+           	$offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
+           	$offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
+           	
             $image = new Image_HelioviewerCompositeImageLayer(
             	$pathToFile, $tmpOutputFile, 'png', 
             	$layer['width'], $layer['height'],		$layer['imageScale'], 
-            	$layer['roi'], 	 $obsInfo['instrument'], $obsInfo['detector'],
-            	$obsInfo['measurement'], $layer['offsetX'], $layer['offsetY'], 
+            	$roi, 	 		 $obsInfo['instrument'], $obsInfo['detector'],
+            	$obsInfo['measurement'], $obsInfo['layeringOrder'], 
+            	$offsetX, $offsetY, 	$layer['opacity'],
             	$closestImage['width'], $closestImage['height'], 
 				$closestImage['scale'], $closestImage['date']
             );
@@ -74,18 +88,37 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
         $this->compileImages();
     }
     
+    private function _convertArcSecondsToImagePixels($image)
+    {
+    	$width 	 = $image['width'];
+    	$height  = $image['height'];
+    	$centerX = $image['sunCenterX'];
+    	// Center coordinates are based on the origin being in the bottom-left. Convert to top-left.
+    	$centerY = $height - $image['sunCenterY'];
+    	$scale 	 = $image['scale'];
+
+    	$roi 	 = array(
+    		'top' 	 => max($this->offsetTop /$scale + $centerY, 0),
+    		'left' 	 => max($this->offsetLeft/$scale + $centerX, 0),
+    		'bottom' => min($this->offsetBottom/$scale + $centerY, $image['height']),
+    		'right'  => min($this->offsetRight /$scale + $centerX, $image['width'])
+    	);
+    	return $roi;
+    }
+    
     private function _getJP2Path($closestImage) {
     	return HV_JP2_DIR . $closestImage['filepath'] . "/" . $closestImage['filename'];
     }
     
     private function _getTmpOutputPath($closestImage) {
-    	return $this->extractedDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . $this->metaInfo->width() . "x" . $this->metaInfo->height() . ".png";
+    	return $this->extractedDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
+    		$this->metaInfo->imageScale() . "_" . $this->metaInfo->width() . "x" . $this->metaInfo->height() . ".png";
     }
 
     /**
      * Queries the database to find the closest image to a given timestamp.
      *
-     * @param HelioviewerImageMetaInformation meta
+     * @param int $sourceId
      *
      * @return array closestImg, an array with the image's id, filepath, filename, date
      */

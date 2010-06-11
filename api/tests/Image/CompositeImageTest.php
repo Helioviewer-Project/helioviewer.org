@@ -15,10 +15,13 @@ require_once 'PHPUnit/Framework.php';
 require_once 'api/src/Config.php';
 require_once 'api/src/Image/HelioviewerCompositeImageLayer.php';
 require_once 'api/src/Image/Composite/HelioviewerCompositeImage.php';
-require_once 'api/src/Image/HelioviewerImageMetaInformation.php';
+
 
 $config = new Config("settings/Config.ini");
 
+/*
+ * These tests are outdated as they use HelioviewerImageMetaInformation, which has been taken out.
+ */
 class CompositeImageTest extends PHPUnit_Framework_TestCase
 {
 	protected $eitImage;

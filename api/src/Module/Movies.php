@@ -72,8 +72,7 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startDate', 'layers', 'imageScale', 'width', 'height', 'numFrames', 'frameRate', 'timeStep', 'quality', 'hqFormat', 'filename'),
-            	"optional" => array('edges', 'sharpen'),
+                "required" => array('startDate', 'layers', 'imageScale', 'width', 'height'),
                 "dates"    => array('startDate'),
                 "ints"     => array('numFrames, frameRate, timeStep, quality', 'width', 'height'),
             	"floats"   => array('imageScale')
@@ -84,14 +83,6 @@ class Module_Movies implements Module
             // TODO: Before re-enabling, validate file input.
             // Allow only filename specification.
             return false;
-        case "buildQuickMovie":
-        	$expected = array(
-        		"required"  => array('startDate', 'imageScale', 'width', 'height', 'layers'),
-        		"dates"		=> array('startDate'),
-        		"ints"		=> array('width', 'height'),
-        		"floats"	=> array('imageScale')
-        	);
-        	break;
         default:
             break;
         }
@@ -118,22 +109,21 @@ class Module_Movies implements Module
     /**
      * buildMovie
      *
-     * All possible parameters: startDate, imageScale, numFrames, frameRate,
-     * timeStep, layers, imageSize ("x,y"), filename, edges, sharpen, format, quality.
-     *
      * API example: http://localhost/helioviewer/api/index.php?action=buildMovie
-     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&numFrames=20&frameRate=8
-     *     &timeStep=86400&layers=3,1,100,0,1024,0,1024,0,0/4,1,100,0,1024,0,1024,0,0
-     *     &width=512&height=512&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4
+     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000
+     *     &offsetRightBottom=5000,5000&width=512&height=512
+     *     // Optional parameters to add on to the end: &numFrames=20&frameRate=8&timeStep=86400
+     *     			&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4&display=true
      * 
      * The first number of each layer represents the layer's source id in the database. Alternatively,
      * you can pass in the layer's name instead of the source id:
      * 
      * http://localhost/helioviewer/api/index.php?action=buildMovie
-     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&numFrames=20&frameRate=8
-     *     &timeStep=86400&layers=SOHO,EIT,EIT,304,1,100,0,1024,0,1024,0,0
-     *     /SOHO,LASCO,C2,white-light,1,100,0,1024,0,1024,0,0
-     *     &width=512&height=512&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4
+     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100
+     *     /SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000
+     *     &offsetRightBottom=5000,5000&width=512&height=512
+     *     // Optional parameters to add on to the end: &numFrames=20&frameRate=8&timeStep=86400
+     *     			&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4&display=true
      *
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of
@@ -147,29 +137,6 @@ class Module_Movies implements Module
 		include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
 		$builder = new Movie_HelioviewerMovieBuilder();
 		return $builder->buildMovie($this->_params);
-    }
-
-    /**
-     * buildQuickMovie
-     *
-     * Similar to buildMovie but with less parameters and more defaults.
-     * All possible parameters: startDate, imageScale, layers, width, height.
-     * API example: http://localhost/helioviewer/api/index.php?action=buildQuickMovie
-     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3/4t&width=512&height=512
-     *
-     * The number for each layer represents the layer's source id in the database. Alternatively,
-     * you can pass in the layer name instead of the source id:
-     *  
-     * http://localhost/helioviewer/api/index.php?action=buildQuickMovie
-     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304/SOHO,LASCO,C2,white-light&width=512&height=512
-     *     
-     * @return void
-     */
-    public function buildQuickMovie() 
-    {
-    	include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
- 		$builder = new Movie_HelioviewerMovieBuilder();
- 		return $builder->buildQuickMovie($this->_params);
     }
 
     /**

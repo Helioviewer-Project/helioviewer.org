@@ -64,9 +64,6 @@ abstract class Image_Composite_CompositeImage
      */
     protected function compileImages()
     {
-        // opacities array holds the "opacityValue" and "opacityGroup" for each image.
-        $opacities   = array("value" => array(), "group" => array());
-
         try  {
             if (empty($this->layerImages)) {
                 throw new Exception("Error: No valid layers specified in layerImages[" . $this->layerImages . "]");
@@ -74,9 +71,9 @@ abstract class Image_Composite_CompositeImage
 
             // Composite images on top of one another if there are multiple layers.
 	        if (sizeOf($this->layerImages) > 1) {
-	            $this->composite = $this->_buildComposite($opacities);
+	            $this->composite = $this->_buildComposite();
 	        } else {
-	            // Otherwise, the image is a screenshot and needs to be watermarked.
+	            // Otherwise, the image has one layer and just needs to be watermarked.
 	            $this->composite = $this->_watermark($this->layerImages[0]);
 	        }
 		    //Optional settings
@@ -175,35 +172,29 @@ abstract class Image_Composite_CompositeImage
      * @param array $opacities The opacities to use for each layer in the composite
      * @return string Filepath to the composited, watermarked image
      */
-    private function _buildComposite($opacities)
+    private function _buildComposite()
     {
-        $sortedImages = $this->layerImages;//$this->_sortByLayeringOrder($images, $opacities["group"], $opacities["value"]);
-		$tmpImg = $this->tmpDir . "/" . $this->outputFile;
+        $sortedImages 	= $this->_sortByLayeringOrder($this->layerImages);
+		$tmpImg 		= $this->tmpDir . "/" . $this->outputFile;
+		$filesToDelete 	= array();
 
         $cmd = HV_PATH_CMD . "composite -gravity Center";
 
         $layerNum = 1;
         foreach ($sortedImages as $image) {
-/*            $img = $image["image"];
-            $op  = $image["opacity"];
-
+        	$opacity = $image->opacity();
             // If the image has an opacity level of less than 100, need to set its opacity.
-            if ($op < 100) {
-                // Get the image's uri
-                $imgFilepath = explode("/", $img);
-                $imgUri = array_pop($imgFilepath);
+            if ($opacity < 100) {
+                $file 	  = $image->getFilePathString();
+                $tmpOpImg = substr($file, 0, -4) . "-op" . $opacity . ".tif";
 
-                $tmpOpImg = $this->transImageDir . substr($imgUri, 0, -4) . "-op" . $op . ".tif";
+                $opacityCmd = HV_PATH_CMD . "convert $file -alpha on -channel o -evaluate set $opacity% $tmpOpImg";
+                exec(escapeshellcmd($opacityCmd));
 
-                // If it's not in the cache, make it
-                if (!file_exists($tmpOpImg)) {
-                    $opacityCmd = HV_PATH_CMD . "convert $img -alpha on -channel o -evaluate set $op% $tmpOpImg";
-                    exec(escapeshellcmd($opacityCmd));
-                }
-
-                $img = $tmpOpImg;
+                $image->setNewFilepath($tmpOpImg);
+                array_push($filesToDelete, $tmpOpImg);
             }
-*/
+
             $cmd .= " " . $image->getFilePathString();
     
             // If there are more than 2 layers, then the composite command needs to be called after every layer,
@@ -211,6 +202,7 @@ abstract class Image_Composite_CompositeImage
             if ($layerNum > 1 && isset($sortedImages[$layerNum])) {
                 $tmpCompImg = $this->tmpDir . "/" . time() . "-comp.tif";
                 $cmd .= " -compose dst-over $tmpCompImg && composite -gravity Center $tmpCompImg";
+                array_push($filesToDelete, $tmpCompImg);
             }
             $layerNum++;
         }
@@ -238,36 +230,36 @@ abstract class Image_Composite_CompositeImage
         
 		$image = $sortedImages[0];
 		$image->setNewFilePath($tmpImg);
+		
+		$this->_cleanUp($filesToDelete);
         return $this->_watermark($image);
+    }
+    
+    /**
+     * Deletes any extra or temporary files that were created in the building process. 
+     * @param $files -- array of filename strings
+     */
+    private function _cleanUp($files)
+    {
+    	foreach($files as $file) {
+    		if(file_exists($file))
+    			unlink($file);
+    	}
     }
 
     /**
      * Sorts the layers by their associated layering order
      *
      * Layering orders that are supported currently are 3 (C3 images), 2 (C2 images), 1 (EIT/MDI images).
-     * The array is sorted like this: 3, 2, 1(layer order that the user has in their viewport).
-     * The parameters "$images" and "$opacities" are each an array_reverse of the arrays they came from.
+     * The array is sorted by increasing layeringOrder.
      *
      * @param array $images        Composite image layers
-     * @param array $layerOrders   Image layer layering orders
-     * @param array $opacityValues layer opacities
      *
      * @return array Array containing the sorted image layers
      */
-    private function _sortByLayeringOrder($images, $layerOrders, $opacityValues)
+    private function _sortByLayeringOrder($images)
     {
         $sortedImages = array();
-
-        /* Multisort sorts by layering order and by value, which is not good, because the order of layers with
-         * layering order 1 needs to be preserved.
-         *
-         * Example:
-         *
-         * If the bottom layer is EIT 100% opacity, and the next layer is MDI 25%, and the top layer
-         * is another EIT 60%, we do not want to sort this because the picture will come out differently
-         * (EIT 100%, EIT 60%, MDI 25%) than what the user was looking at.
-         */
-        $i = 0;
 
         // Array to hold any images with layering order 2 or 3.
         // These images must go in the sortedImages array last because of how compositing works.
@@ -275,13 +267,13 @@ abstract class Image_Composite_CompositeImage
 
         // Push all layering order 1 images into the sortedImages array,
         // push layering order 2 and higher into separate array.
-        foreach ($layerOrders as $layerOrder) {
-            if ($layerOrder > 1) {
-                array_push($groups[$layerOrder], array("image" => $images[$i], "opacity" => $opacityValues[$i]));
+        foreach ($images as $image) {
+        	$order = $image->layeringOrder();
+            if ($order > 1) {
+                array_push($groups[$order], $image);
             } else {
-                array_push($sortedImages, array("image" => $images[$i], "opacity" => $opacityValues[$i]));
+                array_push($sortedImages, $image);
             }
-            $i++;
         }
 
         // Push the group 2's and group 3's into the sortedImages array now.
