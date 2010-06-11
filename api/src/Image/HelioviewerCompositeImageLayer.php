@@ -42,7 +42,7 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
 		
 		parent::__construct($timestamp, $image, $outputFile);
 
-		if($this->_imageNotInCache())
+		if(HV_DISABLE_CACHE || $this->_imageNotInCache())
 			$this->image->build();
 	}
 	

@@ -19,10 +19,21 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
 	{
 	}
 	
-	public function takeScreenshot($params) {
+	public function takeScreenshot($originalParams) {
+    	// Any settings specified in $this->_params will override $defaults
+    	$defaults = array(
+			'edges'		=> false,
+			'sharpen' 	=> false,
+			'filename' 	=> "screenshot" . time() . ".png",
+			'quality' 	=> 10,
+    		'display'	=> true
+		);
+		$params = array_merge($defaults, $originalParams);
+		
         $width  = $params['width'];
         $height = $params['height'];
-        $imageScale = $params['imageScale'];   
+        $imageScale = $params['imageScale'];
+        
         $options = array(
         	'enhanceEdges'	=> $params['edges'] || false,
         	'sharpen' 		=> $params['sharpen'] || false
@@ -34,74 +45,20 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         	$params['layers'],
         	$imageScale, $width, $height
         );
+
+        list($left,$top) 	 = explode(",", $params['offsetLeftTop']);
+        list($right,$bottom) = explode(",", $params['offsetRightBottom']);
         
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
         	$params['obsDate'], 
         	$imageMeta, $options, 
         	$params['filename'] . ".png", 
-        	$params['quality']
+        	$params['quality'],
+        	array('top' => $top, 'left' => $left, 'bottom' => $bottom, 'right' => $right)
         );
         
         $screenshot->buildImages($layerArray);
-
-        return $this->_displayScreenshot($screenshot->getComposite(), $params);
-	}
-	
-	public function takeFullImageScreenshot($params) {
-    	$options = array(
-        	'enhanceEdges'	=> false,
-        	'sharpen' 		=> false
-        );
-        $layers = explode("/", $params['layers']);
-        
-        $imageMeta = new Image_ImageMetaInformation(
-        	$params['width'], 
-        	$params['height'], 
-        	$params['imageScale']
-        );
-
-        /*
-         * @TODO Don't hardcode bottom and right! These numbers work for SOHO images but will break on SDO.
-         */
-        $roi = array(
-        	'top' 	 => 0,
-        	'left' 	 => 0,
-        	'bottom' => 1024,
-        	'right'	 => 1024
-        );
-        
-        $metaArray = array();
-        foreach ($layers as $layer) {
-        	$layerArray = explode(",", $layer);
-	        if(sizeOf($layerArray) > 1) {
-				list($observatory, $instrument, $detector, $measurement) = $layerArray;
-				$sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
-	        } else 
-	        {
-				$sourceId = $layer;
-	        }
-            $layerInfoArray = array(
-            	'sourceId' 	 => $sourceId,
-            	'width' 	 => $params['width'],
-            	'height'	 => $params['height'],
-            	'imageScale' => $params['imageScale'],
-            	'roi' 		 => $roi,
-            	'offsetX' 	 => 0,
-            	'offsetY' 	 => 0,
-            	'opacity'	 => 100
-            );
-            array_push($metaArray, $layerInfoArray);
-        }
-        
-        $screenshot = new Image_Screenshot_HelioviewerScreenshot(
-        	$params['obsDate'], 
-        	$imageMeta, $options, 
-        	"screenshot" . time() . ".png", 10
-        );
-        
-        $screenshot->buildImages($metaArray);
-
-        return $this->_displayScreenshot($screenshot->getComposite(), $params);
+        return $this->_displayScreenshot($screenshot->getComposite(), $originalParams, $params['display']);
 	}
 
     /**
@@ -110,7 +67,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      * each layer. 
      *
      * @param {Array} $layers -- a string of layers in the format:
-     *     "sourceId,visible,opacity,xStart,xSize,yStart,ySize,offsetX,offsetY", 
+     *     "sourceId,visible,opacity", 
      *     layers are separated by "/"
      * @param {float} $imageScale
      * @param {int} $width
@@ -131,37 +88,18 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         foreach ($layerStrings as $layer) {
         	$layerArray = explode(",", $layer);
         	if(sizeOf($layerArray) > 10) {
-				list(
-					$observatory, $instrument, $detector, $measurement, $visible, $opacity,
-					$xStart, $xSize, $yStart, $ySize, $offsetX, $offsetY
-				) = $layerArray;
+				list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
 				$sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
+        	} else {
+           		list($sourceId, $visible, $opacity) = $layerArray;
         	}
         	
-        	else 
-        	{
-           		list(
-           			$sourceId, $visible, $opacity, $xStart, $xSize, $yStart, $ySize, 
-           			$offsetX, $offsetY
-           		) = $layerArray;
-        	}
-        	
-        	if($visible) {
-				$roi = array(
-	            	'top' 	 => $yStart,
-	            	'left' 	 => $xStart,
-	            	'bottom' => $yStart + $ySize,
-	            	'right'	 => $xStart + $xSize
-	            );
-	            
+        	if($visible) {     
 	            $layerInfoArray = array(
 	            	'sourceId' 	 => $sourceId,
-	            	'width' 	 => $xSize,
-	            	'height'	 => $ySize,
+	            	'width' 	 => $width,
+	            	'height'	 => $height,
 	            	'imageScale' => $imageScale,
-	            	'roi' 		 => $roi,
-	            	'offsetX' 	 => $offsetX,
-	            	'offsetY' 	 => $offsetY, 
 	            	'opacity'	 => $opacity
 	            );
 	            array_push($metaArray, $layerInfoArray);
@@ -178,12 +116,12 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      * @param {Array} $params -- Array of parameters from the API call
      * @return void
      */
-    private function _displayScreenshot($composite, $params) {
+    private function _displayScreenshot($composite, $params, $display) {
         if (!file_exists($composite)) {
             throw new Exception('The requested screenshot is either unavailable or does not exist.');
         }
 
-        if ($params == $_GET) {
+        if ($display || $params == $_GET) {
             header('Content-type: image/png');
             echo file_get_contents($composite);
         } else if ($params == $_POST) {
