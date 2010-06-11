@@ -125,7 +125,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         } else {
             $maskScaleFactor = 1;
         }
-        
+
         //var_dump($this);
         $maskTopLeftX = ($this->roi['left'] + ($maskWidth  - $this->jp2Width) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
         $maskTopLeftY = ($this->roi['top'] +  ($maskHeight - $this->jp2Height)/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
@@ -133,7 +133,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         // Crop dimensions
         $cropWidth  = $this->subfieldWidth  * $maskScaleFactor;
         $cropHeight = $this->subfieldHeight * $maskScaleFactor;
-        
+
         // Length of tile edge and gravity
         if ($this->padding) {
             $side    = $this->padding["width"];
@@ -151,7 +151,6 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
             $str, $input, $gravity, $side, $side, $mask, 100 * $maskScaleFactor,
             $cropWidth, $cropHeight, $maskTopLeftX, $maskTopLeftY, $gravity, $side, $side
         );
-
         return $cmd;
     }
 }
