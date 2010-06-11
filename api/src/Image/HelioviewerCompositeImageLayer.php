@@ -16,69 +16,55 @@ require_once 'CompositeImageLayer.php';
 
 class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
 {	
+	protected $layeringOrder;
+	protected $opacity;
+	
 	public function __construct(
 		$sourceJp2, $outputFile, $format, $width, $height, $imageScale, $roi, $instrument, $detector, 
-		$measurement, $offsetX, $offsetY, $jp2Width, $jp2Height, $jp2Scale, $timestamp
+		$measurement, $layeringOrder, $offsetX, $offsetY, $opacity, $jp2Width, $jp2Height, $jp2Scale, $timestamp
 	)
 	{
-		parent::__construct($timestamp);
+		$this->layeringOrder = $layeringOrder;
+		$this->opacity		 = $opacity;
 		
         $type = strtoupper($instrument) . "Image";
         require_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
         
         $classname = "Image_ImageType_" . $type;
         
-        $this->_image = new $classname(
+        $image = new $classname(
         	$width, $height, $timestamp, $sourceJp2, $roi, $format, $jp2Width, $jp2Height,
         	$jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
         );
         
 		$padding = $this->_computePadding();
-		$this->_image->setPadding($padding);
+		$image->setPadding($padding);
 		
-		$this->outputFile = $outputFile;
-		if($this->_imageNotInCache())
-			$this->_image->build();
+		parent::__construct($timestamp, $image, $outputFile);
+
+		if(HV_DISABLE_CACHE || $this->_imageNotInCache())
+			$this->image->build();
 	}
 	
 	public function getWaterMarkName() {
-		return $this->_image->getWaterMarkName();
+		return $this->image->getWaterMarkName();
 	}
 	
 	public function getWaterMarkTimestamp() {
 		// Add extra spaces between date and time for readability.
 		return str_replace("T", "   ", $this->timestamp) . "\n";		
 	}
-/*	
-    public function observatory() 
+
+	public function layeringOrder() 
 	{
-		return $this->metaInfo->observatory();
+		return $this->layeringOrder;
 	}
 	
-	public function instrument() 
+	public function opacity()
 	{
-		return $this->metaInfo->instrument();
+		return $this->opacity;
 	}
 	
-	public function detector() 
-	{
-		return $this->metaInfo->detector();
-	}
-	
-	public function measurement() 
-	{
-		return $this->metaInfo->measurement();
-	}
-	
-	public function getObservatoryInformationString() 
-	{
-		return $this->metaInfo->getObservatoryInformationString();
-	}
-	
-	public function timestamp() {
-		return $this->metaInfo->timestamp();
-	}
-	*/
 	private function _imageNotInCache() 
 	{
 		return !file_exists($this->outputFile);

@@ -284,23 +284,26 @@ class Module_WebClient implements Module
         //mail('test@mail.com', 'My Subject', $message);
     }
 
-
-
-
     /**
      * Obtains layer information, ranges of pixels visible, and the date being
      * looked at and creates a composite image (a Screenshot) of all the layers.
      *
-     * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z
-     * &imageScale=21.04&quality=10&layers=1,1,100,0,1024,0,1024,0,0/4,1,100,0,1024,0,1024,0,0
-     * &width=512&height=512&filename=example&sharpen=false&edges=false
+     * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&width=512&height=512
+     * &obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=4,1,100/3,1,100/6,1,50/5,1,100
+     * &offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000 
+     * // Optional parameters can be added to the end: &quality=10&filename=example&sharpen=false&edges=false
      *
-     * The first number in each layer is the source id of the image. 
+     * The first number in each layer is the source id of the image, the second number is whether the layer is visible,
+     * the third number is the layer's opacity. 
      * 
      * Alternatively, you can send it this message, which uses observatory information instead of source ids: 
-     * http://localhost/helioviewer/api/index.php?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z
-     * &imageScale=21.04&quality=10&layers=SOHO,EIT,EIT,171,1,100,0,1024,0,1024,0,0/SOHO,LASCO,C2,white-light,1,100,0,1024,0,1024,0,0
-     * &width=512&height=512&filename=example&sharpen=false&edges=false
+     * 
+     * http://localhost/helioviewer/api/index.php?action=takeScreenshot&width=512&height=512
+     * &obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100
+     * &offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000
+     * // Optional parameters: &quality=10&filename=example&sharpen=false&edges=false
+     * 
+     * Parameters quality, filename, sharpen, edges, and display are optional parameters and can be left out completely.
      * 
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of
@@ -315,33 +318,6 @@ class Module_WebClient implements Module
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         return $builder->takeScreenshot($this->_params);
-    }
-    
-    /**
-     * Does the same basic thing as takeScreenshot() but with fewer parameters, and assumes user
-     * wants a full image rather than a piece of it. 
-     * 
-     * $_params[layers] must be in the format: "obs,inst,det,meas/obs,inst,det,meas...". Not necessary
-     * to specify offsets or region of interest.
-     * 
-     * @return image/png or JSON
-     * 
-     * Example api call: 
-     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=2/4
-     * 
-     * The number for each layer is the layer's source id.
-     * 
-     * Alternatively you can include the layer names instead of the source id, in this format:
-     * 
-     * http://localhost/helioviewer/api/index.php?action=takeFullImageScreenshot&obsDate=2010-03-01T12:12:12Z&width=512&height=512&imageScale=21.04&layers=SOHO,EIT,EIT,284/SOHO,LASCO,C2,white-light
-     *
-     */
-    public function takeFullImageScreenshot()
-    {
-        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
-        
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        return $builder->takeFullImageScreenshot($this->_params);
     }
 
     /**
@@ -427,23 +403,12 @@ class Module_WebClient implements Module
         case "getViewerImage":
             break;
         case "takeScreenshot":
-        	$required = array('obsDate', 'imageScale', 'layers', 'width', 'height', 'quality');
-        	$optional = array('edges', 'sharpen', 'filename');
+        	$required = array('obsDate', 'imageScale', 'layers', 'width', 'height', 'offsetLeftTop', 'offsetRightBottom');
         	$expected = array(
         		'required' => $required, 
-        		'optional' => $optional,
         		'floats'   => array('imageScale'),
         		'dates'	   => array('obsDate'),
         		'ints'	   => array('width', 'height')
-        	);
-        	break;
-        case "takeFullImageScreenshot":
-        	$required = array('obsDate', 'imageScale', 'width', 'height', 'layers');
-        	$expected = array(
-        		'required' 	=> $required,
-        		'floats'	=> array('imageScale'),
-        		'ints'		=> array('width', 'height'),
-        		'dates'		=> array('obsDate'),
         	);
         	break;
         default:
