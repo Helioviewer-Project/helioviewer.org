@@ -194,9 +194,10 @@ var Viewport = Class.extend(
      * @returns {Object} The X & Y coordinates of the viewport's top-left corner
      */
     getContainerPos: function () {
+        var position = this.movingContainer.position();
         return {
-            x: parseInt(this.movingContainer.css('left'), 10),
-            y: parseInt(this.movingContainer.css('top'), 10)
+            x: position.left,
+            y: position.top
         };
     },
     
@@ -229,7 +230,7 @@ var Viewport = Class.extend(
     getSandboxDimensions: function () {
         var maxTileLayerDimensions, maxEventLayerDimensions, maxWidth, maxHeight;
         
-        this._updateDimensions();
+        //this._refreshViewportDimensions();
         
         maxTileLayerDimensions  = this.controller.tileLayers.getMaxDimensions();
         maxEventLayerDimensions = this.controller.eventLayers.getMaxDimensions();
@@ -357,8 +358,8 @@ var Viewport = Class.extend(
         this.imageScale = imageScale;
 
         //this.checkTiles();
-        this.controller.tileLayers.resetLayers();
-        this.controller.eventLayers.resetLayers();
+        this.controller.tileLayers.onZoomLevelChange();
+        this.controller.eventLayers.onZoomLevelChange();
     
         // update sandbox
         this.updateSandbox();
@@ -373,12 +374,13 @@ var Viewport = Class.extend(
 //        } else {
 //        	this.moveTo(sunCenter.x * 2, sunCenter.y * 2);
 //        }
+        
         this.moveTo(sunCenter.x * sandboxWidthScaleFactor, sunCenter.y * sandboxHeightScaleFactor);
         
         this.checkTiles();
         // WORK-AROUND (first call needed to update dimensions in order to resize sandbox)
-        this.controller.tileLayers.resetLayers();
-        this.controller.eventLayers.resetLayers();
+        this.controller.tileLayers.onZoomLevelChange();
+        this.controller.eventLayers.onZoomLevelChange();
         
         // store new value
         $(document).trigger("save-setting", ["imageScale", imageScale]);
@@ -405,7 +407,10 @@ var Viewport = Class.extend(
         this.outerNode.height(height);
 
         // Update viewport dimensions
-        this._updateDimensions();
+        this.dimensions = {
+                width : this.domNode.width(),
+                height: this.domNode.height()
+        };
         
         this.dimensions.width  += this.prefetch;
         this.dimensions.height += this.prefetch;
@@ -415,16 +420,20 @@ var Viewport = Class.extend(
             this.checkTiles();
             this.controller.tileLayers.resetLayers();
         }
-    },
-    
-    /**
-     * @description Updates the viewport dimensions
-     */
-    _updateDimensions: function () {
-        this.dimensions = {
-            width : this.domNode.width(),
-            height: this.domNode.height()
-        };
+        
+        // TEMP: Debug Testing (06/11/2010)
+        if (!this.tmpDebug) {
+            this.tmpDebug = $("<div style='z-index: 1000; border:1px solid red; position: absolute; opacity: 0.2; background: white;' />").appendTo(this.domNode);    
+        }
+        
+        //console.log("SB: " + $("#sandbox").width() + "x" + $("#sandbox").height() + ", MC: (" + $("#moving-container").css('left') + ", " + $("#moving-container").css('top') + ")");
+        
+        this.tmpDebug.css({
+            "width"  : this.domNode.width()  / 2,
+            "height" : this.domNode.height() / 2,
+            "top"    : (1/4) * this.domNode.height(),
+            "left"   : (1/4) * this.domNode.width()
+        });            
     },
     
     /**
