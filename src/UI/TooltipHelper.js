@@ -17,27 +17,23 @@ var TooltipHelper = Class.extend(
      * @constructs 
      */ 
     init: function (legacyMode) {
-        if (legacyMode === undefined) {
+        if ((typeof legacyMode === undefined) || !legacyMode) {
             this.legacyMode = false;
-        }
-        else {
-            this.legacyMode = legacyMode;
-        }
-        
-        if (this.legacyMode) {
-            loadCSS("resources/css/tooltips-LEGACY.css");
-            this._setupTooltipStyles();
-        }           
-        else {
             loadCSS("lib/jquery.qtip-nightly/jquery.qtip.css");
             loadCSS("resources/css/tooltips.css");
-        } 
+        } else {
+            this.legacyMode = true;
+            loadCSS("resources/css/tooltips-LEGACY.css");
+            this._setupTooltipStyles();
+        }
+        
+        $(document).bind("create-tooltip", $.proxy(this.createTooltip, this));
     },
     
     /**
      * @description Creates a simple informative tooltip
      */    
-    createTooltip: function (selector, direction) {
+    createTooltip: function (event, selector, direction) {
         if (direction === undefined) {
             direction = 'topLeft';
         }
@@ -126,7 +122,7 @@ var TooltipHelper = Class.extend(
         }
 
         // Apply settings and create tooltip
-        selector.qtip({
+        $(selector).qtip({
             position: {
                 adjust: {
                     x: 4,

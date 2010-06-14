@@ -106,8 +106,9 @@ var MediaSettings = Class.extend(
         vpWidth  = visibleCoords.right  - visibleCoords.left;
         vpHeight = visibleCoords.bottom - visibleCoords.top;    
 
-        maxImgSize = helioviewer.tileLayers.getMaxJP2Dimensions(visibleCoords.left, visibleCoords.top,
-                                                                vpWidth, vpHeight);
+        //maxImgSize = helioviewer.tileLayers.getMaxJP2Dimensions(visibleCoords.left, visibleCoords.top,
+        //                                                        vpWidth, vpHeight);
+        helioviewer.tileLayers.getMaxDimensions();
         
         // If the image is smaller than the visibleCoords area, then just use the image's size        
         imgWidth  = Math.round(Math.min(vpWidth,  maxImgSize.width));

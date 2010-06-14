@@ -42,6 +42,15 @@ var KeyboardManager = Class.extend(
          * @TODO 01/04/2010: Use something like js-hotkeys (http://code.google.com/p/js-hotkeys/)
          *                   to allow for more advanced keyboard navigation such as "cntl + z" to undo, etc
          * TODO 01/16/2009: Create buttons for mouse-coord and detail toggles
+         * 
+         * TODO 05/24/2010: To avoid direct links to different code, create hash of events
+         * to trigger when a given key is pressed, e.g.:
+         * 
+         * {
+         *     "c": "center-viewport",
+         *     "m": "toggle-mouse-coordinates",
+         *     etc..
+         *  }
          */
         onKeyPress = function (e) {
             var key, character, vp = self.controller.viewport;
@@ -93,7 +102,7 @@ var KeyboardManager = Class.extend(
                 $("#center-button").click();
             }
             else if (character === "m") {
-                vp.toggleMouseCoords();
+                vp.mouseCoords.toggleMouseCoords();
             }
             else if (character === "-" || character === "_") {
                 $("#zoomControlZoomOut").click();

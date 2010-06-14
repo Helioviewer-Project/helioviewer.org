@@ -13,6 +13,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require 'JPEG2000/JP2Image.php';
+require_once 'ImageMetaInformation.php';
 /**
  * Represents a JPEG 2000 sub-field image.
  *
@@ -39,6 +40,7 @@ class Image_SubFieldImage
     protected $subfieldRelHeight;
     protected $region; // {top: , left: , bottom: , right: }
     **/
+	protected $metaInfo;
     protected $sourceJp2;
     protected $outputFile;
     protected $roi;
@@ -50,7 +52,7 @@ class Image_SubFieldImage
     protected $subfieldHeight;
     protected $subfieldRelWidth;
     protected $subfieldRelHeight;
-    protected $jp2Width;
+    protected $jp2Width; // temporarily public
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
@@ -78,10 +80,11 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($sourceJp2, $outputFile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale)
+    public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile)
     {
+    	$this->outputFile = $outputFile;
+
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
-        $this->outputFile = $outputFile;
         $this->roi        = $roi;
         $this->format     = $format;
 
@@ -101,7 +104,45 @@ class Image_SubFieldImage
         $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
     }
+    
+	public function build() {
+		$this->buildImage();
+	}
+	
+    /**
+     * Sets parameters (gravity and size) for any padding which should be applied to extracted subfield image
+     * 
+     * @param array $padding An associative array containing the width,height, and gravity values to use during padding.
+     * 
+     * @return void
+     */
+	public function setPadding($padding) { 
+        $this->padding = $padding;
+	    //Allow browser to rescale tiles which are not larger than the requested size
+        if (!($padding && ($padding['width'] > $this->width))) {
+            $this->setSkipResize(true);
+        }
+	}
+	
+	public function outputFile() {
+		return $this->outputFile;
+	}
 
+	/*
+	 * Getters that are needed for determining padding, as they must be accessed from Tile or ImageLayer classes.
+	 */
+	public function jp2RelWidth() {
+		return $this->jp2RelWidth;
+	}
+	
+	public function jp2RelHeight() {
+		return $this->jp2RelHeight;
+	}
+	
+	public function reduceFactor() {
+		return $this->reduce;
+	}
+	
     /**
      * Builds the requested subfield image.
      *
@@ -151,12 +192,7 @@ class Image_SubFieldImage
                 $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
 
-            // IM commands for transparency, padding, rescaling, etc.
-            if ($this->hasAlphaMask()) {
-                $cmd = HV_PATH_CMD . " convert " . $this->applyAlphaMask($intermediate);
-            } else {
-                $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
-            }
+            $cmd = HV_PATH_CMD . " convert " . $this->getAlphaMaskCmd($intermediate);
 
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
@@ -171,16 +207,19 @@ class Image_SubFieldImage
             //if (!$this->skipResize) {
             //    $cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}! ";    
             //}
-            
             // For resize to match requested tilesize. Once a suitable solution is found to improve rendering of
             // client-side rescaled tiles, this can be removed (02/26/2010)
-            $cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
-            
+            if(isset($this->tileSize))
+            	$cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
+            else { // For composite images, which don't have $this->tileSize
+            	$cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}";
+            }
             //var_dump($this);
             //die (escapeshellcmd("$cmd $this->outputFile"));
 
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
+            
             if ($ret != 0) {
                 throw new Exception("Unable to build subfield image.\n\tCommand: $cmd $this->outputFile");
             }
@@ -198,6 +237,16 @@ class Image_SubFieldImage
             $this->_abort($this->outputFile);
         }
     }
+    
+    /*
+     * Default behavior for images is to just add a black background.
+     * LASCOImage.php has a getAlphaMaskCmd that overrides this one and applies
+     * an alpha mask instead.
+     */
+    protected function getAlphaMaskCmd($intermediate)
+    {
+    	return $intermediate . " -background black ";
+    }
 
     /**
      * Sets the subfield image color lookup table (CLUT)
@@ -209,6 +258,11 @@ class Image_SubFieldImage
     protected function setColorTable($clut)
     {
         $this->colorTable = $clut;
+    }
+    
+    public function setTileSize($size) 
+    {
+		$this->tileSize = $size;
     }
     
     /**
@@ -235,18 +289,12 @@ class Image_SubFieldImage
         $this->alphaMask = $value;
     }
     
-    /**
-     * Sets parameters (gravity and size) for any padding which should be applied to extracted subfield image
-     * 
-     * @param array $padding An associative array containing the width,height, and gravity values to use during padding.
-     * 
-     * @return void
-     */
-    protected function setPadding($padding)
+
+/*    protected function setPadding($padding)
     {
         $this->padding = $padding;
     }
-    
+*/    
     /**
      * Returns a string formatted for ImageMagick which defines how an image should be padded
      * 
@@ -314,9 +362,9 @@ class Image_SubFieldImage
 
         if ($this->hasAlphaMask()) {
             $mask = substr($filename, 0, -4) . "-mask.tif";
-        }
-        if (file_exists($mask)) {
-            unlink($mask);
+	        if (file_exists($mask)) {
+	            unlink($mask);
+	        }
         }
 
         die();
@@ -425,7 +473,7 @@ class Image_SubFieldImage
      *
      * @return array the width and height of the given image
      */
-    private function _getImageDimensions($filename)
+    protected function _getImageDimensions($filename)
     {
         if (list($width, $height, $type, $attr) = getimagesize($filename)) {
             return array (

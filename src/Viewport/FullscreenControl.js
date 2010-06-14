@@ -18,11 +18,9 @@ var FullscreenControl = Class.extend(
     {
     /**
      * @description Creates a new FullscreenControl. 
-     * @param {Object} controller Reference to the controller class (Helioviewer).
      * @constructs 
      */ 
-    init: function (controller, btnId, speed) {
-        this.controller      = controller;
+    init: function (btnId, speed) {
         this._fullscreenMode = false;
 
         // Sections to be resized or hidden
@@ -77,9 +75,7 @@ var FullscreenControl = Class.extend(
             left: 0
         }, this.speed,
         function () {
-            self.controller.viewport.checkTiles();
-            self.controller.tileLayers.refreshLayers();
-            self.controller.eventLayers.refreshLayers();
+            $(document).trigger('recompute-tile-visibility');
             self.panels.hide();
             self.body.removeClass('disable-fullscreen-mode');
         });
@@ -184,9 +180,11 @@ var FullscreenControl = Class.extend(
         this.body.addClass('disable-fullscreen-mode');
         
         if (this._fullscreenMode) {
-            this.enableFullscreenMode();      
+            this.enableFullscreenMode();
+            this.viewport.addClass("fullscreen-mode");
         } else {
             this.disableFullscreenMode();
+            this.viewport.removeClass("fullscreen-mode");
         }
     },
     
@@ -196,14 +194,14 @@ var FullscreenControl = Class.extend(
      * http://acko.net/blog/abusing-jquery-animate-for-fun-and-profit-and-bacon
      */
     _overrideAnimate: function () {
-        var $_fx_step_default, viewport = this.controller.viewport;
+        var doc               = $(document), 
+            $_fx_step_default = $.fx.step._default;
         
-        $_fx_step_default = $.fx.step._default;
         $.fx.step._default = function (fx) {
             if (fx.elem.id !== "sandbox") {
                 return $_fx_step_default(fx);
             }
-            viewport.updateSandbox();
+            doc.trigger('update-viewport-sandbox');
             fx.elem.updated = true;
         };
     }

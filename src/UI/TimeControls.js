@@ -69,7 +69,7 @@ var TimeControls = Class.extend(
     },
     
     /**
-     * @description Returns the time increment currently displayed in the viewport.
+     * @description Returns the time increment currently displayed in Helioviewer.
      * @return {int} this._timeIncrement -- time increment in secons
      */
     getTimeIncrement: function () {
@@ -104,10 +104,10 @@ var TimeControls = Class.extend(
     },
     
     /**
-     * @description Gets an ISO 8601 string representation of the current observation time
+     * Gets an ISO 8601 string representation of the current observation time
      */
     toISOString: function () {
-        // Work-around: In Firefox 3.1+ (and Webkit), Date.toISOString() Returns single-quoted strings
+        // Work-around: Browsers with native support for toISOString return a quoted date string
         // http://code.google.com/p/datejs/issues/detail?id=54
         return this._date.toISOString().replace(/"/g, '');
     },
@@ -169,7 +169,7 @@ var TimeControls = Class.extend(
      * Initializes the observation time datepicker
      */
     _initDatePicker: function () {
-        var btn, self = this;
+        var btnId, btn, self = this;
         
         // Initialize datepicker
         this.cal = this._dateInput.datepicker({
@@ -189,7 +189,8 @@ var TimeControls = Class.extend(
         });
         
         // Datepicker icon
-        btn = $('#observation-controls .ui-datepicker-trigger');
+        btnId = '#observation-controls .ui-datepicker-trigger';
+        btn   = $(btnId);
 
         btn.hover(
             function () {
@@ -200,8 +201,11 @@ var TimeControls = Class.extend(
             }
         ).attr("title", "Select an observation date.")
          .click(function () {
-             btn.qtip("hide");
-        });
+                btn.qtip("hide");
+            });
+        
+        // Tooltips
+        $(document).trigger('create-tooltip', [btnId]);
     },
     
     /**
@@ -230,6 +234,7 @@ var TimeControls = Class.extend(
     */
     _onTimeIncrementChange: function (e) {
         this._timeIncrement = parseInt(e.target.value, 10);
+        $(document).trigger("time-step-changed", [this._timeIncrement]);
     },
     
     /**

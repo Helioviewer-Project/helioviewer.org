@@ -36,9 +36,9 @@ Date.prototype.toUTCTimeString = function () {
  */
 Date.prototype.toUTCDate = function () {
     return new Date(Date.UTC(
-        this.getFullYear(), this.getMonth(), this.getDate(),this.getHours(), this.getMinutes(), this.getSeconds()
+        this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds()
     ));
-}
+};
 
 /**
  * @description Pads a string to the left.
@@ -53,20 +53,6 @@ String.prototype.padLeft = function (padding, minLength) {
         str = pad + str;
     }
     return str;
-};
-
-/**
- * @description Allows JSON objects to be stored in Storage for browsers that have support for native JSON
- * http://hacks.mozilla.org/2009/06/localstorage/
- */
-var extendLocalStorage = function () {
-    Storage.prototype.setObject = function (key, value) {
-        this.setItem(key, JSON.stringify(value));
-    };
-     
-    Storage.prototype.getObject = function (key) {
-        return JSON.parse(this.getItem(key));
-    };   
 };
 
 /**

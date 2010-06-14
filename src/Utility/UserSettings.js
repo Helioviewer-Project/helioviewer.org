@@ -14,8 +14,7 @@ var UserSettings = Class.extend(
      * 
      * Creates a class which handles the storing the retrieving of custom user settings. This includes things
      * like the requested observation time, image zoom level, and the layers currently loaded. The UserSettings
-     * class has the ability to use both HTML5 local storage and cookies for saving information. In addition, 
-     * when supported, objects are stored as JSON objects rather than strings.<br><br>
+     * class has the ability to use both HTML5 local storage and cookies for saving information.
      *    
      * TODO 2010/04/09: Generalize the validation step by passing in an array of validation criteria instead
      * of passing in parameters individually.
@@ -45,13 +44,8 @@ var UserSettings = Class.extend(
             // Update settings
             this.settings[key] = value;
             
-            // localStorage + native JSON
-            if ($.support.localStorage && $.support.nativeJSON) {
-                localStorage.setObject("settings", this.settings);
-            }
-            
-            // localStorage only
-            else if ($.support.localStorage) {
+            // localStorage
+            if ($.support.localStorage) {
                 localStorage.setItem("settings", $.toJSON(this.settings));
             }
             
@@ -151,13 +145,7 @@ var UserSettings = Class.extend(
     _loadDefaults: function () {
         if ($.support.localStorage) {
             localStorage.clear();
-            
-            if ($.support.nativeJSON) {
-                localStorage.setObject("settings", this._defaults);
-            }
-            else { 
-                localStorage.setItem("settings", $.toJSON(this._defaults));
-            }
+            localStorage.setItem("settings", $.toJSON(this._defaults));
         }
         else {
             this.cookies.set("settings", this._defaults);
@@ -170,15 +158,9 @@ var UserSettings = Class.extend(
      * Retrieves the saved user settings and saved them locally
      */
     _loadSavedSettings: function () {
-        // If native JSON is supported, return value directly
-        if ($.support.localStorage && $.support.nativeJSON) {
-            this.settings = localStorage.getObject("settings");
+        if ($.support.localStorage) {
+            this.settings = $.evalJSON(localStorage.getItem("settings"));
         }
-
-        else if ($.support.localStorage) {
-            this.settings = $.parseJSON(localStorage.getItem("settings"));
-        }
-            
         // Otherwise, check type and return
         else {
             this.settings = this.cookies.get("settings");

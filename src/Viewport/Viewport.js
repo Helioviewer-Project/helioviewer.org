@@ -17,94 +17,77 @@ var Viewport = Class.extend(
      */ 
     defaultOptions: {
         imageScale : 0,
-        headerId   : '#header',
-        footerId   : '#footer',
         tileSize   : 512,
         minHeight  : 450,
         prefetch   : 0
     },
-    isMoving: false,
-    dimensions: { width: 0, height: 0 },
-    mouseStartingPosition: { x: 0, y: 0 },
-    mouseCurrentPosition : { x: 0, y: 0 },
-    moveCounter         : 0,
-    imageUpdateThrottle : 3,
-    tileUpdateThrottle  : 9,
+    isMoving                : false,
+    dimensions              : { width: 0, height: 0 },
+    maxLayerDimensions      : { width: 0, height: 0 },
+    maxTileLayerDimensions  : { width: 0, height: 0 },
+    maxEventLayerDimensions : { width: 0, height: 0 },
+    mouseStartingPosition   : { x: 0, y: 0 },
+    moveCounter             : 0,
+    imageUpdateThrottle     : 3,
+    tileUpdateThrottle      : 9,
+    tileVisibilityRange     : {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0},
 
     /**
      * @constructs
      * @description Creates a new Viewport
-     * @param {Object} controller A Reference to the Helioviewer application class
      * @param {Object} options Custom Viewport settings
      * <br>
      * <br><div style='font-size:16px'>Options:</div><br>
      * <div style='margin-left:15px'>
      *       <b>imageScale</b> - The default image scale to display tiles at (should be passed in from Helioviewer).<br>
-     *       <b>headerId</b>   - Helioviewer header section id.<br>
-     *       <b>footerId</b>   - Helioviewer footer section id.<br>
      *       <b>tileSize</b>   - Size of tiles.<br> 
      *       <b>prefetch</b>   - The radius outside of the visible viewport to prefetch.<br>
      * </div>
      */
-    init: function (controller, options) {
+    init: function (options) {
         $.extend(this, this.defaultOptions);
         $.extend(this, options);
-        this.controller         = controller;
                         
-        this.domNode      = $(this.id);
-        this.innerNode    = $(this.id + '-container-inner');
-        this.outerNode    = $(this.id + '-container-outer');
-
-        this.mouseCoords  = "disabled";
-        this.mouseCoordsX = $('#mouse-coords-x');
-        this.mouseCoordsY = $('#mouse-coords-y');
+        this.domNode   = $(this.id);
+        this.innerNode = $(this.id + '-container-inner');
+        this.outerNode = $(this.id + '-container-outer');
+        
+        this.sandbox         = $("#sandbox");
+        this.movingContainer = $("#moving-container");
         
         // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
         this.rsun = 959.705;
 
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
-        this.headerAndFooterHeight = $(this.headerId).height() + $(this.footerId).height() + 2;
+        this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;
+
+        //this.resize();
+
+        var center = this.getCenter();
+        this.sandbox.css({"left": center.x, "top": center.y});
         
-        // Resize to fit screen
+        // Initialize tile layers
+        this._tileLayerManager = new TileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
+                                                      this.imageScale, this.maxTileLayers, this.tileServers, 
+                                                      this.tileLayers, this.urlStringLayers);
+        
         this.resize();
         
-        // Determine center of viewport
-        var center = this.getCenter();
+        this.mouseCoords = new MouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
         
-        // Create a container to limit how far the layers can be moved
-        this.sandbox = $('<div id="sandbox" style="position: absolute; width: 0; height: 0; left: ' +
-                         center.x + 'px; top: ' + center.y + 'px;"></div>');
-        
-        // Create a master container to make it easy to manipulate all layers at once
-        this.movingContainer = $('<div id="moving-container" style="left: 0; top: 0"></div>').appendTo(this.sandbox);
-        
-        this.domNode.append(this.sandbox);
-        
-        this._initEvents();
+        this._initEventHandlers();
     },
     
     /**
      * @description Centers the viewport.
      */
     center: function () {
-        this.moveTo(0.5 * this.sandbox.width(), 0.5 * this.sandbox.height());
-    },
-
-    /**
-     * @description Move the viewport focus to a new location.
-     * @param {Int} x X-value
-     * @param {Int} y Y-value
-     */
-    moveTo: function (x, y) {
         this.movingContainer.css({
-            left: x + 'px',
-            top:  y + 'px'    
+            left: 0.5 * this.sandbox.width()  + 'px',
+            top:  0.5 * this.sandbox.height() + 'px'    
         });
-
-        // Check throttle
-        if (this.moveCounter === 0) {
-            this.domNode.trigger('viewport-move');
-        }
+        
+        this.checkTileVisibility();
     },
 
     /**
@@ -124,9 +107,23 @@ var Viewport = Class.extend(
             top:  pos.y + 'px'    
         });
         
+        this.checkTileVisibility();
+    },
+    
+    /**
+     * Move the viewport focus to a new location.
+     * @param {Int} x X-value
+     * @param {Int} y Y-value
+     */
+    moveTo: function (x, y) {
+        this.movingContainer.css({
+            left: x + 'px',
+            top:  y + 'px'    
+        });
+
         // Check throttle
         if (this.moveCounter === 0) {
-            this.domNode.trigger('viewport-move');
+        	this.checkTileVisibility();
         }
     },
     
@@ -135,6 +132,7 @@ var Viewport = Class.extend(
      */
     startMoving: function () {
         this.isMoving = true;
+        this.mouseCoords.disable();
         this.startMovingPosition = this.getContainerPos();
     },
     
@@ -143,15 +141,16 @@ var Viewport = Class.extend(
      */
     endMoving: function () {
         this.isMoving = false;
-        this.domNode.trigger('viewport-move');
+        this.mouseCoords.enable();
+        this.checkTileVisibility();
     },
     
     /**
      * @description Get the coordinates of the viewport center
      * @returns {Object} The X & Y coordinates of the viewport's center
      * 
-     * TODO 06/07/2010: getCenter should probably be with respect to the Sandbox, and not the viewport
-     * since that is more meaningful in terms of positioning and movement.
+     * * TODO 06/07/2010: getCenter should probably be with respect to the Sandbox, and not the viewport
+     *   since that is more meaningful in terms of positioning and movement.
      */
     getCenter: function () {
         return {
@@ -194,10 +193,11 @@ var Viewport = Class.extend(
      * @returns {Object} The X & Y coordinates of the viewport's top-left corner
      */
     getContainerPos: function () {
-        var position = this.movingContainer.position();
+    	var position = this.movingContainer.position();
+    	
         return {
-            x: position.left,
-            y: position.top
+        	x: position.left,
+        	y: position.top
         };
     },
     
@@ -206,42 +206,70 @@ var Viewport = Class.extend(
      *              a given time. Uses the Heliocentric coordinates of the viewport's
      *              TOP-LEFT and BOTTOM-RIGHT corners to determine range to display.
      */
-    checkTiles: function () {
-        var i, j, indices;
+    checkTileVisibility: function () {
+        var oldTileVisibilityRange = this.tileVisibilityRange;
         
-        this.visible = [];
+        this._updateTileVisibilityRange();
         
-        indices = this.displayRange();
-        
-        // Update visible array
-        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
-            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
-                if (!this.visible[i]) {
-                    this.visible[i] = [];
-                }
-                this.visible[i][j] = true;
-            }
+        if (!this._checkVisibilityRangeEquality(oldTileVisibilityRange, this.tileVisibilityRange)) {
+            this._tileLayerManager.updateTileVisibilityRange(this.tileVisibilityRange);
         }
     },
     
     /**
-     * Determines the 
+     * @description Returns the range of indices for the tiles to be displayed.
+     * @returns {Object} The range of tiles which should be displayed
+     */
+    _updateTileVisibilityRange: function () {
+        var vp, ts;
+        
+        // Get heliocentric viewport coordinates
+        vp = this.getHCViewportPixelCoords();
+
+        // Expand to fit tile increment
+        ts = this.tileSize;
+        vp = {
+            top:    vp.top    - ts - (vp.top  % ts),
+            left:   vp.left   - ts - (vp.left % ts),
+            bottom: vp.bottom + ts - (vp.bottom % ts),
+            right:  vp.right  + ts - (vp.right % ts)
+        };
+
+        // Indices to display (one subtracted from ends to account for "0th" tiles).
+        this.tileVisibilityRange = {
+            xStart : vp.left / ts,
+            yStart : vp.top  / ts,
+            xEnd   : (vp.right  / ts) - 1,
+            yEnd   : (vp.bottom / ts) - 1
+        };
+    },
+    
+    /**
+     * Compares two sets of indices indicating the current scope or range of tile visibility
+     */
+    _checkVisibilityRangeEquality: function (r1, r2) {
+        return ((r1.xStart === r2.xStart) && (r1.xEnd === r2.xEnd) && 
+                (r1.yStart === r2.yStart) && (r1.yEnd === r2.yEnd));         
+    },    
+    
+    /**
+     * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
+     * contents around in order to see all layers
      */
     getSandboxDimensions: function () {
-        var maxTileLayerDimensions, maxEventLayerDimensions, maxWidth, maxHeight;
-        
-        //this._refreshViewportDimensions();
-        
-        maxTileLayerDimensions  = this.controller.tileLayers.getMaxDimensions();
-        maxEventLayerDimensions = this.controller.eventLayers.getMaxDimensions();
-        
-        maxWidth  = Math.max(maxTileLayerDimensions.width, maxEventLayerDimensions.width);
-        maxHeight = Math.max(maxTileLayerDimensions.height, maxEventLayerDimensions.height);
-        
-        // New sandbox dimensions
         return {
-            width : Math.max(0, maxWidth  - this.dimensions.width),
-            height: Math.max(0, maxHeight - this.dimensions.height)
+            width : Math.max(0, this.maxLayerDimensions.width  - this.dimensions.width),
+            height: Math.max(0, this.maxLayerDimensions.height - this.dimensions.height)
+        };
+    },
+    
+    /**
+     * @description Updates the viewport dimensions
+     */
+    _updateDimensions: function () {
+        this.dimensions = {
+            width : this.domNode.width(),
+            height: this.domNode.height()
         };
     },
     
@@ -288,36 +316,6 @@ var Viewport = Class.extend(
     },
     
     /**
-     * @description Returns the range of indices for the tiles to be displayed.
-     * @returns {Object} The range of tiles which should be displayed
-     */
-    displayRange: function () {
-        var vp, ts;
-        
-        // Get heliocentric viewport coordinates
-        vp = this.getHCViewportPixelCoords();
-
-        // Expand to fit tile increment
-        ts = this.tileSize;
-        vp = {
-            top:    vp.top    - ts - (vp.top  % ts),
-            left:   vp.left   - ts - (vp.left % ts),
-            bottom: vp.bottom + ts - (vp.bottom % ts),
-            right:  vp.right  + ts - (vp.right % ts)
-        };
-
-        // Indices to display (one subtracted from ends to account for "0th" tiles).
-        this.visibleRange = {
-            xStart: vp.left   / ts,
-            xEnd:   (vp.right  / ts) - 1,
-            yStart: vp.top    / ts,
-            yEnd:     (vp.bottom / ts) - 1
-        };
-    
-        return this.visibleRange;
-    },
-
-    /**
      * @description Returns the heliocentric coordinates of the upper-left and bottom-right corners of the viewport
      * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
      */
@@ -339,61 +337,64 @@ var Viewport = Class.extend(
      * @description Zooms To a specified image scale.
      * @param {Float} imageScale The desired image scale
      */
-    zoomTo: function (imageScale) {
+    zoomTo: function (event, imageScale) {
     	var sunCenter, originalSandboxWidth, originalSandboxHeight,  
-    		sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale = this.imageScale;
+		sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale;
     	
-        // get offset
-        sunCenter = this.getContainerPos();
+        originalScale = this.imageScale;
         
-        // when going from a zero dimension to something larger, center the sun along that dimension
-        sunCenter.x = sunCenter.x || 0.5;
-        sunCenter.y = sunCenter.y || 0.5;
+        // get offset and sandbox dimensions
+        sunCenter             = this.getContainerPos();
+        originalSandboxWidth  = this.sandbox.width(); 
+        originalSandboxHeight = this.sandbox.height();
         
-        // get original sandbox dimensions
-        originalSandboxWidth  = this.sandbox.width()  || 1;
-        originalSandboxHeight = this.sandbox.height() || 1;
-        
-        // Adjust image scale and reload layers
         this.imageScale = imageScale;
 
-        //this.checkTiles();
-        this.controller.tileLayers.onZoomLevelChange();
-        this.controller.eventLayers.onZoomLevelChange();
-    
+        // scale layer dimensions
+        this.scaleLayerDimensions(originalScale / imageScale);
+        
         // update sandbox
         this.updateSandbox();
         
-        // ratio of old sandbox dimensions to new ones
         sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
         sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
         
-        // make sure center of viewport is focused on same point as before
-//        if (imageScale > originalScale) {
-//        	this.moveTo(sunCenter.x / 2, sunCenter.y / 2);
-//        } else {
-//        	this.moveTo(sunCenter.x * 2, sunCenter.y * 2);
-//        }
+        this._updateTileVisibilityRange();
         
         this.moveTo(sunCenter.x * sandboxWidthScaleFactor, sunCenter.y * sandboxHeightScaleFactor);
         
-        this.checkTiles();
-        // WORK-AROUND (first call needed to update dimensions in order to resize sandbox)
-        this.controller.tileLayers.onZoomLevelChange();
-        this.controller.eventLayers.onZoomLevelChange();
+        // reset the layers
+        this._tileLayerManager.adjustImageScale(imageScale, this.tileVisibilityRange);
+        
+        this.mouseCoords.updateImageScale(imageScale);
         
         // store new value
         $(document).trigger("save-setting", ["imageScale", imageScale]);
     },
-
+    
+    /**
+     * Adjust saved layer dimensions by a specified scale factor
+     */
+    scaleLayerDimensions: function (sf) {
+        this.maxLayerDimensions.width       = this.maxLayerDimensions.width * sf;
+        this.maxLayerDimensions.height      = this.maxLayerDimensions.height * sf;
+        this.maxTileLayerDimensions.width   = this.maxEventLayerDimensions.width * sf;
+        this.maxTileLayerDimensions.height  = this.maxEventLayerDimensions.height * sf;
+        this.maxEventLayerDimensions.width  = this.maxEventLayerDimensions.width * sf;
+        this.maxEventLayerDimensions.height = this.maxEventLayerDimensions.height * sf;
+    },
+    
     /**
      * @description Adjust viewport dimensions when window is resized.
      */
     resize: function () {
-        var height, padHeight;
+        var oldDimensions, h, padHeight;
+        
+        // Get dimensions
+        oldDimensions = this.dimensions;
         
         // Make room for footer and header if not in fullscreen mode
-        if (this.controller.fullScreenMode && this.controller.fullScreenMode.isEnabled()) {
+        if (this.domNode.hasClass("fullscreen-mode")) {
             padHeight = 0;
         }
         else {
@@ -401,39 +402,21 @@ var Viewport = Class.extend(
         }
         
         // Ensure minimum height
-        height = Math.max(this.minHeight, $(window).height() - padHeight);
+        h = Math.max(this.minHeight, $(window).height() - padHeight);
 
         //Update viewport height
-        this.outerNode.height(height);
+        this.outerNode.height(h);
 
         // Update viewport dimensions
-        this.dimensions = {
-                width : this.domNode.width(),
-                height: this.domNode.height()
-        };
+        this._updateDimensions();
         
         this.dimensions.width  += this.prefetch;
         this.dimensions.height += this.prefetch;
         
-        if (this.controller.tileLayers.size() > 0) {
+        if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
             this.updateSandbox();
-            this.checkTiles();
-            this.controller.tileLayers.refreshLayers();
+            this.checkTileVisibility();
         }
-        
-        // TEMP: Debug Testing (06/11/2010)
-//        if (!this.tmpDebug) {
-//            this.tmpDebug = $("<div style='z-index: 1000; border:1px solid red; position: absolute; opacity: 0.2; background: white;' />").appendTo(this.domNode);    
-//        }
-//        
-//        //console.log("SB: " + $("#sandbox").width() + "x" + $("#sandbox").height() + ", MC: (" + $("#moving-container").css('left') + ", " + $("#moving-container").css('top') + ")");
-//        
-//        this.tmpDebug.css({
-//            "width"  : this.domNode.width()  / 2,
-//            "height" : this.domNode.height() / 2,
-//            "top"    : (1/4) * this.domNode.height(),
-//            "left"   : (1/4) * this.domNode.width()
-//        });            
     },
     
     /**
@@ -459,15 +442,10 @@ var Viewport = Class.extend(
       * @param {Event} event an Event object
       */
     mouseDown: function (event) {
-        var vp, sb;
-        
-        vp = $("#helioviewer-viewport");
-        sb = $("#sandbox");
-        
-        vp.css("cursor", "all-scroll");
+        this.domNode.css("cursor", "all-scroll");
 
         // Don't do anything if entire image is already visible
-        if ((sb.width() === 0) && (sb.height() === 0)) {
+        if ((this.sandbox.width() === 0) && (this.sandbox.height() === 0)) {
             return;
         }
         
@@ -496,16 +474,8 @@ var Viewport = Class.extend(
 
         this.moveCounter = this.moveCounter % this.tileUpdateThrottle;
 
-        this.mouseCurrentPosition = {
-            x: event.pageX, 
-            y: event.pageY
-        };
-
-        // Update text-shadows
-        //this.controller.updateShadows();
-
-        this.moveBy(this.mouseStartingPosition.x - this.mouseCurrentPosition.x,
-                    this.mouseStartingPosition.y - this.mouseCurrentPosition.y);
+        this.moveBy(this.mouseStartingPosition.x - event.pageX,
+                    this.mouseStartingPosition.y - event.pageY);
     },
     
      /**
@@ -526,223 +496,91 @@ var Viewport = Class.extend(
      * @param {Event} e Event class
      */
     doubleClick: function (e) {
-        var pos;
-          
+        var pos, center, diff, scaleFactor;
+        
         //check to make sure that you are not already at the minimum/maximum image scale
-        if ((e.shiftKey || (this.imageScale > this.controller.minImageScale)) && 
-            (this.imageScale < this.controller.maxImageScale)) {
-            pos = this.getRelativeCoords(e.pageX, e.pageY);
-               
-            this.center();                    
-            this.startMoving();
-
-            //adjust for zoom
-            if (e.shiftKey) {
-                this.moveBy(0.5 * pos.x, 0.5 * pos.y);
-                //this.controller.zoomControls.zoomButtonClicked(-1);
-                $("#zoomControlZoomOut").click();
-            }
-            else {
-                this.moveBy(2 * pos.x, 2 * pos.y);
-                //this.controller.zoomControls.zoomButtonClicked(1);
-                $("#zoomControlZoomIn").click();
-            }
-            
-            this.endMoving();
-        }
-    },
-     
-    /**
-     * @description Handles mouse-wheel movements
-     * 
-     * TODO 02/22/2010: Prevent browser window from scrolling on smaller screens when 
-     * wheel is used in viewport
-     * 
-     * @param {Event} event Event class
-     */
-    mouseWheel: function (e, delta) {
-        var dir = delta > 0 ? $("#zoomControlZoomIn").click() : $("#zoomControlZoomOut").click();
-    },
-     
-    /**
-     * @description Get the mouse-coords relative to top-left of the viewport frame
-     * @param {Int} screenx X-dimensions of the user's screen
-     * @param {Int} screeny Y-dimensions of the user's screen
-     */
-    getRelativeCoords: function (screenx, screeny) {
-        var offset, mouseCoords;
-         
-        offset = $('#helioviewer-viewport-container-inner').offset();
-
-        mouseCoords = {
-            x: screenx - offset.left - 1,
-            y: screeny - offset.top - 1
-        };
-
-        return mouseCoords;
-    },
-     
-    /**
-     * @description Toggles mouse-coords visibility
-     * 
-     * TODO (2009/07/27) Disable mouse-coords display during drag & drop
-     */
-    toggleMouseCoords: function () {
-        var vp, mouseCoordsX, mouseCoordsY, updateMouseCoords, warning;
-        
-        // Case 1: Disabled -> Arcseconds 
-        if (this.mouseCoords === "disabled") {
-            this.mouseCoords = "arcseconds";
-            $('#mouse-coords').toggle();
-        }
-
-        // Case 2: Arcseconds -> Polar Coords
-        else if (this.mouseCoords === "arcseconds") {
-            this.mouseCoords = "polar";
-        }
-
-        // Case 3: Polar Coords -> Disabled
-        else {
-            $('#mouse-coords').toggle();
-            this.mouseCoords = "disabled";
-        }
-          
-        // Warn once
-        if (this.controller.userSettings.get('warnMouseCoords') === true) {
-            warning = "<b>Note:</b> Mouse-coordinates should not be used for science operations!";
-            $(document).trigger("message-console-log", [warning])
-                       .trigger("save-setting", ["warnMouseCoords", false]);
-        }
-          
-        // Cartesian & Polar coords
-        if (this.mouseCoords !== "disabled") {
-
-            // Clear old values
-            this.mouseCoordsX.empty();
-            this.mouseCoordsY.empty();
-
-            // Remove existing event handler if switching from cartesian -> polar
-            if (this.mouseCoords === "polar") {
-                $('#moving-container').unbind('mousemove', this.updateMouseCoords);
-            }
-               
-            $('#moving-container').bind('mousemove', $.proxy(this.updateMouseCoords, this));     
-               
-            // TODO: Execute handler once immediately if mouse is over viewport to show new coords     
-            // Use trigger to fire mouse move event and then check to make sure mouse is within viewport?         
-        } else {
-            $('#moving-container').unbind('mousemove', this.updateMouseCoords);
-        }
-    },
-    
-    /**
-     * updateMouseCoords
-     */
-    updateMouseCoords: function (event) {
-        var cartesian, polar;
-        
-        // Threshold
-        this.moveCounter = this.moveCounter + 1;
-        if ((this.moveCounter % this.imageUpdateThrottle) !== 0) {
+        if (!(e.shiftKey || (this.imageScale > this.minImageScale)) ||
+             (this.imageScale >= this.maxImageScale)) {
             return;
         }
-
-        this.moveCounter = this.moveCounter % this.tileUpdateThrottle;
-            
-        // Compute coordinates relative to top-left corner of the viewport
-        cartesian = this.computeMouseCoords(event.pageX, event.pageY);
-                            
-        // Arc-seconds
-        if (this.mouseCoords === "arcseconds") {
-            this.mouseCoordsX.html("x: " + cartesian.x + " &prime;&prime;");
-            this.mouseCoordsY.html("y: " + cartesian.y + " &prime;&prime;");
-                 
-        // Polar coords
+        
+        // Click coordinates relative to viewport top-left
+        pos = this.mouseCoords.getRelativeCoords(e.pageX, e.pageY);
+        
+        // Coordinates of viewport center relative to top-left
+        center = this.getCenter();
+        
+        //adjust for zoom
+        if (e.shiftKey) {
+        	scaleFactor = 0.5;
+            $("#zoomControlZoomOut").click(); 
+        }
+        else {
+        	scaleFactor = 2;
+            $("#zoomControlZoomIn").click();
+        }
+        
+        // Distance between point of mouse-click and the center of the viewport
+        diff = {
+            x: (pos.x - center.x) * scaleFactor,
+            y: (pos.y - center.y) * scaleFactor
+        };
+        
+        this.startMoving();
+        this.moveBy(diff.x, diff.y);
+        this.endMoving();
+    },
+     
+    /**
+     * Updates the stored values for the maximum tile and event layer dimensions. This is used in computing the optimal
+     * sandbox size.
+     */
+    updateMaxLayerDimensions: function (event, type, dimensions) {
+        if (type === "tile") {
+            this.maxTileLayerDimensions  = dimensions;
         } else {
-            polar = Math.toPolarCoords(cartesian.x, cartesian.y);     
-            
-            this.mouseCoordsX.html(((polar.r / this.rsun) + "").substring(0, 5) +
-                 " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
-            this.mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
+            this.maxEventLayerDimensions = dimensions;
+        }
+        
+        var old = this.maxLayerDimensions;
+        
+        this.maxLayerDimensions = {
+            width : Math.max(this.maxTileLayerDimensions.width,  this.maxEventLayerDimensions.width),
+            height: Math.max(this.maxTileLayerDimensions.height, this.maxEventLayerDimensions.height)
+        };
+        
+        if ((this.maxLayerDimensions.width !== old.width) || (this.maxLayerDimensions.height !== old.height)) {
+            this.updateSandbox();
         }
     },
     
     /**
-     * @description Computes the scaled mouse coordinates relative to the size and center of the Sun.
-     * 
-     *  Explanation:
-     * 
-     *    X = location of mouse-pointer
-     *    V = viewport top-left corner
-     *    S = sandbox top-left corner
-     *    M = moving container top-let corner
-     *    
-     *  Each of the two-letter abbreviations represents the vector <x,y> going from one
-     *  location to the other. See wiki documentation below for more details.
-     * 
-     * @see http://helioviewer.org/wiki/index.php?title=Co-ordinate_System_I
+     * _onObservationTimeChange
      */
-    computeMouseCoords: function (screenX, screenY) {
-        var VX, negSV, SV, SM, MX, scale, x, y;
-        
-        // Coordinates realtive to viewport top-left corner
-        VX = this.getRelativeCoords(screenX, screenY);
-        negSV = $("#sandbox").position();
-        SV = {
-            x: -negSV.left,
-            y: -negSV.top
-        };
-        SM = $('#moving-container').position();                    
-        MX = {
-            x: VX.x + (SV.x - SM.left),
-            y: VX.y + (SV.y - SM.top)
-        };
-          
-        //scale
-        scale = this.imageScale;
-        x = Math.round((scale * MX.x));
-        y = - Math.round((scale * MX.y));
-        
-        // Return scaled coords
-        return {
-            x: x,
-            y: y
-        };
+    _onObservationTimeChange: function (event, date) {
+        this._tileLayerManager.updateRequestTime(date);
     },
     
     /**
      * @description
      */
-    _initEvents: function () {
-        var doc, vp, self = this;
+    _initEventHandlers: function () {
+        var self = this;
         
-        // Dynamically resize the viewport when the browser window is resized.
         $(window).resize($.proxy(this.resize, this));
-
-        doc = $(document);
-        vp  = $("#helioviewer-viewport");
+        $(document).mousemove($.proxy(this.mouseMove, this))
+                   .mouseup($.proxy(this.mouseUp, this))
+                   .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
+                   .bind("set-image-scale", $.proxy(this.zoomTo, this))
+                   .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this))
+                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
+                   .bind("recompute-tile-visibility", $.proxy(this.checkTileVisibility, this));
         
-        //Mouse-related event-handlers
-        doc.mousemove(function (e) {
-            self.mouseMove(e);
-        });
-        doc.mouseup(function (e) {
-            self.mouseUp(e);
-        });
-        vp.mousedown(function (e) {
-            self.mouseDown(e);
-        });
-
-          // Double-clicks
-        vp.dblclick(function (e) {
-            self.doubleClick(e);
-        });
-
-          // Mouse-wheel
-        vp.mousewheel(function (e, delta) {
-            self.mouseWheel(e, delta);
-            return false;
-        });
+        $('#center-button').click($.proxy(this.center, this));
+        
+        this.domNode.mousedown($.proxy(this.mouseDown, this))
+                    .dblclick($.proxy(this.doubleClick, this));
+        
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?

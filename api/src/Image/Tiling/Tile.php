@@ -11,21 +11,14 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'src/Image/SubFieldImage.php';
+
 /**
- * A Helioviewer-specific tile class
- * 
- * @category WebClient
- * @package  Helioviewer
- * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
- * @link     http://launchpad.net/helioviewer.org
  * 
  * TODO (2009/12/07)
  *  To improve smoothness of transparency edges, use a larger mask (e.g. 
  *  2080x2080  instead of 1040x1040) so that most of scaling will be downwards
  */
-abstract class Image_Tiling_Tile extends Image_SubFieldImage
+abstract class Image_Tiling_Tile// extends Image_SubFieldImage
 {
     protected $x;
     protected $y;
@@ -48,24 +41,13 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
      * @param bool   $display      If true, the tile will be printed to the screen after generation
      */
     public function __construct( 
-        $jp2, $tile, $x, $y, $desiredScale, $tileSize, $jp2Width, $jp2Height, $jp2Scale, $format, $display = true
+        $desiredScale, $tileSize, $jp2Scale, $x, $y, $display = true
     ) {
-        $this->x = $x;
-        $this->y = $y;
-        $this->tileSize = $tileSize;
+    	$this->tileSize			= $tileSize;
         $this->relativeTileSize = $tileSize * ($desiredScale / $jp2Scale);
         
-        $roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y);
-
-        parent::__construct($jp2, $tile, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale);
-        
-        $padding = $this->computePadding();
-        $this->setPadding($padding);
-        
-        // Allow browser to rescale tiles which are not larger than the requested size
-        if (!($padding && ($padding['width'] > $tileSize))) {
-            $this->setSkipResize(true);
-        }
+        $this->x = $x;
+        $this->y = $y;
     }
     
     /**
@@ -97,8 +79,8 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
         $y = $this->y;
         
         // Determine min and max tile numbers
-        $imgNumTilesX = max(2, ceil($this->jp2RelWidth  / $this->tileSize));
-        $imgNumTilesY = max(2, ceil($this->jp2RelHeight / $this->tileSize));
+        $imgNumTilesX = max(2, ceil($this->_image->jp2RelWidth()  / $this->tileSize));
+        $imgNumTilesY = max(2, ceil($this->_image->jp2RelHeight() / $this->tileSize));
 
         // Tile placement architecture expects an even number of tiles along each dimension
         if ($imgNumTilesX % 2 != 0) {
@@ -142,9 +124,10 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
             }
         }
        
+        $reduceFactor = $this->_image->reduceFactor();
         // Length of side in padded tile 
-        if ($this->reduce > 0) {
-            $side = ($this->relativeTileSize / pow(2, $this->reduce));
+        if ($reduceFactor > 0) {
+            $side = ($this->relativeTileSize / pow(2, $reduceFactor));
         } else {
             $side = $this->relativeTileSize;
         }
@@ -176,12 +159,10 @@ abstract class Image_Tiling_Tile extends Image_SubFieldImage
      * 
      * @return array An array containing the pixel coordinates for a single tile's top-left and bottom-right corners
      */    
-    function convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $x, $y)
+    function convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $relativeTileSize, $x, $y)
     {
         // Rounding
         $precision = 6;
-        
-        $relativeTileSize = $this->relativeTileSize;
         
         // Parameters
         $top = $left = $width = $height = null;
