@@ -61,19 +61,22 @@ var LayerManager = Class.extend(
      * Rechecks maximum dimensions after a layer is removed
      */
     refreshMaxDimensions: function (type) {
-        var maxWidth = 0, maxHeight = 0,  old = this._maxLayerDimensions;
+        var maxLeft   = 0,
+	        maxTop    = 0,
+	        maxBottom = 0,
+	        maxRight  = 0,
+	        old       = this._maxLayerDimensions;
         
         $.each(this._layers, function () {
             var d = this.getDimensions();
-                
-            maxWidth  = Math.max(maxWidth, d.width);
-            maxHeight = Math.max(maxHeight, d.height);
+            
+            maxLeft   = Math.max(maxLeft, d.left);
+            maxTop    = Math.max(maxTop, d.top);
+            maxBottom = Math.max(maxBottom, d.bottom);
+            maxRight  = Math.max(maxRight, d.right);
         });
         
-        this._maxLayerDimensions = {
-            width : maxWidth,
-            height: maxHeight
-        };
+        this._maxLayerDimensions = {width: maxLeft + maxRight, height: maxTop + maxBottom};
         
         if ((this._maxLayerDimensions.width !== old.width) || (this._maxLayerDimensions.height !== old.height)) {
             $(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
