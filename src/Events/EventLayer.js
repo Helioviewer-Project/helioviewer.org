@@ -86,7 +86,7 @@ var EventLayer = Layer.extend(
     /**
      * @description Place-holder for an event-handler which will handle viewportMove events.
      */
-    viewportMove: function () {
+    refreshEvents: function () {
 
     },
     

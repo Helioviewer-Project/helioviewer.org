@@ -90,8 +90,16 @@ var LayerManager = Class.extend(
         this.controller.viewport.updateSandbox();
     },
     
+    refreshLayers: function () {
+        $.each(this._layers, function () {
+            this.refresh();
+        });
+    },
+    
     /**
      * @description Reload layers (For tile layers, finds closest image)
+     * 
+     * @TODO 06/14/2010: Rename/refactor to something like "onTimeChange?"
      */
     reloadLayers: function () {
         $.each(this._layers, function () {

@@ -418,22 +418,22 @@ var Viewport = Class.extend(
         if (this.controller.tileLayers.size() > 0) {
             this.updateSandbox();
             this.checkTiles();
-            this.controller.tileLayers.resetLayers();
+            this.controller.tileLayers.refreshLayers();
         }
         
         // TEMP: Debug Testing (06/11/2010)
-        if (!this.tmpDebug) {
-            this.tmpDebug = $("<div style='z-index: 1000; border:1px solid red; position: absolute; opacity: 0.2; background: white;' />").appendTo(this.domNode);    
-        }
-        
-        //console.log("SB: " + $("#sandbox").width() + "x" + $("#sandbox").height() + ", MC: (" + $("#moving-container").css('left') + ", " + $("#moving-container").css('top') + ")");
-        
-        this.tmpDebug.css({
-            "width"  : this.domNode.width()  / 2,
-            "height" : this.domNode.height() / 2,
-            "top"    : (1/4) * this.domNode.height(),
-            "left"   : (1/4) * this.domNode.width()
-        });            
+//        if (!this.tmpDebug) {
+//            this.tmpDebug = $("<div style='z-index: 1000; border:1px solid red; position: absolute; opacity: 0.2; background: white;' />").appendTo(this.domNode);    
+//        }
+//        
+//        //console.log("SB: " + $("#sandbox").width() + "x" + $("#sandbox").height() + ", MC: (" + $("#moving-container").css('left') + ", " + $("#moving-container").css('top') + ")");
+//        
+//        this.tmpDebug.css({
+//            "width"  : this.domNode.width()  / 2,
+//            "height" : this.domNode.height() / 2,
+//            "top"    : (1/4) * this.domNode.height(),
+//            "left"   : (1/4) * this.domNode.width()
+//        });            
     },
     
     /**
