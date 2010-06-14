@@ -111,6 +111,23 @@ var Viewport = Class.extend(
     },
     
     /**
+     * Move the viewport focus to a new location.
+     * @param {Int} x X-value
+     * @param {Int} y Y-value
+     */
+    moveTo: function (x, y) {
+        this.movingContainer.css({
+            left: x + 'px',
+            top:  y + 'px'    
+        });
+
+        // Check throttle
+        if (this.moveCounter === 0) {
+        	this.checkTileVisibility();
+        }
+    },
+    
+    /**
      * @description Event-handler for a mouse-drag start.
      */
     startMoving: function () {
@@ -131,6 +148,9 @@ var Viewport = Class.extend(
     /**
      * @description Get the coordinates of the viewport center
      * @returns {Object} The X & Y coordinates of the viewport's center
+     * 
+     * * TODO 06/07/2010: getCenter should probably be with respect to the Sandbox, and not the viewport
+     *   since that is more meaningful in terms of positioning and movement.
      */
     getCenter: function () {
         return {
@@ -140,13 +160,44 @@ var Viewport = Class.extend(
     },
     
     /**
+     * TODO Re-work this, getCenter, etc to simplify viewport movement and coordinates
+     * ALSO- be careful to differentiate between pixel coordinates and other units of measurement
+     * 
+     * NEXT- look at moveTo() and find difference between the current position and center.
+     * Double/halve this 
+     */
+    getSandboxCenter: function () {
+    	return {
+    		x: 0.5 * this.sandbox.width(), 
+    		y: 0.5 * this.sandbox.height()
+    	}
+    },
+    
+    /**
+     * Returns the horizontal and vertical displacement of the sun from the center of the viewport
+     */
+    getOffsetFromCenter: function () {
+    	var sandboxCenter, sunCenter;
+    	
+    	sandboxCenter = this.getSandboxCenter();
+    	sunCenter     = this.getContainerPos();
+    	
+    	return {
+    		x: sunCenter.x - sandboxCenter.x,
+    		y: sunCenter.y - sandboxCenter.y
+    	}
+    },
+    
+    /**
      * @description Get the current coordinates of the moving container (relative to the sandbox)
      * @returns {Object} The X & Y coordinates of the viewport's top-left corner
      */
     getContainerPos: function () {
+    	var position = this.movingContainer.position();
+    	
         return {
-            x: parseInt(this.movingContainer.css('left'), 10),
-            y: parseInt(this.movingContainer.css('top'), 10)
+        	x: position.left,
+        	y: position.top
         };
     },
     
@@ -287,17 +338,30 @@ var Viewport = Class.extend(
      * @param {Float} imageScale The desired image scale
      */
     zoomTo: function (event, imageScale) {
-        var oldScale = this.imageScale;
+    	var sunCenter, originalSandboxWidth, originalSandboxHeight,  
+		sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale;
+    	
+        originalScale = this.imageScale;
+        
+        // get offset and sandbox dimensions
+        sunCenter             = this.getContainerPos();
+        originalSandboxWidth  = this.sandbox.width(); 
+        originalSandboxHeight = this.sandbox.height();
         
         this.imageScale = imageScale;
 
         // scale layer dimensions
-        this.scaleLayerDimensions(oldScale / imageScale);
+        this.scaleLayerDimensions(originalScale / imageScale);
         
         // update sandbox
         this.updateSandbox();
         
+        sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
+        sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
+        
         this._updateTileVisibilityRange();
+        
+        this.moveTo(sunCenter.x * sandboxWidthScaleFactor, sunCenter.y * sandboxHeightScaleFactor);
         
         // reset the layers
         this._tileLayerManager.adjustImageScale(imageScale, this.tileVisibilityRange);

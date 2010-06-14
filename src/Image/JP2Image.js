@@ -83,6 +83,10 @@ var JP2Image = Class.extend(
         this.offsetX =   parseFloat((this.sunCenterX - (this.width  / 2)).toPrecision(8));
         this.offsetY = - parseFloat((this.sunCenterY - (this.height / 2)).toPrecision(8));
         
+        //TEMP (06/11/2010): Temporarily simplifying in order to debug centering during zoom
+		//      this.offsetX = 0;
+		//      this.offsetY = 0;
+        
         this._onChange();        
     }
 });
