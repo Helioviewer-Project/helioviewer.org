@@ -73,12 +73,13 @@ if (!(isset($params) && loadModule($params))) {
             <li><a href="index.php#getJPX">JPX API</a></li>
         </ul>
     </li>
-    <li><a href="index.php#MovieAPI">Movie API</a></li>
+    <li><a href="index.php#MovieAPI">Movie and Screenshot API</a></li>
     <li>
         <a href="index.php#Appendices">Appendices</a>
         <ol style="list-style-type: upper-latin;">
             <li><a href="index.php#Identifiers">Identifiers</a></li>
             <li><a href="index.php#VariableTypes"> Variable Types </a></li>
+            <li><a href="index.php#ArcsecondConversions">Arcsecond Conversions</a></li>
         </ol>
     </li>
 </ol>
@@ -703,8 +704,236 @@ if (!(isset($params) && loadModule($params))) {
 
 <!-- Movie API -->
 <div id="MovieAPI">
-    <h1>6. Movie API:</h1>
-    <p><i>Under Development...</i></p>
+    <h1>6. Movie and Screenshot API:</h1>
+    <p>The movie and screenshot API allows users to download images or time-lapse videos of what they are viewing on the website. </p>
+    <ol style="list-style-type: upper-latin;">
+        <!-- Screenshot API -->
+        <li>
+        <div id="takeScreenshot">Screenshot API
+        <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
+        available image is returned.</p>
+
+        <br />
+
+        <div class="summary-box"><span
+            style="text-decoration: underline;">Usage:</span><br />
+        <br />
+
+        <?php echo $baseURL;?>?action=takeScreenshot<br />
+        <br />
+
+        Supported Parameters:<br />
+        <br />
+
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="35%"><b>width</b></td>
+                    <td width="20%"><i>Float</i></td>
+                    <td>Desired output movie width</td>
+                </tr>
+                <tr>
+                    <td><b>height</b></td>
+                    <td><i>Float</i></td>
+                    <td>Desired output movie height</td>
+                </tr>
+                <tr>
+                    <td><b>startDate</b></td>
+                    <td><i>ISO 8601 UTC Date</i></td>
+                    <td>Desired starting timestamp of the movie. The timestamps for the subsequent frames are incremented by
+                    	a certain timestep.</td>
+                </tr>
+                <tr>
+                    <td><b>imageScale</b></td>
+                    <td><i>Float</i></td>
+                    <td>The zoom scale of the images. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
+                    	a factor of 2. The full-res scale of an EIT image is 5.26.</td>
+                </tr>
+                <tr>
+                    <td><b>layers</b></td>
+                    <td><i>String</i></td>
+                    <td>A string of layer information in the following format:<br />
+                    	Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
+                    	If you do not know the sourceId, you can 
+                    	alternately send this layer string: <i>observatory,instrument,detector,measurement,isVisible,opacity</i>.
+                    	Layer strings are separated by "/": layer1/layer2/layer3.</td>
+                </tr>
+                <tr>
+                    <td><b>offsetLeftTop</b></td>
+                    <td><i>String</i></td>
+                    <td>The offset of the image's left,top corner from the center of the sun, in arcseconds, separated by a comma. 
+                    	The left value is first, and then the top value. Example: -5000,-5000. This can be calculated, if necessary, with
+                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>offsetRightBottom</b></td>
+                    <td><i>String</i></td>
+                    <td>The offset of the image's right,bottom corner from the center of the sun, in arcseconds, separated by a comma. 
+                    	The right value is first, and then the bottom value. Example: 5000,5000. This can be calculated, if necessary, with
+                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>numFrames</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The number of frames you would like to include in the movie. You may have between 10 and 100 frames.
+                    	The default value is 40 frames.</td>
+                </tr>
+               	<tr>
+                    <td><b>frameRate</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
+                </tr>
+                <tr>
+                    <td><b>timeStep</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The number of seconds in between each timestamp used to make the movie frames. The default 
+                    	is 86400 seconds, or 1 day.</td>
+                </tr>
+                <tr>
+                    <td><b>quality</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
+                </tr>
+                <tr>
+                    <td><b>filename</b></td>
+                    <td><i>String</i></td>
+                    <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
+                    	the filename defaults to "screenshot" + the unix timestamp of the time it was requested.</td>
+                </tr>
+                <tr>
+                    <td><b>hqFormat</b></td>
+                    <td><i>String</i></td>
+                    <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", and "avi".</td>
+                </tr>
+                <tr>
+                	<td><b>display</b></td>
+                	<td><i>Boolean</i></td>
+                	<td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
+                		filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+
+        <span class="example-header">Examples:</span>
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000
+        </a>
+        </span><br />
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000
+        </a>
+        </span>
+        </div>
+        </div>
+        </li>
+
+        <br />
+
+        <!-- Movie -->
+        <li>
+        <div id="buildMovie">Movie API
+        <p>Returns filepaths to a flash video and a high quality video consisting of 10-100 movie frames. The movie frames are chosen by matching the closest image
+        available at each step within the specified range of dates, and are automatically generated using the Screenshot API calls.</p>
+
+        <br />
+
+        <div class="summary-box"><span
+            style="text-decoration: underline;">Usage:</span><br />
+        <br />
+
+        <?php echo $baseURL;?>?action=buildMovie<br />
+        <br />
+
+        Supported Parameters:<br />
+        <br />
+
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="35%"><b>width</b></td>
+                    <td width="25%"><i>Float</i></td>
+                    <td>Desired output image width</td>
+                </tr>
+                <tr>
+                    <td><b>height</b></td>
+                    <td><i>Float</i></td>
+                    <td>Desired output image height</td>
+                </tr>
+                <tr>
+                    <td><b>obsDate</b></td>
+                    <td><i>ISO 8601 UTC Date</i></td>
+                    <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
+                </tr>
+                <tr>
+                    <td><b>imageScale</b></td>
+                    <td><i>Float</i></td>
+                    <td>The zoom scale of the image. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
+                    	a factor of 2. The full-res scale of an EIT image is 5.26.</td>
+                </tr>
+                <tr>
+                    <td><b>layers</b></td>
+                    <td><i>String</i></td>
+                    <td>A string of layer information in the following format:<br />
+                    	Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
+                    	If you do not know the sourceId, you can 
+                    	alternately send this layer string: <i>observatory,instrument,detector,measurement,isVisible,opacity</i>.
+                    	Layer strings are separated by "/": layer1/layer2/layer3.</td>
+                </tr>
+                <tr>
+                    <td><b>offsetLeftTop</b></td>
+                    <td><i>String</i></td>
+                    <td>The offset of the image's left,top corner from the center of the sun, in arcseconds, separated by a comma. 
+                    	The left value is first, and then the top value. Example: -5000,-5000. This can be calculated, if necessary, with
+                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>offsetRightBottom</b></td>
+                    <td><i>String</i></td>
+                    <td>The offset of the image's right,bottom corner from the center of the sun, in arcseconds, separated by a comma. 
+                    	The right value is first, and then the bottom value. Example: 5000,5000. This can be calculated, if necessary, with
+                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>quality</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
+                </tr>
+                <tr>
+                    <td><b>filename</b></td>
+                    <td><i>String</i></td>
+                    <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
+                    	the filename defaults to "screenshot" + the unix timestamp of the time it was requested.</td>
+                </tr>
+                <tr>
+                	<td><b>display</b></td>
+                	<td><i>Boolean</i></td>
+                	<td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
+                		filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
+                </tr>
+            </tbody>
+        </table>
+
+		<br />
+		
+        <span class="example-header">Example:</span>
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512
+        </a>
+        </span><br />
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512
+        </a>
+        </span></div>
+        </div>
+
+        <br />
+
 </div>
 
     <!-- Appendices -->
@@ -935,15 +1164,78 @@ if (!(isset($params) && loadModule($params))) {
         </div>
         </div>
         </li>
+        <br />
 
-        <!-- TODO : Appendice C: Image Layers -->
+        <!-- Appendix C: Pixel and Arcsecond Conversions -->
+        <li>
+        <div id="ArcsecondConversions">Pixel to Arcsecond Conversions
+        <p>This appendix contains a list of JPEG2000 image scales for some layer types and how to convert 
+        	between pixels on the image and arcseconds.</p>
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <br />
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="50%"><strong>Layer Type:</strong></td>
+                    <td width="50%"><strong>Scale (arcseconds/pixel)</strong></td>
+                </tr>
+                <tr>
+                    <td>EIT (all measurements)</td>
+                    <td>2.63</td>
+                </tr>
+                <tr>
+                    <td>LASCO C2</td>
+                    <td>11.9</td>
+                </tr>
+                <tr>
+                    <td>LASCO C3</td>
+                    <td>56</td>
+                </tr>
+                <tr>
+                    <td>MDI (all measurements)</td>
+                    <td>1.985707</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        To convert between arseconds and pixels, you must know something about the dimensions of the original JPEG2000 image and
+        the coordinates of the center of the sun. <br /><br />
+        Center coordinates can be found in the FITS header of an image under CRPIX1 (x-offset) and 
+        CRPIX2 (y-offset from the <i>bottom</i> of the image). Therefore the y-offset must be adjusted to reflect that the origin is in the top left
+        corner instead of the bottom left corner (simply take newYOffset = ySize - yOffset).<br /><br />
+        Most SOHO images are usually 1024x1024.<br />
+        
+        To find out the offset in arcseconds of the top left corner of an EIT image (Coordinates 0,0), we'll use some example numbers: <br /><br />
+        width = height = 1024 px<br />
+        xOffset = 514.660 px<br />
+        yOffset = 1024 - 505.19 = 518.81 px<br /><br />
+        
+        First convert the top-left coordinates (0,0) into their offsets from the center of the sun (514.660,518.81) by subtracting the center coordinates
+        from the top-left coordinates.<br />
+        Top-left coordinates are now (-514.660, -518.81)<br /><br />
+        
+        Next use the scale listed above to convert these offsets to arcseconds: <br />
+        -514.660 px * 2.63 arcsec/px <br />
+        = -1353.5558 arcseconds from center on x-axis<br /><br />
+        -518.81 px * 2.63 arcsec/px <br />
+        = -1364.4703 arcseconds from center on y-axis<br /><br />
+        
+        Therefore your offsetLeftTop string would be "-1353.5558,-1364.4703".
+
+        <br />
+        <br />
+        </div>
+        </div>
+        </li>
+
+        <!-- TODO : Appendice D: Image Layers -->
     </ol>
 </div>
 
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-04-15 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-06-14 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>
