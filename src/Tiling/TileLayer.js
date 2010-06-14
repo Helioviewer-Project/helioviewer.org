@@ -145,12 +145,12 @@ var TileLayer = Layer.extend(
         this.sunCenterOffsetY = parseFloat((this.image.offsetY * this.scaleFactor).toPrecision(8));
         
         // Update layer dimensions
-//      this.dimensions = {
-//          "left"   : Math.max(this.relWidth  / 2, (this.relWidth  / 2) - this.sunCenterOffsetX),
-//          "top"    : Math.max(this.relHeight / 2, (this.relHeight / 2) - this.sunCenterOffsetY),
-//          "bottom" : Math.max(this.relHeight / 2, (this.relHeight / 2) + this.sunCenterOffsetY),
-//          "right"  : Math.max(this.relWidth  / 2, (this.relWidth  / 2) + this.sunCenterOffsetX)
-//      };
+		this.dimensions = {
+			"left"   : Math.max(this.width  / 2, (this.width  / 2) - this.sunCenterOffsetX),
+			"top"    : Math.max(this.height / 2, (this.height / 2) - this.sunCenterOffsetY),
+			"bottom" : Math.max(this.height / 2, (this.height / 2) + this.sunCenterOffsetY),
+			"right"  : Math.max(this.width  / 2, (this.width  / 2) + this.sunCenterOffsetX)
+		};
         
         // Center of the tile layer
         this.domNode.css({
@@ -261,12 +261,9 @@ var TileLayer = Layer.extend(
     /**
      * @description Returns an array container the values of the positions for each edge of the TileLayer.
      */
-    getDimensions: function () {
-        return {
-            "width" : this.width  + this.sunCenterOffsetX,
-            "height": this.height + this.sunCenterOffsetY
-        };
-    },
+	getDimensions: function () {
+	    return this.dimensions;
+	},
     
     /**
      * @description Creates an array of tile dom-nodes
