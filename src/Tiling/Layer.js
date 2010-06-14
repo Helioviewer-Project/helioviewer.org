@@ -10,8 +10,6 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var Layer = Class.extend(
     /** @lends Layer.prototype */
     {
-    //maxZoomLevel: 20, // ZoomLevel where FullSize = 1px
-    //minZoomLevel: 10,
     visible: true,
 
     /**
@@ -24,25 +22,11 @@ var Layer = Class.extend(
      *        <b>visible</b> - The default layer visibility<br>
      * </div>
      */
-    init: function (controller) {
-        this.controller = controller;
-        this.viewport   = controller.viewport;
-        this.id = 'layer' + Math.floor(Math.random() * 100000 + 1);
-        
+    init: function () {
         this.dimensions = {
-            "left"   : 0,
-            "top"    : 0,
-            "bottom" : 0,
-            "right"  : 0
+            "width" : 0,
+            "height": 0
         };
-    },
-
-    /**
-     * @description Adjust the Layer's z-index 
-     * @param {Object} val Z-index to use
-     */
-    setZIndex: function (val) {
-        this.domNode.css("z-index", val);
     },
 
     /**

@@ -12,12 +12,10 @@ var LayerManager = Class.extend(
     /**
      * @constructs
      * @description Creates a new LayerManager
-     * @param {Object} A Rseference to the main application controller
      */
-    init: function (controller) {
-        this.controller = controller;
+    init: function () {
         this._layers    = [];
-        $(document).bind("observation-time-changed", $.proxy(this.reloadLayers, this));
+        this._maxLayerDimensions = {width: 0, height: 0};
     },
 
     /**
@@ -51,69 +49,62 @@ var LayerManager = Class.extend(
     },
     
     /**
-     * @description Returns the largest width and height of any layers (does not have to be from same layer)
-     * @return {Object} The width and height of the largest layer
-     * 
-     * In order to allow Helioviewer to fully display all layers, a simple solution is to determine the
-     * "maximum dimensions" for all layers. That is, if you were to flatten all layers into a single one,
-     * what would it's dimensions be? If the viewport is able to view this entire layer, then all of it's component
-     * layers will be fully-navigable. 
+     * Updates the stored maximum dimensions. If the specified dimensions for updated are {0,0}, e.g. after
+     * a layer is removed, then all layers will be checked
      */
-    getMaxDimensions: function () {
-        var maxLeft   = 0,
-            maxTop    = 0,
-            maxBottom = 0,
-            maxRight  = 0;
+    updateMaxDimensions: function (event) {
+        var type = event.type.split("-")[0];
+        this.refreshMaxDimensions(type);
+    },
+    
+    /**
+     * Rechecks maximum dimensions after a layer is removed
+     */
+    refreshMaxDimensions: function (type) {
+        var maxWidth = 0, maxHeight = 0,  old = this._maxLayerDimensions;
         
         $.each(this._layers, function () {
             var d = this.getDimensions();
-            
-            maxLeft   = Math.max(maxLeft, d.left);
-            maxTop    = Math.max(maxTop, d.top);
-            maxBottom = Math.max(maxBottom, d.bottom);
-            maxRight  = Math.max(maxRight, d.right);
+                
+            maxWidth  = Math.max(maxWidth, d.width);
+            maxHeight = Math.max(maxHeight, d.height);
         });
         
-        return {width: maxLeft + maxRight, height: maxTop + maxBottom};
+        this._maxLayerDimensions = {
+            width : maxWidth,
+            height: maxHeight
+        };
+        
+        if ((this._maxLayerDimensions.width !== old.width) || (this._maxLayerDimensions.height !== old.height)) {
+            $(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
+        }
+    },
+    
+    /**
+     * @description Returns the largest width and height of any layers (does not have to be from same layer)
+     * @return {Object} The width and height of the largest layer
+     * 
+     */
+    getMaxDimensions: function () {
+        return this._maxLayerDimensions;
     },
 
     /**
      * @description Removes a layer
-     * @param {Object} The layer to remove
+     * @param {string} The id of the layer to remove
      */
-    removeLayer: function (layer) {
+    removeLayer: function (id) {
+        var type  = id.split("-")[0],
+            index = this.indexOf(id), 
+            layer = this._layers[index];
+        
         layer.domNode.remove();
         this._layers = $.grep(this._layers, function (e, i) {
             return (e.id !== layer.id);
         });
         layer = null;
-        this.controller.viewport.updateSandbox();
-    },
-    
-    refreshLayers: function () {
-        $.each(this._layers, function () {
-            this.refresh();
-        });
-    },
-    
-    /**
-     * @description Reload layers (For tile layers, finds closest image)
-     * 
-     * @TODO 06/14/2010: Rename/refactor to something like "onTimeChange?"
-     */
-    reloadLayers: function () {
-        $.each(this._layers, function () {
-            this.reload();
-        });
-    },
-
-    /**
-     * @description Resets each of the layers
-     */
-    onZoomLevelChange: function () {
-        $.each(this._layers, function () {
-            this.onZoomLevelChange();
-        });
+        
+        this.refreshMaxDimensions(type);
     },
     
     /**

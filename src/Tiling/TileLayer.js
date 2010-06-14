@@ -8,7 +8,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, Layer, $, Image, console */
+/*global Class, Layer, $, JP2Image, Image, console, getUTCTimestamp */
 "use strict";
 var TileLayer = Layer.extend( 
     /** @lends TileLayer.prototype */
@@ -19,9 +19,6 @@ var TileLayer = Layer.extend(
     defaultOptions: {
         type        : 'TileLayer',
         opacity     : 100,
-        cacheEnabled: true,
-        autoOpacity : true,
-        startOpened : false,
         sharpen     : false
     },
 
@@ -36,137 +33,90 @@ var TileLayer = Layer.extend(
      *                           tile layers)<br>
      *      <b>tileSize</b>    - Tilesize to use<br>
      *      <b>source</b>      - Tile source ["database" | "filesystem"]<br>
-     *      <b>opacity</b>     - Default opacity (adjusted automatically when layer is added)<br>
-     *      <b>autoOpaicty</b> - Whether or not the opacity should be automatically determined when the image
-     *                           properties are loaded<br>
-     *      <b>startOpened</b> - Whether or not the layer menu entry should initially be open or closed<br>
+     *      <b>opacity</b>     - Default opacity<br>
      * </div>
      */
-    init: function (controller, params) {
-        this._super(controller);
-        this.dataSources = controller.dataSources;
-        this.tileLayers  = controller.tileLayers;
-        this.tileSize    = controller.viewport.tileSize;         
-                
+    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, api, baseURL, observatory, instrument, 
+                    detector, measurement, sourceId, name, visible, opacity, layeringOrder, server) {
         $.extend(this, this.defaultOptions);
-        $.extend(this, params);
-        $.extend(this, this.dataSources[this.observatory][this.instrument][this.detector][this.measurement]);
+        this._super();
         
-        this.htmlId = "tile-" + this.id;
+        this.loaded = false;
+        
+        this._requestDate = date;
 
-        this.domNode = $('<div class="tile-layer-container" style="position: absolute;"></div>').appendTo(
-            this.viewport.movingContainer
-        );
+        this.tileSize      = tileSize;
+        this.viewportScale = viewportScale;
+        
+        this.layeringOrder = layeringOrder;
+        this.visible       = visible;
+        this.opacity       = opacity;
+        this.baseURL       = baseURL;
+        this.name          = name;
+        
+        this.tileVisibilityRange  = tileVisibilityRange;
+        
+        this.id = "tile-layer-" + sourceId;
+
+        this.domNode = $('<div class="tile-layer-container" />').appendTo("#moving-container");
         
         this._setupEventHandlers();
 
-        this.tiles = [];
-        this.loadClosestImage();
-    },
-    
-    /**
-     * Refreshes layer and checks to see if new tiles should be displayed
-     */
-    refresh: function () {
-    	this.refreshTiles(false);
-    },
-    
-    /**
-     * @description Refreshes the TileLayer
-     */
-    reload: function () {
-        this.loadClosestImage();
-    },
-
-    /**
-     * @function Remove TileLayer tiles
-     */
-    removeTiles: function () {
-        this.tiles = [];
-    },
-    
-    
-    /**
-     * @description Loads the closest image in time to that requested
-     */
-    loadClosestImage: function () {
-        var callback, params, self = this;
-
-        params = {
-            action:   'getClosestImage',
-            server:   this.server,
-            sourceId: this.sourceId,
-            date:     this.controller.timeControls.toISOString()
-        };
-
+        this.tiles = {};
         this._loadStaticProperties();
         
-        // Ajax request
-        $.post(this.controller.api, params, $.proxy(this.onLoadImage, this), "json");
+        $(document).trigger("create-tile-layer-accordion-entry", 
+            [index, this.id, name, observatory, instrument, detector, measurement, date, false, opacity, visible,
+             $.proxy(this.setOpacity, this)
+            ]
+        );
+        
+        this.image = new JP2Image(observatory, instrument, detector, measurement, sourceId, 
+                                  date, server, api, $.proxy(this.onLoadImage, this));
     },
     
     /**
-     * Gets information to the best match for a requested image
-     * 
-     * The AJAX request returns a JSON object with the following properties:
-     * 
-     *    jp2Width   Width of the original image
-     *    jp2Height  Height of the original image
-     *    jp2Scale   Pixel scale (in arcseconds per pixel) of the original image
-     *    rotated    Whether or not the original image was rotated 180 degrees
-     *    sunCenterX X-coordinate for the center of the sun in the original image
-     *    sunCenterY Y-coordinate for the center of the sun in the original image
-     *    
+     * Changes data source and fetches image for new source
      */
-    onLoadImage: function (image) {
-        var index, accordion = this.controller.tileLayerAccordion;
-
-        //Only load image if it is different form what is currently displayed
-        if (image.filename === this.filename) {
-            return;
-        }
+    updateDataSource: function (observatory, instrument, detector, measurement, sourceId, name, layeringOrder) {
+        this.name = name;
+        this.layeringOrder = layeringOrder;
         
-        $.extend(this, image);
- 
-        this.viewport.checkTiles(true);
-        
-        //TEMP (06/11/2010): Temporarily simplifying in order to debug centering during zoom
-        this.sunCenterX = this.jp2Width/2;
-        this.sunCenterY = this.jp2Height/2;
-        
-        // Sun center offset at the original JP2 image scale (with respect to top-left origin)
-        this.origSunCenterOffsetX =   parseFloat((this.sunCenterX - (this.jp2Width  / 2)).toPrecision(8));
-        this.origSunCenterOffsetY = - parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
-        
-        this._computeRelativeParameters();        
-        this.reloadTiles(false);
-                   
-        // Update viewport sandbox if necessary
-        this.viewport.updateSandbox();
-
-        // Add to tileLayer Accordion if it's not already there
-        if (!accordion.hasId(this.id)) {
-            index = this.tileLayers.indexOf(this.id);
-            accordion.addLayer(this, index);
-        }
-                        
-        // Otherwise update the accordion entry information
-        else {
-            accordion.updateTimeStamp(this);
-            accordion.updateLayerDesc("#" + this.htmlId, this.name);
-            accordion.updateOpacitySlider(this.id, this.opacity);
-        }
-    },        
-    
-
-    /**
-     * @description Handles zoom level changes
-     */
-    onZoomLevelChange: function () {
-        this._computeRelativeParameters();        
-        this.reloadTiles(true);
+        this.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
     },
     
+    /**
+     * 
+     */
+    updateTileVisibilityRange: function (range) {
+        this.tileVisibilityRange = range;
+        
+        if (this.loaded) {
+            this._checkTiles();
+        }
+    },
+    
+    /**
+     * 
+     */
+    _checkTiles: function () {
+        var i, j;
+
+        for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
+            for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
+                if (!this.tiles[i]) {
+                    this.tiles[i] = {};
+                }
+                if (!this.validTiles[i]) {
+                    this.validTiles[i] = {};
+                }
+                if (!this.tiles[i][j] && this.validTiles[i][j]) {
+                    this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
+                }
+            }
+        }
+    },
+
     /**
      * Computes layer parameters relative to the current viewport image scale
      * 
@@ -176,7 +126,7 @@ var TileLayer = Layer.extend(
      *   Currently, EIT and MDI images are prerotated, and their corresponding meta-information
      *   is guaranteed to be accurate. LASCO images on the other hand are rotated during FITS -> JP2
      *   conversion. The meta-information from the FITS header is not modified, however, and reflects
-     *   the original unrotated image. Therefor, when rotated = true, the coordinates should be flipped
+     *   the original unrotated image. Therefore, when rotated = true, the coordinates should be flipped
      *   to reflect the rotation that was already done to the image itself.
      *   
      * 2. Center offset:
@@ -185,23 +135,22 @@ var TileLayer = Layer.extend(
      */
     _computeRelativeParameters: function () {
         // Ratio of original JP2 image scale to the viewport/desired image scale
-        this.scaleFactor = this.jp2Scale / this.viewport.getImageScale();
+        this.scaleFactor = this.image.scale / this.viewportScale;
         
-        // Update relevant dimensions
-        this.relWidth  = this.jp2Width  * this.scaleFactor;
-        this.relHeight = this.jp2Height * this.scaleFactor;
+        this.width  = this.image.width  * this.scaleFactor;
+        this.height = this.image.height * this.scaleFactor;
         
         // Offset image
-        this.sunCenterOffsetX = parseFloat((this.origSunCenterOffsetX * this.scaleFactor).toPrecision(8));
-        this.sunCenterOffsetY = parseFloat((this.origSunCenterOffsetY * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetX = parseFloat((this.image.offsetX * this.scaleFactor).toPrecision(8));
+        this.sunCenterOffsetY = parseFloat((this.image.offsetY * this.scaleFactor).toPrecision(8));
         
         // Update layer dimensions
-        this.dimensions = {
-            "left"   : Math.max(this.relWidth  / 2, (this.relWidth  / 2) - this.sunCenterOffsetX),
-            "top"    : Math.max(this.relHeight / 2, (this.relHeight / 2) - this.sunCenterOffsetY),
-            "bottom" : Math.max(this.relHeight / 2, (this.relHeight / 2) + this.sunCenterOffsetY),
-            "right"  : Math.max(this.relWidth  / 2, (this.relWidth  / 2) + this.sunCenterOffsetX)
-        };
+//      this.dimensions = {
+//          "left"   : Math.max(this.relWidth  / 2, (this.relWidth  / 2) - this.sunCenterOffsetX),
+//          "top"    : Math.max(this.relHeight / 2, (this.relHeight / 2) - this.sunCenterOffsetY),
+//          "bottom" : Math.max(this.relHeight / 2, (this.relHeight / 2) + this.sunCenterOffsetY),
+//          "right"  : Math.max(this.relWidth  / 2, (this.relWidth  / 2) + this.sunCenterOffsetX)
+//      };
         
         // Center of the tile layer
         this.domNode.css({
@@ -211,27 +160,54 @@ var TileLayer = Layer.extend(
     },
     
     /**
-     * @description Removes all tiles and loads new ones in their place
-     * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
+     * 
      */
-    reloadTiles: function (zoomLevelChanged) {
-        var i, j, old, numTiles, numTilesLoaded, indices, tile, onLoadComplete, visible, self = this;
+    updateImageScale: function (scale, tileVisibilityRange) {
+        this.viewportScale       = scale;
+        this.tileVisibilityRange = tileVisibilityRange;
+        this._computeRelativeParameters();
+        this.reloadTiles(true);
+    },
+    
+    /**
+     * 
+     */
+    onLoadImage: function () {
+        this.loaded = true;
         
-        visible = this.viewport.visible;
-
+        this._computeRelativeParameters();
+        this.reloadTiles(false);
+        
+        // Update viewport sandbox if necessary
+        $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]).
+                    trigger("update-tile-layer-accordion-entry", 
+                           [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
+                            this.image.filepath, this.image.filename, this.image.server]);
+    },
+    
+    /**
+     * Handles time changes
+     */
+    updateRequestTime: function (date) {
+        this.image.updateTime(date);
+    },
+    
+    /**
+     * @description reloads displayed tiles
+     * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
+     */
+    reloadTiles: function (removeOldTilesFirst) {
+        var i, j, old, numTiles = 0, numTilesLoaded = 0, tile, onLoadComplete, self = this;
+        
         this.computeValidTiles();
-        this.removeTiles();
+        this.tiles = {};
+        
         old = this.getTileArray();
 
         // When zooming, remove old tiles right away to avoid visual glitches
-        if (zoomLevelChanged) {
+        if (removeOldTilesFirst) {
             this.removeTileDomNodes(old);
         }
-        
-        numTiles = 0;
-        numTilesLoaded = 0;
-    
-        indices = this.viewport.visibleRange;
         
         // When stepping forward or back in time remove old times only after all new ones have been added
         onLoadComplete = function () {
@@ -239,26 +215,24 @@ var TileLayer = Layer.extend(
 
             // After all tiles have loaded, stop indicator (and remove old-tiles if haven't already)
             if (numTilesLoaded === numTiles) {
-                if (!zoomLevelChanged) {
+                if (!removeOldTilesFirst) {
                     self.removeTileDomNodes(old);
-                    //$('#loading').hide();
                 }
             }
         };
         
         // Load tiles that lie within the current viewport
-        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
-            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
+        for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
+            for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
                 if (!this.validTiles[i]) {
-                    this.validTiles[i] = [];
+                    this.validTiles[i] = {};
                 }
 
-                if (visible[i][j] && this.validTiles[i][j]) {
-                    tile = this.getTile(i, j, this.viewport.imageScale);
-                    this.domNode.append(tile);
-    
+                if (this.validTiles[i][j]) {
+                    tile = this.getTile(i, j).appendTo(this.domNode);
+                                        
                     if (!this.tiles[i]) {
-                        this.tiles[i] = [];
+                        this.tiles[i] = {};
                     }
     
                     this.tiles[i][j] = {};
@@ -288,7 +262,10 @@ var TileLayer = Layer.extend(
      * @description Returns an array container the values of the positions for each edge of the TileLayer.
      */
     getDimensions: function () {
-        return this.dimensions;
+        return {
+            "width" : this.width  + this.sunCenterOffsetX,
+            "height": this.height + this.sunCenterOffsetY
+        };
     },
     
     /**
@@ -314,13 +291,13 @@ var TileLayer = Layer.extend(
         indices = this.getValidTileRange();
         
         // Reset array
-        this.validTiles = [];
+        this.validTiles = {};
         
         // Update validTiles array
         for (i = indices.xStart; i <= indices.xEnd; i += 1) {
             for (j = indices.yStart; j <= indices.yEnd; j += 1) {
                 if (!this.validTiles[i]) {
-                    this.validTiles[i] = [];
+                    this.validTiles[i] = {};
                 }
                 this.validTiles[i][j] = true;
             }
@@ -335,8 +312,8 @@ var TileLayer = Layer.extend(
         var numTilesX, numTilesY, boundaries, ts = this.tileSize;
         
         // Number of tiles for the entire image
-        numTilesX = Math.max(2, Math.ceil(this.relWidth  / ts));
-        numTilesY = Math.max(2, Math.ceil(this.relHeight  / ts));
+        numTilesX = Math.max(2, Math.ceil(this.width  / ts));
+        numTilesY = Math.max(2, Math.ceil(this.height  / ts));
         
         // Tile placement architecture expects an even number of tiles along each dimension
         if ((numTilesX % 2) !== 0) {
@@ -359,30 +336,6 @@ var TileLayer = Layer.extend(
     },
 
     /**
-     * @description Sets the opacity for the layer, taking into account layers which overlap one another.
-     */
-    setInitialOpacity: function () {
-        var self = this,
-            opacity = 1,
-            counter = 0;
-
-        //Note: No longer adjust other layer's opacities... only the new layer's (don't want to overide user settings).
-        this.tileLayers.each(function () {
-            if (parseInt(this.layeringOrder, 10) === parseInt(self.layeringOrder, 10)) {
-                counter += 1;
-            }
-        });
-        
-        //Do no need to adjust opacity if there is only one image
-        if (counter > 1) {
-            opacity = opacity / counter;
-            this.setOpacity(opacity * 100);
-        }
-        
-        this.autoOpacity = false;
-    },
-
-    /**
      * @description Update the tile layer's opacity
      * @param {int} Percent opacity to use
      */
@@ -402,22 +355,19 @@ var TileLayer = Layer.extend(
     },
     
     /**
-     * @description Sets up image properties that are not dependent on the specfic image,
+     * @description Sets up image properties that are not dependent on the specific image,
      * but only on the type (source) of the image.
      * 
      * IE7: Want z-indices < 1 to ensure event icon visibility
      */
     _loadStaticProperties: function () {
-        this.setZIndex(parseInt(this.layeringOrder, 10) - 10);
+        this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
         
         // opacity
         if (this.opacity !== 100) {
             this.setOpacity(this.opacity);
         }
-        else if (this.autoOpacity) {
-            this.setInitialOpacity();
-        }
-        
+
         // visibility
         if (!this.visible) {
             this.setVisibility(false);
@@ -438,34 +388,6 @@ var TileLayer = Layer.extend(
     },
 
     /**
-     * @description Check to see if all visible tiles have been loaded
-     */
-    refreshTiles: function () {
-        var visible, indices, i, j;
-        
-        this.viewport.checkTiles();
-        
-        visible = this.viewport.visible;
-        indices = this.viewport.visibleRange;    
-
-        //console.log("Checking tiles from " + indices.xStart + " to " + indices.xEnd);
-        for (i = indices.xStart; i <= indices.xEnd; i += 1) {
-            for (j = indices.yStart; j <= indices.yEnd; j += 1) {
-                if (!this.tiles[i]) {
-                    this.tiles[i] = [];
-                }
-                if (!this.validTiles[i]) {
-                    this.validTiles[i] = [];
-                }
-                if (visible[i][j] && (!this.tiles[i][j]) && this.validTiles[i][j]) {
-                    //console.log("Loading new tile");
-                    this.tiles[i][j] = this.getTile(i, j).appendTo(this.domNode);
-                }
-            }
-        }
-    },
-
-    /**
      * @description Generates URL to retrieve a single Tile and displays the transparent tile if request fails
      * @param {Int} x Tile X-coordinate
      * @param {Int} y Tile Y-coordinate
@@ -475,11 +397,10 @@ var TileLayer = Layer.extend(
      * set at tile-level.
      */
     getTile: function (x, y) {
-        var top, left, imageScale, ts, img, rf, emptyTile, uri, self  = this;
+        var top, left, ts, img, rf, emptyTile, uri, self  = this;
 
         left       = x * this.tileSize;
         top        = y * this.tileSize;
-        imageScale = this.viewport.imageScale;
         ts         = this.tileSize;
         
         rf = function () {
@@ -502,30 +423,21 @@ var TileLayer = Layer.extend(
 
         img = $(img).addClass("tile").css({"left": left, "top": top}).attr("alt", "");
 
-        // IE
+        // IE (can only adjust opacity at the image level)
         if (!$.support.opacity) {
             img.css("opacity", this.opacity / 100);
         }
+        
+        uri = this.image.filepath + "/" + this.image.filename;
 
-        // If loading fails...
+        // Load tile
         img.error(function (e) {
             img.unbind("error");
             $(this).attr("src", emptyTile);
-        });
-        
-        // Wait until image is done loading specify dimensions in order to prevent Firefox from displaying place-holders
-        img.load(function () {
-            $(this).width(512).height(512);
-        });
-
-        uri = this.filepath + "/" + this.filename;
-
-        // Load tile
-        img.attr("src", this.getTileURL(this.server, x, y));
-        
-        //if (this.controller.debug && (typeof console !== "undefined")) {
-        //console.log(this.getTileURL(this.server, x, y));
-        //}
+        }).load(function () {
+            $(this).width(512).height(512); // Wait until image is done loading specify dimensions in order to prevent 
+                                            // Firefox from displaying place-holders
+        }).attr("src", this.getTileURL(this.image.server, x, y));
         
         return img;
     },
@@ -536,10 +448,9 @@ var TileLayer = Layer.extend(
      * TODO 02/25/2010: What would be performance loss from re-fetching meta information on server-side?
      */
     getTileURL: function (serverId, x, y) {
-        var url, file, format, params;
-        
-        url    = this.controller.tileServers[serverId];
-        file   = this.filepath + "/" + this.filename;
+        var file, format, params;
+
+        file   = this.image.filepath + "/" + this.image.filename;
         format = (this.layeringOrder === 1 ? "jpg" : "png");
 
         params = {
@@ -548,47 +459,22 @@ var TileLayer = Layer.extend(
             "x"                : x,
             "y"                : y,
             "format"           : format,
-            "date"             : this.date,
-            "tileScale"        : this.viewport.imageScale,
+            "date"             : this.image.date,
+            "tileScale"        : this.viewportScale,
             "ts"               : this.tileSize,
-            "jp2Width"         : this.jp2Width,
-            "jp2Height"        : this.jp2Height,
-            "jp2Scale"         : this.jp2Scale,
-            "obs"              : this.observatory,
-            "inst"             : this.instrument,
-            "det"              : this.detector,
-            "meas"             : this.measurement,
-            "sunCenterOffsetX" : this.origSunCenterOffsetX,
-            "sunCenterOffsetY" : this.origSunCenterOffsetY                        
+            "jp2Width"         : this.image.width,
+            "jp2Height"        : this.image.height,
+            "jp2Scale"         : this.image.scale,
+            "obs"              : this.image.observatory,
+            "inst"             : this.image.instrument,
+            "det"              : this.image.detector,
+            "meas"             : this.image.measurement,
+            "sunCenterOffsetX" : this.image.offsetX,
+            "sunCenterOffsetY" : this.image.offsetY                        
         };
-        return url + "?" + $.param(params);
+        return this.baseURL + "?" + $.param(params);
     },
 
-    /**
-     * @description Returns a stringified version of the tile layer for use in URLs, etc
-     * @return string String representation of the tile layer
-     */
-    serialize: function () {
-        return this.observatory + "," + this.instrument + "," + this.detector + "," + this.measurement + "," +
-            (this.visible ? "1" : "0") + "," + this.opacity;
-    },
-    
-    /**
-     * @description Returns a JSON representation of the tile layer for use by the UserSettings manager
-     * @return JSON A JSON representation of the tile layer     
-     */
-    toJSON: function () {
-        return {
-            "server"     : this.server,
-            "observatory": this.observatory,
-            "instrument" : this.instrument,
-            "detector"   : this.detector,
-            "measurement": this.measurement,
-            "visible"    : this.visible,
-            "opacity"    : this.opacity
-        };
-    },
-    
     /**
      * @description Tests all four corners of the visible image area to see if they are within the 
      *              transparent circle region of LASCO C2 and LASCO C3 images. It uses the distance
@@ -627,12 +513,48 @@ var TileLayer = Layer.extend(
     },
     
     /**
+     * @description Returns a stringified version of the tile layer for use in URLs, etc
+     * @return string String representation of the tile layer
+     */
+    serialize: function () {
+        return this.image.observatory + "," + this.image.instrument + "," + this.image.detector + "," +
+               this.image.measurement + "," + (this.visible ? "1" : "0") + "," + this.opacity;
+    },
+    
+    /**
+     * @description Returns a JSON representation of the tile layer for use by the UserSettings manager
+     * @return JSON A JSON representation of the tile layer     
+     */
+    toJSON: function () {
+        return {
+            "server"     : this.image.server,
+            "observatory": this.image.observatory,
+            "instrument" : this.image.instrument,
+            "detector"   : this.image.detector,
+            "measurement": this.image.measurement,
+            "visible"    : this.visible,
+            "opacity"    : this.opacity
+        };
+    },
+    
+    /**
      * @description Sets up event-handlers to deal with viewport motion
      */
     _setupEventHandlers: function () {
         var self = this;
-        this.viewport.domNode.bind('viewport-move', function (e) {
-            self.refreshTiles();
-        });
+        
+        $(document).bind('toggle-layer-visibility', function (event, id) {
+                        if (self.id === id) {
+                            self.toggleVisibility();
+                            $(document).trigger("save-tile-layers");
+                        }
+                    })
+                   .bind('tile-layer-data-source-changed',
+                       function (event, id, obs, inst, det, meas, sourceId, name, layeringOrder) {
+                            if (self.id === id) {
+                                self.updateDataSource(obs, inst, det, meas, sourceId, name, layeringOrder);
+                                $(document).trigger("save-tile-layers");
+                            }
+                        });
     }
 });

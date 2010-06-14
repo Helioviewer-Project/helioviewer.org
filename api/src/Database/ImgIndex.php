@@ -65,13 +65,13 @@ class Database_ImgIndex
      */
     public function getImageFromDatabase($date, $sourceId)
     {
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
 
         // Search left and right side of image database B-Tree separately
-        $lhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
-        $rhs = sprintf("SELECT id as imageId, filepath, filename, date, sourceId FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
+        $lhs = sprintf("SELECT id, filepath, filename, date FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
+        $rhs = sprintf("SELECT id, filepath, filename, date FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
 
         //die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
 
@@ -96,8 +96,7 @@ class Database_ImgIndex
         }
 
         // Fix types
-        $img["imageId"]  = (int) $img["imageId"];
-        $img["sourceId"] = (int) $img["sourceId"];
+        $img["id"]  = (int) $img["id"];
 
         return $img;
     }
@@ -112,7 +111,7 @@ class Database_ImgIndex
      * @return int The number of images in the database within the specified constraints
      */
     public function getImageCount($start, $end, $sourceId) {
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
 
@@ -131,7 +130,7 @@ class Database_ImgIndex
      * @return int The number of images in the database within the specified constraints
      */
     public function getImageRange($start, $end, $sourceId) {
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
 
@@ -154,7 +153,7 @@ class Database_ImgIndex
      */
     public function extractJP2MetaInfo ($img)
     {
-        include_once "src/Image/JPEG2000/JP2ImageXMLBox.php";
+        include_once HV_ROOT_DIR . "/api/src/Image/JPEG2000/JP2ImageXMLBox.php";
 
         try {
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($img);
@@ -163,9 +162,9 @@ class Database_ImgIndex
             $center     = $xmlBox->getSunCenter();
 
             $meta = array(
-                "jp2Scale"   => (float) $xmlBox->getImagePlateScale(),
-                "jp2Width"   => (int) $dimensions[0],
-                "jp2Height"  => (int) $dimensions[1],
+                "scale"      => (float) $xmlBox->getImagePlateScale(),
+                "width"      => (int) $dimensions[0],
+                "height"     => (int) $dimensions[1],
                 "rotated"    => (bool) $xmlBox->getImageRotationStatus(),
                 "sunCenterX" => (float) $center[0],
                 "sunCenterY" => (float) $center[1],
@@ -177,7 +176,39 @@ class Database_ImgIndex
         return $meta;
     }
 
+    /**
+     * Takes in a source id and returns the corresponding 
+     * observatory, instrument, detector, measurement, and
+     * layeringOrder information.
+     * @param {int} $id  Source Id
+     * @return {Array} $result_array  Contains values for 
+     * "observatory", "instrument", "detector", "measurement", 
+     * and "layeringOrder"
+     */
+	public function getDatasourceInformationFromSourceId ($id)
+	{
+		$sql = sprintf(
+            "SELECT
+                observatory.name AS observatory,
+                instrument.name AS instrument,
+                detector.name AS detector,
+                measurement.name AS measurement,
+                datasource.layeringOrder AS layeringOrder
+            FROM datasource
+                LEFT JOIN observatory ON datasource.observatoryId = observatory.id
+                LEFT JOIN instrument ON datasource.instrumentId = instrument.id
+                LEFT JOIN detector ON datasource.detectorId = detector.id
+                LEFT JOIN measurement ON datasource.measurementId = measurement.id
+            WHERE
+                datasource.id='%s'",
+            mysqli_real_escape_string($this->_dbConnection->link, $id)
+        );
+        $result = $this->_dbConnection->query($sql);
+        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
 
+        return $result_array;		
+	}
+	
     /**
      * Returns the sourceId for a given set of parameters.
      *

@@ -59,10 +59,18 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
         getNewImages(dir, tmpdir)
         
     # Create a list of files to process
-    allImages = traverseDirectory(tmpdir).replace(tmpdir, destination)
+    allImages = traverseDirectory(tmpdir)
     
-    numImages = len(allImages.split(" "))
+    # Update paths to reflect desination
+    for i, filename in enumerate(allImages): 
+        allImages[i] = filename.replace(tmpdir, destination)
+    
+    numImages = len(allImages)
     print "Found %d images." % numImages
+    
+    if numImages is 0:
+        print "Nothing to process. Exiting software..."
+        sys.exit()
     
     # Move files to main archive (shutil.move will not merge directories)
     status, output = commands.getstatusoutput("cp -r %s/* %s/" % (tmpdir, destination))
@@ -70,10 +78,7 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     print "Adding images to database."
     
     # If a large number of files are to be processed break-up to avoid exceeding command-line character limit
-    if (numImages > 1000):
-        images = chunks(allImages.split(" "), 1000)        
-    else:
-        images = [allImages]
+    images = chunks(allImages, 1000)        
         
     '''
     for imageArr in images:
@@ -85,7 +90,8 @@ def processIncomingImages(installer, destination, dirs, dbname, dbuser, dbpass, 
     '''
         
     # Add to database
-    for imageStr in images:
+    for imageArr in images:
+        imageStr = " ".join(imageArr)
         cmd = "python %s --update -d %s -u %s -p %s -m %s -b %s %s" % (installer, dbname, dbuser, dbpass.replace("$", "\$"), dbtype, destination, imageStr)
         status, output = commands.getstatusoutput(cmd)
         
@@ -106,18 +112,18 @@ def getNewImages(incoming, tmpdir):
         shutil.move(incoming + "/" + subdir, tmpdir + "/" + subdir)
     
 def traverseDirectory(path):
-    ''' Traverses file-tree starting with the specified path and builds  
-        space-separated string containing the list of files matched '''
-    images = ""
+    ''' Traverses file-tree starting with the specified path and builds a
+        list of the available images '''
+    images = []
 
     for child in os.listdir(path):
         node = os.path.join(path, child)
         if os.path.isdir(node):
             newImgs = traverseDirectory(node)
-            images += newImgs
+            images.extend(newImgs)
         else:
             if node[-3:] == "jp2":
-                images += node + " "
+                images.append(node)
 
     return images
 

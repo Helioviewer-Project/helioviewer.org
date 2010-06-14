@@ -19,7 +19,7 @@
 
 		<concat destfile="build/css/helioviewer.css" encoding="UTF-8" eol="lf">
 			<filelist dir="${cssdir}" files="main.css"/>
-		    <fileset dir="${cssdir}" includes="*.css" excludes="main.css, main-ie.css"/>
+		    <fileset dir="${cssdir}" includes="*.css" excludes="main.css"/>
 		</concat>		
 
 		<!-- minify-->
