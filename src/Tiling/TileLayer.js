@@ -65,6 +65,13 @@ var TileLayer = Layer.extend(
     },
     
     /**
+     * Refreshes layer and checks to see if new tiles should be displayed
+     */
+    refresh: function () {
+    	this.refreshTiles(false);
+    },
+    
+    /**
      * @description Refreshes the TileLayer
      */
     reload: function () {
@@ -132,7 +139,7 @@ var TileLayer = Layer.extend(
         this.origSunCenterOffsetY = - parseFloat((this.sunCenterY - (this.jp2Height / 2)).toPrecision(8));
         
         this._computeRelativeParameters();        
-        this.refreshTiles(false);
+        this.reloadTiles(false);
                    
         // Update viewport sandbox if necessary
         this.viewport.updateSandbox();
@@ -157,7 +164,7 @@ var TileLayer = Layer.extend(
      */
     onZoomLevelChange: function () {
         this._computeRelativeParameters();        
-        this.refreshTiles(true);
+        this.reloadTiles(true);
     },
     
     /**
@@ -202,12 +209,12 @@ var TileLayer = Layer.extend(
             "top" : - this.sunCenterOffsetY
         });
     },
-
+    
     /**
-     * @description Refresh displayed tiles
+     * @description Removes all tiles and loads new ones in their place
      * @param {Boolean} zoomLevelChanged Whether or not the zoom level has been changed
      */
-    refreshTiles: function (zoomLevelChanged) {
+    reloadTiles: function (zoomLevelChanged) {
         var i, j, old, numTiles, numTilesLoaded, indices, tile, onLoadComplete, visible, self = this;
         
         visible = this.viewport.visible;
@@ -433,7 +440,7 @@ var TileLayer = Layer.extend(
     /**
      * @description Check to see if all visible tiles have been loaded
      */
-    viewportMove: function () {
+    refreshTiles: function () {
         var visible, indices, i, j;
         
         this.viewport.checkTiles();
@@ -625,7 +632,7 @@ var TileLayer = Layer.extend(
     _setupEventHandlers: function () {
         var self = this;
         this.viewport.domNode.bind('viewport-move', function (e) {
-            self.viewportMove();
+            self.refreshTiles();
         });
     }
 });

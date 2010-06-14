@@ -78,8 +78,8 @@ var FullscreenControl = Class.extend(
         }, this.speed,
         function () {
             self.controller.viewport.checkTiles();
-            self.controller.tileLayers.resetLayers();
-            self.controller.eventLayers.resetLayers();
+            self.controller.tileLayers.refreshLayers();
+            self.controller.eventLayers.refreshLayers();
             self.panels.hide();
             self.body.removeClass('disable-fullscreen-mode');
         });
