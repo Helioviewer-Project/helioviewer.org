@@ -116,25 +116,24 @@ var TileLayer = Layer.extend(
             }
         }
     },
-    
+
     /**
-     * @description Refresh the tile layer
-     * @param {Boolean} removeOldTilesFirst Should be removed before or after new ones are loaded?
+     * Computes layer parameters relative to the current viewport image scale
      * 
-     * Rotation:
-     *   Currently, EIT and MDI images are pre-rotated, and their corresponding meta-information
+     * Notes:
+     * 
+     * 1. Rotation:
+     *   Currently, EIT and MDI images are prerotated, and their corresponding meta-information
      *   is guaranteed to be accurate. LASCO images on the other hand are rotated during FITS -> JP2
      *   conversion. The meta-information from the FITS header is not modified, however, and reflects
      *   the original unrotated image. Therefore, when rotated = true, the coordinates should be flipped
      *   to reflect the rotation that was already done to the image itself.
      *   
-     *   if (this.rotated) {
-     *       this.sunCenterOffsetX = - this.sunCenterOffsetX;
-     *       this.sunCenterOffsetY = - this.sunCenterOffsetY;
-     *    }
-     *   
+     * 2. Center offset:
+     *   The values for origSunCenterOffsetX and origSunCenterOffsetY reflect the x and y coordinates with the origin
+     *   at the bottom-left corner of the image, not the top-left corner.
      */
-    refresh: function (removeOldTilesFirst) {
+    _computeRelativeParameters: function () {
         // Ratio of original JP2 image scale to the viewport/desired image scale
         this.scaleFactor = this.image.scale / this.viewportScale;
         
@@ -145,21 +144,29 @@ var TileLayer = Layer.extend(
         this.sunCenterOffsetX = parseFloat((this.image.offsetX * this.scaleFactor).toPrecision(8));
         this.sunCenterOffsetY = parseFloat((this.image.offsetY * this.scaleFactor).toPrecision(8));
         
+        // Update layer dimensions
+		this.dimensions = {
+			"left"   : Math.max(this.width  / 2, (this.width  / 2) - this.sunCenterOffsetX),
+			"top"    : Math.max(this.height / 2, (this.height / 2) - this.sunCenterOffsetY),
+			"bottom" : Math.max(this.height / 2, (this.height / 2) + this.sunCenterOffsetY),
+			"right"  : Math.max(this.width  / 2, (this.width  / 2) + this.sunCenterOffsetX)
+		};
+        
+        // Center of the tile layer
         this.domNode.css({
             "left": - this.sunCenterOffsetX,
             "top" : - this.sunCenterOffsetY
         });
-        
-        this.refreshTiles(removeOldTilesFirst);
     },
     
     /**
      * 
      */
     updateImageScale: function (scale, tileVisibilityRange) {
-        this.viewportScale  = scale;
+        this.viewportScale       = scale;
         this.tileVisibilityRange = tileVisibilityRange;
-        this.refresh(true);
+        this._computeRelativeParameters();
+        this.reloadTiles(true);
     },
     
     /**
@@ -167,7 +174,9 @@ var TileLayer = Layer.extend(
      */
     onLoadImage: function () {
         this.loaded = true;
-        this.refresh(false);
+        
+        this._computeRelativeParameters();
+        this.reloadTiles(false);
         
         // Update viewport sandbox if necessary
         $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]).
@@ -184,10 +193,10 @@ var TileLayer = Layer.extend(
     },
     
     /**
-     * @description Refresh displayed tiles
+     * @description reloads displayed tiles
      * @param {Boolean} removeOldTilesFirst Whether old tiles should be removed before or after new ones are loaded.
      */
-    refreshTiles: function (removeOldTilesFirst) {
+    reloadTiles: function (removeOldTilesFirst) {
         var i, j, old, numTiles = 0, numTilesLoaded = 0, tile, onLoadComplete, self = this;
         
         this.computeValidTiles();
@@ -252,12 +261,9 @@ var TileLayer = Layer.extend(
     /**
      * @description Returns an array container the values of the positions for each edge of the TileLayer.
      */
-    getDimensions: function () {
-        return {
-            "width" : this.width  + this.sunCenterOffsetX,
-            "height": this.height + this.sunCenterOffsetY
-        };
-    },
+	getDimensions: function () {
+	    return this.dimensions;
+	},
     
     /**
      * @description Creates an array of tile dom-nodes

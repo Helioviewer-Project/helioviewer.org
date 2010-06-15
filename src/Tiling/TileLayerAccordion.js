@@ -40,7 +40,7 @@ var TileLayerAccordion = Layer.extend(
         // Event-handlers
         $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
                    .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
-                   .bind("observation-time-change", $.proxy(this._onObservationTimeChange, this))
+                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
                    .bind("time-step-changed", $.proxy(this._onTimeIncrementChange, this));
     },
 
