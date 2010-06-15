@@ -30,8 +30,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
 		);
 		$params = array_merge($defaults, $originalParams);
 		
-        $width  = $params['width'];
-        $height = $params['height'];
+        $width  	= $params['width'];
+        $height 	= $params['height'];
         $imageScale = $params['imageScale'];
         
         $options = array(
@@ -87,7 +87,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         
         foreach ($layerStrings as $layer) {
         	$layerArray = explode(",", $layer);
-        	if(sizeOf($layerArray) > 10) {
+        	if(sizeOf($layerArray) > 4) {
 				list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
 				$sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
         	} else {
