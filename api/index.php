@@ -773,23 +773,6 @@ if (!(isset($params) && loadModule($params))) {
                     	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                 </tr>
                 <tr>
-                    <td><b>numFrames</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of frames you would like to include in the movie. You may have between 10 and 100 frames.
-                    	The default value is 40 frames.</td>
-                </tr>
-               	<tr>
-                    <td><b>frameRate</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
-                </tr>
-                <tr>
-                    <td><b>timeStep</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of seconds in between each timestamp used to make the movie frames. The default 
-                    	is 86400 seconds, or 1 day.</td>
-                </tr>
-                <tr>
                     <td><b>quality</b></td>
                     <td><i>Integer</i></td>
                     <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
@@ -801,15 +784,10 @@ if (!(isset($params) && loadModule($params))) {
                     	the filename defaults to "screenshot" + the unix timestamp of the time it was requested.</td>
                 </tr>
                 <tr>
-                    <td><b>hqFormat</b></td>
-                    <td><i>String</i></td>
-                    <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", and "avi".</td>
-                </tr>
-                <tr>
                 	<td><b>display</b></td>
                 	<td><i>Boolean</i></td>
-                	<td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
-                		filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
+                	<td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
+                		filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
                 </tr>
             </tbody>
         </table>
@@ -898,6 +876,23 @@ if (!(isset($params) && loadModule($params))) {
                     	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                 </tr>
                 <tr>
+                    <td><b>numFrames</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The number of frames you would like to include in the movie. You may have between 10 and 100 frames.
+                    	The default value is 40 frames.</td>
+                </tr>
+               	<tr>
+                    <td><b>frameRate</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
+                </tr>
+                <tr>
+                    <td><b>timeStep</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The number of seconds in between each timestamp used to make the movie frames. The default 
+                    	is 86400 seconds, or 1 day.</td>
+                </tr>
+                <tr>
                     <td><b>quality</b></td>
                     <td><i>Integer</i></td>
                     <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
@@ -909,10 +904,15 @@ if (!(isset($params) && loadModule($params))) {
                     	the filename defaults to "screenshot" + the unix timestamp of the time it was requested.</td>
                 </tr>
                 <tr>
+                    <td><b>hqFormat</b></td>
+                    <td><i>String</i></td>
+                    <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", and "avi".</td>
+                </tr>
+                <tr>
                 	<td><b>display</b></td>
                 	<td><i>Boolean</i></td>
-                	<td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
-                		filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
+                	<td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
+                		filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
                 </tr>
             </tbody>
         </table>
