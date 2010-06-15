@@ -5,67 +5,56 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Calendar, FullscreenControl, 
+/*global Class, $, Calendar, FullscreenControl, UIController,
   KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
-  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, 
+  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, HelioviewerViewport, 
   ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
 "use strict";
-var Helioviewer = Class.extend(
+var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
     {
     /**
      * Creates a new Helioviewer instance.
      * @constructs
      * 
-     * @param {Object} urlParams  Client-specified settings to load
-     * @param {Object} settings   Server settings
+     * @param {Object} urlParams  Client-specified settings to load. Includes imageLayers,
+     *                            date, and imageScale
+     * @param {Object} settings   Server settings loaded from Config.ini
      */
     init: function (urlParams, settings) {
-        $.extend(this, settings);
-        this.api       = "api/index.php";
-        this.urlParams = urlParams;
-        this.tileSize  = 512;
+	// Calling super will load settings and call _loadExtensions()
+        this._super(urlParams, settings);
+        this.api = "api/index.php";
 
-        // Determine browser support
-        this._checkBrowser();
-
-        // Load saved user settings
-        this._loadSavedSettings();
-        this._loadURLSettings();
-
-        this._initLoadingIndicator();
-        this._initTooltips();
-
-        // User Interface components
-        this.zoomControls = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
-                                             this.minImageScale, this.maxImageScale);
-
-        this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
-                                             '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
-        
-        // Get available data sources
-        this._getDataSources();
+        // Get available data sources and initialize viewport
+        this._getDataSourcesAndLoadViewport();
         
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
-
-        this.messageConsole     = new MessageConsole();
-        this.fullScreenMode     = new FullscreenControl("#fullscreen-btn", 500);
-        
-        //this.mediaSettings      = new MediaSettings(this);
-        //this.movieBuilder       = new MovieBuilder(this);
-        //this.imageSelectTool    = new ImageSelectTool(this);
-        //this.screenshotBuilder  = new ScreenshotBuilder(this);
     },
-
+    
     /**
-     * @description Checks browser support for various features used in
-     *              Helioviewer
+     * Loads the message console, keyboard shortcut manager, tooltips, 
+     * zoom controls, time controls, and full screen controls
      */
-    _checkBrowser: function () {
-        $.support.nativeJSON = (typeof (JSON) !== "undefined") ? true : false;
-        $.support.localStorage = !!window.localStorage;
+    _loadExtensions: function () {
+    	this.messageConsole = new MessageConsole();
+    	this.keyboard 	    = new KeyboardManager();
+    	this._initTooltips();
+    
+    	// User Interface components
+    	this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
+                                         this.minImageScale, this.maxImageScale);
+
+    	this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
+                                         '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+    	this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
+
+    	//this.mediaSettings      = new MediaSettings(this);
+    	//this.movieBuilder       = new MovieBuilder(this);
+    	//this.imageSelectTool    = new ImageSelectTool(this);
+    	//this.screenshotBuilder  = new ScreenshotBuilder(this);
     },
     
     /**
@@ -80,7 +69,7 @@ var Helioviewer = Class.extend(
     /**
      * @description Returns a tree representing available data sources
      */
-    _getDataSources: function () {
+    _getDataSourcesAndLoadViewport: function () {
         var callback, date, timestep, self = this;
         
         date     = this.timeControls.getDate();
@@ -98,7 +87,7 @@ var Helioviewer = Class.extend(
      * Initializes Helioviewer's viewport
      */
     _initViewport: function (date) {
-        this.viewport = new Viewport({
+        this.viewport = new HelioviewerViewport({
             api            : this.api,
             id             : '#helioviewer-viewport',
             requestDate    : date,
@@ -171,35 +160,9 @@ var Helioviewer = Class.extend(
     },
 
     /**
-     * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
-     */
-    _loadSavedSettings: function () {
-        this.userSettings = new UserSettings(this._getDefaultUserSettings(), this.minImageScale, this.maxImageScale);
-    },
-    
-    /**
-     * Loads any parameters specified in the URL
-     */
-    _loadURLSettings: function () {
-        var timestamp, layerSettings, layers, self = this;
-        
-        if (this.urlParams.date) {
-            timestamp = getUTCTimestamp(this.urlParams.date);
-            $(document).trigger("save-setting", ["date", timestamp]);
-        }
-
-        if (this.urlParams.imageScale) {
-            $(document).trigger("save-setting", ["imageScale", parseFloat(this.urlParams.imageScale)]);
-        }
-    },
-
-    /**
      * @description Initialize event-handlers for UI components controlled by the Helioviewer class
      */
     _initEventHandlers: function () {
-        // Initialize keyboard shortcut manager
-        this.keyboard = new KeyboardManager(this);
-        
         $('#link-button').click($.proxy(this.displayURL, this));
         $('#email-button').click($.proxy(this.displayMailForm, this));
         $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
@@ -211,18 +174,6 @@ var Helioviewer = Class.extend(
             function () {
             $(this).children(".ui-icon").removeClass("ui-icon-hover");
         });
-    },
-
-    /**
-     * @description Sets up a simple AJAX-request loading indicator
-     */
-    _initLoadingIndicator: function () {
-        $(document).ajaxStart(function () {
-            $('#loading').show();
-        })
-        .ajaxStop(function () {
-            $('#loading').hide();
-        });  
     },
     
     /**

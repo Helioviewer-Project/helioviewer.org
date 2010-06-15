@@ -27,6 +27,12 @@ var MouseCoordinates = Class.extend(
         this.mouseCoords  = "disabled";
         this.mouseCoordsX = $('#mouse-coords-x');
         this.mouseCoordsY = $('#mouse-coords-y');
+        
+        this._initEventHandlers();
+    },
+    
+    _initEventHandlers: function () {
+    	$(document).bind('toggle-mouse-coords', $.proxy(this.toggleMouseCoords, this))
     },
     
     enable: function () {

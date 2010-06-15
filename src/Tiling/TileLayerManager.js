@@ -64,7 +64,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, rand, params, opacity, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, params, opacity, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
 
         // If new layer exceeds the maximum number of layers allowed,
         // display a message to the user

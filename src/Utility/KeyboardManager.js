@@ -12,8 +12,7 @@ var KeyboardManager = Class.extend(
     /**
      * @constructs
      */
-    init: function (controller) {
-        this.controller = controller;
+    init: function () {
         this._initEventHandlers();
     },
     
@@ -53,7 +52,7 @@ var KeyboardManager = Class.extend(
          *  }
          */
         onKeyPress = function (e) {
-            var key, character, vp = self.controller.viewport;
+            var key, character;
             
             // Letters use Event.which, while arrows, etc. use Event.keyCode
             if (e.keyCode) {
@@ -68,33 +67,25 @@ var KeyboardManager = Class.extend(
 
             // Arrow keys
             if (key === 37 || key === 38 || key === 39 || key === 40) {
-                vp.startMoving();
-                vp.moveCounter += 1; // Threshold
-                //if ((vp.moveCounter % vp.imageUpdateThrottle) !== 0)
-                //    return;
-                vp.moveCounter = vp.moveCounter % vp.tileUpdateThrottle;
-                
                 //Right-arrow
                 if (key === 37) {
-                    vp.moveBy(8, 0);
+                    $(document).trigger('move-viewport', [8,0]);
                 }
                     
                 //Up-arrow
                 else if (key === 38) {
-                    vp.moveBy(0, 8);
+                    $(document).trigger('move-viewport', [0,8]);
                 }
                     
                 //Left-arrow
                 else if (key === 39) {
-                    vp.moveBy(-8, 0);
+                    $(document).trigger('move-viewport', [-8,0]);
                 }
                     
                 //Down-arrow
                 else if (key === 40) {
-                    vp.moveBy(0, -8);
+                    $(document).trigger('move-viewport', [0,-8]);
                 }
-                
-                vp.endMoving();
                 return false;
             }        
 
@@ -102,7 +93,7 @@ var KeyboardManager = Class.extend(
                 $("#center-button").click();
             }
             else if (character === "m") {
-                vp.mouseCoords.toggleMouseCoords();
+            	$(document).trigger('toggle-mouse-coords');
             }
             else if (character === "-" || character === "_") {
                 $("#zoomControlZoomOut").click();
@@ -111,7 +102,7 @@ var KeyboardManager = Class.extend(
                 $("#zoomControlZoomIn").click();
             }
             else if (character === "d") {
-                self.controller.eventLayers.toggleLabels();
+            	$(document).trigger('toggle-eventLayer-labels');
             }
             else if (character === "f") {
                 $("#fullscreen-btn").click();
