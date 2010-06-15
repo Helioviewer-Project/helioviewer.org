@@ -140,7 +140,7 @@ var MouseCoordinates = Class.extend(
                  
         // Polar coords
         } else {
-            polar = Math.toPolarCoords(cartesian.x, -cartesian.y);     
+            polar = Math.toPolarCoords(cartesian.x, cartesian.y);     
             
             this.mouseCoordsX.html(((polar.r / this.rsun) + "").substring(0, 5) +
                  " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
