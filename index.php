@@ -97,14 +97,14 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         	echo "<script src=\"$compressed?$version\" type=\"text/javascript\"></script>\n\t";
         }
         else {
-        	$js = array("Utility/Config.js", "Helioviewer.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
+        	$js = array("Utility/Config.js", "UIController.js", "Helioviewer.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
                         "Tiling/Layer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js", "Utility/KeyboardManager.js", 
                         "Tiling/LayerManager.js", "Tiling/TileLayerManager.js", "Movies/MediaSettings.js", 
                         "UI/MessageConsole.js", "Movies/MovieBuilder.js", "UI/ScreenshotBuilder.js", 
                         "Image/JP2Image.js", "Tiling/TileLayer.js", "Tiling/TileLayerAccordion.js", 
                         "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
                         "Viewport/FullscreenControl.js", "Viewport/MouseCoordinates.js", "Viewport/Viewport.js", 
-                        "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js");
+                        "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js", "Viewport/SandboxHelper.js", "Viewport/HelioviewerViewport.js");
             foreach($js as $file)
                 printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
         }

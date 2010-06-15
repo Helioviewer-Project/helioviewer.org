@@ -2,10 +2,11 @@
  * @fileOverview Contains the class definition for an Viewport class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
+ * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, document, window */
+/*global Class, $, document, window, TileLayerManager, MouseCoordinates, SandboxHelper */
 "use strict";
 var Viewport = Class.extend(
     /** @lends Viewport.prototype */
@@ -54,39 +55,22 @@ var Viewport = Class.extend(
         
         this.sandbox         = $("#sandbox");
         this.movingContainer = $("#moving-container");
-        
-        // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
-        this.rsun = 959.705;
 
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;
 
-        //this.resize();
-
         var center = this.getCenter();
-        this.sandbox.css({"left": center.x, "top": center.y});
+        this.sandboxHelper = new SandboxHelper(center.x, center.y);
         
-        // Initialize tile layers
-        this._tileLayerManager = new TileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
-                                                      this.imageScale, this.maxTileLayers, this.tileServers, 
-                                                      this.tileLayers, this.urlStringLayers);
-        
-        this.resize();
-        
-        this.mouseCoords = new MouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
-        
-        this._initEventHandlers();
+        //this.resize();
+        //this._initEventHandlers();
     },
     
     /**
      * @description Centers the viewport.
      */
     center: function () {
-        this.movingContainer.css({
-            left: 0.5 * this.sandbox.width()  + 'px',
-            top:  0.5 * this.sandbox.height() + 'px'    
-        });
-        
+	this.sandboxHelper.center();        
         this.checkTileVisibility();
     },
 
@@ -102,11 +86,7 @@ var Viewport = Class.extend(
             y: Math.min(Math.max(this.startMovingPosition.y - y, 0), this.sandbox.height())
         };
         
-        this.movingContainer.css({
-            left: pos.x + 'px',
-            top:  pos.y + 'px'    
-        });
-        
+        this.sandboxHelper.moveContainerTo(pos.x, pos.y);
         this.checkTileVisibility();
     },
     
@@ -116,10 +96,7 @@ var Viewport = Class.extend(
      * @param {Int} y Y-value
      */
     moveTo: function (x, y) {
-        this.movingContainer.css({
-            left: x + 'px',
-            top:  y + 'px'    
-        });
+    	this.sandboxHelper.moveContainerTo(x, y);
 
         // Check throttle
         if (this.moveCounter === 0) {
@@ -165,27 +142,11 @@ var Viewport = Class.extend(
      * 
      * NEXT- look at moveTo() and find difference between the current position and center.
      * Double/halve this 
+     * 
+     * Returns an array of {x:, y:}
      */
     getSandboxCenter: function () {
-    	return {
-    		x: 0.5 * this.sandbox.width(), 
-    		y: 0.5 * this.sandbox.height()
-    	}
-    },
-    
-    /**
-     * Returns the horizontal and vertical displacement of the sun from the center of the viewport
-     */
-    getOffsetFromCenter: function () {
-    	var sandboxCenter, sunCenter;
-    	
-    	sandboxCenter = this.getSandboxCenter();
-    	sunCenter     = this.getContainerPos();
-    	
-    	return {
-    		x: sunCenter.x - sandboxCenter.x,
-    		y: sunCenter.y - sandboxCenter.y
-    	}
+    	return this.sandboxHelper.getCenter();
     },
     
     /**
@@ -217,51 +178,12 @@ var Viewport = Class.extend(
     },
     
     /**
-     * @description Returns the range of indices for the tiles to be displayed.
-     * @returns {Object} The range of tiles which should be displayed
-     */
-    _updateTileVisibilityRange: function () {
-        var vp, ts;
-        
-        // Get heliocentric viewport coordinates
-        vp = this.getHCViewportPixelCoords();
-
-        // Expand to fit tile increment
-        ts = this.tileSize;
-        vp = {
-            top:    vp.top    - ts - (vp.top  % ts),
-            left:   vp.left   - ts - (vp.left % ts),
-            bottom: vp.bottom + ts - (vp.bottom % ts),
-            right:  vp.right  + ts - (vp.right % ts)
-        };
-
-        // Indices to display (one subtracted from ends to account for "0th" tiles).
-        this.tileVisibilityRange = {
-            xStart : vp.left / ts,
-            yStart : vp.top  / ts,
-            xEnd   : (vp.right  / ts) - 1,
-            yEnd   : (vp.bottom / ts) - 1
-        };
-    },
-    
-    /**
      * Compares two sets of indices indicating the current scope or range of tile visibility
      */
     _checkVisibilityRangeEquality: function (r1, r2) {
         return ((r1.xStart === r2.xStart) && (r1.xEnd === r2.xEnd) && 
                 (r1.yStart === r2.yStart) && (r1.yEnd === r2.yEnd));         
     },    
-    
-    /**
-     * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
-     * contents around in order to see all layers
-     */
-    getSandboxDimensions: function () {
-        return {
-            width : Math.max(0, this.maxLayerDimensions.width  - this.dimensions.width),
-            height: Math.max(0, this.maxLayerDimensions.height - this.dimensions.height)
-        };
-    },
     
     /**
      * @description Updates the viewport dimensions
@@ -277,99 +199,12 @@ var Viewport = Class.extend(
      * @description Update the size and location of the movement-constraining box.
      */
     updateSandbox: function () {
-        var old, center, newSize, change, movingContainerOldPos, newHCLeft, newHCTop, padHeight, shiftTop;
-        
-        old = {
-            width : this.sandbox.width(),
-            height: this.sandbox.height()
-        };
+        var center, newSize;
         
         center = this.getCenter();
+        newSize = this.getDesiredSandboxDimensions(); 
         
-        newSize = this.getSandboxDimensions();
-  
-        // Difference
-        change = {
-            x: newSize.width  - old.width,
-            y: newSize.height - old.height
-        };
-        
-        // Initial moving container position
-        movingContainerOldPos = this.movingContainer.position();    
-        
-        // Update sandbox dimensions
-        this.sandbox.css({
-            width  : newSize.width  + 'px',
-            height : newSize.height + 'px',
-            left   : center.x - (0.5 * newSize.width) + 'px',
-            top    : center.y - (0.5 * newSize.height) + 'px'            
-        });
-        
-        // Update moving container position
-        newHCLeft = Math.max(0, Math.min(newSize.width,  movingContainerOldPos.left + (0.5 * change.x)));
-        newHCTop  = Math.max(0, Math.min(newSize.height, movingContainerOldPos.top + (0.5 * change.y)));
-        
-        this.movingContainer.css({
-            left: newHCLeft + 'px',
-            top : newHCTop  + 'px'
-        });
-    },
-    
-    /**
-     * @description Returns the heliocentric coordinates of the upper-left and bottom-right corners of the viewport
-     * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
-     */
-    getHCViewportPixelCoords: function () {
-        var sb, mc;
-        
-        sb = this.sandbox.position();
-        mc = this.movingContainer.position();
-
-        return {
-            left:  -(sb.left + mc.left),
-            top :  -(sb.top + mc.top),
-            right:  this.domNode.width()  - (sb.left + mc.left),
-            bottom: this.domNode.height() - (sb.top + mc.top)
-        };
-    },
-
-    /**
-     * @description Zooms To a specified image scale.
-     * @param {Float} imageScale The desired image scale
-     */
-    zoomTo: function (event, imageScale) {
-    	var sunCenter, originalSandboxWidth, originalSandboxHeight,  
-		sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale;
-    	
-        originalScale = this.imageScale;
-        
-        // get offset and sandbox dimensions
-        sunCenter             = this.getContainerPos();
-        originalSandboxWidth  = this.sandbox.width(); 
-        originalSandboxHeight = this.sandbox.height();
-        
-        this.imageScale = imageScale;
-
-        // scale layer dimensions
-        this.scaleLayerDimensions(originalScale / imageScale);
-        
-        // update sandbox
-        this.updateSandbox();
-        
-        sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
-        sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
-        
-        this._updateTileVisibilityRange();
-        
-        this.moveTo(sunCenter.x * sandboxWidthScaleFactor, sunCenter.y * sandboxHeightScaleFactor);
-        
-        // reset the layers
-        this._tileLayerManager.adjustImageScale(imageScale, this.tileVisibilityRange);
-        
-        this.mouseCoords.updateImageScale(imageScale);
-        
-        // store new value
-        $(document).trigger("save-setting", ["imageScale", imageScale]);
+        this.sandboxHelper.updateSandbox(center, newSize);
     },
     
     /**
@@ -417,13 +252,6 @@ var Viewport = Class.extend(
             this.updateSandbox();
             this.checkTileVisibility();
         }
-    },
-    
-    /**
-     * @description Returns the current solar radius in pixels.
-     */
-    getRSun: function () {
-        return this.rsun / this.imageScale;
     },
     
     /**
@@ -483,13 +311,12 @@ var Viewport = Class.extend(
       * @param {Event} event Event object
       */
     mouseUp: function (event) {
-        $("#helioviewer-viewport").css("cursor", "pointer");
+        this.domNode.css("cursor", "pointer");
 
         if (this.isMoving) {
             this.endMoving();
         }
     },
-
 
     /**
      * @description Handles double-clicks
@@ -565,8 +392,6 @@ var Viewport = Class.extend(
      * @description
      */
     _initEventHandlers: function () {
-        var self = this;
-        
         $(window).resize($.proxy(this.resize, this));
         $(document).mousemove($.proxy(this.mouseMove, this))
                    .mouseup($.proxy(this.mouseUp, this))
@@ -574,13 +399,26 @@ var Viewport = Class.extend(
                    .bind("set-image-scale", $.proxy(this.zoomTo, this))
                    .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this))
                    .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("recompute-tile-visibility", $.proxy(this.checkTileVisibility, this));
+                   .bind("recompute-tile-visibility", $.proxy(this.checkTileVisibility, this))
+                   .bind("move-viewport", $.proxy(this.moveViewport, this));
         
         $('#center-button').click($.proxy(this.center, this));
         
         this.domNode.mousedown($.proxy(this.mouseDown, this))
                     .dblclick($.proxy(this.doubleClick, this));
         
+    },
+    
+    /**
+     * Event triggered by using the arrow keys, moves the viewport by (x, y)
+     */
+    moveViewport: function (event, x, y) {
+    	this.startMoving();
+    	this.moveCounter += 1; // Threshold
+    	this.moveCounter = this.moveCounter % this.tileUpdateThrottle;
+    	
+    	this.moveBy(x, y);
+    	this.endMoving();
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?
