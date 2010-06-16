@@ -49,7 +49,7 @@ var SandboxHelper = Class.extend(
         		x: desiredSandboxSize.width  - this.domNode.width(),
         		y: desiredSandboxSize.height - this.domNode.height()
     		};
-    
+
     		// Update sandbox dimensions
    		this.domNode.css({
         		width  : desiredSandboxSize.width  + 'px',

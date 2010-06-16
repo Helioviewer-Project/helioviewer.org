@@ -81,7 +81,7 @@ var ZoomControls = Class.extend(
         for (i = this.minImageScale; i <= this.maxImageScale; i = i * 2) {
             this.increments.push(i);
         }
-        
+
         // Reverse orientation so that moving slider up zooms in
         this.increments.reverse();
        

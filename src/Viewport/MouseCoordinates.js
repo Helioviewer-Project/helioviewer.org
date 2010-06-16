@@ -14,9 +14,8 @@ var MouseCoordinates = Class.extend(
     /**
      * @constructs
      */
-    init: function (imageScale, rsun, showMouseCoordsWarning) {
+    init: function (imageScale, showMouseCoordsWarning) {
     	this.imageScale      = imageScale;
-    	this.rsun            = rsun;
     	this.warnMouseCoords = showMouseCoordsWarning;
     	
     	this.container       = $('#mouse-coords');
@@ -32,7 +31,7 @@ var MouseCoordinates = Class.extend(
     },
     
     _initEventHandlers: function () {
-    	$(document).bind('toggle-mouse-coords', $.proxy(this.toggleMouseCoords, this))
+    	$(document).bind('toggle-mouse-coords', $.proxy(this.toggleMouseCoords, this));
     },
     
     enable: function () {
@@ -67,15 +66,10 @@ var MouseCoordinates = Class.extend(
      * TODO (2009/07/27) Disable mouse-coords display during drag & drop
      */
     toggleMouseCoords: function () {
-        // Case 1: Disabled -> Arcseconds 
+        // Case 1: Disabled -> Enabled
         if (this.mouseCoords === "disabled") {
-            this.mouseCoords = "arcseconds";
+            this.mouseCoords = "enabled";
             this.container.toggle();
-        }
-
-        // Case 2: Arcseconds -> Polar Coords
-        else if (this.mouseCoords === "arcseconds") {
-            this.mouseCoords = "polar";
         }
 
         // Case 3: Polar Coords -> Disabled
@@ -98,18 +92,14 @@ var MouseCoordinates = Class.extend(
             // Clear old values
             this.mouseCoordsX.empty();
             this.mouseCoordsY.empty();
-
-            // Remove existing event handler if switching from cartesian -> polar
-            if (this.mouseCoords === "polar") {
-                this.movingContainer.unbind('mousemove', this.updateMouseCoords);
-            }
                
-            this.movingContainer.bind('mousemove', $.proxy(this.updateMouseCoords, this));     
+            $(document).bind('mousemove', $.proxy(this.updateMouseCoords, this));
+            //this.movingContainer.bind('mousemove', $.proxy(this.updateMouseCoords, this));  
                
             // TODO: Execute handler once immediately if mouse is over viewport to show new coords     
             // Use trigger to fire mouse move event and then check to make sure mouse is within viewport?         
         } else {
-            this.movingContainer.unbind('mousemove', this.updateMouseCoords);
+            $(document).unbind('mousemove', this.updateMouseCoords);//this.movingContainer.unbind('mousemove', this.updateMouseCoords);
         }
     },
     
@@ -127,7 +117,7 @@ var MouseCoordinates = Class.extend(
     },
     
     /**
-     * updateMouseCoords
+     * updateMouseCoords. Displays cartesian coordinates by default.
      */
     updateMouseCoords: function (event) {
         var cartesian, polar;
@@ -138,20 +128,8 @@ var MouseCoordinates = Class.extend(
             
         // Compute coordinates relative to top-left corner of the viewport
         cartesian = this.computeMouseCoords(event.pageX, event.pageY);
-                            
-        // Arc-seconds
-        if (this.mouseCoords === "arcseconds") {
-            this.mouseCoordsX.html("x: " + cartesian.x + " &prime;&prime;");
-            this.mouseCoordsY.html("y: " + cartesian.y + " &prime;&prime;");
-                 
-        // Polar coords
-        } else {
-            polar = Math.toPolarCoords(cartesian.x, cartesian.y);     
-            
-            this.mouseCoordsX.html(((polar.r / this.rsun) + "").substring(0, 5) +
-                 " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
-            this.mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
-        }
+	this.mouseCoordsX.html("x: " + cartesian.x + " &prime;&prime;"); 
+	this.mouseCoordsY.html("y: " + cartesian.y + " &prime;&prime;");
     },
     
     /**
@@ -189,7 +167,7 @@ var MouseCoordinates = Class.extend(
         scale = this.imageScale;
         x = Math.round((scale * MX.x));
         y = - Math.round((scale * MX.y));
-        
+
         // Return scaled coords
         return {
             x: x,

@@ -17,7 +17,7 @@ var Viewport = Class.extend(
      * @param {Int} prefetch Prefetch any tiles that fall within this many pixels outside the physical viewport
      */ 
     defaultOptions: {
-        imageScale : 0,
+        imageScale : 1,
         tileSize   : 512,
         minHeight  : 450,
         prefetch   : 0
@@ -45,7 +45,7 @@ var Viewport = Class.extend(
      *       <b>prefetch</b>   - The radius outside of the visible viewport to prefetch.<br>
      * </div>
      */
-    init: function (options) {
+    init: function (options, loadDefaults) {
         $.extend(this, this.defaultOptions);
         $.extend(this, options);
                         
@@ -62,8 +62,13 @@ var Viewport = Class.extend(
         var center = this.getCenter();
         this.sandboxHelper = new SandboxHelper(center.x, center.y);
         
-        //this.resize();
-        //this._initEventHandlers();
+        if (loadDefaults) {
+            this._tileLayerManager = new TileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
+        					this.imageScale, this.maxTileLayers, this.tileServers, this.tileLayers, this.urlStringLayers, loadDefaults);
+	    this.mouseCoords = new MouseCoordinates(this.imageScale, this.warnMouseCoords);
+    	    this.resize();
+    	    this._initEventHandlers();
+        }
     },
     
     /**
@@ -150,6 +155,17 @@ var Viewport = Class.extend(
     },
     
     /**
+     * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
+     * contents around in order to see all layers
+     */
+    getDesiredSandboxDimensions: function () {
+    	return {
+            width : Math.max(0, this.maxLayerDimensions.width  - this.dimensions.width),
+            height: Math.max(0, this.maxLayerDimensions.height - this.dimensions.height)
+        };
+    },    
+    
+    /**
      * @description Get the current coordinates of the moving container (relative to the sandbox)
      * @returns {Object} The X & Y coordinates of the viewport's top-left corner
      */
@@ -200,10 +216,8 @@ var Viewport = Class.extend(
      */
     updateSandbox: function () {
         var center, newSize;
-        
         center = this.getCenter();
         newSize = this.getDesiredSandboxDimensions(); 
-        
         this.sandboxHelper.updateSandbox(center, newSize);
     },
     
@@ -410,6 +424,52 @@ var Viewport = Class.extend(
     },
     
     /**
+     * @description Returns the range of indices for the tiles to be displayed.
+     * @returns {Object} The range of tiles which should be displayed
+     */
+    _updateTileVisibilityRange: function () {
+        var vp, ts;
+        
+        // Get heliocentric viewport coordinates
+        vp = this.getViewportCoords();
+
+        // Expand to fit tile increment
+        ts = this.tileSize;
+        vp = {
+            top:    vp.top    - ts - (vp.top  % ts),
+            left:   vp.left   - ts - (vp.left % ts),
+            bottom: vp.bottom + ts - (vp.bottom % ts),
+            right:  vp.right  + ts - (vp.right % ts)
+        };
+
+        // Indices to display (one subtracted from ends to account for "0th" tiles).
+        this.tileVisibilityRange = {
+            xStart : vp.left / ts,
+            yStart : vp.top  / ts,
+            xEnd   : (vp.right  / ts) - 1,
+            yEnd   : (vp.bottom / ts) - 1
+        };
+    },
+    
+    /**
+     * @description Returns the coordinates of the upper-left and bottom-right corners of the viewport with respect to the center
+     * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
+     */
+    getViewportCoords: function () {
+        var sb, mc;
+        
+        sb = this.sandbox.position();
+        mc = this.movingContainer.position();
+
+        return {
+            left:  -(sb.left + mc.left),
+            top :  -(sb.top + mc.top),
+            right:  this.domNode.width()  - (sb.left + mc.left),
+            bottom: this.domNode.height() - (sb.top + mc.top)
+        };
+    },
+    
+    /**
      * Event triggered by using the arrow keys, moves the viewport by (x, y)
      */
     moveViewport: function (event, x, y) {
@@ -419,6 +479,45 @@ var Viewport = Class.extend(
     	
     	this.moveBy(x, y);
     	this.endMoving();
+    },
+    
+    /**
+     * @description Zooms To a specified image scale.
+     * @param {Float} imageScale The desired image scale
+     */
+    zoomTo: function (event, imageScale) {
+        var imageCenter, originalSandboxWidth, originalSandboxHeight,  
+        sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale;
+        
+        originalScale = this.imageScale;
+        
+        // get offset and sandbox dimensions
+        imageCenter             = this.getContainerPos();
+        originalSandboxWidth  = this.sandbox.width(); 
+        originalSandboxHeight = this.sandbox.height();
+        
+        this.imageScale = imageScale;
+
+        // scale layer dimensions
+        this.scaleLayerDimensions(originalScale / imageScale);
+        
+        // update sandbox
+        this.updateSandbox();
+        
+        sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
+        sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
+        
+        this._updateTileVisibilityRange();
+        
+        this.moveTo(imageCenter.x * sandboxWidthScaleFactor, imageCenter.y * sandboxHeightScaleFactor);
+        
+        // reset the layers
+        this._tileLayerManager.adjustImageScale(imageScale, this.tileVisibilityRange);
+        
+        this.mouseCoords.updateImageScale(imageScale);
+        
+        // store new value
+        $(document).trigger("save-setting", ["imageScale", imageScale]);
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?

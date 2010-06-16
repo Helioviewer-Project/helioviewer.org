@@ -6,7 +6,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, document, window, TileLayerManager, MouseCoordinates, SandboxHelper, Viewport */
+/*global Class, $, document, window, TileLayerManager, HelioviewerMouseCoordinates, SandboxHelper, Viewport */
 "use strict";
 var HelioviewerViewport = Viewport.extend(
     /** @lends Viewport.prototype */
@@ -30,11 +30,11 @@ var HelioviewerViewport = Viewport.extend(
         this.rsun = 959.705;
 
         // Initialize tile layers
-        this._tileLayerManager = new TileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
+        this._tileLayerManager = new HelioviewerTileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
                                                       this.imageScale, this.maxTileLayers, this.tileServers, 
                                                       this.tileLayers, this.urlStringLayers);
         
-        this.mouseCoords = new MouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
+        this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
         this.resize();
         this._initEventHandlers();
     },
@@ -51,63 +51,6 @@ var HelioviewerViewport = Viewport.extend(
         return {
             x: sunCenter.x - sandboxCenter.x,
             y: sunCenter.y - sandboxCenter.y
-        };
-    },
-    
-    /**
-     * @description Returns the range of indices for the tiles to be displayed.
-     * @returns {Object} The range of tiles which should be displayed
-     */
-    _updateTileVisibilityRange: function () {
-        var vp, ts;
-        
-        // Get heliocentric viewport coordinates
-        vp = this.getHCViewportPixelCoords();
-
-        // Expand to fit tile increment
-        ts = this.tileSize;
-        vp = {
-            top:    vp.top    - ts - (vp.top  % ts),
-            left:   vp.left   - ts - (vp.left % ts),
-            bottom: vp.bottom + ts - (vp.bottom % ts),
-            right:  vp.right  + ts - (vp.right % ts)
-        };
-
-        // Indices to display (one subtracted from ends to account for "0th" tiles).
-        this.tileVisibilityRange = {
-            xStart : vp.left / ts,
-            yStart : vp.top  / ts,
-            xEnd   : (vp.right  / ts) - 1,
-            yEnd   : (vp.bottom / ts) - 1
-        };
-    },
-    
-    /**
-     * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
-     * contents around in order to see all layers
-     */
-    getDesiredSandboxDimensions: function () {
-        return {
-            width : Math.max(0, this.maxLayerDimensions.width  - this.dimensions.width),
-            height: Math.max(0, this.maxLayerDimensions.height - this.dimensions.height)
-        };
-    },
-    
-    /**
-     * @description Returns the heliocentric coordinates of the upper-left and bottom-right corners of the viewport
-     * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
-     */
-    getHCViewportPixelCoords: function () {
-        var sb, mc;
-        
-        sb = this.sandbox.position();
-        mc = this.movingContainer.position();
-
-        return {
-            left:  -(sb.left + mc.left),
-            top :  -(sb.top + mc.top),
-            right:  this.domNode.width()  - (sb.left + mc.left),
-            bottom: this.domNode.height() - (sb.top + mc.top)
         };
     },
 
