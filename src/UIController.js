@@ -21,7 +21,7 @@ var UIController = Class.extend(
      * @param {Object} urlParams  Client-specified settings to load
      * @param {Object} settings   Server settings
      */
-    init: function (urlParams, settings) {
+    init: function (urlParams, settings, loadDefaultViewport) {
         $.extend(this, settings);
         this.urlParams = urlParams;
 
@@ -33,9 +33,35 @@ var UIController = Class.extend(
         this._loadURLSettings();
 
         this._initLoadingIndicator();
-	this._loadExtensions();
+        this._loadExtensions();
+
+        if (loadDefaultViewport) {
+            this.api = "api/index.php"; // Temporary fix
+            this._initViewport(loadDefaultViewport);
+        }
     },
+ 
+    /**
+     * Initializes a default viewport
+     */
+    _initViewport: function (loadDefaults) {
+    	date = this.timeControls.getDate();
     
+        this.viewport = new Viewport({
+            api            : this.api,
+            id             : '#helioviewer-viewport',
+            requestDate    : date,
+            tileServers    : this.tileServers,
+            tileLayers     : this.userSettings.get('tileLayers'),
+            urlStringLayers: this.urlParams.imageLayers,
+            maxTileLayers  : this.maxTileLayers,
+            imageScale     : this.userSettings.get('imageScale'),
+            minImageScale  : this.minImageScale, 
+            maxImageScale  : this.maxImageScale, 
+            prefetch       : this.prefetchSize,
+            warnMouseCoords: this.userSettings.get('warnMouseCoords') 
+        }, loadDefaults);
+    },
     /**
      * @description Checks browser support for various features used in
      *              Helioviewer
@@ -56,7 +82,7 @@ var UIController = Class.extend(
      * Loads any parameters specified in the URL
      */
     _loadURLSettings: function () {
-        var timestamp, layerSettings, layers, self = this;
+        var timestamp;
         
         if (this.urlParams.date) {
             timestamp = getUTCTimestamp(this.urlParams.date);
@@ -72,7 +98,18 @@ var UIController = Class.extend(
      * Override by extending this class
      */
     _getDefaultUserSettings: function () {
-    	return {};
+    	return {
+    		date            : getUTCTimestamp(this.defaultObsTime),
+    		imageScale      : 1,
+    		version         : this.version + 1,
+    		warnMouseCoords : true,
+    		showWelcomeMsg  : true,
+    		tileLayers : [{
+    			server	   : 0,
+        		visible    : true,
+        		opacity    : 100
+    		}],
+	};
     },
 
     /**
@@ -93,7 +130,14 @@ var UIController = Class.extend(
      * can go here.
      */
     _loadExtensions: function () {
-    	this.messageConsole = new MessageConsole();
-    	this.keyboard 	    = new KeyboardManager(this);
-    },
+        this.messageConsole = new MessageConsole();
+        this.keyboard       = new KeyboardManager(this);
+        // User Interface components
+        this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
+                                             this.minImageScale, this.maxImageScale);
+
+        this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
+                                             '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+        this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
+    }
 });

@@ -21,8 +21,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Creates a new TileLayerManager instance
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    tileServers, savedLayers, urlLayers) {
-
+                    tileServers, savedLayers, urlLayers, loadDefaults) {
         this._super();
 
         this.api           = api;
@@ -30,25 +29,21 @@ var TileLayerManager = LayerManager.extend(
         this.tileSize      = tileSize;
         this.viewportScale = viewportScale;
         this.maxTileLayers = maxTileLayers;
-        
+        this.tileServers   = tileServers;        
+     
         this.tileVisibilityRange  = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
-        
-        this.tileServers      = tileServers;        
+      
         this._observationDate = observationDate;
-
-        this._layers = [];
-        this._queue = [ "SOHO,EIT,EIT,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
-                        "SOHO,LASCO,C2,white-light", "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum",
-                        "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
 
         $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
                    .bind("save-tile-layers",            $.proxy(this.save, this))
-                   .bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
+                   //.bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
                    .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this));
         
-        var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
-        
-        this._loadStartingLayers(startingLayers);
+        if (loadDefaults) {
+        	var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
+       		this._loadStartingLayers(startingLayers);
+        }
     },
 
     /**
@@ -63,7 +58,7 @@ var TileLayerManager = LayerManager.extend(
     /**
      * @description Adds a layer that is not already displayed
      */
-    addNewLayer: function () {
+/*    addNewLayer: function () {
         var currentLayers, next, params, opacity, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
 
         // If new layer exceeds the maximum number of layers allowed,
@@ -79,8 +74,7 @@ var TileLayerManager = LayerManager.extend(
         // current layers in above form
         currentLayers = [];
         $.each(this._layers, function () {
-            currentLayers.push(this.image.observatory + "," + this.image.instrument + "," +  
-                               this.image.detector + "," + this.image.measurement);
+            currentLayers.push(this.image.getLayerName());
         });
 
         // remove existing layers from queue
@@ -102,13 +96,11 @@ var TileLayerManager = LayerManager.extend(
 
         // Add the layer
         this.addLayer(
-            new TileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
-                          this.tileVisibilityRange, this.api, this.tileServers[params.server], params.observatory, 
-                          params.instrument, params.detector, params.measurement, params.sourceId, params.name, 
-                          params.visible, opacity, params.layeringOrder, server)
+            new TileLayer(index, this._observationDate, this.tileSize, this.viewportScale, 
+                                  this.tileVisibilityRange, this.api, params.name, params.visible, params.opacity, params.server, true)
         );
         this.save();
-    },
+    },*/
     
     /**
      * 
@@ -159,7 +151,6 @@ var TileLayerManager = LayerManager.extend(
         if (!urlLayers) {
             return;
         }
-        
         var layerSettings, layers = [], self = this;
         
         $.each(urlLayers, function () {
@@ -171,7 +162,7 @@ var TileLayerManager = LayerManager.extend(
         
         return layers;
     },
-    
+
     /**
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
@@ -179,13 +170,8 @@ var TileLayerManager = LayerManager.extend(
         var layer, basicParams, self = this;
 
         $.each(layers, function (index, params) {
-            basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
-            $.extend(params, basicParams);
             layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, self.tileServers[params.server], 
-                                  params.observatory, params.instrument, params.detector, params.measurement, 
-                                  params.sourceId, params.name, params.visible, params.opacity, params.layeringOrder, 
-                                  params.server);
+                                  self.tileVisibilityRange, self.api, params.name, params.visible, params.opacity, params.server, true);
 
             self.addLayer(layer);
         });
@@ -199,13 +185,6 @@ var TileLayerManager = LayerManager.extend(
     },
     
     /**
-     * Selects a server to handle all tiling and image requests for a given layer
-     */
-    _selectTilingServer: function () {
-        return Math.floor(Math.random() * (this.tileServers.length));                    
-    },
-    
-    /**
      * Handles observation time changes
      */
     updateRequestTime: function (date) {
@@ -213,42 +192,5 @@ var TileLayerManager = LayerManager.extend(
         $.each(this._layers, function (i, layer) {
             this.updateRequestTime(date);
         });
-    },
-
-    /**
-     * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
-     * component parts and returns a JavaScript representation.
-     *
-     * @param {String} The layer identifier as an underscore-concatenated string
-     * 
-     * @returns {Object} A simple JavaScript object representing the layer parameters
-     */
-    parseLayerString: function (str) {
-        var params = str.split(",");
-        return {
-            observatory : params[0],
-            instrument  : params[1],
-            detector    : params[2],
-            measurement : params[3],
-            visible     : Boolean(parseInt(params[4], 10)),
-            opacity     : parseInt(params[5], 10),
-            server      : parseInt(params[6], 10) || 0
-        };
-    },
-    
-    /**
-     * @description Generate a string of URIs for use by JHelioviewer
-     */
-    toURIString: function () {
-        var str = "";
-
-        $.each(this._layers, function () {
-            str += this.uri + ",";
-        });
-
-        // Remove trailing comma
-        str = str.slice(0, -1);
-    
-        return str;
     }
 });

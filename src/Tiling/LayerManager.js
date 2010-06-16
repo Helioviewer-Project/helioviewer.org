@@ -66,10 +66,10 @@ var LayerManager = Class.extend(
 	        maxBottom = 0,
 	        maxRight  = 0,
 	        old       = this._maxLayerDimensions;
-        
+
         $.each(this._layers, function () {
             var d = this.getDimensions();
-            
+
             maxLeft   = Math.max(maxLeft, d.left);
             maxTop    = Math.max(maxTop, d.top);
             maxBottom = Math.max(maxBottom, d.bottom);
@@ -77,7 +77,7 @@ var LayerManager = Class.extend(
         });
         
         this._maxLayerDimensions = {width: maxLeft + maxRight, height: maxTop + maxBottom};
-        
+
         if ((this._maxLayerDimensions.width !== old.width) || (this._maxLayerDimensions.height !== old.height)) {
             $(document).trigger("layer-max-dimensions-changed", [type, this._maxLayerDimensions]);
         }
