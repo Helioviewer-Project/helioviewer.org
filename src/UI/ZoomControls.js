@@ -128,9 +128,9 @@ var ZoomControls = Class.extend(
      */
     _onMouseWheelMove: function (e, delta) {
         if (delta > 0) {
-        	this.zoomInBtn.click();
+            this.zoomInBtn.click();
         } else {
-        	this.zoomOutBtn.click();
+            this.zoomOutBtn.click();
         }
         return false;
     },

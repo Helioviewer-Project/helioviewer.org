@@ -97,15 +97,16 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         	echo "<script src=\"$compressed?$version\" type=\"text/javascript\"></script>\n\t";
         }
         else {
-        	$js = array("Utility/Config.js", "UIController.js", "Helioviewer.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
-                        "Tiling/Layer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js", "Utility/KeyboardManager.js", 
-                        "Tiling/LayerManager.js", "Tiling/TileLayerManager.js", "Movies/MediaSettings.js", 
-                        "UI/MessageConsole.js", "Movies/MovieBuilder.js", "UI/ScreenshotBuilder.js", 
-                        "Image/JP2Image.js", "Tiling/TileLayer.js", "Tiling/TileLayerAccordion.js", 
-                        "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
-                        "Viewport/FullscreenControl.js", "Viewport/MouseCoordinates.js", "Viewport/Viewport.js", 
-                        "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js", "Viewport/SandboxHelper.js", "Viewport/HelioviewerViewport.js",
-        	            "Tiling/HelioviewerTileLayerManager.js", "Tiling/HelioviewerTileLayer.js", "Image/BlankImage.js", "Viewport/HelioviewerMouseCoordinates.js");
+        	$js = array("UIController.js", "Helioviewer.js", "Image/JP2Image.js", "Movies/MediaSettings.js", "Movies/MovieBuilder.js",  
+                        "Tiling/Layer/HelioviewerTileLayer.js", "Tiling/Layer/Layer.js", "Tiling/Layer/TileLayer.js", 
+                        "Tiling/Layer/TileLoader.js", "Tiling/Manager/HelioviewerTileLayerManager.js", "Tiling/Manager/LayerManager.js", 
+                        "Tiling/Manager/TileLayerAccordion.js", "Tiling/Manager/TileLayerManager.js", "Viewport/Helper/MouseCoordinates.js", 
+                        "Viewport/Helper/SandboxHelper.js", "Viewport/Helper/HelioviewerMouseCoordinates.js", 
+                        "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", "Viewport/Viewport.js", 
+        	            "UI/IconPicker.js", "UI/ImageSelectTool.js", "UI/TimeControls.js", "UI/TooltipHelper.js", "UI/TreeSelect.js", 
+        	            "Utility/Config.js", "Utility/FullscreenControl.js", "UI/jquery.ui.dynaccordion.js", "Utility/HelperFunctions.js", 
+        	            "Utility/KeyboardManager.js", "UI/MessageConsole.js", "UI/ScreenshotBuilder.js", "Utility/UserSettings.js", 
+        	            "UI/ZoomControls.js");
             foreach($js as $file)
                 printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
         }
@@ -160,7 +161,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 printf("\t\turlParams = %s;\n", json_encode($urlParams));
             ?>
             config      = new Config(settingsJSON).toArray();
-            helioviewer = /*new Helioviewer(urlParams, config);*/new UIController(urlParams, config, true);
+            helioviewer = new Helioviewer(urlParams, config); /*new UIController(urlParams, config, true);*/
         });
     </script>
 

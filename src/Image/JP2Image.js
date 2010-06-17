@@ -91,7 +91,7 @@ var JP2Image = Class.extend(
     },
     
     getLayerName: function () {
-    	return this.observatory + "," + this.instrument + "," +  
-    	       this.detector + "," + this.measurement;
-    },
+        return this.observatory + "," + this.instrument + "," +  
+            this.detector + "," + this.measurement;
+    }
 });
