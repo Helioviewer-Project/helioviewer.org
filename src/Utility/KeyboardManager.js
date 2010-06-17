@@ -34,7 +34,7 @@ var KeyboardManager = Class.extend(
      * From there it is also simple to add support for diagonal movement, etc.
      */
     _initEventHandlers: function () {
-        var onKeyPress, self = this;
+        var onKeyPress;
 
         /**
          * @description Sets up keyboard shortcuts
@@ -69,22 +69,22 @@ var KeyboardManager = Class.extend(
             if (key === 37 || key === 38 || key === 39 || key === 40) {
                 //Right-arrow
                 if (key === 37) {
-                    $(document).trigger('move-viewport', [8,0]);
+                    $(document).trigger('move-viewport', [-8, 0]);
                 }
                     
                 //Up-arrow
                 else if (key === 38) {
-                    $(document).trigger('move-viewport', [0,8]);
+                    $(document).trigger('move-viewport', [0, -8]);
                 }
                     
                 //Left-arrow
                 else if (key === 39) {
-                    $(document).trigger('move-viewport', [-8,0]);
+                    $(document).trigger('move-viewport', [8, 0]);
                 }
                     
                 //Down-arrow
                 else if (key === 40) {
-                    $(document).trigger('move-viewport', [0,-8]);
+                    $(document).trigger('move-viewport', [0, 8]);
                 }
                 return false;
             }        
@@ -93,7 +93,7 @@ var KeyboardManager = Class.extend(
                 $("#center-button").click();
             }
             else if (character === "m") {
-            	$(document).trigger('toggle-mouse-coords');
+                $(document).trigger('toggle-mouse-coords');
             }
             else if (character === "-" || character === "_") {
                 $("#zoomControlZoomOut").click();
@@ -102,7 +102,7 @@ var KeyboardManager = Class.extend(
                 $("#zoomControlZoomIn").click();
             }
             else if (character === "d") {
-            	$(document).trigger('toggle-eventLayer-labels');
+                $(document).trigger('toggle-eventLayer-labels');
             }
             else if (character === "f") {
                 $("#fullscreen-btn").click();

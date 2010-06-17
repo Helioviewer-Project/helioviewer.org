@@ -6,10 +6,11 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, document, window, TileLayerManager, HelioviewerMouseCoordinates, SandboxHelper, Viewport */
+/*global Class, $, document, window, HelioviewerTileLayerManager, HelioviewerMouseCoordinates, 
+  Viewport, ViewportMovementHelper */
 "use strict";
 var HelioviewerViewport = Viewport.extend(
-    /** @lends Viewport.prototype */
+    /** @lends HelioviewerViewport.prototype */
     {
     /**
      * @constructs
@@ -25,100 +26,41 @@ var HelioviewerViewport = Viewport.extend(
      */
     init: function (options) {
         this._super(options);
-                        
+    
         // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
         this.rsun = 959.705;
 
         // Initialize tile layers
-        this._tileLayerManager = new HelioviewerTileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
-                                                      this.imageScale, this.maxTileLayers, this.tileServers, 
-                                                      this.tileLayers, this.urlStringLayers);
+        this._tileLayerManager = new HelioviewerTileLayerManager(this.api, this.requestDate, this.dataSources, 
+                                  this.tileSize, this.imageScale, this.maxTileLayers,
+                                  this.tileServers, this.tileLayers, this.urlStringLayers);
         
-        this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
+        var mouseCoords	    = new HelioviewerMouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
+        this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
         this.resize();
         this._initEventHandlers();
     },
-    
-    /**
-     * Returns the horizontal and vertical displacement of the sun from the center of the viewport
-     */
-    getOffsetFromCenter: function () {
-        var sandboxCenter, sunCenter;
+
+    /**	
+     * Updates the stored values for the maximum tile and event layer dimensions. 
+     * This is used in computing the optimal sandbox size.	
+     */		
+    updateMaxLayerDimensions: function (event, type, dimensions) {
+        var old, tileLayerDimensions, eventLayerDimensions;
         
-        sandboxCenter = this.getSandboxCenter();
-        sunCenter     = this.getContainerPos();
-        
-        return {
-            x: sunCenter.x - sandboxCenter.x,
-            y: sunCenter.y - sandboxCenter.y
+        old = this.maxLayerDimensions;
+        tileLayerDimensions  = this._tileLayerManager.getMaxDimensions();
+        eventLayerDimensions = tileLayerDimensions; // Hack until eventLayers are put back in;
+        //eventLayerDimensions = this._eventLayerManager.getMaxDimensions();
+	
+        this.maxLayerDimensions = {
+            width : Math.max(tileLayerDimensions.width,  eventLayerDimensions.width),	
+            height: Math.max(tileLayerDimensions.height, eventLayerDimensions.height)
         };
-    },
 
-    /**
-     * @description Zooms To a specified image scale.
-     * @param {Float} imageScale The desired image scale
-     */
-    zoomTo: function (event, imageScale) {
-        var sunCenter, originalSandboxWidth, originalSandboxHeight,  
-        sandboxWidthScaleFactor, sandboxHeightScaleFactor, originalScale;
-        
-        originalScale = this.imageScale;
-        
-        // get offset and sandbox dimensions
-        sunCenter             = this.getContainerPos();
-        originalSandboxWidth  = this.sandbox.width(); 
-        originalSandboxHeight = this.sandbox.height();
-        
-        this.imageScale = imageScale;
-
-        // scale layer dimensions
-        this.scaleLayerDimensions(originalScale / imageScale);
-        
-        // update sandbox
-        this.updateSandbox();
-        
-        sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
-        sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
-        
-        this._updateTileVisibilityRange();
-        
-        this.moveTo(sunCenter.x * sandboxWidthScaleFactor, sunCenter.y * sandboxHeightScaleFactor);
-        
-        // reset the layers
-        this._tileLayerManager.adjustImageScale(imageScale, this.tileVisibilityRange);
-        
-        this.mouseCoords.updateImageScale(imageScale);
-        
-        // store new value
-        $(document).trigger("save-setting", ["imageScale", imageScale]);
-    },
-    
-    /**
-     * @description Returns the current solar radius in pixels.
-     */
-    getRSun: function () {
-        return this.rsun / this.imageScale;
-    },
-
-    /**
-     * @description
-     */
-    _initEventHandlers: function () {
-        $(window).resize($.proxy(this.resize, this));
-        $(document).mousemove($.proxy(this.mouseMove, this))
-                   .mouseup($.proxy(this.mouseUp, this))
-                   .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
-                   .bind("set-image-scale", $.proxy(this.zoomTo, this))
-                   .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this))
-                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("recompute-tile-visibility", $.proxy(this.checkTileVisibility, this))
-                   .bind("move-viewport", $.proxy(this.moveViewport, this));
-        
-        $('#center-button').click($.proxy(this.center, this));
-        
-        this.domNode.mousedown($.proxy(this.mouseDown, this))
-                    .dblclick($.proxy(this.doubleClick, this));
-        
+        if ((this.maxLayerDimensions.width !== old.width) || (this.maxLayerDimensions.height !== old.height)) {
+            this.movementHelper.updateMaxLayerDimensions(this.maxLayerDimensions);	
+        }	
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?

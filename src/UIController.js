@@ -45,7 +45,7 @@ var UIController = Class.extend(
      * Initializes a default viewport
      */
     _initViewport: function (loadDefaults) {
-    	date = this.timeControls.getDate();
+        var date = this.timeControls.getDate();
     
         this.viewport = new Viewport({
             api            : this.api,
@@ -98,18 +98,18 @@ var UIController = Class.extend(
      * Override by extending this class
      */
     _getDefaultUserSettings: function () {
-    	return {
-    		date            : getUTCTimestamp(this.defaultObsTime),
-    		imageScale      : 1,
-    		version         : this.version + 1,
-    		warnMouseCoords : true,
-    		showWelcomeMsg  : true,
-    		tileLayers : [{
-    			server	   : 0,
-        		visible    : true,
-        		opacity    : 100
-    		}],
-	};
+        return {
+            date            : getUTCTimestamp(this.defaultObsTime),
+            imageScale      : 1,
+            version         : this.version + 1,
+            warnMouseCoords : true,
+            showWelcomeMsg  : true,
+            tileLayers : [{
+                server	   : 0,
+                visible    : true,
+                opacity    : 100
+            }]
+        };
     },
 
     /**

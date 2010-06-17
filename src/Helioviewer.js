@@ -22,7 +22,7 @@ var Helioviewer = UIController.extend(
      * @param {Object} settings   Server settings loaded from Config.ini
      */
     init: function (urlParams, settings) {
-	// Calling super will load settings and call _loadExtensions()
+        // Calling super will load settings and call _loadExtensions()
         this._super(urlParams, settings);
         this.api = "api/index.php";
 
@@ -39,22 +39,22 @@ var Helioviewer = UIController.extend(
      * zoom controls, time controls, and full screen controls
      */
     _loadExtensions: function () {
-    	this.messageConsole = new MessageConsole();
-    	this.keyboard 	    = new KeyboardManager();
-    	this._initTooltips();
+        this.messageConsole = new MessageConsole();
+        this.keyboard       = new KeyboardManager();
+        this._initTooltips();
     
-    	// User Interface components
-    	this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
+        // User Interface components
+        this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
                                          this.minImageScale, this.maxImageScale);
 
-    	this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
+        this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
                                          '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
-    	this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
+        this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
 
-    	//this.mediaSettings      = new MediaSettings(this);
-    	//this.movieBuilder       = new MovieBuilder(this);
-    	//this.imageSelectTool    = new ImageSelectTool(this);
-    	//this.screenshotBuilder  = new ScreenshotBuilder(this);
+        //this.mediaSettings      = new MediaSettings(this);
+        //this.movieBuilder       = new MovieBuilder(this);
+        //this.imageSelectTool    = new ImageSelectTool(this);
+        //this.screenshotBuilder  = new ScreenshotBuilder(this);
     },
     
     /**
