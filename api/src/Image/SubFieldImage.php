@@ -40,7 +40,7 @@ class Image_SubFieldImage
     protected $subfieldRelHeight;
     protected $region; // {top: , left: , bottom: , right: }
     **/
-	protected $metaInfo;
+    protected $metaInfo;
     protected $sourceJp2;
     protected $outputFile;
     protected $roi;
@@ -65,13 +65,14 @@ class Image_SubFieldImage
      * Creates an Image_SubFieldImage instance
      *
      * @param string $sourceJp2    Original JP2 image from which the subfield should be derrived
-     * @param string $outputFile   Location to output the subfield image to
+     * @param date   $date         The timestamp of the image
      * @param array	 $roi          Subfield region of interest
      * @param string $format       File format to use when saving the subfield image
      * @param int    $jp2Width     Width of the JP2 image at it's natural resolution
      * @param int    $jp2Height    Height of the JP2 image at it's natural resolution
      * @param float  $jp2Scale     Pixel scale of the original JP2 image
      * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
+     * @param string $outputFile   Location to output the subfield image to
      * 
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal
@@ -82,7 +83,7 @@ class Image_SubFieldImage
       */
     public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile)
     {
-    	$this->outputFile = $outputFile;
+        $this->outputFile = $outputFile;
 
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
         $this->roi        = $roi;
@@ -105,10 +106,16 @@ class Image_SubFieldImage
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
     }
     
-	public function build() {
-		$this->buildImage();
-	}
-	
+    /**
+     * Called by classes that may not have direct access to protected function buildImage
+     * 
+     * @return void
+     */
+    public function build() 
+    {
+        $this->buildImage();
+    }
+    
     /**
      * Sets parameters (gravity and size) for any padding which should be applied to extracted subfield image
      * 
@@ -116,33 +123,55 @@ class Image_SubFieldImage
      * 
      * @return void
      */
-	public function setPadding($padding) { 
+    public function setPadding($padding) 
+    { 
         $this->padding = $padding;
-	    //Allow browser to rescale tiles which are not larger than the requested size
+        //Allow browser to rescale tiles which are not larger than the requested size
         if (!($padding && ($padding['width'] > $this->width))) {
             $this->setSkipResize(true);
         }
-	}
-	
-	public function outputFile() {
-		return $this->outputFile;
-	}
+    }
+    
+    /**
+     * Gets the SubfieldImage's output file
+     * 
+     * @return string outputFile
+     */
+    public function outputFile() 
+    {
+        return $this->outputFile;
+    }
 
-	/*
-	 * Getters that are needed for determining padding, as they must be accessed from Tile or ImageLayer classes.
-	 */
-	public function jp2RelWidth() {
-		return $this->jp2RelWidth;
-	}
-	
-	public function jp2RelHeight() {
-		return $this->jp2RelHeight;
-	}
-	
-	public function reduceFactor() {
-		return $this->reduce;
-	}
-	
+    /**
+     * Getters that are needed for determining padding, as they must be accessed from Tile or ImageLayer classes.
+     * 
+     * @return int jp2RelWidth
+     */
+    public function jp2RelWidth() 
+    {
+        return $this->jp2RelWidth;
+    }
+    
+    /**
+     * Gets the jp2 image's relative height
+     * 
+     * @return int jp2RelHeight
+     */
+    public function jp2RelHeight() 
+    {
+        return $this->jp2RelHeight;
+    }
+    
+    /**
+     * Gets the reduce factor (how much to scale the image)
+     * 
+     * @return int reduceFactor
+     */
+    public function reduceFactor() 
+    {
+        return $this->reduce;
+    }
+    
     /**
      * Builds the requested subfield image.
      *
@@ -210,9 +239,9 @@ class Image_SubFieldImage
             // For resize to match requested tilesize. Once a suitable solution is found to improve rendering of
             // client-side rescaled tiles, this can be removed (02/26/2010)
             if(isset($this->tileSize))
-            	$cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
+                $cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
             else { // For composite images, which don't have $this->tileSize
-            	$cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}";
+                $cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}";
             }
             //var_dump($this);
             //die (escapeshellcmd("$cmd $this->outputFile"));
@@ -238,14 +267,18 @@ class Image_SubFieldImage
         }
     }
     
-    /*
+    /**
      * Default behavior for images is to just add a black background.
      * LASCOImage.php has a getAlphaMaskCmd that overrides this one and applies
      * an alpha mask instead.
+     * 
+     * @param string $intermediate pgm grayscale image
+     * 
+     * @return string partial command for imagemagick
      */
     protected function getAlphaMaskCmd($intermediate)
     {
-    	return $intermediate . " -background black ";
+        return $intermediate . " -background black ";
     }
 
     /**
@@ -260,9 +293,16 @@ class Image_SubFieldImage
         $this->colorTable = $clut;
     }
     
+    /**
+     * Sets the tile size
+     * 
+     * @param int $size the desired width of the square tile
+     * 
+     * @return void
+     */
     public function setTileSize($size) 
     {
-		$this->tileSize = $size;
+        $this->tileSize = $size;
     }
     
     /**
@@ -290,11 +330,11 @@ class Image_SubFieldImage
     }
     
 
-/*    protected function setPadding($padding)
+    /* protected function setPadding($padding)
     {
         $this->padding = $padding;
     }
-*/    
+    */   
     /**
      * Returns a string formatted for ImageMagick which defines how an image should be padded
      * 
@@ -362,9 +402,9 @@ class Image_SubFieldImage
 
         if ($this->hasAlphaMask()) {
             $mask = substr($filename, 0, -4) . "-mask.tif";
-	        if (file_exists($mask)) {
-	            unlink($mask);
-	        }
+            if (file_exists($mask)) {
+                unlink($mask);
+            }
         }
 
         die();
@@ -473,7 +513,7 @@ class Image_SubFieldImage
      *
      * @return array the width and height of the given image
      */
-    protected function _getImageDimensions($filename)
+    protected function getImageDimensions($filename)
     {
         if (list($width, $height, $type, $attr) = getimagesize($filename)) {
             return array (

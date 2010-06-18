@@ -52,7 +52,7 @@ var TreeSelect = Class.extend(
      * @param {Object} newChoice
      */
     _updateSelected: function (depth, newChoice) {
-        var nav, getFirstItem, i, self = this;
+        var nav, getFirstItem, i;
         
         this.selected[depth] = newChoice;
         
@@ -114,9 +114,7 @@ var TreeSelect = Class.extend(
      * @description Returns the value associated with the currently selected leaf-node
      */
     _value: function () {
-        var nav, self = this;
-        
-        nav = "this.tree";
+        var nav = "this.tree";
         $.each(this.selected, function (i, choice) {
             nav += '["' + choice + '"]';
         });

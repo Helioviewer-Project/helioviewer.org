@@ -11,14 +11,21 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-
 /**
+ * Helioviewer Tile Class Definition
  * 
+ * PHP version 5
  * TODO (2009/12/07)
- *  To improve smoothness of transparency edges, use a larger mask (e.g. 
- *  2080x2080  instead of 1040x1040) so that most of scaling will be downwards
+ * To improve smoothness of transparency edges, use a larger mask (e.g. 
+ * 2080x2080  instead of 1040x1040) so that most of scaling will be downwards
+ * 
+ * @category WebClient
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
  */
-abstract class Image_Tiling_Tile// extends Image_SubFieldImage
+abstract class Image_Tiling_Tile
 {
     protected $x;
     protected $y;
@@ -28,22 +35,17 @@ abstract class Image_Tiling_Tile// extends Image_SubFieldImage
     /**
      * Abstract tile class setup
      * 
-     * @param string $jp2          Location of source JP2 image
-     * @param string $tile         Location where tile is or will be stored
+     * @param string $desiredScale Pixel scale (arc-seconds/pixel) for which the tile should be scaled to
+     * @param string $tileSize     Length of a side of the (square) tile in pixels
+     * @param float  $jp2Scale     Natural pixel scale of the source JP2 image
      * @param int    $x            Tile x-coordinate
      * @param int    $y            Tile y-coordinate
-     * @param float  $desiredScale Pixel scale (arc-seconds/pixel) for which the tile should be scaled to
-     * @param int    $tileSize     Length of a side of the (square) tile in pixels
-     * @param int    $jp2Width     Width of the source JP2 image
-     * @param int    $jp2Height    Height of the source JP2 image
-     * @param float  $jp2Scale     Natural pixel scale of the source JP2 image
-     * @param string $format       Format to store the tile in
      * @param bool   $display      If true, the tile will be printed to the screen after generation
      */
     public function __construct( 
         $desiredScale, $tileSize, $jp2Scale, $x, $y, $display = true
     ) {
-    	$this->tileSize			= $tileSize;
+        $this->tileSize			= $tileSize;
         $this->relativeTileSize = $tileSize * ($desiredScale / $jp2Scale);
         
         $this->x = $x;
@@ -79,8 +81,8 @@ abstract class Image_Tiling_Tile// extends Image_SubFieldImage
         $y = $this->y;
         
         // Determine min and max tile numbers
-        $imgNumTilesX = max(2, ceil($this->_image->jp2RelWidth()  / $this->tileSize));
-        $imgNumTilesY = max(2, ceil($this->_image->jp2RelHeight() / $this->tileSize));
+        $imgNumTilesX = max(2, ceil($this->image->jp2RelWidth()  / $this->tileSize));
+        $imgNumTilesY = max(2, ceil($this->image->jp2RelHeight() / $this->tileSize));
 
         // Tile placement architecture expects an even number of tiles along each dimension
         if ($imgNumTilesX % 2 != 0) {
@@ -124,7 +126,7 @@ abstract class Image_Tiling_Tile// extends Image_SubFieldImage
             }
         }
        
-        $reduceFactor = $this->_image->reduceFactor();
+        $reduceFactor = $this->image->reduceFactor();
         // Length of side in padded tile 
         if ($reduceFactor > 0) {
             $side = ($this->relativeTileSize / pow(2, $reduceFactor));
@@ -149,13 +151,14 @@ abstract class Image_Tiling_Tile// extends Image_SubFieldImage
      * 
      * The size of the tile (xSize or ySize) is either outerTs or innerTs, depending where the tile is in the image.
      * 
-     * @param int   $jp2Width     Width of the source JP2 image
-     * @param int   $jp2Height    Height of the source JP2 image
-     * @param float $jp2Scale     Natural pixel scale of the source JP2 image
-     * @param float $desiredScale Pixel scale (arc-seconds/pixel) for which the tile should be scaled to
-     * @param int   $tileSize     Length of a side of the (square) tile in pixels
-     * @param int   $x            Tile x-coordinate
-     * @param int   $y            Tile y-coordinate
+     * @param int   $jp2Width         Width of the source JP2 image
+     * @param int   $jp2Height        Height of the source JP2 image
+     * @param float $jp2Scale         Natural pixel scale of the source JP2 image
+     * @param float $desiredScale     Pixel scale (arc-seconds/pixel) for which the tile should be scaled to
+     * @param int   $tileSize         Length of a side of the (square) tile in pixels
+     * @param int   $relativeTileSize The size of the tile relative to the JP2 Image
+     * @param int   $x                Tile x-coordinate
+     * @param int   $y                Tile y-coordinate
      * 
      * @return array An array containing the pixel coordinates for a single tile's top-left and bottom-right corners
      */    

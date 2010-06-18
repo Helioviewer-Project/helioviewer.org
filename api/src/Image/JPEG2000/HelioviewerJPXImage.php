@@ -134,16 +134,20 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
     /**
      * Retrieves filepaths and timestamps of all images of a given type between the start and end dates specified
      * 
+     * @param object $imgIndex an ImgIndex object with access to the database
+     * @param in     $sourceId the source ID of the image
+     * 
      * @return array Returns list of filepaths to images to use during JPX generation
      *               and also a list of the times for each image in the series.
      */
-    private function _queryJPXImageFramesByRange($imgIndex, $sourceId) {
+    private function _queryJPXImageFramesByRange($imgIndex, $sourceId)
+    {
         $images = array();
         $dates  = array();
         
         $results = $imgIndex->getImageRange($this->_startTime, $this->_endTime, $sourceId);
         
-        foreach($results as $img) {
+        foreach ($results as $img) {
             $filepath = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
             array_push($images, $filepath);
             array_push($dates, toUnixTimestamp($img['date']));
@@ -156,12 +160,15 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      * Retrieves filepaths and timestamps for images at a specified cadence of a given type between 
      * the start and end dates specified
      * 
-     * @param int $sourceId  Image source id
+     * @param object $imgIndex  An ImgIndex object with access to the database
+     * @param int    $sourceId  Image source id
+     * @param int    $numFrames The number of frames to go into the JPX movie
      * 
      * @return array Returns list of filepaths to images to use during JPX generation
      *               and also a list of the times for each image in the series.
      */
-    private function _queryJPXImageFramesByCadence($imgIndex, $sourceId, $numFrames) {
+    private function _queryJPXImageFramesByCadence($imgIndex, $sourceId, $numFrames)
+    {
         $images = array();
         $dates  = array();
         
