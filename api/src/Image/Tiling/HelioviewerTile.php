@@ -34,28 +34,28 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
 {
     private $_cacheDir = HV_CACHE_DIR;
     private $_noImage  = HV_EMPTY_TILE;
-    protected $_image;
+    protected $image;
 
     /**
      * Helioviewer Tile Constructor
      *
-     * @param string $uri              URI for the original JPEG 2000 image
-     * @param string $date             The date of the source JP2 image
-     * @param int    $x                Helioviewer.org tile x-coordinate
-     * @param int    $y                Helioviewer.org tile y-coordinate
-     * @param float  $tileScale        Requested image scale to use for tile
-     * @param int    $tileSize         Requested tile size (width and height)
-     * @param int    $jp2Width         Width of the original JP2 image
-     * @param int    $jp2Height        Height of the original JP2 image
-     * @param float  $jp2Scale         Plate scale (arc-seconds/pixal) of original image
-     * @param float  $sunCenterOffsetX Amount original image is offset from sun center (x)
-     * @param float  $sunCenterOffsetY Amount original image is offset from sun center (y)
-     * @param string $format           Desired format for resulting tile image
-     * @param string $obs              Observatory
-     * @param string $inst             Instrument
-     * @param string $det              Detector
-     * @param string $meas             Measurement
-     * @param bool   $display          Display the tile immediately or generate only
+     * @param string $uri                URI for the original JPEG 2000 image
+     * @param string $date               The date of the source JP2 image
+     * @param int    $x                  Helioviewer.org tile x-coordinate
+     * @param int    $y                  Helioviewer.org tile y-coordinate
+     * @param float  $tileScale          Requested image scale to use for tile
+     * @param int    $tileSize           Requested tile size (width and height)
+     * @param int    $jp2Width           Width of the original JP2 image
+     * @param int    $jp2Height          Height of the original JP2 image
+     * @param float  $jp2Scale           Plate scale (arc-seconds/pixal) of original image
+     * @param float  $solarCenterOffsetX Amount original image is offset from sun center (x)
+     * @param float  $solarCenterOffsetY Amount original image is offset from sun center (y)
+     * @param string $format             Desired format for resulting tile image
+     * @param string $obs                Observatory
+     * @param string $inst               Instrument
+     * @param string $det                Detector
+     * @param string $meas               Measurement
+     * @param bool   $display            Display the tile immediately or generate only
      *
      * @return void
      */
@@ -65,7 +65,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
     ) {
         $type 		= strtoupper($inst) . "Image";
         $classname	= "Image_ImageType_$type";
-        require_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
+        include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
         
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->getTileFilepath($jp2, $date, $x, $y, $tileScale, $format, $classname, $det, $meas);
@@ -90,20 +90,20 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
              
         // Dynamically generate a class that corresponds to the type of image. Current classes available:
         // EITImage, MDIImage, LASCOImage
-		$this->_image = new $classname(
-			$tileSize, $tileSize, $date, $jp2, $roi, $format, $jp2Width, $jp2Height, 
-			$jp2Scale, $tileScale, $det, $meas, $solarCenterOffsetX, $solarCenterOffsetY, $tile
-		);
-		
-		// Padding is calculated in the tile and not in the xxxImage because padding is done differently between tiles and
-		// CompositeImageLayers. 
-		$padding = $this->computePadding();
-		$this->_image->setPadding($padding);
-		$this->_image->setTileSize($tileSize);
-		$this->_image->build();
+        $this->image = new $classname(
+            $tileSize, $tileSize, $date, $jp2, $roi, $format, $jp2Width, $jp2Height, 
+            $jp2Scale, $tileScale, $det, $meas, $solarCenterOffsetX, $solarCenterOffsetY, $tile
+        );
+        
+        // Padding is calculated in the tile and not in the xxxImage because padding is done differently between tiles and
+        // CompositeImageLayers. 
+        $padding = $this->computePadding();
+        $this->image->setPadding($padding);
+        $this->image->setTileSize($tileSize);
+        $this->image->build();
 
         if ($display) {
-            $this->_image->display();
+            $this->image->display();
         } 
     }
 
@@ -162,12 +162,15 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
     /**
      * getTileFilePath
      *
-     * @param string $jp2    The location of the tile's source JP2 image.
-     * @param string $date   The date of the source JP2 image (e.g. "2003-11-08 01:19:35")
-     * @param int    $x      Tile x-coordinate
-     * @param int    $y      Tile y-coordinate
-     * @param float  $scale  Image scale of requested tile
-     * @param string $format The file format used by the tile
+     * @param string $jp2       The location of the tile's source JP2 image.
+     * @param string $date      The date of the source JP2 image (e.g. "2003-11-08 01:19:35")
+     * @param int    $x         Tile x-coordinate
+     * @param int    $y         Tile y-coordinate
+     * @param float  $scale     Image scale of requested tile
+     * @param string $format    The file format used by the tile
+     * @param string $classname The name of the class to be created, ex. EIT_Image or MDI_Image
+     * @param string $det       The detector, ex. EIT, C2
+     * @param string $meas      The measurement, ex. 171, white-light
      *
      * @return string The path in the cache where the tile should be stored
      */
@@ -193,7 +196,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         */
         
         // $classname::getFilePathNickName does not work in php 5.2.x, which is what is running on Delphi
-		$filepath .= call_user_func($classname . '::getFilePathNickName', $det, $meas);
+        $filepath .= call_user_func($classname . '::getFilePathNickName', $det, $meas);
         
         $filepath .= "/$year/$month/$day/";
 

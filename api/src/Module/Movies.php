@@ -75,7 +75,7 @@ class Module_Movies implements Module
                 "required" => array('startDate', 'layers', 'imageScale', 'width', 'height'),
                 "dates"    => array('startDate'),
                 "ints"     => array('numFrames, frameRate, timeStep, quality', 'width', 'height'),
-            	"floats"   => array('imageScale')
+                "floats"   => array('imageScale')
             );
             break;
         case "playMovie":
@@ -134,9 +134,9 @@ class Module_Movies implements Module
      */
     public function buildMovie ()
     {
-		include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
-		$builder = new Movie_HelioviewerMovieBuilder();
-		return $builder->buildMovie($this->_params);
+        include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+        $builder = new Movie_HelioviewerMovieBuilder();
+        return $builder->buildMovie($this->_params);
     }
 
     /**

@@ -13,7 +13,18 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once HV_ROOT_DIR . '/api/src/Image/ImageMetaInformation.php';
-
+/**
+ * Image_CompositeImage class definition
+ *
+ * PHP version 5
+ *
+ * @category Composite
+ * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
+ * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ */
 abstract class Image_Composite_CompositeImage
 {
     protected $composite;
@@ -28,28 +39,34 @@ abstract class Image_Composite_CompositeImage
     /**
      * Instantiates a Image_CompositeImage object
      *
-     * @param ImageMetaInformation $meta -- Meta information object that holds information like width, height, scale
-     * @param array  $options    An array with ["edges"] => true/false, ["sharpen"] => true/false
-     * @param string $tmpDir     The temporary directory where images are cached
-     * @param string $filename	 Desired filename of the output
+     * @param object $meta     Meta information object that holds information like width, height, scale
+     * @param array  $options  An array with ["edges"] => true/false, ["sharpen"] => true/false
+     * @param string $tmpDir   The temporary directory where images are cached
+     * @param string $filename Desired filename of the output
      */
     protected function __construct($meta, $options, $tmpDir, $filename)
     {
-        //date_default_timezone_set('UTC');
         $this->metaInfo   = $meta;
         $this->options    = $options;
         $this->tmpDir     = $tmpDir;
-		$this->_setOutputFile($filename);
+        $this->_setOutputFile($filename);
 
         $this->transImageDir = HV_CACHE_DIR . "/transparent_images/";
         $this->compositeImageDir = HV_CACHE_DIR . "/composite_images/";
         
-		$this->_makeDirectory($this->tmpDir);
-		$this->_makeDirectory($this->transImageDir);
-		$this->_makeDirectory($this->compositeImageDir);
+        $this->makeDirectory($this->tmpDir);
+        $this->makeDirectory($this->transImageDir);
+        $this->makeDirectory($this->compositeImageDir);
     }
     
-    protected function _makeDirectory($directory) 
+    /**
+     * Creates directories if they do not exist
+     * 
+     * @param string $directory Directory path
+     * 
+     * @return void
+     */
+    protected function makeDirectory($directory) 
     {
         if (!file_exists($directory)) {
             mkdir($directory, 0777, true);
@@ -70,21 +87,21 @@ abstract class Image_Composite_CompositeImage
             }
 
             // Composite images on top of one another if there are multiple layers.
-	        if (sizeOf($this->layerImages) > 1) {
-	            $this->composite = $this->_buildComposite();
-	        } else {
-	            // Otherwise, the image has one layer and just needs to be watermarked.
-	            $this->composite = $this->_watermark($this->layerImages[0]);
-	        }
-		    //Optional settings
-	        /*if ($this->options['enhanceEdges'] == "true") {
-	            $this->composite->edgeImage(3);
-	        }
-	
-	        if ($this->options['sharpen'] == "true") {
-	            $this->composite->adaptiveSharpenImage(2,1);
-	        }
-	        */
+            if (sizeOf($this->layerImages) > 1) {
+                $this->composite = $this->_buildComposite();
+            } else {
+                // Otherwise, the image has one layer and just needs to be watermarked.
+                $this->composite = $this->_watermark($this->layerImages[0]);
+            }
+            //Optional settings
+            /*if ($this->options['enhanceEdges'] == "true") {
+                $this->composite->edgeImage(3);
+            }
+    
+            if ($this->options['sharpen'] == "true") {
+                $this->composite->adaptiveSharpenImage(2,1);
+            }
+            */
         } catch(Exception $e) {
             $error = "Unable to compile composite image layers: {$e->getMessage()}";
             logErrorMsg($error, true);
@@ -104,20 +121,19 @@ abstract class Image_Composite_CompositeImage
      *
      * These two strings are then layered on top of each other and put in the southwest corner of the image.
      *
-     * @param CompositeImageLayer $imageLayer
+     * @param CompositeImageLayer $imageLayer A built CompositeImageLayer
      *
      * @return string $image The filepath to the watermarked image
      */
-    
     private function _watermark($imageLayer)
     {
         $watermark 	 = HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png";
-		$imageWidth  = $this->metaInfo->width();
-		$image 		 = $imageLayer->getFilePathString();
-		
+        $imageWidth  = $this->metaInfo->width();
+        $image 		 = $imageLayer->getFilePathString();
+        
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if ($imageWidth / 300 < 2) {
-        	$watermark = $this->_waterMarkSmall($imageWidth);
+            $watermark = $this->_waterMarkSmall($imageWidth);
         }
 
         exec(escapeshellcmd(HV_PATH_CMD . " composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image));
@@ -137,11 +153,14 @@ abstract class Image_Composite_CompositeImage
     
     /**
      * Fetch the small watermark image and scale it to fit the composite image. 
+     * 
      * @param {int} $imageWidth -- The width of the composite image.
+     * 
      * @return {string} the filepath to the scaled watermark image
      */
-    private function _waterMarkSmall($imageWidth) {
-    	$watermark = HV_ROOT_DIR . "/api/resources/images/watermark_circle_small.png";
+    private function _waterMarkSmall($imageWidth)
+    {
+        $watermark = HV_ROOT_DIR . "/api/resources/images/watermark_circle_small.png";
 
         $scale = ($imageWidth * 100 / 2) / 300;
         $resize = HV_PATH_CMD . "convert -scale " . $scale . "% " . $watermark . " " . $this->compositeImageDir . "watermark_scaled.png";
@@ -154,35 +173,37 @@ abstract class Image_Composite_CompositeImage
      * of the filename sometimes overwrites duplicate files if they are created fast enough. This checks
      * to see if the filename is already being used and will recursively append "_" to the name until
      * a unique filename is found. 
-     * @param {string} $filename 
+     * 
+     * @param {string} $filename The output filename
+     * 
      * @return void
      */
-    private function _setOutputFile($filename) {
-    	if(file_exists($this->tmpDir . "/" . $filename)) {
-    		$filename = substr($filename, 0, -4) . "_.png";
-    		$this->_setOutputFile($filename);
-    	}
-    	else
-    		$this->outputFile = $filename;
+    private function _setOutputFile($filename)
+    {
+        if (file_exists($this->tmpDir . "/" . $filename)) {
+            $filename = substr($filename, 0, -4) . "_.png";
+            $this->_setOutputFile($filename);
+        }
+        else
+            $this->outputFile = $filename;
     }
 
     /**
      * Composites the layers on top of each other after putting them in the proper order.
-     *
-     * @param array $opacities The opacities to use for each layer in the composite
+     * 
      * @return string Filepath to the composited, watermarked image
      */
     private function _buildComposite()
     {
         $sortedImages 	= $this->_sortByLayeringOrder($this->layerImages);
-		$tmpImg 		= $this->tmpDir . "/" . $this->outputFile;
-		$filesToDelete 	= array();
+        $tmpImg 		= $this->tmpDir . "/" . $this->outputFile;
+        $filesToDelete 	= array();
 
         $cmd = HV_PATH_CMD . "composite -gravity Center";
 
         $layerNum = 1;
         foreach ($sortedImages as $image) {
-        	$opacity = $image->opacity();
+            $opacity = $image->opacity();
             // If the image has an opacity level of less than 100, need to set its opacity.
             if ($opacity < 100) {
                 $file 	  = $image->getFilePathString();
@@ -210,14 +231,14 @@ abstract class Image_Composite_CompositeImage
         $cmd .= " -compose dst-over -depth 8 -quality 10 " . $tmpImg;
 
         try {
-        	// Need to break $cmd into pieces at each "&&", because escapeshellcmd escapes & and the command doesn't work then.
-        	$commands = explode("&&", $cmd);
-        	foreach($commands as $command) {
-	            exec(escapeshellcmd($command), $out, $ret);
-	            if ($ret != 0) {
-	                throw new Exception("Error executing command $cmd.");
-	            }
-        	}
+            // Need to break $cmd into pieces at each "&&", because escapeshellcmd escapes & and the command doesn't work then.
+            $commands = explode("&&", $cmd);
+            foreach ($commands as $command) {
+                exec(escapeshellcmd($command), $out, $ret);
+                if ($ret != 0) {
+                    throw new Exception("Error executing command $cmd.");
+                }
+            }
 
             exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off $tmpImg"), $out, $ret);
             if ($ret != 0) {
@@ -228,23 +249,26 @@ abstract class Image_Composite_CompositeImage
             logErrorMsg($e->getMessage(), true);
         }
         
-		$image = $sortedImages[0];
-		$image->setNewFilePath($tmpImg);
-		
-		$this->_cleanUp($filesToDelete);
+        $image = $sortedImages[0];
+        $image->setNewFilePath($tmpImg);
+        
+        $this->_cleanUp($filesToDelete);
         return $this->_watermark($image);
     }
     
     /**
      * Deletes any extra or temporary files that were created in the building process. 
-     * @param $files -- array of filename strings
+     * 
+     * @param array $files -- array of filename strings
+     * 
+     * @return void
      */
     private function _cleanUp($files)
     {
-    	foreach($files as $file) {
-    		if(file_exists($file))
-    			unlink($file);
-    	}
+        foreach ($files as $file) {
+            if(file_exists($file))
+                unlink($file);
+        }
     }
 
     /**
@@ -253,7 +277,7 @@ abstract class Image_Composite_CompositeImage
      * Layering orders that are supported currently are 3 (C3 images), 2 (C2 images), 1 (EIT/MDI images).
      * The array is sorted by increasing layeringOrder.
      *
-     * @param array $images        Composite image layers
+     * @param array $images Array of Composite image layers
      *
      * @return array Array containing the sorted image layers
      */
@@ -268,7 +292,7 @@ abstract class Image_Composite_CompositeImage
         // Push all layering order 1 images into the sortedImages array,
         // push layering order 2 and higher into separate array.
         foreach ($images as $image) {
-        	$order = $image->layeringOrder();
+            $order = $image->layeringOrder();
             if ($order > 1) {
                 array_push($groups[$order], $image);
             } else {
@@ -357,10 +381,17 @@ abstract class Image_Composite_CompositeImage
         return $path;
     }
 
+    /**
+     * Starts the compositing process from an array of built images
+     * 
+     * @param array $images An array of built CompositeImageLayer images
+     * 
+     * @return void
+     */
     public function compositeImageFromImageArray($images) 
     {
-    	$this->layerImages = $images;
-    	$this->compileImages();
+        $this->layerImages = $images;
+        $this->compileImages();
     }
     /**
      * OUTDATED
