@@ -61,9 +61,9 @@ class Image_Composite_HelioviewerCompositeImage extends Image_Composite_Composit
         // Write words in white over outline
         $cmd .= " -stroke none -fill white -annotate +20+0 '$nameCmd'";
         // Outline words in black
-        $cmd .= " -stroke #000C -strokewidth 2 -annotate +100+0 '$timeCmd'";
+        $cmd .= " -stroke #000C -strokewidth 2 -annotate +125+0 '$timeCmd'";
         // Write words in white
-        $cmd .= " -stroke none -fill white -annotate +100+0 '$timeCmd'";
+        $cmd .= " -stroke none -fill white -annotate +125+0 '$timeCmd'";
 
         return $cmd;
     }

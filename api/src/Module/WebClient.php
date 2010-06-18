@@ -403,12 +403,12 @@ class Module_WebClient implements Module
         case "getViewerImage":
             break;
         case "takeScreenshot":
-            $required = array('obsDate', 'imageScale', 'layers', 'width', 'height', 'offsetLeftTop', 'offsetRightBottom');
+            $required = array('obsDate', 'imageScale', 'layers', 'width', 'height', 'x1', 'x2', 'y1', 'y2');
             $expected = array(
                 'required' => $required, 
                 'floats'   => array('imageScale'),
                 'dates'	   => array('obsDate'),
-                'ints'	   => array('width', 'height')
+                'ints'	   => array('width', 'height', 'x1', 'x2', 'y1', 'y2')
             );
             break;
         default:

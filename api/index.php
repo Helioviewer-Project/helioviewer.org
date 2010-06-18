@@ -73,7 +73,13 @@ if (!(isset($params) && loadModule($params))) {
             <li><a href="index.php#getJPX">JPX API</a></li>
         </ul>
     </li>
-    <li><a href="index.php#MovieAPI">Movie and Screenshot API</a></li>
+    <li>
+        <a href="index.php#MovieAPI">Movie and Screenshot API</a>
+        <ul>
+            <li><a href="index.php#takeScreenshot">Screenshot API</a></li>
+            <li><a href="index.php#buildMovie">Movie API</a></li>
+        </ul>
+    </li>
     <li>
         <a href="index.php#Appendices">Appendices</a>
         <ol style="list-style-type: upper-latin;">
@@ -702,7 +708,7 @@ if (!(isset($params) && loadModule($params))) {
 
         <br />
 
-<!-- Movie API -->
+<!-- Movie and Screenshot API -->
 <div id="MovieAPI">
     <h1>6. Movie and Screenshot API:</h1>
     <p>The movie and screenshot API allows users to download images or time-lapse videos of what they are viewing on the website. </p>
@@ -728,7 +734,7 @@ if (!(isset($params) && loadModule($params))) {
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="35%"><b>width</b></td>
+                    <td width="20%"><b>width</b></td>
                     <td width="20%"><i>Float</i></td>
                     <td>Desired output movie width</td>
                 </tr>
@@ -755,22 +761,32 @@ if (!(isset($params) && loadModule($params))) {
                     <td>A string of layer information in the following format:<br />
                     	Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
                     	If you do not know the sourceId, you can 
-                    	alternately send this layer string: <i>observatory,instrument,detector,measurement,isVisible,opacity</i>.
+                    	alternately send this layer string: <i>obs,inst,det,meas,isVisible,opacity</i>.
                     	Layer strings are separated by "/": layer1/layer2/layer3.</td>
                 </tr>
                 <tr>
-                    <td><b>offsetLeftTop</b></td>
-                    <td><i>String</i></td>
-                    <td>The offset of the image's left,top corner from the center of the sun, in arcseconds, separated by a comma. 
-                    	The left value is first, and then the top value. Example: -5000,-5000. This can be calculated, if necessary, with
-                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                    <td><b>y1</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
                 </tr>
                 <tr>
-                    <td><b>offsetRightBottom</b></td>
-                    <td><i>String</i></td>
-                    <td>The offset of the image's right,bottom corner from the center of the sun, in arcseconds, separated by a comma. 
-                    	The right value is first, and then the bottom value. Example: 5000,5000. This can be calculated, if necessary, with
-                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                    <td><b>x1</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>y2</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>x2</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                 </tr>
                 <tr>
                     <td><b>quality</b></td>
@@ -796,13 +812,13 @@ if (!(isset($params) && loadModule($params))) {
 
         <span class="example-header">Examples:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span>
         </div>
@@ -832,8 +848,8 @@ if (!(isset($params) && loadModule($params))) {
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="35%"><b>width</b></td>
-                    <td width="25%"><i>Float</i></td>
+                    <td width="20%"><b>width</b></td>
+                    <td width="20%"><i>Float</i></td>
                     <td>Desired output image width</td>
                 </tr>
                 <tr>
@@ -858,22 +874,32 @@ if (!(isset($params) && loadModule($params))) {
                     <td>A string of layer information in the following format:<br />
                     	Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
                     	If you do not know the sourceId, you can 
-                    	alternately send this layer string: <i>observatory,instrument,detector,measurement,isVisible,opacity</i>.
+                    	alternately send this layer string: <i>obs,inst,det,meas,isVisible,opacity</i>.
                     	Layer strings are separated by "/": layer1/layer2/layer3.</td>
                 </tr>
                 <tr>
-                    <td><b>offsetLeftTop</b></td>
-                    <td><i>String</i></td>
-                    <td>The offset of the image's left,top corner from the center of the sun, in arcseconds, separated by a comma. 
-                    	The left value is first, and then the top value. Example: -5000,-5000. This can be calculated, if necessary, with
-                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                    <td><b>y1</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
                 </tr>
                 <tr>
-                    <td><b>offsetRightBottom</b></td>
-                    <td><i>String</i></td>
-                    <td>The offset of the image's right,bottom corner from the center of the sun, in arcseconds, separated by a comma. 
-                    	The right value is first, and then the bottom value. Example: 5000,5000. This can be calculated, if necessary, with
-                    	<a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                    <td><b>x1</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>y2</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                </tr>
+                <tr>
+                    <td><b>x2</b></td>
+                    <td><i>Integer</i></td>
+                    <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
+                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                 </tr>
                 <tr>
                     <td><b>numFrames</b></td>
@@ -906,7 +932,8 @@ if (!(isset($params) && loadModule($params))) {
                 <tr>
                     <td><b>hqFormat</b></td>
                     <td><i>String</i></td>
-                    <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", and "avi".</td>
+                    <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", "avi", and "ipod".
+                        iPod video will come out in mp4 format but extra settings need to be applied so format must be specified as "ipod". </td>
                 </tr>
                 <tr>
                 	<td><b>display</b></td>
@@ -921,18 +948,25 @@ if (!(isset($params) && loadModule($params))) {
 		
         <span class="example-header">Example:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000&width=512&height=512
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512
         </a>
-        </span></div>
+        </span><br />
+        <span class="example-url">
+        IPod Video:<br />
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&width=320&height=320&hqFormat=ipod&display=false">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&width=320&height=320&hqFormat=ipod&display=false
+        </a>
+        </span>
         </div>
+    </div>
 
-        <br />
+    <br />
 
 </div>
 
@@ -1176,24 +1210,29 @@ if (!(isset($params) && loadModule($params))) {
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="50%"><strong>Layer Type:</strong></td>
-                    <td width="50%"><strong>Scale (arcseconds/pixel)</strong></td>
+                    <td width="40%"><strong>Layer Type:</strong></td>
+                    <td width="35%"><strong>Scale (arcsec/pixel)</strong></td>
+                    <td><strong>Width (arcsec)</strong></td>
                 </tr>
                 <tr>
                     <td>EIT (all measurements)</td>
                     <td>2.63</td>
+                    <td>2693.12</td>
                 </tr>
                 <tr>
                     <td>LASCO C2</td>
                     <td>11.9</td>
+                    <td>12185.6</td>
                 </tr>
                 <tr>
                     <td>LASCO C3</td>
                     <td>56</td>
+                    <td>57344</td>
                 </tr>
                 <tr>
                     <td>MDI (all measurements)</td>
                     <td>1.985707</td>
+                    <td>2033.364</td>
                 </tr>
             </tbody>
         </table>
@@ -1203,9 +1242,9 @@ if (!(isset($params) && loadModule($params))) {
         Center coordinates can be found in the FITS header of an image under CRPIX1 (x-offset) and 
         CRPIX2 (y-offset from the <i>bottom</i> of the image). Therefore the y-offset must be adjusted to reflect that the origin is in the top left
         corner instead of the bottom left corner (simply take newYOffset = ySize - yOffset).<br /><br />
-        Most SOHO images are usually 1024x1024.<br />
+        Most SOHO images are 1024x1024 pixels.<br /><br />
         
-        To find out the offset in arcseconds of the top left corner of an EIT image (Coordinates 0,0), we'll use some example numbers: <br /><br />
+        Let's say we want to find out the offset in arcseconds of the top left corner of an EIT image (Coordinates 0,0). We'll use some example numbers: <br /><br />
         width = height = 1024 px<br />
         xOffset = 514.660 px<br />
         yOffset = 1024 - 505.19 = 518.81 px<br /><br />
@@ -1220,7 +1259,11 @@ if (!(isset($params) && loadModule($params))) {
         -518.81 px * 2.63 arcsec/px <br />
         = -1364.4703 arcseconds from center on y-axis<br /><br />
         
-        Therefore your offsetLeftTop string would be "-1353.5558,-1364.4703".
+        Putting those together, the formula to find an offset for each coordinate is:<br />
+        x = (xCoord - xOffset) * scale or<br />
+        y = (yCoord - (imageHeight - yOffset)) * scale<br /><br />
+        
+        Therefore your x1 value is -1353.5558 and your y1 value is -1364.4703. This same formula can be used to find x2 and y2.
 
         <br />
         <br />

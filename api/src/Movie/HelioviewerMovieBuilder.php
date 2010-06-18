@@ -147,8 +147,10 @@ class Movie_HelioviewerMovieBuilder
                 'sharpen'	 => $this->_params['sharpen'],
                 'edges'		 => $this->_params['edges'],
                 'display'	 => false,
-                'offsetLeftTop' 	=> $this->_params['offsetLeftTop'],
-                'offsetRightBottom' => $this->_params['offsetRightBottom'],
+                'x1' 	     => $this->_params['x1'],
+                'x2'         => $this->_params['x2'],
+                'y1'         => $this->_params['y1'],
+                'y2'         => $this->_params['y2']
             );
 
             $image = $builder->takeScreenshot($params);
