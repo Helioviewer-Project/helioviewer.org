@@ -68,16 +68,13 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $params['layers'],
             $imageScale, $width, $height
         );
-
-        list($left,$top) 	 = explode(",", $params['offsetLeftTop']);
-        list($right,$bottom) = explode(",", $params['offsetRightBottom']);
         
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
             $imageMeta, $options, 
             $params['filename'] . ".png", 
             $params['quality'],
-            array('top' => $top, 'left' => $left, 'bottom' => $bottom, 'right' => $right)
+            array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2'])
         );
         
         $screenshot->buildImages($layerArray);

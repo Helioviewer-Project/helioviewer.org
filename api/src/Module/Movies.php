@@ -72,9 +72,9 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startDate', 'layers', 'imageScale', 'width', 'height'),
+                "required" => array('startDate', 'layers', 'imageScale', 'width', 'height', 'x1', 'x2', 'y1', 'y2'),
                 "dates"    => array('startDate'),
-                "ints"     => array('numFrames, frameRate, timeStep, quality', 'width', 'height'),
+                "ints"     => array('numFrames, frameRate, timeStep, quality', 'width', 'height', 'x1', 'x2', 'y1', 'y2'),
                 "floats"   => array('imageScale')
             );
             break;
@@ -125,6 +125,7 @@ class Module_Movies implements Module
      *     // Optional parameters to add on to the end: &numFrames=20&frameRate=8&timeStep=86400
      *     			&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4&display=true
      *
+     * For an iPod-compatible format, specify "hqFormat=ipod"
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of
      * knowing ahead of time whether the image is a .png, .tif, .flv, etc,
