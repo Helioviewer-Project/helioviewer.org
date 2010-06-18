@@ -181,7 +181,7 @@ class Module_WebClient implements Module
     {
         // Retrieve header locally
         if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
-        	include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
+            include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"]);
             $xmlBox->printXMLBox();
         } else {
@@ -403,14 +403,14 @@ class Module_WebClient implements Module
         case "getViewerImage":
             break;
         case "takeScreenshot":
-        	$required = array('obsDate', 'imageScale', 'layers', 'width', 'height', 'offsetLeftTop', 'offsetRightBottom');
-        	$expected = array(
-        		'required' => $required, 
-        		'floats'   => array('imageScale'),
-        		'dates'	   => array('obsDate'),
-        		'ints'	   => array('width', 'height')
-        	);
-        	break;
+            $required = array('obsDate', 'imageScale', 'layers', 'width', 'height', 'offsetLeftTop', 'offsetRightBottom');
+            $expected = array(
+                'required' => $required, 
+                'floats'   => array('imageScale'),
+                'dates'	   => array('obsDate'),
+                'ints'	   => array('width', 'height')
+            );
+            break;
         default:
             break;
         }

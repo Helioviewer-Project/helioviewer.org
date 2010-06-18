@@ -11,7 +11,6 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-//require_once 'HelioviewerMovieFrame.php';
 require_once HV_ROOT_DIR . '/api/lib/phpvideotoolkit/config.php';
 require_once HV_ROOT_DIR . '/api/lib/phpvideotoolkit/phpvideotoolkit.php5.php';
 require_once HV_ROOT_DIR . '/api/src/Image/ImageMetaInformation.php';
@@ -55,26 +54,20 @@ class Movie_HelioviewerMovie
     /**
      * HelioviewerMovie Constructor
      *
-     * @param array  $layers    Layers to use for movie generation. Each layer is a string of the form:
-     *                          OBS_INST_DET_MEAS,xstart,xsize,ystart,ysize,hcOffsetx,hcOffsety,opacity
      * @param int    $startTime Requested movie start time (unix timestamp)
-     * @param int    $zoomLevel Zoom-level for which the movie was requested at
      * @param int    $numFrames Number of frames to include
      * @param int    $frameRate Number of frames per second
      * @param string $hqFormat  Format to use for high-quality version of the movie
      * @param array  $options   An array with ["edges"] => true/false, ["sharpen"] => true/false
      * @param int    $timeStep  Desired timestep between movie frames in seconds. Default is 86400 seconds, or 1 day.
-     * @param array  $imageSize Width and height of each movie frame
      * @param string $filename  Desired filename for the movie
      * @param int    $quality   Movie quality
+     * @param Object $meta      An ImageMetaInformation object with width, height, and imageScale
      */
     public function __construct(
         $startTime, $numFrames, $frameRate, $hqFormat,
         $options, $timeStep, $filename, $quality, $meta
     ) {
-        // date_default_timezone_set('UTC');
-        // $layers is an array of layer information arrays, identified by their layer names.
-        // Each layer information array has values for "name", "xRange", "yRange", "hcOffset", and "opacityValue"
         $this->_metaInfo = $meta;
 
         // working directory
@@ -131,12 +124,24 @@ class Movie_HelioviewerMovie
 
     }
     
-    public function width() {
-    	return $this->_metaInfo->width();
+    /**
+     * Get width
+     * 
+     * @return int width
+     */
+    public function width()
+    {
+        return $this->_metaInfo->width();
     }
     
-    public function height() {
-    	return $this->_metaInfo->height();
+    /**
+     * Get height
+     * 
+     * @return int height
+     */
+    public function height()
+    {
+        return $this->_metaInfo->height();
     }
 
     /**
@@ -145,12 +150,14 @@ class Movie_HelioviewerMovie
      * Makes a temporary directory to store frames in, calculates a timestamp for every frame, gets the closest
      * image to each timestamp for each layer. Then takes all layers belonging to one timestamp and makes a movie frame
      * out of it. When done with all movie frames, phpvideotoolkit is used to compile all the frames into a movie.
+     * 
+     * @param array $builtImages An array of built movie frames (in the form of HelioviewerScreenshot objects)
      *
      * @return void
      */
     public function buildMovie($builtImages)
     {
-    	$this->_images = $builtImages;
+        $this->_images = $builtImages;
         // Make a temporary directory to store the movie in.
         $now       = time();
         $movieName = /*"Helioviewer-Movie-" . */$this->_filename;
@@ -249,30 +256,30 @@ class Movie_HelioviewerMovie
             unlink($image);
         }
         
-// @TODO: Figure out how this works.
-// Command line works, videoTo doesn't. 
-//   /usr/bin/ffmpeg -i '/var/www/hv/cache/tmp/1276095506/example.mp4' -f 'mp4' -ar '44100' -ab '128kb' -vcodec 'mpeg4' -s '320x240' -r '29.7' -mbd '2' -flags '+4mv+aic' -trellis 1 -cmp '2' -subcmp '2' -y /var/www/hv/cache/tmp/1276095506/1276095506-4c0fac12a953f.mp4 &> /var/www/hv/cache/tmp/1276095506/1276095506-4c0fac12a96b0.info
-/*		include_once HV_ROOT_DIR . "/api/lib/phpvideotoolkit/adapters/videoto.php";
-		$result = VideoTo::iPod($tmpdir . $movieName . ".mp4", array(
-			'temp_dir'                              => $tmpdir, 
-			'output_dir'                            => $tmpdir, 
-			'die_on_error'                          => false,
-			'output_file'                           => 'example-ipod.mp4',
-			'overwrite_mode'                        => PHPVideoToolkit::OVERWRITE_EXISTING
+        // @TODO: Figure out how this works.
+        // Command line works, videoTo doesn't. 
+        //   /usr/bin/ffmpeg -i '/var/www/hv/cache/tmp/1276095506/example.mp4' -f 'mp4' -ar '44100' -ab '128kb' -vcodec 'mpeg4' -s '320x240' -r '29.7' -mbd '2' -flags '+4mv+aic' -trellis 1 -cmp '2' -subcmp '2' -y /var/www/hv/cache/tmp/1276095506/1276095506-4c0fac12a953f.mp4 &> /var/www/hv/cache/tmp/1276095506/1276095506-4c0fac12a96b0.info
+        /* include_once HV_ROOT_DIR . "/api/lib/phpvideotoolkit/adapters/videoto.php";
+        $result = VideoTo::iPod($tmpdir . $movieName . ".mp4", array(
+            'temp_dir'                              => $tmpdir, 
+            'output_dir'                            => $tmpdir, 
+            'die_on_error'                          => false,
+            'output_file'                           => 'example-ipod.mp4',
+            'overwrite_mode'                        => PHPVideoToolkit::OVERWRITE_EXISTING
                         ));
-//              check for an error
-		if($result !== PHPVideoToolkit::RESULT_OK)
-		{
-			echo VideoTo::getError().'<br />'."\r\n";
-			echo 'Please check the log file generated as additional debug info may be contained.<br /><br />'."\r\n";
-		}
-		else
-		{
-			$output = VideoTo::getOutput();
-			echo 'Coverted to <a href="processed/videos/'.basename($output[0]).'">iPod mp4</a>.<br /><br />'."\r\n";
-		}
-		
-		echo $output;*/
+        //              check for an error
+        if($result !== PHPVideoToolkit::RESULT_OK)
+        {
+            echo VideoTo::getError().'<br />'."\r\n";
+            echo 'Please check the log file generated as additional debug info may be contained.<br /><br />'."\r\n";
+        }
+        else
+        {
+            $output = VideoTo::getOutput();
+            echo 'Coverted to <a href="processed/videos/'.basename($output[0]).'">iPod mp4</a>.<br /><br />'."\r\n";
+        }
+        
+        echo $output;*/
         //$this->showMovie($tmpurl, 512, 512);
 
         //header('Content-type: application/json');
