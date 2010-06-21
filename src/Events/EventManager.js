@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window, EventType, EventFeatureRecognitionMethod, Event, EventTree, getUTCTimestamp */
+/*global Class, $, window, EventType, EventFeatureRecognitionMethod, Event, EventTimeline, EventTree, getUTCTimestamp */
 
 "use strict";
 
@@ -20,21 +20,18 @@ var EventManager = Class.extend({
      * second the time window/filesize.<br><br>
      *    
      * @constructs
-     * @param {Object} controller A reference to the Helioviewer application class
      */
-    init: function (controller) {
+    init: function (date, searchWindowSizeInSecs) {
         
         this._eventSources = {};
-        this._jsTreeData = [];
-        this._eventTypes = {};
+        this._eventTypes   = {};
         this._timelineData = {};
-        this._api = "http://localhost/jonathan-jstree/api/index.php?";
-        this.controller = controller;
+        this._jsTreeData   = [];
         
-        this._date = controller.date;
-        this._windowSize = controller.timeControls.getTimeIncrement();
+        this._date       = date;
+        this._windowSize = searchWindowSizeInSecs;
         
-        this._querySearchData();
+        //this._querySearchData();
     },
     
     /**
@@ -43,7 +40,7 @@ var EventManager = Class.extend({
      *
      */
     _querySearchData: function () {
-        var eventTypes, returnData, self = this;
+        var eventTypes, returnData, params, self = this;
         //eventTypes = "ch,ar,fl,ce";
         eventTypes = "**";
         returnData = [];
@@ -51,10 +48,10 @@ var EventManager = Class.extend({
         params = {
             "action"     : "queryHEK",
             "eventTypes" : eventTypes,
-            "startTime"  : new Date(this._date.getDate()).addSeconds(-this._windowSize/2).toHEKISOString(),
-            "endTime"    : new Date(this._date.getDate()).addSeconds(this._windowSize/2).toHEKISOString()
-        }
-        $.get(self._api + $.param(params), $.proxy(this._parseSearchData, this));
+            "startTime"  : new Date(this._date.getDate()).addSeconds(-this._windowSize / 2).toHEKISOString(),
+            "endTime"    : new Date(this._date.getDate()).addSeconds(this._windowSize / 2).toHEKISOString()
+        };
+        $.get("api/index.php?" + $.param(params), $.proxy(this._parseSearchData, this));
     },
     
     /**
@@ -63,20 +60,24 @@ var EventManager = Class.extend({
      * data and then calling generateTreeData to build the jsTree.
      *
      */
-    _parseSearchData: function(data) {
+    _parseSearchData: function (data) {
         var self = this;
         $.each(data.result, function (i, event) {
             //check if event_type exists
             if (self._eventTypes[event.event_type]) {
-                if(!self._eventTypes[event.event_type]._eventFRMs[event.frm_name]) {
-                    self._eventTypes[event.event_type]._eventFRMs[event.frm_name] = new EventFeatureRecognitionMethod(event.frm_name, self);
-                    self._eventTypes[event.event_type]._eventFRMs[event.frm_name].domNode = $('<div class="event-layer"></div>').appendTo(self.controller.viewport.movingContainer);
+                if (!self._eventTypes[event.event_type]._eventFRMs[event.frm_name]) {
+                    self._eventTypes[event.event_type]._eventFRMs[event.frm_name] = 
+                        new EventFeatureRecognitionMethod(event.frm_name, self);
+                    self._eventTypes[event.event_type]._eventFRMs[event.frm_name].domNode = 
+                        $('<div class="event-layer"></div>').appendTo("#moving-container");
                 }
             }
             else {
                 self._eventTypes[event.event_type] = new EventType(event.event_type, {});
-                self._eventTypes[event.event_type]._eventFRMs[event.frm_name] = new EventFeatureRecognitionMethod(event.frm_name, self);
-                self._eventTypes[event.event_type]._eventFRMs[event.frm_name].domNode = $('<div class="event-layer"></div>').appendTo(self.controller.viewport.movingContainer);
+                self._eventTypes[event.event_type]._eventFRMs[event.frm_name] = 
+                    new EventFeatureRecognitionMethod(event.frm_name, self);
+                self._eventTypes[event.event_type]._eventFRMs[event.frm_name].domNode =
+                    $('<div class="event-layer"></div>').appendTo("#moving-container");
 
             }
         });
@@ -167,16 +168,18 @@ var EventManager = Class.extend({
      * Reloads the windowSize, and queries new tree structure data.
      *
      */
-    updateTime: function () {
+    updateRequestTime: function (date) {
         var managerStartDate, managerEndDate, eventStartDate, eventEndDate, self = this;
-        this._windowSize = this.controller.timeControls.getTimeIncrement();
+        //this._windowSize = this.controller.timeControls.getTimeIncrement();
+        this._date = date;
+        
         $.each(this._eventTypes, function (typeName, eventType) {
             $.each(eventType.getEventFRMs(), function (frmName, FRM) {
                 $.each(FRM._events, function (i, event) {
                     eventStartDate = new Date(event.event_starttime);
                     eventEndDate = new Date(event.event_endtime);
-                    managerStartDate = new Date(self._date.getDate()).addSeconds(-self._windowSize/2);
-                    managerEndDate = new Date(self._date.getDate()).addSeconds(self._windowSize/2);
+                    managerStartDate = new Date(self._date.getDate()).addSeconds(-self._windowSize / 2);
+                    managerEndDate = new Date(self._date.getDate()).addSeconds(self._windowSize / 2);
                     if (eventEndDate < managerStartDate || eventStartDate > managerEndDate) {
                         event.setVisibility(false);
                     }
@@ -215,14 +218,14 @@ var EventManager = Class.extend({
     },
     
     query: function (queryType, queryName) {
-        var queryStartTime, queryEndTime, largestQuery, self=this;
-        queryStartTime = new Date(this._date.getDate()).addSeconds(-this._windowSize/2).getTime();
-        queryEndTime = new Date(this._date.getDate()).addSeconds(this._windowSize/2).getTime();
+        var queryStartTime, params, queryRange, queryEndTime, largestQuery, resultFRM, first, self = this;
+        queryStartTime = new Date(this._date.getDate()).addSeconds(-this._windowSize / 2).getTime();
+        queryEndTime = new Date(this._date.getDate()).addSeconds(this._windowSize / 2).getTime();
         
         if (queryType === "frm") {
             $.each(self._eventTypes, function (eventTypeName, eventType) {
                 if (eventType._eventFRMs[queryName]) {
-                    if(!eventType._eventFRMs[queryName].isQueried(queryStartTime, queryEndTime)) {
+                    if (!eventType._eventFRMs[queryName].isQueried(queryStartTime, queryEndTime)) {
                         queryRange = eventType._eventFRMs[queryName].rangeToQuery(queryStartTime, queryEndTime);
                         params = {
                             "action"     : "queryHEK",
@@ -230,9 +233,9 @@ var EventManager = Class.extend({
                             "startTime"  : new Date(queryRange[0]).toHEKISOString(),
                             "endTime"    : new Date(queryRange[1]).toHEKISOString(),
                             "frmFilter"  : queryName
-                        }
+                        };
                     
-                        $.get(self._api + $.param(params), function(data) {
+                        $.get("api/index.php" + $.param(params), function (data) {
                             $.each(data.result, function (i, result) {
                                 resultFRM = self._eventTypes[result.event_type]._eventFRMs[result.frm_name];
                                 if (!resultFRM.contains(new Date(getUTCTimestamp(result.event_starttime)).getTime())) {
@@ -272,33 +275,33 @@ var EventManager = Class.extend({
                         }
                     });
                     
-                    if (!(largestQuery.toString() === [0, 0].toString())) {
-                        /*params = {
-                            
-                            "cmd"             : "search",
-                            "type"            : "column",
-                            "result_limit"    : "200",
-                            "event_type"      : queryName,
-                            "event_starttime" : new Date(largestQuery[0]).toUTCDateString() + "T" + new Date(largestQuery[0]).toUTCTimeString(),
-                            "event_endtime"   : new Date(largestQuery[1]).toUTCDateString() + "T" + new Date(largestQuery[1]).toUTCTimeString(),
-                            "event_coordsys"  : "helioprojective",
-                            "x1"              : "-1800",
-                            "x2"              : "1800",
-                            "y1"              : "-1800",
-                            "y2"              : "1800",
-                            "return"          : "required",
-                            "cosec"           : "2"
-                        }
-                        $.get("http://www.lmsal.com/her/dev/search-hpkb/hek?" + $.param(params), $.proxy(self._displayEvents, self));
-                        */
+                    if (largestQuery.toString() !== [0, 0].toString()) {
+/*params = {
+    
+    "cmd"             : "search",
+    "type"            : "column",
+    "result_limit"    : "200",
+    "event_type"      : queryName,
+    "event_starttime" : new Date(largestQuery[0]).toUTCDateString() + "T" + new Date(largestQuery[0]).toUTCTimeString(),
+    "event_endtime"   : new Date(largestQuery[1]).toUTCDateString() + "T" + new Date(largestQuery[1]).toUTCTimeString(),
+    "event_coordsys"  : "helioprojective",
+    "x1"              : "-1800",
+    "x2"              : "1800",
+    "y1"              : "-1800",
+    "y2"              : "1800",
+    "return"          : "required",
+    "cosec"           : "2"
+}
+$.get("http://www.lmsal.com/her/dev/search-hpkb/hek?" + $.param(params), $.proxy(self._displayEvents, self));
+*/
                         params = {
                             "action"     : "queryHEK",
                             "eventTypes" : queryName,
                             "startTime"  : new Date(largestQuery[0]).toHEKISOString(),
                             "endTime"    : new Date(largestQuery[1]).toHEKISOString()
-                        }
+                        };
                     
-                        $.get(self._api + $.param(params), function(data) {
+                        $.get("api/index.php" + $.param(params), function (data) {
                             $.each(data.result, function (i, result) {
                                 resultFRM = self._eventTypes[result.event_type]._eventFRMs[result.frm_name];
                                 if (!resultFRM.contains(new Date(getUTCTimestamp(result.event_starttime)).getTime())) {
@@ -317,9 +320,9 @@ var EventManager = Class.extend({
             });
         }
         else if (queryType === "type" && self._eventTypes[queryName].isQueried(queryStartTime, queryEndTime)) {
-            $.each(self._eventTypes, function(typeName, eventType) {
-                if(eventType.getName() == queryName) {
-                    $.each(eventType.getEventFRMs(), function(frmName, FRM) {
+            $.each(self._eventTypes, function (typeName, eventType) {
+                if (eventType.getName() === queryName) {
+                    $.each(eventType.getEventFRMs(), function (frmName, FRM) {
                         FRM.toggleVisibility();
                     });
                 }
@@ -327,8 +330,8 @@ var EventManager = Class.extend({
         }
     },
     
-    _displayEvents: function(data) {
-        var self = this;
+    _displayEvents: function (data) {
+        var resultFRM, self = this;
         $.each(data.result, function (i, result) {
             resultFRM = self._eventTypes[result.event_type]._eventFRMs[result.frm_name];
             if (!resultFRM.contains(new Date(getUTCTimestamp(result.event_starttime)).getTime())) {
@@ -339,8 +342,8 @@ var EventManager = Class.extend({
     },
     
     refreshEvents: function () {
-        $.each(this._eventTypes, function(typeName, eventType) {
-            $.each(eventType.getEventFRMs(), function(frmName, FRM) {
+        $.each(this._eventTypes, function (typeName, eventType) {
+            $.each(eventType.getEventFRMs(), function (frmName, FRM) {
                 FRM.refreshEvents();
             });
         });
