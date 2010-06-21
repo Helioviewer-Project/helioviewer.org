@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window */
+/*global Class, $, window, EventMarker */
 
 "use strict";
 
@@ -41,12 +41,12 @@ var EventFeatureRecognitionMethod = Class.extend({
         //If there is data already queried in the middle but not reaching the edge of the
         //query time, remove it
         
-        var newStartTime = startTime, newEndTime = endTime, self=this;
+        var newStartTime = startTime, newEndTime = endTime, self = this;
         
-        $.each(this._queriedRanges, function(i, range) {
+        $.each(this._queriedRanges, function (i, range) {
             //If range start time > startTime and range end time < endTime, delete
             if (range[0] > startTime && range[1] < endTime) {
-                self._queriedRanges.splice(i,1);
+                self._queriedRanges.splice(i, 1);
             }
             
             //If range start time <= startTime and range end time > startTime, move forward newStartTime
@@ -58,8 +58,9 @@ var EventFeatureRecognitionMethod = Class.extend({
             
             //If range start time < endTime and range end time >= endTime, move forward newStartTime
             else if (range[0] < endTime && range[1] >= endTime) {
-                //NOTE
-                //This shouldn't happen, but if range start time < startTime, we would want to make sure nothing is queried
+                // NOTE
+                // This shouldn't happen, but if range start time < startTime,
+                // we would want to make sure nothing is queried
                 newEndTime = range[0];
             }
         });
@@ -82,7 +83,7 @@ var EventFeatureRecognitionMethod = Class.extend({
                     if (endTime >= range2[0] && endTime <= range2[1]) {
                         //It is, so fix this up by extending the first range, and then deleting range2
                         range[1] = range2[1];
-                        self._queriedRanges.splice(j,1);
+                        self._queriedRanges.splice(j, 1);
                         addCompleted = true;
                         return false;
                     }
@@ -99,7 +100,7 @@ var EventFeatureRecognitionMethod = Class.extend({
                     if (startTime <= range2[1] && startTime >= range2[0]) {
                         //It is, so fix this up by extending the first range, and then deleting range2
                         range2[1] = range[1];
-                        self._queriedRanges.splice(i,1);
+                        self._queriedRanges.splice(i, 1);
                         addCompleted = true;
                         return false;
                     }
@@ -132,7 +133,9 @@ var EventFeatureRecognitionMethod = Class.extend({
     
     addEvent: function (newEvent) {
         var rsun = this.eventManager.controller.viewport.getRSun();
-        this._events.push(new EventMarker(this, newEvent, newEvent.event_starttime, rsun, {offset: {top : 10, left : 0}}));
+        this._events.push(
+            new EventMarker(this, newEvent, newEvent.event_starttime, rsun, {offset: {top : 10, left : 0}})
+        );
     },
     
     refreshEvents: function () {
@@ -159,7 +162,7 @@ var EventFeatureRecognitionMethod = Class.extend({
     
     toggleVisibility: function () {
         this._visible = !this._visible;
-        if(this._visible) {
+        if (this._visible) {
             this.domNode.show();
         }
         else {
