@@ -73,11 +73,13 @@ class Module_SolarEvents implements Module
      * 
      * @return void
      */
-    public function  getEventFRMs() {
+    public function  getEventFRMs()
+    {
         include_once "src/Event/HEKAdapter.php";
         
         $hek = new Event_HEKAdapter();
         
+        header("Content-type: application/json");
         echo $hek->getFRMs($this->_params['startDate'], $this->_params['endDate']);
     }
     
@@ -86,7 +88,8 @@ class Module_SolarEvents implements Module
      *
      * @return void
      */
-    public function getEvents() {
+    public function getEvents()
+    {
         include_once "src/Event/HEKAdapter.php";
 
     }
@@ -103,15 +106,13 @@ class Module_SolarEvents implements Module
         case "getEvents":
             $expected = array(
                 "required" => array('startDate', 'endDate'),
-                "dates"    => array('startDate', 'endDate'),
-//                "ints"     => array('numFrames, frameRate, timeStep, quality', 'width', 'height', 'x1', 'x2', 'y1', 'y2'),
-//                "floats"   => array('imageScale')
+                "dates"    => array('startDate', 'endDate')
             );
             break;
         case "getEventFRMs":
             $expected = array(
                "required" => array('startDate', 'endDate'),
-               "dates"    => array('startDate', 'endDate'),
+               "dates"    => array('startDate', 'endDate')
             );
             break;
         default:
