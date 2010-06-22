@@ -42,76 +42,84 @@ var EventMarker = Class.extend(
     },
     
     setupPositionData: function () {
+        var deg2rad, radians, rsun, theta, phi, r, b_zero, phi_zero, phi_c, l_zero, 
+            x, y, old, a, b, c, d, e, f, g, h, i, j, day;  
+                
         deg2rad = (2 * Math.PI) / 360;
+        
         if (this.event_coordsys === "UTC-HRC-TOPO") {
             
-            var radians  = (this.event_coord1 + 90) * deg2rad,
-                rsun     = this.event_coord2;
+            radians = (this.event_coord1 + 90) * deg2rad;
+            rsun    = this.event_coord2;
             
             this.sunX = -1 * rsun * Math.sin(radians);
             this.sunY = rsun * Math.cos(radians);               
         }
         else if (this.event_coordsys === "UTC-HGS-TOPO") {
             //Heliographic Stonyhurst
-            var theta    = this.event_coord2 * deg2rad,
-                phi      = this.event_coord1 * deg2rad,
-                r        = 1,
-                b_zero   = 0,
-                phi_zero = 0;
+            theta    = this.event_coord2 * deg2rad;
+            phi      = this.event_coord1 * deg2rad;
+            r        = 1;
+            b_zero   = 0;
+            phi_zero = 0;
             
             this.sunX = r * Math.cos(theta) * Math.sin(phi - phi_zero);
-            this.sunY = (-1) * r * ( (Math.sin(theta) * Math.cos(b_zero)) - (Math.cos(theta) * Math.cos(phi - phi_zero) * Math.sin(b_zero)) );
-        }
-        else if (this.event_coordsys === "UTC-HGC-TOPO") {
-            var phi_c   = this.event_coord1,
-                theta   = this.event_coord2 * deg2rad,
-                phi     = 0,
-                l_zero  = 0,
-                y       = 0,
-                x       = 0,
-                old     = 0,
-                a       = 1.91787,
-                b       = -0.13067,
-                c       = -0.0825278,
-                d       = -0.17505,
-                e       = 365.27116,
-                f       = 0.26318,
-                g       = -26379.45,
-                h       = -0.00520448,
-                i       = -0.00556336,
-                j       = -0.0122842,
-                day = 1000 * 60 * 60 * 24,
-                r        = 1,
-                b_zero   = 7 * deg2rad,
-                phi_zero = 0;
-            
-           x = (new Date(this.event_starttime).getTime() - new Date(1995, 0, 1).getTime())/day;
-           console.log("days/x: " + x);
-           if ( (x > 364) && (x < 731) ) {
-               y = f + (x/g) + a * Math.sin(2 * Math.PI * (x/e)) + b * Math.sin(4 * Math.PI * (x/e)) + h * Math.sin(6 * Math.PI * (x/e)) +
-                   c * Math.cos(2 * Math.PI * (x/e)) + d * Math.cos(4 * Math.PI * (x/e)) + i * Math.cos(6 * Math.PI * (x/e)) - j;
-           }
-           else {
-               y = f + (x/g) + a * Math.sin(2 * Math.PI * (x/e)) + b * Math.sin(4 * Math.PI * (x/e)) + h * Math.sin(6 * Math.PI * (x/e)) +
-                   c * Math.cos(2 * Math.PI * (x/e)) + d * Math.cos(4 * Math.PI * (x/e)) + i * Math.cos(6 * Math.PI * (x/e));
-           }
+            this.sunY = (-1) * r * ((Math.sin(theta) * Math.cos(b_zero)) - 
+                                    (Math.cos(theta) * Math.cos(phi - phi_zero) * Math.sin(b_zero)));
+        } else if (this.event_coordsys === "UTC-HGC-TOPO") {
+            phi_c   = this.event_coord1;
+            theta   = this.event_coord2 * deg2rad;
+            phi     = 0;
+            l_zero  = 0;
+            x       = 0;
+            y       = 0;
+            old     = 0;
+            a       = 1.91787;
+            b       = -0.13067;
+            c       = -0.0825278;
+            d       = -0.17505;
+            e       = 365.27116;
+            f       = 0.26318;
+            g       = -26379.45;
+            h       = -0.00520448;
+            i       = -0.00556336;
+            j       = -0.0122842;
+            day = 1000 * 60 * 60 * 24;
+            r        = 1;
+            b_zero   = 7 * deg2rad;
+            phi_zero = 0;
+
+            x = (new Date(this.event_starttime).getTime() - new Date(1995, 0, 1).getTime()) / day;
+
+           //console.log("days/x: " + x);
+
+            if ((x > 364) && (x < 731)) {
+                y = f + (x / g) + a * Math.sin(2 * Math.PI * (x / e)) + b * Math.sin(4 * Math.PI * (x / e)) + 
+                    h * Math.sin(6 * Math.PI * (x / e)) + c * Math.cos(2 * Math.PI * (x / e)) +
+                    d * Math.cos(4 * Math.PI * (x / e)) + i * Math.cos(6 * Math.PI * (x / e)) - j;
+            }
+            else {
+                y = f + (x / g) + a * Math.sin(2 * Math.PI * (x / e)) + b * Math.sin(4 * Math.PI * (x / e)) + 
+                    h * Math.sin(6 * Math.PI * (x / e)) + c * Math.cos(2 * Math.PI * (x / e)) +
+                    d * Math.cos(4 * Math.PI * (x / e)) + i * Math.cos(6 * Math.PI * (x / e));
+            }
                 
                 
-           old = (349.03 - ((360.0 * x)/27.2753)).mod(360);
-           l_zero = old + y;
-           //console.log("old: " + old);
-           //console.log("y  : " + y);
-           phi = (phi_c - l_zero);
-           console.log(phi);
-           if( (phi < -90) || (phi > 90)) {
-               this.behindSun = true;
-           }
-           //Stonyhurst Conversion
-           phi = phi * deg2rad;
-           
-           
-           this.sunX = r * Math.cos(theta) * Math.sin(phi - phi_zero);
-           this.sunY = (-1) * r * ( (Math.sin(theta) * Math.cos(b_zero)) - (Math.cos(theta) * Math.cos(phi - phi_zero) * Math.sin(b_zero)) );
+            old = (349.03 - ((360.0 * x) / 27.2753)).mod(360);
+            l_zero = old + y;
+            //console.log("old: " + old);
+            //console.log("y  : " + y);
+            phi = (phi_c - l_zero);
+            //console.log(phi);
+            if ((phi < -90) || (phi > 90)) {
+                this.behindSun = true;
+            }
+            //Stonyhurst Conversion
+            phi = phi * deg2rad;           
+    
+            this.sunX = r * Math.cos(theta) * Math.sin(phi - phi_zero);
+            this.sunY = (-1) * r * ((Math.sin(theta) * Math.cos(b_zero)) - 
+                        (Math.cos(theta) * Math.cos(phi - phi_zero) * Math.sin(b_zero)));
         }    
     },
     
@@ -132,14 +140,16 @@ var EventMarker = Class.extend(
         this.marker = $('<div class="event-marker"></div>');
         this.marker.css('background', 'url(resources/images/events/small-yellow-square-CME.png)');
         this.container.append(this.marker);
-        if(this.behindSun) {
+        if (this.behindSun) {
             this.marker.hide();
         }
         //make event-type CSS-friendly
         //var cssType = this.type.replace(/ /g, "_");
         //
         //this.marker = $('<div class="event-marker"></div>');
-        //this.marker.css('background', 'url(resources/images/events/' + this.eventLayer.icon + "-" + cssType + '.png)');
+        //this.marker.css(
+        //    'background', 'url(resources/images/events/' + this.eventLayer.icon + "-" + cssType + '.png)'
+        //);
         //
         //this.container.append(this.marker);
     },

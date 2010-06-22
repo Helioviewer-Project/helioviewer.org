@@ -29,10 +29,10 @@ var EventType = Class.extend({
 		this._eventFRMs[frm._name] = frm;
 	},
 	
-	isQueried: function(startTime, endTime) {
+	isQueried: function (startTime, endTime) {
 	    var typeIsQueried = true;
 	    $.each(this._eventFRMs, function (frmName, FRM) {
-	        if(!FRM.isQueried(startTime, endTime)) {
+	        if (!FRM.isQueried(startTime, endTime)) {
 	            typeIsQueried = false;
 	            return false;
 	        }

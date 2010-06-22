@@ -31,7 +31,7 @@ var EventTree = Class.extend({
             json_data : { data: treeData },
             themes : { theme: "default", dots : true },
             plugins : [ "crrm", "json_data", "themes", "ui", "checkbox" ]
-        })
+        });
 
         $("#eventAccordion").bind("jstree.change_state", $.proxy(this._treeChangedState, this));
 	},
