@@ -26,7 +26,7 @@
  */
 class Net_Proxy
 {
-    private $_url;
+    private $_baseURL;
     
     /**
      * Net_Proxy constructor
@@ -34,9 +34,9 @@ class Net_Proxy
      * @param string $baseURL     Base URL to query
      * @param string $queryString GET query parameters
      */
-    public function __construct($baseURL, $queryString)
+    public function __construct($baseURL)
     {
-        $this->_url = $baseURL . $queryString;
+        $this->_baseURL = $baseURL;
     }
 
     /**
@@ -46,21 +46,42 @@ class Net_Proxy
      * 
      * @return mixed Contents of mirrored page
      */
-    public function query($curl = false)
+    public function query($queryString, $curl = false)
     {
+        $queryString = $this->fixQueryString($queryString);
+        
+        $url = $this->_baseURL . $queryString;
+
+        die($url);
+        
         if ($curl) {
             // Fetch Results
             $curl_handle=curl_init();
-            curl_setopt($curl_handle, CURLOPT_URL, $this->_url);
+            curl_setopt($curl_handle, CURLOPT_URL, $url);
             curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 30);
             curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1); 
-        
+            
             $results = curl_exec($curl_handle);
             curl_close($curl_handle);
             return $results;
         } else {
-            return file_get_contents($this->_url);
+            return file_get_contents($url);
         }
+    }
+    
+    /**
+     * Escapes special characters 
+     * 
+     * NOTE: This may not work in all situations.  An ideal solution would split the query
+     *       string, only reformatting the values of each parameter.
+     *       -Jonathan
+     */
+    private function fixQueryString($queryString) {
+        $queryString = str_replace(":", "%3A", $queryString);
+        $queryString = str_replace("+", "%2B", $queryString);
+        $queryString = str_replace(" ", "+", $queryString);
+        
+        return $queryString;
     }
 }
 ?>
