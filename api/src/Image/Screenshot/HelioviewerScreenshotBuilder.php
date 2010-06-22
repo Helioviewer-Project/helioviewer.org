@@ -47,7 +47,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         $defaults = array(
             'edges'		=> false,
             'sharpen' 	=> false,
-            'filename' 	=> "screenshot" . time() . ".png",
+            'filename' 	=> "screenshot" . time(),
             'quality' 	=> 10,
             'display'	=> true
         );
@@ -145,7 +145,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             throw new Exception('The requested screenshot is either unavailable or does not exist.');
         }
 
-        if ($display || $params == $_GET) {
+        if ($display === true && $params == $_GET) {
             header('Content-type: image/png');
             echo file_get_contents($composite);
         } else if ($params == $_POST) {

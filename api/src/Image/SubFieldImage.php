@@ -81,8 +81,9 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile)
-    {
+    public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+        $outputFile, $offsetX, $offsetY
+    ) {
         $this->outputFile = $outputFile;
 
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
@@ -91,6 +92,7 @@ class Image_SubFieldImage
 
         $this->jp2Width  = $jp2Width;
         $this->jp2Height = $jp2Height;
+        $this->jp2Scale  = $jp2Scale;
         $this->subfieldWidth  = $roi["right"] - $roi["left"];
         $this->subfieldHeight = $roi["bottom"] - $roi["top"];
 
@@ -104,6 +106,9 @@ class Image_SubFieldImage
 
         $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
+        
+        $this->offsetX = $offsetX;
+        $this->offsetY = $offsetY;
     }
     
     /**
@@ -116,6 +121,16 @@ class Image_SubFieldImage
         $this->buildImage();
     }
     
+    /**
+     * Returns the image's region of interest in pixels
+     * 
+     * @return array roi
+     */
+    public function ROI()
+    {
+    	return $this->roi;
+    }
+
     /**
      * Sets parameters (gravity and size) for any padding which should be applied to extracted subfield image
      * 
@@ -160,6 +175,32 @@ class Image_SubFieldImage
     public function jp2RelHeight() 
     {
         return $this->jp2RelHeight;
+    }
+    
+    public function computePadding($roi, $scale)
+    {
+        $width  = ($roi['right']  - $roi['left']) / $scale;
+        $height = ($roi['bottom'] - $roi['top'])  / $scale;
+        
+        $centerX = $this->jp2Width  / 2 + $this->offsetX;
+        $centerY = $this->jp2Height / 2 + $this->offsetY;
+        
+        $leftToCenter = ($this->roi['left'] - $centerX);
+        $topToCenter  = ($this->roi['top']  - $centerY);
+        $scaleFactor = $this->jp2Scale / $scale;
+        $relLeftToCenter = $leftToCenter * $scaleFactor;
+        $relTopToCenter  = $topToCenter  * $scaleFactor;
+
+        $left = $roi['left'] / $scale - $relLeftToCenter;
+        $top  = $roi['top']  / $scale - $relTopToCenter;
+
+        return array(
+           "gravity" => "northwest",
+           "width"   => $width,
+           "height"  => $height,
+           "offsetX" => $left,
+           "offsetY" => $top
+        );
     }
     
     /**
@@ -226,6 +267,16 @@ class Image_SubFieldImage
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
+            // Screenshots need to be resized before padding, tiles need to be resized after.
+            if (!isset($this->tileSize)) {
+            	if ($this->hasAlphaMask()) 
+            	{
+
+            	} else {
+            		$cmd .= "-resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight} ";
+            	}
+            }
+
             if ($this->padding && !$this->hasAlphaMask()) {
                 $cmd .= $this->_getPaddingString();
             }
@@ -240,15 +291,13 @@ class Image_SubFieldImage
             // client-side rescaled tiles, this can be removed (02/26/2010)
             if(isset($this->tileSize))
                 $cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
-            else { // For composite images, which don't have $this->tileSize
-                $cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}";
-            }
+                
             //var_dump($this);
             //die (escapeshellcmd("$cmd $this->outputFile"));
-
+//echo $cmd . "\n";
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
-            
+
             if ($ret != 0) {
                 throw new Exception("Unable to build subfield image.\n\tCommand: $cmd $this->outputFile");
             }
@@ -344,7 +393,7 @@ class Image_SubFieldImage
      */
     private function _getPaddingString()
     {
-        return "-gravity {$this->padding['gravity']} -extent {$this->padding['width']}x{$this->padding['height']}";
+        return "-gravity {$this->padding['gravity']} -extent {$this->padding['width']}x{$this->padding['height']}{$this->padding['offsetX']}{$this->padding['offsetY']}";
     }
 
     /**

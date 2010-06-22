@@ -176,13 +176,13 @@ class Movie_HelioviewerMovieBuilder
             throw new Exception('The requested movie is either unavailable or does not exist.');
         }
 
-        if ($display || $params == $_GET) {
+        if ($display === true && $params == $_GET) {
             return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
         } else if ($params == $_POST) {
             header('Content-type: application/json');
             echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
         } else {
-            return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
+            return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
         }
     }
 }

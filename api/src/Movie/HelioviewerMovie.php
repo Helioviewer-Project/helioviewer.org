@@ -161,7 +161,7 @@ class Movie_HelioviewerMovie
         // Make a temporary directory to store the movie in.
         $now       = time();
         $movieName = /*"Helioviewer-Movie-" . */$this->_filename;
-        $tmpdir    = HV_TMP_DIR . "/$now/";
+        $tmpdir    = $this->tmpDir . "/$now/";
 
         $tmpurl    = HV_TMP_ROOT_URL . "/$now/$movieName." . $this->_filetype;
         mkdir($tmpdir);
