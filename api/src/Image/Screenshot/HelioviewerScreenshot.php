@@ -78,11 +78,17 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
         foreach ($layerInfoArray as $layer) {
             $closestImage = $this->_getClosestImage($layer['sourceId']);
             $obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
-            
-            $pathToFile 	= $this->_getJP2Path($closestImage);
-            $tmpOutputFile 	= $this->_getTmpOutputPath($closestImage);
-            
-            $roi 	 = $this->_convertArcSecondsToImagePixels($closestImage);
+
+            $roi = array(
+                'top'    => $this->offsetTop,
+                'left'   => $this->offsetLeft,
+                'bottom' => $this->offsetBottom,
+                'right'  => $this->offsetRight
+            );
+       
+            $pathToFile     = $this->_getJP2Path($closestImage);
+            $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $roi);
+
             $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
             
@@ -99,31 +105,6 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
         }
 
         $this->compileImages();
-    }
-    
-    /**
-     * Converts arcseconds (given in $offsets in the constructor) to image pixels
-     * 
-     * @param array $image An array with image meta information, gotten from the database
-     * 
-     * @return array an array of pixel offsets
-     */
-    private function _convertArcSecondsToImagePixels($image)
-    {
-        $width 	 = $image['width'];
-        $height  = $image['height'];
-        $centerX = $image['sunCenterX'];
-        // Center coordinates are based on the origin being in the bottom-left. Convert to top-left.
-        $centerY = $height - $image['sunCenterY'];
-        $scale 	 = $image['scale'];
-
-        $roi 	 = array(
-            'top' 	 => max($this->offsetTop /$scale + $centerY, 0),
-            'left' 	 => max($this->offsetLeft/$scale + $centerX, 0),
-            'bottom' => min($this->offsetBottom/$scale + $centerY, $image['height']),
-            'right'  => min($this->offsetRight /$scale + $centerX, $image['width'])
-        );
-        return $roi;
     }
     
     /**
@@ -145,10 +126,11 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_Helioviewer
      * 
      * @return string a string containing the image's temporary output path
      */
-    private function _getTmpOutputPath($closestImage)
+    private function _getTmpOutputPath($closestImage, $roi)
     {
         return $this->extractedDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
-            $this->metaInfo->imageScale() . "_" . $this->metaInfo->width() . "x" . $this->metaInfo->height() . ".png";
+            $this->metaInfo->imageScale() . "_" . $roi['left'] . "_" . $roi['right'] . "x_" . 
+            $roi['top'] . "_" . $roi['bottom'] . "y.png";
     }
 
     /**
