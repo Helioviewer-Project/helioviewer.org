@@ -110,12 +110,12 @@ var getOS = function () {
  * @returns {Object} Polar coordinates (r, theta) resulting from conversion 
  */
 Math.toPolarCoords = function (x, y) {
-    var radians = Math.atan(-x/y);
+    var radians = Math.atan(-x / y);
 
     if (y < 0) {
-    	radians += (Math.PI);
+        radians += (Math.PI);
     } else if ((x >= 0) && (y >= 0)) {
-    	radians += (2 * Math.PI);
+        radians += (2 * Math.PI);
     }
         
     return {
@@ -209,5 +209,3 @@ var helioprojectiveToSolarRadii = function (hx, hy, scale, rsun) {
         y: hy / rsunInArcSeconds 
     };
 };
-
-

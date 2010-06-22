@@ -29,6 +29,7 @@ class Image_JPEG2000_JP2ImageXMLBox
      * Create an instance of Image_JPEG2000_JP2Image_XMLBox
      *
      * @param string $file JPEG 2000 Image location
+     * @param string $root Where the data is coming from
      */
     public function __construct($file, $root = "fits")
     {
@@ -76,9 +77,15 @@ class Image_JPEG2000_JP2ImageXMLBox
         $this->_xml->loadXML($this->_xmlString);
     }
     
-    public function printXMLBox () {
-    	header('Content-type: text/xml');
-    	echo $this->_xmlString;
+    /**
+     * Prints xml information
+     * 
+     * @return void
+     */
+    public function printXMLBox ()
+    {
+        header('Content-type: text/xml');
+        echo $this->_xmlString;
     }
 
     /**
