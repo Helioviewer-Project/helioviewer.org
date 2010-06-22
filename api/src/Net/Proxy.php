@@ -31,8 +31,9 @@ class Net_Proxy
     /**
      * Net_Proxy constructor
      * 
-     * @param string $baseURL     Base URL to query
-     * @param string $queryString GET query parameters
+     * @param string $baseURL Base URL to query
+     * 
+     * @return void
      */
     public function __construct($baseURL)
     {
@@ -42,17 +43,14 @@ class Net_Proxy
     /**
      * Queries remote site and displays results
      * 
-     * @param bool $curl If true then cURL will be used to send request
+     * @param array $params Query parameters
+     * @param bool  $curl   If true then cURL will be used to send request
      * 
      * @return mixed Contents of mirrored page
      */
-    public function query($queryString, $curl = false)
+    public function query($params, $curl = false)
     {
-        $queryString = $this->fixQueryString($queryString);
-        
-        $url = $this->_baseURL . $queryString;
-
-        die($url);
+        $url = $this->_baseURL . http_build_query($params);
         
         if ($curl) {
             // Fetch Results
@@ -67,21 +65,6 @@ class Net_Proxy
         } else {
             return file_get_contents($url);
         }
-    }
-    
-    /**
-     * Escapes special characters 
-     * 
-     * NOTE: This may not work in all situations.  An ideal solution would split the query
-     *       string, only reformatting the values of each parameter.
-     *       -Jonathan
-     */
-    private function fixQueryString($queryString) {
-        $queryString = str_replace(":", "%3A", $queryString);
-        $queryString = str_replace("+", "%2B", $queryString);
-        $queryString = str_replace(" ", "+", $queryString);
-        
-        return $queryString;
     }
 }
 ?>
