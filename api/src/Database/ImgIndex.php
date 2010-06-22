@@ -110,7 +110,8 @@ class Database_ImgIndex
      *
      * @return int The number of images in the database within the specified constraints
      */
-    public function getImageCount($start, $end, $sourceId) {
+    public function getImageCount($start, $end, $sourceId)
+    {
         include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
@@ -129,7 +130,8 @@ class Database_ImgIndex
      *
      * @return int The number of images in the database within the specified constraints
      */
-    public function getImageRange($start, $end, $sourceId) {
+    public function getImageRange($start, $end, $sourceId)
+    {
         include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
@@ -180,14 +182,16 @@ class Database_ImgIndex
      * Takes in a source id and returns the corresponding 
      * observatory, instrument, detector, measurement, and
      * layeringOrder information.
-     * @param {int} $id  Source Id
+     * 
+     * @param {int} $id Source Id
+     * 
      * @return {Array} $result_array  Contains values for 
      * "observatory", "instrument", "detector", "measurement", 
      * and "layeringOrder"
      */
-	public function getDatasourceInformationFromSourceId ($id)
-	{
-		$sql = sprintf(
+    public function getDatasourceInformationFromSourceId ($id)
+    {
+        $sql = sprintf(
             "SELECT
                 observatory.name AS observatory,
                 instrument.name AS instrument,
@@ -207,8 +211,8 @@ class Database_ImgIndex
         $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
 
         return $result_array;		
-	}
-	
+    }
+    
     /**
      * Returns the sourceId for a given set of parameters.
      *

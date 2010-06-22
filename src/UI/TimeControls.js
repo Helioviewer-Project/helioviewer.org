@@ -77,7 +77,7 @@ var TimeControls = Class.extend(
     },
     
     goToPresent: function () {
-    	this.setDate(new Date());
+        this.setDate(new Date());
     },
     
     /**

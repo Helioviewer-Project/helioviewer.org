@@ -13,28 +13,56 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
-
+/**
+ * Image_ImageType_LASCOImage class definition
+ * There is one xxxImage for each type of detector Helioviewer supports.
+ *
+ * PHP version 5
+ *
+ * @category Image
+ * @package  Helioviewer
+ * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
+ * @link     http://launchpad.net/helioviewer.org
+ */
 class Image_ImageType_LASCOImage extends Image_SubFieldImage
 {
-	private   $_measurement;
-	private   $_detector;
-	protected $tileSize;
-	protected $width;
-	protected $height;
-	protected $_cacheDir = HV_CACHE_DIR;
-    protected $_noImage  = HV_EMPTY_TILE;
+    private   $_measurement;
+    private   $_detector;
+    protected $tileSize;
+    protected $width;
+    protected $height;
     protected $solarCenterOffsetX;
     protected $solarCenterOffsetY;
-	
-	public function __construct(
-		$width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
-		$jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile)
-	{
-		$this->_detector 	= $detector;
-		$this->_measurement = $measurement;
-		parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile);
+    
+    /**
+     * Constructor
+     * 
+     * @param int    $width        Desired width of the image
+     * @param int    $height       Desired height of the image
+     * @param date   $date         Timestamp of the image
+     * @param string $sourceJp2    The filepath to the image's JP2 file
+     * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
+     * @param string $format       File format
+     * @param int    $jp2Width     Width of the JP2 image
+     * @param int    $jp2Height    Height of the JP2 image
+     * @param int    $jp2Scale     Scale of the JP2 image
+     * @param float  $desiredScale Desired scale of the output image
+     * @param string $detector     Detector
+     * @param string $measurement  Measurement
+     * @param int    $offsetX      Offset of the sun center from the image center
+     * @param int    $offsetY      Offset of the sun center from the iamge center
+     * @param string $outputFile   Filepath to where the final image will be stored
+     */    
+    public function __construct(
+        $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
+        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
+    ) {
+        $this->_detector 	= $detector;
+        $this->_measurement = $measurement;
+        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile);
 
-		if ($this->_detector == "C2") {
+        if ($this->_detector == "C2") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_idl_3.png";
         } else if ($this->_detector == "C3") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_idl_1.png";
@@ -44,29 +72,49 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
             $this->setColorTable($colorTable);
         }
         
-		$this->setAlphaMask(true);
+        $this->setAlphaMask(true);
         $this->width 	= $width;
         $this->height 	= $height;
         $this->solarCenterOffsetX = $offsetX;
         $this->solarCenterOffsetY = $offsetY;
         $this->relativeTileSize   = $width * ($desiredScale / $jp2Scale);
-	}
-
-   	protected function getAlphaMaskCmd($intermediate)
-    {
-    	return $this->applyAlphaMask($intermediate);
     }
-	
-	public static function getFilePathNickName($det, $meas) 
-	{
-		return "LASCO-$det/$meas";
-	}
-	
-	public function getWaterMarkName() 
-	{
-		return "LASCO $this->_detector\n";
-	}
-	
+
+    /**
+     * calls applyAlphaMask to build an alpha mask command for imagemagick.
+     * 
+     * @param string $intermediate The filepath to the grayscale image
+     * 
+     * @return string command
+     */
+    protected function getAlphaMaskCmd($intermediate)
+    {
+        return $this->applyAlphaMask($intermediate);
+    }
+
+    /**
+     * Returns the detector/measurement nickname used in filepaths
+     * 
+     * @param string $det  The detector of the image, either C2 or C3
+     * @param string $meas The measurement of the image, always white-light for LASCO.
+     * 
+     * @return string The nickname
+     */
+    public static function getFilePathNickName($det, $meas) 
+    {
+        return "LASCO-$det/$meas";
+    }
+    
+    /**
+     * Gets a string that will be displayed in the image's watermark
+     * 
+     * @return string watermark name
+     */    
+    public function getWaterMarkName() 
+    {
+        return "LASCO $this->_detector\n";
+    }
+    
     /**
      * Generates a portion of an ImageMagick convert command to apply an alpha mask
      * 
@@ -112,7 +160,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      *
      * @return string An imagemagick sub-command for generating the necessary alpha mask
      */
-	protected function applyAlphaMask($input)
+    protected function applyAlphaMask($input)
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;

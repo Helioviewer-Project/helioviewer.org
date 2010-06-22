@@ -37,7 +37,7 @@ var JP2Image = Class.extend(
             sourceId: this.sourceId,
             date:     this.requestDate.toISOString().replace(/"/g, '')
         };
-        
+
         $.post(this.api, params, $.proxy(this._onImageLoad, this), "json");
     },
     
@@ -88,5 +88,10 @@ var JP2Image = Class.extend(
 		//      this.offsetY = 0;
         
         this._onChange();        
+    },
+    
+    getLayerName: function () {
+        return this.observatory + "," + this.instrument + "," +  
+            this.detector + "," + this.measurement;
     }
 });
