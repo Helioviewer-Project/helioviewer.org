@@ -1,4 +1,5 @@
 /**
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
  * @author Jonathan Harper
  * @fileOverview Handles event queries, data formatting, and storage
  * 
