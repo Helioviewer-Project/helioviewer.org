@@ -58,22 +58,26 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
     ) {
         $this->layeringOrder = $layeringOrder;
         $this->opacity		 = $opacity;
+        $this->imageScale    = $imageScale;
         
         $type = strtoupper($instrument) . "Image";
         include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
         
         $classname = "Image_ImageType_" . $type;
         
+        $this->_roi = $roi;
+        $pixelRoi = $this->_getPixelRoi($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
+
         $image = new $classname(
-            $width, $height, $timestamp, $sourceJp2, $roi, $format, $jp2Width, $jp2Height,
+            $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
             $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
         );
         
-        $padding = $this->_computePadding();
+        parent::__construct($timestamp, $image, $outputFile);
+        
+        $padding = $this->image->computePadding($roi, $imageScale);
         $image->setPadding($padding);
         
-        parent::__construct($timestamp, $image, $outputFile);
-
         if(HV_DISABLE_CACHE || $this->_imageNotInCache())
             $this->image->build();
     }
@@ -128,18 +132,24 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
     {
         return !file_exists($this->outputFile);
     }
-    
+
     /**
-     * TODO This is hard-coded. Fix it when I've figured out where the padding code went for a composite image.
+     * Converts arcseconds (given in $roi in the constructor) to image pixels
      * 
-     * @return array padding
+     * @param array $image An array with image meta information, gotten from the database
+     * 
+     * @return array an array of pixel offsets
      */
-    private function _computePadding()
+    private function _getPixelRoi($width, $height, $scale, $offsetX, $offsetY)
     {
-        return array(
-            "gravity" 	=> "center",
-            "width" 	=> 0,
-            "height" 	=> 0
+    	$centerX = $width / 2 + $offsetX;
+    	$centerY = $width / 2 + $offsetY;
+    	
+    	return array(
+            'top'    => max($this->_roi['top']   /$scale + $centerY, 0),
+            'left'   => max($this->_roi['left']  /$scale + $centerX, 0),
+            'bottom' => min($this->_roi['bottom']/$scale + $centerY, $height),
+            'right'  => min($this->_roi['right'] /$scale + $centerX, $width)
         );
     }
 }

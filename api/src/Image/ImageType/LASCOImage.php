@@ -60,7 +60,8 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
     ) {
         $this->_detector 	= $detector;
         $this->_measurement = $measurement;
-        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile);
+        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+            $outputFile, $offsetX, $offsetY);
 
         if ($this->_detector == "C2") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_idl_3.png";
@@ -165,40 +166,33 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         $maskWidth  = 1040;
         $maskHeight = 1040;
         $mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
-        
-        // Extracted subfield will always have a spatial scale equal to either the original JP2 scale, or
-        // the original JP2 scale / (2 ^ $reduce)
-        if ($this->reduce > 0) {
-            $maskScaleFactor = 1 / pow(2, $this->reduce);
-        } else {
-            $maskScaleFactor = 1;
-        }
 
+        $maskScaleFactor = $this->subfieldRelWidth / $this->subfieldWidth;
+        
         //var_dump($this);
         $maskTopLeftX = ($this->roi['left'] + ($maskWidth  - $this->jp2Width) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
-        $maskTopLeftY = ($this->roi['top'] +  ($maskHeight - $this->jp2Height)/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
+        $maskTopLeftY = ($this->roi['top']  + ($maskHeight - $this->jp2Height)/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
 
-        // Crop dimensions
-        $cropWidth  = $this->subfieldWidth  * $maskScaleFactor;
-        $cropHeight = $this->subfieldHeight * $maskScaleFactor;
+        $width  = $this->subfieldRelWidth;
+        $height = $this->subfieldRelHeight;
 
-        // Length of tile edge and gravity
-        if ($this->padding) {
-            $side    = $this->padding["width"];
-            $gravity = $this->padding["gravity"];
-        } else {
-            $side    = $this->relativeTileSize * $maskScaleFactor;
-            $gravity = "SouthWest";
-        }
+        $padWidth  = $this->padding["width"];
+        $padHeight = $this->padding["height"];
+        $offsetX   = $this->padding["offsetX"];
+        $offsetY   = $this->padding["offsetY"];
+        $gravity   = $this->padding["gravity"];
 
-        $str = " -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
-               "( %s -resize '%f%%' -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
-               "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite ";
+
+        $str = " -respect-parenthesis ( %s -resize %fx%f! -gravity %s -background black -extent %fx%f%+f%+f ) " .
+               "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
+               "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite ";
         
         $cmd = sprintf(
-            $str, $input, $gravity, $side, $side, $mask, 100 * $maskScaleFactor,
-            $cropWidth, $cropHeight, $maskTopLeftX, $maskTopLeftY, $gravity, $side, $side
+            $str, $input, $width, $height, $gravity, $padWidth, $padHeight, $offsetX, $offsetY, $mask, 100 * $maskScaleFactor,
+            $width, $height, $maskTopLeftX, $maskTopLeftY, $gravity, $padWidth, $padHeight,
+            $offsetX, $offsetY
         );
+
         return $cmd;
     }
 }

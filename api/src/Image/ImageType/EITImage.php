@@ -57,7 +57,8 @@ class Image_ImageType_EITImage extends Image_SubFieldImage
     ) {
         $this->_measurement = $measurement;
         
-        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile);
+        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+            $outputFile, $offsetX, $offsetY);
 
         $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_EIT_{$this->_measurement}.png";
 
