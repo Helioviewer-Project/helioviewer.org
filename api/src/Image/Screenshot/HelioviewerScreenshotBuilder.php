@@ -53,9 +53,9 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         );
         $params = array_merge($defaults, $originalParams);
         
-        $width  	= $params['width'];
-        $height 	= $params['height'];
         $imageScale = $params['imageScale'];
+        $width  	= ($params['x2'] - $params['x1']) / $imageScale;
+        $height 	= ($params['y2'] - $params['y1']) / $imageScale;
         
         $options = array(
             'enhanceEdges'	=> $params['edges'] || false,
