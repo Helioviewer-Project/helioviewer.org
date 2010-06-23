@@ -161,7 +161,7 @@ class Movie_HelioviewerMovie
         // Make a temporary directory to store the movie in.
         $now       = time();
         $movieName = /*"Helioviewer-Movie-" . */$this->_filename;
-        $tmpdir    = $this->tmpDir . "/$now/";
+        $tmpdir    = HV_TMP_DIR . "/$now/";
 
         $tmpurl    = HV_TMP_ROOT_URL . "/$now/$movieName." . $this->_filetype;
         mkdir($tmpdir);
@@ -196,7 +196,7 @@ class Movie_HelioviewerMovie
             exit();
         }
 
-        $toolkit->setVideoOutputDimensions($this->_metaInfo->width(), $this->_metaInfo->height());
+        $toolkit->setVideoOutputDimensions(ceil($this->_metaInfo->width()), ceil($this->_metaInfo->height()));
     
         // Need to do something slightly different to get the video to be iPod compatible
         if ($this->_highQualityFiletype === "ipod") {

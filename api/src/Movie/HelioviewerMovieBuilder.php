@@ -48,7 +48,7 @@ class Movie_HelioviewerMovieBuilder
         $defaults = array(
             'numFrames' => 20,
             'frameRate' => 8,
-            'timeStep'	=> 86400,
+            'timeStep'	=> 28800,
             'filename'	=> "movie" . time(),
             'sharpen'	=> false,
             'edges'		=> false,
@@ -58,9 +58,10 @@ class Movie_HelioviewerMovieBuilder
         );
         $this->_params = array_merge($defaults, $params);
         
-        $width  	= $this->_params['width'];
-        $height 	= $this->_params['height'];
-        $imageScale = $this->_params['imageScale'];   
+        $imageScale = $params['imageScale'];
+        $width      = ($params['x2'] - $params['x1']) / $imageScale;
+        $height     = ($params['y2'] - $params['y1']) / $imageScale;   
+
         $options 	= array(
             'enhanceEdges'	=> $this->_params['edges'],
             'sharpen' 		=> $this->_params['sharpen']
