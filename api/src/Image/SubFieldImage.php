@@ -198,8 +198,8 @@ class Image_SubFieldImage
            "gravity" => "northwest",
            "width"   => $width,
            "height"  => $height,
-           "offsetX" => $left,
-           "offsetY" => $top
+           "offsetX" => $left < 0.001? 0 : $left,
+           "offsetY" => $top < 0.001? 0 : $top
         );
     }
     
@@ -251,7 +251,7 @@ class Image_SubFieldImage
 
             // Extract region (PGM)
             $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
-            
+
             // Generate GD-readable grayscale image (PNG)
             $toIntermediateCmd = HV_PATH_CMD . "convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate";
             exec(escapeshellcmd($toIntermediateCmd));
@@ -294,7 +294,7 @@ class Image_SubFieldImage
                 
             //var_dump($this);
             //die (escapeshellcmd("$cmd $this->outputFile"));
-//echo $cmd . "\n";
+//echo $cmd . "\n"; die();
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
 
