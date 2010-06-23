@@ -22,3 +22,4 @@ docs/symbols
 error.log
 jp2
 build/css
+*.log
