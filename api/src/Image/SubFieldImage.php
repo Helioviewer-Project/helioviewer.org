@@ -198,8 +198,8 @@ class Image_SubFieldImage
            "gravity" => "northwest",
            "width"   => $width,
            "height"  => $height,
-           "offsetX" => $left < 0.001? 0 : $left,
-           "offsetY" => $top < 0.001? 0 : $top
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : $left,
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : $top
         );
     }
     
