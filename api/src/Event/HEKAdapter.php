@@ -68,12 +68,14 @@ class Event_HEKAdapter
         // remove redundant entries
         foreach ($decoded['result'] as $row) {
             $name = $row["frm_name"];
-            if (!in_array($name, $names)) {
-                array_push($names, $name);
+            if (!array_key_exists($name, $names)) {
+                $names[$name] = 0;
                 array_push($unsorted, $row);
-            } 
+            } else {
+                $names[$name]++;
+            }
         }
-        
+
         $sorted = array();
         
         // sort by event type
@@ -83,8 +85,10 @@ class Event_HEKAdapter
             if (!isset($sorted[$eventType]))
                 $sorted[$eventType] = array();
 
-            // remove redundant event_type parameter    
+            // remove redundant event_type parameter and add count
             unset($frm["event_type"]);
+            $frm["count"] = $names[$frm['frm_name']];
+            
             array_push($sorted[$eventType], $frm);                
         }
         
