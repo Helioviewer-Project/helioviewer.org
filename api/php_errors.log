@@ -1,0 +1,10 @@
+[23-Jun-2010 11:09:50] PHP Warning:  mkdir() [<a href='function.mkdir'>function.mkdir</a>]: File exists in /var/www/hv/api/src/Image/Composite/CompositeImage.php on line 72
+[23-Jun-2010 11:09:50] PHP Stack trace:
+[23-Jun-2010 11:09:50] PHP   1. {main}() /var/www/hv/api/index.php:0
+[23-Jun-2010 11:09:50] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[23-Jun-2010 11:09:50] PHP   3. Module_WebClient->execute() /var/www/hv/api/index.php:1314
+[23-Jun-2010 11:09:50] PHP   4. Module_WebClient->takeScreenshot() /var/www/hv/api/src/Module/WebClient.php:51
+[23-Jun-2010 11:09:50] PHP   5. Image_Screenshot_HelioviewerScreenshotBuilder->takeScreenshot() /var/www/hv/api/src/Module/WebClient.php:320
+[23-Jun-2010 11:09:50] PHP   6. Image_Screenshot_HelioviewerScreenshot->__construct() /var/www/hv/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php:78
+[23-Jun-2010 11:09:50] PHP   7. Image_Composite_CompositeImage->makeDirectory() /var/www/hv/api/src/Image/Screenshot/HelioviewerScreenshot.php:60
+[23-Jun-2010 11:09:50] PHP   8. mkdir() /var/www/hv/api/src/Image/Composite/CompositeImage.php:72
