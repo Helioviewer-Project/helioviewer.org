@@ -48,7 +48,7 @@ class Movie_HelioviewerMovieBuilder
         $defaults = array(
             'numFrames' => 20,
             'frameRate' => 8,
-            'timeStep'	=> 86400,
+            'timeStep'	=> 28800,
             'filename'	=> "movie" . time(),
             'sharpen'	=> false,
             'edges'		=> false,
@@ -58,9 +58,10 @@ class Movie_HelioviewerMovieBuilder
         );
         $this->_params = array_merge($defaults, $params);
         
-        $width  	= $this->_params['width'];
-        $height 	= $this->_params['height'];
-        $imageScale = $this->_params['imageScale'];   
+        $imageScale = $params['imageScale'];
+        $width      = ($params['x2'] - $params['x1']) / $imageScale;
+        $height     = ($params['y2'] - $params['y1']) / $imageScale;   
+
         $options 	= array(
             'enhanceEdges'	=> $this->_params['edges'],
             'sharpen' 		=> $this->_params['sharpen']
@@ -176,13 +177,13 @@ class Movie_HelioviewerMovieBuilder
             throw new Exception('The requested movie is either unavailable or does not exist.');
         }
 
-        if ($display || $params == $_GET) {
+        if ($display === true && $params == $_GET) {
             return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
         } else if ($params == $_POST) {
             header('Content-type: application/json');
             echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
         } else {
-            return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
+            return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
         }
     }
 }

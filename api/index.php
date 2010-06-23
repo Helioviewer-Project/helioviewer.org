@@ -734,26 +734,15 @@ if (!(isset($params) && loadModule($params))) {
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="20%"><b>width</b></td>
-                    <td width="20%"><i>Float</i></td>
-                    <td>Desired output movie width</td>
-                </tr>
-                <tr>
-                    <td><b>height</b></td>
-                    <td><i>Float</i></td>
-                    <td>Desired output movie height</td>
-                </tr>
-                <tr>
-                    <td><b>startDate</b></td>
+                    <td width="20%"><b>obsDate</b></td>
                     <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Desired starting timestamp of the movie. The timestamps for the subsequent frames are incremented by
-                    	a certain timestep.</td>
+                    <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
                 </tr>
                 <tr>
                     <td><b>imageScale</b></td>
                     <td><i>Float</i></td>
-                    <td>The zoom scale of the images. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
-                    	a factor of 2. The full-res scale of an EIT image is 5.26.</td>
+                    <td>The zoom scale of the image. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
+                        a factor of 2. The full-res scale of an EIT image is 5.26.</td>
                 </tr>
                 <tr>
                     <td><b>layers</b></td>
@@ -812,13 +801,13 @@ if (!(isset($params) && loadModule($params))) {
 
         <span class="example-header">Examples:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&width=512&height=512&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span>
         </div>
@@ -848,26 +837,17 @@ if (!(isset($params) && loadModule($params))) {
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="20%"><b>width</b></td>
-                    <td width="20%"><i>Float</i></td>
-                    <td>Desired output image width</td>
-                </tr>
-                <tr>
-                    <td><b>height</b></td>
-                    <td><i>Float</i></td>
-                    <td>Desired output image height</td>
-                </tr>
-                <tr>
-                    <td><b>obsDate</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
+                    <td width="20%"><b>startDate</b></td>
+                    <td width="20%"><i>ISO 8601 UTC Date</i></td>
+                    <td>Desired starting timestamp of the movie. The timestamps for the subsequent frames are incremented by
+                        a certain timestep.</td>
                 </tr>
                 <tr>
                     <td><b>imageScale</b></td>
                     <td><i>Float</i></td>
-                    <td>The zoom scale of the image. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
-                    	a factor of 2. The full-res scale of an EIT image is 5.26.</td>
-                </tr>
+                    <td>The zoom scale of the images. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
+                        a factor of 2. The full-res scale of an EIT image is 5.26.</td>
+                </tr>                
                 <tr>
                     <td><b>layers</b></td>
                     <td><i>String</i></td>
@@ -904,7 +884,7 @@ if (!(isset($params) && loadModule($params))) {
                 <tr>
                     <td><b>numFrames</b></td>
                     <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of frames you would like to include in the movie. You may have between 10 and 100 frames.
+                    <td><i>[Optional]</i> The number of frames you would like to include in the movie. You may have between 10 and 120 frames.
                     	The default value is 40 frames.</td>
                 </tr>
                	<tr>
@@ -948,19 +928,19 @@ if (!(isset($params) && loadModule($params))) {
 		
         <span class="example-header">Example:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000&width=512&height=512
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span><br />
         <span class="example-url">
         IPod Video:<br />
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&width=320&height=320&hqFormat=ipod&display=false">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&width=320&height=320&hqFormat=ipod&display=false
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false
         </a>
         </span>
         </div>
