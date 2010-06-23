@@ -45,6 +45,9 @@ var Viewport = Class.extend(
         this.domNode   = $(this.id);
         this.innerNode = $(this.id + '-container-inner');
         this.outerNode = $(this.id + '-container-outer');
+        
+        //      Combined height of the header and footer in pixels (used for resizing viewport vertically)
+        this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;    
 
         // If Viewport.js is not subclassed, do default setup. Otherwise handle these functions in the subclass.
         if (loadDefaults) {
@@ -53,7 +56,7 @@ var Viewport = Class.extend(
                             this.urlStringLayers, loadDefaults);
             var mouseCoords     = new MouseCoordinates(this.imageScale, this.warnMouseCoords);
             this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
-    
+            
             this.resize();
             this._initEventHandlers();
         }
@@ -153,7 +156,7 @@ var Viewport = Class.extend(
         else {
             padHeight = this.headerAndFooterHeight;
         }
-    
+
         // Ensure minimum height
         h = Math.max(this.minHeight, $(window).height() - padHeight);
 

@@ -183,7 +183,7 @@ class Movie_HelioviewerMovieBuilder
             header('Content-type: application/json');
             echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
         } else {
-            return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
+            echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
         }
     }
 }
