@@ -58,9 +58,9 @@ if (!(isset($params) && loadModule($params))) {
 <ol>
     <li><a href="index.php#Overview">Overview</a></li>
     <li><a href="index.php#CustomView">Loading a Custom View</a></li>
-    <li><a href="index.php#ImageAPI">Image API</a></li>
-    <li>Events (disabled)
-        <a href="index.php#FeatureEventAPI">Feature/Event API</a>
+    <li><a href="index.php#TilingAPI">Tiling API</a></li>
+    <li>
+        <a href="index.php#FeatureEventAPI">Feature/Event API (Temporarily Disabled)</a>
         <ul>
             <li><a href="index.php#getEventFRMs">Event FRMs</a></li>
             <li><a href="index.php#getEvents">Events</a></li>
@@ -107,12 +107,11 @@ if (!(isset($params) && loadModule($params))) {
     offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
     strings. The simplest APIs require only a single URI, and result in some resource being returned, e.g. a movie or
     <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading a particular "view"
-    into Helioviewer. Some of the API's are somewhat more complex, and involve two steps. For example, in order to get a
-    list of events from some catalogs for a certain period of time, first a query is usually made to see which catalogs
-    are available and functional. A second query then returns a list of features/events are fetched using a second
-    query. If you know the ID's for the desired catalogs and are confident that they are available, you can skip the
-    first query    and go straight to the second query. More on that later though.
-
+    into Helioviewer. Some of the API's are more complex and involve two steps. For example, in order to get a
+    list of solar events for a certain period of time, first a query is usually made to see which Feature Recognition
+    Methods (or FRMs) include events for that time period. A second query then returns a list of features/events are 
+    fetched using a second query. 
+    
     <br />
     <br />
 
@@ -121,7 +120,6 @@ if (!(isset($params) && loadModule($params))) {
     <div class="summary-box">
         <?php echo $baseURL;?>?action=methodName&param1=value1&param2=value2...
     </div>
-
 
     <p>The base URL is the same for each of the APIs (<a href="<?php echo $baseURL;?>;"><?php echo $baseURL;?></a>).
     The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters
@@ -185,9 +183,132 @@ if (!(isset($params) && loadModule($params))) {
 <br />
 
 <!-- Image API -->
-<div id="ImageAPI">
-    <h1>3. Image API:</h1>
-    <p><i>Under Development...</i></p>
+<div id="TilingAPI">
+    <h1>3. Tiling API:</h1>
+    <p>Requesting a tile image in Helioviewer.org occurs in two steps. During the first step the user specifies the
+    parameters of the image they are interested in tiling including the date, observatory, instrument, detector, 
+    measurement. Alternatively, if the sourceId for the desired data source is already known that can be used
+    in place of specifying the observatory, instrument, detector and measurement.</p>
+
+    <br />
+
+     <ol style="list-style-type: upper-latin;">
+     
+        <!-- Closest Image API -->
+        <li>
+        <div id="getClosestImage">Finding the Closest Image:
+        <p>The result of this first request will include some basic information about the 
+           nearest image match available. This information can then be used to make tile requests.</p>
+
+        <br />
+
+
+        <div class="summary-box">
+            <span style="text-decoration: underline;">Usage:</span>
+            <br />
+            <br />
+            <a href="<?php echo $baseURL;?>?action=getClosestImage">
+                <?php echo $baseURL;?>?action=getClosestImage
+            </a>
+            
+            Supported Parameters:<br />
+            <br />
+    
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="20%"><b>date</b></td>
+                        <td width="25%"><i>ISO 8601 UTC Date</i></td>
+                        <td width="55%">The desired image date</td>
+                    </tr>
+                    <tr>
+                        <td><b>server</b></td>
+                        <td><i>Integer</i></td>
+                        <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
+                    </tr>
+                    <tr>
+                        <td><b>sourceId</b></td>
+                        <td><i>Integer</i></td>
+                        <td>[Optional] The image data source identifier.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Closest Image API Notes -->
+            <div class="summary-box" style="background-color: #E3EFFF;">
+            <span style="text-decoration: underline;">Notes:</span>
+            <br />
+            <br />
+            <ul>
+                <li>
+                <p>At least one of the methods for specifying the image source, either a sourceId or the image 
+                observatory, instrument, detector and measurement must be included in the request. </p>
+                </li>
+            </ul>
+            </div>
+            
+            <br /><br />
+    
+            Result:<br />
+            <br />
+    
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="20%"><b>filename</b></td>
+                        <td width="25%"><i>String</i></td>
+                        <td width="55%">The filename of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>filepath</b></td>
+                        <td><i>String</i></td>
+                        <td>The location of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>date</b></td>
+                        <td><i>Date String</i></td>
+                        <td>The date of of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>scale</b></td>
+                        <td><i>Float</i></td>
+                        <td>The image's native spatial scale, in arc-seconds/pixel</td>
+                    </tr>
+                    <tr>
+                        <td><b>width</b></td>
+                        <td><i>Integer</i></td>
+                        <td>Image width</td>
+                    </tr>
+                    <tr>
+                        <td><b>height</b></td>
+                        <td><i>Integer</i></td>
+                        <td>Image width</td>
+                    </tr>
+                    <tr>
+                        <td><b>sunCenterX</b></td>
+                        <td><i>Float</i></td>
+                        <td>Distance from image left to the solar center, in pixels</td>
+                    </tr>
+                    <tr>
+                        <td><b>sunCenterY</b></td>
+                        <td><i>Float</i></td>
+                        <td>Distance from image bottom to the solar center, in pixels</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <br />
+    
+            <span class="example-header">Example:</span> <span class="example-url">
+            <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=0&sourceId=3">
+               <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=0&sourceId=3
+            </a>
+            </span>
+        </div>
+        </li>
+        
+        <!-- Tile API -->
+    </ol>
 </div>
 
 <!-- Feature/Event API -->
@@ -1262,7 +1383,7 @@ if (!(isset($params) && loadModule($params))) {
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-06-14 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-06-24 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>
