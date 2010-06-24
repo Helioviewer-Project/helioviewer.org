@@ -6,11 +6,12 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window, EventType, EventFeatureRecognitionMethod, Event, EventTimeline, EventTree, getUTCTimestamp */
+/*global $, window, LayerManager, EventType, EventFeatureRecognitionMethod, Event, 
+  EventTimeline, EventTree, getUTCTimestamp */
 
 "use strict";
 
-var EventManager = Class.extend({
+var EventManager = LayerManager.extend({
     /**
      * Class to manage event queries and data storage.<br><br>
      * 
@@ -22,17 +23,16 @@ var EventManager = Class.extend({
      *    
      * @constructs
      */
-    init: function (date, searchWindowSizeInSecs) {
-        
-        this._eventSources = {};
+    init: function (date, searchWindowSizeInSecs, rsun) {
         this._eventTypes   = {};
         this._timelineData = {};
         this._jsTreeData   = [];
         
+        this._rsun       = rsun;
         this._date       = date;
         this._windowSize = searchWindowSizeInSecs;
         
-        //this._querySearchData();
+        this._queryEventFRMs();
     },
     
     /**
@@ -40,19 +40,14 @@ var EventManager = Class.extend({
      * classes.
      *
      */
-    _querySearchData: function () {
-        var eventTypes, returnData, params, self = this;
-        //eventTypes = "ch,ar,fl,ce";
-        eventTypes = "**";
-        returnData = [];
-        //"startTime"  : this._date.getDate().toHEKISOString(),
-        params = {
-            "action"     : "queryHEK",
-            "eventTypes" : eventTypes,
-            "startTime"  : new Date(this._date.getDate()).addSeconds(-this._windowSize / 2).toHEKISOString(),
-            "endTime"    : new Date(this._date.getDate()).addSeconds(this._windowSize / 2).toHEKISOString()
+    _queryEventFRMs: function () {
+        var params = {
+            "action"     : "getEventFRMs",
+            "startDate"  : new Date(this._date.getTime()).addSeconds(-this._windowSize / 2).toISOString(),
+            "endDate"    : new Date(this._date.getTime()).addSeconds(this._windowSize / 2).toISOString()
         };
-        $.get("api/index.php?" + $.param(params), $.proxy(this._parseSearchData, this));
+        
+        $.post("api/index.php", params, $.proxy(this._parseEventFRMs, this), "json");
     },
     
     /**
@@ -61,28 +56,29 @@ var EventManager = Class.extend({
      * data and then calling generateTreeData to build the jsTree.
      *
      */
-    _parseSearchData: function (data) {
+    _parseEventFRMs: function (result) {
         var self = this;
-        $.each(data.result, function (i, event) {
-            //check if event_type exists
-            if (self._eventTypes[event.event_type]) {
-                if (!self._eventTypes[event.event_type]._eventFRMs[event.frm_name]) {
-                    self._eventTypes[event.event_type]._eventFRMs[event.frm_name] = 
-                        new EventFeatureRecognitionMethod(event.frm_name, self);
-                    self._eventTypes[event.event_type]._eventFRMs[event.frm_name].domNode = 
-                        $('<div class="event-layer"></div>').appendTo("#moving-container");
+        
+        $.each(result, function (eventType, eventFRMs) {
+            // Create new EventType if it doesn't exist
+            if (!self._eventTypes[eventType]) {
+                self._eventTypes[eventType] = new EventType(eventType);
+            }
+            
+            // Process event FRMs
+            $.each(eventFRMs, function (frmName, eventFRM) {
+                // Add FRM if it does not already exist
+                if (!self._eventTypes[eventType]._eventFRMs[frmName]) {
+                    self._eventTypes[eventType]._eventFRMs[frmName] = 
+                        new EventFeatureRecognitionMethod(frmName, this._rsun);
+                    self._eventTypes[eventType]._eventFRMs[frmName].domNode = 
+                        $('<div class="event-layer"></div>').appendTo("#moving-container");                    
+                } else {
+                    // TODO: Update count information
                 }
-            }
-            else {
-                self._eventTypes[event.event_type] = new EventType(event.event_type, {});
-                self._eventTypes[event.event_type]._eventFRMs[event.frm_name] = 
-                    new EventFeatureRecognitionMethod(event.frm_name, self);
-                self._eventTypes[event.event_type]._eventFRMs[event.frm_name].domNode =
-                    $('<div class="event-layer"></div>').appendTo("#moving-container");
-
-            }
+            });
         });
-        this._generateTreeData(data);
+        //this._generateTreeData(data);
     },
     
     /**
