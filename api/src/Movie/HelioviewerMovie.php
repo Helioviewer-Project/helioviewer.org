@@ -196,7 +196,7 @@ class Movie_HelioviewerMovie
             exit();
         }
 
-        $toolkit->setVideoOutputDimensions($this->_metaInfo->width(), $this->_metaInfo->height());
+        $toolkit->setVideoOutputDimensions(ceil($this->_metaInfo->width()), ceil($this->_metaInfo->height()));
     
         // Need to do something slightly different to get the video to be iPod compatible
         if ($this->_highQualityFiletype === "ipod") {

@@ -122,7 +122,7 @@ abstract class Image_Tiling_Tile
             } else if ($y == $tileMaxY) {
                 $gravity = "North";
             } else {
-                return false;
+                $gravity = "SouthWest";//return false;
             }
         }
        
@@ -136,8 +136,10 @@ abstract class Image_Tiling_Tile
 
         return array(
             "gravity" => $gravity,
-            "width"   => $side,
-            "height"  => $side
+            "width"   => $this->tileSize,
+            "height"  => $this->tileSize,
+            "offsetX" => "+0",
+            "offsetY" => "+0"
         );
     }
 

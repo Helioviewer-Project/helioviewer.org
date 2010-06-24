@@ -27,9 +27,6 @@ var ViewportMovementHelper = Class.extend(
         this.sandbox         = $("#sandbox");
         this.movingContainer = $("#moving-container");
         this.mouseCoords     = mouseCoords;
-
-        // Combined height of the header and footer in pixels (used for resizing viewport vertically)
-        this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;
     
         var center = this.getCenter();
         this.sandboxHelper = new SandboxHelper(center.x, center.y);
