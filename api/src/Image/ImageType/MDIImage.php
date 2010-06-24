@@ -56,7 +56,8 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
         $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
     ) {
         $this->_measurement = $measurement;
-        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, $outputFile);
+        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+            $outputFile, $offsetX, $offsetY);
 
         // MDI has no color table
 

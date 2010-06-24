@@ -51,11 +51,11 @@ abstract class Image_Composite_CompositeImage
         $this->tmpDir     = $tmpDir;
         $this->_setOutputFile($filename);
 
-        $this->transImageDir = HV_CACHE_DIR . "/transparent_images/";
+        //$this->transImageDir = HV_CACHE_DIR . "/transparent_images/";
         $this->compositeImageDir = HV_CACHE_DIR . "/composite_images/";
         
         $this->makeDirectory($this->tmpDir);
-        $this->makeDirectory($this->transImageDir);
+        //$this->makeDirectory($this->transImageDir);
         $this->makeDirectory($this->compositeImageDir);
     }
     
@@ -130,7 +130,8 @@ abstract class Image_Composite_CompositeImage
         $watermark 	 = HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png";
         $imageWidth  = $this->metaInfo->width();
         $image 		 = $imageLayer->getFilePathString();
-        
+        /** Watermarking Disabled temporarily **/
+        /*     
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if ($imageWidth / 300 < 2) {
             $watermark = $this->_waterMarkSmall($imageWidth);
@@ -147,7 +148,7 @@ abstract class Image_Composite_CompositeImage
         $cmd .= " -type TrueColor -alpha off " . $image;
 
         exec(escapeshellcmd($cmd));
-
+        */
         return $image;
     }
     
@@ -217,7 +218,7 @@ abstract class Image_Composite_CompositeImage
             }
 
             $cmd .= " " . $image->getFilePathString();
-    
+
             // If there are more than 2 layers, then the composite command needs to be called after every layer,
             // compositing the last composite image and the current image.
             if ($layerNum > 1 && isset($sortedImages[$layerNum])) {
