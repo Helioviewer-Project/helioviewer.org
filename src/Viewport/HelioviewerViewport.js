@@ -7,7 +7,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, document, window, HelioviewerTileLayerManager, HelioviewerMouseCoordinates, 
-  Viewport, ViewportMovementHelper */
+  Viewport, ViewportMovementHelper, EventManager */
 "use strict";
 var HelioviewerViewport = Viewport.extend(
     /** @lends HelioviewerViewport.prototype */
@@ -28,14 +28,17 @@ var HelioviewerViewport = Viewport.extend(
         this._super(options);
     
         // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
-        this.rsun = 959.705;
+        this._rsun = 959.705;
 
         // Initialize tile layers
         this._tileLayerManager = new HelioviewerTileLayerManager(this.api, this.requestDate, this.dataSources, 
                                   this.tileSize, this.imageScale, this.maxTileLayers,
                                   this.tileServers, this.tileLayers, this.urlStringLayers);
         
-        var mouseCoords	    = new HelioviewerMouseCoordinates(this.imageScale, this.rsun, this.warnMouseCoords);
+        // Initialize even layers
+        this._eventLayerManager = new EventManager(this.requestDate, 86400, this.getRSun());
+        
+        var mouseCoords	    = new HelioviewerMouseCoordinates(this.imageScale, this._rsun, this.warnMouseCoords);
         this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
         this.resize();
         this._initEventHandlers();
@@ -61,6 +64,13 @@ var HelioviewerViewport = Viewport.extend(
         if ((this.maxLayerDimensions.width !== old.width) || (this.maxLayerDimensions.height !== old.height)) {
             this.movementHelper.updateMaxLayerDimensions(this.maxLayerDimensions);	
         }	
+    },
+    
+    /**
+     * Returns the solar radius in arc-seconds for an EIT image at native resolution 
+     */
+    getRSun: function () {
+        return this._rsun;
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?

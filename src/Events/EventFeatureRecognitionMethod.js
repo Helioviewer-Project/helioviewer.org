@@ -1,6 +1,8 @@
 /**
+ * EventFeatureRecognitionMethod Class Definition 
+ * 
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
  * @author Jonathan Harper
- * @fileOverview This class represents a single event from a query.
  *
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
@@ -11,11 +13,11 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 
 var EventFeatureRecognitionMethod = Class.extend({
 
-    init: function (name, eventManager) {
-        this._events = [];
-        this._name = name;
+    init: function (name, rsun) {
+        this._events  = [];
+        this._name    = name;
+        this._rsun    = rsun;
         this._visible = false;
-        this.eventManager = eventManager;
         
         //Time range in the form
         // [ [startTimeA, endTimeA], [startTimeB, endTimeB], ... ]
@@ -132,16 +134,14 @@ var EventFeatureRecognitionMethod = Class.extend({
     },
     
     addEvent: function (newEvent) {
-        var rsun = this.eventManager.controller.viewport.getRSun();
         this._events.push(
-            new EventMarker(this, newEvent, newEvent.event_starttime, rsun, {offset: {top : 10, left : 0}})
+            new EventMarker(this, newEvent, newEvent.event_starttime, this._rsun, {offset: {top : 10, left : 0}})
         );
     },
     
     refreshEvents: function () {
-        var rsun = this.eventManager.controller.viewport.getRSun();
         $.each(this._events, function (i, event) {
-            event.refresh(rsun);
+            event.refresh(this._rsun);
         });
     },
     
