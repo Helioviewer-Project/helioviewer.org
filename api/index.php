@@ -29,7 +29,72 @@ if (isset($_REQUEST['action'])) {
 }
 
 if (!(isset($params) && loadModule($params))) {
+    printAPIDocumentation();
+}
+
+/**
+ * Loads the required module based on the action specified and run the
+ * action.
+ *
+ * @param array $params API Request parameters
+ *
+ * @return bool Returns true if the action specified is valid and was
+ *              successfully run.
+ */
+function loadModule($params)
+{
+    $valid_actions = array(
+        "takeFullImageScreenshot" => "WebClient",
+        "downloadFile"     => "WebClient",
+        "getClosestImage"  => "WebClient",
+        "getDataSources"   => "WebClient",
+        "getScreenshot"    => "WebClient",
+        "getJP2Header"     => "WebClient",
+        "getTile"          => "WebClient",
+        "launchJHV"        => "WebClient",
+        "takeScreenshot"   => "WebClient",
+        "getEventFRMs"     => "SolarEvents",
+        "getEvents"        => "SolarEvents",
+        "getJP2Image"      => "JHelioviewer",
+        "getJPX"           => "JHelioviewer",
+        "buildMovie"       => "Movies",
+        "buildQuickMovie"  => "Movies"
+    );
+    
+    include_once "src/Validation/InputValidator.php";
+
+    try {
+        if (!array_key_exists($params["action"], $valid_actions)) {
+            $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+            throw new Exception(
+                "Invalid action specified. See the <a href='$url'>" .
+                "API Documentation</a> for a list of valid actions."
+            );
+        } else {
+            $moduleName = $valid_actions[$params["action"]];
+            $className  = "Module_" . $moduleName;
+
+            include_once "src/Module/$moduleName.php";
+
+            $module = new $className($params);
+            $module->execute();
+        }
+    } catch (Exception $e) {
+        printErrorMsg($e->getMessage());
+    }
+
+    return true;
+}
+
+/**
+ * Prints Helioviewer API documentation for each enabled module
+ * 
+ * @return void
+ */
+function printAPIDocumentation()
+{
     $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+    $modules = array("WebClient", "SolarEvents", "JHelioviewer", "Movies");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,29 +122,12 @@ if (!(isset($params) && loadModule($params))) {
 <div class='toc'>
 <ol>
     <li><a href="index.php#Overview">Overview</a></li>
-    <li><a href="index.php#CustomView">Loading a Custom View</a></li>
-    <li><a href="index.php#TilingAPI">Tiling API</a></li>
-    <li>
-        <a href="index.php#FeatureEventAPI">Feature/Event API (Temporarily Disabled)</a>
-        <ul>
-            <li><a href="index.php#getEventFRMs">Event FRMs</a></li>
-            <li><a href="index.php#getEvents">Events</a></li>
-        </ul>
-    </li>
-    <li>
-        <a href="index.php#JPEG2000API">JPEG 2000 API</a>
-        <ul>
-            <li><a href="index.php#getJP2Image">Image API</a></li>
-            <li><a href="index.php#getJPX">JPX API</a></li>
-        </ul>
-    </li>
-    <li>
-        <a href="index.php#MovieAPI">Movie and Screenshot API</a>
-        <ul>
-            <li><a href="index.php#takeScreenshot">Screenshot API</a></li>
-            <li><a href="index.php#buildMovie">Movie API</a></li>
-        </ul>
-    </li>
+<?php
+    foreach($modules as $moduleName) {
+        include_once "src/Module/$moduleName.php";
+        call_user_func("Module_$moduleName" . '::printDocHeader');
+    }
+?>
     <li>
         <a href="index.php#Appendices">Appendices</a>
         <ol style="list-style-type: upper-latin;">
@@ -98,988 +146,62 @@ if (!(isset($params) && loadModule($params))) {
 <!-- Main Content -->
 <div class='content'>
 
-<!-- Overview -->
-<div id="Overview">
-
-    <h1>1. Overview</h1>
-    <p>In order to facilitate third-party application developers who wish to use content from and interact with
-    Helioviewer.org, a number of <abbr title="Application Programming Interface">APIs</abbr> have been developed,
-    offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
-    strings. The simplest APIs require only a single URI, and result in some resource being returned, e.g. a movie or
-    <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading a particular "view"
-    into Helioviewer. Some of the API's are more complex and involve two steps. For example, in order to get a
-    list of solar events for a certain period of time, first a query is usually made to see which Feature Recognition
-    Methods (or FRMs) include events for that time period. A second query then returns a list of features/events are 
-    fetched using a second query. 
+    <!-- Overview -->
+    <div id="Overview">
     
-    <br />
-    <br />
-
-    The general structure of queries is as follows:</p>
-
-    <div class="summary-box">
-        <?php echo $baseURL;?>?action=methodName&param1=value1&param2=value2...
-    </div>
-
-    <p>The base URL is the same for each of the APIs (<a href="<?php echo $baseURL;?>;"><?php echo $baseURL;?></a>).
-    The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters
-    may also be required depending on the specific API being accessed. The one exception to this rule is the
-    <a href="index.php#CustomView">Custom View API</a> which is accessed from
-    <a href="http://www.helioviewer.org/index.php"> http://www.helioviewer.org/index.php</a> and does not require an
-    "action" to be specified. Finally, the queries may be sent using either a GET or POST request. In both cases the
-    result is a <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr> object
-
-</div>
-
-<!-- Custom View API-->
-<div id="CustomView">
-    <h1>2. Custom View API:</h1>
-    <p>The custom view API enables the user to load a specific set of parameters into Helioviewer: "view," here, simply
-    means a given set of observation parameters. This is useful for dynamically loading a specific view or observation
-    into Helioviewer using a URL.</p>
-
-    <div class="summary-box">
-        <span style="text-decoration: underline;">Usage:</span>
+        <h1>1. Overview</h1>
+        <p>In order to facilitate third-party application developers who wish to use content from and interact with
+        Helioviewer.org, a number of <abbr title="Application Programming Interface">APIs</abbr> have been developed,
+        offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
+        strings. The simplest APIs require only a single URI, and result in some resource being returned, e.g. a movie or
+        <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading a particular "view"
+        into Helioviewer. Some of the API's are more complex and involve two steps. For example, in order to get a
+        list of solar events for a certain period of time, first a query is usually made to see which Feature Recognition
+        Methods (or FRMs) include events for that time period. A second query then returns a list of features/events are 
+        fetched using a second query. 
+        
         <br />
         <br />
-        http://www.helioviewer.org/index.php<br />
-        <br />
-
-        Supported Parameters:<br />
-        <br />
-
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="20%"><b>date</b></td>
-                    <td width="25%"><i>ISO 8601 UTC Date</i></td>
-                    <td width="55%">Date and time to display</td>
-                </tr>
-                <tr>
-                    <td><b>imageScale</b></td>
-                    <td><i>Float</i></td>
-                    <td>Image scale in arc-seconds/pixel</td>
-                </tr>
-                <tr>
-                    <td><b>imageLayers</b></td>
-                    <td><i>2d List</i></td>
-                    <td>A comma-separated list of the image layers to be
-                    displayed. Each image layer should be of the form:
-                    [OBSERVATORY,INSTRUMENT,DETECTOR, MEASUREMENT,VISIBLE,OPACITY].</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-
-        <span class="example-header">Example:</span> <span class="example-url">
-        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
-           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
-        </a>
-        </span>
-    </div>
-</div>
-
-<br />
-
-<!-- Tiling API -->
-<div id="TilingAPI">
-    <h1>3. Tiling API:</h1>
-    <p>Requesting a tile image in Helioviewer.org occurs in two steps. During the first step the user specifies the
-    parameters of the image they are interested in tiling including the date, observatory, instrument, detector, 
-    measurement. Alternatively, if the sourceId for the desired data source is already known that can be used
-    in place of specifying the observatory, instrument, detector and measurement.</p>
-
-    <br />
-
-     <ol style="list-style-type: upper-latin;">
-     
-        <!-- Closest Image API -->
-        <li>
-        <div id="getClosestImage">Finding the Closest Image:
-        <p>The result of this first request will include some basic information about the 
-           nearest image match available. This information can then be used to make tile requests.</p>
-
-        <br />
-
-
+    
+        The general structure of queries is as follows:</p>
+    
         <div class="summary-box">
-            <span style="text-decoration: underline;">Usage:</span>
-            <br />
-            <br />
-            <a href="<?php echo $baseURL;?>?action=getClosestImage">
-                <?php echo $baseURL;?>?action=getClosestImage
-            </a>
-            
-            Supported Parameters:<br />
-            <br />
+            <?php echo $baseURL;?>?action=methodName&param1=value1&param2=value2...
+        </div>
     
-            <table class="param-list" cellspacing="10">
-                <tbody valign="top">
-                    <tr>
-                        <td width="20%"><b>date</b></td>
-                        <td width="25%"><i>ISO 8601 UTC Date</i></td>
-                        <td width="55%">The desired image date</td>
-                    </tr>
-                    <tr>
-                        <td><b>server</b></td>
-                        <td><i>Integer</i></td>
-                        <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
-                    </tr>
-                    <tr>
-                        <td><b>sourceId</b></td>
-                        <td><i>Integer</i></td>
-                        <td><i>[Optional]</i> The image data source identifier.</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <br /><br />
+        <p>The base URL is the same for each of the APIs (<a href="<?php echo $baseURL;?>;"><?php echo $baseURL;?></a>).
+        The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters
+        may also be required depending on the specific API being accessed. The one exception to this rule is the
+        <a href="index.php#CustomView">Custom View API</a> which is accessed from
+        <a href="http://www.helioviewer.org/index.php"> http://www.helioviewer.org/index.php</a> and does not require an
+        "action" to be specified. Finally, the queries may be sent using either a GET or POST request. In both cases the
+        result is a <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr> object
     
-            Result:<br />
-            <br />
-    
-            <table class="param-list" cellspacing="10">
-                <tbody valign="top">
-                    <tr>
-                        <td width="20%"><b>filename</b></td>
-                        <td width="25%"><i>String</i></td>
-                        <td width="55%">The filename of the matched image</td>
-                    </tr>
-                    <tr>
-                        <td><b>filepath</b></td>
-                        <td><i>String</i></td>
-                        <td>The location of the matched image</td>
-                    </tr>
-                    <tr>
-                        <td><b>date</b></td>
-                        <td><i>Date String</i></td>
-                        <td>The date of of the matched image</td>
-                    </tr>
-                    <tr>
-                        <td><b>scale</b></td>
-                        <td><i>Float</i></td>
-                        <td>The image's native spatial scale, in arc-seconds/pixel</td>
-                    </tr>
-                    <tr>
-                        <td><b>width</b></td>
-                        <td><i>Integer</i></td>
-                        <td>Image width</td>
-                    </tr>
-                    <tr>
-                        <td><b>height</b></td>
-                        <td><i>Integer</i></td>
-                        <td>Image width</td>
-                    </tr>
-                    <tr>
-                        <td><b>sunCenterX</b></td>
-                        <td><i>Float</i></td>
-                        <td>Distance from image left to the solar center, in pixels</td>
-                    </tr>
-                    <tr>
-                        <td><b>sunCenterY</b></td>
-                        <td><i>Float</i></td>
-                        <td>Distance from image bottom to the solar center, in pixels</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <br />
-    
-            <span class="example-header">Examples:</span> <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
-                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
-                </a>
-                <br /><br />
-                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3">
-                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3
-                </a>
-            </span>
-            
-        </div>
-
-        <br />
-        
-        <!-- Closest Image API Notes -->
-        <div class="summary-box" style="background-color: #E3EFFF;">
-        <span style="text-decoration: underline;">Notes:</span>
-        <br />
-        <ul>
-            <li>
-            <p>At least one of the methods for specifying the image source, either a sourceId or the image 
-            observatory, instrument, detector and measurement must be included in the request. </p>
-            </li>
-        </ul>
-        </div>
-        
-        </li>
-        
-        <!-- Tile API -->
-    </ol>
-</div>
-
-<br />
-
-<!-- Feature/Event API -->
-<div id="FeatureEventAPI">
-    <h1>4. Feature/Event API:</h1>
-    <p>There are two ways to use Helioviewer's Feature/Event API. The first is to query the available Feature 
-    Recognition Methods (FRM), and then query for specific features/events within each FRM. The second method is to go
-    straight to querying for features/events, skipping the FRM step. <!-- This requires that you already know the 
-    identifiers for each specific catalog you wish you query.-->Both steps are described below.</p>
-    <ol style="list-style-type: upper-latin;">
-    
-        <!-- Catalog API -->
-        <li>
-        <div id="getEventFRMs">Event Feature Recognition Methods (FRM):
-        <p>To query the list of available FRMs, simply call the "getEventFRMs" and specify a startDate and endDate. 
-        This will return a list of the FRMs for which event data exists in the requested time range, as well as some 
-        meta-information describing each of the catalogs. <!--The most important parameters returned are the "id", 
-        the identifier used to query the specific catalog for features/events, and "eventType" which specified 
-        the type of feature/event the catalog described, e.g. "CME" or "Active Region." --></p>
-
-        <br />
-
-        <div class="summary-box">
-        <span style="text-decoration: underline;">Usage:</span>
-
-        <br />
-        <br />
-        <a href="<?php echo $baseURL;?>?action=getEventCatalogs">
-            <?php echo $baseURL;?>?action=getEventFRMs
-        </a>
-
-        <br /><br />
-        Result:
-        <br /><br />
-
-        An array of catalog objects is returned formatted as JSON. Each catalog object includes the following
-        six parameters:
-
-        <!-- Feature/Event Catalog Parameter Description -->
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="25%"><b>adjustRotation</b></td>
-                    <td width="15%"><i>Boolean</i></td>
-                    <td>Specifies whether the position of the events has been adjusted to account for solar
-                    rotation.</td>
-                </tr>
-                <tr>
-                    <td><b>coordinateSystem</b></td>
-                    <td><i>String</i></td>
-                    <td>The type of coordinate system used by the catalog provider. Recognized coordinate systems
-                    include "HELIOGRAPHIC," "PRINCIPAL_ANGLE," and "ANGULAR."</td>
-                </tr>
-                <tr>
-                    <td><b>description</b></td>
-                    <td><i>String</i></td>
-                    <td>A brief human-readable description of the catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>eventType</b></td>
-                    <td><i>String</i></td>
-                    <td>The type of event described. See <a href="index.html#Identifiers">Appendix A</a> for a list of
-                    the supported event types.</td>
-                </tr>
-                <tr>
-                    <td><b>id</b></td>
-                    <td><i>String</i></td>
-                    <td>The identifier for a specific catalog. The identifier consists of two parts separate by
-                    double-colons. The left-side of the double-colons identifies the catalog provider, which may be
-                    the same for several catalogs. The right-side identifies the specific catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>name</b></td>
-                    <td><i>String</i></td>
-                    <td>A human-readable name for the catalog.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        </div>
-
-        <br />
-
-        <!-- Catalog API Notes -->
-        <div class="summary-box" style="background-color: #E3EFFF;">
-        <span style="text-decoration: underline;">Notes:</span>
-        <br />
-        <br />
-        <ul>
-            <li>
-            <p>Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a>
-            for the specific IDs used.</p>
-            </li>
-            <li>
-            <p>Results are returned as <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr>. Future versions
-            will provide the ability to request results in either JSON or VOEvent format.</p>
-            </li>
-        </ul>
-        </div>
-
-        </div>
-        </li>
-
-        <br />
- 
-        <!-- Catalog Entry API -->
-<!-- 
-        <li>
-        <div id="getEvents">Feature/Event Catalog Entries:
-        <p></p>
-
-        <div class="summary-box"><span
-            style="text-decoration: underline;">Usage:</span><br />
-        <br />
-
-        <?php echo $baseURL;?>?action=getEvents<br />
-        <br />
-
-        Supported Parameters:<br />
-        <br />
-
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="25%"><b>catalogs</b></td>
-                    <td width="35%"><i>List</i></td>
-                    <td>A comma-separated list of catalog identifiers identifying the catalogs to be included in
-                    the search.</td>
-                </tr>
-                <tr>
-                    <td><b>date</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>The date about which the feature/event query is centered.</td>
-                </tr>
-                <tr>
-                    <td><b>windowSize</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The window-size (in seconds) to search.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-
-        Result:<br />
-        <br />
-        An array of event objects is returned formatted as JSON. Each event object includes 12 required parameters as
-        well as an array, "properties", which contains additional parameters which vary from catalog to catalog. Among
-        the 12 required parameters, two of the parameters relating to the coordinates of the event may vary, but every
-        event object will include a set of coordinates.
-        <br />
-        <br />
- -->
-        <!-- Event Parameter Description -->
-<!-- 
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="20%"><b>angularX</b></td>
-                    <td width="20%"><i>Integer</i></td>
-                    <td><i>[Optional]</i> ...</td>
-                </tr>
-                <tr>
-                    <td><b>angularY</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> ...</td>
-                </tr>
-                <tr>
-                    <td><b>catalogId</b></td>
-                    <td><i>String</i></td>
-                    <td>The ID of the catalog from which the event came from.</td>
-                </tr>
-                <tr>
-                    <td><b>detail</b></td>
-                    <td><i>String</i></td>
-                    <td>Miscellaneous event-related details. The variable properties array is derived primarily from
-                    this.</td>
-                </tr>
-                <tr>
-                    <td><b>endTime</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>End event time.</td>
-                </tr>
-                <tr>
-                    <td><b>eventId</b></td>
-                    <td><i>String</i></td>
-                    <td>Event identifier: varies depending on the catalog source.</td>
-                </tr>
-                <tr>
-                    <td><b>hlat</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> Heliocentric latitudinal coordinate of event...</td>
-                </tr>
-                <tr>
-                    <td><b>hlong</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> Heliocentric longitudinal coordinate of event...</td>
-                </tr>
-                <tr>
-                    <td><b>info</b></td>
-                    <td><i>String</i></td>
-                    <td>A shorter version of the "detail" parameter: lists some basic parameters of the event which
-                    vary from catalog to catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>polarCpa</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> Polar coordinates angle, in degrees.</td>
-                </tr>
-                <tr>
-                    <td><b>polarWidth</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> Polar coordinates width...</td>
-                </tr>
-                <tr>
-                    <td><b>properties</b></td>
-                    <td><i>List</i></td>
-                    <td>An array of parameters which vary depending on the specific catalog queried: each catalog is
-                    associated with a separate set of parameters.</td>
-                </tr>
-                <tr>
-                    <td><b>shortInfo</b></td>
-                    <td><i>String</i></td>
-                    <td>An even shorter version of the "detail" parameter: lists some very basic parameters of the event
-                    which vary from catalog to catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>sourceUrl</b></td>
-                    <td><i>String</i></td>
-                    <td>Source URL for the individual event, or a link to the catalog search interface if no individual
-                    URL can be generated.</td>
-                </tr>
-                <tr>
-                    <td><b>startTime</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Start event time.</td>
-                </tr>
-                <tr>
-                    <td><b>sunX</b></td>
-                    <td><i>Float</i></td>
-                    <td>Normalized heliocentric cartesian X-coordinate.</td>
-                </tr>
-                <tr>
-                    <td><b>sunY</b></td>
-                    <td><i>Float</i></td>
-                    <td>Normalized heliocentric cartesian Y-coordinate.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-
-        <span class="example-header">Example:</span>
-        <span class="example-url">
-            <a href="<?php echo $baseURL;?>?action=getEvents&amp;date=2003-10-05T00:00:00Z&amp;windowSize=86400&amp;catalogs=VSOService::noaa,GOESXRayService::GOESXRay">
-                <?php echo $baseURL;?>?action=getEvents&date=2003-10-05T00:00:00Z&windowSize=86400&catalogs=VSOService::noaa,GOESXRayService::GOESXRay
-            </a>
-        </span></div>
-
-        <br />
- -->
-        <!-- Catalog Entry API Notes -->
-<!-- 
-        <div class="summary-box" style="background-color: #E3EFFF;">
-        <span style="text-decoration: underline;">Notes:</span><br />
-        <br />
-        <ul>
-            <li>
-            <p>The coordinate parameters returned will vary depending on the specific catalog queried. For catalogs
-            which use the "PRINCIPAL_ANGLE" coordinate system, the parameters "polarCpa" and "polarWidth" are returned.
-            For catalogs which use the "HELIOGRAPHIC" coordinate system, "hlat" and "hlong" parameters are return.</p>
-            </li>
-        </ul>
-        </div>
-
-        </div>
-        </li>
-    </ol>
-</div>
- -->
-
-<!-- JPEG 2000 API -->
-<div id="JPEG2000API">
-    <h1>5. JPEG 2000 API:</h1>
-    <p>Helioviewer's JPEG 2000 API's enable access to the raw JPEG 2000 images used to generate the tiles seen on the
-    site, as well as real-time generation of JPEG 2000 Image Series (JPX).</p>
-    <ol style="list-style-type: upper-latin;">
-        <!-- JPEG 2000 Image API -->
-        <li>
-        <div id="getJP2Image">JP2 Images:
-        <p>Returns a single JPEG 2000 (JP2) image. If an image is not available for the date request the closest
-        available image is returned.</p>
-
-        <br />
-
-        <div class="summary-box"><span
-            style="text-decoration: underline;">Usage:</span><br />
-        <br />
-
-        <?php echo $baseURL;?>?action=getJP2Image<br />
-        <br />
-
-        Supported Parameters:<br />
-        <br />
-
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="25%"><b>observatory</b></td>
-                    <td width="35%"><i>String</i></td>
-                    <td>Observatory</td>
-                </tr>
-                <tr>
-                    <td><b>instrument</b></td>
-                    <td><i>String</i></td>
-                    <td>Instrument</td>
-                </tr>
-                <tr>
-                    <td><b>detector</b></td>
-                    <td><i>String</i></td>
-                    <td>Detector</td>
-                </tr>
-                <tr>
-                    <td><b>measurement</b></td>
-                    <td><i>String</i></td>
-                    <td>Measurement</td>
-                </tr>
-                <tr>
-                    <td><b>date</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Observation date and time</td>
-                </tr>
-                <tr>
-                    <td><b>sourceId</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
-                    measurement parameters).</td>
-                </tr>
-                <tr>
-                    <td><b>jpip</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> Returns a JPIP URI instead of an actual image.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-
-        <span class="example-header">Examples:</span>
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;date=2003-10-05T00:00:00Z">
-        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z
-        </a>
-        </span><br />
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
-        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
-        </a>
-        </span>
-        </div>
-        </div>
-        </li>
-
-        <br />
-
-        <!-- JPX API -->
-        <li>
-        <div id="getJPX">JPX API
-        <p>Returns a JPEG 2000 Image Series (JPX) file. The movie frames are chosen by matching the closest image
-        available at each step within the specified range of dates.</p>
-
-        <br />
-
-        <div class="summary-box"><span style="text-decoration: underline;">Usage:</span><br />
-
-        <br />
-
-        <?php echo $baseURL;?>?action=getJPX<br />
-        <br />
-
-        Supported Parameters:<br />
-        <br />
-
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="20%"><b>observatory</b></td>
-                    <td width="20%"><i>String</i></td>
-                    <td>Observatory</td>
-                </tr>
-                <tr>
-                    <td><b>instrument</b></td>
-                    <td><i>String</i></td>
-                    <td>Instrument</td>
-                </tr>
-                <tr>
-                    <td><b>detector</b></td>
-                    <td><i>String</i></td>
-                    <td>Detector</td>
-                </tr>
-                <tr>
-                    <td><b>measurement</b></td>
-                    <td><i>String</i></td>
-                    <td>Measurement</td>
-                </tr>
-                <tr>
-                    <td><b>startTime</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Movie start time</td>
-                </tr>
-                <tr>
-                    <td><b>endTime</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Movie end time</td>
-                </tr>
-                <tr>
-                    <td><b>cadence</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The desired amount of time between each movie-frame, in seconds. If no 
-                    cadence is specified, the server will attempt to select an optimal cadence.</td>
-                </tr>
-                <tr>
-                    <td><b>sourceId</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
-                    measurement parameters).</td>
-                </tr>
-                <tr>
-                    <td><b>frames</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> Returns individual movie-frame timestamps along with the file URI
-                    as JSON.</td>
-                </tr>
-                <tr>
-                    <td><b>verbose</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> In addition to the JPX file URI, returns any warning or
-                    error messages generated during the request.</td>
-                </tr>
-                <tr>
-                    <td><b>frames</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> Returns a JSON data structure including the JPX URI and also a list of
-                    the timestamps associated with each layer in the file.</td>
-                </tr>
-                <tr>
-                    <td><b>jpip</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> Returns a JPIP URI instead of an actual movie.</td>
-                </tr>
-                <tr>
-                    <td><b>linked</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><i>[Optional]</i> Returns a linked JPX file containing image pointers instead of data for each
-                    individual frame in the series. Currently, only JPX image series support this feature.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-        Result:<br />
-        <br />
-        The default action is to simply return the requested JPX file. If additional information is needed,
-        for example, then a JSON result will be returned with the file URI plus any additional parameters requested.
-        <br /><br />
-
-        <!-- Return parameter description -->
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="20%"><b>uri</b></td>
-                    <td width="20%"><i>String</i></td>
-                    <td><i>[Optional]</i> Location of the requested file.</td>
-                </tr>
-                <tr>
-                    <td><b>frames</b></td>
-                    <td><i>List</i></td>
-                    <td><i>[Optional]</i> List of timestamps.</td>
-                </tr>
-                <tr>
-                    <td><b>verbose</b></td>
-                    <td><i>String</i></td>
-                    <td><i>[Optional]</i> Any warning or error messages generated during the request</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-
-        <span class="example-header">Examples:</span>
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
-            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
-        </a>
-        </span><br />
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;jpip=true">
-            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&jpip=true
-        </a>
-        </span></div>
-        </div>
-
-        <br />
-
-        <!-- getJPX API Notes -->
-        <div class="summary-box" style="background-color: #E3EFFF;">
-        <span style="text-decoration: underline;">Notes:</span>
-
-        <br /><br />
-
-        <ul>
-            <li>
-            <p>If no cadence is specified Helioviewer.org attempts to choose an optimal cadence for the requested range and data source.</p>
-            </li>
-        </ul>
-        </div>
-
-        <br />
-
-<!-- Movie and Screenshot API -->
-<div id="MovieAPI">
-    <h1>6. Movie and Screenshot API:</h1>
-    <p>The movie and screenshot API allows users to download images or time-lapse videos of what they are viewing on the website. </p>
-    <ol style="list-style-type: upper-latin;">
-        <!-- Screenshot API -->
-        <li>
-        <div id="takeScreenshot">Screenshot API
-        <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
-        available image is returned.</p>
-
-        <br />
-
-        <div class="summary-box"><span
-            style="text-decoration: underline;">Usage:</span><br />
-        <br />
-
-        <?php echo $baseURL;?>?action=takeScreenshot<br />
-        <br />
-
-        Supported Parameters:<br />
-        <br />
-
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="20%"><b>obsDate</b></td>
-                    <td><i>ISO 8601 UTC Date</i></td>
-                    <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
-                </tr>
-                <tr>
-                    <td><b>imageScale</b></td>
-                    <td><i>Float</i></td>
-                    <td>The zoom scale of the image. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
-                        a factor of 2. The full-res scale of an EIT image is 5.26.</td>
-                </tr>
-                <tr>
-                    <td><b>layers</b></td>
-                    <td><i>String</i></td>
-                    <td>A string of layer information in the following format:<br />
-                    	Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
-                    	If you do not know the sourceId, you can 
-                    	alternately send this layer string: <i>obs,inst,det,meas,isVisible,opacity</i>.
-                    	Layer strings are separated by "/": layer1/layer2/layer3.</td>
-                </tr>
-                <tr>
-                    <td><b>y1</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>x1</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>y2</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>x2</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>quality</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
-                </tr>
-                <tr>
-                    <td><b>filename</b></td>
-                    <td><i>String</i></td>
-                    <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
-                    	the filename defaults to "screenshot" + the unix timestamp of the time it was requested.</td>
-                </tr>
-                <tr>
-                	<td><b>display</b></td>
-                	<td><i>Boolean</i></td>
-                	<td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
-                		filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-
-        <span class="example-header">Examples:</span>
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
-        </a>
-        </span><br />
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
-        </a>
-        </span>
-        </div>
-        </div>
-        </li>
-
-        <br />
-
-        <!-- Movie -->
-        <li>
-        <div id="buildMovie">Movie API
-        <p>Returns filepaths to a flash video and a high quality video consisting of 10-100 movie frames. The movie frames are chosen by matching the closest image
-        available at each step within the specified range of dates, and are automatically generated using the Screenshot API calls.</p>
-
-        <br />
-
-        <div class="summary-box"><span
-            style="text-decoration: underline;">Usage:</span><br />
-        <br />
-
-        <?php echo $baseURL;?>?action=buildMovie<br />
-        <br />
-
-        Supported Parameters:<br />
-        <br />
-
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="20%"><b>startDate</b></td>
-                    <td width="20%"><i>ISO 8601 UTC Date</i></td>
-                    <td>Desired starting timestamp of the movie. The timestamps for the subsequent frames are incremented by
-                        a certain timestep.</td>
-                </tr>
-                <tr>
-                    <td><b>imageScale</b></td>
-                    <td><i>Float</i></td>
-                    <td>The zoom scale of the images. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
-                        a factor of 2. The full-res scale of an EIT image is 5.26.</td>
-                </tr>                
-                <tr>
-                    <td><b>layers</b></td>
-                    <td><i>String</i></td>
-                    <td>A string of layer information in the following format:<br />
-                    	Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
-                    	If you do not know the sourceId, you can 
-                    	alternately send this layer string: <i>obs,inst,det,meas,isVisible,opacity</i>.
-                    	Layer strings are separated by "/": layer1/layer2/layer3.</td>
-                </tr>
-                <tr>
-                    <td><b>y1</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>x1</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>y2</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>x2</b></td>
-                    <td><i>Integer</i></td>
-                    <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
-                        if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                </tr>
-                <tr>
-                    <td><b>numFrames</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of frames you would like to include in the movie. You may have between 10 and 120 frames.
-                    	The default value is 40 frames.</td>
-                </tr>
-               	<tr>
-                    <td><b>frameRate</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
-                </tr>
-                <tr>
-                    <td><b>timeStep</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of seconds in between each timestamp used to make the movie frames. The default 
-                    	is 86400 seconds, or 1 day.</td>
-                </tr>
-                <tr>
-                    <td><b>quality</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
-                </tr>
-                <tr>
-                    <td><b>filename</b></td>
-                    <td><i>String</i></td>
-                    <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
-                    	the filename defaults to "screenshot" + the unix timestamp of the time it was requested.</td>
-                </tr>
-                <tr>
-                    <td><b>hqFormat</b></td>
-                    <td><i>String</i></td>
-                    <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", "avi", and "ipod".
-                        iPod video will come out in mp4 format but extra settings need to be applied so format must be specified as "ipod". </td>
-                </tr>
-                <tr>
-                	<td><b>display</b></td>
-                	<td><i>Boolean</i></td>
-                	<td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
-                		filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
-                </tr>
-            </tbody>
-        </table>
-
-		<br />
-		
-        <span class="example-header">Examples:</span>
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
-        </a>
-        </span><br />
-        <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
-        </a>
-        </span><br />
-        <span class="example-url">
-        <i>iPod Video:</i><br /><br />
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false
-        </a>
-        </span>
-        </div>
     </div>
-
-    <br />
-
+<?php
+    foreach($modules as $moduleName) {
+        call_user_func("Module_$moduleName" . '::printDoc');
+    }
+    printDocumentationAppendices();
+?>
 </div>
 
-    <!-- Appendices -->
+<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
+    Last Updated: 2010-06-25 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+</div>
+
+</body>
+</html>
+<?php
+}
+
+/**
+ * Displays documentation appendices
+ */
+function printDocumentationAppendices()
+{
+?>
+<!-- Appendices -->
     <div id="Appendices">
     <h1>7. Appendices:</h1>
     <p></p>
@@ -1313,7 +435,7 @@ if (!(isset($params) && loadModule($params))) {
         <li>
         <div id="ArcsecondConversions">Pixel to Arcsecond Conversions
         <p>This appendix contains a list of JPEG2000 image scales for some layer types and how to convert 
-        	between pixels on the image and arcseconds.</p>
+            between pixels on the image and arcseconds.</p>
         <div class="summary-box" style="background-color: #E3EFFF;">
         <br />
         <table class="param-list" cellspacing="10">
@@ -1383,70 +505,7 @@ if (!(isset($params) && loadModule($params))) {
         <!-- TODO : Appendice D: Image Layers -->
     </ol>
 </div>
-
-</div>
-
-<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-06-24 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
-</div>
-
-</body>
-</html>
-<?php
-}
-
-/**
- * Loads the required module based on the action specified and run the
- * action.
- *
- * @param array $params API Request parameters
- *
- * @return bool Returns true if the action specified is valid and was
- *              successfully run.
- */
-function loadModule($params)
-{
-    $valid_actions = array(
-        "takeFullImageScreenshot" => "WebClient",
-        "downloadFile"     => "WebClient",
-        "getClosestImage"  => "WebClient",
-        "getDataSources"   => "WebClient",
-        "getScreenshot"    => "WebClient",
-        "getJP2Header"     => "WebClient",
-        "getTile"          => "WebClient",
-        "launchJHV"        => "WebClient",
-    	"takeScreenshot"   => "WebClient",
-        "getEventFRMs"     => "SolarEvents",
-        "getEvents"        => "SolarEvents",
-        "getJP2Image"      => "JHelioviewer",
-        "getJPX"           => "JHelioviewer",
-    	"buildMovie"	   => "Movies",
-    	"buildQuickMovie"  => "Movies"
-    );
-
-    include_once "src/Validation/InputValidator.php";
-
-    try {
-        if (!array_key_exists($params["action"], $valid_actions)) {
-            $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
-            throw new Exception(
-                "Invalid action specified. See the <a href='$url'>" .
-                "API Documentation</a> for a list of valid actions."
-            );
-        } else {
-            $moduleName = $valid_actions[$params["action"]];
-            $className  = "Module_" . $moduleName;
-
-            include_once "src/Module/$moduleName.php";
-
-            $module = new $className($params);
-            $module->execute();
-        }
-    } catch (Exception $e) {
-        printErrorMsg($e->getMessage());
-    }
-
-    return true;
+<?php 
 }
 
 /**
