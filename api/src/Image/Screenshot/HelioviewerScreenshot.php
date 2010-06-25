@@ -62,7 +62,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $this->extractedDir = HV_CACHE_DIR . "/extracted_images";
         $this->makeDirectory($this->extractedDir);
 
-        parent::__construct($meta, $options, $tmpDir, $filename);
+        parent::__construct($meta, $options, $tmpDir, $filename . ".jpg");
     }
 
     /**
