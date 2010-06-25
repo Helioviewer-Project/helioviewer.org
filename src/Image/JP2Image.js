@@ -73,7 +73,7 @@ var JP2Image = Class.extend(
      */
     _onImageLoad: function (result) {
         //Only load image if it is different form what is currently displayed
-        if (this.id === result.id) {
+        if (this.filename === result.filename) {
             return;
         }
         

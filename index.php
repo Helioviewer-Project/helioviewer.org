@@ -49,6 +49,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <!-- imgAreaSelect jQuery plugin -->
     <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
+    
+    <!-- jsTree -->
+    <script src="lib/jquery.jsTree-1.0rc/jquery.jstree.js" type="text/javascript"></script>
 
     <!-- CookieJar -->
     <script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>
@@ -100,8 +103,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         	$js = array("Utility/Config.js", "UIController.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
                         "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
                         "Tiling/Layer/HelioviewerTileLayer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js",  
-                        "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", 
+                        "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", "Events/EventManager.js", 
         	            "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
+        	            "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js",
                         "Movies/MediaSettings.js", "UI/MessageConsole.js", "Movies/MovieBuilder.js",  
                         "UI/ScreenshotBuilder.js", "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js",  
                         "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 

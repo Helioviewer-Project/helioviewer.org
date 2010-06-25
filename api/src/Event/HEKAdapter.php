@@ -81,15 +81,17 @@ class Event_HEKAdapter
         // sort by event type
         foreach ($unsorted as $frm) {
             $eventType = $frm['event_type'];
+            $name      = $frm["frm_name"];
             
             if (!isset($sorted[$eventType]))
                 $sorted[$eventType] = array();
 
-            // remove redundant event_type parameter and add count
+            // remove redundant event_type and frm_parameters and add count
             unset($frm["event_type"]);
-            $frm["count"] = $names[$frm['frm_name']];
+            unset($frm["frm_name"]);
+            $frm["count"] = $names[$name];
             
-            array_push($sorted[$eventType], $frm);                
+            $sorted[$eventType][$name] = $frm;
         }
         
         return json_encode($sorted);

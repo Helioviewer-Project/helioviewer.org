@@ -33,4 +33,10 @@ interface Module
      * @return void
      */
     public static function printDoc();
+    /**
+     * Prints the documentation header for the table of contents section
+     * 
+     * @return void
+     */
+    public static function printDocHeader();
 }

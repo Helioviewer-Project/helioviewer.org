@@ -53,7 +53,7 @@ class JHelioviewerTest extends PHPUnit_Framework_TestCase
             'detector'    => 'C2',
             'measurement' => 'white-light',
             'date'        => '2003-10-05T00:00:00Z',
-            'getJPIP'     => 'true'
+            'jpip'     => 'true'
         );
 
         $jhv = new Module_JHelioviewer($params);

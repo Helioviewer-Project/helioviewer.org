@@ -47,6 +47,7 @@ div > p:first-letter {
 
 div.summary-box {
     width: 60%;
+    min-width: 620px;
     margin-left: 40px;
     background-color: #f0f1f2;
     color: #000;
