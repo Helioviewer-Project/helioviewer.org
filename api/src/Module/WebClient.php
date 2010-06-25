@@ -58,15 +58,6 @@ class Module_WebClient implements Module
         }
     }
 
-    /**
-     * printDoc
-     *
-     * @return void
-     */
-    public static function printDoc()
-    {
-
-    }
 
     /**
      * 'Opens' the requested file in the current window as an attachment,
@@ -482,6 +473,213 @@ class Module_WebClient implements Module
             chmod($filepath, 0777);
         }
     }
+    
+    /**
+     * Prints the WebClient module's documentation header
+     */
+    public static function printDocHeader() {
+?>
+    <li><a href="index.php#CustomView">Loading a Custom View</a></li>
+    <li><a href="index.php#TilingAPI">Tiling API</a></li>
+<?php
+    }
+    
+    /**
+     * printDoc
+     *
+     * @return void
+     */
+    public static function printDoc()
+    {
+        $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+?>
+<!-- Custom View API-->
+<div id="CustomView">
+    <h1>2. Custom View API:</h1>
+    <p>The custom view API enables the user to load a specific set of parameters into Helioviewer: "view," here, simply
+    means a given set of observation parameters. This is useful for dynamically loading a specific view or observation
+    into Helioviewer using a URL.</p>
 
+    <div class="summary-box">
+        <span style="text-decoration: underline;">Usage:</span>
+        <br />
+        <br />
+        http://www.helioviewer.org/index.php<br />
+        <br />
+
+        Supported Parameters:<br />
+        <br />
+
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="20%"><b>date</b></td>
+                    <td width="25%"><i>ISO 8601 UTC Date</i></td>
+                    <td width="55%">Date and time to display</td>
+                </tr>
+                <tr>
+                    <td><b>imageScale</b></td>
+                    <td><i>Float</i></td>
+                    <td>Image scale in arc-seconds/pixel</td>
+                </tr>
+                <tr>
+                    <td><b>imageLayers</b></td>
+                    <td><i>2d List</i></td>
+                    <td>A comma-separated list of the image layers to be
+                    displayed. Each image layer should be of the form:
+                    [OBSERVATORY,INSTRUMENT,DETECTOR, MEASUREMENT,VISIBLE,OPACITY].</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+
+        <span class="example-header">Example:</span> <span class="example-url">
+        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+        </a>
+        </span>
+    </div>
+</div>
+
+<br />
+
+<!-- Tiling API -->
+<div id="TilingAPI">
+    <h1>3. Tiling API:</h1>
+    <p>Requesting a tile image in Helioviewer.org occurs in two steps. During the first step the user specifies the
+    parameters of the image they are interested in tiling including the date, observatory, instrument, detector, 
+    measurement. Alternatively, if the sourceId for the desired data source is already known that can be used
+    in place of specifying the observatory, instrument, detector and measurement.</p>
+
+    <br />
+
+     <ol style="list-style-type: upper-latin;">
+     
+        <!-- Closest Image API -->
+        <li>
+        <div id="getClosestImage">Finding the Closest Image:
+        <p>The result of this first request will include some basic information about the 
+           nearest image match available. This information can then be used to make tile requests.</p>
+
+        <br />
+
+
+        <div class="summary-box">
+            <span style="text-decoration: underline;">Usage:</span>
+            <br />
+            <br />
+            <a href="<?php echo $baseURL;?>?action=getClosestImage">
+                <?php echo $baseURL;?>?action=getClosestImage
+            </a>
+            
+            Supported Parameters:<br />
+            <br />
+    
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="20%"><b>date</b></td>
+                        <td width="25%"><i>ISO 8601 UTC Date</i></td>
+                        <td width="55%">The desired image date</td>
+                    </tr>
+                    <tr>
+                        <td><b>server</b></td>
+                        <td><i>Integer</i></td>
+                        <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
+                    </tr>
+                    <tr>
+                        <td><b>sourceId</b></td>
+                        <td><i>Integer</i></td>
+                        <td><i>[Optional]</i> The image data source identifier.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <br /><br />
+    
+            Result:<br />
+            <br />
+    
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="20%"><b>filename</b></td>
+                        <td width="25%"><i>String</i></td>
+                        <td width="55%">The filename of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>filepath</b></td>
+                        <td><i>String</i></td>
+                        <td>The location of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>date</b></td>
+                        <td><i>Date String</i></td>
+                        <td>The date of of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>scale</b></td>
+                        <td><i>Float</i></td>
+                        <td>The image's native spatial scale, in arc-seconds/pixel</td>
+                    </tr>
+                    <tr>
+                        <td><b>width</b></td>
+                        <td><i>Integer</i></td>
+                        <td>Image width</td>
+                    </tr>
+                    <tr>
+                        <td><b>height</b></td>
+                        <td><i>Integer</i></td>
+                        <td>Image width</td>
+                    </tr>
+                    <tr>
+                        <td><b>sunCenterX</b></td>
+                        <td><i>Float</i></td>
+                        <td>Distance from image left to the solar center, in pixels</td>
+                    </tr>
+                    <tr>
+                        <td><b>sunCenterY</b></td>
+                        <td><i>Float</i></td>
+                        <td>Distance from image bottom to the solar center, in pixels</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <br />
+    
+            <span class="example-header">Examples:</span> <span class="example-url">
+                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
+                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
+                </a>
+                <br /><br />
+                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3">
+                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3
+                </a>
+            </span>
+            
+        </div>
+
+        <br />
+        
+        <!-- Closest Image API Notes -->
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <span style="text-decoration: underline;">Notes:</span>
+        <br />
+        <ul>
+            <li>
+            <p>At least one of the methods for specifying the image source, either a sourceId or the image 
+            observatory, instrument, detector and measurement must be included in the request. </p>
+            </li>
+        </ul>
+        </div>
+        
+        </li>
+        
+        <!-- getTile API -->
+    </ol>
+</div>
+<?php
+    }
 }
 ?>
