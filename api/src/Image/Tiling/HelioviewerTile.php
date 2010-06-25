@@ -87,7 +87,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         );
 
         $roi = $this->convertTileIndexToPixels($jp2Width, $jp2Height, $jp2Scale, $tileScale, $tileSize, $this->relativeTileSize, $x, $y);
-             
+
         // Dynamically generate a class that corresponds to the type of image. Current classes available:
         // EITImage, MDIImage, LASCOImage
         $this->image = new $classname(
