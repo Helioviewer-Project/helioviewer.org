@@ -1,7 +1,6 @@
 /**
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
  * @author Jonathan Harper
- * @fileOverview TO BE ADDED
- *
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -11,9 +10,9 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 
 var EventType = Class.extend({
 	
-    init: function (name, frms) {
+    init: function (name) {
 		this._name = name;
-		this._eventFRMs = frms;
+		this._eventFRMs = {};
 		this._queried = false;
 	},
 	
