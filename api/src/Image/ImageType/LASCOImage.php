@@ -181,18 +181,37 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         $offsetX   = $this->padding["offsetX"];
         $offsetY   = $this->padding["offsetY"];
         $gravity   = $this->padding["gravity"];
+/*
+        $image = new IMagick($input);
+        $mask  = new IMagick($mask);
 
+        $image->resizeImage($width, $height, IMagick::FILTER_UNDEFINED, 0);
+        $image->setGravity(IMagick::GRAVITY_NORTHWEST);
+        $image->setImageBackgroundColor('black');
+        //$image->extentImage($padWidth + 4, $padHeight + 4, 0, 0);
+        //$image->setImageExtent($padWidth + 4, $padHeight + 4);
 
-        $str = " -respect-parenthesis ( %s -resize %fx%f! -gravity %s -background black -extent %fx%f%+f%+f ) " .
+        //$image->setImageAlphaChannel(IMagick::ALPHACHANNEL_DEACTIVATE);
+        $image->writeImage($input);
+        
+        $mask->resizeImage($maskWidth * $maskScaleFactor, $maskHeight * $maskScaleFactor, IMagick::FILTER_UNDEFINED, 0);
+        //$mask->cropImage($width, $height, $maskTopLeftX, $maskTopLeftY);
+        //$mask->resetImagePage("{$width}x{$height}+0+0");
+        //$mask->setGravity(IMagick::GRAVITY_NORTHWEST);
+        //$mask->setImageBackgroundColor('black');
+        //$mask->setImageExtent($padWidth, $padHeight);
+        $mask->writeImage("/var/www/hv/cache/extracted_images/mask.png");
+        die();*/
+        $str = "convert -respect-parenthesis ( %s -resize %fx%f! -gravity %s -background black -extent %fx%f%+f%+f ) " .
                "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
-               "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite ";
+               "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite $input";
         
         $cmd = sprintf(
             $str, $input, $width, $height, $gravity, $padWidth, $padHeight, $offsetX, $offsetY, $mask, 100 * $maskScaleFactor,
             $width, $height, $maskTopLeftX, $maskTopLeftY, $gravity, $padWidth, $padHeight,
             $offsetX, $offsetY
         );
-
-        return $cmd;
+        exec(escapeshellcmd($cmd));
+        //return $cmd;
     }
 }
