@@ -100,46 +100,66 @@ abstract class Image_Tiling_Tile
 
         // Determine where the tile is located (where tile should lie in the padding)
         $gravity = null;
+        $right = $this->image->subfieldRelWidth() - $this->tileSize;
+        $down  = $right;
         if ($x == $tileMinX) {
             if ($y == $tileMinY) {
-                $gravity = "SouthEast";
+                $offsetX = $right;
+                $offsetY = $down;
+                //$gravity = "SouthEast";
             } else if ($y == $tileMaxY) {
-                $gravity = "NorthEast";
+            	$offsetX = $right;
+            	$offsetY = 0;
+                //$gravity = "NorthEast";
             } else {
-                $gravity = "East";
+            	$offsetX = $right;
+            	$offsetY = 0;
+                //$gravity = "East";
             }
         } else if ($x == $tileMaxX) {
             if ($y == $tileMinY) {
-                $gravity = "SouthWest";
+            	$offsetX = 0;
+            	$offsetY = $down;
+                //$gravity = "SouthWest";
             } else if ($y == $tileMaxY) {
-                $gravity = "NorthWest";
+            	$offsetX = 0;
+            	$offsetY = 0;
+                //$gravity = "NorthWest";
             } else {
-                $gravity = "West";
+            	$offsetX = 0;
+            	$offsetY = 0;
+                //$gravity = "West";
             }
         } else {
             if ($y == $tileMinY) {
-                $gravity = "South";
+            	$offsetX = 0;
+            	$offsetY = $down;
+                //$gravity = "South";
             } else if ($y == $tileMaxY) {
-                $gravity = "North";
+            	$offsetX = 0;
+            	$offsetY = 0;
+                //$gravity = "North";
             } else {
-                $gravity = "SouthWest";//return false;
+            	$offsetX = 0;
+            	$offsetY = $down;
+                //$gravity = "SouthWest";//return false;
             }
         }
-       
+        /*
         $reduceFactor = $this->image->reduceFactor();
         // Length of side in padded tile 
         if ($reduceFactor > 0) {
             $side = ($this->relativeTileSize / pow(2, $reduceFactor));
         } else {
             $side = $this->relativeTileSize;
-        }
+        }*/
 
         return array(
-            "gravity" => $gravity,
+            "gravity" => "NorthWest",
             "width"   => $this->tileSize,
             "height"  => $this->tileSize,
-            "offsetX" => "+0",
-            "offsetY" => "+0"
+            "offsetX" => $offsetX,
+            "offsetY" => $offsetY
         );
     }
 

@@ -85,7 +85,6 @@ class Image_SubFieldImage
         $outputFile, $offsetX, $offsetY
     ) {
         $this->outputFile = $outputFile;
-
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
         $this->roi        = $roi;
         $this->format     = $format;
@@ -112,7 +111,8 @@ class Image_SubFieldImage
     }
     
     /**
-     * Called by classes that may not have direct access to protected function buildImage
+     * Called by classes that may not have direct access to protected function buildImage.
+     * Change buildImage to buildImageNoImagick() to use command-line calls instead of imagick.
      * 
      * @return void
      */
@@ -175,6 +175,11 @@ class Image_SubFieldImage
     public function jp2RelHeight() 
     {
         return $this->jp2RelHeight;
+    }
+    
+    public function subfieldRelWidth()
+    {
+    	return $this->subfieldRelWidth;
     }
     
     public function computePadding($roi, $scale)
@@ -252,6 +257,86 @@ class Image_SubFieldImage
             // Extract region (PGM)
             $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
 
+            $image = new IMagick($grayscale);
+            $image->setImageFormat('PNG'); 
+            $image->setImageDepth(8);
+            $image->setImageType(IMagick::IMGTYPE_GRAYSCALE);
+            $image->writeImage($intermediate);
+            $image->destroy();
+
+            //Apply color-lookup table
+            //if ($this->colorTable && ($_GET["det"] != "AIA")) {
+            if ($this->colorTable) {
+                $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
+            }
+            
+            $this->getAlphaMaskCmd($intermediate);
+
+            $image = new IMagick($intermediate);
+            if ($this->format === "png")
+            {
+                //$image->setCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
+                $image->setImageInterlaceScheme(IMagick::INTERLACE_PLANE);
+                // Need to set colors to 256?
+            } else {
+            	$image->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
+            	$image->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
+            }
+
+            $image->setImageDepth(HV_BIT_DEPTH);
+
+            // Screenshots need to be resized before padding, tiles need to be resized after.
+            if (!isset($this->tileSize) && !$this->hasAlphaMask()) {
+            	$image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
+            }
+
+            if ($this->padding && !$this->hasAlphaMask()) {
+                //$image->setGravity($this->padding['imGravity']);
+                $image->setImageBackgroundColor('black');
+                // Places the current image on a larger field of black if the final image is larger than this one
+                $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
+            }
+
+            /* 
+             * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
+             * It seems that even if this particular instance of writeImage doesn't take the full time frame, if several instances of it are
+             * running PHP will complain.  
+             * 
+             * NOTE: This extra writeImage() on LASCO images adds superfluous time to execution. Need to move this or don't set compression
+             * when building movies. 
+             */
+            set_time_limit(60);
+            $image->writeImage($this->outputFile);
+            $image->destroy();
+
+            if ($this->outputFile != $intermediate) {
+                unlink($intermediate);
+            }
+
+            unlink($grayscale);
+
+        } catch(Exception $e) {
+            logErrorMsg($e->getMessage(), true);
+                      
+            //Clean-up and exit
+            $this->_abort($this->outputFile);
+        }
+    }
+    
+    /**
+     * Does the same as buildImage() but with command-line commands instead of imagick.
+     * 
+     * @return void
+     */
+    protected function buildImageNoImagick()
+    {
+            try {
+            $grayscale    = substr($this->outputFile, 0, -3) . "pgm";
+            $intermediate = substr($this->outputFile, 0, -3) . "png";
+
+            // Extract region (PGM)
+            $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
+
             // Generate GD-readable grayscale image (PNG)
             $toIntermediateCmd = HV_PATH_CMD . "convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate";
             exec(escapeshellcmd($toIntermediateCmd));
@@ -262,19 +347,15 @@ class Image_SubFieldImage
                 $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
 
-            $cmd = HV_PATH_CMD . " convert " . $this->getAlphaMaskCmd($intermediate);
+            $this->getAlphaMaskCmd($intermediate);
+            $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
 
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
 
             // Screenshots need to be resized before padding, tiles need to be resized after.
-            if (!isset($this->tileSize)) {
-            	if ($this->hasAlphaMask()) 
-            	{
-
-            	} else {
-            		$cmd .= "-resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight} ";
-            	}
+            if (!isset($this->tileSize) && !$this->hasAlphaMask()) {
+                $cmd .= "-resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight} ";
             }
 
             if ($this->padding && !$this->hasAlphaMask()) {
@@ -294,9 +375,10 @@ class Image_SubFieldImage
                 
             //var_dump($this);
             //die (escapeshellcmd("$cmd $this->outputFile"));
-//echo $cmd . "\n"; die();
+
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
+
 
             if ($ret != 0) {
                 throw new Exception("Unable to build subfield image.\n\tCommand: $cmd $this->outputFile");
@@ -310,17 +392,17 @@ class Image_SubFieldImage
 
         } catch(Exception $e) {
             logErrorMsg($e->getMessage(), true);
-            
+                      
             //Clean-up and exit
             $this->_abort($this->outputFile);
-        }
+        }    	
     }
     
     /**
      * Default behavior for images is to just add a black background.
      * LASCOImage.php has a getAlphaMaskCmd that overrides this one and applies
      * an alpha mask instead.
-     * 
+     * $this->getAlphaMaskCmd($intermediate); 
      * @param string $intermediate pgm grayscale image
      * 
      * @return string partial command for imagemagick
@@ -470,8 +552,15 @@ class Image_SubFieldImage
      *
      * @return void
      */
-    private function _setColorPalette ($input, $clut, $output)
-    {
+ /*   private function _setColorPalette ($imagickImage, $clut, $output)
+    {   
+        $ctable = new IMagick($clut);
+        $imagickImage->clutImage($ctable);
+        $ctable->destroy();
+    }*/
+    
+    private function _setColorPalette($input, $clut, $output)
+    {	
         $gd = null;
         try {
             if (file_exists($input)) {

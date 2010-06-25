@@ -258,7 +258,10 @@ class Movie_HelioviewerMovie
             . "-qmax 51 -qdiff 4 -level 30 -g 30 -async 2 " . $ipodVideoName;
 
         exec(escapeshellcmd($cmd));
-        unlink($tmpdir . $hq_filename);
+        if (file_exists($tmpdir . $hq_filename))
+        {
+            unlink($tmpdir . $hq_filename);
+        }
         return $ipodVideoName;
     }
     
@@ -295,7 +298,10 @@ class Movie_HelioviewerMovie
 
         // Clean up png/tif images that are no longer needed
         foreach ($this->_images as $image) {
-            unlink($image);     
+        	if (file_exists($image)) 
+        	{
+                unlink($image);
+        	}     
         }    	
     }
 
