@@ -45,11 +45,11 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
-            'edges'		=> false,
-            'sharpen' 	=> false,
-            'filename' 	=> "screenshot" . time(),
-            'quality' 	=> 10,
-            'display'	=> true
+            'edges'		  => false,
+            'sharpen' 	  => false,
+            'quality' 	  => 10,
+            'display'	  => true,
+            'watermarkOn' => true
         );
         $params = array_merge($defaults, $originalParams);
         
@@ -69,11 +69,17 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $imageScale, $width, $height
         );
         
+        if (isset($params['filename']))
+        {
+        	$filename = $params['filename'];
+        } else {
+        	$filename = null;
+        }
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
             $imageMeta, $options, 
-            $params['filename'] . ".png", 
-            $params['quality'],
+            $filename, 
+            $params['quality'], $params['watermarkOn'],
             array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2'])
         );
         
@@ -145,7 +151,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             throw new Exception('The requested screenshot is either unavailable or does not exist.');
         }
 
-        if ($display === true && $params == $_GET) {
+        if (($display === true || $display === "true") && $params == $_GET) {
             header('Content-type: image/png');
             echo file_get_contents($composite);
         } else if ($params == $_POST) {
