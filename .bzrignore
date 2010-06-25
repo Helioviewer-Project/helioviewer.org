@@ -23,3 +23,4 @@ error.log
 jp2
 build/css
 *.log
+php_errors.log

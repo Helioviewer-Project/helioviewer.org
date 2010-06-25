@@ -46,15 +46,16 @@ class Movie_HelioviewerMovieBuilder
     public function buildMovie($params) 
     {
         $defaults = array(
-            'numFrames' => 20,
-            'frameRate' => 8,
-            'timeStep'	=> 28800,
-            'filename'	=> "movie" . time(),
-            'sharpen'	=> false,
-            'edges'		=> false,
-            'quality'	=> 10,
-            'hqFormat'	=> "mp4",
-            'display'	=> true
+            'numFrames'   => 20,
+            'frameRate'   => 8,
+            'timeStep'	  => 28800,
+            'filename'	  => "movie" . time(),
+            'sharpen'	  => false,
+            'edges'		  => false,
+            'quality'	  => 10,
+            'hqFormat'	  => "mp4",
+            'display'	  => true,
+            'watermarkOn' => true
         );
         $this->_params = array_merge($defaults, $params);
         
@@ -151,7 +152,8 @@ class Movie_HelioviewerMovieBuilder
                 'x1' 	     => $this->_params['x1'],
                 'x2'         => $this->_params['x2'],
                 'y1'         => $this->_params['y1'],
-                'y2'         => $this->_params['y2']
+                'y2'         => $this->_params['y2'],
+                'watermarkOn'=> $this->_params['watermarkOn']
             );
 
             $image = $builder->takeScreenshot($params);
