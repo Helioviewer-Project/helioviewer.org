@@ -113,6 +113,11 @@ class Module_WebClient implements Module
      */
     public function getClosestImage ()
     {
+        // Default to localhost if no server is specified
+        if (!isset($this->_params['server'])) {
+            $this->_params['server'] = 0;
+        }
+     
         // Tile locally
         if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
             include_once 'src/Database/ImgIndex.php';
@@ -147,7 +152,11 @@ class Module_WebClient implements Module
                     throw new Exception($msg);
                 }
             } else {
-                $err = "Both local and remote tiling is disabled on the server.";
+                if ($this->_params['server'] == 0) {
+                    $err = "Both local and remote tiling is disabled on the server.";
+                } else {
+                    $err = "Remote tiling is disabled for this server.";
+                }
                 throw new Exception($err);
             }
         }
