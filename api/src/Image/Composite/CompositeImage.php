@@ -49,13 +49,11 @@ abstract class Image_Composite_CompositeImage
         $this->metaInfo   = $meta;
         $this->options    = $options;
         $this->tmpDir     = $tmpDir;
-        $this->_setOutputFile($filename);
+        $this->setOutputFile($filename);
 
-        //$this->transImageDir = HV_CACHE_DIR . "/transparent_images/";
         $this->compositeImageDir = HV_CACHE_DIR . "/composite_images/";
         
         $this->makeDirectory($this->tmpDir);
-        //$this->makeDirectory($this->transImageDir);
         $this->makeDirectory($this->compositeImageDir);
     }
     
@@ -91,7 +89,16 @@ abstract class Image_Composite_CompositeImage
                 $this->composite = $this->_buildComposite();
             } else {
                 // Otherwise, the image has one layer and just needs to be watermarked.
-                $this->composite = $this->_watermark($this->layerImages[0]);
+                $imagickImage = new IMagick($this->layerImages[0]->getFilePathString());
+                $output = $this->tmpDir . "/$this->outputFile";
+
+                if ($this->watermarkOn === true || $this->watermarkOn === "true")
+                {
+                    $this->_watermark($imagickImage);
+                }
+                $this->_finalizeImage($imagickImage, $output);
+            
+                $this->composite = $output; 
             }
             //Optional settings
             /*if ($this->options['enhanceEdges'] == "true") {
@@ -123,18 +130,49 @@ abstract class Image_Composite_CompositeImage
      *
      * @param CompositeImageLayer $imageLayer A built CompositeImageLayer
      *
-     * @return string $image The filepath to the watermarked image
+     * @return void
      */
-    private function _watermark($imageLayer)
+    private function _watermark($imagickImage)
     {
-        $watermark 	 = HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png";
+        $watermark 	 = new IMagick(HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png");
         $imageWidth  = $this->metaInfo->width();
-        $image 		 = $imageLayer->getFilePathString();
-        /** Watermarking Disabled temporarily **/
-        /*     
+        $imageHeight = $this->metaInfo->height();
+        //$image 		 = $imageLayer->getFilePathString();
+        $output      = $this->tmpDir . "/$this->outputFile";
+        //$imagickImage = new IMagick($image);
+
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if ($imageWidth / 300 < 2) {
-            $watermark = $this->_waterMarkSmall($imageWidth);
+            $watermark->readImage(HV_ROOT_DIR . "/api/resources/images/watermark_circle_small.png");
+            $scale = ($imageWidth / 2) / 300;
+            $width = $watermark->getImageWidth();
+            $watermark->scaleImage($width * $scale, $width * $scale);     
+        }
+        
+        // For whatever reason, compositeImage() doesn't carry over gravity settings so the offsets must
+        // be relative to the top left corner of the image rather than the desired gravity. 
+        $x = $imageWidth  - $watermark->getImageWidth()  - 10;
+        $y = $imageHeight - $watermark->getImageHeight() - 10;
+        $imagickImage->compositeImage($watermark, IMagick::COMPOSITE_DISSOLVE, $x, $y);
+        
+        // If the image is too small, text won't fit. Don't put a timestamp on it. 
+        if ($imageWidth > 235) {
+            $this->addWaterMarkText($imagickImage);
+        }
+    }
+    
+    private function _watermarkNoImagick($imageLayer)
+    {
+        $watermark   = HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png";
+        $imageWidth  = $this->metaInfo->width();
+        $imageHeight = $this->metaInfo->height();
+        $image       = $imageLayer->getFilePathString();
+        
+        /** Watermarking Disabled temporarily **/
+          
+        // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
+        if ($imageWidth / 300 < 2) {
+            $watermark = $this->_watermarkSmall($imageWidth);
         }
 
         exec(escapeshellcmd(HV_PATH_CMD . " composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image));
@@ -144,12 +182,12 @@ abstract class Image_Composite_CompositeImage
             return $image;
         }
 
-        $cmd = HV_PATH_CMD . "convert " . $image . " -gravity SouthWest" . $this->getWaterMarkText();
-        $cmd .= " -type TrueColor -alpha off " . $image;
+        $cmd = HV_PATH_CMD . "convert " . $image . " -gravity SouthWest" . $this->addWaterMarkTextNoImagick();
+        $cmd .= " -type TrueColor -alpha off -colors 256 -depth 8 " . $image;
 
         exec(escapeshellcmd($cmd));
-        */
-        return $image;
+
+        return $image;    	
     }
     
     /**
@@ -164,6 +202,7 @@ abstract class Image_Composite_CompositeImage
         $watermark = HV_ROOT_DIR . "/api/resources/images/watermark_circle_small.png";
 
         $scale = ($imageWidth * 100 / 2) / 300;
+
         $resize = HV_PATH_CMD . "convert -scale " . $scale . "% " . $watermark . " " . $this->compositeImageDir . "watermark_scaled.png";
         exec(escapeshellcmd($resize));
         return $this->compositeImageDir . "watermark_scaled.png";
@@ -179,26 +218,27 @@ abstract class Image_Composite_CompositeImage
      * 
      * @return void
      */
-    private function _setOutputFile($filename)
+    protected function setOutputFile($filename)
     {
         if (file_exists($this->tmpDir . "/" . $filename)) {
-            $filename = substr($filename, 0, -4) . "_.png";
-            $this->_setOutputFile($filename);
+            $filename = substr($filename, 0, -4) . "_.jpg";
+            $this->setOutputFile($filename);
         }
         else
             $this->outputFile = $filename;
     }
-
+    
     /**
-     * Composites the layers on top of each other after putting them in the proper order.
+     * Does the same as _buildComposite() but with command-line calls rather than
+     * using imagick.
      * 
-     * @return string Filepath to the composited, watermarked image
+     * @return string Filepath to the composited image.
      */
-    private function _buildComposite()
+    private function _buildCompositeNoImagick()
     {
-        $sortedImages 	= $this->_sortByLayeringOrder($this->layerImages);
-        $tmpImg 		= $this->tmpDir . "/" . $this->outputFile;
-        $filesToDelete 	= array();
+        $sortedImages   = $this->_sortByLayeringOrder($this->layerImages);
+        $tmpImg         = $this->tmpDir . "/" . $this->outputFile;
+        $filesToDelete  = array();
 
         $cmd = HV_PATH_CMD . "composite -gravity Center";
 
@@ -207,7 +247,7 @@ abstract class Image_Composite_CompositeImage
             $opacity = $image->opacity();
             // If the image has an opacity level of less than 100, need to set its opacity.
             if ($opacity < 100) {
-                $file 	  = $image->getFilePathString();
+                $file     = $image->getFilePathString();
                 $tmpOpImg = substr($file, 0, -4) . "-op" . $opacity . ".tif";
 
                 $opacityCmd = HV_PATH_CMD . "convert $file -alpha on -channel o -evaluate set $opacity% $tmpOpImg";
@@ -223,12 +263,12 @@ abstract class Image_Composite_CompositeImage
             // compositing the last composite image and the current image.
             if ($layerNum > 1 && isset($sortedImages[$layerNum])) {
                 $tmpCompImg = $this->tmpDir . "/" . time() . "-comp.tif";
+                
                 $cmd .= " -compose dst-over $tmpCompImg && composite -gravity Center $tmpCompImg";
                 array_push($filesToDelete, $tmpCompImg);
             }
             $layerNum++;
         }
-
         $cmd .= " -compose dst-over -depth 8 -quality 10 " . $tmpImg;
 
         try {
@@ -241,7 +281,7 @@ abstract class Image_Composite_CompositeImage
                 }
             }
 
-            exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off $tmpImg"), $out, $ret);
+            exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off -colors 256 -depth 8 $tmpImg"), $out, $ret);
             if ($ret != 0) {
                 throw new Exception("Error turning alpha channel off on $tmpImg.");
             }
@@ -254,7 +294,68 @@ abstract class Image_Composite_CompositeImage
         $image->setNewFilePath($tmpImg);
         
         $this->_cleanUp($filesToDelete);
-        return $this->_watermark($image);
+        return $this->_watermark($image);    	
+    }
+
+    /**
+     * Composites the layers on top of each other after putting them in the proper order.
+     * 
+     * @return string Filepath to the composited, watermarked image
+     */
+    private function _buildComposite()
+    {
+        $sortedImages 	= $this->_sortByLayeringOrder($this->layerImages);
+        $tmpImg 		= $this->tmpDir . "/" . $this->outputFile;
+
+        $layerNum = 1;
+        $imagickImage = false;
+        foreach ($sortedImages as $image) {
+        	$previous = $imagickImage;
+        	$imagickImage = new IMagick($image->getFilePathString());
+            $opacity = $image->opacity();
+            
+            // If the image has an opacity level of less than 100, need to set its opacity.
+            if ($opacity < 100) {          
+                $imagickImage->setImageOpacity($opacity / 100);
+            }
+
+            // If $previous exists, then the images need to be composited. For memory purposes, 
+            // destroy $previous when done with it. 
+            if ($previous) { 
+                $imagickImage->compositeImage($previous, IMagick::COMPOSITE_DSTOVER, 0, 0);
+                $previous->destroy();
+            }
+            $layerNum++;
+        }
+        
+        try {
+        	if ($this->watermarkOn === true || $this->watermarkOn === "true")
+        	{
+        	   $this->_watermark($imagickImage);
+        	}
+            $this->_finalizeImage($imagickImage, $tmpImg);
+            
+            if (!file_exists($tmpImg)) {
+                throw new Exception("Error turning alpha channel off on $tmpImg.");
+            }
+        }
+        catch(Exception $e) {
+            logErrorMsg($e->getMessage(), true);
+        }
+        return $tmpImg;
+    }
+    
+    private function _finalizeImage($imagickImage, $output)
+    {
+    	$imagickImage->setImageFormat('JPG');
+    	$imagickImage->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
+        $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
+        $imagickImage->setBackgroundColor('black');
+        $imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
+        $imagickImage->setImageDepth(8);
+        $imagickImage->quantizeImage(256, IMagick::COLORSPACE_RGB, 256, false, false);
+        $imagickImage->writeImage($output);
+        $imagickImage->destroy();
     }
     
     /**
