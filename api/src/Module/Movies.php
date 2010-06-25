@@ -72,9 +72,9 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startDate', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"    => array('startDate'),
-                "ints"     => array('numFrames, frameRate, timeStep, quality'),
+                "required" => array('startDate', 'endDate', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "dates"    => array('startDate', 'endDate'),
+                "ints"     => array('frameRate', 'quality'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
             );
             break;

@@ -25,6 +25,9 @@ require_once 'HelioviewerScreenshot.php';
  */
 class Image_Screenshot_HelioviewerScreenshotBuilder
 {
+	protected $maxWidth  = 1920;
+	protected $maxHeight = 1080;
+	
     /**
      * Does not require any parameters or setup.
      */
@@ -56,6 +59,15 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         $imageScale = $params['imageScale'];
         $width  	= ($params['x2'] - $params['x1']) / $imageScale;
         $height 	= ($params['y2'] - $params['y1']) / $imageScale;
+        
+        // Limit to maximum dimensions
+        if ($width > $this->maxWidth || $height > $this->maxHeight)
+        {
+        	$scaleFactor = min($this->maxWidth / $width, $this->maxHeight / $height);
+        	$width      *= $scaleFactor;
+        	$height     *= $scaleFactor;
+        	$imageScale /= $scaleFactor;
+        }
         
         $options = array(
             'enhanceEdges'	=> $params['edges'] || false,
