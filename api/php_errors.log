@@ -30838,3 +30838,67 @@
 [25-Jun-2010 17:30:10] PHP   4. Module_WebClient->takeScreenshot() /var/www/hv/api/src/Module/WebClient.php:51
 [25-Jun-2010 17:30:10] PHP   5. Image_Screenshot_HelioviewerScreenshotBuilder->takeScreenshot() /var/www/hv/api/src/Module/WebClient.php:320
 [25-Jun-2010 17:30:10] PHP   6. Image_Screenshot_HelioviewerScreenshot->buildImages() /var/www/hv/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php:86
+[25-Jun-2010 14:43:17] PHP Notice:  Undefined variable: imageScale in /var/www/hv/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php on line 152
+[25-Jun-2010 14:43:17] PHP Stack trace:
+[25-Jun-2010 14:43:17] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 14:43:17] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 14:43:17] PHP   3. Module_WebClient->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 14:43:17] PHP   4. Module_WebClient->takeScreenshot() /var/www/hv/api/src/Module/WebClient.php:51
+[25-Jun-2010 14:43:17] PHP   5. Image_Screenshot_HelioviewerScreenshotBuilder->takeScreenshot() /var/www/hv/api/src/Module/WebClient.php:320
+[25-Jun-2010 14:43:17] PHP   6. Image_Screenshot_HelioviewerScreenshotBuilder->_scaleImageDimensions() /var/www/hv/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php:65
+[25-Jun-2010 15:27:45] PHP Parse error:  syntax error, unexpected '[' in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 188
+[25-Jun-2010 15:27:45] PHP Stack trace:
+[25-Jun-2010 15:27:45] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:27:45] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:27:45] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:27:45] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:28:12] PHP Notice:  Undefined property: Movie_HelioviewerMovieBuilder::$maxWidth in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 67
+[25-Jun-2010 15:28:12] PHP Stack trace:
+[25-Jun-2010 15:28:12] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:28:12] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:28:12] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:28:12] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:28:12] PHP   5. Movie_HelioviewerMovieBuilder->buildMovie() /var/www/hv/api/src/Module/Movies.php:140
+[25-Jun-2010 15:28:12] PHP Notice:  Undefined property: Movie_HelioviewerMovieBuilder::$maxWidth in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 69
+[25-Jun-2010 15:28:12] PHP Stack trace:
+[25-Jun-2010 15:28:12] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:28:12] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:28:12] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:28:12] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:28:12] PHP   5. Movie_HelioviewerMovieBuilder->buildMovie() /var/www/hv/api/src/Module/Movies.php:140
+[25-Jun-2010 15:28:12] PHP Notice:  Undefined property: Movie_HelioviewerMovieBuilder::$maxHeight in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 69
+[25-Jun-2010 15:28:12] PHP Stack trace:
+[25-Jun-2010 15:28:12] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:28:12] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:28:12] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:28:12] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:28:12] PHP   5. Movie_HelioviewerMovieBuilder->buildMovie() /var/www/hv/api/src/Module/Movies.php:140
+[25-Jun-2010 15:28:12] PHP Warning:  Division by zero in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 72
+[25-Jun-2010 15:28:12] PHP Stack trace:
+[25-Jun-2010 15:28:12] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:28:12] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:28:12] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:28:12] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:28:12] PHP   5. Movie_HelioviewerMovieBuilder->buildMovie() /var/www/hv/api/src/Module/Movies.php:140
+[25-Jun-2010 15:28:12] PHP Notice:  Undefined index: endDate in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 91
+[25-Jun-2010 15:28:12] PHP Stack trace:
+[25-Jun-2010 15:28:12] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:28:12] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:28:12] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:28:12] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:28:12] PHP   5. Movie_HelioviewerMovieBuilder->buildMovie() /var/www/hv/api/src/Module/Movies.php:140
+[25-Jun-2010 15:28:41] PHP Notice:  Undefined index: endDate in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 93
+[25-Jun-2010 15:28:41] PHP Stack trace:
+[25-Jun-2010 15:28:41] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:28:41] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:28:41] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:28:41] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:28:41] PHP   5. Movie_HelioviewerMovieBuilder->buildMovie() /var/www/hv/api/src/Module/Movies.php:140
+[25-Jun-2010 15:30:16] PHP Fatal error:  Class 'ImgIndex' not found in /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php on line 184
+[25-Jun-2010 15:30:16] PHP Stack trace:
+[25-Jun-2010 15:30:16] PHP   1. {main}() /var/www/hv/api/index.php:0
+[25-Jun-2010 15:30:16] PHP   2. loadModule() /var/www/hv/api/index.php:31
+[25-Jun-2010 15:30:16] PHP   3. Module_Movies->execute() /var/www/hv/api/index.php:1318
+[25-Jun-2010 15:30:16] PHP   4. Module_Movies->buildMovie() /var/www/hv/api/src/Module/Movies.php:60
+[25-Jun-2010 15:30:16] PHP   5. Movie_HelioviewerMovieBuilder->buildMovie() /var/www/hv/api/src/Module/Movies.php:140
+[25-Jun-2010 15:30:16] PHP   6. Movie_HelioviewerMovieBuilder->_determineOptimalCadence() /var/www/hv/api/src/Movie/HelioviewerMovieBuilder.php:93

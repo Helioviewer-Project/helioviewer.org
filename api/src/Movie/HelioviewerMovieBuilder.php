@@ -28,7 +28,9 @@ require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
 class Movie_HelioviewerMovieBuilder
 {
     private $_params;
-    
+    protected $maxNumFrames = 120;
+    protected $maxWidth  = 1920;
+    protected $maxHeight = 1080;
     /**
      * Does not require any parameters or setup.
      */
@@ -61,8 +63,17 @@ class Movie_HelioviewerMovieBuilder
         
         $imageScale = $params['imageScale'];
         $width      = ($params['x2'] - $params['x1']) / $imageScale;
-        $height     = ($params['y2'] - $params['y1']) / $imageScale;   
+        $height     = ($params['y2'] - $params['y1']) / $imageScale;  
 
+        // Limit to maximum dimensions
+        if ($width > $this->maxWidth || $height > $this->maxHeight)
+        {
+            $scaleFactor = min($this->maxWidth / $width, $this->maxHeight / $height);
+            $width      *= $scaleFactor;
+            $height     *= $scaleFactor;
+            $imageScale /= $scaleFactor;
+        }
+        
         $options 	= array(
             'enhanceEdges'	=> $this->_params['edges'],
             'sharpen' 		=> $this->_params['sharpen']
@@ -79,28 +90,32 @@ class Movie_HelioviewerMovieBuilder
                 throw new Exception($msg);
             }
             
-            $numFrames = $this->_params['numFrames'];
+            $numFrames = $this->_determineOptimalNumFrames($layers, $this->_params['startDate'], $this->_params['endDate']);
+
+            //$numFrames = min($this->_params['numFrames'], $this->maxNumFrames);
             $startDate = toUnixTimestamp($this->_params['startDate']);
-            $timeStep  = $this->_params['timeStep'];
+            $endDate   = toUnixTimestamp($this->_params['endDate']);
+            $cadence   = $this->_determineOptimalCadence($startDate, $endDate, $numFrames);
+            //$timeStep  = $this->_params['timeStep'];
             
             //Limit number of frames
-            if (($numFrames < 10) || ($numFrames > HV_MAX_MOVIE_FRAMES)) {
+            /*if (($numFrames < 10) || ($numFrames > HV_MAX_MOVIE_FRAMES)) {
                 $msg = "Invalid number of frames. Number of frames should be " .
                 "at least 10 and no more than " . HV_MAX_MOVIE_FRAMES . ".";
                 throw new Exception($msg);
-            }
+            }*/
 
             $movie = new Movie_HelioviewerMovie(
                 $startDate, $numFrames,
                 $this->_params['frameRate'],
                 $this->_params['hqFormat'],
-                $options, $timeStep,
+                $options, $cadence,
                 $this->_params['filename'],
                 $this->_params['quality'],
                 $movieMeta
             );
         
-            $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startDate, $timeStep, $numFrames);
+            $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startDate, $cadence, $numFrames);
             $url 	= $movie->buildMovie($images);
             
             return $this->_displayMovie($url, $movie, $params, $this->_params['display']);
@@ -161,6 +176,29 @@ class Movie_HelioviewerMovieBuilder
         }
         
         return $images;
+    }
+    
+    private function _determineOptimalNumFrames($layers, $startDate, $endDate)
+    {
+    	include_once HV_ROOT_DIR . "/api/src/Database/ImgIndex.php";
+    	//$isoStart = toISOString(parseUnixTimestamp($startDate));
+    	//$isoEnd   = toISOString(parseUnixTimestamp($endDate));
+    	$imgIndex = new Database_ImgIndex();
+    	
+    	$totalInRange = 0;
+    	
+    	foreach ($layers as $layer)
+    	{
+    		$layerInfo = explode(",", $layer);
+    		$totalInRange += $imgIndex->getImageCount($startDate, $endDate, $layerInfo[0]);
+    	}
+
+    	return min($totalInRange / sizeOf($layers), $this->maxNumFrames);
+    }
+    
+    private function _determineOptimalCadence($startDate, $endDate, $numFrames)
+    {
+    	return ($endDate - $startDate) / $numFrames;
     }
     
     /**
