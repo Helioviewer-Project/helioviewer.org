@@ -182,7 +182,7 @@ if (!(isset($params) && loadModule($params))) {
 
 <br />
 
-<!-- Image API -->
+<!-- Tiling API -->
 <div id="TilingAPI">
     <h1>3. Tiling API:</h1>
     <p>Requesting a tile image in Helioviewer.org occurs in two steps. During the first step the user specifies the
@@ -229,23 +229,10 @@ if (!(isset($params) && loadModule($params))) {
                     <tr>
                         <td><b>sourceId</b></td>
                         <td><i>Integer</i></td>
-                        <td>[Optional] The image data source identifier.</td>
+                        <td><i>[Optional]</i> The image data source identifier.</td>
                     </tr>
                 </tbody>
             </table>
-            
-            <!-- Closest Image API Notes -->
-            <div class="summary-box" style="background-color: #E3EFFF;">
-            <span style="text-decoration: underline;">Notes:</span>
-            <br />
-            <br />
-            <ul>
-                <li>
-                <p>At least one of the methods for specifying the image source, either a sourceId or the image 
-                observatory, instrument, detector and measurement must be included in the request. </p>
-                </li>
-            </ul>
-            </div>
             
             <br /><br />
     
@@ -299,17 +286,39 @@ if (!(isset($params) && loadModule($params))) {
             
             <br />
     
-            <span class="example-header">Example:</span> <span class="example-url">
-            <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=0&sourceId=3">
-               <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=0&sourceId=3
-            </a>
+            <span class="example-header">Examples:</span> <span class="example-url">
+                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
+                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
+                </a>
+                <br /><br />
+                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3">
+                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3
+                </a>
             </span>
+            
         </div>
+
+        <br />
+        
+        <!-- Closest Image API Notes -->
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <span style="text-decoration: underline;">Notes:</span>
+        <br />
+        <ul>
+            <li>
+            <p>At least one of the methods for specifying the image source, either a sourceId or the image 
+            observatory, instrument, detector and measurement must be included in the request. </p>
+            </li>
+        </ul>
+        </div>
+        
         </li>
         
         <!-- Tile API -->
     </ol>
 </div>
+
+<br />
 
 <!-- Feature/Event API -->
 <div id="FeatureEventAPI">
@@ -648,11 +657,6 @@ if (!(isset($params) && loadModule($params))) {
                     measurement parameters).</td>
                 </tr>
                 <tr>
-                    <td><b>getJPIP</b></td>
-                    <td><i>Boolean</i></td>
-                    <td><b style="color: red;">[Deprecated]</b> Old-style way of specifying that a JPIP URL should be returned.</td>
-                </tr>
-                <tr>
                     <td><b>jpip</b></td>
                     <td><i>Boolean</i></td>
                     <td><i>[Optional]</i> Returns a JPIP URI instead of an actual image.</td>
@@ -803,7 +807,7 @@ if (!(isset($params) && loadModule($params))) {
 
         <br />
 
-        <span class="example-header">Example:</span>
+        <span class="example-header">Examples:</span>
         <span class="example-url">
         <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
             <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
@@ -1051,7 +1055,7 @@ if (!(isset($params) && loadModule($params))) {
 
 		<br />
 		
-        <span class="example-header">Example:</span>
+        <span class="example-header">Examples:</span>
         <span class="example-url">
         <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
             <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
@@ -1063,7 +1067,7 @@ if (!(isset($params) && loadModule($params))) {
         </a>
         </span><br />
         <span class="example-url">
-        IPod Video:<br />
+        <i>iPod Video:</i><br /><br />
         <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false">
             <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false
         </a>

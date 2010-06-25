@@ -97,7 +97,7 @@ class Module_JHelioviewer implements Module
 
         $filepath = HV_JP2_DIR . $relativePath;
 
-        if ($this->_params['jpip'] || $this->_params['getJPIP']) {
+        if ($this->_params['jpip']) {
             echo $this->_getJPIPURL($filepath);
         } else {
             $this->_displayJP2($filepath);
@@ -166,8 +166,8 @@ class Module_JHelioviewer implements Module
             $this->_params['endTime'], $this->_params['cadence'], $this->_params['linked']
         );
 
-        // Support deprecated style
-        if ($this->_params['getJPIP'] || $this->_params['jpip']) {
+        // JPIP URL
+        if ($this->_params['jpip']) {
             $jpip = true;
         } else {
             $jpip = false;
@@ -196,7 +196,7 @@ class Module_JHelioviewer implements Module
         {
         case 'getJP2Image':
             $expected = array(
-               'bools' => array('jpip', 'getJPIP'),
+               'bools' => array('jpip'),
                'dates' => array('date')
             );
 
@@ -212,7 +212,7 @@ class Module_JHelioviewer implements Module
             $expected = array(
                 'required' => array('startTime', 'endTime'),
                 'optional' => array('sourceId', 'cadence'),
-                'bools'    => array('jpip', 'getJPIP', 'frames', 'verbose', 'linked'),
+                'bools'    => array('jpip', 'frames', 'verbose', 'linked'),
                 'dates'    => array('startTime', 'endTime'),
                 'ints'     => array('cadence')
             );
