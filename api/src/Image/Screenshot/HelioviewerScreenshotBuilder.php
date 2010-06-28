@@ -25,6 +25,9 @@ require_once 'HelioviewerScreenshot.php';
  */
 class Image_Screenshot_HelioviewerScreenshotBuilder
 {
+	protected $maxWidth  = 1920;
+	protected $maxHeight = 1080;
+	
     /**
      * Does not require any parameters or setup.
      */
@@ -56,6 +59,15 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         $imageScale = $params['imageScale'];
         $width  	= ($params['x2'] - $params['x1']) / $imageScale;
         $height 	= ($params['y2'] - $params['y1']) / $imageScale;
+        
+        // Limit to maximum dimensions
+        if ($width > $this->maxWidth || $height > $this->maxHeight)
+        {
+        	$scaleFactor = min($this->maxWidth / $width, $this->maxHeight / $height);
+        	$width      *= $scaleFactor;
+        	$height     *= $scaleFactor;
+        	$imageScale /= $scaleFactor;
+        }
         
         $options = array(
             'enhanceEdges'	=> $params['edges'] || false,
@@ -114,22 +126,20 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         foreach ($layerStrings as $layer) {
             $layerArray = explode(",", $layer);
             if (sizeOf($layerArray) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
+                list($observatory, $instrument, $detector, $measurement, $opacity) = $layerArray;
                 $sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
             } else {
-                list($sourceId, $visible, $opacity) = $layerArray;
+                list($sourceId, $opacity) = $layerArray;
             }
-            
-            if ($visible) {     
-                $layerInfoArray = array(
-                    'sourceId' 	 => $sourceId,
-                    'width' 	 => $width,
-                    'height'	 => $height,
-                    'imageScale' => $imageScale,
-                    'opacity'	 => $opacity
-                );
-                array_push($metaArray, $layerInfoArray);
-            }
+                
+            $layerInfoArray = array(
+                'sourceId' 	 => $sourceId,
+                'width' 	 => $width,
+                'height'	 => $height,
+                'imageScale' => $imageScale,
+                'opacity'	 => $opacity
+            );
+            array_push($metaArray, $layerInfoArray);
         }
 
         return $metaArray;
