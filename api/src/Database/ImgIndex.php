@@ -70,8 +70,8 @@ class Database_ImgIndex
         $datestr = isoDateToMySQL($date);
 
         // Search left and right side of image database B-Tree separately
-        $lhs = sprintf("SELECT id, filepath, filename, date FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
-        $rhs = sprintf("SELECT id, filepath, filename, date FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
+        $lhs = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
+        $rhs = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
 
         //die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
 
@@ -94,9 +94,6 @@ class Database_ImgIndex
             $source = $result["name"];
             throw new Exception("No images of the requested type ($source) were found in the database.");
         }
-
-        // Fix types
-        $img["id"]  = (int) $img["id"];
 
         return $img;
     }
@@ -167,7 +164,6 @@ class Database_ImgIndex
                 "scale"      => (float) $xmlBox->getImagePlateScale(),
                 "width"      => (int) $dimensions[0],
                 "height"     => (int) $dimensions[1],
-                "rotated"    => (bool) $xmlBox->getImageRotationStatus(),
                 "sunCenterX" => (float) $center[0],
                 "sunCenterY" => (float) $center[1],
             );
