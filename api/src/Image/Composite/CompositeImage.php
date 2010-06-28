@@ -355,7 +355,7 @@ abstract class Image_Composite_CompositeImage
         $imagickImage->setBackgroundColor('black');
         $imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
         $imagickImage->setImageDepth(8);
-        $imagickImage->quantizeImage(256, IMagick::COLORSPACE_RGB, 256, false, false);
+        //$imagickImage->quantizeImage(256, IMagick::COLORSPACE_RGB, 256, false, false); // Takes too long and doesn't do much.
         $imagickImage->writeImage($output);
         $imagickImage->destroy();
     }
