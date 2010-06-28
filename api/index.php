@@ -149,7 +149,7 @@ function printAPIDocumentation()
     <!-- Overview -->
     <div id="Overview">
     
-        <h1>1. Overview</h1>
+        <h1>Overview</h1>
         <p>In order to facilitate third-party application developers who wish to use content from and interact with
         Helioviewer.org, a number of <abbr title="Application Programming Interface">APIs</abbr> have been developed,
         offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
@@ -203,7 +203,7 @@ function printDocumentationAppendices()
 ?>
 <!-- Appendices -->
     <div id="Appendices">
-    <h1>7. Appendices:</h1>
+    <h1>Appendices:</h1>
     <p></p>
     <ol style="list-style-type: upper-latin;">
         <!-- Appendix A: Identifiers -->

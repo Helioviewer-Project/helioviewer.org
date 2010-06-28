@@ -479,8 +479,14 @@ class Module_WebClient implements Module
      */
     public static function printDocHeader() {
 ?>
-    <li><a href="index.php#CustomView">Loading a Custom View</a></li>
-    <li><a href="index.php#TilingAPI">Tiling API</a></li>
+    <li><a href="index.php#CustomView">Loading Custom Settings</a></li>
+    <li>
+        <a href="index.php#TilingAPI">Tiling</a>
+        <ul>
+            <li><a href="index.php#getClosestImage">Finding Images</a></li>
+            <li><a href="index.php#getTile">Creating Tiles</a></li>
+        </ul>
+    </li>
 <?php
     }
     
@@ -492,10 +498,11 @@ class Module_WebClient implements Module
     public static function printDoc()
     {
         $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+        $rootURL = substr($baseURL, 0, -13) . "index.php?";
 ?>
 <!-- Custom View API-->
 <div id="CustomView">
-    <h1>2. Custom View API:</h1>
+    <h1>Custom View API:</h1>
     <p>The custom view API enables the user to load a specific set of parameters into Helioviewer: "view," here, simply
     means a given set of observation parameters. This is useful for dynamically loading a specific view or observation
     into Helioviewer using a URL.</p>
@@ -504,7 +511,8 @@ class Module_WebClient implements Module
         <span style="text-decoration: underline;">Usage:</span>
         <br />
         <br />
-        http://www.helioviewer.org/index.php<br />
+        <?php echo $rootURL; ?>
+        <br />
         <br />
 
         Supported Parameters:<br />
@@ -535,8 +543,8 @@ class Module_WebClient implements Module
         <br />
 
         <span class="example-header">Example:</span> <span class="example-url">
-        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
-           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+        <a href="<?php echo $rootURL;?>date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+           <?php echo $rootURL;?>date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
         </a>
         </span>
     </div>
@@ -546,7 +554,7 @@ class Module_WebClient implements Module
 
 <!-- Tiling API -->
 <div id="TilingAPI">
-    <h1>3. Tiling API:</h1>
+    <h1>Tiling API:</h1>
     <p>Requesting a tile image in Helioviewer.org occurs in two steps. During the first step the user specifies the
     parameters of the image they are interested in tiling including the date, observatory, instrument, detector, 
     measurement. Alternatively, if the sourceId for the desired data source is already known that can be used

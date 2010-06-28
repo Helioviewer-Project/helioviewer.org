@@ -178,8 +178,8 @@ class Module_Movies implements Module
     <li>
         <a href="index.php#MovieAPI">Movie and Screenshot API</a>
         <ul>
-            <li><a href="index.php#takeScreenshot">Screenshot API</a></li>
-            <li><a href="index.php#buildMovie">Movie API</a></li>
+            <li><a href="index.php#takeScreenshot">Creating Screenshots</a></li>
+            <li><a href="index.php#buildMovie">Creating Movies</a></li>
         </ul>
     </li>
 <?php
@@ -196,7 +196,7 @@ class Module_Movies implements Module
 ?>
 <!-- Movie and Screenshot API -->
 <div id="MovieAPI">
-    <h1>6. Movie and Screenshot API:</h1>
+    <h1>Movie and Screenshot API:</h1>
     <p>The movie and screenshot API allows users to download images or time-lapse videos of what they are viewing on the website. </p>
     <ol style="list-style-type: upper-latin;">
         <!-- Screenshot API -->
