@@ -58,16 +58,6 @@ class Module_JHelioviewer implements Module
     }
 
     /**
-     * Prints JHelioviewer module documentation
-     *
-     * @return void
-     */
-    public static function printDoc()
-    {
-
-    }
-
-    /**
      * Finds the best match for a single JPEG 2000 image and either prints a link to it or displays
      * it directly.
      *
@@ -97,7 +87,7 @@ class Module_JHelioviewer implements Module
 
         $filepath = HV_JP2_DIR . $relativePath;
 
-        if ($this->_params['jpip'] || $this->_params['getJPIP']) {
+        if ($this->_params['jpip']) {
             echo $this->_getJPIPURL($filepath);
         } else {
             $this->_displayJP2($filepath);
@@ -166,8 +156,8 @@ class Module_JHelioviewer implements Module
             $this->_params['endTime'], $this->_params['cadence'], $this->_params['linked']
         );
 
-        // Support deprecated style
-        if ($this->_params['getJPIP'] || $this->_params['jpip']) {
+        // JPIP URL
+        if ($this->_params['jpip']) {
             $jpip = true;
         } else {
             $jpip = false;
@@ -196,7 +186,7 @@ class Module_JHelioviewer implements Module
         {
         case 'getJP2Image':
             $expected = array(
-               'bools' => array('jpip', 'getJPIP'),
+               'bools' => array('jpip'),
                'dates' => array('date')
             );
 
@@ -212,7 +202,7 @@ class Module_JHelioviewer implements Module
             $expected = array(
                 'required' => array('startTime', 'endTime'),
                 'optional' => array('sourceId', 'cadence'),
-                'bools'    => array('jpip', 'getJPIP', 'frames', 'verbose', 'linked'),
+                'bools'    => array('jpip', 'frames', 'verbose', 'linked'),
                 'dates'    => array('startTime', 'endTime'),
                 'ints'     => array('cadence')
             );
@@ -228,6 +218,270 @@ class Module_JHelioviewer implements Module
 
         return true;
     }
-}
 
+    /**
+     * Prints the JHelioviewer module's documentation header
+     */
+    public static function printDocHeader() {
+?>
+    <li>
+        <a href="index.php#JPEG2000API">JPEG 2000 API</a>
+        <ul>
+            <li><a href="index.php#getJP2Image">Image API</a></li>
+            <li><a href="index.php#getJPX">JPX API</a></li>
+        </ul>
+    </li>
+<?php     
+    }
+
+
+    /**
+     * Prints JHelioviewer module documentation
+     *
+     * @return void
+     */
+    public static function printDoc()
+    {
+        $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+?>
+<!-- JPEG 2000 API -->
+<div id="JPEG2000API">
+    <h1>5. JPEG 2000 API:</h1>
+    <p>Helioviewer's JPEG 2000 API's enable access to the raw JPEG 2000 images used to generate the tiles seen on the
+    site, as well as real-time generation of JPEG 2000 Image Series (JPX).</p>
+    <ol style="list-style-type: upper-latin;">
+        <!-- JPEG 2000 Image API -->
+        <li>
+        <div id="getJP2Image">JP2 Images:
+        <p>Returns a single JPEG 2000 (JP2) image. If an image is not available for the date request the closest
+        available image is returned.</p>
+
+        <br />
+
+        <div class="summary-box"><span
+            style="text-decoration: underline;">Usage:</span><br />
+        <br />
+
+        <?php echo $baseURL;?>?action=getJP2Image<br />
+        <br />
+
+        Supported Parameters:<br />
+        <br />
+
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="25%"><b>observatory</b></td>
+                    <td width="35%"><i>String</i></td>
+                    <td>Observatory</td>
+                </tr>
+                <tr>
+                    <td><b>instrument</b></td>
+                    <td><i>String</i></td>
+                    <td>Instrument</td>
+                </tr>
+                <tr>
+                    <td><b>detector</b></td>
+                    <td><i>String</i></td>
+                    <td>Detector</td>
+                </tr>
+                <tr>
+                    <td><b>measurement</b></td>
+                    <td><i>String</i></td>
+                    <td>Measurement</td>
+                </tr>
+                <tr>
+                    <td><b>date</b></td>
+                    <td><i>ISO 8601 UTC Date</i></td>
+                    <td>Observation date and time</td>
+                </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
+                <tr>
+                    <td><b>jpip</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Returns a JPIP URI instead of an actual image.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+
+        <span class="example-header">Examples:</span>
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;date=2003-10-05T00:00:00Z">
+        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z
+        </a>
+        </span><br />
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
+        <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
+        </a>
+        </span>
+        </div>
+        </div>
+        </li>
+
+        <br />
+
+        <!-- JPX API -->
+        <li>
+        <div id="getJPX">JPX API
+        <p>Returns a JPEG 2000 Image Series (JPX) file. The movie frames are chosen by matching the closest image
+        available at each step within the specified range of dates.</p>
+
+        <br />
+
+        <div class="summary-box"><span style="text-decoration: underline;">Usage:</span><br />
+
+        <br />
+
+        <?php echo $baseURL;?>?action=getJPX<br />
+        <br />
+
+        Supported Parameters:<br />
+        <br />
+
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="20%"><b>observatory</b></td>
+                    <td width="20%"><i>String</i></td>
+                    <td>Observatory</td>
+                </tr>
+                <tr>
+                    <td><b>instrument</b></td>
+                    <td><i>String</i></td>
+                    <td>Instrument</td>
+                </tr>
+                <tr>
+                    <td><b>detector</b></td>
+                    <td><i>String</i></td>
+                    <td>Detector</td>
+                </tr>
+                <tr>
+                    <td><b>measurement</b></td>
+                    <td><i>String</i></td>
+                    <td>Measurement</td>
+                </tr>
+                <tr>
+                    <td><b>startTime</b></td>
+                    <td><i>ISO 8601 UTC Date</i></td>
+                    <td>Movie start time</td>
+                </tr>
+                <tr>
+                    <td><b>endTime</b></td>
+                    <td><i>ISO 8601 UTC Date</i></td>
+                    <td>Movie end time</td>
+                </tr>
+                <tr>
+                    <td><b>cadence</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The desired amount of time between each movie-frame, in seconds. If no 
+                    cadence is specified, the server will attempt to select an optimal cadence.</td>
+                </tr>
+                <tr>
+                    <td><b>sourceId</b></td>
+                    <td><i>Integer</i></td>
+                    <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
+                    measurement parameters).</td>
+                </tr>
+                <tr>
+                    <td><b>frames</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Returns individual movie-frame timestamps along with the file URI
+                    as JSON.</td>
+                </tr>
+                <tr>
+                    <td><b>verbose</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> In addition to the JPX file URI, returns any warning or
+                    error messages generated during the request.</td>
+                </tr>
+                <tr>
+                    <td><b>frames</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Returns a JSON data structure including the JPX URI and also a list of
+                    the timestamps associated with each layer in the file.</td>
+                </tr>
+                <tr>
+                    <td><b>jpip</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Returns a JPIP URI instead of an actual movie.</td>
+                </tr>
+                <tr>
+                    <td><b>linked</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Returns a linked JPX file containing image pointers instead of data for each
+                    individual frame in the series. Currently, only JPX image series support this feature.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+        Result:<br />
+        <br />
+        The default action is to simply return the requested JPX file. If additional information is needed,
+        for example, then a JSON result will be returned with the file URI plus any additional parameters requested.
+        <br /><br />
+
+        <!-- Return parameter description -->
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="20%"><b>uri</b></td>
+                    <td width="20%"><i>String</i></td>
+                    <td><i>[Optional]</i> Location of the requested file.</td>
+                </tr>
+                <tr>
+                    <td><b>frames</b></td>
+                    <td><i>List</i></td>
+                    <td><i>[Optional]</i> List of timestamps.</td>
+                </tr>
+                <tr>
+                    <td><b>verbose</b></td>
+                    <td><i>String</i></td>
+                    <td><i>[Optional]</i> Any warning or error messages generated during the request</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+
+        <span class="example-header">Examples:</span>
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
+            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
+        </a>
+        </span><br />
+        <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;jpip=true">
+            <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&jpip=true
+        </a>
+        </span></div>
+        </div>
+
+        <br />
+
+        <!-- getJPX API Notes -->
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <span style="text-decoration: underline;">Notes:</span>
+
+        <br /><br />
+
+        <ul>
+            <li>
+            <p>If no cadence is specified Helioviewer.org attempts to choose an optimal cadence for the requested range and data source.</p>
+            </li>
+        </ul>
+        </div>
+
+        <br />
+<?php
+    }
+}
 ?>
