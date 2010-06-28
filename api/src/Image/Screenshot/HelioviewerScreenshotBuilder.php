@@ -126,22 +126,20 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         foreach ($layerStrings as $layer) {
             $layerArray = explode(",", $layer);
             if (sizeOf($layerArray) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
+                list($observatory, $instrument, $detector, $measurement, $opacity) = $layerArray;
                 $sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
             } else {
-                list($sourceId, $visible, $opacity) = $layerArray;
+                list($sourceId, $opacity) = $layerArray;
             }
-            
-            if ($visible) {     
-                $layerInfoArray = array(
-                    'sourceId' 	 => $sourceId,
-                    'width' 	 => $width,
-                    'height'	 => $height,
-                    'imageScale' => $imageScale,
-                    'opacity'	 => $opacity
-                );
-                array_push($metaArray, $layerInfoArray);
-            }
+                
+            $layerInfoArray = array(
+                'sourceId' 	 => $sourceId,
+                'width' 	 => $width,
+                'height'	 => $height,
+                'imageScale' => $imageScale,
+                'opacity'	 => $opacity
+            );
+            array_push($metaArray, $layerInfoArray);
         }
 
         return $metaArray;

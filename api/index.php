@@ -44,7 +44,6 @@ if (!(isset($params) && loadModule($params))) {
 function loadModule($params)
 {
     $valid_actions = array(
-        "takeFullImageScreenshot" => "WebClient",
         "downloadFile"     => "WebClient",
         "getClosestImage"  => "WebClient",
         "getDataSources"   => "WebClient",
@@ -57,8 +56,7 @@ function loadModule($params)
         "getEvents"        => "SolarEvents",
         "getJP2Image"      => "JHelioviewer",
         "getJPX"           => "JHelioviewer",
-        "buildMovie"       => "Movies",
-        "buildQuickMovie"  => "Movies"
+        "buildMovie"       => "Movies"
     );
     
     include_once "src/Validation/InputValidator.php";
