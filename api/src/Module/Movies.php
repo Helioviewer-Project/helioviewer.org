@@ -280,6 +280,12 @@ class Module_Movies implements Module
                     <td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
                         filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
                 </tr>
+                <tr>
+                    <td><b>watermarkOn</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the image will not be watermarked.
+                        If left blank, it defaults to true and images will be watermarked.</td>
+                </tr>
             </tbody>
         </table>
 
@@ -378,8 +384,7 @@ class Module_Movies implements Module
                     <td><i>Integer</i></td>
                     <td><i>[Optional]</i> If you want a specific number of frames rather than the optimal number, you can specify 
                             the number of frames you would like to include in the movie. You may have between 10 and 120 frames. If
-                            numFrames is not specified, the optimal cadence and number of frames will be calculated for you. 
-                </td>
+                            numFrames is not specified, the optimal cadence and number of frames will be calculated for you.</td>
                 </tr>
                 <tr>
                     <td><b>frameRate</b></td>
@@ -409,6 +414,13 @@ class Module_Movies implements Module
                     <td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
                         filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
                 </tr>
+                <tr>
+                    <td><b>watermarkOn</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the images will not be watermarked, 
+                        which will speed up movie generation time but you will have no timestamps on the movie. If left blank, it defaults to true 
+                        and images will be watermarked.</td>
+                </tr>
             </tbody>
         </table>
 
@@ -427,8 +439,8 @@ class Module_Movies implements Module
         </span><br />
         <span class="example-url">
         <i>iPod Video:</i><br /><br />
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=0,100/1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false">
-            <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=0,100/1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=1,100&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
+            <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=1,100&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
         </a>
         </span>
         </div>
