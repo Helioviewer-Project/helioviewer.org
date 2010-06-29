@@ -137,9 +137,7 @@ abstract class Image_Composite_CompositeImage
         $watermark 	 = new IMagick(HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png");
         $imageWidth  = $this->metaInfo->width();
         $imageHeight = $this->metaInfo->height();
-        //$image 		 = $imageLayer->getFilePathString();
         $output      = $this->tmpDir . "/$this->outputFile";
-        //$imagickImage = new IMagick($image);
 
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if ($imageWidth / 300 < 2) {
@@ -159,6 +157,8 @@ abstract class Image_Composite_CompositeImage
         if ($imageWidth > 235) {
             $this->addWaterMarkText($imagickImage);
         }
+        
+        $watermark->destroy();
     }
     
     private function _watermarkNoImagick($imageLayer)
@@ -347,13 +347,15 @@ abstract class Image_Composite_CompositeImage
     
     private function _finalizeImage($imagickImage, $output)
     {
+    	// Need to up the time limit that imagick is allowed to use to execute commands. 
+        set_time_limit(60);
     	$imagickImage->setImageFormat('JPG');
     	$imagickImage->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
         $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
         $imagickImage->setBackgroundColor('black');
         $imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
         $imagickImage->setImageDepth(8);
-        $imagickImage->quantizeImage(256, IMagick::COLORSPACE_RGB, 256, false, false);
+        //$imagickImage->quantizeImage(256, IMagick::COLORSPACE_RGB, 256, false, false); // Takes too long and doesn't do much.
         $imagickImage->writeImage($output);
         $imagickImage->destroy();
     }

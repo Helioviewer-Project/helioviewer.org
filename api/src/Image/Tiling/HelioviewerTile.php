@@ -195,7 +195,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         );
         */
         
-        // $classname::getFilePathNickName does not work in php 5.2.x, which is what is running on Delphi
+        // $classname::getFilePathNickName does not work in php 5.2.x, using call_user_func instead
         $filepath .= call_user_func($classname . '::getFilePathNickName', $det, $meas);
         
         $filepath .= "/$year/$month/$day/";

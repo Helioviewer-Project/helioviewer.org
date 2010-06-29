@@ -72,9 +72,9 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startDate', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"    => array('startDate'),
-                "ints"     => array('numFrames, frameRate, timeStep, quality'),
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "dates"    => array('startTime', 'endTime'),
+                "ints"     => array('frameRate', 'quality'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
             );
             break;
@@ -178,8 +178,8 @@ class Module_Movies implements Module
     <li>
         <a href="index.php#MovieAPI">Movie and Screenshot API</a>
         <ul>
-            <li><a href="index.php#takeScreenshot">Creating Screenshots</a></li>
-            <li><a href="index.php#buildMovie">Creating Movies</a></li>
+            <li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>
+            <li><a href="index.php#buildMovie">Creating a Movie</a></li>
         </ul>
     </li>
 <?php
@@ -234,9 +234,9 @@ class Module_Movies implements Module
                     <td><b>layers</b></td>
                     <td><i>String</i></td>
                     <td>A string of layer information in the following format:<br />
-                        Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
+                        Each layer is comma-separated with these values: <i>sourceId,opacity</i>. <br />
                         If you do not know the sourceId, you can 
-                        alternately send this layer string: <i>obs,inst,det,meas,isVisible,opacity</i>.
+                        alternately send this layer string: <i>obs,inst,det,meas,opacity</i>.
                         Layer strings are separated by "/": layer1/layer2/layer3.</td>
                 </tr>
                 <tr>
@@ -280,6 +280,12 @@ class Module_Movies implements Module
                     <td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
                         filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
                 </tr>
+                <tr>
+                    <td><b>watermarkOn</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the image will not be watermarked.
+                        If left blank, it defaults to true and images will be watermarked.</td>
+                </tr>
             </tbody>
         </table>
 
@@ -287,13 +293,13 @@ class Module_Movies implements Module
 
         <span class="example-header">Examples:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,100/4,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=3,100/4,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
+        <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,100/SOHO,LASCO,C2,white-light,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+        <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,100/SOHO,LASCO,C2,white-light,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span>
         </div>
@@ -323,10 +329,16 @@ class Module_Movies implements Module
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="20%"><b>startDate</b></td>
+                    <td width="20%"><b>startTime</b></td>
                     <td width="20%"><i>ISO 8601 UTC Date</i></td>
                     <td>Desired starting timestamp of the movie. The timestamps for the subsequent frames are incremented by
                         a certain timestep.</td>
+                </tr>
+                <tr>
+                    <td><b>endTime</b></td>
+                    <td><i>ISO 8601 UTC Date</i></td>
+                    <td>Desired ending timestamp of the movie. Time step and number of frames will be figured out from the range
+                        between startTime and endTime.</td>
                 </tr>
                 <tr>
                     <td><b>imageScale</b></td>
@@ -338,9 +350,9 @@ class Module_Movies implements Module
                     <td><b>layers</b></td>
                     <td><i>String</i></td>
                     <td>A string of layer information in the following format:<br />
-                        Each layer is comma-separated with these values: <i>sourceId,isVisible,opacity</i>. <br />
+                        Each layer is comma-separated with these values: <i>sourceId,opacity</i>. <br />
                         If you do not know the sourceId, you can 
-                        alternately send this layer string: <i>obs,inst,det,meas,isVisible,opacity</i>.
+                        alternately send this layer string: <i>obs,inst,det,meas,opacity</i>.
                         Layer strings are separated by "/": layer1/layer2/layer3.</td>
                 </tr>
                 <tr>
@@ -370,19 +382,14 @@ class Module_Movies implements Module
                 <tr>
                     <td><b>numFrames</b></td>
                     <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of frames you would like to include in the movie. You may have between 10 and 120 frames.
-                        The default value is 40 frames.</td>
+                    <td><i>[Optional]</i> If you want a specific number of frames rather than the optimal number, you can specify 
+                            the number of frames you would like to include in the movie. You may have between 10 and 120 frames. If
+                            numFrames is not specified, the optimal cadence and number of frames will be calculated for you.</td>
                 </tr>
                 <tr>
                     <td><b>frameRate</b></td>
                     <td><i>Integer</i></td>
                     <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
-                </tr>
-                <tr>
-                    <td><b>timeStep</b></td>
-                    <td><i>Integer</i></td>
-                    <td><i>[Optional]</i> The number of seconds in between each timestamp used to make the movie frames. The default 
-                        is 86400 seconds, or 1 day.</td>
                 </tr>
                 <tr>
                     <td><b>quality</b></td>
@@ -407,6 +414,13 @@ class Module_Movies implements Module
                     <td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
                         filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
                 </tr>
+                <tr>
+                    <td><b>watermarkOn</b></td>
+                    <td><i>Boolean</i></td>
+                    <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the images will not be watermarked, 
+                        which will speed up movie generation time but you will have no timestamps on the movie. If left blank, it defaults to true 
+                        and images will be watermarked.</td>
+                </tr>
             </tbody>
         </table>
 
@@ -414,19 +428,19 @@ class Module_Movies implements Module
         
         <span class="example-header">Examples:</span>
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=3,100/4,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=3,100/4,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span><br />
         <span class="example-url">
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100/SOHO,LASCO,C2,white-light,1,100&x1=-5000&y1=-5000&x2=5000&y2=5000
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,100/SOHO,LASCO,C2,white-light,100&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,100/SOHO,LASCO,C2,white-light,100&x1=-5000&y1=-5000&x2=5000&y2=5000
         </a>
         </span><br />
         <span class="example-url">
         <i>iPod Video:</i><br /><br />
-        <a href="<?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false">
-            <?php echo $baseURL;?>?action=buildMovie&startDate=2010-03-01T12:12:12Z&imageScale=8.416&layers=0,1,100/1,1,50&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false
+        <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=1,100&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
+            <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=1,100&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
         </a>
         </span>
         </div>
