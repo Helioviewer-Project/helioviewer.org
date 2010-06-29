@@ -227,8 +227,8 @@ class Module_JHelioviewer implements Module
     <li>
         <a href="index.php#JPEG2000API">JPEG 2000</a>
         <ul>
-            <li><a href="index.php#getJP2Image">Retrieving JPEG 2000 Images</a></li>
-            <li><a href="index.php#getJPX">Creating JPX Movies</a></li>
+            <li><a href="index.php#getJP2Image">Retrieving a JPEG 2000 Image</a></li>
+            <li><a href="index.php#getJPX">Creating a JPX Movie</a></li>
         </ul>
     </li>
 <?php     
