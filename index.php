@@ -47,7 +47,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" type="text/css" />
 
     <!-- imgAreaSelect jQuery plugin -->
-    <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
+    <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
     
     <!-- jsTree -->
@@ -220,16 +220,16 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                                 </div>-->
 
                                 <!-- Movie button -->
-                                <!--<div id="movie-button" class="text-btn">
+                                <div id="movie-button" class="text-btn">
                                     <span class="ui-icon ui-icon-video" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Movie</span>
-                                </div>-->
+                                </div>
 
                                 <!-- Screenshot button -->
-                                <!--<div id="screenshot-button" class="text-btn">
+                                <div id="screenshot-button" class="text-btn">
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
-                                </div>-->
+                                </div>
 
                                 <!-- Select region button -->
                                 <!--<div id="select-region-button" class="text-btn">
