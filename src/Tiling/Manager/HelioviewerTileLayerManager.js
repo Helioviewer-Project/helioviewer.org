@@ -144,5 +144,21 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         str = str.slice(0, -1);
     
         return str;
+    },
+    
+    /**
+     * The toJSON and toString methods are not what is needed for screenshots/movies, so 
+     * this returns a differently-formatted string
+     */
+    toScreenshotQueryString: function () {
+        var parsedLayers = [];
+        $.each(this._layers, function () {
+            json = this.toJSON();
+            str = json.observatory + "," + json.instrument + "," + json.detector + "," + json.measurement + "," + json.opacity;
+            if (json.visible == 1) {
+                parsedLayers.push(str);
+            }
+        });
+        return parsedLayers.join("/");
     }
 });

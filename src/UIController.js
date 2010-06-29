@@ -33,11 +33,11 @@ var UIController = Class.extend(
         this._loadURLSettings();
 
         this._initLoadingIndicator();
-        this._loadExtensions();
 
         if (loadDefaultViewport) {
             this.api = "api/index.php"; // Temporary fix
             this._initViewport(loadDefaultViewport);
+            this._loadExtensions();
         }
     },
  
