@@ -125,7 +125,7 @@ class Module_WebClient implements Module
             $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
 
             // Prepare cache for tiles
-            $this->_createImageCacheDir($this->_params['sourceId'], $result['date']);
+            $this->_createImageCacheDir($result['filepath']);
 
             $json = json_encode($result);
         } else {
@@ -437,52 +437,20 @@ class Module_WebClient implements Module
      * Creates the directory structure which will be used to cache
      * generated tiles.
      *
-     * @param int    $sourceId The image source id
-     * @param string $date     The image date
+     * @param string $filepath The filepath where the image is stored
      *
      * @return void
      *
      * Note: mkdir may not set permissions properly due to an issue with umask.
      *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
-    private function _createImageCacheDir($sourceId, $date)
+    private function _createImageCacheDir($filepath)
     {
-        // Base directory
-        $filepath = HV_CACHE_DIR . "/";
-
-        // Date information
-        $year  = substr($date, 0, 4);
-        $month = substr($date, 5, 2);
-        $day   = substr($date, 8, 2);
-       
-        // Work-around 03/23/2010
-        // Nicknames not currently included in filename or query. Hard-coding future
-        // versions of JP2 images are modified to include nicknames
-        if ($sourceId == 0) {
-            $filepath .= "EIT/171";
-        } else if ($sourceId == 1 ) {
-            $filepath .= "EIT/195";
-        } else if ($sourceId == 2 ) {
-            $filepath .= "EIT/284";
-        } else if ($sourceId == 3 ) {
-            $filepath .= "EIT/304";
-        } else if ($sourceId == 4 ) {
-            $filepath .= "LASCO-C2/white-light";
-        } else if ($sourceId == 5 ) {
-            $filepath .= "LASCO-C3/white-light";
-        } else if ($sourceId == 6 ) {
-            $filepath .= "MDI/magnetogram";
-        } else if ($sourceId == 7 ) {
-            $filepath .= "MDI/continuum";
-        } else if ($sourceId == 8) {
-            $filepath .= "AIA/171";
-        }
+        $cacheDir = HV_CACHE_DIR . $filepath;
         
-        $filepath .= "/$year/$month/$day/";
-
-        if (!file_exists($filepath)) {
-            mkdir($filepath, 0777, true);
-            chmod($filepath, 0777);
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+            chmod($cacheDir, 0777);
         }
     }
     
