@@ -58,22 +58,40 @@ var TileLayerManager = LayerManager.extend(
     /**
      * 
      */
-    updateTileVisibilityRange: function (tileVisibilityRange) {
-        this.tileVisibilityRange = tileVisibilityRange;
-        
+    updateTileVisibilityRange: function (vpCoords) {
+        var ts, self;
+        // Expand to fit tile increment
+        ts = this.tileSize;
+        vp = {
+            top:    vpCoords.top    - ts - (vpCoords.top    % ts),
+            left:   vpCoords.left   - ts - (vpCoords.left   % ts),
+            bottom: vpCoords.bottom + ts - (vpCoords.bottom % ts),
+            right:  vpCoords.right  + ts - (vpCoords.right  % ts)
+        };
+
+        // Indices to display (one subtracted from ends to account for "0th" tiles).
+        this.tileVisibilityRange = {
+            xStart : vp.left / ts,
+            yStart : vp.top  / ts,
+            xEnd   : (vp.right  / ts) - 1,
+            yEnd   : (vp.bottom / ts) - 1
+        };
+
+        self = this;
         $.each(this._layers, function () {
-            this.updateTileVisibilityRange(tileVisibilityRange); 
+            this.updateTileVisibilityRange(self.tileVisibilityRange); 
         });
     },
     
     /**
      * 
      */
-    adjustImageScale: function (scale, tileVisibilityRange) {
+    adjustImageScale: function (scale) {
         this.viewportScale = scale;
+        var self = this;
         
         $.each(this._layers, function () {
-            this.updateImageScale(scale, tileVisibilityRange);
+            this.updateImageScale(scale, self.tileVisibilityRange);
         });
     },
 

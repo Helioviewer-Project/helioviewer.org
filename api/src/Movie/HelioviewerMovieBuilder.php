@@ -89,7 +89,7 @@ class Movie_HelioviewerMovieBuilder
                 throw new Exception($msg);
             }
             
-            $numFrames = $this->_params['numFrames'] === 0? 
+            $numFrames = ($this->_params['numFrames'] === 0 || $this->_params['numFrames'] === "0")? 
                             $this->_determineOptimalNumFrames($layers, $this->_params['startTime'], $this->_params['endTime']) :
                             min($this->_params['numFrames'], $this->maxNumFrames);
 

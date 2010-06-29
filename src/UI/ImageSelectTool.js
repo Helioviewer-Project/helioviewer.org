@@ -17,58 +17,59 @@ var ImageSelectTool = Class.extend(
      *                 the fake transparent image will be inserted
      * @param {Object} controller -- the helioviewer class
      */
-    init: function (controller) {
-        $.extend(this); // TODO (2009/09/10): Necessary?
-        this.button     = $("#select-region-button");
-        this.controller = controller;
+    init: function (viewport) {
         this.active     = false;
-            
-        var self = this;
-    
-        this.button.click(function () {
-            var width, height, imgContainer, transImg, helioviewer;
-            
-            // If the user has already pushed the button but not done anything, this will turn the feature off.
-            if (self.active) {
-                self.cleanup();
-            }
+        this.viewport   = viewport;
+        this.vpDomNode  = $("#helioviewer-viewport");
 
-            // Otherwise, turn it on.
-            else {
-                // Disable keyboard shortcuts for fullscreen mode
-                $("body").addClass('disable-fullscreen-mode');
-                self.active = true;
-                helioviewer = self.controller;
-                
-                // Get viewport dimensions to make the transparent image with. 
-                width  = helioviewer.viewport.dimensions.width;
-                height = helioviewer.viewport.dimensions.height;
-                
-                /* 
-                 * Create a temporary transparent image that spans the height and width of the viewport.
-                 * Necessary because the viewport image is done in tiles and imgAreaSelect cannot cross 
-                 * over tile boundaries. Add the transparent image to the viewport, on top of the other tiles.
-                 * 
-                 * viewport.domNode corresponds to the div "#helioviewer-viewport", so add the tile directly
-                 * inside this div. It is necessary to specify a z-index because otherwise it gets added underneath
-                 * the rest of the tiles and the plugin will not work.
-                 */
-                transImg = $('<img id="transparent-image" src="resources/images/transparent_512.png" alt="" width="' +
-                           width + '" height="' + height + '" />');
-                transImg.css({'position': 'relative', 'cursor': 'crosshair', 'z-index': 5});
-                helioviewer.viewport.domNode.append(transImg);
-                
-                /* Make a temporary container for imgAreaSelect to put all of its divs into.
-                 * Note that this container must be OUTSIDE of the viewport because otherwise the plugin's boundaries
-                 * do not span the whole image for some reason. All of the divs are put in "#outside-box"
-                 */
-                imgContainer = $('body').append('<div id="imgContainer"></div>');
-                
-                self.selectArea();
-            }
-        }); 
+        this._setupFinishedButton();
+        this.button     = $("#done-selecting-image");
+        
+        $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
 
+    enableAreaSelect: function (event, callback) {
+        var width, height, imgContainer, transImg, helioviewer;
+    
+        // If the user has already pushed the button but not done anything, this will turn the feature off.
+        if (this.active) {
+            this.cleanup();
+        }
+
+        // Otherwise, turn it on.
+        else {
+            // Disable keyboard shortcuts for fullscreen mode
+            $("body").addClass('disable-fullscreen-mode');
+            this.active = true;
+
+            // Get viewport dimensions to make the transparent image with. 
+            this.width  = this.vpDomNode.width();
+            this.height = this.vpDomNode.height();
+        
+            /* 
+            * Create a temporary transparent image that spans the height and width of the viewport.
+            * Necessary because the viewport image is done in tiles and imgAreaSelect cannot cross 
+            * over tile boundaries. Add the transparent image to the viewport, on top of the other tiles.
+            * 
+            * viewport.domNode corresponds to the div "#helioviewer-viewport", so add the tile directly
+            * inside this div. It is necessary to specify a z-index because otherwise it gets added underneath
+            * the rest of the tiles and the plugin will not work.
+            */
+            transImg = $('<img id="transparent-image" src="resources/images/transparent_512.png" alt="" width="' +
+                   this.width + '" height="' + this.height + '" />');
+            transImg.css({'position': 'relative', 'cursor': 'crosshair', 'z-index': 5});
+            transImg.appendTo(this.vpDomNode);
+            
+            /* Make a temporary container for imgAreaSelect to put all of its divs into.
+            * Note that this container must be OUTSIDE of the viewport because otherwise the plugin's boundaries
+            * do not span the whole image for some reason. All of the divs are put in "#outside-box"
+            */
+            imgContainer = $('body').append('<div id="imgContainer"></div>');
+
+            this.selectArea(callback);
+        }
+    },
+    
     /**
      * @description Loads the imgAreaSelect plugin and uses it on the transparent image that covers the viewport.
      *                 The function imgAreaSelect() returns two variables, "img", which is the original transparent
@@ -76,39 +77,86 @@ var ImageSelectTool = Class.extend(
      *                 "selection" is x1, y1, x2, y2, width, and height.
      *                 See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation. 
      */
-    selectArea: function () {
-        var viewport, coords, visibleCoords, self = this;
-        
-        viewport = this.controller.viewport;
+    selectArea: function (callback) {
+        var coords, visibleCoords, area, selection, viewportInfo, selectInfo, self = this;
+        //$(document).trigger("message-console-info", ["Resize the selection or click and drag on the image to start a new selection."]);
         
         // Use imgAreaSelect on the transparent region to get the top, left, bottom, and right 
         // coordinates of the selected region. 
-        $("#transparent-image").imgAreaSelect({ 
-            handles:     true,
-            parent:        "#imgContainer",
-            /* onSelectChange:    function (img, selection) {
-                helioviewer.messageConsole.info("Image dimensions: " + (selection.x2 - selection.x1) + "x" +
-                                                (selection.y2 - selection.y1) + " px");
-            }, */
-            
-            onSelectEnd:    function (img, selection) {    
-                // Get the coordinates of the selected image, and adjust them to be 
-                // heliocentric like the viewport coords. 
-                visibleCoords = viewport.getHCViewportPixelCoords();
-                
-                coords = {
-                    top        : visibleCoords.top  + selection.y1,
-                    left    : visibleCoords.left + selection.x1,
-                    bottom    : visibleCoords.top  + selection.y2,
-                    right    : visibleCoords.left + selection.x2
-                };
-                
-                //Pop up a dialog box in shadowbox asking the user what they want to do with it.                 
-                self.createDialog(coords);
+        area = $("#transparent-image").imgAreaSelect({ 
+            instance: true,
+            handles : true,
+            parent  : "#imgContainer",
+            x1      : this.width / 4,
+            x2      : this.width * 3 / 4,
+            y1      : this.height / 4,
+            y2      : this.height * 3 / 4,
+            onInit  : function () {
+                self.vpDomNode.qtip("show");
+                $("#social-buttons").hide("fast");
+                $("#center-button").hide("fast");
+                $("#zoomSliderContainer").hide("fast");
+                $("#zoomControlZoomIn").hide("fast");
+                $("#zoomControlZoomOut").hide("fast");
             }
+        });
+        
+        self.button.click(function () {
+            // Get the coordinates of the selected image, and adjust them to be 
+            // heliocentric like the viewport coords.
+            selection     = area.getSelection();
+            viewportInfo  = self.viewport.getViewportInformation();
+            visibleCoords = viewportInfo.coordinates;
+
+            coords = {
+                top     : visibleCoords.top  + selection.y1,
+                left    : visibleCoords.left + selection.x1,
+                bottom  : visibleCoords.top  + selection.y2,
+                right   : visibleCoords.left + selection.x2
+            };
+
+            selectInfo = {
+                coordinates : coords,
+                imageScale  : viewportInfo.imageScale,
+                layers      : viewportInfo.layers,
+                time        : viewportInfo.time
+            };
+            self.cleanup();
+            callback(selectInfo);
         });
     },
 
+    _setupFinishedButton: function () {
+        this.vpDomNode.qtip({
+            position: {
+                corner: {
+                    target: 'topRight',
+                    tooltip: 'topRight',
+                },
+            },      
+            adjust: {
+                x: 0,
+                y: 0
+            },
+            content: {
+                text : "<div id='done-selecting-image' class='text-btn'>" +
+                            "<span style='line-height: 1.6em'>Done</span>" +
+                        "</div>"
+            },
+            show: false,
+            hide: 'click',
+            style: {
+                color: '#fff',
+                background: '#2A2A2A',
+                "z-index" : 7,
+                border: { 
+                    width: 0,
+                    radius: 3, 
+                    color: '#2A2A2A'
+                },
+            },
+        });
+    },
     /**
      * @description Loads a dialog pop-up that asks the user what they would like to do with the region they selected.
      *                 Current options are: "Take Screenshot", "Build Movie", and "Cancel".
@@ -163,16 +211,20 @@ var ImageSelectTool = Class.extend(
     },
 
     /**
-     * Removes all divs created by imgAreaSelect. Also closes Shadowbox.
+     * Removes all divs created by imgAreaSelect. Also shows all divs that were hidden during selection.
      * @param imgContainer -- has all imgAreaSelect divs inside
      * @param transImg -- temporary transparent image that imgAreaSelect is used on.
      * @TODO: add error checking if the divs are already gone for whatever reason.
      */    
     cleanup: function () {
-        Shadowbox.close();
-        
+        this.vpDomNode.qtip("hide");
+        $("#social-buttons").show("fast");
+        $("#center-button").show("fast");
+        $("#zoomSliderContainer").show("fast");
+        $("#zoomControlZoomIn").show("fast");
+        $("#zoomControlZoomOut").show("fast");
         $('#imgContainer, #transparent-image').remove();
-        
+        this.button.unbind('click');
         this.active = false;
         $("body").removeClass('disable-fullscreen-mode');
     }

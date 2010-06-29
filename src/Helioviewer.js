@@ -25,7 +25,9 @@ var Helioviewer = UIController.extend(
         // Calling super will load settings and call _loadExtensions()
         this._super(urlParams, settings);
         this.api = "api/index.php";
-
+        
+        this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
+                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
         // Get available data sources and initialize viewport
         this._getDataSourcesAndLoadViewport();
         
@@ -47,14 +49,13 @@ var Helioviewer = UIController.extend(
         this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
                                          this.minImageScale, this.maxImageScale);
 
-        this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
-                                         '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
 
         //this.mediaSettings      = new MediaSettings(this);
         //this.movieBuilder       = new MovieBuilder(this);
-        //this.imageSelectTool    = new ImageSelectTool(this);
-        //this.screenshotBuilder  = new ScreenshotBuilder(this);
+        this.imageSelectTool    = new ImageSelectTool(this.viewport);
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport);
     },
     
     /**
@@ -101,7 +102,9 @@ var Helioviewer = UIController.extend(
             maxImageScale  : this.maxImageScale, 
             prefetch       : this.prefetchSize,
             warnMouseCoords: this.userSettings.get('warnMouseCoords') 
-        });
+        }, this.timeControls);
+        
+        this._loadExtensions();
     },
     
     /**
