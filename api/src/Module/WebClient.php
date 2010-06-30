@@ -447,7 +447,7 @@ class Module_WebClient implements Module
     private function _createImageCacheDir($filepath)
     {
         $cacheDir = HV_CACHE_DIR . $filepath;
-        
+
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
             chmod($cacheDir, 0777);

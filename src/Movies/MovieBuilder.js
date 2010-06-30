@@ -12,7 +12,7 @@
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, Shadowbox, setTimeout, window */
 "use strict";
-var MovieBuilder = Class.extend(
+var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
     {
 
@@ -22,37 +22,41 @@ var MovieBuilder = Class.extend(
      * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (controller) {
-        $.extend(this); //?
-        this.url         = "api/index.php";
-        this.controller    = controller;
-        this.button        = $("#movie-button");
-        this.viewport     = this.controller.viewport;    
-        
-        this.mediaSettings = this.controller.mediaSettings;
-        this.building    = false;
+    init: function (viewport) {
+        this._super(viewport);
+        this.button  = $("#movie-button");
         this.percent = 0;
-        var self = this;
-
-        this.button.click(function () {            
-            var helioviewer = self.controller, visibleCoords;
-
+        this.id      = "movie";
+        this._setupDialog();
+    },
+    
+    _setupEventListeners: function () {
+        var self = this, visibleCoords;
+        this.fullVPButton     = $("#" + this.id + "-full-viewport");
+        this.selectAreaButton = $("#" + this.id + "-select-area");
+    
+        this.fullVPButton.click(function () {
+            self.button.qtip("hide");
             if (self.building) {
-                self.mediaSettings.shadowboxWarn('Warning: Your movie is already being built. A link to view' +
-                                                 'the movie will appear shortly.');
+                $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
             }
-
-            if (!self.building) {
-                visibleCoords = helioviewer.viewport.getHCViewportPixelCoords();     
-                
-                // Check to see if the user wants more than 3 layers in their movie. If they do,
-                // they will have to pick 3. 
-                // checkMovieLayers will start the building process when it is done checking.    
-                self.checkMovieLayers(visibleCoords);
+            else {
+                viewportInfo = self.viewport.getViewportInformation();
+                self.checkMovieLayers(viewportInfo);
+            }
+        });
+    
+        this.selectAreaButton.click(function () {
+            self.button.qtip("hide");
+            if (self.building) {
+                $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
+            }
+            else {
+                $(document).trigger("enable-select-tool", $.proxy(self.checkMovieLayers, self));
             }
         });
     },
-
+    
     /**
      * @description Checks to make sure there are 3 or less layers in the movie. If there are more, 
      *              user is presented with pop-up in Shadowbox asking them to pick 3 layers.
@@ -63,29 +67,24 @@ var MovieBuilder = Class.extend(
      *                     Note that these coordinates are heliocentric, with the center of the sun being (0,0).
      *                     
      */
-    checkMovieLayers: function (visibleCoords) {
+    checkMovieLayers: function (viewportInfo) {
         var finalLayers, self, layers, table, info, rawName, name, tableValues, checkboxes;
         
-        finalLayers = [];
-        
-        // Refresh settings in case something has changed.
-        this.mediaSettings.getSettings(visibleCoords);    
-        layers = this.mediaSettings.layerNames;
-
         // If there are between 1 and 3 layers, continue building.
-        if (layers.length <= 3 && layers.length >= 1) {
-            this.buildMovie(layers);
+        if (viewportInfo.layers.length <= 3 && viewportInfo.layers.length >= 1) {
+            this.buildMovie(viewportInfo);
         }    
         
         // Otherwise, prompt the user to pick 3 layers.
         else {
+            finalLayers = [];
             self = this;
             Shadowbox.open({
                 player:    "html",
                 width:     450,
                 // Adjust height depending on how much space the text takes up (roughly 20 pixels per 
                 // layer name, and a base height of 150)
-                height: 150 + layers.length * 20,
+                height: 150 + viewportInfo.layers.length * 20,
 
                 // Put an empty table into shadowbox. Rows of layers need to be dynamically added through javascript.
                 content: '<div id="shadowbox-form" class="ui-widget ui-widget-content ui-corner-all ' + 
@@ -107,11 +106,11 @@ var MovieBuilder = Class.extend(
                         
                         // Get a user-friendly name for each layer. each layer in "layers" is a string: 
                         // "obs,inst,det,meas,visible,opacity'x'XStart,XEnd,YStart,YEnd,offsetX,offsetY"    
-                        $.each(layers, function (i, l) {
+                        $.each(viewportInfo.layers, function (i, l) {
                             info = l.split('x');
                             // Extract the first part of the layer string (obs,inst,det,meas,visible,opacity) and
                             // slice off the last two values.
-                            rawName = (info[0]).split(',').slice(0, -2);
+                            rawName = (info[0]).split(',').slice(0, -1);
                             name = rawName.join(" ");
                             tableValues += '<tr>' +
                                     '<td class="layers-checkbox"><input type=checkbox name="layers" ' + 
@@ -140,7 +139,13 @@ var MovieBuilder = Class.extend(
                             });
 
                             if (finalLayers.length <= 3 && finalLayers.length >= 1) {
-                                self.buildMovie(finalLayers);
+                                newInfo = {
+                                    layers      : finalLayers,
+                                    time        : viewportInfo.time,
+                                    imageScale  : viewportInfo.imageScale,
+                                    coordinates : viewportInfo.coordinates
+                                };
+                                self.buildMovie(newInfo);
                                 Shadowbox.close();
                             }
                             
@@ -164,18 +169,12 @@ var MovieBuilder = Class.extend(
      *                 Upon completion, it displays a notification that lets the user click to view it in Shadowbox
      *                 or download the high quality version. 
      * @param {Object} self
-     * @param {Object} layers -- An array of layer strings in the format: "obs,inst,det,meas,visible,
-     *                           opacity'x'XStart,XEnd,YStart,YEnd,offsetX,offsetY"    
+     * @param {Object} layers -- An array of layer strings in the format: "obs,inst,det,meas,opacity"    
      */
-    buildMovie: function (layers) {
-        var mediaSettings, helioviewer, timeout, imgHeight, imgWidth, options, params, callback, self = this;
+    buildMovie: function (viewportInfo) {
+        var timeout, options, params, callback, self = this;
         
         this.building = true;
-        helioviewer   = this.controller;
-        mediaSettings = this.mediaSettings;
-
-        imgWidth  = mediaSettings.width; 
-        imgHeight = mediaSettings.height;
 
         /*
          * timeout is calculated to estimate the amount of time a movie will take to build. From benchmarking, 
@@ -205,7 +204,7 @@ var MovieBuilder = Class.extend(
                 
             // If the response is an error message instead of a url, show the message
             if (data === null) {
-                mediaSettings.shadowboxWarn("Error Creating Movie.");
+                //mediaSettings.shadowboxWarn("Error Creating Movie.");
             }    
             
             else {
@@ -243,21 +242,18 @@ var MovieBuilder = Class.extend(
             } 
         };
 
+        arcsecCoords = this.toArcsecCoords(viewportInfo);
+        
         // Ajax Request Parameters
         params = {
             action     : "buildMovie",
-            layers     : layers.join("/"),
-            startDate  : mediaSettings.startTime,
-            timeStep   : mediaSettings.timeStep,
-            imageScale : mediaSettings.imageScale,
-            numFrames  : mediaSettings.numFrames,
-            frameRate  : mediaSettings.frameRate,
-            edges      : mediaSettings.edgeEnhance,
-            sharpen    : mediaSettings.sharpen,
-            format     : mediaSettings.hqFormat,
-            imageSize  : imgWidth + "," + imgHeight,
-            filename   : mediaSettings.filename,
-            quality    : mediaSettings.quality
+            layers     : viewportInfo.layers.join("/"),
+            startTime  : viewportInfo.time,
+            imageScale : viewportInfo.imageScale,
+            x1         : arcsecCoords.x1,
+            x2         : arcsecCoords.x2,
+            y1         : arcsecCoords.y1,
+            y2         : arcsecCoords.y2,
         };
 
         $.post(this.url, params, callback, "json");

@@ -24,6 +24,8 @@ var ImageSelectTool = Class.extend(
 
         this._setupFinishedButton();
         this.button     = $("#done-selecting-image");
+        this.helpButton = $("#image-select-help");
+        this._setupHelpDialog();
         
         $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
@@ -140,23 +142,66 @@ var ImageSelectTool = Class.extend(
             },
             content: {
                 text : "<div id='done-selecting-image' class='text-btn'>" +
+                            "<span class='ui-icon ui-icon-circle-check' style='float: left;'></span>" +
                             "<span style='line-height: 1.6em'>Done</span>" +
+                        "</div>" + 
+                        "<div id='image-select-help' class='text-btn' style='float: right;'>" + 
+                            "<span class='ui-icon ui-icon-info'></span>" +
                         "</div>"
             },
             show: false,
             hide: 'click',
             style: {
                 color: '#fff',
+                "font-weight": 600, 
+                padding: 0,
+                width: 100,
                 background: '#2A2A2A',
                 "z-index" : 7,
                 border: { 
                     width: 0,
-                    radius: 3, 
+                    radius: 6, 
                     color: '#2A2A2A'
                 },
             },
         });
     },
+    
+    _setupHelpDialog: function () {
+        this.helpButton.qtip({
+            position: {
+                corner: {
+                    target: 'bottomRight',
+                    tooltip: 'topRight'
+                }
+            },
+            content: {
+                text: "Resize by dragging the edges of the selection<br />" +
+                        "Move the selection by clicking inside and dragging it<br />" + 
+                		"Click and drag outside the selected area to start" +
+                		" a new selection.<br />" +
+                		"Click 'Done' when you have finished to download your screenshot."
+            },
+            adjust: {
+                x: 0,
+                y: 40
+            },
+            show: 'click',
+            hide: 'click',
+            style: {
+                tip: 'topRight',
+                color: '#fff',
+                background: '#2A2A2A',
+                "z-index" : 7,
+                border: { 
+                    width: 0,
+                    radius: 6, 
+                    color: '#2A2A2A'
+                }
+            }
+        });
+    },
+    
     /**
      * @description Loads a dialog pop-up that asks the user what they would like to do with the region they selected.
      *                 Current options are: "Take Screenshot", "Build Movie", and "Cancel".
@@ -225,6 +270,7 @@ var ImageSelectTool = Class.extend(
         $("#zoomControlZoomOut").show("fast");
         $('#imgContainer, #transparent-image').remove();
         this.button.unbind('click');
+        this.helpButton.qtip("hide");
         this.active = false;
         $("body").removeClass('disable-fullscreen-mode');
     }
