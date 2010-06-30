@@ -209,5 +209,17 @@ var TooltipHelper = Class.extend(
                 color: '#6e6e6e'
             }
         };
+        
+        $.fn.qtip.styles.mediaDark = {
+            textAlign: 'justify',
+            width: 200,
+            color: '#fff',
+            background: '#2A2A2A',
+            border: { 
+                width: 1,
+                radius: 6, 
+                color: '#2A2A2A'
+            },
+        };
     }
 });
