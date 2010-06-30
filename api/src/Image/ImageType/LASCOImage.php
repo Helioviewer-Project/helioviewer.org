@@ -167,14 +167,18 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         $maskHeight = 1040;
         $mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
 
-        $maskScaleFactor = $this->subfieldRelWidth / $this->subfieldWidth;
+        if ($this->reduce > 0) {
+            $maskScaleFactor = 1 / pow(2, $this->reduce);
+        } else {
+        	$maskScaleFactor = 1;
+        }
         
         //var_dump($this);
         $maskTopLeftX = ($this->roi['left'] + ($maskWidth  - $this->jp2Width) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
         $maskTopLeftY = ($this->roi['top']  + ($maskHeight - $this->jp2Height)/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
 
-        $width  = $this->subfieldRelWidth;
-        $height = $this->subfieldRelHeight;
+        $width  = $this->subfieldWidth * $maskScaleFactor;
+        $height = $this->subfieldHeight * $maskScaleFactor;
 
         $padWidth  = $this->padding["width"];
         $padHeight = $this->padding["height"];
@@ -201,17 +205,19 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         //$mask->setImageBackgroundColor('black');
         //$mask->setImageExtent($padWidth, $padHeight);
         $mask->writeImage("/var/www/hv/cache/extracted_images/mask.png");
-        die();*/
-        $str = "convert -respect-parenthesis ( %s -resize %fx%f! -gravity %s -background black -extent %fx%f%+f%+f ) " .
+        die();*/ 
+        $str = "convert -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
                "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
-               "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite $input";
+               "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite $input";
         
         $cmd = sprintf(
-            $str, $input, $width, $height, $gravity, $padWidth, $padHeight, $offsetX, $offsetY, $mask, 100 * $maskScaleFactor,
-            $width, $height, $maskTopLeftX, $maskTopLeftY, $gravity, $padWidth, $padHeight,
-            $offsetX, $offsetY
+            $str, $input, $gravity, $width, $height, $mask, 100 * $maskScaleFactor,
+            $width, $height, $maskTopLeftX, $maskTopLeftY, 
+            $gravity, $width, $height
         );
+
         exec(escapeshellcmd($cmd));
+
         //return $cmd;
     }
 }

@@ -125,7 +125,7 @@ class Module_WebClient implements Module
             $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
 
             // Prepare cache for tiles
-            $this->_createImageCacheDir($this->_params['sourceId'], $result['date']);
+            $this->_createImageCacheDir($result['filepath']);
 
             $json = json_encode($result);
         } else {
@@ -211,6 +211,18 @@ class Module_WebClient implements Module
      */
     public function getTile ()
     {
+        // PROFILE TEST (performance of re-querying jp2 dimensions, offset, etc?)
+        include_once 'src/Database/ImgIndex.php';
+        $imgIndex = new Database_ImgIndex();
+
+        // Convert human-readable params to sourceId if needed
+        if (!isset($this->_params['sourceId'])) {
+            $this->_params['sourceId'] = $imgIndex->getSourceId(
+                $this->_params['obs'], $this->_params['inst'],
+                $this->_params['det'], $this->_params['meas']
+            );
+        }
+     
         include_once 'src/Image/Tiling/HelioviewerTile.php';
         $tile = new Image_Tiling_HelioviewerTile(
             $this->_params['uri'], $this->_params['date'], $this->_params['x'], $this->_params['y'],
@@ -425,52 +437,20 @@ class Module_WebClient implements Module
      * Creates the directory structure which will be used to cache
      * generated tiles.
      *
-     * @param int    $sourceId The image source id
-     * @param string $date     The image date
+     * @param string $filepath The filepath where the image is stored
      *
      * @return void
      *
      * Note: mkdir may not set permissions properly due to an issue with umask.
      *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
-    private function _createImageCacheDir($sourceId, $date)
+    private function _createImageCacheDir($filepath)
     {
-        // Base directory
-        $filepath = HV_CACHE_DIR . "/";
+        $cacheDir = HV_CACHE_DIR . $filepath;
 
-        // Date information
-        $year  = substr($date, 0, 4);
-        $month = substr($date, 5, 2);
-        $day   = substr($date, 8, 2);
-       
-        // Work-around 03/23/2010
-        // Nicknames not currently included in filename or query. Hard-coding future
-        // versions of JP2 images are modified to include nicknames
-        if ($sourceId == 0) {
-            $filepath .= "EIT/171";
-        } else if ($sourceId == 1 ) {
-            $filepath .= "EIT/195";
-        } else if ($sourceId == 2 ) {
-            $filepath .= "EIT/284";
-        } else if ($sourceId == 3 ) {
-            $filepath .= "EIT/304";
-        } else if ($sourceId == 4 ) {
-            $filepath .= "LASCO-C2/white-light";
-        } else if ($sourceId == 5 ) {
-            $filepath .= "LASCO-C3/white-light";
-        } else if ($sourceId == 6 ) {
-            $filepath .= "MDI/magnetogram";
-        } else if ($sourceId == 7 ) {
-            $filepath .= "MDI/continuum";
-        } else if ($sourceId == 8) {
-            $filepath .= "AIA/171";
-        }
-        
-        $filepath .= "/$year/$month/$day/";
-
-        if (!file_exists($filepath)) {
-            mkdir($filepath, 0777, true);
-            chmod($filepath, 0777);
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+            chmod($cacheDir, 0777);
         }
     }
     
@@ -479,8 +459,14 @@ class Module_WebClient implements Module
      */
     public static function printDocHeader() {
 ?>
-    <li><a href="index.php#CustomView">Loading a Custom View</a></li>
-    <li><a href="index.php#TilingAPI">Tiling API</a></li>
+    <li><a href="index.php#CustomView">Loading Custom Settings</a></li>
+    <li>
+        <a href="index.php#TilingAPI">Tiling</a>
+        <ul>
+            <li><a href="index.php#getClosestImage">Finding an Image</a></li>
+            <li><a href="index.php#getTile">Creating a Tile</a></li>
+        </ul>
+    </li>
 <?php
     }
     
@@ -492,10 +478,11 @@ class Module_WebClient implements Module
     public static function printDoc()
     {
         $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+        $rootURL = substr($baseURL, 0, -13) . "index.php?";
 ?>
 <!-- Custom View API-->
 <div id="CustomView">
-    <h1>2. Custom View API:</h1>
+    <h1>Custom View API:</h1>
     <p>The custom view API enables the user to load a specific set of parameters into Helioviewer: "view," here, simply
     means a given set of observation parameters. This is useful for dynamically loading a specific view or observation
     into Helioviewer using a URL.</p>
@@ -504,7 +491,8 @@ class Module_WebClient implements Module
         <span style="text-decoration: underline;">Usage:</span>
         <br />
         <br />
-        http://www.helioviewer.org/index.php<br />
+        <?php echo $rootURL; ?>
+        <br />
         <br />
 
         Supported Parameters:<br />
@@ -535,8 +523,8 @@ class Module_WebClient implements Module
         <br />
 
         <span class="example-header">Example:</span> <span class="example-url">
-        <a href="http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
-           http://www.helioviewer.org/index.php?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+        <a href="<?php echo $rootURL;?>date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+           <?php echo $rootURL;?>date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
         </a>
         </span>
     </div>
@@ -546,7 +534,7 @@ class Module_WebClient implements Module
 
 <!-- Tiling API -->
 <div id="TilingAPI">
-    <h1>3. Tiling API:</h1>
+    <h1>Tiling API:</h1>
     <p>Requesting a tile image in Helioviewer.org occurs in two steps. During the first step the user specifies the
     parameters of the image they are interested in tiling including the date, observatory, instrument, detector, 
     measurement. Alternatively, if the sourceId for the desired data source is already known that can be used
@@ -677,6 +665,126 @@ class Module_WebClient implements Module
         </li>
         
         <!-- getTile API -->
+        <li>
+        <div id="getClosestImage">Creating a Tile:
+        <p>Once you have determined the image for which you wish to retrieve a tile from using the above
+           <a href="#getClosestImage" />getClosestImage</p> request, you are ready to begin requesting tiles
+           for that image. Tiles are requesting by specifying the identifier for the image you wish to tile, in
+           this case simply the filename of the image, the spatial scale that the tile should be generated at,..
+
+        <br />
+
+
+        <div class="summary-box">
+            <span style="text-decoration: underline;">Usage:</span>
+            <br />
+            <br />
+            <a href="<?php echo $baseURL;?>?action=getClosestImage">
+                <?php echo $baseURL;?>?action=getClosestImage
+            </a>
+            
+            Supported Parameters:<br />
+            <br />
+    
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="20%"><b>date</b></td>
+                        <td width="25%"><i>ISO 8601 UTC Date</i></td>
+                        <td width="55%">The desired image date</td>
+                    </tr>
+                    <tr>
+                        <td><b>server</b></td>
+                        <td><i>Integer</i></td>
+                        <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
+                    </tr>
+                    <tr>
+                        <td><b>sourceId</b></td>
+                        <td><i>Integer</i></td>
+                        <td><i>[Optional]</i> The image data source identifier.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <br /><br />
+    
+            Result:<br />
+            <br />
+    
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="20%"><b>filename</b></td>
+                        <td width="25%"><i>String</i></td>
+                        <td width="55%">The filename of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>filepath</b></td>
+                        <td><i>String</i></td>
+                        <td>The location of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>date</b></td>
+                        <td><i>Date String</i></td>
+                        <td>The date of of the matched image</td>
+                    </tr>
+                    <tr>
+                        <td><b>scale</b></td>
+                        <td><i>Float</i></td>
+                        <td>The image's native spatial scale, in arc-seconds/pixel</td>
+                    </tr>
+                    <tr>
+                        <td><b>width</b></td>
+                        <td><i>Integer</i></td>
+                        <td>Image width</td>
+                    </tr>
+                    <tr>
+                        <td><b>height</b></td>
+                        <td><i>Integer</i></td>
+                        <td>Image width</td>
+                    </tr>
+                    <tr>
+                        <td><b>sunCenterX</b></td>
+                        <td><i>Float</i></td>
+                        <td>Distance from image left to the solar center, in pixels</td>
+                    </tr>
+                    <tr>
+                        <td><b>sunCenterY</b></td>
+                        <td><i>Float</i></td>
+                        <td>Distance from image bottom to the solar center, in pixels</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <br />
+    
+            <span class="example-header">Examples:</span> <span class="example-url">
+                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
+                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
+                </a>
+                <br /><br />
+                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3">
+                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3
+                </a>
+            </span>
+            
+        </div>
+
+        <br />
+        
+        <!-- Closest Image API Notes -->
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <span style="text-decoration: underline;">Notes:</span>
+        <br />
+        <ul>
+            <li>
+            <p>At least one of the methods for specifying the image source, either a sourceId or the image 
+            observatory, instrument, detector and measurement must be included in the request. </p>
+            </li>
+        </ul>
+        </div>
+        
+        </li>
     </ol>
 </div>
 <?php
