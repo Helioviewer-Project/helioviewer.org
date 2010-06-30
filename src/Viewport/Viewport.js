@@ -200,6 +200,10 @@ var Viewport = Class.extend(
         $(document).trigger("save-setting", ["imageScale", imageScale]);
     },
     
+    serialize: function () {
+        return this._tileLayerManager.serialize();
+    },
+    
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?
     toString: function () {
     },    
