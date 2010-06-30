@@ -225,10 +225,10 @@ class Module_JHelioviewer implements Module
     public static function printDocHeader() {
 ?>
     <li>
-        <a href="index.php#JPEG2000API">JPEG 2000 API</a>
+        <a href="index.php#JPEG2000API">JPEG 2000</a>
         <ul>
-            <li><a href="index.php#getJP2Image">Image API</a></li>
-            <li><a href="index.php#getJPX">JPX API</a></li>
+            <li><a href="index.php#getJP2Image">Retrieving a JPEG 2000 Image</a></li>
+            <li><a href="index.php#getJPX">Creating a JPX Movie</a></li>
         </ul>
     </li>
 <?php     
@@ -246,7 +246,7 @@ class Module_JHelioviewer implements Module
 ?>
 <!-- JPEG 2000 API -->
 <div id="JPEG2000API">
-    <h1>5. JPEG 2000 API:</h1>
+    <h1>JPEG 2000 API:</h1>
     <p>Helioviewer's JPEG 2000 API's enable access to the raw JPEG 2000 images used to generate the tiles seen on the
     site, as well as real-time generation of JPEG 2000 Image Series (JPX).</p>
     <ol style="list-style-type: upper-latin;">

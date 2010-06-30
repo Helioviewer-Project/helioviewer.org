@@ -48,7 +48,7 @@ class Movie_HelioviewerMovieBuilder
     public function buildMovie($params) 
     {
         $defaults = array(
-            'numFrames'   => 0,
+            'numFrames'   => false,
             'frameRate'   => 8,
             'filename'	  => "movie" . time(),
             'sharpen'	  => false,
@@ -102,9 +102,10 @@ class Movie_HelioviewerMovieBuilder
             	$endTime    = toUnixTimestamp($isoEndTime);
             }
             
-            $numFrames = ($this->_params['numFrames'] === 0 || $this->_params['numFrames'] === "0")? 
+            $numFrames = ($this->_params['numFrames'] === false)? 
                             $this->_determineOptimalNumFrames($layers, $this->_params['startTime'], $isoEndTime) :
                             min($this->_params['numFrames'], $this->maxNumFrames);
+            $numFrames = max($numFrames, 10);
 
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 

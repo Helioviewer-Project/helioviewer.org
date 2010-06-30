@@ -59,9 +59,11 @@ def getObservationDate(dom):
         except:
             print "Unable to find image date... (Not AIA, EIT, MDI, or LASCO)"
         else:
-            # If SDO, first convert to same format as SOHO (yyyy-mm-ddThh:mm:ss.mZ => yyyy-mm-ddThh:mm:ss.mmmZ)
+            # If SDO, first convert to same format as SOHO (yyyy-mm-ddThh:mm:ss.m(m)Z => yyyy-mm-ddThh:mm:ss.mmmZ)
             if d[21] == "Z":
                 d = d[0:-1] + "00Z"
+            elif d[22] == "Z":
+                d = d[0:-1] + "0Z"
             
             datestring = d[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
             
