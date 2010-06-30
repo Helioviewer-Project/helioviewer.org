@@ -82,7 +82,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         foreach ($layerInfoArray as $layer) {
             $closestImage = $this->_getClosestImage($layer['sourceId']);
             $obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
-            $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'];
+            $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";
             
             $roi = array(
                 'top'    => $this->offsetTop,
@@ -112,7 +112,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         if ($this->buildFilename)
         {
         	$time = str_replace(array(":", "-", "T", "Z"), "_", $this->timestamp);
-        	$this->setOutputFile($time . $filenameInfo . ".jpg");
+        	$this->setOutputFile($time . $filenameInfo . time() . ".jpg");
         }
 
         $this->compileImages();

@@ -23,7 +23,7 @@ var ViewportMovementHelper = Class.extend(
      * @description Creates a new ViewportMovementHelper
      */
     init: function (domNode, mouseCoords) {
-        this.domNode         = domNode;
+        this.domNode         = $(domNode);
         this.sandbox         = $("#sandbox");
         this.movingContainer = $("#moving-container");
         this.mouseCoords     = mouseCoords;
