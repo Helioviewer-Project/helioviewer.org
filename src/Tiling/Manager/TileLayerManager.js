@@ -125,7 +125,7 @@ var TileLayerManager = LayerManager.extend(
         var layerSettings, layers = [], self = this;
         
         $.each(urlLayers, function () {
-            layerSettings        = this.parseLayerString(this);
+            layerSettings        = self.parseLayerString(this);
             layerSettings.server = self._selectTilingServer();
             layers.push(layerSettings);
         });

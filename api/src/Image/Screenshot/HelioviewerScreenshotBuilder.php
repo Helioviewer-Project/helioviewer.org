@@ -116,30 +116,31 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      */
     private function _createMetaInformation($layers, $imageScale, $width, $height)
     {
-        $layerStrings 	= explode("/", $layers);
-        $metaArray 		= array();
+        $layerStrings = explode("],", $layers);
+        $metaArray    = array();
         
         if (sizeOf($layerStrings) < 1) {
             throw new Exception('Invalid layer choices! You must specify at least 1 layer.');
         }
         
         foreach ($layerStrings as $layer) {
-            $layerArray = explode(",", $layer);
+            $layerArray = explode(",", str_replace(array("[","]"), "", $layer));
             if (sizeOf($layerArray) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $opacity) = $layerArray;
+                list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
                 $sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
             } else {
-                list($sourceId, $opacity) = $layerArray;
+                list($sourceId, $visible, $opacity) = $layerArray;
             }
-                
-            $layerInfoArray = array(
-                'sourceId' 	 => $sourceId,
-                'width' 	 => $width,
-                'height'	 => $height,
-                'imageScale' => $imageScale,
-                'opacity'	 => $opacity
-            );
-            array_push($metaArray, $layerInfoArray);
+            if ($visible !== 0 && $visible !== "0") {
+	            $layerInfoArray = array(
+	                'sourceId' 	 => $sourceId,
+	                'width' 	 => $width,
+	                'height'	 => $height,
+	                'imageScale' => $imageScale,
+	                'opacity'	 => $opacity
+	            );
+                array_push($metaArray, $layerInfoArray);
+            }
         }
 
         return $metaArray;

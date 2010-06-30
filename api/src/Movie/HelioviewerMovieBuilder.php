@@ -84,7 +84,7 @@ class Movie_HelioviewerMovieBuilder
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
-            $layers = explode("/", $this->_params['layers']);
+            $layers = explode("],", $this->_params['layers']);
             if (sizeOf($layers) == 0 || sizeOf($layers) > 3) {
                 $msg = "Invalid layer choices! You must specify 1-3 comma-separated layernames.";
                 throw new Exception($msg);
@@ -118,7 +118,7 @@ class Movie_HelioviewerMovieBuilder
                 $this->_params['quality'],
                 $movieMeta
             );
-        
+
             $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames);
             $url 	= $movie->buildMovie($images);
             
@@ -194,11 +194,11 @@ class Movie_HelioviewerMovieBuilder
     		$layerInfo = explode(",", $layer);
     	    if (sizeOf($layerInfo) > 4) {
                 list($observatory, $instrument, $detector, $measurement, $opacity) = $layerInfo;
-                $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);        
+                $sourceId = $imgIndex->getSourceId(str_replace("[", "", $observatory), $instrument, $detector, $measurement);        
             } else {
                 $sourceId = $layerInfo[0];
             }
-    		$maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, $sourceId));
+    		$maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, str_replace("[", "", $sourceId)));
     	}
 
     	return min($maxInRange, $this->maxNumFrames);

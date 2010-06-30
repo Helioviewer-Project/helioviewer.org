@@ -199,7 +199,7 @@ var TileLayer = Layer.extend(
      * set at tile-level.
      */
     getTile: function (event, x, y, onTileLoadComplete) {
-        var top, left, ts, img, rf, emptyTile;
+        var top, left, ts, img, rf, emptyTile; 
 
         left = x * this.tileSize;
         top  = y * this.tileSize;
