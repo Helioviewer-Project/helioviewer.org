@@ -68,9 +68,6 @@ class Image_JPEG2000_JP2ImageXMLBox
 
         fclose($fp);
         
-        // TEMP Work-around 2010/04/12 for AIA Invalid XML
-        $xml = str_replace("&", "&amp;", $xml);
-        
         $this->_xmlString = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
 
         $this->_xml = new DOMDocument();
@@ -114,9 +111,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         try {
             $scale = $this->_getElementValue("CDELT1");
         } catch (Exception $e) {
-            // TEMP Work-around 2010/04/12: Include support for AIA 171
-            $scale =  0.6075; // ESTIMATE        
-            //echo 'Unable to locate image scale in header tags!';            
+            echo 'Unable to locate image scale in header tags!';            
         }
         return $scale;
     }
@@ -135,10 +130,7 @@ class Image_JPEG2000_JP2ImageXMLBox
             $x = $this->_getElementValue("CRPIX1");
             $y = $this->_getElementValue("CRPIX2");
         } catch (Exception $e) {
-            // TEMP Work-around 2010/04/12: Include support for AIA 171
-            $x = 2048;
-            $y = 2048;
-            //echo 'Unable to locate sun center center in header tags!';
+            echo 'Unable to locate sun center center in header tags!';
         }
         return array($x, $y);
     }

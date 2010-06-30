@@ -107,15 +107,24 @@ def createSourceTable(cursor):
 
     cursor.execute('''
     INSERT INTO `datasource` VALUES
-        (0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 0, 1),
-        (1, 'EIT 195', 'SOHO EIT 195', 0, 0, 0, 1, 1),
-        (2, 'EIT 284', 'SOHO EIT 284', 0, 0, 0, 2, 1),
-        (3, 'EIT 304', 'SOHO EIT 304', 0, 0, 0, 3, 1),
-        (4, 'LASCO C2', 'SOHO LASCO C2', 0, 1, 1, 6, 2),
-        (5, 'LASCO C3', 'SOHO LASCO C3', 0, 1, 2, 6, 3),
-        (6, 'MDI Mag', 'SOHO MDI Mag', 0, 2, 3, 5, 1),
-        (7, 'MDI Int', 'SOHO MDI Int', 0, 2, 3, 4, 1),
-        (8, 'AIA 171', 'SDO AIA 171',  2, 4, 5, 0, 1);
+        (0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 2, 1),
+        (1, 'EIT 195', 'SOHO EIT 195', 0, 0, 0, 4, 1),
+        (2, 'EIT 284', 'SOHO EIT 284', 0, 0, 0, 6, 1),
+        (3, 'EIT 304', 'SOHO EIT 304', 0, 0, 0, 7, 1),
+        (4, 'LASCO C2', 'SOHO LASCO C2', 0, 1, 1, 14, 2),
+        (5, 'LASCO C3', 'SOHO LASCO C3', 0, 1, 2, 14, 3),
+        (6, 'MDI Mag', 'SOHO MDI Mag', 0, 2, 3, 13, 1),
+        (7, 'MDI Int', 'SOHO MDI Int', 0, 2, 3, 12, 1),
+        (8, 'AIA 94', 'SDO AIA 94',  2, 4, 5, 0, 1),
+        (9, 'AIA 131', 'SDO AIA 131',  2, 4, 5, 1, 1),
+        (10, 'AIA 171', 'SDO AIA 171',  2, 4, 5, 2, 1),
+        (11, 'AIA 193', 'SDO AIA 193',  2, 4, 5, 3, 1),
+        (12, 'AIA 211', 'SDO AIA 211',  2, 4, 5, 5, 1),
+        (13, 'AIA 304', 'SDO AIA 304',  2, 4, 5, 7, 1),        
+        (14, 'AIA 335', 'SDO AIA 335',  2, 4, 5, 8, 1),
+        (15, 'AIA 1600', 'SDO AIA 1600',  2, 4, 5, 9, 1),
+        (16, 'AIA 1700', 'SDO AIA 1700',  2, 4, 5, 10, 1),
+        (17, 'AIA 4500', 'SDO AIA 4500',  2, 4, 5, 11, 1);
     ''')
 
 def createObservatoryTable(cursor):
@@ -194,13 +203,21 @@ def createMeasurementTable(cursor):
 
     cursor.execute(u'''
     INSERT INTO `measurement` VALUES
-        (0, '171', '171 Ångström extreme ultraviolet', 'Å'),
-        (1, '195', '195 Ångström extreme ultraviolet', 'Å'),
-        (2, '284', '284 Ångström extreme ultraviolet', 'Å'),
-        (3, '304', '304 Ångström extreme ultraviolet', 'Å'),
-        (4, 'continuum', 'Intensitygram', 'DN'),
-        (5, 'magnetogram', 'Magnetogram', 'Mx'),
-        (6, 'white-light', 'White Light', 'DN');
+        (0, '94', '94 Ångström extreme ultraviolet', 'Å'),
+        (1, '131', '131 Ångström extreme ultraviolet', 'Å'),
+        (2, '171', '171 Ångström extreme ultraviolet', 'Å'),
+        (3, '193', '193 Ångström extreme ultraviolet', 'Å'),
+        (4, '195', '195 Ångström extreme ultraviolet', 'Å'),
+        (5, '211', '211 Ångström extreme ultraviolet', 'Å'),        
+        (6, '284', '284 Ångström extreme ultraviolet', 'Å'),
+        (7, '304', '304 Ångström extreme ultraviolet', 'Å'),
+        (8, '335', '335 Ångström extreme ultraviolet', 'Å'),
+        (9, '1600', '1600 Ångström extreme ultraviolet', 'Å'),
+        (10, '1700', '1700 Ångström extreme ultraviolet', 'Å'),
+        (11, '4500', '4500 Ångström extreme ultraviolet', 'Å'),
+        (12, 'continuum', 'Intensitygram', 'DN'),
+        (13, 'magnetogram', 'Magnetogram', 'Mx'),
+        (14, 'white-light', 'White Light', 'DN');
     ''')
     
 def createDateIndex(cursor):
@@ -215,8 +232,6 @@ def getDataSources(cursor):
     __DET_NAME_IDX__  = 3
     __MEAS_NAME_IDX__ = 4
     
-    #((0, 'SOHO', 'EIT', '', '171'), (1, 'SOHO', 'EIT', '', '195'), (2, 'SOHO', 'EIT', '', '284'), (3, 'SOHO', 'EIT', '', '304'), (4, 'SOHO', 'LASCO', 'C2', 'WL'), (5, 'SOHO', 'LASCO', 'C3', 'WL'), (6, 'SOHO', 'MDI', '', 'mag'), (7, 'SOHO', 'MDI', '', 'int'))
-
     sql = \
     ''' SELECT
             datasource.id as id,
