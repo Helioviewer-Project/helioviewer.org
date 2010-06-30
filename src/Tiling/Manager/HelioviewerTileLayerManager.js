@@ -159,6 +159,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                 parsedLayers.push(str);
             }
         });
-        return parsedLayers.join("/");
+        return parsedLayers;
     }
 });
