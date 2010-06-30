@@ -100,8 +100,9 @@ abstract class Image_Tiling_Tile
 
         // Determine where the tile is located (where tile should lie in the padding)
         $gravity = null;
-        $right = $this->image->subfieldRelWidth() - $this->tileSize;
-        $down  = $right;
+        $right = $this->image->subfieldRelWidth()  - $this->tileSize;
+        $down  = $this->image->subfieldRelHeight() - $this->tileSize;
+
         if ($x == $tileMinX) {
             if ($y == $tileMinY) {
                 $offsetX = $right;

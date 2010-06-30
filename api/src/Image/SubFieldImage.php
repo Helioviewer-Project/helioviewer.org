@@ -100,8 +100,8 @@ class Image_SubFieldImage
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));
 
-        $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
-        $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
+        $this->subfieldRelWidth  = round($this->subfieldWidth  / $this->desiredToActual);
+        $this->subfieldRelHeight = round($this->subfieldHeight / $this->desiredToActual);
 
         $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
@@ -180,6 +180,11 @@ class Image_SubFieldImage
     public function subfieldRelWidth()
     {
     	return $this->subfieldRelWidth;
+    }
+    
+    public function subfieldRelHeight()
+    {
+    	return $this->subfieldRelHeight;
     }
     
     public function computePadding($roi, $scale)
@@ -277,7 +282,6 @@ class Image_SubFieldImage
             {
                 //$image->setCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
                 $image->setImageInterlaceScheme(IMagick::INTERLACE_PLANE);
-                // Need to set colors to 256?
             } else {
             	$image->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
             	$image->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
@@ -285,14 +289,15 @@ class Image_SubFieldImage
 
             $image->setImageDepth(HV_BIT_DEPTH);
 
-            // Screenshots need to be resized before padding, tiles need to be resized after.
-            if (!isset($this->tileSize) && !$this->hasAlphaMask()) {
-            	$image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
-            }
+            // Resize extracted image to correct size before padding.
+            $image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
 
-            if ($this->padding && !$this->hasAlphaMask()) {
-                //$image->setGravity($this->padding['imGravity']);
-                $image->setImageBackgroundColor('black');
+            if ($this->padding) {
+            	if ($this->hasAlphaMask()) {
+            		$image->setImageBackgroundColor('transparent');
+            	} else {
+                    $image->setImageBackgroundColor('black');
+            	}
                 // Places the current image on a larger field of black if the final image is larger than this one
                 $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
             }
