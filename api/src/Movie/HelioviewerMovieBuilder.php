@@ -56,7 +56,8 @@ class Movie_HelioviewerMovieBuilder
             'quality'	  => 10,
             'hqFormat'	  => "mp4",
             'display'	  => true,
-            'watermarkOn' => true
+            'watermarkOn' => true,
+            'endTime'     => false
         );
         $this->_params = array_merge($defaults, $params);
         
@@ -89,12 +90,21 @@ class Movie_HelioviewerMovieBuilder
                 throw new Exception($msg);
             }
             
-            $numFrames = ($this->_params['numFrames'] === 0 || $this->_params['numFrames'] === "0")? 
-                            $this->_determineOptimalNumFrames($layers, $this->_params['startTime'], $this->_params['endTime']) :
-                            min($this->_params['numFrames'], $this->maxNumFrames);
-
             $startTime = toUnixTimestamp($this->_params['startTime']);
-            $endTime   = toUnixTimestamp($this->_params['endTime']);
+            
+            // If endTime was not given, default to 24 hours after the startTime.
+            if (!$this->_params['endTime'])
+            {
+            	$endTime     = $startTime + 86400;
+            	$isoEndTime  = toISOString(parseUnixTimestamp($endTime));
+            } else {
+            	$isoEndTime = $this->_params['endTime'];
+            	$endTime    = toUnixTimestamp($isoEndTime);
+            }
+            
+            $numFrames = ($this->_params['numFrames'] === 0 || $this->_params['numFrames'] === "0")? 
+                            $this->_determineOptimalNumFrames($layers, $this->_params['startTime'], $isoEndTime) :
+                            min($this->_params['numFrames'], $this->maxNumFrames);
 
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 

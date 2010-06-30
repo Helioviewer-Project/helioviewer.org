@@ -285,13 +285,12 @@ class Image_SubFieldImage
 
             $image->setImageDepth(HV_BIT_DEPTH);
 
-            // Screenshots need to be resized before padding, tiles need to be resized after.
-            if (!isset($this->tileSize) && !$this->hasAlphaMask()) {
+            // Resize extracted image to correct size before padding.
+            if (!$this->hasAlphaMask()) {
             	$image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
             }
 
             if ($this->padding && !$this->hasAlphaMask()) {
-                //$image->setGravity($this->padding['imGravity']);
                 $image->setImageBackgroundColor('black');
                 // Places the current image on a larger field of black if the final image is larger than this one
                 $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
