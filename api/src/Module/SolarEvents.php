@@ -124,10 +124,10 @@ class Module_SolarEvents implements Module
     public static function printDocHeader() {
 ?>
     <li>
-        <a href="index.php#FeatureEventAPI">Feature/Event API (Temporarily Disabled)</a>
+        <a href="index.php#FeatureEventAPI">Features/Events</a>
         <ul>
-            <li><a href="index.php#getEventFRMs">Event FRMs</a></li>
-            <li><a href="index.php#getEvents">Events</a></li>
+            <li><a href="index.php#getEventFRMs">Feature Recognition Methods (FRMs)</a></li>
+            <li><a href="index.php#getEvents">Finding Events</a></li>
         </ul>
     </li>
 <?php
@@ -144,7 +144,7 @@ class Module_SolarEvents implements Module
 ?>
 <!-- Feature/Event API -->
 <div id="FeatureEventAPI">
-    <h1>4. Feature/Event API:</h1>
+    <h1>Feature/Event API:</h1>
     <p>There are two ways to use Helioviewer's Feature/Event API. The first is to query the available Feature 
     Recognition Methods (FRM), and then query for specific features/events within each FRM. The second method is to go
     straight to querying for features/events, skipping the FRM step. <!-- This requires that you already know the 
