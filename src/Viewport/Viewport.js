@@ -24,7 +24,6 @@ var Viewport = Class.extend(
     },
     dimensions              : { width: 0, height: 0 },
     maxLayerDimensions      : { width: 0, height: 0 },
-    tileVisibilityRange     : {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0},
 
     /**
      * @constructs
@@ -46,7 +45,7 @@ var Viewport = Class.extend(
         this.innerNode = $(this.id + '-container-inner');
         this.outerNode = $(this.id + '-container-outer');
         
-        //      Combined height of the header and footer in pixels (used for resizing viewport vertically)
+        // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;    
 
         // If Viewport.js is not subclassed, do default setup. Otherwise handle these functions in the subclass.
@@ -61,30 +60,7 @@ var Viewport = Class.extend(
             this._initEventHandlers();
         }
     },
-    
-    /**
-     * @description Algorithm for determining which tiles should be displayed at
-     *              a given time. Uses the Heliocentric coordinates of the viewport's
-     *              TOP-LEFT and BOTTOM-RIGHT corners to determine range to display.
-     */
-    checkTileVisibility: function () {
-        var oldTileVisibilityRange = this.tileVisibilityRange;
-        
-        this._updateTileVisibilityRange();
-        
-        if (!this._checkVisibilityRangeEquality(oldTileVisibilityRange, this.tileVisibilityRange)) {
-            this._tileLayerManager.updateTileVisibilityRange(this.tileVisibilityRange);
-        }
-    },
-    
-    /**
-     * Compares two sets of indices indicating the current scope or range of tile visibility
-     */
-    _checkVisibilityRangeEquality: function (r1, r2) {
-        return ((r1.xStart === r2.xStart) && (r1.xEnd === r2.xEnd) && 
-                (r1.yStart === r2.yStart) && (r1.yEnd === r2.yEnd));         
-    },    
-    
+
     /**
      * Adjust saved layer dimensions by a specified scale factor
      */
@@ -171,7 +147,7 @@ var Viewport = Class.extend(
     
         if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
             this.movementHelper.resize();
-            this.checkTileVisibility();
+            this._updateTileVisibilityRange();
         }
     },
     
@@ -190,7 +166,8 @@ var Viewport = Class.extend(
         $(document).bind("set-image-scale", $.proxy(this.setImageScale, this))
                    .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
                    .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("recompute-tile-visibility", $.proxy(this.checkTileVisibility, this));
+                   .bind("recompute-tile-visibility", $.proxy(this._updateTileVisibilityRange, this))
+                   .bind("get-viewport-information", $.proxy(this.getViewportInformation, this));
         
         this.domNode.dblclick($.proxy(this.doubleClick, this));
     },
@@ -200,27 +177,9 @@ var Viewport = Class.extend(
      * @returns {Object} The range of tiles which should be displayed
      */
     _updateTileVisibilityRange: function () {
-        var vp, ts;
-        
         // Get viewport coordinates with respect to the center of the image
-        vp = this.movementHelper.getViewportCoords();
-
-        // Expand to fit tile increment
-        ts = this.tileSize;
-        vp = {
-            top:    vp.top    - ts - (vp.top  % ts),
-            left:   vp.left   - ts - (vp.left % ts),
-            bottom: vp.bottom + ts - (vp.bottom % ts),
-            right:  vp.right  + ts - (vp.right % ts)
-        };
-
-        // Indices to display (one subtracted from ends to account for "0th" tiles).
-        this.tileVisibilityRange = {
-            xStart : vp.left / ts,
-            yStart : vp.top  / ts,
-            xEnd   : (vp.right  / ts) - 1,
-            yEnd   : (vp.bottom / ts) - 1
-        };
+        var vp = this.movementHelper.getViewportCoords();
+        this._tileLayerManager.updateTileVisibilityRange(vp);
     },
     
     setImageScale: function (event, imageScale) {
@@ -235,7 +194,7 @@ var Viewport = Class.extend(
     
         this._updateTileVisibilityRange();
         // reset the layers
-        this._tileLayerManager.adjustImageScale(imageScale, this.tileVisibilityRange);
+        this._tileLayerManager.adjustImageScale(imageScale);
     
         // store new value
         $(document).trigger("save-setting", ["imageScale", imageScale]);
@@ -244,6 +203,7 @@ var Viewport = Class.extend(
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?
     toString: function () {
     },    
+    
     toJSON: function () {
     }
 });

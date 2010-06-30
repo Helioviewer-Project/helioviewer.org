@@ -24,11 +24,12 @@ var HelioviewerViewport = Viewport.extend(
      *       <b>prefetch</b>   - The radius outside of the visible viewport to prefetch.<br>
      * </div>
      */
-    init: function (options) {
+    init: function (options, timeControls) {
         this._super(options);
     
         // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
-        this._rsun = 959.705;
+        this._rsun         = 959.705;
+        this._timeControls = timeControls;
 
         // Initialize tile layers
         this._tileLayerManager = new HelioviewerTileLayerManager(this.api, this.requestDate, this.dataSources, 
@@ -44,26 +45,20 @@ var HelioviewerViewport = Viewport.extend(
         this._initEventHandlers();
     },
 
-    /**	
-     * Updates the stored values for the maximum tile and event layer dimensions. 
-     * This is used in computing the optimal sandbox size.	
-     */		
-    updateMaxLayerDimensions: function (event, type, dimensions) {
-        var old, tileLayerDimensions, eventLayerDimensions;
-        
-        old = this.maxLayerDimensions;
-        tileLayerDimensions  = this._tileLayerManager.getMaxDimensions();
-        eventLayerDimensions = tileLayerDimensions; // Hack until eventLayers are put back in;
-        //eventLayerDimensions = this._eventLayerManager.getMaxDimensions();
-	
-        this.maxLayerDimensions = {
-            width : Math.max(tileLayerDimensions.width,  eventLayerDimensions.width),	
-            height: Math.max(tileLayerDimensions.height, eventLayerDimensions.height)
+    getViewportInformation: function (event, callback) {
+        info = {
+            time        : this._timeControls.toISOString(),
+            layers      : this._tileLayerManager.toScreenshotQueryString(),
+            coordinates : this.movementHelper.getViewportCoords(),
+            imageScale  : this.imageScale
         };
-
-        if ((this.maxLayerDimensions.width !== old.width) || (this.maxLayerDimensions.height !== old.height)) {
-            this.movementHelper.updateMaxLayerDimensions(this.maxLayerDimensions);	
-        }	
+        
+        if (callback) {
+            callback(info);
+        }
+        else {
+            return info;
+        }
     },
     
     /**
