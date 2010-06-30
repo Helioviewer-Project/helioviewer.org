@@ -62,10 +62,10 @@ var ScreenshotBuilder = MediaBuilder.extend(
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInformation);
         self = this;
-        
+        console.log(viewportInformation.layers);
         params = {
             action     : "takeScreenshot",
-            layers     : viewportInformation.layers.join("/"),
+            layers     : viewportInformation.layers,
             obsDate    : viewportInformation.time,
             imageScale : scale,
             x1         : arcsecCoords.x1,
