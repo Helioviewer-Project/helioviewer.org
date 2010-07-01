@@ -349,10 +349,10 @@ abstract class Image_Composite_CompositeImage
     	// Need to up the time limit that imagick is allowed to use to execute commands. 
         set_time_limit(60);
     	$imagickImage->setImageFormat('JPG');
-    	$imagickImage->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
+    	//$imagickImage->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
         $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
         $imagickImage->setBackgroundColor('black');
-        $imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
+        //$imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
         $imagickImage->setImageDepth(8);
         //$imagickImage->quantizeImage(256, IMagick::COLORSPACE_RGB, 256, false, false); // Takes too long and doesn't do much.
         $imagickImage->writeImage($output);
