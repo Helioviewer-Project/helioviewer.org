@@ -78,8 +78,9 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
         $padding = $this->image->computePadding($roi, $imageScale);
         $image->setPadding($padding);
 
-        if(HV_DISABLE_CACHE || $this->_imageNotInCache())
-            $this->image->build();
+        if(HV_DISABLE_CACHE || $this->_imageNotInCache()) {
+        	$this->image->build();
+        }
     }
     
     /**
