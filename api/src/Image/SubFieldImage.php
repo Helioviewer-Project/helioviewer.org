@@ -52,7 +52,7 @@ class Image_SubFieldImage
     protected $subfieldHeight;
     protected $subfieldRelWidth;
     protected $subfieldRelHeight;
-    protected $jp2Width; // temporarily public
+    protected $jp2Width; 
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
@@ -197,7 +197,7 @@ class Image_SubFieldImage
         
         $leftToCenter = ($this->roi['left'] - $centerX);
         $topToCenter  = ($this->roi['top']  - $centerY);
-        $scaleFactor = $this->jp2Scale / $scale;
+        $scaleFactor  = $this->jp2Scale / $scale;
         $relLeftToCenter = $leftToCenter * $scaleFactor;
         $relTopToCenter  = $topToCenter  * $scaleFactor;
 
@@ -271,36 +271,21 @@ class Image_SubFieldImage
 
             //Apply color-lookup table
             //if ($this->colorTable && ($_GET["det"] != "AIA")) {
-            if ($this->colorTable) {
-                $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
-            }
+            // Override setColorPalette in MDIImage and AIAImage, which have no color tables.
+            $this->setColorPalette($intermediate, $this->colorTable, $intermediate);
             
-            $this->getAlphaMaskCmd($intermediate);
+            $this->applyAlphaMaskCmd($intermediate);
 
             $image = new IMagick($intermediate);
-            if ($this->format === "png")
-            {
-                //$image->setCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
-                $image->setImageInterlaceScheme(IMagick::INTERLACE_PLANE);
-            } else {
-            	$image->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
-            	$image->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
-            }
-
-            $image->setImageDepth(HV_BIT_DEPTH);
+            $this->compressImage($image);
 
             // Resize extracted image to correct size before padding.
             $image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
 
-            if ($this->padding) {
-            	if ($this->hasAlphaMask()) {
-            		$image->setImageBackgroundColor('transparent');
-            	} else {
-                    $image->setImageBackgroundColor('black');
-            	}
-                // Places the current image on a larger field of black if the final image is larger than this one
-                $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
-            }
+            $this->setBackground($image);
+
+            // Places the current image on a larger field of black if the final image is larger than this one
+            $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
 
             /* 
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
@@ -352,7 +337,7 @@ class Image_SubFieldImage
                 $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
             }
 
-            $this->getAlphaMaskCmd($intermediate);
+            $this->applyAlphaMaskCmd($intermediate);
             $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
 
             // Compression settings & Interlacing
@@ -404,15 +389,44 @@ class Image_SubFieldImage
     }
     
     /**
+     * Sets compression for images that are not compositeImageLayers 
+     */
+    protected function compressImage($imagickImage)
+    {
+    	if (!isset($this->tileSize)) {
+    		return;
+    	}
+        if ($this->format === "png")
+        {
+            $imagickImage->setCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
+            $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_PLANE);
+        } else {
+            $imagickImage->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
+            $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
+        }
+        
+        $imagickImage->setImageDepth(HV_BIT_DEPTH);
+    }
+    
+    /**
+     * Sets the background color of the image. LASCOImage overrides this to set
+     * the background to transparent.
+     */
+    protected function setBackground($imagickImage)
+    {
+    	$imagickImage->setImageBackgroundColor('black');
+    }
+    
+    /**
      * Default behavior for images is to just add a black background.
-     * LASCOImage.php has a getAlphaMaskCmd that overrides this one and applies
+     * LASCOImage.php has a applyAlphaMaskCmd that overrides this one and applies
      * an alpha mask instead.
-     * $this->getAlphaMaskCmd($intermediate); 
+     * $this->applyAlphaMaskCmd($intermediate); 
      * @param string $intermediate pgm grayscale image
      * 
      * @return string partial command for imagemagick
      */
-    protected function getAlphaMaskCmd($intermediate)
+    protected function applyAlphaMaskCmd($intermediate)
     {
         return $intermediate . " -background black ";
     }
@@ -548,6 +562,8 @@ class Image_SubFieldImage
 
     /**
      * Applies the specified color lookup table to the image using GD
+     * Override this in any ImageType class that doesn't have a color
+     * table, i.e. MDI and AIA (for now)
      *
      * Note: input and output are usually the same file.
      *
@@ -556,15 +572,8 @@ class Image_SubFieldImage
      * @param string $output Location to save new image to
      *
      * @return void
-     */
- /*   private function _setColorPalette ($imagickImage, $clut, $output)
-    {   
-        $ctable = new IMagick($clut);
-        $imagickImage->clutImage($ctable);
-        $ctable->destroy();
-    }*/
-    
-    private function _setColorPalette($input, $clut, $output)
+     */    
+    protected function setColorPalette($input, $clut, $output)
     {	
         $gd = null;
         try {

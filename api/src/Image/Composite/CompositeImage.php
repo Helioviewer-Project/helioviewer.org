@@ -33,7 +33,7 @@ abstract class Image_Composite_CompositeImage
     protected $tmpDir;
     protected $layerImages;
     protected $transImageDir;
-    protected $compositeImageDir;
+    protected $cacheDir;
     protected $metaInfo;
 
     /**
@@ -51,10 +51,9 @@ abstract class Image_Composite_CompositeImage
         $this->tmpDir     = $tmpDir;
         $this->setOutputFile($filename);
 
-        $this->compositeImageDir = HV_CACHE_DIR . "/composite_images/";
+        $this->cacheDir = HV_CACHE_DIR . "/";
         
         $this->makeDirectory($this->tmpDir);
-        $this->makeDirectory($this->compositeImageDir);
     }
     
     /**
@@ -154,7 +153,7 @@ abstract class Image_Composite_CompositeImage
         $imagickImage->compositeImage($watermark, IMagick::COMPOSITE_DISSOLVE, $x, $y);
         
         // If the image is too small, text won't fit. Don't put a timestamp on it. 
-        if ($imageWidth > 235) {
+        if ($imageWidth > 285) {
             $this->addWaterMarkText($imagickImage);
         }
         
@@ -203,9 +202,9 @@ abstract class Image_Composite_CompositeImage
 
         $scale = ($imageWidth * 100 / 2) / 300;
 
-        $resize = HV_PATH_CMD . "convert -scale " . $scale . "% " . $watermark . " " . $this->compositeImageDir . "watermark_scaled.png";
+        $resize = HV_PATH_CMD . "convert -scale " . $scale . "% " . $watermark . " " . $this->cacheDir . "watermark_scaled.png";
         exec(escapeshellcmd($resize));
-        return $this->compositeImageDir . "watermark_scaled.png";
+        return $this->cacheDir . "watermark_scaled.png";
     }
     
     /**

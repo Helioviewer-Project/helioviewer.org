@@ -44,7 +44,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      *                              
      * @return string the screenshot
      */
-    public function takeScreenshot($originalParams)
+    public function takeScreenshot($originalParams, $outputDir)
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
@@ -52,7 +52,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             'sharpen' 	  => false,
             'quality' 	  => 10,
             'display'	  => true,
-            'watermarkOn' => true
+            'watermarkOn' => true,
+            'filename'    => false
         );
         $params = array_merge($defaults, $originalParams);
         
@@ -81,18 +82,13 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $imageScale, $width, $height
         );
         
-        if (isset($params['filename']))
-        {
-        	$filename = $params['filename'];
-        } else {
-        	$filename = null;
-        }
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
             $imageMeta, $options, 
-            $filename, 
+            $params['filename'], 
             $params['quality'], $params['watermarkOn'],
-            array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2'])
+            array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
+            $outputDir
         );
         
         $screenshot->buildImages($layerArray);
