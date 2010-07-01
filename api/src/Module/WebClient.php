@@ -329,7 +329,8 @@ class Module_WebClient implements Module
         include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        return $builder->takeScreenshot($this->_params);
+        $tmpDir  = HV_CACHE_DIR . "/screenshots";
+        return $builder->takeScreenshot($this->_params, $tmpDir);
     }
 
     /**
