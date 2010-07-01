@@ -66,16 +66,12 @@ class Movie_HelioviewerMovie
      */
     public function __construct(
         $startTime, $numFrames, $frameRate, $hqFormat,
-        $options, $timeStep, $filename, $quality, $meta
+        $options, $timeStep, $filename, $quality, $meta, $tmpDir
     ) {
         $this->_metaInfo = $meta;
-
+        
         // working directory
-        $this->tmpDir = HV_TMP_DIR;
-        if (!file_exists($this->tmpDir)) {
-            mkdir($this->tmpDir, 0777, true);
-            chmod($this->tmpDir, 0777);
-        }
+        $this->tmpDir = $tmpDir; 
 
         // _startTime is a Unix timestamp in seconds.
         $this->_startTime  = $startTime;
@@ -158,14 +154,9 @@ class Movie_HelioviewerMovie
     public function buildMovie($builtImages)
     {
         $this->_images = $builtImages;
-        // Make a temporary directory to store the movie in.
-        $now       = time();
         $movieName = /*"Helioviewer-Movie-" . */$this->_filename;
-        $tmpdir    = HV_TMP_DIR . "/$now/";
 
-        $tmpurl    = HV_TMP_ROOT_URL . "/$now/$movieName." . $this->_filetype;
-        mkdir($tmpdir);
-        chmod($tmpdir, 0777);
+        $tmpurl    = str_replace(HV_TMP_DIR, HV_TMP_ROOT_URL, $this->tmpDir) . "/$movieName." . $this->_filetype;
 
         // Pad to a 16:9 aspect ratio by adding a black border around the image.
         // This is set up so that width CAN be padded if it's uncommented. Currently it is not padded.
@@ -185,7 +176,7 @@ class Movie_HelioviewerMovie
         }
 
         // Use phpvideotoolkit to compile them
-        $toolkit = new PHPVideoToolkit($tmpdir);
+        $toolkit = new PHPVideoToolkit($this->tmpDir);
 
         // compile the image to the tmp dir
         $ok = $toolkit->prepareImagesForConversionToVideo($this->_images, $this->_frameRate);
@@ -200,7 +191,7 @@ class Movie_HelioviewerMovie
     
         // Need to do something slightly different to get the video to be iPod compatible
         if ($this->_highQualityFiletype === "ipod") {
-            return $this->_createIpodVideo($tmpdir, $toolkit, $movieName);
+            return $this->_createIpodVideo($this->tmpDir, $toolkit, $movieName);
         }
         
         // set the output parameters (Flash video)

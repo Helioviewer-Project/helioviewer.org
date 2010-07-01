@@ -87,4 +87,12 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
     {
         return "AIA $this->_measurement\n";
     }
+    
+    /**
+     * No color table. Do nothing.
+     */
+    protected function setColorPalette($input, $clut, $output)
+    {
+        return;
+    }
 }

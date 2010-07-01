@@ -80,6 +80,14 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
     }
     
     /**
+     * No color table. Do nothing.
+     */
+    protected function setColorPalette($input, $clut, $output)
+    {
+    	return;
+    }
+    
+    /**
      * Gets a string that will be displayed in the image's watermark
      * 
      * @return string watermark name
