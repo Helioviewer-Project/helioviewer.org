@@ -191,13 +191,13 @@ class Movie_HelioviewerMovie
     
         // Need to do something slightly different to get the video to be iPod compatible
         if ($this->_highQualityFiletype === "ipod") {
-            return $this->_createIpodVideo($this->tmpDir, $toolkit, $movieName);
+            return $this->_createIpodVideo($toolkit, $movieName);
         }
         
         // set the output parameters (Flash video)
         $output_filename = "$movieName." . $this->_filetype;
 
-        $ok = $toolkit->setOutput($tmpdir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+        $ok = $toolkit->setOutput($this->tmpDir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 
         if (!$ok) {
             //         if there was an error then get it
@@ -228,20 +228,20 @@ class Movie_HelioviewerMovie
             $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
         }
 
-        $this->_createHighQualityVideo($tmpdir, $toolkit, $movieName);
+        $this->_createHighQualityVideo($toolkit, $movieName);
 
-        return $tmpdir . $movieName . "." . $this->_filetype;
+        return $this->tmpDir . $movieName . "." . $this->_filetype;
     }
     
-    private function _createIpodVideo($tmpdir, $toolkit, $movieName) 
+    private function _createIpodVideo($toolkit, $movieName) 
     {
     	$this->_highQualityFiletype = "mp4";
     	
-    	$this->_createHighQualityVideo($tmpdir, $toolkit, $movieName);
+    	$this->_createHighQualityVideo($toolkit, $movieName);
     	
         $hq_filename = "$movieName." . $this->_highQualityFiletype;
-        $ipodVideoName = $tmpdir . "ipod-$hq_filename";
-        $cmd = "/usr/bin/ffmpeg -i " . $tmpdir . $hq_filename . " -f mp4 -acodec "
+        $ipodVideoName = $this->tmpDir . "ipod-$hq_filename";
+        $cmd = "/usr/bin/ffmpeg -i " . $this->tmpDir . $hq_filename . " -f mp4 -acodec "
             . "libmp3lame -ar 48000 -ab 64k -vcodec libx264 -b 800k -flags +loop "
             . "-cmp +chroma -subq 5 -trellis 1 -refs 1 -coder 0 -me_range 16 "
             . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bt 200k -maxrate "
@@ -249,9 +249,9 @@ class Movie_HelioviewerMovie
             . "-qmax 51 -qdiff 4 -level 30 -g 30 -async 2 " . $ipodVideoName;
 
         exec(escapeshellcmd($cmd));
-        if (file_exists($tmpdir . $hq_filename))
+        if (file_exists($this->tmpDir . $hq_filename))
         {
-            unlink($tmpdir . $hq_filename);
+            unlink($this->tmpDir . $hq_filename);
         }
         return $ipodVideoName;
     }
@@ -260,19 +260,18 @@ class Movie_HelioviewerMovie
      * Creates a high quality version of the video and then unlinks all images
      * used to create the movie.
      * 
-     * @param string $tmpdir
      * @param object $toolkit
      * @param string $movieName
      * 
      * @return void
      */
-    private function _createHighQualityVideo($tmpdir, $toolkit, $movieName)
+    private function _createHighQualityVideo($toolkit, $movieName)
     {
         // Create a high-quality version as well
         $hq_filename = "$movieName." . $this->_highQualityFiletype;
         $toolkit->setConstantQuality($this->_highQualityLevel);
         
-        $ok = $toolkit->setOutput($tmpdir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
+        $ok = $toolkit->setOutput($this->tmpDir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
 
         if (!$ok) {
             // if there was an error then get it
