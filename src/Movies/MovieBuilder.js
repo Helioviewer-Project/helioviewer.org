@@ -10,7 +10,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, MediaBuilder */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
@@ -31,12 +31,12 @@ var MovieBuilder = MediaBuilder.extend(
     },
     
     _setupEventListeners: function () {
-        var self = this, visibleCoords;
+        var self = this, viewportInfo;
         this.fullVPButton     = $("#" + this.id + "-full-viewport");
         this.selectAreaButton = $("#" + this.id + "-select-area");
     
         this.fullVPButton.click(function () {
-            self.button.qtip("hide");
+            self.hideDialogs();
             if (self.building) {
                 $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
             }
@@ -47,7 +47,7 @@ var MovieBuilder = MediaBuilder.extend(
         });
     
         this.selectAreaButton.click(function () {
-            self.button.qtip("hide");
+            self.hideDialogs();
             if (self.building) {
                 $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
             }
@@ -55,6 +55,13 @@ var MovieBuilder = MediaBuilder.extend(
                 $(document).trigger("enable-select-tool", $.proxy(self.checkMovieLayers, self));
             }
         });
+        
+        this.historyBar = new MovieHistoryBar(this.id);
+    },
+    
+    hideDialogs: function () {
+        this.button.qtip("hide");
+        this.historyBar.hide();
     },
     
     /**
@@ -68,10 +75,11 @@ var MovieBuilder = MediaBuilder.extend(
      *                     
      */
     checkMovieLayers: function (viewportInfo) {
-        var finalLayers, self, layers, table, info, rawName, name, tableValues, checkboxes;
+        var finalLayers, self, layers, table, info, rawName, name, tableValues, checkboxes, newInfo;
         
+        layers = viewportInfo.layers.split("]");
         // If there are between 1 and 3 layers, continue building.
-        if (viewportInfo.layers.length <= 3 && viewportInfo.layers.length >= 1) {
+        if (layers.length <= 3 && layers.length >= 1) {
             this.buildMovie(viewportInfo);
         }    
         
@@ -84,7 +92,7 @@ var MovieBuilder = MediaBuilder.extend(
                 width:     450,
                 // Adjust height depending on how much space the text takes up (roughly 20 pixels per 
                 // layer name, and a base height of 150)
-                height: 150 + viewportInfo.layers.length * 20,
+                height: 150 + layers.length * 20,
 
                 // Put an empty table into shadowbox. Rows of layers need to be dynamically added through javascript.
                 content: '<div id="shadowbox-form" class="ui-widget ui-widget-content ui-corner-all ' + 
@@ -172,7 +180,7 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} layers -- An array of layer strings in the format: "obs,inst,det,meas,opacity"    
      */
     buildMovie: function (viewportInfo) {
-        var timeout, options, params, callback, self = this;
+        var timeout, options, params, callback, arcsecCoords, self = this;
         
         this.building = true;
 
@@ -191,17 +199,14 @@ var MovieBuilder = MediaBuilder.extend(
 
         // Ajax Request Callback
         callback = function (data) {
+            var id, hqfile;
             $(this).trigger('video-done');
- 
-             /* 
-              * Not using linkId any more because there are two now options in the same 
-              * notification, so linkId.click() is no longer useful.           
-              * //Let user know that video is ready
-              * linkId = helioviewer.messageConsole.link('', 'Quick-Video ready! Click here to start watching.');
-              */
             
+            id = (data).slice(-14,-4);
             self.building = false;
-                
+            // chop off the flv at the end of the file and replace it with mov/asf/mp4
+            hqfile = (data).slice(0, -3) + "mp4";
+            
             // If the response is an error message instead of a url, show the message
             if (data === null) {
                 //mediaSettings.shadowboxWarn("Error Creating Movie.");
@@ -214,32 +219,28 @@ var MovieBuilder = MediaBuilder.extend(
                     sticky: true,
                     header: "Your movie is ready!",
                     open:    function () {
-                        var hqfile, download, watch;
-                        // chop off the flv at the end of the file and replace it with mov/asf/mp4
-                        hqfile = (data).slice(0, -3) + mediaSettings.hqFormat;
-                        
-                        download = $('#download-' + mediaSettings.filename);
-                        watch     = $('#watch-' + mediaSettings.filename);
+                        var watch, dialog;
+                        watch       = $('#watch-' + id);
+                       // watchDialog = $('#watch-dialog-' + id);
 
-                        // Download the hq file event listener
-                        download.click(function () {
-                            window.open('api/index.php?action=downloadFile&url=' + hqfile, '_parent');
-                        });
+                        movie.setURL(data, id);
+                        self.historyBar.addToHistory(movie);
                         
-                        // Open shadowbox and display movie event listener
+                        // Open pop-up and display movie
                         watch.click(function () {
-                            self.playMovie(helioviewer, imgWidth, imgHeight, data);
+                            movie.playMovie();
                         });
                     }
                 };
 
                 // Make the jGrowl notification with the options above.
-                $(document).trigger("message-console-info", ["<div id='watch-" + mediaSettings.filename +
-                    "' style='cursor: pointer'>Click here to watch it</div>" +
-                    "-or-<br />" + 
-                    "<div id='download-" + mediaSettings.filename +
-                    "' style='cursor: pointer'>Click here to download a high-quality version.</div>", options]);
-            } 
+                $(document).trigger("message-console-info", [
+                            "<a href='#' id='watch-" + id + "'>Click here to watch it</a> (opens in a pop-up)<br />" +
+                            "-or-<br />" + 
+                            "<a href='api/index.php?action=downloadFile&url=" + hqfile + "'>" +
+                            		"Click here to download a high-quality version." +
+                            "</a>", options]);
+            }
         };
 
         arcsecCoords = this.toArcsecCoords(viewportInfo);
@@ -247,53 +248,18 @@ var MovieBuilder = MediaBuilder.extend(
         // Ajax Request Parameters
         params = {
             action     : "buildMovie",
-            layers     : viewportInfo.layers.join("/"),
+            layers     : viewportInfo.layers,
             startTime  : viewportInfo.time,
             imageScale : viewportInfo.imageScale,
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
-            y2         : arcsecCoords.y2,
+            y2         : arcsecCoords.y2
         };
+        
+        movie = new Movie(params);
 
         $.post(this.url, params, callback, "json");
-    },
-
-    /**
-     * @description Calculates what dimensions the image has, whether to scale it or not, and how big 
-     *               Shadowbox should be. Opens Shadowbox to play the movie.
-     */
-    playMovie: function (helioviewer, imgWidth, imgHeight, data) {
-        var url, vpWidth, vpHeight, vpDimensions, sbHeight, sbWidth;
-        
-        vpDimensions = helioviewer.viewport.getDimensions();
-        vpWidth  = vpDimensions.width;
-        vpHeight = vpDimensions.height;
-        
-        // Scale to 80% if the movie size is too large to display without scrollbars.
-        if (imgWidth >= vpWidth || imgHeight >= vpHeight) {
-            imgWidth  = imgWidth * 0.8;
-            imgHeight = imgHeight * 0.8;
-        }
-        
-        url = 'api/index.php?action=playMovie&url=' + data + '&width=' + imgWidth + '&height=' + imgHeight;    
-        
-        // 40 seems to be a good size for the iframe to completely surround the div. Can be changed if necessary.
-        sbWidth  = imgWidth  + 40;
-        sbHeight = imgHeight + 40;
-        
-        // 7-13-2009 -- Changed the player from 'iframe' to 'html' so that the movie could be surrounded by nice
-        // rounded corners and transparent border.
-        Shadowbox.open({
-            player    : 'html',
-            title    : 'Helioviewer Movie Player',
-            height    : sbHeight + 45,
-            width    : sbWidth  + 40,
-            content    : '<div class="ui-corner-all ui-helper-clearfix" ' + 
-                         'style="margin: 10px; padding: 10px; background: black">' + 
-                         '<iframe src=' + url + ' width=' + sbWidth + ' height=' + sbHeight + ' frameborder=0>' + 
-                         '</div>'
-        });                                    
     },
     
     /**

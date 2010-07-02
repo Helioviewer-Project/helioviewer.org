@@ -69,7 +69,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         
         $jp2  = HV_JP2_DIR . $uri;
         $tile = $this->getTileFilepath($jp2, $date, $x, $y, $tileScale, $format, $classname, $det, $meas);
-        
+
         // If tile already exists in cache, use it
         // TODO: Once a smarter caching system is in place, take advantage of
         //       which data we know will be cached (e.g. most recent 2 weeks), and

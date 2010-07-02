@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, $, Class, window */
+/*global document, $, Class, window, MediaBuilder */
 "use strict";
 var ScreenshotBuilder = MediaBuilder.extend(
     /** @lends ScreenshotBuilder.prototype */
@@ -24,7 +24,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
     },
 
     _setupEventListeners: function () {
-        var self = this, visibleCoords;
+        var self = this, viewportInfo;
         this.fullVPButton     = $("#" + this.id + "-full-viewport");
         this.selectAreaButton = $("#" + this.id + "-select-area");
         
@@ -57,17 +57,18 @@ var ScreenshotBuilder = MediaBuilder.extend(
      *                 coordinates of the visible region 
      */
     takeScreenshot: function (viewportInformation) {
-        var self, callback, params, imgWidth, imgHeight, url, mediaSettings, download, options, filename;        
+        var self, callback, params, imgWidth, imgHeight, url, mediaSettings, download, 
+            options, filename, arcsecCoords;        
 
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInformation);
         self = this;
-        console.log(viewportInformation.layers);
+
         params = {
             action     : "takeScreenshot",
             layers     : viewportInformation.layers,
             obsDate    : viewportInformation.time,
-            imageScale : scale,
+            imageScale : viewportInformation.imageScale,
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,

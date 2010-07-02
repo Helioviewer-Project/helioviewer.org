@@ -59,7 +59,7 @@ var TileLayerManager = LayerManager.extend(
      * 
      */
     updateTileVisibilityRange: function (vpCoords) {
-        var ts, self;
+        var ts, self, vp;
         // Expand to fit tile increment
         ts = this.tileSize;
         vp = {

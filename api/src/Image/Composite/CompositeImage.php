@@ -29,10 +29,8 @@ abstract class Image_Composite_CompositeImage
 {
     protected $composite;
     protected $options;
-    protected $imageSize;
     protected $tmpDir;
     protected $layerImages;
-    protected $transImageDir;
     protected $cacheDir;
     protected $metaInfo;
 
@@ -91,8 +89,7 @@ abstract class Image_Composite_CompositeImage
                 $imagickImage = new IMagick($this->layerImages[0]->getFilePathString());
                 $output = $this->tmpDir . "/$this->outputFile";
 
-                if ($this->watermarkOn === true || $this->watermarkOn === "true")
-                {
+                if ($this->watermarkOn === true || $this->watermarkOn === "true") {
                     $this->_watermark($imagickImage);
                 }
                 $this->_finalizeImage($imagickImage, $output);
@@ -127,7 +124,7 @@ abstract class Image_Composite_CompositeImage
      *
      * These two strings are then layered on top of each other and put in the southwest corner of the image.
      *
-     * @param CompositeImageLayer $imageLayer A built CompositeImageLayer
+     * @param Object $imagickImage An Imagick object
      *
      * @return void
      */
@@ -160,53 +157,6 @@ abstract class Image_Composite_CompositeImage
         $watermark->destroy();
     }
     
-    private function _watermarkNoImagick($imageLayer)
-    {
-        $watermark   = HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png";
-        $imageWidth  = $this->metaInfo->width();
-        $imageHeight = $this->metaInfo->height();
-        $image       = $imageLayer->getFilePathString();
-        
-        /** Watermarking Disabled temporarily **/
-          
-        // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
-        if ($imageWidth / 300 < 2) {
-            $watermark = $this->_watermarkSmall($imageWidth);
-        }
-
-        exec(escapeshellcmd(HV_PATH_CMD . " composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image));
-
-        // If the image is too small, text won't fit. Don't put a timestamp on it. 
-        if ($imageWidth < 235) {
-            return $image;
-        }
-
-        $cmd = HV_PATH_CMD . "convert " . $image . " -gravity SouthWest" . $this->addWaterMarkTextNoImagick();
-        $cmd .= " -type TrueColor -alpha off -colors 256 -depth 8 " . $image;
-
-        exec(escapeshellcmd($cmd));
-
-        return $image;    	
-    }
-    
-    /**
-     * Fetch the small watermark image and scale it to fit the composite image. 
-     * 
-     * @param {int} $imageWidth -- The width of the composite image.
-     * 
-     * @return {string} the filepath to the scaled watermark image
-     */
-    private function _waterMarkSmall($imageWidth)
-    {
-        $watermark = HV_ROOT_DIR . "/api/resources/images/watermark_circle_small.png";
-
-        $scale = ($imageWidth * 100 / 2) / 300;
-
-        $resize = HV_PATH_CMD . "convert -scale " . $scale . "% " . $watermark . " " . $this->cacheDir . "watermark_scaled.png";
-        exec(escapeshellcmd($resize));
-        return $this->cacheDir . "watermark_scaled.png";
-    }
-    
     /**
      * In cases where movie frames are being generated, the naming system of adding time() to the end
      * of the filename sometimes overwrites duplicate files if they are created fast enough. This checks
@@ -226,75 +176,6 @@ abstract class Image_Composite_CompositeImage
         else
             $this->outputFile = $filename;
     }
-    
-    /**
-     * Does the same as _buildComposite() but with command-line calls rather than
-     * using imagick.
-     * 
-     * @return string Filepath to the composited image.
-     */
-    private function _buildCompositeNoImagick()
-    {
-        $sortedImages   = $this->_sortByLayeringOrder($this->layerImages);
-        $tmpImg         = $this->tmpDir . "/" . $this->outputFile;
-        $filesToDelete  = array();
-
-        $cmd = HV_PATH_CMD . "composite -gravity Center";
-
-        $layerNum = 1;
-        foreach ($sortedImages as $image) {
-            $opacity = $image->opacity();
-            // If the image has an opacity level of less than 100, need to set its opacity.
-            if ($opacity < 100) {
-                $file     = $image->getFilePathString();
-                $tmpOpImg = substr($file, 0, -4) . "-op" . $opacity . ".tif";
-
-                $opacityCmd = HV_PATH_CMD . "convert $file -alpha on -channel o -evaluate set $opacity% $tmpOpImg";
-                exec(escapeshellcmd($opacityCmd));
-
-                $image->setNewFilepath($tmpOpImg);
-                array_push($filesToDelete, $tmpOpImg);
-            }
-
-            $cmd .= " " . $image->getFilePathString();
-
-            // If there are more than 2 layers, then the composite command needs to be called after every layer,
-            // compositing the last composite image and the current image.
-            if ($layerNum > 1 && isset($sortedImages[$layerNum])) {
-                $tmpCompImg = $this->tmpDir . "/" . time() . "-comp.tif";
-                
-                $cmd .= " -compose dst-over $tmpCompImg && composite -gravity Center $tmpCompImg";
-                array_push($filesToDelete, $tmpCompImg);
-            }
-            $layerNum++;
-        }
-        $cmd .= " -compose dst-over -depth 8 -quality 10 " . $tmpImg;
-
-        try {
-            // Need to break $cmd into pieces at each "&&", because escapeshellcmd escapes & and the command doesn't work then.
-            $commands = explode("&&", $cmd);
-            foreach ($commands as $command) {
-                exec(escapeshellcmd($command), $out, $ret);
-                if ($ret != 0) {
-                    throw new Exception("Error executing command $cmd.");
-                }
-            }
-
-            exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off -colors 256 -depth 8 $tmpImg"), $out, $ret);
-            if ($ret != 0) {
-                throw new Exception("Error turning alpha channel off on $tmpImg.");
-            }
-        }
-        catch(Exception $e) {
-            logErrorMsg($e->getMessage(), true);
-        }
-        
-        $image = $sortedImages[0];
-        $image->setNewFilePath($tmpImg);
-        
-        $this->_cleanUp($filesToDelete);
-        return $this->_watermark($image);    	
-    }
 
     /**
      * Composites the layers on top of each other after putting them in the proper order.
@@ -309,8 +190,8 @@ abstract class Image_Composite_CompositeImage
         $layerNum = 1;
         $imagickImage = false;
         foreach ($sortedImages as $image) {
-        	$previous = $imagickImage;
-        	$imagickImage = new IMagick($image->getFilePathString());
+            $previous = $imagickImage;
+            $imagickImage = new IMagick($image->getFilePathString());
             $opacity = $image->opacity();
             
             // If the image has an opacity level of less than 100, need to set its opacity.
@@ -328,10 +209,9 @@ abstract class Image_Composite_CompositeImage
         }
         
         try {
-        	if ($this->watermarkOn === true || $this->watermarkOn === "true")
-        	{
-        	   $this->_watermark($imagickImage);
-        	}
+            if ($this->watermarkOn === true || $this->watermarkOn === "true") {
+                $this->_watermark($imagickImage);
+            }
             $this->_finalizeImage($imagickImage, $tmpImg);
             
             if (!file_exists($tmpImg)) {
@@ -344,17 +224,22 @@ abstract class Image_Composite_CompositeImage
         return $tmpImg;
     }
     
+    /**
+     * Writes the image to a file and cleans up memory.
+     * 
+     * @param Object $imagickImage An Imagick object
+     * @param String $output       The filepath where the image will be written to
+     * 
+     * @return void
+     */
     private function _finalizeImage($imagickImage, $output)
     {
-    	// Need to up the time limit that imagick is allowed to use to execute commands. 
+        // Need to up the time limit that imagick is allowed to use to execute commands. 
         set_time_limit(60);
-    	$imagickImage->setImageFormat('JPG');
-    	//$imagickImage->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
+        $imagickImage->setImageFormat('JPG');
         $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
         $imagickImage->setBackgroundColor('black');
-        //$imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
         $imagickImage->setImageDepth(8);
-        //$imagickImage->quantizeImage(256, IMagick::COLORSPACE_RGB, 256, false, false); // Takes too long and doesn't do much.
         $imagickImage->writeImage($output);
         $imagickImage->destroy();
     }
@@ -423,65 +308,6 @@ abstract class Image_Composite_CompositeImage
     {
         header("Content-Type: image/png");
         echo $this->composite;
-    }
-
-    /**
-     * Writes the composite image to the cache
-     *
-     * @param string $filepath The location to save the image to.
-     *
-     * @return void
-     */
-    public function writeImage($filepath)
-    {
-        $this->composite->writeImage($filepath);
-    }
-
-    /**
-     * Returns the timestamps for each layer in the composite image
-     *
-     * @return array layer timestamps
-     */
-    public function timestamps()
-    {
-        return $this->timestamps;
-    }
-
-    /**
-     * Returns the number of layers in the composite image
-     *
-     * @return int number of layers
-     */
-    public function numFrames()
-    {
-        return sizeOf($this->timestamps);
-    }
-
-    /**
-     * Builds a directory string for the given layer
-     *
-     * @param string $uri JP2 image location
-     *
-     * @return string Image filepath
-     */
-    protected function getFilepath($uri)
-    {
-        // Extract the relevant data from the image uri (excluding the .jp2 at the end)
-        $uriData = explode("_", substr($uri, 0, -4));
-        $year      = $uriData[0];
-        $month      = $uriData[1];
-        $day      = $uriData[2];
-        // Skip over the unix timestamp in the middle
-        $obs      = $uriData[4];
-        $inst       = $uriData[5];
-        $det      = $uriData[6];
-        $meas      = $uriData[7];
-
-        $path  = HV_JP2_DIR . implode("/", array($year, $month, $day));
-        $path .= "/$obs/$inst/$det/$meas/";
-        $path .= $uri;
-
-        return $path;
     }
 
     /**

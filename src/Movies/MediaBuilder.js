@@ -28,20 +28,22 @@ var MediaBuilder = Class.extend(
     },
     
     _setupDialog: function () {
-        divContent = "<div id='" + this.id + "-full-viewport' class='text-btn'>" +
-                        "<span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>" +
-                        "<span style='line-height: 1.6em'>Full Viewport</span>" +
-                     "</div>" +
-                     "<div id='" + this.id + "-select-area' class='text-btn'>" +
-                        "<span class='ui-icon ui-icon-scissors' style='float:left;'></span>" +
-                        "<span style='line-height: 1.6em'>Select Area</span>" + 
-                     "</div>";
-        
+        var self, divContent;
+        divContent = "<div id='qtip-" + this.id + "'>" +
+        		         "<div id='" + this.id + "-full-viewport' class='text-btn'>" +
+                            "<span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>" +
+                            "<span style='line-height: 1.6em'>Full Viewport</span>" +
+                         "</div>" +
+                         "<div id='" + this.id + "-select-area' class='text-btn'>" +
+                            "<span class='ui-icon ui-icon-scissors' style='float:left;'></span>" +
+                            "<span style='line-height: 1.6em'>Select Area</span>" + 
+                         "</div></div>";
+        self = this;
         this.button.qtip({
-            position: {
+            position  : {
                 corner: {
-                    target: 'bottomMiddle',
-                    tooltip: 'topMiddle',
+                    target : 'bottomMiddle',
+                    tooltip: 'topMiddle'
                 },
                 adjust: {
                     x : 0,
@@ -49,20 +51,25 @@ var MediaBuilder = Class.extend(
                 }
             },
             show: {
-                when: 'click',
+                when  : 'click',
                 effect: "slide"
             },
             hide: {
-                when: 'click',
+                when  : 'click',
                 effect: "slide"
             },                      
             content: divContent,
-            style: "mediaDark",
-            api: { onRender: $.proxy(this._setupEventListeners, this) }
+            style  : "mediaDark",
+            api    : { onRender: $.proxy(this._setupEventListeners, this) }
+        });
+        
+        $("#social-buttons").click(function () {
+            self.button.qtip('hide');
         });
     },
     
     toArcsecCoords: function (viewportInfo) {
+        var vpCoords, scale;
         vpCoords     = viewportInfo.coordinates;
         scale        = viewportInfo.imageScale;
         return {
