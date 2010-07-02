@@ -81,7 +81,6 @@ var ImageSelectTool = Class.extend(
      */
     selectArea: function (callback) {
         var coords, visibleCoords, area, selection, viewportInfo, selectInfo, self = this;
-        //$(document).trigger("message-console-info", ["Resize the selection or click and drag on the image to start a new selection."]);
         
         // Use imgAreaSelect on the transparent region to get the top, left, bottom, and right 
         // coordinates of the selected region. 
@@ -133,8 +132,8 @@ var ImageSelectTool = Class.extend(
             position: {
                 corner: {
                     target: 'topRight',
-                    tooltip: 'topRight',
-                },
+                    tooltip: 'topRight'
+                }
             },      
             adjust: {
                 x: 0,
@@ -162,8 +161,8 @@ var ImageSelectTool = Class.extend(
                     width: 0,
                     radius: 6, 
                     color: '#2A2A2A'
-                },
-            },
+                }
+            }
         });
     },
     
@@ -178,9 +177,9 @@ var ImageSelectTool = Class.extend(
             content: {
                 text: "Resize by dragging the edges of the selection<br />" +
                         "Move the selection by clicking inside and dragging it<br />" + 
-                		"Click and drag outside the selected area to start" +
-                		" a new selection.<br />" +
-                		"Click 'Done' when you have finished to download your screenshot."
+                        "Click and drag outside the selected area to start" +
+                        " a new selection.<br />" +
+                        "Click 'Done' when you have finished to download your screenshot."
             },
             adjust: {
                 x: 0,

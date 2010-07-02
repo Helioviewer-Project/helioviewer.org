@@ -151,11 +151,12 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * this returns a differently-formatted string
      */
     toScreenshotQueryString: function () {
-        var parsedLayers = [];
+        var json, str, parsedLayers = [];
         $.each(this._layers, function () {
             json = this.toJSON();
-            str = json.observatory + "," + json.instrument + "," + json.detector + "," + json.measurement + "," + json.opacity;
-            if (json.visible == 1) {
+            str = json.observatory + "," + json.instrument + "," + json.detector + 
+                    "," + json.measurement + "," + json.opacity;
+            if (json.visible === 1) {
                 parsedLayers.push(str);
             }
         });

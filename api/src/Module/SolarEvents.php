@@ -120,17 +120,20 @@ class Module_SolarEvents implements Module
     
     /**
      * Prints the module's documentation header
+     * 
+     * @return void
      */
-    public static function printDocHeader() {
-?>
-    <li>
-        <a href="index.php#FeatureEventAPI">Features/Events</a>
-        <ul>
-            <li><a href="index.php#getEventFRMs">Feature Recognition Methods (FRMs)</a></li>
-            <li><a href="index.php#getEvents">Finding Events</a></li>
-        </ul>
-    </li>
-<?php
+    public static function printDocHeader()
+    {
+        ?>
+            <li>
+                <a href="index.php#FeatureEventAPI">Features/Events</a>
+                <ul>
+                    <li><a href="index.php#getEventFRMs">Feature Recognition Methods (FRMs)</a></li>
+                    <li><a href="index.php#getEvents">Finding Events</a></li>
+                </ul>
+            </li>
+        <?php
     }
     
     /**
@@ -141,111 +144,111 @@ class Module_SolarEvents implements Module
     public static function printDoc()
     {
         $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-?>
-<!-- Feature/Event API -->
-<div id="FeatureEventAPI">
-    <h1>Feature/Event API:</h1>
-    <p>There are two ways to use Helioviewer's Feature/Event API. The first is to query the available Feature 
-    Recognition Methods (FRM), and then query for specific features/events within each FRM. The second method is to go
-    straight to querying for features/events, skipping the FRM step. <!-- This requires that you already know the 
-    identifiers for each specific catalog you wish you query.-->Both steps are described below.</p>
-    <ol style="list-style-type: upper-latin;">
-    
-        <!-- Catalog API -->
-        <li>
-        <div id="getEventFRMs">Event Feature Recognition Methods (FRM):
-        <p>To query the list of available FRMs, simply call the "getEventFRMs" and specify a startDate and endDate. 
-        This will return a list of the FRMs for which event data exists in the requested time range, as well as some 
-        meta-information describing each of the catalogs. <!--The most important parameters returned are the "id", 
-        the identifier used to query the specific catalog for features/events, and "eventType" which specified 
-        the type of feature/event the catalog described, e.g. "CME" or "Active Region." --></p>
-
-        <br />
-
-        <div class="summary-box">
-        <span style="text-decoration: underline;">Usage:</span>
-
-        <br />
-        <br />
-        <a href="<?php echo $baseURL;?>?action=getEventCatalogs">
-            <?php echo $baseURL;?>?action=getEventFRMs
-        </a>
-
-        <br /><br />
-        Result:
-        <br /><br />
-
-        An array of catalog objects is returned formatted as JSON. Each catalog object includes the following
-        six parameters:
-
-        <!-- Feature/Event Catalog Parameter Description -->
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="25%"><b>adjustRotation</b></td>
-                    <td width="15%"><i>Boolean</i></td>
-                    <td>Specifies whether the position of the events has been adjusted to account for solar
-                    rotation.</td>
-                </tr>
-                <tr>
-                    <td><b>coordinateSystem</b></td>
-                    <td><i>String</i></td>
-                    <td>The type of coordinate system used by the catalog provider. Recognized coordinate systems
-                    include "HELIOGRAPHIC," "PRINCIPAL_ANGLE," and "ANGULAR."</td>
-                </tr>
-                <tr>
-                    <td><b>description</b></td>
-                    <td><i>String</i></td>
-                    <td>A brief human-readable description of the catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>eventType</b></td>
-                    <td><i>String</i></td>
-                    <td>The type of event described. See <a href="index.html#Identifiers">Appendix A</a> for a list of
-                    the supported event types.</td>
-                </tr>
-                <tr>
-                    <td><b>id</b></td>
-                    <td><i>String</i></td>
-                    <td>The identifier for a specific catalog. The identifier consists of two parts separate by
-                    double-colons. The left-side of the double-colons identifies the catalog provider, which may be
-                    the same for several catalogs. The right-side identifies the specific catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>name</b></td>
-                    <td><i>String</i></td>
-                    <td>A human-readable name for the catalog.</td>
-                </tr>
-            </tbody>
-        </table>
-
+        ?>
+        <!-- Feature/Event API -->
+        <div id="FeatureEventAPI">
+            <h1>Feature/Event API:</h1>
+            <p>There are two ways to use Helioviewer's Feature/Event API. The first is to query the available Feature 
+            Recognition Methods (FRM), and then query for specific features/events within each FRM. The second method is to go
+            straight to querying for features/events, skipping the FRM step. <!-- This requires that you already know the 
+            identifiers for each specific catalog you wish you query.-->Both steps are described below.</p>
+            <ol style="list-style-type: upper-latin;">
+            
+                <!-- Catalog API -->
+                <li>
+                <div id="getEventFRMs">Event Feature Recognition Methods (FRM):
+                <p>To query the list of available FRMs, simply call the "getEventFRMs" and specify a startDate and endDate. 
+                This will return a list of the FRMs for which event data exists in the requested time range, as well as some 
+                meta-information describing each of the catalogs. <!--The most important parameters returned are the "id", 
+                the identifier used to query the specific catalog for features/events, and "eventType" which specified 
+                the type of feature/event the catalog described, e.g. "CME" or "Active Region." --></p>
+        
+                <br />
+        
+                <div class="summary-box">
+                <span style="text-decoration: underline;">Usage:</span>
+        
+                <br />
+                <br />
+                <a href="<?php echo $baseURL;?>?action=getEventCatalogs">
+                    <?php echo $baseURL;?>?action=getEventFRMs
+                </a>
+        
+                <br /><br />
+                Result:
+                <br /><br />
+        
+                An array of catalog objects is returned formatted as JSON. Each catalog object includes the following
+                six parameters:
+        
+                <!-- Feature/Event Catalog Parameter Description -->
+                <table class="param-list" cellspacing="10">
+                    <tbody valign="top">
+                        <tr>
+                            <td width="25%"><b>adjustRotation</b></td>
+                            <td width="15%"><i>Boolean</i></td>
+                            <td>Specifies whether the position of the events has been adjusted to account for solar
+                            rotation.</td>
+                        </tr>
+                        <tr>
+                            <td><b>coordinateSystem</b></td>
+                            <td><i>String</i></td>
+                            <td>The type of coordinate system used by the catalog provider. Recognized coordinate systems
+                            include "HELIOGRAPHIC," "PRINCIPAL_ANGLE," and "ANGULAR."</td>
+                        </tr>
+                        <tr>
+                            <td><b>description</b></td>
+                            <td><i>String</i></td>
+                            <td>A brief human-readable description of the catalog.</td>
+                        </tr>
+                        <tr>
+                            <td><b>eventType</b></td>
+                            <td><i>String</i></td>
+                            <td>The type of event described. See <a href="index.html#Identifiers">Appendix A</a> for a list of
+                            the supported event types.</td>
+                        </tr>
+                        <tr>
+                            <td><b>id</b></td>
+                            <td><i>String</i></td>
+                            <td>The identifier for a specific catalog. The identifier consists of two parts separate by
+                            double-colons. The left-side of the double-colons identifies the catalog provider, which may be
+                            the same for several catalogs. The right-side identifies the specific catalog.</td>
+                        </tr>
+                        <tr>
+                            <td><b>name</b></td>
+                            <td><i>String</i></td>
+                            <td>A human-readable name for the catalog.</td>
+                        </tr>
+                    </tbody>
+                </table>
+        
+                </div>
+        
+                <br />
+            
+            <!-- Catalog API Notes -->
+            <div class="summary-box" style="background-color: #E3EFFF;">
+            <span style="text-decoration: underline;">Notes:</span>
+            <br />
+            <br />
+            <ul>
+                <li>
+                <p>Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a>
+                for the specific IDs used.</p>
+                </li>
+                <li>
+                <p>Results are returned as <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr>. Future versions
+                will provide the ability to request results in either JSON or VOEvent format.</p>
+                </li>
+            </ul>
+            </div>
+        
+            </div>
+            </li>
+        
+            <br />
         </div>
-
-        <br />
-    
-    <!-- Catalog API Notes -->
-    <div class="summary-box" style="background-color: #E3EFFF;">
-    <span style="text-decoration: underline;">Notes:</span>
-    <br />
-    <br />
-    <ul>
-        <li>
-        <p>Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a>
-        for the specific IDs used.</p>
-        </li>
-        <li>
-        <p>Results are returned as <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr>. Future versions
-        will provide the ability to request results in either JSON or VOEvent format.</p>
-        </li>
-    </ul>
-    </div>
-
-    </div>
-    </li>
-
-    <br />
-</div>
-<?php
+        <?php
     }
 }
 ?>

@@ -60,8 +60,10 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
     ) {
         $this->_detector 	= $detector;
         $this->_measurement = $measurement;
-        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY);
+        parent::__construct(
+            $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+            $outputFile, $offsetX, $offsetY
+        );
 
         if ($this->_detector == "C2") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_idl_3.png";
@@ -73,32 +75,46 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
             $this->setColorTable($colorTable);
         }
         
-        $this->setAlphaMask(true);
         $this->width 	= $width;
         $this->height 	= $height;
         $this->solarCenterOffsetX = $offsetX;
         $this->solarCenterOffsetY = $offsetY;
-        $this->relativeTileSize   = $width * ($desiredScale / $jp2Scale);
     }
 
     /**
      * calls applyAlphaMask to build an alpha mask command for imagemagick.
      * 
-     * @param string $intermediate The filepath to the grayscale image
+     * @param Object $imagickImage An IMagick object
      * 
-     * @return string command
+     * @return void
      */
-    protected function applyAlphaMaskCmd($intermediate)
+    protected function applyAlphaMaskCmd($imagickImage)
     {
-        return $this->applyAlphaMask($intermediate);
+        $this->applyAlphaMask($imagickImage);
+    }
+    
+    /**
+     * Calls the command-line imagemagick functions instead of imagick.
+     * 
+     * @param string $intermediate The filepath to the grayscale image.
+     * 
+     * @return void
+     */
+    protected function applyAlphaMaskCmdNoImagick($intermediate)
+    {
+        $this->applyAlphaMaskNoImagick($intermediate);
     }
     
     /**
      * Sets the background of the image to transparent.
+     * 
+     * @param Object $imagickImage An IMagick object
+     * 
+     * @return void
      */
     protected function setBackground($imagickImage)
     {
-    	$imagickImage->setImageBackgroundColor('transparent');
+        $imagickImage->setImageBackgroundColor('transparent');
     }
 
     /**
@@ -165,11 +181,11 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      *  
      *    The region of interest (ROI) below is specified at the original JP2 image scale.
      *
-     * @param string $input image filepath
+     * @param Object $imagickImage an initialized Imagick object
      *
-     * @return string An imagemagick sub-command for generating the necessary alpha mask
+     * @return void
      */
-    protected function applyAlphaMask($input)
+    protected function applyAlphaMask($imagickImage)
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;
@@ -178,42 +194,57 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         if ($this->reduce > 0) {
             $maskScaleFactor = 1 / pow(2, $this->reduce);
         } else {
-        	$maskScaleFactor = 1;
+            $maskScaleFactor = 1;
+        }
+
+        $maskTopLeftX = ($this->roi['left'] + ($maskWidth  - $this->jp2Width) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
+        $maskTopLeftY = ($this->roi['top']  + ($maskHeight - $this->jp2Height)/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
+
+        $width  = $this->subfieldWidth  * $maskScaleFactor;
+        $height = $this->subfieldHeight * $maskScaleFactor;
+
+        $mask  = new IMagick($mask);
+        
+        $mask->scaleImage($maskWidth * $maskScaleFactor, $maskHeight * $maskScaleFactor);
+        $mask->cropImage($width, $height, $maskTopLeftX, $maskTopLeftY);
+        $mask->resetImagePage("{$width}x{$height}+0+0");
+
+        $mask->setImageBackgroundColor('black');
+        $mask->setImageExtent($width, $height);
+
+        $imagickImage->setImageExtent($width, $height);
+        $imagickImage->compositeImage($mask, IMagick::COMPOSITE_COPYOPACITY, 0, 0);
+        $mask->destroy();
+    }
+    
+    /**
+     * Does the same thing as applyAlphaMask but with command-line calls instead of IMagick
+     * 
+     * @param string $input The filepath to the image
+     * 
+     * @return void
+     */
+    protected function applyAlphaMaskNoImagick($input)
+    {
+        $maskWidth  = 1040;
+        $maskHeight = 1040;
+        $mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
+
+        if ($this->reduce > 0) {
+            $maskScaleFactor = 1 / pow(2, $this->reduce);
+        } else {
+            $maskScaleFactor = 1;
         }
         
         //var_dump($this);
         $maskTopLeftX = ($this->roi['left'] + ($maskWidth  - $this->jp2Width) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
         $maskTopLeftY = ($this->roi['top']  + ($maskHeight - $this->jp2Height)/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
 
-        $width  = $this->subfieldWidth * $maskScaleFactor;
+        $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;
 
-        $padWidth  = $this->padding["width"];
-        $padHeight = $this->padding["height"];
-        $offsetX   = $this->padding["offsetX"];
-        $offsetY   = $this->padding["offsetY"];
         $gravity   = $this->padding["gravity"];
-/*
-        $image = new IMagick($input);
-        $mask  = new IMagick($mask);
 
-        $image->resizeImage($width, $height, IMagick::FILTER_UNDEFINED, 0);
-        $image->setGravity(IMagick::GRAVITY_NORTHWEST);
-        $image->setImageBackgroundColor('black');
-        //$image->extentImage($padWidth + 4, $padHeight + 4, 0, 0);
-        //$image->setImageExtent($padWidth + 4, $padHeight + 4);
-
-        //$image->setImageAlphaChannel(IMagick::ALPHACHANNEL_DEACTIVATE);
-        $image->writeImage($input);
-        
-        $mask->resizeImage($maskWidth * $maskScaleFactor, $maskHeight * $maskScaleFactor, IMagick::FILTER_UNDEFINED, 0);
-        //$mask->cropImage($width, $height, $maskTopLeftX, $maskTopLeftY);
-        //$mask->resetImagePage("{$width}x{$height}+0+0");
-        //$mask->setGravity(IMagick::GRAVITY_NORTHWEST);
-        //$mask->setImageBackgroundColor('black');
-        //$mask->setImageExtent($padWidth, $padHeight);
-        $mask->writeImage("/var/www/hv/cache/extracted_images/mask.png");
-        die();*/ 
         $str = "convert -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
                "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
                "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite $input";
@@ -225,7 +256,5 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         );
 
         exec(escapeshellcmd($cmd));
-
-        //return $cmd;
     }
 }
