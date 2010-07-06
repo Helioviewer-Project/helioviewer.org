@@ -8,7 +8,7 @@
  *
  * @category Image
  * @package  Helioviewer
- * @author   Keith Hughitt <keith.hughitt@nasa.gov)
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -21,7 +21,7 @@ require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
  *
  * @category Image
  * @package  Helioviewer
- * @author   Keith Hughitt <keith.hughitt@nasa.gov)
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -57,8 +57,10 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
     ) {
         $this->_measurement = $measurement;
         
-        parent::__construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY);
+        parent::__construct(
+            $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+            $outputFile, $offsetX, $offsetY
+        );
 
         $this->width    = $width;
         $this->height   = $height;
@@ -90,8 +92,13 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
     
     /**
      * No color table. Do nothing.
+     * 
+     * @param string $input  Input file
+     * @param string $output Output file
+     * 
+     * @return void
      */
-    protected function setColorPalette($input, $clut, $output)
+    protected function setColorPalette($input, $output)
     {
         return;
     }

@@ -13,7 +13,6 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require 'JPEG2000/JP2Image.php';
-require_once 'ImageMetaInformation.php';
 /**
  * Represents a JPEG 2000 sub-field image.
  *
@@ -32,15 +31,6 @@ require_once 'ImageMetaInformation.php';
  */
 class Image_SubFieldImage
 {
-    /**
-    protected $subfieldFile; //image
-    protected $subfieldWidth; //imageWidth
-    protected $subfieldHeight;
-    protected $subfieldRelWidth; //imageRelWidth ... = $this->imageWidth  * $this->desiredToActual;
-    protected $subfieldRelHeight;
-    protected $region; // {top: , left: , bottom: , right: }
-    **/
-    protected $metaInfo;
     protected $sourceJp2;
     protected $outputFile;
     protected $roi;
@@ -56,10 +46,6 @@ class Image_SubFieldImage
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
-    protected $alphaMask  = false;
-    protected $colorTable = false;
-    protected $padding    = false;
-    protected $skipResize = false;
 
     /**
      * Creates an Image_SubFieldImage instance
@@ -73,7 +59,9 @@ class Image_SubFieldImage
      * @param float  $jp2Scale     Pixel scale of the original JP2 image
      * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
      * @param string $outputFile   Location to output the subfield image to
-     * 
+     * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
+     * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
+     *
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal
      * case (for movies, etc) would be to resize to the requested scale on the server-side.
@@ -120,16 +108,6 @@ class Image_SubFieldImage
     {
         $this->buildImage();
     }
-    
-    /**
-     * Returns the image's region of interest in pixels
-     * 
-     * @return array roi
-     */
-    public function ROI()
-    {
-    	return $this->roi;
-    }
 
     /**
      * Sets parameters (gravity and size) for any padding which should be applied to extracted subfield image
@@ -142,9 +120,9 @@ class Image_SubFieldImage
     { 
         $this->padding = $padding;
         //Allow browser to rescale tiles which are not larger than the requested size
-        if (!($padding && ($padding['width'] > $this->width))) {
+        /*if (!($padding && ($padding['width'] > $this->width))) {
             $this->setSkipResize(true);
-        }
+        }*/
     }
     
     /**
@@ -177,16 +155,35 @@ class Image_SubFieldImage
         return $this->jp2RelHeight;
     }
     
+    /**
+     * Gets the extracted image's relative width
+     * 
+     * @return int subfieldRelWidth
+     */
     public function subfieldRelWidth()
     {
-    	return $this->subfieldRelWidth;
+        return $this->subfieldRelWidth;
     }
     
+    /**
+     * Gets the extracted image's relative height
+     * 
+     * @return int subfieldRelHeight
+     */    
     public function subfieldRelHeight()
     {
-    	return $this->subfieldRelHeight;
+        return $this->subfieldRelHeight;
     }
     
+    /**
+     * Figures out where the extracted image lies inside the final image
+     * if the final image is larger.
+     * 
+     * @param Array $roi   The region of interest in arcseconds of the final image.
+     * @param Float $scale The scale of the image in arcseconds / pixel
+     * 
+     * @return array with padding
+     */
     public function computePadding($roi, $scale)
     {
         $width  = ($roi['right']  - $roi['left']) / $scale;
@@ -211,16 +208,6 @@ class Image_SubFieldImage
            "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : $left,
            "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : $top
         );
-    }
-    
-    /**
-     * Gets the reduce factor (how much to scale the image)
-     * 
-     * @return int reduceFactor
-     */
-    public function reduceFactor() 
-    {
-        return $this->reduce;
     }
     
     /**
@@ -270,13 +257,12 @@ class Image_SubFieldImage
             $image->destroy();
 
             //Apply color-lookup table
-            //if ($this->colorTable && ($_GET["det"] != "AIA")) {
             // Override setColorPalette in MDIImage and AIAImage, which have no color tables.
-            $this->setColorPalette($intermediate, $this->colorTable, $intermediate);
+            $this->setColorPalette($intermediate, $intermediate);
             
-            $this->applyAlphaMaskCmd($intermediate);
-
             $image = new IMagick($intermediate);
+            
+            $this->applyAlphaMaskCmd($image);
             $this->compressImage($image);
 
             // Resize extracted image to correct size before padding.
@@ -291,9 +277,6 @@ class Image_SubFieldImage
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
              * It seems that even if this particular instance of writeImage doesn't take the full time frame, if several instances of it are
              * running PHP will complain.  
-             * 
-             * NOTE: This extra writeImage() on LASCO images adds superfluous time to execution. Need to move this or don't set compression
-             * when building movies. 
              */
             set_time_limit(60);
             $image->writeImage($this->outputFile);
@@ -313,91 +296,20 @@ class Image_SubFieldImage
         }
     }
     
+
     /**
-     * Does the same as buildImage() but with command-line commands instead of imagick.
+     * Sets compression for images that are not compositeImageLayers
+     * 
+     * @param Object $imagickImage An initialized Imagick object
      * 
      * @return void
      */
-    protected function buildImageNoImagick()
-    {
-            try {
-            $grayscale    = substr($this->outputFile, 0, -3) . "pgm";
-            $intermediate = substr($this->outputFile, 0, -3) . "png";
-
-            // Extract region (PGM)
-            $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
-
-            // Generate GD-readable grayscale image (PNG)
-            $toIntermediateCmd = HV_PATH_CMD . "convert $grayscale -depth 8 -quality 10 -type Grayscale $intermediate";
-            exec(escapeshellcmd($toIntermediateCmd));
-
-            //Apply color-lookup table
-            //if ($this->colorTable && ($_GET["det"] != "AIA")) {
-            if ($this->colorTable) {
-                $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
-            }
-
-            $this->applyAlphaMaskCmd($intermediate);
-            $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
-
-            // Compression settings & Interlacing
-            $cmd .= $this->setImageParams();
-
-            // Screenshots need to be resized before padding, tiles need to be resized after.
-            if (!isset($this->tileSize) && !$this->hasAlphaMask()) {
-                $cmd .= "-resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight} ";
-            }
-
-            if ($this->padding && !$this->hasAlphaMask()) {
-                $cmd .= $this->_getPaddingString();
-            }
-
-            // 02/23/10
-            // ONLY WANT TO RESIZE DOWN TO 512x512 WHEN IMAGE IS BIGGER (Same numbers used in padding last step tell
-            // you how big tile is at this point).
-            //if (!$this->skipResize) {
-            //    $cmd .= " -resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}! ";    
-            //}
-            // For resize to match requested tilesize. Once a suitable solution is found to improve rendering of
-            // client-side rescaled tiles, this can be removed (02/26/2010)
-            if(isset($this->tileSize))
-                $cmd .= " -resize {$this->tileSize}x{$this->tileSize}!";
-                
-            //var_dump($this);
-            //die (escapeshellcmd("$cmd $this->outputFile"));
-
-            // Execute command
-            exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
-
-
-            if ($ret != 0) {
-                throw new Exception("Unable to build subfield image.\n\tCommand: $cmd $this->outputFile");
-            }
-
-            if ($this->outputFile != $intermediate) {
-                unlink($intermediate);
-            }
-
-            unlink($grayscale);
-
-        } catch(Exception $e) {
-            logErrorMsg($e->getMessage(), true);
-                      
-            //Clean-up and exit
-            $this->_abort($this->outputFile);
-        }    	
-    }
-    
-    /**
-     * Sets compression for images that are not compositeImageLayers 
-     */
     protected function compressImage($imagickImage)
     {
-    	if (!isset($this->tileSize)) {
-    		return;
-    	}
-        if ($this->format === "png")
-        {
+        if (!isset($this->tileSize)) {
+            return;
+        }
+        if ($this->format === "png") {
             $imagickImage->setCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
             $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_PLANE);
         } else {
@@ -411,24 +323,28 @@ class Image_SubFieldImage
     /**
      * Sets the background color of the image. LASCOImage overrides this to set
      * the background to transparent.
+     * 
+     * @param Object $imagickImage An initialized Imagick object
+     * 
+     * @return void
      */
     protected function setBackground($imagickImage)
     {
-    	$imagickImage->setImageBackgroundColor('black');
+        $imagickImage->setImageBackgroundColor('black');
     }
     
     /**
      * Default behavior for images is to just add a black background.
      * LASCOImage.php has a applyAlphaMaskCmd that overrides this one and applies
      * an alpha mask instead.
-     * $this->applyAlphaMaskCmd($intermediate); 
-     * @param string $intermediate pgm grayscale image
      * 
-     * @return string partial command for imagemagick
+     * @param Object $intermediate IMagick Object
+     * 
+     * @return void
      */
     protected function applyAlphaMaskCmd($intermediate)
     {
-        return $intermediate . " -background black ";
+        return;
     }
 
     /**
@@ -453,76 +369,6 @@ class Image_SubFieldImage
     public function setTileSize($size) 
     {
         $this->tileSize = $size;
-    }
-    
-    /**
-     * Set true to skip final resizing and return unscaled subfield image
-     * 
-     * @param bool $value Whether or not the resizing step should be skipped
-     * 
-     * @return void
-     */
-    protected function setSkipResize($value)
-    {
-        $this->skipResize = $value;
-    }
-
-    /**
-     * Enable/Disable alpha mask support
-     *
-     * @param string $value Locatation of the base image to use for an alpha mask
-     *
-     * @return void
-     */
-    protected function setAlphaMask($value)
-    {
-        $this->alphaMask = $value;
-    }
-    
-
-    /* protected function setPadding($padding)
-    {
-        $this->padding = $padding;
-    }
-    */   
-    /**
-     * Returns a string formatted for ImageMagick which defines how an image should be padded
-     * 
-     * @see http://www.imagemagick.org/Usage/thumbnails/#pad
-     * 
-     * @return string 
-     */
-    private function _getPaddingString()
-    {
-        return "-gravity {$this->padding['gravity']} -extent {$this->padding['width']}x{$this->padding['height']}{$this->padding['offsetX']}{$this->padding['offsetY']}";
-    }
-
-    /**
-     * Returns true if the image has an associated alpha mask
-     *
-     * @return bool Whether or not the subfield image uses an associated alpha mask for transparent regions.
-     */
-    protected function hasAlphaMask()
-    {
-        return $this->alphaMask;
-    }
-
-    /**
-     * Set Image Parameters
-     *
-     * @return string Image compression and quality related flags.
-     */
-    protected function setImageParams()
-    {
-        $args = " -quality ";
-        if ($this->format == "png") {
-            $args .= HV_PNG_COMPRESSION_QUALITY . " -interlace plane -colors " . HV_NUM_COLORS;
-        } else {
-            $args .= HV_JPEG_COMPRESSION_QUALITY . " -interlace line";
-        }
-        $args .= " -depth " . HV_BIT_DEPTH . " ";
-
-        return $args;
     }
 
     /**
@@ -550,13 +396,6 @@ class Image_SubFieldImage
             unlink($filename);
         }
 
-        if ($this->hasAlphaMask()) {
-            $mask = substr($filename, 0, -4) . "-mask.tif";
-            if (file_exists($mask)) {
-                unlink($mask);
-            }
-        }
-
         die();
     }
 
@@ -568,14 +407,14 @@ class Image_SubFieldImage
      * Note: input and output are usually the same file.
      *
      * @param string $input  Location of input image
-     * @param string $clut   Location of the color lookup table to use
      * @param string $output Location to save new image to
      *
      * @return void
      */    
-    protected function setColorPalette($input, $clut, $output)
+    protected function setColorPalette($input, $output)
     {	
-        $gd = null;
+        $gd   = null;
+        $clut = $this->colorTable;
         try {
             if (file_exists($input)) {
                 $gd = imagecreatefrompng($input);

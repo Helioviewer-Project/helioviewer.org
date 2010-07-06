@@ -25,9 +25,9 @@ require_once 'HelioviewerScreenshot.php';
  */
 class Image_Screenshot_HelioviewerScreenshotBuilder
 {
-	protected $maxWidth  = 1920;
-	protected $maxHeight = 1080;
-	
+    protected $maxWidth  = 1920;
+    protected $maxHeight = 1080;
+    
     /**
      * Does not require any parameters or setup.
      */
@@ -38,9 +38,10 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     /**
      * Prepares the parameters passed in from the api call and creates a screenshot from them.
      * 
-     * @param array $originalParams The original parameters passed in by the API call. These
-     *                              are then merged with $defaults in case some of those
-     *                              parameters weren't specified.
+     * @param array  $originalParams The original parameters passed in by the API call. These
+     *                               are then merged with $defaults in case some of those
+     *                               parameters weren't specified.
+     * @param string $outputDir      The directory path where the screenshot will be stored.
      *                              
      * @return string the screenshot
      */
@@ -62,12 +63,11 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         $height 	= ($params['y2'] - $params['y1']) / $imageScale;
         
         // Limit to maximum dimensions
-        if ($width > $this->maxWidth || $height > $this->maxHeight)
-        {
-        	$scaleFactor = min($this->maxWidth / $width, $this->maxHeight / $height);
-        	$width      *= $scaleFactor;
-        	$height     *= $scaleFactor;
-        	$imageScale /= $scaleFactor;
+        if ($width > $this->maxWidth || $height > $this->maxHeight) {
+            $scaleFactor = min($this->maxWidth / $width, $this->maxHeight / $height);
+            $width      *= $scaleFactor;
+            $height     *= $scaleFactor;
+            $imageScale /= $scaleFactor;
         }
         
         $options = array(
@@ -128,13 +128,13 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
                 list($sourceId, $visible, $opacity) = $layerArray;
             }
             if ($visible !== 0 && $visible !== "0") {
-	            $layerInfoArray = array(
-	                'sourceId' 	 => $sourceId,
-	                'width' 	 => $width,
-	                'height'	 => $height,
-	                'imageScale' => $imageScale,
-	                'opacity'	 => $opacity
-	            );
+                $layerInfoArray = array(
+                    'sourceId' 	 => $sourceId,
+                    'width' 	 => $width,
+                    'height'	 => $height,
+                    'imageScale' => $imageScale,
+                    'opacity'	 => $opacity
+                );
                 array_push($metaArray, $layerInfoArray);
             }
         }

@@ -46,7 +46,7 @@ var HelioviewerViewport = Viewport.extend(
     },
 
     getViewportInformation: function (event, callback) {
-        info = {
+        var info = {
             time        : this._timeControls.toISOString(),
             layers      : this._tileLayerManager.serialize(),
             coordinates : this.movementHelper.getViewportCoords(),

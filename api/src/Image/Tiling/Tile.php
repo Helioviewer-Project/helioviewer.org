@@ -109,51 +109,43 @@ abstract class Image_Tiling_Tile
                 $offsetY = $down;
                 //$gravity = "SouthEast";
             } else if ($y == $tileMaxY) {
-            	$offsetX = $right;
-            	$offsetY = 0;
+                $offsetX = $right;
+                $offsetY = 0;
                 //$gravity = "NorthEast";
             } else {
-            	$offsetX = $right;
-            	$offsetY = 0;
+                $offsetX = $right;
+                $offsetY = 0;
                 //$gravity = "East";
             }
         } else if ($x == $tileMaxX) {
             if ($y == $tileMinY) {
-            	$offsetX = 0;
-            	$offsetY = $down;
+                $offsetX = 0;
+                $offsetY = $down;
                 //$gravity = "SouthWest";
             } else if ($y == $tileMaxY) {
-            	$offsetX = 0;
-            	$offsetY = 0;
+                $offsetX = 0;
+                $offsetY = 0;
                 //$gravity = "NorthWest";
             } else {
-            	$offsetX = 0;
-            	$offsetY = 0;
+                $offsetX = 0;
+                $offsetY = 0;
                 //$gravity = "West";
             }
         } else {
             if ($y == $tileMinY) {
-            	$offsetX = 0;
-            	$offsetY = $down;
+                $offsetX = 0;
+                $offsetY = $down;
                 //$gravity = "South";
             } else if ($y == $tileMaxY) {
-            	$offsetX = 0;
-            	$offsetY = 0;
+                $offsetX = 0;
+                $offsetY = 0;
                 //$gravity = "North";
             } else {
-            	$offsetX = 0;
-            	$offsetY = $down;
+                $offsetX = 0;
+                $offsetY = $down;
                 //$gravity = "SouthWest";//return false;
             }
         }
-        /*
-        $reduceFactor = $this->image->reduceFactor();
-        // Length of side in padded tile 
-        if ($reduceFactor > 0) {
-            $side = ($this->relativeTileSize / pow(2, $reduceFactor));
-        } else {
-            $side = $this->relativeTileSize;
-        }*/
 
         return array(
             "gravity" => "NorthWest",

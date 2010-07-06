@@ -63,6 +63,7 @@ class Movie_HelioviewerMovie
      * @param string $filename  Desired filename for the movie
      * @param int    $quality   Movie quality
      * @param Object $meta      An ImageMetaInformation object with width, height, and imageScale
+     * @param String $tmpDir    the directory where the movie will be stored
      */
     public function __construct(
         $startTime, $numFrames, $frameRate, $hqFormat,
@@ -81,8 +82,8 @@ class Movie_HelioviewerMovie
         $this->_options    = $options;
 
         // _timeStep is in seconds
-        $this->_timeStep  = $timeStep;
-        $this->_filename   = $filename;
+        $this->_timeStep = $timeStep;
+        $this->_filename = $filename;
 
         $this->_endTime = $startTime + ($numFrames * $timeStep);
 
@@ -233,12 +234,20 @@ class Movie_HelioviewerMovie
         return $this->tmpDir . $movieName . "." . $this->_filetype;
     }
     
+    /**
+     * Creates a high quality video and converts it to an ipod-compatible format
+     * 
+     * @param Object $toolkit   An instance of phpvideotoolkit
+     * @param String $movieName the filename of the movie
+     * 
+     * @return String the filename of the ipod video
+     */
     private function _createIpodVideo($toolkit, $movieName) 
     {
-    	$this->_highQualityFiletype = "mp4";
-    	
-    	$this->_createHighQualityVideo($toolkit, $movieName);
-    	
+        $this->_highQualityFiletype = "mp4";
+        
+        $this->_createHighQualityVideo($toolkit, $movieName);
+        
         $hq_filename = "$movieName." . $this->_highQualityFiletype;
         $ipodVideoName = $this->tmpDir . "ipod-$hq_filename";
         $cmd = "/usr/bin/ffmpeg -i " . $this->tmpDir . $hq_filename . " -f mp4 -acodec "
@@ -249,8 +258,7 @@ class Movie_HelioviewerMovie
             . "-qmax 51 -qdiff 4 -level 30 -g 30 -async 2 " . $ipodVideoName;
 
         exec(escapeshellcmd($cmd));
-        if (file_exists($this->tmpDir . $hq_filename))
-        {
+        if (file_exists($this->tmpDir . $hq_filename)) {
             unlink($this->tmpDir . $hq_filename);
         }
         return $ipodVideoName;
@@ -260,8 +268,8 @@ class Movie_HelioviewerMovie
      * Creates a high quality version of the video and then unlinks all images
      * used to create the movie.
      * 
-     * @param object $toolkit
-     * @param string $movieName
+     * @param Object $toolkit   An instance of phpvideotoolkit
+     * @param String $movieName The filename of the movie
      * 
      * @return void
      */
@@ -286,12 +294,11 @@ class Movie_HelioviewerMovie
             logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
         }
 
-        // Clean up png/tif images that are no longer needed
-        foreach ($this->_images as $image) {
-        	if (file_exists($image)) 
-        	{
+        // Clean up png/tif images that are no longer needed. Leave the first frame for previews.
+        foreach (array_slice($this->_images, 1) as $image) {
+            if (file_exists($image)) {
                 unlink($image);
-        	}     
+            }     
         }    	
     }
 

@@ -50,7 +50,7 @@ class Movie_HelioviewerMovieBuilder
         $defaults = array(
             'numFrames'   => false,
             'frameRate'   => 8,
-            'filename'	  => "movie" . time(),
+            'filename'	  => false,
             'sharpen'	  => false,
             'edges'		  => false,
             'quality'	  => 10,
@@ -66,8 +66,7 @@ class Movie_HelioviewerMovieBuilder
         $height     = ($params['y2'] - $params['y1']) / $imageScale;  
 
         // Limit to maximum dimensions
-        if ($width > $this->maxWidth || $height > $this->maxHeight)
-        {
+        if ($width > $this->maxWidth || $height > $this->maxHeight) {
             $scaleFactor = min($this->maxWidth / $width, $this->maxHeight / $height);
             $width      *= $scaleFactor;
             $height     *= $scaleFactor;
@@ -93,13 +92,12 @@ class Movie_HelioviewerMovieBuilder
             $startTime = toUnixTimestamp($this->_params['startTime']);
             
             // If endTime was not given, default to 24 hours after the startTime.
-            if (!$this->_params['endTime'])
-            {
-            	$endTime     = $startTime + 86400;
-            	$isoEndTime  = toISOString(parseUnixTimestamp($endTime));
+            if (!$this->_params['endTime']) {
+                $endTime     = $startTime + 86400;
+                $isoEndTime  = toISOString(parseUnixTimestamp($endTime));
             } else {
-            	$isoEndTime = $this->_params['endTime'];
-            	$endTime    = toUnixTimestamp($isoEndTime);
+                $isoEndTime = $this->_params['endTime'];
+                $endTime    = toUnixTimestamp($isoEndTime);
             }
             
             $numFrames = ($this->_params['numFrames'] === false)? 
@@ -117,12 +115,19 @@ class Movie_HelioviewerMovieBuilder
                 chmod($tmpDir, 0777);
             }
 
+            if (!$this->_params['filename']) {
+            	$start = str_replace(array(":", "-", "T", "Z"), "_", $this->_params['startTime']);
+            	$end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
+                $filename = $start . "_" . $end . $this->buildFilename($layers);
+            } else {
+            	$filename = $this->_params['filename'];
+            }
+
             $movie = new Movie_HelioviewerMovie(
                 $startTime, $numFrames,
                 $this->_params['frameRate'],
                 $this->_params['hqFormat'],
-                $options, $cadence,
-                $this->_params['filename'],
+                $options, $cadence, $filename,
                 $this->_params['quality'],
                 $movieMeta, $tmpDir
             );
@@ -138,6 +143,17 @@ class Movie_HelioviewerMovieBuilder
         }
     }
     
+    protected function buildFilename($layers)
+    {
+        $filename = "";
+        foreach ($layers as $layer) {
+        	$infoArray  = explode(",", str_replace(array("[", "]"), "", $layer));
+        	$infoArray  = array_slice($infoArray, 1, -2);
+        	$filename .= "__" . implode("_", $infoArray);
+        }
+        return $filename;
+    }
+    
     /**
      * Takes in meta and layer information and creates movie frames from them.
      * 
@@ -146,6 +162,7 @@ class Movie_HelioviewerMovieBuilder
      * @param {ISODate} $startTime date the movie starts on
      * @param {int}     $timeStep  time step in between images in the frames
      * @param {int}     $numFrames number of frames in the movie
+     * @param {String}  $tmpDir    the directory where the frames will be stored
      * 
      * @return $images an array of built movie frames
      */
@@ -190,31 +207,49 @@ class Movie_HelioviewerMovieBuilder
         return $images;
     }
     
+    /**
+     * Uses the startTime and endTime to determine how many frames to make, up to 120.
+     * 
+     * @param Array $layers    Array of layer strings
+     * @param Date  $startTime ISO date
+     * @param Date  $endTime   ISO date
+     * 
+     * @return the number of frames
+     */
     private function _determineOptimalNumFrames($layers, $startTime, $endTime)
     {
-    	include_once HV_ROOT_DIR . "/api/src/Database/ImgIndex.php";
-    	$imgIndex = new Database_ImgIndex();
-    	
-    	$maxInRange = 0;
-    	
-    	foreach ($layers as $layer)
-    	{
-    		$layerInfo = explode(",", $layer);
-    	    if (sizeOf($layerInfo) > 4) {
+        include_once HV_ROOT_DIR . "/api/src/Database/ImgIndex.php";
+        $imgIndex = new Database_ImgIndex();
+        
+        $maxInRange = 0;
+        
+        foreach ($layers as $layer) {
+            $layerInfo = explode(",", $layer);
+            if (sizeOf($layerInfo) > 4) {
                 list($observatory, $instrument, $detector, $measurement, $opacity) = $layerInfo;
                 $sourceId = $imgIndex->getSourceId(str_replace("[", "", $observatory), $instrument, $detector, $measurement);        
             } else {
                 $sourceId = $layerInfo[0];
             }
-    		$maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, str_replace("[", "", $sourceId)));
-    	}
+            $maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, str_replace("[", "", $sourceId)));
+        }
 
-    	return min($maxInRange, $this->maxNumFrames);
+        return min($maxInRange, $this->maxNumFrames);
     }
     
+    /**
+     * Uses the startTime, endTime, and numFrames to calculate the amount of time in between
+     * each frame.
+     * 
+     * @param Date $startTime ISO date
+     * @param Date $endTime   ISO date
+     * @param Int  $numFrames number of frames in the movie
+     * 
+     * @return the number of seconds in between each frame
+     */
     private function _determineOptimalCadence($startTime, $endTime, $numFrames)
     {
-    	return ($endTime - $startTime) / $numFrames;
+        return ($endTime - $startTime) / $numFrames;
     }
     
     /**
