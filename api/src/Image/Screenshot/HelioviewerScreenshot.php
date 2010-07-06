@@ -35,6 +35,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     protected $offsetBottom;
     protected $offsetTop;
     protected $watermarkOn;
+    protected $buildFilename;
 
     /**
      * Create an instance of Image_Screenshot

@@ -50,7 +50,7 @@ class Movie_HelioviewerMovieBuilder
         $defaults = array(
             'numFrames'   => false,
             'frameRate'   => 8,
-            'filename'	  => "movie" . time(),
+            'filename'	  => false,
             'sharpen'	  => false,
             'edges'		  => false,
             'quality'	  => 10,
@@ -115,12 +115,19 @@ class Movie_HelioviewerMovieBuilder
                 chmod($tmpDir, 0777);
             }
 
+            if (!$this->_params['filename']) {
+            	$start = str_replace(array(":", "-", "T", "Z"), "_", $this->_params['startTime']);
+            	$end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
+                $filename = $start . "_" . $end . $this->buildFilename($layers);
+            } else {
+            	$filename = $this->_params['filename'];
+            }
+
             $movie = new Movie_HelioviewerMovie(
                 $startTime, $numFrames,
                 $this->_params['frameRate'],
                 $this->_params['hqFormat'],
-                $options, $cadence,
-                $this->_params['filename'],
+                $options, $cadence, $filename,
                 $this->_params['quality'],
                 $movieMeta, $tmpDir
             );
@@ -134,6 +141,17 @@ class Movie_HelioviewerMovieBuilder
             echo 'Error: ' .$e->getMessage();
             exit();
         }
+    }
+    
+    protected function buildFilename($layers)
+    {
+        $filename = "";
+        foreach ($layers as $layer) {
+        	$infoArray  = explode(",", str_replace(array("[", "]"), "", $layer));
+        	$infoArray  = array_slice($infoArray, 1, -2);
+        	$filename .= "__" . implode("_", $infoArray);
+        }
+        return $filename;
     }
     
     /**

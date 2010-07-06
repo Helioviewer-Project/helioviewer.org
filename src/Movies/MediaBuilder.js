@@ -37,7 +37,8 @@ var MediaBuilder = Class.extend(
                          "<div id='" + this.id + "-select-area' class='text-btn'>" +
                             "<span class='ui-icon ui-icon-scissors' style='float:left;'></span>" +
                             "<span style='line-height: 1.6em'>Select Area</span>" + 
-                         "</div></div>";
+                         "</div>" +
+                      "</div>";
         self = this;
         this.button.qtip({
             position  : {
@@ -52,11 +53,9 @@ var MediaBuilder = Class.extend(
             },
             show: {
                 when  : 'click',
-                effect: "slide"
             },
             hide: {
                 when  : 'click',
-                effect: "slide"
             },                      
             content: divContent,
             style  : "mediaDark",
@@ -66,6 +65,11 @@ var MediaBuilder = Class.extend(
         $("#social-buttons").click(function () {
             self.button.qtip('hide');
         });
+    },
+
+    hideDialogs: function () {
+        this.button.qtip("hide");
+        this.historyBar.hide();
     },
     
     toArcsecCoords: function (viewportInfo) {

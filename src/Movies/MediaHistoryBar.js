@@ -15,8 +15,10 @@ var MediaHistoryBar = Class.extend(
      */    
     init: function (id) {
         this.id = id;
-        this.history = [];
-        this.content = "";
+        this.container = $("#qtip-" + this.id);
+        this.button    = $("#" + this.id + "-button");
+        this.history   = [];
+        this.content   = "";
         this.hasDialog = false;
     },
     
@@ -25,15 +27,19 @@ var MediaHistoryBar = Class.extend(
      * included. 
      */
     addToHistory: function (item) {
-        this.history.push(item);
         this.createContentString(item);
         
         if (this.hasDialog) {
+            $.each(this.history, function () {
+                this.removeTooltip();
+            });
             var api = this.container.qtip("api");
             api.elements.tooltip.remove();
         } else {
             this.hasDialog = true;
         }
+        
+        this.history.push(item);
         // It is necessary to completely recreate the tooltip because if you update the content only,
         // any selectors that depend on previous content will break and all movie information tooltips
         // have to be re-created anyway.
@@ -45,6 +51,20 @@ var MediaHistoryBar = Class.extend(
      */
     hide: function () {
         this.container.qtip('hide');
+    },
+    
+    /**
+     * Adds divs for the new item including a text link and an empty, hidden div where the dialog
+     * for playing the movie will be created. Adds the item to the front of the list so that the list
+     * is in reverse chronological order.
+     * 
+     * @param item A Movie or Screenshot object
+     */
+    createContentString: function (item) {
+        this.content = "<div id='" + item.id + "' class='text-btn' style='padding-right:10px'>" + 
+                       item.name + "</div>" +
+                       "<div id='watch-dialog-" + item.id + "' style='display:none'></div><br /><br />" + 
+                       this.content;
     },
     
     /**
@@ -91,7 +111,9 @@ var MediaHistoryBar = Class.extend(
             },
             api: {
                 onRender: function () {
-                    $(document).trigger("setup-information-tooltip");
+                    $.each(self.history, function () {
+                        this.setupTooltip();
+                    });
                 }
             }
         });

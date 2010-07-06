@@ -29,7 +29,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
         this.selectAreaButton = $("#" + this.id + "-select-area");
         
         this.fullVPButton.click(function () {
-            self.button.qtip("hide");
+            self.hideDialogs();
             if (self.building) {
                 $(document).trigger("message-console-log", ["A link to your screenshot will be available shortly."]);
             }
@@ -40,7 +40,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
         });
         
         this.selectAreaButton.click(function () {
-            self.button.qtip("hide");
+            self.hideDialogs();
             if (self.building) {
                 $(document).trigger("message-console-log", ["A link to your screenshot will be available shortly."]);
             }
@@ -48,6 +48,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
                 $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
             }
         });
+
+        this.historyBar = new MediaHistoryBar(this.id);
     },
     
     /**
@@ -57,8 +59,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
      *                 coordinates of the visible region 
      */
     takeScreenshot: function (viewportInformation) {
-        var self, callback, params, imgWidth, imgHeight, url, mediaSettings, download, 
-            options, filename, arcsecCoords;        
+        var self, callback, params, url, arcsecCoords, id, download, screenshot;        
 
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInformation);
@@ -77,7 +78,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
 
         callback = function (url) {
             self.building = false;
-
+            id = (url).slice(-14,-4);
+            
             // If the response is an error message instead of a url, show the message
             if (url === null) {
                 //$(document).trigger("message-console-error", ["The selected region was not valid."]);
@@ -90,19 +92,24 @@ var ScreenshotBuilder = MediaBuilder.extend(
                     sticky: true,
                     header: "Your screenshot is ready!",
                     open:    function (e, m) {
-                        download = $('#screenshot-' + filename);
+                        screenshot.setURL(url, id);
+                        self.historyBar.addToHistory(screenshot);
+                        
+                        download = $("#screenshot-" + id);
                         
                         download.click(function () {
-                            window.open('api/index.php?action=downloadFile&url=' + url, '_parent');
+                            screenshot.download();
                         });
                     }
                 };
 
                 // Create the jGrowl notification.
-                $(document).trigger("message-console-info", ["<div id='screenshot-" + filename +
+                $(document).trigger("message-console-info", ["<div id='screenshot-" + id +
                 "' style='cursor: pointer'>Click here to download. </div>", options]); 
             }
         };
+        
+        screenshot = new Screenshot(params);
 
         $.post(this.url, params, callback, 'json');
     }

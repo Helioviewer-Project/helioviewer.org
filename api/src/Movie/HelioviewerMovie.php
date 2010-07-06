@@ -82,8 +82,8 @@ class Movie_HelioviewerMovie
         $this->_options    = $options;
 
         // _timeStep is in seconds
-        $this->_timeStep  = $timeStep;
-        $this->_filename   = $filename;
+        $this->_timeStep = $timeStep;
+        $this->_filename = $filename;
 
         $this->_endTime = $startTime + ($numFrames * $timeStep);
 
@@ -294,8 +294,8 @@ class Movie_HelioviewerMovie
             logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
         }
 
-        // Clean up png/tif images that are no longer needed
-        foreach ($this->_images as $image) {
+        // Clean up png/tif images that are no longer needed. Leave the first frame for previews.
+        foreach (array_slice($this->_images, 1) as $image) {
             if (file_exists($image)) {
                 unlink($image);
             }     
