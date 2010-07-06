@@ -300,20 +300,7 @@ class Module_WebClient implements Module
      * Obtains layer information, ranges of pixels visible, and the date being
      * looked at and creates a composite image (a Screenshot) of all the layers.
      *
-     * API example: http://localhost/helioviewer/api/index.php?action=takeScreenshot&width=512&height=512
-     * &obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=4,1,100/3,1,100/6,1,50/5,1,100
-     * &offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000 
-     * // Optional parameters can be added to the end: &quality=10&filename=example&sharpen=false&edges=false
-     *
-     * The first number in each layer is the source id of the image, the second number is whether the layer is visible,
-     * the third number is the layer's opacity. 
-     * 
-     * Alternatively, you can send it this message, which uses observatory information instead of source ids: 
-     * 
-     * http://localhost/helioviewer/api/index.php?action=takeScreenshot&width=512&height=512
-     * &obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=SOHO,EIT,EIT,171,1,100/SOHO,LASCO,C2,white-light,1,100
-     * &offsetLeftTop=-5000,-5000&offsetRightBottom=5000,5000
-     * // Optional parameters: &quality=10&filename=example&sharpen=false&edges=false
+     * See the API webpage for example usage.
      * 
      * Parameters quality, filename, sharpen, edges, and display are optional parameters and can be left out completely.
      * 
@@ -322,7 +309,7 @@ class Module_WebClient implements Module
      * knowing ahead of time whether the image is a .png, .tif, .flv, etc, and
      * in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      *
-     * @return image/png or JSON
+     * @return image/jpeg or JSON
      */
     public function takeScreenshot()
     {
@@ -331,6 +318,20 @@ class Module_WebClient implements Module
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $tmpDir  = HV_CACHE_DIR . "/screenshots";
         return $builder->takeScreenshot($this->_params, $tmpDir);
+    }
+    
+    /**
+     * Gets a screenshot from the cache as specified by the event ID in the parameters.
+     * See the API webpage for example usage.
+     *
+     * @return image/
+     */
+    public function getScreenshotForEvent()
+    {
+    	include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        
+        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        //return $builder->findScreenshotForEvent($this->_params);
     }
 
     /**

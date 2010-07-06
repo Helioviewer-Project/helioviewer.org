@@ -55,13 +55,8 @@ var MovieBuilder = MediaBuilder.extend(
                 $(document).trigger("enable-select-tool", $.proxy(self.checkMovieLayers, self));
             }
         });
-        
-        this.historyBar = new MovieHistoryBar(this.id);
-    },
-    
-    hideDialogs: function () {
-        this.button.qtip("hide");
-        this.historyBar.hide();
+
+        this.historyBar = new MediaHistoryBar(this.id);
     },
     
     /**
@@ -202,10 +197,11 @@ var MovieBuilder = MediaBuilder.extend(
             var id, hqfile;
             $(this).trigger('video-done');
             
-            id = (data).slice(-14,-4);
+            id = data.match(/\/\d+\//)[0].replace(/\//g, "");
+
             self.building = false;
             // chop off the flv at the end of the file and replace it with mov/asf/mp4
-            hqfile = (data).slice(0, -3) + "mp4";
+            hqfile = data.slice(0, -3) + "mp4";
             
             // If the response is an error message instead of a url, show the message
             if (data === null) {
@@ -220,8 +216,7 @@ var MovieBuilder = MediaBuilder.extend(
                     header: "Your movie is ready!",
                     open:    function () {
                         var watch, dialog;
-                        watch       = $('#watch-' + id);
-                       // watchDialog = $('#watch-dialog-' + id);
+                        watch = $('#watch-' + id);
 
                         movie.setURL(data, id);
                         self.historyBar.addToHistory(movie);
@@ -235,11 +230,8 @@ var MovieBuilder = MediaBuilder.extend(
 
                 // Make the jGrowl notification with the options above.
                 $(document).trigger("message-console-info", [
-                            "<a href='#' id='watch-" + id + "'>Click here to watch it</a> (opens in a pop-up)<br />" +
-                            "-or-<br />" + 
-                            "<a href='api/index.php?action=downloadFile&url=" + hqfile + "'>" +
-                            		"Click here to download a high-quality version." +
-                            "</a>", options]);
+                            "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or download it.<br />(opens in a pop-up)</div>" +
+                            "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>", options]);
             }
         };
 

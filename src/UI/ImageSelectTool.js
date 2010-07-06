@@ -105,7 +105,14 @@ var ImageSelectTool = Class.extend(
         self.button.click(function () {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
-            selection     = area.getSelection();
+            selection = area.getSelection();
+            
+            // If there is no area selected, don't do anything.
+            if (selection.x2 - selection.x1 <= 0 || selection.y2 - selection.y1 <= 0) {
+                self.cleanup();
+                return;
+            }
+            
             viewportInfo  = self.viewport.getViewportInformation();
             visibleCoords = viewportInfo.coordinates;
 
@@ -126,7 +133,7 @@ var ImageSelectTool = Class.extend(
             callback(selectInfo);
         });
     },
-
+    
     _setupFinishedButton: function () {
         this.vpDomNode.qtip({
             position: {
