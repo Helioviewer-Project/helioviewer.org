@@ -84,7 +84,7 @@ class Movie_HelioviewerMovieBuilder
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
-            $layers = explode("/", $this->_params['layers']);
+            $layers = explode("],", $this->_params['layers']);
             if (sizeOf($layers) == 0 || sizeOf($layers) > 3) {
                 $msg = "Invalid layer choices! You must specify 1-3 comma-separated layernames.";
                 throw new Exception($msg);
@@ -108,6 +108,14 @@ class Movie_HelioviewerMovieBuilder
             $numFrames = max($numFrames, 10);
 
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
+            
+            // Make a temporary directory to store the movie in.
+            $now = time();
+            $tmpDir = HV_TMP_DIR . "/$now/";
+            if (!file_exists($tmpDir)) {
+                mkdir($tmpDir, 0777, true);
+                chmod($tmpDir, 0777);
+            }
 
             $movie = new Movie_HelioviewerMovie(
                 $startTime, $numFrames,
@@ -116,10 +124,10 @@ class Movie_HelioviewerMovieBuilder
                 $options, $cadence,
                 $this->_params['filename'],
                 $this->_params['quality'],
-                $movieMeta
+                $movieMeta, $tmpDir
             );
-        
-            $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames);
+
+            $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames, $tmpDir);
             $url 	= $movie->buildMovie($images);
             
             return $this->_displayMovie($url, $movie, $params, $this->_params['display']);
@@ -141,7 +149,7 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return $images an array of built movie frames
      */
-    private function _buildFramesFromMetaInformation($movieMeta, $layers, $startTime, $timeStep, $numFrames) 
+    private function _buildFramesFromMetaInformation($movieMeta, $layers, $startTime, $timeStep, $numFrames, $tmpDir) 
     {
         $builder 	= new Image_Screenshot_HelioviewerScreenshotBuilder();
         $images 	= array();
@@ -175,7 +183,7 @@ class Movie_HelioviewerMovieBuilder
                 'watermarkOn'=> $this->_params['watermarkOn']
             );
 
-            $image = $builder->takeScreenshot($params);
+            $image = $builder->takeScreenshot($params, $tmpDir);
             array_push($images, $image);
         }
         
@@ -194,11 +202,11 @@ class Movie_HelioviewerMovieBuilder
     		$layerInfo = explode(",", $layer);
     	    if (sizeOf($layerInfo) > 4) {
                 list($observatory, $instrument, $detector, $measurement, $opacity) = $layerInfo;
-                $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);        
+                $sourceId = $imgIndex->getSourceId(str_replace("[", "", $observatory), $instrument, $detector, $measurement);        
             } else {
                 $sourceId = $layerInfo[0];
             }
-    		$maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, $sourceId));
+    		$maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, str_replace("[", "", $sourceId)));
     	}
 
     	return min($maxInRange, $this->maxNumFrames);

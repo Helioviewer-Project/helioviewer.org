@@ -96,4 +96,10 @@ class Event_HEKAdapter
         
         return json_encode($sorted);
     }
+    
+    /**
+     * Returns a list of the latest events
+     */
+    public function getLatestEvents($startTime) {
+    }
 }

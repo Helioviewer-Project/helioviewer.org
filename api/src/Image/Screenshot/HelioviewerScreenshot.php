@@ -47,7 +47,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param array  $offsets   The offsets of the top-left and bottom-right corners of the image
      *                          from the center of the sun.
      */
-    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets)
+    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir)
     {
         $this->timestamp     = $timestamp;
         $this->quality       = $quality;
@@ -56,13 +56,9 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $this->offsetBottom	 = $offsets['bottom'];
         $this->offsetRight	 = $offsets['right'];
         $this->watermarkOn   = $watermarkOn;
-        $this->buildFilename = $filename == null? true : false;
+        $this->buildFilename = !$filename;
 
-        $tmpDir = HV_CACHE_DIR . "/screenshots";
-        $this->extractedDir = HV_CACHE_DIR . "/extracted_images";
-        $this->makeDirectory($this->extractedDir);
-
-        parent::__construct($meta, $options, $tmpDir, $filename . ".jpg");
+        parent::__construct($meta, $options, $outputDir, $filename . ".jpg");
     }
 
     /**
@@ -139,7 +135,14 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      */
     private function _getTmpOutputPath($closestImage, $roi)
     {
-        return $this->extractedDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
+        $cacheDir = HV_CACHE_DIR . $closestImage['filepath'];
+
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+            chmod($cacheDir, 0777);
+        }
+
+        return $cacheDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
             $this->metaInfo->imageScale() . "_" . $roi['left'] . "_" . $roi['right'] . "x_" . 
             $roi['top'] . "_" . $roi['bottom'] . "y.png";
     }

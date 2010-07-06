@@ -44,7 +44,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      *                              
      * @return string the screenshot
      */
-    public function takeScreenshot($originalParams)
+    public function takeScreenshot($originalParams, $outputDir)
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
@@ -52,7 +52,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             'sharpen' 	  => false,
             'quality' 	  => 10,
             'display'	  => true,
-            'watermarkOn' => true
+            'watermarkOn' => true,
+            'filename'    => false
         );
         $params = array_merge($defaults, $originalParams);
         
@@ -81,18 +82,13 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $imageScale, $width, $height
         );
         
-        if (isset($params['filename']))
-        {
-        	$filename = $params['filename'];
-        } else {
-        	$filename = null;
-        }
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
             $imageMeta, $options, 
-            $filename, 
+            $params['filename'], 
             $params['quality'], $params['watermarkOn'],
-            array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2'])
+            array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
+            $outputDir
         );
         
         $screenshot->buildImages($layerArray);
@@ -116,30 +112,31 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      */
     private function _createMetaInformation($layers, $imageScale, $width, $height)
     {
-        $layerStrings 	= explode("/", $layers);
-        $metaArray 		= array();
+        $layerStrings = explode("],", $layers);
+        $metaArray    = array();
         
         if (sizeOf($layerStrings) < 1) {
             throw new Exception('Invalid layer choices! You must specify at least 1 layer.');
         }
         
         foreach ($layerStrings as $layer) {
-            $layerArray = explode(",", $layer);
+            $layerArray = explode(",", str_replace(array("[","]"), "", $layer));
             if (sizeOf($layerArray) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $opacity) = $layerArray;
+                list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
                 $sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
             } else {
-                list($sourceId, $opacity) = $layerArray;
+                list($sourceId, $visible, $opacity) = $layerArray;
             }
-                
-            $layerInfoArray = array(
-                'sourceId' 	 => $sourceId,
-                'width' 	 => $width,
-                'height'	 => $height,
-                'imageScale' => $imageScale,
-                'opacity'	 => $opacity
-            );
-            array_push($metaArray, $layerInfoArray);
+            if ($visible !== 0 && $visible !== "0") {
+	            $layerInfoArray = array(
+	                'sourceId' 	 => $sourceId,
+	                'width' 	 => $width,
+	                'height'	 => $height,
+	                'imageScale' => $imageScale,
+	                'opacity'	 => $opacity
+	            );
+                array_push($metaArray, $layerInfoArray);
+            }
         }
 
         return $metaArray;
