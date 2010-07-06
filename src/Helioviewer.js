@@ -323,7 +323,7 @@ var Helioviewer = UIController.extend(
         imageScale = this.viewport.getImageScale();
         
         // Image layers
-        imageLayers = this.tileLayers.serialize();
+        imageLayers = this.viewport.serialize();
         
         // Build URL
         url = this.rootURL + "/?date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;

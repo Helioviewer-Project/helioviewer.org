@@ -31,7 +31,6 @@ var TileLoader = Class.extend(
      */
     updateTileVisibilityRange: function (range, tilesLoaded) {
         this.tileVisibilityRange = range;
-        
         if (tilesLoaded) {
             return this._checkTiles();
         }
@@ -90,7 +89,6 @@ var TileLoader = Class.extend(
                 if (!this.validTiles[i]) {
                     this.validTiles[i] = {};
                 }
-
                 if (!this.loadedTiles[i][j] && this.validTiles[i][j]) {
                     this.loadedTiles[i][j] = true;
                     $(this.domNode).trigger('get-tile', [i, j]);
@@ -122,6 +120,7 @@ var TileLoader = Class.extend(
 
         this.removeOldTilesFirst = removeOldTilesFirst;
         this.numTilesLoaded      = 0;
+        this.loadedTiles         = {};
         this.computeValidTiles();
         
         this.oldTiles = this.getTileArray();

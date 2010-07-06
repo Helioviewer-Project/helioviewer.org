@@ -194,7 +194,7 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
             $this->_detector, $this->_measurement
         );
         */
-        $filepath .= "$year/";
+
         // $classname::getFilePathNickName does not work in php 5.2.x, using call_user_func instead
         $filepath .= call_user_func($classname . '::getFilePathNickName', $det, $meas);
         

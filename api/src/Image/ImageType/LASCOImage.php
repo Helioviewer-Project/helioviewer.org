@@ -88,9 +88,17 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * 
      * @return string command
      */
-    protected function getAlphaMaskCmd($intermediate)
+    protected function applyAlphaMaskCmd($intermediate)
     {
         return $this->applyAlphaMask($intermediate);
+    }
+    
+    /**
+     * Sets the background of the image to transparent.
+     */
+    protected function setBackground($imagickImage)
+    {
+    	$imagickImage->setImageBackgroundColor('transparent');
     }
 
     /**

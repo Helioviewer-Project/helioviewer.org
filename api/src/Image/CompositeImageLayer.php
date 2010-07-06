@@ -52,7 +52,7 @@ abstract class Image_CompositeImageLayer
     {
         return $this->outputFile;
     }
-    
+
     /**
      * Gets image dimensions
      * 
