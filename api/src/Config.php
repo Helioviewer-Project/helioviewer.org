@@ -57,10 +57,18 @@ class Config
             }
         }
 
-        define("HV_TILE_SERVER_0", "api/index.php");
-        foreach ($this->config["tile_server"] as $id => $url) {
-            define("HV_TILE_SERVER_" . ($id + 1), $url);
+        if ($this->config['local_tiling_enabled']) {
+            array_unshift($this->config["tile_server"], "api/index.php");
         }
+        
+        foreach ($this->config["tile_server"] as $id => $url) {
+            define("HV_TILE_SERVER_" . ($id), $url);
+        }
+        
+//        define("HV_TILE_SERVER_0", "api/index.php");
+//        foreach ($this->config["tile_server"] as $id => $url) {
+//            define("HV_TILE_SERVER_" . ($id + 1), $url);
+//        }
 
         $this->_setAdditionalParams();
 
