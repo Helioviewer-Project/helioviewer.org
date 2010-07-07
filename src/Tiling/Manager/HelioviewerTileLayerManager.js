@@ -75,7 +75,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Add the layer
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
-                          this.tileVisibilityRange, this.api, this.tileServers[params.server], params.observatory, 
+                          this.tileVisibilityRange, this.api, this.tileServers[server], params.observatory, 
                           params.instrument, params.detector, params.measurement, params.sourceId, params.name, 
                           params.visible, opacity, params.layeringOrder, server)
         );
@@ -106,7 +106,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * Selects a server to handle all tiling and image requests for a given layer
      */
     _selectTilingServer: function () {
-        return Math.floor(Math.random() * (this.tileServers.length));                    
+        return Math.floor(Math.random() * (this.tileServers.length));
     },
 
     /**
