@@ -55,7 +55,8 @@ class Event_HEKAdapter
         $params = array(
             "event_starttime" => $startTime,
             "event_endtime"   => $endTime,
-            "return"          => "frm_name,frm_url,frm_identifier,frm_contact,event_type"
+            "result_limit"    => 200,
+            "return"          => "frm_name,frm_url,frm_contact,event_type"
         );
         
         $decoded = json_decode($this->_proxy->query($params, true), true);
@@ -69,7 +70,7 @@ class Event_HEKAdapter
         foreach ($decoded['result'] as $row) {
             $name = $row["frm_name"];
             if (!array_key_exists($name, $names)) {
-                $names[$name] = 0;
+                $names[$name] = 1;
                 array_push($unsorted, $row);
             } else {
                 $names[$name]++;
@@ -95,5 +96,16 @@ class Event_HEKAdapter
         }
         
         return json_encode($sorted);
+    }
+    
+    /**
+     * Returns a list of the latest events
+     * 
+     * @param date $startTime Start time for which events should be retrieved
+     * 
+     * @return void
+     */
+    public function getLatestEvents($startTime)
+    {
     }
 }
