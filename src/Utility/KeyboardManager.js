@@ -61,7 +61,7 @@ var KeyboardManager = Class.extend(
             else if (e.which) {
                 key = e.which;
             }
-            
+
             // Get character pressed (letters, etc)
             character = String.fromCharCode(key);
 
@@ -87,7 +87,12 @@ var KeyboardManager = Class.extend(
                     $(document).trigger('move-viewport', [0, 8]);
                 }
                 return false;
-            }        
+            }
+            
+            // Enter key
+            else if (key === 13) {
+                $(document).trigger('enter-key-pushed');
+            }
 
             else if (character === "c") {
                 $("#center-button").click();

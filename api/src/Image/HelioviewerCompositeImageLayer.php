@@ -78,8 +78,8 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
         $padding = $this->image->computePadding($roi, $imageScale);
         $image->setPadding($padding);
 
-        if(HV_DISABLE_CACHE || $this->_imageNotInCache()) {
-        	$this->image->build();
+        if (HV_DISABLE_CACHE || $this->_imageNotInCache()) {
+            $this->image->build();
         }
     }
     
@@ -137,16 +137,20 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
     /**
      * Converts arcseconds (given in $roi in the constructor) to image pixels
      * 
-     * @param array $image An array with image meta information, gotten from the database
+     * @param int   $width   The width of the JP2 image in pixels
+     * @param int   $height  The height of the JP2 image in pixels
+     * @param float $scale   The scale of the JP2 image in arcsec/pixel
+     * @param float $offsetX The offset of the center of the sun from the center of the image
+     * @param float $offsetY The offset of the center of the sun from the center of the image
      * 
      * @return array an array of pixel offsets
      */
     private function _getPixelRoi($width, $height, $scale, $offsetX, $offsetY)
     {
-    	$centerX = $width / 2 + $offsetX;
-    	$centerY = $width / 2 + $offsetY;
-    	
-    	return array(
+        $centerX = $width / 2 + $offsetX;
+        $centerY = $width / 2 + $offsetY;
+        
+        return array(
             'top'    => max($this->_roi['top']   /$scale + $centerY, 0),
             'left'   => max($this->_roi['left']  /$scale + $centerX, 0),
             'bottom' => min($this->_roi['bottom']/$scale + $centerY, $height),
