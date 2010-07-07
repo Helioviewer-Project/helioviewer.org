@@ -211,7 +211,6 @@ class Module_WebClient implements Module
      */
     public function getTile ()
     {
-        // PROFILE TEST (performance of re-querying jp2 dimensions, offset, etc?)
         include_once 'src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();
 
@@ -496,8 +495,8 @@ class Module_WebClient implements Module
         <br />
         <br />
 
-        Supported Parameters:<br />
-        <br />
+        Supported Parameters:
+        <br /><br />
 
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
@@ -536,11 +535,9 @@ class Module_WebClient implements Module
 <!-- Tiling API -->
 <div id="TilingAPI">
     <h1>Tiling API:</h1>
-    <p>Requesting a tile image in Helioviewer.org occurs in two steps. During the first step the user specifies the
-    parameters of the image they are interested in tiling including the date, observatory, instrument, detector, 
-    measurement. Alternatively, if the sourceId for the desired data source is already known that can be used
-    in place of specifying the observatory, instrument, detector and measurement.</p>
-
+    <p>Requesting a image tile in Helioviewer.org occurs in two steps. During the first step a request is made
+    in order to find the nearest image to the specified time. Once an image has been found, the URI associated
+    with the image can then be used in subsequent tile requests.</p>
     <br />
 
      <ol style="list-style-type: upper-latin;">
@@ -562,8 +559,9 @@ class Module_WebClient implements Module
                 <?php echo $baseURL;?>?action=getClosestImage
             </a>
             
-            Supported Parameters:<br />
-            <br />
+            <br /><br />
+            Supported Parameters:
+            <br /><br />
     
             <table class="param-list" cellspacing="10">
                 <tbody valign="top">
@@ -578,6 +576,26 @@ class Module_WebClient implements Module
                         <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
                     </tr>
                     <tr>
+                        <td><b>observatory</b></td>
+                        <td><i>String</i></td>
+                        <td><i>[Optional]</i> Observatory</td>
+                    </tr>
+                    <tr>
+                        <td><b>instrument</b></td>
+                        <td><i>String</i></td>
+                        <td><i>[Optional]</i> Instrument</td>
+                    </tr>
+                    <tr>
+                        <td><b>detector</b></td>
+                        <td><i>String</i></td>
+                        <td><i>[Optional]</i> Detector</td>
+                    </tr>
+                    <tr>
+                        <td><b>measurement</b></td>
+                        <td><i>String</i></td>
+                        <td><i>[Optional]</i> Measurement</td>
+                    </tr>
+                    <tr>
                         <td><b>sourceId</b></td>
                         <td><i>Integer</i></td>
                         <td><i>[Optional]</i> The image data source identifier.</td>
@@ -586,9 +604,8 @@ class Module_WebClient implements Module
             </table>
             
             <br /><br />
-    
-            Result:<br />
-            <br />
+            Result:
+            <br /><br />
     
             <table class="param-list" cellspacing="10">
                 <tbody valign="top">
@@ -665,13 +682,15 @@ class Module_WebClient implements Module
         
         </li>
         
+        <br />
+        
         <!-- getTile API -->
         <li>
         <div id="getClosestImage">Creating a Tile:
         <p>Once you have determined the image for which you wish to retrieve a tile from using the above
-           <a href="#getClosestImage" />getClosestImage</p> request, you are ready to begin requesting tiles
+           <a href="#getClosestImage" />getClosestImage</a> request, you are ready to begin requesting tiles
            for that image. Tiles are requesting by specifying the identifier for the image you wish to tile, in
-           this case simply the filename of the image, the spatial scale that the tile should be generated at,..
+           this case simply the filename of the image, the spatial scale that the tile should be generated at,..</p>
 
         <br />
 
@@ -680,111 +699,12 @@ class Module_WebClient implements Module
             <span style="text-decoration: underline;">Usage:</span>
             <br />
             <br />
-            <a href="<?php echo $baseURL;?>?action=getClosestImage">
-                <?php echo $baseURL;?>?action=getClosestImage
+            <a href="<?php echo $baseURL;?>?action=getTile">
+                <?php echo $baseURL;?>?action=getTile
             </a>
-            
-            Supported Parameters:<br />
-            <br />
-    
-            <table class="param-list" cellspacing="10">
-                <tbody valign="top">
-                    <tr>
-                        <td width="20%"><b>date</b></td>
-                        <td width="25%"><i>ISO 8601 UTC Date</i></td>
-                        <td width="55%">The desired image date</td>
-                    </tr>
-                    <tr>
-                        <td><b>server</b></td>
-                        <td><i>Integer</i></td>
-                        <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
-                    </tr>
-                    <tr>
-                        <td><b>sourceId</b></td>
-                        <td><i>Integer</i></td>
-                        <td><i>[Optional]</i> The image data source identifier.</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <br /><br />
-    
-            Result:<br />
-            <br />
-    
-            <table class="param-list" cellspacing="10">
-                <tbody valign="top">
-                    <tr>
-                        <td width="20%"><b>filename</b></td>
-                        <td width="25%"><i>String</i></td>
-                        <td width="55%">The filename of the matched image</td>
-                    </tr>
-                    <tr>
-                        <td><b>filepath</b></td>
-                        <td><i>String</i></td>
-                        <td>The location of the matched image</td>
-                    </tr>
-                    <tr>
-                        <td><b>date</b></td>
-                        <td><i>Date String</i></td>
-                        <td>The date of of the matched image</td>
-                    </tr>
-                    <tr>
-                        <td><b>scale</b></td>
-                        <td><i>Float</i></td>
-                        <td>The image's native spatial scale, in arc-seconds/pixel</td>
-                    </tr>
-                    <tr>
-                        <td><b>width</b></td>
-                        <td><i>Integer</i></td>
-                        <td>Image width</td>
-                    </tr>
-                    <tr>
-                        <td><b>height</b></td>
-                        <td><i>Integer</i></td>
-                        <td>Image width</td>
-                    </tr>
-                    <tr>
-                        <td><b>sunCenterX</b></td>
-                        <td><i>Float</i></td>
-                        <td>Distance from image left to the solar center, in pixels</td>
-                    </tr>
-                    <tr>
-                        <td><b>sunCenterY</b></td>
-                        <td><i>Float</i></td>
-                        <td>Distance from image bottom to the solar center, in pixels</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <br />
-    
-            <span class="example-header">Examples:</span> <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
-                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
-                </a>
-                <br /><br />
-                <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3">
-                   <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3
-                </a>
-            </span>
-            
         </div>
 
         <br />
-        
-        <!-- Closest Image API Notes -->
-        <div class="summary-box" style="background-color: #E3EFFF;">
-        <span style="text-decoration: underline;">Notes:</span>
-        <br />
-        <ul>
-            <li>
-            <p>At least one of the methods for specifying the image source, either a sourceId or the image 
-            observatory, instrument, detector and measurement must be included in the request. </p>
-            </li>
-        </ul>
-        </div>
-        
         </li>
     </ol>
 </div>

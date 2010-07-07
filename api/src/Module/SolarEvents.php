@@ -145,20 +145,21 @@ class Module_SolarEvents implements Module
 <!-- Feature/Event API -->
 <div id="FeatureEventAPI">
     <h1>Feature/Event API:</h1>
-    <p>There are two ways to use Helioviewer's Feature/Event API. The first is to query the available Feature 
-    Recognition Methods (FRM), and then query for specific features/events within each FRM. The second method is to go
-    straight to querying for features/events, skipping the FRM step. <!-- This requires that you already know the 
-    identifiers for each specific catalog you wish you query.-->Both steps are described below.</p>
+    <p>Solar feature/event data used by Helioviewer is retrieved through the 
+    <a href="http://www.lmsal.com/hek/index.html">Heliophysics Event Knowledgebase (HEK)</a>. While the HEK includes
+    a very <a href="http://www.lmsal.com/hek/api.html">rich and full-features API of it's own</a>, Helioviewer provides
+    only a few simple but useful feature/event query methods. Each of these types of queries are described below.</p>
     <ol style="list-style-type: upper-latin;">
     
-        <!-- Catalog API -->
+        <!-- FRM API -->
         <li>
         <div id="getEventFRMs">Event Feature Recognition Methods (FRM):
-        <p>To query the list of available FRMs, simply call the "getEventFRMs" and specify a startDate and endDate. 
-        This will return a list of the FRMs for which event data exists in the requested time range, as well as some 
-        meta-information describing each of the catalogs. <!--The most important parameters returned are the "id", 
-        the identifier used to query the specific catalog for features/events, and "eventType" which specified 
-        the type of feature/event the catalog described, e.g. "CME" or "Active Region." --></p>
+        <p>Each event stored in the HEK has an associated Feature Recognition Method or "FRM" which corresponds
+        with the mechanism used to locate the event. This could be either an automated feature recognition method such
+        as <a href="http://sidc.oma.be/cactus/">Computer Aided CME Tracking (CACTus)</a>
+        or a simple user-submitted event. To query the list of available FRMs, simply call the "getEventFRMs" API method
+        and specify a startDate and endDate. This will return a list of the FRMs for which event data exists in 
+        the requested time range, as well as some meta-information describing each of the FRMs.</p>
 
         <br />
 
@@ -172,72 +173,120 @@ class Module_SolarEvents implements Module
         </a>
 
         <br /><br />
-        Result:
+        Supported Parameters:
         <br /><br />
 
-        An array of catalog objects is returned formatted as JSON. Each catalog object includes the following
-        six parameters:
-
-        <!-- Feature/Event Catalog Parameter Description -->
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="25%"><b>adjustRotation</b></td>
-                    <td width="15%"><i>Boolean</i></td>
-                    <td>Specifies whether the position of the events has been adjusted to account for solar
-                    rotation.</td>
+                    <td width="20%"><b>startDate</b></td>
+                    <td width="25%"><i>ISO 8601 UTC Date</i></td>
+                    <td width="55%">Beginning of query window.</td>
                 </tr>
                 <tr>
-                    <td><b>coordinateSystem</b></td>
-                    <td><i>String</i></td>
-                    <td>The type of coordinate system used by the catalog provider. Recognized coordinate systems
-                    include "HELIOGRAPHIC," "PRINCIPAL_ANGLE," and "ANGULAR."</td>
-                </tr>
-                <tr>
-                    <td><b>description</b></td>
-                    <td><i>String</i></td>
-                    <td>A brief human-readable description of the catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>eventType</b></td>
-                    <td><i>String</i></td>
-                    <td>The type of event described. See <a href="index.html#Identifiers">Appendix A</a> for a list of
-                    the supported event types.</td>
-                </tr>
-                <tr>
-                    <td><b>id</b></td>
-                    <td><i>String</i></td>
-                    <td>The identifier for a specific catalog. The identifier consists of two parts separate by
-                    double-colons. The left-side of the double-colons identifies the catalog provider, which may be
-                    the same for several catalogs. The right-side identifies the specific catalog.</td>
-                </tr>
-                <tr>
-                    <td><b>name</b></td>
-                    <td><i>String</i></td>
-                    <td>A human-readable name for the catalog.</td>
+                    <td><b>endDate</b></td>
+                    <td><i>ISO 8601 UTC Date</i></td>
+                    <td>End of query window.</td>
                 </tr>
             </tbody>
         </table>
+        
+        <br /><br />
+        Result:
+        <br /><br />
+        The result includes a list of event types denoted by their two-letter acronym as 
+        <a href="http://www.lmsal.com/helio-informatics/hpkb/VOEvent_Spec.html">listed at the HEK</a>. Within each
+        event type is a list of all FRMs for which events were found in the specified query window. Finally, for each
+        FRM some basic information including the FRM name, id, url and contact information, along with the number
+        of events matched are returned.
+        <br /><br />
+        
+        <table class="param-list" cellspacing="10">
+            <tbody valign="top">
+                <tr>
+                    <td width="20%"><b>count</b></td>
+                    <td width="25%"><i>Integer</i></td>
+                    <td width="55%">The number of events found for the associated FRM</td>
+                </tr>
+                <tr>
+                    <td><b>frm_contact</b></td>
+                    <td><i>String</i></td>
+                    <td><i>[Optional]</i>E-mail address or name associated with the FRM</td>
+                </tr>
+                <tr>
+                    <td><b>frm_url</b></td>
+                    <td><i>String</i></td>
+                    <td><i>[Optional]</i> The URL associated with the FRM</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <br />
+        
+        <span class="example-header">Example:</span> <span class="example-url">
+        <a href="<?php echo $baseURL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z">
+           <?php echo $baseURL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z
+        </a>
+        </span>
+
 
         </div>
 
         <br />
     
-    <!-- Catalog API Notes -->
+    <!-- FRM Example Result -->
     <div class="summary-box" style="background-color: #E3EFFF;">
-    <span style="text-decoration: underline;">Notes:</span>
+    <span style="text-decoration: underline;">Example Result:</span>
     <br />
     <br />
-    <ul>
-        <li>
-        <p>Refer to the table in the following section, <a href="index.html#CatalogEntries">Catalog Entries</a>
-        for the specific IDs used.</p>
-        </li>
-        <li>
-        <p>Results are returned as <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr>. Future versions
-        will provide the ability to request results in either JSON or VOEvent format.</p>
-        </li>
-    </ul>
+    <pre style="font-size:12px">
+    {
+        "AR": {
+            "NOAA SEC Observer": {
+                "frm_url": "N/A",
+                "frm_contact": "http://www.sec.noaa.gov/",
+                "frm_identifier": "NOAA SEC",
+                "count": 14
+            }
+        },
+        "SS": {
+            "EGSO_SFC": {
+                "frm_url": "n/a",
+                "frm_contact": "s.zharkov at sheffield dot ac dot uk",
+                "frm_identifier": "EGSO_SFC",
+                "count": 45
+            }
+        },
+        "FL": {
+            "SSW Latest Events": {
+                "frm_url": "http://sohowww.nascom.nasa.gov/solarsoft/packages/gevloc/idl/ssw_flare_locator.pro",
+                "frm_contact": "Samuel L. Freeland",
+                "frm_identifier": "SolarSoft",
+                "count": 13
+            },
+            "SEC standard": {
+                "frm_url": "http://www.sec.noaa.gov/",
+                "frm_contact": "SEC.Webmaster@noaa.gov",
+                "frm_identifier": "SEC",
+                "count": 13
+            },
+            "TRACE observer": {
+                "frm_url": "http://hea-www.harvard.edu/trace/flare_catalog/",
+                "frm_contact": "trace_planner at lmsal dot com",
+                "frm_identifier": "TRACE flare catalog",
+                "count": 1
+            }
+        },
+        "FA": {
+            "Karel Schrijver": {
+                "frm_url": "n/a",
+                "frm_contact": "Karel Schrijver",
+                "frm_identifier": "Karel Schrijver",
+                "count": 4
+            }
+        }
+    }
+    </pre>
     </div>
 
     </div>

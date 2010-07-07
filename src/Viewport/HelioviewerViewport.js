@@ -37,7 +37,7 @@ var HelioviewerViewport = Viewport.extend(
                                   this.tileServers, this.tileLayers, this.urlStringLayers);
         
         // Initialize even layers
-        //this._eventLayerManager = new EventManager(this.requestDate, 86400, this.getRSun());
+        this._eventLayerManager = new EventManager(this.requestDate, 86400, this.getRSun());
         
         var mouseCoords	    = new HelioviewerMouseCoordinates(this.imageScale, this._rsun, this.warnMouseCoords);
         this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
