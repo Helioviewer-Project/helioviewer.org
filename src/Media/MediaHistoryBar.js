@@ -11,7 +11,8 @@ var MediaHistoryBar = Class.extend(
     {
     /**
      * @constructs
-     * @param id a unique id that identifies which container it belongs to.
+     * @param id a unique id that identifies which container it belongs to,
+     *           either "screenshot" or "movie".
      */    
     init: function (id) {
         this.id = id;
@@ -26,13 +27,12 @@ var MediaHistoryBar = Class.extend(
      * Adds the new item to history and re-makes the history dialog with the new item
      * included. 
      */
-    addToHistory: function (item) {
-        this.createContentString(item);
-        
+    addToHistory: function (item) {        
         if (this.hasDialog) {
             $.each(this.history, function () {
                 this.removeTooltip();
             });
+            
             var api = this.container.qtip("api");
             api.elements.tooltip.remove();
         } else {
@@ -40,6 +40,7 @@ var MediaHistoryBar = Class.extend(
         }
         
         this.history.push(item);
+        this.createContentString();
         // It is necessary to completely recreate the tooltip because if you update the content only,
         // any selectors that depend on previous content will break and all movie information tooltips
         // have to be re-created anyway.
@@ -60,41 +61,51 @@ var MediaHistoryBar = Class.extend(
      * 
      * @param item A Movie or Screenshot object
      */
-    createContentString: function (item) {
-        this.content = "<div id='" + item.id + "' class='text-btn' style='padding-right:10px'>" + 
-                       item.name + "</div>" +
-                       "<div id='watch-dialog-" + item.id + "' style='display:none'></div><br /><br />" + 
-                       this.content;
+    createContentString: function () {
+        var self = this;
+        this.content = "";
+        $.each(this.history, function () {
+            self.content =  "<div id='" + this.id + "' class='text-btn' float: left'>" + 
+                                this.name + 
+                            "</div>" +
+                            "<div style='float:right; font-size: 8pt;'>" + 
+                                "<i>" + this.getTimeDiff() + "</i>" + 
+                            "</div>" +
+                            "<div id='watch-dialog-" + this.id + "' style='display:none'>" +
+                            "</div><br /><br />" + 
+                            self.content;
+        });
     },
     
     /**
      * Creates a dialog with the title "History" and a list of recently made media. 
      * When done, triggers the event "setup-information-tooltip", which should be 
      * received by Movie.js or Screenshot.js
+     * 
+     * The target field in show and hide points to either Movie-Button or Screenshot-Button,
+     * so the dialog is shown or hidden when that button is clicked rather than when 
+     * this.container is clicked. 
      */
     _setupDialog: function () {
         var self, divContent;
         self = this;
         
         this.container.qtip({
-            position  : {
+            position: {
                 target: self.button,
                 corner: {
                     target : 'bottomMiddle',
                     tooltip: 'topMiddle'
                 },
-                adjust: {
-                    x : 0,
-                    y : 65
-                }
+                adjust: { y : 65 }
             },
-            show: { 
+            show   : { 
                 when  : {
                     event : 'click',
                     target: self.button
                 }
             },
-            hide: {
+            hide   : {
                 when  : {
                     event : 'click',
                     target: self.button
@@ -104,12 +115,8 @@ var MediaHistoryBar = Class.extend(
                 title : "History",
                 text  : self.content
             },
-            style  : {
-                name  : "mediaDark",
-                width : 'auto',
-                height: 'auto'
-            },
-            api: {
+            style  : "mediaDark",
+            api    : {
                 onRender: function () {
                     $.each(self.history, function () {
                         this.setupTooltip();

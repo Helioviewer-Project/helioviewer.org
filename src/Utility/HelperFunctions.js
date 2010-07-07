@@ -209,3 +209,55 @@ var helioprojectiveToSolarRadii = function (hx, hy, scale, rsun) {
         y: hy / rsunInArcSeconds 
     };
 };
+
+/**
+ * Takes in a time difference in seconds and converts it to 'fuzzy' time, namely 
+ * "5 minutes ago" or "3 days ago"
+ * 
+ * @input {int} timeDiff -- Difference in time between two values in seconds
+ */
+var toFuzzyTime = function (timeDiff) {
+    // Since it's flooring values, any number under 2 minutes (120 seconds) 
+    // should come up as "1 minute ago" rather than "1 minutes ago"
+    if (timeDiff <= 119) {
+        return "1 minute ago";
+    
+    } else if (timeDiff <= 3600) {
+        return Math.floor(timeDiff / 60) + " minutes ago";
+    
+    } else if (timeDiff <= 7199) {
+        // Same as above, any number under 2 hours (7200 seconds)
+        // should come up as "1 hour ago" rather than "1 hours ago"
+        return "1 hour ago";
+    
+    } else if (timeDiff <= 86400) {
+        return Math.floor(timeDiff / 3600) + " hours ago";
+    
+    } else if (timeDiff <= 172799) {
+        // Same as above, any number under 2 days (172800 seconds)
+        // should come up as "1 day ago" rather than "1 days ago"
+        return "1 day ago";
+    
+    } else {
+        return Math.floor(timeDiff / 86400) + " days ago";
+    }    
+};
+
+/**
+ * Takes in pixel coordinates and converts them to arcseconds. 
+ * Pixel coordinates must be relative to the center of the sun. 
+ * 
+ * @input {Object} coordinates -- contains values for x1, x2, y1, and y2
+ * @input {Float}  scale       -- the scale of the image in arcsec/pixel
+ * 
+ * @return object
+ */
+var pixelsToArcseconds = function (coordinates, scale) {
+    return {
+        x1 : coordinates.x1 * scale,
+        x2 : coordinates.x2 * scale,
+        y1 : coordinates.y1 * scale,
+        y2 : coordinates.y2 * scale
+    };
+};
+

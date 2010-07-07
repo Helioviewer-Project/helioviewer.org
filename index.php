@@ -106,9 +106,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", "Events/EventManager.js", 
         	            "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
         	            "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js",
-                        "Movies/MediaBuilder.js", "UI/MessageConsole.js", "Movies/MediaHistoryBar.js",
-        	            "Movies/Media.js", "Movies/Screenshot.js", "Movies/Movie.js", "Movies/MovieBuilder.js",  
-                        "UI/ScreenshotBuilder.js", "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js",  
+                        "Media/Builder/MediaBuilder.js", "UI/MessageConsole.js", "Media/MediaHistoryBar.js",
+        	            "Media/Media.js", "Media/Screenshot.js", "Media/Movie.js", "Media/Builder/MovieBuilder.js",  
+                        "Media/Builder/ScreenshotBuilder.js", "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js",  
                         "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
                         "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
@@ -219,19 +219,29 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                                     <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Email</span>
                                 </div>-->
-
+                        <?php 
+                            if ($config["enable_movie_button"])
+                            {
+                        ?>
                                 <!-- Movie button -->
                                 <div id="movie-button" class="text-btn">
                                     <span class="ui-icon ui-icon-video" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Movie</span>
                                 </div>
-
+                        <?php 
+                            }
+                            
+                            if ($config["enable_screenshot_button"])
+                            {
+                        ?>                      
                                 <!-- Screenshot button -->
                                 <div id="screenshot-button" class="text-btn">
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
-
+                        <?php 
+                            }
+                        ?>
                                 <!-- Select region button -->
                                 <!--<div id="select-region-button" class="text-btn">
                                     <span class='ui-icon ui-icon-scissors' style="float: left;"></span>

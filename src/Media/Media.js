@@ -13,10 +13,11 @@ var Media = Class.extend(
      * @constructs
      * @description Calculates its dimensions and holds on to meta information.
      */    
-    init: function (params) {
+    init: function (params, dateRequested) {
         $.extend(this, params);
-        this.width  = Math.floor((this.x2 - this.x1) / this.imageScale);
-        this.height = Math.floor((this.y2 - this.y1) / this.imageScale);
+        this.dateRequested = dateRequested;
+        this.width         = Math.floor((this.x2 - this.x1) / this.imageScale);
+        this.height        = Math.floor((this.y2 - this.y1) / this.imageScale);
     },
     
     /**
@@ -28,12 +29,56 @@ var Media = Class.extend(
         this.name = this.parseName();
     },
     
-    parseLayer: function (layer) {
-        var layerArray = layer.split("_");
-        if (layerArray[0] === "LASCO") {
-            return layerArray[0] + " " + layerArray[1];
+    /**
+     * Creates the name that will be displayed in the history.
+     * Groups layers together by detector, ex: 
+     * EIT 171/304, LASCO C2/C3
+     * Will crop names that are too long and append ellipses
+     */
+    parseName: function () {
+        var rawName, layerArray, name, currentInst, self = this;
+        layerArray = this.layers.split("],").sort();
+        name = "";
+        
+        currentInst = false;
+        
+        $.each(layerArray, function () {
+            rawName = this.split(",").slice(1,-2);
+            if(rawName[0] !== currentInst) {
+                currentInst = rawName[0];
+                name += ", " + currentInst + " " + self.parseLayer(rawName);
+            } else {
+                name += "/" + self.parseLayer(rawName);
+            }
+        });
+        
+        // Get rid of the extra ", " at the front
+        name = name.slice(2);
+        if (name.length > 14) {
+            name = name.slice(0,14) + "...";
         }
-        return layerArray[1] + " " + layerArray[2];
+        
+        return name;
+    },
+    
+    /**
+     * Figures out what part of the layer name is relevant to display.
+     * The layer is given as an array: {inst, det, meas}
+     */
+    parseLayer: function (layer) {
+        if (layer[0] === "LASCO") {
+            return layer[1];
+        }
+        return layer[2];
+    },
+    
+    getTimeDiff: function () {
+        var now, diff;
+        now = new Date();
+        // Translate time diff from milliseconds to seconds
+        diff = (now.getTime() - this.dateRequested.getTime()) / 1000;
+
+        return toFuzzyTime(diff);
     },
     
     /**
@@ -48,10 +93,7 @@ var Media = Class.extend(
 
         this.button.qtip({
             position: {
-                adjust: {
-                    x: -30,
-                    y: 0
-                },
+                adjust: { x: -30 },
                 corner : {
                     target : "leftMiddle",
                     tooltip: "rightMiddle" 

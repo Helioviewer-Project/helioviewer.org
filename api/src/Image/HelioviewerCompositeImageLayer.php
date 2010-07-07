@@ -59,19 +59,30 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
         $this->layeringOrder = $layeringOrder;
         $this->opacity		 = $opacity;
         $this->imageScale    = $imageScale;
-        
-        $type = strtoupper($instrument) . "Image";
-        include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
-        
-        $classname = "Image_ImageType_" . $type;
-        
+
         $this->_roi = $roi;
         $pixelRoi = $this->_getPixelRoi($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
 
-        $image = new $classname(
-            $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
-            $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
-        );
+        // Make a blank image if the region of interest does not include this image.
+        if ($this->_imageNotVisible($pixelRoi)) {
+        	$outputFile = HV_ROOT_DIR . "/resources/images/transparent_512.png";
+        	
+        	include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
+        	$image = new Image_ImageType_BlankImage(
+        	   $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
+                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
+        	);
+        } else {   	        
+            $type      = strtoupper($instrument) . "Image";
+            $classname = "Image_ImageType_" . $type;
+        
+        	include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
+        	
+            $image = new $classname(
+                $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
+                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
+            );
+        }
         
         parent::__construct($timestamp, $image, $outputFile);
         
@@ -81,6 +92,20 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
         if (HV_DISABLE_CACHE || $this->_imageNotInCache()) {
             $this->image->build();
         }
+    }
+    
+    /**
+     * Determines if the roi is invalid by calculating width and height and seeing if they are
+     * less than 0.
+     * 
+     * @param Array $pixelRoi An array with values for top, left, bottom, and right
+     * 
+     * @return boolean
+     */
+    private function _imageNotVisible($pixelRoi)
+    {
+    	return ($pixelRoi['bottom'] - $pixelRoi['top'] <= 0) || 
+    	           ($pixelRoi['right'] - $pixelRoi['left'] <= 0);
     }
     
     /**
@@ -153,8 +178,8 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
         return array(
             'top'    => max($this->_roi['top']   /$scale + $centerY, 0),
             'left'   => max($this->_roi['left']  /$scale + $centerX, 0),
-            'bottom' => min($this->_roi['bottom']/$scale + $centerY, $height),
-            'right'  => min($this->_roi['right'] /$scale + $centerX, $width)
+            'bottom' => max(min($this->_roi['bottom']/$scale + $centerY, $height), 0),
+            'right'  => max(min($this->_roi['right'] /$scale + $centerX, $width), 0)
         );
     }
 }
