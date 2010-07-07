@@ -100,7 +100,12 @@ class Event_HEKAdapter
     
     /**
      * Returns a list of the latest events
+     * 
+     * @param date $startTime Start time for which events should be retrieved
+     * 
+     * @return void
      */
-    public function getLatestEvents($startTime) {
+    public function getLatestEvents($startTime)
+    {
     }
 }

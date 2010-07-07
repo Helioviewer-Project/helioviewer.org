@@ -35,17 +35,20 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     protected $offsetBottom;
     protected $offsetTop;
     protected $watermarkOn;
+    protected $buildFilename;
 
     /**
      * Create an instance of Image_Screenshot
      *
-     * @param int    $timestamp The unix timestamp of the observation date in the viewport
-     * @param object $meta      An ImageMetaInformation object
-     * @param array  $options   An array containing true/false values for "EdgeEnhance" and "Sharpen"
-     * @param string $filename  Location where the screenshot will be stored
-     * @param int    $quality   Screenshot compression quality
-     * @param array  $offsets   The offsets of the top-left and bottom-right corners of the image
-     *                          from the center of the sun.
+     * @param int    $timestamp   The unix timestamp of the observation date in the viewport
+     * @param object $meta        An ImageMetaInformation object
+     * @param array  $options     An array containing true/false values for "EdgeEnhance" and "Sharpen"
+     * @param string $filename    Location where the screenshot will be stored
+     * @param int    $quality     Screenshot compression quality
+     * @param bool   $watermarkOn Whether to watermark the image or not
+     * @param array  $offsets     The offsets of the top-left and bottom-right corners of the image
+     *                            from the center of the sun.
+     * @param string $outputDir   The directory where the screenshot will be stored
      */
     public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir)
     {
@@ -71,7 +74,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      */
     public function buildImages($layerInfoArray)
     {
-    	$filenameInfo = "";
+        $filenameInfo = "";
         $this->layerImages = array();
 
         // Find the closest image for each layer, add the layer information string to it
@@ -105,10 +108,9 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             array_push($this->layerImages, $image);
         }
 
-        if ($this->buildFilename)
-        {
-        	$time = str_replace(array(":", "-", "T", "Z"), "_", $this->timestamp);
-        	$this->setOutputFile($time . $filenameInfo . time() . ".jpg");
+        if ($this->buildFilename) {
+            $time = str_replace(array(":", "-", "T", "Z"), "_", $this->timestamp);
+            $this->setOutputFile($time . $filenameInfo . time() . ".jpg");
         }
 
         $this->compileImages();
@@ -130,6 +132,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * Builds a temporary output path where the extracted image will be stored
      * 
      * @param array $closestImage An array containing image meta information, obtained from the database
+     * @param array $roi          The region of interest in arcseconds
      * 
      * @return string a string containing the image's temporary output path
      */
@@ -179,9 +182,10 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         return $result;    	
     }
     
-    
     /**
      * Builds an imagemagick command to composite watermark text onto the image
+     * 
+     * @param Object $imagickImage An initialized IMagick object
      * 
      * @return void
      */
@@ -194,9 +198,9 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $lowerPad = $height - 8; 
         // Put the names on first, then put the times on as a separate layer so the times are nicely aligned.
         foreach ($this->layerImages as $layer) {
-        	$lowerPad -= 12;
-            $nameCmd .= $layer->getWaterMarkName();
-            $timeCmd .= $layer->getWaterMarkTimestamp();
+            $lowerPad -= 12;
+            $nameCmd  .= $layer->getWaterMarkName();
+            $timeCmd  .= $layer->getWaterMarkTimestamp();
         }
         
         $black = new IMagickPixel("#000C");
@@ -206,14 +210,14 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $underText = new IMagickDraw();
         $underText->setStrokeColor($black);
         $underText->setStrokeWidth(2);
-        $imagickImage->annotateImage($underText, 20,  $lowerPad, 0, $nameCmd);
+        $imagickImage->annotateImage($underText, 20, $lowerPad, 0, $nameCmd);
         $imagickImage->annotateImage($underText, 125, $lowerPad, 0, $timeCmd);
         
         // Write words in white over outline
         $text = new IMagickDraw();
         $text->setFillColor($white);
         $text->setStrokeWidth(0);
-        $imagickImage->annotateImage($text, 20,  $lowerPad, 0, $nameCmd);
+        $imagickImage->annotateImage($text, 20, $lowerPad, 0, $nameCmd);
         $imagickImage->annotateImage($text, 125, $lowerPad, 0, $timeCmd);
         
         $black->destroy();
