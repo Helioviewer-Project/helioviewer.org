@@ -190,7 +190,9 @@ class Validation_InputValidator
     public static function checkDates($dates, &$params)
     {
         foreach ($dates as $date) {
-            Validation_InputValidator::checkUTCDate($params[$date]);
+            if (isset($params[$date])) {
+                Validation_InputValidator::checkUTCDate($params[$date]);
+            }
         }
     }
 

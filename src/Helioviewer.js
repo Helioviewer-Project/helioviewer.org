@@ -263,8 +263,6 @@ var Helioviewer = UIController.extend(
      * is shifted backward to maintain it's size.
      */
     launchJHelioviewer: function () {
-        //window.open("http://www.jhelioviewer.org", "_blank");
-        //-jhv "[startTime=2003-10-05T00:00:00Z;endTime=2003-10-20T00:00:00Z;linked=true;cadence=3600;imageScale=5000;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]]"
         var endDate, params;
         
         // If currently near the end of available data, shift window back
