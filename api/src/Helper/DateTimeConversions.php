@@ -33,6 +33,20 @@ function toUnixTimestamp($dateStr)
 }
 
 /**
+ * Returns an ISO 8601 UTC date string
+ *
+ * @return string ISO 8601 Date string
+ */
+
+function getUTCDateString()
+{
+    date_default_timezone_set('UTC');
+    $now  = getdate();
+    $date = array($now['year'], $now['mon'], $now['mday'], $now['hours'], $now['minutes'], $now['seconds']);
+    return vsprintf("%d/%02d/%02dT%02d:%02d:%02d.000Z", $date);
+}
+
+/**
  * Converts a unix timestamp to a PHP DateTime instance
  *
  * @param int $timestamp The number of seconds since Jan 1, 1970 UTC

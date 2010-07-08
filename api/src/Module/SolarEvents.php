@@ -77,14 +77,32 @@ class Module_SolarEvents implements Module
     /**
      * Gets a JSON-formatted list of Features/Events for the requested time range and FRMs 
      *
+     * http://www.lmsal.com/hek/her?cosec=2&cmd=search&type=column&event_type=**
+     *  &event_starttime=2010-07-01T00:00:00&event_endtime=2010-07-02T00:00:00
+     *  &event_coordsys=helioprojective&x1=-1200&x2=1200&y1=-1200&y2=1200&result_limit=200&return=kb_archivid,concept,
+     *  frm_institute,obs_observatory,frm_name,event_starttime,event_endtime,hpc_x,hpc_y,hpc_bbox
      * @return void
      */
     public function getEvents()
     {
         include_once "src/Event/HEKAdapter.php";
-
+        $hek = new Event_HEKAdapter();
+        
+        // Check for end date
+        if (!isset($this->_params['endDate'])) {
+            include_once "src/Helper/DateTimeConversions.php";
+            $this->_params['endDate'] = getUTCDateString();
+        }
+        
+        // Check for event type
+        if (!isset($this->_params["eventType"])) {
+            $this->_params['eventType'] = "**";
+        }
+        
+        header("Content-type: application/json");
+        echo $hek->getEvents($this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType'], $this->_params['iPod']);
     }
-    
+
     /**
      * validate
      *
@@ -96,7 +114,8 @@ class Module_SolarEvents implements Module
         {
         case "getEvents":
             $expected = array(
-                "required" => array('startDate', 'endDate'),
+                "required" => array('startDate'),
+                "bools"    => array('iPod'),
                 "dates"    => array('startDate', 'endDate')
             );
             break;
