@@ -104,13 +104,15 @@ class Module_WebClient implements Module
      */
     public function getClosestImage ()
     {
-        // Default to localhost if no server is specified
+        // Default to the first known api if no server is specified
         if (!isset($this->_params['server'])) {
             $this->_params['server'] = 0;
         }
-     
+        
+        $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+
         // Tile locally
-        if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
+        if (HV_LOCAL_TILING_ENABLED && ($baseURL == 'api/index.php')) {
             include_once 'src/Database/ImgIndex.php';
             $imgIndex = new Database_ImgIndex();
 
@@ -131,8 +133,7 @@ class Module_WebClient implements Module
         } else {
             if (HV_DISTRIBUTED_TILING_ENABLED) {
                 // Redirect request to remote server
-                if ($this->_params['server'] != 0) {
-                    $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+                if ($baseURL != 'api/index.php') {
                     $source  = $this->_params['sourceId'];
                     $date    = $this->_params['date'];
                     $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
@@ -143,7 +144,7 @@ class Module_WebClient implements Module
                     throw new Exception($msg);
                 }
             } else {
-                if ($this->_params['server'] == 0) {
+                if ($baseURL == 'api/index.php') {
                     $err = "Both local and remote tiling is disabled on the server.";
                 } else {
                     $err = "Remote tiling is disabled for this server.";
