@@ -104,8 +104,8 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
      */
     private function _imageNotVisible($pixelRoi)
     {
-    	return ($pixelRoi['bottom'] - $pixelRoi['top'] <= 0) || 
-    	           ($pixelRoi['right'] - $pixelRoi['left'] <= 0);
+    	return ($pixelRoi['bottom'] - $pixelRoi['top'] <= 1) || 
+    	           ($pixelRoi['right'] - $pixelRoi['left'] <= 1);
     }
     
     /**

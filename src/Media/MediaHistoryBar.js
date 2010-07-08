@@ -45,6 +45,7 @@ var MediaHistoryBar = Class.extend(
         // any selectors that depend on previous content will break and all movie information tooltips
         // have to be re-created anyway.
         this._setupDialog();
+        $(document).trigger("save-setting", [this.id + "-history", this.history]);
     },
     
     /**
