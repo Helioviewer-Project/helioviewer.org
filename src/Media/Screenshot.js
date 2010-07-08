@@ -13,8 +13,8 @@ var Screenshot = Media.extend(
      * @constructs
      * @description Holds on to meta information 
      */    
-    init: function (params) {
-        this._super(params);
+    init: function (params, dateRequested) {
+        this._super(params, dateRequested);
         this.time = this.obsDate.replace("T", " ").slice(0,-5);
     },
     
@@ -31,17 +31,6 @@ var Screenshot = Media.extend(
             self.button.qtip("hide");
             self.download();
         });
-    },
-
-    parseName: function () {
-        var rawName, layerArray, name, self = this;
-        rawName    = this.url.match(/[a-zA-Z]+_+.*/)[0].slice(0,-15);
-        layerArray = rawName.split("__");
-        name = "";
-        $.each(layerArray, function () {
-            name = name + self.parseLayer(this) + " / ";
-        });
-        return name.slice(0,-3);
     },
 
     /**
@@ -61,7 +50,7 @@ var Screenshot = Media.extend(
                     "</tr>" +
                     "<tr>&nbsp;</tr>" +
                     "<tr>" +
-                        "<td><b>Time: </b></td>" +
+                        "<td><b>Timestamp: </b></td>" +
                         "<td>" + this.time + "</td>" + 
                     "</tr>" +
                     "<tr>&nbsp;</tr>" +

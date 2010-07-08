@@ -1,8 +1,9 @@
 <?php 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Image_ImageType_LASCOImage class definition
+ * Image_ImageType_TemplateImage class definition
  * There is one xxxImage for each type of detector Helioviewer supports.
+ * Use this class for an idea of how to create new image classes for new image types.
  *
  * PHP version 5
  *
@@ -14,9 +15,10 @@
  */
 require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
 /**
- * Image_ImageType_LASCOImage class definition
+ * Image_ImageType_EITImage class definition
  * There is one xxxImage for each type of detector Helioviewer supports.
- *
+ * Use this class for an idea of how to create new image classes for new image types.
+ * 
  * PHP version 5
  *
  * @category Image
@@ -25,15 +27,12 @@ require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_ImageType_LASCOImage extends Image_SubFieldImage
+class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
 {
     private   $_measurement;
-    private   $_detector;
     protected $tileSize;
     protected $width;
     protected $height;
-    protected $solarCenterOffsetX;
-    protected $solarCenterOffsetY;
     
     /**
      * Constructor
@@ -53,34 +52,68 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * @param int    $offsetX      Offset of the sun center from the image center
      * @param int    $offsetY      Offset of the sun center from the iamge center
      * @param string $outputFile   Filepath to where the final image will be stored
-     */    
+     */     
     public function __construct(
         $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
         $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
     ) {
-        $this->_detector 	= $detector;
         $this->_measurement = $measurement;
+        
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
             $outputFile, $offsetX, $offsetY
         );
 
-        if ($this->_detector == "C2") {
-            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_idl_3.png";
-        } else if ($this->_detector == "C3") {
-            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_idl_1.png";
-        }
+        // Enter color table here if it exists, otherwise leave this commented out. 
+        /*
+        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_EIT_{$this->_measurement}.png";
 
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }
-        
+        */
         $this->width 	= $width;
         $this->height 	= $height;
-        $this->solarCenterOffsetX = $offsetX;
-        $this->solarCenterOffsetY = $offsetY;
     }
-
+    
+    /**
+     * Returns the detector/measurement nickname used in filepaths
+     * 
+     * @param string $det  Not used for EIT images but is used in other image types like
+     *                     LASCO, so this parameter is required anyway.
+     * @param string $meas The measurement of the image.
+     * 
+     * @return string The nickname
+     */    
+    public static function getFilePathNickName($det, $meas) 
+    {
+    	/*
+    	 * Enter the appropriate filepath nickname as it should appear. Examples:
+    	 * "AIA/" . $meas
+    	 * "LASCO-" . $det . "/" . $meas
+    	 */ 
+        return "EIT/" . $meas;
+    }
+    
+    /**
+     * Gets a string that will be displayed in the image's watermark
+     * 
+     * @return string watermark name
+     */
+    public function getWaterMarkName() 
+    {
+        /*
+         * Enter the appropriate layer nickname as it should appear in the watermark. Examples:
+         * "AIA $this->_measurement\n"
+         * "LASCO $this->_detector\n"
+         */ 
+        return "EIT $this->_measurement\n";
+    }
+    
+    /**
+     * The rest of these functions are for ALPHA MASKED IMAGES ONLY. Uncomment all of these if
+     * the image requires alpha-masking or transparency.
+     */
     /**
      * calls applyAlphaMask to build an alpha mask command for imagemagick.
      * 
@@ -88,10 +121,11 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * 
      * @return void
      */
+    /*
     protected function applyAlphaMaskCmd($imagickImage)
     {
         $this->applyAlphaMask($imagickImage);
-    }
+    }*/
     
     /**
      * Calls the command-line imagemagick functions instead of imagick.
@@ -100,10 +134,11 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * 
      * @return void
      */
+    /*
     protected function applyAlphaMaskCmdNoImagick($intermediate)
     {
         $this->applyAlphaMaskNoImagick($intermediate);
-    }
+    }*/
     
     /**
      * Sets the background of the image to transparent.
@@ -112,33 +147,11 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * 
      * @return void
      */
+    /*
     protected function setBackground($imagickImage)
     {
         $imagickImage->setImageBackgroundColor('transparent');
-    }
-
-    /**
-     * Returns the detector/measurement nickname used in filepaths
-     * 
-     * @param string $det  The detector of the image, either C2 or C3
-     * @param string $meas The measurement of the image, always white-light for LASCO.
-     * 
-     * @return string The nickname
-     */
-    public static function getFilePathNickName($det, $meas) 
-    {
-        return "LASCO-$det/$meas";
-    }
-    
-    /**
-     * Gets a string that will be displayed in the image's watermark
-     * 
-     * @return string watermark name
-     */    
-    public function getWaterMarkName() 
-    {
-        return "LASCO $this->_detector\n";
-    }
+    }*/
     
     /**
      * Generates a portion of an ImageMagick convert command to apply an alpha mask
@@ -185,6 +198,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      *
      * @return void
      */
+    /*
     protected function applyAlphaMask($imagickImage)
     {
         $maskWidth  = 1040;
@@ -202,26 +216,20 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
 
         $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;
-        
-        // $maskTopLeft coordinates cannot be negative when cropping, so if they are, adjust the width and height
-        // by the negative offset and crop with zero offsets. Then put the image on the properly-sized image
-        // and offset it correctly.
-        $cropWidth  = $width  + min($maskTopLeftX, 0);
-        $cropHeight = $height + min($maskTopLeftY, 0);
 
         $mask  = new IMagick($mask);
         
         $mask->scaleImage($maskWidth * $maskScaleFactor, $maskHeight * $maskScaleFactor);
-        $mask->cropImage($cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0));
+        $mask->cropImage($width, $height, $maskTopLeftX, $maskTopLeftY);
         $mask->resetImagePage("{$width}x{$height}+0+0");
 
         $mask->setImageBackgroundColor('black');
-        $mask->extentImage($width, $height, ceil($width - $cropWidth), ceil($height - $cropHeight));
+        $mask->setImageExtent($width, $height);
 
         $imagickImage->setImageExtent($width, $height);
         $imagickImage->compositeImage($mask, IMagick::COMPOSITE_COPYOPACITY, 0, 0);
         $mask->destroy();
-    }
+    }*/
     
     /**
      * Does the same thing as applyAlphaMask but with command-line calls instead of IMagick
@@ -230,6 +238,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * 
      * @return void
      */
+    /*
     protected function applyAlphaMaskNoImagick($input)
     {
         $maskWidth  = 1040;
@@ -249,24 +258,18 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;
 
-        // $maskTopLeft coordinates cannot be negative when cropping, so if they are, adjust the width and height
-        // by the negative offset and crop with zero offsets. Then put the image on the properly-sized image
-        // and offset it correctly.
-        $cropWidth  = $width  + min($maskTopLeftX, 0);
-        $cropHeight = $height + min($maskTopLeftY, 0);
-        
         $gravity   = $this->padding["gravity"];
 
         $str = "convert -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
                "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
-               "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite $input";
+               "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite $input";
         
         $cmd = sprintf(
             $str, $input, $gravity, $width, $height, $mask, 100 * $maskScaleFactor,
-            $cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0), 
-            $gravity, $width, $height, ceil($width - $cropWidth), ceil($height - $cropHeight)
+            $width, $height, $maskTopLeftX, $maskTopLeftY, 
+            $gravity, $width, $height
         );
 
         exec(escapeshellcmd($cmd));
-    }
+    }*/
 }
