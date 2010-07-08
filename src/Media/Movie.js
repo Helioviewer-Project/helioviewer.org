@@ -14,9 +14,10 @@ var Movie = Media.extend(
      * @description Calculates its dimensions and handles movie display. Holds on to information used 
      *  to create the movie.
      */    
-    init: function (params) {
-        this._super(params);
+    init: function (params, dateRequested, hqFormat) {
+        this._super(params, dateRequested);
         this.startTime = this.startTime.replace("T", " ").slice(0,-5);
+        this.hqFormat  = hqFormat;
     },
     
     /**
@@ -24,20 +25,7 @@ var Movie = Media.extend(
      */
     setURL: function (url, id) {
         this._super(url, id);
-        this.hqFile = (url).slice(0, -3) + "mp4";
-    },
-
-    parseName: function () {
-        var rawName, layerArray, name, self = this;
-        rawName    = this.url.match(/[a-zA-Z]+_+.*/)[0].slice(0,-4);
-        layerArray = rawName.split("__");
-        name = "";
-        
-        $.each(layerArray, function () {
-            name = name + self.parseLayer(this) + " / ";
-        });
-        
-        return name.slice(0,-3);
+        this.hqFile = (url).slice(0, -3) + this.hqFormat;
     },
 
     /**

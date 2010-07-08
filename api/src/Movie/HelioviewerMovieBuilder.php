@@ -148,7 +148,11 @@ class Movie_HelioviewerMovieBuilder
         $filename = "";
         foreach ($layers as $layer) {
         	$infoArray  = explode(",", str_replace(array("[", "]"), "", $layer));
-        	$infoArray  = array_slice($infoArray, 1, -2);
+        	if (sizeOf($infoArray) > 4) {
+        	   $infoArray  = array_slice($infoArray, 1, -2);
+        	} else {
+        		$infoArray = array_slice($infoArray, 0, -2);
+        	}
         	$filename .= "__" . implode("_", $infoArray);
         }
         return $filename;
