@@ -26,8 +26,9 @@ var Helioviewer = UIController.extend(
         this._super(urlParams, settings);
         this.api = "api/index.php";
         
-        this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
-                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+        this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
+                          '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+
         // Get available data sources and initialize viewport
         this._getDataSourcesAndLoadViewport();
         
@@ -270,11 +271,14 @@ var Helioviewer = UIController.extend(
         endDate = new Date(Math.min(this.timeControls.getDate().addHours(12), Date.now()));
 
         params = {
-            "endTime"  : endDate.toISOString(),
-            "startTime": endDate.addHours(-24).toISOString()
+            "action"    : "launchJHelioviewer",
+            "endTime"   : endDate.toISOString(),
+            "startTime" : endDate.addHours(-24).toISOString(),
+            "imageScale": 5000,
+            "layers"    : this.viewport.serialize()
         };
         
-        console.dir(params);
+        window.open(this.api + "?" + $.param(params), "_blank");
     },
 
     /**

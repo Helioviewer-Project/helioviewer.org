@@ -143,13 +143,13 @@ var ImageSelectTool = Class.extend(
                 }
             },      
             adjust: {
-                x: 0,
-                y: 0
+                x: -200,
+                y: 200
             },
             content: {
                 text : "<div id='done-selecting-image' class='text-btn'>" +
                             "<span class='ui-icon ui-icon-circle-check' style='float: left;'></span>" +
-                            "<span style='line-height: 1.6em'>Done</span>" +
+                            "<span>Done</span>" +
                         "</div>" + 
                         "<div id='image-select-help' class='text-btn' style='float: right;'>" + 
                             "<span class='ui-icon ui-icon-info'></span>" +
@@ -158,107 +158,46 @@ var ImageSelectTool = Class.extend(
             show: false,
             hide: 'click',
             style: {
-                color: '#fff',
-                "font-weight": 600, 
-                padding: 0,
-                width: 100,
-                background: '#2A2A2A',
-                "z-index" : 7,
-                border: { 
-                    width: 0,
-                    radius: 6, 
-                    color: '#2A2A2A'
-                }
+                name: "mediaDark",
+                "font-weight": 600,
+                "font-size": "10pt",
+                width: 'auto'
             }
         });
     },
     
     _setupHelpDialog: function () {
+        var api = this.vpDomNode.qtip("api");
+        qtip    = api.elements.tooltip;
+        
         this.helpButton.qtip({
             position: {
                 corner: {
-                    target: 'bottomRight',
+                    target: 'bottomLeft',
                     tooltip: 'topRight'
                 }
             },
             content: {
-                text: "Resize by dragging the edges of the selection<br />" +
-                        "Move the selection by clicking inside and dragging it<br />" + 
+                title: "Help",
+                text: "Resize by dragging the edges of the selection.<br />" +
+                        "Move the selection by clicking inside and dragging it.<br />" + 
                         "Click and drag outside the selected area to start" +
                         " a new selection.<br />" +
-                        "Click 'Done' when you have finished to download your screenshot."
+                        "Click 'Done' when you have finished to submit."
             },
-            adjust: {
-                x: 0,
-                y: 40
-            },
-            show: 'click',
-            hide: 'click',
+            adjust: { y: 100 },
+            show: 'mouseover',
+            hide: 'mouseout',
             style: {
                 tip: 'topRight',
-                color: '#fff',
-                background: '#2A2A2A',
-                "z-index" : 7,
-                border: { 
-                    width: 0,
-                    radius: 6, 
-                    color: '#2A2A2A'
+                name: 'simple',
+                width: 'auto',
+                "text-align": 'left',
+                title: {
+                    background: '#FFF'
                 }
             }
         });
-    },
-    
-    /**
-     * @description Loads a dialog pop-up that asks the user what they would like to do with the region they selected.
-     *                 Current options are: "Take Screenshot", "Build Movie", and "Cancel".
-     * @param {Array} coords -- an array of the heliocentric top, left, right, and bottom coordinates of the selected 
-     *                          region, relative to the viewport coordinates.
-     */    
-
-    createDialog: function (coords) {
-        var self = this;
-
-        Shadowbox.open({
-            options:    {
-                onFinish: function () {
-                    $('#take-screenshot-button').click(function () {
-                        self.cleanup();
-                        self.controller.screenshotBuilder.takeScreenshot(coords);
-                    });
-                    
-                    $('#cancel-button').click(function () {
-                        self.cleanup();
-                    });
-                    
-                    $('#build-movie-button').click(function () {
-                        self.cleanup();
-                        // Delay the action for one second so Shadowbox doesn't crash 
-                        // from opening and closing at the same time.
-                        setTimeout(function () {
-                            self.controller.movieBuilder.checkMovieLayers(coords);                                
-                        }, 1000);                
-                    });
-                }            
-
-            },
-
-            player:    'html',
-            width:     500,
-            height: 160,
-            title:    'Select Region Options',
-            content:    '<div id="shadowbox-form" class="ui-widget-content ui-corner-all" ' +
-                        'style="margin: 10px; padding: 20px; height: 100px; font-size: 12pt;">' +
-                            '<h2 style="font-size: 14pt;">What would you like to do with the selected region?</h2>' +
-                            '<br />' +
-                            '<div id="buttons" style="text-align: left; float: right;">' +
-                                '<button id="cancel-button" class="ui-state-default ui-corner-all">Cancel</button>' +
-                                '<button id="build-movie-button" class="ui-state-default ui-corner-all">' + 
-                                'Build Movie</button>' +
-                                '<button id="take-screenshot-button" class="ui-state-default ui-corner-all">' + 
-                                'Take Screenshot</button>' +
-                            '</div>' + 
-                        '</div>'
-        });    
     },
 
     /**
