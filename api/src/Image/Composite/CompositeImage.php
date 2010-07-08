@@ -135,6 +135,10 @@ abstract class Image_Composite_CompositeImage
         $imageHeight = $this->metaInfo->height();
         $output      = $this->tmpDir . "/$this->outputFile";
 
+        if ($imageWidth < 200 || $imageHeight < 200) {
+            $watermark->destroy();
+            return;
+        }
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if ($imageWidth / 300 < 2) {
             $watermark->readImage(HV_ROOT_DIR . "/api/resources/images/watermark_circle_small.png");

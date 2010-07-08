@@ -10,7 +10,6 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var ScreenshotBuilder = MediaBuilder.extend(
     /** @lends ScreenshotBuilder.prototype */
     {
-
     /**
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
@@ -20,9 +19,19 @@ var ScreenshotBuilder = MediaBuilder.extend(
         this._super(viewport);
         this.button = $("#screenshot-button");
         this.id     = "screenshot";
-        this._setupDialog();
+        this._setupDialogAndEventHandlers();
     },
 
+    /**
+     * Called after _setupDialogAndEventHandlers is finished initializing the dialog. 
+     * Creates event listeners for the "Full Viewport" and "Select Area" buttons in the
+     * dialog. "Full Viewport" takes a screenshot immediately, "Select Area" triggers 
+     * the ImageSelectTool and provides it with a callback function to takeScreenshot().
+     * 
+     * Finally, it also initializes the history bar, which floats beneath the dialog and
+     * has a list of all movies made in this session. History bar has to be initialized here
+     * because it depends on divs created in the dialog.
+     */
     _setupEventListeners: function () {
         var self = this, viewportInfo;
         this.fullVPButton     = $("#" + this.id + "-full-viewport");
@@ -30,23 +39,13 @@ var ScreenshotBuilder = MediaBuilder.extend(
         
         this.fullVPButton.click(function () {
             self.hideDialogs();
-            if (self.building) {
-                $(document).trigger("message-console-log", ["A link to your screenshot will be available shortly."]);
-            }
-            else {
-                viewportInfo = self.viewport.getViewportInformation();
-                self.takeScreenshot(viewportInfo);
-            }
+            viewportInfo = self.viewport.getViewportInformation();
+            self.takeScreenshot(viewportInfo);
         });
         
         this.selectAreaButton.click(function () {
             self.hideDialogs();
-            if (self.building) {
-                $(document).trigger("message-console-log", ["A link to your screenshot will be available shortly."]);
-            }
-            else {
-                $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
-            }
+            $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
         });
 
         this.historyBar = new MediaHistoryBar(this.id);
@@ -60,9 +59,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
      */
     takeScreenshot: function (viewportInformation) {
         var self, callback, params, url, arcsecCoords, id, download, screenshot;        
-
-        this.building = true;
-        arcsecCoords  = this.toArcsecCoords(viewportInformation);
+        arcsecCoords  = this.toArcsecCoords(viewportInformation.coordinates, viewportInformation.imageScale);
         self = this;
 
         params = {
@@ -76,16 +73,12 @@ var ScreenshotBuilder = MediaBuilder.extend(
             y2         : arcsecCoords.y2
         };
 
+        screenshot = new Screenshot(params, new Date());
+
         callback = function (url) {
-            self.building = false;
             id = (url).slice(-14,-4);
-            
-            // If the response is an error message instead of a url, show the message
-            if (url === null) {
-                //$(document).trigger("message-console-error", ["The selected region was not valid."]);
-            }
-            
-            else {        
+
+            if (url !== null) {       
                 // Options for the jGrowl notification. Clicking on the notification will 
                 // let the user download the file.                        
                 options = {
@@ -108,8 +101,6 @@ var ScreenshotBuilder = MediaBuilder.extend(
                 "' style='cursor: pointer'>Click here to download. </div>", options]); 
             }
         };
-        
-        screenshot = new Screenshot(params);
 
         $.post(this.url, params, callback, 'json');
     }
