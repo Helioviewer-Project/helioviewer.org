@@ -256,9 +256,25 @@ var Helioviewer = UIController.extend(
     
     /**
      * Launches an instance of JHelioviewer
+     * 
+     * Helioviewer attempts to choose a 24-hour window around the current observation time. If the user is
+     * currently browsing near the end of the available data then the window for which the movie is created
+     * is shifted backward to maintain it's size.
      */
     launchJHelioviewer: function () {
-        window.open("http://www.jhelioviewer.org", "_blank");
+        //window.open("http://www.jhelioviewer.org", "_blank");
+        //-jhv "[startTime=2003-10-05T00:00:00Z;endTime=2003-10-20T00:00:00Z;linked=true;cadence=3600;imageScale=5000;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]]"
+        var endDate, params;
+        
+        // If currently near the end of available data, shift window back
+        endDate = new Date(Math.min(this.timeControls.getDate().addHours(12), Date.now()));
+
+        params = {
+            "endTime"  : endDate.toISOString(),
+            "startTime": endDate.addHours(-24).toISOString()
+        };
+        
+        console.dir(params);
     },
 
     /**
