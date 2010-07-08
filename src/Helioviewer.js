@@ -26,8 +26,9 @@ var Helioviewer = UIController.extend(
         this._super(urlParams, settings);
         this.api = "api/index.php";
         
-        this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
-                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+        this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
+                          '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+
         // Get available data sources and initialize viewport
         this._getDataSourcesAndLoadViewport();
         
@@ -256,9 +257,26 @@ var Helioviewer = UIController.extend(
     
     /**
      * Launches an instance of JHelioviewer
+     * 
+     * Helioviewer attempts to choose a 24-hour window around the current observation time. If the user is
+     * currently browsing near the end of the available data then the window for which the movie is created
+     * is shifted backward to maintain it's size.
      */
     launchJHelioviewer: function () {
-        window.open("http://www.jhelioviewer.org", "_blank");
+        var endDate, params;
+        
+        // If currently near the end of available data, shift window back
+        endDate = new Date(Math.min(this.timeControls.getDate().addHours(12), Date.now()));
+
+        params = {
+            "action"    : "launchJHelioviewer",
+            "endTime"   : endDate.toISOString(),
+            "startTime" : endDate.addHours(-24).toISOString(),
+            "imageScale": 5000,
+            "layers"    : this.viewport.serialize()
+        };
+        
+        window.open(this.api + "?" + $.param(params), "_blank");
     },
 
     /**

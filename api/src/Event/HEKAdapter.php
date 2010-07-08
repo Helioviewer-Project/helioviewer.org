@@ -35,7 +35,7 @@ class Event_HEKAdapter
      */
     public function __construct()
     {
-        $this->_baseURL = HEK_BASE_URL . '?cosec=2&cmd=search&type=column&event_type=**' 
+        $this->_baseURL = HEK_BASE_URL . '?cosec=2&cmd=search&type=column' 
                                        . '&event_coordsys=helioprojective&x1=-1200&x2=1200&y1=-1200&y2=1200&';
 
         include_once 'src/Net/Proxy.php';
@@ -55,6 +55,7 @@ class Event_HEKAdapter
         $params = array(
             "event_starttime" => $startTime,
             "event_endtime"   => $endTime,
+            "event_type"      => "**",
             "result_limit"    => 200,
             "return"          => "frm_name,frm_url,frm_contact,event_type"
         );
@@ -99,13 +100,25 @@ class Event_HEKAdapter
     }
     
     /**
-     * Returns a list of the latest events
+     * Returns a list of events
      * 
      * @param date $startTime Start time for which events should be retrieved
      * 
      * @return void
      */
-    public function getLatestEvents($startTime)
+    public function getEvents($startTime, $endTime, $eventType, $ipod)
     {
+        $params = array(
+            "event_starttime" => $startTime,
+            "event_endtime"   => $endTime,
+            "event_type"      => $eventType,
+            "result_limit"    => 200,
+            "return"          => "kb_archivid,concept,frm_name,frm_institute,obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox"
+        );
+        
+        //TODO Add screenshots and movies
+        //TODO Group similar (identical) events
+        
+        return $this->_proxy->query($params, true);
     }
 }
