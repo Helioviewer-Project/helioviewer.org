@@ -146,8 +146,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         }
 
         return $cacheDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
-            $this->metaInfo->imageScale() . "_" . $roi['left'] . "_" . $roi['right'] . "x_" . 
-            $roi['top'] . "_" . $roi['bottom'] . "y.png";
+            $this->metaInfo->imageScale() . "_" . round($roi['left']) . "_" . round($roi['right']) . "x_" . 
+            round($roi['top']) . "_" . round($roi['bottom']) . "y.png";
     }
 
     /**

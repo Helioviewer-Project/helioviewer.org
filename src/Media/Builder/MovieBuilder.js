@@ -15,7 +15,12 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
     {
-
+    formats : {
+        "win"   : "avi",
+        "mac"   : "mov",
+        "linux" : "mp4",
+        "other" : "mp4"
+    },
     /**
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the movie button
@@ -24,9 +29,13 @@ var MovieBuilder = MediaBuilder.extend(
      */    
     init: function (viewport) {
         this._super(viewport);
-        this.button  = $("#movie-button");
-        this.percent = 0;
-        this.id      = "movie";
+        this.button   = $("#movie-button");
+        this.percent  = 0;
+        this.id       = "movie";
+        
+        var os        = getOS();
+        this.hqFormat = this.formats[os];
+
         this._setupDialogAndEventHandlers();
     },
     
@@ -204,10 +213,11 @@ var MovieBuilder = MediaBuilder.extend(
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
-            y2         : arcsecCoords.y2
+            y2         : arcsecCoords.y2,
+            hqFormat   : this.hqFormat
         };
         
-        movie = new Movie(params, new Date());
+        movie = new Movie(params, new Date(), this.hqFormat);
 
         /*
          * timeout is calculated to estimate the amount of time a movie will take to build. From benchmarking, 
@@ -232,7 +242,7 @@ var MovieBuilder = MediaBuilder.extend(
 
             self.building = false;
             // chop off the flv at the end of the file and replace it with mov/asf/mp4
-            hqfile = data.slice(0, -3) + "mp4";
+            hqfile = data.slice(0, -3) + this.hqFormat;
             
             if (data !== null) {
                 // Options for the jGrowl notification. After it has opened, it will create
