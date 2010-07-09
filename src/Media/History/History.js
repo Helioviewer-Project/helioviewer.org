@@ -55,11 +55,19 @@ var History = Class.extend(
     },
     
     _addToContentString: function (item) {
-        return  "<div id='" + item.id + "' class='text-btn' float: left'>" + 
+        return  "<div id='" + item.id + "' class='text-btn' style='float:left;'>" + 
                     item.name + 
                 "</div>" +
                 "<div style='float:right; font-size: 8pt;'>" + 
                     "<i>" + item.getTimeDiff() + "</i>" + 
                 "</div><br /><br />";
+    },
+    
+    _serialize: function () {
+        var serialHistory = [];
+        $.each(this.history, function () {
+            serialHistory.push(this.serialize());
+        });
+        return serialHistory;
     }
 });

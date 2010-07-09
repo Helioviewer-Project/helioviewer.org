@@ -130,6 +130,37 @@ class Module_Movies implements Module
         $builder = new Movie_HelioviewerMovieBuilder();
         return $builder->buildMovie($this->_params);
     }
+    
+    /**
+     * Gets a movie from the cache or builds it if it doesn't exist, as specified by the event ID 
+     * in the parameters.
+     * See the API webpage for example usage.
+     *
+     * @return movie URL
+     */
+    public function getMovieForEvent () 
+    {
+        include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+        $builder = new Movie_HelioviewerMovieBuilder();
+        return $builder->buildMovie($this->_params);    
+    }
+    
+    /**
+     * Creates the directory structure that will be used to store movies
+     * based upon events. 
+     *
+     * @param string $cacheDir The path to cache/events/eventId
+     */
+    private function _createEventCacheDir($cacheDir) {
+        if (!file_exists($cacheDir . "/iPod/movies")) {
+            mkdir($cacheDir . "/iPod/movies", 0777, true);
+            chmod($cacheDir . "/iPod/movies", 0777);        
+        }
+        if (!file_exists($cacheDir . "/regular/movies")) {
+            mkdir($cacheDir . "/regular/movies", 0777, true);
+            chmod($cacheDir . "/regular/movies", 0777);        
+        }
+    }
 
     /**
      * Gets the movie url and loads it into MC Mediaplayer
