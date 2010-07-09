@@ -34,6 +34,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
      */
     _setupEventListeners: function () {
         var self = this, viewportInfo;
+        
         this.fullVPButton     = $("#" + this.id + "-full-viewport");
         this.selectAreaButton = $("#" + this.id + "-select-area");
         
@@ -48,6 +49,10 @@ var ScreenshotBuilder = MediaBuilder.extend(
             $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
         });
         
+        // Close any open jGrowl notifications
+        this.button.click(function () {
+            $(".jGrowl-notification .close").click();
+        });
         this.historyBar.setup();
     },
     
@@ -73,7 +78,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             y2         : arcsecCoords.y2
         };
 
-        screenshot = new Screenshot(params, new Date());
+        screenshot = new Screenshot(params, (new Date()).getTime());
 
         callback = function (url) {
             id = (url).slice(-14,-4);
@@ -84,7 +89,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
                 options = {
                     sticky: true,
                     header: "Your screenshot is ready!",
-                    open:    function (e, m) {
+                    open:    function (e, m, o) {
                         screenshot.setURL(url, id);
                         self.historyBar.addScreenshotToHistory(screenshot);
                         

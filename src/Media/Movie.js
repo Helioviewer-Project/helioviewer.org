@@ -119,4 +119,24 @@ var Movie = Media.extend(
             show   : 'fade'
         });                                 
     },
+    
+    serialize: function () {
+        return {
+            dateRequested : this.dateRequested,
+            id            : this.id,
+            width         : this.width,
+            height        : this.height,
+            imageScale    : this.imageScale,
+            layers        : this.layers,
+            name          : this.name,
+            startTime     : this.startTime,
+            url           : this.url,
+            x1            : this.x1,
+            x2            : this.x2,
+            y1            : this.y1,
+            y2            : this.y2,
+            hqFormat      : this.hqFormat,
+            scaleDown     : this.scaleDown
+        }
+    }
 });
