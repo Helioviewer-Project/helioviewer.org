@@ -75,6 +75,11 @@ var MovieBuilder = MediaBuilder.extend(
             }
         });
         
+        // Close any open jGrowl notifications
+        this.button.click(function () {
+            $(".jGrowl-notification .close").click();
+        });
+        
         this.historyBar.setup();
     },
     
