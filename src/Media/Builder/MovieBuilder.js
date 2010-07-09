@@ -27,8 +27,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport) {
-        this._super(viewport);
+    init: function (viewport, mediaHistoryBar) {
+        this._super(viewport, mediaHistoryBar);
         this.button   = $("#movie-button");
         this.percent  = 0;
         this.id       = "movie";
@@ -75,7 +75,7 @@ var MovieBuilder = MediaBuilder.extend(
             }
         });
         
-        this.historyBar = new MediaHistoryBar(this.id);
+        this.historyBar.setup();
     },
     
     /**
@@ -199,11 +199,21 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var timeout, options, params, callback, arcsecCoords, self = this;
+        var timeout, options, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, scaleDown = false, self = this;
         
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
         
+        realVPSize = this.viewport.getViewportInformation().coordinates;
+        vpHeight   = realVPSize.bottom - realVPSize.top;
+        
+        coordinates = viewportInfo.coordinates;
+        movieHeight = coordinates.bottom - coordinates.top;
+        
+        if (movieHeight >= vpHeight - 50) {
+            scaleDown = true;
+        }
+
         // Ajax Request Parameters
         params = {
             action     : "buildMovie",
@@ -214,7 +224,8 @@ var MovieBuilder = MediaBuilder.extend(
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
-            hqFormat   : this.hqFormat
+            hqFormat   : this.hqFormat,
+            scaleDown  : scaleDown
         };
         
         movie = new Movie(params, new Date(), this.hqFormat);
@@ -254,7 +265,7 @@ var MovieBuilder = MediaBuilder.extend(
                         var watch = $('#watch-' + id);
 
                         movie.setURL(data, id);
-                        self.historyBar.addToHistory(movie);
+                        self.historyBar.addMovieToHistory(movie);
                         
                         // Open pop-up and display movie
                         watch.click(function () {

@@ -108,10 +108,6 @@ abstract class Image_Tiling_Tile
                 $offsetX = $right;
                 $offsetY = $down;
                 //$gravity = "SouthEast";
-            } else if ($y == $tileMaxY) {
-                $offsetX = $right;
-                $offsetY = 0;
-                //$gravity = "NorthEast";
             } else {
                 $offsetX = $right;
                 $offsetY = 0;
@@ -122,28 +118,20 @@ abstract class Image_Tiling_Tile
                 $offsetX = 0;
                 $offsetY = $down;
                 //$gravity = "SouthWest";
-            } else if ($y == $tileMaxY) {
-                $offsetX = 0;
-                $offsetY = 0;
-                //$gravity = "NorthWest";
             } else {
                 $offsetX = 0;
                 $offsetY = 0;
                 //$gravity = "West";
             }
         } else {
-            if ($y == $tileMinY) {
-                $offsetX = 0;
-                $offsetY = $down;
-                //$gravity = "South";
-            } else if ($y == $tileMaxY) {
+        	if ($y == $tileMaxY) {
                 $offsetX = 0;
                 $offsetY = 0;
                 //$gravity = "North";
             } else {
                 $offsetX = 0;
                 $offsetY = $down;
-                //$gravity = "SouthWest";//return false;
+                //$gravity = "SouthWest";
             }
         }
 
