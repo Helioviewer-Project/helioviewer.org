@@ -54,8 +54,8 @@ var Media = Class.extend(
         
         // Get rid of the extra ", " at the front
         name = name.slice(2);
-        if (name.length > 14) {
-            name = name.slice(0,14) + "...";
+        if (name.length > 16) {
+            name = name.slice(0,16) + "...";
         }
         
         return name;
@@ -93,7 +93,10 @@ var Media = Class.extend(
 
         this.button.qtip({
             position: {
-                adjust: { x: -30 },
+                adjust: { 
+                    x: -30, 
+                    screen: true 
+                },
                 corner : {
                     target : "leftMiddle",
                     tooltip: "rightMiddle" 

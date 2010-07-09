@@ -15,8 +15,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport) {
-        this._super(viewport);
+    init: function (viewport, mediaHistoryBar) {
+        this._super(viewport, mediaHistoryBar);
         this.button = $("#screenshot-button");
         this.id     = "screenshot";
         this._setupDialogAndEventHandlers();
@@ -47,8 +47,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
             self.hideDialogs();
             $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
         });
-
-        this.historyBar = new MediaHistoryBar(this.id);
+        
+        this.historyBar.setup();
     },
     
     /**
@@ -86,7 +86,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
                     header: "Your screenshot is ready!",
                     open:    function (e, m) {
                         screenshot.setURL(url, id);
-                        self.historyBar.addToHistory(screenshot);
+                        self.historyBar.addScreenshotToHistory(screenshot);
                         
                         download = $("#screenshot-" + id);
                         
