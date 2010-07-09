@@ -89,19 +89,26 @@ class Movie_HelioviewerMovieBuilder
                 throw new Exception($msg);
             }
             
-            $startTime = toUnixTimestamp($this->_params['startTime']);
+            $isoStartTime = $this->_params['startTime'];
+            $startTime    = toUnixTimestamp($isoStartTime);
             
-            // If endTime was not given, default to 24 hours after the startTime.
+            // If endTime was not given, default to 24 hours after the startTime, but make sure that
+            // if the user is requesting 'today' as a start time to END at today and start 24 hours prior
+            // to ensure that they actually have a video to look at.
             if (!$this->_params['endTime']) {
-                $endTime     = $startTime + 86400;
-                $isoEndTime  = toISOString(parseUnixTimestamp($endTime));
+            	$now        = time();
+            	if ($now - $startTime < 86400) {
+                    $startTime -= 86400;
+            	}
+                $endTime    = $startTime + 86400;
+                $isoEndTime = toISOString(parseUnixTimestamp($endTime));
             } else {
                 $isoEndTime = $this->_params['endTime'];
                 $endTime    = toUnixTimestamp($isoEndTime);
             }
             
             $numFrames = ($this->_params['numFrames'] === false)? 
-                            $this->_determineOptimalNumFrames($layers, $this->_params['startTime'], $isoEndTime) :
+                            $this->_determineOptimalNumFrames($layers, $isoStartTime, $isoEndTime) :
                             min($this->_params['numFrames'], $this->maxNumFrames);
             $numFrames = max($numFrames, 10);
 
@@ -116,7 +123,7 @@ class Movie_HelioviewerMovieBuilder
             }
 
             if (!$this->_params['filename']) {
-            	$start = str_replace(array(":", "-", "T", "Z"), "_", $this->_params['startTime']);
+            	$start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
             	$end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
                 $filename = $start . "_" . $end . $this->buildFilename($layers);
             } else {
