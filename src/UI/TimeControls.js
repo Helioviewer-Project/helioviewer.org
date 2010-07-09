@@ -44,7 +44,7 @@ var TimeControls = Class.extend(
      * @description Returns the current observation date as a JavaScript Date object
      */    
     getDate: function () {
-        return this._date; 
+        return new Date(this._date.getTime()); // return by value
     },
     
     /**

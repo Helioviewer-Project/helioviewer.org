@@ -35,7 +35,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
     <!--<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.js" type="text/javascript"></script>
     <script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
-    <script src="lib/jquery.qtip-1.0-r44/jquery.qtip-1.0.min.js" type="text/javascript"></script>
+    <script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
 
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />
 

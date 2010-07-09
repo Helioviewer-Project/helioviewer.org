@@ -237,12 +237,15 @@ class Module_WebClient implements Module
     }
 
     /**
-     * launchJHV
+     * launchJHelioviewer
      *
      * @return void
      */
-    public function launchJHV ()
+    public function launchJHelioviewer ()
     {
+        $args = array($this->_params['startTime'], $this->_params['endTime'], 
+                      $this->_params['imageScale'], $this->_params['layers']);
+     
         header('content-type: application/x-java-jnlp-file');
         header('content-disposition: attachment; filename="JHelioviewer.jnlp"');
         echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
@@ -267,12 +270,8 @@ class Module_WebClient implements Module
             </security>
 
             <application-desc main-class="org.helioviewer.JavaHelioViewer">
-                <?php
-
-        if ((isset($this->_params['files'])) && ($this->_params['files'] != "")) {
-            echo "        <argument>$this->files</argument>\n";
-        }
-                ?>
+                <argument>-jhv</argument>
+                <argument><?php vprintf("[startTime=%s;endTime=%s;linked=true;imageScale=%f;imageLayers=%s]", $args);?></argument>
             </application-desc>
         </jnlp>
     <?php
@@ -420,6 +419,13 @@ class Module_WebClient implements Module
         case "getJP2Header":
             break;
         case "getViewerImage":
+            break;
+        case "launchJHelioviewer":
+            $expected = array(
+                'required' => array('startTime', 'endTime', 'imageScale', 'layers'),
+                'floats'   => array('imageScale'),
+                'dates'    => array('startTime', 'endTime'),
+            );
             break;
         case "takeScreenshot":
             $required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');

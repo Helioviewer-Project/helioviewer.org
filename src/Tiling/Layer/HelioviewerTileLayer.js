@@ -106,7 +106,7 @@ var HelioviewerTileLayer = TileLayer.extend(
             "sunCenterOffsetX" : this.image.offsetX,
             "sunCenterOffsetY" : this.image.offsetY                        
         };
-        //console.log(this.baseURL + "?" + $.param(params));
+
         return this.baseURL + "?" + $.param(params);
     },
 
