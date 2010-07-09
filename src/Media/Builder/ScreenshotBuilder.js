@@ -73,7 +73,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             y2         : arcsecCoords.y2
         };
 
-        screenshot = new Screenshot(params, new Date());
+        screenshot = new Screenshot(params, (new Date()).getTime());
 
         callback = function (url) {
             id = (url).slice(-14,-4);

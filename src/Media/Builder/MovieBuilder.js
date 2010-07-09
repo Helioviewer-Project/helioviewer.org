@@ -228,7 +228,7 @@ var MovieBuilder = MediaBuilder.extend(
             scaleDown  : scaleDown
         };
         
-        movie = new Movie(params, new Date(), this.hqFormat);
+        movie = new Movie(params, (new Date()).getTime(), this.hqFormat);
 
         /*
          * timeout is calculated to estimate the amount of time a movie will take to build. From benchmarking, 

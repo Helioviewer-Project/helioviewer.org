@@ -19,7 +19,7 @@ var MovieHistory = History.extend(
 
     addToHistory: function (item) {
         this._super(item);
-        $(document).trigger("save-setting", ["movie-history", this.history]);
+        $(document).trigger("save-setting", ["movie-history", this._serialize()]);
     },
 
     createContentString: function () {
