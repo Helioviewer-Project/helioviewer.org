@@ -188,13 +188,6 @@ class Image_Tiling_HelioviewerTile extends Image_Tiling_Tile
         $month = substr($date, 5, 2);
         $day   = substr($date, 8, 2);
 
-        /**
-        $fieldArray = array(
-            $year, $month, $day, $this->_observatory, $this->_instrument,
-            $this->_detector, $this->_measurement
-        );
-        */
-
         // $classname::getFilePathNickName does not work in php 5.2.x, using call_user_func instead
         $filepath .= call_user_func($classname . '::getFilePathNickName', $det, $meas);
         

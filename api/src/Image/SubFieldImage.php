@@ -309,12 +309,15 @@ class Image_SubFieldImage
         if (!isset($this->tileSize)) {
             return;
         }
+        
+        $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
+
         if ($this->format === "png") {
-            $imagickImage->setCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
-            $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_PLANE);
+        	$imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
         } else {
-            $imagickImage->setCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
-            $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
+            $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
+            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
         }
         
         $imagickImage->setImageDepth(HV_BIT_DEPTH);

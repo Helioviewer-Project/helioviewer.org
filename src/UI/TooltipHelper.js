@@ -212,7 +212,7 @@ var TooltipHelper = Class.extend(
         
         $.fn.qtip.styles.mediaDark = {
             textAlign : 'left',
-            width     : 200,
+            width     : 215,
             height    : 'auto',
             color     : '#fff',
             background: '#2A2A2A',
