@@ -57,7 +57,8 @@ function loadModule($params)
         "getJP2Image"        => "JHelioviewer",
         "getJPX"             => "JHelioviewer",
         "buildMovie"         => "Movies",
-        "playMovie"          => "Movies"
+        "playMovie"          => "Movies",
+        "getScreenshotForEvent" => "WebClient"
     );
     
     include_once "src/Validation/InputValidator.php";

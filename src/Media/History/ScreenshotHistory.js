@@ -19,7 +19,7 @@ var ScreenshotHistory = History.extend(
     
     addToHistory: function (item) {
         this._super(item);
-        $(document).trigger("save-setting", ["screenshot-history", this.history]);
+        $(document).trigger("save-setting", ["screenshot-history", this._serialize()]);
     },
     
     createContentString: function () {

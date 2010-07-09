@@ -325,16 +325,19 @@ class Module_WebClient implements Module
     }
     
     /**
-     * Gets a screenshot from the cache as specified by the event ID in the parameters.
+     * Gets a screenshot from the cache or builds it if it doesn't exist, as specified by the event ID 
+     * in the parameters.
      * See the API webpage for example usage.
      *
-     * @return image/
+     * @return image
      */
     public function getScreenshotForEvent()
     {
         include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'];
+        $this->_createEventCacheDir($tmpDir);
         //return $builder->findScreenshotForEvent($this->_params);
     }
 
@@ -435,6 +438,14 @@ class Module_WebClient implements Module
                 'dates'	   => array('obsDate'),
             );
             break;
+        case "getScreenshotForEvent" : 
+        	$required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
+            $expected = array(
+                'required' => $required, 
+                'floats'   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                'dates'    => array('obsDate'),
+            );
+            break;
         default:
             break;
         }
@@ -464,6 +475,19 @@ class Module_WebClient implements Module
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
             chmod($cacheDir, 0777);
+        }
+    }
+    
+    /**
+     * Creates the directory structure that will be used to store screenshots
+     * based upon events. 
+     *
+     * @param string $cacheDir The path to cache/events/eventId
+     */
+    private function _createEventCacheDir($cacheDir) {
+        if (!file_exists($cacheDir . "/regular/screenshots")) {
+            mkdir($cacheDir . "/regular/screenshots", 0777, true);
+            chmod($cacheDir . "/regular/screenshots", 0777);        
         }
     }
     
