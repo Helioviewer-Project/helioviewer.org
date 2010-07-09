@@ -272,7 +272,7 @@ var Helioviewer = UIController.extend(
             "action"    : "launchJHelioviewer",
             "endTime"   : endDate.toISOString(),
             "startTime" : endDate.addHours(-24).toISOString(),
-            "imageScale": 5000,
+            "imageScale": this.viewport.getImageScaleInKilometersPerPixel(),
             "layers"    : this.viewport.serialize()
         };
         
