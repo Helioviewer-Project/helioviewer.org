@@ -20,10 +20,11 @@ var MediaBuilder = Class.extend(
      * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport) {
-        this.url      = "api/index.php";
-        this.viewport = viewport;   
-        this.building = false;
+    init: function (viewport, mediaHistoryBar) {
+        this.url        = "api/index.php";
+        this.viewport   = viewport;   
+        this.building   = false;
+        this.historyBar = mediaHistoryBar;
     },
     
     /**
@@ -55,8 +56,13 @@ var MediaBuilder = Class.extend(
         });
         
         // Hide the dialog if any other button in the social buttons bar is clicked.
-        $("#social-buttons").click(function () {
-            self.button.qtip('hide');
+        $("#social-buttons").click(function (e) {
+            var button = $(e.target);
+
+            if (button != self.button && button.context.parentNode != self.button[0]) {
+                self.button.qtip("hide");
+            } 
+
         });
     },
 
@@ -75,7 +81,7 @@ var MediaBuilder = Class.extend(
                         "<span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>" +
                         "<span style='line-height: 1.6em'>Full Viewport</span>" +
                     "</div>" +
-                    "<div id='" + this.id + "-select-area' class='text-btn'>" +
+                    "<div id='" + this.id + "-select-area' class='text-btn' style='float:right;'>" +
                         "<span class='ui-icon ui-icon-scissors' style='float:left;'></span>" +
                         "<span style='line-height: 1.6em'>Select Area</span>" + 
                     "</div>" +

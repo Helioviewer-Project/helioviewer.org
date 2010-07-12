@@ -16,8 +16,17 @@ var Movie = Media.extend(
      */    
     init: function (params, dateRequested, hqFormat) {
         this._super(params, dateRequested);
-        this.startTime = this.startTime.replace("T", " ").slice(0,-5);
-        this.hqFormat  = hqFormat;
+        this.startTime    = this.startTime.replace("T", " ").slice(0,-5);
+        this.hqFormat     = hqFormat;
+        
+        // Resize what appears in the movie player if the movie is as big as the viewport
+        if (this.scaleDown === true) {
+            this.viewerWidth  = this.width  * 0.8;
+            this.viewerHeight = this.height * 0.8;
+        } else {
+            this.viewerWidth  = this.width;
+            this.viewerHeight = this.height;
+        }
     },
     
     /**
@@ -90,8 +99,9 @@ var Movie = Media.extend(
     playMovie: function () {
         var url, self;
         self = this;
-        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + this.width + '&height=' + this.height;    
+        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + this.viewerWidth + '&height=' + this.viewerHeight;    
         this.watchDialog = $("#watch-dialog-" + this.id);
+
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
         // trying to download it. 
         this.watchDialog.dialog({
@@ -99,7 +109,7 @@ var Movie = Media.extend(
             width  : 'auto',
             height : 'auto',
             open   : self.watchDialog.append("<div id='movie-player-" + self.id + "'>" + 
-                                            "<iframe src=" + url + " width=" + self.width + " height=" + self.height + 
+                                            "<iframe src=" + url + " width=" + self.viewerWidth + " height=" + self.viewerHeight + 
                                                 " marginheight=0 marginwidth=0 scrolling=no frameborder=0 /><br /><br />" +
                                                 "<a href='api/index.php?action=downloadFile&url=" + self.hqFile + "'>" +
                                                     "Click here to download a high-quality version." +
@@ -109,4 +119,24 @@ var Movie = Media.extend(
             show   : 'fade'
         });                                 
     },
+    
+    serialize: function () {
+        return {
+            dateRequested : this.dateRequested,
+            id            : this.id,
+            width         : this.width,
+            height        : this.height,
+            imageScale    : this.imageScale,
+            layers        : this.layers,
+            name          : this.name,
+            startTime     : this.startTime,
+            url           : this.url,
+            x1            : this.x1,
+            x2            : this.x2,
+            y1            : this.y1,
+            y2            : this.y2,
+            hqFormat      : this.hqFormat,
+            scaleDown     : this.scaleDown
+        }
+    }
 });

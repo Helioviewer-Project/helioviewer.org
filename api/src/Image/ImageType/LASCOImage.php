@@ -202,21 +202,28 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
 
         $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;
-        
+
         // $maskTopLeft coordinates cannot be negative when cropping, so if they are, adjust the width and height
         // by the negative offset and crop with zero offsets. Then put the image on the properly-sized image
         // and offset it correctly.
-        $cropWidth  = $width  + min($maskTopLeftX, 0);
-        $cropHeight = $height + min($maskTopLeftY, 0);
+        $cropWidth  = round($width  + min($maskTopLeftX, 0));
+        $cropHeight = round($height + min($maskTopLeftY, 0));
 
         $mask  = new IMagick($mask);
+        
+        // Imagick floors pixel values but they need to be rounded up or down. Rounding cannot be done in the previous lines of code
+        // because some addition needs to take place first.
+        $maskTopLeftX = round($maskTopLeftX);
+        $maskTopLeftY = round($maskTopLeftY);
+        $width = round($width);
+        $height = round($height);
         
         $mask->scaleImage($maskWidth * $maskScaleFactor, $maskHeight * $maskScaleFactor);
         $mask->cropImage($cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0));
         $mask->resetImagePage("{$width}x{$height}+0+0");
 
         $mask->setImageBackgroundColor('black');
-        $mask->extentImage($width, $height, ceil($width - $cropWidth), ceil($height - $cropHeight));
+        $mask->extentImage($width, $height, $width - $cropWidth, $height - $cropHeight);
 
         $imagickImage->setImageExtent($width, $height);
         $imagickImage->compositeImage($mask, IMagick::COMPOSITE_COPYOPACITY, 0, 0);
@@ -252,11 +259,18 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         // $maskTopLeft coordinates cannot be negative when cropping, so if they are, adjust the width and height
         // by the negative offset and crop with zero offsets. Then put the image on the properly-sized image
         // and offset it correctly.
-        $cropWidth  = $width  + min($maskTopLeftX, 0);
-        $cropHeight = $height + min($maskTopLeftY, 0);
+        $cropWidth  = round($width  + min($maskTopLeftX, 0));
+        $cropHeight = round($height + min($maskTopLeftY, 0));
         
         $gravity   = $this->padding["gravity"];
-
+        
+        // Imagemagick floors pixel values but they need to be rounded up or down. Rounding cannot be done in the previous lines of code
+        // because some addition needs to take place first.
+        $maskTopLeftX = round($maskTopLeftX);
+        $maskTopLeftY = round($maskTopLeftY);
+        $width = round($width);
+        $height = round($height);
+        
         $str = "convert -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
                "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
                "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite $input";

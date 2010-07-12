@@ -45,7 +45,7 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function buildMovie($params) 
+    public function buildMovie($params, $outputDir) 
     {
         $defaults = array(
             'numFrames'   => false,
@@ -89,34 +89,33 @@ class Movie_HelioviewerMovieBuilder
                 throw new Exception($msg);
             }
             
-            $startTime = toUnixTimestamp($this->_params['startTime']);
+            $isoStartTime = $this->_params['startTime'];
+            $startTime    = toUnixTimestamp($isoStartTime);
             
-            // If endTime was not given, default to 24 hours after the startTime.
+            // If endTime was not given, default to 24 hours after the startTime, but make sure that
+            // if the user is requesting 'today' as a start time to END at today and start 24 hours prior
+            // to ensure that they actually have a video to look at.
             if (!$this->_params['endTime']) {
-                $endTime     = $startTime + 86400;
-                $isoEndTime  = toISOString(parseUnixTimestamp($endTime));
+            	$now        = time();
+            	if ($now - $startTime < 86400) {
+                    $startTime -= 86400;
+            	}
+                $endTime    = $startTime + 86400;
+                $isoEndTime = toISOString(parseUnixTimestamp($endTime));
             } else {
                 $isoEndTime = $this->_params['endTime'];
                 $endTime    = toUnixTimestamp($isoEndTime);
             }
             
             $numFrames = ($this->_params['numFrames'] === false)? 
-                            $this->_determineOptimalNumFrames($layers, $this->_params['startTime'], $isoEndTime) :
+                            $this->_determineOptimalNumFrames($layers, $isoStartTime, $isoEndTime) :
                             min($this->_params['numFrames'], $this->maxNumFrames);
             $numFrames = max($numFrames, 10);
 
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
-            
-            // Make a temporary directory to store the movie in.
-            $now = time();
-            $tmpDir = HV_TMP_DIR . "/$now/";
-            if (!file_exists($tmpDir)) {
-                mkdir($tmpDir, 0777, true);
-                chmod($tmpDir, 0777);
-            }
 
             if (!$this->_params['filename']) {
-            	$start = str_replace(array(":", "-", "T", "Z"), "_", $this->_params['startTime']);
+            	$start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
             	$end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
                 $filename = $start . "_" . $end . $this->buildFilename($layers);
             } else {
@@ -129,13 +128,13 @@ class Movie_HelioviewerMovieBuilder
                 $this->_params['hqFormat'],
                 $options, $cadence, $filename,
                 $this->_params['quality'],
-                $movieMeta, $tmpDir
+                $movieMeta, $outputDir
             );
 
-            $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames, $tmpDir);
+            $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames, $outputDir);
             $url 	= $movie->buildMovie($images);
             
-            return $this->_displayMovie($url, $movie, $params, $this->_params['display']);
+            return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
 
         } catch(Exception $e) {
             echo 'Error: ' .$e->getMessage();
@@ -143,6 +142,95 @@ class Movie_HelioviewerMovieBuilder
         }
     }
     
+    /**
+     * Searches the cache for a movie related to the event and returns the filepath if one exists. If not,
+     * returns false
+     * 
+     * @param array  $originalParams the original parameters passed in by the API call
+     * @param string $outputDir      the directory path to where the cached file should be stored
+     * 
+     * @return string
+     */
+    public function getMovieForEvent($originalParams, $outputDir) 
+    {
+        $defaults = array(
+           'display' => true,
+           'ipod'    => false
+        );
+        $format = ".flv";
+        $params = array_merge($defaults, $originalParams);
+        $filename = "";
+        if ($params['ipod'] === "true" || $params['ipod'] === true) {
+            $outputDir .= "/iPod";
+            $filename .= "ipod-";
+            $format = ".mp4";
+        } else {
+            $outputDir .= "/regular";
+        }
+        
+        $filename .= "Movie_" . $params['eventId'];
+        if (file_exists($outputDir . "/" . $filename . ".mp4")) {
+        	// The first frame of the movie is always saved for previews.
+            $firstFrame = $outputDir . "/frame0.jpg";
+            
+            // Get the dimensions of the video by extracting the dimensions of the first frame.
+            if (file_exists($firstFrame)) {
+                list($width, $height, $type, $attr) = getimagesize($firstFrame);
+            } else {
+            	$width  = 512;
+            	$height = 512;
+            }
+
+            return $this->_displayMovie($outputDir . "/" . $filename . $format, $originalParams, $params['display'], $width, $height);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Searches the cache for a movie related to the event and returns the filepath if one exists. If not,
+     * returns false
+     * 
+     * @param array  $originalParams the original parameters passed in by the API call
+     * @param string $outputDir      the directory path to where the cached file should be stored
+     * 
+     * @return string
+     */
+    public function createMovieForEvent($originalParams, $outputDir) 
+    {
+        $defaults = array(
+           'display' => false,
+           'ipod'    => false
+        );
+        $params = array_merge($defaults, $originalParams);
+        $format = ".flv";
+        $filename = "";
+        if ($params['ipod'] === "true" || $params['ipod'] === true) {
+        	$params['hqFormat'] = "ipod";
+            $outputDir .= "/iPod/";
+            $filename .= "ipod-";
+            $format = ".mp4";
+        } else {
+            $outputDir .= "/regular/";
+        }
+        
+        $filename .= "Movie_" . $params['eventId'];
+        
+        if (file_exists($outputDir . $filename . $format)) {
+            return $outputDir . $filename . $format;
+        }
+        $params['filename'] = $filename;
+        return $this->buildMovie($params, $outputDir);
+    }
+    
+    /**
+     * Takes in a layer string and formats it into an appropriate filename by removing square brackets
+     * and extra information like visibility and opacity.
+     * 
+     * @param string $layers a string of layers in the format [layer],[layer]...
+     * 
+     * @return string
+     */
     protected function buildFilename($layers)
     {
         $filename = "";
@@ -266,14 +354,15 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return {String} movie object or displays a movie
      */
-    private function _displayMovie($url, $movie, $params, $display)
+    private function _displayMovie($url, $params, $display, $width, $height)
     {
         if (!file_exists($url)) {
             throw new Exception('The requested movie is either unavailable or does not exist.');
         }
 
         if ($display === true && $params == $_GET) {
-            return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
+        	return Movie_HelioviewerMovie::showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $width, $height);
+            //return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
         } else if ($params == $_POST) {
             header('Content-type: application/json');
             echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
