@@ -44,21 +44,25 @@ if (!(isset($params) && loadModule($params))) {
 function loadModule($params)
 {
     $valid_actions = array(
-        "downloadFile"       => "WebClient",
-        "getClosestImage"    => "WebClient",
-        "getDataSources"     => "WebClient",
-        "getScreenshot"      => "WebClient",
-        "getJP2Header"       => "WebClient",
-        "getTile"            => "WebClient",
-        "launchJHelioviewer" => "WebClient",
-        "takeScreenshot"     => "WebClient",
-        "getEventFRMs"       => "SolarEvents",
-        "getEvents"          => "SolarEvents",
-        "getJP2Image"        => "JHelioviewer",
-        "getJPX"             => "JHelioviewer",
-        "buildMovie"         => "Movies",
-        "playMovie"          => "Movies",
-        "getScreenshotForEvent" => "WebClient"
+        "downloadFile"        => "WebClient",
+        "getClosestImage"     => "WebClient",
+        "getDataSources"      => "WebClient",
+        "getScreenshot"       => "WebClient",
+        "getJP2Header"        => "WebClient",
+        "getTile"             => "WebClient",
+        "launchJHelioviewer"  => "WebClient",
+        "takeScreenshot"      => "WebClient",
+        "getEventFRMs"        => "SolarEvents",
+        "getEvents"           => "SolarEvents",
+        "getJP2Image"         => "JHelioviewer",
+        "getJPX"              => "JHelioviewer",
+        "buildMovie"          => "Movies",
+        "playMovie"           => "Movies",
+        "getMovieForEvent"    => "Movies",
+        "createMovieForEvent" => "Movies",
+        "getScreenshotForEvent"    => "WebClient",
+        "createScreenshotForEvent" => "WebClient"
+        
     );
     
     include_once "src/Validation/InputValidator.php";

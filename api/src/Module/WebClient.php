@@ -317,6 +317,7 @@ class Module_WebClient implements Module
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $tmpDir  = HV_CACHE_DIR . "/screenshots";
+        
         $response = $builder->takeScreenshot($this->_params, $tmpDir);
         if (!isset($this->_params['display']) || !$this->_params['display'] || $this->_params['display'] === "false") {
             echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
@@ -336,9 +337,38 @@ class Module_WebClient implements Module
         include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'];
+        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
         $this->_createEventCacheDir($tmpDir);
-        //return $builder->findScreenshotForEvent($this->_params);
+        
+        $response = $builder->getScreenshotForEvent($this->_params, $tmpDir);
+            
+        if ($response === false) {
+            throw new Exception("The requested movie does not exist.");
+        } else if (isset($this->_params['display']) && (!$this->_params['display'] || $this->_params['display'] === "false")) {
+            echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
+        }
+
+        return $response;
+    }
+    
+    /**
+     * Creates a screenshot based upon the eventId and the parameters specified.
+     * See the API webpage for example usage.
+     *
+     * @return image
+     */
+    public function createScreenshotForEvent()
+    {
+        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        
+        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
+        $this->_createEventCacheDir($tmpDir);
+        
+        $response = $builder->createScreenshotForEvent($this->_params, $tmpDir);
+        
+        echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
+        return $response;
     }
 
     /**
@@ -438,14 +468,19 @@ class Module_WebClient implements Module
                 'dates'	   => array('obsDate'),
             );
             break;
-        case "getScreenshotForEvent" : 
-        	$required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
+        case "getScreenshotForEvent": 
+            $expected = array(
+                'required' => array('eventId')
+            );
+            break;
+        case "createScreenshotForEvent":
+            $required = array('eventId', 'obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
             $expected = array(
                 'required' => $required, 
                 'floats'   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 'dates'    => array('obsDate'),
             );
-            break;
+            break;        	
         default:
             break;
         }
@@ -485,9 +520,16 @@ class Module_WebClient implements Module
      * @param string $cacheDir The path to cache/events/eventId
      */
     private function _createEventCacheDir($cacheDir) {
-        if (!file_exists($cacheDir . "/regular/screenshots")) {
-            mkdir($cacheDir . "/regular/screenshots", 0777, true);
-            chmod($cacheDir . "/regular/screenshots", 0777);        
+    	$ipodDir = $cacheDir . "/iPod";
+        if (!file_exists($ipodDir)) {
+            mkdir($ipodDir, 0777, true);
+            chmod($ipodDir, 0777);        
+        }
+
+        $regular = $cacheDir . "/regular";
+        if (!file_exists($regular)) {
+            mkdir($regular, 0777, true);
+            chmod($regular, 0777);        
         }
     }
     
