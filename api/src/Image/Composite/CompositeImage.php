@@ -130,7 +130,7 @@ abstract class Image_Composite_CompositeImage
      */
     private function _watermark($imagickImage)
     {
-        $watermark 	 = new IMagick(HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png");
+        $watermark 	 = new IMagick(HV_ROOT_DIR . "/api/resources/images/watermark_small_black_border.png");
         $imageWidth  = $this->metaInfo->width();
         $imageHeight = $this->metaInfo->height();
         $output      = $this->tmpDir . "/$this->outputFile";
@@ -141,7 +141,7 @@ abstract class Image_Composite_CompositeImage
         }
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if ($imageWidth / 300 < 2) {
-            $watermark->readImage(HV_ROOT_DIR . "/api/resources/images/watermark_circle_small.png");
+            $watermark->readImage(HV_ROOT_DIR . "/api/resources/images/watermark_circle_small_black_border.png");
             $scale = ($imageWidth / 2) / 300;
             $width = $watermark->getImageWidth();
             $watermark->scaleImage($width * $scale, $width * $scale);     
