@@ -58,9 +58,9 @@ function loadModule($params)
         "getJPX"              => "JHelioviewer",
         "buildMovie"          => "Movies",
         "playMovie"           => "Movies",
-        "getMovieForEvent"    => "Movies",
+        "getMoviesForEvent"   => "Movies",
         "createMovieForEvent" => "Movies",
-        "getScreenshotForEvent"    => "WebClient",
+        "getScreenshotsForEvent"   => "WebClient",
         "createScreenshotForEvent" => "WebClient"
         
     );
