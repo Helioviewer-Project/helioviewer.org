@@ -15,8 +15,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport) {
-        this._super(viewport);
+    init: function (viewport, mediaHistoryBar) {
+        this._super(viewport, mediaHistoryBar);
         this.button = $("#screenshot-button");
         this.id     = "screenshot";
         this._setupDialogAndEventHandlers();
@@ -34,6 +34,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
      */
     _setupEventListeners: function () {
         var self = this, viewportInfo;
+        
         this.fullVPButton     = $("#" + this.id + "-full-viewport");
         this.selectAreaButton = $("#" + this.id + "-select-area");
         
@@ -47,8 +48,12 @@ var ScreenshotBuilder = MediaBuilder.extend(
             self.hideDialogs();
             $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
         });
-
-        this.historyBar = new MediaHistoryBar(this.id);
+        
+        // Close any open jGrowl notifications
+        this.button.click(function () {
+            $(".jGrowl-notification .close").click();
+        });
+        this.historyBar.setup();
     },
     
     /**
@@ -73,7 +78,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             y2         : arcsecCoords.y2
         };
 
-        screenshot = new Screenshot(params, new Date());
+        screenshot = new Screenshot(params, (new Date()).getTime());
 
         callback = function (url) {
             id = (url).slice(-14,-4);
@@ -84,9 +89,9 @@ var ScreenshotBuilder = MediaBuilder.extend(
                 options = {
                     sticky: true,
                     header: "Your screenshot is ready!",
-                    open:    function (e, m) {
+                    open:    function (e, m, o) {
                         screenshot.setURL(url, id);
-                        self.historyBar.addToHistory(screenshot);
+                        self.historyBar.addScreenshotToHistory(screenshot);
                         
                         download = $("#screenshot-" + id);
                         

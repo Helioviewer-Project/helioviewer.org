@@ -13,39 +13,67 @@ var MediaHistoryBar = Class.extend(
      * @constructs
      * @param id a unique id that identifies which container it belongs to,
      *           either "screenshot" or "movie".
+     *           
+     * @TODO This class is set up like it is in preparation to merge screenshot and movie history into 
+     *       one bar. Currently they are separated into two bars and two instances of this class. 
      */    
-    init: function (id) {
+    init: function (id, screenshotHistory, movieHistory) {
         this.id = id;
-        this.container = $("#qtip-" + this.id);
-        this.button    = $("#" + this.id + "-button");
-        this.history   = [];
+        this.ssHistory    = new ScreenshotHistory(screenshotHistory);
+        this.movieHistory = new MovieHistory(movieHistory);
         this.content   = "";
         this.hasDialog = false;
+    },
+    
+    /**
+     * Grabs divs that it needs to set up the qtip dialog and initializes the dialog if there is history.
+     */
+    setup: function () {
+        this.container = $("#qtip-" + this.id);
+        this.button    = $("#" + this.id + "-button");
+        
+        this._createContentString();
+        if (this.content.length > 0 && !this.hasDialog) {
+            this._setupDialog();
+            this.hasDialog = true;
+        }
     },
     
     /**
      * Adds the new item to history and re-makes the history dialog with the new item
      * included. 
      */
-    addToHistory: function (item) {        
+    addMovieToHistory: function (item) {        
+        this._cleanupTooltips();
+        
+        this.movieHistory.addToHistory(item);
+        this._createContentString();
+        // It is necessary to completely recreate the tooltip because if you update the content only,
+        // any selectors that depend on previous content will break and all movie information tooltips
+        // would have to be re-created anyway. "Time ago" must also be re-calculated.
+        this._setupDialog();
+    },
+    
+    addScreenshotToHistory: function (item) {        
+        this._cleanupTooltips();
+    
+        this.ssHistory.addToHistory(item);
+        this._createContentString();
+        // It is necessary to completely recreate the tooltip because if you update the content only,
+        // any selectors that depend on previous content will break and all movie information tooltips
+        // would have to be re-created anyway. "Time ago" must also be re-calculated.
+        this._setupDialog();
+    },
+    
+    _cleanupTooltips: function () {
         if (this.hasDialog) {
-            $.each(this.history, function () {
-                this.removeTooltip();
-            });
-            
+            this._removeTooltips(); 
+
             var api = this.container.qtip("api");
             api.elements.tooltip.remove();
         } else {
             this.hasDialog = true;
         }
-        
-        this.history.push(item);
-        this.createContentString();
-        // It is necessary to completely recreate the tooltip because if you update the content only,
-        // any selectors that depend on previous content will break and all movie information tooltips
-        // have to be re-created anyway.
-        this._setupDialog();
-        $(document).trigger("save-setting", [this.id + "-history", this.history]);
     },
     
     /**
@@ -62,20 +90,15 @@ var MediaHistoryBar = Class.extend(
      * 
      * @param item A Movie or Screenshot object
      */
-    createContentString: function () {
-        var self = this;
-        this.content = "";
-        $.each(this.history, function () {
-            self.content =  "<div id='" + this.id + "' class='text-btn' float: left'>" + 
-                                this.name + 
-                            "</div>" +
-                            "<div style='float:right; font-size: 8pt;'>" + 
-                                "<i>" + this.getTimeDiff() + "</i>" + 
-                            "</div>" +
-                            "<div id='watch-dialog-" + this.id + "' style='display:none'>" +
-                            "</div><br /><br />" + 
-                            self.content;
-        });
+    _createContentString: function () {
+        this.content = this.ssHistory.createContentString() + this.movieHistory.createContentString();
+        // Slice off the last "<br />" at the end.
+        this.content = this.content.slice(0,-6);
+    },
+    
+    _removeTooltips: function () {
+        this.ssHistory.removeTooltips();
+        this.movieHistory.removeTooltips();
     },
     
     /**
@@ -88,8 +111,10 @@ var MediaHistoryBar = Class.extend(
      * this.container is clicked. 
      */
     _setupDialog: function () {
-        var self, divContent;
-        self = this;
+        var self = this, titleContent;
+        titleContent = this.id.slice(0,1).toUpperCase() + this.id.slice(1) + " History" + 
+                       "<div id='" + this.id + "-dialog-close' title='Close' class='ui-icon ui-icon-close'" +
+                       		" style='float:right; cursor:pointer;'>&nbsp;</div>";
         
         this.container.qtip({
             position: {
@@ -100,7 +125,7 @@ var MediaHistoryBar = Class.extend(
                 },
                 adjust: { y : 65 }
             },
-            show   : { 
+            show   : {
                 when  : {
                     event : 'click',
                     target: self.button
@@ -111,23 +136,41 @@ var MediaHistoryBar = Class.extend(
                     event : 'click',
                     target: self.button
                 }
-            },                      
+            },                 
             content: {
-                title : "History",
+                title : titleContent,
                 text  : self.content
             },
             style  : "mediaDark",
             api    : {
                 onRender: function () {
-                    $.each(self.history, function () {
-                        this.setupTooltip();
+                    self.closed = false;
+                    
+                    self.ssHistory.setupTooltips();
+                    self.movieHistory.setupTooltips();
+                    
+                    $("#" + self.id + "-dialog-close").click(function () {
+                        self.container.qtip('hide');
+                        self.closed = true;
                     });
+                },
+                
+                beforeShow: function () {
+                    if (self.closed) {
+                        self.closed = false;
+                        return false;
+                    }
                 }
             }
         });
 
-       $("#social-buttons").click(function () {
-            self.container.qtip('hide');
-       });
+        $("#social-buttons").click(function (e) {
+            var button = $(e.target);
+
+            if (button != self.button && button.context.parentNode != self.button[0]) {
+                self.container.qtip("hide");
+                self.closed = false;
+            } 
+        });
     }
 });

@@ -54,9 +54,11 @@ var Helioviewer = UIController.extend(
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
 
         //this.mediaSettings      = new MediaSettings(this);
-        this.movieBuilder       = new MovieBuilder(this.viewport);
+        sshistoryBar = new MediaHistoryBar("screenshot", this.userSettings.get('screenshot-history'), null);
+        mhistoryBar  = new MediaHistoryBar("movie", null, this.userSettings.get('movie-history'));
+        this.movieBuilder       = new MovieBuilder(this.viewport, mhistoryBar);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport);
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, sshistoryBar);
     },
     
     /**

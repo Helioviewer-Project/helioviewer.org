@@ -111,6 +111,20 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
     }
     
     /**
+     * Uncomment this if the image has NO COLOR TABLE.
+     * 
+     * @param string $input  Input file
+     * @param string $output Output file
+     * 
+     * @return void
+     */
+    /*
+    protected function setColorPalette($input, $output)
+    {
+        return;
+    }*/
+    
+    /**
      * The rest of these functions are for ALPHA MASKED IMAGES ONLY. Uncomment all of these if
      * the image requires alpha-masking or transparency.
      */
