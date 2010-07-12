@@ -161,7 +161,7 @@ class Movie_HelioviewerMovie
 
         // Pad to a 16:9 aspect ratio by adding a black border around the image.
         // This is set up so that width CAN be padded if it's uncommented. Currently it is not padded.
-        foreach ($this->_images as $image) {
+        /*foreach ($this->_images as $image) {
             //$imgWidth = $this->_imageSize["width"];
             //$width     = $this->padDimensions["width"];
             //$widthDiff = ($width - $imgWidth) / 2;
@@ -170,11 +170,11 @@ class Movie_HelioviewerMovie
             $height = $this->_padDimensions["height"];
             $heightDiff = ($height - $imgHeight) / 2;
 
-            if (/*$widthDiff > 0 || */ $heightDiff > 0) {
+            if (/*$widthDiff > 0 || */ /*$heightDiff > 0) {
                 $padCmd = ' && convert -bordercolor black -border 0x' . $heightDiff . " " . $image . " " . $image;
                 exec(HV_PATH_CMD . escapeshellcmd($padCmd));
             }
-        }
+        }*/
 
         // Use phpvideotoolkit to compile them
         $toolkit = new PHPVideoToolkit($this->tmpDir);

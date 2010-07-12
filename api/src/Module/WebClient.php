@@ -326,13 +326,13 @@ class Module_WebClient implements Module
     }
     
     /**
-     * Gets a screenshot from the cache or builds it if it doesn't exist, as specified by the event ID 
+     * Gets a collection of screenshots from the cache as specified by the event ID 
      * in the parameters.
      * See the API webpage for example usage.
      *
      * @return image
      */
-    public function getScreenshotForEvent()
+    public function getScreenshotsForEvent()
     {
         include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
@@ -340,15 +340,18 @@ class Module_WebClient implements Module
         $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
         $this->_createEventCacheDir($tmpDir);
         
-        $response = $builder->getScreenshotForEvent($this->_params, $tmpDir);
+        $response = $builder->getScreenshotsForEvent($this->_params, $tmpDir);
             
         if ($response === false) {
-            throw new Exception("The requested movie does not exist.");
-        } else if (isset($this->_params['display']) && (!$this->_params['display'] || $this->_params['display'] === "false")) {
-            echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
+            throw new Exception("The requested image does not exist.");
         }
 
-        return $response;
+        $finalResponse = array();
+        foreach($response as $filepath) {
+            array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+        }
+        echo JSON_encode($finalResponse);
+        return $finalResponse;
     }
     
     /**
@@ -473,7 +476,7 @@ class Module_WebClient implements Module
                 'required' => array('eventId')
             );
             break;
-        case "createScreenshotForEvent":
+        case "createScreenshotsForEvent":
             $required = array('eventId', 'obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
             $expected = array(
                 'required' => $required, 
