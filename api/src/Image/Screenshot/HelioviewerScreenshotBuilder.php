@@ -90,11 +90,68 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
             $outputDir
         );
-        
+
         $screenshot->buildImages($layerArray);
         return $this->_displayScreenshot($screenshot->getComposite(), $originalParams, $params['display']);
     }
+    
+    /**
+     * Searches the cache for a screenshot related to the event and returns the filepath if one exists. If not,
+     * returns false
+     * 
+     * @param array  $originalParams the original parameters passed in by the API call
+     * @param string $outputDir      the directory path to where the cached file should be stored
+     * 
+     * @return string
+     */
+    public function getScreenshotForEvent($originalParams, $outputDir) 
+    {
+    	$defaults = array(
+    	   'display' => true,
+    	   'ipod'    => false
+    	);
+    	$params = array_merge($defaults, $originalParams);
+    	
+    	$filename = "Screenshot_";
+    	if ($params['ipod'] === "true" || $params['ipod'] === true) {
+    		$outputDir .= "/iPod";
+    		$filename .= "iPhone_";
+    	} else {
+    		$outputDir .= "/regular";
+    	}
+    	
+    	$filename .= $params['eventId'];
+    	if (file_exists($outputDir . "/" . $filename . ".jpg")) {
+    		return $this->_displayScreenshot($outputDir . "/" . $filename . ".jpg", $originalParams, $params['display']);
+    	} else {
+    		return false;
+    	}
+    }
+    
+    public function createScreenshotForEvent($originalParams, $outputDir) { 
+    	$defaults = array(
+           'display' => false,
+           'ipod'    => false
+        );
+        
+        $params = array_merge($defaults, $originalParams);
+        
+        $filename = "Screenshot_";
+        if ($params['ipod'] === "true" || $params['ipod'] === true) {
+            $outputDir .= "/iPod";
+            $filename .= "iPhone_";
+        } else {
+            $outputDir .= "/regular";
+        }
 
+        $filename .= $params['eventId'];
+        if (file_exists($outputDir . "/" . $filename . ".jpg")) {
+        	return $outputDir . "/" . $filename . ".jpg";
+        }
+        $params['filename'] = $filename;
+        return $this->takeScreenshot($params, $outputDir);
+    }
+    
     /**
      * _createMetaInformation
      * Takes the string representation of a layer from the javascript creates meta information for

@@ -345,7 +345,7 @@ class Movie_HelioviewerMovie
      *
      * @return void
      */
-    public function showMovie($url, $width, $height)
+    public static function showMovie($url, $width, $height)
     {
         ?>
         <!-- MC Media Player -->
