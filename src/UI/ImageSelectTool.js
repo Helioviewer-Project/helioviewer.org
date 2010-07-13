@@ -23,8 +23,9 @@ var ImageSelectTool = Class.extend(
         this.vpDomNode  = $("#helioviewer-viewport");
 
         this._setupFinishedButton();
-        this.button     = $("#done-selecting-image");
-        this.helpButton = $("#image-select-help");
+        this.doneButton   = $("#done-selecting-image");
+        this.cancelButton = $("#cancel-selecting-image");
+        this.helpButton   = $("#help-selecting-image");
         this._setupHelpDialog();
         
         $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
@@ -102,7 +103,7 @@ var ImageSelectTool = Class.extend(
             }
         });
         
-        self.button.click(function () {
+        self.doneButton.click(function () {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
@@ -132,6 +133,12 @@ var ImageSelectTool = Class.extend(
             self.cleanup();
             callback(selectInfo);
         });
+        
+        self.cancelButton.click(function () {
+            self.cleanup();
+        });
+        
+        self._setupEventListeners();
     },
     
     _setupFinishedButton: function () {
@@ -151,7 +158,11 @@ var ImageSelectTool = Class.extend(
                             "<span class='ui-icon ui-icon-circle-check' style='float: left;'></span>" +
                             "<span>Done</span>" +
                         "</div>" + 
-                        "<div id='image-select-help' class='text-btn' style='float: right;'>" + 
+                        "<div id='cancel-selecting-image' class='text-btn'>" + 
+                            "<span class='ui-icon ui-icon-circle-close' style='float:left;' />" + 
+                            "<span>Cancel</span>" + 
+                        "</div>" +
+                        "<div id='help-selecting-image' class='text-btn' style='float: right;'>" + 
                             "<span class='ui-icon ui-icon-info'></span>" +
                         "</div>"
             },
@@ -164,6 +175,15 @@ var ImageSelectTool = Class.extend(
                 width: 'auto'
             }
         });
+    },
+    
+    /**
+     * Adds hover event listeners for the icons next to the text in the dialog.
+     */
+    _setupEventListeners: function () {
+        addIconHoverEventListener(this.doneButton);
+        addIconHoverEventListener(this.cancelButton);
+        addIconHoverEventListener(this.helpButton);
     },
     
     _setupHelpDialog: function () {
@@ -214,7 +234,8 @@ var ImageSelectTool = Class.extend(
         $("#zoomControlZoomIn").show("fast");
         $("#zoomControlZoomOut").show("fast");
         $('#imgContainer, #transparent-image').remove();
-        this.button.unbind('click');
+        this.doneButton.unbind('click');
+        this.cancelButton.unbind('click');
         this.helpButton.qtip("hide");
         this.active = false;
         $("body").removeClass('disable-fullscreen-mode');

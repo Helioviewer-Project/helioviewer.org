@@ -38,6 +38,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
         this.fullVPButton     = $("#" + this.id + "-full-viewport");
         this.selectAreaButton = $("#" + this.id + "-select-area");
         
+        this._super();
+        
         this.fullVPButton.click(function () {
             self.hideDialogs();
             viewportInfo = self.viewport.getViewportInformation();
@@ -63,6 +65,14 @@ var ScreenshotBuilder = MediaBuilder.extend(
      *                 coordinates of the visible region 
      */
     takeScreenshot: function (viewportInformation) {
+        if (!this.ensureValidArea(viewportInformation)) {
+            $(document).trigger("message-console-warn", ["The area you have selected is too small to create a screenshot. Please try again."]);
+            return;
+        } else if (!this.ensureValidLayers(viewportInformation)) {
+            $(document).trigger("message-console-warn", ["You must have at least one layer in your screenshot. Please try again."]);
+            return;
+        }
+        
         var self, callback, params, url, arcsecCoords, id, download, screenshot;        
         arcsecCoords  = this.toArcsecCoords(viewportInformation.coordinates, viewportInformation.imageScale);
         self = this;
@@ -91,11 +101,12 @@ var ScreenshotBuilder = MediaBuilder.extend(
                     header: "Your screenshot is ready!",
                     open:    function (e, m, o) {
                         screenshot.setURL(url, id);
-                        self.historyBar.addScreenshotToHistory(screenshot);
+                        self.historyBar.addToHistory(screenshot);
                         
                         download = $("#screenshot-" + id);
                         
                         download.click(function () {
+                            $(".jGrowl-notification .close").click();
                             screenshot.download();
                         });
                     }
