@@ -77,7 +77,7 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
             $classname = "Image_ImageType_" . $type;
         
         	include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
-        	
+
             $image = new $classname(
                 $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
                 $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
@@ -94,6 +94,10 @@ class Image_HelioviewerCompositeImageLayer extends Image_CompositeImageLayer
         }
     }
     
+    public function display()
+    {
+    	$this->image->display();
+    }
     /**
      * Determines if the roi is invalid by calculating width and height and seeing if they are
      * less than 0.

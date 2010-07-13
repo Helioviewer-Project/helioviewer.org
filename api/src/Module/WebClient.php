@@ -224,7 +224,24 @@ class Module_WebClient implements Module
             );
         }
 
-        include_once 'src/Image/Tiling/HelioviewerTile.php';
+        $roi = $this->tileCoordsToArcSeconds($this->_params['jp2Width'], $this->_params['jp2Height'], $this->_params['jp2Scale'],
+            $this->_params['tileScale'], 512, 512 * $this->_params['tileScale'] / $this->_params['jp2Scale'], $this->_params['x'],
+            $this->_params['y'], $this->_params['sunCenterOffsetX'], $this->_params['sunCenterOffsetY']);
+
+        $filepath = dirname($this->_params["uri"]) . "/" . substr(basename($this->_params['uri']), 0, -4) . "_" . 
+                    $this->_params['tileScale'] . "_" . $this->_params['x'] . "_" . $this->_params['y'] . "." . $this->_params['format'];
+
+        include_once 'src/Image/HelioviewerCompositeImageLayer.php';
+        $tile = new Image_HelioviewerCompositeImageLayer(
+            HV_JP2_DIR . $this->_params['uri'], HV_CACHE_DIR . $filepath, $this->_params['format'], $this->_params['ts'], $this->_params['ts'], 
+            $this->_params['tileScale'], $roi, $this->_params['inst'], $this->_params['det'], $this->_params['meas'], 
+            1, $this->_params['sunCenterOffsetX'], $this->_params['sunCenterOffsetY'], 100, 
+            $this->_params['jp2Width'], $this->_params['jp2Height'], $this->_params['jp2Scale'], $this->_params['date']
+        );
+        
+        $tile->display();
+
+        /*include_once 'src/Image/Tiling/HelioviewerTile.php';
         $tile = new Image_Tiling_HelioviewerTile(
             $this->_params['uri'], $this->_params['date'], $this->_params['x'], $this->_params['y'],
             $this->_params['tileScale'], $this->_params['ts'],
@@ -233,9 +250,81 @@ class Module_WebClient implements Module
             $this->_params['sunCenterOffsetY'], $this->_params['format'],
             $this->_params['obs'], $this->_params['inst'],
             $this->_params['det'], $this->_params['meas']
-        );
+        );*/
     }
 
+    protected function tileCoordsToArcSeconds ($jp2Width, $jp2Height, $jp2Scale, $desiredScale, $tileSize, $relativeTileSize, $x, $y, $offsetX, $offsetY) 
+    {
+        // Rounding
+        $precision = 6;
+        
+        // Parameters
+        $top = $left = $width = $height = null;
+        
+        // Number of tiles for the entire image
+        $imgNumTilesX = max(2, ceil($jp2Width  /  $relativeTileSize));
+        $imgNumTilesY = max(2, ceil($jp2Height /  $relativeTileSize));
+
+        // Tile placement architecture expects an even number of tiles along each dimension
+        if ($imgNumTilesX % 2 != 0) {
+            $imgNumTilesX += 1;
+        }
+
+        if ($imgNumTilesY % 2 != 0) {
+            $imgNumTilesY += 1;
+        }
+                  
+        // Shift so that 0,0 now corresponds to the top-left tile
+        $relX = (0.5 * $imgNumTilesX) + $x;
+        $relY = (0.5 * $imgNumTilesY) + $y;
+
+        // Number of "inner" (non-edge) tiles
+        $numTilesInsideX = $imgNumTilesX - 2;
+        $numTilesInsideY = $imgNumTilesY - 2;
+      
+        // Dimensions for inner and outer tiles
+        $innerTS = $relativeTileSize;
+        $outerTS = ($jp2Width - ($numTilesInsideX * $innerTS)) / 2;
+
+        // Upper left corner of 'tile'
+        $top  = (($relY == 0)? 0 : $outerTS + ($relY - 1) * $innerTS) - ($jp2Height / 2) - $offsetY;
+        $left = (($relX == 0)? 0 : $outerTS + ($relX - 1) * $innerTS) - ($jp2Width / 2) - $offsetX;
+        
+        // Width and height of 'tile'
+        $bottom = $top  + (( ($relY == 0) || ($relY == ($imgNumTilesY - 1)) )? $outerTS : $innerTS);
+        $right  = $left + (( ($relX == 0) || ($relX == ($imgNumTilesX - 1)) )? $outerTS : $innerTS);
+
+        if ($x < 0) {
+            $left = $right - 512 * $desiredScale / $jp2Scale;
+        } else {
+        	$right = $left + 512 * $desiredScale / $jp2Scale;
+
+        }
+        if ($y < 0) {
+        	$top = $bottom - 512 * $desiredScale / $jp2Scale;
+        } else {
+        	$bottom = $top + 512 * $desiredScale / $jp2Scale;
+        }
+        /*try {
+            if ($left < 0 || $top < 0) {
+                $msg = "Unable to convert from tile to pixel coordinates: Invalid start value for top or left values.";
+                throw new Exception($msg);
+            }
+            if ($right > $jp2Width || $bottom > $jp2Height) {
+                throw new Exception("Unable to convert from tile to pixel coordinates: Invalid size value for right or bottom values.");
+            }
+        }
+        catch(Exception $e) {
+            logErrorMsg($e->getMessage(), true);
+        }*/
+
+        return array(
+            "top"    => $top * $jp2Scale,
+            "left"   => $left * $jp2Scale,
+            "bottom" => $bottom * $jp2Scale,
+            "right"  => $right * $jp2Scale
+        );
+    }
     /**
      * launchJHelioviewer
      *
