@@ -14,6 +14,7 @@
 require_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
 require_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovie.php';
 require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+require_once HV_ROOT_DIR . '/api/src/Helper/LayerParser.php';
 /**
  * Image_Movie_HelioviewerMovieBuilder class definition
  *
@@ -83,7 +84,7 @@ class Movie_HelioviewerMovieBuilder
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
-            $layers = explode("],", $this->_params['layers']);
+            $layers = getLayerArrayFromString($this->_params['layers']);
             if (sizeOf($layers) == 0 || sizeOf($layers) > 3) {
                 $msg = "Invalid layer choices! You must specify 1-3 comma-separated layernames.";
                 throw new Exception($msg);
@@ -143,18 +144,17 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
-     * Searches the cache for a movie related to the event and returns the filepath if one exists. If not,
-     * returns false
+     * Searches the cache for movies related to the event and returns an array of filepaths if at least
+     * one exists. If not, returns false
      * 
      * @param array  $originalParams the original parameters passed in by the API call
      * @param string $outputDir      the directory path to where the cached file should be stored
      * 
      * @return string
      */
-    public function getMovieForEvent($originalParams, $outputDir) 
+    public function getMoviesForEvent($originalParams, $outputDir) 
     {
         $defaults = array(
-           'display' => true,
            'ipod'    => false
         );
         $format = ".flv";
@@ -169,22 +169,13 @@ class Movie_HelioviewerMovieBuilder
         }
         
         $filename .= "Movie_" . $params['eventId'];
-        if (file_exists($outputDir . "/" . $filename . ".mp4")) {
-        	// The first frame of the movie is always saved for previews.
-            $firstFrame = $outputDir . "/frame0.jpg";
-            
-            // Get the dimensions of the video by extracting the dimensions of the first frame.
-            if (file_exists($firstFrame)) {
-                list($width, $height, $type, $attr) = getimagesize($firstFrame);
-            } else {
-            	$width  = 512;
-            	$height = 512;
-            }
 
-            return $this->_displayMovie($outputDir . "/" . $filename . $format, $originalParams, $params['display'], $width, $height);
-        } else {
-            return false;
+        $movies = glob($outputDir . "/" . $filename . "*" . $format);
+        if (sizeOf($movies) === 0) {
+        	return false;
         }
+        
+        return $movies;
     }
     
     /**
@@ -214,7 +205,7 @@ class Movie_HelioviewerMovieBuilder
             $outputDir .= "/regular/";
         }
         
-        $filename .= "Movie_" . $params['eventId'];
+        $filename .= "Movie_" . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($params['layers']));
         
         if (file_exists($outputDir . $filename . $format)) {
             return $outputDir . $filename . $format;
@@ -235,13 +226,7 @@ class Movie_HelioviewerMovieBuilder
     {
         $filename = "";
         foreach ($layers as $layer) {
-        	$infoArray  = explode(",", str_replace(array("[", "]"), "", $layer));
-        	if (sizeOf($infoArray) > 4) {
-        	   $infoArray  = array_slice($infoArray, 1, -2);
-        	} else {
-        		$infoArray = array_slice($infoArray, 0, -2);
-        	}
-        	$filename .= "__" . implode("_", $infoArray);
+        	$filename .= "__" . extractLayerName($layer);
         }
         return $filename;
     }
@@ -316,14 +301,14 @@ class Movie_HelioviewerMovieBuilder
         $maxInRange = 0;
         
         foreach ($layers as $layer) {
-            $layerInfo = explode(",", $layer);
+            $layerInfo = singleLayerToArray($layer);
             if (sizeOf($layerInfo) > 4) {
                 list($observatory, $instrument, $detector, $measurement, $opacity) = $layerInfo;
-                $sourceId = $imgIndex->getSourceId(str_replace("[", "", $observatory), $instrument, $detector, $measurement);        
+                $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);        
             } else {
                 $sourceId = $layerInfo[0];
             }
-            $maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, str_replace("[", "", $sourceId)));
+            $maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, $sourceId));
         }
 
         return min($maxInRange, $this->maxNumFrames);

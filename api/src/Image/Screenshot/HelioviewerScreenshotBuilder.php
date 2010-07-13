@@ -12,6 +12,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'HelioviewerScreenshot.php';
+require_once HV_ROOT_DIR . '/api/src/Helper/LayerParser.php';
 /**
  * Image_Screenshot_HelioviewerScreenshotBuilder class definition
  *
@@ -96,18 +97,17 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     }
     
     /**
-     * Searches the cache for a screenshot related to the event and returns the filepath if one exists. If not,
-     * returns false
+     * Searches the cache for screenshots related to the event and returns an array of filepaths if at least one
+     * exists. If not, returns false
      * 
      * @param array  $originalParams the original parameters passed in by the API call
      * @param string $outputDir      the directory path to where the cached file should be stored
      * 
      * @return string
      */
-    public function getScreenshotForEvent($originalParams, $outputDir) 
+    public function getScreenshotsForEvent($originalParams, $outputDir) 
     {
     	$defaults = array(
-    	   'display' => true,
     	   'ipod'    => false
     	);
     	$params = array_merge($defaults, $originalParams);
@@ -121,11 +121,13 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     	}
     	
     	$filename .= $params['eventId'];
-    	if (file_exists($outputDir . "/" . $filename . ".jpg")) {
-    		return $this->_displayScreenshot($outputDir . "/" . $filename . ".jpg", $originalParams, $params['display']);
-    	} else {
-    		return false;
-    	}
+    	
+        $images = glob($outputDir . "/" . $filename . "*.jpg");
+        if (sizeOf($images) === 0) {
+            return false;
+        }
+        
+        return $images;
     }
     
     public function createScreenshotForEvent($originalParams, $outputDir) { 
@@ -144,12 +146,29 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $outputDir .= "/regular";
         }
 
-        $filename .= $params['eventId'];
+        $filename .= $params['eventId'] . $this->buildFilename(getLayerArrayFromString($params['layers']));
         if (file_exists($outputDir . "/" . $filename . ".jpg")) {
         	return $outputDir . "/" . $filename . ".jpg";
         }
         $params['filename'] = $filename;
         return $this->takeScreenshot($params, $outputDir);
+    }
+
+    /**
+     * Takes in a layer string and formats it into an appropriate filename by removing square brackets
+     * and extra information like visibility and opacity.
+     * 
+     * @param string $layers a string of layers in the format [layer],[layer]...
+     * 
+     * @return string
+     */
+    protected function buildFilename($layers)
+    {
+        $filename = "";
+        foreach ($layers as $layer) {
+            $filename .= "__" . extractLayerName($layer);
+        }
+        return $filename;
     }
     
     /**
@@ -169,7 +188,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      */
     private function _createMetaInformation($layers, $imageScale, $width, $height)
     {
-        $layerStrings = explode("],", $layers);
+        $layerStrings = getLayerArrayFromString($layers);
         $metaArray    = array();
         
         if (sizeOf($layerStrings) < 1) {
@@ -177,7 +196,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         }
         
         foreach ($layerStrings as $layer) {
-            $layerArray = explode(",", str_replace(array("[","]"), "", $layer));
+            $layerArray = singleLayerToArray($layer);
             if (sizeOf($layerArray) > 4) {
                 list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
                 $sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
