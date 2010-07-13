@@ -86,7 +86,7 @@ var HelioviewerTileLayer = TileLayer.extend(
 
         file   = this.image.filepath + "/" + this.image.filename;
         format = (this.layeringOrder === 1 ? "jpg" : "png");
-
+        
         params = {
             "action"           : "getTile",
             "uri"              : file,

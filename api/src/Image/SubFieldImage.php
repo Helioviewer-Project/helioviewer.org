@@ -188,7 +188,7 @@ class Image_SubFieldImage
     {
         $width  = ($roi['right']  - $roi['left']) / $scale;
         $height = ($roi['bottom'] - $roi['top'])  / $scale;
-        
+
         $centerX = $this->jp2Width  / 2 + $this->offsetX;
         $centerY = $this->jp2Height / 2 + $this->offsetY;
         
@@ -205,8 +205,8 @@ class Image_SubFieldImage
            "gravity" => "northwest",
            "width"   => $width,
            "height"  => $height,
-           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : $left,
-           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : $top
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
         );
     }
     
@@ -267,6 +267,8 @@ class Image_SubFieldImage
 
             // Resize extracted image to correct size before padding.
             //$image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
+
+            //$image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
             $image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
             $this->setBackground($image);
 
