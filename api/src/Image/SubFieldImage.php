@@ -266,8 +266,8 @@ class Image_SubFieldImage
             $this->compressImage($image);
 
             // Resize extracted image to correct size before padding.
-            $image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
-
+            //$image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
+            $image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
             $this->setBackground($image);
 
             // Places the current image on a larger field of black if the final image is larger than this one

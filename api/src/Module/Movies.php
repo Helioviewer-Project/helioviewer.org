@@ -85,7 +85,7 @@ class Module_Movies implements Module
                 "urls"     => array('url')
             );
             break;
-        case "getMovieForEvent":
+        case "getMoviesForEvent":
         	$expected = array(
         	   "required" => array('eventId')
         	);
@@ -112,22 +112,7 @@ class Module_Movies implements Module
 
     /**
      * buildMovie
-     *
-     * API example: http://localhost/helioviewer/api/index.php?action=buildMovie
-     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=3,1,100/4,1,100&offsetLeftTop=-5000,-5000
-     *     &offsetRightBottom=5000,5000&width=512&height=512
-     *     // Optional parameters to add on to the end: &numFrames=20&frameRate=8&timeStep=86400
-     *     			&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4&display=true
-     * 
-     * The first number of each layer represents the layer's source id in the database. Alternatively,
-     * you can pass in the layer's name instead of the source id:
-     * 
-     * http://localhost/helioviewer/api/index.php?action=buildMovie
-     *     &startDate=2010-03-01T12:12:12Z&imageScale=21.04&layers=SOHO,EIT,EIT,304,1,100
-     *     /SOHO,LASCO,C2,white-light,1,100&offsetLeftTop=-5000,-5000
-     *     &offsetRightBottom=5000,5000&width=512&height=512
-     *     // Optional parameters to add on to the end: &numFrames=20&frameRate=8&timeStep=86400
-     *     			&filename=example&sharpen=false&edges=false&quality=10&hqFormat=mp4&display=true
+     * See the API webpage for example usage.
      *
      * For an iPod-compatible format, specify "hqFormat=ipod"
      * Note that filename does NOT have the . extension on it. The reason for
@@ -153,13 +138,13 @@ class Module_Movies implements Module
     }
     
     /**
-     * Gets a movie from the cache or builds it if it doesn't exist, as specified by the event ID 
+     * Gets a collection of movies from the cache as specified by the event ID 
      * in the parameters.
      * See the API webpage for example usage.
      *
      * @return movie URL
      */
-    public function getMovieForEvent () 
+    public function getMoviesForEvent () 
     {
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
         $builder = new Movie_HelioviewerMovieBuilder();
@@ -167,15 +152,25 @@ class Module_Movies implements Module
         $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/movies";
         $this->_createEventCacheDir($tmpDir);
         
-        $response = $builder->getMovieForEvent($this->_params, $tmpDir);            
+        $response = $builder->getMoviesForEvent($this->_params, $tmpDir);            
         if ($response === false) {
             throw new Exception("The requested movie does not exist.");
-        } else if (isset($this->_params['display']) && (!$this->_params['display'] || $this->_params['display'] === "false")) {
-            echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
         }
-        return $response;
+        
+        $finalResponse = array();
+        foreach($response as $filepath) {
+            array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+        }
+        echo JSON_encode($finalResponse);
+        return $finalResponse;
     }
     
+    /**
+     * Creates a movie based on the event ID and other parameters specified. 
+     * See the API webpage for example usage.
+     *
+     * @return movie URL
+     */
     public function createMovieForEvent ()
     {
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
@@ -263,8 +258,8 @@ class Module_Movies implements Module
                 <ul>
                     <li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>
                     <li><a href="index.php#buildMovie">Creating a Movie</a></li>
-                    <li><a href="index.php#getScreenshotForEvent">Fetching Cached Event Screenshots</a></li>
-                    <li><a href="index.php#getMovieForEvent">Fetching Cached Event Movies</a></li>
+                    <li><a href="index.php#getScreenshotsForEvent">Fetching Cached Event Screenshots</a></li>
+                    <li><a href="index.php#getMoviesForEvent">Fetching Cached Event Movies</a></li>
                     <li><a href="index.php#createScreenshotForEvent">Creating Cached Event Screenshots</a></li>
                     <li><a href="index.php#createMovieForEvent">Creating Cached Event Movies</a></li>
                 </ul>
@@ -537,8 +532,8 @@ class Module_Movies implements Module
             
                 <!-- Fetching cached Event Screenshots  -->
                 <li>
-                <div id="getScreenshotForEvent">Fetching Cached Event Screenshots
-                <p>Returns the filepath to a screenshot of an event. If the file does not exist, returns false.</p>
+                <div id="getScreenshotsForEvent">Fetching Cached Event Screenshots
+                <p>Returns a collection of filepath to screenshots of an event. If no file exists, returns false.</p>
         
                 <br />
         
@@ -546,7 +541,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo $baseURL;?>?action=getScreenshotForEvent<br />
+                <?php echo $baseURL;?>?action=getScreenshotsForEvent<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -565,12 +560,6 @@ class Module_Movies implements Module
                             <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
                                 Defaults to false if not specified.</td>
                         </tr>
-                        <tr>
-                            <td><b>display</b></td>
-                            <td width="20%"><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Set this to true if you want the screenshot to display on screen when fetched. Set this to 
-                                    false if you want the filepath echoed instead. Defaults to true if not specified.</td>
-                        </tr>
                     </tbody>
                 </table>
                 <br />
@@ -578,13 +567,13 @@ class Module_Movies implements Module
                 <span class="example-header">Examples:</span>
                 <i>Note: Both of these links will return false if the particular event is not in the cache.</i>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getScreenshotForEvent&eventId=AR211_TomBerger_20100630_175443">
-                    <?php echo $baseURL;?>?action=getScreenshotForEvent&eventId=AR211_TomBerger_20100630_175443
+                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
+                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getScreenshotForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false">
-                    <?php echo $baseURL;?>?action=getScreenshotForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false
+                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false">
+                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true
                 </a>
                 </span>
                 </div>
@@ -594,8 +583,8 @@ class Module_Movies implements Module
                         
                 <!-- Fetching cached Event Movies -->
                 <li>
-                <div id="getMovieForEvent">Fetching Cached Event Movies
-                <p>Returns the filepath to a movie of an event. If the file does not exist, returns false.</p>
+                <div id="getMoviesForEvent">Fetching Cached Event Movies
+                <p>Returns a collection of filepaths to movies of an event. If no movie file exists, returns false.</p>
         
                 <br />
         
@@ -603,7 +592,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo $baseURL;?>?action=getMovieForEvent<br />
+                <?php echo $baseURL;?>?action=getMoviesForEvent<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -622,12 +611,6 @@ class Module_Movies implements Module
                             <td><i>[Optional]</i> Whether or not you are looking for the iPod-compatible movie or the regular movie.
                                 Defaults to false if not specified.</td>
                         </tr>
-                        <tr>
-                            <td><b>display</b></td>
-                            <td width="20%"><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Set this to true if you want the screenshot to display on screen when fetched. Set this to 
-                                    false if you want the filepath echoed instead. Defaults to true if not specified.</td>
-                        </tr>
                     </tbody>
                 </table>
                 <br />
@@ -635,13 +618,13 @@ class Module_Movies implements Module
                 <span class="example-header">Examples:</span>
                 <i>Note: Both of these links will return false if the particular event is not in the cache.</i>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getMovieForEvent&eventId=AR211_TomBerger_20100630_175443">
-                    <?php echo $baseURL;?>?action=getMovieForEvent&eventId=AR211_TomBerger_20100630_175443
+                <a href="<?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443">
+                    <?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getMovieForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false">
-                    <?php echo $baseURL;?>?action=getMovieForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false
+                <a href="<?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false">
+                    <?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true
                 </a>
                 </span>
                 </div>

@@ -17,8 +17,6 @@ var MediaBuilder = Class.extend(
     /**
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the movie button
-     * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
-     * @param {Object} controller -- the helioviewer class 
      */    
     init: function (viewport, mediaHistoryBar) {
         this.url        = "api/index.php";
