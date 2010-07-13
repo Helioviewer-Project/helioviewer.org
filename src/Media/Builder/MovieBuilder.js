@@ -75,7 +75,7 @@ var MovieBuilder = MediaBuilder.extend(
             }
         });
         
-        // Close any open jGrowl notifications
+        // Close any open jGrowl notifications if the button is clicked.
         this.button.click(function () {
             $(".jGrowl-notification .close").click();
         });
@@ -118,12 +118,11 @@ var MovieBuilder = MediaBuilder.extend(
             player:    "html",
             width:     450,
             // Adjust height depending on how much space the text takes up (roughly 20 pixels per 
-            // layer name, and a base height of 150)
+            // layer name, and a base height of 170)
             height: 170 + layers.length * 20,
 
             // Put a table of possible layers + check boxes in shadowbox.
-            content: this.createLayerSelectionTable(layers),
-                
+            content: this.createLayerSelectionTable(layers),       
             options:    {
                 onFinish: function () {
                     // Set up event handler for the button
