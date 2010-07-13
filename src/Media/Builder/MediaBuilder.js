@@ -57,11 +57,27 @@ var MediaBuilder = Class.extend(
         $("#social-buttons").click(function (e) {
             var button = $(e.target);
 
-            if (button != self.button && button.context.parentNode != self.button[0]) {
+            if (button != self.button && button.context && button.context.parentNode != self.button[0]) {
                 self.button.qtip("hide");
             } 
 
         });
+    },
+    
+    /**
+     * Subclassed in MovieBuilder and ScreenshotBuilder. Both classes call this._super() to call
+     * this function as well. 
+     */
+    _setupEventListeners: function () {
+        addIconHoverEventListener(this.fullVPButton);
+        addIconHoverEventListener(this.selectAreaButton);
+        
+        // Close any open jGrowl notifications if the button is clicked.
+        this.button.click(function () {
+            $(".jGrowl-notification .close").click();
+        });
+
+        this.historyBar.setup();
     },
 
     /**
@@ -106,5 +122,32 @@ var MediaBuilder = Class.extend(
         };
         
         return pixelsToArcseconds(coordinates, scale);
+    },
+    
+    /**
+     * Checks to make sure there is actually something in the selected area.
+     * 
+     * @input {Array} viewportInfo -- Information with viewport coordinates and layers
+     */
+    ensureValidArea: function (viewportInfo) {
+        var coordinates = viewportInfo.coordinates;
+        if (coordinates.bottom - coordinates.top > 50 && coordinates.right - coordinates.left > 50) {
+            return true;
+        }
+        return false;
+    },
+    
+    /**
+     * Checks to make sure there is at least one layer in the selected area.
+     * 
+     * @input {Array} viewportInfo -- Information with viewport coordinates and layers
+     * @TODO add more sophisticated checks to make sure that the selected region contains
+     * a layer.
+     */
+    ensureValidLayers: function (viewportInfo) {
+        if (viewportInfo.layers.length > 0) {
+            return true;
+        }
+        return false;
     }
 });

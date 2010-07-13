@@ -54,6 +54,10 @@ var History = Class.extend(
         });
     },
     
+    clear: function () {
+        this.history = [];
+    },
+    
     _addToContentString: function (item) {
         return  "<div id='" + item.id + "' class='text-btn' style='float:left;'>" + 
                     item.name + 

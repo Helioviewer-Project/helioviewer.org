@@ -25,7 +25,12 @@ var MovieHistory = History.extend(
     createContentString: function () {
         return /*"Movies: <br />" + */this._super();
     },
-
+    
+    clear: function () {
+        this._super();
+        $(document).trigger("save-setting", ["movie-history", this.history]);
+    },
+    
     _addToContentString: function (item) {
         return  this._super(item) + 
                 "<div id='watch-dialog-" + item.id + "' style='display:none'>" +

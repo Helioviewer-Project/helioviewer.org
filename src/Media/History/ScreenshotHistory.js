@@ -25,6 +25,11 @@ var ScreenshotHistory = History.extend(
     createContentString: function () {
         return /*"Screenshots: <br />" + */this._super();
     },
+
+    clear: function () {
+        this._super();
+        $(document).trigger("save-setting", ["screenshot-history", this.history]);
+    },
     
     _loadSavedHistory: function (history) {
         var self = this;

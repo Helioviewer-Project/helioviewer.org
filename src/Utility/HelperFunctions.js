@@ -261,3 +261,30 @@ var pixelsToArcseconds = function (coordinates, scale) {
     };
 };
 
+/**
+ * Takes in a container and adds an event listener so that when the
+ * container is hovered over, its icon will highlight too, and when 
+ * done hovering, the icon goes back to normal. Necessary for some of
+ * the movie/screenshot dialog box icons, which do not seem to highlight
+ * correctly otherwise.
+ * 
+ * @input {Object} container -- jQuery-selected html element that contains 
+ *                              the icon.
+ *                              
+ * @return void
+ */
+var addIconHoverEventListener = function (container) {
+    if (container) {
+        container.hover(
+            function () {
+                var icon = container.find(".ui-icon");
+                icon.addClass("ui-icon-hover");
+            },
+            function () {
+                var icon = container.find(".ui-icon");
+                icon.removeClass("ui-icon-hover");
+            }
+        );
+    }
+};
+
