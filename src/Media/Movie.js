@@ -136,6 +136,7 @@ var Movie = Media.extend(
             y1            : this.y1,
             y2            : this.y2,
             hqFormat      : this.hqFormat,
+            hqFile        : this.hqFile,
             scaleDown     : this.scaleDown
         }
     }
