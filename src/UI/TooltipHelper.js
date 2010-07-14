@@ -215,6 +215,7 @@ var TooltipHelper = Class.extend(
             width     : 215,
             height    : 'auto',
             color     : '#fff',
+            "z-index" : 20,
             background: '#2A2A2A',
             title     : {
                 'color'      : '#fff',

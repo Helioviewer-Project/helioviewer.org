@@ -12,7 +12,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once HV_ROOT_DIR . '/api/lib/phpvideotoolkit/config.php';
-require_once HV_ROOT_DIR . '/api/lib/phpvideotoolkit/phpvideotoolkit.php5.php';
+require_once HV_ROOT_DIR . '/api/src/Movie/FFMPEGWrapper.php';
 require_once HV_ROOT_DIR . '/api/src/Image/ImageMetaInformation.php';
 require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
 /**
@@ -155,145 +155,41 @@ class Movie_HelioviewerMovie
     public function buildMovie($builtImages)
     {
         $this->_images = $builtImages;
-        $movieName = /*"Helioviewer-Movie-" . */$this->_filename;
+        $movieName = $this->_filename;
 
-        $tmpurl    = str_replace(HV_TMP_DIR, HV_TMP_ROOT_URL, $this->tmpDir) . "/$movieName." . $this->_filetype;
-
-        // Pad to a 16:9 aspect ratio by adding a black border around the image.
-        // This is set up so that width CAN be padded if it's uncommented. Currently it is not padded.
-        /*foreach ($this->_images as $image) {
-            //$imgWidth = $this->_imageSize["width"];
-            //$width     = $this->padDimensions["width"];
-            //$widthDiff = ($width - $imgWidth) / 2;
-
-            $imgHeight = $this->_metaInfo->height();
-            $height = $this->_padDimensions["height"];
-            $heightDiff = ($height - $imgHeight) / 2;
-
-            if (/*$widthDiff > 0 || */ /*$heightDiff > 0) {
-                $padCmd = ' && convert -bordercolor black -border 0x' . $heightDiff . " " . $image . " " . $image;
-                exec(HV_PATH_CMD . escapeshellcmd($padCmd));
-            }
-        }*/
-
-        // Use phpvideotoolkit to compile them
-        $toolkit = new PHPVideoToolkit($this->tmpDir);
-
-        // compile the image to the tmp dir
-        $ok = $toolkit->prepareImagesForConversionToVideo($this->_images, $this->_frameRate);
-
-        if (!$ok) {
-            // if there was an error then get it
-            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
-            exit();
-        }
-
-        $toolkit->setVideoOutputDimensions(ceil($this->_metaInfo->width()), ceil($this->_metaInfo->height()));
-    
         // Need to do something slightly different to get the video to be iPod compatible
+        $ffmpeg = new Movie_FFMPEGWrapper($this->_frameRate);
+        
+        // Width and height must be divisible by 2 or ffmpeg will throw an error.
+        $width  = round($this->_metaInfo->width());
+        $height = round($this->_metaInfo->height());
+        
+        $width  += ($width  % 2 === 0? 0 : 1);
+        $height += ($height % 2 === 0? 0 : 1);        
+        
         if ($this->_highQualityFiletype === "ipod") {
-            return $this->_createIpodVideo($toolkit, $movieName);
+        	$hq_filename = "$movieName.mp4";
+            return $ffmpeg->createIpodVideo($hq_filename, $this->tmpDir, $width, $height);
         }
         
-        // set the output parameters (Flash video)
-        $output_filename = "$movieName." . $this->_filetype;
-
-        $ok = $toolkit->setOutput($this->tmpDir, $output_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
-
-        if (!$ok) {
-            //         if there was an error then get it
-            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
-            exit();
-        }
-
-        //     execute the ffmpeg command
-        $movie = $toolkit->execute(false, true);
-
-        // check the return value in-case of error
-        if ($movie !== PHPVideoToolkit::RESULT_OK) {
-            // if there was an error then get it
-            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
-        }
+        $flash_filename = "$movieName." . $this->_filetype;
+        $hq_filename    = "$movieName." . $this->_highQualityFiletype;
         
-        // Create a high-quality version as well
-        $hq_filename = "$movieName." . $this->_highQualityFiletype;
-        $toolkit->setConstantQuality($this->_highQualityLevel);
+        // Create flash video
+        $ffmpeg->createVideo($flash_filename, $this->tmpDir, $width, $height);
 
-        // Use ASF for Windows
-        if ($this->_highQualityFiletype == "avi") {
-            $toolkit->setFormat(PHPVideoToolkit::FORMAT_ASF);
-        }
-
-        // Use MPEG-4 for Mac
-        if ($this->_highQualityFiletype == "mov") {
-            $toolkit->setVideoCodec(PHPVideoToolkit::FORMAT_MPEG4);
-        }
-
-        $this->_createHighQualityVideo($toolkit, $movieName);
-
-        return $this->tmpDir . $movieName . "." . $this->_filetype;
+        $ffmpeg->createVideo($hq_filename, $this->tmpDir, $width, $height);
+        $this->_cleanup();
+        return $this->tmpDir . $flash_filename;
     }
     
     /**
-     * Creates a high quality video and converts it to an ipod-compatible format
-     * 
-     * @param Object $toolkit   An instance of phpvideotoolkit
-     * @param String $movieName the filename of the movie
-     * 
-     * @return String the filename of the ipod video
-     */
-    private function _createIpodVideo($toolkit, $movieName) 
-    {
-        $this->_highQualityFiletype = "mp4";
-        
-        $this->_createHighQualityVideo($toolkit, $movieName);
-        
-        $hq_filename = "$movieName." . $this->_highQualityFiletype;
-        $ipodVideoName = $this->tmpDir . "ipod-$hq_filename";
-        $cmd = "/usr/bin/ffmpeg -i " . $this->tmpDir . $hq_filename . " -f mp4 -acodec "
-            . "libmp3lame -ar 48000 -ab 64k -vcodec libx264 -b 800k -flags +loop "
-            . "-cmp +chroma -subq 5 -trellis 1 -refs 1 -coder 0 -me_range 16 "
-            . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bt 200k -maxrate "
-            . "96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 "
-            . "-qmax 51 -qdiff 4 -level 30 -g 30 -async 2 " . $ipodVideoName;
-
-        exec(escapeshellcmd($cmd));
-        if (file_exists($this->tmpDir . $hq_filename)) {
-            unlink($this->tmpDir . $hq_filename);
-        }
-        return $ipodVideoName;
-    }
-    
-    /**
-     * Creates a high quality version of the video and then unlinks all images
-     * used to create the movie.
-     * 
-     * @param Object $toolkit   An instance of phpvideotoolkit
-     * @param String $movieName The filename of the movie
+     * Unlinks all images except the first frame used to create the video.
      * 
      * @return void
      */
-    private function _createHighQualityVideo($toolkit, $movieName)
+    private function _cleanup ()
     {
-        // Create a high-quality version as well
-        $hq_filename = "$movieName." . $this->_highQualityFiletype;
-        $toolkit->setConstantQuality($this->_highQualityLevel);
-        
-        $ok = $toolkit->setOutput($this->tmpDir, $hq_filename, PHPVideoToolkit::OVERWRITE_EXISTING);
-
-        if (!$ok) {
-            // if there was an error then get it
-            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
-        }
-
-        // execute the ffmpeg command
-        $mp4 = $toolkit->execute(false, true);
-
-        if ($mp4 !== PHPVideoToolkit::RESULT_OK) {
-            //         if there was an error then get it
-            logErrorMsg("PHPVideoToolkit: {$toolkit->getLastError()}");
-        }
-
         // Clean up png/tif images that are no longer needed. Leave the first frame for previews.
         foreach (array_slice($this->_images, 1) as $image) {
             if (file_exists($image)) {

@@ -41,6 +41,20 @@ Date.prototype.toUTCDate = function () {
 };
 
 /**
+ * Normalizes behavior for Date.toISOString
+ * 
+ * Browsers with native support for toISOString return a quoted date string, whereas other browsers
+ * return unquoted date string.
+ * 
+ * @see http://code.google.com/p/datejs/issues/detail?id=54
+ * 
+ */
+var toISOString = Date.prototype.toISOString;
+Date.prototype.toISOString = function () {
+    return toISOString.call(this).replace(/"/g, '');
+};
+
+/**
  * @description Pads a string to the left.
  * @param {String} padding Character to use for padding, e.g. " "
  * @param {Int} minLength Length to pad up to
@@ -261,3 +275,64 @@ var pixelsToArcseconds = function (coordinates, scale) {
     };
 };
 
+/**
+ * Takes in a container and adds an event listener so that when the
+ * container is hovered over, its icon will highlight too, and when 
+ * done hovering, the icon goes back to normal. Necessary for some of
+ * the movie/screenshot dialog box icons, which do not seem to highlight
+ * correctly otherwise.
+ * 
+ * @input {Object} container -- jQuery-selected html element that contains 
+ *                              the icon.
+ *                              
+ * @return void
+ */
+var addIconHoverEventListener = function (container) {
+    if (container) {
+        container.hover(
+            function () {
+                var icon = container.find(".ui-icon");
+                icon.addClass("ui-icon-hover");
+            },
+            function () {
+                var icon = container.find(".ui-icon");
+                icon.removeClass("ui-icon-hover");
+            }
+        );
+    }
+};
+
+/**
+ * Helper function to hide all buttons that exist in the viewport.
+ * hideZoomControls is in ZoomControls.js
+ */
+var hideButtonsInViewport = function () {
+    hideZoomControls();
+    $("#social-buttons").hide("fast");
+    $("#center-button").hide("fast");
+    $("#fullscreen-btn").hide("fast");
+};
+
+/**
+ * Helper function to show all buttons that exist inside the viewport.
+ * showZoomControls is in ZoomControls.js
+ */
+var showButtonsInViewport = function () {
+    showZoomControls();
+    $("#social-buttons").show("fast");
+    $("#center-button").show("fast");
+    $("#fullscreen-btn").show("fast");
+};
+
+var layerStringToLayerArray = function (layers) {
+    var layerArray = [], rawArray = layers.split("],");
+    
+    $.each(rawArray, function () {
+         layerArray.push(this.replace(/[\[\]]/g, ""));
+    });
+    return layerArray;
+};
+
+var extractLayerName = function (layer) {
+    return layer.split(",").slice(0,-2);
+};
