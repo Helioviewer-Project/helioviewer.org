@@ -27,8 +27,9 @@ var HelioviewerViewport = Viewport.extend(
     init: function (options, timeControls) {
         this._super(options);
     
-        // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
-        this._rsun         = 959.705;
+        this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
+        this._rsunInKilometers = 695700;
+        
         this._timeControls = timeControls;
 
         // Initialize tile layers
@@ -39,7 +40,8 @@ var HelioviewerViewport = Viewport.extend(
         // Initialize even layers
         this._eventLayerManager = new EventManager(this.requestDate, 86400, this.getRSun());
         
-        var mouseCoords	    = new HelioviewerMouseCoordinates(this.imageScale, this._rsun, this.warnMouseCoords);
+        var mouseCoords     = new HelioviewerMouseCoordinates(this.imageScale, this._rsunInArcseconds, 
+                                                              this.warnMouseCoords);
         this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
         this.resize();
         this._initEventHandlers();
@@ -65,7 +67,14 @@ var HelioviewerViewport = Viewport.extend(
      * Returns the solar radius in arc-seconds for an EIT image at native resolution 
      */
     getRSun: function () {
-        return this._rsun;
+        return this._rsunInArcseconds;
+    },
+    
+    /**
+     * Returns the image scale in Kilometers per pixel
+     */
+    getImageScaleInKilometersPerPixel: function () {
+        return parseFloat(this.imageScale.toPrecision(8) * (this._rsunInKilometers / this._rsunInArcseconds));
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?

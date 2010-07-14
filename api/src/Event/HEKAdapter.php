@@ -113,7 +113,8 @@ class Event_HEKAdapter
             "event_endtime"   => $endTime,
             "event_type"      => $eventType,
             "result_limit"    => 200,
-            "return"          => "kb_archivid,concept,frm_name,frm_institute,obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox"
+            "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
+                                 "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox"
         );
         
         //TODO Add screenshots and movies
