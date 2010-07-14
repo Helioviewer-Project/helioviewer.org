@@ -55,7 +55,9 @@ var HelioviewerTileLayer = TileLayer.extend(
      */
     updateDataSource: function (observatory, instrument, detector, measurement, sourceId, name, layeringOrder) {
         this.name = name;
+        
         this.layeringOrder = layeringOrder;
+        this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
         
         this.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
     },

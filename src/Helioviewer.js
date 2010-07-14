@@ -54,8 +54,8 @@ var Helioviewer = UIController.extend(
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
 
         //this.mediaSettings      = new MediaSettings(this);
-        sshistoryBar = new MediaHistoryBar("screenshot", this.userSettings.get('screenshot-history'), null);
-        mhistoryBar  = new MediaHistoryBar("movie", null, this.userSettings.get('movie-history'));
+        sshistoryBar = new MediaHistoryBar("screenshot", new ScreenshotHistory(this.userSettings.get('screenshot-history')));
+        mhistoryBar  = new MediaHistoryBar("movie", new MovieHistory(this.userSettings.get('movie-history')));
         this.movieBuilder       = new MovieBuilder(this.viewport, mhistoryBar);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
         this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, sshistoryBar);
@@ -268,7 +268,7 @@ var Helioviewer = UIController.extend(
         var endDate, params;
         
         // If currently near the end of available data, shift window back
-        endDate = new Date(Math.min(this.timeControls.getDate().addHours(12), Date.now()));
+        endDate = new Date(Math.min(this.timeControls.getDate().addHours(12), new Date()));
 
         params = {
             "action"    : "launchJHelioviewer",
@@ -277,7 +277,6 @@ var Helioviewer = UIController.extend(
             "imageScale": this.viewport.getImageScaleInKilometersPerPixel(),
             "layers"    : this.viewport.serialize()
         };
-        
         window.open(this.api + "?" + $.param(params), "_blank");
     },
 

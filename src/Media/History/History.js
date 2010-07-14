@@ -21,6 +21,12 @@ var History = Class.extend(
         }
     },
     
+    /**
+     * Adds an item to the history array and slices the array down to 12 items. Oldest items are chopped off
+     * in favor of new items.
+     * 
+     * @input {Object} item -- Either a Screenshot or Movie object.
+     */
     addToHistory: function (item) {
         this.history.push(item);
         this.history = this.history.reverse().slice(0,12).reverse();
@@ -42,18 +48,38 @@ var History = Class.extend(
         return content;
     },
     
+    /**
+     * Iterates through its history and tells each object to remove its
+     * information tooltip in preparation to make a new one. 
+     */
     removeTooltips: function () {
         $.each(this.history, function () {
             this.removeTooltip();
         });
     },
     
+    /**
+     * Iterates through its history and tells each object to create its
+     * information tooltip.
+     */
     setupTooltips: function () {
         $.each(this.history, function () {
             this.setupTooltip();
         });
     },
     
+    /**
+     * Empties history.
+     */
+    clear: function () {
+        this.history = [];
+    },
+    
+    /**
+     * Adds an item to the content string being generated for the history list
+     * 
+     * @input {Object} item A Movie or Screenshot object
+     */
     _addToContentString: function (item) {
         return  "<div id='" + item.id + "' class='text-btn' style='float:left;'>" + 
                     item.name + 
@@ -63,6 +89,11 @@ var History = Class.extend(
                 "</div><br /><br />";
     },
     
+    /**
+     * Iterates through its history and gets a serialized array of each object's
+     * information that needs to be saved. Adds it to serialHistory and returns
+     * that for saving in UserSettings.
+     */
     _serialize: function () {
         var serialHistory = [];
         $.each(this.history, function () {

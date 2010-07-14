@@ -2679,7 +2679,7 @@ PHPVIDEOTOOLKIT_MENCODER_BINARY.' -oac copy -ovc copy -idx -o '.$temp_file.' '.i
 				array_push($this->_unlink_files, $this->_log_file);
 				$exec_string = $exec_string.' &> '.$this->_log_file;
 			}
-
+echo $exec_string; 
 //			execute the command
 			exec($exec_string);
 

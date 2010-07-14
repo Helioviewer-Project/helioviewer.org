@@ -38,32 +38,40 @@ var Screenshot = Media.extend(
      */
     getInformationTable: function () {
         var layerArray, table;
-        layerArray = this.layers.split("],");
+        layerArray = layerStringToLayerArray(this.layers);
         table = "<table>" +
                     "<tr valign='top'>" + 
                         "<td><b>Layers: </b></td>" +
                         "<td>";
         $.each(layerArray, function () {
-            table = table + "<dt>" + this.replace(/[\[\]]/g, " ").split(",").slice(0,-2).join(" ") + "</dt>";
+            table = table + "<dt>" + extractLayerName(this).join(" ") + "</dt>";
         });
         table = table + "</td>" + 
                     "</tr>" +
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr>" +
                         "<td><b>Timestamp: </b></td>" +
                         "<td>" + this.time + "</td>" + 
                     "</tr>" +
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr>" + 
                         "<td><b>Image Scale:&nbsp;&nbsp;</b></td>" +
                         "<td>" + this.imageScale + " arcsec/px</td>" + 
                     "</tr>" +
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr>" + 
                         "<td><b>Dimensions: </b></td>" + 
                         "<td>" + this.width + "x" + this.height + " px</td>" + 
                     "</tr>" + 
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr valign='top'>" + 
                         "<td><b>Preview: </b></td>" + 
                         "<td><img src=" + this.url + " width=150 /></td>" + 
@@ -75,7 +83,11 @@ var Screenshot = Media.extend(
      * @description Opens the download dialog
      */
     download: function () {
-        window.open('api/index.php?action=downloadFile&url=' + this.url, '_parent');
+        if (this.url) {
+            window.open('api/index.php?action=downloadFile&url=' + this.url, '_parent');
+        } else {
+            $(document).trigger("message-console-warn", ["There was an error retrieving your screenshot. Please try again later or refresh the page."]);
+        }
     },
     
     serialize: function () {

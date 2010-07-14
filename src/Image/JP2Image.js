@@ -35,7 +35,7 @@ var JP2Image = Class.extend(
             action:   'getClosestImage',
             server:   this.server,
             sourceId: this.sourceId,
-            date:     this.requestDate.toISOString().replace(/"/g, '')
+            date:     this.requestDate.toISOString()
         };
 
         $.post(this.api, params, $.proxy(this._onImageLoad, this), "json");

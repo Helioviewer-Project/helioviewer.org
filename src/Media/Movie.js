@@ -44,8 +44,7 @@ var Movie = Media.extend(
      */
     setupTooltip: function () {
         this._super();
-        
-        //this.watchDialog = $("#watch-dialog-" + this.id);
+
         var self = this;
         
         this.button.click(function () {
@@ -60,32 +59,40 @@ var Movie = Media.extend(
     getInformationTable: function () {        
         var layerArray, table, previewFrame;
         previewFrame = this.url.split("/").slice(0,-1).join("/") + "/frame0.jpg";
-        layerArray = this.layers.split("],");
+        layerArray = layerStringToLayerArray(this.layers);
         table = "<table>" +
                     "<tr valign='top'>" + 
                         "<td><b>Layers: </b></td>" +
                         "<td>";
         $.each(layerArray, function () {
-            table = table + "<dt>" + this.replace(/[\[\]]/g, " ").split(",").slice(0,-2).join(" ") + "</dt>";
+            table = table + "<dt>" + extractLayerName(this).join(" ") + "</dt>";
         });
         table = table + "</td>" + 
                     "</tr>" +
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr>" +
                         "<td><b>Start Time: </b></td>" +
                         "<td>" + this.startTime + "</td>" + 
                     "</tr>" +
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr>" + 
                         "<td><b>Image Scale:&nbsp;&nbsp;</b></td>" +
                         "<td>" + this.imageScale + " arcsec/px</td>" + 
                     "</tr>" +
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr>" + 
                         "<td><b>Dimensions: </b></td>" + 
                         "<td>" + this.width + "x" + this.height + " px</td>" + 
                     "</tr>" + 
-                    "<tr>&nbsp;</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
                     "<tr valign='top'>" + 
                         "<td><b>Preview: </b></td>" + 
                         "<td><img src=" + previewFrame + " width=150 /></td>" + 
