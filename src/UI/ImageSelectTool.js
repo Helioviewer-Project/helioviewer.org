@@ -23,10 +23,6 @@ var ImageSelectTool = Class.extend(
         this.vpDomNode  = $("#helioviewer-viewport");
 
         this._setupFinishedButton();
-        this.doneButton   = $("#done-selecting-image");
-        this.cancelButton = $("#cancel-selecting-image");
-        this.helpButton   = $("#help-selecting-image");
-        this._setupHelpDialog();
         
         $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
@@ -95,11 +91,7 @@ var ImageSelectTool = Class.extend(
             y2      : this.height * 3 / 4,
             onInit  : function () {
                 self.vpDomNode.qtip("show");
-                $("#social-buttons").hide("fast");
-                $("#center-button").hide("fast");
-                $("#zoomSliderContainer").hide("fast");
-                $("#zoomControlZoomIn").hide("fast");
-                $("#zoomControlZoomOut").hide("fast");
+                hideButtonsInViewport();
             }
         });
         
@@ -107,12 +99,6 @@ var ImageSelectTool = Class.extend(
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
-            
-            // If there is no area selected, don't do anything.
-            if (selection.x2 - selection.x1 <= 0 || selection.y2 - selection.y1 <= 0) {
-                self.cleanup();
-                return;
-            }
             
             viewportInfo  = self.viewport.getViewportInformation();
             visibleCoords = viewportInfo.coordinates;
@@ -124,14 +110,10 @@ var ImageSelectTool = Class.extend(
                 right   : visibleCoords.left + selection.x2
             };
 
-            selectInfo = {
-                coordinates : coords,
-                imageScale  : viewportInfo.imageScale,
-                layers      : viewportInfo.layers,
-                time        : viewportInfo.time
-            };
+            viewportInfo.coordinates = coords;
+
             self.cleanup();
-            callback(selectInfo);
+            callback(viewportInfo);
         });
         
         self.cancelButton.click(function () {
@@ -142,6 +124,7 @@ var ImageSelectTool = Class.extend(
     },
     
     _setupFinishedButton: function () {
+        var self = this;
         this.vpDomNode.qtip({
             position: {
                 corner: {
@@ -149,10 +132,6 @@ var ImageSelectTool = Class.extend(
                     tooltip: 'topRight'
                 }
             },      
-            adjust: {
-                x: -200,
-                y: 200
-            },
             content: {
                 text : "<div id='done-selecting-image' class='text-btn'>" +
                             "<span class='ui-icon ui-icon-circle-check' style='float: left;'></span>" +
@@ -167,12 +146,19 @@ var ImageSelectTool = Class.extend(
                         "</div>"
             },
             show: false,
-            hide: 'click',
+            hide: false,
             style: {
                 name: "mediaDark",
-                "font-weight": 600,
                 "font-size": "10pt",
                 width: 'auto'
+            },
+            api: { 
+                onRender: function () {
+                    self.doneButton   = $("#done-selecting-image");
+                    self.cancelButton = $("#cancel-selecting-image");
+                    self.helpButton   = $("#help-selecting-image");
+                    self._setupHelpDialog();
+                }
             }
         });
     },
@@ -228,11 +214,9 @@ var ImageSelectTool = Class.extend(
      */    
     cleanup: function () {
         this.vpDomNode.qtip("hide");
-        $("#social-buttons").show("fast");
-        $("#center-button").show("fast");
-        $("#zoomSliderContainer").show("fast");
-        $("#zoomControlZoomIn").show("fast");
-        $("#zoomControlZoomOut").show("fast");
+        
+        showButtonsInViewport();
+        
         $('#imgContainer, #transparent-image').remove();
         this.doneButton.unbind('click');
         this.cancelButton.unbind('click');

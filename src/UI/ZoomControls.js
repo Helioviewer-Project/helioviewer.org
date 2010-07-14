@@ -145,3 +145,22 @@ var ZoomControls = Class.extend(
         
     }
 });
+
+
+/**
+ * Helper function to hide the zoom controls
+ */
+var hideZoomControls = function () {
+    $("#zoomSliderContainer").hide("fast");
+    $("#zoomControlZoomIn").hide("fast");
+    $("#zoomControlZoomOut").hide("fast");
+};
+
+/**
+ * Helper function to show the zoom controls
+ */
+var showZoomControls = function () {
+    $("#zoomSliderContainer").show("fast");
+    $("#zoomControlZoomIn").show("fast");
+    $("#zoomControlZoomOut").show("fast");
+};

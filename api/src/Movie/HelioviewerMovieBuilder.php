@@ -199,7 +199,6 @@ class Movie_HelioviewerMovieBuilder
         if ($params['ipod'] === "true" || $params['ipod'] === true) {
         	$params['hqFormat'] = "ipod";
             $outputDir .= "/iPod/";
-            $filename .= "ipod-";
             $format = ".mp4";
         } else {
             $outputDir .= "/regular/";
