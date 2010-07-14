@@ -268,7 +268,7 @@ var Helioviewer = UIController.extend(
         var endDate, params;
         
         // If currently near the end of available data, shift window back
-        endDate = new Date(Math.min(this.timeControls.getDate().addHours(12), Date.now()));
+        endDate = new Date(Math.min(this.timeControls.getDate().addHours(12), new Date()));
 
         params = {
             "action"    : "launchJHelioviewer",
@@ -277,7 +277,6 @@ var Helioviewer = UIController.extend(
             "imageScale": this.viewport.getImageScaleInKilometersPerPixel(),
             "layers"    : this.viewport.serialize()
         };
-        
         window.open(this.api + "?" + $.param(params), "_blank");
     },
 

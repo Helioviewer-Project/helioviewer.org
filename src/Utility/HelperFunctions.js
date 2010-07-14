@@ -41,6 +41,20 @@ Date.prototype.toUTCDate = function () {
 };
 
 /**
+ * Normalizes behavior for Date.toISOString
+ * 
+ * Browsers with native support for toISOString return a quoted date string, whereas other browsers
+ * return unquoted date string.
+ * 
+ * @see http://code.google.com/p/datejs/issues/detail?id=54
+ * 
+ */
+var toISOString = Date.prototype.toISOString;
+Date.prototype.toISOString = function () {
+    return toISOString.call(this).replace(/"/g, '');
+};
+
+/**
  * @description Pads a string to the left.
  * @param {String} padding Character to use for padding, e.g. " "
  * @param {Int} minLength Length to pad up to
