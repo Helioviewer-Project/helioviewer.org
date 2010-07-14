@@ -37,13 +37,14 @@ var Media = Class.extend(
      */
     parseName: function () {
         var rawName, layerArray, name, currentInst, self = this;
-        layerArray = this.layers.split("],").sort();
+        layerArray = layerStringToLayerArray(this.layers).sort();
         name = "";
         
         currentInst = false;
         
         $.each(layerArray, function () {
-            rawName = this.split(",").slice(1,-2);
+            rawName = extractLayerName(this).slice(1);
+
             if(rawName[0] !== currentInst) {
                 currentInst = rawName[0];
                 name += ", " + currentInst + " " + self.parseLayer(rawName);

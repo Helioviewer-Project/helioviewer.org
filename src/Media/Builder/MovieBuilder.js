@@ -259,7 +259,7 @@ var MovieBuilder = MediaBuilder.extend(
         callback = function (data) {
             var id, hqfile;
             $(this).trigger('video-done');
-            
+
             // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
             id = data.match(/\/\d+\//)[0].replace(/\//g, "");
 
@@ -277,6 +277,7 @@ var MovieBuilder = MediaBuilder.extend(
                         var watch = $('#watch-' + id), jgrowl = this;
 
                         movie.setURL(data, id);
+                        self.hideDialogs();
                         self.historyBar.addToHistory(movie);
                         
                         // Open pop-up and display movie

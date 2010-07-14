@@ -76,6 +76,11 @@ var MediaBuilder = Class.extend(
         this.button.click(function () {
             $(".jGrowl-notification .close").click();
         });
+        
+        var self = this;
+        $("#fullscreen-btn").click(function () {
+            self.hideDialogs();
+        });
 
         this.historyBar.setup();
     },

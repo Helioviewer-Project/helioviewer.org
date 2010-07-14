@@ -288,3 +288,37 @@ var addIconHoverEventListener = function (container) {
     }
 };
 
+/**
+ * Helper function to hide all buttons that exist in the viewport.
+ * hideZoomControls is in ZoomControls.js
+ */
+var hideButtonsInViewport = function () {
+    hideZoomControls();
+    $("#social-buttons").hide("fast");
+    $("#center-button").hide("fast");
+    $("#fullscreen-btn").hide("fast");
+};
+
+/**
+ * Helper function to show all buttons that exist inside the viewport.
+ * showZoomControls is in ZoomControls.js
+ */
+var showButtonsInViewport = function () {
+    showZoomControls();
+    $("#social-buttons").show("fast");
+    $("#center-button").show("fast");
+    $("#fullscreen-btn").show("fast");
+};
+
+var layerStringToLayerArray = function (layers) {
+    var layerArray = [], rawArray = layers.split("],");
+    
+    $.each(rawArray, function () {
+         layerArray.push(this.replace(/[\[\]]/g, ""));
+    });
+    return layerArray;
+};
+
+var extractLayerName = function (layer) {
+    return layer.split(",").slice(0,-2);
+};
