@@ -107,9 +107,7 @@ var TimeControls = Class.extend(
      * Gets an ISO 8601 string representation of the current observation time
      */
     toISOString: function () {
-        // Work-around: Browsers with native support for toISOString return a quoted date string
-        // http://code.google.com/p/datejs/issues/detail?id=54
-        return this._date.toISOString().replace(/"/g, '');
+        return this._date.toISOString();
     },
     
     /**
