@@ -16,7 +16,8 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["local_tiling_enabled", "distributed_tiling_enabled", "disable_cache"];
+        this.bools  = ["local_tiling_enabled", "distributed_tiling_enabled", "disable_cache",
+                       "enable_movie_button", "enable_screenshot_button"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
                        "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames",
                        "max_tile_layers"];

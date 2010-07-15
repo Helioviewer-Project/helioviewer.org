@@ -23,9 +23,6 @@ var ImageSelectTool = Class.extend(
         this.vpDomNode  = $("#helioviewer-viewport");
 
         this._setupFinishedButton();
-        this.button     = $("#done-selecting-image");
-        this.helpButton = $("#image-select-help");
-        this._setupHelpDialog();
         
         $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
@@ -94,24 +91,14 @@ var ImageSelectTool = Class.extend(
             y2      : this.height * 3 / 4,
             onInit  : function () {
                 self.vpDomNode.qtip("show");
-                $("#social-buttons").hide("fast");
-                $("#center-button").hide("fast");
-                $("#zoomSliderContainer").hide("fast");
-                $("#zoomControlZoomIn").hide("fast");
-                $("#zoomControlZoomOut").hide("fast");
+                hideButtonsInViewport();
             }
         });
         
-        self.button.click(function () {
+        self.doneButton.click(function () {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
-            
-            // If there is no area selected, don't do anything.
-            if (selection.x2 - selection.x1 <= 0 || selection.y2 - selection.y1 <= 0) {
-                self.cleanup();
-                return;
-            }
             
             viewportInfo  = self.viewport.getViewportInformation();
             visibleCoords = viewportInfo.coordinates;
@@ -123,18 +110,21 @@ var ImageSelectTool = Class.extend(
                 right   : visibleCoords.left + selection.x2
             };
 
-            selectInfo = {
-                coordinates : coords,
-                imageScale  : viewportInfo.imageScale,
-                layers      : viewportInfo.layers,
-                time        : viewportInfo.time
-            };
+            viewportInfo.coordinates = coords;
+
             self.cleanup();
-            callback(selectInfo);
+            callback(viewportInfo);
         });
+        
+        self.cancelButton.click(function () {
+            self.cleanup();
+        });
+        
+        self._setupEventListeners();
     },
     
     _setupFinishedButton: function () {
+        var self = this;
         this.vpDomNode.qtip({
             position: {
                 corner: {
@@ -142,28 +132,44 @@ var ImageSelectTool = Class.extend(
                     tooltip: 'topRight'
                 }
             },      
-            adjust: {
-                x: -200,
-                y: 200
-            },
             content: {
                 text : "<div id='done-selecting-image' class='text-btn'>" +
                             "<span class='ui-icon ui-icon-circle-check' style='float: left;'></span>" +
                             "<span>Done</span>" +
                         "</div>" + 
-                        "<div id='image-select-help' class='text-btn' style='float: right;'>" + 
+                        "<div id='cancel-selecting-image' class='text-btn'>" + 
+                            "<span class='ui-icon ui-icon-circle-close' style='float:left;' />" + 
+                            "<span>Cancel</span>" + 
+                        "</div>" +
+                        "<div id='help-selecting-image' class='text-btn' style='float: right;'>" + 
                             "<span class='ui-icon ui-icon-info'></span>" +
                         "</div>"
             },
             show: false,
-            hide: 'click',
+            hide: false,
             style: {
                 name: "mediaDark",
-                "font-weight": 600,
                 "font-size": "10pt",
                 width: 'auto'
+            },
+            api: { 
+                onRender: function () {
+                    self.doneButton   = $("#done-selecting-image");
+                    self.cancelButton = $("#cancel-selecting-image");
+                    self.helpButton   = $("#help-selecting-image");
+                    self._setupHelpDialog();
+                }
             }
         });
+    },
+    
+    /**
+     * Adds hover event listeners for the icons next to the text in the dialog.
+     */
+    _setupEventListeners: function () {
+        addIconHoverEventListener(this.doneButton);
+        addIconHoverEventListener(this.cancelButton);
+        addIconHoverEventListener(this.helpButton);
     },
     
     _setupHelpDialog: function () {
@@ -208,13 +214,12 @@ var ImageSelectTool = Class.extend(
      */    
     cleanup: function () {
         this.vpDomNode.qtip("hide");
-        $("#social-buttons").show("fast");
-        $("#center-button").show("fast");
-        $("#zoomSliderContainer").show("fast");
-        $("#zoomControlZoomIn").show("fast");
-        $("#zoomControlZoomOut").show("fast");
+        
+        showButtonsInViewport();
+        
         $('#imgContainer, #transparent-image').remove();
-        this.button.unbind('click');
+        this.doneButton.unbind('click');
+        this.cancelButton.unbind('click');
         this.helpButton.qtip("hide");
         this.active = false;
         $("body").removeClass('disable-fullscreen-mode');

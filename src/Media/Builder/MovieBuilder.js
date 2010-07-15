@@ -51,8 +51,11 @@ var MovieBuilder = MediaBuilder.extend(
      */
     _setupEventListeners: function () {
         var self = this, viewportInfo;
+        
         this.fullVPButton     = $("#" + this.id + "-full-viewport");
         this.selectAreaButton = $("#" + this.id + "-select-area");
+
+        this._super();
     
         this.fullVPButton.click(function () {
             self.hideDialogs();
@@ -74,13 +77,6 @@ var MovieBuilder = MediaBuilder.extend(
                 $(document).trigger("enable-select-tool", $.proxy(self.checkMovieLayers, self));
             }
         });
-        
-        // Close any open jGrowl notifications if the button is clicked.
-        this.button.click(function () {
-            $(".jGrowl-notification .close").click();
-        });
-        
-        this.historyBar.setup();
     },
     
     /**
@@ -91,6 +87,14 @@ var MovieBuilder = MediaBuilder.extend(
      *                     
      */
     checkMovieLayers: function (viewportInfo) {
+        if (!this.ensureValidArea(viewportInfo)) {
+            $(document).trigger("message-console-warn", ["The area you have selected is too small to create a movie. Please try again."]);
+            return;
+        } else if (!this.ensureValidLayers(viewportInfo)) {
+            $(document).trigger("message-console-warn", ["You must have at least one layer in your movie. Please try again."]);
+            return;
+        }
+        
         var finalLayers, self, layers, table, info, rawName, name, tableValues, checkboxes, newInfo;
         
         layers = viewportInfo.layers.split("],");
@@ -168,7 +172,7 @@ var MovieBuilder = MediaBuilder.extend(
      * <okButton>
      */
     createLayerSelectionTable: function (layers) {
-        var table, rawName, name;
+        var table, rawName, name, numLayers;
         table = '<div id="shadowbox-form" class="ui-widget ui-widget-content ui-corner-all ' + 
                     'ui-helper-clearfix" style="margin: 10px; padding: 20px; font-size: 12pt;" >' +
                     'Please select at most 3 layers from the choices below for the movie: <br /><br />' +
@@ -177,15 +181,19 @@ var MovieBuilder = MediaBuilder.extend(
         // Get a user-friendly name for each layer. each layer in "layers" is a string: 
         // "obs,inst,det,meas,visible,opacity". Cut off visible and opacity and get rid of
         // square brackets.
+        layerNum = 1;
         $.each(layers, function () {
             rawName = this.split(',').slice(0, -2);
             name = rawName.join(" ").replace(/[\[\]]/g, "");
-            
+            // Only check the first 3 layers by default.
+            checked = layerNum < 4? 'checked=true' : "";
+
             table +=    '<tr>' +
                             '<td class="layers-checkbox"><input type=checkbox name="layers" ' + 
-                                'checked=true value="' + this.replace("]", "") + "]" + '"/></td>' +
+                                checked + ' value="' + this.replace("]", "") + "]" + '"/></td>' +
                             '<td class="layers-name">' + name + '</td>' + 
                         '</tr>';
+            layerNum += 1;
         });
         
         table +=    '</table>' + 
@@ -203,7 +211,7 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var timeout, options, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, scaleDown = false, self = this;
+        var timeout, options, end, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, valid, scaleDown = false, self = this;
         
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -218,11 +226,16 @@ var MovieBuilder = MediaBuilder.extend(
             scaleDown = true;
         }
 
+        // Default to 24 hours after startTime.
+        end = new Date(getUTCTimestamp(viewportInfo.time) + 86400000);
+        end = end.toISOString().replace(/"/g, '');
+        
         // Ajax Request Parameters
         params = {
             action     : "buildMovie",
             layers     : viewportInfo.layers,
             startTime  : viewportInfo.time,
+            endTime    : end,
             imageScale : viewportInfo.imageScale,
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
@@ -251,28 +264,31 @@ var MovieBuilder = MediaBuilder.extend(
         callback = function (data) {
             var id, hqfile;
             $(this).trigger('video-done');
-            
-            // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
-            id = data.match(/\/\d+\//)[0].replace(/\//g, "");
 
             self.building = false;
-            // chop off the flv at the end of the file and replace it with mov/asf/mp4
-            hqfile = data.slice(0, -3) + this.hqFormat;
             
             if (data !== null) {
+                // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
+                id = data.match(/\/\d+\//)[0].replace(/\//g, "");
+
+                // chop off the flv at the end of the file and replace it with mov/asf/mp4
+                hqfile = data.slice(0, -3) + this.hqFormat;
+                
                 // Options for the jGrowl notification. After it has opened, it will create
                 // event listeners for the watch link                               
                 options = {
                     sticky: true,
                     header: "Your movie is ready!",
                     open  : function () {
-                        var watch = $('#watch-' + id);
+                        var watch = $('#watch-' + id), jgrowl = this;
 
                         movie.setURL(data, id);
-                        self.historyBar.addMovieToHistory(movie);
+                        self.hideDialogs();
+                        self.historyBar.addToHistory(movie);
                         
                         // Open pop-up and display movie
                         watch.click(function () {
+                            $(".jGrowl-notification .close").click();
                             movie.playMovie();
                         });
                     }
@@ -283,6 +299,8 @@ var MovieBuilder = MediaBuilder.extend(
                 $(document).trigger("message-console-info", [
                             "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or download it.<br />(opens in a pop-up)</div>" +
                             "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>", options]);
+            } else {
+                $(document).trigger("message-console-warn", ["There are not enough images to create a video for this date. Please try a different date or different layers."]);
             }
         };
 

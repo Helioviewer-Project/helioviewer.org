@@ -98,7 +98,10 @@ var TileLayer = Layer.extend(
         this._updateDimensions();
         
         this.tileLoader.setTileVisibilityRange(tileVisibilityRange);
-        this.tileLoader.reloadTiles(true);
+        
+        if (this.visible) {
+            this.tileLoader.reloadTiles(true);
+        }
     },
     
     /**
@@ -113,8 +116,8 @@ var TileLayer = Layer.extend(
      */
     onLoadImage: function () {
         this.loaded = true;
-        
         this._updateDimensions();
+
         this.tileLoader.reloadTiles(false);
         
         // Update viewport sandbox if necessary
@@ -144,6 +147,20 @@ var TileLayer = Layer.extend(
         // Everyone else
         else {
             $(this.domNode).css("opacity", opacity / 100);
+        }
+    },
+    
+    /**
+     * Reloads tiles if visibility is being set to true.
+     */
+    setVisibility: function (visible) {
+        this._super(visible);
+        if (visible) {
+            this._updateDimensions();
+            this.tileLoader.reloadTiles(true);
+        
+            // Update viewport sandbox if necessary
+            $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
         }
     },
     
