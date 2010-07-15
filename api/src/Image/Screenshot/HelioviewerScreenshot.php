@@ -79,7 +79,12 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 
         // Find the closest image for each layer, add the layer information string to it
         foreach ($layerInfoArray as $layer) {
-            $closestImage = $this->_getClosestImage($layer['sourceId']);
+        	if (!$layer['closestImage']) {
+                $closestImage = $this->_getClosestImage($layer['sourceId']);
+        	} else {
+        		$closestImage = $layer['closestImage'];
+        	}
+
             $obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
             $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";
             

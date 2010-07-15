@@ -100,6 +100,7 @@ class Movie_HelioviewerMovieBuilder
             	$now        = time();
             	if ($now - $startTime < 86400) {
                     $startTime -= 86400;
+                    $isoStartTime = toISOString(parseUnixTimestamp($startTime));
             	}
                 $endTime    = $startTime + 86400;
                 $isoEndTime = toISOString(parseUnixTimestamp($endTime));
@@ -107,11 +108,13 @@ class Movie_HelioviewerMovieBuilder
                 $isoEndTime = $this->_params['endTime'];
                 $endTime    = toUnixTimestamp($isoEndTime);
             }
-            
+
             $numFrames = ($this->_params['numFrames'] === false)? 
                             $this->_determineOptimalNumFrames($layers, $isoStartTime, $isoEndTime) :
                             min($this->_params['numFrames'], $this->maxNumFrames);
-            $numFrames = max($numFrames, 10);
+            if ($numFrames < 10) {
+            	return false;
+            }
 
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 
@@ -141,6 +144,20 @@ class Movie_HelioviewerMovieBuilder
             echo 'Error: ' .$e->getMessage();
             exit();
         }
+    }
+    
+    private function _getImageTimestamps($layers, $startTime, $endTime) {
+        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
+        $imgIndex = new Database_ImgIndex();
+        $timestamps = array();
+  	
+    	foreach ($layers as $layer) {
+    		$layerArray = singleLayerToArray($layer);
+    		$sourceId   = getSourceIdFromLayerArray($layerArray);
+            $images     = $imgIndex->getImageRange($startTime, $endTime, $sourceId);
+            $timestamps[$sourceId] = $images;	
+    	}
+    	return $timestamps;
     }
     
     /**
@@ -277,7 +294,7 @@ class Movie_HelioviewerMovieBuilder
                 'watermarkOn'=> $this->_params['watermarkOn']
             );
 
-            $image = $builder->takeScreenshot($params, $tmpDir);
+            $image = $builder->takeScreenshot($params, $tmpDir, array());
             array_push($images, $image);
         }
         
@@ -302,12 +319,7 @@ class Movie_HelioviewerMovieBuilder
         
         foreach ($layers as $layer) {
             $layerInfo = singleLayerToArray($layer);
-            if (sizeOf($layerInfo) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $opacity) = $layerInfo;
-                $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);        
-            } else {
-                $sourceId = $layerInfo[0];
-            }
+            $sourceId  = getSourceIdFromLayerArray($layerInfo);
 
             $maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, $sourceId));
         }
