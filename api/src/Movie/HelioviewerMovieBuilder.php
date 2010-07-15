@@ -256,6 +256,7 @@ class Movie_HelioviewerMovieBuilder
             array_push($timestamps, round($time));
         }
         $frameNum = 0;
+
         foreach ($timestamps as $time) {
             $isoTime = toISOString(parseUnixTimestamp($time));
             $params = array(
@@ -307,6 +308,7 @@ class Movie_HelioviewerMovieBuilder
             } else {
                 $sourceId = $layerInfo[0];
             }
+
             $maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, $sourceId));
         }
 

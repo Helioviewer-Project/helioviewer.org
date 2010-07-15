@@ -309,6 +309,8 @@ class Module_WebClient implements Module
         foreach($response as $filepath) {
             array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
+        
+        header('Content-Type: application/json');
         echo JSON_encode($finalResponse);
         return $finalResponse;
     }
