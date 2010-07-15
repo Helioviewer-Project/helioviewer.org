@@ -70,15 +70,19 @@ var HelioviewerTileLayer = TileLayer.extend(
         this.loaded = true;
         
         this._updateDimensions();
+        
         if (this.visible) {
             this.tileLoader.reloadTiles(false);
+
+//          Update viewport sandbox if necessary
+            $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
+        }        
         
-            // Update viewport sandbox if necessary
-            $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]).
-                        trigger("update-tile-layer-accordion-entry", 
-                                [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
-                                this.image.filepath, this.image.filename, this.image.server]);
-        }
+        
+        $(document).trigger("update-tile-layer-accordion-entry", 
+        		[this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
+				this.image.filepath, this.image.filename, this.image.server]);
+
     },
     
     /**
