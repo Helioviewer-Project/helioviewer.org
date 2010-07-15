@@ -211,7 +211,7 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var timeout, options, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, scaleDown = false, self = this;
+        var timeout, options, end, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, valid, scaleDown = false, self = this;
         
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -225,7 +225,7 @@ var MovieBuilder = MediaBuilder.extend(
         if (movieHeight >= vpHeight - 50) {
             scaleDown = true;
         }
-
+        
         // Ajax Request Parameters
         params = {
             action     : "buildMovie",
@@ -260,14 +260,15 @@ var MovieBuilder = MediaBuilder.extend(
             var id, hqfile;
             $(this).trigger('video-done');
 
-            // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
-            id = data.match(/\/\d+\//)[0].replace(/\//g, "");
-
             self.building = false;
-            // chop off the flv at the end of the file and replace it with mov/asf/mp4
-            hqfile = data.slice(0, -3) + this.hqFormat;
             
             if (data !== null) {
+                // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
+                id = data.match(/\/\d+\//)[0].replace(/\//g, "");
+
+                // chop off the flv at the end of the file and replace it with mov/asf/mp4
+                hqfile = data.slice(0, -3) + this.hqFormat;
+                
                 // Options for the jGrowl notification. After it has opened, it will create
                 // event listeners for the watch link                               
                 options = {
@@ -293,6 +294,8 @@ var MovieBuilder = MediaBuilder.extend(
                 $(document).trigger("message-console-info", [
                             "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or download it.<br />(opens in a pop-up)</div>" +
                             "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>", options]);
+            } else {
+                $(document).trigger("message-console-warn", ["There are not enough images to create a video for this date. Please try a different date or different layers."]);
             }
         };
 

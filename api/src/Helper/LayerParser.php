@@ -63,4 +63,17 @@ function singleLayerToArray($layer)
 {
 	return explode(",", str_replace(array("[","]"), "", $layer));
 }
+
+function getSourceIdFromLayerArray($layerArray)
+{
+    if (sizeOf($layerArray) > 4) {
+        list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
+        
+        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
+        $imgIndex = new Database_ImgIndex();
+        $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
+        return $sourceId;
+    }
+    return $layerArray[0];	
+}
 ?>
