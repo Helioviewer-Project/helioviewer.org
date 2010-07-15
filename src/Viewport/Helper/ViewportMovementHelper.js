@@ -299,15 +299,16 @@ var ViewportMovementHelper = Class.extend(
         
         // get offset and sandbox dimensions
         imageCenter           = this.getContainerPos();
-        originalSandboxWidth  = this.sandbox.width(); 
-        originalSandboxHeight = this.sandbox.height();
+        // Ensure width/height are at least 1 to avoid dividing by zero
+        originalSandboxWidth  = this.sandbox.width()  || 1; 
+        originalSandboxHeight = this.sandbox.height() || 1;
         
         // update sandbox
         this.updateSandbox();
         
         sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
         sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
-        
+
         this.moveTo(imageCenter.x * sandboxWidthScaleFactor, imageCenter.y * sandboxHeightScaleFactor);
         
         this.mouseCoords.updateImageScale(imageScale);

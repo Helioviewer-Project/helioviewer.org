@@ -152,6 +152,8 @@ var TileLayer = Layer.extend(
     
     /**
      * Reloads tiles if visibility is being set to true.
+     * This method is almost identical to onLoadImage, except that reloadTiles
+     * needs to be called with true instead of false.
      */
     setVisibility: function (visible) {
         this._super(visible);
