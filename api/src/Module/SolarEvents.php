@@ -77,10 +77,21 @@ class Module_SolarEvents implements Module
     /**
      * Gets a JSON-formatted list of Features/Events for the requested time range and FRMs 
      *
+     *  Example Query:
+     *
      * http://www.lmsal.com/hek/her?cosec=2&cmd=search&type=column&event_type=**
      *  &event_starttime=2010-07-01T00:00:00&event_endtime=2010-07-02T00:00:00
      *  &event_coordsys=helioprojective&x1=-1200&x2=1200&y1=-1200&y2=1200&result_limit=200&return=kb_archivid,concept,
      *  frm_institute,obs_observatory,frm_name,event_starttime,event_endtime,hpc_x,hpc_y,hpc_bbox
+     *  
+     *  QUERYING A SINGLE EVENT:
+     *  
+     *  http://www.lmsal.com/hek/her?cosec=2&cmd=search&type=column&event_type=**
+     *  &event_starttime=0001-01-01T00:00:00&event_endtime=9999-01-01T00:00:00
+     *  &event_coordsys=helioprojective&x1=-1200&x2=1200&y1=-1200&y2=1200&param0=kb_archivid
+     *  &op0==&value0=ivo://helio-informatics.org/FA1550_YingnaSu_20090415_154655
+     *  &return=required
+     *  
      * @return void
      */
     public function getEvents()

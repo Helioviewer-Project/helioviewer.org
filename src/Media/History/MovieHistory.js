@@ -11,27 +11,48 @@ var MovieHistory = History.extend(
     {
     /**
      * @constructs
-     * @param history -- an array of saved history from UserSettings. May be null.
+     * @param history -- an array of saved history from UserSettings. May be null or empty.
      */    
     init: function (history) {
         this._super(history);
     },
 
+    /**
+     * Adds the item to history, then saves the setting in UserSettings.
+     * 
+     * @input {Object} item A Movie object
+     */
     addToHistory: function (item) {
         this._super(item);
         $(document).trigger("save-setting", ["movie-history", this._serialize()]);
     },
-
-    createContentString: function () {
-        return /*"Movies: <br />" + */this._super();
+    
+    /**
+     * Completely empties history and saves an empty array to UserSettings.
+     */
+    clear: function () {
+        this._super();
+        $(document).trigger("save-setting", ["movie-history", this.history]);
     },
-
+    
+    /**
+     * Adds an item to the content string and also adds an emtpy div where the watch
+     * dialog will be created.
+     * 
+     * @param {Object} item A Movie object
+     */
     _addToContentString: function (item) {
         return  this._super(item) + 
                 "<div id='watch-dialog-" + item.id + "' style='display:none'>" +
                 "</div>";
     },
-
+    
+    /**
+     * Takes in an array of history gotten from UserSettings and creates Movie objects from it.
+     * Slices the array down to 12 objects.
+     * 
+     * @input {Array} history An array of saved movie histories
+     */
     _loadSavedHistory: function (history) {
         var self = this;
         $.each(history, function () {

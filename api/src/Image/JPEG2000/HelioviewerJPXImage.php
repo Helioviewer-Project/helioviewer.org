@@ -114,7 +114,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
                                     "exceeding the maximum allowed number of frames (" . HV_MAX_JPX_FRAMES . ").";
             }
         } else {
-            // Chose an optimal cadence
+            // Choose an optimal cadence
             // If possible, all images between the start and end dates will be included in the jpx.  
             // If the number of images in the date range exceeds the maximum number of frames allowed, a lower 
             // cadence (increased time between images) is chosen.

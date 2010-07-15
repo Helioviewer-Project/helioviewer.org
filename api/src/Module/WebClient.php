@@ -326,47 +326,6 @@ class Module_WebClient implements Module
         );
     }
     /**
-     * launchJHelioviewer
-     *
-     * @return void
-     */
-    public function launchJHelioviewer ()
-    {
-        $args = array($this->_params['startTime'], $this->_params['endTime'], 
-                      $this->_params['imageScale'], $this->_params['layers']);
-     
-        header('content-type: application/x-java-jnlp-file');
-        header('content-disposition: attachment; filename="JHelioviewer.jnlp"');
-        echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
-
-        ?>
-        <jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
-            <information>
-                <title>JHelioviewer</title>
-                <vendor>ESA</vendor>
-                <homepage href="index.html" />
-                <description>JHelioviewer web launcher</description>
-                <offline-allowed />
-            </information>
-
-            <resources>
-                <j2se version="1.5+" max-heap-size="1000M"/>
-                <jar href="JHelioviewer.jar" />
-            </resources>
-
-            <security>
-                <all-permissions />
-            </security>
-
-            <application-desc main-class="org.helioviewer.JavaHelioViewer">
-                <argument>-jhv</argument>
-                <argument><?php vprintf("[startTime=%s;endTime=%s;linked=true;imageScale=%f;imageLayers=%s]", $args);?></argument>
-            </application-desc>
-        </jnlp>
-    <?php
-    }
-
-    /**
      * sendEmail
      * TODO: CAPTCHA, Server-side security
      *
@@ -439,6 +398,8 @@ class Module_WebClient implements Module
         foreach($response as $filepath) {
             array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
+        
+        header('Content-Type: application/json');
         echo JSON_encode($finalResponse);
         return $finalResponse;
     }
@@ -544,13 +505,6 @@ class Module_WebClient implements Module
         case "getJP2Header":
             break;
         case "getViewerImage":
-            break;
-        case "launchJHelioviewer":
-            $expected = array(
-                'required' => array('startTime', 'endTime', 'imageScale', 'layers'),
-                'floats'   => array('imageScale'),
-                'dates'    => array('startTime', 'endTime'),
-            );
             break;
         case "takeScreenshot":
             $required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');

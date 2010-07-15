@@ -17,20 +17,35 @@ var ScreenshotHistory = History.extend(
         this._super(history);
     },
     
+    /**
+     * Adds the item to history, then saves the setting in UserSettings.
+     * 
+     * @input {Object} item A Screenshot object
+     */
     addToHistory: function (item) {
         this._super(item);
         $(document).trigger("save-setting", ["screenshot-history", this._serialize()]);
     },
-    
-    createContentString: function () {
-        return /*"Screenshots: <br />" + */this._super();
+
+    /**
+     * Completely empties history and saves an empty array to UserSettings.
+     */
+    clear: function () {
+        this._super();
+        $(document).trigger("save-setting", ["screenshot-history", this.history]);
     },
     
+    /**
+     * Takes in an array of history gotten from UserSettings and creates Screenshot objects from it.
+     * Slices the array down to 12 objects.
+     * 
+     * @input {Array} history An array of saved screenshot histories
+     */
     _loadSavedHistory: function (history) {
         var self = this;
         $.each(history, function () {
             self.history.push(new Screenshot(this, new Date(this.dateRequested)));
         });
-        this.history = this.history.slice(0,12);
+        this.history = this.history.reverse().slice(0,12).reverse();
     }
 });
