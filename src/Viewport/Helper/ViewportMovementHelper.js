@@ -155,7 +155,7 @@ var ViewportMovementHelper = Class.extend(
      * @param {Int} y Y-value
      */
     moveTo: function (x, y) {
-        this.sandboxHelper.moveContainerTo(x, y);
+        //this.sandboxHelper.moveContainerTo(x, y);
 
         // Check throttle
         if (this.moveCounter === 0) {

@@ -71,7 +71,7 @@ function getSourceIdFromLayerArray($layerArray)
         
         include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();
-        $sourceId = $imgIndex->getSourceId($obs, $inst, $det, $meas);
+        $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
         return $sourceId;
     }
     return $layerArray[0];	
