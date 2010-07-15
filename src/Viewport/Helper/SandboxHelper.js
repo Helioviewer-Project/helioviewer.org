@@ -63,15 +63,15 @@ var SandboxHelper = Class.extend(
         // Update moving container position
         newHCLeft = Math.max(0, Math.min(desiredSandboxSize.width,  containerPos.left + (0.5 * change.x)));
         newHCTop  = Math.max(0, Math.min(desiredSandboxSize.height, containerPos.top  + (0.5 * change.y)));
-   
+ 
         this.moveContainerTo(newHCLeft, newHCTop);
     },
         
     moveContainerTo: function (x, y) {
-        if (x > 0) {
+        if (x > 0 || this.movingContainer.css('left').slice(0,-2) !== "0") {
             this.movingContainer.css({left: x + 'px'});
         }
-        if (y > 0) {
+        if (y > 0 || this.movingContainer.css('top').slice(0,-2) !== "0") {
             this.movingContainer.css({top:  y + 'px'});
         }
     }
