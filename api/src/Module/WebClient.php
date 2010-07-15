@@ -276,8 +276,9 @@ class Module_WebClient implements Module
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $tmpDir  = HV_CACHE_DIR . "/screenshots";
+
+        $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
         
-        $response = $builder->takeScreenshot($this->_params, $tmpDir);
         if (!isset($this->_params['display']) || !$this->_params['display'] || $this->_params['display'] === "false") {
             echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
         }
