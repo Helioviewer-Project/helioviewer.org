@@ -31,6 +31,7 @@ var TileLoader = Class.extend(
      */
     updateTileVisibilityRange: function (range, tilesLoaded) {
         this.tileVisibilityRange = range;
+
         if (tilesLoaded) {
             return this._checkTiles();
         }
@@ -72,7 +73,7 @@ var TileLoader = Class.extend(
             yStart: - (numTilesY / 2),
             yEnd  :   (numTilesY / 2) - 1
         };
-        
+
         return boundaries;
     },
     
@@ -81,10 +82,14 @@ var TileLoader = Class.extend(
      */
     _checkTiles: function () {
         var i, j;
+
         for (i = this.tileVisibilityRange.xStart; i <= this.tileVisibilityRange.xEnd; i += 1) {
             for (j = this.tileVisibilityRange.yStart; j <= this.tileVisibilityRange.yEnd; j += 1) {
                 if (!this.loadedTiles[i]) {
                     this.loadedTiles[i] = {};
+                }
+                if (!this.validTiles) {
+                    this.validTiles = {};
                 }
                 if (!this.validTiles[i]) {
                     this.validTiles[i] = {};
@@ -99,7 +104,7 @@ var TileLoader = Class.extend(
     
     /**
      * @description Creates an array of tile dom-nodes
-     * @return {Array} An array containing pointgetDimensions: ers to all of the tiles currently loaded
+     * @return {Array} An array containing pointers to all of the tiles currently loaded
      */
     getTileArray: function () {
         var tiles = [];
