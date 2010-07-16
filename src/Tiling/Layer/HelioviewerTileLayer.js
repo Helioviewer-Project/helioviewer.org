@@ -78,6 +78,8 @@ var HelioviewerTileLayer = TileLayer.extend(
             //          Update viewport sandbox if necessary
 
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
+	}
+        $(document).trigger("update-tile-layer-accordion-entry", 
                             [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
                                 this.image.filepath, this.image.filename, this.image.server]);
     },
