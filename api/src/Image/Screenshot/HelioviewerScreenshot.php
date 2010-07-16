@@ -111,7 +111,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 $obsInfo['measurement'], $obsInfo['layeringOrder'], 
                 $offsetX, $offsetY, $layer['opacity'],
                 $closestImage['width'], $closestImage['height'], 
-                $closestImage['scale'], $closestImage['date'], $compress
+                $closestImage['scale'], $closestImage['date'], $this->compress
             );
             array_push($this->layerImages, $image);
         }
