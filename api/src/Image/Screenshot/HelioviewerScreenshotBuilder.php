@@ -46,7 +46,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      *                              
      * @return string the screenshot
      */
-    public function takeScreenshot($originalParams, $outputDir)
+    public function takeScreenshot($originalParams, $outputDir, $closestImages)
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
@@ -55,7 +55,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             'quality' 	  => 10,
             'display'	  => true,
             'watermarkOn' => true,
-            'filename'    => false
+            'filename'    => false,
+            'compress'    => false
         );
         $params = array_merge($defaults, $originalParams);
         
@@ -80,7 +81,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
 
         $layerArray = $this->_createMetaInformation(
             $params['layers'],
-            $imageScale, $width, $height
+            $imageScale, $width, $height, $closestImages
         );
         
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
@@ -89,7 +90,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $params['filename'], 
             $params['quality'], $params['watermarkOn'],
             array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
-            $outputDir
+            $outputDir, $params['compress']
         );
 
         $screenshot->buildImages($layerArray);
@@ -186,7 +187,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      * @return {Array} $metaArray -- The array containing one meta information 
      * object per layer
      */
-    private function _createMetaInformation($layers, $imageScale, $width, $height)
+    private function _createMetaInformation($layers, $imageScale, $width, $height, $closestImages)
     {
         $layerStrings = getLayerArrayFromString($layers);
         $metaArray    = array();
@@ -197,19 +198,20 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         
         foreach ($layerStrings as $layer) {
             $layerArray = singleLayerToArray($layer);
-            if (sizeOf($layerArray) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
-                $sourceId = $this->_getSourceId($observatory, $instrument, $detector, $measurement);		
-            } else {
-                list($sourceId, $visible, $opacity) = $layerArray;
-            }
+            $sourceId   = getSourceIdFromLayerArray($layerArray);
+            $opacity    = array_pop($layerArray);
+            $visible    = array_pop($layerArray);
+
+            $image = (sizeOf($closestImages) > 0? $closestImages[$sourceId] : false);
+
             if ($visible !== 0 && $visible !== "0") {
                 $layerInfoArray = array(
-                    'sourceId' 	 => $sourceId,
-                    'width' 	 => $width,
-                    'height'	 => $height,
-                    'imageScale' => $imageScale,
-                    'opacity'	 => $opacity
+                    'sourceId' 	   => $sourceId,
+                    'width' 	   => $width,
+                    'height'	   => $height,
+                    'imageScale'   => $imageScale,
+                    'opacity'	   => $opacity,
+                    'closestImage' => $image
                 );
                 array_push($metaArray, $layerInfoArray);
             }
@@ -246,23 +248,5 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             return $composite;
         }
     }
-    
-    /**
-     * If no source ID is given in the parameters, this will query the database
-     * and find the image's source id
-     * 
-     * @param string $obs  Observatory
-     * @param string $inst Instrument
-     * @param string $det  Detector
-     * @param string $meas Measurement
-     * 
-     * @return int the source id of the image
-     */
-    private function _getSourceId($obs, $inst, $det, $meas)
-    {
-        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
-        $imgIndex = new Database_ImgIndex();
-        $result = $imgIndex->getSourceId($obs, $inst, $det, $meas);
-        return $result;    	
-    }
 }
+?>

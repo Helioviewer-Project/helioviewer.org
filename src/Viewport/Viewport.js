@@ -144,7 +144,7 @@ var Viewport = Class.extend(
     
         this.dimensions.width  += this.prefetch;
         this.dimensions.height += this.prefetch;
-    
+
         if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
             this.movementHelper.resize();
             this._updateTileVisibilityRange();
@@ -191,7 +191,7 @@ var Viewport = Class.extend(
         
         // Moves the viewport to the correct position after zooming
         this.movementHelper.zoomTo(imageScale);
-    
+
         this._updateTileVisibilityRange();
         // reset the layers
         this._tileLayerManager.adjustImageScale(imageScale);

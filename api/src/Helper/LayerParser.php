@@ -63,4 +63,24 @@ function singleLayerToArray($layer)
 {
 	return explode(",", str_replace(array("[","]"), "", $layer));
 }
+
+function getSourceIdFromLayerArray($layerArray)
+{
+    if (sizeOf($layerArray) > 4) {
+        list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
+        
+        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
+        $imgIndex = new Database_ImgIndex();
+        $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);
+        return $sourceId;
+    }
+    return $layerArray[0];	
+}
+
+function getCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
+{
+    return dirname($uri) . "/" . substr(basename($uri), 0, -4) . "_" . $scale 
+            . "_" . round($x1) . "_" . round($x2) . "x_" . round($y1) . "_"
+            . round($y2) . "y." . $format;
+}
 ?>

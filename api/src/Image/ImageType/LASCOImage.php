@@ -56,13 +56,14 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      */    
     public function __construct(
         $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
-        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
+        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
     ) {
-        $this->_detector 	= $detector;
+    	$this->_detector    = $detector;
         $this->_measurement = $measurement;
+        
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY
+            $outputFile, $offsetX, $offsetY, $compress
         );
 
         if ($this->_detector == "C2") {

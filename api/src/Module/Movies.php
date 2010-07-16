@@ -109,35 +109,6 @@ class Module_Movies implements Module
 
         return true;
     }
-    
-    /**
-     * Queries the database to see how many images exist in the time range specified by 
-     * startTime, endTime, and layers.
-     * 
-     * @return int
-     */
-    public function getImageCountInRange()
-    {
-    	include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
-    	$imgIndex = new Database_ImgIndex();
-    	
-    	$layers = getLayerArrayFromString($this->_params['layers']);
-    	$maxInRange = 0;
-    	
-    	foreach ($layers as $layer) {
-    	   $layerInfo = singleLayerToArray($layer);
-            if (sizeOf($layerInfo) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $opacity) = $layerInfo;
-                $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);        
-            } else {
-                $sourceId = $layerInfo[0];
-            }
-
-            $maxInRange = max($maxInRange, $imgIndex->getImageCount($this->_params['startTime'], $this->_params['endTime'], $sourceId));
-    	}
-    	
-    	return $maxInRange >= 10;
-    }
 
     /**
      * buildMovie
@@ -154,11 +125,6 @@ class Module_Movies implements Module
     public function buildMovie ()
     {
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
-        $valid = $this->getImageCountInRange();
-        
-        if (!$valid) {
-        	return false;
-        }
         
         $builder = new Movie_HelioviewerMovieBuilder();
                 

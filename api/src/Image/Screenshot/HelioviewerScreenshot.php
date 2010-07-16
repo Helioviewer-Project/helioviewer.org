@@ -12,7 +12,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once HV_ROOT_DIR . '/api/src/Image/Composite/CompositeImage.php';
-require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerCompositeImageLayer.php';
+require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerImageLayer.php';
 /**
  * Image_HelioviewerScreenshot class definition
  *
@@ -36,6 +36,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     protected $offsetTop;
     protected $watermarkOn;
     protected $buildFilename;
+    protected $compress;
 
     /**
      * Create an instance of Image_Screenshot
@@ -50,7 +51,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      *                            from the center of the sun.
      * @param string $outputDir   The directory where the screenshot will be stored
      */
-    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir)
+    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, $compress)
     {
         $this->timestamp     = $timestamp;
         $this->quality       = $quality;
@@ -60,6 +61,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $this->offsetRight	 = $offsets['right'];
         $this->watermarkOn   = $watermarkOn;
         $this->buildFilename = !$filename;
+        $this->compress      = $compress;
 
         parent::__construct($meta, $options, $outputDir, $filename . ".jpg");
     }
@@ -79,7 +81,12 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 
         // Find the closest image for each layer, add the layer information string to it
         foreach ($layerInfoArray as $layer) {
-            $closestImage = $this->_getClosestImage($layer['sourceId']);
+        	if (!$layer['closestImage']) {
+                $closestImage = $this->_getClosestImage($layer['sourceId']);
+        	} else {
+        		$closestImage = $layer['closestImage'];
+        	}
+
             $obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
             $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";
             
@@ -96,14 +103,14 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
             
-            $image = new Image_HelioviewerCompositeImageLayer(
+            $image = new Image_HelioviewerImageLayer(
                 $pathToFile, $tmpOutputFile, 'png', 
                 $layer['width'], $layer['height'], $layer['imageScale'], 
                 $roi, $obsInfo['instrument'], $obsInfo['detector'],
                 $obsInfo['measurement'], $obsInfo['layeringOrder'], 
                 $offsetX, $offsetY, $layer['opacity'],
                 $closestImage['width'], $closestImage['height'], 
-                $closestImage['scale'], $closestImage['date']
+                $closestImage['scale'], $closestImage['date'], $compress
             );
             array_push($this->layerImages, $image);
         }

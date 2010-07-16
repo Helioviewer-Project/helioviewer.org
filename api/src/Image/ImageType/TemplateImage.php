@@ -55,13 +55,13 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
      */     
     public function __construct(
         $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
-        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
+        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
     ) {
         $this->_measurement = $measurement;
         
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY
+            $outputFile, $offsetX, $offsetY, $compress
         );
 
         // Enter color table here if it exists, otherwise leave this commented out. 
