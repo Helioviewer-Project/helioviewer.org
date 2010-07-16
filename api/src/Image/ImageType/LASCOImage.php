@@ -53,16 +53,18 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * @param int    $offsetX      Offset of the sun center from the image center
      * @param int    $offsetY      Offset of the sun center from the iamge center
      * @param string $outputFile   Filepath to where the final image will be stored
+     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */    
     public function __construct(
         $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
-        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile
+        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
     ) {
-        $this->_detector 	= $detector;
+        $this->_detector    = $detector;
         $this->_measurement = $measurement;
+        
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY
+            $outputFile, $offsetX, $offsetY, $compress
         );
 
         if ($this->_detector == "C2") {

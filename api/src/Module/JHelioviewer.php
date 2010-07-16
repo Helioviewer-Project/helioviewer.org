@@ -190,30 +190,30 @@ class Module_JHelioviewer implements Module
         echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 
         ?>
-<jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
-    <information>
-        <title>JHelioviewer</title>
-        <vendor>ESA</vendor>
-        <homepage href="index.html" />
-        <description>JHelioviewer web launcher</description>
-        <offline-allowed />
-    </information>
-
-    <resources>
-        <j2se version="1.5+" max-heap-size="1000M"/>
-        <jar href="JHelioviewer.jar" />
-    </resources>
-
-    <security>
-        <all-permissions />
-    </security>
-
-    <application-desc main-class="org.helioviewer.JavaHelioViewer">
-        <argument>-jhv</argument>
-        <argument><?php vprintf("[startTime=%s;endTime=%s;linked=true;imageScale=%f;imageLayers=%s]", $args);?></argument>
-    </application-desc>
-</jnlp>
-    <?php
+            <jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
+                <information>
+                    <title>JHelioviewer</title>
+                    <vendor>ESA</vendor>
+                    <homepage href="index.html" />
+                    <description>JHelioviewer web launcher</description>
+                    <offline-allowed />
+                </information>
+            
+                <resources>
+                    <j2se version="1.5+" max-heap-size="1000M"/>
+                    <jar href="JHelioviewer.jar" />
+                </resources>
+            
+                <security>
+                    <all-permissions />
+                </security>
+            
+                <application-desc main-class="org.helioviewer.JavaHelioViewer">
+                    <argument>-jhv</argument>
+                    <argument><?php vprintf("[startTime=%s;endTime=%s;linked=true;imageScale=%f;imageLayers=%s]", $args);?></argument>
+                </application-desc>
+            </jnlp>
+        <?php
     }
 
     /**
