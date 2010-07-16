@@ -122,8 +122,8 @@ var MediaSettings = Class.extend(
             imgHeight += 1;
         }
 
-        this.width         = imgWidth;
-        this.height     = imgHeight;
+        this.width  = imgWidth;
+        this.height = imgHeight;
 
         this.hcOffset = this.getHCOffset(visibleCoords);
                                      

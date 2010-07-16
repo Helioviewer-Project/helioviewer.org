@@ -8,7 +8,8 @@
 /*global Class, $, Calendar, FullscreenControl, UIController,
   KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
   TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, HelioviewerViewport, 
-  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
+  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time, MediaHistoryBar,
+  ScreenshotHistory, MovieHistory */
 "use strict";
 var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
@@ -42,6 +43,7 @@ var Helioviewer = UIController.extend(
      * zoom controls, time controls, and full screen controls
      */
     _loadExtensions: function () {
+        var sshistoryBar, mhistoryBar;
         this.messageConsole = new MessageConsole();
         this.keyboard       = new KeyboardManager();
         this._initTooltips();
@@ -54,8 +56,10 @@ var Helioviewer = UIController.extend(
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
 
         //this.mediaSettings      = new MediaSettings(this);
-        sshistoryBar = new MediaHistoryBar("screenshot", new ScreenshotHistory(this.userSettings.get('screenshot-history')));
-        mhistoryBar  = new MediaHistoryBar("movie", new MovieHistory(this.userSettings.get('movie-history')));
+        sshistoryBar = new MediaHistoryBar("screenshot", 
+                            new ScreenshotHistory(this.userSettings.get('screenshot-history')));
+        mhistoryBar  = new MediaHistoryBar("movie", 
+                            new MovieHistory(this.userSettings.get('movie-history')));
         this.movieBuilder       = new MovieBuilder(this.viewport, mhistoryBar);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
         this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, sshistoryBar);

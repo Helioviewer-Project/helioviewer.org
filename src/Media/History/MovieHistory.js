@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, Movie, History */
 "use strict";
 var MovieHistory = History.extend(
     /** @lends MovieHistory.prototype */
@@ -59,6 +59,6 @@ var MovieHistory = History.extend(
             self.history.push(new Movie(this, new Date(this.dateRequested)));
         });
 
-        this.history = this.history.slice(0,12);
+        this.history = this.history.slice(0, 12);
     }
 });

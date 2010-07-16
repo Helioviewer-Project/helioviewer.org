@@ -46,7 +46,7 @@ function extractLayerName ($layer)
  */
 function getLayerArrayFromString($layers)
 {
-	return explode("],", $layers);
+    return explode("],", $layers);
 }
 
 /**
@@ -55,15 +55,25 @@ function getLayerArrayFromString($layers)
  * [obs,inst,det,meas,visible,opacity] or
  * [sourceId,visible,opacity]
  * 
- * @param string $layers A string of layers in the above format.
+ * @param string $layer A layer string in the above format
  * 
  * @return array
  */
 function singleLayerToArray($layer)
 {
-	return explode(",", str_replace(array("[","]"), "", $layer));
+    return explode(",", str_replace(array("[","]"), "", $layer));
 }
 
+/**
+ * Queries the database to get the image's source id based on the information
+ * in layerArray.
+ * 
+ * @param Array $layerArray An array of information from a single layer string
+ *                          that contains either [obs, inst, det, meas, visible, opacity]
+ *                          or [sourceId, visible, opacity]
+ * 
+ * @return int
+ */
 function getSourceIdFromLayerArray($layerArray)
 {
     if (sizeOf($layerArray) > 4) {
@@ -75,5 +85,25 @@ function getSourceIdFromLayerArray($layerArray)
         return $sourceId;
     }
     return $layerArray[0];	
+}
+
+/**
+ * Builds a filename for a cached tile or image based on boundaries and scale
+ * 
+ * @param string $uri    The uri of the original jp2 image
+ * @param float  $scale  The scale of the extracted image
+ * @param float  $x1     The left boundary in arcseconds
+ * @param float  $x2     The right boundary in arcseconds
+ * @param float  $y1     The top boundary in arcseconds
+ * @param float  $y2     The bottom boundary in arcseconds
+ * @param string $format jpg or png
+ * 
+ * @return string
+ */
+function getCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
+{
+    return dirname($uri) . "/" . substr(basename($uri), 0, -4) . "_" . $scale 
+            . "_" . round($x1) . "_" . round($x2) . "x_" . round($y1) . "_"
+            . round($y2) . "y." . $format;
 }
 ?>
