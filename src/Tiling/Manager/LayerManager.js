@@ -74,6 +74,7 @@ var LayerManager = Class.extend(
             maxTop    = Math.max(maxTop, d.top);
             maxBottom = Math.max(maxBottom, d.bottom);
             maxRight  = Math.max(maxRight, d.right);
+
         });
         
         this._maxLayerDimensions = {width: maxLeft + maxRight, height: maxTop + maxBottom};
