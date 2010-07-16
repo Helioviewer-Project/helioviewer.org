@@ -50,6 +50,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param array  $offsets     The offsets of the top-left and bottom-right corners of the image
      *                            from the center of the sun.
      * @param string $outputDir   The directory where the screenshot will be stored
+     * @param bool   $compress    Whether to compress the image after extracting or not (true for tiles)
      */
     public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, $compress)
     {
@@ -81,11 +82,11 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 
         // Find the closest image for each layer, add the layer information string to it
         foreach ($layerInfoArray as $layer) {
-        	if (!$layer['closestImage']) {
+            if (!$layer['closestImage']) {
                 $closestImage = $this->_getClosestImage($layer['sourceId']);
-        	} else {
-        		$closestImage = $layer['closestImage'];
-        	}
+            } else {
+                $closestImage = $layer['closestImage'];
+            }
 
             $obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
             $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";

@@ -8,7 +8,8 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, Layer, $, JP2Image, Image, console, getUTCTimestamp, TileLayer, TileLoader */
+/*global Class, Layer, $, JP2Image, Image, console, getUTCTimestamp, TileLayer, 
+    TileLoader, tileCoordinatesToArcseconds */
 "use strict";
 var HelioviewerTileLayer = TileLayer.extend( 
     /** @lends HelioviewerTileLayer.prototype */

@@ -6,7 +6,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global console, $, navigator, Storage,  */
+/*global console, $, navigator, Storage, hideZoomControls, showZoomControls */
 "use strict";
 /**
  * @description Outputs a UTC Date string of the format "YYYY/MM/dd"
@@ -301,6 +301,7 @@ var pixelsToArcseconds = function (coordinates, scale) {
  * @input {float} offsetY  y-offset of the sun's center from the center of the jp2 image
  */
 var tileCoordinatesToArcseconds = function (x, y, scale, jp2Scale, tileSize, offsetX, offsetY) {
+    var relativeTileSize, top, left, bottom, right;
     relativeTileSize = tileSize * scale / jp2Scale;
 
     top  = y * relativeTileSize - offsetY;
@@ -369,11 +370,11 @@ var layerStringToLayerArray = function (layers) {
     var layerArray = [], rawArray = layers.split("],");
     
     $.each(rawArray, function () {
-         layerArray.push(this.replace(/[\[\]]/g, ""));
+        layerArray.push(this.replace(/[\[\]]/g, ""));
     });
     return layerArray;
 };
 
 var extractLayerName = function (layer) {
-    return layer.split(",").slice(0,-2);
+    return layer.split(",").slice(0, -2);
 };

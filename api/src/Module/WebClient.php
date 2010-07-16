@@ -288,7 +288,7 @@ class Module_WebClient implements Module
         }
 
         $finalResponse = array();
-        foreach($response as $filepath) {
+        foreach ($response as $filepath) {
             array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
         
@@ -457,9 +457,12 @@ class Module_WebClient implements Module
      * based upon events. 
      *
      * @param string $cacheDir The path to cache/events/eventId
+     * 
+     * @return void
      */
-    private function _createEventCacheDir($cacheDir) {
-    	$ipodDir = $cacheDir . "/iPod";
+    private function _createEventCacheDir($cacheDir)
+    {
+        $ipodDir = $cacheDir . "/iPod";
         if (!file_exists($ipodDir)) {
             mkdir($ipodDir, 0777, true);
             chmod($ipodDir, 0777);        

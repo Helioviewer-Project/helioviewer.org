@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, $, Class, window, MediaBuilder */
+/*global document, $, Class, window, MediaBuilder, Screenshot */
 "use strict";
 var ScreenshotBuilder = MediaBuilder.extend(
     /** @lends ScreenshotBuilder.prototype */
@@ -66,14 +66,16 @@ var ScreenshotBuilder = MediaBuilder.extend(
      */
     takeScreenshot: function (viewportInformation) {
         if (!this.ensureValidArea(viewportInformation)) {
-            $(document).trigger("message-console-warn", ["The area you have selected is too small to create a screenshot. Please try again."]);
+            $(document).trigger("message-console-warn", ["The area you have selected is too small to " +
+                    "create a screenshot. Please try again."]);
             return;
         } else if (!this.ensureValidLayers(viewportInformation)) {
-            $(document).trigger("message-console-warn", ["You must have at least one layer in your screenshot. Please try again."]);
+            $(document).trigger("message-console-warn", ["You must have at least one layer in your " +
+                    "screenshot. Please try again."]);
             return;
         }
         
-        var self, callback, params, url, arcsecCoords, id, download, screenshot;        
+        var self, callback, params, url, arcsecCoords, id, download, screenshot, options;        
         arcsecCoords  = this.toArcsecCoords(viewportInformation.coordinates, viewportInformation.imageScale);
         self = this;
 
@@ -91,7 +93,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
         screenshot = new Screenshot(params, (new Date()).getTime());
 
         callback = function (url) {
-            id = (url).slice(-14,-4);
+            id = (url).slice(-14, -4);
 
             if (url !== null) {       
                 // Options for the jGrowl notification. Clicking on the notification will 
