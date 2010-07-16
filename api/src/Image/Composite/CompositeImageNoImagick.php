@@ -96,7 +96,7 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
      *
      * These two strings are then layered on top of each other and put in the southwest corner of the image.
      *
-     * @param CompositeImageLayer $imageLayer A built CompositeImageLayer
+     * @param CompositeImageLayer $imageLayer A built ImageLayer
      *
      * @return void
      */    

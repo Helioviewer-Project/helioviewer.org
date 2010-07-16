@@ -57,11 +57,11 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
      */
     public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY
+        $outputFile, $offsetX, $offsetY, $compress
     ) {
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY
+            $outputFile, $offsetX, $offsetY, $compress
         );
     }
 
@@ -177,7 +177,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      */
     protected function setImageParams()
     {
-        if (!isset($this->tileSize)) {
+        if (!$this->compress) {
             return "";
         }
         $args = " -quality ";

@@ -46,6 +46,7 @@ class Image_SubFieldImage
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
+    protected $compress;
 
     /**
      * Creates an Image_SubFieldImage instance
@@ -70,7 +71,7 @@ class Image_SubFieldImage
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
     public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY
+        $outputFile, $offsetX, $offsetY, $compress
     ) {
         $this->outputFile = $outputFile;
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
@@ -96,6 +97,8 @@ class Image_SubFieldImage
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
+        
+        $this->compress = $compress;
     }
     
     /**
@@ -300,7 +303,7 @@ class Image_SubFieldImage
     
 
     /**
-     * Sets compression for images that are not compositeImageLayers
+     * Sets compression for images that are not ImageLayers
      * 
      * @param Object $imagickImage An initialized Imagick object
      * 
@@ -308,7 +311,7 @@ class Image_SubFieldImage
      */
     protected function compressImage($imagickImage)
     {
-        if (!isset($this->tileSize)) {
+        if (!$this->compress) {
             return;
         }
         
@@ -362,18 +365,6 @@ class Image_SubFieldImage
     protected function setColorTable($clut)
     {
         $this->colorTable = $clut;
-    }
-    
-    /**
-     * Sets the tile size
-     * 
-     * @param int $size the desired width of the square tile
-     * 
-     * @return void
-     */
-    public function setTileSize($size) 
-    {
-        $this->tileSize = $size;
     }
 
     /**

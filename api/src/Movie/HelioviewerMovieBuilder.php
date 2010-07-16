@@ -15,6 +15,7 @@ require_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuild
 require_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovie.php';
 require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
 require_once HV_ROOT_DIR . '/api/src/Helper/LayerParser.php';
+require_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
 /**
  * Image_Movie_HelioviewerMovieBuilder class definition
  *
@@ -37,6 +38,7 @@ class Movie_HelioviewerMovieBuilder
      */
     public function __construct() 
     {
+        $this->_imgIndex = new Database_ImgIndex();
     }
     
     /**
@@ -89,31 +91,16 @@ class Movie_HelioviewerMovieBuilder
                 $msg = "Invalid layer choices! You must specify 1-3 comma-separated layernames.";
                 throw new Exception($msg);
             }
-            
-            $isoStartTime = $this->_params['startTime'];
-            $startTime    = toUnixTimestamp($isoStartTime);
-            
-            // If endTime was not given, default to 24 hours after the startTime, but make sure that
-            // if the user is requesting 'today' as a start time to END at today and start 24 hours prior
-            // to ensure that they actually have a video to look at.
-            if (!$this->_params['endTime']) {
-            	$now        = time();
-            	if ($now - $startTime < 86400) {
-                    $startTime -= 86400;
-            	}
-                $endTime    = $startTime + 86400;
-                $isoEndTime = toISOString(parseUnixTimestamp($endTime));
-            } else {
-                $isoEndTime = $this->_params['endTime'];
-                $endTime    = toUnixTimestamp($isoEndTime);
-            }
-            
-            $numFrames = ($this->_params['numFrames'] === false)? 
-                            $this->_determineOptimalNumFrames($layers, $isoStartTime, $isoEndTime) :
-                            min($this->_params['numFrames'], $this->maxNumFrames);
-            $numFrames = max($numFrames, 10);
+        
+            list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
 
-            $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
+            $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
+   
+            if ($numFrames < 10) {
+            	return false;
+            }
+
+            $cadence = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 
             if (!$this->_params['filename']) {
             	$start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
@@ -133,6 +120,9 @@ class Movie_HelioviewerMovieBuilder
             );
 
             $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames, $outputDir);
+            if ($images === false) {
+            	return false;
+            }
             $url 	= $movie->buildMovie($images);
             
             return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
@@ -141,6 +131,35 @@ class Movie_HelioviewerMovieBuilder
             echo 'Error: ' .$e->getMessage();
             exit();
         }
+    }
+    
+    /**
+     * Figures out startTime and endTime based on parameters. If endTime is not given, endTime defaults to 24 hours after
+     * startTime. If startTime is within a day of "now", startTime defaults to 24 hours before, and endTime becomes the old
+     * startTime to ensure that the user actually has a video to look at. 
+     *
+     * @return array
+     */
+    private function _getStartAndEndTimes () {
+        $isoStartTime = $this->_params['startTime'];
+        $startTime    = toUnixTimestamp($isoStartTime);
+            
+        if (!$this->_params['endTime']) {
+            $now = time();
+            if ($now - $startTime < 86400) {
+                $startTime -= 86400;
+                $isoStartTime = toISOString(parseUnixTimestamp($startTime));
+            }
+            
+            $endTime    = $startTime + 86400;
+            $isoEndTime = toISOString(parseUnixTimestamp($endTime));
+            
+        } else {
+            $isoEndTime = $this->_params['endTime'];
+            $endTime    = toUnixTimestamp($isoEndTime);
+        }
+        
+        return array($isoStartTime, $isoEndTime, $startTime, $endTime);
     }
     
     /**
@@ -246,46 +265,95 @@ class Movie_HelioviewerMovieBuilder
     {
         $builder 	= new Image_Screenshot_HelioviewerScreenshotBuilder();
         $images 	= array();
-        $timestamps = array();
+        $sourceIds  = array();
         
         $width  = $movieMeta->width();
         $height = $movieMeta->height();
         $scale  = $movieMeta->imageScale();
-        
-        for ($time = $startTime; $time < $startTime + $numFrames * $timeStep; $time += $timeStep) {
-            array_push($timestamps, round($time));
+
+        $layerArray = getLayerArrayFromString($layers);
+        foreach ($layerArray as $layer) {
+            $layerInfo = singleLayerToArray($layer);
+            array_push($sourceIds, getSourceIdFromLayerArray($layerInfo));
         }
+        
+        $timestamps = $this->_getTimestamps($sourceIds, $startTime, $timeStep, $numFrames);
+
+        if (sizeOf($timestamps) < 10) {
+        	return false;
+        }
+        
         $frameNum = 0;
 
-        foreach ($timestamps as $time) {
-            $isoTime = toISOString(parseUnixTimestamp($time));
-            $params = array(
-                'width'  	 => $width,
-                'height'	 => $height,
-                'imageScale' => $scale,
-                'obsDate' 	 => $isoTime,
-                'layers' 	 => $layers,
-                'filename'	 => "frame" . $frameNum++,
-                'quality'	 => $this->_params['quality'],
-                'sharpen'	 => $this->_params['sharpen'],
-                'edges'		 => $this->_params['edges'],
-                'display'	 => false,
-                'x1' 	     => $this->_params['x1'],
-                'x2'         => $this->_params['x2'],
-                'y1'         => $this->_params['y1'],
-                'y2'         => $this->_params['y2'],
-                'watermarkOn'=> $this->_params['watermarkOn']
-            );
+        foreach ($timestamps as $time => $closestImages) {
+        	$isoTime = toISOString(parseUnixTimestamp($time));
+        	
+	        $params = array(
+	            'width'  	 => $width,
+	            'height'	 => $height,
+	            'imageScale' => $scale,
+	            'obsDate' 	 => $isoTime,
+	            'layers' 	 => $layers,
+	            'filename'	 => "frame" . $frameNum++,
+	            'quality'	 => $this->_params['quality'],
+	            'sharpen'	 => $this->_params['sharpen'],
+	            'edges'		 => $this->_params['edges'],
+	            'display'	 => false,
+	            'x1' 	     => $this->_params['x1'],
+	            'x2'         => $this->_params['x2'],
+	            'y1'         => $this->_params['y1'],
+	            'y2'         => $this->_params['y2'],
+	            'watermarkOn'=> $this->_params['watermarkOn']
+	        );
+	
+	        $image = $builder->takeScreenshot($params, $tmpDir, $closestImages);
+	        array_push($images, $image);
+        }
 
-            $image = $builder->takeScreenshot($params, $tmpDir);
-            array_push($images, $image);
+        return $images;
+    }
+    
+    /**
+     * Fetches the closest images from the database for each given time. Adds them to the timestamp
+     * array if they are not duplicates of sets of images in the timestamp array already. $closestImages
+     * is an array with one image per layer, associated with their sourceId.
+     *
+     * @return array
+     */
+    private function _getTimestamps($sourceIds, $startTime, $timeStep, $numFrames) {
+    	$timestamps = array();
+    	
+        for ($time = $startTime; $time < $startTime + $numFrames * $timeStep; $time += $timeStep) {
+            $isoTime = toISOString(parseUnixTimestamp(round($time)));
+            $closestImages = $this->_getClosestImagesForTime($sourceIds, $isoTime);
+
+            // Only add frames if they are unique
+            if ($closestImages != end($timestamps)) {
+                $timestamps[round($time)] = $closestImages;
+                
+            }
         }
         
+        return $timestamps;
+    }
+    
+    /**
+     * Queries the database to get the closest image to $isoTime for each layer.
+     * Returns all images in an associative array with source IDs as the keys. 
+     * 
+     * @return array
+     */
+    private function _getClosestImagesForTime($sourceIds, $isoTime) {
+        $images = array();
+        foreach ($sourceIds as $id) {
+        	$images[$id] = $this->_imgIndex->getClosestImage($isoTime, $id);
+        }
         return $images;
     }
     
     /**
      * Uses the startTime and endTime to determine how many frames to make, up to 120.
+     * Fetches timestamps based on that number.
      * 
      * @param Array $layers    Array of layer strings
      * @param Date  $startTime ISO date
@@ -293,26 +361,24 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return the number of frames
      */
-    private function _determineOptimalNumFrames($layers, $startTime, $endTime)
+    private function _getOptimalNumFrames($layers, $startTime, $endTime)
     {
-        include_once HV_ROOT_DIR . "/api/src/Database/ImgIndex.php";
-        $imgIndex = new Database_ImgIndex();
-        
         $maxInRange = 0;
         
         foreach ($layers as $layer) {
             $layerInfo = singleLayerToArray($layer);
-            if (sizeOf($layerInfo) > 4) {
-                list($observatory, $instrument, $detector, $measurement, $opacity) = $layerInfo;
-                $sourceId = $imgIndex->getSourceId($observatory, $instrument, $detector, $measurement);        
-            } else {
-                $sourceId = $layerInfo[0];
-            }
+            $sourceId  = getSourceIdFromLayerArray($layerInfo);
 
-            $maxInRange = max($maxInRange, $imgIndex->getImageCount($startTime, $endTime, $sourceId));
+            $maxInRange = max($maxInRange, $this->_imgIndex->getImageCount($startTime, $endTime, $sourceId));
         }
 
-        return min($maxInRange, $this->maxNumFrames);
+        // If the user specifies numFrames, use the minimum of their number and the maximum images in range.
+        if ($this->_params['numFrames'] !== false) {
+        	$numFrames = min($maxInRange, $this->_params['numFrames']);
+        } else {
+            $numFrames = $maxInRange;
+        }
+        return min($numFrames, HV_MAX_MOVIE_FRAMES / sizeOf($layers));
     }
     
     /**

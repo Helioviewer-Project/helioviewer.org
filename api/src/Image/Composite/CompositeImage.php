@@ -317,7 +317,7 @@ abstract class Image_Composite_CompositeImage
     /**
      * Starts the compositing process from an array of built images
      * 
-     * @param array $images An array of built CompositeImageLayer images
+     * @param array $images An array of built ImageLayer images
      * 
      * @return void
      */

@@ -96,11 +96,30 @@ var ImageSelectTool = Class.extend(
         });
         
         self.doneButton.click(function () {
+            self.submitSelectedArea(area, callback);
+        });
+
+        /* Key presses don't register while imgAreaSelect is active for some reason.
+        $(document).bind("enter-key-pushed", function () {
+            console.log("pushed");
+            self.submitSelectedArea(area, callback);
+        });
+        */
+        
+        self.cancelButton.click(function () {
+            self.cleanup();
+        });
+        
+        self._setupEventListeners();
+    },
+    
+    submitSelectedArea: function (area, callback) {
+        if (area) {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
-            
-            viewportInfo  = self.viewport.getViewportInformation();
+    
+            viewportInfo  = this.viewport.getViewportInformation();
             visibleCoords = viewportInfo.coordinates;
 
             coords = {
@@ -112,15 +131,9 @@ var ImageSelectTool = Class.extend(
 
             viewportInfo.coordinates = coords;
 
-            self.cleanup();
+            this.cleanup();
             callback(viewportInfo);
-        });
-        
-        self.cancelButton.click(function () {
-            self.cleanup();
-        });
-        
-        self._setupEventListeners();
+        }
     },
     
     _setupFinishedButton: function () {

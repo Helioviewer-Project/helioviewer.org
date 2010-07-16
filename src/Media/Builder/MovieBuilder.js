@@ -225,17 +225,12 @@ var MovieBuilder = MediaBuilder.extend(
         if (movieHeight >= vpHeight - 50) {
             scaleDown = true;
         }
-
-        // Default to 24 hours after startTime.
-        end = new Date(getUTCTimestamp(viewportInfo.time) + 86400000);
-        end = end.toISOString().replace(/"/g, '');
         
         // Ajax Request Parameters
         params = {
             action     : "buildMovie",
             layers     : viewportInfo.layers,
             startTime  : viewportInfo.time,
-            endTime    : end,
             imageScale : viewportInfo.imageScale,
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
