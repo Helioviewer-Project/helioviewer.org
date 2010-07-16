@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
 "use strict";
 var Screenshot = Media.extend(
     /** @lends Screenshot.prototype */
@@ -15,7 +15,7 @@ var Screenshot = Media.extend(
      */    
     init: function (params, dateRequested) {
         this._super(params, dateRequested);
-        this.time = this.obsDate.replace("T", " ").slice(0,-5);
+        this.time = this.obsDate.replace("T", " ").slice(0, -5);
     },
     
     /**
@@ -86,7 +86,8 @@ var Screenshot = Media.extend(
         if (this.url) {
             window.open('api/index.php?action=downloadFile&url=' + this.url, '_parent');
         } else {
-            $(document).trigger("message-console-warn", ["There was an error retrieving your screenshot. Please try again later or refresh the page."]);
+            $(document).trigger("message-console-warn", ["There was an error retrieving your " +
+                                "screenshot. Please try again later or refresh the page."]);
         }
     },
     
@@ -105,6 +106,6 @@ var Screenshot = Media.extend(
             x2            : this.x2,
             y1            : this.y1,
             y2            : this.y2
-        }
+        };
     }
 });

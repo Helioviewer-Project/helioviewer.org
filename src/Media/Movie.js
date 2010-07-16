@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
 "use strict";
 var Movie = Media.extend(
     /** @lends Movie.prototype */
@@ -16,7 +16,7 @@ var Movie = Media.extend(
      */    
     init: function (params, dateRequested, hqFormat) {
         this._super(params, dateRequested);
-        this.startTime    = this.startTime.replace("T", " ").slice(0,-5);
+        this.startTime    = this.startTime.replace("T", " ").slice(0, -5);
         this.hqFormat     = hqFormat;
         
         // Resize what appears in the movie player if the movie is as big as the viewport
@@ -58,7 +58,7 @@ var Movie = Media.extend(
      */
     getInformationTable: function () {        
         var layerArray, table, previewFrame;
-        previewFrame = this.url.split("/").slice(0,-1).join("/") + "/frame0.jpg";
+        previewFrame = this.url.split("/").slice(0, -1).join("/") + "/frame0.jpg";
         layerArray = layerStringToLayerArray(this.layers);
         table = "<table>" +
                     "<tr valign='top'>" + 
@@ -106,7 +106,8 @@ var Movie = Media.extend(
     playMovie: function () {
         var url, self;
         self = this;
-        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + this.viewerWidth + '&height=' + this.viewerHeight;    
+        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + 
+                this.viewerWidth + '&height=' + this.viewerHeight;    
         this.watchDialog = $("#watch-dialog-" + this.id);
 
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
@@ -116,12 +117,15 @@ var Movie = Media.extend(
             width  : 'auto',
             height : 'auto',
             open   : self.watchDialog.append("<div id='movie-player-" + self.id + "'>" + 
-                                            "<iframe src=" + url + " width=" + self.viewerWidth + " height=" + self.viewerHeight + 
-                                                " marginheight=0 marginwidth=0 scrolling=no frameborder=0 /><br /><br />" +
+                                            "<iframe src=" + url + " width=" + self.viewerWidth + " height=" + 
+                                                self.viewerHeight + " marginheight=0 marginwidth=0 scrolling=no " +
+                                                "frameborder=0 /><br /><br />" +
                                                 "<a href='api/index.php?action=downloadFile&url=" + self.hqFile + "'>" +
                                                     "Click here to download a high-quality version." +
                                                 "</a></div>"),
-            close  : function () { $("#movie-player-" + self.id).remove() },
+            close  : function () {  
+                        $("#movie-player-" + self.id).remove();
+                    },
             zIndex : 9999,
             show   : 'fade'
         });                                 
@@ -145,6 +149,6 @@ var Movie = Media.extend(
             hqFormat      : this.hqFormat,
             hqFile        : this.hqFile,
             scaleDown     : this.scaleDown
-        }
+        };
     }
 });

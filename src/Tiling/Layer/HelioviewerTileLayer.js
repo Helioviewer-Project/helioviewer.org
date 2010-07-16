@@ -8,7 +8,8 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, Layer, $, JP2Image, Image, console, getUTCTimestamp, TileLayer, TileLoader */
+/*global Class, Layer, $, JP2Image, Image, console, getUTCTimestamp, TileLayer, 
+    TileLoader, tileCoordinatesToArcseconds */
 "use strict";
 var HelioviewerTileLayer = TileLayer.extend( 
     /** @lends HelioviewerTileLayer.prototype */
@@ -74,15 +75,13 @@ var HelioviewerTileLayer = TileLayer.extend(
         if (this.visible) {
             this.tileLoader.reloadTiles(false);
 
-//          Update viewport sandbox if necessary
-            $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
-        }        
-        
-        
-        $(document).trigger("update-tile-layer-accordion-entry", 
-        		[this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
-				this.image.filepath, this.image.filename, this.image.server]);
+            //          Update viewport sandbox if necessary
 
+            $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
+	}
+        $(document).trigger("update-tile-layer-accordion-entry", 
+                            [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
+                                this.image.filepath, this.image.filename, this.image.server]);
     },
     
     /**
@@ -91,29 +90,36 @@ var HelioviewerTileLayer = TileLayer.extend(
      * TODO 02/25/2010: What would be performance loss from re-fetching meta information on server-side?
      */
     getTileURL: function (serverId, x, y) {
-        var file, format, params;
+        var file, format, coordinates, params;
 
         file   = this.image.filepath + "/" + this.image.filename;
         format = (this.layeringOrder === 1 ? "jpg" : "png");
 
+        coordinates = tileCoordinatesToArcseconds(
+            x, y, this.viewportScale, this.image.scale, this.tileSize, this.image.offsetX, 
+            this.image.offsetY
+        );
+        
         params = {
-            "action"           : "getTile",
-            "uri"              : file,
-            "x"                : x,
-            "y"                : y,
-            "format"           : format,
-            "date"             : this.image.date,
-            "tileScale"        : this.viewportScale,
-            "ts"               : this.tileSize,
-            "jp2Width"         : this.image.width,
-            "jp2Height"        : this.image.height,
-            "jp2Scale"         : this.image.scale,
-            "obs"              : this.image.observatory,
-            "inst"             : this.image.instrument,
-            "det"              : this.image.detector,
-            "meas"             : this.image.measurement,
-            "sunCenterOffsetX" : this.image.offsetX,
-            "sunCenterOffsetY" : this.image.offsetY                        
+            "action"    : "getTile",
+            "uri"       : file,
+            "x1"        : coordinates.x1,
+            "x2"        : coordinates.x2,
+            "y1"        : coordinates.y1,
+            "y2"        : coordinates.y2,
+            "format"    : format,
+            "date"      : this.image.date,
+            "imageScale": this.viewportScale,
+            "size"      : this.tileSize,
+            "jp2Width"  : this.image.width,
+            "jp2Height" : this.image.height,
+            "jp2Scale"  : this.image.scale,
+            "obs"       : this.image.observatory,
+            "inst"      : this.image.instrument,
+            "det"       : this.image.detector,
+            "meas"      : this.image.measurement,
+            "offsetX"   : this.image.offsetX,
+            "offsetY"   : this.image.offsetY                        
         };
 
         return this.baseURL + "?" + $.param(params);

@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, toFuzzyTime, layerStringToLayerArray, extractLayerName */
 "use strict";
 var Media = Class.extend(
     /** @lends Media.prototype */
@@ -45,7 +45,7 @@ var Media = Class.extend(
         $.each(layerArray, function () {
             rawName = extractLayerName(this).slice(1);
 
-            if(rawName[0] !== currentInst) {
+            if (rawName[0] !== currentInst) {
                 currentInst = rawName[0];
                 name += ", " + currentInst + " " + self.parseLayer(rawName);
             } else {
@@ -56,7 +56,7 @@ var Media = Class.extend(
         // Get rid of the extra ", " at the front
         name = name.slice(2);
         if (name.length > 16) {
-            name = name.slice(0,16) + "...";
+            name = name.slice(0, 16) + "...";
         }
         
         return name;
@@ -122,7 +122,7 @@ var Media = Class.extend(
         this.button = $("#" + this.id);
 
         var api = this.button.qtip("api");
-        if(api.elements && api.elements.tooltip) {
+        if (api.elements && api.elements.tooltip) {
             api.elements.tooltip.remove();
         }
     }

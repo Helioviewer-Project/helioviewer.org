@@ -10,7 +10,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, MediaBuilder */
+/*global Class, $, Shadowbox, setTimeout, window, MediaBuilder, Movie, getOS */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
@@ -88,10 +88,12 @@ var MovieBuilder = MediaBuilder.extend(
      */
     checkMovieLayers: function (viewportInfo) {
         if (!this.ensureValidArea(viewportInfo)) {
-            $(document).trigger("message-console-warn", ["The area you have selected is too small to create a movie. Please try again."]);
+            $(document).trigger("message-console-warn", ["The area you have selected is too small to " +
+                "create a movie. Please try again."]);
             return;
         } else if (!this.ensureValidLayers(viewportInfo)) {
-            $(document).trigger("message-console-warn", ["You must have at least one layer in your movie. Please try again."]);
+            $(document).trigger("message-console-warn", ["You must have at least one layer in your movie. " +
+                "Please try again."]);
             return;
         }
         
@@ -114,7 +116,7 @@ var MovieBuilder = MediaBuilder.extend(
      * Opens Shadowbox and prompts the user to pick only 3 layers.
      */
     promptForLayers: function (viewportInfo, layers) {
-        var finalLayers, self=this;
+        var finalLayers, checkboxes, self;
         finalLayers = [];
         self = this;
         
@@ -172,7 +174,7 @@ var MovieBuilder = MediaBuilder.extend(
      * <okButton>
      */
     createLayerSelectionTable: function (layers) {
-        var table, rawName, name, numLayers;
+        var table, rawName, name, layerNum, checked;
         table = '<div id="shadowbox-form" class="ui-widget ui-widget-content ui-corner-all ' + 
                     'ui-helper-clearfix" style="margin: 10px; padding: 20px; font-size: 12pt;" >' +
                     'Please select at most 3 layers from the choices below for the movie: <br /><br />' +
@@ -186,7 +188,7 @@ var MovieBuilder = MediaBuilder.extend(
             rawName = this.split(',').slice(0, -2);
             name = rawName.join(" ").replace(/[\[\]]/g, "");
             // Only check the first 3 layers by default.
-            checked = layerNum < 4? 'checked=true' : "";
+            checked = layerNum < 4 ? 'checked=true' : "";
 
             table +=    '<tr>' +
                             '<td class="layers-checkbox"><input type=checkbox name="layers" ' + 
@@ -211,7 +213,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var timeout, options, end, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, valid, scaleDown = false, self = this;
+        var timeout, options, end, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
+            valid, movie, scaleDown = false, self = this;
         
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -289,13 +292,17 @@ var MovieBuilder = MediaBuilder.extend(
                     }
                 };
 
-                // Make the jGrowl notification with the options above. Add an empty div for the watch dialog in case they
-                // click on the notification.
-                $(document).trigger("message-console-info", [
-                            "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or download it.<br />(opens in a pop-up)</div>" +
-                            "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>", options]);
+                // Make the jGrowl notification with the options above. Add an empty div for the watch dialog in 
+                //case they click on the notification.
+                $(document).trigger("message-console-info", 
+                    [
+                        "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
+                            " download it." + "<br />(opens in a pop-up)</div>" +
+                        "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>", options
+                    ]);
             } else {
-                $(document).trigger("message-console-warn", ["There are not enough images to create a video for this date. Please try a different date or different layers."]);
+                $(document).trigger("message-console-warn", ["There are not enough images to create a video for " +
+                    "this date. Please try a different date or different layers."]);
             }
         };
 

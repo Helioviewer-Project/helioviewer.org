@@ -11,7 +11,6 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once HV_ROOT_DIR . '/api/lib/phpvideotoolkit/config.php';
 require_once HV_ROOT_DIR . '/api/src/Movie/FFMPEGWrapper.php';
 require_once HV_ROOT_DIR . '/api/src/Image/ImageMetaInformation.php';
 require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
@@ -168,7 +167,7 @@ class Movie_HelioviewerMovie
         $height += ($height % 2 === 0? 0 : 1);        
         
         if ($this->_highQualityFiletype === "ipod") {
-        	$hq_filename = "$movieName.mp4";
+            $hq_filename = "$movieName.mp4";
             return $ffmpeg->createIpodVideo($hq_filename, $this->tmpDir, $width, $height);
         }
         
