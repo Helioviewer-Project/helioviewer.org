@@ -46,6 +46,7 @@ class Image_SubFieldImage
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
+    protected $compress;
 
     /**
      * Creates an Image_SubFieldImage instance
@@ -61,6 +62,7 @@ class Image_SubFieldImage
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
+     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      *
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal
@@ -70,7 +72,7 @@ class Image_SubFieldImage
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
     public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY
+        $outputFile, $offsetX, $offsetY, $compress
     ) {
         $this->outputFile = $outputFile;
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
@@ -96,6 +98,8 @@ class Image_SubFieldImage
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
+        
+        $this->compress = $compress;
     }
     
     /**
@@ -188,7 +192,7 @@ class Image_SubFieldImage
     {
         $width  = ($roi['right']  - $roi['left']) / $scale;
         $height = ($roi['bottom'] - $roi['top'])  / $scale;
-        
+
         $centerX = $this->jp2Width  / 2 + $this->offsetX;
         $centerY = $this->jp2Height / 2 + $this->offsetY;
         
@@ -205,8 +209,8 @@ class Image_SubFieldImage
            "gravity" => "northwest",
            "width"   => $width,
            "height"  => $height,
-           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : $left,
-           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : $top
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
         );
     }
     
@@ -267,6 +271,8 @@ class Image_SubFieldImage
 
             // Resize extracted image to correct size before padding.
             //$image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
+
+            //$image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
             $image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
             $this->setBackground($image);
 
@@ -298,7 +304,7 @@ class Image_SubFieldImage
     
 
     /**
-     * Sets compression for images that are not compositeImageLayers
+     * Sets compression for images that are not ImageLayers
      * 
      * @param Object $imagickImage An initialized Imagick object
      * 
@@ -306,14 +312,14 @@ class Image_SubFieldImage
      */
     protected function compressImage($imagickImage)
     {
-        if (!isset($this->tileSize)) {
+        if (!$this->compress) {
             return;
         }
         
         $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
 
         if ($this->format === "png") {
-        	$imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
             $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
         } else {
             $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
@@ -360,18 +366,6 @@ class Image_SubFieldImage
     protected function setColorTable($clut)
     {
         $this->colorTable = $clut;
-    }
-    
-    /**
-     * Sets the tile size
-     * 
-     * @param int $size the desired width of the square tile
-     * 
-     * @return void
-     */
-    public function setTileSize($size) 
-    {
-        $this->tileSize = $size;
     }
 
     /**

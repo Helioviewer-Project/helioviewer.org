@@ -5,7 +5,8 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, showButtonsInViewport, 
+    hideButtonsInViewport, addIconHoverEventListener */
 "use strict";
 var ImageSelectTool = Class.extend(
     /** @lends ImageSelectTool.prototype */
@@ -114,6 +115,7 @@ var ImageSelectTool = Class.extend(
     },
     
     submitSelectedArea: function (area, callback) {
+        var selection, viewportInfo, visibleCoords, coords;
         if (area) {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
@@ -186,8 +188,9 @@ var ImageSelectTool = Class.extend(
     },
     
     _setupHelpDialog: function () {
-        var api = this.vpDomNode.qtip("api");
-        qtip    = api.elements.tooltip;
+        var api, qtip;
+        api  = this.vpDomNode.qtip("api");
+        qtip = api.elements.tooltip;
         
         this.helpButton.qtip({
             position: {

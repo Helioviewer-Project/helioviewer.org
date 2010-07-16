@@ -22,11 +22,19 @@
  */
 class Movie_FFMPEGWrapper
 {
-	private $_macFlags;
-	private $_frameRate;
-	
-    public function __construct($frameRate) {
-    	$this->_macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
+    private $_macFlags;
+    private $_frameRate;
+    
+    /**
+     * Constructor
+     * 
+     * @param {int} $frameRate The number of frames per second in the movie
+     * 
+     * @return void
+     */
+    public function __construct($frameRate)
+    {
+        $this->_macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
                     . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 1 -qcomp 0.6 -qmin 10 "
                     . "-qmax 51 -qdiff 4 -bf 3 -directpred 1 -trellis 1 -wpredp 2 -y";
         $this->_frameRate = $frameRate;
@@ -37,6 +45,8 @@ class Movie_FFMPEGWrapper
      * 
      * @param String $hq_filename the filename of the movie
      * @param String $tmpDir      the path where the file will be stored
+     * @param int    $width       the width of the video
+     * @param int    $height      the height of the video
      * 
      * @return String the filename of the ipod video
      */
@@ -61,7 +71,9 @@ class Movie_FFMPEGWrapper
      * 
      * @param String $filename the filename of the movie
      * @param String $tmpDir   the path where the file will be stored
-     *
+     * @param int    $width    the width of the video
+     * @param int    $height   the height of the video
+     * 
      * @return String the filename of the video
      */
     public function createVideo($filename, $tmpDir, $width, $height)
@@ -73,7 +85,7 @@ class Movie_FFMPEGWrapper
         try {
             exec(escapeshellcmd($cmd));
         } catch (Exception $e) {
-        	logErrorMsg($e->getMessage(), true);
+            logErrorMsg($e->getMessage(), true);
         }
         return $filename;
     }
