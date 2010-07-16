@@ -211,29 +211,10 @@ class Module_WebClient implements Module
      * @return void
      */
     public function getTile ()
-    {
-        // PROFILE TEST (performance of re-querying jp2 dimensions, offset, etc?)
-        include_once 'src/Database/ImgIndex.php';
-        $imgIndex = new Database_ImgIndex();
-
-        // Convert human-readable params to sourceId if needed
-        if (!isset($this->_params['sourceId'])) {
-            $this->_params['sourceId'] = $imgIndex->getSourceId(
-                $this->_params['obs'], $this->_params['inst'],
-                $this->_params['det'], $this->_params['meas']
-            );
-        }
-
-        include_once 'src/Image/Tiling/HelioviewerTile.php';
-        $tile = new Image_Tiling_HelioviewerTile(
-            $this->_params['uri'], $this->_params['date'], $this->_params['x'], $this->_params['y'],
-            $this->_params['tileScale'], $this->_params['ts'],
-            $this->_params['jp2Width'], $this->_params['jp2Height'],
-            $this->_params['jp2Scale'], $this->_params['sunCenterOffsetX'],
-            $this->_params['sunCenterOffsetY'], $this->_params['format'],
-            $this->_params['obs'], $this->_params['inst'],
-            $this->_params['det'], $this->_params['meas']
-        );
+    {        
+        include_once 'src/Image/Tiling/HelioviewerTileBuilder.php';
+        $builder = new Image_Tiling_HelioviewerTileBuilder();
+        return $builder->getTile($this->_params);
     }
 
     /**
@@ -307,7 +288,7 @@ class Module_WebClient implements Module
         }
 
         $finalResponse = array();
-        foreach($response as $filepath) {
+        foreach ($response as $filepath) {
             array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
         
@@ -407,8 +388,8 @@ class Module_WebClient implements Module
             break;
 
         case "getTile":
-            $required = array('uri', 'x', 'y', 'date', 'tileScale', 'ts', 'jp2Width','jp2Height', 'jp2Scale',
-                              'sunCenterOffsetX', 'sunCenterOffsetY', 'format', 'obs', 'inst', 'det', 'meas');
+            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'date', 'imageScale', 'size', 'jp2Width','jp2Height', 'jp2Scale',
+                              'offsetX', 'offsetY', 'format', 'obs', 'inst', 'det', 'meas');
             $expected = array(
                "required" => $required
             );
@@ -476,9 +457,12 @@ class Module_WebClient implements Module
      * based upon events. 
      *
      * @param string $cacheDir The path to cache/events/eventId
+     * 
+     * @return void
      */
-    private function _createEventCacheDir($cacheDir) {
-    	$ipodDir = $cacheDir . "/iPod";
+    private function _createEventCacheDir($cacheDir)
+    {
+        $ipodDir = $cacheDir . "/iPod";
         if (!file_exists($ipodDir)) {
             mkdir($ipodDir, 0777, true);
             chmod($ipodDir, 0777);        

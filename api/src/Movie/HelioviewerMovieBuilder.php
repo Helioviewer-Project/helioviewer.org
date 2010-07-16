@@ -44,7 +44,8 @@ class Movie_HelioviewerMovieBuilder
     /**
      * Prepares the parameters passed in from the api call and makes a movie from them. 
      * 
-     * @param {Array} $params parameters passed in by the api call. 
+     * @param {Array}  $params    parameters passed in by the api call. 
+     * @param {String} $outputDir The directory where the movie will be stored
      * 
      * @return {String} a url to the movie, or the movie will display.
      */
@@ -95,19 +96,19 @@ class Movie_HelioviewerMovieBuilder
             list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
 
             $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
-            
+   
             if ($numFrames < 10) {
-            	return false;
+                return false;
             }
 
             $cadence = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 
             if (!$this->_params['filename']) {
-            	$start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
-            	$end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
+                $start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
+                $end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
                 $filename = $start . "_" . $end . $this->buildFilename($layers);
             } else {
-            	$filename = $this->_params['filename'];
+                $filename = $this->_params['filename'];
             }
 
             $movie = new Movie_HelioviewerMovie(
@@ -121,7 +122,7 @@ class Movie_HelioviewerMovieBuilder
 
             $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames, $outputDir);
             if ($images === false) {
-            	return false;
+                return false;
             }
             $url 	= $movie->buildMovie($images);
             
@@ -140,7 +141,8 @@ class Movie_HelioviewerMovieBuilder
      *
      * @return array
      */
-    private function _getStartAndEndTimes () {
+    private function _getStartAndEndTimes ()
+    {
         $isoStartTime = $this->_params['startTime'];
         $startTime    = toUnixTimestamp($isoStartTime);
             
@@ -191,7 +193,7 @@ class Movie_HelioviewerMovieBuilder
 
         $movies = glob($outputDir . "/" . $filename . "*" . $format);
         if (sizeOf($movies) === 0) {
-        	return false;
+            return false;
         }
         
         return $movies;
@@ -216,7 +218,7 @@ class Movie_HelioviewerMovieBuilder
         $format = ".flv";
         $filename = "";
         if ($params['ipod'] === "true" || $params['ipod'] === true) {
-        	$params['hqFormat'] = "ipod";
+            $params['hqFormat'] = "ipod";
             $outputDir .= "/iPod/";
             $format = ".mp4";
         } else {
@@ -244,7 +246,7 @@ class Movie_HelioviewerMovieBuilder
     {
         $filename = "";
         foreach ($layers as $layer) {
-        	$filename .= "__" . extractLayerName($layer);
+            $filename .= "__" . extractLayerName($layer);
         }
         return $filename;
     }
@@ -280,34 +282,34 @@ class Movie_HelioviewerMovieBuilder
         $timestamps = $this->_getTimestamps($sourceIds, $startTime, $timeStep, $numFrames);
 
         if (sizeOf($timestamps) < 10) {
-        	return false;
+            return false;
         }
         
         $frameNum = 0;
 
         foreach ($timestamps as $time => $closestImages) {
-        	$isoTime = toISOString(parseUnixTimestamp($time));
-        	
-	        $params = array(
-	            'width'  	 => $width,
-	            'height'	 => $height,
-	            'imageScale' => $scale,
-	            'obsDate' 	 => $isoTime,
-	            'layers' 	 => $layers,
-	            'filename'	 => "frame" . $frameNum++,
-	            'quality'	 => $this->_params['quality'],
-	            'sharpen'	 => $this->_params['sharpen'],
-	            'edges'		 => $this->_params['edges'],
-	            'display'	 => false,
-	            'x1' 	     => $this->_params['x1'],
-	            'x2'         => $this->_params['x2'],
-	            'y1'         => $this->_params['y1'],
-	            'y2'         => $this->_params['y2'],
-	            'watermarkOn'=> $this->_params['watermarkOn']
-	        );
-	
-	        $image = $builder->takeScreenshot($params, $tmpDir, $closestImages);
-	        array_push($images, $image);
+            $isoTime = toISOString(parseUnixTimestamp($time));
+            
+            $params = array(
+                'width'  	 => $width,
+                'height'	 => $height,
+                'imageScale' => $scale,
+                'obsDate' 	 => $isoTime,
+                'layers' 	 => $layers,
+                'filename'	 => "frame" . $frameNum++,
+                'quality'	 => $this->_params['quality'],
+                'sharpen'	 => $this->_params['sharpen'],
+                'edges'		 => $this->_params['edges'],
+                'display'	 => false,
+                'x1' 	     => $this->_params['x1'],
+                'x2'         => $this->_params['x2'],
+                'y1'         => $this->_params['y1'],
+                'y2'         => $this->_params['y2'],
+                'watermarkOn'=> $this->_params['watermarkOn']
+            );
+    
+            $image = $builder->takeScreenshot($params, $tmpDir, $closestImages);
+            array_push($images, $image);
         }
 
         return $images;
@@ -317,12 +319,18 @@ class Movie_HelioviewerMovieBuilder
      * Fetches the closest images from the database for each given time. Adds them to the timestamp
      * array if they are not duplicates of sets of images in the timestamp array already. $closestImages
      * is an array with one image per layer, associated with their sourceId.
-     *
+     * 
+     * @param {Array} $sourceIds An array of source ids, one for each layer
+     * @param {int}   $startTime The Unix Timestamp of the start time
+     * @param {float} $timeStep  The cadence or the movie
+     * @param {int}   $numFrames The number of frames
+     * 
      * @return array
      */
-    private function _getTimestamps($sourceIds, $startTime, $timeStep, $numFrames) {
-    	$timestamps = array();
-    	
+    private function _getTimestamps($sourceIds, $startTime, $timeStep, $numFrames)
+    {
+        $timestamps = array();
+        
         for ($time = $startTime; $time < $startTime + $numFrames * $timeStep; $time += $timeStep) {
             $isoTime = toISOString(parseUnixTimestamp(round($time)));
             $closestImages = $this->_getClosestImagesForTime($sourceIds, $isoTime);
@@ -341,12 +349,16 @@ class Movie_HelioviewerMovieBuilder
      * Queries the database to get the closest image to $isoTime for each layer.
      * Returns all images in an associative array with source IDs as the keys. 
      * 
+     * @param {Array} $sourceIds An array of source ids, one for each layer
+     * @param {Date}  $isoTime   The ISO date string of the timestamp
+     * 
      * @return array
      */
-    private function _getClosestImagesForTime($sourceIds, $isoTime) {
+    private function _getClosestImagesForTime($sourceIds, $isoTime)
+    {
         $images = array();
         foreach ($sourceIds as $id) {
-        	$images[$id] = $this->_imgIndex->getClosestImage($isoTime, $id);
+            $images[$id] = $this->_imgIndex->getClosestImage($isoTime, $id);
         }
         return $images;
     }
@@ -374,7 +386,7 @@ class Movie_HelioviewerMovieBuilder
 
         // If the user specifies numFrames, use the minimum of their number and the maximum images in range.
         if ($this->_params['numFrames'] !== false) {
-        	$numFrames = min($maxInRange, $this->_params['numFrames']);
+            $numFrames = min($maxInRange, $this->_params['numFrames']);
         } else {
             $numFrames = $maxInRange;
         }
@@ -400,9 +412,10 @@ class Movie_HelioviewerMovieBuilder
      * Displays the movie or returns the url to it.
      * 
      * @param {String}  $url     url of the movie
-     * @param {Object}  $movie   Movie object
      * @param {Array}   $params  parameters from the API call
      * @param {Boolean} $display whether to display or return the url
+     * @param {int}     $width   the width of the movie
+     * @param {int}     $height  the height of the movie
      * 
      * @return {String} movie object or displays a movie
      */
@@ -413,7 +426,7 @@ class Movie_HelioviewerMovieBuilder
         }
 
         if ($display === true && $params == $_GET) {
-        	return Movie_HelioviewerMovie::showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $width, $height);
+            return Movie_HelioviewerMovie::showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $width, $height);
             //return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
         } else if ($params == $_POST) {
             header('Content-type: application/json');

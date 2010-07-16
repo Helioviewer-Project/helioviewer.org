@@ -43,6 +43,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      *                               are then merged with $defaults in case some of those
      *                               parameters weren't specified.
      * @param string $outputDir      The directory path where the screenshot will be stored.
+     * @param array  $closestImages  An array of the closest images to the timestamp for this
+     *                               screenshot, associated by sourceId as keys.
      *                              
      * @return string the screenshot
      */
@@ -55,7 +57,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             'quality' 	  => 10,
             'display'	  => true,
             'watermarkOn' => true,
-            'filename'    => false
+            'filename'    => false,
+            'compress'    => false
         );
         $params = array_merge($defaults, $originalParams);
         
@@ -89,7 +92,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $params['filename'], 
             $params['quality'], $params['watermarkOn'],
             array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
-            $outputDir
+            $outputDir, $params['compress']
         );
 
         $screenshot->buildImages($layerArray);
@@ -107,21 +110,21 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      */
     public function getScreenshotsForEvent($originalParams, $outputDir) 
     {
-    	$defaults = array(
-    	   'ipod'    => false
-    	);
-    	$params = array_merge($defaults, $originalParams);
-    	
-    	$filename = "Screenshot_";
-    	if ($params['ipod'] === "true" || $params['ipod'] === true) {
-    		$outputDir .= "/iPod";
-    		$filename .= "iPhone_";
-    	} else {
-    		$outputDir .= "/regular";
-    	}
-    	
-    	$filename .= $params['eventId'];
-    	
+        $defaults = array(
+           'ipod'    => false
+        );
+        $params = array_merge($defaults, $originalParams);
+        
+        $filename = "Screenshot_";
+        if ($params['ipod'] === "true" || $params['ipod'] === true) {
+            $outputDir .= "/iPod";
+            $filename .= "iPhone_";
+        } else {
+            $outputDir .= "/regular";
+        }
+        
+        $filename .= $params['eventId'];
+        
         $images = glob($outputDir . "/" . $filename . "*.jpg");
         if (sizeOf($images) === 0) {
             return false;
@@ -130,8 +133,18 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         return $images;
     }
     
-    public function createScreenshotForEvent($originalParams, $outputDir) { 
-    	$defaults = array(
+    /**
+     * Creates a screenshot based upon an event, specified in $originalParams and
+     * returns the filepath to the completed screenshot.
+     * 
+     * @param Array  $originalParams An array of parameters passed in by the API call
+     * @param String $outputDir      The path to where the file will be stored
+     * 
+     * @return string
+     */
+    public function createScreenshotForEvent($originalParams, $outputDir)
+    { 
+        $defaults = array(
            'display' => false,
            'ipod'    => false
         );
@@ -148,7 +161,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
 
         $filename .= $params['eventId'] . $this->buildFilename(getLayerArrayFromString($params['layers']));
         if (file_exists($outputDir . "/" . $filename . ".jpg")) {
-        	return $outputDir . "/" . $filename . ".jpg";
+            return $outputDir . "/" . $filename . ".jpg";
         }
         $params['filename'] = $filename;
         return $this->takeScreenshot($params, $outputDir);
@@ -176,12 +189,13 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      * Takes the string representation of a layer from the javascript creates meta information for
      * each layer. 
      *
-     * @param {Array} $layers     a string of layers in the format:
-     *                            "sourceId,visible,opacity", 
-     *                            layers are separated by "/"
-     * @param {float} $imageScale Scale of the image
-     * @param {int}   $width      desired width of the output image
-     * @param {int}   $height     desired height of the output image
+     * @param {Array} $layers        a string of layers. use functions in LayerParser.php to extract
+     *                               relevant information.
+     * @param {float} $imageScale    Scale of the image
+     * @param {int}   $width         desired width of the output image
+     * @param {int}   $height        desired height of the output image
+     * @param array   $closestImages An array of the closest images to the timestamp for this
+     *                               screenshot, associated by sourceId as keys.
      *
      * @return {Array} $metaArray -- The array containing one meta information 
      * object per layer
@@ -248,3 +262,4 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         }
     }
 }
+?>
