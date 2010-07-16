@@ -51,6 +51,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * @param int    $jp2Height     Height of the JP2 image at it's natural resolution
      * @param float  $jp2Scale      Pixel scale of the original JP2 image
      * @param date   $timestamp     The timestamp of the image
+     * @param bool   $compress      Whether to compress the image after extracting or not (true for tiles)
      */
     public function __construct(
         $sourceJp2, $outputFile, $format, $width, $height, $imageScale, $roi, $instrument, $detector, 
@@ -66,19 +67,19 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
 
         // Make a blank image if the region of interest does not include this image.
         if ($this->_imageNotVisible($pixelRoi)) {
-        	$outputFile = HV_ROOT_DIR . "/resources/images/transparent_512.png";
-        	
-        	include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
-        	$image = new Image_ImageType_BlankImage(
-        	   $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
+            $outputFile = HV_ROOT_DIR . "/resources/images/transparent_512.png";
+            
+            include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
+            $image = new Image_ImageType_BlankImage(
+               $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
                 $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
-        	);
-        	
+            );
+            
         } else {   	        
             $type      = strtoupper($instrument) . "Image";
             $classname = "Image_ImageType_" . $type;
         
-        	include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
+            include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
 
             $image = new $classname(
                 $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
@@ -96,9 +97,14 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
         }
     }
     
+    /**
+     * Displays the image
+     * 
+     * @return void
+     */
     public function display()
     {
-    	$this->image->display();
+        $this->image->display();
     }
     /**
      * Determines if the roi is invalid by calculating width and height and seeing if they are
@@ -110,8 +116,8 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      */
     private function _imageNotVisible($pixelRoi)
     {
-    	return ($pixelRoi['bottom'] - $pixelRoi['top'] <= 1) || 
-    	           ($pixelRoi['right'] - $pixelRoi['left'] <= 1);
+        return ($pixelRoi['bottom'] - $pixelRoi['top'] <= 1) || 
+                   ($pixelRoi['right'] - $pixelRoi['left'] <= 1);
     }
     
     /**

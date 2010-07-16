@@ -167,7 +167,7 @@ class Movie_HelioviewerMovie
         $height += ($height % 2 === 0? 0 : 1);        
         
         if ($this->_highQualityFiletype === "ipod") {
-        	$hq_filename = "$movieName.mp4";
+            $hq_filename = "$movieName.mp4";
             return $ffmpeg->createIpodVideo($hq_filename, $this->tmpDir, $width, $height);
         }
         

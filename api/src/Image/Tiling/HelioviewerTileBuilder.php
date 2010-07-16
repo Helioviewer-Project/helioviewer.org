@@ -34,14 +34,19 @@ class Image_Tiling_HelioviewerTileBuilder
     }
     
     /**
-     * Creates a HelioviewerImageLayer with the parameters given in the API call.  
+     * Creates a HelioviewerImageLayer with the parameters given in the API call.
+     * 
+     * @param {Array} $params The parameters passed in from the API call
+     * 
+     * @return tile
      */
     public function getTile ($params)
     {
-        $filepath = HV_CACHE_DIR . getCacheFilename(
-                                        $params['uri'], $params['imageScale'], $params['x1'], 
-                                        $params['x2'], $params['y1'], $params['y2'], $params['format']
-                                   );
+        $filepath = HV_CACHE_DIR 
+            . getCacheFilename(
+                $params['uri'], $params['imageScale'], $params['x1'], 
+                $params['x2'], $params['y1'], $params['y2'], $params['format']
+            );
         $jp2File = HV_JP2_DIR . $params['uri'];
         
         $roi = array(

@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, addIconHoverEventListener */
 "use strict";
 var MediaHistoryBar = Class.extend(
     /** @lends MediaHistoryBar.prototype */
@@ -84,7 +84,7 @@ var MediaHistoryBar = Class.extend(
     _createContentString: function () {
         this.content = this.history.createContentString();
         // Slice off the last "<br />" at the end.
-        this.content = this.content.slice(0,-6);
+        this.content = this.content.slice(0, -6);
     },
     
     _removeTooltips: function () {
@@ -103,7 +103,7 @@ var MediaHistoryBar = Class.extend(
     _setupDialog: function () {
         var self = this, titleContent, clearButton;
         titleContent = "<div style='line-height:1.6em'>" + 
-                            this.id.slice(0,1).toUpperCase() + this.id.slice(1) + " History" + 
+                            this.id.slice(0, 1).toUpperCase() + this.id.slice(1) + " History" + 
                             "<div id='" + this.id + "-clear-history-button' class='text-btn' style='float:right;'>" +
                                 "<span class='ui-icon ui-icon-trash' style='float:left;' />" +
                                 "<span style='font-weight:normal'><i>Clear</i></span>" +
@@ -154,7 +154,7 @@ var MediaHistoryBar = Class.extend(
         $("#social-buttons").click(function (e) {
             var button = $(e.target);
 
-            if (button != self.button && button.context.parentNode != self.button[0]) {
+            if (button !== self.button && button.context.parentNode !== self.button[0]) {
                 self.container.qtip("hide");
             } 
         });

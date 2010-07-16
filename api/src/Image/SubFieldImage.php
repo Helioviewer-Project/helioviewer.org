@@ -62,6 +62,7 @@ class Image_SubFieldImage
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
+     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      *
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal
@@ -318,7 +319,7 @@ class Image_SubFieldImage
         $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
 
         if ($this->format === "png") {
-        	$imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
             $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
         } else {
             $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);

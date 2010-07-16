@@ -48,6 +48,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
+     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      * 
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal

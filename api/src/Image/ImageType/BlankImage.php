@@ -52,6 +52,7 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      * @param int    $offsetX      Offset of the sun center from the image center
      * @param int    $offsetY      Offset of the sun center from the image center
      * @param string $outputFile   Filepath to where the final image will be stored
+     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */     
     public function __construct(
         $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
@@ -95,7 +96,7 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      */
     public function build()
     {
-    	// Do nothing.
+        // Do nothing.
     }
     
     /**
@@ -108,7 +109,7 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      */
     public function computePadding($roi, $scale) 
     {
-    	$width  = ($roi['right']  - $roi['left']) / $scale;
+        $width  = ($roi['right']  - $roi['left']) / $scale;
         $height = ($roi['bottom'] - $roi['top'])  / $scale;
         
         return array(
