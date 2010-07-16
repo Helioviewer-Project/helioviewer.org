@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, Screenshot, History */
 "use strict";
 var ScreenshotHistory = History.extend(
     /** @lends ScreenshotHistory.prototype */
@@ -46,6 +46,6 @@ var ScreenshotHistory = History.extend(
         $.each(history, function () {
             self.history.push(new Screenshot(this, new Date(this.dateRequested)));
         });
-        this.history = this.history.reverse().slice(0,12).reverse();
+        this.history = this.history.reverse().slice(0, 12).reverse();
     }
 });

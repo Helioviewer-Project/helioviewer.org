@@ -29,7 +29,7 @@ var History = Class.extend(
      */
     addToHistory: function (item) {
         this.history.push(item);
-        this.history = this.history.reverse().slice(0,12).reverse();
+        this.history = this.history.reverse().slice(0, 12).reverse();
     },
 
     /**
@@ -37,7 +37,7 @@ var History = Class.extend(
      * Adds the items in reverse chronological order. 
      */
     createContentString: function () {
-        var self=this, content = "";
+        var self = this, content = "";
     
         if (this.history.length > 0) {
             $.each(this.history, function () {

@@ -48,6 +48,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
+     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      * 
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal
@@ -57,11 +58,11 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
      */
     public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY
+        $outputFile, $offsetX, $offsetY, $compress
     ) {
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY
+            $outputFile, $offsetX, $offsetY, $compress
         );
     }
 
@@ -177,7 +178,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      */
     protected function setImageParams()
     {
-        if (!isset($this->tileSize)) {
+        if (!$this->compress) {
             return "";
         }
         $args = " -quality ";

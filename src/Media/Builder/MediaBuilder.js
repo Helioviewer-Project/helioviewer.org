@@ -8,7 +8,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window */
+/*global Class, $, Shadowbox, setTimeout, window, pixelsToArcseconds, addIconHoverEventListener */
 "use strict";
 var MediaBuilder = Class.extend(
     /** @lends MediaBuilder.prototype */
@@ -57,7 +57,7 @@ var MediaBuilder = Class.extend(
         $("#social-buttons").click(function (e) {
             var button = $(e.target);
 
-            if (button != self.button && button.context && button.context.parentNode != self.button[0]) {
+            if (button !== self.button && button.context && button.context.parentNode !== self.button[0]) {
                 self.button.qtip("hide");
             } 
 
