@@ -366,6 +366,10 @@ var showButtonsInViewport = function () {
     $("#fullscreen-btn").show("fast");
 };
 
+/**
+ * Takes in a string of layers and formats it into an array, removing square
+ * brackets
+ */
 var layerStringToLayerArray = function (layers) {
     var layerArray = [], rawArray = layers.split("],");
     
@@ -375,6 +379,10 @@ var layerStringToLayerArray = function (layers) {
     return layerArray;
 };
 
+/**
+ * Takes a single-layer string and returns an array of the layer's name
+ * by chopping off the "visible" and "opacity" numbers at the end.
+ */
 var extractLayerName = function (layer) {
     return layer.split(",").slice(0, -2);
 };

@@ -14,9 +14,10 @@ var MovieHistory = History.extend(
      * @param history -- an array of saved history from UserSettings. May be null or empty.
      */    
     init: function (history) {
+        this.id = "movie";
         this._super(history);
     },
-
+    
     /**
      * Adds the item to history, then saves the setting in UserSettings.
      * 

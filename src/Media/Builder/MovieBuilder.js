@@ -1,16 +1,16 @@
 /**
- * @description Class that builds a movie from a series of images when a button is clicked, and displays the video to the user.
+ * @description Class that builds a movie from a series of images when a button is clicked, 
+ *              and displays the video to the user.
  * @fileoverview Contains the definition of a class for generating and displaying movies.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author Jaclyn Beck
+ * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  * 
- * @TODO: Error messages from the movie building process pop up in Shadowbox right now for debugging, but for 
- *             putting this online it might be better to just display a jGrowl notification saying there was an error. 
  * @TODO: If the user's end time is past what the database has, warn the user that their movie will be incomplete.
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, MediaBuilder, Movie, getOS */
+/*global Class, $, Shadowbox, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
+ extractLayerName */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
@@ -27,14 +27,13 @@ var MovieBuilder = MediaBuilder.extend(
      * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, mediaHistoryBar) {
-        this._super(viewport, mediaHistoryBar);
+    init: function (viewport, history) {
+        this._super(viewport, history);
         this.button   = $("#movie-button");
         this.percent  = 0;
         this.id       = "movie";
-        
-        var os        = getOS();
-        this.hqFormat = this.formats[os];
+
+        this.hqFormat = this.formats[getOS()];
 
         this._setupDialogAndEventHandlers();
     },
@@ -43,11 +42,7 @@ var MovieBuilder = MediaBuilder.extend(
      * Called after _setupDialogAndEventHandlers is finished initializing the dialog. 
      * Creates event listeners for the "Full Viewport" and "Select Area" buttons in the
      * dialog. "Full Viewport" makes a movie immediately, "Select Area" triggers 
-     * the ImageSelectTool and provides it with a callback function to checkMovieLayers().
-     * 
-     * Finally, it also initializes the history bar, which floats beneath the dialog and
-     * has a list of all movies made in this session. History bar has to be initialized here
-     * because it depends on divs created in the dialog.
+     * the ImageSelectTool and provides it with a callback function to validateAndBuild().
      */
     _setupEventListeners: function () {
         var self = this, viewportInfo;
@@ -64,7 +59,7 @@ var MovieBuilder = MediaBuilder.extend(
                 $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
             } else {
                 viewportInfo = self.viewport.getViewportInformation();
-                self.checkMovieLayers(viewportInfo);
+                self.validateAndBuild(viewportInfo);
             }
         });
     
@@ -74,7 +69,7 @@ var MovieBuilder = MediaBuilder.extend(
             if (self.building) {
                 $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
             } else {
-                $(document).trigger("enable-select-tool", $.proxy(self.checkMovieLayers, self));
+                $(document).trigger("enable-select-tool", $.proxy(self.validateAndBuild, self));
             }
         });
     },
@@ -86,20 +81,19 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing layers, time, imageScale, and coordinates.
      *                     
      */
-    checkMovieLayers: function (viewportInfo) {
+    validateAndBuild: function (viewportInfo) {
         if (!this.ensureValidArea(viewportInfo)) {
             $(document).trigger("message-console-warn", ["The area you have selected is too small to " +
                 "create a movie. Please try again."]);
             return;
+            
         } else if (!this.ensureValidLayers(viewportInfo)) {
             $(document).trigger("message-console-warn", ["You must have at least one layer in your movie. " +
                 "Please try again."]);
             return;
         }
         
-        var finalLayers, self, layers, table, info, rawName, name, tableValues, checkboxes, newInfo;
-        
-        layers = viewportInfo.layers.split("],");
+        var layers = layerStringToLayerArray(viewportInfo.layers);
 
         // If there are between 1 and 3 layers, continue building.
         if (layers.length <= 3 && layers.length >= 1) {
@@ -116,9 +110,7 @@ var MovieBuilder = MediaBuilder.extend(
      * Opens Shadowbox and prompts the user to pick only 3 layers.
      */
     promptForLayers: function (viewportInfo, layers) {
-        var finalLayers, checkboxes, self;
-        finalLayers = [];
-        self = this;
+        var finalLayers = [], self = this;
         
         Shadowbox.open({
             player:    "html",
@@ -133,36 +125,45 @@ var MovieBuilder = MediaBuilder.extend(
                 onFinish: function () {
                     // Set up event handler for the button
                     $('#ok-button').click(function () {
-                        checkboxes = $('td.layers-checkbox');
-                    
-                        // checkboxes is an array of each <td.layers-checkbox> that exists in the table
-                        // this.firstChild is an <input type=checkbox> and is used to get the value.
-                        $.each(checkboxes, function () {
-                            // If the checkbox is selected, add that layer.
-                            if (this.firstChild.checked) {
-                                finalLayers.push(this.firstChild.value);
-                            }
-                        });
-
-                        // Set the new layers in viewportInfo and build the movie.
-                        if (finalLayers.length <= 3 && finalLayers.length >= 1) {
-                            viewportInfo.layers = finalLayers.join(",");
-                            self.buildMovie(viewportInfo);
-                            Shadowbox.close();
-                        }
-                    
-                        // If the user still hasn't entered a valid number of layers, 
-                        // keep the prompt open and warn them
-                        else {
-                            // clear out finalLayers and try again
-                            finalLayers = [];
-                            var msg = "Please select between 1 and 3 layers.";
-                            $(document).trigger("message-console-log", [msg]);
-                        }
+                        self.finalizeLayersAndBuild(viewportInfo);
                     });
                 }
             }
         });
+    },
+    
+    /**
+     * Checks to see if the user has picked 3 or fewer layers and will make a movie if they have.
+     * If not, does nothing and warns the user to pick 1-3 layers.
+     */
+    finalizeLayersAndBuild: function (viewportInfo) {
+        var checkboxes, finalLayers = [], msg;
+        checkboxes = $('td.layers-checkbox');
+    
+        // checkboxes is an array of each <td.layers-checkbox> that exists in the table
+        // this.firstChild is an <input type=checkbox> and is used to get the value.
+        $.each(checkboxes, function () {
+            // If the checkbox is selected, add that layer.
+            if (this.firstChild.checked) {
+                finalLayers.push(this.firstChild.value);
+            }
+        });
+
+        // Set the new layers in viewportInfo and build the movie.
+        if (finalLayers.length <= 3 && finalLayers.length >= 1) {
+            viewportInfo.layers = finalLayers.join(",");
+            this.buildMovie(viewportInfo);
+            Shadowbox.close();
+        }
+
+        // If the user still hasn't entered a valid number of layers, 
+        // keep the prompt open and warn them
+        else {
+            // clear out finalLayers and try again
+            finalLayers = [];
+            msg = "Please select between 1 and 3 layers.";
+            $(document).trigger("message-console-log", [msg]);
+        }
     },
     
     /**
@@ -185,14 +186,14 @@ var MovieBuilder = MediaBuilder.extend(
         // square brackets.
         layerNum = 1;
         $.each(layers, function () {
-            rawName = this.split(',').slice(0, -2);
-            name = rawName.join(" ").replace(/[\[\]]/g, "");
+            rawName = extractLayerName(this);
+            name = rawName.join(" ");
             // Only check the first 3 layers by default.
             checked = layerNum < 4 ? 'checked=true' : "";
 
             table +=    '<tr>' +
                             '<td class="layers-checkbox"><input type=checkbox name="layers" ' + 
-                                checked + ' value="' + this.replace("]", "") + "]" + '"/></td>' +
+                                checked + ' value="[' + this + ']"/></td>' +
                             '<td class="layers-name">' + name + '</td>' + 
                         '</tr>';
             layerNum += 1;
@@ -203,7 +204,7 @@ var MovieBuilder = MediaBuilder.extend(
                         '<button id="ok-button" class="ui-state-default ui-corner-all">OK</button>' +
                     '</div>' +
                 '</div>';
-        
+
         return table;
     },
     
@@ -213,8 +214,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var timeout, options, end, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            valid, movie, scaleDown = false, self = this;
+        var options, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
+            movie, scaleDown = false, self = this;
         
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -243,20 +244,7 @@ var MovieBuilder = MediaBuilder.extend(
             scaleDown  : scaleDown
         };
         
-        movie = new Movie(params, (new Date()).getTime(), this.hqFormat);
-
-        /*
-         * timeout is calculated to estimate the amount of time a movie will take to build. From benchmarking, 
-         * I estimated about 1 second per layer, per frame, to be the general case. C2 and C3 layers sometimes 
-         * take longer but this is a good general equation. It will need to be adjusted when the database scales 
-         * up to account for the amount of time queries take.
-         * A movie with 40 frames and 2 layers would then take 1000 ms * 2 layers * 40 frames = 80000 ms, 
-         * or 80 seconds. Then we want to divide that evenly over 100% so that each 1% gets added at regular 
-         * intervals. so 80000 ms / 100 = 800 ms, or .8 seconds in between adding 1% to the progress counter.
-         */
-//        timeout = (1000 * layerNames.length * self.numFrames) / 100; 
-//        self.percent  = 0;
-//        self.updateProgress(timeout);    
+        movie = new Movie(params, (new Date()).getTime(), this.hqFormat);   
 
         // Ajax Request Callback
         callback = function (data) {
@@ -266,6 +254,13 @@ var MovieBuilder = MediaBuilder.extend(
             self.building = false;
             
             if (data !== null) {
+                if (data.slice(0,4) !== "http") {
+                    $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                                 " try again later."]);
+                    return;
+                    
+                }
+                
                 // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
                 id = data.match(/\/\d+\//)[0].replace(/\//g, "");
 
@@ -278,11 +273,11 @@ var MovieBuilder = MediaBuilder.extend(
                     sticky: true,
                     header: "Your movie is ready!",
                     open  : function () {
-                        var watch = $('#watch-' + id), jgrowl = this;
+                        var watch = $('#watch-' + id);
 
                         movie.setURL(data, id);
                         self.hideDialogs();
-                        self.historyBar.addToHistory(movie);
+                        self.history.addToHistory(movie);
                         
                         // Open pop-up and display movie
                         watch.click(function () {
@@ -294,12 +289,7 @@ var MovieBuilder = MediaBuilder.extend(
 
                 // Make the jGrowl notification with the options above. Add an empty div for the watch dialog in 
                 //case they click on the notification.
-                $(document).trigger("message-console-info", 
-                    [
-                        "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
-                            " download it." + "<br />(opens in a pop-up)</div>" +
-                        "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>", options
-                    ]);
+                $(document).trigger("message-console-info", [self.addJGrowlHTML(id), options]);
             } else {
                 $(document).trigger("message-console-warn", ["There are not enough images to create a video for " +
                     "this date. Please try a different date or different layers."]);
@@ -307,6 +297,15 @@ var MovieBuilder = MediaBuilder.extend(
         };
 
         $.post(this.url, params, callback, "json");
+    },
+
+    /**
+     * Creates the html that will go in the jgrowl notification when the video is done.
+     */
+    addJGrowlHTML: function (id) {
+        return  "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
+                    " download it." + "<br />(opens in a pop-up)</div>" +
+                "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>";
     },
     
     /**

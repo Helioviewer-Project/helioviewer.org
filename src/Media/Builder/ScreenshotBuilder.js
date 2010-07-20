@@ -1,7 +1,7 @@
 /**
  * @author Jaclyn Beck
- * @fileoverview Contains the code for the Screenshot Builder class. Handles event listeners for the screenshot button and
- *                  screenshot creation.
+ * @fileoverview Contains the code for the Screenshot Builder class. Handles event listeners 
+ *                  for the screenshot button and screenshot creation.
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -15,8 +15,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, mediaHistoryBar) {
-        this._super(viewport, mediaHistoryBar);
+    init: function (viewport, history) {
+        this._super(viewport, history);
         this.button = $("#screenshot-button");
         this.id     = "screenshot";
         this._setupDialogAndEventHandlers();
@@ -27,10 +27,6 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * Creates event listeners for the "Full Viewport" and "Select Area" buttons in the
      * dialog. "Full Viewport" takes a screenshot immediately, "Select Area" triggers 
      * the ImageSelectTool and provides it with a callback function to takeScreenshot().
-     * 
-     * Finally, it also initializes the history bar, which floats beneath the dialog and
-     * has a list of all movies made in this session. History bar has to be initialized here
-     * because it depends on divs created in the dialog.
      */
     _setupEventListeners: function () {
         var self = this, viewportInfo;
@@ -55,7 +51,6 @@ var ScreenshotBuilder = MediaBuilder.extend(
         this.button.click(function () {
             $(".jGrowl-notification .close").click();
         });
-        this.historyBar.setup();
     },
     
     /**
@@ -75,7 +70,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             return;
         }
         
-        var self, callback, params, url, arcsecCoords, id, download, screenshot, options;        
+        var self, callback, params, arcsecCoords, id, download, screenshot, options;        
         arcsecCoords  = this.toArcsecCoords(viewportInformation.coordinates, viewportInformation.imageScale);
         self = this;
 
@@ -93,9 +88,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
         screenshot = new Screenshot(params, (new Date()).getTime());
 
         callback = function (url) {
-            id = (url).slice(-14, -4);
-
-            if (url !== null) {       
+            if (url !== null) {
+                id = (url).slice(-14, -4);
                 // Options for the jGrowl notification. Clicking on the notification will 
                 // let the user download the file.                        
                 options = {
@@ -103,7 +97,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
                     header: "Your screenshot is ready!",
                     open:    function (e, m, o) {
                         screenshot.setURL(url, id);
-                        self.historyBar.addToHistory(screenshot);
+                        self.hideDialogs();
+                        self.history.addToHistory(screenshot);
                         
                         download = $("#screenshot-" + id);
                         
