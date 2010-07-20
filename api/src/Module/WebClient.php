@@ -267,57 +267,6 @@ class Module_WebClient implements Module
     }
     
     /**
-     * Gets a collection of screenshots from the cache as specified by the event ID 
-     * in the parameters.
-     * See the API webpage for example usage.
-     *
-     * @return image
-     */
-    public function getScreenshotsForEvent()
-    {
-        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
-        
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
-        $this->_createEventCacheDir($tmpDir);
-        
-        $response = $builder->getScreenshotsForEvent($this->_params, $tmpDir);
-            
-        if ($response === false) {
-            throw new Exception("The requested image does not exist.");
-        }
-
-        $finalResponse = array();
-        foreach ($response as $filepath) {
-            array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
-        }
-        
-        header('Content-Type: application/json');
-        echo JSON_encode($finalResponse);
-        return $finalResponse;
-    }
-    
-    /**
-     * Creates a screenshot based upon the eventId and the parameters specified.
-     * See the API webpage for example usage.
-     *
-     * @return image
-     */
-    public function createScreenshotForEvent()
-    {
-        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
-        
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
-        $this->_createEventCacheDir($tmpDir);
-        
-        $response = $builder->createScreenshotForEvent($this->_params, $tmpDir);
-        
-        echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
-        return $response;
-    }
-
-    /**
      * getViewerImage (aka "getCompositeImage")
      *
      * Example usage: (outdated!)
@@ -407,19 +356,6 @@ class Module_WebClient implements Module
                 'dates'	   => array('obsDate'),
             );
             break;
-        case "getScreenshotForEvent": 
-            $expected = array(
-                'required' => array('eventId')
-            );
-            break;
-        case "createScreenshotsForEvent":
-            $required = array('eventId', 'obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
-            $expected = array(
-                'required' => $required, 
-                'floats'   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                'dates'    => array('obsDate'),
-            );
-            break;        	
         default:
             break;
         }
@@ -449,29 +385,6 @@ class Module_WebClient implements Module
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
             chmod($cacheDir, 0777);
-        }
-    }
-    
-    /**
-     * Creates the directory structure that will be used to store screenshots
-     * based upon events. 
-     *
-     * @param string $cacheDir The path to cache/events/eventId
-     * 
-     * @return void
-     */
-    private function _createEventCacheDir($cacheDir)
-    {
-        $ipodDir = $cacheDir . "/iPod";
-        if (!file_exists($ipodDir)) {
-            mkdir($ipodDir, 0777, true);
-            chmod($ipodDir, 0777);        
-        }
-
-        $regular = $cacheDir . "/regular";
-        if (!file_exists($regular)) {
-            mkdir($regular, 0777, true);
-            chmod($regular, 0777);        
         }
     }
     
@@ -565,7 +478,7 @@ class Module_WebClient implements Module
         
             <br />
         
-             <ol style="list-style-type: upper-latin;">
+            <ol style="list-style-type: upper-latin;">
      
             <!-- Closest Image API -->
             <li>
