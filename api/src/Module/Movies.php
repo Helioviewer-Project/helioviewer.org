@@ -122,6 +122,7 @@ class Module_Movies implements Module
             mkdir($tmpDir, 0777, true);
             chmod($tmpDir, 0777);
         }
+        
         return $builder->buildMovie($this->_params, $tmpDir);
     }
 

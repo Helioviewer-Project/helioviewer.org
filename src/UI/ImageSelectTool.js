@@ -11,7 +11,6 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var ImageSelectTool = Class.extend(
     /** @lends ImageSelectTool.prototype */
     {
-        
     /**
      * @constructs
      * @description Sets up an event handler for the select region button and finds the divs where
@@ -28,8 +27,11 @@ var ImageSelectTool = Class.extend(
         $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
 
+    /**
+     * Activates the plugin or disables it if it is already active
+     */
     enableAreaSelect: function (event, callback) {
-        var width, height, imgContainer, transImg, helioviewer;
+        var imgContainer, transImg;
     
         // If the user has already pushed the button but not done anything, this will turn the feature off.
         if (this.active) {
@@ -51,7 +53,7 @@ var ImageSelectTool = Class.extend(
             * Necessary because the viewport image is done in tiles and imgAreaSelect cannot cross 
             * over tile boundaries. Add the transparent image to the viewport, on top of the other tiles.
             * 
-            * viewport.domNode corresponds to the div "#helioviewer-viewport", so add the tile directly
+            * vpDomNode corresponds to the div "#helioviewer-viewport", so add the tile directly
             * inside this div. It is necessary to specify a z-index because otherwise it gets added underneath
             * the rest of the tiles and the plugin will not work.
             */
@@ -78,7 +80,7 @@ var ImageSelectTool = Class.extend(
      *                 See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation. 
      */
     selectArea: function (callback) {
-        var coords, visibleCoords, area, selection, viewportInfo, selectInfo, self = this;
+        var area, self = this;
         
         // Use imgAreaSelect on the transparent region to get the top, left, bottom, and right 
         // coordinates of the selected region. 
@@ -96,7 +98,7 @@ var ImageSelectTool = Class.extend(
             }
         });
         
-        self.doneButton.click(function () {
+        this.doneButton.click(function () {
             self.submitSelectedArea(area, callback);
         });
 
@@ -107,13 +109,18 @@ var ImageSelectTool = Class.extend(
         });
         */
         
-        self.cancelButton.click(function () {
+        this.cancelButton.click(function () {
             self.cleanup();
         });
         
-        self._setupEventListeners();
+        this._setupEventListeners();
     },
     
+    /**
+     * Once an area has been selected, this method calculates the coordinates of the 
+     * selected area, cleans up divs created by the plugin, and uses the callback 
+     * function to complete movie/screenshot building.
+     */
     submitSelectedArea: function (area, callback) {
         var selection, viewportInfo, visibleCoords, coords;
         if (area) {
@@ -138,6 +145,10 @@ var ImageSelectTool = Class.extend(
         }
     },
     
+    /**
+     * Adds a bar in the upper-right corner of the viewport with buttons for "Done", 
+     * "Cancel", and "Help"
+     */
     _setupFinishedButton: function () {
         var self = this;
         this.vpDomNode.qtip({
@@ -187,6 +198,9 @@ var ImageSelectTool = Class.extend(
         addIconHoverEventListener(this.helpButton);
     },
     
+    /**
+     * Sets up a help tooltip that pops up when the help button is moused over
+     */
     _setupHelpDialog: function () {
         var api, qtip;
         api  = this.vpDomNode.qtip("api");
