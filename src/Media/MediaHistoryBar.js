@@ -1,5 +1,6 @@
 /**
- * @description Abstract class that keeps track of previous media made and controls the display bar and tooltips associated with it.
+ * @description Abstract class that keeps track of previous media made and controls the display bar 
+ *              and tooltips associated with it.
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
@@ -17,23 +18,16 @@ var MediaHistoryBar = Class.extend(
      * @TODO This class is set up like it is in preparation to merge screenshot and movie history into 
      *       one bar. Currently they are separated into two bars and two instances of this class. 
      */    
-    init: function (id, history) {
+    init: function (id, initialContent) {
         this.id = id;
-        this.history   = history;
 
-        this.content   = "";
+        this.content   = initialContent;
         this.hasDialog = false;
-    },
-    
-    /**
-     * Grabs divs that it needs to set up the qtip dialog and initializes the dialog if there is history.
-     */
-    setup: function () {
+
         this.container = $("#qtip-" + this.id);
         this.button    = $("#" + this.id + "-button");
         
-        this._createContentString();
-        if (this.content.length > 0 && !this.hasDialog) {
+        if (this.content.length > 0) {
             this._setupDialog();
             this.hasDialog = true;
         }
@@ -43,21 +37,20 @@ var MediaHistoryBar = Class.extend(
      * Adds the new item to history and re-makes the history dialog with the new item
      * included. 
      */
-    addToHistory: function (item) {        
+    addToHistory: function (content) {        
         this._cleanupTooltips();
-        
-        this.history.addToHistory(item);
-        this._createContentString();
+        this.content = content;
         // It is necessary to completely recreate the tooltip because if you update the content only,
         // any selectors that depend on previous content will break and all movie information tooltips
         // would have to be re-created anyway. "Time ago" must also be re-calculated.
         this._setupDialog();
     },
     
+    /**
+     * Calls methods to get rid of divs left over from old dialogs
+     */
     _cleanupTooltips: function () {
         if (this.hasDialog) {
-            this._removeTooltips(); 
-
             var api = this.container.qtip("api");
             if (api.elements && api.elements.tooltip) {
                 api.elements.tooltip.remove();
@@ -87,8 +80,13 @@ var MediaHistoryBar = Class.extend(
         this.content = this.content.slice(0, -6);
     },
     
-    _removeTooltips: function () {
-        this.history.removeTooltips();
+    /**
+     * Completely empties its history and destroys all tooltips/dialogs 
+     * associated with it.
+     */
+    _clearHistory: function () {
+        this._cleanupTooltips();
+        this.hasDialog = false;
     },
     
     /**
@@ -138,31 +136,26 @@ var MediaHistoryBar = Class.extend(
             style  : "mediaDark",
             api    : {
                 onRender: function () {
-                    self.history.setupTooltips();
+                    $(document).trigger('setup-' + self.id + '-history-tooltips');
                     
                     clearButton = $("#" + self.id + "-clear-history-button");
                     
                     clearButton.click(function () {
+                        $(document).trigger('clear-' + self.id + '-history');
                         self._clearHistory();
                     });
                     
                     addIconHoverEventListener(clearButton);
+                    
+                    $("#social-buttons").click(function (e) {
+                        var button = $(e.target);
+
+                        if (button !== self.button && button.context.parentNode !== self.button[0]) {
+                            self.hide();
+                        } 
+                    });
                 }
             }
         });
-
-        $("#social-buttons").click(function (e) {
-            var button = $(e.target);
-
-            if (button !== self.button && button.context.parentNode !== self.button[0]) {
-                self.container.qtip("hide");
-            } 
-        });
-    },
-    
-    _clearHistory: function () {
-        this._cleanupTooltips();
-        this.hasDialog = false;
-        this.history.clear();
     }
 });
