@@ -32,7 +32,40 @@ var Screenshot = Media.extend(
             self.download();
         });
     },
-
+    
+    /**
+     * @description Opens the download dialog
+     */
+    download: function () {
+        if (this.url) {
+            window.open('api/index.php?action=downloadFile&url=' + this.url, '_parent');
+        } else {
+            $(document).trigger("message-console-warn", ["There was an error retrieving your " +
+                                "screenshot. Please try again later or refresh the page."]);
+        }
+    },
+    
+    /**
+     * Puts information about the screenshot into an array for storage in UserSettings.
+     */    
+    serialize: function () {
+        return {
+            dateRequested : this.dateRequested,
+            id            : this.id,
+            width         : this.width,
+            height        : this.height,
+            imageScale    : this.imageScale,
+            layers        : this.layers,
+            name          : this.name,
+            obsDate       : this.obsDate,
+            url           : this.url,
+            x1            : this.x1,
+            x2            : this.x2,
+            y1            : this.y1,
+            y2            : this.y2
+        };
+    },
+    
     /**
      * Creates a table element with information about the screenshot
      */
@@ -77,35 +110,5 @@ var Screenshot = Media.extend(
                         "<td><img src=" + this.url + " width=150 /></td>" + 
                  "</table>";
         return table;
-    },
-    
-    /**
-     * @description Opens the download dialog
-     */
-    download: function () {
-        if (this.url) {
-            window.open('api/index.php?action=downloadFile&url=' + this.url, '_parent');
-        } else {
-            $(document).trigger("message-console-warn", ["There was an error retrieving your " +
-                                "screenshot. Please try again later or refresh the page."]);
-        }
-    },
-    
-    serialize: function () {
-        return {
-            dateRequested : this.dateRequested,
-            id            : this.id,
-            width         : this.width,
-            height        : this.height,
-            imageScale    : this.imageScale,
-            layers        : this.layers,
-            name          : this.name,
-            obsDate       : this.obsDate,
-            url           : this.url,
-            x1            : this.x1,
-            x2            : this.x2,
-            y1            : this.y1,
-            y2            : this.y2
-        };
     }
 });

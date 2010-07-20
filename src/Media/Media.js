@@ -33,24 +33,27 @@ var Media = Class.extend(
      * Creates the name that will be displayed in the history.
      * Groups layers together by detector, ex: 
      * EIT 171/304, LASCO C2/C3
-     * Will crop names that are too long and append ellipses
+     * Will crop names that are too long and append ellipses.
      */
     parseName: function () {
-        var rawName, layerArray, name, currentInst, self = this;
+        var rawName, layerArray, name, currentInstrument, self = this;
+        
         layerArray = layerStringToLayerArray(this.layers).sort();
         name = "";
         
-        currentInst = false;
+        currentInstrument = false;
         
         $.each(layerArray, function () {
             rawName = extractLayerName(this).slice(1);
 
-            if (rawName[0] !== currentInst) {
-                currentInst = rawName[0];
-                name += ", " + currentInst + " " + self.parseLayer(rawName);
+            if (rawName[0] !== currentInstrument) {
+                currentInstrument = rawName[0];
+                name += ", " + currentInstrument + " ";
             } else {
-                name += "/" + self.parseLayer(rawName);
+                name += "/";
             }
+            
+            name += self.parseLayer(rawName);
         });
         
         // Get rid of the extra ", " at the front
@@ -73,6 +76,11 @@ var Media = Class.extend(
         return layer[2];
     },
     
+    /**
+     * Gets the difference between "now" and this object's date and 
+     * returns it in "fuzzy time", i.e. "5 minutes ago" or 
+     * "1 day ago"
+     */
     getTimeDiff: function () {
         var now, diff;
         now = new Date();
