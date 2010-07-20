@@ -35,7 +35,8 @@ var HelioviewerTileLayer = TileLayer.extend(
         this.layeringOrder = layeringOrder;
         this.baseURL = baseURL;
         
-        this.id = "tile-layer-" + sourceId;
+        // Create a random id which can be used to link tile layer with it's corresponding tile layer accordion entry
+        this.id = "tile-layer-" + new Date().getTime();
         
         this._setupEventHandlers();
         this._loadStaticProperties();
@@ -73,15 +74,14 @@ var HelioviewerTileLayer = TileLayer.extend(
         
         if (this.visible) {
             this.tileLoader.reloadTiles(false);
+
             //          Update viewport sandbox if necessary
+
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
-        }
-        
-        
+	}
         $(document).trigger("update-tile-layer-accordion-entry", 
                             [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
                                 this.image.filepath, this.image.filename, this.image.server]);
-
     },
     
     /**
