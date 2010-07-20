@@ -109,7 +109,7 @@ var ViewportMovementHelper = Class.extend(
         // Click coordinates relative to viewport top-left
         pos = this.mouseCoords.getRelativeCoords(event.pageX, event.pageY);
     
-        // Coordinates of viewport center relative to top-left
+        // Coordinates of the center of the viewport
         center = this.getCenter();
     
         //adjust for zoom
@@ -144,7 +144,7 @@ var ViewportMovementHelper = Class.extend(
             x: Math.min(Math.max(this.startMovingPosition.x - x, 0), this.sandbox.width()),
             y: Math.min(Math.max(this.startMovingPosition.y - y, 0), this.sandbox.height())
         };
-        
+      
         this.sandboxHelper.moveContainerTo(pos.x, pos.y);
         $(document).trigger("recompute-tile-visibility");
     },
@@ -155,7 +155,7 @@ var ViewportMovementHelper = Class.extend(
      * @param {Int} y Y-value
      */
     moveTo: function (x, y) {
-        //this.sandboxHelper.moveContainerTo(x, y);
+        this.sandboxHelper.moveContainerTo(x, y);
 
         // Check throttle
         if (this.moveCounter === 0) {
@@ -278,6 +278,20 @@ var ViewportMovementHelper = Class.extend(
     },
     
     /**
+     * Uses the center of the visible area in the viewport to calculate what the
+     * moving container's coordinates should be. 
+     */
+    viewportCoordsToMovingContainerCoords: function (newCenter) {
+        sbCenter = this.sandboxHelper.getCenter();
+        mcCoords = {
+            x: Math.max(Math.min(sbCenter.x - newCenter.x, this.sandbox.width()), 0),
+            y: Math.max(Math.min(sbCenter.y - newCenter.y, this.sandbox.height()), 0)
+        };
+        
+        return mcCoords;
+    },
+    
+    /**
      * Event triggered by using the arrow keys, moves the viewport by (x, y)
      */
     moveViewport: function (event, x, y) {
@@ -295,22 +309,26 @@ var ViewportMovementHelper = Class.extend(
      */
     zoomTo: function (imageScale) {
         var imageCenter, originalSandboxWidth, originalSandboxHeight,  
-        sandboxWidthScaleFactor, sandboxHeightScaleFactor;
+        newScale, newCenter, newCoords;
         
-        // get offset and sandbox dimensions
-        imageCenter           = this.getContainerPos();
-        // Ensure width/height are at least 1 to avoid dividing by zero
-        originalSandboxWidth  = this.sandbox.width()  || 1; 
-        originalSandboxHeight = this.sandbox.height() || 1;
-        
+        vpCoords = this.getViewportCoords();
+        center = {
+            x: (vpCoords.right + vpCoords.left)/2,
+            y: (vpCoords.bottom + vpCoords.top) / 2
+        };
+
+        newScale = this.mouseCoords.imageScale / imageScale;
+        newCenter = {
+            x: center.x * newScale,
+            y: center.y * newScale
+        };
+
         // update sandbox
         this.updateSandbox();
-        
-        sandboxWidthScaleFactor  = this.sandbox.width()  / originalSandboxWidth;
-        sandboxHeightScaleFactor = this.sandbox.height() / originalSandboxHeight;
 
-        this.moveTo(imageCenter.x * sandboxWidthScaleFactor, imageCenter.y * sandboxHeightScaleFactor);
-        
+        newCoords = this.viewportCoordsToMovingContainerCoords(newCenter);
+
+        this.moveTo(newCoords.x, newCoords.y);
         this.mouseCoords.updateImageScale(imageScale);
     }
 });

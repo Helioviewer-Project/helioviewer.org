@@ -18,11 +18,11 @@ var MediaBuilder = Class.extend(
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the movie button
      */    
-    init: function (viewport, mediaHistoryBar) {
-        this.url        = "api/index.php";
-        this.viewport   = viewport;   
-        this.building   = false;
-        this.historyBar = mediaHistoryBar;
+    init: function (viewport, history) {
+        this.url      = "api/index.php";
+        this.viewport = viewport;   
+        this.building = false;
+        this.history  = history;
     },
     
     /**
@@ -67,6 +67,10 @@ var MediaBuilder = Class.extend(
     /**
      * Subclassed in MovieBuilder and ScreenshotBuilder. Both classes call this._super() to call
      * this function as well. 
+     * 
+     * It also initializes the history bar, which floats beneath the dialog and
+     * has a list of all movies made in this session. History bar has to be initialized here
+     * because it depends on divs created in the dialog.
      */
     _setupEventListeners: function () {
         addIconHoverEventListener(this.fullVPButton);
@@ -82,7 +86,11 @@ var MediaBuilder = Class.extend(
             self.hideDialogs();
         });
 
-        this.historyBar.setup();
+        this.history.setup();
+
+        $(document).bind("message-console-log", $.proxy(this.hideDialogs, this))
+                   .bind("message-console-error", $.proxy(this.hideDialogs, this))
+                   .bind("message-console-warn", $.proxy(this.hideDialogs, this));
     },
 
     /**
@@ -112,7 +120,7 @@ var MediaBuilder = Class.extend(
      */
     hideDialogs: function () {
         this.button.qtip("hide");
-        this.historyBar.hide();
+        this.history.hide();
     },
     
     /**

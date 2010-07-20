@@ -68,11 +68,7 @@ var SandboxHelper = Class.extend(
     },
         
     moveContainerTo: function (x, y) {
-        if (x > 0 || this.movingContainer.css('left').slice(0, -2) !== "0") {
-            this.movingContainer.css({left: x + 'px'});
-        }
-        if (y > 0 || this.movingContainer.css('top').slice(0, -2) !== "0") {
-            this.movingContainer.css({top:  y + 'px'});
-        }
+        this.movingContainer.css({left: x + 'px'});
+        this.movingContainer.css({top:  y + 'px'});
     }
 });

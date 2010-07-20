@@ -1,5 +1,6 @@
 /**
- * @description Abstract class that keeps track of previous media made and controls the display bar and tooltips associated with it.
+ * @description Abstract class that keeps track of previous media made and controls the display 
+ *              bar and tooltips associated with it.
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
@@ -16,7 +17,12 @@ var Movie = Media.extend(
      */    
     init: function (params, dateRequested, hqFormat) {
         this._super(params, dateRequested);
-        this.startTime    = this.startTime.replace("T", " ").slice(0, -5);
+        this.startTime = this.startTime.replace(["T", "Z"], " ");
+        // Get rid of the extra .000 if there is one
+        if (this.startTime.length > 20) {
+            this.startTime = this.startTime.slice(0, -5);
+        }
+        
         this.hqFormat     = hqFormat;
         
         // Resize what appears in the movie player if the movie is as big as the viewport
@@ -52,7 +58,62 @@ var Movie = Media.extend(
             self.playMovie();
         });
     },
+    
+    /**
+     * @description Opens a pop-up with the movie player in it.
+     */
+    playMovie: function () {
+        var url, self;
+        self = this;
+        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + 
+                this.viewerWidth + '&height=' + this.viewerHeight;    
+        this.watchDialog = $("#watch-dialog-" + this.id);
 
+        // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
+        // trying to download it. 
+        this.watchDialog.dialog({
+            title  : "Helioviewer Movie Player",
+            width  : 'auto',
+            height : 'auto',
+            open   : self.watchDialog.append("<div id='movie-player-" + self.id + "'>" + 
+                                            "<iframe src=" + url + " width=" + self.viewerWidth + " height=" + 
+                                                self.viewerHeight + " marginheight=0 marginwidth=0 scrolling=no " +
+                                                "frameborder=0 /><br /><br />" +
+                                                "<a href='api/index.php?action=downloadFile&url=" + self.hqFile + "'>" +
+                                                    "Click here to download a high-quality version." +
+                                                "</a></div>"),
+            close  : function () {  
+                        $("#movie-player-" + self.id).remove();
+                    },
+            zIndex : 9999,
+            show   : 'fade'
+        });                                 
+    },
+    
+    /**
+     * Puts information about the movie into an array for storage in UserSettings.
+     */
+    serialize: function () {
+        return {
+            dateRequested : this.dateRequested,
+            id            : this.id,
+            width         : this.width,
+            height        : this.height,
+            imageScale    : this.imageScale,
+            layers        : this.layers,
+            name          : this.name,
+            startTime     : this.startTime,
+            url           : this.url,
+            x1            : this.x1,
+            x2            : this.x2,
+            y1            : this.y1,
+            y2            : this.y2,
+            hqFormat      : this.hqFormat,
+            hqFile        : this.hqFile,
+            scaleDown     : this.scaleDown
+        };
+    },
+    
     /**
      * Creates a table element with information about the movie.
      */
@@ -98,57 +159,5 @@ var Movie = Media.extend(
                         "<td><img src=" + previewFrame + " width=150 /></td>" + 
                  "</table>";
         return table;
-    },
-    
-    /**
-     * @description Opens a pop-up with the movie player in it.
-     */
-    playMovie: function () {
-        var url, self;
-        self = this;
-        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + 
-                this.viewerWidth + '&height=' + this.viewerHeight;    
-        this.watchDialog = $("#watch-dialog-" + this.id);
-
-        // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
-        // trying to download it. 
-        this.watchDialog.dialog({
-            title  : "Helioviewer Movie Player",
-            width  : 'auto',
-            height : 'auto',
-            open   : self.watchDialog.append("<div id='movie-player-" + self.id + "'>" + 
-                                            "<iframe src=" + url + " width=" + self.viewerWidth + " height=" + 
-                                                self.viewerHeight + " marginheight=0 marginwidth=0 scrolling=no " +
-                                                "frameborder=0 /><br /><br />" +
-                                                "<a href='api/index.php?action=downloadFile&url=" + self.hqFile + "'>" +
-                                                    "Click here to download a high-quality version." +
-                                                "</a></div>"),
-            close  : function () {  
-                        $("#movie-player-" + self.id).remove();
-                    },
-            zIndex : 9999,
-            show   : 'fade'
-        });                                 
-    },
-    
-    serialize: function () {
-        return {
-            dateRequested : this.dateRequested,
-            id            : this.id,
-            width         : this.width,
-            height        : this.height,
-            imageScale    : this.imageScale,
-            layers        : this.layers,
-            name          : this.name,
-            startTime     : this.startTime,
-            url           : this.url,
-            x1            : this.x1,
-            x2            : this.x2,
-            y1            : this.y1,
-            y2            : this.y2,
-            hqFormat      : this.hqFormat,
-            hqFile        : this.hqFile,
-            scaleDown     : this.scaleDown
-        };
     }
 });
