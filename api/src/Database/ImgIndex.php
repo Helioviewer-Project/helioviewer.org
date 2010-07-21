@@ -134,7 +134,9 @@ class Database_ImgIndex
         $endDate   = isoDateToMySQL($end);
 
         $images = array();
-        $sql = "SELECT * FROM image WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
+        $sql = "SELECT * FROM image 
+                WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate' ORDER BY date ASC";
+
         $result = $this->_dbConnection->query($sql);
 
         while ($image = $result->fetch_array(MYSQL_ASSOC)) {
