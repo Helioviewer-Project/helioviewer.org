@@ -23,7 +23,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                     tileServers, savedLayers, urlLayers) {
 
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-		tileServers, savedLayers, urlLayers);
+		              tileServers, savedLayers, urlLayers);
 
         this._queue = [ "SOHO,EIT,EIT,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
                         "SOHO,LASCO,C2,white-light", "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum",

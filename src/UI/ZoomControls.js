@@ -25,7 +25,7 @@ var ZoomControls = Class.extend(
         this._buildUI();
         this._initSlider();
         this._setupTooltips();
-        this._initEvents();
+        this._initEventHandlers();
     },
 
     /**
@@ -54,7 +54,7 @@ var ZoomControls = Class.extend(
      * @param {Object} v jQuery slider value
      */
     _setImageScale: function (v) {
-        $(document).trigger('set-image-scale', [this.increments[v]]);
+        $(document).trigger('image-scale-changed', [this.increments[v]]);
     },
     
     /**
@@ -138,14 +138,13 @@ var ZoomControls = Class.extend(
     /**
      * @description Initializes zoom control-related event-handlers
      */
-    _initEvents: function () {
+    _initEventHandlers: function () {
         this.zoomInBtn.click($.proxy(this._onZoomInBtnClick, this));
         this.zoomOutBtn.click($.proxy(this._onZoomOutBtnClick, this));
         $("#helioviewer-viewport").mousewheel($.proxy(this._onMouseWheelMove, this));
         
     }
 });
-
 
 /**
  * Helper function to hide the zoom controls

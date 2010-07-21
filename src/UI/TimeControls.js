@@ -37,7 +37,7 @@ var TimeControls = Class.extend(
         this._addTimeIncrements();
         this._updateInputFields();
         this._initDatePicker();
-        this._initEvents();
+        this._initEventHandlers();
     },
 
     /**
@@ -113,7 +113,7 @@ var TimeControls = Class.extend(
     /**
      * @descriptional Initialize date and Time-related events
      */
-    _initEvents: function () {
+    _initEventHandlers: function () {
         this._backBtn.bind('click', $.proxy(this.timePrevious, this));
         this._forwardBtn.bind('click', $.proxy(this.timeNext, this));
         this._timeInput.bind('change', $.proxy(this._onTextFieldChange, this));
@@ -207,7 +207,7 @@ var TimeControls = Class.extend(
     },
     
     /**
-     * Updates form fields and let's other interested objects know about new time
+     * Updates form fields and lets other interested objects know about new time
      */
     _onDateChange: function () {
         this._updateInputFields();
