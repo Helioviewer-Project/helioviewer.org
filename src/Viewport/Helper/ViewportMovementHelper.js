@@ -1,5 +1,5 @@
 /**
- * @fileOverview Contains helper functions for the Viewport class.
+ * @fileOverview Contains helper functions for the Viewport class. Controls the sandbox and moving container.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
@@ -27,28 +27,16 @@ var ViewportMovementHelper = Class.extend(
         this.sandbox         = $("#sandbox");
         this.movingContainer = $("#moving-container");
         this.mouseCoords     = mouseCoords;
-    
-        var center = this.getCenter();
-        this.sandboxHelper = new SandboxHelper(center.x, center.y);
-        this._initEventHandlers();
-    },
 
-    _initEventHandlers: function () {
-        $(document).mousemove($.proxy(this.mouseMove, this))
-                   .mouseup($.proxy(this.mouseUp, this))
-                   .bind("update-viewport-sandbox", $.proxy(this.updateSandbox, this))
-                   .bind("move-viewport", $.proxy(this.moveViewport, this));
-    
-        $('#center-button').click($.proxy(this.center, this));
-        this.domNode.mousedown($.proxy(this.mouseDown, this));
+        var center = this._getCenter();
+        this.sandboxHelper = new SandboxHelper(center.x, center.y);
     },
     
     /**
      * @description Centers the viewport.
      */
-    center: function () {
-        this.sandboxHelper.center();    
-        $(document).trigger("recompute-tile-visibility");
+    centerViewport: function () {
+        this.sandboxHelper.center();
     },
     
     /**
@@ -68,17 +56,17 @@ var ViewportMovementHelper = Class.extend(
             y: event.pageY
         };
     
-        this.startMoving();
+        this._startMoving();
     },
     
     /**
      * @description Fired when a mouse button is released
      * @param {Event} event Event object
      */    
-    mouseUp: function () {
+    mouseUp: function (event) {
         this.domNode.css("cursor", "pointer");
         if (this.isMoving) {
-            this.endMoving();
+            this._endMoving();
         }
     },
     
@@ -99,163 +87,47 @@ var ViewportMovementHelper = Class.extend(
 
         this.moveCounter = this.moveCounter % this.tileUpdateThrottle;
 
-        this.moveBy(this.mouseStartingPosition.x - event.pageX,
+        this._moveBy(this.mouseStartingPosition.x - event.pageX,
             this.mouseStartingPosition.y - event.pageY);
     },
     
+    /**
+     * Centers the viewport on the point that was double clicked and then triggers
+     * zoom in/out events.
+     */
     doubleClick: function (event) {
-        var pos, center, scaleFactor, diff;
-    
+        var pos, center, diff;
         // Click coordinates relative to viewport top-left
         pos = this.mouseCoords.getRelativeCoords(event.pageX, event.pageY);
-    
+
         // Coordinates of the center of the viewport
-        center = this.getCenter();
-    
-        //adjust for zoom
-        if (event.shiftKey) {
-            scaleFactor = 0.5;
-            $("#zoomControlZoomOut").click(); 
-        }
-        else {
-            scaleFactor = 2;
-            $("#zoomControlZoomIn").click();
-        }
-    
+        center = this._getCenter();
+        
         // Distance between point of mouse-click and the center of the viewport
         diff = {
-            x: (pos.x - center.x) * scaleFactor,
-            y: (pos.y - center.y) * scaleFactor
+            x: (pos.x - center.x),
+            y: (pos.y - center.y)
         };
-    
-        this.startMoving();
-        this.moveBy(diff.x, diff.y);
-        this.endMoving();
-    },
-    
-    /**
-     * @description Moves the viewport's focus
-     * @param {Int} x X-value
-     * @param {Int} y Y-value
-     */   
-    moveBy: function (x, y) {
-        // Compare against sandbox dimensions
-        var pos = {
-            x: Math.min(Math.max(this.startMovingPosition.x - x, 0), this.sandbox.width()),
-            y: Math.min(Math.max(this.startMovingPosition.y - y, 0), this.sandbox.height())
-        };
-      
-        this.sandboxHelper.moveContainerTo(pos.x, pos.y);
-        $(document).trigger("recompute-tile-visibility");
-    },
-    
-    /**
-     * Move the viewport focus to a new location.
-     * @param {Int} x X-value
-     * @param {Int} y Y-value
-     */
-    moveTo: function (x, y) {
-        this.sandboxHelper.moveContainerTo(x, y);
-
-        // Check throttle
-        if (this.moveCounter === 0) {
-            $(document).trigger("recompute-tile-visibility");
-        }
-    },
-    
-    /**
-     * @description Event-handler for a mouse-drag start.
-     */
-    startMoving: function () {
-        this.isMoving = true;
-        this.mouseCoords.disable();
-        this.startMovingPosition = this.getContainerPos();
-    },
-    
-    /**
-     * @description Event handler triggered after dragging
-     */
-    endMoving: function () {
-        this.isMoving = false;
-        this.mouseCoords.enable();
-        $(document).trigger("recompute-tile-visibility");
-    },
-    
-    /**
-     * @description Get the coordinates of the viewport center
-     * @returns {Object} The X & Y coordinates of the viewport's center
-     * 
-     * * TODO 06/07/2010: getCenter should probably be with respect to the Sandbox, and not the viewport
-     *   since that is more meaningful in terms of positioning and movement.
-     */
-    getCenter: function () {
-        return {
-            x: Math.round(this.domNode.width()  / 2),
-            y: Math.round(this.domNode.height() / 2)
-        };
-    },
-    
-    /**
-     * TODO Re-work this, getCenter, etc to simplify viewport movement and coordinates
-     * ALSO- be careful to differentiate between pixel coordinates and other units of measurement
-     * 
-     * NEXT- look at moveTo() and find difference between the current position and center.
-     * Double/halve this 
-     * 
-     * Returns an array of {x:, y:}
-     */
-    getSandboxCenter: function () {
-        return this.sandboxHelper.getCenter();
-    },
-    
-    /**
-     * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
-     * contents around in order to see all layers
-     */
-    getDesiredSandboxDimensions: function () {
-        var width, height;
-        width  = this.domNode.width();
-        height = this.domNode.height();
-    
-        return {
-            width : Math.max(0, this.maxLayerDimensions.width  - width),
-            height: Math.max(0, this.maxLayerDimensions.height - height)
-        };
-    },    
-    
-    /**
-     * @description Get the current coordinates of the moving container (relative to the sandbox)
-     * @returns {Object} The X & Y coordinates of the viewport's top-left corner
-     */
-    getContainerPos: function () {
-        var position = this.movingContainer.position();
         
-        return {
-            x: position.left,
-            y: position.top
-        };
+        this._startMoving();
+        this._moveBy(diff.x, diff.y);
+        this._endMoving();
     },
     
     updateMaxLayerDimensions: function (maxDimensions) {
         this.maxLayerDimensions = maxDimensions;
-        this.updateSandbox();
+        this.update();
     },
     
     /**
      * @description Update the size and location of the movement-constraining box.
      */
-    updateSandbox: function () {
+    update: function () {
         var center, newSize;
-        center  = this.getCenter();
-        newSize = this.getDesiredSandboxDimensions(); 
+        center  = this._getCenter();
+        newSize = this._getDesiredSandboxDimensions(); 
+
         this.sandboxHelper.updateSandbox(center, newSize);
-    },
-    
-    /**
-     * @description Adjust viewport dimensions when window is resized.
-     */
-    resize: function () {
-        this.updateSandbox();
     },
     
     /**
@@ -278,29 +150,15 @@ var ViewportMovementHelper = Class.extend(
     },
     
     /**
-     * Uses the center of the visible area in the viewport to calculate what the
-     * moving container's coordinates should be. 
-     */
-    viewportCoordsToMovingContainerCoords: function (newCenter) {
-        sbCenter = this.sandboxHelper.getCenter();
-        mcCoords = {
-            x: Math.max(Math.min(sbCenter.x - newCenter.x, this.sandbox.width()), 0),
-            y: Math.max(Math.min(sbCenter.y - newCenter.y, this.sandbox.height()), 0)
-        };
-        
-        return mcCoords;
-    },
-    
-    /**
      * Event triggered by using the arrow keys, moves the viewport by (x, y)
      */
-    moveViewport: function (event, x, y) {
-        this.startMoving();
+    moveViewport: function (x, y) {
+        this._startMoving();
         this.moveCounter += 1; // Threshold
         this.moveCounter = this.moveCounter % this.tileUpdateThrottle;
         
-        this.moveBy(x, y);
-        this.endMoving();
+        this._moveBy(x, y);
+        this._endMoving();
     },
     
     /**
@@ -308,12 +166,11 @@ var ViewportMovementHelper = Class.extend(
      * @param {Float} imageScale The desired image scale
      */
     zoomTo: function (imageScale) {
-        var imageCenter, originalSandboxWidth, originalSandboxHeight,  
-        newScale, newCenter, newCoords;
+        var vpCoords, center, newScale, newCenter, newCoords;
         
         vpCoords = this.getViewportCoords();
         center = {
-            x: (vpCoords.right + vpCoords.left)/2,
+            x: (vpCoords.right + vpCoords.left) / 2,
             y: (vpCoords.bottom + vpCoords.top) / 2
         };
 
@@ -324,11 +181,115 @@ var ViewportMovementHelper = Class.extend(
         };
 
         // update sandbox
-        this.updateSandbox();
+        this.update();
 
-        newCoords = this.viewportCoordsToMovingContainerCoords(newCenter);
+        newCoords = this._viewportCoordsToMovingContainerCoords(newCenter);
 
-        this.moveTo(newCoords.x, newCoords.y);
+        this._moveTo(newCoords.x, newCoords.y);
         this.mouseCoords.updateImageScale(imageScale);
+    },
+    
+    /**
+     * Uses the center of the visible area in the viewport to calculate what the
+     * moving container's coordinates should be. 
+     */
+    _viewportCoordsToMovingContainerCoords: function (newCenter) {
+        var sbCenter, mcCoords;
+        sbCenter = this.sandboxHelper.getCenter();
+        mcCoords = {
+            x: Math.max(Math.min(sbCenter.x - newCenter.x, this.sandbox.width()), 0),
+            y: Math.max(Math.min(sbCenter.y - newCenter.y, this.sandbox.height()), 0)
+        };
+        
+        return mcCoords;
+    },
+    
+    /**
+     * Uses the maximum tile and event layer dimensions to determine how far a user needs to drag the viewport
+     * contents around in order to see all layers
+     */
+    _getDesiredSandboxDimensions: function () {
+        var width, height;
+        width  = this.domNode.width();
+        height = this.domNode.height();
+
+        return {
+            width : Math.max(0, this.maxLayerDimensions.width  - width),
+            height: Math.max(0, this.maxLayerDimensions.height - height)
+        };
+    },    
+    
+    /**
+     * @description Get the current coordinates of the moving container (relative to the sandbox)
+     * @returns {Object} The X & Y coordinates of the viewport's top-left corner
+     */
+    _getContainerPos: function () {
+        var position = this.movingContainer.position();
+        
+        return {
+            x: position.left,
+            y: position.top
+        };
+    },
+
+    /**
+     * @description Adjusts the viewport's focus by x and y
+     * @param {Int} x X-value
+     * @param {Int} y Y-value
+     */   
+    _moveBy: function (x, y) {
+        // Compare against sandbox dimensions
+        var pos = {
+            x: Math.min(Math.max(this.startMovingPosition.x - x, 0), this.sandbox.width()),
+            y: Math.min(Math.max(this.startMovingPosition.y - y, 0), this.sandbox.height())
+        };
+
+        this.sandboxHelper.moveContainerTo(pos.x, pos.y);
+    },
+    
+    /**
+     * Move the viewport focus to a new location.
+     * @param {Int} x X-value
+     * @param {Int} y Y-value
+     */
+    _moveTo: function (x, y) {
+        this.sandboxHelper.moveContainerTo(x, y);
+
+        // Check throttle
+        if (this.moveCounter === 0) {
+            $(document).trigger("update-viewport");
+        }
+    },
+    
+    /**
+     * @description Event-handler for a mouse-drag start.
+     */
+    _startMoving: function () {
+        this.isMoving = true;
+        this.mouseCoords.disable();
+        this.startMovingPosition = this._getContainerPos();
+    },
+    
+    /**
+     * @description Event handler triggered after dragging
+     */
+    _endMoving: function () {
+        this.isMoving = false;
+        this.mouseCoords.enable();
+        $(document).trigger("update-viewport");
+    },
+    
+    /**
+     * @description Get the coordinates of the viewport center
+     * @returns {Object} The X & Y coordinates of the viewport's center
+     * 
+     * * TODO 06/07/2010: _getCenter should probably be with respect to the Sandbox, and not the viewport
+     *   since that is more meaningful in terms of positioning and movement.
+     */
+    _getCenter: function () {
+        return {
+            x: Math.round(this.domNode.width()  / 2),
+            y: Math.round(this.domNode.height() / 2)
+        };
     }
 });

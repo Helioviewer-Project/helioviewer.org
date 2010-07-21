@@ -21,7 +21,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Creates a new TileLayerManager instance
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    tileServers, savedLayers, urlLayers, loadDefaults) {
+                    tileServers, savedLayers, urlLayers) {
         this._super();
 
         this.api           = api;
@@ -39,11 +39,6 @@ var TileLayerManager = LayerManager.extend(
                    .bind("save-tile-layers",            $.proxy(this.save, this))
                    .bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
                    .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this));
-        
-        if (loadDefaults) {
-            var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
-            this._loadStartingLayers(startingLayers);
-        }
     },
 
     /**
@@ -59,7 +54,8 @@ var TileLayerManager = LayerManager.extend(
      * 
      */
     updateTileVisibilityRange: function (vpCoords) {
-        var ts, self, vp;
+        var old, ts, self, vp;
+        old = this.tileVisibilityRange;
         // Expand to fit tile increment
         ts = this.tileSize;
         vp = {
@@ -78,15 +74,21 @@ var TileLayerManager = LayerManager.extend(
         };
 
         self = this;
-        $.each(this._layers, function () {
-            this.updateTileVisibilityRange(self.tileVisibilityRange); 
-        });
+        if (this.tileVisibilityRange !== old) {
+            $.each(this._layers, function () {
+                this.updateTileVisibilityRange(self.tileVisibilityRange); 
+            });
+        }
     },
     
     /**
      * 
      */
     adjustImageScale: function (scale) {
+        if (this.viewportScale === scale) {
+            return; 
+        }
+        
         this.viewportScale = scale;
         var self = this;
         
