@@ -17,16 +17,13 @@ var HelioviewerViewport = Viewport.extend(
      * @description Creates a new Viewport
      * @param {Object} options Custom Viewport settings
      */
-    init: function (options, movementHelper) {
+    init: function (options) {
         this._super(options);
  
         this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
         this._rsunInKilometers = 695700;
 
         this._getDataSources();
-
-        this.movementHelper = movementHelper;
-        $(document).bind("layer-max-dimensions-changed", $.proxy(this._updateMaxLayerDimensions, this));
     },
     
     /**
@@ -61,7 +58,7 @@ var HelioviewerViewport = Viewport.extend(
      */
     getViewportInformation: function () {
         return {
-            time        : this.requestDate.toISOString(),
+            time        : this._tileLayerManager.getRequestDateAsISOString(),
             layers      : this.serialize(),
             imageScale  : this.imageScale
         };
