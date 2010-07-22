@@ -167,14 +167,16 @@ var ViewportMovementHelper = Class.extend(
      */
     zoomTo: function (imageScale) {
         var vpCoords, center, newScale, newCenter, newCoords;
-        
+
+        newScale = this.mouseCoords.imageScale / imageScale;
+        this._scaleLayerDimensions(newScale);
+
         vpCoords = this.getViewportCoords();
         center = {
             x: (vpCoords.right + vpCoords.left) / 2,
             y: (vpCoords.bottom + vpCoords.top) / 2
         };
 
-        newScale = this.mouseCoords.imageScale / imageScale;
         newCenter = {
             x: center.x * newScale,
             y: center.y * newScale
@@ -291,5 +293,10 @@ var ViewportMovementHelper = Class.extend(
             x: Math.round(this.domNode.width()  / 2),
             y: Math.round(this.domNode.height() / 2)
         };
+    },
+    
+    _scaleLayerDimensions: function (scaleFactor) {
+        this.maxLayerDimensions.width  *= scaleFactor;
+        this.maxLayerDimensions.height *= scaleFactor;
     }
 });

@@ -18,10 +18,11 @@ var ViewportController = Class.extend(
      */
     init: function (options) {
         this.domNode        = $("#helioviewer-viewport");
-        var mouseCoords     = new HelioviewerMouseCoordinates(this.imageScale, this._rsunInArcseconds, 
-                                                              this.warnMouseCoords);
+        this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
+        var mouseCoords     = new HelioviewerMouseCoordinates(options.imageScale, this._rsunInArcseconds, 
+                                                              options.warnMouseCoords);
         this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
-        this.viewport       = new HelioviewerViewport(options, this.movementHelper);
+        this.viewport       = new HelioviewerViewport(options);
 
         this._initEventHandlers();
     },
@@ -30,11 +31,12 @@ var ViewportController = Class.extend(
      * Event listeners for interacting with the viewport
      */
     _initEventHandlers: function () {
-        $(document).bind("image-scale-changed", $.proxy(this.zoomViewport, this))
-                   .bind("update-viewport", $.proxy(this.updateViewportRanges, this))
-                   .bind("get-viewport-information", $.proxy(this.getViewportInformation, this))
+        $(document).bind("image-scale-changed",             $.proxy(this.zoomViewport, this))
+                   .bind("update-viewport",                 $.proxy(this.updateViewportRanges, this))
+                   .bind("get-viewport-information",        $.proxy(this.getViewportInformation, this))
                    .bind("move-viewport mousemove mouseup", $.proxy(this.moveViewport, this))
-                   .bind("resize-viewport", $.proxy(this.resizeViewport, this));
+                   .bind("resize-viewport",                 $.proxy(this.resizeViewport, this))
+                   .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this));
         
         $(this.domNode).bind("mousedown", $.proxy(this.moveViewport, this));
         this.domNode.dblclick($.proxy(this.doubleClick, this));
@@ -144,5 +146,14 @@ var ViewportController = Class.extend(
      */
     getImageScaleInKilometersPerPixel: function () {
         return this.viewport.getImageScaleInKilometersPerPixel();
-    }
+    },
+    
+    /**
+     * Updates the stored values for the maximum layer dimensions. This is used in computing the optimal
+     * sandbox size in movementHelper. Assumes there is only one kind of layer (aka tileLayers). To
+     * account for multiple layer types, like eventLayers, add some comparisons between dimensions.
+     */
+    updateMaxLayerDimensions: function (event, type, dimensions) {
+        this.movementHelper.updateMaxLayerDimensions(dimensions);
+    },
 });

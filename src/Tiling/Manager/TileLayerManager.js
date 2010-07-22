@@ -15,7 +15,6 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var TileLayerManager = LayerManager.extend(
 /** @lends TileLayerManager.prototype */
 {
-
     /**
      * @constructs
      * @description Creates a new TileLayerManager instance
@@ -38,7 +37,8 @@ var TileLayerManager = LayerManager.extend(
         $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
                    .bind("save-tile-layers",            $.proxy(this.save, this))
                    .bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
-                   .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this));
+                   .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this))
+                   .bind("observation-time-changed",    $.proxy(this.updateRequestTime, this));
     },
 
     /**
@@ -161,10 +161,14 @@ var TileLayerManager = LayerManager.extend(
     /**
      * Handles observation time changes
      */
-    updateRequestTime: function (date) {
+    updateRequestTime: function (event, date) {
         this._observationDate = date;
         $.each(this._layers, function (i, layer) {
             this.updateRequestTime(date);
         });
+    },
+    
+    getRequestDateAsISOString: function () {
+        return this._observationDate.toISOString();
     }
 });

@@ -35,7 +35,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         this.layeringOrder = layeringOrder;
         this.baseURL = baseURL;
         
-        // Create a random id which can be used to link tile layer with it's corresponding tile layer accordion entry
+        // Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
         this.id = "tile-layer-" + new Date().getTime();
         
         this._setupEventHandlers();
@@ -55,15 +55,18 @@ var HelioviewerTileLayer = TileLayer.extend(
     /**
      * Changes data source and fetches image for new source
      */
-    updateDataSource: function (observatory, instrument, detector, measurement, sourceId, name, layeringOrder) {
-        this.name = name;
+    updateDataSource: function (event, id, observatory, instrument, detector, measurement, sourceId, name, layeringOrder) {
+        if (this.id === id) {
+            this.name = name;
         
-        this.layeringOrder = layeringOrder;
-        this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
+            this.layeringOrder = layeringOrder;
+            this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
         
-        this.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
+            this.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
+            $(document).trigger("save-tile-layers");
+        }
     },
-
+    
     /**
      * 
      */
@@ -182,21 +185,8 @@ var HelioviewerTileLayer = TileLayer.extend(
      * @description Sets up event-handlers to deal with viewport motion
      */
     _setupEventHandlers: function () {
-        var self = this;
-        
         $(this.domNode).bind('get-tile', $.proxy(this.getTile, this));
-        $(document).bind('toggle-layer-visibility', function (event, id) {
-                        if (self.id === id) {
-                            self.toggleVisibility();
-                            $(document).trigger("save-tile-layers");
-                        }
-                    })
-                   .bind('tile-layer-data-source-changed',
-                       function (event, id, obs, inst, det, meas, sourceId, name, layeringOrder) {
-                            if (self.id === id) {
-                                self.updateDataSource(obs, inst, det, meas, sourceId, name, layeringOrder);
-                                $(document).trigger("save-tile-layers");
-                            }
-                        });
+        $(document).bind('toggle-layer-visibility',        $.proxy(this.toggleVisibility, this))
+                   .bind('tile-layer-data-source-changed', $.proxy(this.updateDataSource, this));
     }
 });

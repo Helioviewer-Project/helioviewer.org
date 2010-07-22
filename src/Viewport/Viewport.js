@@ -86,11 +86,7 @@ var Viewport = Class.extend(
      * Saves the new image scale and scales maxLayerDimensions accordingly.
      */
     setImageScale: function (imageScale) {
-        var originalScale = this.imageScale;
-        this.imageScale   = imageScale;   
-    
-        // scale layer dimensions
-        this._scaleLayerDimensions(originalScale / imageScale);
+        this.imageScale = imageScale;
     },
     
     updateViewportRanges: function (coordinates) {
@@ -113,33 +109,11 @@ var Viewport = Class.extend(
     },
     
     /**
-     * _onObservationTimeChange
-     */
-    _onObservationTimeChange: function (event, date) {
-        this._tileLayerManager.updateRequestTime(date);
-    },
-    
-    /**
      * @description Returns the range of indices for the tiles to be displayed.
      * @returns {Object} The range of tiles which should be displayed
      */
     _updateTileVisibilityRange: function (coordinates) {
         this._tileLayerManager.updateTileVisibilityRange(coordinates);
-    },
-    
-    /**
-     * Updates the stored values for the maximum layer dimensions. This is used in computing the optimal
-     * sandbox size in movementHelper. Assumes there is only one kind of layer (aka tileLayers). To
-     * account for multiple layer types, like eventLayers, override this method in a subclass. 
-     */
-    _updateMaxLayerDimensions: function (event, type, dimensions) {
-        var old = this.maxLayerDimensions;
-
-        this.maxLayerDimensions = dimensions;
-
-        if (!this._hasSameDimensions(this.maxLayerDimensions, old)) {
-            this.movementHelper.updateMaxLayerDimensions(this.maxLayerDimensions);
-        }
     },
     
     /**
@@ -157,14 +131,6 @@ var Viewport = Class.extend(
             width : this.domNode.width(),
             height: this.domNode.height()
         };
-    },
-    
-    /**
-     * Adjust saved layer dimensions by a specified scale factor
-     */
-    _scaleLayerDimensions: function (sf) {
-        this.maxLayerDimensions.width  = this.maxLayerDimensions.width  * sf;
-        this.maxLayerDimensions.height = this.maxLayerDimensions.height * sf;
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?

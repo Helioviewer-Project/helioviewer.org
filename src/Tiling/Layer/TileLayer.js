@@ -27,7 +27,7 @@ var TileLayer = Layer.extend(
      * @description Creates a new TileLayer
      */
     init: function (index, date, tileSize, viewportScale, tileVisibilityRange, api, name, visible, 
-            opacity, server, loadDefaults) {
+            opacity, server) {
         $.extend(this, this.defaultOptions);
         this._super();
         
@@ -42,14 +42,48 @@ var TileLayer = Layer.extend(
         this.visible       = visible;
         this.opacity       = opacity;
         this.name          = name;
-        
-        if (loadDefaults) {
-            this._loadStaticProperties();
-            this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
-            // this.image needs to be set here.
-        }
     },
 
+    updateTileVisibilityRange: function (range) {
+        this.tileLoader.updateTileVisibilityRange(range, this.loaded);
+    },
+    
+    /**
+     * 
+     */
+    updateImageScale: function (scale, tileVisibilityRange) {
+        this.viewportScale = scale;
+        this._updateDimensions();
+        
+        this.tileLoader.setTileVisibilityRange(tileVisibilityRange);
+        
+        if (this.visible) {
+            this.tileLoader.reloadTiles(true);
+        }
+    },
+    
+    /**
+     * Handles time changes
+     */
+    updateRequestTime: function (date) {
+        this.image.updateTime(date);
+    },
+    
+    /**
+     * @description Returns a stringified version of the tile layer for use in URLs, etc
+     * @return string String representation of the tile layer
+     */
+    serialize: function () {
+        return this.image.getLayerName() + "," + (this.visible ? "1" : "0") + "," + this.opacity;
+    },
+    
+    toggleVisibility: function (event, id) {
+        if (this.id === id) {
+            this._super();
+            $(document).trigger("save-tile-layers");
+        }
+    },
+    
     /**
      * Computes layer parameters relative to the current viewport image scale
      *   
@@ -84,31 +118,6 @@ var TileLayer = Layer.extend(
             "left": - offsetX,
             "top" : - offsetY
         });
-    },
-
-    updateTileVisibilityRange: function (range) {
-        this.tileLoader.updateTileVisibilityRange(range, this.loaded);
-    },
-    
-    /**
-     * 
-     */
-    updateImageScale: function (scale, tileVisibilityRange) {
-        this.viewportScale = scale;
-        this._updateDimensions();
-        
-        this.tileLoader.setTileVisibilityRange(tileVisibilityRange);
-        
-        if (this.visible) {
-            this.tileLoader.reloadTiles(true);
-        }
-    },
-    
-    /**
-     * Handles time changes
-     */
-    updateRequestTime: function (date) {
-        this.image.updateTime(date);
     },
     
     /**
@@ -197,14 +206,6 @@ var TileLayer = Layer.extend(
             //$("img.tile[src!=resources/images/transparent_512.gif]").pixastic("sharpen", {amount: 0.35});
         }
         this.sharpen = !this.sharpen;
-    },
-    
-    /**
-     * @description Returns a stringified version of the tile layer for use in URLs, etc
-     * @return string String representation of the tile layer
-     */
-    serialize: function () {
-        return this.image.getLayerName() + "," + (this.visible ? "1" : "0") + "," + this.opacity;
     },
     
     /**
