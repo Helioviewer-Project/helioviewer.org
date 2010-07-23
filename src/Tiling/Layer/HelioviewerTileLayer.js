@@ -104,25 +104,25 @@ var HelioviewerTileLayer = TileLayer.extend(
         );
         
         params = {
-            "action"    : "getTile",
-            "uri"       : file,
-            "x1"        : coordinates.x1,
-            "x2"        : coordinates.x2,
-            "y1"        : coordinates.y1,
-            "y2"        : coordinates.y2,
-            "format"    : format,
-            "date"      : this.image.date,
-            "imageScale": this.viewportScale,
-            "size"      : this.tileSize,
-            "jp2Width"  : this.image.width,
-            "jp2Height" : this.image.height,
-            "jp2Scale"  : this.image.scale,
-            "obs"       : this.image.observatory,
-            "inst"      : this.image.instrument,
-            "det"       : this.image.detector,
-            "meas"      : this.image.measurement,
-            "offsetX"   : this.image.offsetX,
-            "offsetY"   : this.image.offsetY                        
+            "action"      : "getTile",
+            "uri"         : file,
+            "x1"          : coordinates.x1,
+            "x2"          : coordinates.x2,
+            "y1"          : coordinates.y1,
+            "y2"          : coordinates.y2,
+            "format"      : format,
+            "date"        : this.image.date,
+            "imageScale"  : this.viewportScale,
+            "size"        : this.tileSize,
+            "jp2Width"    : this.image.width,
+            "jp2Height"   : this.image.height,
+            "jp2Scale"    : this.image.scale,
+            "observatory" : this.image.observatory,
+            "instrument"  : this.image.instrument,
+            "detector"    : this.image.detector,
+            "measurement" : this.image.measurement,
+            "offsetX"     : this.image.offsetX,
+            "offsetY"     : this.image.offsetY                        
         };
 
         return this.baseURL + "?" + $.param(params);
