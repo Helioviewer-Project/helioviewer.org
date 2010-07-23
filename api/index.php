@@ -51,18 +51,15 @@ function loadModule($params)
         "getJP2Header"        => "WebClient",
         "getTile"             => "WebClient",
         "takeScreenshot"      => "WebClient",
-        "getEventFRMs"        => "SolarEvents",
-        "getEvents"           => "SolarEvents",
         "getJP2Image"         => "JHelioviewer",
         "getJPX"              => "JHelioviewer",
         "launchJHelioviewer"  => "JHelioviewer",
         "buildMovie"          => "Movies",
         "playMovie"           => "Movies",
-        "getMoviesForEvent"   => "Movies",
-        "createMovieForEvent" => "Movies",
-        "getScreenshotsForEvent"   => "WebClient",
-        "createScreenshotForEvent" => "WebClient"
-        
+        "getEventFRMs"           => "SolarEvents",
+        "getEvents"              => "SolarEvents",
+        "getScreenshotsForEvent" => "SolarEvents",
+        "getMoviesForEvent"      => "SolarEvents"
     );
     
     include_once "src/Validation/InputValidator.php";
@@ -191,7 +188,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-07-06 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-07-20 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>

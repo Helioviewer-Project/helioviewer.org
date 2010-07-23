@@ -59,7 +59,7 @@ class Image_Tiling_HelioviewerTileBuilder
         $tile = new Image_HelioviewerImageLayer(
             $jp2File, $filepath, $params['format'], $params['size'],
             $params['size'], $params['imageScale'], $roi, 
-            $params['inst'], $params['det'], $params['meas'], 1, 
+            $params['instrument'], $params['detector'], $params['measurement'], 1, 
             $params['offsetX'], $params['offsetY'], 100, 
             $params['jp2Width'], $params['jp2Height'], 
             $params['jp2Scale'], $params['date'], true
