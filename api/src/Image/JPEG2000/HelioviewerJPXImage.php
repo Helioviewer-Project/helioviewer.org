@@ -96,9 +96,9 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         // Get image sourceId
         $sourceId = $this->_getSourceId($imgIndex);
 
-        // Check request start and end dates
-        $this->_checkRequestDates();
-        
+        // Replace start and end request dates with actual matches in order to account for gaps at either side
+        $this->_checkRequestDates($imgIndex, $sourceId);
+
         $start = toUnixTimestamp($this->_startTime);
         $end   = toUnixTimestamp($this->_endTime);
         
@@ -201,12 +201,13 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      * 
      * @return void 
      */
-    private function _checkRequestDates()
+    private function _checkRequestDates($imgIndex, $sourceId)
     {
-        // Retrieve first and last date for requested data source
-        // Update start and end date to ensure that it is within range
-        // Record a message if neccessary
-        // If the range is completely outside, discontinue JPX generation                
+        $startImage = $imgIndex->getClosestImageAfterDate($this->_startTime, $sourceId);
+        $endImage   = $imgIndex->getClosestImageBeforeDate($this->_endTime, $sourceId);
+        
+        $this->_startTime = isoDateToMySQL($startImage["date"]);
+        $this->_endTime   = isoDateToMySQL($endImage["date"]);
     }
 
     /**
