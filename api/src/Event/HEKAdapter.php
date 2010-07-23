@@ -36,7 +36,7 @@ class Event_HEKAdapter
     public function __construct()
     {
         $this->_baseURL = HEK_BASE_URL . '?cosec=2&cmd=search&type=column' 
-                                       . '&event_coordsys=helioprojective&x1=-1200&x2=1200&y1=-1200&y2=1200&';
+                                       . '&event_coordsys=helioprojective&x1=-30000&x2=30000&y1=-30000&y2=30000&';
 
         include_once 'src/Net/Proxy.php';
         $this->_proxy = new Net_Proxy($this->_baseURL);
@@ -106,7 +106,7 @@ class Event_HEKAdapter
      * 
      * @return void
      */
-    public function getEvents($startTime, $endTime, $eventType, $ipod)
+    public function getEvents($startTime, $endTime, $eventType, $eventId, $ipod)
     {
         $params = array(
             "event_starttime" => $startTime,
@@ -116,7 +116,13 @@ class Event_HEKAdapter
             "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
                                  "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox"
         );
-        
+
+        if (isset($eventId)) {
+        	$params["param0"] = "kb_archivid";
+        	$params["op0"]    = "=";
+        	$params["value0"] = "ivo://helio-informatics.org/" . $eventId;
+        	$params["return"] .= ",obs_instrument,obs_channelid";
+        }
         //TODO Add screenshots and movies
         //TODO Group similar (identical) events
         

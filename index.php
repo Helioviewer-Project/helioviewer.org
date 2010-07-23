@@ -110,11 +110,12 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         "Media/Builder/MediaBuilder.js", "UI/MessageConsole.js", "Media/MediaHistoryBar.js",
         	            "Media/Media.js", "Media/Screenshot.js", "Media/Movie.js", "Media/Builder/MovieBuilder.js",  
                         "Media/Builder/ScreenshotBuilder.js", "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js",  
-                        "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/UserSettings.js", 
+                        "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                         "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
         	            "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-        	            "Helioviewer.js", "UI/ZoomControls.js", "UI/jquery.ui.dynaccordion.js");
+        	            "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", 
+        	            "UI/jquery.ui.dynaccordion.js");
             foreach($js as $file)
                 printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
         }
@@ -169,7 +170,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 printf("\t\turlParams = %s;\n", json_encode($urlParams));
             ?>
             config      = new Config(settingsJSON).toArray();
-            helioviewer = new Helioviewer(urlParams, config); /*new UIController(urlParams, config, true);*/
+            helioviewer = new Helioviewer(urlParams, config);
         });
     </script>
 

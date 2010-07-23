@@ -6,7 +6,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, document, window, TileLayerManager, MouseCoordinates, ViewportMovementHelper */
+/*global Class, $, document, window, TileLayerManager */
 "use strict";
 var Viewport = Class.extend(
     /** @lends Viewport.prototype */
@@ -37,7 +37,7 @@ var Viewport = Class.extend(
      *       <b>prefetch</b>   - The radius outside of the visible viewport to prefetch.<br>
      * </div>
      */
-    init: function (options, loadDefaults) {
+    init: function (options) {
         $.extend(this, this.defaultOptions);
         $.extend(this, options);
                         
@@ -47,26 +47,6 @@ var Viewport = Class.extend(
         
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;    
-
-        // If Viewport.js is not subclassed, do default setup. Otherwise handle these functions in the subclass.
-        if (loadDefaults) {
-            this._tileLayerManager = new TileLayerManager(this.api, this.requestDate, this.dataSources, this.tileSize, 
-                            this.imageScale, this.maxTileLayers, this.tileServers, this.tileLayers, 
-                            this.urlStringLayers, loadDefaults);
-            var mouseCoords     = new MouseCoordinates(this.imageScale, this.warnMouseCoords);
-            this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
-            
-            this.resize();
-            this._initEventHandlers();
-        }
-    },
-
-    /**
-     * Adjust saved layer dimensions by a specified scale factor
-     */
-    scaleLayerDimensions: function (sf) {
-        this.maxLayerDimensions.width       = this.maxLayerDimensions.width  * sf;
-        this.maxLayerDimensions.height      = this.maxLayerDimensions.height * sf;
     },
     
     /**
@@ -75,7 +55,74 @@ var Viewport = Class.extend(
     getImageScale: function () {
         return parseFloat(this.imageScale.toPrecision(8));
     },
+    
+    /**
+     * Gets the window height and resizes the viewport to fit within it
+     */
+    resize: function () {
+        var oldDimensions, height;
+    
+        // Get dimensions
+        oldDimensions = this.dimensions;
+        // Ensure minimum height
+        height = Math.max(this.minHeight, $(window).height() - this._getPadHeight());
 
+        //Update viewport height
+        this.outerNode.height(height);
+
+        // Update viewport dimensions
+        this._updateDimensions();
+    
+        this.dimensions.width  += this.prefetch;
+        this.dimensions.height += this.prefetch;
+
+        if (!this._hasSameDimensions(this.dimensions, oldDimensions)) {
+            return true;
+        }
+        return false;
+    },
+    
+    /**
+     * Saves the new image scale and scales maxLayerDimensions accordingly.
+     */
+    setImageScale: function (imageScale) {
+        this.imageScale = imageScale;
+    },
+    
+    updateViewportRanges: function (coordinates) {
+        this._updateTileVisibilityRange(coordinates);
+        this._tileLayerManager.adjustImageScale(this.imageScale);
+    },
+    
+    serialize: function () {
+        return this._tileLayerManager.serialize();
+    },
+    
+    /**
+     * Makes room for header and footer if not in fullscreen mode
+     */
+    _getPadHeight: function () {
+        if (this.domNode.hasClass("fullscreen-mode")) {
+            return 0;
+        }
+        return this.headerAndFooterHeight;
+    },
+    
+    /**
+     * @description Returns the range of indices for the tiles to be displayed.
+     * @returns {Object} The range of tiles which should be displayed
+     */
+    _updateTileVisibilityRange: function (coordinates) {
+        this._tileLayerManager.updateTileVisibilityRange(coordinates);
+    },
+    
+    /**
+     * Checks to see if two dimension arrays are the same
+     */
+    _hasSameDimensions: function (newDimensions, old) {
+        return (newDimensions.width === old.width) && (newDimensions.height === old.height);
+    },
+    
     /**
      * @description Updates the viewport dimensions
      */
@@ -84,124 +131,6 @@ var Viewport = Class.extend(
             width : this.domNode.width(),
             height: this.domNode.height()
         };
-    },
-    
-    getDimensions: function () {
-        return this.dimensions;
-    },
-
-    /**
-     * @description Handles double-clicks
-     * @param {Event} e Event class
-     */
-    doubleClick: function (e) {
-        //check to make sure that you are not already at the minimum/maximum image scale
-        if (!(e.shiftKey || (this.imageScale > this.minImageScale)) ||
-             (this.imageScale >= this.maxImageScale)) {
-            return;
-        }
-        
-        this.movementHelper.doubleClick(e);
-    },
-     
-    /**
-     * Updates the stored values for the maximum layer dimensions. This is used in computing the optimal
-     * sandbox size in movementHelper. Assumes there is only one kind of layer (aka tileLayers). To
-     * account for multiple layer types, like eventLayers, override this method in a subclass. 
-     */
-    updateMaxLayerDimensions: function (event, type, dimensions) {
-        var old = this.maxLayerDimensions;
-
-        this.maxLayerDimensions = dimensions;
-        
-        if ((this.maxLayerDimensions.width !== old.width) || (this.maxLayerDimensions.height !== old.height)) {
-            this.movementHelper.updateMaxLayerDimensions(this.maxLayerDimensions);
-        }
-    },
-    
-    resize: function () {
-        var oldDimensions, h, padHeight;
-    
-        // Get dimensions
-        oldDimensions = this.dimensions;
-    
-        // Make room for footer and header if not in fullscreen mode
-        if (this.domNode.hasClass("fullscreen-mode")) {
-            padHeight = 0;
-        }
-        else {
-            padHeight = this.headerAndFooterHeight;
-        }
-
-        // Ensure minimum height
-        h = Math.max(this.minHeight, $(window).height() - padHeight);
-
-        //Update viewport height
-        this.outerNode.height(h);
-
-        // Update viewport dimensions
-        this._updateDimensions();
-    
-        this.dimensions.width  += this.prefetch;
-        this.dimensions.height += this.prefetch;
-
-        if (this.dimensions.width !== oldDimensions.width || this.dimensions.height !== oldDimensions.height) {
-            this.movementHelper.resize();
-            this._updateTileVisibilityRange();
-        }
-    },
-    
-    /**
-     * _onObservationTimeChange
-     */
-    _onObservationTimeChange: function (event, date) {
-        this._tileLayerManager.updateRequestTime(date);
-    },
-    
-    /**
-     * @description
-     */
-    _initEventHandlers: function () {
-        $(window).resize($.proxy(this.resize, this));
-        $(document).bind("set-image-scale", $.proxy(this.setImageScale, this))
-                   .bind("layer-max-dimensions-changed", $.proxy(this.updateMaxLayerDimensions, this))
-                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("recompute-tile-visibility", $.proxy(this._updateTileVisibilityRange, this))
-                   .bind("get-viewport-information", $.proxy(this.getViewportInformation, this));
-        
-        this.domNode.dblclick($.proxy(this.doubleClick, this));
-    },
-    
-    /**
-     * @description Returns the range of indices for the tiles to be displayed.
-     * @returns {Object} The range of tiles which should be displayed
-     */
-    _updateTileVisibilityRange: function () {
-        // Get viewport coordinates with respect to the center of the image
-        var vp = this.movementHelper.getViewportCoords();
-        this._tileLayerManager.updateTileVisibilityRange(vp);
-    },
-    
-    setImageScale: function (event, imageScale) {
-        var originalScale = this.imageScale;
-        this.imageScale   = imageScale;   
-    
-        // scale layer dimensions
-        this.scaleLayerDimensions(originalScale / imageScale);
-        
-        // Moves the viewport to the correct position after zooming
-        this.movementHelper.zoomTo(imageScale);
-
-        this._updateTileVisibilityRange();
-        // reset the layers
-        this._tileLayerManager.adjustImageScale(imageScale);
-    
-        // store new value
-        $(document).trigger("save-setting", ["imageScale", imageScale]);
-    },
-    
-    serialize: function () {
-        return this._tileLayerManager.serialize();
     },
     
     // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?

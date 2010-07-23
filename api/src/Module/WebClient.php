@@ -338,7 +338,7 @@ class Module_WebClient implements Module
 
         case "getTile":
             $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'date', 'imageScale', 'size', 'jp2Width','jp2Height', 'jp2Scale',
-                              'offsetX', 'offsetY', 'format', 'obs', 'inst', 'det', 'meas');
+                              'offsetX', 'offsetY', 'format', 'observatory', 'instrument', 'detector', 'measurement');
             $expected = array(
                "required" => $required
             );
@@ -351,9 +351,10 @@ class Module_WebClient implements Module
         case "takeScreenshot":
             $required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
             $expected = array(
-                'required' => $required, 
-                'floats'   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                'dates'	   => array('obsDate'),
+                "required" => $required, 
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "dates"	   => array('obsDate'),
+                "ints"     => array('quality')
             );
             break;
         default:
@@ -624,7 +625,7 @@ class Module_WebClient implements Module
             
             <!-- getTile API -->
             <li>
-            <div id="getClosestImage">Creating a Tile:
+            <div id="getTile">Creating a Tile:
             <p>Once you have determined the image for which you wish to retrieve a tile from using the above
                <a href="#getClosestImage" />getClosestImage</a> request, you are ready to begin requesting tiles
                for that image. Tiles are requesting by specifying the identifier for the image you wish to tile, in
@@ -640,9 +641,122 @@ class Module_WebClient implements Module
                 <a href="<?php echo $baseURL;?>?action=getTile">
                     <?php echo $baseURL;?>?action=getTile
                 </a>
-            </div>
-    
-            <br />
+                            
+                <br /><br />
+                Supported Parameters:
+                <br /><br />
+        
+                <table class="param-list" cellspacing="10">
+                    <tbody valign="top">
+                        <tr>
+                            <td width="20%"><b>uri</b></td>
+                            <td width="25%"><i>String</i></td>
+                            <td width="55%">The filepath to the JP2 image that will be tiled. The filepath is relative to the main JP2
+                                directory, parts like /var/www/jp2 can be left out.</td>
+                        </tr>
+                        <tr>
+                            <td><b>y1</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
+                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                        </tr>
+                        <tr>
+                            <td><b>x1</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
+                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                        </tr>
+                        <tr>
+                            <td><b>y2</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
+                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                        </tr>
+                        <tr>
+                            <td><b>x2</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
+                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                        </tr>
+                        <tr>
+                            <td><b>format</b></td>
+                            <td><i>String</i></td>
+                            <td>The format of the tile. Should be png if the tile has transparency, as with LASCO images, and jpg if it does not.</td>
+                        </tr>
+                        <tr>
+                            <td><b>date</b></td>
+                            <td><i>ISO 8601 UTC Date</i></td>
+                            <td>The date of the image</td>
+                        </tr>
+                        <tr>
+                            <td><b>imageScale</b></td>
+                            <td><i>Float</i></td>
+                            <td>The scale of the image in the viewport, in arcseconds per pixel.</td>
+                        </tr>
+                        <tr>
+                            <td><b>size</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The desired tile size in pixels.</td>
+                        </tr>
+                        <tr>
+                            <td><b>jp2Scale</b></td>
+                            <td><i>Float</i></td>
+                            <td>The native scale of the JP2 image in arcseconds per pixel.</td>
+                        </tr>
+                        <tr>
+                            <td><b>jp2Height</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The height of the JP2 image in pixels.</td>
+                        </tr>
+                        <tr>
+                            <td><b>jp2Width</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The width of the JP2 image in pixels.</td>
+                        </tr>
+                        <tr>
+                            <td><b>observatory</b></td>
+                            <td><i>String</i></td>
+                            <td>Observatory</td>
+                        </tr>
+                        <tr>
+                            <td><b>instrument</b></td>
+                            <td><i>String</i></td>
+                            <td>Instrument</td>
+                        </tr>
+                        <tr>
+                            <td><b>detector</b></td>
+                            <td><i>String</i></td>
+                            <td>Detector</td>
+                        </tr>
+                        <tr>
+                            <td><b>measurement</b></td>
+                            <td><i>String</i></td>
+                            <td>Measurement</td>
+                        </tr>
+                        <tr>
+                            <td><b>offsetX</b></td>
+                            <td><i>Float</i></td>
+                            <td>The offset of the center of the sun from the center of the JP2 image in pixels
+                                at the image's native resolution.</td>
+                        </tr>
+                        <tr>
+                            <td><b>offsetY</b></td>
+                            <td><i>Float</i></td>
+                            <td>The offset of the center of the sun from the center of the JP2 image in pixels
+                                at the image's native resolution.</td>
+                        </tr>
+                    </tbody>
+                </table>   
+                <br />
+                <span class="example-header">Examples:</span> <span class="example-url">
+                    <a href="<?php echo $baseURL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&format=jpg&date=2010-06-02+01:00:16&imageScale=5.26&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
+                       <?php echo $baseURL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2
+                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&format=jpg&date=2010-06-02+01:00:16&imageScale=5.26
+                        &size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171
+                        &offsetX=2.66&offsetY=7.32
+                    </a>
+                    <br /><br />
+                </span>
             </li>
             </ol>
         </div>
