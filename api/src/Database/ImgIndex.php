@@ -87,15 +87,81 @@ class Database_ImgIndex
             $img = $right;
         }
 
-        // Check to make sure a match was found
+        // Make sure match was found
         if (is_null($img)) {
-            $sql = "SELECT name FROM datasource WHERE id=$sourceId";
-            $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
-            $source = $result["name"];
-            throw new Exception("No images of the requested type ($source) were found in the database.");
+            $source = $this->_getDataSourceName($sourceId);
+            throw new Exception("No images of the requested type ($source) are currently available.");
         }
 
         return $img;
+    }
+    
+    /**
+     * Queries the database and returns the closest image match before or equal to the date specified 
+     *
+     * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
+     * @param int    $sourceId An identifier specifying the image type or source requested.
+     *
+     * @return array Array including the image id, filepath, filename, date, and sourceId.
+     */
+    public function getClosestImageBeforeDate($date, $sourceId)
+    {
+        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+
+        $datestr = isoDateToMySQL($date);
+
+        // Search database
+        $sql = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date <= '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
+        $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+
+        // Make sure match was founds
+        if (is_null($img)) {
+            $source = $this->_getDataSourceName($sourceId);
+            throw new Exception("No $source images are available on or before $date.");
+        }
+
+        return $img;
+    }
+    
+    /**
+     * Queries the database and returns the closest image match after or equal to the date specified 
+     *
+     * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
+     * @param int    $sourceId An identifier specifying the image type or source requested.
+     *
+     * @return array Array including the image id, filepath, filename, date, and sourceId.
+     */
+    public function getClosestImageAfterDate ($date, $sourceId)
+    {
+        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+
+        $datestr = isoDateToMySQL($date);
+
+        // Search database
+        $sql = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
+        $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+
+        // Make sure match was found
+        if (is_null($img)) {
+            $source = $this->_getDataSourceName($sourceId);
+            throw new Exception("No $source images are available on or after $date.");
+        }
+
+        return $img;
+    }
+    
+    /**
+     * Gets the human-readable name associated with the specified source id
+     *
+     * @param int $sourceId An identifier specifying the image type or source requested.
+     * 
+     * @return string Name of the data source associated with specified id
+     */
+    private function _getDataSourceName ($sourceId)
+    {
+        $sql = "SELECT name FROM datasource WHERE id=$sourceId";
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        return $result["name"];
     }
 
     /**
@@ -283,27 +349,31 @@ class Database_ImgIndex
         $tree = array();
 
         foreach ($sources as $source) {
-
-            // Image parameters
-            $obs  = $source["observatory"];
-            $inst = $source["instrument"];
-            $det  = $source["detector"];
-            $meas = $source["measurement"];
-            $name = $source["name"];
-            $ord  = (int) ($source["layeringOrder"]);
             $id   = (int) ($source["id"]);
 
-            // Build tree
-            if (!isset($tree[$obs])) {
-                $tree[$obs] = array();
+            // Only include if data is available for the specified source
+            if ($this->getImageCount("1000/01/01 00:00:00", "9999/01/01 00:00:00", $id)) {
+             
+                // Image parameters
+                $obs  = $source["observatory"];
+                $inst = $source["instrument"];
+                $det  = $source["detector"];
+                $meas = $source["measurement"];
+                $name = $source["name"];
+                $ord  = (int) ($source["layeringOrder"]);
+    
+                // Build tree
+                if (!isset($tree[$obs])) {
+                    $tree[$obs] = array();
+                }
+                if (!isset($tree[$obs][$inst])) {
+                    $tree[$obs][$inst] = array();
+                }
+                if (!isset($tree[$obs][$inst][$det])) {
+                    $tree[$obs][$inst][$det] = array();
+                }
+                $tree[$obs][$inst][$det][$meas] = array("sourceId"=>$id, "name"=>$name, "layeringOrder"=>$ord);             
             }
-            if (!isset($tree[$obs][$inst])) {
-                $tree[$obs][$inst] = array();
-            }
-            if (!isset($tree[$obs][$inst][$det])) {
-                $tree[$obs][$inst][$det] = array();
-            }
-            $tree[$obs][$inst][$det][$meas] = array("sourceId"=>$id, "name"=>$name, "layeringOrder"=>$ord);
         }
 
         return $tree;
