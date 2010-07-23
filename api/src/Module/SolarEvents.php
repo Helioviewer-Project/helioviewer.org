@@ -109,9 +109,12 @@ class Module_SolarEvents implements Module
         if (!isset($this->_params["eventType"])) {
             $this->_params['eventType'] = "**";
         }
-        
-        header("Content-type: application/json");
-        echo $hek->getEvents($this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType'], $this->_params['iPod']);
+
+       // header("Content-type: application/json");
+        echo $hek->getEvents(
+            $this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType'], 
+            $this->_params['eventId'], $this->_params['iPod']
+        );
     }
 
     /**
@@ -126,6 +129,7 @@ class Module_SolarEvents implements Module
         case "getEvents":
             $expected = array(
                 "required" => array('startDate'),
+                "optional" => array('eventId'),
                 "bools"    => array('iPod'),
                 "dates"    => array('startDate', 'endDate')
             );
@@ -136,19 +140,24 @@ class Module_SolarEvents implements Module
                "dates"    => array('startDate', 'endDate')
             );
             break;
-        case "getScreenshotForEvent": 
+        case "getScreenshotsForEvent": 
             $expected = array(
-                'required' => array('eventId')
+                "required" => array('eventId'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "dates"    => array('obsDate'),
+                "ints"     => array('quality'),
+                "bools"    => array('display', 'getOnly')
             );
             break;
-        case "createScreenshotsForEvent":
-            $required = array('eventId', 'obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
+        case "getMoviesForEvent": 
             $expected = array(
-                'required' => $required, 
-                'floats'   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                'dates'    => array('obsDate'),
+                "required" => array('eventId'),
+                "dates"    => array('startTime', 'endTime'),
+                "ints"     => array('frameRate', 'quality', 'numFrames'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "bools"    => array('display', 'getOnly')
             );
-            break;   
+            break;  
         default:
             break;
         }
@@ -177,9 +186,10 @@ class Module_SolarEvents implements Module
         $this->_createEventCacheDir($tmpDir);
         
         $response = $builder->getScreenshotsForEvent($this->_params, $tmpDir);
-            
-        if ($response === false) {
-            throw new Exception("The requested image does not exist.");
+        if (empty($response) || HV_DISABLE_CACHE) {
+        	if (!$this->_getOnly()) {                    
+                $response = $this->_createForEvent($builder, $tmpDir);
+            }
         }
 
         $finalResponse = array();
@@ -187,29 +197,11 @@ class Module_SolarEvents implements Module
             array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
         
-        header('Content-Type: application/json');
+        if (!empty($_POST)) {
+            header('Content-Type: application/json');
+        }
         echo JSON_encode($finalResponse);
         return $finalResponse;
-    }
-    
-    /**
-     * Creates a screenshot based upon the eventId and the parameters specified.
-     * See the API webpage for example usage.
-     *
-     * @return image
-     */
-    public function createScreenshotForEvent()
-    {
-        include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
-        
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
-        $this->_createEventCacheDir($tmpDir);
-        
-        $response = $builder->createScreenshotForEvent($this->_params, $tmpDir);
-        
-        echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
-        return $response;
     }
     
     /**
@@ -222,43 +214,91 @@ class Module_SolarEvents implements Module
     public function getMoviesForEvent () 
     {
         include_once 'src/Movie/HelioviewerMovieBuilder.php';
+        
         $builder = new Movie_HelioviewerMovieBuilder();
         
         $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/movies";
         $this->_createEventCacheDir($tmpDir);
         
         $response = $builder->getMoviesForEvent($this->_params, $tmpDir);            
-        if ($response === false) {
-            throw new Exception("The requested movie does not exist.");
+        if (empty($response) || HV_DISABLE_CACHE) {
+            if (!$this->_getOnly()) {
+                $response = $this->_createForEvent($builder, $tmpDir);
+            }
         }
         
         $finalResponse = array();
         foreach ($response as $filepath) {
-            array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+            if ($filepath !== null) {
+                array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+            }
         }
         
-        header('Content-Type: application/json');
+        if (!empty($_POST)) {
+            header('Content-Type: application/json');
+        }
         echo JSON_encode($finalResponse);
         return $finalResponse;
     }
     
     /**
-     * Creates a movie based on the event ID and other parameters specified. 
-     * See the API webpage for example usage.
+     * Creates a screenshot or movie based upon the eventId and the parameters specified.
+     * 
+     * @param object $builder -- An instance of HelioviewerScreenshotBuilder or
+     *                           HelioviewerMovieBuilder
+     * @param string $tmpDir  -- The directory where the movie/screenshot will be stored.
      *
-     * @return movie URL
+     * @return array
      */
-    public function createMovieForEvent ()
+    private function _createForEvent($builder, $tmpDir)
     {
-        include_once 'src/Movie/HelioviewerMovieBuilder.php';
-        $builder = new Movie_HelioviewerMovieBuilder();
+    	include_once(HV_ROOT_DIR . "/api/src/Helper/EventParser.php");
+        $eventInfo = JSON_decode($this->_getSingleEventInformation());
+        $result    = $eventInfo->result;
         
-        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/movies";
-        $this->_createEventCacheDir($tmpDir);
+        if (!empty($result)) {
+        	$result = $result[0];
+            $layerInfo = getLayerInfoForEventType($result->event_type);
+
+        	$info = array(
+        	   "sourceIds"   => $layerInfo['sourceIds'],
+        	   "imageScale"  => $layerInfo['imageScale'],
+        	   "boundingBox" => polygonToBoundingBox($result->hpc_bbox),
+        	   "startTime"   => $result->event_starttime,
+        	   "endTime"     => $result->event_endtime,
+        	   "obsDate"     => $result->event_starttime
+        	);
+        	
+        	$params = array_merge($info, $this->_params);
+
+            $response = $builder->createForEvent($params, $info, $tmpDir);
+            return $response;
+        }
+        return array();
+    }
+    
+    /**
+     * Uses HEKAdapter to get information about a single event from its ID.
+     *
+     * @return object 
+     */
+    private function _getSingleEventInformation() {
+    	include_once "src/Event/HEKAdapter.php";
+        $hek = new Event_HEKAdapter();
         
-        $response = $builder->createMovieForEvent($this->_params, $tmpDir);
-        echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
-        return $response;       
+        $startDate = "0001-01-01T00:00:00Z";
+        $endDate   = "9999-01-01T00:00:00Z";
+        return $hek->getEvents($startDate, $endDate, "**", $this->_params['eventId'], false);
+    }
+    
+    /**
+     * Checks to see if 'getOnly' is set to true in $params
+     *
+     * @return boolean
+     */
+    private function _getOnly()
+    {
+    	return isset($this->_params['getOnly']) && $this->_params['getOnly'] === true;
     }
     
     /**
@@ -297,10 +337,8 @@ class Module_SolarEvents implements Module
             <ul>
                 <li><a href="index.php#getEventFRMs">Feature Recognition Methods (FRMs)</a></li>
                 <li><a href="index.php#getEvents">Finding Events</a></li>
-                <li><a href="index.php#getScreenshotsForEvent">Fetching Cached Event Screenshots</a></li>
-                <li><a href="index.php#getMoviesForEvent">Fetching Cached Event Movies</a></li>
-                <li><a href="index.php#createScreenshotForEvent">Creating Event Screenshots</a></li>
-                <li><a href="index.php#createMovieForEvent">Creating Event Movies</a></li>
+                <li><a href="index.php#getScreenshotsForEvent">Fetching or Creating Event Screenshots</a></li>
+                <li><a href="index.php#getMoviesForEvent">Fetching or Creating Event Movies</a></li>
             </ul>
         </li>
         <?php
@@ -464,53 +502,66 @@ class Module_SolarEvents implements Module
         
             </div>
             </li>
-        
+            
+            <br />
+            
             <!-- Fetching cached Event Screenshots  -->
             <li>
-            <div id="getScreenshotsForEvent">Fetching Cached Event Screenshots
-                <p>Returns a collection of filepath to screenshots of an event. If no file exists, returns false.</p>
+            <div id="getScreenshotsForEvent">Fetching or Creating Event Screenshots
+                <p>Returns a collection of filepaths to screenshots of an event. If no screenshot files exist yet, it 
+                    will create one or more depending on parameters, or will return an empty array if <i>getOnly</i> 
+                    is set to true.</p>
         
                 <br />
         
-                <div class="summary-box"><span
-                    style="text-decoration: underline;">Usage:</span><br />
-                <br />
+                <div class="summary-box"><span style="text-decoration: underline;">Usage:</span><br />
+                    <br />
         
-                <?php echo $baseURL;?>?action=getScreenshotsForEvent<br />
-                <br />
+                    <?php echo $baseURL;?>?action=getScreenshotsForEvent<br />
+                    <br />
         
-                Supported Parameters:<br />
-                <br />
-        
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>eventId</b></td>
-                            <td width="20%"><i>String</i></td>
-                            <td>The unique ID of the event, as obtained from querying HEK. </td>
-                        </tr>
-                        <tr>
-                            <td><b>ipod</b></td>
-                            <td width="20%"><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
-                                Defaults to false if not specified.</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br />
-                
-                <span class="example-header">Examples:</span>
-                <i>Note: Both of these links will return false if the particular event is not in the cache.</i>
-                <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
-                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
-                </a>
-                </span><br />
-                <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false">
-                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true
-                </a>
-                </span>
+	                Supported Parameters:<br />
+	                <br />
+	        
+	                <table class="param-list" cellspacing="10">
+	                    <tbody valign="top">
+	                        <tr>
+	                            <td width="20%"><b>eventId</b></td>
+	                            <td width="20%"><i>String</i></td>
+	                            <td>The unique ID of the event, as obtained from querying HEK. </td>
+	                        </tr>
+	                        <tr>
+	                            <td><b>ipod</b></td>
+	                            <td width="20%"><i>Boolean</i></td>
+	                            <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
+	                                Defaults to false if not specified.</td>
+	                        </tr>
+                            <tr>
+                                <td><b>getOnly</b></td>
+                                <td width="20%"><i>Boolean</i></td>
+                                <td><i>[Optional]</i> Whether or not you want images built if they don't exist. Set this to true if you 
+                                    are calling this method from an iPod or other interface where you just want to check for existing files.
+                                    Defaults to false if not specified.</td>
+                            </tr>
+	                    </tbody>
+	                </table>
+	                <br />
+	                
+	                The rest of the parameter list is identical to that of <a href="#takeScreenshot" style="color:#3366FF">takeScreenshot</a>, except that you should never
+	                specify <i>filename</i> in the parameters.
+	                <br /><br />
+	                
+	                <span class="example-header">Examples:</span>
+	                <span class="example-url">
+	                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
+	                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
+	                </a>
+	                </span><br />
+	                <span class="example-url">
+	                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
+	                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true
+	                </a>
+	                </span>
                 </div>
             </div>
             </li>
@@ -519,8 +570,9 @@ class Module_SolarEvents implements Module
                     
             <!-- Fetching cached Event Movies -->
             <li>
-            <div id="getMoviesForEvent">Fetching Cached Event Movies
-                <p>Returns a collection of filepaths to movies of an event. If no movie file exists, returns false.</p>
+            <div id="getMoviesForEvent">Fetching or Creating Event Movies
+                <p>Returns a collection of filepaths to movies of an event. If no movie files exist yet, it will create one or 
+                    more depending on parameters, or will return an empty array if <i>getOnly</i> is set to true.</p>
         
                 <br />
     
@@ -547,129 +599,35 @@ class Module_SolarEvents implements Module
                                 <td><i>[Optional]</i> Whether or not you are looking for the iPod-compatible movie or the regular movie.
                                     Defaults to false if not specified.</td>
                             </tr>
+                            <tr>
+                                <td><b>getOnly</b></td>
+                                <td width="20%"><i>Boolean</i></td>
+                                <td><i>[Optional]</i> Whether or not you want movies built if they don't exist. Set this to true if you 
+                                    are calling this method from an iPod or other interface where you just want to check for existing files.
+                                    Defaults to false if not specified.</td>
+                            </tr>
                         </tbody>
                     </table>
                     <br />
                     
+                    The rest of the parameter list is identical to that of <a href="#buildMovie" style="color:#3366FF">buildMovie</a>, except that you should never
+                    specify <i>hqFormat</i> or <i>filename</i> in the parameters, as these are generated based upon the eventId and whether <i>ipod</i> is set to true or false.
+                    <br /><br />
+                    
                     <span class="example-header">Examples:</span>
-                    <i>Note: Both of these links will return false if the particular event is not in the cache.</i>
                     <span class="example-url">
                     <a href="<?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443">
                         <?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443
                     </a>
                     </span><br />
                     <span class="example-url">
-                    <a href="<?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true&display=false">
+                    <a href="<?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
                         <?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true
                     </a>
                     </span>
                 </div>
             </div>
             </li>
-            <br />
-        
-            <!-- Creating cached Event Screenshots  -->
-            <li>
-            <div id="createScreenshotForEvent">Creating Cached Event Screenshots
-                <p>Creates a screenshot based upon the information given and returns the filepath to that image. If the file already exists,
-                    the filepath is returned without going through the creation process. Unlike the other screenshot-fetching API calls,
-                    this call will only return the filepath and will never display the screenshot.</p>
-        
-                <br />
-        
-                <div class="summary-box"><span
-                    style="text-decoration: underline;">Usage:</span><br />
-                <br />
-        
-                <?php echo $baseURL;?>?action=createScreenshotForEvent<br />
-                <br />
-        
-                Supported Parameters:<br />
-                <br />
-        
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>eventId</b></td>
-                            <td width="20%"><i>String</i></td>
-                            <td>The unique ID of the event, as obtained from querying HEK. </td>
-                        </tr>
-                        <tr>
-                            <td><b>ipod</b></td>
-                            <td width="20%"><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
-                                Defaults to false if not specified.</td>
-                        </tr>
-                    </tbody>
-                </table>
-                The rest of the parameter list is identical to that of <a href="#takeScreenshot" style="color:#3366FF">takeScreenshot</a>, except that you should never
-                specify <i>filename</i> in the parameters.
-                <br /><br />
-                
-                <span class="example-header">Examples:</span>
-                <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=createScreenshotForEvent&eventId=An_Event_Name&obsDate=2010-03-01T12:12:12Z&imageScale=2.63&layers=[3,1,100]&x1=-1000&y1=-1000&x2=1000&y2=1000">
-                    <?php echo $baseURL;?>?action=createScreenshotForEvent&eventId=An_Event_Name&obsDate=2010-03-01T12:12:12Z&imageScale=2.63&layers=[3,1,100]&x1=-1000&y1=-1000&x2=1000&y2=1000
-                </a>
-                </span><br />
-                </div>
-            </div>
-    
-            <br />
-              
-            <!-- Creating cached Event Movies  -->
-            <li>
-            <div id="createScreenshotForEvent">Creating Cached Event Movies
-                <p>Creates a video based upon the information given and returns the filepath to that video. If the file already exists,
-                    the filepath is returned without going through the creation process. Unlike the other movie-fetching API calls,
-                    this call will only return the filepath and will never display the movie.</p>
-        
-                <br />
-        
-                <div class="summary-box"><span
-                    style="text-decoration: underline;">Usage:</span><br />
-                <br />
-        
-                <?php echo $baseURL;?>?action=createMovieForEvent<br />
-                <br />
-        
-                Supported Parameters:<br />
-                <br />
-        
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>eventId</b></td>
-                            <td width="20%"><i>String</i></td>
-                            <td>The unique ID of the event, as obtained from querying HEK. </td>
-                        </tr>
-                        <tr>
-                            <td><b>ipod</b></td>
-                            <td width="20%"><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
-                                Defaults to false if not specified.</td>
-                        </tr>
-                    </tbody>
-                </table>
-                The rest of the parameter list is identical to that of <a href="#buildMovie" style="color:#3366FF">buildMovie</a>, except that you should never
-                specify <i>hqFormat</i> or <i>filename</i> in the parameters, as these are generated based upon the eventId and whether <i>ipod</i> is set to true or false.
-                <br />
-                
-                <span class="example-header">Examples:</span>
-                <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=createMovieForEvent&eventId=An_Event_Name&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=2.63&layers=[3,1,100]&x1=-1000&y1=-1000&x2=0&y2=0">
-                    <?php echo $baseURL;?>?action=createMovieForEvent&eventId=An_Event_Name&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=2.63&layers=[3,1,100]&x1=-1000&y1=-1000&x2=0&y2=0
-                </a>
-                </span><br />
-                <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=createMovieForEvent&eventId=An_Event_Name&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=2.63&layers=[3,1,100]&x1=-1000&y1=-1000&x2=0&y2=0&ipod=true">
-                    <?php echo $baseURL;?>?action=createMovieForEvent&eventId=An_Event_Name&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=2.63&layers=[3,1,100]&x1=-1000&y1=-1000&x2=0&y2=0&ipod=true
-                </a>
-                </span>
-                </div>
-            </div>
-            </li>
-    
             <br />
         </div>
     <?php

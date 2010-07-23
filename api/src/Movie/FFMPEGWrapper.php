@@ -44,17 +44,17 @@ class Movie_FFMPEGWrapper
      * Creates an ipod-compatible mp4 video
      * 
      * @param String $hq_filename the filename of the movie
-     * @param String $tmpDir      the path where the file will be stored
+     * @param String $outputDir      the path where the file will be stored
      * @param int    $width       the width of the video
      * @param int    $height      the height of the video
      * 
      * @return String the filename of the ipod video
      */
-    public function createIpodVideo($hq_filename, $tmpDir, $width, $height) 
+    public function createIpodVideo($hq_filename, $outputDir, $tmpImageDir, $width, $height) 
     {
-        $ipodVideoName = $tmpDir . "ipod-$hq_filename";
-        $cmd = "/usr/bin/ffmpeg -r " . $this->_frameRate . " -i " . $tmpDir . "frame%d.jpg "
-            . "-f mp4 -acodec libmp3lame -ar 48000 -ab 64k -b 800k -coder 0 -bt 200k -maxrate "
+        $ipodVideoName = $outputDir . "/ipod-$hq_filename";
+        $cmd = "/usr/bin/ffmpeg -i " . $tmpImageDir . "/frame%d.jpg -r " . $this->_frameRate
+            . " -f mp4 -acodec libmp3lame -ar 48000 -ab 64k -b 800k -coder 0 -bt 200k -maxrate "
             . "96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 -async 2 " 
             . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " " 
             . $this->_macFlags . " " . $ipodVideoName;
@@ -70,17 +70,17 @@ class Movie_FFMPEGWrapper
      * Creates a video in whatever format is given in $filename
      * 
      * @param String $filename the filename of the movie
-     * @param String $tmpDir   the path where the file will be stored
+     * @param String $outputDir   the path where the file will be stored
      * @param int    $width    the width of the video
      * @param int    $height   the height of the video
      * 
      * @return String the filename of the video
      */
-    public function createVideo($filename, $tmpDir, $width, $height)
+    public function createVideo($filename, $outputDir, $tmpImageDir, $width, $height)
     {  	
-        $cmd = "/usr/bin/ffmpeg -r " . $this->_frameRate . " -i " . $tmpDir . "frame%d.jpg "
-            . "-vcodec libx264 -vpre hq -s " . $width . "x" . $height . " -y " 
-            . $tmpDir . $filename;
+        $cmd = "/usr/bin/ffmpeg -i " . $tmpImageDir . "/frame%d.jpg -r " . $this->_frameRate
+            . " -vcodec libx264 -vpre hq -s " . $width . "x" . $height . " -y " 
+            . $outputDir . "/" . $filename;
 
         try {
             exec(escapeshellcmd($cmd));

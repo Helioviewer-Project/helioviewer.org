@@ -252,20 +252,22 @@ var MovieBuilder = MediaBuilder.extend(
             $(this).trigger('video-done');
 
             self.building = false;
-            
+
             if (data !== null) {
-                if (data.slice(0,4) !== "http") {
-                    $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                                 " try again later."]);
+                if (data.error) {
+                    $(document).trigger("message-console-info", [data.error]);
                     return;
-                    
+                } else if (!data.url) {
+                    $(document.trigger('message-console-info'), ["There was an error creating your video. Please" +
+                                                                 " try again later."])
+                    return;
                 }
                 
                 // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
-                id = data.match(/\/\d+\//)[0].replace(/\//g, "");
+                id = data.url.match(/\/\d+\//)[0].replace(/\//g, "");
 
                 // chop off the flv at the end of the file and replace it with mov/asf/mp4
-                hqfile = data.slice(0, -3) + this.hqFormat;
+                hqfile = data.url.slice(0, -3) + this.hqFormat;
                 
                 // Options for the jGrowl notification. After it has opened, it will create
                 // event listeners for the watch link                               
@@ -275,7 +277,7 @@ var MovieBuilder = MediaBuilder.extend(
                     open  : function () {
                         var watch = $('#watch-' + id);
 
-                        movie.setURL(data, id);
+                        movie.setURL(data.url, id);
                         self.hideDialogs();
                         self.history.addToHistory(movie);
                         
@@ -291,8 +293,9 @@ var MovieBuilder = MediaBuilder.extend(
                 //case they click on the notification.
                 $(document).trigger("message-console-info", [self.addJGrowlHTML(id), options]);
             } else {
-                $(document).trigger("message-console-warn", ["There are not enough images to create a video for " +
-                    "this date. Please try a different date or different layers."]);
+                $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                             " try again later."]);
+                return;
             }
         };
 

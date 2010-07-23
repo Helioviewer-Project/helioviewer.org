@@ -73,8 +73,8 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"    => array('startTime'),
-                "ints"     => array('frameRate', 'quality'),
+                "dates"    => array('startTime', 'endTime'),
+                "ints"     => array('frameRate', 'quality', 'numFrames'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
             );
             break;
@@ -117,7 +117,7 @@ class Module_Movies implements Module
                 
         // Make a temporary directory to store the movie in.
         $now = time();
-        $tmpDir = HV_TMP_DIR . "/$now/";
+        $tmpDir = HV_TMP_DIR . "/$now";
         if (!file_exists($tmpDir)) {
             mkdir($tmpDir, 0777, true);
             chmod($tmpDir, 0777);

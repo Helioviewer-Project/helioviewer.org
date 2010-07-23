@@ -49,6 +49,10 @@ var SandboxHelper = Class.extend(
             x: desiredSandboxSize.width  - this.domNode.width(),
             y: desiredSandboxSize.height - this.domNode.height()
         };
+        
+        if (Math.abs(change.x) < 0.5 && Math.abs(change.y) < 0.5) {
+            return;
+        }
 
         // Update sandbox dimensions
         this.domNode.css({
@@ -68,7 +72,6 @@ var SandboxHelper = Class.extend(
     },
         
     moveContainerTo: function (x, y) {
-        this.movingContainer.css({left: x + 'px'});
-        this.movingContainer.css({top:  y + 'px'});
+        this.movingContainer.css({left: x + 'px', top: y + 'px'});
     }
 });

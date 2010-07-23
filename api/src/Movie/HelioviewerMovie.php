@@ -151,7 +151,7 @@ class Movie_HelioviewerMovie
      *
      * @return void
      */
-    public function buildMovie($builtImages)
+    public function buildMovie($builtImages, $tmpImageDir)
     {
         $this->_images = $builtImages;
         $movieName = $this->_filename;
@@ -168,18 +168,18 @@ class Movie_HelioviewerMovie
         
         if ($this->_highQualityFiletype === "ipod") {
             $hq_filename = "$movieName.mp4";
-            return $ffmpeg->createIpodVideo($hq_filename, $this->tmpDir, $width, $height);
+            return $ffmpeg->createIpodVideo($hq_filename, $this->tmpDir, $tmpImageDir, $width, $height);
         }
         
         $flash_filename = "$movieName." . $this->_filetype;
         $hq_filename    = "$movieName." . $this->_highQualityFiletype;
         
         // Create flash video
-        $ffmpeg->createVideo($flash_filename, $this->tmpDir, $width, $height);
+        $ffmpeg->createVideo($flash_filename, $this->tmpDir, $tmpImageDir, $width, $height);
 
-        $ffmpeg->createVideo($hq_filename, $this->tmpDir, $width, $height);
+        $ffmpeg->createVideo($hq_filename, $this->tmpDir, $tmpImageDir, $width, $height);
         $this->_cleanup();
-        return $this->tmpDir . $flash_filename;
+        return $this->tmpDir . "/" . $flash_filename;
     }
     
     /**
@@ -194,7 +194,10 @@ class Movie_HelioviewerMovie
             if (file_exists($image)) {
                 unlink($image);
             }     
-        }    	
+        }
+        
+        $preview = $this->_images[0];
+        rename($preview, $this->tmpDir . "/" . $this->_filename . ".jpg");
     }
 
     /**
