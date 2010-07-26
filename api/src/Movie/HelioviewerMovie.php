@@ -66,7 +66,7 @@ class Movie_HelioviewerMovie
      */
     public function __construct(
         $startTime, $numFrames, $frameRate, $hqFormat,
-        $options, $timeStep, $filename, $quality, $meta, $tmpDir
+        $options, $filename, $quality, $meta, $tmpDir
     ) {
         $this->_metaInfo = $meta;
         
@@ -80,11 +80,7 @@ class Movie_HelioviewerMovie
         $this->_quality    = $quality;
         $this->_options    = $options;
 
-        // _timeStep is in seconds
-        $this->_timeStep = $timeStep;
         $this->_filename = $filename;
-
-        $this->_endTime = $startTime + ($numFrames * $timeStep);
 
         $this->_padDimensions = $this->_setAspectRatios();
         $this->_highQualityFiletype = $hqFormat;
