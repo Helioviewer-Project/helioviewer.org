@@ -100,37 +100,6 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     }
     
     /**
-     * Searches the cache for screenshots related to the event and returns an array of filepaths if at least one
-     * exists. If not, returns false
-     * 
-     * @param array  $originalParams the original parameters passed in by the API call
-     * @param string $outputDir      the directory path to where the cached file should be stored
-     * 
-     * @return string
-     */
-    public function getScreenshotsForEvent($originalParams, $outputDir) 
-    {
-        $defaults = array(
-           'ipod'    => false
-        );
-        $params = array_merge($defaults, $originalParams);
-        
-        $filename = "Screenshot_";
-        if ($params['ipod'] === "true" || $params['ipod'] === true) {
-            $outputDir .= "/iPod";
-            $filename .= "iPhone_";
-        } else {
-            $outputDir .= "/regular";
-        }
-        
-        $filename .= $params['eventId'];
-        
-        $images = glob($outputDir . "/" . $filename . "*.jpg");
-        
-        return $images;
-    }
-    
-    /**
      * Creates a screenshot based upon an event, specified in $originalParams and
      * returns the filepath to the completed screenshot.
      * 

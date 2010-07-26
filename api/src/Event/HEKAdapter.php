@@ -47,7 +47,8 @@ class Event_HEKAdapter
      * 
      * @param string $startTime Query start date
      * @param string $endTime   Query end date 
-     * 
+     *         var_dump($result);
+        die();
      * @return JSON List of event FRMs sorted by event type 
      */
     public function getFRMs($startTime, $endTime)
@@ -73,7 +74,8 @@ class Event_HEKAdapter
             if (!array_key_exists($name, $names)) {
                 $names[$name] = 1;
                 array_push($unsorted, $row);
-            } else {
+            } else {        var_dump($result);
+        die();
                 $names[$name]++;
             }
         }
@@ -104,9 +106,9 @@ class Event_HEKAdapter
      * 
      * @param date $startTime Start time for which events should be retrieved
      * 
-     * @return void
+     * @return string
      */
-    public function getEvents($startTime, $endTime, $eventType, $eventId, $ipod)
+    public function getEvents($startTime, $endTime, $eventType)
     {
         $params = array(
             "event_starttime" => $startTime,
@@ -117,15 +119,32 @@ class Event_HEKAdapter
                                  "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox"
         );
 
-        if (isset($eventId)) {
-        	$params["param0"] = "kb_archivid";
-        	$params["op0"]    = "=";
-        	$params["value0"] = "ivo://helio-informatics.org/" . $eventId;
-        	$params["return"] .= ",obs_instrument,obs_channelid";
-        }
-        //TODO Add screenshots and movies
         //TODO Group similar (identical) events
-        
+
         return $this->_proxy->query($params, true);
+    }
+    
+    /**
+     * Queries HEK for a single event's information
+     * 
+     * @param string $eventId The ID of the event
+     * 
+     * @return string
+     */
+    public function getEventById($eventId)
+    {
+        $params = array(
+            "event_starttime" => "0001-01-01T00:00:00Z",
+            "event_endtime"   => "9999-01-01T00:00:00Z",
+            "event_type"      => "**",
+            "result_limit"    => 1,
+            "param0"          => "kb_archivid",
+            "op0"             => "=",
+            "value0"          => "ivo://helio-informatics.org/" . $eventId,
+            "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
+                                 "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox,obs_instrument,obs_channelid"
+        );
+        
+        return $this->_proxy->query($params, true);	
     }
 }
