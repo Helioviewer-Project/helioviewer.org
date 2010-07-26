@@ -22,7 +22,6 @@ var HelioviewerViewport = Viewport.extend(
  
         this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
         this._rsunInKilometers = 695700;
-
         this._getDataSources();
     },
     
@@ -46,7 +45,7 @@ var HelioviewerViewport = Viewport.extend(
             // Initialize event layers
             self._eventLayerManager = new EventManager(self.requestDate, 86400, self.getRSun());
         
-            $(document).trigger("resize-viewport");           
+            $(document).trigger("update-viewport");
         };
         
         $.post(this.api, {action: "getDataSources"}, callback, "json"); 

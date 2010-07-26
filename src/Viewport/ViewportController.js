@@ -21,9 +21,11 @@ var ViewportController = Class.extend(
         this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
         var mouseCoords     = new HelioviewerMouseCoordinates(options.imageScale, this._rsunInArcseconds, 
                                                               options.warnMouseCoords);
-        this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
         this.viewport       = new HelioviewerViewport(options);
-
+        // Viewport must be resized before movement helper and sandbox are initialized.
+        this.viewport.resize();
+        this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
+        
         this._initEventHandlers();
     },
 
