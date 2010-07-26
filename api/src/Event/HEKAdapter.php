@@ -74,8 +74,7 @@ class Event_HEKAdapter
             if (!array_key_exists($name, $names)) {
                 $names[$name] = 1;
                 array_push($unsorted, $row);
-            } else {        var_dump($result);
-        die();
+            } else {
                 $names[$name]++;
             }
         }
