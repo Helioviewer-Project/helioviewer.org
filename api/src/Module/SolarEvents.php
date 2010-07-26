@@ -117,9 +117,7 @@ class Module_SolarEvents implements Module
         $ipod       = isset($this->_params['ipod']) && $this->_params['ipod'];
         $result     = $this->_addMediaToEventResponse(json_decode($jsonResult), $ipod);
         
-        if (!empty($_POST)) {
-            header('Content-Type: application/json');
-        }
+        header('Content-Type: application/json');
         echo json_encode($result);
     }    
     
