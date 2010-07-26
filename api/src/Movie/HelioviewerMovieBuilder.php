@@ -179,38 +179,6 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
-     * Searches the cache for movies related to the event and returns an array of filepaths if at least
-     * one exists. If not, returns false
-     * 
-     * @param array  $originalParams the original parameters passed in by the API call
-     * @param string $outputDir      the directory path to where the cached file should be stored
-     * 
-     * @return string
-     */
-    public function getMoviesForEvent($originalParams, $outputDir) 
-    {
-        $defaults = array(
-           'ipod'    => false
-        );
-        $format = ".flv";
-        $params = array_merge($defaults, $originalParams);
-        $filename = "";
-        if ($params['ipod'] === "true" || $params['ipod'] === true) {
-            $outputDir .= "/iPod";
-            $filename .= "ipod-";
-            $format = ".mp4";
-        } else {
-            $outputDir .= "/regular";
-        }
-        
-        $filename .= "Movie_" . $params['eventId'];
-
-        $movies = glob($outputDir . "/" . $filename . "*" . $format);
-        
-        return $movies;
-    }
-    
-    /**
      * Searches the cache for a movie related to the event and returns the filepath if one exists. If not,
      * returns false
      * 

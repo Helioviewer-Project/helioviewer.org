@@ -110,11 +110,47 @@ class Module_SolarEvents implements Module
             $this->_params['eventType'] = "**";
         }
 
-       // header("Content-type: application/json");
-        echo $hek->getEvents(
-            $this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType'], 
-            $this->_params['eventId'], $this->_params['iPod']
+        $jsonResult = $hek->getEvents(
+                        $this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType']
         );
+
+        $ipod       = isset($this->_params['ipod']) && $this->_params['ipod'];
+        $result     = $this->_addMediaToEventResponse(json_decode($jsonResult), $ipod);
+        
+        if (!empty($_POST)) {
+            header('Content-Type: application/json');
+        }
+        echo json_encode($result);
+    }    
+    
+    /**
+     * Gets any screenshot/movie files associated with each event in $jsonResult and adds it to the event
+     * object. Sets $jsonResult->result to the array of event objects created.
+     * 
+     * @param object $jsonResult A json object which has an attribute "result", which is an array of
+     *                           event information.
+     * 
+     * @return json object
+     */
+    private function _addMediaToEventResponse($jsonResult, $ipod)
+    {
+        $result = array();
+        foreach ($jsonResult->result as $event) {
+            $fullId  = explode("/", $event->kb_archivid);
+            $id      = end($fullId);
+            $format  = ($ipod === true? "mp4" : "flv");
+            
+            $tmpDir  = HV_CACHE_DIR . "/events/" . $id;
+            $this->_createEventCacheDir($tmpDir);
+            
+            $event->screenshots = $this->_checkForFiles($tmpDir . "/screenshots", $ipod, "*");
+            $event->movies      = $this->_checkForFiles($tmpDir . "/movies", $ipod, $format);
+
+            $result[] = $event;
+        }
+
+        $jsonResult->result = $result;
+        return $jsonResult;
     }
 
     /**
@@ -129,8 +165,7 @@ class Module_SolarEvents implements Module
         case "getEvents":
             $expected = array(
                 "required" => array('startDate'),
-                "optional" => array('eventId'),
-                "bools"    => array('iPod'),
+                "bools"    => array('ipod'),
                 "dates"    => array('startDate', 'endDate')
             );
             break;
@@ -140,22 +175,26 @@ class Module_SolarEvents implements Module
                "dates"    => array('startDate', 'endDate')
             );
             break;
+        // Any booleans that default to true cannot be listed here because the
+        // validation process sets them to false if they are not given.
         case "getScreenshotsForEvent": 
             $expected = array(
                 "required" => array('eventId'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"    => array('obsDate'),
                 "ints"     => array('quality'),
-                "bools"    => array('display', 'getOnly')
+                "bools"    => array('display', 'getOnly', 'ipod')
             );
             break;
+        // Any booleans that default to true cannot be listed here because the
+        // validation process sets them to false if they are not given.
         case "getMoviesForEvent": 
             $expected = array(
                 "required" => array('eventId'),
                 "dates"    => array('startTime', 'endTime'),
                 "ints"     => array('frameRate', 'quality', 'numFrames'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "bools"    => array('display', 'getOnly')
+                "bools"    => array('display', 'getOnly', 'ipod')
             );
             break;  
         default:
@@ -183,9 +222,10 @@ class Module_SolarEvents implements Module
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
+        $ipod    = isset($this->_params['ipod']) && $this->_params['ipod'];
         $this->_createEventCacheDir($tmpDir);
         
-        $response = $builder->getScreenshotsForEvent($this->_params, $tmpDir);
+        $response = $this->_checkForFiles($tmpDir, $ipod, "*");
         if (empty($response) || HV_DISABLE_CACHE) {
         	if (!$this->_getOnly()) {                    
                 $response = $this->_createForEvent($builder, $tmpDir);
@@ -216,11 +256,12 @@ class Module_SolarEvents implements Module
         include_once 'src/Movie/HelioviewerMovieBuilder.php';
         
         $builder = new Movie_HelioviewerMovieBuilder();
-        
         $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/movies";
+        $ipod    = isset($this->_params['ipod']) && $this->_params['ipod'];
+        $format  = ($ipod === true? "mp4" : "flv");
         $this->_createEventCacheDir($tmpDir);
         
-        $response = $builder->getMoviesForEvent($this->_params, $tmpDir);            
+        $response = $this->_checkForFiles($tmpDir, $ipod, $format);        
         if (empty($response) || HV_DISABLE_CACHE) {
             if (!$this->_getOnly()) {
                 $response = $this->_createForEvent($builder, $tmpDir);
@@ -239,6 +280,27 @@ class Module_SolarEvents implements Module
         }
         echo JSON_encode($finalResponse);
         return $finalResponse;
+    }
+    
+    /**
+     * Globs a directory to see if there are any files in it.
+     * 
+     * @param string  $outputDir Directory path to where the screenshots or movies are stored
+     * @param boolean $ipod      Whether to look in the ipod folder or regular folder
+     * 
+     * @return array
+     */
+    private function _checkForFiles($outputDir, $ipod, $format)
+    {
+        if ($ipod === true) {
+            $outputDir .= "/iPod";
+        } else {
+            $outputDir .= "/regular";
+        }
+
+        $files = glob($outputDir . "/*." . $format);
+        
+        return $files;    	
     }
     
     /**
@@ -285,10 +347,8 @@ class Module_SolarEvents implements Module
     private function _getSingleEventInformation() {
     	include_once "src/Event/HEKAdapter.php";
         $hek = new Event_HEKAdapter();
-        
-        $startDate = "0001-01-01T00:00:00Z";
-        $endDate   = "9999-01-01T00:00:00Z";
-        return $hek->getEvents($startDate, $endDate, "**", $this->_params['eventId'], false);
+
+        return $hek->getEventById($this->_params['eventId']);
     }
     
     /**
