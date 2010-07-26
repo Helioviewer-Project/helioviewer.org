@@ -98,12 +98,6 @@ class Movie_HelioviewerMovieBuilder
 
             $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
 
-            if ($numFrames < 1) {
-                $msg = "There are no images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
-                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
-                throw new Exception($msg);
-            }
-
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 
             if (!$this->_params['filename']) {
@@ -121,13 +115,21 @@ class Movie_HelioviewerMovieBuilder
                         . toReadableISOString($isoEndTime) . ", so a movie was not created.";
                 throw new Exception($msg);
             }
+        
+            $numFrames = sizeOf($images);
+            if ($numFrames < 3) {
+                $msg = "There is only one image for the given layers between " . toReadableISOString($isoStartTime) . " and " 
+                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
+                throw new Exception($msg);
+            }
             
-            $frameRate = $this->_determineOptimalFrameRate(sizeOf($images));
+            // Subtract 1 because we added an extra frame to the end
+            $frameRate = $this->_determineOptimalFrameRate($numFrames - 1);
 
             $movie = new Movie_HelioviewerMovie(
-                $startTime, sizeOf($images),
+                $startTime, $numFrames,
                 $frameRate, $this->_params['hqFormat'],
-                $options, $cadence, $filename,
+                $options, $filename,
                 $this->_params['quality'],
                 $movieMeta, $outputDir
             );
@@ -360,9 +362,14 @@ class Movie_HelioviewerMovieBuilder
             );
     
             $image = $builder->takeScreenshot($params, $tmpDir, $closestImages);
-            array_push($images, $image);
+            $images[] = $image;
         }
 
+        // Copy the last frame so that it actually shows up in the movie for the same amount of time
+        // as the rest of the frames. 
+        $lastImage = copy($image, dirname($image) . "/frame" . $frameNum . ".jpg");
+        $images[]  = $lastImage;
+        
         return $images;
     }
     
