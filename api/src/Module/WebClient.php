@@ -348,6 +348,8 @@ class Module_WebClient implements Module
             break;
         case "getViewerImage":
             break;
+        // Any booleans that default to true cannot be listed here because the
+        // validation process sets them to false if they are not given.
         case "takeScreenshot":
             $required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
             $expected = array(
