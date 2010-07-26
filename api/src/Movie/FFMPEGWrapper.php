@@ -68,6 +68,12 @@ class Movie_FFMPEGWrapper
     
     /**
      * Creates a video in whatever format is given in $filename
+     ********* 
+     *  NOTE: Frame rate MUST be specified twice in the command, 
+     *        before and after the input file, or ffmpeg will start
+     *        cutting off frames to adjust for what it thinks is the right
+     *        frameRate. 
+     *********
      * 
      * @param String $filename the filename of the movie
      * @param String $outputDir   the path where the file will be stored
@@ -78,9 +84,13 @@ class Movie_FFMPEGWrapper
      */
     public function createVideo($filename, $outputDir, $tmpImageDir, $width, $height)
     {  	
-        $cmd = "/usr/bin/ffmpeg -i " . $tmpImageDir . "/frame%d.jpg -r " . $this->_frameRate
-            . " -vcodec libx264 -vpre hq -s " . $width . "x" . $height . " -y " 
-            . $outputDir . "/" . $filename;
+    	// MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
+    	// fps >= 2
+    	$outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
+
+        $cmd = "/usr/bin/ffmpeg -r " . $this->_frameRate . " -i " . $tmpImageDir . "/frame%d.jpg"
+            . " -r " . $outputRate . " -vcodec libx264 -vpre hq -s " . $width . "x" . $height 
+            . " -y " . $outputDir . "/" . $filename;
 
         try {
             exec(escapeshellcmd($cmd));
