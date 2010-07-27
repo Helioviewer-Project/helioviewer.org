@@ -75,7 +75,7 @@ var FullscreenControl = Class.extend(
             left: 0
         }, this.speed,
         function () {
-            $(document).trigger('recompute-tile-visibility');
+            $(document).trigger('update-viewport');
             self.panels.hide();
             self.body.removeClass('disable-fullscreen-mode');
         });
@@ -201,7 +201,7 @@ var FullscreenControl = Class.extend(
             if (fx.elem.id !== "sandbox") {
                 return $_fx_step_default(fx);
             }
-            doc.trigger('update-viewport-sandbox');
+            doc.trigger('update-viewport');
             fx.elem.updated = true;
         };
     }

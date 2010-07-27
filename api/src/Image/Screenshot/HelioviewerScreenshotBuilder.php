@@ -100,57 +100,23 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     }
     
     /**
-     * Searches the cache for screenshots related to the event and returns an array of filepaths if at least one
-     * exists. If not, returns false
-     * 
-     * @param array  $originalParams the original parameters passed in by the API call
-     * @param string $outputDir      the directory path to where the cached file should be stored
-     * 
-     * @return string
-     */
-    public function getScreenshotsForEvent($originalParams, $outputDir) 
-    {
-        $defaults = array(
-           'ipod'    => false
-        );
-        $params = array_merge($defaults, $originalParams);
-        
-        $filename = "Screenshot_";
-        if ($params['ipod'] === "true" || $params['ipod'] === true) {
-            $outputDir .= "/iPod";
-            $filename .= "iPhone_";
-        } else {
-            $outputDir .= "/regular";
-        }
-        
-        $filename .= $params['eventId'];
-        
-        $images = glob($outputDir . "/" . $filename . "*.jpg");
-        if (sizeOf($images) === 0) {
-            return false;
-        }
-        
-        return $images;
-    }
-    
-    /**
      * Creates a screenshot based upon an event, specified in $originalParams and
      * returns the filepath to the completed screenshot.
      * 
      * @param Array  $originalParams An array of parameters passed in by the API call
+     * @param Array  $eventInfo      An array of parameters gotten from querying HEK
      * @param String $outputDir      The path to where the file will be stored
      * 
      * @return string
      */
-    public function createScreenshotForEvent($originalParams, $outputDir)
+    public function createForEvent($originalParams, $eventInfo, $outputDir)
     { 
         $defaults = array(
-           'display' => false,
-           'ipod'    => false
+            'ipod'    => false
         );
         
         $params = array_merge($defaults, $originalParams);
-        
+        $params['display'] = false;
         $filename = "Screenshot_";
         if ($params['ipod'] === "true" || $params['ipod'] === true) {
             $outputDir .= "/iPod";
@@ -159,12 +125,83 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $outputDir .= "/regular";
         }
 
-        $filename .= $params['eventId'] . $this->buildFilename(getLayerArrayFromString($params['layers']));
-        if (file_exists($outputDir . "/" . $filename . ".jpg")) {
-            return $outputDir . "/" . $filename . ".jpg";
+        $box = $this->_getBoundingBox($params, $eventInfo);
+        $params['x1'] = $box['x1'];
+        $params['x2'] = $box['x2'];
+        $params['y1'] = $box['y1'];
+        $params['y2'] = $box['y2'];
+
+        $layers = $this->_getLayersFromParamsOrSourceIds($params, $eventInfo);
+        $files  = array();
+
+        foreach ($layers as $layer) {
+        	$layerFilename = $filename . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($layer));
+
+            if (!HV_DISABLE_CACHE && file_exists($outputDir . "/" . $layerFilename . ".jpg")) {
+                $files[] = $outputDir . "/" . $layerFilename . ".jpg";
+            } else {
+            	try {
+                    $params['filename'] = $layerFilename;
+                    $params['layers']   = $layer;
+                    $files[] = $this->takeScreenshot($params, $outputDir, array());
+            	} catch(Exception $e) {
+                    // Ignore any exceptions thrown by takeScreenshot, since they
+            		// occur when no image is made and we only care about images that
+                    // are made.
+            	}
+            }
         }
-        $params['filename'] = $filename;
-        return $this->takeScreenshot($params, $outputDir);
+
+        return $files;
+    }
+    
+    private function _getBoundingBox($params, $eventInfo) {
+    	$box = array();
+    	
+    	if (!isset($params['x1'])) {
+    		$box = $eventInfo['boundingBox'];
+    	} else {
+    		$box['x1'] = $params['x1'];
+    		$box['x2'] = $params['x2'];
+    		$box['y1'] = $params['y1'];
+    		$box['y2'] = $params['y2'];
+    	}
+
+    	return $this->_padToMinSize($box, $params['imageScale']);
+    }
+    
+    private function _padToMinSize($box, $imageScale)
+    {
+        $minSize = (400 * $imageScale) / 2;
+        $centerX = ($box['x1'] + $box['x2']) / 2;
+        $centerY = ($box['y1'] + $box['y2']) / 2;
+        
+        $minX    = min($centerX - $minSize, $box['x1']);
+        $minY    = min($centerY - $minSize, $box['y1']);
+        $maxX    = max($centerX + $minSize, $box['x2']);
+        $maxY    = max($centerY + $minSize, $box['y2']);
+        
+        return array(
+            "x1" => $minX, 
+            "x2" => $maxX, 
+            "y1" => $minY, 
+            "y2" => $maxY);
+    }
+    
+    private function _getLayersFromParamsOrSourceIds($params, $eventInfo)
+    {
+    	$layers = array();
+
+    	if (!isset($params['layers'])) {
+    		$sourceIds = $eventInfo['sourceIds'];
+    		foreach ($sourceIds as $source) {
+    			$layers[] = "[" . $source . ",1,100]";
+    		}
+    	} else {
+    		$layers[] = $params['layers'];
+    	}
+    	
+    	return $layers;
     }
 
     /**

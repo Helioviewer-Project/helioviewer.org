@@ -15,13 +15,12 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var TileLayerManager = LayerManager.extend(
 /** @lends TileLayerManager.prototype */
 {
-
     /**
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    tileServers, savedLayers, urlLayers, loadDefaults) {
+                    tileServers, savedLayers, urlLayers) {
         this._super();
 
         this.api           = api;
@@ -38,12 +37,8 @@ var TileLayerManager = LayerManager.extend(
         $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
                    .bind("save-tile-layers",            $.proxy(this.save, this))
                    .bind("add-new-tile-layer",          $.proxy(this.addNewLayer, this))
-                   .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this));
-        
-        if (loadDefaults) {
-            var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
-            this._loadStartingLayers(startingLayers);
-        }
+                   .bind("remove-tile-layer",           $.proxy(this._onLayerRemove, this))
+                   .bind("observation-time-changed",    $.proxy(this.updateRequestTime, this));
     },
 
     /**
@@ -59,7 +54,8 @@ var TileLayerManager = LayerManager.extend(
      * 
      */
     updateTileVisibilityRange: function (vpCoords) {
-        var ts, self, vp;
+        var old, ts, self, vp;
+        old = this.tileVisibilityRange;
         // Expand to fit tile increment
         ts = this.tileSize;
         vp = {
@@ -78,15 +74,21 @@ var TileLayerManager = LayerManager.extend(
         };
 
         self = this;
-        $.each(this._layers, function () {
-            this.updateTileVisibilityRange(self.tileVisibilityRange); 
-        });
+        if (this.tileVisibilityRange !== old) {
+            $.each(this._layers, function () {
+                this.updateTileVisibilityRange(self.tileVisibilityRange); 
+            });
+        }
     },
     
     /**
      * 
      */
     adjustImageScale: function (scale) {
+        if (this.viewportScale === scale) {
+            return; 
+        }
+        
         this.viewportScale = scale;
         var self = this;
         
@@ -159,10 +161,14 @@ var TileLayerManager = LayerManager.extend(
     /**
      * Handles observation time changes
      */
-    updateRequestTime: function (date) {
+    updateRequestTime: function (event, date) {
         this._observationDate = date;
         $.each(this._layers, function (i, layer) {
             this.updateRequestTime(date);
         });
+    },
+    
+    getRequestDateAsISOString: function () {
+        return this._observationDate.toISOString();
     }
 });

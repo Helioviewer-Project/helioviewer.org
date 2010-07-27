@@ -99,4 +99,9 @@ function toISOString($date)
 {
     return $date->format("Y-m-d\TH:i:s\Z");
 }
+
+function toReadableISOString($string)
+{
+	return substr(str_replace(array("T", "Z"), " ", $string), 0, 19); 
+}
 ?>
