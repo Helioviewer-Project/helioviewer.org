@@ -99,7 +99,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             );
        
             $pathToFile     = $this->_getJP2Path($closestImage);
-            $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $roi);
+            $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $roi, $layer['opacity']);
 
             $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
@@ -144,7 +144,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * 
      * @return string a string containing the image's temporary output path
      */
-    private function _getTmpOutputPath($closestImage, $roi)
+    private function _getTmpOutputPath($closestImage, $roi, $opacity)
     {
         $cacheDir = HV_CACHE_DIR . $closestImage['filepath'];
 
@@ -155,7 +155,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 
         return $cacheDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
             $this->metaInfo->imageScale() . "_" . round($roi['left']) . "_" . round($roi['right']) . "x_" . 
-            round($roi['top']) . "_" . round($roi['bottom']) . "y.png";
+            round($roi['top']) . "_" . round($roi['bottom']) . "y-op$opacity.png";
     }
 
     /**
