@@ -83,7 +83,7 @@ var Viewport = Class.extend(
     },
     
     /**
-     * Saves the new image scale and scales maxLayerDimensions accordingly.
+     * Saves the new image scale
      */
     setImageScale: function (imageScale) {
         this.imageScale = imageScale;
