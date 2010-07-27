@@ -69,9 +69,10 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
         
         // Default to grayscale color table if not found
         if (!file_exists($colorTable)) {
-            $colorTable = "/api/resources/images/color-tables/extra/ctable_idl_0.png";
+            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/extra/ctable_idl_0.png";
         }
-
+        $this->setColorTable($colorTable);
+        
         $this->width    = $width;
         $this->height   = $height;
     }
@@ -99,17 +100,4 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
     {
         return "AIA $this->_measurement\n";
     }
-    
-    /**
-     * No color table. Do nothing.
-     * 
-     * @param string $input  Input file
-     * @param string $output Output file
-     * 
-     * @return void
-     */
-    //    protected function setColorPalette($input, $output)
-    //    {
-    //        return;
-    //    }
 }
