@@ -132,9 +132,9 @@ class Config
         //define("HV_WEB_ROOT_URL", "http://" . $_SERVER["SERVER_NAME"]
         //    . substr($_SERVER["SCRIPT_NAME"], 0, -14));
         define("HV_CACHE_DIR", HV_ROOT_DIR . "/cache");
-        define("HV_TMP_DIR", HV_ROOT_DIR . "/cache/tmp");
+        define("HV_TMP_DIR", HV_ROOT_DIR . "/cache/movies");
         define("HV_ERROR_LOG", HV_ROOT_DIR . "/log/error");
         define("HV_EMPTY_TILE", HV_ROOT_DIR . "/resources/images/transparent_512.png");
-        define("HV_TMP_ROOT_URL", HV_WEB_ROOT_URL . "/cache/tmp");
+        define("HV_TMP_ROOT_URL", HV_WEB_ROOT_URL . "/cache/movies");
     }
 }

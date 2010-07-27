@@ -99,8 +99,10 @@ var ImageSelectTool = Class.extend(
         });
         
         $(window).resize(function () {
-            self.cancelButton.click();
-            self.enableAreaSelect(0, callback);
+            if (self.active) {
+                self.cancelButton.click();
+                self.enableAreaSelect(0, callback);
+            }
         });
 
         this.doneButton.click(function () {

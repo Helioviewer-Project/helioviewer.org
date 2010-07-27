@@ -291,7 +291,6 @@ class Module_SolarEvents implements Module
      */
     private function _checkForFiles($outputDir, $ipod, $format)
     {
-
         if ($ipod === true) {
             $outputDir .= "/iPod";
         } else {
@@ -317,7 +316,7 @@ class Module_SolarEvents implements Module
     	include_once(HV_ROOT_DIR . "/api/src/Helper/EventParser.php");
         $eventInfo = JSON_decode($this->_getSingleEventInformation());
         $result    = $eventInfo->result;
-        
+
         if (!empty($result)) {
         	$result = $result[0];
             $layerInfo = getLayerInfoForEventType($result->event_type);
