@@ -336,7 +336,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 <a href="http://helioviewer.org/wiki/" class="light" target="_blank">Wiki</a>
                 <a href="api/" class="light" target="_blank">API</a>
                 <a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
-                <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Bug</a>
+                <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
             </div>
         </div>
     </div>
