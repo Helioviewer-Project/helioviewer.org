@@ -53,7 +53,7 @@ class Movie_HelioviewerMovieBuilder
     {
         $defaults = array(
             'numFrames'   => false,
-            'frameRate'   => 8,
+            //'frameRate'   => 12,
             'filename'	  => false,
             'sharpen'	  => false,
             'edges'		  => false,
@@ -63,8 +63,9 @@ class Movie_HelioviewerMovieBuilder
             'watermarkOn' => true,
             'endTime'     => false
         );
+
         $this->_params = array_merge($defaults, $params);
-        
+
         $imageScale = $params['imageScale'];
         $width      = ($params['x2'] - $params['x1']) / $imageScale;
         $height     = ($params['y2'] - $params['y1']) / $imageScale;  
@@ -96,12 +97,8 @@ class Movie_HelioviewerMovieBuilder
             list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
 
             $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
-   
-            if ($numFrames < 10) {
-                return false;
-            }
 
-            $cadence = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
+            $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 
             if (!$this->_params['filename']) {
                 $start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
@@ -111,26 +108,43 @@ class Movie_HelioviewerMovieBuilder
                 $filename = $this->_params['filename'];
             }
 
+            $tmpImageDir = $outputDir . "/tmp-" . $filename;
+            $images      = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames, $tmpImageDir);
+            if ($images === false) {
+                $msg = "There are no images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
+                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
+                throw new Exception($msg);
+            }
+        
+            $numFrames = sizeOf($images);
+            if ($numFrames < 3) {
+                $msg = "There is only one image for the given layers between " . toReadableISOString($isoStartTime) . " and " 
+                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
+                throw new Exception($msg);
+            }
+            
+            // Subtract 1 because we added an extra frame to the end
+            $frameRate = $this->_determineOptimalFrameRate($numFrames - 1);
+
             $movie = new Movie_HelioviewerMovie(
                 $startTime, $numFrames,
-                $this->_params['frameRate'],
-                $this->_params['hqFormat'],
-                $options, $cadence, $filename,
+                $frameRate, $this->_params['hqFormat'],
+                $options, $filename,
                 $this->_params['quality'],
                 $movieMeta, $outputDir
             );
-
-            $images = $this->_buildFramesFromMetaInformation($movieMeta, $this->_params['layers'], $startTime, $cadence, $numFrames, $outputDir);
-            if ($images === false) {
-                return false;
-            }
-            $url 	= $movie->buildMovie($images);
+            
+            $url = $movie->buildMovie($images, $tmpImageDir);
             
             return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
 
         } catch(Exception $e) {
-            echo 'Error: ' .$e->getMessage();
-            exit();
+        	if (!empty($_POST)) {
+                header('Content-type: application/json');
+                echo json_encode(array("error" => $e->getMessage()));       		
+        	} else {
+                //printErrorMsg($e->getMessage());
+        	}
         }
     }
     
@@ -143,17 +157,19 @@ class Movie_HelioviewerMovieBuilder
      */
     private function _getStartAndEndTimes ()
     {
-        $isoStartTime = $this->_params['startTime'];
-        $startTime    = toUnixTimestamp($isoStartTime);
+        $isoStartTime  = $this->_params['startTime'];
+        $startTime     = toUnixTimestamp($isoStartTime);
+        // Convert to seconds.
+        $defaultWindow = HV_DEFAULT_MOVIE_TIME_WINDOW_IN_HOURS * 3600;
             
         if (!$this->_params['endTime']) {
             $now = time();
-            if ($now - $startTime < 86400) {
-                $startTime -= 86400;
+            if ($now - $startTime < $defaultWindow) {
+                $startTime -= $defaultWindow;
                 $isoStartTime = toISOString(parseUnixTimestamp($startTime));
             }
             
-            $endTime    = $startTime + 86400;
+            $endTime    = $startTime + $defaultWindow;
             $isoEndTime = toISOString(parseUnixTimestamp($endTime));
             
         } else {
@@ -165,41 +181,6 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
-     * Searches the cache for movies related to the event and returns an array of filepaths if at least
-     * one exists. If not, returns false
-     * 
-     * @param array  $originalParams the original parameters passed in by the API call
-     * @param string $outputDir      the directory path to where the cached file should be stored
-     * 
-     * @return string
-     */
-    public function getMoviesForEvent($originalParams, $outputDir) 
-    {
-        $defaults = array(
-           'ipod'    => false
-        );
-        $format = ".flv";
-        $params = array_merge($defaults, $originalParams);
-        $filename = "";
-        if ($params['ipod'] === "true" || $params['ipod'] === true) {
-            $outputDir .= "/iPod";
-            $filename .= "ipod-";
-            $format = ".mp4";
-        } else {
-            $outputDir .= "/regular";
-        }
-        
-        $filename .= "Movie_" . $params['eventId'];
-
-        $movies = glob($outputDir . "/" . $filename . "*" . $format);
-        if (sizeOf($movies) === 0) {
-            return false;
-        }
-        
-        return $movies;
-    }
-    
-    /**
      * Searches the cache for a movie related to the event and returns the filepath if one exists. If not,
      * returns false
      * 
@@ -208,30 +189,102 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return string
      */
-    public function createMovieForEvent($originalParams, $outputDir) 
+    public function createForEvent($originalParams, $eventInfo, $outputDir) 
     {
         $defaults = array(
-           'display' => false,
            'ipod'    => false
         );
         $params = array_merge($defaults, $originalParams);
+        $params['display'] = false;
         $format = ".flv";
         $filename = "";
         if ($params['ipod'] === "true" || $params['ipod'] === true) {
             $params['hqFormat'] = "ipod";
-            $outputDir .= "/iPod/";
+            $outputDir .= "/iPod";
             $format = ".mp4";
         } else {
-            $outputDir .= "/regular/";
+            $outputDir .= "/regular";
         }
         
-        $filename .= "Movie_" . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($params['layers']));
+        $filename .= "Movie_";
         
-        if (file_exists($outputDir . $filename . $format)) {
-            return $outputDir . $filename . $format;
+        $box = $this->_getBoundingBox($params, $eventInfo);
+        $params['x1'] = $box['x1'];
+        $params['x2'] = $box['x2'];
+        $params['y1'] = $box['y1'];
+        $params['y2'] = $box['y2'];
+
+        $layers = $this->_getLayersFromParamsOrSourceIds($params, $eventInfo);
+        $files  = array();
+
+        foreach ($layers as $layer) {
+            $layerFilename = $filename . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($layer));
+
+            if (!HV_DISABLE_CACHE && file_exists($outputDir . "/" . $layerFilename . $format)) {
+                $files[] = $outputDir . "/" . $layerFilename . $format;
+            } else {
+                try {
+                    $params['filename'] = $layerFilename;
+                    $params['layers']   = $layer;
+                    $files[] = $this->buildMovie($params, $outputDir);
+                } catch(Exception $e) {
+                    // Ignore any exceptions thrown by buildMovie, since they
+                    // occur when no movie is made and we only care about movies that
+                    // are made.
+                }
+            }
         }
-        $params['filename'] = $filename;
-        return $this->buildMovie($params, $outputDir);
+
+        return $files;
+    }
+    
+    private function _getBoundingBox($params, $eventInfo) {
+        $box = array();
+        
+        if (!isset($params['x1'])) {
+            $box = $eventInfo['boundingBox'];
+        } else {
+            $box['x1'] = $params['x1'];
+            $box['x2'] = $params['x2'];
+            $box['y1'] = $params['y1'];
+            $box['y2'] = $params['y2'];
+        }
+
+        return $this->_padToMinSize($box, $params['imageScale']);
+    }
+    
+    private function _padToMinSize($box, $imageScale)
+    {
+        $minSize = (400 * $imageScale) / 2;
+        $centerX = ($box['x1'] + $box['x2']) / 2;
+        $centerY = ($box['y1'] + $box['y2']) / 2;
+        
+        $minX    = min($centerX - $minSize, $box['x1']);
+        $minY    = min($centerY - $minSize, $box['y1']);
+        $maxX    = max($centerX + $minSize, $box['x2']);
+        $maxY    = max($centerY + $minSize, $box['y2']);
+        
+        return array(
+            "x1" => $minX, 
+            "x2" => $maxX, 
+            "y1" => $minY, 
+            "y2" => $maxY);
+    }
+    
+    private function _getLayersFromParamsOrSourceIds($params, $eventInfo)
+    {
+        $layers = array();
+
+        if (!isset($params['layers'])) {
+            $sourceIds = $eventInfo['sourceIds'];
+            foreach ($sourceIds as $source) {
+                $layers[] = "[" . $source . ",1,100]";
+            }
+        } else {
+            $layers[] = $params['layers'];
+        }
+        
+        return $layers;
     }
     
     /**
@@ -281,7 +334,7 @@ class Movie_HelioviewerMovieBuilder
         
         $timestamps = $this->_getTimestamps($sourceIds, $startTime, $timeStep, $numFrames);
 
-        if (sizeOf($timestamps) < 10) {
+        if (sizeOf($timestamps) < 1) {
             return false;
         }
         
@@ -309,9 +362,14 @@ class Movie_HelioviewerMovieBuilder
             );
     
             $image = $builder->takeScreenshot($params, $tmpDir, $closestImages);
-            array_push($images, $image);
+            $images[] = $image;
         }
 
+        // Copy the last frame so that it actually shows up in the movie for the same amount of time
+        // as the rest of the frames. 
+        $lastImage = copy($image, dirname($image) . "/frame" . $frameNum . ".jpg");
+        $images[]  = $lastImage;
+        
         return $images;
     }
     
@@ -397,8 +455,8 @@ class Movie_HelioviewerMovieBuilder
      * Uses the startTime, endTime, and numFrames to calculate the amount of time in between
      * each frame.
      * 
-     * @param Date $startTime ISO date
-     * @param Date $endTime   ISO date
+     * @param Date $startTime Unix Timestamp
+     * @param Date $endTime   Unix Timestamp
      * @param Int  $numFrames number of frames in the movie
      * 
      * @return the number of seconds in between each frame
@@ -406,6 +464,28 @@ class Movie_HelioviewerMovieBuilder
     private function _determineOptimalCadence($startTime, $endTime, $numFrames)
     {
         return ($endTime - $startTime) / $numFrames;
+    }
+    
+    /**
+     * Uses numFrames to calculate the frame rate that should
+     * be used when encoding the movie.
+     * 
+     * @param Int  $numFrames number of frames in the movie
+     * 
+     * @return Int 
+     */
+    private function _determineOptimalFrameRate($numFrames)
+    {
+    	$duration  = HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
+    	$frameRate = $numFrames / $duration;
+    	
+    	// Take the smaller number in case the user specifies a larger
+    	// frame rate than is practical.
+    	if (isset($this->_params['frameRate'])) {
+    		$frameRate = min($frameRate, $this->_params['frameRate']);
+    	}
+
+    	return $frameRate;
     }
     
     /**
@@ -425,14 +505,17 @@ class Movie_HelioviewerMovieBuilder
             throw new Exception('The requested movie is either unavailable or does not exist.');
         }
 
-        if ($display === true && $params == $_GET) {
+        if ($display === true && !empty($_GET)) {
             return Movie_HelioviewerMovie::showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $width, $height);
-            //return $movie->showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $movie->width(), $movie->height());
-        } else if ($params == $_POST) {
+        } else if (!empty($_POST)) {
             header('Content-type: application/json');
-            echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
+            echo json_encode(array(
+                                "url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url),
+                            ));
+            return $url;
         } else {
-            echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
+            //echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
+            return $url;
         }
     }
 }

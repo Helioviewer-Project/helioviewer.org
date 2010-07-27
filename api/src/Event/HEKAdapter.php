@@ -36,7 +36,7 @@ class Event_HEKAdapter
     public function __construct()
     {
         $this->_baseURL = HEK_BASE_URL . '?cosec=2&cmd=search&type=column' 
-                                       . '&event_coordsys=helioprojective&x1=-1200&x2=1200&y1=-1200&y2=1200&';
+                                       . '&event_coordsys=helioprojective&x1=-30000&x2=30000&y1=-30000&y2=30000&';
 
         include_once 'src/Net/Proxy.php';
         $this->_proxy = new Net_Proxy($this->_baseURL);
@@ -47,7 +47,8 @@ class Event_HEKAdapter
      * 
      * @param string $startTime Query start date
      * @param string $endTime   Query end date 
-     * 
+     *         var_dump($result);
+        die();
      * @return JSON List of event FRMs sorted by event type 
      */
     public function getFRMs($startTime, $endTime)
@@ -73,7 +74,7 @@ class Event_HEKAdapter
             if (!array_key_exists($name, $names)) {
                 $names[$name] = 1;
                 array_push($unsorted, $row);
-            } else {
+            } else { 
                 $names[$name]++;
             }
         }
@@ -104,9 +105,9 @@ class Event_HEKAdapter
      * 
      * @param date $startTime Start time for which events should be retrieved
      * 
-     * @return void
+     * @return string
      */
-    public function getEvents($startTime, $endTime, $eventType, $ipod)
+    public function getEvents($startTime, $endTime, $eventType)
     {
         $params = array(
             "event_starttime" => $startTime,
@@ -116,10 +117,33 @@ class Event_HEKAdapter
             "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
                                  "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox"
         );
-        
-        //TODO Add screenshots and movies
+
         //TODO Group similar (identical) events
-        
+
         return $this->_proxy->query($params, true);
+    }
+    
+    /**
+     * Queries HEK for a single event's information
+     * 
+     * @param string $eventId The ID of the event
+     * 
+     * @return string
+     */
+    public function getEventById($eventId)
+    {
+        $params = array(
+            "event_starttime" => "0001-01-01T00:00:00Z",
+            "event_endtime"   => "9999-01-01T00:00:00Z",
+            "event_type"      => "**",
+            "result_limit"    => 1,
+            "param0"          => "kb_archivid",
+            "op0"             => "=",
+            "value0"          => "ivo://helio-informatics.org/" . $eventId,
+            "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
+                                 "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox,obs_instrument,obs_channelid"
+        );
+        
+        return $this->_proxy->query($params, true);	
     }
 }

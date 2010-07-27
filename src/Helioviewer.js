@@ -19,49 +19,33 @@ var Helioviewer = UIController.extend(
      * @constructs
      * 
      * @param {Object} urlParams  Client-specified settings to load. Includes imageLayers,
-     *                            date, and imageScale
+     *                            date, and imageScale. May be empty.
      * @param {Object} settings   Server settings loaded from Config.ini
      */
     init: function (urlParams, settings) {
-        // Calling super will load settings and call _loadExtensions()
+        // Calling super will load settings, init viewport, and call _loadExtensions()
         this._super(urlParams, settings);
-        this.api = "api/index.php";
         
-        this.timeControls = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
-                          '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+        this.rootURL = this.userSettings.get('rootURL');
 
-        // Get available data sources and initialize viewport
-        this._getDataSourcesAndLoadViewport();
-        
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
     },
     
     /**
-     * Loads the message console, keyboard shortcut manager, tooltips, 
-     * zoom controls, time controls, and full screen controls
+     * Loads the message console, keyboard shortcut manager, tooltips, zoom controls, and
+     * full screen controls. the movie builder, screenshot builder, and image select tool.
      */
     _loadExtensions: function () {
         var screenshotHistory, movieHistory;
-        this.messageConsole = new MessageConsole();
-        this.keyboard       = new KeyboardManager();
+        this._super(); // Call super method in UIController to load a few extensions
+        
         this._initTooltips();
-    
-        // User Interface components
-        this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
-                                         this.minImageScale, this.maxImageScale);
 
-
-        this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
-
-        //this.mediaSettings      = new MediaSettings(this);
         screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history'));
         movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
-        /*sshistoryBar = new MediaHistoryBar("screenshot", 
-                            new ScreenshotHistory(this.userSettings.get('screenshot-history')));
-        mhistoryBar  = new MediaHistoryBar("movie", 
-                            new MovieHistory(this.userSettings.get('movie-history')));*/
+
         this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
         this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, screenshotHistory);
@@ -77,43 +61,24 @@ var Helioviewer = UIController.extend(
     },
     
     /**
-     * @description Returns a tree representing available data sources
-     */
-    _getDataSourcesAndLoadViewport: function () {
-        var callback, date, timestep, self = this;
-        
-        date     = this.timeControls.getDate();
-        timestep = this.timeControls.getTimeIncrement();
-        
-        callback = function (dataSources) {
-            self.dataSources = dataSources;
-            self.tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date, timestep);
-            self._initViewport(date);
-        };
-        $.post(this.api, {action: "getDataSources"}, callback, "json");
-    },
-    
-    /**
      * Initializes Helioviewer's viewport
      */
-    _initViewport: function (date) {
-        this.viewport = new HelioviewerViewport({
+    _initViewport: function () {
+        this.viewport = new ViewportController({
             api            : this.api,
             id             : '#helioviewer-viewport',
-            requestDate    : date,
-            dataSources    : this.dataSources,
-            tileServers    : this.tileServers,
+            requestDate    : this.timeControls.getDate(),
+            timestep       : this.timeControls.getTimeIncrement(),
+            tileServers    : this.userSettings.get('tileServers'),
             tileLayers     : this.userSettings.get('tileLayers'),
             urlStringLayers: this.urlParams.imageLayers,
-            maxTileLayers  : this.maxTileLayers,
+            maxTileLayers  : this.userSettings.get('maxTileLayers'),
             imageScale     : this.userSettings.get('imageScale'),
-            minImageScale  : this.minImageScale, 
-            maxImageScale  : this.maxImageScale, 
-            prefetch       : this.prefetchSize,
+            minImageScale  : this.userSettings.get('minImageScale'),
+            maxImageScale  : this.userSettings.get('maxImageScale'), 
+            prefetch       : this.userSettings.get('prefetchSize'),
             warnMouseCoords: this.userSettings.get('warnMouseCoords') 
-        }, this.timeControls);
-        
-        this._loadExtensions();
+        });   
     },
     
     /**
@@ -182,7 +147,7 @@ var Helioviewer = UIController.extend(
         // Hover effect for text/icon buttons        
         $('#social-buttons .text-btn').hover(function () {
             $(this).children(".ui-icon").addClass("ui-icon-hover");
-        },
+            },
             function () {
             $(this).children(".ui-icon").removeClass("ui-icon-hover");
         });
@@ -293,41 +258,12 @@ var Helioviewer = UIController.extend(
         if (!this.userSettings.get('showWelcomeMsg')) {
             return;
         }
-        
+
         $(document).trigger("message-console-info", 
             ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to check out our " +
              "<a href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" " +
              "class=\"message-console-link\" target=\"_blank\"> User Guide</a>.", {life: 15000}]
         ).trigger("save-setting", ["showWelcomeMsg", false]);
-    },
-    
-    /**
-     * Creates a hash containing the default settings to use
-     * 
-     * @returns {Object} The default Helioviewer.org settings
-     */
-    _getDefaultUserSettings: function () {
-        return {
-            date            : getUTCTimestamp(this.defaultObsTime),
-            imageScale      : this.defaultImageScale,
-            version         : this.version,
-            warnMouseCoords : true,
-            showWelcomeMsg  : true,
-            tileLayers : [{
-                server     : 0,
-                observatory: 'SOHO',
-                instrument : 'EIT',
-                detector   : 'EIT',
-                measurement: '304',
-                visible    : true,
-                opacity    : 100
-            }],
-            eventIcons      : {
-                'VSOService::noaa'         : 'small-blue-circle',
-                'GOESXRayService::GOESXRay': 'small-green-diamond',
-                'VSOService::cmelist'      : 'small-yellow-square'
-            }
-        };
     },
     
     /**

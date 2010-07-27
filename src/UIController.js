@@ -21,47 +21,46 @@ var UIController = Class.extend(
      * @param {Object} urlParams  Client-specified settings to load
      * @param {Object} settings   Server settings
      */
-    init: function (urlParams, settings, loadDefaultViewport) {
-        $.extend(this, settings);
+    init: function (urlParams, settings) {
         this.urlParams = urlParams;
 
         // Determine browser support
         this._checkBrowser();
-
-        // Load saved user settings
-        this._loadSavedSettings();
-        this._loadURLSettings();
+        this.userSettings = SettingsLoader.loadSettings(urlParams, settings);
 
         this._initLoadingIndicator();
+        
+        this.timeControls = new TimeControls(this.userSettings.get('date'), this.userSettings.get('timeIncrementSecs'),
+                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
 
-        if (loadDefaultViewport) {
-            this.api = "api/index.php"; // Temporary fix
-            this._initViewport(loadDefaultViewport);
-            this._loadExtensions();
-        }
+        this.api = "api/index.php";
+        
+        // Get available data sources and initialize viewport
+        this._initViewport();
+        this._loadExtensions();
     },
  
     /**
-     * Initializes a default viewport
+     * Initializes a default viewport. Overridden in Helioviewer.js
      */
-    _initViewport: function (loadDefaults) {
-        var date = this.timeControls.getDate();
-    
+    _initViewport: function () {    
         this.viewport = new Viewport({
             api            : this.api,
             id             : '#helioviewer-viewport',
-            requestDate    : date,
-            tileServers    : this.tileServers,
+            requestDate    : this.timeControls.getDate(),
+            timestep       : this.timeControls.getTimeIncrement(),
+            tileServers    : this.userSettings.get('tileServers'),
             tileLayers     : this.userSettings.get('tileLayers'),
             urlStringLayers: this.urlParams.imageLayers,
-            maxTileLayers  : this.maxTileLayers,
+            maxTileLayers  : this.userSettings.get('maxTileLayers'),
             imageScale     : this.userSettings.get('imageScale'),
-            minImageScale  : this.minImageScale, 
-            maxImageScale  : this.maxImageScale, 
-            prefetch       : this.prefetchSize,
+            minImageScale  : this.userSettings.get('minImageScale'),
+            maxImageScale  : this.userSettings.get('maxImageScale'),
+            prefetch       : this.userSettings.get('prefetchSize'),
             warnMouseCoords: this.userSettings.get('warnMouseCoords') 
-        }, loadDefaults);
+        });
     },
+    
     /**
      * @description Checks browser support for various features used in
      *              Helioviewer
@@ -69,47 +68,6 @@ var UIController = Class.extend(
     _checkBrowser: function () {
         $.support.nativeJSON = (typeof (JSON) !== "undefined") ? true : false;
         $.support.localStorage = !!window.localStorage;
-    },
-
-    /**
-     * @description Loads user settings from URL, cookies, or defaults if no settings have been stored.
-     */
-    _loadSavedSettings: function () {
-        this.userSettings = new UserSettings(this._getDefaultUserSettings(), this.minImageScale, this.maxImageScale);
-    },
-    
-    /**
-     * Loads any parameters specified in the URL
-     */
-    _loadURLSettings: function () {
-        var timestamp;
-        
-        if (this.urlParams.date) {
-            timestamp = getUTCTimestamp(this.urlParams.date);
-            $(document).trigger("save-setting", ["date", timestamp]);
-        }
-
-        if (this.urlParams.imageScale) {
-            $(document).trigger("save-setting", ["imageScale", parseFloat(this.urlParams.imageScale)]);
-        }
-    },
-    
-    /**
-     * Override by extending this class
-     */
-    _getDefaultUserSettings: function () {
-        return {
-            date            : getUTCTimestamp(this.defaultObsTime),
-            imageScale      : 1,
-            version         : this.version + 1,
-            warnMouseCoords : true,
-            showWelcomeMsg  : true,
-            tileLayers : [{
-                server	   : 0,
-                visible    : true,
-                opacity    : 100
-            }]
-        };
     },
 
     /**
@@ -127,17 +85,16 @@ var UIController = Class.extend(
     /**
      * Loads the message console and keyboard shortcuts by default. Loading of extra
      * event handlers/UI elements such as time controls, zoom controls, and tooltips
-     * can go here.
+     * can go here. Overridden in Helioviewer.js but this method is called by that one.
      */
     _loadExtensions: function () {
         this.messageConsole = new MessageConsole();
-        this.keyboard       = new KeyboardManager(this);
+        this.keyboard       = new KeyboardManager();
         // User Interface components
         this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
-                                             this.minImageScale, this.maxImageScale);
+                                             this.userSettings.get('minImageScale'), 
+                                             this.userSettings.get('maxImageScale'));
 
-        this.timeControls   = new TimeControls(this.userSettings.get('date'), this.timeIncrementSecs, 
-                                             '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
     }
 });

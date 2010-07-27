@@ -189,6 +189,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      */
     protected function applyAlphaMask($imagickImage)
     {
+    	die();
         $maskWidth  = 1040;
         $maskHeight = 1040;
         $mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";

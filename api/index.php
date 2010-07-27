@@ -56,12 +56,10 @@ function loadModule($params)
         "launchJHelioviewer"  => "JHelioviewer",
         "buildMovie"          => "Movies",
         "playMovie"           => "Movies",
-        "getMoviesForEvent"   => "Movies",
-        "createMovieForEvent" => "Movies",
-        "getEventFRMs"             => "SolarEvents",
-        "getEvents"                => "SolarEvents",
-        "getScreenshotsForEvent"   => "SolarEvents",
-        "createScreenshotForEvent" => "SolarEvents"        
+        "getEventFRMs"           => "SolarEvents",
+        "getEvents"              => "SolarEvents",
+        "getScreenshotsForEvent" => "SolarEvents",
+        "getMoviesForEvent"      => "SolarEvents"
     );
     
     include_once "src/Validation/InputValidator.php";
