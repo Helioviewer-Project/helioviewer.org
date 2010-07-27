@@ -12,7 +12,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'SubfieldImage.php';
+require_once 'SubFieldImage.php';
 /**
  * Represents a JPEG 2000 sub-field image.
  *
@@ -58,11 +58,11 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
      */
     public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY, $compress
+        $outputFile, $offsetX, $offsetY, $opacity, $compress
     ) {
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY, $compress
+            $outputFile, $offsetX, $offsetY, $opacity, $compress
         );
     }
 
@@ -111,10 +111,10 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
 
             //Apply color-lookup table
             // Override setColorPalette in MDIImage and AIAImage, which have no color tables.
-            $this->_setColorPalette($intermediate, $this->colorTable, $intermediate);
+            $this->setColorPalette($intermediate, $intermediate);
 
-            $this->applyAlphaMaskCmdNoImagick($intermediate);
-            $cmd = HV_PATH_CMD . " convert $intermediate -background black ";
+            $this->setAlphaChannelNoImagick($intermediate);
+            $cmd = HV_PATH_CMD . " convert $intermediate -background transparent ";
 
             // Compression settings & Interlacing
             $cmd .= $this->setImageParams();
@@ -123,7 +123,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
             $cmd .= "-resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight} ";
 
             $cmd .= $this->_getPaddingString();
-            
+        
             // Execute command
             exec(escapeshellcmd("$cmd $this->outputFile"), $out, $ret);
 
@@ -154,9 +154,14 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      * 
      * @return void
      */
-    protected function applyAlphaMaskNoImagick($intermediate)
+    protected function setAlphaChannelNoImagick($intermediate)
     {
-        return;
+    	if ($this->opacity === 100) {
+    		return;
+    	}
+
+        $opacityCmd = HV_PATH_CMD . "convert $intermediate -alpha on -channel o -evaluate set $this->opacity% $intermediate";
+        exec(escapeshellcmd($opacityCmd));
     }
     
     /**
@@ -168,7 +173,9 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      */
     private function _getPaddingString()
     {
-        return "-gravity {$this->padding['gravity']} -extent {$this->padding['width']}x{$this->padding['height']}{$this->padding['offsetX']}{$this->padding['offsetY']}";
+        return sprintf("-gravity %s -extent %fx%f%+f%+f",
+                        $this->padding['gravity'], $this->padding['width'], $this->padding['height'],
+                        $this->padding['offsetX'], $this->padding['offsetY']);
     }
 
     /**

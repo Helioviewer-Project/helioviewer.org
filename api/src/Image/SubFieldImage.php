@@ -72,7 +72,7 @@ class Image_SubFieldImage
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
     public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY, $compress
+        $outputFile, $offsetX, $offsetY, $opacity, $compress
     ) {
         $this->outputFile = $outputFile;
         $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
@@ -98,6 +98,7 @@ class Image_SubFieldImage
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
+        $this->opacity = $opacity;
         
         $this->compress = $compress;
     }
@@ -127,6 +128,11 @@ class Image_SubFieldImage
         /*if (!($padding && ($padding['width'] > $this->width))) {
             $this->setSkipResize(true);
         }*/
+    }
+    
+    public function setNewFilePath($filepath)
+    {
+    	$this->outputFile = $filepath;
     }
     
     /**
@@ -266,19 +272,16 @@ class Image_SubFieldImage
             
             $image = new IMagick($intermediate);
             
-            $this->applyAlphaMaskCmd($image);
+            $this->setAlphaChannel($image);
             $this->compressImage($image);
 
             // Resize extracted image to correct size before padding.
-            //$image->scaleImage($this->subfieldRelWidth, $this->subfieldRelHeight);
-
-            //$image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
             $image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
-            $this->setBackground($image);
+            $image->setImageBackgroundColor('transparent');
 
             // Places the current image on a larger field of black if the final image is larger than this one
             $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
-
+            
             /* 
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
              * It seems that even if this particular instance of writeImage doesn't take the full time frame, if several instances of it are
@@ -291,7 +294,6 @@ class Image_SubFieldImage
             if ($this->outputFile != $intermediate) {
                 unlink($intermediate);
             }
-
             unlink($grayscale);
 
         } catch(Exception $e) {
@@ -330,30 +332,17 @@ class Image_SubFieldImage
     }
     
     /**
-     * Sets the background color of the image. LASCOImage overrides this to set
-     * the background to transparent.
-     * 
-     * @param Object $imagickImage An initialized Imagick object
-     * 
-     * @return void
-     */
-    protected function setBackground($imagickImage)
-    {
-        $imagickImage->setImageBackgroundColor('black');
-    }
-    
-    /**
-     * Default behavior for images is to just add a black background.
+     * Default behavior for images is to just set their opacity.
      * LASCOImage.php has a applyAlphaMaskCmd that overrides this one and applies
-     * an alpha mask instead.
+     * an alpha mask and does some special commands for opacity
      * 
-     * @param Object $intermediate IMagick Object
+     * @param Object $imagickImage IMagick Object
      * 
-     * @return void
+     * @return string
      */
-    protected function applyAlphaMaskCmd($intermediate)
+    protected function setAlphaChannel($imagickImage)
     {
-        return;
+        $imagickImage->setImageOpacity($this->opacity / 100);
     }
 
     /**
@@ -412,6 +401,7 @@ class Image_SubFieldImage
     {	
         $gd   = null;
         $clut = $this->colorTable;
+
         try {
             if (file_exists($input)) {
                 $gd = imagecreatefrompng($input);

@@ -72,7 +72,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
             include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
             $image = new Image_ImageType_BlankImage(
                $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
-                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
+                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
             );
             
         } else {   	        
@@ -83,7 +83,8 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
 
             $image = new $classname(
                 $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
-                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
+                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
+                $opacity, $compress
             );
         }
         

@@ -56,13 +56,14 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
      */     
     public function __construct(
         $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
-        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
+        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
+        $opacity, $compress
     ) {
         $this->_measurement = $measurement;
         
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY, $compress
+            $outputFile, $offsetX, $offsetY, $opacity, $compress
         );
 
         // Enter color table here if it exists, otherwise leave this commented out. 
@@ -129,47 +130,11 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
      * The rest of these functions are for ALPHA MASKED IMAGES ONLY. Uncomment all of these if
      * the image requires alpha-masking or transparency.
      */
-    /**
-     * calls applyAlphaMask to build an alpha mask command for imagemagick.
-     * 
-     * @param Object $imagickImage An IMagick object
-     * 
-     * @return void
-     */
-    /*
-    protected function applyAlphaMaskCmd($imagickImage)
-    {
-        $this->applyAlphaMask($imagickImage);
-    }*/
+
     
     /**
-     * Calls the command-line imagemagick functions instead of imagick.
-     * 
-     * @param string $intermediate The filepath to the grayscale image.
-     * 
-     * @return void
-     */
-    /*
-    protected function applyAlphaMaskCmdNoImagick($intermediate)
-    {
-        $this->applyAlphaMaskNoImagick($intermediate);
-    }*/
-    
-    /**
-     * Sets the background of the image to transparent.
-     * 
-     * @param Object $imagickImage An IMagick object
-     * 
-     * @return void
-     */
-    /*
-    protected function setBackground($imagickImage)
-    {
-        $imagickImage->setImageBackgroundColor('transparent');
-    }*/
-    
-    /**
-     * Generates a portion of an ImageMagick convert command to apply an alpha mask
+     * Generates a portion of an ImageMagick convert command to apply an alpha mask and set the
+     * image's opacity
      * 
      * Note: More accurate values for radii used to generate the LASCO C2 & C3 alpha masks:
      *  rocc_outer = 7.7;   // (.9625 * orig)
@@ -214,7 +179,7 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
      * @return void
      */
     /*
-    protected function applyAlphaMask($imagickImage)
+    protected function setAlphaChannel($imagickImage)
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;
@@ -232,29 +197,51 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
         $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;
 
+        // $maskTopLeft coordinates cannot be negative when cropping, so if they are, adjust the width and height
+        // by the negative offset and crop with zero offsets. Then put the image on the properly-sized image
+        // and offset it correctly.
+        $cropWidth  = round($width  + min($maskTopLeftX, 0));
+        $cropHeight = round($height + min($maskTopLeftY, 0));
+
         $mask  = new IMagick($mask);
         
+        // Imagick floors pixel values but they need to be rounded up or down. Rounding cannot be done in the previous lines of code
+        // because some addition needs to take place first.
+        $maskTopLeftX = round($maskTopLeftX);
+        $maskTopLeftY = round($maskTopLeftY);
+        $width  = round($width);
+        $height = round($height);
+        
         $mask->scaleImage($maskWidth * $maskScaleFactor, $maskHeight * $maskScaleFactor);
-        $mask->cropImage($width, $height, $maskTopLeftX, $maskTopLeftY);
+        $mask->cropImage($cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0));
         $mask->resetImagePage("{$width}x{$height}+0+0");
 
         $mask->setImageBackgroundColor('black');
-        $mask->setImageExtent($width, $height);
+        $mask->extentImage($width, $height, $width - $cropWidth, $height - $cropHeight);
 
         $imagickImage->setImageExtent($width, $height);
         $imagickImage->compositeImage($mask, IMagick::COMPOSITE_COPYOPACITY, 0, 0);
+
+        if ($this->opacity < 100) {
+            $mask->negateImage(true);
+        
+            $imagickImage->setImageClipMask($mask);
+            $imagickImage->setImageOpacity($this->opacity / 100);
+            $imagickImage->setImageFilename(substr($this->outputFile, 0, -4) . "-op" . $this->opacity . ".png");
+        }
+
         $mask->destroy();
     }*/
     
     /**
-     * Does the same thing as applyAlphaMask but with command-line calls instead of IMagick
+     * Does the same thing as setAlphaChannel but with command-line calls instead of IMagick
      * 
      * @param string $input The filepath to the image
      * 
      * @return void
      */
     /*
-    protected function applyAlphaMaskNoImagick($input)
+    protected function setAlphaChannelNoImagick($input)
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;
@@ -273,18 +260,46 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
         $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;
 
+        // $maskTopLeft coordinates cannot be negative when cropping, so if they are, adjust the width and height
+        // by the negative offset and crop with zero offsets. Then put the image on the properly-sized image
+        // and offset it correctly.
+        $cropWidth  = round($width  + min($maskTopLeftX, 0));
+        $cropHeight = round($height + min($maskTopLeftY, 0));
+        
         $gravity   = $this->padding["gravity"];
-
+        
+        // Imagemagick floors pixel values but they need to be rounded up or down. Rounding cannot be done in the previous lines of code
+        // because some addition needs to take place first.
+        $maskTopLeftX = round($maskTopLeftX);
+        $maskTopLeftY = round($maskTopLeftY);
+        $width = round($width);
+        $height = round($height);
+        
         $str = "convert -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
                "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
-               "-background black -extent %fx%f ) -alpha off -compose copy_opacity -composite $input";
+               "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite $input";
         
         $cmd = sprintf(
             $str, $input, $gravity, $width, $height, $mask, 100 * $maskScaleFactor,
-            $width, $height, $maskTopLeftX, $maskTopLeftY, 
-            $gravity, $width, $height
+            $cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0), 
+            $gravity, $width, $height, ceil($width - $cropWidth), ceil($height - $cropHeight)
         );
 
         exec(escapeshellcmd($cmd));
+
+        if ($this->opacity < 100) {
+            $negative = substr($input, 0, -4) . "-mask.png";
+            $str = "convert -negate $mask -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity $gravity " .
+               "-background black -extent %fx%f%+f%+f $negative";
+            $cmd = sprintf(
+                $str, 100 * $maskScaleFactor, $cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0), 
+                $width, $height, ceil($width - $cropWidth), ceil($height - $cropHeight)
+            );
+
+            exec(escapeshellcmd($cmd));
+
+            $cmd = "convert $input -clip-mask $negative -alpha on -channel o -evaluate set $this->opacity% $input";
+            exec(escapeshellcmd($cmd));
+        }
     }*/
 }
