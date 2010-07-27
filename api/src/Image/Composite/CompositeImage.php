@@ -197,11 +197,6 @@ abstract class Image_Composite_CompositeImage
             $previous = $imagickImage;
             $imagickImage = new IMagick($image->getFilePathString());
             $opacity = $image->opacity();
-            
-            // If the image has an opacity level of less than 100, need to set its opacity.
-            if ($opacity < 100) {          
-                $imagickImage->setImageOpacity($opacity / 100);
-            }
 
             // If $previous exists, then the images need to be composited. For memory purposes, 
             // destroy $previous when done with it. 

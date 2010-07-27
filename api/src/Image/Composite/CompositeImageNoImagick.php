@@ -160,19 +160,6 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
 
         $layerNum = 1;
         foreach ($sortedImages as $image) {
-            $opacity = $image->opacity();
-            // If the image has an opacity level of less than 100, need to set its opacity.
-            if ($opacity < 100) {
-                $file     = $image->getFilePathString();
-                $tmpOpImg = substr($file, 0, -4) . "-op" . $opacity . ".tif";
-
-                $opacityCmd = HV_PATH_CMD . "convert $file -alpha on -channel o -evaluate set $opacity% $tmpOpImg";
-                exec(escapeshellcmd($opacityCmd));
-
-                $image->setNewFilepath($tmpOpImg);
-                array_push($filesToDelete, $tmpOpImg);
-            }
-
             $cmd .= " " . $image->getFilePathString();
 
             // If there are more than 2 layers, then the composite command needs to be called after every layer,
