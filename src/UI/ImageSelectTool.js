@@ -98,6 +98,11 @@ var ImageSelectTool = Class.extend(
             }
         });
         
+        $(window).resize(function () {
+            self.cancelButton.click();
+            self.enableAreaSelect(0, callback);
+        });
+
         this.doneButton.click(function () {
             self.submitSelectedArea(area, callback);
         });
@@ -130,15 +135,17 @@ var ImageSelectTool = Class.extend(
     
             viewportInfo  = this.viewport.getViewportInformation();
             visibleCoords = viewportInfo.coordinates;
+            maxCoords     = viewportInfo.maxImageCoordinates;
 
             coords = {
-                top     : visibleCoords.top  + selection.y1,
-                left    : visibleCoords.left + selection.x1,
-                bottom  : visibleCoords.top  + selection.y2,
-                right   : visibleCoords.left + selection.x2
+                top     : Math.max(visibleCoords.top  + selection.y1, maxCoords.top),
+                left    : Math.max(visibleCoords.left + selection.x1, maxCoords.left),
+                bottom  : Math.min(visibleCoords.top  + selection.y2, maxCoords.bottom),
+                right   : Math.min(visibleCoords.left + selection.x2, maxCoords.right)
             };
 
             viewportInfo.coordinates = coords;
+            viewportInfo.maxImageCoordinates = coords;
 
             this.cleanup();
             callback(viewportInfo);
