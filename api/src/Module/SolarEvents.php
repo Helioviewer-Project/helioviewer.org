@@ -117,7 +117,7 @@ class Module_SolarEvents implements Module
         $ipod       = isset($this->_params['ipod']) && $this->_params['ipod'];
         $result     = $this->_addMediaToEventResponse(json_decode($jsonResult), $ipod);
         
-        header('Content-Type: application/json');
+        //header('Content-Type: application/json');
         echo json_encode($result);
     }    
     
@@ -139,7 +139,8 @@ class Module_SolarEvents implements Module
             $format  = ($ipod === true? "mp4" : "flv");
             
             $tmpDir  = HV_CACHE_DIR . "/events/" . $id;
-            $this->_createEventCacheDir($tmpDir);
+            $this->_createEventCacheDir($tmpDir . "/screenshots");
+            $this->_createEventCacheDir($tmpDir . "/movies");
             
             $event->screenshots = $this->_checkForFiles($tmpDir . "/screenshots", $ipod, "*");
             $event->movies      = $this->_checkForFiles($tmpDir . "/movies", $ipod, $format);
@@ -290,6 +291,7 @@ class Module_SolarEvents implements Module
      */
     private function _checkForFiles($outputDir, $ipod, $format)
     {
+
         if ($ipod === true) {
             $outputDir .= "/iPod";
         } else {
