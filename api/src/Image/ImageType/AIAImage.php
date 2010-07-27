@@ -62,6 +62,14 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
             $outputFile, $offsetX, $offsetY, $compress
         );
+        
+        # AIA 171, 193, and 304 color tables are same as EIT for the similar wavelengths
+        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_AIA_{$this->_measurement}.png";
+        
+        // Default to grayscale color table if not found
+        if (!file_exists($colorTable)) {
+            $colorTable = "/api/resources/images/color-tables/extra/ctable_idl_0.png";
+        }
 
         $this->width    = $width;
         $this->height   = $height;
@@ -99,8 +107,8 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
      * 
      * @return void
      */
-    protected function setColorPalette($input, $output)
-    {
-        return;
-    }
+    //    protected function setColorPalette($input, $output)
+    //    {
+    //        return;
+    //    }
 }
