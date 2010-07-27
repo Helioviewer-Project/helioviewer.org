@@ -120,6 +120,25 @@ var ViewportMovementHelper = Class.extend(
     },
     
     /**
+     * Uses current viewport coordinates and maxLayerDimensions to determine the max coordinates of
+     * the image in the viewport.
+     */
+    getMaxImageCoordinates: function (coordinates) {
+        var halfWidth, halfHeight, maxCoordinates;
+        halfWidth  = this.maxLayerDimensions.width  / 2;
+        halfHeight = this.maxLayerDimensions.height / 2;
+        
+        maxCoordinates = {
+            left   : Math.max(coordinates.left, -halfWidth),
+            top    : Math.max(coordinates.top, -halfHeight),
+            right  : Math.min(coordinates.right, halfWidth),
+            bottom : Math.min(coordinates.bottom, halfHeight)
+        };
+        
+        return maxCoordinates;
+    },
+    
+    /**
      * @description Update the size and location of the movement-constraining box.
      */
     update: function () {
