@@ -97,7 +97,11 @@ class Movie_HelioviewerMovieBuilder
             list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
 
             $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
-
+            if ($numFrames < 1) {
+                $msg = "There are no images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
+                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
+                throw new Exception($msg);
+            }
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 
             if (!$this->_params['filename']) {

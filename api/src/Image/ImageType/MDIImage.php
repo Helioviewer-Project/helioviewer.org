@@ -54,13 +54,14 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
      */
     public function __construct(
         $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
-        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $compress
+        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
+        $opacity, $compress
     ) {
         $this->_measurement = $measurement;
         
         parent::__construct(
             $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY, $compress
+            $outputFile, $offsetX, $offsetY, $opacity, $compress
         );
 
         // MDI has no color table

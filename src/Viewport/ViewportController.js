@@ -158,4 +158,8 @@ var ViewportController = Class.extend(
     updateMaxLayerDimensions: function (event, type, dimensions) {
         this.movementHelper.updateMaxLayerDimensions(dimensions);
     },
+    
+    serialize: function () {
+        return this.viewport.serialize();
+    }
 });
