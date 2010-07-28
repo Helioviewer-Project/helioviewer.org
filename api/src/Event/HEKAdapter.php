@@ -47,8 +47,7 @@ class Event_HEKAdapter
      * 
      * @param string $startTime Query start date
      * @param string $endTime   Query end date 
-     *         var_dump($result);
-        die();
+     *
      * @return JSON List of event FRMs sorted by event type 
      */
     public function getFRMs($startTime, $endTime)
@@ -115,7 +114,7 @@ class Event_HEKAdapter
             "event_type"      => $eventType,
             "result_limit"    => 200,
             "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
-                                 "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox"
+                                 "obs_observatory,obs_channelid,event_type,hpc_x,hpc_y,hpc_bbox"
         );
 
         //TODO Group similar (identical) events
