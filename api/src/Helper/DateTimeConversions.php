@@ -100,8 +100,15 @@ function toISOString($date)
     return $date->format("Y-m-d\TH:i:s\Z");
 }
 
+/**
+ * Takes an ISO string with T's and Z's in it and removes them.
+ * 
+ * @param string $string The ISO String
+ * 
+ * @return string
+ */
 function toReadableISOString($string)
 {
-	return substr(str_replace(array("T", "Z"), " ", $string), 0, 19); 
+    return substr(str_replace(array("T", "Z"), " ", $string), 0, 19); 
 }
 ?>

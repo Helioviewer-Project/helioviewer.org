@@ -9,7 +9,7 @@
 /*global Class, $, Calendar, FullscreenControl, 
   KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
   TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, 
-  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time */
+  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time, SettingsLoader */
 "use strict";
 var UIController = Class.extend(
     /** @lends UIController.prototype */

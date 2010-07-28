@@ -199,6 +199,9 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      * they are adjusted so that they fall within the available data range. If the request range falls completely
      * outside of the range of available data then no movie is generated. 
      * 
+     * @param object $imgIndex An instance of ImgIndex
+     * @param int    $sourceId The source id of the image
+     * 
      * @return void 
      */
     private function _checkRequestDates($imgIndex, $sourceId)

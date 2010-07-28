@@ -136,7 +136,7 @@ var ImageSelectTool = Class.extend(
      * function to complete movie/screenshot building.
      */
     submitSelectedArea: function (area, callback) {
-        var selection, viewportInfo, visibleCoords, coords;
+        var selection, viewportInfo, visibleCoords, coords, maxCoords;
         if (area) {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.

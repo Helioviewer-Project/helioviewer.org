@@ -107,7 +107,6 @@ class Image_JPEG2000_JP2Image
 
         // Add desired region
         $cmd .= $this->_getRegionString($roi);
-        
         // Execute the command
         try {
             $result = exec(HV_PATH_CMD . escapeshellcmd($cmd), $out, $ret);
@@ -141,11 +140,17 @@ class Image_JPEG2000_JP2Image
         $right  = $roi["right"];
 
         // Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
-        $scaledTop    = substr($top / $this->_height, 0, $precision);
-        $scaledLeft   = substr($left / $this->_width, 0, $precision);
-        $scaledHeight = substr(($bottom - $top) / $this->_height, 0, $precision);
-        $scaledWidth  = substr(($right - $left) / $this->_width, 0, $precision);
-
+        $scaledTop    = $top / $this->_height;
+        $scaledLeft   = $left / $this->_width;
+        $scaledHeight = ($bottom - $top) / $this->_height;
+        $scaledWidth  = ($right - $left) / $this->_width; 
+        
+        // Ensure no negative exponents.
+        $scaledTop    = substr($scaledTop    > 0.0001? $scaledTop    : 0, 0, $precision);
+        $scaledLeft   = substr($scaledLeft   > 0.0001? $scaledLeft   : 0, 0, $precision);
+        $scaledHeight = substr($scaledHeight > 0.0001? $scaledHeight : 0, 0, $precision);
+        $scaledWidth  = substr($scaledWidth  > 0.0001? $scaledWidth  : 0, 0, $precision);
+        
         $region = '-region {' . "$scaledTop,$scaledLeft" . '},{' . "$scaledHeight,$scaledWidth" . '}';
 
         return $region;

@@ -141,6 +141,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * 
      * @param array $closestImage An array containing image meta information, obtained from the database
      * @param array $roi          The region of interest in arcseconds
+     * @param int   $opacity      The opacity of the image from 0 to 100
      * 
      * @return string a string containing the image's temporary output path
      */
