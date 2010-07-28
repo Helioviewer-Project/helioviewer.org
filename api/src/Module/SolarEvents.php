@@ -236,9 +236,7 @@ class Module_SolarEvents implements Module
             array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
         
-        if (!empty($_POST)) {
-            header('Content-Type: application/json');
-        }
+        header('Content-Type: application/json');
         echo JSON_encode($finalResponse);
         return $finalResponse;
     }
@@ -274,9 +272,7 @@ class Module_SolarEvents implements Module
             }
         }
         
-        if (!empty($_POST)) {
-            header('Content-Type: application/json');
-        }
+        header('Content-Type: application/json');
         echo JSON_encode($finalResponse);
         return $finalResponse;
     }
