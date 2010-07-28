@@ -259,7 +259,7 @@ var MovieBuilder = MediaBuilder.extend(
                     return;
                 } else if (!data.url) {
                     $(document.trigger('message-console-info'), ["There was an error creating your video. Please" +
-                                                                 " try again later."])
+                                                                 " try again later."]);
                     return;
                 }
                 

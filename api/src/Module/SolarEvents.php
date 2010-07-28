@@ -111,7 +111,7 @@ class Module_SolarEvents implements Module
         }
 
         $jsonResult = $hek->getEvents(
-                        $this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType']
+            $this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType']
         );
 
         $ipod       = isset($this->_params['ipod']) && $this->_params['ipod'];
@@ -125,8 +125,9 @@ class Module_SolarEvents implements Module
      * Gets any screenshot/movie files associated with each event in $jsonResult and adds it to the event
      * object. Sets $jsonResult->result to the array of event objects created.
      * 
-     * @param object $jsonResult A json object which has an attribute "result", which is an array of
-     *                           event information.
+     * @param object  $jsonResult A json object which has an attribute "result", which is an array of
+     *                            event information.
+     * @param boolean $ipod       Whether to look in the ipod folders or not
      * 
      * @return json object
      */
@@ -226,7 +227,7 @@ class Module_SolarEvents implements Module
         
         $response = $this->_checkForFiles($tmpDir, $ipod, "*");
         if (empty($response) || HV_DISABLE_CACHE) {
-        	if (!$this->_getOnly()) {                    
+            if (!$this->_getOnly()) {                    
                 $response = $this->_createForEvent($builder, $tmpDir);
             }
         }
@@ -282,6 +283,7 @@ class Module_SolarEvents implements Module
      * 
      * @param string  $outputDir Directory path to where the screenshots or movies are stored
      * @param boolean $ipod      Whether to look in the ipod folder or regular folder
+     * @param string  $format    File format
      * 
      * @return array
      */
@@ -309,24 +311,24 @@ class Module_SolarEvents implements Module
      */
     private function _createForEvent($builder, $tmpDir)
     {
-    	include_once(HV_ROOT_DIR . "/api/src/Helper/EventParser.php");
+        include_once HV_ROOT_DIR . "/api/src/Helper/EventParser.php";
         $eventInfo = JSON_decode($this->_getSingleEventInformation());
         $result    = $eventInfo->result;
 
         if (!empty($result)) {
-        	$result = $result[0];
+            $result = $result[0];
             $layerInfo = getLayerInfoForEventType($result->event_type);
 
-        	$info = array(
-        	   "sourceIds"   => $layerInfo['sourceIds'],
-        	   "imageScale"  => $layerInfo['imageScale'],
-        	   "boundingBox" => polygonToBoundingBox($result->hpc_bbox),
-        	   "startTime"   => $result->event_starttime,
-        	   "endTime"     => $result->event_endtime,
-        	   "obsDate"     => $result->event_starttime
-        	);
-        	
-        	$params = array_merge($info, $this->_params);
+            $info = array(
+               "sourceIds"   => $layerInfo['sourceIds'],
+               "imageScale"  => $layerInfo['imageScale'],
+               "boundingBox" => polygonToBoundingBox($result->hpc_bbox),
+               "startTime"   => $result->event_starttime,
+               "endTime"     => $result->event_endtime,
+               "obsDate"     => $result->event_starttime
+            );
+            
+            $params = array_merge($info, $this->_params);
 
             $response = $builder->createForEvent($params, $info, $tmpDir);
             return $response;
@@ -339,8 +341,9 @@ class Module_SolarEvents implements Module
      *
      * @return object 
      */
-    private function _getSingleEventInformation() {
-    	include_once "src/Event/HEKAdapter.php";
+    private function _getSingleEventInformation()
+    {
+        include_once "src/Event/HEKAdapter.php";
         $hek = new Event_HEKAdapter();
 
         return $hek->getEventById($this->_params['eventId']);
@@ -353,7 +356,7 @@ class Module_SolarEvents implements Module
      */
     private function _getOnly()
     {
-    	return isset($this->_params['getOnly']) && $this->_params['getOnly'] === true;
+        return isset($this->_params['getOnly']) && $this->_params['getOnly'] === true;
     }
     
     /**
@@ -575,22 +578,22 @@ class Module_SolarEvents implements Module
                     <?php echo $baseURL;?>?action=getScreenshotsForEvent<br />
                     <br />
         
-	                Supported Parameters:<br />
-	                <br />
-	        
-	                <table class="param-list" cellspacing="10">
-	                    <tbody valign="top">
-	                        <tr>
-	                            <td width="20%"><b>eventId</b></td>
-	                            <td width="20%"><i>String</i></td>
-	                            <td>The unique ID of the event, as obtained from querying HEK. </td>
-	                        </tr>
-	                        <tr>
-	                            <td><b>ipod</b></td>
-	                            <td width="20%"><i>Boolean</i></td>
-	                            <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
-	                                Defaults to false if not specified.</td>
-	                        </tr>
+                    Supported Parameters:<br />
+                    <br />
+            
+                    <table class="param-list" cellspacing="10">
+                        <tbody valign="top">
+                            <tr>
+                                <td width="20%"><b>eventId</b></td>
+                                <td width="20%"><i>String</i></td>
+                                <td>The unique ID of the event, as obtained from querying HEK. </td>
+                            </tr>
+                            <tr>
+                                <td><b>ipod</b></td>
+                                <td width="20%"><i>Boolean</i></td>
+                                <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
+                                    Defaults to false if not specified.</td>
+                            </tr>
                             <tr>
                                 <td><b>getOnly</b></td>
                                 <td width="20%"><i>Boolean</i></td>
@@ -598,25 +601,25 @@ class Module_SolarEvents implements Module
                                     are calling this method from an iPod or other interface where you just want to check for existing files.
                                     Defaults to false if not specified.</td>
                             </tr>
-	                    </tbody>
-	                </table>
-	                <br />
-	                
-	                The rest of the parameter list is identical to that of <a href="#takeScreenshot" style="color:#3366FF">takeScreenshot</a>, except that you should never
-	                specify <i>filename</i> in the parameters.
-	                <br /><br />
-	                
-	                <span class="example-header">Examples:</span>
-	                <span class="example-url">
-	                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
-	                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
-	                </a>
-	                </span><br />
-	                <span class="example-url">
-	                <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
-	                    <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true
-	                </a>
-	                </span>
+                        </tbody>
+                    </table>
+                    <br />
+                    
+                    The rest of the parameter list is identical to that of <a href="#takeScreenshot" style="color:#3366FF">takeScreenshot</a>, except that you should never
+                    specify <i>filename</i> in the parameters.
+                    <br /><br />
+                    
+                    <span class="example-header">Examples:</span>
+                    <span class="example-url">
+                    <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
+                        <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
+                    </a>
+                    </span><br />
+                    <span class="example-url">
+                    <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
+                        <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true
+                    </a>
+                    </span>
                 </div>
             </div>
             </li>

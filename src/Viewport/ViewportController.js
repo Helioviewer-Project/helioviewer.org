@@ -6,7 +6,8 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, document, window, TileLayerManager, MouseCoordinates, ViewportMovementHelper */
+/*global Class, $, document, window, TileLayerManager, HelioviewerMouseCoordinates, ViewportMovementHelper,
+HelioviewerViewport */
 "use strict";
 var ViewportController = Class.extend(
     /** @lends ViewportController.prototype */
@@ -64,7 +65,7 @@ var ViewportController = Class.extend(
             default:
                 this.movementHelper.moveViewport(x, y);
                 break;
-        };
+        }
     },
     
     /**

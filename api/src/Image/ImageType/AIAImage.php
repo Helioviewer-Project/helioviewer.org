@@ -50,6 +50,7 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
      * @param int    $offsetX      Offset of the sun center from the image center
      * @param int    $offsetY      Offset of the sun center from the iamge center
      * @param string $outputFile   Filepath to where the final image will be stored
+     * @param int    $opacity      The opacity of the image from 0 to 100
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */     
     public function __construct(
@@ -64,7 +65,7 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
             $outputFile, $offsetX, $offsetY, $opacity, $compress
         );
         
-        # AIA 171, 193, and 304 color tables are same as EIT for the similar wavelengths
+        // AIA 171, 193, and 304 color tables are same as EIT for the similar wavelengths
         $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_AIA_{$this->_measurement}.png";
         
         // Default to grayscale color table if not found

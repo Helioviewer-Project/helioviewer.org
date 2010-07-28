@@ -55,7 +55,9 @@ var HelioviewerTileLayer = TileLayer.extend(
     /**
      * Changes data source and fetches image for new source
      */
-    updateDataSource: function (event, id, observatory, instrument, detector, measurement, sourceId, name, layeringOrder) {
+    updateDataSource: function (
+        event, id, observatory, instrument, detector, measurement, sourceId, name, layeringOrder
+    ) {
         if (this.id === id) {
             this.name = name;
         
@@ -81,7 +83,7 @@ var HelioviewerTileLayer = TileLayer.extend(
             //          Update viewport sandbox if necessary
 
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
-	}
+        }
         $(document).trigger("update-tile-layer-accordion-entry", 
                             [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
                                 this.image.filepath, this.image.filename, this.image.server]);
