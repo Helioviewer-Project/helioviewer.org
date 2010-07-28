@@ -87,7 +87,9 @@ class Module_WebClient implements Module
             header("Content-Transfer-Encoding: binary");
 
             header("Content-Length: " . $stat['size']);
-
+            if (substr($url, -3) === "mov") {
+            	header("Content-type: video/quicktime");
+            }
             echo file_get_contents($url);
         } else {
             throw new Exception("Unable to find the specified requested file.");

@@ -14,6 +14,7 @@ var KeyboardManager = Class.extend(
      */
     init: function () {
         this._initEventHandlers();
+        $(document).bind('re-enable-keyboard-shortcuts', $.proxy(this._initEventHandlers, this));
     },
     
 
@@ -34,97 +35,92 @@ var KeyboardManager = Class.extend(
      * From there it is also simple to add support for diagonal movement, etc.
      */
     _initEventHandlers: function () {
-        var onKeyPress;
+        var self = this;
 
-        /**
-         * @description Sets up keyboard shortcuts
-         * @TODO 01/04/2010: Use something like js-hotkeys (http://code.google.com/p/js-hotkeys/)
-         *                   to allow for more advanced keyboard navigation such as "cntl + z" to undo, etc
-         * TODO 01/16/2009: Create buttons for mouse-coord and detail toggles
-         * 
-         * TODO 05/24/2010: To avoid direct links to different code, create hash of events
-         * to trigger when a given key is pressed, e.g.:
-         * 
-         * {
-         *     "c": "center-viewport",
-         *     "m": "toggle-mouse-coordinates",
-         *     etc..
-         *  }
-         */
-        onKeyPress = function (e) {
-            var key, character;
-            
-            // Letters use Event.which, while arrows, etc. use Event.keyCode
-            if (e.keyCode) {
-                key = e.keyCode;
-            }
-            else if (e.which) {
-                key = e.which;
-            }
-
-            // Get character pressed (letters, etc)
-            character = String.fromCharCode(key);
-
-            // Arrow keys
-            if (key === 37 || key === 38 || key === 39 || key === 40) {
-                //Right-arrow
-                if (key === 37) {
-                    $(document).trigger('move-viewport', [-8, 0]);
-                }
-                    
-                //Up-arrow
-                else if (key === 38) {
-                    $(document).trigger('move-viewport', [0, -8]);
-                }
-                    
-                //Left-arrow
-                else if (key === 39) {
-                    $(document).trigger('move-viewport', [8, 0]);
-                }
-                    
-                //Down-arrow
-                else if (key === 40) {
-                    $(document).trigger('move-viewport', [0, 8]);
-                }
-                return false;
-            }
-            
-            // Enter key
-            else if (key === 13) {
-                $(document).trigger('enter-key-pushed');
-            }
-
-            else if (character === "c") {
-                $("#center-button").click();
-            }
-            else if (character === "m") {
-                $(document).trigger('toggle-mouse-coords');
-            }
-            else if (character === "-" || character === "_") {
-                $("#zoomControlZoomOut").click();
-            }
-            else if (character === "=" || character === "+") {
-                $("#zoomControlZoomIn").click();
-            }
-            else if (character === "d") {
-                $(document).trigger('toggle-eventLayer-labels');
-            }
-            else if (character === "f") {
-                $("#fullscreen-btn").click();
-            }
-            else if (character === ",") {
-                $("#timeBackBtn").click();
-            }
-            else if (character === ".") {
-                $("#timeForwardBtn").click();
-            }
-        };
-        
         // Event-handlers
         $(document).keypress(function (e) {
             if (e.target.tagName !== "INPUT") {
-                onKeyPress(e);
+                self.onKeyPress(e);
             }
-        });     
+        });
+    },
+
+    /**
+     * @description Sets up keyboard shortcuts
+     * @TODO 01/04/2010: Use something like js-hotkeys (http://code.google.com/p/js-hotkeys/)
+     *                   to allow for more advanced keyboard navigation such as "cntl + z" to undo, etc
+     * TODO 01/16/2009: Create buttons for mouse-coord and detail toggles
+     * 
+     * TODO 05/24/2010: To avoid direct links to different code, create hash of events
+     * to trigger when a given key is pressed, e.g.:
+     * 
+     * {
+     *     "c": "center-viewport",
+     *     "m": "toggle-mouse-coordinates",
+     *     etc..
+     *  }
+     */
+    onKeyPress: function (e) {
+        var key, character;
+        
+        // Letters use Event.which, while arrows, etc. use Event.keyCode
+        if (e.keyCode) {
+            key = e.keyCode;
+        }
+        else if (e.which) {
+            key = e.which;
+        }
+
+        // Get character pressed (letters, etc)
+        character = String.fromCharCode(key);
+
+        // Arrow keys
+        if (key === 37 || key === 38 || key === 39 || key === 40) {
+            //Right-arrow
+            if (key === 37) {
+                $(document).trigger('move-viewport', [-8, 0]);
+            }
+                
+            //Up-arrow
+            else if (key === 38) {
+                $(document).trigger('move-viewport', [0, -8]);
+            }
+                
+            //Left-arrow
+            else if (key === 39) {
+                $(document).trigger('move-viewport', [8, 0]);
+            }
+                
+            //Down-arrow
+            else if (key === 40) {
+                $(document).trigger('move-viewport', [0, 8]);
+            }
+            return false;
+        }
+
+        else if (character === "c") {
+            $("#center-button").click();
+        }
+        else if (character === "m") {
+            $(document).trigger('toggle-mouse-coords');
+        }
+        else if (character === "-" || character === "_") {
+            $("#zoomControlZoomOut").click();
+        }
+        else if (character === "=" || character === "+") {
+            $("#zoomControlZoomIn").click();
+        }
+        else if (character === "d") {
+            $(document).trigger('toggle-eventLayer-labels');
+        }
+        else if (character === "f") {
+            $("#fullscreen-btn").click();
+        }
+        else if (character === ",") {
+            $("#timeBackBtn").click();
+        }
+        else if (character === ".") {
+            $("#timeForwardBtn").click();
+        }
     }
 });

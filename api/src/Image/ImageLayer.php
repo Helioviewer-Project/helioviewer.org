@@ -50,7 +50,7 @@ abstract class Image_ImageLayer
      */
     public function getFilePathString() 
     {
-        return $this->outputFile;
+        return $this->image->outputFile();
     }
 
     /**
@@ -72,7 +72,7 @@ abstract class Image_ImageLayer
      */
     public function setNewFilePath($filePath) 
     {
-        $this->outputFile = $filePath;
+        $this->image->setNewFilePath($filePath);
     }
     
     /**
