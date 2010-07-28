@@ -17,6 +17,7 @@
  * find a rectangular region that includes the event.
  * 
  * @param string $polygon -- The polygon string in the above format
+ * 
  * @return array 
  */
 function polygonToBoundingBox($polygon)
@@ -46,6 +47,10 @@ function polygonToBoundingBox($polygon)
 /**
  * Some temporarily hard-coded assumptions about what layers should be
  * used for certain event types
+ * 
+ * @param string $eventType The two-letter code for event type
+ * 
+ * @return array
  */
 function getLayerInfoForEventType($eventType)
 {

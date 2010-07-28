@@ -48,6 +48,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
+     * @param int    $opacity      The opacity of the image from 0 to 100
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      * 
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
@@ -156,9 +157,9 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      */
     protected function setAlphaChannelNoImagick($intermediate)
     {
-    	if ($this->opacity === 100) {
-    		return;
-    	}
+        if ($this->opacity === 100) {
+            return;
+        }
 
         $opacityCmd = HV_PATH_CMD . "convert $intermediate -alpha on -channel o -evaluate set $this->opacity% $intermediate";
         exec(escapeshellcmd($opacityCmd));
@@ -173,9 +174,11 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
      */
     private function _getPaddingString()
     {
-        return sprintf("-gravity %s -extent %fx%f%+f%+f",
-                        $this->padding['gravity'], $this->padding['width'], $this->padding['height'],
-                        $this->padding['offsetX'], $this->padding['offsetY']);
+        return sprintf(
+            "-gravity %s -extent %fx%f%+f%+f",
+            $this->padding['gravity'], $this->padding['width'], $this->padding['height'],
+            $this->padding['offsetX'], $this->padding['offsetY']
+        );
     }
 
     /**

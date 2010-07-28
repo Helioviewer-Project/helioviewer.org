@@ -143,12 +143,12 @@ class Movie_HelioviewerMovieBuilder
             return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
 
         } catch(Exception $e) {
-        	if (!empty($_POST)) {
+            if (!empty($_POST)) {
                 header('Content-type: application/json');
                 echo json_encode(array("error" => $e->getMessage()));       		
-        	} else {
+            } else {
                 //printErrorMsg($e->getMessage());
-        	}
+            }
         }
     }
     
@@ -189,6 +189,7 @@ class Movie_HelioviewerMovieBuilder
      * returns false
      * 
      * @param array  $originalParams the original parameters passed in by the API call
+     * @param array  $eventInfo      an associative array with information gotten from HEK
      * @param string $outputDir      the directory path to where the cached file should be stored
      * 
      * @return string
@@ -242,7 +243,16 @@ class Movie_HelioviewerMovieBuilder
         return $files;
     }
     
-    private function _getBoundingBox($params, $eventInfo) {
+    /**
+     * Checks to see if the bounding box was given in the parameters or uses eventInfo if it wasn't.
+     * 
+     * @param array $params    The parameters from the API call
+     * @param array $eventInfo an associative array with information gotten from HEK
+     * 
+     * @return array
+     */
+    private function _getBoundingBox($params, $eventInfo)
+    {
         $box = array();
         
         if (!isset($params['x1'])) {
@@ -257,6 +267,14 @@ class Movie_HelioviewerMovieBuilder
         return $this->_padToMinSize($box, $params['imageScale']);
     }
     
+    /**
+     * Pads the bounding box up to a minimum size of roughly 400x400 pixels
+     * 
+     * @param array $box        The bounding box coordinates
+     * @param float $imageScale The scale of the image in arcsec/pixel
+     * 
+     * @return array
+     */
     private function _padToMinSize($box, $imageScale)
     {
         $minSize = (400 * $imageScale) / 2;
@@ -275,6 +293,15 @@ class Movie_HelioviewerMovieBuilder
             "y2" => $maxY);
     }
     
+    /**
+     * Checks to see if layers were specified in the parameters. If not, uses all source
+     * id's from $eventInfo
+     * 
+     * @param array $params    The parameters from the API call
+     * @param array $eventInfo an associative array with information gotten from HEK
+     * 
+     * @return array
+     */
     private function _getLayersFromParamsOrSourceIds($params, $eventInfo)
     {
         $layers = array();
@@ -474,22 +501,22 @@ class Movie_HelioviewerMovieBuilder
      * Uses numFrames to calculate the frame rate that should
      * be used when encoding the movie.
      * 
-     * @param Int  $numFrames number of frames in the movie
+     * @param Int $numFrames number of frames in the movie
      * 
      * @return Int 
      */
     private function _determineOptimalFrameRate($numFrames)
     {
-    	$duration  = HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
-    	$frameRate = $numFrames / $duration;
-    	
-    	// Take the smaller number in case the user specifies a larger
-    	// frame rate than is practical.
-    	if (isset($this->_params['frameRate'])) {
-    		$frameRate = min($frameRate, $this->_params['frameRate']);
-    	}
+        $duration  = HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
+        $frameRate = $numFrames / $duration;
+        
+        // Take the smaller number in case the user specifies a larger
+        // frame rate than is practical.
+        if (isset($this->_params['frameRate'])) {
+            $frameRate = min($frameRate, $this->_params['frameRate']);
+        }
 
-    	return $frameRate;
+        return $frameRate;
     }
     
     /**
@@ -513,9 +540,7 @@ class Movie_HelioviewerMovieBuilder
             return Movie_HelioviewerMovie::showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $width, $height);
         } else if ($params == $_POST) {
             header('Content-type: application/json');
-            echo json_encode(array(
-                                "url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url),
-                            ));
+            echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url)));
             return $url;
         } else {
             //echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
