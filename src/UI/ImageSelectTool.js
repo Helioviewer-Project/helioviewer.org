@@ -112,9 +112,16 @@ var ImageSelectTool = Class.extend(
         /* Key presses don't register while imgAreaSelect is active for some reason.
         $(document).bind("enter-key-pushed", function () {
             console.log("pushed");
-            self.submitSelectedArea(area, callback);
+            
         });
         */
+        
+        $(document).keypress(function (e) {
+            // Enter key
+            if (e.which === 13) {
+                self.submitSelectedArea(area, callback);
+            }
+        });
         
         this.cancelButton.click(function () {
             self.cleanup();
@@ -253,7 +260,7 @@ var ImageSelectTool = Class.extend(
      */    
     cleanup: function () {
         this.vpDomNode.qtip("hide");
-        
+        $("#transparent-image").imgAreaSelect({remove: true});
         showButtonsInViewport();
         
         $('#imgContainer, #transparent-image').remove();
@@ -261,6 +268,9 @@ var ImageSelectTool = Class.extend(
         this.cancelButton.unbind('click');
         this.helpButton.qtip("hide");
         this.active = false;
+        
         $("body").removeClass('disable-fullscreen-mode');
+        $(document).unbind('keypress');
+        $(document).trigger('re-enable-keyboard-shortcuts');
     }
 });
