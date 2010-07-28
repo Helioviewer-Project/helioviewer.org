@@ -47,8 +47,7 @@ class Event_HEKAdapter
      * 
      * @param string $startTime Query start date
      * @param string $endTime   Query end date 
-     *         var_dump($result);
-        die();
+     * 
      * @return JSON List of event FRMs sorted by event type 
      */
     public function getFRMs($startTime, $endTime)
@@ -103,7 +102,9 @@ class Event_HEKAdapter
     /**
      * Returns a list of events
      * 
-     * @param date $startTime Start time for which events should be retrieved
+     * @param date   $startTime Start time for which events should be retrieved
+     * @param date   $endTime   End time for which events should be retrieved
+     * @param string $eventType The two-letter code(s) for event type(s), or **
      * 
      * @return string
      */

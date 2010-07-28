@@ -135,41 +135,58 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         $files  = array();
 
         foreach ($layers as $layer) {
-        	$layerFilename = $filename . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($layer));
+            $layerFilename = $filename . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($layer));
 
             if (!HV_DISABLE_CACHE && file_exists($outputDir . "/" . $layerFilename . ".jpg")) {
                 $files[] = $outputDir . "/" . $layerFilename . ".jpg";
             } else {
-            	try {
+                try {
                     $params['filename'] = $layerFilename;
                     $params['layers']   = $layer;
                     $files[] = $this->takeScreenshot($params, $outputDir, array());
-            	} catch(Exception $e) {
+                } catch(Exception $e) {
                     // Ignore any exceptions thrown by takeScreenshot, since they
-            		// occur when no image is made and we only care about images that
+                    // occur when no image is made and we only care about images that
                     // are made.
-            	}
+                }
             }
         }
 
         return $files;
     }
     
-    private function _getBoundingBox($params, $eventInfo) {
-    	$box = array();
-    	
-    	if (!isset($params['x1'])) {
-    		$box = $eventInfo['boundingBox'];
-    	} else {
-    		$box['x1'] = $params['x1'];
-    		$box['x2'] = $params['x2'];
-    		$box['y1'] = $params['y1'];
-    		$box['y2'] = $params['y2'];
-    	}
+    /**
+     * Checks to see if the bounding box was given in the parameters or uses eventInfo if it wasn't.
+     * 
+     * @param array $params    The parameters from the API call
+     * @param array $eventInfo an associative array with information gotten from HEK
+     * 
+     * @return array
+     */
+    private function _getBoundingBox($params, $eventInfo)
+    {
+        $box = array();
+        
+        if (!isset($params['x1'])) {
+            $box = $eventInfo['boundingBox'];
+        } else {
+            $box['x1'] = $params['x1'];
+            $box['x2'] = $params['x2'];
+            $box['y1'] = $params['y1'];
+            $box['y2'] = $params['y2'];
+        }
 
-    	return $this->_padToMinSize($box, $params['imageScale']);
+        return $this->_padToMinSize($box, $params['imageScale']);
     }
     
+    /**
+     * Pads the bounding box up to a minimum size of roughly 400x400 pixels
+     * 
+     * @param array $box        The bounding box coordinates
+     * @param float $imageScale The scale of the image in arcsec/pixel
+     * 
+     * @return array
+     */    
     private function _padToMinSize($box, $imageScale)
     {
         $minSize = (400 * $imageScale) / 2;
@@ -188,20 +205,29 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             "y2" => $maxY);
     }
     
+    /**
+     * Checks to see if layers were specified in the parameters. If not, uses all source
+     * id's from $eventInfo
+     * 
+     * @param array $params    The parameters from the API call
+     * @param array $eventInfo an associative array with information gotten from HEK
+     * 
+     * @return array
+     */    
     private function _getLayersFromParamsOrSourceIds($params, $eventInfo)
     {
-    	$layers = array();
+        $layers = array();
 
-    	if (!isset($params['layers'])) {
-    		$sourceIds = $eventInfo['sourceIds'];
-    		foreach ($sourceIds as $source) {
-    			$layers[] = "[" . $source . ",1,100]";
-    		}
-    	} else {
-    		$layers[] = $params['layers'];
-    	}
-    	
-    	return $layers;
+        if (!isset($params['layers'])) {
+            $sourceIds = $eventInfo['sourceIds'];
+            foreach ($sourceIds as $source) {
+                $layers[] = "[" . $source . ",1,100]";
+            }
+        } else {
+            $layers[] = $params['layers'];
+        }
+        
+        return $layers;
     }
 
     /**

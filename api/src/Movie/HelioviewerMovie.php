@@ -58,7 +58,6 @@ class Movie_HelioviewerMovie
      * @param int    $frameRate Number of frames per second
      * @param string $hqFormat  Format to use for high-quality version of the movie
      * @param array  $options   An array with ["edges"] => true/false, ["sharpen"] => true/false
-     * @param int    $timeStep  Desired timestep between movie frames in seconds. Default is 86400 seconds, or 1 day.
      * @param string $filename  Desired filename for the movie
      * @param int    $quality   Movie quality
      * @param Object $meta      An ImageMetaInformation object with width, height, and imageScale
@@ -143,7 +142,8 @@ class Movie_HelioviewerMovie
      * image to each timestamp for each layer. Then takes all layers belonging to one timestamp and makes a movie frame
      * out of it. When done with all movie frames, phpvideotoolkit is used to compile all the frames into a movie.
      * 
-     * @param array $builtImages An array of built movie frames (in the form of HelioviewerScreenshot objects)
+     * @param array  $builtImages An array of built movie frames (in the form of HelioviewerScreenshot objects)
+     * @param string $tmpImageDir Directory where the individual movie frames are stored.
      *
      * @return void
      */
