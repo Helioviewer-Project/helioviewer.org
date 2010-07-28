@@ -98,6 +98,13 @@ var ImageSelectTool = Class.extend(
             }
         });
         
+        $(window).resize(function () {
+            if (self.active) {
+                self.cancelButton.click();
+                self.enableAreaSelect(0, callback);
+            }
+        });
+
         this.doneButton.click(function () {
             self.submitSelectedArea(area, callback);
         });
@@ -105,9 +112,16 @@ var ImageSelectTool = Class.extend(
         /* Key presses don't register while imgAreaSelect is active for some reason.
         $(document).bind("enter-key-pushed", function () {
             console.log("pushed");
-            self.submitSelectedArea(area, callback);
+            
         });
         */
+        
+        $(document).keypress(function (e) {
+            // Enter key
+            if (e.which === 13) {
+                self.submitSelectedArea(area, callback);
+            }
+        });
         
         this.cancelButton.click(function () {
             self.cleanup();
@@ -130,15 +144,17 @@ var ImageSelectTool = Class.extend(
     
             viewportInfo  = this.viewport.getViewportInformation();
             visibleCoords = viewportInfo.coordinates;
+            maxCoords     = viewportInfo.maxImageCoordinates;
 
             coords = {
-                top     : visibleCoords.top  + selection.y1,
-                left    : visibleCoords.left + selection.x1,
-                bottom  : visibleCoords.top  + selection.y2,
-                right   : visibleCoords.left + selection.x2
+                top     : Math.max(visibleCoords.top  + selection.y1, maxCoords.top),
+                left    : Math.max(visibleCoords.left + selection.x1, maxCoords.left),
+                bottom  : Math.min(visibleCoords.top  + selection.y2, maxCoords.bottom),
+                right   : Math.min(visibleCoords.left + selection.x2, maxCoords.right)
             };
 
             viewportInfo.coordinates = coords;
+            viewportInfo.maxImageCoordinates = coords;
 
             this.cleanup();
             callback(viewportInfo);
@@ -244,7 +260,7 @@ var ImageSelectTool = Class.extend(
      */    
     cleanup: function () {
         this.vpDomNode.qtip("hide");
-        
+        $("#transparent-image").imgAreaSelect({remove: true});
         showButtonsInViewport();
         
         $('#imgContainer, #transparent-image').remove();
@@ -252,6 +268,9 @@ var ImageSelectTool = Class.extend(
         this.cancelButton.unbind('click');
         this.helpButton.qtip("hide");
         this.active = false;
+        
         $("body").removeClass('disable-fullscreen-mode');
+        $(document).unbind('keypress');
+        $(document).trigger('re-enable-keyboard-shortcuts');
     }
 });

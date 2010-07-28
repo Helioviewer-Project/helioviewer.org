@@ -95,8 +95,9 @@ var ViewportController = Class.extend(
      * and returns them as an array or calls the callback function if it's provided.
      */    
     getViewportInformation: function (event, callback) {
-        var info         = this.viewport.getViewportInformation();
-        info.coordinates = this.movementHelper.getViewportCoords();
+        var info                 = this.viewport.getViewportInformation();
+        info.coordinates         = this.movementHelper.getViewportCoords();
+        info.maxImageCoordinates = this.movementHelper.getMaxImageCoordinates(info.coordinates);
         
         if (callback) {
             callback(info);
@@ -158,4 +159,8 @@ var ViewportController = Class.extend(
     updateMaxLayerDimensions: function (event, type, dimensions) {
         this.movementHelper.updateMaxLayerDimensions(dimensions);
     },
+    
+    serialize: function () {
+        return this.viewport.serialize();
+    }
 });

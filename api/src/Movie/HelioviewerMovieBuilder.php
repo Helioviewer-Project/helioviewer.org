@@ -97,7 +97,11 @@ class Movie_HelioviewerMovieBuilder
             list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
 
             $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
-
+            if ($numFrames < 1) {
+                $msg = "There are no images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
+                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
+                throw new Exception($msg);
+            }
             $cadence   = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
 
             if (!$this->_params['filename']) {
@@ -505,9 +509,9 @@ class Movie_HelioviewerMovieBuilder
             throw new Exception('The requested movie is either unavailable or does not exist.');
         }
 
-        if ($display === true && !empty($_GET)) {
+        if ($display === true && $params == $_GET) {
             return Movie_HelioviewerMovie::showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $width, $height);
-        } else if (!empty($_POST)) {
+        } else if ($params == $_POST) {
             header('Content-type: application/json');
             echo json_encode(array(
                                 "url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url),
