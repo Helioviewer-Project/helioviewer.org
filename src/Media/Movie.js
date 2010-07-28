@@ -119,7 +119,7 @@ var Movie = Media.extend(
      */
     getInformationTable: function () {        
         var layerArray, table, previewFrame;
-        previewFrame = this.url.slice(0,-3) + "jpg";
+        previewFrame = this.url.slice(0, -3) + "jpg";
         layerArray = layerStringToLayerArray(this.layers);
         table = "<table>" +
                     "<tr valign='top'>" + 

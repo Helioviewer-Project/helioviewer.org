@@ -44,7 +44,8 @@ class Movie_FFMPEGWrapper
      * Creates an ipod-compatible mp4 video
      * 
      * @param String $hq_filename the filename of the movie
-     * @param String $outputDir      the path where the file will be stored
+     * @param String $outputDir   the path where the file will be stored
+     * @param String $tmpImageDir The directory where the individual movie frames are stored
      * @param int    $width       the width of the video
      * @param int    $height      the height of the video
      * 
@@ -75,18 +76,19 @@ class Movie_FFMPEGWrapper
      *        frameRate. 
      *********
      * 
-     * @param String $filename the filename of the movie
+     * @param String $filename    the filename of the movie
      * @param String $outputDir   the path where the file will be stored
-     * @param int    $width    the width of the video
-     * @param int    $height   the height of the video
+     * @param String $tmpImageDir The directory where the individual movie frames are stored
+     * @param int    $width       the width of the video
+     * @param int    $height      the height of the video
      * 
      * @return String the filename of the video
      */
     public function createVideo($filename, $outputDir, $tmpImageDir, $width, $height)
     {  	
-    	// MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
-    	// fps >= 2
-    	$outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
+        // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
+        // fps >= 2
+        $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
 
         $cmd = "/usr/bin/ffmpeg -r " . $this->_frameRate . " -i " . $tmpImageDir . "/frame%d.jpg"
             . " -r " . $outputRate . " -vcodec libx264 -vpre hq -s " . $width . "x" . $height 

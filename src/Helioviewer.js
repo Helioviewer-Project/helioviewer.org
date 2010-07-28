@@ -7,7 +7,7 @@
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, Calendar, FullscreenControl, UIController,
   KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
-  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, HelioviewerViewport, 
+  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, ViewportController, 
   ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time, MediaHistoryBar,
   ScreenshotHistory, MovieHistory */
 "use strict";
@@ -145,11 +145,12 @@ var Helioviewer = UIController.extend(
         $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
 
         // Hover effect for text/icon buttons        
-        $('#social-buttons .text-btn').hover(function () {
-            $(this).children(".ui-icon").addClass("ui-icon-hover");
+        $('#social-buttons .text-btn').hover(
+            function () {
+                $(this).children(".ui-icon").addClass("ui-icon-hover");
             },
             function () {
-            $(this).children(".ui-icon").removeClass("ui-icon-hover");
+                $(this).children(".ui-icon").removeClass("ui-icon-hover");
         });
     },
     
