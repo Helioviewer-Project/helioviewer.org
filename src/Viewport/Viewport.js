@@ -24,6 +24,7 @@ var Viewport = Class.extend(
     },
     dimensions              : { width: 0, height: 0 },
     maxLayerDimensions      : { width: 0, height: 0 },
+    maxTileLayers           : 6,
 
     /**
      * @constructs
