@@ -62,6 +62,7 @@ class Image_SubFieldImage
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
+     * @param int    $opacity      The opacity of the image from 0 to 100
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      *
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
@@ -130,9 +131,16 @@ class Image_SubFieldImage
         }*/
     }
     
+    /**
+     * Saves the new filepath
+     * 
+     * @param string $filepath The new file path to the image
+     * 
+     * @return void
+     */
     public function setNewFilePath($filepath)
     {
-    	$this->outputFile = $filepath;
+        $this->outputFile = $filepath;
     }
     
     /**
