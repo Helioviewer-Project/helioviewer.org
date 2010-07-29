@@ -241,8 +241,10 @@ span.ui-icon-hover {
 
 /* jGrowl */
 body > div.jGrowl.top-right {
-    top: 56px;
-    right: 42px;
+    top: 70px;
+    right: 50px;
+    padding: 0px;
+    z-index: 1000; /* make sure tooltips show above */
 }
 
 div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {

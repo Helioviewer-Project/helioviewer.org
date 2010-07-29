@@ -129,7 +129,7 @@ class Movie_HelioviewerMovieBuilder
             
             // Subtract 1 because we added an extra frame to the end
             $frameRate = $this->_determineOptimalFrameRate($numFrames - 1);
-
+            
             $movie = new Movie_HelioviewerMovie(
                 $startTime, $numFrames,
                 $frameRate, $this->_params['hqFormat'],
@@ -147,7 +147,7 @@ class Movie_HelioviewerMovieBuilder
                 header('Content-type: application/json');
                 echo json_encode(array("error" => $e->getMessage()));       		
             } else {
-                //printErrorMsg($e->getMessage());
+                printErrorMsg($e->getMessage());
             }
         }
     }
