@@ -44,6 +44,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         # Mandatory fields
         self.ui.dbAdminPage.registerField("dbAdminUserName*", self.ui.dbAdminUserName)
         self.ui.dbAdminPage.registerField("dbAdminPassword*", self.ui.dbAdminPassword)
+        self.ui.hvDatabaseSetupPage.registerField("hvDatabaseName*", self.ui.hvDatabaseName)
         self.ui.hvDatabaseSetupPage.registerField("hvUserName*", self.ui.hvUserName)
         self.ui.hvDatabaseSetupPage.registerField("hvPassword*", self.ui.hvPassword)
 
@@ -53,6 +54,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         # DB Admin Info
         self.ui.dbAdminUserName.setValidator(alphanum)
         self.ui.dbAdminPassword.setValidator(passwd)
+        self.ui.hvDatabaseName.setValidator(alphanum)
         self.ui.hvUserName.setValidator(alphanum)
         self.ui.hvPassword.setValidator(passwd)
 
@@ -111,13 +113,13 @@ If this is correct, please press "Start" to begin processing.
 
     def processImages(self):
         ''' Process JPEG 2000 archive and enter information into the database '''
-        admin, adminpass, hvuser, hvpass, jp2dir, mysql = self.getFormFields()
+        admin, adminpass, hvdb, hvuser, hvpass, jp2dir, mysql = self.getFormFields()
+
+        self.ui.startProcessingBtn.setEnabled(False)
 
         self.ui.statusMsg.setText("Creating database schema")
 
-        dbname = "helioviewer"
-
-        cursor = setupDatabaseSchema(admin, adminpass, dbname, hvuser, hvpass, mysql)
+        cursor = setupDatabaseSchema(admin, adminpass, hvdb, hvuser, hvpass, mysql)
 
         processJPEG2000Images(self.images, jp2dir, cursor, mysql, self.updateProgress)
     
@@ -137,11 +139,12 @@ If this is correct, please press "Start" to begin processing.
         mysql = self.ui.mysqlRadioBtn.isChecked()
         admin = str(self.ui.dbAdminUserName.text())
         adminpass = str(self.ui.dbAdminPassword.text())
+        hvdb   = str(self.ui.hvDatabaseName.text())
         hvuser = str(self.ui.hvUserName.text())
         hvpass = str(self.ui.hvPassword.text())
         jp2dir = str(self.ui.jp2RootDirInput.text())
 
-        return admin, adminpass, hvuser, hvpass, jp2dir, mysql
+        return admin, adminpass, hvdb, hvuser, hvpass, jp2dir, mysql
 
     def initEvents(self):
         QtCore.QObject.connect(self.ui.jp2BrowseBtn, QtCore.SIGNAL("clicked()"), self.openBrowseDialog)
