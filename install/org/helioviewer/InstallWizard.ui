@@ -317,7 +317,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Select a username and password to use for the Helioviewer database:</string>
+        <string>Select a name for the new database to be created, and the username and password you wish to use to access this database.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -329,7 +329,7 @@
        <property name="fieldGrowthPolicy">
         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
        </property>
-       <item row="0" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="hvUserNameLbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -345,7 +345,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="2" column="1">
         <widget class="QLineEdit" name="hvUserName">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -358,7 +358,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="hvPasswordLbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -374,7 +374,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="4" column="1">
         <widget class="QLineEdit" name="hvPassword">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -390,7 +390,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -403,7 +403,7 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="1">
+       <item row="5" column="1">
         <widget class="QLabel" name="hvDatabaseSetupStatus">
          <property name="text">
           <string/>
@@ -412,6 +412,48 @@
           <bool>true</bool>
          </property>
         </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="hvDatabaseNameLbl">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Database:</string>
+         </property>
+         <property name="indent">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="hvDatabaseName">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -457,7 +499,7 @@
      <item>
       <layout class="QHBoxLayout" name="jp2ArchivePageHBox">
        <property name="rightMargin">
-        <number>10</number>
+        <number>15</number>
        </property>
        <item>
         <widget class="QLabel" name="jp2RootDirLbl">
@@ -588,7 +630,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="" native="true">
+      <widget class="QWidget" name="widget" native="true">
        <property name="maximumSize">
         <size>
          <width>16777215</width>
@@ -641,6 +683,18 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>mysqlRadioBtn</tabstop>
+  <tabstop>postgresRadioBtn</tabstop>
+  <tabstop>dbAdminUserName</tabstop>
+  <tabstop>dbAdminPassword</tabstop>
+  <tabstop>hvDatabaseName</tabstop>
+  <tabstop>hvUserName</tabstop>
+  <tabstop>hvPassword</tabstop>
+  <tabstop>jp2RootDirInput</tabstop>
+  <tabstop>jp2BrowseBtn</tabstop>
+  <tabstop>startProcessingBtn</tabstop>
+ </tabstops>
  <resources>
   <include location="resources/hv.qrc"/>
  </resources>
