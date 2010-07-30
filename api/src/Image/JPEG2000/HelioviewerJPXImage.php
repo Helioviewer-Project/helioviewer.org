@@ -75,7 +75,16 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         if (!file_exists($filepath)) {
             list ($images, $timestamps) = $this->_queryJPXImageFrames();
             $this->_timestamps = $timestamps;
-            $this->buildJPXImage($images, $linked);
+            $this->_images     = $images;
+            
+            // Make sure that at least some movie frames were found
+            if (sizeOf($images) > 0) {
+                $this->buildJPXImage($images, $linked);
+            } else {
+                $this->_url     = null;
+                $this->_message = "No images were found for the requested time range."; 
+            }            
+            
             $this->_writeFileGenerationReport();
         }
     }
@@ -299,6 +308,26 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
 
         $this->_timestamps = $summary->frames;
         $this->_message    = $summary->message;
+    }
+    
+    /**
+     * Returns the number of images that make up the JPX movie
+     * 
+     * @return int Number of images
+     */
+    public function getNumJPXFrames()
+    {
+        return sizeOf($this->_images); 
+    }
+    
+    /**
+     * Returns a message describing any errors encountered during the JPX generation process
+     *
+     * @return string Error message
+     */
+    public function getErrorMessage ()
+    {
+        return $this->_message;     
     }
 
     /**
