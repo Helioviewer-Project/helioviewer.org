@@ -98,7 +98,7 @@ var ViewportController = Class.extend(
     getViewportInformation: function (event, callback) {
         var info                 = this.viewport.getViewportInformation();
         info.coordinates         = this.movementHelper.getViewportCoords();
-        info.maxImageCoordinates = this.movementHelper.getMaxImageCoordinates(info.coordinates);
+        //info.maxImageCoordinates = this.movementHelper.getMaxImageCoordinates(info.coordinates);
         
         if (callback) {
             callback(info);

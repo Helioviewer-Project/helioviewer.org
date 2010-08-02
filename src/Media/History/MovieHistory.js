@@ -55,11 +55,15 @@ var MovieHistory = History.extend(
      * @input {Array} history An array of saved movie histories
      */
     _loadSavedHistory: function (history) {
-        var self = this;
+        var self = this, movie;
         $.each(history, function () {
-            self.history.push(new Movie(this, new Date(this.dateRequested)));
+            movie = new Movie(this, this.dateRequested);
+            if (movie.isValidEntry()) {
+                self.history.push(movie);
+            }
         });
 
-        this.history = this.history.slice(0, 12);
+        this.history = this.history.reverse().slice(0, 12).reverse();
+        $(document).trigger("save-setting", ["movie-history", this._serialize()]);
     }
 });
