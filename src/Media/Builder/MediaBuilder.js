@@ -143,7 +143,7 @@ var MediaBuilder = Class.extend(
      * @input {Array} viewportInfo -- Information with viewport coordinates and layers
      */
     ensureValidArea: function (viewportInfo) {
-        var coordinates = viewportInfo.maxImageCoordinates;
+        var coordinates = viewportInfo.coordinates;
         if (coordinates.bottom - coordinates.top > 50 && coordinates.right - coordinates.left > 50) {
             return true;
         }
