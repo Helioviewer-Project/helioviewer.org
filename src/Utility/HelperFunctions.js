@@ -156,7 +156,7 @@ Math.lg = function (x) {
 //    
 //    // console.log
 //    console.log = function (msg) {
-//        $.jGrowl(msg, { header: '[DEBUG] ' });
+//        $("#message-console").jGrowl(msg, { header: '[DEBUG] ' });
 //    };
 //    
 //    // console.dir
@@ -170,7 +170,7 @@ Math.lg = function (x) {
 //            }
 //        }
 //            
-//        $.jGrowl(str, { header: '[DEBUG] ' });
+//        $("#message-console").jGrowl(str, { header: '[DEBUG] ' });
 //    };
 //}
 

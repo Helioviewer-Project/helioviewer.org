@@ -240,15 +240,14 @@ span.ui-icon-hover {
 }
 
 /* jGrowl */
-body > div.jGrowl.top-right {
-    top: 70px;
-    right: 50px;
-    padding: 0px;
-    z-index: 1000; /* make sure tooltips show above */
+#message-console {
+    position: absolute;
+    top: 13px;
+    right: 0px;
 }
 
-div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
-   background-color: Azure;  /* GhostWhite #D18F61; lightBlue;*/
+#message-console .jGrowl-notification, #message-console .jGrowl-closer {
+   background-color: Azure;
    color: #262424;
 }
 
