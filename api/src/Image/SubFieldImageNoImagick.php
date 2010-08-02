@@ -121,7 +121,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
             $cmd .= $this->setImageParams();
             
             // Resize extracted image to correct size before padding.
-            $cmd .= "-resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight} ";
+            $cmd .= "-resize {$this->subfieldRelWidth}x{$this->subfieldRelHeight}! ";
 
             $cmd .= $this->_getPaddingString();
         

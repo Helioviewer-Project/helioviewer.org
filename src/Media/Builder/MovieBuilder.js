@@ -218,12 +218,12 @@ var MovieBuilder = MediaBuilder.extend(
             movie, scaleDown = false, self = this;
 
         this.building = true;
-        arcsecCoords  = this.toArcsecCoords(viewportInfo.maxImageCoordinates, viewportInfo.imageScale);
+        arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
         
         realVPSize = this.viewport.getViewportInformation().coordinates;
         vpHeight   = realVPSize.bottom - realVPSize.top;
         
-        coordinates = viewportInfo.maxImageCoordinates;
+        coordinates = viewportInfo.coordinates;
         movieHeight = coordinates.bottom - coordinates.top;
         
         if (movieHeight >= vpHeight - 50) {
