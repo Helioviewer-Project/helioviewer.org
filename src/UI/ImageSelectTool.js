@@ -144,17 +144,17 @@ var ImageSelectTool = Class.extend(
     
             viewportInfo  = this.viewport.getViewportInformation();
             visibleCoords = viewportInfo.coordinates;
-            maxCoords     = viewportInfo.maxImageCoordinates;
+            //maxCoords     = viewportInfo.maxImageCoordinates;
 
             coords = {
-                top     : Math.max(visibleCoords.top  + selection.y1, maxCoords.top),
-                left    : Math.max(visibleCoords.left + selection.x1, maxCoords.left),
-                bottom  : Math.min(visibleCoords.top  + selection.y2, maxCoords.bottom),
-                right   : Math.min(visibleCoords.left + selection.x2, maxCoords.right)
+                top     : visibleCoords.top  + selection.y1,
+                left    : visibleCoords.left + selection.x1,
+                bottom  : visibleCoords.top  + selection.y2,
+                right   : visibleCoords.left + selection.x2
             };
 
             viewportInfo.coordinates = coords;
-            viewportInfo.maxImageCoordinates = coords;
+            //viewportInfo.maxImageCoordinates = coords;
 
             this.cleanup();
             callback(viewportInfo);

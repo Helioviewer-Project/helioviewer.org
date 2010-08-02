@@ -71,7 +71,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
         }
         
         var self, callback, params, arcsecCoords, id, download, screenshot, options;        
-        arcsecCoords  = this.toArcsecCoords(viewportInformation.maxImageCoordinates, viewportInformation.imageScale);
+        arcsecCoords  = this.toArcsecCoords(viewportInformation.coordinates, viewportInformation.imageScale);
         self = this;
 
         params = {

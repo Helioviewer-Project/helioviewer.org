@@ -130,15 +130,17 @@ abstract class Image_Composite_CompositeImage
      */
     private function _watermark($imagickImage)
     {
-        $watermark 	 = new IMagick(HV_ROOT_DIR . "/api/resources/images/watermark_small_black_border.png");
+        
         $imageWidth  = $this->metaInfo->width();
         $imageHeight = $this->metaInfo->height();
         $output      = $this->tmpDir . "/$this->outputFile";
 
         if ($imageWidth < 200 || $imageHeight < 200) {
-            $watermark->destroy();
             return;
         }
+        
+        $watermark   = new IMagick(HV_ROOT_DIR . "/api/resources/images/watermark_small_black_border.png");
+        
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
         if ($imageWidth / 300 < 2) {
             $watermark->readImage(HV_ROOT_DIR . "/api/resources/images/watermark_circle_small_black_border.png");
@@ -188,7 +190,7 @@ abstract class Image_Composite_CompositeImage
      */
     private function _buildComposite()
     {
-        $sortedImages 	= $this->_sortByLayeringOrder($this->layerImages);
+        $sortedImages 	= $this->sortByLayeringOrder($this->layerImages);
         $tmpImg 		= $this->tmpDir . "/" . $this->outputFile;
 
         $layerNum = 1;
@@ -196,7 +198,6 @@ abstract class Image_Composite_CompositeImage
         foreach ($sortedImages as $image) {
             $previous = $imagickImage;
             $imagickImage = new IMagick($image->getFilePathString());
-            $opacity = $image->opacity();
 
             // If $previous exists, then the images need to be composited. For memory purposes, 
             // destroy $previous when done with it. 
@@ -268,7 +269,7 @@ abstract class Image_Composite_CompositeImage
      *
      * @return array Array containing the sorted image layers
      */
-    private function _sortByLayeringOrder($images)
+    protected function sortByLayeringOrder($images)
     {
         $sortedImages = array();
 

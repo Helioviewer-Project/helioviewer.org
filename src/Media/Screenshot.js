@@ -15,7 +15,11 @@ var Screenshot = Media.extend(
      */    
     init: function (params, dateRequested) {
         this._super(params, dateRequested);
-        this.time = this.obsDate.replace("T", " ").slice(0, -5);
+        this.time = this.obsDate.replace("T", " ");
+        // Get rid of the extra .000 if there is one
+        if (this.time.length > 20) {
+            this.time = this.time.slice(0, -5);
+        }
     },
     
     /**
@@ -64,6 +68,23 @@ var Screenshot = Media.extend(
             y1            : this.y1,
             y2            : this.y2
         };
+    },
+    
+    /**
+     * Checks to make sure that all fields required for display in the history list are correct.
+     * dateRequested must be a valid date, and id, layers, and obsDate must not be empty
+     * strings. imageScale must be a number. url must start with http
+     */
+    isValidEntry: function () {
+        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested
+                && this.id.length > 1 
+                && (!isNaN(this.imageScale) || this.imageScale.length > 1)
+                && this.layers.length > 1 && this.obsDate.length > 1
+                && this.url.slice(0,4) === "http") {
+            return true;
+        }
+
+        return false;
     },
     
     /**

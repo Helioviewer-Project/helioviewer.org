@@ -17,10 +17,10 @@ var Movie = Media.extend(
      */    
     init: function (params, dateRequested, hqFormat) {
         this._super(params, dateRequested);
-        this.startTime = this.startTime.replace(["T", "Z"], " ");
+        this.time = this.startTime.replace("T", " ");
         // Get rid of the extra .000 if there is one
-        if (this.startTime.length > 20) {
-            this.startTime = this.startTime.slice(0, -5);
+        if (this.time.length > 20) {
+            this.time = this.time.slice(0, -5);
         }
         
         this.hqFormat     = hqFormat;
@@ -115,6 +115,23 @@ var Movie = Media.extend(
     },
     
     /**
+     * Checks to make sure that all fields required for display in the history list are correct.
+     * dateRequested must be a valid date, and id, layers, and startTime must not be empty
+     * strings. imageScale must be a number. url must start with http
+     */
+    isValidEntry: function () {
+        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested
+                && this.id.length > 1
+                && (!isNaN(this.imageScale) || this.imageScale.length > 1)
+                && this.layers.length > 1 && this.startTime.length > 1
+                && this.url.slice(0,4) === "http") {
+            return true;
+        }
+
+        return false;
+    },
+    
+    /**
      * Creates a table element with information about the movie.
      */
     getInformationTable: function () {        
@@ -135,7 +152,7 @@ var Movie = Media.extend(
                     "</tr>" +
                     "<tr>" +
                         "<td><b>Start Time: </b></td>" +
-                        "<td>" + this.startTime + "</td>" + 
+                        "<td>" + this.time + "</td>" + 
                     "</tr>" +
                     "<tr>" +
                         "<td>&nbsp;</td>" +
