@@ -43,17 +43,10 @@ var SandboxHelper = Class.extend(
      * and updates the css accordingly. Also repositions the movingContainer.
      */
     updateSandbox: function (viewportCenter, desiredSandboxSize) {
-        var change, newHCLeft, newHCTop, containerPos;
-        // Difference
-        change = {
-            x: desiredSandboxSize.width  - this.domNode.width(),
-            y: desiredSandboxSize.height - this.domNode.height()
-        };
-        
-        if (Math.abs(change.x) < 0.5 && Math.abs(change.y) < 0.5) {
-            return;
-        }
+        var change, oldCenter, newCenter, newHCLeft, newHCTop, containerPos;
 
+        oldCenter = this.getCenter();
+        
         // Update sandbox dimensions
         this.domNode.css({
             width  : desiredSandboxSize.width  + 'px',
@@ -61,12 +54,23 @@ var SandboxHelper = Class.extend(
             left   : viewportCenter.x - (0.5 * desiredSandboxSize.width) + 'px',
             top    : viewportCenter.y - (0.5 * desiredSandboxSize.height) + 'px'            
         });
-   
+
+        newCenter = this.getCenter();
+
+        // Difference
+        change = {
+            x: newCenter.x - oldCenter.x,
+            y: newCenter.y - oldCenter.y
+        };
+
+        if (Math.abs(change.x) < 0.01 && Math.abs(change.y) < 0.01) {
+            return;
+        }
         containerPos = this.movingContainer.position();
-   
+
         // Update moving container position
-        newHCLeft = Math.max(0, Math.min(desiredSandboxSize.width,  containerPos.left + (0.5 * change.x)));
-        newHCTop  = Math.max(0, Math.min(desiredSandboxSize.height, containerPos.top  + (0.5 * change.y)));
+        newHCLeft = Math.max(0, Math.min(desiredSandboxSize.width,  containerPos.left + change.x));
+        newHCTop  = Math.max(0, Math.min(desiredSandboxSize.height, containerPos.top  + change.y));
  
         this.moveContainerTo(newHCLeft, newHCTop);
     },

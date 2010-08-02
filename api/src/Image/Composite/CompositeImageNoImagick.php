@@ -63,10 +63,10 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
                 $output = $this->tmpDir . "/$this->outputFile";
 
                 if ($this->watermarkOn === true || $this->watermarkOn === "true") {
-                    $this->_watermark($this->layerImages[0]);
+                    $this->_watermarkNoImagick($this->layerImages[0], $output);
                 }
 
-                $this->composite = $output; 
+                $this->composite = $output;
             }
             //Optional settings
             /*if ($this->options['enhanceEdges'] == "true") {
@@ -97,10 +97,11 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
      * These two strings are then layered on top of each other and put in the southwest corner of the image.
      *
      * @param CompositeImageLayer $imageLayer A built ImageLayer
+     * @param string              $output     The output file
      *
      * @return void
      */    
-    private function _watermark($imageLayer)
+    private function _watermarkNoImagick($imageLayer, $output)
     {
         $watermark   = HV_ROOT_DIR . "/api/resources/images/watermark_small_gs.png";
         $imageWidth  = $this->metaInfo->width();
@@ -112,17 +113,16 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
             $watermark = $this->_watermarkSmall($imageWidth);
         }
 
-        exec(escapeshellcmd(HV_PATH_CMD . " composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $image));
+        exec(escapeshellcmd(HV_PATH_CMD . " composite -gravity SouthEast -dissolve 60% -geometry +10+10 " . $watermark . " " . $image . " " . $output));
 
         // If the image is too small, text won't fit. Don't put a timestamp on it. 
         if ($imageWidth < 285) {
             return $image;
         }
 
-        $cmd = HV_PATH_CMD . "convert " . $image . " -gravity SouthWest" . $this->addWaterMarkTextNoImagick();
-        $cmd .= " -type TrueColor -alpha off -colors 256 -depth 8 " . $image;
-
-        exec(escapeshellcmd($cmd));
+        $cmd = HV_PATH_CMD . "convert " . $output . " -gravity SouthWest" . $this->addWaterMarkTextNoImagick();
+        $cmd .= " -type TrueColor -alpha off -colors 256 -depth 8 " . $output;
+        exec(escapeshellcmd($cmd), $out, $ret);
 
         return $image;    	
     }
@@ -152,7 +152,7 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
      */
     private function _buildComposite()
     {
-        $sortedImages   = $this->_sortByLayeringOrder($this->layerImages);
+        $sortedImages   = $this->sortByLayeringOrder($this->layerImages);
         $tmpImg         = $this->tmpDir . "/" . $this->outputFile;
         $filesToDelete  = array();
 
@@ -172,7 +172,7 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
             }
             $layerNum++;
         }
-        $cmd .= " -compose dst-over -depth 8 -quality 10 " . $tmpImg;
+        $cmd .= " -compose dst-over -depth 8 " . $tmpImg;
 
         try {
             // Need to break $cmd into pieces at each "&&", because escapeshellcmd escapes & and the command doesn't work then.
@@ -184,7 +184,7 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
                 }
             }
 
-            exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off -colors 256 -depth 8 $tmpImg"), $out, $ret);
+            exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off -depth 8 $tmpImg"), $out, $ret);
             if ($ret != 0) {
                 throw new Exception("Error turning alpha channel off on $tmpImg.");
             }
@@ -198,7 +198,7 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
         
         $this->_cleanUp($filesToDelete);
         if ($this->watermarkOn === true || $this->watermarkOn === "true") {
-            return $this->_watermark($image);
+            return $this->_watermarkNoImagick($image, $tmpImg);
         }
         return $image;    	
     }
