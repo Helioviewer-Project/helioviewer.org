@@ -215,6 +215,9 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      */
     private function _checkRequestDates($imgIndex, $sourceId)
     {
+        // TODO 08/02/2010: Make note when dates use differ significantly from request date.
+        // Perhaps instead of returning a "message" parameter, just return the items of interest: startTime,endTime,
+        // overmax, etc.
         $startImage = $imgIndex->getClosestImageAfterDate($this->_startTime, $sourceId);
         $endImage   = $imgIndex->getClosestImageBeforeDate($this->_endTime, $sourceId);
         

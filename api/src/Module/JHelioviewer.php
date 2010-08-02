@@ -165,16 +165,11 @@ class Module_JHelioviewer implements Module
 
         // Chose appropriate action based on request parameters
         if (!($this->_params['frames'] || $this->_params['verbose'])) {
-            // Don't do anything unless some data was found
-            if ($jpx->getNumJPXFrames() > 0) {
-                if ($jpip) {
-                    echo $jpx->getJPIPURL();
-                } else {
-                    $jpx->displayImage();
-                }             
+            if ($jpip) {
+                echo $jpx->getJPIPURL();
             } else {
-                throw new Exception($jpx->getErrorMessage());
-            }
+                $jpx->displayImage();
+            }             
         } else {
             $jpx->printJSON($jpip, $this->_params['frames'], $this->_params['verbose']);
         }
