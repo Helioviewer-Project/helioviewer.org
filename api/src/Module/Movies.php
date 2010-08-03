@@ -86,7 +86,18 @@ class Module_Movies implements Module
                 "floats"   => array('width', 'height'),
                 "urls"     => array('url')
             );
-            break;    	
+            break;
+        case "getMovie":
+        	$expected = array(
+        	   "required" => array('id')
+        	);
+        	break;
+        case "getETAForMovie":
+        	$expected = array(
+        	   "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+        	   "dates"    => array('startTime', 'endTime'),
+        	   "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+        	);
         default:
             break;
         }
@@ -129,9 +140,21 @@ class Module_Movies implements Module
         // until proxying enabled.
         /*if (HV_DISTRIBUTED_TILING_ENABLED) {
         	$builder->getEtaAndId($this->_params, $tmpDir);
+        	touch($tmpDir . "/INVALID");
         	return;
         }*/
         $builder->buildMovie($this->_params, $tmpDir);
+    }
+    
+    /**
+     * Calculates the ETA for the given movie using width/height and numFrames
+     */
+    public function getETAForMovie ()
+    {
+        include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+        $builder = new Movie_HelioviewerMovieBuilder();
+        
+        return $builder->calculateETA($this->_params);
     }
     
     /**
@@ -161,7 +184,7 @@ class Module_Movies implements Module
         } else {
         	echo json_encode(array(
         	   "status" => "not ready",
-        	   //"eta"    => 10,
+        	   "eta"    => 10,
         	   "id"     => $this->_params['id']
         	));
         }

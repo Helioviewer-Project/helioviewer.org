@@ -18,6 +18,7 @@ var Media = Class.extend(
         this.dateRequested = dateRequested;
         this.width         = Math.floor((this.x2 - this.x1) / this.imageScale);
         this.height        = Math.floor((this.y2 - this.y1) / this.imageScale);
+        this.name          = this.parseName();
     },
     
     /**
@@ -26,7 +27,6 @@ var Media = Class.extend(
     setURL: function (url, id) {
         this.url  = url;
         this.id   = id;
-        this.name = this.parseName();
     },
     
     /**

@@ -244,7 +244,7 @@ var toFuzzyTime = function (timeDiff) {
     } else if (timeDiff <= 7199) {
         // Same as above, any number under 2 hours (7200 seconds)
         // should come up as "1 hour ago" rather than "1 hours ago"
-        return "1 hour ago";
+        return "1 hour";
     
     } else if (timeDiff <= 86400) {
         return Math.floor(timeDiff / 3600) + " hours";
@@ -252,7 +252,7 @@ var toFuzzyTime = function (timeDiff) {
     } else if (timeDiff <= 172799) {
         // Same as above, any number under 2 days (172800 seconds)
         // should come up as "1 day ago" rather than "1 days ago"
-        return "1 day ago";
+        return "1 day";
     
     } else {
         return Math.floor(timeDiff / 86400) + " days";
