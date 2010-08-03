@@ -71,7 +71,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         $.extend(params, ds);
 
         opacity = this._computeLayerStartingOpacity(params.layeringOrder);
-console.log(params);
+
         // Add the layer
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
@@ -91,12 +91,12 @@ console.log(params);
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
-console.log(params);
+
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
                                   self.tileVisibilityRange, self.api, self.tileServers[params.server], 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
-                                  params.sourceId, params.nickname, params.visible, params.opacity, params.layeringOrder, 
-                                  params.server);
+                                  params.sourceId, params.nickname, params.visible, params.opacity,
+                                  params.layeringOrder, params.server);
 
             self.addLayer(layer);
         });
