@@ -196,6 +196,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                                 <div id="sandbox" style="position: absolute;">
                                     <div id="moving-container" style="left: 0; top: 0"></div>
                                 </div>
+                                <div id="message-console"></div>
                             </div>
 
                             <!-- UI COMPONENTS -->

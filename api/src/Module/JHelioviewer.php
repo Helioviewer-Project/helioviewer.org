@@ -169,7 +169,7 @@ class Module_JHelioviewer implements Module
                 echo $jpx->getJPIPURL();
             } else {
                 $jpx->displayImage();
-            }
+            }             
         } else {
             $jpx->printJSON($jpip, $this->_params['frames'], $this->_params['verbose']);
         }

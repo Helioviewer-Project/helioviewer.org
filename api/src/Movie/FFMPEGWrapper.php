@@ -109,9 +109,9 @@ class Movie_FFMPEGWrapper
         $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
 
         $cmd = "/usr/bin/ffmpeg -r " . $this->_frameRate . " -i " . $tmpImageDir . "/frame%d.jpg"
-            . " -r " . $outputRate . " -vcodec libx264 -vpre hq -s " . $width . "x" . $height 
+            . " -r " . $outputRate . " -vcodec libx264 -vpre hq -b 2048k -s " . $width . "x" . $height 
             . " -y " . $outputDir . "/" . $filename;
-
+            
         try {
             exec(escapeshellcmd($cmd));
         } catch (Exception $e) {

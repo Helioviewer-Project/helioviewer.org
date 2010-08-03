@@ -27,7 +27,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     log: function (msg, options) {
-        $.jGrowl(msg, options);
+        $("#message-console").jGrowl(msg, options);
     },
     
     /**
@@ -36,7 +36,7 @@ var MessageConsole = Class.extend(
      * @param {Object} options
      */
     info: function (msg, options) {
-        $.jGrowl(msg, options);
+        $("#message-console").jGrowl(msg, options);
     },
     
     /**
@@ -44,7 +44,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     warn: function (msg, options) {
-        $.jGrowl(msg, options);
+        $("#message-console").jGrowl(msg, options);
     },
     
     /**
@@ -52,7 +52,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     error: function (msg, options) {
-        $.jGrowl(msg, options);
+        $("#message-console").jGrowl(msg, options);
         $("#helioviewer-viewport-container-outer").effect("shake", { times: 1 });
     },
     

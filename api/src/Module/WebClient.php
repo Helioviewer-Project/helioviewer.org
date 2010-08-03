@@ -168,7 +168,7 @@ class Module_WebClient implements Module
         include_once 'src/Database/ImgIndex.php';
 
         $imgIndex = new Database_ImgIndex();
-        $dataSources = json_encode($imgIndex->getDataSources());
+        $dataSources = json_encode($imgIndex->getDataSources($this->_params['verbose'], $this->_params['compat']));
 
         header('Content-type: application/json');
 
@@ -336,6 +336,9 @@ class Module_WebClient implements Module
             break;
 
         case "getDataSources":
+            $expected = array(
+               "optional" => array('verbose', 'compat')
+            );
             break;
 
         case "getTile":
