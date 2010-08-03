@@ -315,22 +315,29 @@ class Database_ImgIndex
 
     /**
      * Returns a list of the known data sources
+     * 
+     * @param bool $verbose If set to true an alternative data structure is returned that includes meta-information
+     *                      at each level of the tree, and adds units to numeric measurement names
+     * @param bool $compas  If true, measurements of the form "171" are printed in a string-sortable form ("0171").
      *
      * @return array A tree representation of the known data sources
      */
-    public function getDataSources ()
+    public function getDataSources ($verbose=false, $compat=false)
     {
-        // Query
-        $sql = "
-            SELECT
-                datasource.name as name,
-                datasource.id as id,
-                datasource.layeringOrder as layeringOrder,
-                observatory.name as observatory,
-                instrument.name as instrument,
-                detector.name as detector,
-                measurement.name as measurement
-            FROM datasource
+        $fields = array("observatory", "instrument", "detector", "measurement");
+        
+        $sql = "SELECT
+                    datasource.name as nickname,
+                    datasource.id as id,
+                    datasource.layeringOrder as layeringOrder,
+                    measurement.units as measurement_units,";
+
+        foreach ($fields as $field) {
+            $sql .= sprintf("%s.name as %s_name, %s.description as %s_description,", $field, $field, $field, $field);
+        }
+     
+        $sql = substr($sql, 0, -1) . " " . 
+            "FROM datasource
                 LEFT JOIN observatory ON datasource.observatoryId = observatory.id
                 LEFT JOIN instrument ON datasource.instrumentId = instrument.id
                 LEFT JOIN detector ON datasource.detectorId = detector.id
@@ -352,27 +359,73 @@ class Database_ImgIndex
             $id   = (int) ($source["id"]);
 
             // Only include if data is available for the specified source
-            if ($this->getImageCount("1000/01/01 00:00:00", "9999/01/01 00:00:00", $id)) {
+            if ($this->getImageCount("1000/01/01 00:00:00", "9999/01/01 00:00:00", $id) > 0) {
              
                 // Image parameters
-                $obs  = $source["observatory"];
-                $inst = $source["instrument"];
-                $det  = $source["detector"];
-                $meas = $source["measurement"];
-                $name = $source["name"];
-                $ord  = (int) ($source["layeringOrder"]);
+                $obs      = $source["observatory_name"];
+                $inst     = $source["instrument_name"];
+                $det      = $source["detector_name"];
+                $meas     = $source["measurement_name"];
+                $nickname = $source["nickname"];
+                $order    = (int) ($source["layeringOrder"]);
+                
+                // Compatability mode ("171" -> "0171")
+                if ($compat && preg_match("/^\d*$/", $meas)) {
+                    $meas = sprintf("%04d", $meas);
+                }
+                
+                // Verbose measurement adjustment ("171" -> "171 Å")
+                if ($verbose && preg_match("/^\d*$/", $meas)) {
+                    $measurementWithUnits = $source["measurement_name"] . utf8_encode($source["measurement_units"]);
+                }
     
                 // Build tree
-                if (!isset($tree[$obs])) {
-                    $tree[$obs] = array();
-                }
-                if (!isset($tree[$obs][$inst])) {
-                    $tree[$obs][$inst] = array();
-                }
-                if (!isset($tree[$obs][$inst][$det])) {
-                    $tree[$obs][$inst][$det] = array();
-                }
-                $tree[$obs][$inst][$det][$meas] = array("sourceId"=>$id, "name"=>$name, "layeringOrder"=>$ord);             
+                if (!$verbose) {
+                    // Normal
+                    if (!isset($tree[$obs])) {
+                        $tree[$obs] = array();
+                    }
+                    if (!isset($tree[$obs][$inst])) {
+                        $tree[$obs][$inst] = array();
+                    }
+                    if (!isset($tree[$obs][$inst][$det])) {
+                        $tree[$obs][$inst][$det] = array();
+                    }
+                    $tree[$obs][$inst][$det][$meas] = array(
+                        "sourceId"      => $id,
+                        "nickname"      => $nickname,
+                        "layeringOrder" => $order
+                    );
+                } else {
+                    // Verbose
+                    if (!isset($tree[$obs])) {
+                        $tree[$obs] = array(
+                            "name"        => $obs,
+                            "description" => $source["observatory_description"],
+                            "instruments" => array()
+                        );
+                    }
+                    if (!isset($tree[$obs]["instruments"][$inst])) {
+                        $tree[$obs]["instruments"][$inst] = array(
+                            "name"        => $inst,
+                            "description" => $source["instrument_description"],
+                            "detectors"   => array()
+                        );
+                    }
+                    if (!isset($tree[$obs]["instruments"][$inst]["detectors"][$det])) {
+                        $tree[$obs]["instruments"][$inst]["detectors"][$det] = array(
+                            "name"        => $det,
+                            "description" => $source["detector_description"],
+                            "measurements" => array()
+                        );
+                    }
+                    $tree[$obs]["instruments"][$inst]["detectors"][$det]["measurements"][$meas] = array(
+                        "name"          => $measurementWithUnits, 
+                        "nickname"      => $nickname, 
+                        "sourceId"      => $id,
+                        "layeringOrder" => $order
+                    );
+                }                
             }
         }
 

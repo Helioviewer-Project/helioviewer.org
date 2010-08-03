@@ -34,7 +34,8 @@ var TreeSelect = Class.extend(
     _initSelectMenus: function () {
         var self = this;
         
-        this._updateSelectMenus();
+        // Load initial options into select menus
+        this._updateSelectMenus(0);
         
         // Set initial choices in select menus
         $.each(this.selectIds, function (depth, id) {
@@ -83,13 +84,8 @@ var TreeSelect = Class.extend(
     _updateSelectMenus: function (startDepth) {
         var select, i, nav, opt, self = this;
         
-        if (typeof(startDepth) === "undefined") {
-            startDepth = 0;
-        }
-        
         $.each(this.selectIds, function (depth, id) {
             if (depth >= startDepth) {
-                //console.log(id);
                 select = $(id);
                 
                 // remove old choices
