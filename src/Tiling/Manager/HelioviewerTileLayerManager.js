@@ -76,7 +76,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
                           this.tileVisibilityRange, this.api, this.tileServers[server], params.observatory, 
-                          params.instrument, params.detector, params.measurement, params.sourceId, params.name, 
+                          params.instrument, params.detector, params.measurement, params.sourceId, params.nickname, 
                           params.visible, opacity, params.layeringOrder, server)
         );
         this.save();
@@ -95,8 +95,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
                                   self.tileVisibilityRange, self.api, self.tileServers[params.server], 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
-                                  params.sourceId, params.name, params.visible, params.opacity, params.layeringOrder, 
-                                  params.server);
+                                  params.sourceId, params.nickname, params.visible, params.opacity,
+                                  params.layeringOrder, params.server);
 
             self.addLayer(layer);
         });
