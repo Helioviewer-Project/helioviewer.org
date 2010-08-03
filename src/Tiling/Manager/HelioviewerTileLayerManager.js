@@ -29,6 +29,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                         "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
         
         var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
+
         this._loadStartingLayers(startingLayers);
     },
 
@@ -70,12 +71,12 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         $.extend(params, ds);
 
         opacity = this._computeLayerStartingOpacity(params.layeringOrder);
-
+console.log(params);
         // Add the layer
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
                           this.tileVisibilityRange, this.api, this.tileServers[server], params.observatory, 
-                          params.instrument, params.detector, params.measurement, params.sourceId, params.name, 
+                          params.instrument, params.detector, params.measurement, params.sourceId, params.nickname, 
                           params.visible, opacity, params.layeringOrder, server)
         );
         this.save();
@@ -90,11 +91,11 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
-
+console.log(params);
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
                                   self.tileVisibilityRange, self.api, self.tileServers[params.server], 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
-                                  params.sourceId, params.name, params.visible, params.opacity, params.layeringOrder, 
+                                  params.sourceId, params.nickname, params.visible, params.opacity, params.layeringOrder, 
                                   params.server);
 
             self.addLayer(layer);
