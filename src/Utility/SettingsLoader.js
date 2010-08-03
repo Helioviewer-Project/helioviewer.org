@@ -48,7 +48,7 @@ var SettingsLoader = (
             showWelcomeMsg  : true,
             minImageScale   : this.minImageScale,
             maxImageScale   : this.maxImageScale,
-            maxTileLayer    : this.maxTileLayers,
+            maxTileLayers   : this.maxTileLayers,
             prefetchSize    : this.prefetchSize,
             tileServers     : this.tileServers,
             timeIncrementSecs: this.timeIncrementSecs,

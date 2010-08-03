@@ -231,13 +231,15 @@ var helioprojectiveToSolarRadii = function (hx, hy, scale, rsun) {
  * @input {int} timeDiff -- Difference in time between two values in seconds
  */
 var toFuzzyTime = function (timeDiff) {
-    // Since it's flooring values, any number under 2 minutes (120 seconds) 
-    // should come up as "1 minute ago" rather than "1 minutes ago"
-    if (timeDiff <= 119) {
-        return "1 minute ago";
+    if (timeDiff <= 60) {
+        return Math.ceil(timeDiff) + " seconds";
+    } else if (timeDiff <= 119) {
+        // Since it's flooring values, any number under 2 minutes (120 seconds) 
+        // should come up as "1 minute ago" rather than "1 minutes ago"
+        return "1 minute";
     
     } else if (timeDiff <= 3600) {
-        return Math.floor(timeDiff / 60) + " minutes ago";
+        return Math.floor(timeDiff / 60) + " minutes";
     
     } else if (timeDiff <= 7199) {
         // Same as above, any number under 2 hours (7200 seconds)
@@ -245,7 +247,7 @@ var toFuzzyTime = function (timeDiff) {
         return "1 hour ago";
     
     } else if (timeDiff <= 86400) {
-        return Math.floor(timeDiff / 3600) + " hours ago";
+        return Math.floor(timeDiff / 3600) + " hours";
     
     } else if (timeDiff <= 172799) {
         // Same as above, any number under 2 days (172800 seconds)
@@ -253,7 +255,7 @@ var toFuzzyTime = function (timeDiff) {
         return "1 day ago";
     
     } else {
-        return Math.floor(timeDiff / 86400) + " days ago";
+        return Math.floor(timeDiff / 86400) + " days";
     }    
 };
 

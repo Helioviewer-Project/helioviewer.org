@@ -56,6 +56,7 @@ function loadModule($params)
         "launchJHelioviewer"  => "JHelioviewer",
         "buildMovie"          => "Movies",
         "playMovie"           => "Movies",
+        "getMovie"            => "Movies",
         "getEventFRMs"           => "SolarEvents",
         "getEvents"              => "SolarEvents",
         "getScreenshotsForEvent" => "SolarEvents",
