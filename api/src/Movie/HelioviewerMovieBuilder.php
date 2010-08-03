@@ -141,7 +141,7 @@ class Movie_HelioviewerMovieBuilder
         	touch($outputDir . "/INVALID");
             if (!empty($_POST)) {
                 header('Content-type: application/json');
-                echo json_encode(array("error" => $e->getMessage()));       		
+                echo json_encode(array("error" => $e->getMessage()));
             }
         }
     }
