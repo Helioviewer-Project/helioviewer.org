@@ -21,7 +21,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
                     tileServers, savedLayers, urlLayers) {
-
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
 		              tileServers, savedLayers, urlLayers);
 

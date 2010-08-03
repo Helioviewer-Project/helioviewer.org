@@ -8,7 +8,7 @@
  *
  * @category Image
  * @package  Helioviewer
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -21,7 +21,7 @@ require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
  *
  * @category Image
  * @package  Helioviewer
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */

@@ -87,7 +87,7 @@ var Media = Class.extend(
         // Translate time diff from milliseconds to seconds
         diff = (now.getTime() - this.dateRequested) / 1000;
 
-        return toFuzzyTime(diff);
+        return toFuzzyTime(diff) + " ago";
     },
     
     /**

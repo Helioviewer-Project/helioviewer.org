@@ -8,7 +8,7 @@
  * @category Configuration
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  * 
@@ -25,7 +25,7 @@ require_once 'interface.Module.php';
  * @category Configuration
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  *
@@ -125,7 +125,46 @@ class Module_Movies implements Module
             chmod($tmpDir, 0777);
         }
         
-        return $builder->buildMovie($this->_params, $tmpDir);
+        // @TODO: implement some kind of forking or background process. Commented out
+        // until proxying enabled.
+        /*if (HV_DISTRIBUTED_TILING_ENABLED) {
+        	$builder->getEtaAndId($this->_params, $tmpDir);
+        	return;
+        }*/
+        $builder->buildMovie($this->_params, $tmpDir);
+    }
+    
+    /**
+     * Checks to see if the movie is done and returns the url if it is. If not,
+     * returns a new eta.
+     * 
+     * $this->_params['id'] should be the file path and file name of the movie 
+     * without the format extension
+     */
+    public function getMovie ()
+    {
+        $filepath = HV_CACHE_DIR . "/" . $this->_params['id'];
+        
+        header('Content-type: application/json');
+        if (file_exists($filepath . "/INVALID")) {
+            echo json_encode(array(
+                "status" => "invalid",
+                "error"  => "There were not enough images for the date requested, so a "
+                            . "movie was not created."
+            ));
+        } else if (file_exists($filepath . "/READY")) {
+        	$url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_DIR, $filepath);
+        	echo json_encode(array(
+        	   "status" => "ready",
+        	   "url"    => $url
+        	));
+        } else {
+        	echo json_encode(array(
+        	   "status" => "not ready",
+        	   //"eta"    => 10,
+        	   "id"     => $this->_params['id']
+        	));
+        }
     }
 
     /**

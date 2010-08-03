@@ -7,7 +7,7 @@
  *
  * @category Movie
  * @package  Helioviewer
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -16,7 +16,7 @@
  *
  * @category Movie
  * @package  Helioviewer
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -65,6 +65,24 @@ class Movie_FFMPEGWrapper
             logErrorMsg($e->getMessage(), true);
         }
         return $ipodVideoName;
+    }
+    
+    /**
+     * Creates a flash video by converting it from the high quality file
+     * 
+     * @param string $hqFile    The name of the high quality file
+     * @param string $filename  The name of the flash video file
+     * @param string $outputDir The directory where both files are stored
+     */
+    public function createFlashVideo($hqFile, $filename, $outputDir)
+    {
+    	$cmd = "ffmpeg -i $outputDir/$hqFile -vcodec copy $outputDir/$filename";
+    
+        try {
+            exec(escapeshellcmd($cmd));
+        } catch (Exception $e) {
+            logErrorMsg($e->getMessage(), true);
+        }
     }
     
     /**
