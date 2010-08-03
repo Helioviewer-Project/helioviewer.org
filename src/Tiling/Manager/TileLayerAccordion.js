@@ -53,7 +53,7 @@ var TileLayerAccordion = Layer.extend(
         if (typeof(index) === "undefined") {
             index = 1000;
         }
-        
+
         this._createAccordionEntry(index, id, name, visible, startOpened);
         this._initTreeSelect(id, observatory, instrument, detector, measurement);
         this._initOpacitySlider(id, opacity, onOpacityChange);        

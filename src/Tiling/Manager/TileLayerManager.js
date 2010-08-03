@@ -144,7 +144,7 @@ var TileLayerManager = LayerManager.extend(
 
         $.each(layers, function (index, params) {
             layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, params.name, params.visible, 
+                                  self.tileVisibilityRange, self.api, params.nickname, params.visible, 
                                   params.opacity, params.server, true);
 
             self.addLayer(layer);

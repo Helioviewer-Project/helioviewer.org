@@ -21,6 +21,7 @@ var MovieBuilder = MediaBuilder.extend(
         "linux" : "mp4",
         "other" : "mp4"
     },
+    proxied : false,
     /**
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the movie button
@@ -232,7 +233,7 @@ var MovieBuilder = MediaBuilder.extend(
         
         // Ajax Request Parameters
         params = {
-            action     : "buildMovie",
+            action     : "getETAForMovie",
             layers     : viewportInfo.layers,
             startTime  : viewportInfo.time,
             imageScale : viewportInfo.imageScale,
@@ -241,67 +242,121 @@ var MovieBuilder = MediaBuilder.extend(
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
             hqFormat   : this.hqFormat,
-            scaleDown  : scaleDown
+            scaleDown  : scaleDown,
+            display    : false
         };
         
         movie = new Movie(params, (new Date()).getTime(), this.hqFormat);   
+        
+        self.hideDialogs();
+        self.history.addToHistory(movie);
 
-        // Ajax Request Callback
-        callback = function (data) {
-            var id, hqfile;
-            $(this).trigger('video-done');
-
-            self.building = false;
-
-            if (data !== null) {
-                if (data.error) {
-                    $(document).trigger("message-console-info", [data.error]);
-                    return;
-                } else if (!data.url) {
-                    $(document.trigger('message-console-info'), ["There was an error creating your video. Please" +
-                                                                 " try again later."]);
-                    return;
-                }
-                
-                // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
-                id = data.url.match(/\/\d+\//)[0].replace(/\//g, "");
-
-                // chop off the flv at the end of the file and replace it with mov/asf/mp4
-                hqfile = data.url.slice(0, -3) + this.hqFormat;
-                
-                // Options for the jGrowl notification. After it has opened, it will create
-                // event listeners for the watch link                               
-                options = {
-                    sticky: true,
-                    header: "Your movie is ready!",
-                    open  : function () {
-                        var watch = $('#watch-' + id);
-
-                        movie.setURL(data.url, id);
-                        self.hideDialogs();
-                        self.history.addToHistory(movie);
-                        
-                        // Open pop-up and display movie
-                        watch.click(function () {
-                            $(".jGrowl-notification .close").click();
-                            movie.playMovie();
-                        });
-                    }
-                };
-
-                // Make the jGrowl notification with the options above. Add an empty div for the watch dialog in 
-                //case they click on the notification.
-                $(document).trigger("message-console-info", [self.addJGrowlHTML(id), options]);
-            } else {
-                $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                             " try again later."]);
+        movieCallback = function (movieData) {
+            if (self._handleDataErrors(movieData)) {
                 return;
             }
+
+            self.waitForMovie(movieData, movie);
+        }
+        
+        // Ajax Request Callback
+        callback = function (data) {
+            if (self._handleDataErrors(data)) {
+                return;
+            }
+            if (data.eta) {
+            $(document).trigger("message-console-info", ["Your video is processing and will be available " +
+                                                         "in approximately " + toFuzzyTime(data.eta) +
+                                                         ". You may view it at any time after it is ready " +
+                                                         "by clicking the 'Movie' button."]);
+        }                
+            params.action = "buildMovie";
+                
+            $.post(this.url, params, movieCallback, "json");
         };
 
         $.post(this.url, params, callback, "json");
     },
 
+    /**
+     * Pops up a notification that lets the user know the movie is done.
+     */
+    notifyUser: function (data, movie) {
+        var id, hqfile, options, self=this;
+        this.building = false;
+        
+        if (data.url === null) {
+            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                         " try again later."]);
+            self.history.remove(movie);
+            return;        
+        }
+        
+        // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
+        id = data.url.match(/\/\d+\//)[0].replace(/\//g, "");
+
+        // chop off the flv at the end of the file and replace it with mov/asf/mp4
+        hqfile = data.url.slice(0,-3) + this.hqFormat;
+
+        // Options for the jGrowl notification. After it has opened, it will create
+        // event listeners for the watch link                               
+        options = {
+            sticky: true,
+            header: "Your movie is ready!",
+            open  : function () {
+                var watch = $('#watch-' + id);
+
+                movie.setURL(data.url, id);
+                self.hideDialogs();
+                self.history.save();
+                self.history.updateTooltips();
+    
+                // Open pop-up and display movie
+                watch.click(function () {
+                    $(".jGrowl-notification .close").click();
+                    movie.playMovie();
+                });
+            }
+        };
+
+        // Make the jGrowl notification with the options above. Add an empty div for the watch dialog in 
+        //case they click on the notification.
+        $(document).trigger("message-console-info", [this.addJGrowlHTML(id), options]);
+    },
+    
+    /**
+     * Waits for (eta) time and tries to get the movie at that time. Will keep calling waitForMovie as long as
+     * an eta is returned instead of a url. data.eta is in seconds so it needs to be converted to milliseconds
+     * for setTimeout
+     */
+    waitForMovie: function (data, movie) {
+        var self=this;
+
+        if (data.error) {
+            $(document).trigger("message-console-info", [data.error]);
+            this.building = false;
+            return;     
+            
+        } else if (data.eta) {
+            tryToGetMovie = function () {
+                params = {
+                    action     : "getMovie",
+                    id         : data.id
+                };
+            
+                callback = function (newData) {
+                    self.waitForMovie(newData, movie);
+                };
+            
+                $.post(self.url, params, callback, "json");
+            };
+
+            setTimeout(tryToGetMovie, data.eta*1000);
+        } else if (data.url) {
+            this.notifyUser(data, movie);
+        }
+    },
+    
     /**
      * Creates the html that will go in the jgrowl notification when the video is done.
      */
@@ -334,5 +389,22 @@ var MovieBuilder = MediaBuilder.extend(
                 thisObj.updateProgress(timeout);
             }, timeout, this);
         }    
+    },
+    
+    _handleDataErrors: function (data) {
+        if (data === null) {
+            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                         " try again later."]);
+            this.building = false;
+            return true;
+        }
+
+        if (data.error) {
+            $(document).trigger("message-console-info", [data.error]);
+            this.building = false;
+            return true;
+        }
+        
+        return false;
     }
 });

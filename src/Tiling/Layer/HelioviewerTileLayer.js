@@ -40,7 +40,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         
         this._setupEventHandlers();
         this._loadStaticProperties();
-        
+
         $(document).trigger("create-tile-layer-accordion-entry", 
             [index, this.id, name, observatory, instrument, detector, measurement, date, false, opacity, visible,
              $.proxy(this.setOpacity, this)
