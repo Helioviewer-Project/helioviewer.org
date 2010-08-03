@@ -21,7 +21,7 @@ var MovieBuilder = MediaBuilder.extend(
         "linux" : "mp4",
         "other" : "mp4"
     },
-    proxied : true,
+    proxied : false,
     /**
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the movie button
@@ -233,7 +233,7 @@ var MovieBuilder = MediaBuilder.extend(
         
         // Ajax Request Parameters
         params = {
-            action     : "buildMovie",
+            action     : "getETAForMovie",
             layers     : viewportInfo.layers,
             startTime  : viewportInfo.time,
             imageScale : viewportInfo.imageScale,
@@ -247,29 +247,32 @@ var MovieBuilder = MediaBuilder.extend(
         };
         
         movie = new Movie(params, (new Date()).getTime(), this.hqFormat);   
+        
+        self.hideDialogs();
+        self.history.addToHistory(movie);
 
-        // Ajax Request Callback
-        callback = function (data) {
-            if (data !== null) {
-                if (data.error) {
-                    $(document).trigger("message-console-info", [data.error]);
-                    self.building = false;
-                    return;
-                }
-                
-                if (self.proxied) {
-                    $(document).trigger("message-console-info", ["Your video is processing and will be available " +
-                    		                                     "in approximately " + toFuzzyTime(data.eta) + "."]);
-                }
-                    self.waitForMovie(data, movie);
-                //} else if (!self.proxied){
-                    //self.notifyUser(data, movie);
-                //}
-            } else {
-                $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                             " try again later."]);
+        movieCallback = function (movieData) {
+            if (self._handleDataErrors(movieData)) {
                 return;
             }
+
+            self.waitForMovie(movieData, movie);
+        }
+        
+        // Ajax Request Callback
+        callback = function (data) {
+            if (self._handleDataErrors(data)) {
+                return;
+            }
+            if (data.eta) {
+            $(document).trigger("message-console-info", ["Your video is processing and will be available " +
+                                                         "in approximately " + toFuzzyTime(data.eta) +
+                                                         ". You may view it at any time after it is ready " +
+                                                         "by clicking the 'Movie' button."]);
+        }                
+            params.action = "buildMovie";
+                
+            $.post(this.url, params, movieCallback, "json");
         };
 
         $.post(this.url, params, callback, "json");
@@ -281,9 +284,11 @@ var MovieBuilder = MediaBuilder.extend(
     notifyUser: function (data, movie) {
         var id, hqfile, options, self=this;
         this.building = false;
+        
         if (data.url === null) {
             $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
                                                          " try again later."]);
+            self.history.remove(movie);
             return;        
         }
         
@@ -303,7 +308,8 @@ var MovieBuilder = MediaBuilder.extend(
 
                 movie.setURL(data.url, id);
                 self.hideDialogs();
-                self.history.addToHistory(movie);
+                self.history.save();
+                self.history.updateTooltips();
     
                 // Open pop-up and display movie
                 watch.click(function () {
@@ -330,18 +336,22 @@ var MovieBuilder = MediaBuilder.extend(
             $(document).trigger("message-console-info", [data.error]);
             this.building = false;
             return;     
+            
         } else if (data.eta) {
-            params = {
-                action     : "getMovie",
-                id         : data.id
-            };
+            tryToGetMovie = function () {
+                params = {
+                    action     : "getMovie",
+                    id         : data.id
+                };
             
-            callback = function (newData) {
-                // This doesn't actually work.
-                setTimeout($.proxy(self.waitForMovie, self), data.eta*1000);
-            };
+                callback = function (newData) {
+                    self.waitForMovie(newData, movie);
+                };
             
-            $.post(this.url, params, callback, "json");
+                $.post(self.url, params, callback, "json");
+            };
+
+            setTimeout(tryToGetMovie, data.eta*1000);
         } else if (data.url) {
             this.notifyUser(data, movie);
         }
@@ -379,5 +389,22 @@ var MovieBuilder = MediaBuilder.extend(
                 thisObj.updateProgress(timeout);
             }, timeout, this);
         }    
+    },
+    
+    _handleDataErrors: function (data) {
+        if (data === null) {
+            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                         " try again later."]);
+            this.building = false;
+            return true;
+        }
+
+        if (data.error) {
+            $(document).trigger("message-console-info", [data.error]);
+            this.building = false;
+            return true;
+        }
+        
+        return false;
     }
 });

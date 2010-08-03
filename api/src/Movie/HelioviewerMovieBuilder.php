@@ -41,7 +41,7 @@ class Movie_HelioviewerMovieBuilder
         $this->_imgIndex = new Database_ImgIndex();
     }
     
-    public function getEtaAndId($params, $outputDir)
+    public function calculateETA($params)
     {
         $defaults = array(
             'numFrames'   => false,
@@ -57,7 +57,12 @@ class Movie_HelioviewerMovieBuilder
     	
         $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
 
-        $this->_returnIdAndETA($outputDir, $numFrames, sizeOf($layers), $width, $height);
+        $timePerFrame = 0.000001 * $width * $height + 0.25;
+        $eta = $timePerFrame * $numFrames;
+
+        header('Content-type: application/json');
+        echo JSON_encode(array("eta" => $eta));
+
         return;
     }
     

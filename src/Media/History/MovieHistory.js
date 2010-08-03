@@ -25,6 +25,10 @@ var MovieHistory = History.extend(
      */
     addToHistory: function (item) {
         this._super(item);
+        this.save();
+    },
+    
+    save: function () {
         $(document).trigger("save-setting", ["movie-history", this._serialize()]);
     },
     
@@ -64,6 +68,6 @@ var MovieHistory = History.extend(
         });
 
         this.history = this.history.reverse().slice(0, 12).reverse();
-        $(document).trigger("save-setting", ["movie-history", this._serialize()]);
+        this.save();
     }
 });
