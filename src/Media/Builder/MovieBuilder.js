@@ -216,7 +216,7 @@ var MovieBuilder = MediaBuilder.extend(
      */
     buildMovie: function (viewportInfo) {
         var options, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            movie, scaleDown = false, self = this;
+            movie, url, scaleDown = false, self = this;
 
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -245,13 +245,14 @@ var MovieBuilder = MediaBuilder.extend(
             scaleDown  : scaleDown,
             display    : false
         };
-        
+
         movie = new Movie(params, (new Date()).getTime(), this.hqFormat);   
         
         self.hideDialogs();
         self.history.addToHistory(movie);
 
-        movieCallback = function (movieData) {
+        movieCallback = function (movieData, textStatus, request) {
+            console.log(movieData, textStatus, request);
             if (self._handleDataErrors(movieData)) {
                 return;
             }
@@ -259,22 +260,37 @@ var MovieBuilder = MediaBuilder.extend(
             self.waitForMovie(movieData, movie);
         }
         
-        // Ajax Request Callback
+        // Callback for getETAForMovie
         callback = function (data) {
             if (self._handleDataErrors(data)) {
                 return;
             }
             if (data.eta) {
-            $(document).trigger("message-console-info", ["Your video is processing and will be available " +
-                                                         "in approximately " + toFuzzyTime(data.eta) +
-                                                         ". You may view it at any time after it is ready " +
-                                                         "by clicking the 'Movie' button."]);
-        }                
-            params.action = "buildMovie";
-                
-            $.post(this.url, params, movieCallback, "json");
-        };
+                $(document).trigger("message-console-info", ["Your video is processing and will be available " +
+                                                             "in approximately " + toFuzzyTime(data.eta) +
+                                                             ". You may view it at any time after it is ready " +
+                                                             "by clicking the 'Movie' button."]);
+            }
 
+            params.action = "buildMovie";
+            url = "http://localhost/hv/" + this.url + "?";
+            $.each(params, function (key, value) {
+                url = url + key + "=" + value + "&";
+            });
+            
+            url = url.slice(0,-1);
+            console.log(url);
+            $.ajax({
+                type: 'POST',
+                url: "http://localhost:4567/queue-task",
+                data: {'url': url, 'eta': data.eta},
+                success: movieCallback,
+                dataType: "json"
+            });
+            //$.post("http://localhost:4567/queue-task", {'url': url, 'eta': data.eta}, movieCallback, "json");
+        };
+        
+        
         $.post(this.url, params, callback, "json");
     },
 
@@ -330,6 +346,7 @@ var MovieBuilder = MediaBuilder.extend(
      * for setTimeout
      */
     waitForMovie: function (data, movie) {
+        console.log(data);
         var self=this;
 
         if (data.error) {

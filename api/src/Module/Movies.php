@@ -153,7 +153,7 @@ class Module_Movies implements Module
     {
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
         $builder = new Movie_HelioviewerMovieBuilder();
-        
+
         return $builder->calculateETA($this->_params);
     }
     

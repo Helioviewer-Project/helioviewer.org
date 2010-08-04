@@ -61,7 +61,7 @@ class Movie_HelioviewerMovieBuilder
         $eta = $timePerFrame * $numFrames;
 
         header('Content-type: application/json');
-        echo JSON_encode(array("eta" => $eta));
+        echo JSON_encode(array("eta" => round($eta)));
 
         return;
     }
