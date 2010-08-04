@@ -71,7 +71,7 @@ var Helioviewer = UIController.extend(
             timestep       : this.timeControls.getTimeIncrement(),
             tileServers    : this.userSettings.get('tileServers'),
             tileLayers     : this.userSettings.get('tileLayers'),
-            urlStringLayers: this.urlParams.imageLayers,
+            urlStringLayers: this.urlParams.imageLayers || "",
             maxTileLayers  : this.userSettings.get('maxTileLayers'),
             imageScale     : this.userSettings.get('imageScale'),
             minImageScale  : this.userSettings.get('minImageScale'),

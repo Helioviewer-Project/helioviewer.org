@@ -7,7 +7,7 @@
  *
  * @category Movie
  * @package  Helioviewer
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -23,7 +23,7 @@ require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
  *
  * @category Movie
  * @package  Helioviewer
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -169,11 +169,13 @@ class Movie_HelioviewerMovie
         
         $flash_filename = "$movieName." . $this->_filetype;
         $hq_filename    = "$movieName." . $this->_highQualityFiletype;
-        
-        // Create flash video
-        $ffmpeg->createVideo($flash_filename, $this->tmpDir, $tmpImageDir, $width, $height);
 
+        // Create high quality video
         $ffmpeg->createVideo($hq_filename, $this->tmpDir, $tmpImageDir, $width, $height);
+        
+        // Create flash video from that
+        $ffmpeg->createFlashVideo($hq_filename, $flash_filename, $this->tmpDir);
+        
         $this->_cleanup();
         return $this->tmpDir . "/" . $flash_filename;
     }
@@ -194,6 +196,7 @@ class Movie_HelioviewerMovie
         
         $preview = $this->_images[0];
         rename($preview, $this->tmpDir . "/" . $this->_filename . ".jpg");
+        touch($this->tmpDir . "/READY");
     }
 
     /**

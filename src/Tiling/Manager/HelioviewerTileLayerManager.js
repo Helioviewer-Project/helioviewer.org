@@ -21,7 +21,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
                     tileServers, savedLayers, urlLayers) {
-
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
 		              tileServers, savedLayers, urlLayers);
 
@@ -30,6 +29,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                         "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
         
         var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
+
         this._loadStartingLayers(startingLayers);
     },
 

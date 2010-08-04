@@ -17,13 +17,14 @@ var Movie = Media.extend(
      */    
     init: function (params, dateRequested, hqFormat) {
         this._super(params, dateRequested);
+
         this.time = this.startTime.replace("T", " ");
         // Get rid of the extra .000 if there is one
         if (this.time.length > 20) {
             this.time = this.time.slice(0, -5);
         }
-        
-        this.hqFormat     = hqFormat;
+
+        this.hqFormat = hqFormat;
         
         // Resize what appears in the movie player if the movie is as big as the viewport
         if (this.scaleDown === true) {
@@ -33,6 +34,14 @@ var Movie = Media.extend(
             this.viewerWidth  = this.width;
             this.viewerHeight = this.height;
         }
+        
+        this.complete = params.complete || false;
+        this.url      = params.url      || "";
+        
+        if (!this.complete) {
+            this.id = "incomplete";
+            this._getMovie();
+        }
     },
     
     /**
@@ -41,8 +50,16 @@ var Movie = Media.extend(
     setURL: function (url, id) {
         this._super(url, id);
         this.hqFile = (url).slice(0, -3) + this.hqFormat;
+        this.complete = true;
     },
 
+    getTimeDiff: function () {
+        if (!this.complete) {
+            return "Processing";
+        }
+        return this._super();
+    },
+    
     /**
      * Creates a tooltip that pops up with information about the movie
      * when its link is moused over. Also sets up an event listener for the
@@ -108,6 +125,7 @@ var Movie = Media.extend(
             x2            : this.x2,
             y1            : this.y1,
             y2            : this.y2,
+            complete      : this.complete,
             hqFormat      : this.hqFormat,
             hqFile        : this.hqFile,
             scaleDown     : this.scaleDown
@@ -121,10 +139,8 @@ var Movie = Media.extend(
      */
     isValidEntry: function () {
         if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested
-                && this.id.length > 1
                 && (!isNaN(this.imageScale) || this.imageScale.length > 1)
-                && this.layers.length > 1 && this.startTime.length > 1
-                && this.url.slice(0,4) === "http") {
+                && this.layers.length > 1 && this.startTime.length > 1) {
             return true;
         }
 
@@ -170,11 +186,22 @@ var Movie = Media.extend(
                     "</tr>" + 
                     "<tr>" +
                         "<td>&nbsp;</td>" +
-                    "</tr>" +
+                    "</tr>";
+        if (this.complete) {
+            table = table +
                     "<tr valign='top'>" + 
                         "<td><b>Preview: </b></td>" + 
                         "<td><img src=" + previewFrame + " width=150 /></td>" + 
-                 "</table>";
+                    "</tr>";
+        }
+        table = table + "</table>";
         return table;
+    },
+    
+    /**
+     * Makes an API call to getMovie with this.id to see if the movie is ready.
+     */
+    _getMovie: function () {
+    
     }
 });

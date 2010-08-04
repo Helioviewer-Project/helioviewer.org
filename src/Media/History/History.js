@@ -40,10 +40,30 @@ var History = Class.extend(
         this.history.push(item);
         this.history = this.history.reverse().slice(0, 12).reverse();
         
+        this.updateTooltips();
+    },
+    
+    /**
+     * Removes an item from history.
+     */
+    remove: function (item) {
+        this.removeTooltips();
+        this.history = $.grep(this.history, function (h) { h !== item; });
+
+        if (this.history.length === 0) {
+           this.historyBar.clearHistory();
+        } else {
+            this.updateTooltips();
+        }
+        this.save();
+    },
+    
+    updateTooltips: function () {
+        this.removeTooltips();
         var content = this._createContentString();
         this.historyBar.addToHistory(content);
     },
-
+    
     /**
      * Adds divs for all history items including a text link and time ago.
      * Adds the items in reverse chronological order. 
