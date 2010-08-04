@@ -84,7 +84,7 @@ var MediaHistoryBar = Class.extend(
      * Completely empties its history and destroys all tooltips/dialogs 
      * associated with it.
      */
-    _clearHistory: function () {
+    clearHistory: function () {
         this._cleanupTooltips();
         this.hasDialog = false;
     },
@@ -142,7 +142,7 @@ var MediaHistoryBar = Class.extend(
                     
                     clearButton.click(function () {
                         $(document).trigger('clear-' + self.id + '-history');
-                        self._clearHistory();
+                        self.clearHistory();
                     });
                     
                     addIconHoverEventListener(clearButton);
@@ -154,6 +154,10 @@ var MediaHistoryBar = Class.extend(
                             self.hide();
                         } 
                     });
+                },
+                // Don't show unless hasDialog is true.
+                beforeShow: function () {
+                    return self.hasDialog;
                 }
             }
         });

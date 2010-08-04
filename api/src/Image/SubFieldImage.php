@@ -8,7 +8,7 @@
  * @category Image
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -25,7 +25,7 @@ require 'JPEG2000/JP2Image.php';
  * @category Image
  * @package  Helioviewer
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
- * @author   Jaclyn Beck <jabeck@nmu.edu>
+ * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
