@@ -376,7 +376,8 @@ class Database_ImgIndex
                 
                 // Verbose measurement adjustment ("171" -> "171 Å")
                 if ($verbose && preg_match("/^\d*$/", $meas)) {
-                    $measurementWithUnits = $source["measurement_name"] . utf8_encode($source["measurement_units"]);
+                    // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
+                    $measurementWithUnits = $source["measurement_name"] . "\xE2\x81\x9F" . utf8_encode($source["measurement_units"]);
                 }
     
                 // Build tree
