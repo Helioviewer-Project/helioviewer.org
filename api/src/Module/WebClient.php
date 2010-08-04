@@ -170,7 +170,7 @@ class Module_WebClient implements Module
         $imgIndex = new Database_ImgIndex();
         $dataSources = json_encode($imgIndex->getDataSources($this->_params['verbose'], $this->_params['compat']));
 
-        header('Content-type: application/json');
+        header('Content-type: application/json;charset=UTF-8');
 
         print $dataSources;
     }
