@@ -69,7 +69,7 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
 
         // Enter color table here if it exists, otherwise leave this commented out. 
         /*
-        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_EIT_{$this->_measurement}.png";
+        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/EIT_{$this->_measurement}.png";
 
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
