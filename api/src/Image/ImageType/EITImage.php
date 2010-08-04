@@ -65,7 +65,7 @@ class Image_ImageType_EITImage extends Image_SubFieldImage
             $outputFile, $offsetX, $offsetY, $opacity, $compress
         );
 
-        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/ctable_EIT_{$this->_measurement}.png";
+        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/EIT_{$this->_measurement}.png";
 
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);

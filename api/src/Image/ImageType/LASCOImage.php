@@ -70,9 +70,9 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         );
 
         if ($this->_detector == "C2") {
-            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/extra/ctable_idl_3.png";
+            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/extra/idl_3.png";
         } else if ($this->_detector == "C3") {
-            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/extra/ctable_idl_1.png";
+            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/extra/idl_1.png";
         }
 
         if (file_exists($colorTable)) {
