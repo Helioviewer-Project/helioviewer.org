@@ -142,6 +142,8 @@ class Movie_HelioviewerMovieBuilder
             if (!empty($_POST)) {
                 header('Content-type: application/json');
                 echo json_encode(array("error" => $e->getMessage()));
+            } else if ($this->_params['display'] === false) {
+            	printErrorMsg($e->getMessage());
             }
         }
     }
@@ -624,7 +626,7 @@ class Movie_HelioviewerMovieBuilder
             echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url)));
             return $url;
         } else {
-            //echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
+            echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url)));
             return $url;
         }
     }

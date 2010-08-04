@@ -252,11 +252,16 @@ var MovieBuilder = MediaBuilder.extend(
         self.history.addToHistory(movie);
 
         movieCallback = function (movieData, textStatus, request) {
-            console.log(movieData, textStatus, request);
             if (self._handleDataErrors(movieData)) {
                 return;
             }
-
+            
+            if (movieData.eta) {
+                $(document).trigger("message-console-info", ["Your video is processing and will be available " +
+                                                             "in approximately " + toFuzzyTime(movieData.eta) +
+                                                             ". You may view it at any time after it is ready " +
+                                                             "by clicking the 'Movie' button."]);
+            }
             self.waitForMovie(movieData, movie);
         }
         
@@ -264,12 +269,6 @@ var MovieBuilder = MediaBuilder.extend(
         callback = function (data) {
             if (self._handleDataErrors(data)) {
                 return;
-            }
-            if (data.eta) {
-                $(document).trigger("message-console-info", ["Your video is processing and will be available " +
-                                                             "in approximately " + toFuzzyTime(data.eta) +
-                                                             ". You may view it at any time after it is ready " +
-                                                             "by clicking the 'Movie' button."]);
             }
 
             params.action = "buildMovie";
@@ -280,14 +279,8 @@ var MovieBuilder = MediaBuilder.extend(
             
             url = url.slice(0,-1);
             console.log(url);
-            $.ajax({
-                type: 'POST',
-                url: "http://localhost:4567/queue-task",
-                data: {'url': url, 'eta': data.eta},
-                success: movieCallback,
-                dataType: "json"
-            });
-            //$.post("http://localhost:4567/queue-task", {'url': url, 'eta': data.eta}, movieCallback, "json");
+
+            $.post("http://localhost/hq/queue-task", {'url': url, 'eta': data.eta}, movieCallback, "json");
         };
         
         
@@ -360,15 +353,17 @@ var MovieBuilder = MediaBuilder.extend(
                     action     : "getMovie",
                     id         : data.id
                 };
+                
+                url = "http://localhost/hq/status";
             
                 callback = function (newData) {
                     self.waitForMovie(newData, movie);
                 };
             
-                $.post(self.url, params, callback, "json");
+                $.get("http://localhost/hq/status/" + data.id, {}, callback, "json");
             };
 
-            setTimeout(tryToGetMovie, data.eta*1000);
+            setTimeout(tryToGetMovie, data.eta*200);
         } else if (data.url) {
             this.notifyUser(data, movie);
         }
