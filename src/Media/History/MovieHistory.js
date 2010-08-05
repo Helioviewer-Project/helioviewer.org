@@ -13,8 +13,10 @@ var MovieHistory = History.extend(
      * @constructs
      * @param history -- an array of saved history from UserSettings. May be null or empty.
      */    
-    init: function (history) {
+    init: function (history, proxyURL) {
         this.id = "movie";
+        this.proxyURL = proxyURL;
+
         this._super(history);
     },
     
@@ -41,6 +43,147 @@ var MovieHistory = History.extend(
     },
     
     /**
+     * Queues the movie and waits for a return.
+     */
+    queueMovie: function (params, hqFormat, apiUrl) {
+        var callback, movieCallback, message, movie, self = this;
+
+        movieCallback = function (movieData) {
+            if (self._handleDataErrors(movieData)) {
+                return;
+            }
+            
+            if (movieData.eta) {
+                message = "Your video is processing and will be available in approximately " + 
+                          toFuzzyTime(movieData.eta) + ". You may view it at any time after " +
+                          "it is ready by clicking the 'Movie' button."
+                $(document).trigger("message-console-info", [message]);
+            }
+            
+            movie = new Movie(params, (new Date()).getTime(), hqFormat);
+            movie.setId(movieData.id);
+            self.addToHistory(movie);
+            
+            self.save();
+            self._waitForMovie(movieData, movie);
+        }
+        
+        etaUrl = apiUrl + "?";
+        $.each(params, function (key, value) {
+            etaUrl = etaUrl + key + "=" + value + "&";
+        });
+        etaUrl = etaUrl.slice(0,-1);
+            
+        params.action = "buildMovie";
+        url = apiUrl + "?";
+        $.each(params, function (key, value) {
+            url = url + key + "=" + value + "&";
+        });
+            
+        url = url.slice(0,-1);
+
+        $.post(self.proxyURL + "/queue-task", {'url': url, 'etaUrl': etaUrl}, movieCallback, "json");
+    },
+    
+    /**
+     * Pops up a notification that lets the user know the movie is done.
+     */
+    _notifyUser: function (data, movie) {
+        var options, self=this;
+
+        if (data.url === null) {
+            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                         " try again later."]);
+            self.remove(movie);
+            return;        
+        }
+        // Options for the jGrowl notification. After it has opened, it will create
+        // event listeners for the watch link                               
+        options = {
+            sticky: true,
+            header: "Your movie is ready!",
+            open  : function () {
+                var watch = $('#watch-' + movie.id);
+
+                movie.setURL(data.url, movie.id);
+                //self.button.qtip('hide');
+                self.hide();
+                $("#social-buttons").click(); // hides the button qtip
+                self.save();
+                self.updateTooltips();
+    
+                // Open pop-up and display movie
+                watch.click(function () {
+                    $(".jGrowl-notification .close").click();
+                    movie.playMovie();
+                });
+            }
+        };
+
+        // Make the jGrowl notification with the options above. Add an empty div for the watch dialog in 
+        //case they click on the notification.
+        $(document).trigger("message-console-info", [this._addJGrowlHTML(movie.id), options]);
+    },
+    
+    /**
+     * Waits for (eta) time and tries to get the movie at that time. Will keep calling waitForMovie as long as
+     * an eta is returned instead of a url. data.eta is in seconds so it needs to be converted to milliseconds
+     * for setTimeout
+     */
+    _waitForMovie: function (data, movie) {
+        var tryToGetMovie, callback, self=this;
+
+        if (self._handleDataErrors(data)) {
+            self.remove(movie);
+            return;     
+            
+        } else if (data.url) {
+            this._notifyUser(data, movie);
+        } else {
+            tryToGetMovie = function () {
+                callback = function (newData) {
+                    self._waitForMovie(newData, movie);
+                };
+            
+                $.get("http://localhost/hq/status/" + movie.id, {}, callback, "json");
+            };
+
+            // Wait for half of the eta, the eta function isn't very accurate and overshoots
+            // if images are small. If eta is zero, wait for 15 seconds.
+            setTimeout(tryToGetMovie, Math.max(data.eta, 30)*500);
+        }
+    },
+    
+    _handleDataErrors: function (data) {
+        if (data === null) {
+            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                         " try again later."]);
+            return true;
+        }
+
+        if (data.error) {
+            if (data.errorCode && data.errorCode === 1) {
+                $(document).trigger("message-console-info", [data.error]);
+            } else {
+                $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
+                                                             " try again later."]);
+            }
+            return true;
+        }
+        
+        return false;
+    },
+    
+    /**
+     * Creates the html that will go in the jgrowl notification when the video is done.
+     */
+    _addJGrowlHTML: function (id) {
+        return  "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
+                    " download it." + "<br />(opens in a pop-up)</div>" +
+                "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>";
+    },
+    
+    /**
      * Adds an item to the content string and also adds an emtpy div where the watch
      * dialog will be created.
      * 
@@ -64,6 +207,9 @@ var MovieHistory = History.extend(
             movie = new Movie(this, this.dateRequested);
             if (movie.isValidEntry()) {
                 self.history.push(movie);
+                if (!movie.complete && movie.id) {
+                    self._waitForMovie({}, movie);
+                }
             }
         });
 

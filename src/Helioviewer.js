@@ -23,11 +23,13 @@ var Helioviewer = UIController.extend(
      * @param {Object} settings   Server settings loaded from Config.ini
      */
     init: function (urlParams, settings) {
+        this.proxyURL = settings.proxyURL;
+
         // Calling super will load settings, init viewport, and call _loadExtensions()
         this._super(urlParams, settings);
         
-        this.rootURL = this.userSettings.get('rootURL');
-
+        this.rootURL  = this.userSettings.get('rootURL');
+        
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
@@ -44,11 +46,11 @@ var Helioviewer = UIController.extend(
         this._initTooltips();
 
         screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history'));
-        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
+        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'), this.proxyURL);
 
-        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory);
+        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory, this.proxyURL);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, screenshotHistory);
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, screenshotHistory, this.proxyURL);
     },
     
     /**
