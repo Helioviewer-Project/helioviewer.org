@@ -48,7 +48,7 @@ var History = Class.extend(
      */
     remove: function (item) {
         this.removeTooltips();
-        this.history = $.grep(this.history, function (h) { h !== item; });
+        $.grep(this.history, function (h) { h.id !== item.id; });
 
         if (this.history.length === 0) {
            this.historyBar.clearHistory();
@@ -60,8 +60,10 @@ var History = Class.extend(
     
     updateTooltips: function () {
         this.removeTooltips();
-        var content = this._createContentString();
-        this.historyBar.addToHistory(content);
+        if (this.historyBar) {
+            var content = this._createContentString();
+            this.historyBar.addToHistory(content);
+        }
     },
     
     /**
@@ -110,7 +112,9 @@ var History = Class.extend(
     },
     
     hide: function () {
-        this.historyBar.hide();
+        if (this.historyBar) {
+            this.historyBar.hide();
+        }
     },
     
     /**
