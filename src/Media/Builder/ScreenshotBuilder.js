@@ -15,8 +15,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, history) {
-        this._super(viewport, history);
+    init: function (viewport, history, proxyURL) {
+        this._super(viewport, history, proxyURL);
         this.button = $("#screenshot-button");
         this.id     = "screenshot";
         this._setupDialogAndEventHandlers();
@@ -82,7 +82,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
-            y2         : arcsecCoords.y2
+            y2         : arcsecCoords.y2,
+            display    : false
         };
 
         screenshot = new Screenshot(params, (new Date()).getTime());
@@ -115,6 +116,12 @@ var ScreenshotBuilder = MediaBuilder.extend(
             }
         };
 
-        $.post(this.url, params, callback, 'json');
+        url = this.url + "?";
+        $.each(params, function (key, value) {
+            url = url + key + "=" + value + "&";
+        });
+        
+        url = url.slice(0,-1);
+        $.post(this.proxyURL + "/takeScreenshot", {"url": url}, callback, 'json');
     }
 });

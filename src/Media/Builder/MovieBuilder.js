@@ -28,8 +28,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, history) {
-        this._super(viewport, history);
+    init: function (viewport, history, proxyURL) {
+        this._super(viewport, history, proxyURL);
         this.button   = $("#movie-button");
         this.percent  = 0;
         this.id       = "movie";
@@ -215,8 +215,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var options, params, callback, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            movie, scaleDown = false, self = this;
+        var options, params, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
+            movie, url, scaleDown = false, self = this;
 
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -246,165 +246,8 @@ var MovieBuilder = MediaBuilder.extend(
             display    : false
         };
         
-        movie = new Movie(params, (new Date()).getTime(), this.hqFormat);   
-        
-        self.hideDialogs();
-        self.history.addToHistory(movie);
-
-        movieCallback = function (movieData) {
-            if (self._handleDataErrors(movieData)) {
-                return;
-            }
-
-            self.waitForMovie(movieData, movie);
-        }
-        
-        // Ajax Request Callback
-        callback = function (data) {
-            if (self._handleDataErrors(data)) {
-                return;
-            }
-            if (data.eta) {
-            $(document).trigger("message-console-info", ["Your video is processing and will be available " +
-                                                         "in approximately " + toFuzzyTime(data.eta) +
-                                                         ". You may view it at any time after it is ready " +
-                                                         "by clicking the 'Movie' button."]);
-        }                
-            params.action = "buildMovie";
-                
-            $.post(this.url, params, movieCallback, "json");
-        };
-
-        $.post(this.url, params, callback, "json");
-    },
-
-    /**
-     * Pops up a notification that lets the user know the movie is done.
-     */
-    notifyUser: function (data, movie) {
-        var id, hqfile, options, self=this;
+        this.hideDialogs();
+        this.history.queueMovie(params, this.hqFormat, this.url);
         this.building = false;
-        
-        if (data.url === null) {
-            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                         " try again later."]);
-            self.history.remove(movie);
-            return;        
-        }
-        
-        // Finds the part of the url that is the unix timestamp of the movie and uses that for id.
-        id = data.url.match(/\/\d+\//)[0].replace(/\//g, "");
-
-        // chop off the flv at the end of the file and replace it with mov/asf/mp4
-        hqfile = data.url.slice(0,-3) + this.hqFormat;
-
-        // Options for the jGrowl notification. After it has opened, it will create
-        // event listeners for the watch link                               
-        options = {
-            sticky: true,
-            header: "Your movie is ready!",
-            open  : function () {
-                var watch = $('#watch-' + id);
-
-                movie.setURL(data.url, id);
-                self.hideDialogs();
-                self.history.save();
-                self.history.updateTooltips();
-    
-                // Open pop-up and display movie
-                watch.click(function () {
-                    $(".jGrowl-notification .close").click();
-                    movie.playMovie();
-                });
-            }
-        };
-
-        // Make the jGrowl notification with the options above. Add an empty div for the watch dialog in 
-        //case they click on the notification.
-        $(document).trigger("message-console-info", [this.addJGrowlHTML(id), options]);
-    },
-    
-    /**
-     * Waits for (eta) time and tries to get the movie at that time. Will keep calling waitForMovie as long as
-     * an eta is returned instead of a url. data.eta is in seconds so it needs to be converted to milliseconds
-     * for setTimeout
-     */
-    waitForMovie: function (data, movie) {
-        var self=this;
-
-        if (data.error) {
-            $(document).trigger("message-console-info", [data.error]);
-            this.building = false;
-            return;     
-            
-        } else if (data.eta) {
-            tryToGetMovie = function () {
-                params = {
-                    action     : "getMovie",
-                    id         : data.id
-                };
-            
-                callback = function (newData) {
-                    self.waitForMovie(newData, movie);
-                };
-            
-                $.post(self.url, params, callback, "json");
-            };
-
-            setTimeout(tryToGetMovie, data.eta*1000);
-        } else if (data.url) {
-            this.notifyUser(data, movie);
-        }
-    },
-    
-    /**
-     * Creates the html that will go in the jgrowl notification when the video is done.
-     */
-    addJGrowlHTML: function (id) {
-        return  "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
-                    " download it." + "<br />(opens in a pop-up)</div>" +
-                "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>";
-    },
-    
-    /**
-     * @description Displays a percentage, starting at 0, and increments it by one every <timeout> seconds.
-     *              It is here so users can tell something is going on. 
-     * @param {Object} timeout -- a value in miliseconds that was calculated in buildMovie as an estimate 
-     *        of how long the movie will take to build / 100.
-     */    
-    updateProgress: function (timeout) {
-        var self = this;
-        
-        // If 'video-done' is fired off, self.percent will be 101 so the next if statement will fail, and
-        // the process will stop.
-        $(this).bind('video-done', function () {
-            self.percent = 101;
-        });
-        
-        if (this.percent <= 100) {
-            //this.controller.messageConsole.progress('Movie loading: ' + this.percent + '%');
-            this.percent += 1;
-            // call this function after <timeout> seconds.
-            setTimeout(function (thisObj) {
-                thisObj.updateProgress(timeout);
-            }, timeout, this);
-        }    
-    },
-    
-    _handleDataErrors: function (data) {
-        if (data === null) {
-            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                         " try again later."]);
-            this.building = false;
-            return true;
-        }
-
-        if (data.error) {
-            $(document).trigger("message-console-info", [data.error]);
-            this.building = false;
-            return true;
-        }
-        
-        return false;
     }
 });
