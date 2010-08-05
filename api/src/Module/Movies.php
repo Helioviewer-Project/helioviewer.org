@@ -87,11 +87,6 @@ class Module_Movies implements Module
                 "urls"     => array('url')
             );
             break;
-        case "getMovie":
-        	$expected = array(
-        	   "required" => array('id')
-        	);
-        	break;
         case "getETAForMovie":
         	$expected = array(
         	   "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),

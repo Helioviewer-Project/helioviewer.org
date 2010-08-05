@@ -78,7 +78,8 @@ var Config = Class.extend(
             'prefetchSize'        : this.params["prefetch_size"],
             'timeIncrementSecs'   : this.params["default_timestep"],
             'tileServers'         : this.params["tile_server"],
-            'rootURL'             : this.params["web_root_url"]
+            'rootURL'             : this.params["web_root_url"],
+            'proxyURL'            : this.params["proxy_root_url"]
         };
     }
 });
