@@ -156,39 +156,6 @@ class Module_Movies implements Module
 
         return $builder->calculateETA($this->_params);
     }
-    
-    /**
-     * Checks to see if the movie is done and returns the url if it is. If not,
-     * returns a new eta.
-     * 
-     * $this->_params['id'] should be the file path and file name of the movie 
-     * without the format extension
-     */
-    public function getMovie ()
-    {
-        $filepath = HV_CACHE_DIR . "/" . $this->_params['id'];
-        
-        header('Content-type: application/json');
-        if (file_exists($filepath . "/INVALID")) {
-            echo json_encode(array(
-                "status" => "invalid",
-                "error"  => "There were not enough images for the date requested, so a "
-                            . "movie was not created."
-            ));
-        } else if (file_exists($filepath . "/READY")) {
-        	$url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_DIR, $filepath);
-        	echo json_encode(array(
-        	   "status" => "ready",
-        	   "url"    => $url
-        	));
-        } else {
-        	echo json_encode(array(
-        	   "status" => "not ready",
-        	   "eta"    => 10,
-        	   "id"     => $this->_params['id']
-        	));
-        }
-    }
 
     /**
      * Gets the movie url and loads it into MC Mediaplayer

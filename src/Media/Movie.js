@@ -24,7 +24,7 @@ var Movie = Media.extend(
             this.time = this.time.slice(0, -5);
         }
 
-        this.hqFormat = hqFormat;
+        this.hqFormat = params.hqFormat || hqFormat;
         
         // Resize what appears in the movie player if the movie is as big as the viewport
         if (this.scaleDown === true) {
@@ -37,20 +37,19 @@ var Movie = Media.extend(
         
         this.complete = params.complete || false;
         this.url      = params.url      || "";
-        
-        if (!this.complete) {
-            this.id = "incomplete";
-            this._getMovie();
-        }
     },
     
     /**
      * Sets the url, name, and high quality file
      */
-    setURL: function (url, id) {
-        this._super(url, id);
+    setURL: function (url) {
+        this._super(url, this.id);
         this.hqFile = (url).slice(0, -3) + this.hqFormat;
         this.complete = true;
+    },
+    
+    setId: function (id) {
+        this.id = id;
     },
 
     getTimeDiff: function () {
@@ -196,12 +195,5 @@ var Movie = Media.extend(
         }
         table = table + "</table>";
         return table;
-    },
-    
-    /**
-     * Makes an API call to getMovie with this.id to see if the movie is ready.
-     */
-    _getMovie: function () {
-    
     }
 });
