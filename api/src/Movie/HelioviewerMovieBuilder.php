@@ -60,8 +60,18 @@ class Movie_HelioviewerMovieBuilder
         $timePerFrame = 0.000001 * $width * $height + 0.25;
         $eta = $timePerFrame * $numFrames;
 
-        header('Content-type: application/json');
-        echo JSON_encode(array("eta" => $eta));
+        try {
+        	$this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
+            header('Content-type: application/json');
+            echo JSON_encode(array("eta" => round($eta)));
+        } catch (Exception $e) {
+            if (!empty($_POST)) {
+                header('Content-type: application/json');
+                echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
+            } else if ($this->_params['display'] === false) {
+                printErrorMsg($e->getMessage());
+            }        	
+        }
 
         return;
     }
@@ -74,7 +84,7 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function buildMovie($params, $outputDir) 
+    public function buildMovie($params, $outputDir, $forEvent = false) 
     {
         $defaults = array(
             'numFrames'   => false,
@@ -135,13 +145,18 @@ class Movie_HelioviewerMovieBuilder
             $images      = $this->_buildFramesFromMetaInformation($movieMeta, $timestamps, $tmpImageDir);
 
             $url = $movie->buildMovie($images, $tmpImageDir);
-            return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
+            if ($forEvent) {
+            	return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
+            }
             
+            return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
         } catch(Exception $e) {
         	touch($outputDir . "/INVALID");
             if (!empty($_POST)) {
                 header('Content-type: application/json');
-                echo json_encode(array("error" => $e->getMessage()));
+                echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
+            } else if ($this->_params['display'] === false) {
+            	printErrorMsg($e->getMessage());
             }
         }
     }
@@ -257,7 +272,7 @@ class Movie_HelioviewerMovieBuilder
                 try {
                     $params['filename'] = $layerFilename;
                     $params['layers']   = $layer;
-                    $files[] = $this->buildMovie($params, $outputDir);
+                    $files[] = $this->buildMovie($params, $outputDir, true);
                 } catch(Exception $e) {
                     // Ignore any exceptions thrown by buildMovie, since they
                     // occur when no movie is made and we only care about movies that
@@ -624,7 +639,7 @@ class Movie_HelioviewerMovieBuilder
             echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url)));
             return $url;
         } else {
-            //echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
+            echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url)));
             return $url;
         }
     }
