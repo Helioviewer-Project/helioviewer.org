@@ -318,11 +318,10 @@ class Database_ImgIndex
      * 
      * @param bool $verbose If set to true an alternative data structure is returned that includes meta-information
      *                      at each level of the tree, and adds units to numeric measurement names
-     * @param bool $compas  If true, measurements of the form "171" are printed in a string-sortable form ("0171").
      *
      * @return array A tree representation of the known data sources
      */
-    public function getDataSources ($verbose=false, $compat=false)
+    public function getDataSources ($verbose=false)
     {
         $fields = array("observatory", "instrument", "detector", "measurement");
         
@@ -368,17 +367,6 @@ class Database_ImgIndex
                 $meas     = $source["measurement_name"];
                 $nickname = $source["nickname"];
                 $order    = (int) ($source["layeringOrder"]);
-                
-                // Compatability mode ("171" -> "0171")
-                if ($compat && preg_match("/^\d*$/", $meas)) {
-                    $meas = sprintf("%04d", $meas);
-                }
-                
-                // Verbose measurement adjustment ("171" -> "171 Å")
-                if ($verbose && preg_match("/^\d*$/", $meas)) {
-                    // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
-                    $measurementWithUnits = $source["measurement_name"] . "\xE2\x81\x9F" . utf8_encode($source["measurement_units"]);
-                }
     
                 // Build tree
                 if (!$verbose) {
@@ -398,31 +386,43 @@ class Database_ImgIndex
                         "layeringOrder" => $order
                     );
                 } else {
+                    // Alternative measurement descriptors
+                    if (preg_match("/^\d*$/", $meas)) {
+                        // "171" -> "0171"
+                        $measurementSortable = sprintf("%04d", $meas);
+                        
+                        // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
+                        $measurementWithUnits = $source["measurement_name"] . "\xE2\x81\x9F" 
+                                              . utf8_encode($source["measurement_units"]);
+                    }
+                 
                     // Verbose
                     if (!isset($tree[$obs])) {
                         $tree[$obs] = array(
                             "name"        => $obs,
                             "description" => $source["observatory_description"],
-                            "instruments" => array()
+                            "children" => array()
                         );
                     }
-                    if (!isset($tree[$obs]["instruments"][$inst])) {
-                        $tree[$obs]["instruments"][$inst] = array(
+                    if (!isset($tree[$obs]["children"][$inst])) {
+                        $tree[$obs]["children"][$inst] = array(
                             "name"        => $inst,
                             "description" => $source["instrument_description"],
-                            "detectors"   => array()
+                            "children"   => array()
                         );
                     }
-                    if (!isset($tree[$obs]["instruments"][$inst]["detectors"][$det])) {
-                        $tree[$obs]["instruments"][$inst]["detectors"][$det] = array(
+                    if (!isset($tree[$obs]["children"][$inst]["children"][$det])) {
+                        $tree[$obs]["children"][$inst]["children"][$det] = array(
                             "name"        => $det,
                             "description" => $source["detector_description"],
-                            "measurements" => array()
+                            "children" => array()
                         );
                     }
-                    $tree[$obs]["instruments"][$inst]["detectors"][$det]["measurements"][$meas] = array(
-                        "name"          => $measurementWithUnits, 
-                        "nickname"      => $nickname, 
+                    $tree[$obs]["children"][$inst]["children"][$det]["children"][$meas] = array(
+                        "name"          => $measurementWithUnits,
+                        "description"   => utf8_encode($source["measurement_description"]),
+                        "sortName"      => $measurementSortable,
+                        "nickname"      => $nickname,
                         "sourceId"      => $id,
                         "layeringOrder" => $order
                     );

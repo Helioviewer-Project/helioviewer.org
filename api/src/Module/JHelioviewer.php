@@ -88,7 +88,12 @@ class Module_JHelioviewer implements Module
         $filepath = HV_JP2_DIR . $relativePath;
 
         if ($this->_params['jpip']) {
-            echo $this->_getJPIPURL($filepath);
+            if ($this->_params['json']) {
+                header('Content-type: application/json;charset=UTF-8');
+                echo json_encode(array("uri" => $this->_getJPIPURL($filepath)));
+            } else {
+                echo $this->_getJPIPURL($filepath);
+            }
         } else {
             $this->_displayJP2($filepath);
         }
@@ -227,7 +232,7 @@ class Module_JHelioviewer implements Module
         {
         case 'getJP2Image':
             $expected = array(
-               'bools' => array('jpip'),
+               'bools' => array('jpip', 'json'),
                'dates' => array('date')
             );
 
