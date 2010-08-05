@@ -33,8 +33,8 @@ class Config
     private $_bools  = array("local_tiling_enabled", "distributed_tiling_enabled", "disable_cache",
                              "enable_movie_button", "enable_screenshot_button");
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
-                             "png_compression_quality", "jpeg_compression_quality", "max_jpx_frames",
-                             "max_movie_frames");
+                             "png_compression_quality", "jpeg_compression_quality", "ffmpeg_max_threads", 
+                             "max_jpx_frames", "max_movie_frames");
     private $_floats = array("default_image_scale", "min_image_scale", "max_image_scale");
 
     public  $servers;

@@ -28,8 +28,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, history) {
-        this._super(viewport, history);
+    init: function (viewport, history, proxyURL) {
+        this._super(viewport, history, proxyURL);
         this.button   = $("#movie-button");
         this.percent  = 0;
         this.id       = "movie";

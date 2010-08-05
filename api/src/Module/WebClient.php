@@ -76,7 +76,10 @@ class Module_WebClient implements Module
         // for every file on Linux due to security permissions with apache.
         // To get the file size, do $stat['size']
         $url = str_replace(HV_WEB_ROOT_URL, HV_ROOT_DIR, $url);
-        $stat = stat($url);
+        if (substr($url, 0, 4) !== "http") {
+        	// Can't stat files that are from other servers.
+            $stat = stat($url);
+        }
 
         if (strlen($url) > 1) {
             header("Pragma: public");
@@ -86,7 +89,9 @@ class Module_WebClient implements Module
             header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";");
             header("Content-Transfer-Encoding: binary");
 
-            header("Content-Length: " . $stat['size']);
+            if (isset($stat) && $stat['size']) {
+                header("Content-Length: " . $stat['size']);
+            }
             if (substr($url, -3) === "mov") {
                 header("Content-type: video/quicktime");
             }

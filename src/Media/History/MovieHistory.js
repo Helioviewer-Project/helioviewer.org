@@ -13,8 +13,10 @@ var MovieHistory = History.extend(
      * @constructs
      * @param history -- an array of saved history from UserSettings. May be null or empty.
      */    
-    init: function (history) {
+    init: function (history, proxyURL) {
         this.id = "movie";
+        this.proxyURL = proxyURL;
+
         this._super(history);
     },
     
@@ -66,24 +68,21 @@ var MovieHistory = History.extend(
             self._waitForMovie(movieData, movie);
         }
         
-        // Callback for getETAForMovie
-        callback = function (data) {
-            if (self._handleDataErrors(data)) {
-                return;
-            }
+        etaUrl = apiUrl + "?";
+        $.each(params, function (key, value) {
+            etaUrl = etaUrl + key + "=" + value + "&";
+        });
+        etaUrl = etaUrl.slice(0,-1);
+            
+        params.action = "buildMovie";
+        url = apiUrl + "?";
+        $.each(params, function (key, value) {
+            url = url + key + "=" + value + "&";
+        });
+            
+        url = url.slice(0,-1);
 
-            params.action = "buildMovie";
-            url = "http://localhost/hv/" + apiUrl + "?";
-            $.each(params, function (key, value) {
-                url = url + key + "=" + value + "&";
-            });
-            
-            url = url.slice(0,-1);
-            
-            $.post("http://localhost/hq/queue-task", {'url': url, 'eta': data.eta || 0}, movieCallback, "json");
-        };
-        
-        $.post(apiUrl, params, callback, "json");
+        $.post(self.proxyURL + "/queue-task", {'url': url, 'etaUrl': etaUrl}, movieCallback, "json");
     },
     
     /**
