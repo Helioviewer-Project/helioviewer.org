@@ -66,7 +66,7 @@ class Image_ImageType_AIAImage extends Image_SubFieldImage
         );
         
         // AIA 171, 193, and 304 color tables are same as EIT for the similar wavelengths
-        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/AIA_{$this->_measurement}.png";
+        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/SDO_AIA_{$this->_measurement}.png";
 
         $this->setColorTable($colorTable);
         
