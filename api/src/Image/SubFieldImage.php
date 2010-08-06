@@ -275,7 +275,6 @@ class Image_SubFieldImage
             $image->destroy();
 
             //Apply color-lookup table
-            // Override setColorPalette in MDIImage and AIAImage, which have no color tables.
             $this->setColorPalette($intermediate, $intermediate);
             
             $image = new IMagick($intermediate);
@@ -286,6 +285,19 @@ class Image_SubFieldImage
             // Resize extracted image to correct size before padding.
             $image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
             $image->setImageBackgroundColor('transparent');
+            
+//            var_dump($this->padding);
+//            var_dump($this->padding['width']);
+//            var_dump(512.0);
+//            $test=512.0;
+//            var_dump((int) $test);
+//            var_dump((int) (string) ($this->padding['width']));
+//            print ((int) $this->padding['width']);
+//            printf("%5f", $this->padding['width']);
+            
+            // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
+            $this->padding['width']  = (int) (string) $this->padding['width'];
+            $this->padding['height'] = (int) (string) $this->padding['height'];
 
             // Places the current image on a larger field of black if the final image is larger than this one
             $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
