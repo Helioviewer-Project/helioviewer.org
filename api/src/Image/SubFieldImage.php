@@ -427,8 +427,11 @@ class Image_SubFieldImage
         $ctable = imagecreatefrompng($clut);
 
         for ($i = 0; $i <= 255; $i++) {
-            $rgba = imagecolorsforindex($ctable, $i);
-            imagecolorset($gd, $i, $rgba["red"], $rgba["green"], $rgba["blue"]);
+            $rgb = imagecolorat($ctable, 0, $i);
+            $r = ($rgb >> 16) & 0xFF;
+            $g = ($rgb >> 8) & 0xFF;
+            $b = $rgb & 0xFF;
+            imagecolorset($gd, $i, $r, $g, $b);
         }
 
         // Enable interlacing
