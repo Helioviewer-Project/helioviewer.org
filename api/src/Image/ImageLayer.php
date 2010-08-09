@@ -54,16 +54,6 @@ abstract class Image_ImageLayer
     }
 
     /**
-     * Gets image dimensions
-     * 
-     * @return array dimensions
-     */
-    public function getImageDimensions()
-    {
-        return $this->image->getImageDimensions($this->getFilePathString());
-    }
-    
-    /**
      * Sets a new filepath 
      * 
      * @param string $filePath New filepath
