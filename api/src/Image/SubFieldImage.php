@@ -91,8 +91,8 @@ class Image_SubFieldImage
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));
 
-        $this->subfieldRelWidth  = round($this->subfieldWidth  / $this->desiredToActual);
-        $this->subfieldRelHeight = round($this->subfieldHeight / $this->desiredToActual);
+        $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
+        $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
 
         $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
@@ -216,15 +216,17 @@ class Image_SubFieldImage
         $relLeftToCenter = $leftToCenter * $scaleFactor;
         $relTopToCenter  = $topToCenter  * $scaleFactor;
 
-        $left = $roi['left'] / $scale - $relLeftToCenter;
-        $top  = $roi['top']  / $scale - $relTopToCenter;
+        $left = ($roi['left'] / $scale) - $relLeftToCenter;
+        $top  = ($roi['top']  / $scale) - $relTopToCenter;
 
+        // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
+        // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
         return array(
            "gravity" => "northwest",
-           "width"   => $width,
-           "height"  => $height,
-           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
-           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
+           "width"   => round($width, 10),
+           "height"  => round($height, 10),
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left, 10),
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top, 10)
         );
     }
     
@@ -281,24 +283,11 @@ class Image_SubFieldImage
             
             $this->setAlphaChannel($image);
             $this->compressImage($image);
-
+            
             // Resize extracted image to correct size before padding.
-            $image->resizeImage($this->subfieldRelWidth, $this->subfieldRelHeight, IMagick::FILTER_TRIANGLE, 0.6);
+            $image->resizeImage(round($this->subfieldRelWidth), round($this->subfieldRelHeight), IMagick::FILTER_TRIANGLE, 0.6);
             $image->setImageBackgroundColor('transparent');
             
-//            var_dump($this->padding);
-//            var_dump($this->padding['width']);
-//            var_dump(512.0);
-//            $test=512.0;
-//            var_dump((int) $test);
-//            var_dump((int) (string) ($this->padding['width']));
-//            print ((int) $this->padding['width']);
-//            printf("%5f", $this->padding['width']);
-            
-            // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
-            $this->padding['width']  = (int) (string) $this->padding['width'];
-            $this->padding['height'] = (int) (string) $this->padding['height'];
-
             // Places the current image on a larger field of black if the final image is larger than this one
             $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
             
@@ -332,7 +321,7 @@ class Image_SubFieldImage
      * 
      * @return void
      */
-    protected function compressImage($imagickImage)
+    protected function compressImage(&$imagickImage)
     {
         if (!$this->compress) {
             return;
@@ -360,7 +349,7 @@ class Image_SubFieldImage
      * 
      * @return string
      */
-    protected function setAlphaChannel($imagickImage)
+    protected function setAlphaChannel(&$imagickImage)
     {
         $imagickImage->setImageOpacity($this->opacity / 100);
     }
@@ -504,25 +493,6 @@ class Image_SubFieldImage
             }
         } catch (Exception $e) {
             logErrorMsg($error, true);
-        }
-    }
-
-    /**
-     * Returns the image's width and height
-     *
-     * @param string $filename The image filepath
-     *
-     * @return array the width and height of the given image
-     */
-    protected function getImageDimensions($filename)
-    {
-        if (list($width, $height, $type, $attr) = getimagesize($filename)) {
-            return array (
-                'width'  => $width,
-                'height' => $height
-            );
-        } else {
-            $this->_abort($filename);
         }
     }
 }
