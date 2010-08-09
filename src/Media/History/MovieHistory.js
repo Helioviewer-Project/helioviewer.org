@@ -145,7 +145,7 @@ var MovieHistory = History.extend(
                     self._waitForMovie(newData, movie);
                 };
             
-                $.get("http://localhost/hq/status/" + movie.id, {}, callback, "json");
+                $.get(self.proxyURL + "/status/" + movie.id, {}, callback, "json");
             };
 
             // Wait for half of the eta, the eta function isn't very accurate and overshoots
