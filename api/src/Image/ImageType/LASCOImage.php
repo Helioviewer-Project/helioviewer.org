@@ -153,7 +153,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      *
      * @return void
      */
-    protected function setAlphaChannel($imagickImage)
+    protected function setAlphaChannel(&$imagickImage)
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;
@@ -179,8 +179,8 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
 
         $mask  = new IMagick($mask);
         
-        // Imagick floors pixel values but they need to be rounded up or down. Rounding cannot be done in the previous lines of code
-        // because some addition needs to take place first.
+        // Imagick floors pixel values but they need to be rounded up or down.
+        // Rounding cannot be done in the previous lines of code because some addition needs to take place first.
         $maskTopLeftX = round($maskTopLeftX);
         $maskTopLeftY = round($maskTopLeftY);
         $width  = round($width);
