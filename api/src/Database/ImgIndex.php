@@ -388,13 +388,13 @@ class Database_ImgIndex
                 } else {
                     // Alternative measurement descriptors
                     if (preg_match("/^\d*$/", $meas)) {
-                        // "171" -> "0171"
-                        $measurementSortable = sprintf("%04d", $meas);
-                        
                         // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
-                        $measurementWithUnits = $source["measurement_name"] . "\xE2\x81\x9F" 
+                        $measurementName = $source["measurement_name"] . "\xE2\x81\x9F" 
                                               . utf8_encode($source["measurement_units"]);
+                    } else {
+                        $measurementName     = ucwords(str_replace("-", " ", $meas));
                     }
+                   
                  
                     // Verbose
                     if (!isset($tree[$obs])) {
@@ -419,9 +419,8 @@ class Database_ImgIndex
                         );
                     }
                     $tree[$obs]["children"][$inst]["children"][$det]["children"][$meas] = array(
-                        "name"          => $measurementWithUnits,
+                        "name"          => $measurementName,
                         "description"   => utf8_encode($source["measurement_description"]),
-                        "sortName"      => $measurementSortable,
                         "nickname"      => $nickname,
                         "sourceId"      => $id,
                         "layeringOrder" => $order
