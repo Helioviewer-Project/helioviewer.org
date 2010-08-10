@@ -79,7 +79,7 @@ input, select {background-color:#F4F4F4;}
 }
 
 /* Message Console */
-.message-console-link {
+a.message-console-link {
 	text-decoration: none;
 	font-weight: bold;
 	color: #3d76e0;

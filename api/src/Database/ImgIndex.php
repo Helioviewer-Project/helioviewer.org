@@ -389,10 +389,9 @@ class Database_ImgIndex
                     // Alternative measurement descriptors
                     if (preg_match("/^\d*$/", $meas)) {
                         // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
-                        $measurementName = $source["measurement_name"] . "\xE2\x81\x9F" 
-                                              . utf8_encode($source["measurement_units"]);
+                        $measurementName = $meas . "\xE2\x81\x9F" . utf8_encode($source["measurement_units"]);
                     } else {
-                        $measurementName     = ucwords(str_replace("-", " ", $meas));
+                        $measurementName = ucwords(str_replace("-", " ", $meas));
                     }
                    
                  
@@ -427,6 +426,14 @@ class Database_ImgIndex
                     );
                 }                
             }
+        }
+        
+        // Set defaults for verbose mode
+        if ($verbose) {
+            $tree["SOHO"]["default"] = true;
+            $tree["SOHO"]["children"]["EIT"]["default"] = true;
+            $tree["SOHO"]["children"]["EIT"]["children"]["EIT"]["default"] = true;
+            $tree["SOHO"]["children"]["EIT"]["children"]["EIT"]["children"]["304"]["default"] = true;
         }
 
         return $tree;
