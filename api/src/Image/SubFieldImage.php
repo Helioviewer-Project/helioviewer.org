@@ -223,10 +223,10 @@ class Image_SubFieldImage
         // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
         return array(
            "gravity" => "northwest",
-           "width"   => round($width, 10),
-           "height"  => round($height, 10),
-           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left, 10),
-           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top, 10)
+           "width"   => round($width),
+           "height"  => round($height),
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
         );
     }
     
