@@ -38,9 +38,6 @@ class Movie_HelioviewerMovie
     private $_numFrames;
     private $_frameRate;
     private $_db;
-    private $_baseScale = 2.63;
-    private $_baseZoom = 10;
-    private $_tileSize = 512;
     private $_filetype = "flv";
     private $_highQualityLevel = 100;
     private $_highQualityFileType;

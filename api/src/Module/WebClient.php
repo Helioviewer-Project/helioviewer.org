@@ -278,7 +278,7 @@ class Module_WebClient implements Module
      *
      * Example usage: (outdated!)
      *     http://helioviewer.org/api/index.php?action=getViewerImage
-     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&imageScale=2.63
+     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&imageScale=2.4
      *         &tileSize=512&xRange=-1,0&yRange=-1,0
      *     http://helioviewer.org/api/index.php?action=getViewerImage
      *         &layers=SOH_EIT_EIT_195,SOH_LAS_0C2_0WL

@@ -153,7 +153,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 // Application state
                 $urlParams = array();
 
-                //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,white light,0,100]
+                //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SOHO,AIA,AIA,171,1,70],[SOHO,LASCO,C2,white light,0,100]
                 if (isset($_GET['imageLayers'])) {
                     $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                     $imageLayers = preg_split("/\],\[/", $imageLayersString);
