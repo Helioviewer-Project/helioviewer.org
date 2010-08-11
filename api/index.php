@@ -73,13 +73,34 @@ function loadModule($params)
                 "API Documentation</a> for a list of valid actions."
             );
         } else {
-            $moduleName = $valid_actions[$params["action"]];
-            $className  = "Module_" . $moduleName;
+            // Local requests
+            if ((!isset($params['server'])) || (HV_LOCAL_TILING_ENABLED && ($params['server'] == 0))) {
+                $moduleName = $valid_actions[$params["action"]];
+                $className  = "Module_" . $moduleName;
+    
+                include_once "src/Module/$moduleName.php";
+    
+                $module = new $className($params);
+                $module->execute();
+            } else {
+                // Forward request if neccessary
+                // TODO 08/11/2010: Create separate method or extend Net_Proxy
+                if (HV_DISTRIBUTED_TILING_ENABLED) {
+                    $url = constant("HV_TILE_SERVER_" . $params['server']) . "?server=0";
+                
+                    unset ($params['server']);
+                    foreach ($params as $key=>$value) {
+                        $url .= "&$key=$value";
+                    }
+                    
+                    // TODO 08/11/2010: Use Net_Proxy instead
+                    echo file_get_contents($url);
+                } else {
+                    $err = "Both local and remote tiling is disabled on the server.";
+                    throw new Exception($err);
+                }
+            }
 
-            include_once "src/Module/$moduleName.php";
-
-            $module = new $className($params);
-            $module->execute();
         }
     } catch (Exception $e) {
         printErrorMsg($e->getMessage());
