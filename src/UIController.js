@@ -18,20 +18,22 @@ var UIController = Class.extend(
      * Creates a new UIController instance.
      * @constructs
      * 
-     * @param {Object} urlParams  Client-specified settings to load
-     * @param {Object} settings   Server settings
+     * @param {Object} urlParams        Settings specified via URL
+     * @param {Object} serverSettings   Server settings
      */
-    init: function (urlParams, settings) {
+    init: function (urlParams, serverSettings) {
         this.urlParams = urlParams;
 
         // Determine browser support
         this._checkBrowser();
-        this.userSettings = SettingsLoader.loadSettings(urlParams, settings);
+        
+        this.serverSettings = serverSettings; 
+        this.userSettings   = SettingsLoader.loadSettings(urlParams, serverSettings);
 
         this._initLoadingIndicator();
         
-        this.timeControls = new TimeControls(this.userSettings.get('date'), this.userSettings.get('timeIncrementSecs'),
-                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+        this.timeControls = new TimeControls(this.userSettings.get('date'), this.serverSettings.timeIncrementSecs,
+                                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
 
         this.api = "api/index.php";
         
@@ -49,15 +51,15 @@ var UIController = Class.extend(
             id             : '#helioviewer-viewport',
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            tileServers    : this.userSettings.get('tileServers'),
+            urlStringLayers: this.urlParams.imageLayers  || "",
+            tileServers    : this.serverSettings.tileServers,
+            maxTileLayers  : this.serverSettings.maxTileLayers,
+            minImageScale  : this.serverSettings.minImageScale,
+            maxImageScale  : this.serverSettings.maxImageScale,
+            prefetch       : this.serverSettings.prefetchSize,
             tileLayers     : this.userSettings.get('tileLayers'),
-            urlStringLayers: this.urlParams.imageLayers,
-            maxTileLayers  : this.userSettings.get('maxTileLayers'),
             imageScale     : this.userSettings.get('imageScale'),
-            minImageScale  : this.userSettings.get('minImageScale'),
-            maxImageScale  : this.userSettings.get('maxImageScale'),
-            prefetch       : this.userSettings.get('prefetchSize'),
-            warnMouseCoords: this.userSettings.get('warnMouseCoords') 
+            warnMouseCoords: this.userSettings.get('warnMouseCoords')
         });
     },
     
@@ -90,10 +92,11 @@ var UIController = Class.extend(
     _loadExtensions: function () {
         this.messageConsole = new MessageConsole();
         this.keyboard       = new KeyboardManager();
+        
         // User Interface components
         this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
-                                             this.userSettings.get('minImageScale'), 
-                                             this.userSettings.get('maxImageScale'));
+                                             this.serverSettings.minImageScale, 
+                                             this.serverSettings.maxImageScale);
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
     }

@@ -23,10 +23,9 @@ var UserSettings = Class.extend(
      * 
      * @see <a href="https://developer.mozilla.org/en/DOM/Storage">https://developer.mozilla.org/en/DOM/Storage</a>
      */
-    init: function (defaults, minImageScale, maxImageScale) {
-        this._defaults      = defaults;
-        this._minImageScale = minImageScale;
-        this._maxImageScale = maxImageScale;        
+    init: function (defaults, serverSettings) {
+        this._defaults       = defaults;
+        this._serverSettings = serverSettings;
                 
         // Initialize storage
         this._initStorage();
@@ -129,7 +128,7 @@ var UserSettings = Class.extend(
             }
             break;
         case "imageScale":
-            if ((isNaN(value)) || (value < this._minImageScale) || (value > this._maxImageScale)) {
+            if ((isNaN(value)) || (value < this._serverSettings.minImageScale) || (value > this._serverSettings.maxImageScale)) {
                 return false;
             }
             break;
