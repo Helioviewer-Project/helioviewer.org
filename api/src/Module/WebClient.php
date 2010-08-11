@@ -119,7 +119,7 @@ class Module_WebClient implements Module
         $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
 
         // Tile locally
-        if (HV_LOCAL_TILING_ENABLED && ($baseURL == 'api/index.php')) {
+//        if (HV_LOCAL_TILING_ENABLED && ($baseURL == 'api/index.php')) {
             include_once 'src/Database/ImgIndex.php';
             $imgIndex = new Database_ImgIndex();
 
@@ -137,28 +137,28 @@ class Module_WebClient implements Module
             $this->_createImageCacheDir($result['filepath']);
 
             $json = json_encode($result);
-        } else {
-            if (HV_DISTRIBUTED_TILING_ENABLED) {
-                // Redirect request to remote server
-                if ($baseURL != 'api/index.php') {
-                    $source  = $this->_params['sourceId'];
-                    $date    = $this->_params['date'];
-                    $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
-                    $json = file_get_contents($url);
-                } else {
-                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini " .
-                           "for more information";
-                    throw new Exception($msg);
-                }
-            } else {
-                if ($baseURL == 'api/index.php') {
-                    $err = "Both local and remote tiling is disabled on the server.";
-                } else {
-                    $err = "Remote tiling is disabled for this server.";
-                }
-                throw new Exception($err);
-            }
-        }
+//        } else {
+//            if (HV_DISTRIBUTED_TILING_ENABLED) {
+//                // Redirect request to remote server
+//                if ($baseURL != 'api/index.php') {
+//                    $source  = $this->_params['sourceId'];
+//                    $date    = $this->_params['date'];
+//                    $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
+//                    $json = file_get_contents($url);
+//                } else {
+//                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini " .
+//                           "for more information";
+//                    throw new Exception($msg);
+//                }
+//            } else {
+//                if ($baseURL == 'api/index.php') {
+//                    $err = "Both local and remote tiling is disabled on the server.";
+//                } else {
+//                    $err = "Remote tiling is disabled for this server.";
+//                }
+//                throw new Exception($err);
+//            }
+//        }
         header('Content-Type: application/json');
         echo $json;
     }
@@ -188,28 +188,28 @@ class Module_WebClient implements Module
     public function getJP2Header ()
     {
         // Retrieve header locally
-        if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
+//        if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
             include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"]);
             $xmlBox->printXMLBox();
-        } else {
-            if (HV_DISTRIBUTED_TILING_ENABLED) {
-                // Redirect request to remote server
-                if ($this->_params['server'] != 0) {
-                    $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
-                    $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";
-                    header('Content-type: text/xml');
-                    echo file_get_contents($url);
-                } else {
-                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini" .
-                           "for more information";
-                    throw new Exception($msg);
-                }
-            } else {
-                $err = "Both local and remote tiling is disabled on the server.";
-                throw new Exception($err);
-            }
-        }
+//        } else {
+//            if (HV_DISTRIBUTED_TILING_ENABLED) {
+//                // Redirect request to remote server
+//                if ($this->_params['server'] != 0) {
+//                    $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+//                    $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";
+//                    header('Content-type: text/xml');
+//                    echo file_get_contents($url);
+//                } else {
+//                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini" .
+//                           "for more information";
+//                    throw new Exception($msg);
+//                }
+//            } else {
+//                $err = "Both local and remote tiling is disabled on the server.";
+//                throw new Exception($err);
+//            }
+//        }
     }
 
     /**
@@ -267,7 +267,7 @@ class Module_WebClient implements Module
 
         $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
         
-        if (!isset($this->_params['display']) || !$this->_params['display'] || $this->_params['display'] === "false") {
+        if (!$this->_params['display']) {
             echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
         }
         return $response;
@@ -361,12 +361,13 @@ class Module_WebClient implements Module
         // Any booleans that default to true cannot be listed here because the
         // validation process sets them to false if they are not given.
         case "takeScreenshot":
-            $required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
+            $required = array('obsDate', 'imageScale', 'layers', 'server', 'x1', 'x2', 'y1', 'y2');
             $expected = array(
-                "required" => $required, 
+                "required" => $required,
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"	   => array('obsDate'),
-                "ints"     => array('quality')
+                "ints"     => array('quality', 'server'),
+                "bools"    => array('display')
             );
             break;
         default:

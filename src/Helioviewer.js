@@ -50,7 +50,8 @@ var Helioviewer = UIController.extend(
 
         this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory, this.proxyURL);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, screenshotHistory, this.proxyURL);
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.userSettings.get('tileServers'),
+                                                        screenshotHistory, this.proxyURL);
     },
     
     /**

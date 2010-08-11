@@ -237,6 +237,8 @@ var TileLayer = Layer.extend(
             img.css("opacity", this.opacity / 100);
         }
 
+        console.log(this.getTileURL(this.image.server, x, y));
+        
         // Load tile
         img.error(function (e) {
             img.unbind("error");

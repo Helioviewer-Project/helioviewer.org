@@ -15,10 +15,11 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, history, proxyURL) {
+    init: function (viewport, tileServers, history, proxyURL) {
         this._super(viewport, history, proxyURL);
-        this.button = $("#screenshot-button");
-        this.id     = "screenshot";
+        this.button      = $("#screenshot-button");
+        this.id          = "screenshot";
+        this.tileServers = tileServers;
         this._setupDialogAndEventHandlers();
     },
 
@@ -83,6 +84,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
+            server     : Math.floor(Math.random() * (this.tileServers.length)),
             display    : false
         };
 
@@ -115,13 +117,15 @@ var ScreenshotBuilder = MediaBuilder.extend(
                 "' style='cursor: pointer'>Click here to download. </div>", options]); 
             }
         };
-
-        url = this.url + "?";
-        $.each(params, function (key, value) {
-            url = url + key + "=" + value + "&";
-        });
-        
-        url = url.slice(0,-1);
-        $.post(this.proxyURL + "/takeScreenshot", {"url": url}, callback, 'json');
+       
+        $.post(this.url, params, callback, 'json');
+//
+//        url = this.url + "?";
+//        $.each(params, function (key, value) {
+//            url = url + key + "=" + value + "&";
+//        });
+//        
+//        url = url.slice(0,-1);
+//        $.post(this.proxyURL + "/takeScreenshot", {"url": url}, callback, 'json');
     }
 });
