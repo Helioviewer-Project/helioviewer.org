@@ -18,17 +18,18 @@ var Helioviewer = UIController.extend(
      * Creates a new Helioviewer instance.
      * @constructs
      * 
-     * @param {Object} urlParams  Client-specified settings to load. Includes imageLayers,
-     *                            date, and imageScale. May be empty.
-     * @param {Object} settings   Server settings loaded from Config.ini
+     * @param {Object} urlParams        Client-specified settings to load. Includes imageLayers,
+     *                                  date, and imageScale. May be empty.
+     * @param {Object} serverSettings   Server settings loaded from Config.ini
      */
-    init: function (urlParams, settings) {
-        this.proxyURL = settings.proxyURL;
+    init: function (urlParams, serverSettings) {
 
         // Calling super will load settings, init viewport, and call _loadExtensions()
-        this._super(urlParams, settings);
+        this._super(urlParams, serverSettings);
         
-        this.rootURL  = this.userSettings.get('rootURL');
+        // TODO 08/11/2010 USE this.serverSettings for these two.. don't need to alias?
+        this.proxyURL = serverSettings.proxyURL;
+        this.rootURL  = serverSettings.rootURL;
         
         this._setupDialogs();
         this._initEventHandlers();
@@ -41,6 +42,7 @@ var Helioviewer = UIController.extend(
      */
     _loadExtensions: function () {
         var screenshotHistory, movieHistory;
+
         this._super(); // Call super method in UIController to load a few extensions
         
         this._initTooltips();
@@ -50,7 +52,7 @@ var Helioviewer = UIController.extend(
 
         this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory, this.proxyURL);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.userSettings.get('tileServers'),
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.tileServers,
                                                         screenshotHistory, this.proxyURL);
     },
     
@@ -72,15 +74,15 @@ var Helioviewer = UIController.extend(
             id             : '#helioviewer-viewport',
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            tileServers    : this.userSettings.get('tileServers'),
+            urlStringLayers: this.urlParams.imageLayers  || "",
+            tileServers    : this.serverSettings.tileServers,
+            maxTileLayers  : this.serverSettings.maxTileLayers,
+            minImageScale  : this.serverSettings.minImageScale,
+            maxImageScale  : this.serverSettings.maxImageScale,
+            prefetch       : this.serverSettings.prefetchSize,
             tileLayers     : this.userSettings.get('tileLayers'),
-            urlStringLayers: this.urlParams.imageLayers || "",
-            maxTileLayers  : this.userSettings.get('maxTileLayers'),
             imageScale     : this.userSettings.get('imageScale'),
-            minImageScale  : this.userSettings.get('minImageScale'),
-            maxImageScale  : this.userSettings.get('maxImageScale'), 
-            prefetch       : this.userSettings.get('prefetchSize'),
-            warnMouseCoords: this.userSettings.get('warnMouseCoords') 
+            warnMouseCoords: this.userSettings.get('warnMouseCoords')
         });   
     },
     
