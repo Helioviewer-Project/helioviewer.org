@@ -74,7 +74,7 @@ function loadModule($params)
             );
         } else {
             // Local requests
-            if ((!isset($params['server'])) || (HV_LOCAL_TILING_ENABLED && ($params['server'] == 0))) {
+            if (!isset($params['server'])) {
                 $moduleName = $valid_actions[$params["action"]];
                 $className  = "Module_" . $moduleName;
     
@@ -86,17 +86,18 @@ function loadModule($params)
                 // Forward request if neccessary
                 // TODO 08/11/2010: Create separate method or extend Net_Proxy
                 if (HV_DISTRIBUTED_MODE_ENABLED) {
-                    $url = constant("HV_SERVER_" . $params['server']) . "?server=0";
-                
+                    $url = constant("HV_SERVER_" . $params['server']) . "?";
+                    
                     unset ($params['server']);
                     foreach ($params as $key=>$value) {
-                        $url .= "&$key=$value";
+                        $url .= "$key=$value&";
                     }
+                    trim($url, "&");
                     
                     // TODO 08/11/2010: Use Net_Proxy instead
                     echo file_get_contents($url);
                 } else {
-                    $err = "Both local and remote tiling is disabled on the server.";
+                    $err = "Distributed mode is disabled for this server.";
                     throw new Exception($err);
                 }
             }
@@ -116,7 +117,6 @@ function loadModule($params)
  */
 function printAPIDocumentation()
 {
-    $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
     $modules = array("WebClient", "SolarEvents", "JHelioviewer", "Movies");
 ?>
 <!DOCTYPE html>
@@ -189,10 +189,10 @@ function printAPIDocumentation()
         The general structure of queries is as follows:</p>
     
         <div class="summary-box">
-            <?php echo $baseURL;?>?action=methodName&param1=value1&param2=value2...
+            <?php echo HV_API_ROOT_URL;?>?action=methodName&param1=value1&param2=value2...
         </div>
     
-        <p>The base URL is the same for each of the APIs (<a href="<?php echo $baseURL;?>;"><?php echo $baseURL;?></a>).
+        <p>The base URL is the same for each of the APIs (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
         The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters
         may also be required depending on the specific API being accessed. The one exception to this rule is the
         <a href="index.php#CustomView">Custom View API</a> which is accessed from

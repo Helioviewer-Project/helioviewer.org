@@ -30,8 +30,9 @@
  */
 class Config
 {
-    private $_bools  = array("local_tiling_enabled", "distributed_mode_enabled", "disable_cache",
+    private $_bools  = array("distributed_mode_enabled", "disable_cache", 
                              "enable_movie_button", "enable_screenshot_button");
+                             
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
                              "png_compression_quality", "jpeg_compression_quality", "ffmpeg_max_threads", 
                              "max_jpx_frames", "max_movie_frames");
@@ -57,26 +58,21 @@ class Config
                 define("HV_" . strtoupper($key), $value);
             }
         }
-
-        if ($this->config['local_tiling_enabled']) {
-            array_unshift($this->config["server"], "api/index.php");
-        }
         
+        if ($this->config['distributed_mode_enabled']) {
+            array_unshift($this->config["server"], "api/index.php");
+        } else {
+            $this->config["server"] = array("api/index.php");
+        }
+
         foreach ($this->config["server"] as $id => $url) {
             define("HV_SERVER_" . ($id), $url);
         }
-        
-        //        define("HV_TILE_SERVER_0", "api/index.php");
-        //        foreach ($this->config["tile_server"] as $id => $url) {
-        //            define("HV_TILE_SERVER_" . ($id + 1), $url);
-        //        }
 
         $this->_setAdditionalParams();
-
         $this->_setupLogging(true);
-
+        
         $dbconfig = substr($file, 0, strripos($file, "/")) . "/Database.php";
-
         include_once $dbconfig;
     }
 
@@ -128,14 +124,12 @@ class Config
      */
     private function _setAdditionalParams()
     {
-        //define("HV_ROOT_DIR", substr(getcwd(), 0, -4));
-        //define("HV_WEB_ROOT_URL", "http://" . $_SERVER["SERVER_NAME"]
-        //    . substr($_SERVER["SCRIPT_NAME"], 0, -14));
         define("HV_CACHE_DIR", HV_ROOT_DIR . "/cache");
         define("HV_TMP_DIR", HV_ROOT_DIR . "/cache/movies");
         define("HV_ERROR_LOG", HV_ROOT_DIR . "/log/error");
         define("HV_EMPTY_TILE", HV_ROOT_DIR . "/resources/images/transparent_512.png");
         define("HV_TMP_ROOT_URL", HV_WEB_ROOT_URL . "/cache/movies");
+        define("HV_API_ROOT_URL", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
         
         if (!file_exists(HV_CACHE_DIR)) {
             mkdir(HV_CACHE_DIR, 0777, true);

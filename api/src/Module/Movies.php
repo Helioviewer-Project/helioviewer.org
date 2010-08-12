@@ -218,7 +218,6 @@ class Module_Movies implements Module
      */
     public static function printDoc()
     {
-        $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
         ?>
         <!-- Movie and Screenshot API -->
         <div id="MovieAPI">
@@ -237,7 +236,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo $baseURL;?>?action=takeScreenshot<br />
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -319,13 +318,13 @@ class Module_Movies implements Module
         
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span>
                 </div>
@@ -346,7 +345,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo $baseURL;?>?action=buildMovie<br />
+                <?php echo HV_API_ROOT_URL;?>?action=buildMovie<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -454,19 +453,19 @@ class Module_Movies implements Module
                 
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
-                <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
-                    <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
                 </a>
                 </span>
                 </div>

@@ -37,7 +37,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, params, opacity, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, params, opacity, queue, ds, server, baseURL, defaultLayer = "SOHO,EIT,EIT,171";
 
         // If new layer exceeds the maximum number of layers allowed,
         // display a message to the user
@@ -66,6 +66,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         params = this.parseLayerString(next + ",1,100");
 
         server = this._selectTilingServer();
+        
+        baseURL = this.servers[server] || "api/index.php";
 
         ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
@@ -75,7 +77,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Add the layer
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
-                          this.tileVisibilityRange, this.api, this.servers[server], params.observatory, 
+                          this.tileVisibilityRange, this.api, baseURL, params.observatory, 
                           params.instrument, params.detector, params.measurement, params.sourceId, params.nickname, 
                           params.visible, opacity, params.layeringOrder, server)
         );
@@ -86,14 +88,16 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        var layer, basicParams, self = this;
+        var layer, basicParams, baseURL, self = this;
 
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
+            
+            baseURL = self.servers[params.server] || "api/index.php";
 
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, self.servers[params.server], 
+                                  self.tileVisibilityRange, self.api, baseURL, 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
                                   params.sourceId, params.nickname, params.visible, params.opacity,
                                   params.layeringOrder, params.server);

@@ -16,8 +16,8 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["local_tiling_enabled", "distributed_mode_enabled", "disable_cache",
-                       "enable_movie_button", "enable_screenshot_button"];
+        this.bools  = ["distributed_mode_enabled", "disable_cache", "enable_movie_button", "enable_screenshot_button"
+                       ];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
                        "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames",
                        "max_tile_layers"];
@@ -55,12 +55,10 @@ var Config = Class.extend(
         });
         
         // Servers
-        if (this.params["distributed_mode_enabled"]) {
-            if (this.params["local_tiling_enabled"]) {
-                this.params["server"].unshift("api/index.php");
-            }            
+        if (this.params['distributed_mode_enabled']) {
+            this.params["server"].unshift("api/index.php");
         } else {
-            this.params["server"] = ["api/index.php"];   
+            this.params["server"] = ["api/index.php"];
         }
     },
     
