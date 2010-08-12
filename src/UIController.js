@@ -52,7 +52,7 @@ var UIController = Class.extend(
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
             urlStringLayers: this.urlParams.imageLayers  || "",
-            tileServers    : this.serverSettings.tileServers,
+            servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
             maxImageScale  : this.serverSettings.maxImageScale,

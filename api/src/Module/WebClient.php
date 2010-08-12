@@ -116,7 +116,7 @@ class Module_WebClient implements Module
             $this->_params['server'] = 0;
         }
         
-        $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+        $baseURL = constant("HV_SERVER_" . $this->_params['server']);
 
         // Tile locally
 //        if (HV_LOCAL_TILING_ENABLED && ($baseURL == 'api/index.php')) {
@@ -196,7 +196,7 @@ class Module_WebClient implements Module
 //            if (HV_DISTRIBUTED_TILING_ENABLED) {
 //                // Redirect request to remote server
 //                if ($this->_params['server'] != 0) {
-//                    $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+//                    $baseURL = constant("HV_SERVER_" . $this->_params['server']);
 //                    $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";
 //                    header('Content-type: text/xml');
 //                    echo file_get_contents($url);

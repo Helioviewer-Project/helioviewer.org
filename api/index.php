@@ -85,8 +85,8 @@ function loadModule($params)
             } else {
                 // Forward request if neccessary
                 // TODO 08/11/2010: Create separate method or extend Net_Proxy
-                if (HV_DISTRIBUTED_TILING_ENABLED) {
-                    $url = constant("HV_TILE_SERVER_" . $params['server']) . "?server=0";
+                if (HV_DISTRIBUTED_MODE_ENABLED) {
+                    $url = constant("HV_SERVER_" . $params['server']) . "?server=0";
                 
                     unset ($params['server']);
                     foreach ($params as $key=>$value) {

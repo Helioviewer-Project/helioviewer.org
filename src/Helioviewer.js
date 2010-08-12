@@ -52,7 +52,7 @@ var Helioviewer = UIController.extend(
 
         this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory, this.proxyURL);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.tileServers,
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.servers,
                                                         screenshotHistory, this.proxyURL);
     },
     
@@ -75,7 +75,7 @@ var Helioviewer = UIController.extend(
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
             urlStringLayers: this.urlParams.imageLayers  || "",
-            tileServers    : this.serverSettings.tileServers,
+            servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
             maxImageScale  : this.serverSettings.maxImageScale,

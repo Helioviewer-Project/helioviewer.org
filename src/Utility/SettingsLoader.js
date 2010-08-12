@@ -45,13 +45,6 @@ var SettingsLoader = (
             version         : serverSettings.version,
             warnMouseCoords : true,
             showWelcomeMsg  : true,
-            //minImageScale   : this.minImageScale,
-            //maxImageScale   : this.maxImageScale,
-            //maxTileLayers   : this.maxTileLayers,
-            //prefetchSize    : this.prefetchSize,
-            //tileServers     : this.tileServers,
-            //timeIncrementSecs: this.timeIncrementSecs,
-            //rootURL         : this.rootURL,
             tileLayers : [{
                 server     : 0,
                 observatory: 'SOHO',
