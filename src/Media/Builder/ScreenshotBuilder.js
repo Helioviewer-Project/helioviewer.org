@@ -15,11 +15,13 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, tileServers, history, proxyURL) {
+    init: function (viewport, servers, history, proxyURL) {
         this._super(viewport, history, proxyURL);
-        this.button      = $("#screenshot-button");
-        this.id          = "screenshot";
-        this.tileServers = tileServers;
+        
+        this.button  = $("#screenshot-button");
+        this.id      = "screenshot";
+        this.servers = servers;
+        
         this._setupDialogAndEventHandlers();
     },
 
@@ -84,7 +86,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
-            server     : Math.floor(Math.random() * (this.tileServers.length)),
+            server     : Math.floor(Math.random() * (this.servers.length)),
             display    : false
         };
 

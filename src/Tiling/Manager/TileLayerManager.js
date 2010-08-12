@@ -20,7 +20,7 @@ var TileLayerManager = LayerManager.extend(
      * @description Creates a new TileLayerManager instance
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    tileServers, savedLayers, urlLayers) {
+                    servers, savedLayers, urlLayers) {
         this._super();
 
         this.api           = api;
@@ -28,7 +28,7 @@ var TileLayerManager = LayerManager.extend(
         this.tileSize      = tileSize;
         this.viewportScale = viewportScale;
         this.maxTileLayers = maxTileLayers;
-        this.tileServers   = tileServers;        
+        this.servers       = servers;        
      
         this.tileVisibilityRange  = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
       

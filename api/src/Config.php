@@ -30,7 +30,7 @@
  */
 class Config
 {
-    private $_bools  = array("local_tiling_enabled", "distributed_tiling_enabled", "disable_cache",
+    private $_bools  = array("local_tiling_enabled", "distributed_mode_enabled", "disable_cache",
                              "enable_movie_button", "enable_screenshot_button");
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
                              "png_compression_quality", "jpeg_compression_quality", "ffmpeg_max_threads", 
@@ -53,17 +53,17 @@ class Config
         $this->_fixTypes();
 
         foreach ($this->config as $key => $value) {
-            if ($key !== "tile_server") {
+            if ($key !== "server") {
                 define("HV_" . strtoupper($key), $value);
             }
         }
 
         if ($this->config['local_tiling_enabled']) {
-            array_unshift($this->config["tile_server"], "api/index.php");
+            array_unshift($this->config["server"], "api/index.php");
         }
         
-        foreach ($this->config["tile_server"] as $id => $url) {
-            define("HV_TILE_SERVER_" . ($id), $url);
+        foreach ($this->config["server"] as $id => $url) {
+            define("HV_SERVER_" . ($id), $url);
         }
         
         //        define("HV_TILE_SERVER_0", "api/index.php");
