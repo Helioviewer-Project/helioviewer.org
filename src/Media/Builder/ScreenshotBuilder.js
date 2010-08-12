@@ -73,7 +73,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             return;
         }
         
-        var self, callback, params, arcsecCoords, id, download, screenshot, options;        
+        var self, callback, params, arcsecCoords, id, download, screenshot, server, options;        
         arcsecCoords  = this.toArcsecCoords(viewportInformation.coordinates, viewportInformation.imageScale);
         self = this;
 
@@ -86,9 +86,14 @@ var ScreenshotBuilder = MediaBuilder.extend(
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
-            server     : Math.floor(Math.random() * (this.servers.length)),
             display    : false
         };
+        
+        // Choose server to send request to
+        server = Math.floor(Math.random() * (this.servers.length));
+        if (server > 0) {
+            params.server = server;
+        }
 
         screenshot = new Screenshot(params, (new Date()).getTime());
 
@@ -120,7 +125,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             }
         };
        
-        $.post(this.url, params, callback, 'json');
+        $.post(this.url, params, callback);
 //
 //        url = this.url + "?";
 //        $.each(params, function (key, value) {

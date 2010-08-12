@@ -298,7 +298,6 @@ class Module_JHelioviewer implements Module
      */
     public static function printDoc()
     {
-        $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
         ?>
         <!-- JPEG 2000 API -->
         <div id="JPEG2000API">
@@ -318,7 +317,7 @@ class Module_JHelioviewer implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo $baseURL;?>?action=getJP2Image<br />
+                <?php echo HV_API_ROOT_URL;?>?action=getJP2Image<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -369,13 +368,13 @@ class Module_JHelioviewer implements Module
         
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;date=2003-10-05T00:00:00Z">
-                <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;date=2003-10-05T00:00:00Z">
+                <?php echo HV_API_ROOT_URL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
-                <?php echo $baseURL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
+                <?php echo HV_API_ROOT_URL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
                 </a>
                 </span>
                 </div>
@@ -396,7 +395,7 @@ class Module_JHelioviewer implements Module
         
                 <br />
         
-                <?php echo $baseURL;?>?action=getJPX<br />
+                <?php echo HV_API_ROOT_URL;?>?action=getJPX<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -510,13 +509,13 @@ class Module_JHelioviewer implements Module
         
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
-                    <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
+                    <?php echo HV_API_ROOT_URL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;jpip=true">
-                    <?php echo $baseURL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&jpip=true
+                <a href="<?php HV_API_ROOT_URL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;jpip=true">
+                    <?php echo HV_API_ROOT_URL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&jpip=true
                 </a>
                 </span></div>
                 </div>
