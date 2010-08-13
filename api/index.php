@@ -74,7 +74,7 @@ function loadModule($params)
             );
         } else {
             // Local requests
-            if (!isset($params['server'])) {
+            if (!isset($params['s'])) {
                 $moduleName = $valid_actions[$params["action"]];
                 $className  = "Module_" . $moduleName;
     
@@ -86,9 +86,9 @@ function loadModule($params)
                 // Forward request if neccessary
                 // TODO 08/11/2010: Create separate method or extend Net_Proxy
                 if (HV_DISTRIBUTED_MODE_ENABLED) {
-                    $url = constant("HV_SERVER_" . $params['server']) . "?";
+                    $url = constant("HV_SERVER_" . $params['s']) . "?";
                     
-                    unset ($params['server']);
+                    unset ($params['s']);
                     foreach ($params as $key=>$value) {
                         $url .= "$key=$value&";
                     }
@@ -210,7 +210,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-07-20 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-08-13 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>
