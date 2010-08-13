@@ -66,5 +66,20 @@ class Net_Proxy
             return file_get_contents($url);
         }
     }
+    
+    /**
+     *   cURL POST Request Example
+     *   
+     *   $curl = curl_init(HV_HELIOQUEUER_API_URL);
+     *           
+     *   curl_setopt($curl, CURLOPT_POST, 1);
+     *   curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+     *   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+     *    
+     *   $response = curl_exec($curl);
+     *   curl_close($curl);
+     *   
+     *   echo $response;
+     */
 }
 ?>

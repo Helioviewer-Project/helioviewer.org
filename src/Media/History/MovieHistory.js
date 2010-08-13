@@ -68,21 +68,23 @@ var MovieHistory = History.extend(
             self._waitForMovie(movieData, movie);
         }
         
-        etaUrl = apiUrl + "?";
-        $.each(params, function (key, value) {
-            etaUrl = etaUrl + key + "=" + value + "&";
-        });
-        etaUrl = etaUrl.slice(0,-1);
-            
-        params.action = "buildMovie";
-        url = apiUrl + "?";
-        $.each(params, function (key, value) {
-            url = url + key + "=" + value + "&";
-        });
-            
-        url = url.slice(0,-1);
+        $.post("api/index.php", params, movieCallback, "json");
+        
+//        etaUrl = apiUrl + "?";
+//        $.each(params, function (key, value) {
+//            etaUrl = etaUrl + key + "=" + value + "&";
+//        });
+//        etaUrl = etaUrl.slice(0,-1);
+//            
+//        params.action = "buildMovie";
+//        url = apiUrl + "?";
+//        $.each(params, function (key, value) {
+//            url = url + key + "=" + value + "&";
+//        });
+//            
+//        url = url.slice(0,-1);
 
-        $.post(self.proxyURL + "/queue-task", {'url': url, 'etaUrl': etaUrl}, movieCallback, "json");
+//        $.post(self.proxyURL + "/queue-task", {'url': url, 'etaUrl': etaUrl}, movieCallback, "json");
     },
     
     /**
