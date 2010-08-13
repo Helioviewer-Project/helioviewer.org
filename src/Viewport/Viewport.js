@@ -114,7 +114,10 @@ var Viewport = Class.extend(
      * @returns {Object} The range of tiles which should be displayed
      */
     _updateTileVisibilityRange: function (coordinates) {
-        this._tileLayerManager.updateTileVisibilityRange(coordinates);
+        if (typeof this._tileLayerManager !== "undefined") {
+            this._tileLayerManager.updateTileVisibilityRange(coordinates);            
+        }
+        
     },
     
     /**

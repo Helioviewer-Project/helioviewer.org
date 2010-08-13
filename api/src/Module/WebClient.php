@@ -102,7 +102,7 @@ class Module_WebClient implements Module
     }
 
     /**
-     * http://helioviewer.org/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&server=1
+     * http://helioviewer.org/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&s=1
      * 
      * TODO 01/29/2010 Check to see if server number is within valid range of know authenticated servers.
      *
@@ -284,10 +284,9 @@ class Module_WebClient implements Module
 
             if (isset($this->_params["sourceId"])) {
                 $expected["required"] = array('date', 'sourceId');
-                $expected["ints"]     = array('sourceId', 'server');
+                $expected["ints"]     = array('sourceId');
             } else {
                 $expected["required"] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
-                $expected["ints"]     = array('server');
             }
             break;
 
@@ -316,7 +315,7 @@ class Module_WebClient implements Module
                 "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"	   => array('obsDate'),
-                "ints"     => array('quality', 'server'),
+                "ints"     => array('quality'),
                 "bools"    => array('display')
             );
             break;
@@ -472,11 +471,6 @@ class Module_WebClient implements Module
                             <td width="55%">The desired image date</td>
                         </tr>
                         <tr>
-                            <td><b>server</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
-                        </tr>
-                        <tr>
                             <td><b>observatory</b></td>
                             <td><i>String</i></td>
                             <td><i>[Optional]</i> Observatory</td>
@@ -560,8 +554,8 @@ class Module_WebClient implements Module
                        <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
                     </a>
                     <br /><br />
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3">
-                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&s=1&sourceId=3">
+                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&s=1&sourceId=3
                     </a>
                 </span>
                 
