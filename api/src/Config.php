@@ -30,7 +30,7 @@
  */
 class Config
 {
-    private $_bools  = array("distributed_mode_enabled", "disable_cache", 
+    private $_bools  = array("distributed_mode_enabled", "disable_cache", "helioqueuer_enabled",
                              "enable_movie_button", "enable_screenshot_button");
                              
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",

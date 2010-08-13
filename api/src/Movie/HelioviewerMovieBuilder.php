@@ -155,7 +155,7 @@ class Movie_HelioviewerMovieBuilder
             if (!empty($_POST)) {
                 header('Content-type: application/json');
                 echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
-            } else if ($this->_params['display'] === false) {
+            } else {
             	printErrorMsg($e->getMessage());
             }
         }

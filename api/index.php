@@ -55,13 +55,16 @@ function loadModule($params)
         "getJPX"              => "JHelioviewer",
         "launchJHelioviewer"  => "JHelioviewer",
         "buildMovie"          => "Movies",
+        "checkMovieStatus"    => "Movies",
         "playMovie"           => "Movies",
-        "getETAForMovie"      => "Movies",
+        "queueMovie"          => "Movies",
         "getEventFRMs"           => "SolarEvents",
         "getEvents"              => "SolarEvents",
         "getScreenshotsForEvent" => "SolarEvents",
         "getMoviesForEvent"      => "SolarEvents"
     );
+    
+    $helioqueuer_tasks = array ("queueMovie", "checkMovieStatus");
     
     include_once "src/Validation/InputValidator.php";
 
@@ -73,16 +76,8 @@ function loadModule($params)
                 "API Documentation</a> for a list of valid actions."
             );
         } else {
-            // Local requests
-            if (!isset($params['s'])) {
-                $moduleName = $valid_actions[$params["action"]];
-                $className  = "Module_" . $moduleName;
-    
-                include_once "src/Module/$moduleName.php";
-    
-                $module = new $className($params);
-                $module->execute();
-            } else {
+            // Remote requests
+            if (isset($params['s'])) {
                 // Forward request if neccessary
                 // TODO 08/11/2010: Create separate method or extend Net_Proxy
                 if (HV_DISTRIBUTED_MODE_ENABLED) {
@@ -92,7 +87,7 @@ function loadModule($params)
                     foreach ($params as $key=>$value) {
                         $url .= "$key=$value&";
                     }
-                    trim($url, "&");
+                    $url = trim($url, "&");
                     
                     // TODO 08/11/2010: Use Net_Proxy instead
                     echo file_get_contents($url);
@@ -100,6 +95,33 @@ function loadModule($params)
                     $err = "Distributed mode is disabled for this server.";
                     throw new Exception($err);
                 }
+                
+            // Forward Helioqueuer tasks 
+            } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
+                //$url = HV_HELIOQUEUER_API_URL . "/" .strtolower(preg_replace('/([A-Z])/', '-$1', $params["action"]));
+                $url = HV_HELIOQUEUER_API_URL . "/" . $params['action'];
+                unset ($params['action']);
+                
+                $opts = array('http' =>
+                    array(
+                        'method'  => 'POST',
+                        'header'  => 'Content-type: application/x-www-form-urlencoded',
+                        'content' => http_build_query($params)
+                    )
+                );
+                
+                $context  = stream_context_create($opts);
+                echo file_get_contents($url, false, $context);
+
+            // Local requests
+            } else {
+                $moduleName = $valid_actions[$params["action"]];
+                $className  = "Module_" . $moduleName;
+    
+                include_once "src/Module/$moduleName.php";
+    
+                $module = new $className($params);
+                $module->execute();
             }
 
         }

@@ -16,8 +16,8 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["distributed_mode_enabled", "disable_cache", "enable_movie_button", "enable_screenshot_button"
-                       ];
+        this.bools  = ["distributed_mode_enabled", "disable_cache", "enable_movie_button", "enable_screenshot_button",
+                       "helioqueuer_enabled"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
                        "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames",
                        "max_tile_layers"];
@@ -77,6 +77,7 @@ var Config = Class.extend(
             'timeIncrementSecs'   : this.params["default_timestep"],
             'servers'             : this.params["server"],
             'rootURL'             : this.params["web_root_url"],
+            'hqEnabled'           : this.params["helioqueuer_enabled"],
             'proxyURL'            : this.params["proxy_root_url"]
         };
     }

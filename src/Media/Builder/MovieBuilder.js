@@ -233,7 +233,7 @@ var MovieBuilder = MediaBuilder.extend(
         
         // Ajax Request Parameters
         params = {
-            action     : "getETAForMovie",
+            action     : "queueMovie", //action     : "getETAForMovie",
             layers     : viewportInfo.layers,
             startTime  : viewportInfo.time,
             imageScale : viewportInfo.imageScale,

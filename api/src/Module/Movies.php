@@ -87,6 +87,13 @@ class Module_Movies implements Module
                 "urls"     => array('url')
             );
             break;
+        case "queueMovie":
+            $expected = array(
+               "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "bools"    => array('scaleDown', 'display'),
+               "dates"    => array('startTime', 'endTime'),
+               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+            );
         case "getETAForMovie":
         	$expected = array(
         	   "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
@@ -139,6 +146,10 @@ class Module_Movies implements Module
         	return;
         }*/
         $builder->buildMovie($this->_params, $tmpDir);
+    }
+    
+    public function queueMovie() {
+        print "Not yet implemented in Dynamo...";
     }
     
     /**
