@@ -58,6 +58,7 @@ function loadModule($params)
         "checkMovieStatus"    => "Movies",
         "playMovie"           => "Movies",
         "queueMovie"          => "Movies",
+        "getETAForMovie"      => "Movies",
         "getEventFRMs"           => "SolarEvents",
         "getEvents"              => "SolarEvents",
         "getScreenshotsForEvent" => "SolarEvents",
@@ -98,7 +99,6 @@ function loadModule($params)
                 
             // Forward Helioqueuer tasks 
             } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
-                //$url = HV_HELIOQUEUER_API_URL . "/" .strtolower(preg_replace('/([A-Z])/', '-$1', $params["action"]));
                 $url = HV_HELIOQUEUER_API_URL . "/" . $params['action'];
                 unset ($params['action']);
                 

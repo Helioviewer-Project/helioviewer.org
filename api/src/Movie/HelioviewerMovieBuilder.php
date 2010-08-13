@@ -56,7 +56,7 @@ class Movie_HelioviewerMovieBuilder
     	list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
     	
         $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
-
+        
         $timePerFrame = 0.000001 * $width * $height + 0.25;
         $eta = $timePerFrame * $numFrames;
 
@@ -65,12 +65,12 @@ class Movie_HelioviewerMovieBuilder
             header('Content-type: application/json');
             echo JSON_encode(array("eta" => round($eta)));
         } catch (Exception $e) {
-            if (!empty($_POST)) {
+//            if (!empty($_POST)) {
                 header('Content-type: application/json');
                 echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
-            } else if ($this->_params['display'] === false) {
-                printErrorMsg($e->getMessage());
-            }        	
+//            } else {
+//                printErrorMsg($e->getMessage());
+//            }
         }
 
         return;
