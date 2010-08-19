@@ -101,7 +101,7 @@ function loadModule($params)
             } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
                 $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
                 unset ($params['action']);
-
+                
                 $opts = array('http' =>
                     array(
                         'method'  => $_SERVER['REQUEST_METHOD'],
@@ -566,6 +566,10 @@ function printErrorMsg($msg)
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <?php
+        $meta = "<!-- DATE: %s URL: http://%s%s -->\n";
+        printf($meta, strftime('%Y-%m-%d %H:%m:%S'), $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
+    ?>
     <title>Helioviewer.org API - Error</title>
 </head>
 <body>
