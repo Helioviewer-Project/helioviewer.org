@@ -92,7 +92,10 @@ var Viewport = Class.extend(
     
     updateViewportRanges: function (coordinates) {
         this._updateTileVisibilityRange(coordinates);
-        this._tileLayerManager.adjustImageScale(this.imageScale);
+        
+        if (typeof this._tileLayerManager !== "undefined") {
+            this._tileLayerManager.adjustImageScale(this.imageScale);            
+        }
     },
     
     serialize: function () {
@@ -116,8 +119,7 @@ var Viewport = Class.extend(
     _updateTileVisibilityRange: function (coordinates) {
         if (typeof this._tileLayerManager !== "undefined") {
             this._tileLayerManager.updateTileVisibilityRange(coordinates);            
-        }
-        
+        }        
     },
     
     /**

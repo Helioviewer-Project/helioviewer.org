@@ -55,7 +55,7 @@ function loadModule($params)
         "getJPX"              => "JHelioviewer",
         "launchJHelioviewer"  => "JHelioviewer",
         "buildMovie"          => "Movies",
-        "checkMovieStatus"    => "Movies",
+        "getMovie"            => "Movies",
         "playMovie"           => "Movies",
         "queueMovie"          => "Movies",
         "getETAForMovie"      => "Movies",
@@ -65,7 +65,7 @@ function loadModule($params)
         "getMoviesForEvent"      => "SolarEvents"
     );
     
-    $helioqueuer_tasks = array ("queueMovie", "checkMovieStatus");
+    $helioqueuer_tasks = array ("queueMovie", "getMovie");
     
     include_once "src/Validation/InputValidator.php";
 
@@ -99,12 +99,12 @@ function loadModule($params)
                 
             // Forward Helioqueuer tasks 
             } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
-                $url = HV_HELIOQUEUER_API_URL . "/" . $params['action'];
+                $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
                 unset ($params['action']);
-                
+
                 $opts = array('http' =>
                     array(
-                        'method'  => 'POST',
+                        'method'  => $_SERVER['REQUEST_METHOD'],
                         'header'  => 'Content-type: application/x-www-form-urlencoded',
                         'content' => http_build_query($params)
                     )
@@ -232,7 +232,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-08-13 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-08-17 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>

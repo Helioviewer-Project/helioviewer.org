@@ -77,8 +77,7 @@ var Config = Class.extend(
             'timeIncrementSecs'   : this.params["default_timestep"],
             'servers'             : this.params["server"],
             'rootURL'             : this.params["web_root_url"],
-            'hqEnabled'           : this.params["helioqueuer_enabled"],
-            'proxyURL'            : this.params["proxy_root_url"]
+            'hqEnabled'           : this.params["helioqueuer_enabled"]
         };
     }
 });

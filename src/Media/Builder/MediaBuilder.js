@@ -18,10 +18,8 @@ var MediaBuilder = Class.extend(
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the movie button
      */    
-    init: function (viewport, history, proxyURL) {
+    init: function (viewport, history) {
         this.url      = "api/index.php";
-
-        this.proxyURL = proxyURL;
         this.viewport = viewport;   
         this.building = false;
         this.history  = history;

@@ -27,8 +27,7 @@ var Helioviewer = UIController.extend(
         // Calling super will load settings, init viewport, and call _loadExtensions()
         this._super(urlParams, serverSettings);
         
-        // TODO 08/11/2010 USE this.serverSettings for these two.. don't need to alias?
-        this.proxyURL = serverSettings.proxyURL;
+        // TODO 08/11/2010 USE this.serverSettings.. don't need to alias?
         this.rootURL  = serverSettings.rootURL;
         
         this._setupDialogs();
@@ -48,12 +47,11 @@ var Helioviewer = UIController.extend(
         this._initTooltips();
 
         screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history'));
-        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'), this.proxyURL);
+        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
 
-        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory, this.proxyURL);
+        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.servers,
-                                                        screenshotHistory, this.proxyURL);
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
     },
     
     /**
