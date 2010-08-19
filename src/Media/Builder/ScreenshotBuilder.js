@@ -15,8 +15,8 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, servers, history, proxyURL) {
-        this._super(viewport, history, proxyURL);
+    init: function (viewport, servers, history) {
+        this._super(viewport, history);
         
         this.button  = $("#screenshot-button");
         this.id      = "screenshot";
@@ -126,13 +126,5 @@ var ScreenshotBuilder = MediaBuilder.extend(
         };
        
         $.post(this.url, params, callback);
-//
-//        url = this.url + "?";
-//        $.each(params, function (key, value) {
-//            url = url + key + "=" + value + "&";
-//        });
-//        
-//        url = url.slice(0,-1);
-//        $.post(this.proxyURL + "/takeScreenshot", {"url": url}, callback, 'json');
     }
 });

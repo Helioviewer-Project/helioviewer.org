@@ -13,9 +13,8 @@ var MovieHistory = History.extend(
      * @constructs
      * @param history -- an array of saved history from UserSettings. May be null or empty.
      */    
-    init: function (history, proxyURL) {
+    init: function (history) {
         this.id = "movie";
-        this.proxyURL = proxyURL;
 
         this._super(history);
     },
@@ -133,7 +132,7 @@ var MovieHistory = History.extend(
      * for setTimeout
      */
     _waitForMovie: function (data, movie) {
-        var tryToGetMovie, callback, self=this;
+        var tryToGetMovie, callback, params, self=this;
 
         if (self._handleDataErrors(data)) {
             self.remove(movie);
@@ -146,8 +145,12 @@ var MovieHistory = History.extend(
                 callback = function (newData) {
                     self._waitForMovie(newData, movie);
                 };
-            
-                $.get(self.proxyURL + "/status/" + movie.id, {}, callback, "json");
+                
+                params = {
+                        "action": "getMovie", 
+                        "id"    : movie.id
+                };
+                $.get("api/index.php", params, callback, "json");
             };
 
             // Wait for half of the eta, the eta function isn't very accurate and overshoots

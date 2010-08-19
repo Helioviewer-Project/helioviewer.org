@@ -247,7 +247,7 @@ span.ui-icon-hover {
 }
 
 #message-console .jGrowl-notification, #message-console .jGrowl-closer {
-   background-color: Azure;
+   background: Azure;
    color: #262424;
 }
 
