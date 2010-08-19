@@ -235,7 +235,7 @@ var MovieBuilder = MediaBuilder.extend(
         params = {
             action     : "queueMovie", //action     : "getETAForMovie",
             layers     : viewportInfo.layers,
-            startTime  : viewportInfo.time,
+            startTime  : new Date(viewportInfo.time).addHours(-12).toISOString(),
             imageScale : viewportInfo.imageScale,
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
