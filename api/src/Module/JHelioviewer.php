@@ -53,7 +53,12 @@ class Module_JHelioviewer implements Module
     public function execute()
     {
         if ($this->validate()) {
-            $this->{$this->_params['action']}();
+            try {
+                $this->{$this->_params['action']}();
+            } catch (Exception $e) {
+                header('Content-type: application/json;charset=UTF-8');
+                echo json_encode(array("error" => $e->getMessage()));
+            }
         }
     }
 
@@ -155,11 +160,21 @@ class Module_JHelioviewer implements Module
         }
 
         // Create JPX image instance
-        $jpx = new Image_JPEG2000_HelioviewerJPXImage(
-            $this->_params['observatory'], $this->_params['instrument'], $this->_params['detector'],
-            $this->_params['measurement'], $this->_params['sourceId'], $this->_params['startTime'],
-            $this->_params['endTime'], $this->_params['cadence'], $this->_params['linked']
-        );
+        try {
+            $jpx = new Image_JPEG2000_HelioviewerJPXImage(
+                $this->_params['observatory'], $this->_params['instrument'], $this->_params['detector'],
+                $this->_params['measurement'], $this->_params['sourceId'], $this->_params['startTime'],
+                $this->_params['endTime'], $this->_params['cadence'], $this->_params['linked']
+            );
+        } catch (Exception $e) {
+            header('Content-type: application/json;charset=UTF-8');
+            echo json_encode(array(
+                "error"   => $e->getMessage(), 
+                "message" => $e->getMessage(), // DEPRECATED (https://bugs.edge.launchpad.net/jhelioviewer/+bug/621223)
+                "uri"     => null
+            ));
+            return;
+        }
 
         // JPIP URL
         if ($this->_params['jpip']) {
