@@ -15,7 +15,6 @@ var MovieHistory = History.extend(
      */    
     init: function (history) {
         this.id = "movie";
-
         this._super(history);
     },
     
@@ -68,22 +67,6 @@ var MovieHistory = History.extend(
         }
         
         $.post("api/index.php", params, movieCallback, "json");
-        
-//        etaUrl = apiUrl + "?";
-//        $.each(params, function (key, value) {
-//            etaUrl = etaUrl + key + "=" + value + "&";
-//        });
-//        etaUrl = etaUrl.slice(0,-1);
-//            
-//        params.action = "buildMovie";
-//        url = apiUrl + "?";
-//        $.each(params, function (key, value) {
-//            url = url + key + "=" + value + "&";
-//        });
-//            
-//        url = url.slice(0,-1);
-
-//        $.post(self.proxyURL + "/queue-task", {'url': url, 'etaUrl': etaUrl}, movieCallback, "json");
     },
     
     /**
@@ -159,6 +142,9 @@ var MovieHistory = History.extend(
         }
     },
     
+    /**
+     * 
+     */
     _handleDataErrors: function (data) {
         if (data === null) {
             $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
