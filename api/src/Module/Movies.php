@@ -131,20 +131,14 @@ class Module_Movies implements Module
         $builder = new Movie_HelioviewerMovieBuilder();
                 
         // Make a temporary directory to store the movie in.
-        $now = time();
+        $now    = date("Ymd_His");
+        
         $tmpDir = HV_TMP_DIR . "/$now";
         if (!file_exists($tmpDir)) {
             mkdir($tmpDir, 0777, true);
             chmod($tmpDir, 0777);
         }
-        
-        // @TODO: implement some kind of forking or background process. Commented out
-        // until proxying enabled.
-        /*if (HV_DISTRIBUTED_TILING_ENABLED) {
-        	$builder->getEtaAndId($this->_params, $tmpDir);
-        	touch($tmpDir . "/INVALID");
-        	return;
-        }*/
+
         $builder->buildMovie($this->_params, $tmpDir);
     }
     
