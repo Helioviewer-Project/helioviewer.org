@@ -126,7 +126,7 @@ function loadModule($params)
 
         }
     } catch (Exception $e) {
-        printErrorMsg($e->getMessage());
+        printHTMLErrorMsg($e->getMessage());
     }
 
     return true;
@@ -554,13 +554,13 @@ function printDocumentationAppendices()
 }
 
 /**
- * Display an error message to the API user
+ * Displays a human-readable HTML error message to the user
  *
  * @param string $msg Error message to display to the user
  *
  * @return void
  */
-function printErrorMsg($msg)
+function printHTMLErrorMsg($msg)
 {
     ?>
 <!DOCTYPE html>
@@ -582,6 +582,26 @@ function printErrorMsg($msg)
 </html>
     <?php
     exit();
+}
+
+/**
+ * Displays an error message in JSON, and optionally for displaying in FirePHP
+ * 
+ * @param string $msg     The error message to display
+ * @param bool   $firePHP Whether to send a message to be displayed in FirePHP
+ * 
+ * @see http://www.firephp.org/
+ */
+function printErrorMsg($msg, $firePHP=true)
+{
+    header('Content-type: application/json;charset=UTF-8');
+
+    if ($firePHP) {
+        include_once "lib/FirePHPCore/fb.php";
+        FB::error($msg);
+    }
+    
+    echo json_encode(array("error"=>$msg));
 }
 
 /**

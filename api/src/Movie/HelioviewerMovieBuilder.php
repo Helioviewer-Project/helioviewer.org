@@ -60,17 +60,13 @@ class Movie_HelioviewerMovieBuilder
         $timePerFrame = 0.000001 * $width * $height + 0.25;
         $eta = $timePerFrame * $numFrames;
 
+        header('Content-type: application/json');
+        
         try {
         	$this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
-            header('Content-type: application/json');
             echo JSON_encode(array("eta" => round($eta)));
         } catch (Exception $e) {
-//            if (!empty($_POST)) {
-                header('Content-type: application/json');
-                echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
-//            } else {
-//                printErrorMsg($e->getMessage());
-//            }
+            echo json_encode(array("error" => $e->getMessage()));
         }
 
         return;
@@ -152,12 +148,7 @@ class Movie_HelioviewerMovieBuilder
             return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
         } catch(Exception $e) {
         	touch($outputDir . "/INVALID");
-            if (!empty($_POST)) {
-                header('Content-type: application/json');
-                echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
-            } else {
-            	printErrorMsg($e->getMessage());
-            }
+       		throw new Exception($e->getMessage());
         }
     }
     

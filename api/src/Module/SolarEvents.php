@@ -50,10 +50,7 @@ class Module_SolarEvents implements Module
             try {
                 $this->{$this->_params['action']}();
             } catch (Exception $e) {
-                // Output plain-text for browser requests to make Firebug debugging easier
-                include_once "lib/FirePHPCore/fb.php";
-                FB::error($e->getMessage());
-                throw new Exception($e->getMessage());
+                printErrorMsg($e->getMessage());
             }
         }
     }

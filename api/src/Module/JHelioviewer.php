@@ -56,8 +56,7 @@ class Module_JHelioviewer implements Module
             try {
                 $this->{$this->_params['action']}();
             } catch (Exception $e) {
-                header('Content-type: application/json;charset=UTF-8');
-                echo json_encode(array("error" => $e->getMessage()));
+                printErrorMsg($e->getMessage(), false);
             }
         }
     }

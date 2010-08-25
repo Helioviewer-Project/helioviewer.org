@@ -57,7 +57,11 @@ class Module_Movies implements Module
     public function execute()
     {
         if ($this->validate()) {
-            $this->{$this->_params['action']}();
+            try {
+                $this->{$this->_params['action']}();
+            } catch (Exception $e) {
+                printErrorMsg($e->getMessage());
+            }
         }
     }
 
