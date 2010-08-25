@@ -23,7 +23,6 @@ var Helioviewer = UIController.extend(
      * @param {Object} serverSettings   Server settings loaded from Config.ini
      */
     init: function (urlParams, serverSettings) {
-
         // Calling super will load settings, init viewport, and call _loadExtensions()
         this._super(urlParams, serverSettings);
         
