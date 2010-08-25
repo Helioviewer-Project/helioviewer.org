@@ -215,7 +215,8 @@ class Module_WebClient implements Module
         $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
         
         if (!$this->_params['display']) {
-            echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
+            header('Content-Type: application/json');
+            echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
         }
 
         return $response;        
