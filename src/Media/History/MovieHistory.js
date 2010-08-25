@@ -146,22 +146,10 @@ var MovieHistory = History.extend(
      * 
      */
     _handleDataErrors: function (data) {
-        if (data === null) {
-            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                         " try again later."]);
-            return true;
-        }
-
         if (data.error) {
-            if (data.errorCode && data.errorCode === 1) {
-                $(document).trigger("message-console-info", [data.error]);
-            } else {
-                $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                             " try again later."]);
-            }
+        	$(document).trigger("message-console-info", [data.error]);
             return true;
         }
-        
         return false;
     },
     
