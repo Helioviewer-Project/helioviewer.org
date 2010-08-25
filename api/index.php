@@ -650,6 +650,14 @@ function logErrorMsg($error)
               . "====[MESSAGE]=================\n\n%s";
     
     $msg = sprintf($template, date("Y/m/d H:i:s"), $url, $error);
+    
+    if (!empty($_POST)) {
+        $msg .= "\n\n====[POST]=================\n\n";
+        foreach ($_POST as $key => $value) {
+           $msg .= "'$key' => $value\n";
+        }
+        $msg .= "\n$url?" . http_build_query($_POST);
+    }
 
     file_put_contents($log, $msg);
 }
