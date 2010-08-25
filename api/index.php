@@ -585,40 +585,53 @@ function printHTMLErrorMsg($msg)
 }
 
 /**
- * Displays an error message in JSON, and optionally for displaying in FirePHP
+ * Handles errors encountered during request processing.
  * 
  * @param string $msg     The error message to display
- * @param bool   $firePHP Whether to send a message to be displayed in FirePHP
+ * @param bool   $skipLog If true no log file will be created
+ * 
+ * Note: If multiple levels of verbosity are needed, one option would be to split up the complete error message
+ *       into it's separate parts, add a "details" field with the full message, and display only the top-level
+ *       error message in "error" 
  * 
  * @see http://www.firephp.org/
  */
-function printErrorMsg($msg, $firePHP=true)
+function handleError($msg, $skipLog=false)
 {
     header('Content-type: application/json;charset=UTF-8');
-
-    if ($firePHP) {
-        include_once "lib/FirePHPCore/fb.php";
-        FB::error($msg);
-    }
     
+    // JSON
     echo json_encode(array("error"=>$msg));
+
+    // Fire PHP
+    include_once "lib/FirePHPCore/fb.php";
+    FB::error($msg);
+    
+    // For errors which are expected (e.g. a movie request for which sufficient data is not available) a non-zero
+    // exception code can be set to a non-zero value indicating that the error is known and no log should be created.
+    if (!$skipLog) {
+        logErrorMsg($msg);
+    }
 }
 
 /**
  * Logs an error message to the log whose location is specified in Config.ini
  * 
- * @param string $msg The body of the error message to be logged.
- * @param bool   $url If true, the request URL will be included in the error message.
+ * @param string $error The body of the error message to be logged.
  * 
  * @return void 
  */
-function logErrorMsg($msg, $url=false)
+function logErrorMsg($error)
 {
-    $error = "(" . date("Y/m/d H:i:s") . ") $msg\n";
-    if ($url) {
-        $error .= "\t{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}\n";
-    }
-    file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
+    $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $log = HV_LOG_DIR . "/" . date("Ymd_His") . ".log";
+    
+    $template = "====[DATE]====================\n\n%s\n\n====[URL]=====================\n\n%s\n\n"
+              . "====[MESSAGE]=================\n\n%s";
+    
+    $msg = sprintf($template, date("Y/m/d H:i:s"), $url, $error);
+
+    file_put_contents($log, $msg);
 }
 
 ?>

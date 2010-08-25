@@ -78,7 +78,7 @@ abstract class Image_Composite_CompositeImage
     {
         try  {
             if (empty($this->layerImages)) {
-                throw new Exception("Error: No valid layers specified in layerImages[" . $this->layerImages . "]");
+                throw new Exception("No valid layers specified in layerImages");
             }
 
             // Composite images on top of one another if there are multiple layers.
@@ -106,8 +106,7 @@ abstract class Image_Composite_CompositeImage
             }
             */
         } catch(Exception $e) {
-            $error = "Unable to compile composite image layers: {$e->getMessage()}";
-            logErrorMsg($error, true);
+            throw new Exception("Unable to compile composite image layers: {$e->getMessage()}");
         }
     }
 
@@ -208,19 +207,15 @@ abstract class Image_Composite_CompositeImage
             $layerNum++;
         }
         
-        try {
-            if ($this->watermarkOn === true || $this->watermarkOn === "true") {
-                $this->_watermark($imagickImage);
-            }
-            $this->_finalizeImage($imagickImage, $tmpImg);
-            
-            if (!file_exists($tmpImg)) {
-                throw new Exception("Error turning alpha channel off on $tmpImg.");
-            }
+        if ($this->watermarkOn === true || $this->watermarkOn === "true") {
+            $this->_watermark($imagickImage);
         }
-        catch(Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+        $this->_finalizeImage($imagickImage, $tmpImg);
+        
+        if (!file_exists($tmpImg)) {
+            throw new Exception("Unable to turn alpha channel off for $tmpImg.");
         }
+
         return $tmpImg;
     }
     
@@ -337,7 +332,7 @@ abstract class Image_Composite_CompositeImage
             // Extract timestamps
             $timestamps = explode(",", $this->params['timestamps']);
             if (strlen($this->params['timestamps']) == 0) {
-                throw new Exception("Error: Incorrect number of timestamps specified!");
+                throw new Exception("Incorrect number of timestamps specified!");
             }
 
             // Region of interest
@@ -366,7 +361,7 @@ abstract class Image_Composite_CompositeImage
 
             // Limit to 3 layers
             if ((sizeOf($layers) > 3) || (strlen($this->params['layers']) == 0)) {
-                throw new Exception("Error: Invalid layer choices! You must specify 1-3 command-separate layernames.");
+                throw new Exception("Invalid layer choices! You must specify 1-3 command-separate layernames.");
             }
 
             // Optional parameters
@@ -375,8 +370,8 @@ abstract class Image_Composite_CompositeImage
             $options["sharpen"]     = $this->params['sharpen'];
         }
         catch(Exception $e) {
-            echo 'Error: ' .$e->getMessage();
-            exit();
+            throw $e;
+            die();
         }
 
         $returnimage = new Image_CompositeImage($layers, $imageScale, $xRange, $yRange, $options);

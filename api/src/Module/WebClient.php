@@ -50,7 +50,7 @@ class Module_WebClient implements Module
             try {
                 $this->{$this->_params['action']}();
             } catch (Exception $e) {
-                printErrorMsg($e->getMessage());
+                handleError($e->getMessage(), $e->getCode());
             }
         }
     }

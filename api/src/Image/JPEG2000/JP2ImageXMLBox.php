@@ -49,8 +49,7 @@ class Image_JPEG2000_JP2ImageXMLBox
     {
         if (!file_exists($this->_file)) {
             $msg = "Unable to extract XMLbox for {$this->_file}. File does not exist!";
-            logErrorMsg($msg, true);
-            throw new Exception("Unable to find file: {$this->_file}.");
+            throw new Exception($msg);
         }
 
         $fp = fopen($this->_file, "rb");
