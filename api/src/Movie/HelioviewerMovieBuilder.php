@@ -66,9 +66,8 @@ class Movie_HelioviewerMovieBuilder
         	$this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
             echo JSON_encode(array("eta" => round($eta)));
         } catch (Exception $e) {
-            echo json_encode(array("error" => $e->getMessage()));
+            throw $e;
         }
-
         return;
     }
     
@@ -148,7 +147,7 @@ class Movie_HelioviewerMovieBuilder
             return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
         } catch(Exception $e) {
         	touch($outputDir . "/INVALID");
-       		throw new Exception($e->getMessage());
+       		throw new Exception("Unable to create movie: " . $e->getMessage(), $e->getCode());
         }
     }
     
@@ -180,8 +179,8 @@ class Movie_HelioviewerMovieBuilder
     {
         if ($numFrames < 3) {
             $msg = "There are not enough images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
-                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
-            throw new Exception($msg);
+                 . toReadableISOString($isoEndTime);
+            throw new Exception($msg, 1);
         }
     }
     /**
@@ -265,9 +264,8 @@ class Movie_HelioviewerMovieBuilder
                     $params['layers']   = $layer;
                     $files[] = $this->buildMovie($params, $outputDir, true);
                 } catch(Exception $e) {
-                    // Ignore any exceptions thrown by buildMovie, since they
-                    // occur when no movie is made and we only care about movies that
-                    // are made.
+                    // Log these error messages for now. See if they can be avoided in future.
+                    throw $e;
                 }
             }
         }

@@ -60,7 +60,7 @@ class Module_Movies implements Module
             try {
                 $this->{$this->_params['action']}();
             } catch (Exception $e) {
-                printErrorMsg($e->getMessage());
+                handleError($e->getMessage(), $e->getCode());
             }
         }
     }
@@ -137,7 +137,8 @@ class Module_Movies implements Module
         // Make a temporary directory to store the movie in.
         $now    = date("Ymd_His");
         
-        $tmpDir = HV_TMP_DIR . "/$now";
+        $tmpDir = HV_CACHE_DIR . "/movies/$now";
+
         if (!file_exists($tmpDir)) {
             mkdir($tmpDir, 0777, true);
             chmod($tmpDir, 0777);

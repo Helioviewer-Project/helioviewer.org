@@ -140,7 +140,7 @@ class Image_SubFieldImageNoImagick extends Image_SubFieldImage
             unlink($grayscale);
 
         } catch(Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+            throw $e;
                       
             //Clean-up and exit
             $this->_abort($this->outputFile);

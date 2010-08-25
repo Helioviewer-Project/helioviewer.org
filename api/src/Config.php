@@ -70,7 +70,6 @@ class Config
         }
 
         $this->_setAdditionalParams();
-        $this->_setupLogging(true);
         
         $dbconfig = substr($file, 0, strripos($file, "/")) . "/Database.php";
         include_once $dbconfig;
@@ -100,24 +99,6 @@ class Config
     }
 
     /**
-     * Makes sure that error log exists and selects desired logging verbosity
-     *
-     * @param bool $verbose Whether or not to force verbose logging.
-     *
-     * @return void
-     */
-    private function _setupLogging($verbose)
-    {
-        if ($verbose) {
-            error_reporting(E_ALL | E_STRICT);
-        }
-        $errorLog = HV_ERROR_LOG;
-        if (!file_exists($errorLog)) {
-            touch($errorLog);
-        }
-    }
-
-    /**
      * Some useful values can be determined automatically...
      *
      * @return void
@@ -125,20 +106,7 @@ class Config
     private function _setAdditionalParams()
     {
         define("HV_CACHE_DIR", HV_ROOT_DIR . "/cache");
-        define("HV_TMP_DIR", HV_ROOT_DIR . "/cache/movies");
-        define("HV_ERROR_LOG", HV_ROOT_DIR . "/log/error");
-        define("HV_EMPTY_TILE", HV_ROOT_DIR . "/resources/images/transparent_512.png");
-        define("HV_TMP_ROOT_URL", HV_WEB_ROOT_URL . "/cache/movies");
+        define("HV_LOG_DIR", HV_ROOT_DIR . "/log");
         define("HV_API_ROOT_URL", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
-        
-        if (!file_exists(HV_CACHE_DIR)) {
-            mkdir(HV_CACHE_DIR, 0777, true);
-            chmod(HV_CACHE_DIR, 0777);
-        }
-        
-        if (!file_exists(HV_TMP_DIR)) {
-            mkdir(HV_TMP_DIR, 0777, true);
-            chmod(HV_TMP_DIR, 0777);        	
-        }
     }
 }

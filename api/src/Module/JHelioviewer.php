@@ -56,7 +56,7 @@ class Module_JHelioviewer implements Module
             try {
                 $this->{$this->_params['action']}();
             } catch (Exception $e) {
-                printErrorMsg($e->getMessage(), false);
+                handleError($e->getMessage(), $e->getCode());
             }
         }
     }
