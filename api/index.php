@@ -111,7 +111,27 @@ function loadModule($params)
                 );
                 
                 $context  = stream_context_create($opts);
-                echo file_get_contents($url, false, $context);
+                
+                
+                // Set up handler to respond to warnings emitted by file_get_contents
+                function catchWarning($errno, $errstr, $errfile, $errline, array $errcontext) {
+                    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+                }
+                
+                set_error_handler('catchWarning');
+                
+                // Attempt to forward request to Helioqueuer
+                try {
+                    echo file_get_contents($url, false, $context);
+                } catch (Exception $e) {
+                    // Helioqueuer inaccessable
+                    if (preg_match("/Connection refused/", $e->getMessage())) {
+                        handleError("Unable to access Helioqueuer. Is the server online?");
+                    }                    
+                }
+                
+                // Restore normal behavior for dealing with warnings
+                restore_error_handler();
 
             // Local requests
             } else {
