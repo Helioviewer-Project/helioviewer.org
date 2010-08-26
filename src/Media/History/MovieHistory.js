@@ -97,7 +97,8 @@ var MovieHistory = History.extend(
                 self.updateTooltips();
     
                 // Open pop-up and display movie
-                watch.click(function () {
+                //watch.click(function () {
+                watch.live("click", function () {
                     $(".jGrowl-notification .close").click();
                     movie.playMovie();
                 });
@@ -146,7 +147,10 @@ var MovieHistory = History.extend(
      * 
      */
     _handleDataErrors: function (data) {
-        if (data.error) {
+        if (data === null) {
+            $(document).trigger("message-console-info", "Unable to process request. Please try again later.");
+            return true;
+        } else if (data.error) {
         	$(document).trigger("message-console-info", [data.error]);
             return true;
         }

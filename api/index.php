@@ -126,7 +126,7 @@ function loadModule($params)
                 } catch (Exception $e) {
                     // Helioqueuer inaccessable
                     if (preg_match("/Connection refused/", $e->getMessage())) {
-                        handleError("Unable to access Helioqueuer. Is the server online?");
+                        handleError("Unable to access Helioqueuer. Is the server online?", true);
                     }                    
                 }
                 

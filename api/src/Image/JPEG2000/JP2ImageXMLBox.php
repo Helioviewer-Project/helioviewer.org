@@ -48,7 +48,7 @@ class Image_JPEG2000_JP2ImageXMLBox
     public function getXMLBox ($root)
     {
         if (!file_exists($this->_file)) {
-            $msg = "Unable to extract XMLbox for {$this->_file}. File does not exist!";
+            $msg = "Unable to access file. Do you have the proper permissions?";
             throw new Exception($msg);
         }
 

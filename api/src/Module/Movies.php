@@ -78,7 +78,7 @@ class Module_Movies implements Module
         // validation process sets them to false if they are not given.
         case "buildMovie":
             $expected = array(
-                "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"    => array('startTime', 'endTime'),
                 "ints"     => array('frameRate', 'quality', 'numFrames'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
@@ -93,7 +93,7 @@ class Module_Movies implements Module
             break;
         case "queueMovie":
             $expected = array(
-               "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
                "bools"    => array('scaleDown', 'display'),
                "dates"    => array('startTime', 'endTime'),
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')

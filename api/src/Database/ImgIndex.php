@@ -236,7 +236,7 @@ class Database_ImgIndex
                 "sunCenterY" => (float) $center[1],
             );
         } catch (Exception $e) {
-            throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img['filename'], $e->getMessage()));
+            throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()));
         }
 
         return $meta;
