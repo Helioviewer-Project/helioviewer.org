@@ -167,7 +167,7 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
-     * Checks to make sure there are at least 3 frames in the movie.
+     * Checks to make sure there are at least 1 frame in the movie.
      * 
      * @param int  $numFrames    Number of frames in the movie
      * @param date $isoStartTime ISO Date string
@@ -177,7 +177,7 @@ class Movie_HelioviewerMovieBuilder
      */
     private function _validateNumFrames($numFrames, $isoStartTime, $isoEndTime)
     {
-        if ($numFrames < 3) {
+        if ($numFrames == 0) {
             $msg = "There are not enough images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
                  . toReadableISOString($isoEndTime);
             throw new Exception($msg, 1);

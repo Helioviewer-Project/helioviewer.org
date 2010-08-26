@@ -109,7 +109,6 @@ var History = Class.extend(
     clear: function () {
         this.removeTooltips();
         this.history = [];
-        console.log(this.id + "History.clear()");
     },
     
     hide: function () {
