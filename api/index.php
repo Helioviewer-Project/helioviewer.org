@@ -102,33 +102,44 @@ function loadModule($params)
                 $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
                 unset ($params['action']);
                 
-                $opts = array('http' =>
-                    array(
-                        'method'  => $_SERVER['REQUEST_METHOD'],
-                        'header'  => 'Content-type: application/x-www-form-urlencoded',
-                        'content' => http_build_query($params)
-                    )
-                );
+                // NOTE 08/26/2010: file_get_contents sometimes returns empty responses. switching to cURL 
                 
-                $context  = stream_context_create($opts);
+                //$opts = array('http' =>
+                //    array(
+                //       'method'  => $_SERVER['REQUEST_METHOD'],
+                //        'header'  => 'Content-type: application/x-www-form-urlencoded',
+                //        'content' => http_build_query($params)
+                //    )
+                //);
                 
+                //$context  = stream_context_create($opts);
                 
                 // Set up handler to respond to warnings emitted by file_get_contents
                 function catchWarning($errno, $errstr, $errfile, $errline, array $errcontext) {
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
                 }
-                
                 set_error_handler('catchWarning');
                 
-                // Attempt to forward request to Helioqueuer
-                try {
-                    echo file_get_contents($url, false, $context);
-                } catch (Exception $e) {
-                    // Helioqueuer inaccessable
-                    if (preg_match("/Connection refused/", $e->getMessage())) {
-                        handleError("Unable to access Helioqueuer. Is the server online?", true);
-                    }                    
+                include_once 'src/Net/Proxy.php';
+                header('Content-type: application/json;charset=UTF-8');
+                $proxy = new Net_Proxy($url . "?");
+                
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
+                    echo $proxy->post($params, true);    
+                } else {
+                    echo $proxy->query($params, true);
                 }
+                
+                
+                // Attempt to forward request to Helioqueuer
+                //try {
+                //    echo file_get_contents($url, false, $context);
+                //} catch (Exception $e) {
+                    // Helioqueuer inaccessable
+                //    if (preg_match("/Connection refused/", $e->getMessage())) {
+                //        handleError("Unable to access Helioqueuer. Is the server online?", true);
+                //    }                    
+                //}
                 
                 // Restore normal behavior for dealing with warnings
                 restore_error_handler();
