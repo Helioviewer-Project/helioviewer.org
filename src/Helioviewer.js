@@ -26,9 +26,6 @@ var Helioviewer = UIController.extend(
         // Calling super will load settings, init viewport, and call _loadExtensions()
         this._super(urlParams, serverSettings);
         
-        // TODO 08/11/2010 USE this.serverSettings.. don't need to alias?
-        this.rootURL  = serverSettings.rootURL;
-        
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
@@ -290,7 +287,7 @@ var Helioviewer = UIController.extend(
         imageLayers = this.viewport.serialize();
         
         // Build URL
-        url = this.rootURL + "/?date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
+        url = this.serverSettings.rootURL + "/?date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
 
         return url;
     }

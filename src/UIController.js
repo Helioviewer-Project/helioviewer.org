@@ -64,12 +64,39 @@ var UIController = Class.extend(
     },
     
     /**
-     * @description Checks browser support for various features used in
-     *              Helioviewer
+     * @description Checks browser support for various features used in Helioviewer
      */
     _checkBrowser: function () {
-        $.support.nativeJSON = (typeof (JSON) !== "undefined") ? true : false;
-        $.support.localStorage = !!window.localStorage;
+        // Base support
+        $.extend($.support, {
+            "localStorage" : ('localStorage' in window) && window['localStorage'] !== null,
+            "nativeJSON"   : typeof (JSON) !== "undefined",
+            "video"        : !!document.createElement('video').canPlayType,
+            "h264"         : false,
+            "ogg"          : false,
+            "vp8"          : false
+        });
+        
+        // HTML 5 Video Support
+        if ($.support.video) {
+            var v = document.createElement("video");
+            
+            // VP8/WebM
+            if (v.canPlayType('video/webm; codecs="vp8"')) {
+                $.support.vp8 = true;
+            }
+            
+            // Ogg Theora
+            if (v.canPlayType('video/ogg; codecs="theora"')) {
+                $.support.ogg = true;
+            }
+            
+            // H.264
+            if (v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
+                $.support.h264 = true;
+            }
+            
+        }
     },
 
     /**
@@ -95,8 +122,8 @@ var UIController = Class.extend(
         
         // User Interface components
         this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
-                                             this.serverSettings.minImageScale, 
-                                             this.serverSettings.maxImageScale);
+                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
+                                             
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
     }
