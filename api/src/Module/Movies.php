@@ -86,9 +86,8 @@ class Module_Movies implements Module
             break;
         case "playMovie":
             $expected = array(
-                "required" => array('url', 'width', 'height'),
-                "floats"   => array('width', 'height'),
-                "urls"     => array('url')
+                "required" => array('file', 'width', 'height'),
+                "floats"   => array('width', 'height')
             );
             break;
         case "queueMovie":
@@ -169,9 +168,10 @@ class Module_Movies implements Module
      */
     public function playMovie ()
     {
-        $url = $this->_params['url'];
         $width  = $this->_params['width'];
         $height = $this->_params['height'];
+        
+        $url = HV_CACHE_URL . "/movies/" . $this->_params['file'];
 
         ?>
         <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"

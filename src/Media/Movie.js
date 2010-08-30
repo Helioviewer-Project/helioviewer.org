@@ -79,10 +79,13 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var url, self;
-        self = this;
-        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + 
-                this.viewerWidth + '&height=' + this.viewerHeight;    
+        var file, url, self = this;
+
+        file = this.url.match(/[\w]*\/[\w\.]*.flv$/).pop(); // Relative path to movie 
+        
+        url  = 'api/index.php?action=playMovie&file=' + file + '&width=' + this.viewerWidth + '&height=' 
+             + this.viewerHeight;
+        
         this.watchDialog = $("#watch-dialog-" + this.id);
 
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
