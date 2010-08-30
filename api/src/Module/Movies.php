@@ -171,6 +171,11 @@ class Module_Movies implements Module
         $width  = $this->_params['width'];
         $height = $this->_params['height'];
         
+        // Make sure it exists
+        if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
+            throw new Exception("Invalid movie requested");
+        }
+        
         $url = HV_CACHE_URL . "/movies/" . $this->_params['file'];
 
         ?>

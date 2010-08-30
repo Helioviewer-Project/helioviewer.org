@@ -215,7 +215,7 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var options, params, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
+        var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
             movie, url, scaleDown = false, self = this;
 
         this.building = true;
@@ -231,12 +231,15 @@ var MovieBuilder = MediaBuilder.extend(
             scaleDown = true;
         }
         
+        // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
+        currentTime = new Date(getUTCTimestamp(viewportInfo.time));
+        
         // Ajax Request Parameters
         params = {
             action     : "queueMovie", //action     : "getETAForMovie",
             layers     : viewportInfo.layers,
-            startTime  : new Date(viewportInfo.time).addHours(-12).toISOString(),
-            endTime    : new Date(viewportInfo.time).addHours(12).toISOString(),
+            startTime  : currentTime.addHours(-12).toISOString(),
+            endTime    : currentTime.addHours(24).toISOString(),
             imageScale : viewportInfo.imageScale,
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,

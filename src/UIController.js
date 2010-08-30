@@ -77,7 +77,7 @@ var UIController = Class.extend(
             "vp8"          : false
         });
         
-        // HTML 5 Video Support
+        // HTML5 Video Support
         if ($.support.video) {
             var v = document.createElement("video");
             

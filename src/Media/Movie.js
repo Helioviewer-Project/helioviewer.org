@@ -81,10 +81,9 @@ var Movie = Media.extend(
     playMovie: function () {
         var file, url, self = this;
 
-        file = this.url.match(/[\w]*\/[\w\.]*.flv$/).pop(); // Relative path to movie 
         
-        url  = 'api/index.php?action=playMovie&file=' + file + '&width=' + this.viewerWidth + '&height=' 
-             + this.viewerHeight;
+        
+       
         
         this.watchDialog = $("#watch-dialog-" + this.id);
 
@@ -94,19 +93,41 @@ var Movie = Media.extend(
             title  : "Helioviewer Movie Player",
             width  : 'auto',
             height : 'auto',
-            open   : self.watchDialog.append("<div id='movie-player-" + self.id + "'>" + 
-                                            "<iframe src=" + url + " width=" + self.viewerWidth + " height=" + 
-                                                self.viewerHeight + " marginheight=0 marginwidth=0 scrolling=no " +
-                                                "frameborder=0 /><br /><br />" +
-                                                "<a href='api/index.php?action=downloadFile&url=" + self.hqFile + "'>" +
-                                                    "Click here to download a high-quality version." +
-                                                "</a></div>"),
+            open   : self.watchDialog.append(self.getVideoPlayerHTML()),
             close  : function () {  
                         $("#movie-player-" + self.id).remove();
                     },
             zIndex : 9999,
             show   : 'fade'
         });                                 
+    },
+    
+    /**
+     * Decides how to display video and returns HTML corresponding to that method
+     */
+    getVideoPlayerHTML: function () {
+        // HTML5 Video (Currently only H.264 supported)
+        if ($.support.h264) {
+            var path = this.hqFile.match(/http:\/\/[\w.]*\/(.*)/).pop();
+            return "<video id='movie-player-" + this.id + "' src='" + path + "' controls preload width='" + this.viewerWidth + "' height='" 
+                   + this.viewerHeight + "'></video>";
+        } 
+        
+        // Fallback (flash player)
+        else {
+            var file = this.url.match(/[\w]*\/[\w\.]*.flv$/).pop(), // Relative path to movie
+                url  = 'api/index.php?action=playMovie&file=' + file + '&width=' + this.viewerWidth + '&height=' 
+                     + this.viewerHeight;
+            
+            
+            return "<div id='movie-player-" + this.id + "'>" + 
+            "<iframe src=" + url + " width=" + this.viewerWidth + " height=" + 
+                this.viewerHeight + " marginheight=0 marginwidth=0 scrolling=no " +
+                "frameborder=0 /><br /><br />" +
+                "<a href='api/index.php?action=downloadFile&url=" + this.hqFile + "'>" +
+                    "Click here to download a high-quality version." +
+                "</a></div>";
+        }
     },
     
     /**
