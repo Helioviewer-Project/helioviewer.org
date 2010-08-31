@@ -29,6 +29,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <!-- Layout -->
     <link rel="stylesheet" href="resources/css/layout.css" type="text/css" />
 
+    <!-- Kaltura HTML5 video player -->
+    <!-- <script type="text/javascript" src="http://html5.kaltura.org/js"></script> --> 
+
     <!-- jQuery -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
@@ -37,7 +40,8 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
     <script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
 
-    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />
+    <!--<link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />-->
+    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />    
 
     <!-- Mousewheel support -->
     <script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>

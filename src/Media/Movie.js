@@ -70,26 +70,50 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var file, url, self = this;
+        var file, url, dimensions, self = this;
+        
+        $("#movie-button").click();
         
         this.watchDialog = $("#watch-dialog-" + this.id);
         
-        var dimensions = this.getVideoPlayerDimensions();
+        dimensions = this.getVideoPlayerDimensions();
 
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
         // trying to download it. 
         this.watchDialog.dialog({
-            title  : "Helioviewer Movie Player",
-            width  : dimensions.width  + 34,
-            height : dimensions.height + 104,
-            open   : self.watchDialog.append(self.getVideoPlayerHTML(dimensions.width, dimensions.height)),
-            close  : function () {  
-                        $("#movie-player-" + self.id).remove();
-                    },
-            zIndex : 9999,
-            show   : 'fade'
-        });                                 
+            title     : "Helioviewer Movie Player",
+            width     : dimensions.width  + 34,
+            height    : dimensions.height + 104,
+            resizable : $.support.h264,
+            open      : self.watchDialog.append(self.getVideoPlayerHTML(dimensions.width, dimensions.height)),
+            close     : function () {  
+                            $("#movie-player-" + self.id).remove();
+                        },
+            zIndex    : 9999,
+            show      : 'fade'
+        });                      
     },
+    
+    /**
+     * Decides how to display video and returns HTML corresponding to that method
+     * 
+     * 08/31/2010: Kaltura does not currently support jQuery UI 1.8, and even with 1.7.1
+     * some bugs are present. Try again in future.
+     */
+//    getVideoPlayerHTML: function (width, height) {
+//        // Base URL
+//        var path = this.hqFile.match(/cache.*/).pop().slice(0,-3);
+//        
+//        // Use relative dimensions for browsers which support the video element
+//        if ($.support.video) {
+//            width = "100%";
+//            height= "99%";
+//        }
+//        
+//        return "<video id='movie-player-" + this.id + "' width='" + width + "' " + "height='" + height + "' poster='" + path + "jpg'>"
+//             + "<source src='" + path + "mp4' /><source src='" + path + "flv' />"
+//             + "</video>";
+//    },
     
     /**
      * Decides how to display video and returns HTML corresponding to that method
@@ -98,8 +122,8 @@ var Movie = Media.extend(
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
             var path = this.hqFile.match(/cache.*/).pop();
-            return "<video id='movie-player-" + this.id + "' src='" + path + "' controls preload width='100%' " +
-            		"height='99%%'></video>";
+            return "<video id='movie-player-" + this.id + "' src='" + path + "' controls preload autoplay width='100%' " +
+            		"height='99%'></video>";
         } 
         
         // Fallback (flash player)
