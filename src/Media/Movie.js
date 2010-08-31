@@ -108,7 +108,7 @@ var Movie = Media.extend(
     getVideoPlayerHTML: function () {
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
-            var path = this.hqFile.match(/http:\/\/[\w.]*\/(.*)/).pop();
+            var path = this.hqFile.match(/cache.*/).pop();
             return "<video id='movie-player-" + this.id + "' src='" + path + "' controls preload width='" + this.viewerWidth + "' height='" 
                    + this.viewerHeight + "'></video>";
         } 
