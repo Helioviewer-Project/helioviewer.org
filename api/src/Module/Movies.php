@@ -93,7 +93,7 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "bools"    => array('scaleDown', 'display'),
+               "bools"    => array('display'),
                "dates"    => array('startTime', 'endTime'),
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
             );

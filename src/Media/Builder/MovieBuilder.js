@@ -216,7 +216,7 @@ var MovieBuilder = MediaBuilder.extend(
      */
     buildMovie: function (viewportInfo) {
         var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            movie, url, scaleDown = false, self = this;
+            movie, url, self = this;
 
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -226,10 +226,6 @@ var MovieBuilder = MediaBuilder.extend(
         
         coordinates = viewportInfo.coordinates;
         movieHeight = coordinates.bottom - coordinates.top;
-        
-        if (movieHeight >= vpHeight - 50) {
-            scaleDown = true;
-        }
         
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = new Date(getUTCTimestamp(viewportInfo.time));
@@ -246,7 +242,6 @@ var MovieBuilder = MediaBuilder.extend(
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
             hqFormat   : this.hqFormat,
-            scaleDown  : scaleDown,
             display    : false
         };
         

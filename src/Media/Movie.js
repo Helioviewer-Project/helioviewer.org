@@ -25,16 +25,7 @@ var Movie = Media.extend(
         }
 
         this.hqFormat = params.hqFormat || hqFormat;
-        
-        // Resize what appears in the movie player if the movie is as big as the viewport
-        if (this.scaleDown === true) {
-            this.viewerWidth  = this.width  * 0.8;
-            this.viewerHeight = this.height * 0.8;
-        } else {
-            this.viewerWidth  = this.width;
-            this.viewerHeight = this.height;
-        }
-        
+
         this.complete = params.complete || false;
         this.url      = params.url      || "";
     },
@@ -80,20 +71,18 @@ var Movie = Media.extend(
      */
     playMovie: function () {
         var file, url, self = this;
-
-        
-        
-       
         
         this.watchDialog = $("#watch-dialog-" + this.id);
+        
+        var dimensions = this.getVideoPlayerDimensions();
 
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
         // trying to download it. 
         this.watchDialog.dialog({
             title  : "Helioviewer Movie Player",
-            width  : 'auto',
-            height : 'auto',
-            open   : self.watchDialog.append(self.getVideoPlayerHTML()),
+            width  : dimensions.width  + 34,
+            height : dimensions.height + 104,
+            open   : self.watchDialog.append(self.getVideoPlayerHTML(dimensions.width, dimensions.height)),
             close  : function () {  
                         $("#movie-player-" + self.id).remove();
                     },
@@ -105,29 +94,41 @@ var Movie = Media.extend(
     /**
      * Decides how to display video and returns HTML corresponding to that method
      */
-    getVideoPlayerHTML: function () {
+    getVideoPlayerHTML: function (width, height) {
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
             var path = this.hqFile.match(/cache.*/).pop();
-            return "<video id='movie-player-" + this.id + "' src='" + path + "' controls preload width='" + this.viewerWidth + "' height='" 
-                   + this.viewerHeight + "'></video>";
+            return "<video id='movie-player-" + this.id + "' src='" + path + "' controls preload width='100%' " +
+            		"height='99%%'></video>";
         } 
         
         // Fallback (flash player)
         else {
             var file = this.url.match(/[\w]*\/[\w\.]*.flv$/).pop(), // Relative path to movie
-                url  = 'api/index.php?action=playMovie&file=' + file + '&width=' + this.viewerWidth + '&height=' 
-                     + this.viewerHeight;
-            
+                url  = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
             
             return "<div id='movie-player-" + this.id + "'>" + 
-            "<iframe src=" + url + " width=" + this.viewerWidth + " height=" + 
-                this.viewerHeight + " marginheight=0 marginwidth=0 scrolling=no " +
+            "<iframe src=" + url + " width=" + width + " height=" + 
+                height + " marginheight=0 marginwidth=0 scrolling=no " +
                 "frameborder=0 /><br /><br />" +
                 "<a href='api/index.php?action=downloadFile&url=" + this.hqFile + "'>" +
                     "Click here to download a high-quality version." +
                 "</a></div>";
         }
+    },
+    
+    /**
+     * Determines dimensions for which movie should be displayed
+     */
+    getVideoPlayerDimensions: function () {
+        var maxWidth    = $(window).width() * 0.80,
+            maxHeight   = $(window).height() * 0.80,
+            scaleFactor = Math.max(1, this.width/maxWidth, this.height/maxHeight);
+        
+        return {
+            "width"  : this.width  / scaleFactor,
+            "height" : this.height / scaleFactor
+        };
     },
     
     /**
@@ -150,8 +151,7 @@ var Movie = Media.extend(
             y2            : this.y2,
             complete      : this.complete,
             hqFormat      : this.hqFormat,
-            hqFile        : this.hqFile,
-            scaleDown     : this.scaleDown
+            hqFile        : this.hqFile
         };
     },
     
