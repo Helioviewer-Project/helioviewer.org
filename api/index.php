@@ -47,7 +47,6 @@ function loadModule($params)
         "downloadFile"        => "WebClient",
         "getClosestImage"     => "WebClient",
         "getDataSources"      => "WebClient",
-        "getScreenshot"       => "WebClient",
         "getJP2Header"        => "WebClient",
         "getTile"             => "WebClient",
         "takeScreenshot"      => "WebClient",
