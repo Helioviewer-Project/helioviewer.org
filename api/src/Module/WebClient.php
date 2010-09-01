@@ -82,8 +82,18 @@ class Module_WebClient implements Module
         header("Content-Length: " . filesize($file));
 
         // Mime type
-        $fileinfo = new finfo(FILEINFO_MIME);
-        header("Content-type: " . $fileinfo->file($file));
+        $parts = explode(".", $file);
+        $extension = end($parts);
+        
+        if (in_array($extension, array("jp2", "jpx"))) {
+            $mimetype = "image/$extension";
+        } else if (in_array($extension, array("ogg", "ogv", "webm"))) {
+            $mimetype = "video/$extension";
+        } else {        
+            $fileinfo = new finfo(FILEINFO_MIME);
+            $mimetype = $fileinfo->file($file);
+        }
+        header("Content-type: " . $mimetype);
 
         echo file_get_contents($file);
     }
@@ -260,7 +270,8 @@ class Module_WebClient implements Module
 
         case "downloadFile":
             $expected = array(
-               "required" => array('uri')
+               "required" => array('uri'),
+               "files"    => array('uri')
             );
             break;
 
