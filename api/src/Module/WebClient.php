@@ -207,7 +207,7 @@ class Module_WebClient implements Module
      */
     public function takeScreenshot()
     {
-        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $tmpDir  = HV_CACHE_DIR . "/screenshots";
@@ -290,7 +290,7 @@ class Module_WebClient implements Module
 
         case "getDataSources":
             $expected = array(
-               "optional" => array('verbose')
+               "bools" => array('verbose')
             );
             break;
 
@@ -298,11 +298,16 @@ class Module_WebClient implements Module
             $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'date', 'imageScale', 'size', 'jp2Width','jp2Height', 'jp2Scale',
                               'offsetX', 'offsetY', 'format', 'observatory', 'instrument', 'detector', 'measurement');
             $expected = array(
-               "required" => $required
+                "required" => $required,
+                "files"    => array('uri')
             );
             break;
 
         case "getJP2Header":
+            $expected = array(
+                "required" => array('file'),
+                "files" => array('file')
+            );
             break;
         case "getViewerImage":
             break;

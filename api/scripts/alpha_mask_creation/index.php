@@ -52,7 +52,7 @@
         $cmd = "convert -size {$width}x$height xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\"" .
                " -fill black -draw \"circle $crpix1,$crpix2 $crpix1,$innerCircleY\" -monochrome out/{$mask['filename']}";
         echo "<div style='margin:20px;'>$cmd</div><br>";
-        exec($cmd);
+        exec(escapeshellcmd($cmd));
         echo "Done!<br><br>";
     }
 ?>
