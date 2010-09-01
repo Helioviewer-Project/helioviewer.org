@@ -45,7 +45,8 @@ class Validation_InputValidator
             "floats"   => "checkFloats",
             "bools"    => "checkBools",
             "dates"    => "checkDates",
-            "urls"     => "checkURLs"
+            "urls"     => "checkURLs",
+            "files"    => "checkFilePaths"
         );
 
         // Run validation checks
@@ -114,6 +115,23 @@ class Validation_InputValidator
                 }
             } else {
                 $params[$bool] = false;
+            }
+        }
+    }
+    
+    /**
+     * Checks filepaths to check for attempts to access parent directories
+     */
+    public static function checkFilePaths($files, &$params)
+    {
+        foreach ($files as $file) {
+            if (isset($params[$file])) {
+                if(strpos($params[$file], '..')) {
+                    throw new Exception("Invalid file requested: .. not allowed in filenames.");
+                } elseif (preg_match('/[^\/.-\w]/', $params[$file])) {
+                    throw new Exception("Invalid file requested. Valid characters for filenames include letters, " .
+                    "digits, underscores, hyphens and periods.");
+                }
             }
         }
     }
