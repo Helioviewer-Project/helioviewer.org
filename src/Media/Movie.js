@@ -128,14 +128,15 @@ var Movie = Media.extend(
         
         // Fallback (flash player)
         else {
-            var file = this.url.match(/[\w]*\/[\w\.]*.flv$/).pop(), // Relative path to movie
-                url  = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
+            var file   = this.url.match(/[\w]*\/[\w\.]*.flv$/).pop(), // Relative path to movie
+                hqFile = file.replace("flv", this.hqFormat),
+                url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
             
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
                 height + " marginheight=0 marginwidth=0 scrolling=no " +
                 "frameborder=0 /><br /><br />" +
-                "<a href='api/index.php?action=downloadFile&url=" + this.hqFile + "'>" +
+                "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
                     "Click here to download a high-quality version." +
                 "</a></div>";
         }

@@ -57,45 +57,35 @@ class Module_WebClient implements Module
 
 
     /**
-     * 'Opens' the requested file in the current window as an attachment,
-     *  which pops up the "Save file as" dialog.
-     *
+     * 'Opens' the requested file in the current window as an attachment,  which pops up the "Save file as" dialog.
+     * 
      * @TODO test this to make sure it works in all browsers.
      *
      * @return void
      */
     public function downloadFile()
     {
-        $url = $this->_params['url'];
+        $file = HV_CACHE_DIR . "/" . $this->_params['uri'];
 
-        // Convert web url into directory url so stat() works.
-        // Need to use stat() instead of filesize() because filesize fails
-        // for every file on Linux due to security permissions with apache.
-        // To get the file size, do $stat['size']
-        $url = str_replace(HV_WEB_ROOT_URL, HV_ROOT_DIR, $url);
-
-        if (substr($url, 0, 4) !== "http") {
-            $stat = stat($url); // Can't stat files that are from other servers.
+        // Make sure file exists
+        if (!file_exists($file)) {
+            throw new Exception("Unable to locate the requested file: $file");
         }
 
-        if (strlen($url) > 1) {
-            header("Pragma: public");
-            header("Expires: 0");
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-            header("Cache-Control: private", false); // required for certain browsers
-            header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";");
-            header("Content-Transfer-Encoding: binary");
+        // Set HTTP headers
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Cache-Control: private", false); // required for certain browsers
+        header("Content-Disposition: attachment; filename=\"" . basename($file) . "\"");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Length: " . filesize($file));
 
-            if (isset($stat) && $stat['size']) {
-                header("Content-Length: " . $stat['size']);
-            }
-            if (substr($url, -3) === "mov") {
-                header("Content-type: video/quicktime");
-            }
-            echo file_get_contents($url);
-        } else {
-            throw new Exception("Unable to find the specified requested file.");
-        }
+        // Mime type
+        $fileinfo = new finfo(FILEINFO_MIME);
+        header("Content-type: " . $fileinfo->file($file));
+
+        echo file_get_contents($file);
     }
 
     /**
@@ -270,8 +260,7 @@ class Module_WebClient implements Module
 
         case "downloadFile":
             $expected = array(
-               "required" => array('url'),
-               "urls"     => array('url')
+               "required" => array('uri')
             );
             break;
 
