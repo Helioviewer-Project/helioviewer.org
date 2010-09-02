@@ -24,8 +24,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
 		            servers, savedLayers, urlLayers);
 
-        this._queue = [ "SOHO,EIT,EIT,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
-                        "SOHO,LASCO,C2,white-light", "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum",
+        this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
+                        "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum", "SDO,AIA,AIA,171",
                         "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
         
         var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
@@ -37,7 +37,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, params, opacity, queue, ds, server, baseURL, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, params, opacity, queue, ds, server, baseURL, defaultLayer = "SDO,AIA,AIA,171";
 
         // If new layer exceeds the maximum number of layers allowed,
         // display a message to the user
