@@ -167,7 +167,12 @@ class Module_WebClient implements Module
     public function getTile ()
     {        
         include_once 'src/Image/Tiling/HelioviewerTileBuilder.php';
+
         $builder = new Image_Tiling_HelioviewerTileBuilder();
+        
+        // Make sure cache directory is available
+        $this->_createImageCacheDir(dirname($this->_params['uri']));
+        
         return $builder->getTile($this->_params);
     }
 
