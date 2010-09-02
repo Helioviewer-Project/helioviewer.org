@@ -116,7 +116,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         
         // Check to make sure header information is valid
         if ((filter_var($scale, FILTER_VALIDATE_FLOAT) === false) || ($scale <= 0)) {
-            throw new Exception("Invalid CDELT1 for " . $this->_file);
+            throw new Exception("Invalid value for CDELT1: $scale");
         }
         
         return $scale;
