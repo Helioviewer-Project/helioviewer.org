@@ -96,6 +96,10 @@ var UserSettings = Class.extend(
         }
             
         // If version is out of date, reset settings
+        // TODO 09/02/2010:
+        // Instead of reseting user settings whenever the version is different, do a check on each
+        // item to make sure its valid, reset those items which are invalid, and then update the 
+        // stored version number.
         if (this.get('version') !== this._defaults.version) {
             this._loadDefaults();
         }

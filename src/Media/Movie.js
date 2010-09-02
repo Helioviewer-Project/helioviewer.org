@@ -128,7 +128,7 @@ var Movie = Media.extend(
         
         // Fallback (flash player)
         else {
-            var file   = this.url.match(/[\w]*\/[\w\.]*.flv$/).pop(), // Relative path to movie
+            var file   = this.url.match(/[\w]*\/[\w-\.]*.flv$/).pop(), // Relative path to movie
                 hqFile = file.replace("flv", this.hqFormat),
                 url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
             
