@@ -37,7 +37,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, params, opacity, queue, ds, server, baseURL, defaultLayer = "SDO,AIA,AIA,171";
+        var currentLayers, next, params, opacity, queue, ds, server, baseURL, 
+            queueChoiceIsValid = false, i = 0, defaultLayer = "SDO,AIA,AIA,171";
 
         // If new layer exceeds the maximum number of layers allowed,
         // display a message to the user
@@ -59,13 +60,19 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         queue = $.grep(this._queue, function (item, i) {
             return ($.inArray(item, currentLayers) === -1);
         });
+        
+        server = this._selectTilingServer();
 
         // Pull off the next layer on the queue
-        next = queue[0] || defaultLayer;
-
-        params = this.parseLayerString(next + ",1,100");
-
-        server = this._selectTilingServer();
+        while (!queueChoiceIsValid) {
+            next = queue[i] || defaultLayer;
+            params = this.parseLayerString(next + ",1,100");
+            
+            if (this.checkDataSource(params.observatory, params.instrument, params.detector, params.measurement)) {
+                queueChoiceIsValid = true;
+            }
+            i++;
+        }
         
         baseURL = this.servers[server] || "api/index.php";
 
@@ -132,6 +139,26 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             opacity     : parseInt(params[5], 10),
             server      : parseInt(params[6], 10) || 0
         };
+    },
+    
+    /**
+     * Checks to make sure requested data source exists
+     * 
+     * Note: Once defaults provided by getDataSource are used, this function will
+     * no longer be necessary.
+     */
+    checkDataSource: function (obs, inst, det, meas) {
+        if (this.dataSources[obs] !== undefined) {
+            if (this.dataSources[obs][inst] !== undefined) {
+                if (this.dataSources[obs][inst][det] !== undefined) {
+                    if (this.dataSources[obs][inst][det][meas] !== undefined) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
     },
     
     /**

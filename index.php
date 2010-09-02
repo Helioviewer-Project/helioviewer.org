@@ -174,7 +174,14 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 printf("\t\turlParams = %s;\n", json_encode($urlParams));
             ?>
             config      = new Config(settingsJSON).toArray();
-            helioviewer = new Helioviewer(urlParams, config);
+
+            try {
+                helioviewer = new Helioviewer(urlParams, config);
+            } catch (e) {
+                if (typeof console !== "undefined") {
+                    console.log("Error: " + e.description);
+                }
+            }
         });
     </script>
 
