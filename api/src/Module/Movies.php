@@ -143,7 +143,10 @@ class Module_Movies implements Module
             chmod($tmpDir, 0777);
         }
 
-        $builder->buildMovie($this->_params, $tmpDir);
+        $filepath = $builder->buildMovie($this->_params, $tmpDir);
+        
+        header('Content-type: application/json');
+        echo json_encode(array("url" => $filepath));
     }
     
     public function queueMovie() {
