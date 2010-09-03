@@ -219,12 +219,16 @@ class Module_WebClient implements Module
 
         $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
         
-        if (!$this->_params['display']) {
-            header('Content-Type: application/json');
-            echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
+        if ($this->_params['display']) {
+            $fileinfo = new finfo(FILEINFO_MIME);
+            $mimetype = $fileinfo->file($response);
+            header("Content-Disposition: inline; filename=\"" . basename($response) . "\"");
+            header("Content-type: " . $mimetype);
+            die(file_get_contents($response));
         }
-
-        return $response;        
+        
+        header('Content-Type: application/json');
+        echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
     }
     
     /**

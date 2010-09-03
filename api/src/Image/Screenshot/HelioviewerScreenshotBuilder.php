@@ -96,7 +96,15 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         );
 
         $screenshot->buildImages($layerArray);
-        return $this->_displayScreenshot($screenshot->getComposite(), $originalParams, $params['display']);
+        
+        $composite = $screenshot->getComposite();
+        
+        // Check to see if screenshot was successfully created
+        if (!file_exists($composite)) {
+            throw new Exception('The requested screenshot is either unavailable or does not exist.');
+        }
+        
+        return $composite;
     }
     
     /**
@@ -294,35 +302,6 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         }
 
         return $metaArray;
-    }
-    
-    /**
-     * Checks to see if the screenshot file is there and displays it either as an image/png or
-     * as JSON, depending on where the request came from. 
-     * 
-     * @param {string}  $composite filepath to composite image
-     * @param {Array}   $params    Array of parameters from the API call
-     * @param {Boolean} $display   Whether to display the image or return its filepath
-     * 
-     * @return void
-     */
-    private function _displayScreenshot($composite, $params, $display) 
-    {
-        if (!file_exists($composite)) {
-            throw new Exception('The requested screenshot is either unavailable or does not exist.');
-        }
-
-        if (($display === true || $display === "true") && $params == $_GET) {
-            header('Content-type: image/png');
-            echo file_get_contents($composite);
-        } else if ($params == $_POST) {
-            header('Content-type: application/json');
-            // Replace '/var/www/helioviewer', or wherever the directory is,
-            // with 'http://localhost/helioviewer' so it can be displayed.
-            echo json_encode(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $composite));
-        } else {
-            return $composite;
-        }
     }
 }
 ?>
