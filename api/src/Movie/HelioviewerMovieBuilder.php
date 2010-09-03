@@ -148,7 +148,7 @@ class Movie_HelioviewerMovieBuilder
             
             $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
             
-            if ($display === true) {
+            if ($this->_params['display'] === true) {
                 return Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
             }
 
