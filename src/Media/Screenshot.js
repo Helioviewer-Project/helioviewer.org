@@ -3,7 +3,7 @@
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
+bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
 "use strict";
 var Screenshot = Media.extend(
@@ -42,7 +42,7 @@ var Screenshot = Media.extend(
      */
     download: function () {
         if (this.url) {
-            var file = this.url.match(/[\w]*\/[\w\.]*\.[jpg|png]$/).pop(); // Relative path to movie
+            var file = this.url.match(/[\w]*\/[\w\.]*.[jpg|png]$/).pop(); // Relative path to movie
             window.open('api/index.php?action=downloadFile&uri=' + file, '_parent');
         } else {
             $(document).trigger("message-console-warn", ["There was an error retrieving your " +

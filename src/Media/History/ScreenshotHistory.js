@@ -51,6 +51,6 @@ var ScreenshotHistory = History.extend(
             }
         });
         this.history = this.history.reverse().slice(0, 12).reverse();
-        $(document).trigger("save-setting", ["screenshot-history", this._serialize()]);
+        //$(document).trigger("save-setting", ["screenshot-history", this._serialize()]);
     }
 });
