@@ -71,7 +71,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             if (this.checkDataSource(params.observatory, params.instrument, params.detector, params.measurement)) {
                 queueChoiceIsValid = true;
             }
-            i++;
+            i += 1;
         }
         
         baseURL = this.servers[server] || "api/index.php";

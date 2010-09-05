@@ -42,7 +42,7 @@ var Screenshot = Media.extend(
      */
     download: function () {
         if (this.url) {
-            var file = this.url.match(/[\w]*\/[\w\.]*.[jpg|png]$/).pop(); // Relative path to movie
+            var file = this.url.match(/[\w]*\/[\w\.]*\.[jpg|png]$/).pop(); // Relative path to movie
             window.open('api/index.php?action=downloadFile&uri=' + file, '_parent');
         } else {
             $(document).trigger("message-console-warn", ["There was an error retrieving your " +
@@ -77,11 +77,11 @@ var Screenshot = Media.extend(
      * strings. imageScale must be a number. url must start with http
      */
     isValidEntry: function () {
-        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested
-                && this.id.length > 1 
-                && (!isNaN(this.imageScale) || this.imageScale.length > 1)
-                && this.layers.length > 1 && this.obsDate.length > 1
-                && this.url.slice(0,4) === "http") {
+        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested &&
+                this.id.length > 1 &&
+                (!isNaN(this.imageScale) || this.imageScale.length > 1) &&
+                this.layers.length > 1 && this.obsDate.length > 1 &&
+                this.url.slice(0, 4) === "http") {
             return true;
         }
 

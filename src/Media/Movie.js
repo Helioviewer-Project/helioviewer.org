@@ -4,7 +4,7 @@
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
+bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
 "use strict";
 var Movie = Media.extend(
@@ -110,7 +110,8 @@ var Movie = Media.extend(
 //            height= "99%";
 //        }
 //        
-//        return "<video id='movie-player-" + this.id + "' width='" + width + "' " + "height='" + height + "' poster='" + path + "jpg'>"
+//        return "<video id='movie-player-" + this.id + "' width='" + width + "' " + "height='"
+//               + height + "' poster='" + path + "jpg'>"
 //             + "<source src='" + path + "mp4' /><source src='" + path + "flv' />"
 //             + "</video>";
 //    },
@@ -119,18 +120,20 @@ var Movie = Media.extend(
      * Decides how to display video and returns HTML corresponding to that method
      */
     getVideoPlayerHTML: function (width, height) {
+        var path, file, hqFile, url;
+        
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
-            var path = this.hqFile.match(/cache.*/).pop();
-            return "<video id='movie-player-" + this.id + "' src='" + path + "' controls preload autoplay width='100%' " +
-            		"height='99%'></video>";
-        } 
-        
+            path = this.hqFile.match(/cache.*/).pop();
+            return "<video id='movie-player-" + this.id + "' src='" + path +
+                   "' controls preload autoplay width='100%' " + "height='99%'></video>";
+        }
+
         // Fallback (flash player)
         else {
-            var file   = this.url.match(/[\w]*\/[\w-\.]*.flv$/).pop(), // Relative path to movie
-                hqFile = file.replace("flv", this.hqFormat),
-                url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
+            file   = this.url.match(/[\w]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
+            hqFile = file.replace("flv", this.hqFormat);
+            url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
             
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
@@ -148,7 +151,7 @@ var Movie = Media.extend(
     getVideoPlayerDimensions: function () {
         var maxWidth    = $(window).width() * 0.80,
             maxHeight   = $(window).height() * 0.80,
-            scaleFactor = Math.max(1, this.width/maxWidth, this.height/maxHeight);
+            scaleFactor = Math.max(1, this.width / maxWidth, this.height / maxHeight);
         
         return {
             "width"  : this.width  / scaleFactor,
@@ -186,9 +189,10 @@ var Movie = Media.extend(
      * strings. imageScale must be a number. url must start with http
      */
     isValidEntry: function () {
-        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested
-                && (!isNaN(this.imageScale) || this.imageScale.length > 1)
-                && this.layers.length > 1 && this.startTime.length > 1) {
+        if (this.dateRequested && 
+            new Date(this.dateRequested).getTime() === this.dateRequested &&
+            (!isNaN(this.imageScale) || this.imageScale.length > 1) &&
+            this.layers.length > 1 && this.startTime.length > 1) {
             return true;
         }
 

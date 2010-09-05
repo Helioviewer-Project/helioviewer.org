@@ -53,18 +53,18 @@ var ViewportController = Class.extend(
      */
     moveViewport: function (event, x, y) {
         switch (event.type) {
-            case "mouseup":
-                this.movementHelper.mouseUp(event);
-                break;
-            case "mousedown":
-                this.movementHelper.mouseDown(event);
-                break;
-            case "mousemove":
-                this.movementHelper.mouseMove(event);
-                break;
-            default:
-                this.movementHelper.moveViewport(x, y);
-                break;
+        case "mouseup":
+            this.movementHelper.mouseUp(event);
+            break;
+        case "mousedown":
+            this.movementHelper.mouseDown(event);
+            break;
+        case "mousemove":
+            this.movementHelper.mouseMove(event);
+            break;
+        default:
+            this.movementHelper.moveViewport(x, y);
+            break;
         }
     },
     

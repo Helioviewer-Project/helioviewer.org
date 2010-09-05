@@ -9,7 +9,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
+/*global Class, $, Shadowbox, getUTCTimestamp, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
  extractLayerName */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(

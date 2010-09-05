@@ -150,7 +150,8 @@ var Helioviewer = UIController.extend(
             },
             function () {
                 $(this).children(".ui-icon").removeClass("ui-icon-hover");
-        });
+            }
+        );
     },
     
     /**
@@ -287,7 +288,8 @@ var Helioviewer = UIController.extend(
         imageLayers = this.viewport.serialize();
         
         // Build URL
-        url = this.serverSettings.rootURL + "/?date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
+        url = this.serverSettings.rootURL + "/?date=" + date + "&imageScale=" + imageScale +
+              "&imageLayers=" + imageLayers;
 
         return url;
     }

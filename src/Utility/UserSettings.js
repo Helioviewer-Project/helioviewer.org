@@ -132,7 +132,10 @@ var UserSettings = Class.extend(
             }
             break;
         case "imageScale":
-            if ((isNaN(value)) || (value < this._serverSettings.minImageScale) || (value > this._serverSettings.maxImageScale)) {
+            if ((isNaN(value)) || 
+                (value < this._serverSettings.minImageScale) || 
+                (value > this._serverSettings.maxImageScale)) 
+            {
                 return false;
             }
             break;

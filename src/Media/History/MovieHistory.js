@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, Movie, History */
+/*global Class, $, Shadowbox, setTimeout, window, Movie, History, toFuzzyTime */
 "use strict";
 var MovieHistory = History.extend(
     /** @lends MovieHistory.prototype */
@@ -54,7 +54,7 @@ var MovieHistory = History.extend(
             if (movieData.eta) {
                 message = "Your video is processing and will be available in approximately " + 
                           toFuzzyTime(movieData.eta) + ". You may view it at any time after " +
-                          "it is ready by clicking the 'Movie' button."
+                          "it is ready by clicking the 'Movie' button.";
                 $(document).trigger("message-console-info", [message]);
             }
             
@@ -64,7 +64,7 @@ var MovieHistory = History.extend(
             
             self.save();
             self._waitForMovie(movieData, movie);
-        }
+        };
         
         $.post("api/index.php", params, movieCallback, "json");
     },
@@ -73,7 +73,7 @@ var MovieHistory = History.extend(
      * Pops up a notification that lets the user know the movie is done.
      */
     _notifyUser: function (data, movie) {
-        var options, self=this;
+        var options, self = this;
 
         if (data.url === null) {
             $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
@@ -116,7 +116,7 @@ var MovieHistory = History.extend(
      * for setTimeout
      */
     _waitForMovie: function (data, movie) {
-        var tryToGetMovie, callback, params, self=this;
+        var tryToGetMovie, callback, params, self = this;
 
         if (self._handleDataErrors(data)) {
             self.remove(movie);
@@ -131,15 +131,15 @@ var MovieHistory = History.extend(
                 };
                 
                 params = {
-                        "action": "getMovie", 
-                        "id"    : movie.id
+                    "action": "getMovie", 
+                    "id"    : movie.id
                 };
                 $.get("api/index.php", params, callback, "json");
             };
 
             // Wait for half of the eta, the eta function isn't very accurate and overshoots
             // if images are small. If eta is zero, wait for 15 seconds.
-            setTimeout(tryToGetMovie, Math.max(data.eta, 30)*500);
+            setTimeout(tryToGetMovie, Math.max(data.eta, 30) * 500);
         }
     },
     
@@ -151,7 +151,7 @@ var MovieHistory = History.extend(
             $(document).trigger("message-console-info", "Unable to process request. Please try again later.");
             return true;
         } else if (data.error) {
-        	$(document).trigger("message-console-info", [data.error]);
+            $(document).trigger("message-console-info", [data.error]);
             return true;
         }
         return false;

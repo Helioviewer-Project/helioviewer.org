@@ -45,7 +45,7 @@ var ScreenshotHistory = History.extend(
     _loadSavedHistory: function (history) {
         var self = this, screenshot;
         $.each(history, function () {
-            screenshot = new Screenshot(this, this.dateRequested)
+            screenshot = new Screenshot(this, this.dateRequested);
             if (screenshot.isValidEntry()) {
                 self.history.push(screenshot);
             }
