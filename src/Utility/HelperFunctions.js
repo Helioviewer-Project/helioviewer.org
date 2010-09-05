@@ -1,11 +1,11 @@
 /**
  * @fileOverview Various helper functions used throughout Helioviewer.
- * @author <a href="mailto:vincent.k.hughitt@nasa.gov">Keith Hughitt</a>
+ * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * 
  * TODO: Move helper functions to a separate namespcae? (e.g. $hv)
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
+bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global console, $, navigator, Storage, hideZoomControls, showZoomControls */
 "use strict";
 /**
@@ -397,14 +397,15 @@ var extractLayerName = function (layer) {
  */
 function createUUID() {
     // http://www.ietf.org/rfc/rfc4122.txt
-    var s = [];
-    var hexDigits = "0123456789ABCDEF";
-    for (var i = 0; i < 32; i++) {
+    var uuid, i, s = [],
+        hexDigits = "0123456789ABCDEF";
+    
+    for (i = 0; i < 32; i += 1) {
         s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
     }
     s[12] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
     s[16] = hexDigits.substr((s[16] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
 
-    var uuid = s.join("");
+    uuid = s.join("");
     return uuid;
 }
