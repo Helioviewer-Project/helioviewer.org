@@ -119,7 +119,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
         	            "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
         	            "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", 
-        	            "UI/jquery.ui.dynaccordion.js");
+        	            "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
             foreach($js as $file)
                 printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
         }

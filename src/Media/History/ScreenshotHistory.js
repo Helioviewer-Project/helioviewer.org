@@ -43,14 +43,12 @@ var ScreenshotHistory = History.extend(
      * @input {Array} history An array of saved screenshot histories
      */
     _loadSavedHistory: function (history) {
-        var self = this, screenshot;
+        var self = this;
+        
         $.each(history, function () {
-            screenshot = new Screenshot(this, this.dateRequested);
-            if (screenshot.isValidEntry()) {
-                self.history.push(screenshot);
-            }
+            self.history.push(new Screenshot(this, this.dateRequested));
         });
+        
         this.history = this.history.reverse().slice(0, 12).reverse();
-        //$(document).trigger("save-setting", ["screenshot-history", this._serialize()]);
     }
 });

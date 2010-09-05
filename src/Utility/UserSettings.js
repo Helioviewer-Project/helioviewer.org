@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, CookieJar, $, localStorage, getUTCTimestamp */
+/*global Class, InputValidator, CookieJar, $, localStorage, getUTCTimestamp */
 "use strict";
 var UserSettings = Class.extend(
     /** @lends UserSettings.prototype */
@@ -26,6 +26,9 @@ var UserSettings = Class.extend(
     init: function (defaults, serverSettings) {
         this._defaults       = defaults;
         this._serverSettings = serverSettings;
+        
+        // Input validator
+        this._validator = new InputValidator();
                 
         // Initialize storage
         this._initStorage();
@@ -39,19 +42,23 @@ var UserSettings = Class.extend(
      * @param {Object} value The new value for the setting
      */
     set: function (key, value) {
-        if (this._validate(key, value)) {
-            // Update settings
-            this.settings[key] = value;
-            
-            // localStorage
-            if ($.support.localStorage) {
-                localStorage.setItem("settings", $.toJSON(this.settings));
-            }
-            
-            // cookies
-            else {         
-                this.cookies.set("settings", this.settings);
-            }
+        try {
+            this._validate(key, value);
+        } catch (e) {
+            return;
+        }
+        
+        // Update settings
+        this.settings[key] = value;
+
+        // localStorage
+        if ($.support.localStorage) {
+            localStorage.setItem("settings", $.toJSON(this.settings));
+        }
+
+        // cookies
+        else {         
+            this.cookies.set("settings", this.settings);
         }
     },
     
@@ -125,24 +132,31 @@ var UserSettings = Class.extend(
      * @returns {Boolean} Returns true if the setting is valid
      */
     _validate: function (setting, value) {
+        var self = this;
+        
         switch (setting) {
         case "date":
-            if (isNaN(value)) {
-                return false;
-            }
+            this._validator.checkTimestamp(value);
             break;
         case "imageScale":
-            if ((isNaN(value)) || 
-                (value < this._serverSettings.minImageScale) || 
-                (value > this._serverSettings.maxImageScale)) 
-            {
-                return false;
-            }
+            this._validator.checkFloat(value, {
+                "min": this._serverSettings.minImageScale,
+                "max": this._serverSettings.maxImageScale
+            });
+            break;
+        case "movie-history":
+            $.each(value, function (i, movie) {
+                self._validator.checkTimestamp(movie["dateRequested"]);
+            });
+            break;
+        case "screenshot-history":
+            $.each(value, function (i, screenshot) {
+                self._validator.checkTimestamp(screenshot["dateRequested"]);
+            });
             break;
         default:
             break;        
         }
-        return true;
     },
     
     /**

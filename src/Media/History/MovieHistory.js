@@ -188,11 +188,9 @@ var MovieHistory = History.extend(
         var self = this, movie;
         $.each(history, function () {
             movie = new Movie(this, this.dateRequested);
-            if (movie.isValidEntry()) {
-                self.history.push(movie);
-                if (!movie.complete && movie.id) {
-                    self._waitForMovie({}, movie);
-                }
+            self.history.push(movie);
+            if (!movie.complete && movie.id) {
+                self._waitForMovie({}, movie);
             }
         });
 
