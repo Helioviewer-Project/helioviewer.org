@@ -72,23 +72,6 @@ var Screenshot = Media.extend(
     },
     
     /**
-     * Checks to make sure that all fields required for display in the history list are correct.
-     * dateRequested must be a valid date, and id, layers, and obsDate must not be empty
-     * strings. imageScale must be a number. url must start with http
-     */
-    isValidEntry: function () {
-        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested &&
-                this.id.length > 1 &&
-                (!isNaN(this.imageScale) || this.imageScale.length > 1) &&
-                this.layers.length > 1 && this.obsDate.length > 1 &&
-                this.url.slice(0, 4) === "http") {
-            return true;
-        }
-
-        return false;
-    },
-    
-    /**
      * Creates a table element with information about the screenshot
      */
     getInformationTable: function () {
