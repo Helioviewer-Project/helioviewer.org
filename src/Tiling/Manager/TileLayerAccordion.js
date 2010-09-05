@@ -233,8 +233,7 @@ var TileLayerAccordion = Layer.extend(
         this.updateTimeStamp(id, date);
         
         entry.find(".tile-accordion-header-left").html(name);
-        entry.find("#opacity-slider-track-" + id).slider("value", opacity);
-        
+
         // Display FITS header
         entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
             self._showFITS(id, name, filepath, filename, server);
