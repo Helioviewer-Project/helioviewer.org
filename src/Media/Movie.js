@@ -121,7 +121,8 @@ var Movie = Media.extend(
      */
     getVideoPlayerHTML: function (width, height) {
         var path, file, hqFile, url;
-        
+
+        file   = this.url.match(/[\w]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
         hqFile = file.replace("flv", this.hqFormat);
         
         // HTML5 Video (Currently only H.264 supported)
@@ -130,7 +131,7 @@ var Movie = Media.extend(
 //            return "<video id='movie-player-" + this.id + "' src='" + path +
 //                   "' controls preload autoplay width='100%' " + "height='99%'></video>";
             return "<video id='movie-player-" + this.id + "' src='" + path +
-            "' controls preload autoplay width='100%' " + "height='99%'></video>" +
+            "' controls preload autoplay width='100%' " + "height='95%'></video>" +
             "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
             "Click here to download a high-quality version.</a>";
         
@@ -139,7 +140,6 @@ var Movie = Media.extend(
 
         // Fallback (flash player)
         else {
-            file   = this.url.match(/[\w]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
             url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
             
             return "<div id='movie-player-" + this.id + "'>" + 
