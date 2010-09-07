@@ -195,6 +195,5 @@ var MovieHistory = History.extend(
         });
 
         this.history = this.history.reverse().slice(0, 12).reverse();
-        this.save();
     }
 });
