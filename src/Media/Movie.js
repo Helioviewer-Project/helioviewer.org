@@ -70,28 +70,27 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var file, url, dimensions, self = this;
+        var file, url, dimensions, movieDialog, self = this;
         
         $("#movie-button").click();
         
-        this.watchDialog = $("#watch-dialog-" + this.id);
+        movieDialog = $("#watch-dialog-" + this.id);
         
         dimensions = this.getVideoPlayerDimensions();
-
+        
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
         // trying to download it. 
-        this.watchDialog.dialog({
+        movieDialog.dialog({
             title     : "Helioviewer Movie Player",
             width     : dimensions.width  + 34,
             height    : dimensions.height + 104,
             resizable : $.support.h264,
-            open      : self.watchDialog.append(self.getVideoPlayerHTML(dimensions.width, dimensions.height)),
-            close     : function () {  
-                            $("#movie-player-" + self.id).remove();
+            close     : function () {
+                            movieDialog.empty();
                         },
             zIndex    : 9999,
             show      : 'fade'
-        });                      
+        }).append(self.getVideoPlayerHTML(dimensions.width, dimensions.height));
     },
     
     /**
