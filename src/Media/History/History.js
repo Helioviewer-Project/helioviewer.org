@@ -53,7 +53,7 @@ var History = Class.extend(
             return h.id !== item.id;
         });
 
-        if (this.history.length === 0) {
+        if ((this.history.length === 0) && this.historyBar) {
             this.historyBar.clearHistory();
         } else {
             this.updateTooltips();
