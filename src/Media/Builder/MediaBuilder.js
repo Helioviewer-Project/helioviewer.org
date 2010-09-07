@@ -117,6 +117,12 @@ var MediaBuilder = Class.extend(
     
     /**
      * Hides both its dialog and the history bar underneath that.
+     * 
+     * NOTE 09/07/2010:
+     * 
+     * Bug #619944 may be caused by a conflict created when two qtip elements (media builder buttons
+     * and history panel) are bound to the same element. In future, consider either binding tooltips
+     * to different elements, or not using qtip plugin.
      */
     hideDialogs: function () {
         this.button.qtip("hide");
