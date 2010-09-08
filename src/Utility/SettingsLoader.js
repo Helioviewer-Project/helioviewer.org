@@ -47,9 +47,9 @@ var SettingsLoader = (
             showWelcomeMsg  : true,
             tileLayers : [{
                 server     : 0,
-                observatory: 'SOHO',
-                instrument : 'EIT',
-                detector   : 'EIT',
+                observatory: 'SDO',
+                instrument : 'AIA',
+                detector   : 'AIA',
                 measurement: '304',
                 visible    : true,
                 opacity    : 100
