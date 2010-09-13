@@ -3,7 +3,7 @@
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
+bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
 "use strict";
 var Screenshot = Media.extend(
@@ -42,7 +42,8 @@ var Screenshot = Media.extend(
      */
     download: function () {
         if (this.url) {
-            window.open('api/index.php?action=downloadFile&url=' + this.url, '_parent');
+            var file = this.url.match(/[\w]*\/[\w\.]*.[jpg|png]$/).pop(); // Relative path to movie
+            window.open('api/index.php?action=downloadFile&uri=' + file, '_parent');
         } else {
             $(document).trigger("message-console-warn", ["There was an error retrieving your " +
                                 "screenshot. Please try again later or refresh the page."]);
@@ -68,23 +69,6 @@ var Screenshot = Media.extend(
             y1            : this.y1,
             y2            : this.y2
         };
-    },
-    
-    /**
-     * Checks to make sure that all fields required for display in the history list are correct.
-     * dateRequested must be a valid date, and id, layers, and obsDate must not be empty
-     * strings. imageScale must be a number. url must start with http
-     */
-    isValidEntry: function () {
-        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested
-                && this.id.length > 1 
-                && (!isNaN(this.imageScale) || this.imageScale.length > 1)
-                && this.layers.length > 1 && this.obsDate.length > 1
-                && this.url.slice(0,4) === "http") {
-            return true;
-        }
-
-        return false;
     },
     
     /**

@@ -236,7 +236,7 @@ var TileLayer = Layer.extend(
         if (!$.support.opacity) {
             img.css("opacity", this.opacity / 100);
         }
-
+        
         // Load tile
         img.error(function (e) {
             img.unbind("error");
@@ -244,7 +244,7 @@ var TileLayer = Layer.extend(
         }).load(function () {
             $(this).width(512).height(512); // Wait until image is done loading specify dimensions in order to prevent 
                                             // Firefox from displaying place-holders
-        }).attr("src", this.getTileURL(this.image.server, x, y));
+        }).attr("src", this.getTileURL(x, y));
 
         //      Makes sure all of the images have finished downloading before swapping them in
         img.appendTo(this.domNode);

@@ -66,5 +66,42 @@ class Net_Proxy
             return file_get_contents($url);
         }
     }
+    
+    // POST Request
+    public function post($params, $curl = false)
+    {
+        $url = $this->_baseURL;
+        
+        if ($curl) {
+            // Fetch Results
+            $curl_handle=curl_init();
+            curl_setopt($curl_handle, CURLOPT_URL, $url);
+            curl_setopt($curl_handle, CURLOPT_POST, 1);
+            curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 30);
+            curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1); 
+            
+            $results = curl_exec($curl_handle);
+            curl_close($curl_handle);
+            return $results;
+        } else {
+            return file_get_contents($url);
+        }
+    }
+    
+    /**
+     *   cURL POST Request Example
+     *   
+     *   $curl = curl_init(HV_HELIOQUEUER_API_URL);
+     *           
+     *   curl_setopt($curl, CURLOPT_POST, 1);
+     *   curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+     *   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+     *    
+     *   $response = curl_exec($curl);
+     *   curl_close($curl);
+     *   
+     *   echo $response;
+     */
 }
 ?>

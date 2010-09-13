@@ -38,9 +38,6 @@ class Movie_HelioviewerMovie
     private $_numFrames;
     private $_frameRate;
     private $_db;
-    private $_baseScale = 2.63;
-    private $_baseZoom = 10;
-    private $_tileSize = 512;
     private $_filetype = "flv";
     private $_highQualityLevel = 100;
     private $_highQualityFileType;
@@ -190,7 +187,7 @@ class Movie_HelioviewerMovie
         // Clean up png/tif images that are no longer needed. Leave the first frame for previews.
         foreach (array_slice($this->_images, 1) as $image) {
             if (file_exists($image)) {
-                unlink($image);
+                //unlink($image);
             }     
         }
         

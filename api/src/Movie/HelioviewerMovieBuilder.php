@@ -56,23 +56,18 @@ class Movie_HelioviewerMovieBuilder
     	list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
     	
         $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
-
+        
         $timePerFrame = 0.000001 * $width * $height + 0.25;
         $eta = $timePerFrame * $numFrames;
 
+        header('Content-type: application/json');
+        
         try {
         	$this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
-            header('Content-type: application/json');
             echo JSON_encode(array("eta" => round($eta)));
         } catch (Exception $e) {
-            if (!empty($_POST)) {
-                header('Content-type: application/json');
-                echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
-            } else if ($this->_params['display'] === false) {
-                printErrorMsg($e->getMessage());
-            }        	
+            throw $e;
         }
-
         return;
     }
     
@@ -84,25 +79,25 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function buildMovie($params, $outputDir, $forEvent = false) 
+    public function buildMovie($params, $outputDir) 
     {
         $defaults = array(
             'numFrames'   => false,
             'filename'    => false,
             'sharpen'     => false,
             'edges'       => false,
-            'quality'     => 10,
-            'hqFormat'    => "mp4",
             'display'     => true,
             'watermarkOn' => true,
-            'endTime'     => false
+            'endTime'     => false,
+            'hqFormat'    => "mp4",
+            'quality'     => 10
         );
 
         $this->_params = array_merge($defaults, $params);
 
         list($width, $height, $imageScale) = $this->_limitToMaximumDimensions();
         
-        $options    = array(
+        $options = array(
             'enhanceEdges'  => $this->_params['edges'],
             'sharpen'       => $this->_params['sharpen']
         );
@@ -144,20 +139,24 @@ class Movie_HelioviewerMovieBuilder
             $tmpImageDir = $outputDir . "/tmp-" . $filename;
             $images      = $this->_buildFramesFromMetaInformation($movieMeta, $timestamps, $tmpImageDir);
 
-            $url = $movie->buildMovie($images, $tmpImageDir);
-            if ($forEvent) {
-            	return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url);
+            // Compile movie
+            $filepath = $movie->buildMovie($images, $tmpImageDir);
+
+            if (!file_exists($filepath)) {
+                throw new Exception('The requested movie is either unavailable or does not exist.');
             }
             
-            return $this->_displayMovie($url, $params, $this->_params['display'], $movie->width(), $movie->height());
+            $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
+            
+            if ($this->_params['display'] === true) {
+                return Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
+            }
+
+            return $url;
+            
         } catch(Exception $e) {
         	touch($outputDir . "/INVALID");
-            if (!empty($_POST)) {
-                header('Content-type: application/json');
-                echo json_encode(array("error" => $e->getMessage(), "errorCode" => 1));
-            } else if ($this->_params['display'] === false) {
-            	printErrorMsg($e->getMessage());
-            }
+       		throw new Exception("Unable to create movie: " . $e->getMessage(), $e->getCode());
         }
     }
     
@@ -177,7 +176,7 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
-     * Checks to make sure there are at least 3 frames in the movie.
+     * Checks to make sure there are at least 1 frame in the movie.
      * 
      * @param int  $numFrames    Number of frames in the movie
      * @param date $isoStartTime ISO Date string
@@ -187,10 +186,10 @@ class Movie_HelioviewerMovieBuilder
      */
     private function _validateNumFrames($numFrames, $isoStartTime, $isoEndTime)
     {
-        if ($numFrames < 3) {
+        if ($numFrames == 0) {
             $msg = "There are not enough images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
-                        . toReadableISOString($isoEndTime) . ", so a movie was not created.";
-            throw new Exception($msg);
+                 . toReadableISOString($isoEndTime);
+            throw new Exception($msg, 1);
         }
     }
     /**
@@ -274,9 +273,8 @@ class Movie_HelioviewerMovieBuilder
                     $params['layers']   = $layer;
                     $files[] = $this->buildMovie($params, $outputDir, true);
                 } catch(Exception $e) {
-                    // Ignore any exceptions thrown by buildMovie, since they
-                    // occur when no movie is made and we only care about movies that
-                    // are made.
+                    // Log these error messages for now. See if they can be avoided in future.
+                    throw $e;
                 }
             }
         }
@@ -609,38 +607,8 @@ class Movie_HelioviewerMovieBuilder
     	   "eta" => $eta
     	);
     	
-    	//if (isset($_POST) && !empty($_POST)) {
-    	//   header('Content-type: application/json');
-    	   echo JSON_encode($information);
-    	//}
+        echo JSON_encode($information);
+    	
     	return;
-    }
-    /**
-     * Displays the movie or returns the url to it.
-     * 
-     * @param {String}  $url     url of the movie
-     * @param {Array}   $params  parameters from the API call
-     * @param {Boolean} $display whether to display or return the url
-     * @param {int}     $width   the width of the movie
-     * @param {int}     $height  the height of the movie
-     * 
-     * @return {String} movie object or displays a movie
-     */
-    private function _displayMovie($url, $params, $display, $width, $height)
-    {
-        if (!file_exists($url)) {
-            throw new Exception('The requested movie is either unavailable or does not exist.');
-        }
-
-        if ($display === true && $params == $_GET) {
-            return Movie_HelioviewerMovie::showMovie(str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url), $width, $height);
-        } else if ($params == $_POST) {
-            header('Content-type: application/json');
-            echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url)));
-            return $url;
-        } else {
-            echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url)));
-            return $url;
-        }
     }
 }

@@ -57,7 +57,11 @@ class Module_Movies implements Module
     public function execute()
     {
         if ($this->validate()) {
-            $this->{$this->_params['action']}();
+            try {
+                $this->{$this->_params['action']}();
+            } catch (Exception $e) {
+                handleError($e->getMessage(), $e->getCode());
+            }
         }
     }
 
@@ -74,7 +78,7 @@ class Module_Movies implements Module
         // validation process sets them to false if they are not given.
         case "buildMovie":
             $expected = array(
-                "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"    => array('startTime', 'endTime'),
                 "ints"     => array('frameRate', 'quality', 'numFrames'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
@@ -82,11 +86,17 @@ class Module_Movies implements Module
             break;
         case "playMovie":
             $expected = array(
-                "required" => array('url', 'width', 'height'),
-                "floats"   => array('width', 'height'),
-                "urls"     => array('url')
+                "required" => array('file', 'width', 'height'),
+                "floats"   => array('width', 'height')
             );
             break;
+        case "queueMovie":
+            $expected = array(
+               "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "bools"    => array('display'),
+               "dates"    => array('startTime', 'endTime'),
+               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+            );
         case "getETAForMovie":
         	$expected = array(
         	   "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
@@ -124,21 +134,23 @@ class Module_Movies implements Module
         $builder = new Movie_HelioviewerMovieBuilder();
                 
         // Make a temporary directory to store the movie in.
-        $now = time();
-        $tmpDir = HV_TMP_DIR . "/$now";
+        $now    = date("Ymd_His");
+        
+        $tmpDir = HV_CACHE_DIR . "/movies/$now";
+
         if (!file_exists($tmpDir)) {
             mkdir($tmpDir, 0777, true);
             chmod($tmpDir, 0777);
         }
+
+        $filepath = $builder->buildMovie($this->_params, $tmpDir);
         
-        // @TODO: implement some kind of forking or background process. Commented out
-        // until proxying enabled.
-        /*if (HV_DISTRIBUTED_TILING_ENABLED) {
-        	$builder->getEtaAndId($this->_params, $tmpDir);
-        	touch($tmpDir . "/INVALID");
-        	return;
-        }*/
-        $builder->buildMovie($this->_params, $tmpDir);
+        header('Content-type: application/json');
+        echo json_encode(array("url" => $filepath));
+    }
+    
+    public function queueMovie() {
+        print "Not yet implemented in Dynamo...";
     }
     
     /**
@@ -147,8 +159,8 @@ class Module_Movies implements Module
     public function getETAForMovie ()
     {
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+        
         $builder = new Movie_HelioviewerMovieBuilder();
-
         return $builder->calculateETA($this->_params);
     }
 
@@ -159,9 +171,15 @@ class Module_Movies implements Module
      */
     public function playMovie ()
     {
-        $url = $this->_params['url'];
         $width  = $this->_params['width'];
         $height = $this->_params['height'];
+        
+        // Make sure it exists
+        if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
+            throw new Exception("Invalid movie requested");
+        }
+        
+        $url = HV_CACHE_URL . "/movies/" . $this->_params['file'];
 
         ?>
         <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
@@ -218,7 +236,6 @@ class Module_Movies implements Module
      */
     public static function printDoc()
     {
-        $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
         ?>
         <!-- Movie and Screenshot API -->
         <div id="MovieAPI">
@@ -237,7 +254,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo $baseURL;?>?action=takeScreenshot<br />
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -319,13 +336,13 @@ class Module_Movies implements Module
         
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                <?php echo $baseURL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span>
                 </div>
@@ -346,7 +363,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo $baseURL;?>?action=buildMovie<br />
+                <?php echo HV_API_ROOT_URL;?>?action=buildMovie<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -454,19 +471,19 @@ class Module_Movies implements Module
                 
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
-                <a href="<?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
-                    <?php echo $baseURL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
                 </a>
                 </span>
                 </div>

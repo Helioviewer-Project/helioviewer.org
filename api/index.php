@@ -47,7 +47,6 @@ function loadModule($params)
         "downloadFile"        => "WebClient",
         "getClosestImage"     => "WebClient",
         "getDataSources"      => "WebClient",
-        "getScreenshot"       => "WebClient",
         "getJP2Header"        => "WebClient",
         "getTile"             => "WebClient",
         "takeScreenshot"      => "WebClient",
@@ -55,13 +54,17 @@ function loadModule($params)
         "getJPX"              => "JHelioviewer",
         "launchJHelioviewer"  => "JHelioviewer",
         "buildMovie"          => "Movies",
+        "getMovie"            => "Movies",
         "playMovie"           => "Movies",
+        "queueMovie"          => "Movies",
         "getETAForMovie"      => "Movies",
         "getEventFRMs"           => "SolarEvents",
         "getEvents"              => "SolarEvents",
         "getScreenshotsForEvent" => "SolarEvents",
         "getMoviesForEvent"      => "SolarEvents"
     );
+    
+    $helioqueuer_tasks = array ("queueMovie", "getMovie");
     
     include_once "src/Validation/InputValidator.php";
 
@@ -73,16 +76,87 @@ function loadModule($params)
                 "API Documentation</a> for a list of valid actions."
             );
         } else {
-            $moduleName = $valid_actions[$params["action"]];
-            $className  = "Module_" . $moduleName;
+            // Remote requests
+            if (isset($params['s'])) {
+                // Forward request if neccessary
+                // TODO 08/11/2010: Create separate method or extend Net_Proxy
+                if (HV_DISTRIBUTED_MODE_ENABLED) {
+                    $url = constant("HV_SERVER_" . $params['s']) . "?";
+                    
+                    unset ($params['s']);
+                    foreach ($params as $key=>$value) {
+                        $url .= "$key=$value&";
+                    }
+                    $url = trim($url, "&");
+                    
+                    // TODO 08/11/2010: Use Net_Proxy instead
+                    echo file_get_contents($url);
+                } else {
+                    $err = "Distributed mode is disabled for this server.";
+                    throw new Exception($err);
+                }
+                
+            // Forward Helioqueuer tasks 
+            } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
+                $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
+                unset ($params['action']);
+                
+                // NOTE 08/26/2010: file_get_contents sometimes returns empty responses. switching to cURL 
+                
+                //$opts = array('http' =>
+                //    array(
+                //       'method'  => $_SERVER['REQUEST_METHOD'],
+                //        'header'  => 'Content-type: application/x-www-form-urlencoded',
+                //        'content' => http_build_query($params)
+                //    )
+                //);
+                
+                //$context  = stream_context_create($opts);
+                
+                // Set up handler to respond to warnings emitted by file_get_contents
+                function catchWarning($errno, $errstr, $errfile, $errline, array $errcontext) {
+                    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+                }
+                set_error_handler('catchWarning');
+                
+                include_once 'src/Net/Proxy.php';
+                header('Content-type: application/json;charset=UTF-8');
+                $proxy = new Net_Proxy($url . "?");
+                
+                if ($_SERVER['REQUEST_METHOD'] == "POST") {
+                    echo $proxy->post($params, true);    
+                } else {
+                    echo $proxy->query($params, true);
+                }
+                
+                
+                // Attempt to forward request to Helioqueuer
+                //try {
+                //    echo file_get_contents($url, false, $context);
+                //} catch (Exception $e) {
+                    // Helioqueuer inaccessable
+                //    if (preg_match("/Connection refused/", $e->getMessage())) {
+                //        handleError("Unable to access Helioqueuer. Is the server online?", true);
+                //    }                    
+                //}
+                
+                // Restore normal behavior for dealing with warnings
+                restore_error_handler();
 
-            include_once "src/Module/$moduleName.php";
+            // Local requests
+            } else {
+                $moduleName = $valid_actions[$params["action"]];
+                $className  = "Module_" . $moduleName;
+    
+                include_once "src/Module/$moduleName.php";
+    
+                $module = new $className($params);
+                $module->execute();
+            }
 
-            $module = new $className($params);
-            $module->execute();
         }
     } catch (Exception $e) {
-        printErrorMsg($e->getMessage());
+        printHTMLErrorMsg($e->getMessage());
     }
 
     return true;
@@ -95,7 +169,6 @@ function loadModule($params)
  */
 function printAPIDocumentation()
 {
-    $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
     $modules = array("WebClient", "SolarEvents", "JHelioviewer", "Movies");
 ?>
 <!DOCTYPE html>
@@ -168,10 +241,10 @@ function printAPIDocumentation()
         The general structure of queries is as follows:</p>
     
         <div class="summary-box">
-            <?php echo $baseURL;?>?action=methodName&param1=value1&param2=value2...
+            <?php echo HV_API_ROOT_URL;?>?action=methodName&param1=value1&param2=value2...
         </div>
     
-        <p>The base URL is the same for each of the APIs (<a href="<?php echo $baseURL;?>;"><?php echo $baseURL;?></a>).
+        <p>The base URL is the same for each of the APIs (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
         The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters
         may also be required depending on the specific API being accessed. The one exception to this rule is the
         <a href="index.php#CustomView">Custom View API</a> which is accessed from
@@ -189,7 +262,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-07-20 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2010-08-17 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>
@@ -511,18 +584,22 @@ function printDocumentationAppendices()
 }
 
 /**
- * Display an error message to the API user
+ * Displays a human-readable HTML error message to the user
  *
  * @param string $msg Error message to display to the user
  *
  * @return void
  */
-function printErrorMsg($msg)
+function printHTMLErrorMsg($msg)
 {
     ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <?php
+        $meta = "<!-- DATE: %s URL: http://%s%s -->\n";
+        printf($meta, strftime('%Y-%m-%d %H:%m:%S'), $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']);
+    ?>
     <title>Helioviewer.org API - Error</title>
 </head>
 <body>
@@ -538,20 +615,61 @@ function printErrorMsg($msg)
 }
 
 /**
+ * Handles errors encountered during request processing.
+ * 
+ * @param string $msg     The error message to display
+ * @param bool   $skipLog If true no log file will be created
+ * 
+ * Note: If multiple levels of verbosity are needed, one option would be to split up the complete error message
+ *       into it's separate parts, add a "details" field with the full message, and display only the top-level
+ *       error message in "error" 
+ * 
+ * @see http://www.firephp.org/
+ */
+function handleError($msg, $skipLog=false)
+{
+    header('Content-type: application/json;charset=UTF-8');
+    
+    // JSON
+    echo json_encode(array("error"=>$msg));
+
+    // Fire PHP
+    include_once "lib/FirePHPCore/fb.php";
+    FB::error($msg);
+    
+    // For errors which are expected (e.g. a movie request for which sufficient data is not available) a non-zero
+    // exception code can be set to a non-zero value indicating that the error is known and no log should be created.
+    if (!$skipLog) {
+        logErrorMsg($msg);
+    }
+}
+
+/**
  * Logs an error message to the log whose location is specified in Config.ini
  * 
- * @param string $msg The body of the error message to be logged.
- * @param bool   $url If true, the request URL will be included in the error message.
+ * @param string $error The body of the error message to be logged.
  * 
  * @return void 
  */
-function logErrorMsg($msg, $url=false)
+function logErrorMsg($error)
 {
-    $error = "(" . date("Y/m/d H:i:s") . ") $msg\n";
-    if ($url) {
-        $error .= "\t{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}\n";
+    $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $log = HV_LOG_DIR . "/" . date("Ymd_His") . ".log";
+    
+    $template = "====[DATE]====================\n\n%s\n\n====[URL]=====================\n\n%s\n\n"
+              . "====[MESSAGE]=================\n\n%s";
+    
+    $msg = sprintf($template, date("Y/m/d H:i:s"), $url, $error);
+    
+    if (!empty($_POST)) {
+        $msg .= "\n\n====[POST]=================\n\n";
+        foreach ($_POST as $key => $value) {
+           $msg .= "'$key' => $value\n";
+        }
+        $msg .= "\n$url?" . http_build_query($_POST);
     }
-    file_put_contents(HV_ERROR_LOG, $error, FILE_APPEND);
+
+    file_put_contents($log, $msg);
 }
 
 ?>

@@ -23,7 +23,6 @@ var TileLayerAccordion = Layer.extend(
      */
     init: function (containerId, dataSources, observationDate, timeIncrement) {
         this.container        = $(containerId);
-        this.queryURL         = "api/index.php";
         this._dataSources     = dataSources;
         this._observationDate = observationDate;
         this._timeIncrement   = timeIncrement;
@@ -234,8 +233,7 @@ var TileLayerAccordion = Layer.extend(
         this.updateTimeStamp(id, date);
         
         entry.find(".tile-accordion-header-left").html(name);
-        entry.find("#opacity-slider-track-" + id).slider("value", opacity);
-        
+
         // Display FITS header
         entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
             self._showFITS(id, name, filepath, filename, server);
@@ -263,9 +261,12 @@ var TileLayerAccordion = Layer.extend(
         // Request parameters
         params = {
             action : "getJP2Header",
-            file   : filepath + "/" + filename,
-            server : server
+            file   : filepath + "/" + filename            
         };
+        
+        if (server > 0) {
+            params.server = server;
+        }
         
         $.post("api/index.php", params, function (response) {
             self._buildFITSHeaderDialog(name, id, response);

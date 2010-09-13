@@ -223,10 +223,10 @@ class Image_SubFieldImage
         // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
         return array(
            "gravity" => "northwest",
-           "width"   => round($width, 10),
-           "height"  => round($height, 10),
-           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left, 10),
-           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top, 10)
+           "width"   => round($width),
+           "height"  => round($height),
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
         );
     }
     
@@ -306,7 +306,7 @@ class Image_SubFieldImage
             unlink($grayscale);
 
         } catch(Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+            throw $e;
                       
             //Clean-up and exit
             $this->_abort($this->outputFile);
@@ -411,20 +411,16 @@ class Image_SubFieldImage
         $gd   = null;
         $clut = $this->colorTable;
 
-        try {
-            if (file_exists($input)) {
-                $gd = imagecreatefrompng($input);
-            } else {
-                throw new Exception("Unable to apply color-table: $input does not exist.");
-            }
-
-            if (!$gd) {
-                throw new Exception("Unable to apply color-table: $input is not a valid image.");
-            }
-
-        } catch(Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+        if (file_exists($input)) {
+            $gd = imagecreatefrompng($input);
+        } else {
+            throw new Exception("Unable to apply color-table: $input does not exist.");
         }
+
+        if (!$gd) {
+            throw new Exception("Unable to apply color-table: $input is not a valid image.");
+        }
+
         $ctable = imagecreatefrompng($clut);
 
         for ($i = 0; $i <= 255; $i++) {
@@ -459,40 +455,36 @@ class Image_SubFieldImage
      */
     public function display()
     {
-        try {
-            //header("Cache-Control: public, max-age=" . $lifetime * 60);
-            $headers = apache_request_headers();
-            
-            // Enable caching of images served by PHP
-            // http://us.php.net/manual/en/function.header.php#61903
-            $lastModified = 'Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($this->outputFile)).' GMT';
-            if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($this->outputFile))) {
-                // Cache is current (304)
-                header($lastModified, true, 304);    
+        //header("Cache-Control: public, max-age=" . $lifetime * 60);
+        $headers = apache_request_headers();
+        
+        // Enable caching of images served by PHP
+        // http://us.php.net/manual/en/function.header.php#61903
+        $lastModified = 'Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($this->outputFile)).' GMT';
+        if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($this->outputFile))) {
+            // Cache is current (304)
+            header($lastModified, true, 304);    
+        } else {
+            // Image not in cache or out of date (200)
+            header($lastModified, true, 200);
+
+            header('Content-Length: '.filesize($this->outputFile));
+
+            if ($this->format == "png") {
+                header("Content-Type: image/png");
             } else {
-                // Image not in cache or out of date (200)
-                header($lastModified, true, 200);
-
-                header('Content-Length: '.filesize($this->outputFile));
-
-                if ($this->format == "png") {
-                    header("Content-Type: image/png");
-                } else {
-                    header("Content-Type: image/jpeg");
-                }
-
-                // Filename & Content-length
-                $exploded = explode("/", $this->outputFile);
-                $filename = end($exploded);
-                header("Content-Disposition: inline; filename=\"$filename\"");
-                
-                if (!readfile($this->outputFile)) {
-                    throw new Exception("Unable to read tile from cache: $filename");
-                }
-
+                header("Content-Type: image/jpeg");
             }
-        } catch (Exception $e) {
-            logErrorMsg($error, true);
+
+            // Filename & Content-length
+            $exploded = explode("/", $this->outputFile);
+            $filename = end($exploded);
+            header("Content-Disposition: inline; filename=\"$filename\"");
+            
+            if (!readfile($this->outputFile)) {
+                throw new Exception("Unable to read tile from cache: $filename");
+            }
+
         }
     }
 }

@@ -15,12 +15,11 @@ var SettingsLoader = (
      * 
      * @returns {Object} A UserSettings object
      */
-    loadSettings: function (urlParams, settings) {
+    loadSettings: function (urlParams, serverSettings) {
         var userSettings, timestamp;
         this.urlParams = urlParams;
-        $.extend(this, settings);
         
-        userSettings = new UserSettings(this._getDefaultUserSettings(), this.minImageScale, this.maxImageScale);
+        userSettings = new UserSettings(this._getDefaultUserSettings(serverSettings), serverSettings);
 
         if (this.urlParams.date) {
             timestamp = getUTCTimestamp(this.urlParams.date);
@@ -39,34 +38,22 @@ var SettingsLoader = (
      * 
      * @returns {Object} The default Helioviewer.org settings
      */
-    _getDefaultUserSettings: function () {
+    _getDefaultUserSettings: function (serverSettings) {
         return {
-            date            : getUTCTimestamp(this.defaultObsTime),
-            imageScale      : this.defaultImageScale,
-            version         : this.version,
+            date            : getUTCTimestamp(serverSettings.defaultObsTime),
+            imageScale      : serverSettings.defaultImageScale,
+            version         : serverSettings.version,
             warnMouseCoords : true,
             showWelcomeMsg  : true,
-            minImageScale   : this.minImageScale,
-            maxImageScale   : this.maxImageScale,
-            maxTileLayers   : this.maxTileLayers,
-            prefetchSize    : this.prefetchSize,
-            tileServers     : this.tileServers,
-            timeIncrementSecs: this.timeIncrementSecs,
-            rootURL         : this.rootURL,
             tileLayers : [{
                 server     : 0,
-                observatory: 'SOHO',
-                instrument : 'EIT',
-                detector   : 'EIT',
+                observatory: 'SDO',
+                instrument : 'AIA',
+                detector   : 'AIA',
                 measurement: '304',
                 visible    : true,
                 opacity    : 100
-            }],
-            eventIcons      : {
-                'VSOService::noaa'         : 'small-blue-circle',
-                'GOESXRayService::GOESXRay': 'small-green-diamond',
-                'VSOService::cmelist'      : 'small-yellow-square'
-            }
+            }]
         };
     }
 });

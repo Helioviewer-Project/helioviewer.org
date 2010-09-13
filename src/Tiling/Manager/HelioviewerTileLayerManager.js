@@ -20,12 +20,12 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Creates a new TileLayerManager instance
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    tileServers, savedLayers, urlLayers) {
+                    servers, savedLayers, urlLayers) {
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-		              tileServers, savedLayers, urlLayers);
+		            servers, savedLayers, urlLayers);
 
-        this._queue = [ "SOHO,EIT,EIT,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
-                        "SOHO,LASCO,C2,white-light", "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum",
+        this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
+                        "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum", "SDO,AIA,AIA,171",
                         "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
         
         var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
@@ -37,7 +37,8 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, params, opacity, queue, ds, server, defaultLayer = "SOHO,EIT,EIT,171";
+        var currentLayers, next, params, opacity, queue, ds, server, baseURL, 
+            queueChoiceIsValid = false, i = 0, defaultLayer = "SDO,AIA,AIA,171";
 
         // If new layer exceeds the maximum number of layers allowed,
         // display a message to the user
@@ -59,13 +60,21 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         queue = $.grep(this._queue, function (item, i) {
             return ($.inArray(item, currentLayers) === -1);
         });
+        
+        server = this._selectTilingServer();
 
         // Pull off the next layer on the queue
-        next = queue[0] || defaultLayer;
-
-        params = this.parseLayerString(next + ",1,100");
-
-        server = this._selectTilingServer();
+        while (!queueChoiceIsValid) {
+            next = queue[i] || defaultLayer;
+            params = this.parseLayerString(next + ",1,100");
+            
+            if (this.checkDataSource(params.observatory, params.instrument, params.detector, params.measurement)) {
+                queueChoiceIsValid = true;
+            }
+            i += 1;
+        }
+        
+        baseURL = this.servers[server] || "api/index.php";
 
         ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
@@ -75,7 +84,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Add the layer
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
-                          this.tileVisibilityRange, this.api, this.tileServers[server], params.observatory, 
+                          this.tileVisibilityRange, this.api, baseURL, params.observatory, 
                           params.instrument, params.detector, params.measurement, params.sourceId, params.nickname, 
                           params.visible, opacity, params.layeringOrder, server)
         );
@@ -86,14 +95,16 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        var layer, basicParams, self = this;
+        var layer, basicParams, baseURL, self = this;
 
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
+            
+            baseURL = self.servers[params.server] || "api/index.php";
 
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, self.tileServers[params.server], 
+                                  self.tileVisibilityRange, self.api, baseURL, 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
                                   params.sourceId, params.nickname, params.visible, params.opacity,
                                   params.layeringOrder, params.server);
@@ -106,7 +117,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * Selects a server to handle all tiling and image requests for a given layer
      */
     _selectTilingServer: function () {
-        return Math.floor(Math.random() * (this.tileServers.length));
+        return Math.floor(Math.random() * (this.servers.length));
     },
 
     /**
@@ -128,6 +139,26 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             opacity     : parseInt(params[5], 10),
             server      : parseInt(params[6], 10) || 0
         };
+    },
+    
+    /**
+     * Checks to make sure requested data source exists
+     * 
+     * Note: Once defaults provided by getDataSource are used, this function will
+     * no longer be necessary.
+     */
+    checkDataSource: function (obs, inst, det, meas) {
+        if (this.dataSources[obs] !== undefined) {
+            if (this.dataSources[obs][inst] !== undefined) {
+                if (this.dataSources[obs][inst][det] !== undefined) {
+                    if (this.dataSources[obs][inst][det][meas] !== undefined) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
     },
     
     /**

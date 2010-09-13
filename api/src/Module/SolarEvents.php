@@ -50,10 +50,7 @@ class Module_SolarEvents implements Module
             try {
                 $this->{$this->_params['action']}();
             } catch (Exception $e) {
-                // Output plain-text for browser requests to make Firebug debugging easier
-                include_once "lib/FirePHPCore/fb.php";
-                FB::error($e->getMessage());
-                throw new Exception($e->getMessage());
+                handleError($e->getMessage(), $e->getCode());
             }
         }
     }
@@ -419,7 +416,6 @@ class Module_SolarEvents implements Module
      */
     public static function printDoc()
     {
-        $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
         ?>
         <!-- Feature/Event API -->
         <div id="FeatureEventAPI">
@@ -447,8 +443,8 @@ class Module_SolarEvents implements Module
         
                 <br />
                 <br />
-                <a href="<?php echo $baseURL;?>?action=getEventCatalogs">
-                    <?php echo $baseURL;?>?action=getEventFRMs
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEventCatalogs">
+                    <?php echo HV_API_ROOT_URL;?>?action=getEventFRMs
                 </a>
         
                 <br /><br />
@@ -503,8 +499,8 @@ class Module_SolarEvents implements Module
                 <br />
                 
                 <span class="example-header">Example:</span> <span class="example-url">
-                <a href="<?php echo $baseURL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z">
-                   <?php echo $baseURL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z">
+                   <?php echo HV_API_ROOT_URL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z
                 </a>
                 </span>
         
@@ -585,7 +581,7 @@ class Module_SolarEvents implements Module
                 <div class="summary-box"><span style="text-decoration: underline;">Usage:</span><br />
                     <br />
         
-                    <?php echo $baseURL;?>?action=getScreenshotsForEvent<br />
+                    <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent<br />
                     <br />
         
                     Supported Parameters:<br />
@@ -621,13 +617,13 @@ class Module_SolarEvents implements Module
                     
                     <span class="example-header">Examples:</span>
                     <span class="example-url">
-                    <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
-                        <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
+                        <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
                     </a>
                     </span><br />
                     <span class="example-url">
-                    <a href="<?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
-                        <?php echo $baseURL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
+                        <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true
                     </a>
                     </span>
                 </div>
@@ -648,7 +644,7 @@ class Module_SolarEvents implements Module
                     <span style="text-decoration: underline;">Usage:</span><br />
                     <br />
             
-                    <?php echo $baseURL;?>?action=getMoviesForEvent<br />
+                    <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent<br />
                     <br />
             
                     Supported Parameters:<br />
@@ -684,13 +680,13 @@ class Module_SolarEvents implements Module
                     
                     <span class="example-header">Examples:</span>
                     <span class="example-url">
-                    <a href="<?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443">
-                        <?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443">
+                        <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443
                     </a>
                     </span><br />
                     <span class="example-url">
-                    <a href="<?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
-                        <?php echo $baseURL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
+                        <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true
                     </a>
                     </span>
                 </div>
