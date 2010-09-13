@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, Movie, History */
+/*global Class, $, Shadowbox, setTimeout, window, Movie, History, toFuzzyTime */
 "use strict";
 var MovieHistory = History.extend(
     /** @lends MovieHistory.prototype */
@@ -13,10 +13,8 @@ var MovieHistory = History.extend(
      * @constructs
      * @param history -- an array of saved history from UserSettings. May be null or empty.
      */    
-    init: function (history, proxyURL) {
+    init: function (history) {
         this.id = "movie";
-        this.proxyURL = proxyURL;
-
         this._super(history);
     },
     
@@ -56,7 +54,7 @@ var MovieHistory = History.extend(
             if (movieData.eta) {
                 message = "Your video is processing and will be available in approximately " + 
                           toFuzzyTime(movieData.eta) + ". You may view it at any time after " +
-                          "it is ready by clicking the 'Movie' button."
+                          "it is ready by clicking the 'Movie' button.";
                 $(document).trigger("message-console-info", [message]);
             }
             
@@ -66,30 +64,16 @@ var MovieHistory = History.extend(
             
             self.save();
             self._waitForMovie(movieData, movie);
-        }
+        };
         
-        etaUrl = apiUrl + "?";
-        $.each(params, function (key, value) {
-            etaUrl = etaUrl + key + "=" + value + "&";
-        });
-        etaUrl = etaUrl.slice(0,-1);
-            
-        params.action = "buildMovie";
-        url = apiUrl + "?";
-        $.each(params, function (key, value) {
-            url = url + key + "=" + value + "&";
-        });
-            
-        url = url.slice(0,-1);
-
-        $.post(self.proxyURL + "/queue-task", {'url': url, 'etaUrl': etaUrl}, movieCallback, "json");
+        $.post("api/index.php", params, movieCallback, "json");
     },
     
     /**
      * Pops up a notification that lets the user know the movie is done.
      */
     _notifyUser: function (data, movie) {
-        var options, self=this;
+        var options, self = this;
 
         if (data.url === null) {
             $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
@@ -113,7 +97,8 @@ var MovieHistory = History.extend(
                 self.updateTooltips();
     
                 // Open pop-up and display movie
-                watch.click(function () {
+                //watch.click(function () {
+                watch.live("click", function () {
                     $(".jGrowl-notification .close").click();
                     movie.playMovie();
                 });
@@ -131,7 +116,7 @@ var MovieHistory = History.extend(
      * for setTimeout
      */
     _waitForMovie: function (data, movie) {
-        var tryToGetMovie, callback, self=this;
+        var tryToGetMovie, callback, params, self = this;
 
         if (self._handleDataErrors(data)) {
             self.remove(movie);
@@ -144,33 +129,31 @@ var MovieHistory = History.extend(
                 callback = function (newData) {
                     self._waitForMovie(newData, movie);
                 };
-            
-                $.get(self.proxyURL + "/status/" + movie.id, {}, callback, "json");
+                
+                params = {
+                    "action": "getMovie", 
+                    "id"    : movie.id
+                };
+                $.get("api/index.php", params, callback, "json");
             };
 
             // Wait for half of the eta, the eta function isn't very accurate and overshoots
             // if images are small. If eta is zero, wait for 15 seconds.
-            setTimeout(tryToGetMovie, Math.max(data.eta, 30)*500);
+            setTimeout(tryToGetMovie, Math.max(data.eta, 30) * 500);
         }
     },
     
+    /**
+     * 
+     */
     _handleDataErrors: function (data) {
         if (data === null) {
-            $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                         " try again later."]);
+            $(document).trigger("message-console-info", "Unable to process request. Please try again later.");
+            return true;
+        } else if (data.error) {
+            $(document).trigger("message-console-info", [data.error]);
             return true;
         }
-
-        if (data.error) {
-            if (data.errorCode && data.errorCode === 1) {
-                $(document).trigger("message-console-info", [data.error]);
-            } else {
-                $(document).trigger("message-console-info", ["There was an error creating your video. Please" +
-                                                             " try again later."]);
-            }
-            return true;
-        }
-        
         return false;
     },
     
@@ -205,15 +188,12 @@ var MovieHistory = History.extend(
         var self = this, movie;
         $.each(history, function () {
             movie = new Movie(this, this.dateRequested);
-            if (movie.isValidEntry()) {
-                self.history.push(movie);
-                if (!movie.complete && movie.id) {
-                    self._waitForMovie({}, movie);
-                }
+            self.history.push(movie);
+            if (!movie.complete && movie.id) {
+                self._waitForMovie({}, movie);
             }
         });
 
         this.history = this.history.reverse().slice(0, 12).reverse();
-        this.save();
     }
 });

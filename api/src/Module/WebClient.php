@@ -50,115 +50,82 @@ class Module_WebClient implements Module
             try {
                 $this->{$this->_params['action']}();
             } catch (Exception $e) {
-                // Output plain-text for browser requests to make Firebug debugging easier
-                include_once "lib/FirePHPCore/fb.php";
-                FB::error($e->getMessage());
-                throw new Exception($e->getMessage());
+                handleError($e->getMessage(), $e->getCode());
             }
         }
     }
 
 
     /**
-     * 'Opens' the requested file in the current window as an attachment,
-     *  which pops up the "Save file as" dialog.
-     *
+     * 'Opens' the requested file in the current window as an attachment,  which pops up the "Save file as" dialog.
+     * 
      * @TODO test this to make sure it works in all browsers.
      *
      * @return void
      */
     public function downloadFile()
     {
-        $url = $this->_params['url'];
+        $file = HV_CACHE_DIR . "/" . $this->_params['uri'];
 
-        // Convert web url into directory url so stat() works.
-        // Need to use stat() instead of filesize() because filesize fails
-        // for every file on Linux due to security permissions with apache.
-        // To get the file size, do $stat['size']
-        $url = str_replace(HV_WEB_ROOT_URL, HV_ROOT_DIR, $url);
-        if (substr($url, 0, 4) !== "http") {
-        	// Can't stat files that are from other servers.
-            $stat = stat($url);
+        // Make sure file exists
+        if (!file_exists($file)) {
+            throw new Exception("Unable to locate the requested file: $file");
         }
 
-        if (strlen($url) > 1) {
-            header("Pragma: public");
-            header("Expires: 0");
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-            header("Cache-Control: private", false); // required for certain browsers
-            header("Content-Disposition: attachment; filename=\"" . basename($url) . "\";");
-            header("Content-Transfer-Encoding: binary");
+        // Set HTTP headers
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Cache-Control: private", false); // required for certain browsers
+        header("Content-Disposition: attachment; filename=\"" . basename($file) . "\"");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Length: " . filesize($file));
 
-            if (isset($stat) && $stat['size']) {
-                header("Content-Length: " . $stat['size']);
-            }
-            if (substr($url, -3) === "mov") {
-                header("Content-type: video/quicktime");
-            }
-            echo file_get_contents($url);
-        } else {
-            throw new Exception("Unable to find the specified requested file.");
+        // Mime type
+        $parts = explode(".", $file);
+        $extension = end($parts);
+        
+        if (in_array($extension, array("jp2", "jpx"))) {
+            $mimetype = "image/$extension";
+        } else if (in_array($extension, array("ogg", "ogv", "webm"))) {
+            $mimetype = "video/$extension";
+        } else {        
+            $fileinfo = new finfo(FILEINFO_MIME);
+            $mimetype = $fileinfo->file($file);
         }
+        header("Content-type: " . $mimetype);
+
+        echo file_get_contents($file);
     }
 
     /**
-     * http://localhost/hv/api/index.php?action=getClosestImage
-     * &date=2003-10-05T00:00:00Z&source=0&server=api/index.php
-     *
+     * http://helioviewer.org/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&s=1
+     * 
      * TODO 01/29/2010 Check to see if server number is within valid range of know authenticated servers.
      *
      * @return void
      */
     public function getClosestImage ()
     {
-        // Default to the first known api if no server is specified
-        if (!isset($this->_params['server'])) {
-            $this->_params['server'] = 0;
-        }
+        include_once 'src/Database/ImgIndex.php';
         
-        $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
+        $imgIndex = new Database_ImgIndex();
 
-        // Tile locally
-        if (HV_LOCAL_TILING_ENABLED && ($baseURL == 'api/index.php')) {
-            include_once 'src/Database/ImgIndex.php';
-            $imgIndex = new Database_ImgIndex();
-
-            // Convert human-readable params to sourceId if needed
-            if (!isset($this->_params['sourceId'])) {
-                $this->_params['sourceId'] = $imgIndex->getSourceId(
-                    $this->_params['observatory'], $this->_params['instrument'],
-                    $this->_params['detector'], $this->_params['measurement']
-                );
-            }
-
-            $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
-
-            // Prepare cache for tiles
-            $this->_createImageCacheDir($result['filepath']);
-
-            $json = json_encode($result);
-        } else {
-            if (HV_DISTRIBUTED_TILING_ENABLED) {
-                // Redirect request to remote server
-                if ($baseURL != 'api/index.php') {
-                    $source  = $this->_params['sourceId'];
-                    $date    = $this->_params['date'];
-                    $url     = "$baseURL?action=getClosestImage&sourceId=$source&date=$date&server=0";
-                    $json = file_get_contents($url);
-                } else {
-                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini " .
-                           "for more information";
-                    throw new Exception($msg);
-                }
-            } else {
-                if ($baseURL == 'api/index.php') {
-                    $err = "Both local and remote tiling is disabled on the server.";
-                } else {
-                    $err = "Remote tiling is disabled for this server.";
-                }
-                throw new Exception($err);
-            }
+        // Convert human-readable params to sourceId if needed
+        if (!isset($this->_params['sourceId'])) {
+            $this->_params['sourceId'] = $imgIndex->getSourceId(
+                $this->_params['observatory'], $this->_params['instrument'],
+                $this->_params['detector'], $this->_params['measurement']
+            );
         }
+
+        $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
+
+        // Prepare cache for tiles
+        $this->_createImageCacheDir($result['filepath']);
+
+        $json = json_encode($result);
+
         header('Content-Type: application/json');
         echo $json;
     }
@@ -187,29 +154,9 @@ class Module_WebClient implements Module
      */
     public function getJP2Header ()
     {
-        // Retrieve header locally
-        if (HV_LOCAL_TILING_ENABLED && ($this->_params['server'] == 0)) {
-            include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
-            $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"]);
-            $xmlBox->printXMLBox();
-        } else {
-            if (HV_DISTRIBUTED_TILING_ENABLED) {
-                // Redirect request to remote server
-                if ($this->_params['server'] != 0) {
-                    $baseURL = constant("HV_TILE_SERVER_" . $this->_params['server']);
-                    $url     = "$baseURL?action=getJP2Header&file={$this->_params['file']}&server=0";
-                    header('Content-type: text/xml');
-                    echo file_get_contents($url);
-                } else {
-                    $msg = "Local tiling is disabled on server. See local_tiling_enabled is Config.Example.ini" .
-                           "for more information";
-                    throw new Exception($msg);
-                }
-            } else {
-                $err = "Both local and remote tiling is disabled on the server.";
-                throw new Exception($err);
-            }
-        }
+        include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
+        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"]);
+        $xmlBox->printXMLBox();
     }
 
     /**
@@ -220,7 +167,12 @@ class Module_WebClient implements Module
     public function getTile ()
     {        
         include_once 'src/Image/Tiling/HelioviewerTileBuilder.php';
+
         $builder = new Image_Tiling_HelioviewerTileBuilder();
+        
+        // Make sure cache directory is available
+        $this->_createImageCacheDir(dirname($this->_params['uri']));
+        
         return $builder->getTile($this->_params);
     }
 
@@ -260,17 +212,23 @@ class Module_WebClient implements Module
      */
     public function takeScreenshot()
     {
-        include_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $tmpDir  = HV_CACHE_DIR . "/screenshots";
 
         $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
         
-        if (!isset($this->_params['display']) || !$this->_params['display'] || $this->_params['display'] === "false") {
-            echo str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response);
+        if ($this->_params['display']) {
+            $fileinfo = new finfo(FILEINFO_MIME);
+            $mimetype = $fileinfo->file($response);
+            header("Content-Disposition: inline; filename=\"" . basename($response) . "\"");
+            header("Content-type: " . $mimetype);
+            die(file_get_contents($response));
         }
-        return $response;
+        
+        header('Content-Type: application/json');
+        echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
     }
     
     /**
@@ -278,7 +236,7 @@ class Module_WebClient implements Module
      *
      * Example usage: (outdated!)
      *     http://helioviewer.org/api/index.php?action=getViewerImage
-     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&imageScale=2.63
+     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&imageScale=2.4
      *         &tileSize=512&xRange=-1,0&yRange=-1,0
      *     http://helioviewer.org/api/index.php?action=getViewerImage
      *         &layers=SOH_EIT_EIT_195,SOH_LAS_0C2_0WL
@@ -321,8 +279,8 @@ class Module_WebClient implements Module
 
         case "downloadFile":
             $expected = array(
-               "required" => array('url'),
-               "urls"     => array('url')
+               "required" => array('uri'),
+               "files"    => array('uri')
             );
             break;
 
@@ -333,16 +291,15 @@ class Module_WebClient implements Module
 
             if (isset($this->_params["sourceId"])) {
                 $expected["required"] = array('date', 'sourceId');
-                $expected["ints"]     = array('sourceId', 'server');
+                $expected["ints"]     = array('sourceId');
             } else {
                 $expected["required"] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
-                $expected["ints"]     = array('server');
             }
             break;
 
         case "getDataSources":
             $expected = array(
-               "optional" => array('verbose')
+               "bools" => array('verbose')
             );
             break;
 
@@ -350,23 +307,28 @@ class Module_WebClient implements Module
             $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'date', 'imageScale', 'size', 'jp2Width','jp2Height', 'jp2Scale',
                               'offsetX', 'offsetY', 'format', 'observatory', 'instrument', 'detector', 'measurement');
             $expected = array(
-               "required" => $required
+                "required" => $required,
+                "files"    => array('uri')
             );
             break;
 
         case "getJP2Header":
+            $expected = array(
+                "required" => array('file'),
+                "files" => array('file')
+            );
             break;
         case "getViewerImage":
             break;
         // Any booleans that default to true cannot be listed here because the
         // validation process sets them to false if they are not given.
         case "takeScreenshot":
-            $required = array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2');
             $expected = array(
-                "required" => $required, 
+                "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"	   => array('obsDate'),
-                "ints"     => array('quality')
+                "ints"     => array('quality'),
+                "bools"    => array('display')
             );
             break;
         default:
@@ -427,8 +389,7 @@ class Module_WebClient implements Module
      */
     public static function printDoc()
     {
-        $baseURL = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-        $rootURL = substr($baseURL, 0, -13) . "index.php?";
+        $rootURL = substr(HV_API_ROOT_URL, 0, -13) . "index.php?";
         ?>
         <!-- Custom View API-->
         <div id="CustomView">
@@ -506,8 +467,8 @@ class Module_WebClient implements Module
                 <span style="text-decoration: underline;">Usage:</span>
                 <br />
                 <br />
-                <a href="<?php echo $baseURL;?>?action=getClosestImage">
-                    <?php echo $baseURL;?>?action=getClosestImage
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage">
+                    <?php echo HV_API_ROOT_URL;?>?action=getClosestImage
                 </a>
                 
                 <br /><br />
@@ -520,11 +481,6 @@ class Module_WebClient implements Module
                             <td width="20%"><b>date</b></td>
                             <td width="25%"><i>ISO 8601 UTC Date</i></td>
                             <td width="55%">The desired image date</td>
-                        </tr>
-                        <tr>
-                            <td><b>server</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The server to query for a distributed Helioviewer architecture</td>
                         </tr>
                         <tr>
                             <td><b>observatory</b></td>
@@ -606,12 +562,12 @@ class Module_WebClient implements Module
                 <br />
         
                 <span class="example-header">Examples:</span> <span class="example-url">
-                    <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
-                       <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
+                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
                     </a>
                     <br /><br />
-                    <a href="<?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3">
-                       <?php echo $baseURL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&server=1&sourceId=3
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&s=1&sourceId=3">
+                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&s=1&sourceId=3
                     </a>
                 </span>
                 
@@ -650,8 +606,8 @@ class Module_WebClient implements Module
                 <span style="text-decoration: underline;">Usage:</span>
                 <br />
                 <br />
-                <a href="<?php echo $baseURL;?>?action=getTile">
-                    <?php echo $baseURL;?>?action=getTile
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile">
+                    <?php echo HV_API_ROOT_URL;?>?action=getTile
                 </a>
                             
                 <br /><br />
@@ -761,8 +717,8 @@ class Module_WebClient implements Module
                 </table>   
                 <br />
                 <span class="example-header">Examples:</span> <span class="example-url">
-                    <a href="<?php echo $baseURL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&format=jpg&date=2010-06-02+01:00:16&imageScale=5.26&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
-                       <?php echo $baseURL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&format=jpg&date=2010-06-02+01:00:16&imageScale=5.26&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
+                       <?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2
                         &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&format=jpg&date=2010-06-02+01:00:16&imageScale=5.26
                         &size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171
                         &offsetX=2.66&offsetY=7.32

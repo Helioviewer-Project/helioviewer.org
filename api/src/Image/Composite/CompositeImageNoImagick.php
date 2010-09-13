@@ -51,7 +51,7 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
     {
         try  {
             if (empty($this->layerImages)) {
-                throw new Exception("Error: No valid layers specified in layerImages[" . $this->layerImages . "]");
+                throw new Exception("No valid layers specified in layerImages");
             }
 
             // Composite images on top of one another if there are multiple layers.
@@ -78,8 +78,7 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
             }
             */
         } catch(Exception $e) {
-            $error = "Unable to compile composite image layers: {$e->getMessage()}";
-            logErrorMsg($error, true);
+            throw new Exception("Unable to compile composite image layers: {$e->getMessage()}");
         }
     }
 
@@ -174,23 +173,18 @@ abstract class Image_Composite_CompositeImageNoImagick extends Image_Composite_C
         }
         $cmd .= " -compose dst-over -depth 8 " . $tmpImg;
 
-        try {
-            // Need to break $cmd into pieces at each "&&", because escapeshellcmd escapes & and the command doesn't work then.
-            $commands = explode("&&", $cmd);
-            foreach ($commands as $command) {
-                exec(escapeshellcmd($command), $out, $ret);
-                if ($ret != 0) {
-                    throw new Exception("Error executing command $cmd.");
-                }
-            }
-
-            exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off -depth 8 $tmpImg"), $out, $ret);
+        // Need to break $cmd into pieces at each "&&", because escapeshellcmd escapes & and the command doesn't work then.
+        $commands = explode("&&", $cmd);
+        foreach ($commands as $command) {
+            exec(escapeshellcmd($command), $out, $ret);
             if ($ret != 0) {
-                throw new Exception("Error turning alpha channel off on $tmpImg.");
+                throw new Exception("Error executing command $cmd.");
             }
         }
-        catch(Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+
+        exec(escapeshellcmd(HV_PATH_CMD . "convert $tmpImg -background black -alpha off -depth 8 $tmpImg"), $out, $ret);
+        if ($ret != 0) {
+            throw new Exception("Unable to turn alpha channel off for $tmpImg.");
         }
         
         $image = $sortedImages[0];

@@ -18,17 +18,13 @@ var Helioviewer = UIController.extend(
      * Creates a new Helioviewer instance.
      * @constructs
      * 
-     * @param {Object} urlParams  Client-specified settings to load. Includes imageLayers,
-     *                            date, and imageScale. May be empty.
-     * @param {Object} settings   Server settings loaded from Config.ini
+     * @param {Object} urlParams        Client-specified settings to load. Includes imageLayers,
+     *                                  date, and imageScale. May be empty.
+     * @param {Object} serverSettings   Server settings loaded from Config.ini
      */
-    init: function (urlParams, settings) {
-        this.proxyURL = settings.proxyURL;
-
+    init: function (urlParams, serverSettings) {
         // Calling super will load settings, init viewport, and call _loadExtensions()
-        this._super(urlParams, settings);
-        
-        this.rootURL  = this.userSettings.get('rootURL');
+        this._super(urlParams, serverSettings);
         
         this._setupDialogs();
         this._initEventHandlers();
@@ -41,16 +37,17 @@ var Helioviewer = UIController.extend(
      */
     _loadExtensions: function () {
         var screenshotHistory, movieHistory;
+
         this._super(); // Call super method in UIController to load a few extensions
         
         this._initTooltips();
 
         screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history'));
-        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'), this.proxyURL);
+        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
 
-        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory, this.proxyURL);
+        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory);
         this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, screenshotHistory, this.proxyURL);
+        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
     },
     
     /**
@@ -71,15 +68,15 @@ var Helioviewer = UIController.extend(
             id             : '#helioviewer-viewport',
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            tileServers    : this.userSettings.get('tileServers'),
+            urlStringLayers: this.urlParams.imageLayers  || "",
+            servers        : this.serverSettings.servers,
+            maxTileLayers  : this.serverSettings.maxTileLayers,
+            minImageScale  : this.serverSettings.minImageScale,
+            maxImageScale  : this.serverSettings.maxImageScale,
+            prefetch       : this.serverSettings.prefetchSize,
             tileLayers     : this.userSettings.get('tileLayers'),
-            urlStringLayers: this.urlParams.imageLayers || "",
-            maxTileLayers  : this.userSettings.get('maxTileLayers'),
             imageScale     : this.userSettings.get('imageScale'),
-            minImageScale  : this.userSettings.get('minImageScale'),
-            maxImageScale  : this.userSettings.get('maxImageScale'), 
-            prefetch       : this.userSettings.get('prefetchSize'),
-            warnMouseCoords: this.userSettings.get('warnMouseCoords') 
+            warnMouseCoords: this.userSettings.get('warnMouseCoords')
         });   
     },
     
@@ -153,7 +150,8 @@ var Helioviewer = UIController.extend(
             },
             function () {
                 $(this).children(".ui-icon").removeClass("ui-icon-hover");
-        });
+            }
+        );
     },
     
     /**
@@ -290,7 +288,8 @@ var Helioviewer = UIController.extend(
         imageLayers = this.viewport.serialize();
         
         // Build URL
-        url = this.rootURL + "/?date=" + date + "&imageScale=" + imageScale + "&imageLayers=" + imageLayers;
+        url = this.serverSettings.rootURL + "/?date=" + date + "&imageScale=" + imageScale +
+              "&imageLayers=" + imageLayers;
 
         return url;
     }

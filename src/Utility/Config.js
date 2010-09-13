@@ -16,8 +16,8 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["local_tiling_enabled", "distributed_tiling_enabled", "disable_cache",
-                       "enable_movie_button", "enable_screenshot_button"];
+        this.bools  = ["distributed_mode_enabled", "disable_cache", "enable_movie_button", "enable_screenshot_button",
+                       "helioqueuer_enabled"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "png_compression_quality",     
                        "jpeg_compression_quality", "bit_depth", "num_colors", "max_movie_frames",
                        "max_tile_layers"];
@@ -54,13 +54,11 @@ var Config = Class.extend(
             self.params[this] = parseFloat(self.params[this]);
         });
         
-        // Tiling Servers
-        if (this.params["distributed_tiling_enabled"]) {
-            if (this.params["local_tiling_enabled"]) {
-                this.params["tile_server"].unshift("api/index.php");
-            }            
+        // Servers
+        if (this.params['distributed_mode_enabled']) {
+            this.params["server"].unshift("api/index.php");
         } else {
-            this.params["tile_server"] = ["api/index.php"];   
+            this.params["server"] = ["api/index.php"];
         }
     },
     
@@ -77,9 +75,9 @@ var Config = Class.extend(
             'maxTileLayers'       : this.params["max_tile_layers"],
             'prefetchSize'        : this.params["prefetch_size"],
             'timeIncrementSecs'   : this.params["default_timestep"],
-            'tileServers'         : this.params["tile_server"],
+            'servers'             : this.params["server"],
             'rootURL'             : this.params["web_root_url"],
-            'proxyURL'            : this.params["proxy_root_url"]
+            'hqEnabled'           : this.params["helioqueuer_enabled"]
         };
     }
 });

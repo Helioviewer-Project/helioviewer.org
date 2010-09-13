@@ -236,7 +236,7 @@ class Database_ImgIndex
                 "sunCenterY" => (float) $center[1],
             );
         } catch (Exception $e) {
-            logErrorMsg($img['filename'] . ": " . $e->getMessage(), true);
+            throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()));
         }
 
         return $meta;
@@ -388,13 +388,12 @@ class Database_ImgIndex
                 } else {
                     // Alternative measurement descriptors
                     if (preg_match("/^\d*$/", $meas)) {
-                        // "171" -> "0171"
-                        $measurementSortable = sprintf("%04d", $meas);
-                        
                         // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
-                        $measurementWithUnits = $source["measurement_name"] . "\xE2\x81\x9F" 
-                                              . utf8_encode($source["measurement_units"]);
+                        $measurementName = $meas . "\xE2\x81\x9F" . utf8_encode($source["measurement_units"]);
+                    } else {
+                        $measurementName = ucwords(str_replace("-", " ", $meas));
                     }
+                   
                  
                     // Verbose
                     if (!isset($tree[$obs])) {
@@ -419,15 +418,22 @@ class Database_ImgIndex
                         );
                     }
                     $tree[$obs]["children"][$inst]["children"][$det]["children"][$meas] = array(
-                        "name"          => $measurementWithUnits,
+                        "name"          => $measurementName,
                         "description"   => utf8_encode($source["measurement_description"]),
-                        "sortName"      => $measurementSortable,
                         "nickname"      => $nickname,
                         "sourceId"      => $id,
                         "layeringOrder" => $order
                     );
                 }                
             }
+        }
+        
+        // Set defaults for verbose mode
+        if ($verbose) {
+            $tree["SOHO"]["default"] = true;
+            $tree["SOHO"]["children"]["EIT"]["default"] = true;
+            $tree["SOHO"]["children"]["EIT"]["children"]["EIT"]["default"] = true;
+            $tree["SOHO"]["children"]["EIT"]["children"]["EIT"]["children"]["304"]["default"] = true;
         }
 
         return $tree;

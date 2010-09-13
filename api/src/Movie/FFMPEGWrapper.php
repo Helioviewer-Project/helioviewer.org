@@ -62,7 +62,7 @@ class Movie_FFMPEGWrapper
         try {
             exec(escapeshellcmd($cmd));
         } catch (Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+            throw new Exception("Unable to create iPod video: " . $e->getMessage());
         }
         return $ipodVideoName;
     }
@@ -81,7 +81,7 @@ class Movie_FFMPEGWrapper
         try {
             exec(escapeshellcmd($cmd));
         } catch (Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+            throw new Exception("Unable to create Flash video: " . $e->getMessage());
         }
     }
     
@@ -115,7 +115,7 @@ class Movie_FFMPEGWrapper
         try {
             exec(escapeshellcmd($cmd));
         } catch (Exception $e) {
-            logErrorMsg($e->getMessage(), true);
+            throw new Exception("Unable to create video: " . $e->getMessage());
         }
         return $filename;
     }

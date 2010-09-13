@@ -9,7 +9,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
+/*global Class, $, Shadowbox, getUTCTimestamp, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
  extractLayerName */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(
@@ -28,8 +28,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @TODO Add error checking for startTime in case the user asks for a time that isn't in the database.
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, history, proxyURL) {
-        this._super(viewport, history, proxyURL);
+    init: function (viewport, history) {
+        this._super(viewport, history);
         this.button   = $("#movie-button");
         this.percent  = 0;
         this.id       = "movie";
@@ -215,8 +215,8 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var options, params, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            movie, url, scaleDown = false, self = this;
+        var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
+            movie, url, self = this;
 
         this.building = true;
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
@@ -227,22 +227,21 @@ var MovieBuilder = MediaBuilder.extend(
         coordinates = viewportInfo.coordinates;
         movieHeight = coordinates.bottom - coordinates.top;
         
-        if (movieHeight >= vpHeight - 50) {
-            scaleDown = true;
-        }
+        // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
+        currentTime = new Date(getUTCTimestamp(viewportInfo.time));
         
         // Ajax Request Parameters
         params = {
-            action     : "getETAForMovie",
+            action     : "queueMovie", //action     : "getETAForMovie",
             layers     : viewportInfo.layers,
-            startTime  : viewportInfo.time,
+            startTime  : currentTime.addHours(-12).toISOString(),
+            endTime    : currentTime.addHours(24).toISOString(),
             imageScale : viewportInfo.imageScale,
             x1         : arcsecCoords.x1,
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
             hqFormat   : this.hqFormat,
-            scaleDown  : scaleDown,
             display    : false
         };
         

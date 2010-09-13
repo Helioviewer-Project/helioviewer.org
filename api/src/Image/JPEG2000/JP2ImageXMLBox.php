@@ -48,9 +48,8 @@ class Image_JPEG2000_JP2ImageXMLBox
     public function getXMLBox ($root)
     {
         if (!file_exists($this->_file)) {
-            $msg = "Unable to extract XMLbox for {$this->_file}. File does not exist!";
-            logErrorMsg($msg, true);
-            throw new Exception("Unable to find file: {$this->_file}.");
+            $msg = "Unable to access file. Do you have the proper permissions?";
+            throw new Exception($msg);
         }
 
         $fp = fopen($this->_file, "rb");
@@ -96,8 +95,9 @@ class Image_JPEG2000_JP2ImageXMLBox
             $width  = $this->_getElementValue("NAXIS1");
             $height = $this->_getElementValue("NAXIS2");
         } catch (Exception $e) {
-            echo 'Unable to locate image dimensions in header tags!';
+            throw new Exception('Unable to locate image dimensions in header tags!');
         }
+        
         return array($width, $height);
     }
 
@@ -111,8 +111,14 @@ class Image_JPEG2000_JP2ImageXMLBox
         try {
             $scale = $this->_getElementValue("CDELT1");
         } catch (Exception $e) {
-            echo 'Unable to locate image scale in header tags!';            
+            throw new Exception("Unable to locate image scale in header tags!");            
         }
+        
+        // Check to make sure header information is valid
+        if ((filter_var($scale, FILTER_VALIDATE_FLOAT) === false) || ($scale <= 0)) {
+            throw new Exception("Invalid value for CDELT1: $scale");
+        }
+        
         return $scale;
     }
 
@@ -130,7 +136,7 @@ class Image_JPEG2000_JP2ImageXMLBox
             $x = $this->_getElementValue("CRPIX1");
             $y = $this->_getElementValue("CRPIX2");
         } catch (Exception $e) {
-            echo 'Unable to locate sun center center in header tags!';
+            throw new Exception('Unable to locate sun center center in header tags!');
         }
         return array($x, $y);
     }

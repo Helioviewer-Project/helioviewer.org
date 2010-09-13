@@ -4,7 +4,7 @@
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
+bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
 "use strict";
 var Movie = Media.extend(
@@ -25,16 +25,7 @@ var Movie = Media.extend(
         }
 
         this.hqFormat = params.hqFormat || hqFormat;
-        
-        // Resize what appears in the movie player if the movie is as big as the viewport
-        if (this.scaleDown === true) {
-            this.viewerWidth  = this.width  * 0.8;
-            this.viewerHeight = this.height * 0.8;
-        } else {
-            this.viewerWidth  = this.width;
-            this.viewerHeight = this.height;
-        }
-        
+
         this.complete = params.complete || false;
         this.url      = params.url      || "";
     },
@@ -79,31 +70,99 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var url, self;
-        self = this;
-        url  = 'api/index.php?action=playMovie&url=' + this.url + '&width=' + 
-                this.viewerWidth + '&height=' + this.viewerHeight;    
-        this.watchDialog = $("#watch-dialog-" + this.id);
-
+        var file, url, dimensions, movieDialog, self = this;
+        
+        $("#movie-button").click();
+        
+        movieDialog = $("#watch-dialog-" + this.id);
+        
+        dimensions = this.getVideoPlayerDimensions();
+        
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
         // trying to download it. 
-        this.watchDialog.dialog({
-            title  : "Helioviewer Movie Player",
-            width  : 'auto',
-            height : 'auto',
-            open   : self.watchDialog.append("<div id='movie-player-" + self.id + "'>" + 
-                                            "<iframe src=" + url + " width=" + self.viewerWidth + " height=" + 
-                                                self.viewerHeight + " marginheight=0 marginwidth=0 scrolling=no " +
-                                                "frameborder=0 /><br /><br />" +
-                                                "<a href='api/index.php?action=downloadFile&url=" + self.hqFile + "'>" +
-                                                    "Click here to download a high-quality version." +
-                                                "</a></div>"),
-            close  : function () {  
-                        $("#movie-player-" + self.id).remove();
-                    },
-            zIndex : 9999,
-            show   : 'fade'
-        });                                 
+        movieDialog.dialog({
+            title     : "Helioviewer Movie Player",
+            width     : dimensions.width  + 34,
+            height    : dimensions.height + 104,
+            resizable : $.support.h264,
+            close     : function () {
+                            movieDialog.empty();
+                        },
+            zIndex    : 9999,
+            show      : 'fade'
+        }).append(self.getVideoPlayerHTML(dimensions.width, dimensions.height));
+    },
+    
+    /**
+     * Decides how to display video and returns HTML corresponding to that method
+     * 
+     * 08/31/2010: Kaltura does not currently support jQuery UI 1.8, and even with 1.7.1
+     * some bugs are present. Try again in future.
+     */
+//    getVideoPlayerHTML: function (width, height) {
+//        // Base URL
+//        var path = this.hqFile.match(/cache.*/).pop().slice(0,-3);
+//        
+//        // Use relative dimensions for browsers which support the video element
+//        if ($.support.video) {
+//            width = "100%";
+//            height= "99%";
+//        }
+//        
+//        return "<video id='movie-player-" + this.id + "' width='" + width + "' " + "height='"
+//               + height + "' poster='" + path + "jpg'>"
+//             + "<source src='" + path + "mp4' /><source src='" + path + "flv' />"
+//             + "</video>";
+//    },
+    
+    /**
+     * Decides how to display video and returns HTML corresponding to that method
+     */
+    getVideoPlayerHTML: function (width, height) {
+        var path, file, hqFile, url;
+
+        file   = this.url.match(/[\w]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
+        hqFile = file.replace("flv", this.hqFormat);
+        
+        // HTML5 Video (Currently only H.264 supported)
+        if ($.support.h264) {
+            path = this.hqFile.match(/cache.*/).pop();
+//            return "<video id='movie-player-" + this.id + "' src='" + path +
+//                   "' controls preload autoplay width='100%' " + "height='99%'></video>";
+            return "<video id='movie-player-" + this.id + "' src='" + path +
+            "' controls preload autoplay width='100%' " + "height='95%'></video>" +
+            "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
+            "Click here to download a high-quality version.</a>";
+        
+
+        }
+
+        // Fallback (flash player)
+        else {
+            url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
+            
+            return "<div id='movie-player-" + this.id + "'>" + 
+            "<iframe src=" + url + " width=" + width + " height=" + 
+                height + " marginheight=0 marginwidth=0 scrolling=no " +
+                "frameborder=0 /><br /><br />" +
+                "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
+                    "Click here to download a high-quality version." +
+                "</a></div>";
+        }
+    },
+    
+    /**
+     * Determines dimensions for which movie should be displayed
+     */
+    getVideoPlayerDimensions: function () {
+        var maxWidth    = $(window).width() * 0.80,
+            maxHeight   = $(window).height() * 0.80,
+            scaleFactor = Math.max(1, this.width / maxWidth, this.height / maxHeight);
+        
+        return {
+            "width"  : this.width  / scaleFactor,
+            "height" : this.height / scaleFactor
+        };
     },
     
     /**
@@ -126,24 +185,8 @@ var Movie = Media.extend(
             y2            : this.y2,
             complete      : this.complete,
             hqFormat      : this.hqFormat,
-            hqFile        : this.hqFile,
-            scaleDown     : this.scaleDown
+            hqFile        : this.hqFile
         };
-    },
-    
-    /**
-     * Checks to make sure that all fields required for display in the history list are correct.
-     * dateRequested must be a valid date, and id, layers, and startTime must not be empty
-     * strings. imageScale must be a number. url must start with http
-     */
-    isValidEntry: function () {
-        if (this.dateRequested && (new Date(this.dateRequested)).getTime() === this.dateRequested
-                && (!isNaN(this.imageScale) || this.imageScale.length > 1)
-                && this.layers.length > 1 && this.startTime.length > 1) {
-            return true;
-        }
-
-        return false;
     },
     
     /**

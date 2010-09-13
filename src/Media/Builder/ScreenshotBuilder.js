@@ -15,10 +15,13 @@ var ScreenshotBuilder = MediaBuilder.extend(
      * @description Loads default options, grabs mediaSettings, sets up event listener for the screenshot button
      * @param {Object} controller -- the helioviewer class 
      */    
-    init: function (viewport, history, proxyURL) {
-        this._super(viewport, history, proxyURL);
-        this.button = $("#screenshot-button");
-        this.id     = "screenshot";
+    init: function (viewport, servers, history) {
+        this._super(viewport, history);
+        
+        this.button  = $("#screenshot-button");
+        this.id      = "screenshot";
+        this.servers = servers;
+        
         this._setupDialogAndEventHandlers();
     },
 
@@ -70,7 +73,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             return;
         }
         
-        var self, callback, params, arcsecCoords, id, download, screenshot, options;        
+        var self, callback, params, url, arcsecCoords, id, download, screenshot, server, options;        
         arcsecCoords  = this.toArcsecCoords(viewportInformation.coordinates, viewportInformation.imageScale);
         self = this;
 
@@ -85,43 +88,49 @@ var ScreenshotBuilder = MediaBuilder.extend(
             y2         : arcsecCoords.y2,
             display    : false
         };
+        
+        // Choose server to send request to
+        server = Math.floor(Math.random() * (this.servers.length));
+        if (server > 0) {
+            params.server = server;
+        }
 
         screenshot = new Screenshot(params, (new Date()).getTime());
 
-        callback = function (url) {
-            if (url !== null) {
-                id = (url).slice(-14, -4);
-                // Options for the jGrowl notification. Clicking on the notification will 
-                // let the user download the file.                        
-                options = {
-                    sticky: true,
-                    header: "Your screenshot is ready!",
-                    open:    function (e, m, o) {
-                        screenshot.setURL(url, id);
-                        self.hideDialogs();
-                        self.history.addToHistory(screenshot);
-                        
-                        download = $("#screenshot-" + id);
-                        
-                        download.click(function () {
-                            $(".jGrowl-notification .close").click();
-                            screenshot.download();
-                        });
-                    }
-                };
-
-                // Create the jGrowl notification.
-                $(document).trigger("message-console-info", ["<div id='screenshot-" + id +
-                "' style='cursor: pointer'>Click here to download. </div>", options]); 
+        // Response handler
+        callback = function (response) {
+            if (response === null) {
+                return;
+            } else if (response.error) {
+                $(document).trigger("message-console-info", "Unable to create screenshot. Please try again later.");
+                return;
             }
-        };
+            url = response.url;
+            
+            id = (url).slice(-14, -4);
+            // Options for the jGrowl notification. Clicking on the notification will 
+            // let the user download the file.                        
+            options = {
+                sticky: true,
+                header: "Your screenshot is ready!",
+                open:    function (e, m, o) {
+                    screenshot.setURL(url, id);
+                    self.hideDialogs();
+                    self.history.addToHistory(screenshot);
+                    
+                    // open callback now called before dom-nodes are added to screen so $.live used
+                    $("#screenshot-" + id).live('click', function () {
+                        $(".jGrowl-notification .close").click();
+                        screenshot.download();
+                    });
+                }
+            };
 
-        url = this.url + "?";
-        $.each(params, function (key, value) {
-            url = url + key + "=" + value + "&";
-        });
-        
-        url = url.slice(0,-1);
-        $.post(this.proxyURL + "/takeScreenshot", {"url": url}, callback, 'json');
+            // Create the jGrowl notification.
+            $(document).trigger("message-console-info", ["<div id='screenshot-" + id +
+            "' style='cursor: pointer'>Click here to download. </div>", options]); 
+        };
+       
+        $.post(this.url, params, callback, "json");
     }
 });

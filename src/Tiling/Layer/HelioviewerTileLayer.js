@@ -94,7 +94,7 @@ var HelioviewerTileLayer = TileLayer.extend(
      * 
      * TODO 02/25/2010: What would be performance loss from re-fetching meta information on server-side?
      */
-    getTileURL: function (serverId, x, y) {
+    getTileURL: function (x, y) {
         var file, format, coordinates, params;
 
         file   = this.image.filepath + "/" + this.image.filename;

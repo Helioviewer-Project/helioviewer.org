@@ -70,11 +70,11 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         );
 
         if ($this->_detector == "C2") {
-            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/extra/Red_Temperature.png";
+            $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Red_Temperature.png";
         } else if ($this->_detector == "C3") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Blue_White_Linear.png";
         }
-
+        
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }

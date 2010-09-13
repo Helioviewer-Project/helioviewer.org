@@ -29,6 +29,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <!-- Layout -->
     <link rel="stylesheet" href="resources/css/layout.css" type="text/css" />
 
+    <!-- Kaltura HTML5 video player -->
+    <!-- <script type="text/javascript" src="http://html5.kaltura.org/js"></script> --> 
+
     <!-- jQuery -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
@@ -37,7 +40,8 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
     <script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
 
-    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />
+    <!--<link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />-->
+    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />    
 
     <!-- Mousewheel support -->
     <script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
@@ -115,7 +119,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
         	            "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
         	            "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", 
-        	            "UI/jquery.ui.dynaccordion.js");
+        	            "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
             foreach($js as $file)
                 printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
         }
@@ -153,7 +157,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 // Application state
                 $urlParams = array();
 
-                //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,70],[SOHO,LASCO,C2,white light,0,100]
+                //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SOHO,AIA,AIA,171,1,70],[SOHO,LASCO,C2,white light,0,100]
                 if (isset($_GET['imageLayers'])) {
                     $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                     $imageLayers = preg_split("/\],\[/", $imageLayersString);
@@ -170,7 +174,14 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 printf("\t\turlParams = %s;\n", json_encode($urlParams));
             ?>
             config      = new Config(settingsJSON).toArray();
-            helioviewer = new Helioviewer(urlParams, config);
+
+            try {
+                helioviewer = new Helioviewer(urlParams, config);
+            } catch (e) {
+                if (typeof console !== "undefined") {
+                    console.log("Error: " + e.description);
+                }
+            }
         });
     </script>
 

@@ -79,13 +79,13 @@ input, select {background-color:#F4F4F4;}
 }
 
 /* Message Console */
-.message-console-link {
+#message-console .message-console-link {
 	text-decoration: none;
 	font-weight: bold;
 	color: #3d76e0;
 }
 
-.message-console-link:hover {
+#message-console .message-console-link:hover {
 	text-decoration: underline;
 	color: #e03d76;
 }
@@ -247,7 +247,7 @@ span.ui-icon-hover {
 }
 
 #message-console .jGrowl-notification, #message-console .jGrowl-closer {
-   background-color: Azure;
+   background: Azure;
    color: #262424;
 }
 
