@@ -173,6 +173,17 @@ Math.lg = function (x) {
 //        $("#message-console").jGrowl(str, { header: '[DEBUG] ' });
 //    };
 //}
+if (typeof(console) === "undefined") {
+    console = {};
+
+    console.log = function (msg) {
+        return false;
+    };
+    
+    console.dir = function (obj) {
+        return false;
+    };
+}
 
 /**
  * @description Checks to see if a given variable is a numeric type
