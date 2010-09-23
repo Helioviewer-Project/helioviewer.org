@@ -3,13 +3,14 @@
 
 ###############################################################################
 # Helioviewer.org Image Removal Tool
-# Last Updated: 2009/04/21
+# Last Updated: 2010/09/23
 #
-# This tool can be used to remove a corrupted image from the archive.
+# This tool can be used to remove corrupted images from the archive. Note that
+# only filenames should be specified, and not entire filepaths
 #
 # Usage:
 #
-#    python remove.py filename.jp2
+#    python remove.py filename.jp2 [filename2.jp2 ...]
 #    
 ###############################################################################
 import sys, os, shutil, MySQLdb
@@ -21,14 +22,13 @@ def main(argv):
     dbuser  = "dbuser"
     dbpass  = "dbpass"
     
-    if len(argv) is not 2:
-        print "Incorrect number of arguments. Please specify the name of the file you wish to remove."
+    if len(argv) < 2:
+        print "Incorrect number of arguments. Please specify the names of the files you wish to remove."
         sys.exit()
         
-    filename = argv[1]
-    
-    filepath = removeFromDatabase(rootdir, filename, dbname, dbuser, dbpass)
-    removeFromArchive(filepath, moveto)    
+    for filename in argv[1:]:
+        filepath = removeFromDatabase(rootdir, filename, dbname, dbuser, dbpass)
+        removeFromArchive(filepath, moveto)    
     
     print "Done!"
     

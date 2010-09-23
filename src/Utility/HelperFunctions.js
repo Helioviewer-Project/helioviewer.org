@@ -6,7 +6,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global console, $, navigator, Storage, hideZoomControls, showZoomControls */
+/*global console: true, $, navigator, Storage, hideZoomControls, showZoomControls */
 "use strict";
 /**
  * @description Outputs a UTC Date string of the format "YYYY/MM/dd"
