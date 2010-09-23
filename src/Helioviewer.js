@@ -6,7 +6,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, Calendar, FullscreenControl, UIController,
-  KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
+  KeyboardManager, ImageSelectTool, LayerManager, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
   TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, ViewportController, 
   ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time, MediaHistoryBar,
   ScreenshotHistory, MovieHistory */
