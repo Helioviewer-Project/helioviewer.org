@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, InputValidator, CookieJar, $, localStorage, getUTCTimestamp */
+/*global Class, InputValidator, CookieJar, $, localStorage, parseLayerString, getUTCTimestamp */
 "use strict";
 var UserSettings = Class.extend(
     /** @lends UserSettings.prototype */

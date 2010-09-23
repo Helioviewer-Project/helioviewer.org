@@ -54,7 +54,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
     
     <!-- jsTree -->
-    <script src="lib/jquery.jsTree-1.0rc/jquery.jstree.js" type="text/javascript"></script>
+    <!--<script src="lib/jquery.jsTree-1.0rc/jquery.jstree.js" type="text/javascript"></script>-->
 
     <!-- CookieJar -->
     <script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>
@@ -174,12 +174,11 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             ?>
             serverSettings = new Config(settingsJSON).toArray();
 
+            // Catch any exceptions that arise during execution
             try {
                 helioviewer = new Helioviewer(urlSettings, serverSettings);
             } catch (e) {
-                if (typeof console !== "undefined") {
-                    console.log("Error: " + e.description);
-                }
+                console.log("Exception: " + e.description);
             }
         });
     </script>
