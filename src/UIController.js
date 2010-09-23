@@ -50,7 +50,6 @@ var UIController = Class.extend(
             id             : '#helioviewer-viewport',
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            urlStringLayers: this.urlSettings.imageLayers  || "",
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,

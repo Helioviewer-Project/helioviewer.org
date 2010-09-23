@@ -45,9 +45,9 @@ var Helioviewer = UIController.extend(
         screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history'));
         movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
 
-        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory);
-        this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
+        this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
+        this.imageSelectTool   = new ImageSelectTool(this.viewport);
+        this.screenshotBuilder = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
     },
     
     /**
@@ -68,7 +68,6 @@ var Helioviewer = UIController.extend(
             id             : '#helioviewer-viewport',
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            urlStringLayers: this.urlSettings.imageLayers  || "", //TODO Handle in UserSettings!
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
