@@ -42,7 +42,7 @@ var HelioviewerViewport = Viewport.extend(
             // Initialize tile layers
             self._tileLayerManager = new HelioviewerTileLayerManager(self.api, self.requestDate, self.dataSources, 
                                   self.tileSize, self.imageScale, self.maxTileLayers,
-                                  self.servers, self.tileLayers, self.urlStringLayers);
+                                  self.servers, self.tileLayers);
         
             // Initialize event layers
             self._eventLayerManager = new EventManager(self.requestDate, 86400, self.getRSun());

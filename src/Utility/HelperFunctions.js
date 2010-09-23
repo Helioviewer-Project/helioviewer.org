@@ -390,6 +390,27 @@ var extractLayerName = function (layer) {
 };
 
 /**
+ * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
+ * component parts and returns a JavaScript representation.
+ *
+ * @param {String} The layer identifier as an underscore-concatenated string
+ * 
+ * @returns {Object} A simple JavaScript object representing the layer parameters
+ */
+var parseLayerString = function (str) {
+    var params = str.split(",");
+    return {
+        observatory : params[0],
+        instrument  : params[1],
+        detector    : params[2],
+        measurement : params[3],
+        visible     : Boolean(parseInt(params[4], 10)),
+        opacity     : parseInt(params[5], 10),
+        server      : parseInt(params[6], 10) || 0
+    };
+};
+
+/**
  * RFC 4122, section 4.4 UUID Generation
  * @see http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
  * 

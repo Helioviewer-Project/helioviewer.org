@@ -32,6 +32,10 @@ var UserSettings = Class.extend(
                 
         // Initialize storage
         this._initStorage();
+        
+        // Process URL parameters
+        this._processURLSettings(urlSettings);
+        
         this._setupEventHandlers();
     },
 
@@ -123,6 +127,23 @@ var UserSettings = Class.extend(
         if (urlSettings.imageScale) {
             this.set("imageScale", parseFloat(urlSettings.imageScale));
         }
+        
+        if (urlSettings.imageLayers) {
+            this.set("tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
+        }
+    },
+    
+    /**
+     * Processes a string containing one or more layers and converts them into JavaScript objects
+     */
+    _parseURLStringLayers: function (urlLayers) {
+        var layers = [], self = this;
+        
+        $.each(urlLayers, function (i, layerString) {
+            layers.push(parseLayerString(layerString));
+        });
+
+        return layers;
     },
     
     /**
