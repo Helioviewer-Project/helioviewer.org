@@ -18,13 +18,13 @@ var Helioviewer = UIController.extend(
      * Creates a new Helioviewer instance.
      * @constructs
      * 
-     * @param {Object} urlParams        Client-specified settings to load. Includes imageLayers,
-     *                                  date, and imageScale. May be empty.
-     * @param {Object} serverSettings   Server settings loaded from Config.ini
+     * @param {Object} urlSettings    Client-specified settings to load. Includes imageLayers,
+     *                                date, and imageScale. May be empty.
+     * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (urlParams, serverSettings) {
+    init: function (urlSettings, serverSettings) {
         // Calling super will load settings, init viewport, and call _loadExtensions()
-        this._super(urlParams, serverSettings);
+        this._super(urlSettings, serverSettings);
         
         this._setupDialogs();
         this._initEventHandlers();
@@ -68,7 +68,7 @@ var Helioviewer = UIController.extend(
             id             : '#helioviewer-viewport',
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            urlStringLayers: this.urlParams.imageLayers  || "",
+            urlStringLayers: this.urlSettings.imageLayers  || "", //TODO Handle in UserSettings!
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
