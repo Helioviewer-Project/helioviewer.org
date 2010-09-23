@@ -44,11 +44,11 @@
 		<td>Pan downward.</td>
 	</tr>
     <tr>
-		<td><strong>&lt;</strong></td>
+		<td><strong>&lt; or ,</strong></td>
 		<td>Step backward in time.</td>
 	</tr>
     <tr>
-		<td><strong>&gt;</strong></td>
+		<td><strong>&gt; or .</strong></td>
 		<td>Step forward in time.</td>
 	</tr>
 	
