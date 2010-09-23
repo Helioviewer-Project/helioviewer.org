@@ -13,25 +13,34 @@ def main(argv):
     db = MySQLdb.connect(use_unicode=True, charset = "utf8", host="localhost", db=argv[1], user=argv[2], passwd=argv[3])
     cursor = db.cursor()
 
-    # Data sources to poll
-    sources = {
-        "EIT 171" : 0,
-        "EIT 195" : 1,
-        "EIT 284" : 2,
-        "EIT 304" : 3,
-        "LASCO C2": 4,
-        "LASCO C3": 5,
-        "MDI Mag" : 6,
-        "MDI Int" : 7
-    }
+    sources = getDataSources(cursor)
     
     results = {}
     
     # For each data source
     for name, id in sources.iteritems():
         dates,freqs = getFrequencies(cursor, name, id)
+        
         plotFrequencies(name, dates, freqs)
-
+         
+def getDataSources(cursor):
+    ''' Returns a list of datasources to query '''
+    cursor.execute("SELECT name, id FROM datasource")
+    datasources = {}
+    
+    # Get data sources
+    for ds in cursor.fetchall():
+        name = ds[0]
+        id   = int(ds[1])
+        
+        # Only include datasources which for images exist in the database
+        cursor.execute("SELECT COUNT(*) FROM image WHERE sourceId=%d" % id)
+        count = cursor.fetchone()[0]
+        
+        if count > 0:
+            datasources[name] = id
+       
+    return datasources
         
 def getFrequencies(cursor, name, id):
     ''' Returns arrays containing the dates queried and the counts for each of those days '''

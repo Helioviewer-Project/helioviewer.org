@@ -23,9 +23,9 @@ var UserSettings = Class.extend(
      * 
      * @see <a href="https://developer.mozilla.org/en/DOM/Storage">https://developer.mozilla.org/en/DOM/Storage</a>
      */
-    init: function (defaults, serverSettings) {
-        this._defaults       = defaults;
-        this._serverSettings = serverSettings;
+    init: function (defaults, urlSettings, constraints) {
+        this._defaults    = defaults;
+        this._constraints = constraints;
         
         // Input validator
         this._validator = new InputValidator();
@@ -113,6 +113,19 @@ var UserSettings = Class.extend(
     },
     
     /**
+     * Processes and validates any URL parameters that have been set
+     */
+    _processURLSettings: function (urlSettings) {
+        if (urlSettings.date) {
+            this.set("date", getUTCTimestamp(urlSettings.date));
+        }
+
+        if (urlSettings.imageScale) {
+            this.set("imageScale", parseFloat(urlSettings.imageScale));
+        }
+    },
+    
+    /**
      * Sets up event-handlers
      */
     _setupEventHandlers: function () {
@@ -140,8 +153,8 @@ var UserSettings = Class.extend(
             break;
         case "imageScale":
             this._validator.checkFloat(value, {
-                "min": this._serverSettings.minImageScale,
-                "max": this._serverSettings.maxImageScale
+                "min": this._constraints.minImageScale,
+                "max": this._constraints.maxImageScale
             });
             break;
         case "movie-history":

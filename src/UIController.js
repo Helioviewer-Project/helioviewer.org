@@ -18,17 +18,16 @@ var UIController = Class.extend(
      * Creates a new UIController instance.
      * @constructs
      * 
-     * @param {Object} urlParams        Settings specified via URL
-     * @param {Object} serverSettings   Server settings
+     * @param {Object} urlSettings    Settings specified via URL
+     * @param {Object} serverSettings Server settings
      */
-    init: function (urlParams, serverSettings) {
-        this.urlParams = urlParams;
+    init: function (urlSettings, serverSettings) {
+        this.urlSettings = urlSettings;
 
-        // Determine browser support
-        this._checkBrowser();
+        this._checkBrowser(); // Determines browser support
         
         this.serverSettings = serverSettings; 
-        this.userSettings   = SettingsLoader.loadSettings(urlParams, serverSettings);
+        this.userSettings   = SettingsLoader.loadSettings(urlSettings, serverSettings);
 
         this._initLoadingIndicator();
         
@@ -51,7 +50,7 @@ var UIController = Class.extend(
             id             : '#helioviewer-viewport',
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            urlStringLayers: this.urlParams.imageLayers  || "",
+            urlStringLayers: this.urlSettings.imageLayers  || "",
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,

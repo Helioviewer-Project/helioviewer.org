@@ -40,7 +40,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
     <script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
 
-    <!--<link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />-->
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />    
 
     <!-- Mousewheel support -->
@@ -139,7 +138,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <link rel="stylesheet" type="text/css" href="resources/css/dot-luv.css">
 
     <script type="text/javascript">
-        var config, settingsJSON, urlParams, api;
+        var serverSettings, settingsJSON, urlSettings;
 
         Shadowbox.init({
             overlayOpacity: 0.5,
@@ -154,29 +153,29 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             <?php
                 printf("settingsJSON = %s;\n", json_encode($config));
 
-                // Application state
-                $urlParams = array();
+                // Settings specified via URL parameters
+                $urlSettings = array();
 
                 //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SOHO,AIA,AIA,171,1,70],[SOHO,LASCO,C2,white light,0,100]
                 if (isset($_GET['imageLayers'])) {
                     $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
                     $imageLayers = preg_split("/\],\[/", $imageLayersString);
-                    $urlParams['imageLayers'] = $imageLayers;
+                    $urlSettings['imageLayers'] = $imageLayers;
                 }
 
                 if (isset($_GET['date']))
-                    $urlParams['date'] = $_GET['date'];
+                    $urlSettings['date'] = $_GET['date'];
 
                 if (isset($_GET['imageScale']))
-                    $urlParams['imageScale'] = $_GET['imageScale'];
+                    $urlSettings['imageScale'] = $_GET['imageScale'];
 
                 // Convert to JSON
-                printf("\t\turlParams = %s;\n", json_encode($urlParams));
+                printf("\t\turlSettings = %s;\n", json_encode($urlSettings));
             ?>
-            config      = new Config(settingsJSON).toArray();
+            serverSettings = new Config(settingsJSON).toArray();
 
             try {
-                helioviewer = new Helioviewer(urlParams, config);
+                helioviewer = new Helioviewer(urlSettings, serverSettings);
             } catch (e) {
                 if (typeof console !== "undefined") {
                     console.log("Error: " + e.description);
