@@ -70,7 +70,7 @@ var HelioviewerTileLayer = TileLayer.extend(
     },
     
     /**
-     * 
+     * onLoadImage
      */
     onLoadImage: function () {
         this.loaded = true;
@@ -80,7 +80,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         if (this.visible) {
             this.tileLoader.reloadTiles(false);
 
-            //          Update viewport sandbox if necessary
+            // Update viewport sandbox if necessary
 
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
         }

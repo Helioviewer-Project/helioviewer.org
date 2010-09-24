@@ -21,11 +21,10 @@ var TileLayerAccordion = Layer.extend(
      * @param {String} containerId ID for the outermost continer where the layer 
      * manager user interface should be constructed
      */
-    init: function (containerId, dataSources, observationDate, timeIncrement) {
+    init: function (containerId, dataSources, observationDate) {
         this.container        = $(containerId);
         this._dataSources     = dataSources;
         this._observationDate = observationDate;
-        this._timeIncrement   = timeIncrement;
 
         this.options = {};
 
@@ -39,8 +38,7 @@ var TileLayerAccordion = Layer.extend(
         // Event-handlers
         $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
                    .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
-                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("time-step-changed", $.proxy(this._onTimeIncrementChange, this));
+                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this));
     },
 
     /**
@@ -57,7 +55,7 @@ var TileLayerAccordion = Layer.extend(
         this._initTreeSelect(id, observatory, instrument, detector, measurement);
         this._initOpacitySlider(id, opacity, onOpacityChange);        
         this._setupEventHandlers(id);
-        this.updateTimeStamp(id, date);
+        this._updateTimeStamp(id, date);
         this._setupTooltips(id);
     },
 
@@ -225,22 +223,6 @@ var TileLayerAccordion = Layer.extend(
     },
     
     /**
-     * 
-     */
-    _updateAccordionEntry: function (event, id, name, opacity, date, filepath, filename, server) {
-        var entry = $("#" + id), self = this;
-        
-        this.updateTimeStamp(id, date);
-        
-        entry.find(".tile-accordion-header-left").html(name);
-
-        // Display FITS header
-        entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
-            self._showFITS(id, name, filepath, filename, server);
-        });
-    },
-    
-    /**
      * @description Displays the FITS header information associated with a given image
      * @param {Object} layer
      */
@@ -334,38 +316,53 @@ var TileLayerAccordion = Layer.extend(
     /**
      * Keeps track of requested date to use when styling timestamps
      */
-    _onObservationTimeChange: function (event, date) {
-        this._observationDate = date;
+    _onObservationTimeChange: function (event, requestDate) {
+        var actualDate, domNode, self = this;
+        
+        this._observationDate = requestDate;
+        
+        // Update timestamp colors
+        $("#TileLayerAccordion-Container .timestamp").each(function (i, item) {
+            domNode    = $(this);
+            actualDate = new Date(getUTCTimestamp(domNode.text()));
+            timeDiff   = (actualDate.getTime() - requestDate.getTime()) / 1000;
+            
+            domNode.css("color", self._chooseTimeStampColor(timeDiff))
+        });
     },
     
     /**
-     * Keeps track of time increment to use when styling timestamps
+     * 
      */
-    _onTimeIncrementChange: function (event, timeIncrement) {
-        this._timeIncrement = timeIncrement;
+    _updateAccordionEntry: function (event, id, name, opacity, date, filepath, filename, server) {
+        var entry = $("#" + id), self = this;
+        
+        this._updateTimeStamp(id, date);
+        
+        entry.find(".tile-accordion-header-left").html(name);
+
+        // Display FITS header
+        entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
+            self._showFITS(id, name, filepath, filename, server);
+        });
     },
     
     /**
      * @description Updates the displayed timestamp for a given tile layer
      * @param {Object} layer The layer being updated
      */
-    updateTimeStamp: function (id, date) {
-        var domNode, timeDiff, timestep;
+    _updateTimeStamp: function (id, date) {
+        var timeDiff = (date.getTime() - this._observationDate.getTime()) / 1000;
         
-        //date     = new Date(getUTCTimestamp(dateString));
-        timeDiff = (date.getTime() - this._observationDate.getTime()) / 1000;
-        timestep = this._timeIncrement;
-        
-        domNode = $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString());
-        
-        domNode.css("color", this._choseTimeStampColor(timeDiff));
+        $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString())
+                   .css("color", this._chooseTimeStampColor(timeDiff));
     },
     
     /**
      * Returns a CSS RGB triplet ranging from green (close to requested time) to yellow (some deviation from requested
      * time) to red (requested time differs strongly from actual time).
      */
-    _choseTimeStampColor: function (deviation) {
+    _chooseTimeStampColor: function (deviation) {
         var SCALE_WINDOW = 24 * 60 * 60,
         weight       = Math.min(1, Math.abs(deviation) / SCALE_WINDOW),
         
