@@ -157,12 +157,8 @@ var FullscreenControl = Class.extend(
     _setupEventHandlers: function (btnId) {
         var btn = $(btnId),
             icon = btn.find(".ui-icon");
-            
-        btn.hover(function () {
-            icon.addClass('ui-icon-hover');
-        }, function () {
-            icon.removeClass('ui-icon-hover');
-        }).click($.proxy(this._onClick, this));
+
+        addIconHoverEventListener(btn);
     },
     
     /**
