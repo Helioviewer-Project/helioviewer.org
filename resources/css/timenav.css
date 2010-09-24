@@ -8,21 +8,6 @@
     left: 120px;
 }
 
-.timeBehind {
-	color: #FFFF66;
-	font-weight: bold;
-}
-
-.timeAhead {
-	color: #b2ff66;
-	font-style: italic;	
-}
-
-.timeSignificantlyOff {
-	font-weight: 500;
-	color: #ff6666;
-}
-
 #timeBackBtn, #timeForwardBtn {
     cursor: pointer;
 }
