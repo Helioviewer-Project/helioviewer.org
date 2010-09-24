@@ -157,7 +157,7 @@ class Module_JHelioviewer implements Module
         if ($this->_params['measurement'] == "white light") {
             $this->_params['measurement'] = "white-light";
         }
-
+        
         // Create JPX image instance
         try {
             $jpx = new Image_JPEG2000_HelioviewerJPXImage(
@@ -175,22 +175,15 @@ class Module_JHelioviewer implements Module
             return;
         }
 
-        // JPIP URL
-        if ($this->_params['jpip']) {
-            $jpip = true;
-        } else {
-            $jpip = false;
-        }
-
         // Chose appropriate action based on request parameters
         if (!($this->_params['frames'] || $this->_params['verbose'])) {
-            if ($jpip) {
+            if ($this->_params['jpip']) {
                 echo $jpx->getJPIPURL();
             } else {
                 $jpx->displayImage();
             }             
         } else {
-            $jpx->printJSON($jpip, $this->_params['frames'], $this->_params['verbose']);
+            $jpx->printJSON($this->_params['jpip'], $this->_params['frames'], $this->_params['verbose']);
         }
     }
     
