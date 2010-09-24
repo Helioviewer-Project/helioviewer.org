@@ -14,23 +14,20 @@ var ImageSelectTool = Class.extend(
      * @constructs
      * @description Sets up an event handler for the select region button and finds the divs where
      *                 the fake transparent image will be inserted
-     * @param {Object} controller -- the helioviewer class
+     *                 
      */
-    init: function (viewport) {
+    init: function () {
         this.active     = false;
-        this.viewport   = viewport;
         this.vpDomNode  = $("#helioviewer-viewport");
 
         this._setupFinishedButton();
-        
-        $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
 
     /**
      * Activates the plugin or disables it if it is already active
      */
-    enableAreaSelect: function (event, callback) {
-        var imgContainer, transImg;
+    enableAreaSelect: function (viewportInfo, callback) {
+        var imgContainer, transImg, body = $("body");
     
         // If the user has already pushed the button but not done anything, this will turn the feature off.
         if (this.active) {
@@ -40,7 +37,7 @@ var ImageSelectTool = Class.extend(
         // Otherwise, turn it on.
         else {
             // Disable keyboard shortcuts for fullscreen mode
-            $("body").addClass('disable-fullscreen-mode');
+            body.addClass('disable-fullscreen-mode');
             this.active = true;
 
             // Get viewport dimensions to make the transparent image with. 
@@ -65,9 +62,9 @@ var ImageSelectTool = Class.extend(
             * Note that this container must be OUTSIDE of the viewport because otherwise the plugin's boundaries
             * do not span the whole image for some reason. All of the divs are put in "#outside-box"
             */
-            imgContainer = $('body').append('<div id="imgContainer"></div>');
+            imgContainer = body.append('<div id="imgContainer"></div>');
 
-            this.selectArea(callback);
+            this.selectArea(viewportInfo, callback);
         }
     },
     
@@ -78,7 +75,7 @@ var ImageSelectTool = Class.extend(
      *                 "selection" is x1, y1, x2, y2, width, and height.
      *                 See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation. 
      */
-    selectArea: function (callback) {
+    selectArea: function (viewportInfo, callback) {
         var area, self = this;
         
         // Use imgAreaSelect on the transparent region to get the top, left, bottom, and right 
@@ -105,20 +102,13 @@ var ImageSelectTool = Class.extend(
         });
 
         this.doneButton.click(function () {
-            self.submitSelectedArea(area, callback);
+            self.submitSelectedArea(area, viewportInfo, callback);
         });
-
-        /* Key presses don't register while imgAreaSelect is active for some reason.
-        $(document).bind("enter-key-pushed", function () {
-            console.log("pushed");
-            
-        });
-        */
         
         $(document).keypress(function (e) {
             // Enter key
             if (e.which === 13) {
-                self.submitSelectedArea(area, callback);
+                self.submitSelectedArea(area, viewportInfo, callback);
             }
         });
         
@@ -134,16 +124,14 @@ var ImageSelectTool = Class.extend(
      * selected area, cleans up divs created by the plugin, and uses the callback 
      * function to complete movie/screenshot building.
      */
-    submitSelectedArea: function (area, callback) {
-        var selection, viewportInfo, visibleCoords, coords, maxCoords;
+    submitSelectedArea: function (area, viewportInfo, callback) {
+        var selection, visibleCoords, coords, maxCoords;
         if (area) {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
-    
-            viewportInfo  = this.viewport.getViewportInformation();
+
             visibleCoords = viewportInfo.coordinates;
-            //maxCoords     = viewportInfo.maxImageCoordinates;
 
             coords = {
                 top     : visibleCoords.top  + selection.y1,
@@ -153,7 +141,6 @@ var ImageSelectTool = Class.extend(
             };
 
             viewportInfo.coordinates = coords;
-            //viewportInfo.maxImageCoordinates = coords;
 
             this.cleanup();
             callback(viewportInfo);
@@ -230,11 +217,9 @@ var ImageSelectTool = Class.extend(
             },
             content: {
                 title: "Help",
-                text: "Resize by dragging the edges of the selection.<br />" +
-                        "Move the selection by clicking inside and dragging it.<br />" + 
-                        "Click and drag outside the selected area to start" +
-                        " a new selection.<br />" +
-                        "Click 'Done' when you have finished to submit."
+                text: "Resize by dragging the edges of the selection.<br /> Move the selection by clicking inside " +
+                        "and dragging it.<br /> Click and drag outside the selected area to start " +
+                        "a new selection.<br /> Click \"Done\" when you have finished to submit."
             },
             adjust: { y: 100 },
             show: 'mouseover',

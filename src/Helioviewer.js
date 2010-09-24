@@ -39,8 +39,9 @@ var Helioviewer = UIController.extend(
         var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
             movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
 
+        this.imageSelectTool   = new ImageSelectTool();
+        
         this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
-        this.imageSelectTool   = new ImageSelectTool(this.viewport);
         this.screenshotBuilder = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
     },
     
@@ -127,9 +128,16 @@ var Helioviewer = UIController.extend(
      * @description Initialize event-handlers for UI components controlled by the Helioviewer class
      */
     _initEventHandlers: function () {
+        var self = this;
+        
         $('#link-button').click($.proxy(this.displayURL, this));
         $('#email-button').click($.proxy(this.displayMailForm, this));
         $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
+        
+        // Handle image area select requests
+        $(document).bind("enable-select-tool", function (event, callback) {
+            self.imageSelectTool.enableAreaSelect(self.viewport.getViewportInformation(), callback);
+        });
 
         // Hover effect for text/icon buttons        
         $('#social-buttons .text-btn').hover(
