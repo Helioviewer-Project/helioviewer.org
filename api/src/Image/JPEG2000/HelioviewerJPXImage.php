@@ -356,7 +356,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      *
      * @return void
      */
-    public function printJSON($jpip, $frames, $verbose)
+    public function printJSON($jpip, $verbose)
     {
         // Read in jpx meta-information from cache
         if (!isset($this->_timestamps)) {
@@ -373,7 +373,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         }
 
         // Image timestamps
-        if ($frames) {
+        if ($verbose) {
             $output["frames"] = $this->_timestamps;
         }
 
