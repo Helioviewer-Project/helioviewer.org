@@ -42,7 +42,7 @@ var Screenshot = Media.extend(
      */
     download: function () {
         if (this.url) {
-            var file = this.url.match(/[\w]*\/[\w\.]*.[jpg|png]$/).pop(); // Relative path to movie
+            var file = this.url.match(/[\w]*\/[\w-\.]*.[jpg|png]$/).pop(); // Relative path to screenshot
             window.open('api/index.php?action=downloadFile&uri=' + file, '_parent');
         } else {
             $(document).trigger("message-console-warn", ["There was an error retrieving your " +

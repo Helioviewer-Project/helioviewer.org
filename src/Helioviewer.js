@@ -1,15 +1,11 @@
 /**
  * @fileOverview Contains the main application class and controller for Helioviewer.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Calendar, FullscreenControl, UIController,
-  KeyboardManager, ImageSelectTool, LayerManager, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
-  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, ViewportController, 
-  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time, MediaHistoryBar,
-  ScreenshotHistory, MovieHistory */
+/*global document, window, $, UIController, ImageSelectTool, MovieBuilder, TooltipHelper, ViewportController, 
+  ScreenshotBuilder, ScreenshotHistory, MovieHistory, Shadowbox */
 "use strict";
 var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
@@ -36,14 +32,12 @@ var Helioviewer = UIController.extend(
      * full screen controls. the movie builder, screenshot builder, and image select tool.
      */
     _loadExtensions: function () {
-        var screenshotHistory, movieHistory;
-
         this._super(); // Call super method in UIController to load a few extensions
         
         this._initTooltips();
 
-        screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history'));
-        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
+        var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
+            movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
 
         this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
         this.imageSelectTool   = new ImageSelectTool(this.viewport);
@@ -64,8 +58,8 @@ var Helioviewer = UIController.extend(
      */
     _initViewport: function () {
         this.viewport = new ViewportController({
-            api            : this.api,
             id             : '#helioviewer-viewport',
+            api            : this.api,
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
             servers        : this.serverSettings.servers,
