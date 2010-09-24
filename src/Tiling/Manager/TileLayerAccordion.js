@@ -357,17 +357,29 @@ var TileLayerAccordion = Layer.extend(
         timestep = this._timeIncrement;
         
         domNode = $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString());
-        domNode.removeClass("timeAhead timeBehind timeSignificantlyOff");
         
-        if (Math.abs(timeDiff) > (4 * timestep)) {
-            domNode.addClass("timeSignificantlyOff");
-        }
-        else if (timeDiff < 0) {
-            domNode.addClass("timeBehind");
-        }
-        else if (timeDiff > 0) {
-            domNode.addClass("timeAhead");
-        }
+        domNode.css("color", this._choseTimeStampColor(timeDiff));
+    },
+    
+    /**
+     * Returns a CSS RGB triplet ranging from green (close to requested time) to yellow (some deviation from requested
+     * time) to red (requested time differs strongly from actual time).
+     */
+    _choseTimeStampColor: function (deviation) {
+        var SCALE_WINDOW = 24 * 60 * 60,
+        weight       = Math.min(1, Math.abs(deviation) / SCALE_WINDOW),
+        
+        // Raw colors
+        //r = Math.min(255, parseInt(2 * weight * 255, 10)),
+        //g = Math.min(255, parseInt(2 * 255 * (1 - weight), 10)),
+        //b = 0;
+        
+        // Less contrast
+        r = Math.min(255, 175 + parseInt(2 * weight * 255, 10)),
+        g = Math.min(255, 100 + parseInt(2 * 255 * (1 - weight), 10)),
+        b = 100;
+    
+        return "rgb(" + r + "," + g + "," + b + ")";
     }
 });
 
