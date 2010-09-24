@@ -79,34 +79,35 @@ var Helioviewer = UIController.extend(
     _setupDialogs: function () {
         
         // About dialog
-        $("#helioviewer-about").click(function () {
-            var d   = $('#about-dialog'),
-                btn = $(this);
-            
-            if (btn.hasClass("dialog-loaded")) {
-                if (d.dialog('isOpen')) {
-                    d.dialog('close');
-                }
-                else {
-                    d.dialog('open');
-                }
-            } else {
-                d.load(this.href).dialog({
-                    autoOpen: true,
-                    title: "Helioviewer - About",
-                    width: 480,
-                    height: 300,
-                    draggable: true
-                });
-                btn.addClass("dialog-loaded");
-            }
-            return false; 
+        this._setupDialog("#helioviewer-about", "#about-dialog", {
+            "title": "Helioviewer - About",
+            height : 300
         });
 
         //Keyboard shortcuts dialog
-        $("#helioviewer-usage").click(function () {
-            var d   = $('#usage-dialog'),
+        this._setupDialog("#helioviewer-usage", "#usage-dialog", {
+            "title": "Helioviewer - Usage Tips"
+        });
+    },
+    
+    /**
+     * Sets up event handlers for a single dialog
+     */
+    _setupDialog: function (btn, dialog, options) {
+        // Default options
+        var defaults = {
+            title     : "Helioviewer.org",
+            autoOpen  : true,
+            draggable : true,
+            width     : 480,
+            height    : 480            
+        };        
+        
+        // Button click handler
+        $(btn).click(function () {
+            var d   = $(dialog),
                 btn = $(this);
+
             if (btn.hasClass("dialog-loaded")) {
                 if (d.dialog('isOpen')) {
                     d.dialog('close');
@@ -115,13 +116,7 @@ var Helioviewer = UIController.extend(
                     d.dialog('open');
                 }
             } else {
-                d.load(this.href).dialog({
-                    autoOpen: true,
-                    title: "Helioviewer - Usage Tips",
-                    width: 480,
-                    height: 480,
-                    draggable: true
-                });
+                d.load(this.href).dialog($.extend(defaults, options));
                 btn.addClass("dialog-loaded");
             }
             return false; 
