@@ -341,7 +341,9 @@ var TileLayerAccordion = Layer.extend(
         
         entry.find(".tile-accordion-header-left").html(name);
 
-        // Display FITS header
+        // Refresh FITS header event listeners
+        $("#fits-header-" + id).remove();
+        
         entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
             self._showFITS(id, name, filepath, filename, server);
         });
