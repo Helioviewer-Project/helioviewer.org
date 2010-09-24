@@ -81,8 +81,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             if (sizeOf($images) > 0) {
                 $this->buildJPXImage($images, $linked);
             } else {
-                $this->_url     = null;
-                $this->_message = "No images were found for the requested time range."; 
+                throw new Exception("No images were found for the requested time range.");
             }            
             
             $this->_writeFileGenerationReport();
@@ -280,7 +279,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
     
     /**
      * Creates a summary file for the generated JPX file including the filepath, image timestamps, and any
-     * warning or error messages encountered during the creation process.
+     * warning messages encountered during the creation process.
      *
      * @return void
      */
