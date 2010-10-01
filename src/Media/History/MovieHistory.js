@@ -48,6 +48,7 @@ var MovieHistory = History.extend(
 
         movieCallback = function (movieData) {
             if (self._handleDataErrors(movieData)) {
+                $("#movie-button").removeClass("working");
                 return;
             }
             
@@ -63,6 +64,8 @@ var MovieHistory = History.extend(
             self.addToHistory(movie);
             
             self.save();
+            
+            $("#movie-button").removeClass("working");
             self._waitForMovie(movieData, movie);
         };
         

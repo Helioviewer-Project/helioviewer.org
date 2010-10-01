@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, InputValidator, CookieJar, $, localStorage, getUTCTimestamp */
+/*global Class, InputValidator, CookieJar, $, localStorage, parseLayerString, getUTCTimestamp */
 "use strict";
 var UserSettings = Class.extend(
     /** @lends UserSettings.prototype */
@@ -23,15 +23,19 @@ var UserSettings = Class.extend(
      * 
      * @see <a href="https://developer.mozilla.org/en/DOM/Storage">https://developer.mozilla.org/en/DOM/Storage</a>
      */
-    init: function (defaults, serverSettings) {
-        this._defaults       = defaults;
-        this._serverSettings = serverSettings;
+    init: function (defaults, urlSettings, constraints) {
+        this._defaults    = defaults;
+        this._constraints = constraints;
         
         // Input validator
         this._validator = new InputValidator();
                 
         // Initialize storage
         this._initStorage();
+        
+        // Process URL parameters
+        this._processURLSettings(urlSettings);
+        
         this._setupEventHandlers();
     },
 
@@ -113,6 +117,36 @@ var UserSettings = Class.extend(
     },
     
     /**
+     * Processes and validates any URL parameters that have been set
+     */
+    _processURLSettings: function (urlSettings) {
+        if (urlSettings.date) {
+            this.set("date", getUTCTimestamp(urlSettings.date));
+        }
+
+        if (urlSettings.imageScale) {
+            this.set("imageScale", parseFloat(urlSettings.imageScale));
+        }
+        
+        if (urlSettings.imageLayers) {
+            this.set("tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
+        }
+    },
+    
+    /**
+     * Processes a string containing one or more layers and converts them into JavaScript objects
+     */
+    _parseURLStringLayers: function (urlLayers) {
+        var layers = [], self = this;
+        
+        $.each(urlLayers, function (i, layerString) {
+            layers.push(parseLayerString(layerString));
+        });
+
+        return layers;
+    },
+    
+    /**
      * Sets up event-handlers
      */
     _setupEventHandlers: function () {
@@ -140,8 +174,8 @@ var UserSettings = Class.extend(
             break;
         case "imageScale":
             this._validator.checkFloat(value, {
-                "min": this._serverSettings.minImageScale,
-                "max": this._serverSettings.maxImageScale
+                "min": this._constraints.minImageScale,
+                "max": this._constraints.maxImageScale
             });
             break;
         case "movie-history":

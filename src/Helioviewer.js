@@ -1,15 +1,11 @@
 /**
  * @fileOverview Contains the main application class and controller for Helioviewer.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Calendar, FullscreenControl, UIController,
-  KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
-  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, ViewportController, 
-  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time, MediaHistoryBar,
-  ScreenshotHistory, MovieHistory */
+/*global document, window, $, UIController, ImageSelectTool, MovieBuilder, TooltipHelper, ViewportController, 
+  ScreenshotBuilder, ScreenshotHistory, MovieHistory, Shadowbox, addIconHoverEventListener */
 "use strict";
 var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
@@ -18,13 +14,13 @@ var Helioviewer = UIController.extend(
      * Creates a new Helioviewer instance.
      * @constructs
      * 
-     * @param {Object} urlParams        Client-specified settings to load. Includes imageLayers,
-     *                                  date, and imageScale. May be empty.
-     * @param {Object} serverSettings   Server settings loaded from Config.ini
+     * @param {Object} urlSettings    Client-specified settings to load. Includes imageLayers,
+     *                                date, and imageScale. May be empty.
+     * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (urlParams, serverSettings) {
+    init: function (urlSettings, serverSettings) {
         // Calling super will load settings, init viewport, and call _loadExtensions()
-        this._super(urlParams, serverSettings);
+        this._super(urlSettings, serverSettings);
         
         this._setupDialogs();
         this._initEventHandlers();
@@ -36,18 +32,17 @@ var Helioviewer = UIController.extend(
      * full screen controls. the movie builder, screenshot builder, and image select tool.
      */
     _loadExtensions: function () {
-        var screenshotHistory, movieHistory;
-
         this._super(); // Call super method in UIController to load a few extensions
         
         this._initTooltips();
 
-        screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history'));
-        movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
+        var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
+            movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
 
-        this.movieBuilder       = new MovieBuilder(this.viewport, movieHistory);
-        this.imageSelectTool    = new ImageSelectTool(this.viewport);
-        this.screenshotBuilder  = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
+        this.imageSelectTool   = new ImageSelectTool();
+        
+        this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
+        this.screenshotBuilder = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
     },
     
     /**
@@ -64,11 +59,10 @@ var Helioviewer = UIController.extend(
      */
     _initViewport: function () {
         this.viewport = new ViewportController({
-            api            : this.api,
             id             : '#helioviewer-viewport',
+            api            : this.api,
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            urlStringLayers: this.urlParams.imageLayers  || "",
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
@@ -86,34 +80,35 @@ var Helioviewer = UIController.extend(
     _setupDialogs: function () {
         
         // About dialog
-        $("#helioviewer-about").click(function () {
-            var d   = $('#about-dialog'),
-                btn = $(this);
-            
-            if (btn.hasClass("dialog-loaded")) {
-                if (d.dialog('isOpen')) {
-                    d.dialog('close');
-                }
-                else {
-                    d.dialog('open');
-                }
-            } else {
-                d.load(this.href).dialog({
-                    autoOpen: true,
-                    title: "Helioviewer - About",
-                    width: 480,
-                    height: 300,
-                    draggable: true
-                });
-                btn.addClass("dialog-loaded");
-            }
-            return false; 
+        this._setupDialog("#helioviewer-about", "#about-dialog", {
+            "title": "Helioviewer - About",
+            height : 300
         });
 
         //Keyboard shortcuts dialog
-        $("#helioviewer-usage").click(function () {
-            var d   = $('#usage-dialog'),
+        this._setupDialog("#helioviewer-usage", "#usage-dialog", {
+            "title": "Helioviewer - Usage Tips"
+        });
+    },
+    
+    /**
+     * Sets up event handlers for a single dialog
+     */
+    _setupDialog: function (btn, dialog, options) {
+        // Default options
+        var defaults = {
+            title     : "Helioviewer.org",
+            autoOpen  : true,
+            draggable : true,
+            width     : 480,
+            height    : 480            
+        };        
+        
+        // Button click handler
+        $(btn).click(function () {
+            var d   = $(dialog),
                 btn = $(this);
+
             if (btn.hasClass("dialog-loaded")) {
                 if (d.dialog('isOpen')) {
                     d.dialog('close');
@@ -122,13 +117,7 @@ var Helioviewer = UIController.extend(
                     d.dialog('open');
                 }
             } else {
-                d.load(this.href).dialog({
-                    autoOpen: true,
-                    title: "Helioviewer - Usage Tips",
-                    width: 480,
-                    height: 480,
-                    draggable: true
-                });
+                d.load(this.href).dialog($.extend(defaults, options));
                 btn.addClass("dialog-loaded");
             }
             return false; 
@@ -139,19 +128,20 @@ var Helioviewer = UIController.extend(
      * @description Initialize event-handlers for UI components controlled by the Helioviewer class
      */
     _initEventHandlers: function () {
+        var self = this;
+        
         $('#link-button').click($.proxy(this.displayURL, this));
         $('#email-button').click($.proxy(this.displayMailForm, this));
         $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
+        
+        // Handle image area select requests
+        $(document).bind("enable-select-tool", function (event, callback) {
+            self.imageSelectTool.enableAreaSelect(self.viewport.getViewportInformation(), callback);
+        });
 
-        // Hover effect for text/icon buttons        
-        $('#social-buttons .text-btn').hover(
-            function () {
-                $(this).children(".ui-icon").addClass("ui-icon-hover");
-            },
-            function () {
-                $(this).children(".ui-icon").removeClass("ui-icon-hover");
-            }
-        );
+        $('#social-buttons .text-btn').each(function (i, item) {
+            addIconHoverEventListener($(this)); 
+        });
     },
     
     /**

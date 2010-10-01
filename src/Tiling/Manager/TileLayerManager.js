@@ -116,25 +116,6 @@ var TileLayerManager = LayerManager.extend(
 
         return 100 / counter;
     },
-    
-    /**
-     * Loads any layers which were set via URL string
-     */
-    _parseURLStringLayers: function (urlLayers) {
-        if (!urlLayers) {
-            return;
-        }
-        var layerSettings, layers = [], self = this;
-        
-        $.each(urlLayers, function () {
-            layerSettings        = self.parseLayerString(this);
-            layerSettings.server = self._selectTilingServer();
-            layers.push(layerSettings);
-        });
-        $(document).trigger("save-setting", ["tileLayers", layers]);
-        
-        return layers;
-    },
 
     /**
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.

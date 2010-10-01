@@ -15,30 +15,24 @@ var SettingsLoader = (
      * 
      * @returns {Object} A UserSettings object
      */
-    loadSettings: function (urlParams, serverSettings) {
-        var userSettings, timestamp;
-        this.urlParams = urlParams;
+    loadSettings: function (urlSettings, serverSettings) {
+        var defaults    = this._getDefaultSettings(serverSettings),
+            constraints = {
+                "minImageScale": serverSettings.minImageScale,
+                "maxImageScale": serverSettings.maxImageScale
+            };
         
-        userSettings = new UserSettings(this._getDefaultUserSettings(serverSettings), serverSettings);
-
-        if (this.urlParams.date) {
-            timestamp = getUTCTimestamp(this.urlParams.date);
-            $(document).trigger("save-setting", ["date", timestamp]);
-        }
-
-        if (this.urlParams.imageScale) {
-            $(document).trigger("save-setting", ["imageScale", parseFloat(this.urlParams.imageScale)]);
-        }
-        
-        return userSettings;
+        return new UserSettings(defaults, urlSettings, constraints);
     },
-
+    
     /**
      * Creates a hash containing the default settings to use. Change default settings here.
      * 
+     * TODO 10/01/2010: Add check when adding default layer to make sure it is available.
+     * 
      * @returns {Object} The default Helioviewer.org settings
      */
-    _getDefaultUserSettings: function (serverSettings) {
+    _getDefaultSettings: function (serverSettings) {
         return {
             date            : getUTCTimestamp(serverSettings.defaultObsTime),
             imageScale      : serverSettings.defaultImageScale,

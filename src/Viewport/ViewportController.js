@@ -36,7 +36,6 @@ var ViewportController = Class.extend(
     _initEventHandlers: function () {
         $(document).bind("image-scale-changed",             $.proxy(this.zoomViewport, this))
                    .bind("update-viewport",                 $.proxy(this.updateViewportRanges, this))
-                   .bind("get-viewport-information",        $.proxy(this.getViewportInformation, this))
                    .bind("move-viewport mousemove mouseup", $.proxy(this.moveViewport, this))
                    .bind("resize-viewport",                 $.proxy(this.resizeViewport, this))
                    .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this));
@@ -95,16 +94,10 @@ var ViewportController = Class.extend(
      * Gets information about the viewport including date, layers, viewport coordinates, and scale
      * and returns them as an array or calls the callback function if it's provided.
      */    
-    getViewportInformation: function (event, callback) {
-        var info                 = this.viewport.getViewportInformation();
-        info.coordinates         = this.movementHelper.getViewportCoords();
-        //info.maxImageCoordinates = this.movementHelper.getMaxImageCoordinates(info.coordinates);
-        
-        if (callback) {
-            callback(info);
-        } else {
-            return info;
-        }
+    getViewportInformation: function () {
+        return $.extend(this.viewport.getViewportInformation(), {
+            "coordinates": this.movementHelper.getViewportCoords()
+        });
     },
     
     /**

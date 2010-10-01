@@ -36,7 +36,7 @@ var History = Class.extend(
      * @input {Object} item -- Either a Screenshot or Movie object.
      */
     addToHistory: function (item) {
-        this.removeTooltips();
+        //this.removeTooltips();
         this.history.push(item);
         this.history = this.history.reverse().slice(0, 12).reverse();
         

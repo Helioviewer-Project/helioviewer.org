@@ -24,6 +24,8 @@
 require_once "src/Config.php";
 $config = new Config("../settings/Config.ini");
 
+register_shutdown_function('shutdownFunction');
+
 if (isset($_REQUEST['action'])) {
     $params = $_REQUEST;
 }
@@ -671,5 +673,16 @@ function logErrorMsg($error)
 
     file_put_contents($log, $msg);
 }
+
+/**
+ * Shutdown function used to catch and log fatal PHP errors
+ */
+function shutDownFunction() { 
+    $error = error_get_last();
+    if ($error['type'] == 1) {
+        handleError(sprintf("%s:%d - %s", $error['file'], $error['line'], $error['message']));
+    } 
+}
+
 
 ?>

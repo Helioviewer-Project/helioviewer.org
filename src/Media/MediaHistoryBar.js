@@ -35,11 +35,12 @@ var MediaHistoryBar = Class.extend(
     
     /**
      * Adds the new item to history and re-makes the history dialog with the new item
-     * included. 
+     * included.
      */
-    addToHistory: function (content) {        
+    addToHistory: function (content) {
         this._cleanupTooltips();
         this.content = content;
+        
         // It is necessary to completely recreate the tooltip because if you update the content only,
         // any selectors that depend on previous content will break and all movie information tooltips
         // would have to be re-created anyway. "Time ago" must also be re-calculated.
@@ -155,9 +156,9 @@ var MediaHistoryBar = Class.extend(
                         } 
                     });
                 },
-                // Don't show unless hasDialog is true.
+                // Don't show unless hasDialog is true
                 beforeShow: function () {
-                    return self.hasDialog;
+                    return self.hasDialog && !self.button.hasClass("working");
                 }
             }
         });
