@@ -25,3 +25,4 @@ build/css
 *.log
 php_errors.log
 .htaccess
+.gnupg

@@ -50,7 +50,14 @@ var MediaBuilder = Class.extend(
             hide: 'click',                      
             content: divContent,
             style  : "mediaDark",
-            api    : { onRender: $.proxy(this._setupEventListeners, this) }
+            api    : {
+                onRender: $.proxy(this._setupEventListeners, this),
+                beforeShow : function (e) {
+                    if (self.button.hasClass("working")) {
+                        return false;
+                    }
+                }
+            }
         });
         
         // Hide the dialog if any other button in the social buttons bar is clicked.

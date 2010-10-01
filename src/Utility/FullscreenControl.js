@@ -11,7 +11,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window */
+/*global Class, $, window, addIconHoverEventListener */
 "use strict";
 var FullscreenControl = Class.extend(
     /** @lends FullscreenControl.prototype */
@@ -155,7 +155,7 @@ var FullscreenControl = Class.extend(
      * Sets up event handlers related to fullscreen control
      */
     _setupEventHandlers: function (btnId) {
-        var btn = $(btnId),
+        var btn = $(btnId).click($.proxy(this._onClick, this)),
             icon = btn.find(".ui-icon");
 
         addIconHoverEventListener(btn);

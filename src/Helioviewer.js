@@ -5,7 +5,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, UIController, ImageSelectTool, MovieBuilder, TooltipHelper, ViewportController, 
-  ScreenshotBuilder, ScreenshotHistory, MovieHistory, Shadowbox */
+  ScreenshotBuilder, ScreenshotHistory, MovieHistory, Shadowbox, addIconHoverEventListener */
 "use strict";
 var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
@@ -139,15 +139,9 @@ var Helioviewer = UIController.extend(
             self.imageSelectTool.enableAreaSelect(self.viewport.getViewportInformation(), callback);
         });
 
-        // Hover effect for text/icon buttons        
-        $('#social-buttons .text-btn').hover(
-            function () {
-                $(this).children(".ui-icon").addClass("ui-icon-hover");
-            },
-            function () {
-                $(this).children(".ui-icon").removeClass("ui-icon-hover");
-            }
-        );
+        $('#social-buttons .text-btn').each(function (i, item) {
+            addIconHoverEventListener($(this)); 
+        });
     },
     
     /**

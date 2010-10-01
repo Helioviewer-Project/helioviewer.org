@@ -28,6 +28,8 @@ var SettingsLoader = (
     /**
      * Creates a hash containing the default settings to use. Change default settings here.
      * 
+     * TODO 10/01/2010: Add check when adding default layer to make sure it is available.
+     * 
      * @returns {Object} The default Helioviewer.org settings
      */
     _getDefaultSettings: function (serverSettings) {

@@ -217,8 +217,12 @@ var MovieBuilder = MediaBuilder.extend(
     buildMovie: function (viewportInfo) {
         var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
             movie, url, self = this;
+        
+        //console.log("building = true");
 
         this.building = true;
+        this.button.addClass("working");
+        
         arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
         
         realVPSize = this.viewport.getViewportInformation().coordinates;
