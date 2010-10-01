@@ -25,6 +25,7 @@ var TileLayerAccordion = Layer.extend(
         this.container        = $(containerId);
         this._dataSources     = dataSources;
         this._observationDate = observationDate;
+        this._maximumTimeDiff = 12 * 60 * 60 * 1000; // 12 hours in miliseconds
 
         this.options = {};
 
@@ -317,7 +318,7 @@ var TileLayerAccordion = Layer.extend(
      * Keeps track of requested date to use when styling timestamps
      */
     _onObservationTimeChange: function (event, requestDate) {
-        var actualDate, domNode, self = this;
+        var actualDate, weight, domNode, self = this;
         
         this._observationDate = requestDate;
         
@@ -325,9 +326,10 @@ var TileLayerAccordion = Layer.extend(
         $("#TileLayerAccordion-Container .timestamp").each(function (i, item) {
             domNode    = $(this);
             actualDate = new Date(getUTCTimestamp(domNode.text()));
-            timeDiff   = (actualDate.getTime() - requestDate.getTime()) / 1000;
-            
-            domNode.css("color", self._chooseTimeStampColor(timeDiff))
+                        
+            weight = self._getScaledTimeDifference(actualDate, requestDate);
+
+            domNode.css("color", self._chooseTimeStampColor(weight, 0, 0, 0));
         });
     },
     
@@ -354,30 +356,33 @@ var TileLayerAccordion = Layer.extend(
      * @param {Object} layer The layer being updated
      */
     _updateTimeStamp: function (id, date) {
-        var timeDiff = (date.getTime() - this._observationDate.getTime()) / 1000;
+        var weight = this._getScaledTimeDifference(date, this._observationDate);
         
         $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString())
-                   .css("color", this._chooseTimeStampColor(timeDiff));
+                   .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
+    },
+    
+    /**
+     * Returns a value from 0 to 1 representing the amount of deviation from the requested time
+     */
+    _getScaledTimeDifference: function (t1, t2) {
+        return Math.min(1, Math.abs(t1.getTime() - t2.getTime()) / this._maximumTimeDiff);
     },
     
     /**
      * Returns a CSS RGB triplet ranging from green (close to requested time) to yellow (some deviation from requested
      * time) to red (requested time differs strongly from actual time).
+     * 
+     * @param float weight  Numeric ranging from 0.0 (green) to 1.0 (red)
+     * @param int   rOffset Offset to add to red value
+     * @param int   gOffset Offset to add to green value
+     * @param int   bOffset Offset to add to blue value
      */
-    _chooseTimeStampColor: function (deviation) {
-        var SCALE_WINDOW = 24 * 60 * 60,
-        weight       = Math.min(1, Math.abs(deviation) / SCALE_WINDOW),
+    _chooseTimeStampColor: function (w, rOffset, gOffset, bOffset) {
+        var r = Math.min(255, rOffset + parseInt(2 * w * 255, 10)),
+            g = Math.min(255, gOffset + parseInt(2 * 255 * (1 - w), 10)),
+            b = bOffset + 0;
         
-        // Raw colors
-        //r = Math.min(255, parseInt(2 * weight * 255, 10)),
-        //g = Math.min(255, parseInt(2 * 255 * (1 - weight), 10)),
-        //b = 0;
-        
-        // Less contrast
-        r = Math.min(255, 175 + parseInt(2 * weight * 255, 10)),
-        g = Math.min(255, 100 + parseInt(2 * 255 * (1 - weight), 10)),
-        b = 100;
-    
         return "rgb(" + r + "," + g + "," + b + ")";
     }
 });
