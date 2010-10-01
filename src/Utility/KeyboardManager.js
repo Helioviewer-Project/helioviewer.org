@@ -116,10 +116,10 @@ var KeyboardManager = Class.extend(
         else if (character === "f") {
             $("#fullscreen-btn").click();
         }
-        else if (character === ",") {
+        else if (character === "," || character === "<") {
             $("#timeBackBtn").click();
         }
-        else if (character === ".") {
+        else if (character === "." || character === ">") {
             $("#timeForwardBtn").click();
         }
     }

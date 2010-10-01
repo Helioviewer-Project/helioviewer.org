@@ -10,7 +10,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global HelioviewerTileLayer, TileLayerManager $ */
+/*global HelioviewerTileLayer, TileLayerManager, parseLayerString, $ */
 "use strict";
 var HelioviewerTileLayerManager = TileLayerManager.extend(
 /** @lends HelioviewerTileLayerManager.prototype */
@@ -20,15 +20,13 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Creates a new TileLayerManager instance
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    servers, savedLayers, urlLayers) {
+                    servers, startingLayers, urlLayers) {
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-		            servers, savedLayers, urlLayers);
+		            servers, startingLayers, urlLayers);
 
         this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
                         "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum", "SDO,AIA,AIA,171",
                         "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
-        
-        var startingLayers = this._parseURLStringLayers(urlLayers) || savedLayers;
 
         this._loadStartingLayers(startingLayers);
     },
@@ -66,7 +64,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Pull off the next layer on the queue
         while (!queueChoiceIsValid) {
             next = queue[i] || defaultLayer;
-            params = this.parseLayerString(next + ",1,100");
+            params = parseLayerString(next + ",1,100");
             
             if (this.checkDataSource(params.observatory, params.instrument, params.detector, params.measurement)) {
                 queueChoiceIsValid = true;
@@ -120,27 +118,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         return Math.floor(Math.random() * (this.servers.length));
     },
 
-    /**
-     * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
-     * component parts and returns a JavaScript representation.
-     *
-     * @param {String} The layer identifier as an underscore-concatenated string
-     * 
-     * @returns {Object} A simple JavaScript object representing the layer parameters
-     */
-    parseLayerString: function (str) {
-        var params = str.split(",");
-        return {
-            observatory : params[0],
-            instrument  : params[1],
-            detector    : params[2],
-            measurement : params[3],
-            visible     : Boolean(parseInt(params[4], 10)),
-            opacity     : parseInt(params[5], 10),
-            server      : parseInt(params[6], 10) || 0
-        };
-    },
-    
     /**
      * Checks to make sure requested data source exists
      * 

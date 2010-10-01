@@ -21,11 +21,11 @@ var TileLayerAccordion = Layer.extend(
      * @param {String} containerId ID for the outermost continer where the layer 
      * manager user interface should be constructed
      */
-    init: function (containerId, dataSources, observationDate, timeIncrement) {
+    init: function (containerId, dataSources, observationDate) {
         this.container        = $(containerId);
         this._dataSources     = dataSources;
         this._observationDate = observationDate;
-        this._timeIncrement   = timeIncrement;
+        this._maximumTimeDiff = 12 * 60 * 60 * 1000; // 12 hours in miliseconds
 
         this.options = {};
 
@@ -39,8 +39,7 @@ var TileLayerAccordion = Layer.extend(
         // Event-handlers
         $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
                    .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
-                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this))
-                   .bind("time-step-changed", $.proxy(this._onTimeIncrementChange, this));
+                   .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this));
     },
 
     /**
@@ -57,7 +56,7 @@ var TileLayerAccordion = Layer.extend(
         this._initTreeSelect(id, observatory, instrument, detector, measurement);
         this._initOpacitySlider(id, opacity, onOpacityChange);        
         this._setupEventHandlers(id);
-        this.updateTimeStamp(id, date);
+        this._updateTimeStamp(id, date);
         this._setupTooltips(id);
     },
 
@@ -225,22 +224,6 @@ var TileLayerAccordion = Layer.extend(
     },
     
     /**
-     * 
-     */
-    _updateAccordionEntry: function (event, id, name, opacity, date, filepath, filename, server) {
-        var entry = $("#" + id), self = this;
-        
-        this.updateTimeStamp(id, date);
-        
-        entry.find(".tile-accordion-header-left").html(name);
-
-        // Display FITS header
-        entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
-            self._showFITS(id, name, filepath, filename, server);
-        });
-    },
-    
-    /**
      * @description Displays the FITS header information associated with a given image
      * @param {Object} layer
      */
@@ -334,40 +317,73 @@ var TileLayerAccordion = Layer.extend(
     /**
      * Keeps track of requested date to use when styling timestamps
      */
-    _onObservationTimeChange: function (event, date) {
-        this._observationDate = date;
+    _onObservationTimeChange: function (event, requestDate) {
+        var actualDate, weight, domNode, self = this;
+        
+        this._observationDate = requestDate;
+        
+        // Update timestamp colors
+        $("#TileLayerAccordion-Container .timestamp").each(function (i, item) {
+            domNode    = $(this);
+            actualDate = new Date(getUTCTimestamp(domNode.text()));
+                        
+            weight = self._getScaledTimeDifference(actualDate, requestDate);
+
+            domNode.css("color", self._chooseTimeStampColor(weight, 0, 0, 0));
+        });
     },
     
     /**
-     * Keeps track of time increment to use when styling timestamps
+     * 
      */
-    _onTimeIncrementChange: function (event, timeIncrement) {
-        this._timeIncrement = timeIncrement;
+    _updateAccordionEntry: function (event, id, name, opacity, date, filepath, filename, server) {
+        var entry = $("#" + id), self = this;
+        
+        this._updateTimeStamp(id, date);
+        
+        entry.find(".tile-accordion-header-left").html(name);
+
+        // Refresh FITS header event listeners
+        $("#fits-header-" + id).remove();
+        
+        entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
+            self._showFITS(id, name, filepath, filename, server);
+        });
     },
     
     /**
      * @description Updates the displayed timestamp for a given tile layer
      * @param {Object} layer The layer being updated
      */
-    updateTimeStamp: function (id, date) {
-        var domNode, timeDiff, timestep;
+    _updateTimeStamp: function (id, date) {
+        var weight = this._getScaledTimeDifference(date, this._observationDate);
         
-        //date     = new Date(getUTCTimestamp(dateString));
-        timeDiff = (date.getTime() - this._observationDate.getTime()) / 1000;
-        timestep = this._timeIncrement;
+        $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString())
+                   .css("color", this._chooseTimeStampColor(weight, 0, 0, 0));
+    },
+    
+    /**
+     * Returns a value from 0 to 1 representing the amount of deviation from the requested time
+     */
+    _getScaledTimeDifference: function (t1, t2) {
+        return Math.min(1, Math.abs(t1.getTime() - t2.getTime()) / this._maximumTimeDiff);
+    },
+    
+    /**
+     * Returns a CSS RGB triplet ranging from green (close to requested time) to yellow (some deviation from requested
+     * time) to red (requested time differs strongly from actual time).
+     * 
+     * @param float weight  Numeric ranging from 0.0 (green) to 1.0 (red)
+     * @param int   rOffset Offset to add to red value
+     * @param int   gOffset Offset to add to green value
+     * @param int   bOffset Offset to add to blue value
+     */
+    _chooseTimeStampColor: function (w, rOffset, gOffset, bOffset) {
+        var r = Math.min(255, rOffset + parseInt(2 * w * 255, 10)),
+            g = Math.min(255, gOffset + parseInt(2 * 255 * (1 - w), 10)),
+            b = bOffset + 0;
         
-        domNode = $("#" + id).find('.timestamp').html(date.toUTCDateString() + " " + date.toUTCTimeString());
-        domNode.removeClass("timeAhead timeBehind timeSignificantlyOff");
-        
-        if (Math.abs(timeDiff) > (4 * timestep)) {
-            domNode.addClass("timeSignificantlyOff");
-        }
-        else if (timeDiff < 0) {
-            domNode.addClass("timeBehind");
-        }
-        else if (timeDiff > 0) {
-            domNode.addClass("timeAhead");
-        }
+        return "rgb(" + r + "," + g + "," + b + ")";
     }
 });
 

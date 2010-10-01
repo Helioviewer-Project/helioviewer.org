@@ -157,7 +157,7 @@ class Module_JHelioviewer implements Module
         if ($this->_params['measurement'] == "white light") {
             $this->_params['measurement'] = "white-light";
         }
-
+        
         // Create JPX image instance
         try {
             $jpx = new Image_JPEG2000_HelioviewerJPXImage(
@@ -175,22 +175,15 @@ class Module_JHelioviewer implements Module
             return;
         }
 
-        // JPIP URL
-        if ($this->_params['jpip']) {
-            $jpip = true;
-        } else {
-            $jpip = false;
-        }
-
         // Chose appropriate action based on request parameters
-        if (!($this->_params['frames'] || $this->_params['verbose'])) {
-            if ($jpip) {
+        if ($this->_params['verbose']) {
+            $jpx->printJSON($this->_params['jpip'], $this->_params['verbose']);
+        } else {
+            if ($this->_params['jpip']) {
                 echo $jpx->getJPIPURL();
             } else {
                 $jpx->displayImage();
-            }             
-        } else {
-            $jpx->printJSON($jpip, $this->_params['frames'], $this->_params['verbose']);
+            }            
         }
     }
     
@@ -262,7 +255,7 @@ class Module_JHelioviewer implements Module
             $expected = array(
                 'required' => array('startTime', 'endTime'),
                 'optional' => array('sourceId', 'cadence'),
-                'bools'    => array('jpip', 'frames', 'verbose', 'linked'),
+                'bools'    => array('jpip', 'verbose', 'linked'),
                 'dates'    => array('startTime', 'endTime'),
                 'ints'     => array('cadence')
             );
@@ -460,22 +453,10 @@ class Module_JHelioviewer implements Module
                             measurement parameters).</td>
                         </tr>
                         <tr>
-                            <td><b>frames</b></td>
-                            <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Returns individual movie-frame timestamps along with the file URI
-                            as JSON.</td>
-                        </tr>
-                        <tr>
                             <td><b>verbose</b></td>
                             <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> In addition to the JPX file URI, returns any warning or
-                            error messages generated during the request.</td>
-                        </tr>
-                        <tr>
-                            <td><b>frames</b></td>
-                            <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Returns a JSON data structure including the JPX URI and also a list of
-                            the timestamps associated with each layer in the file.</td>
+                            <td><i>[Optional]</i> In addition to the JPX file URI, timestamps for each frame in the 
+                            resulting movie and any warning messages generated are included in a JSON response.</td>
                         </tr>
                         <tr>
                             <td><b>jpip</b></td>
@@ -512,9 +493,14 @@ class Module_JHelioviewer implements Module
                             <td><i>[Optional]</i> List of timestamps.</td>
                         </tr>
                         <tr>
-                            <td><b>verbose</b></td>
+                            <td><b>error</b></td>
                             <td><i>String</i></td>
-                            <td><i>[Optional]</i> Any warning or error messages generated during the request</td>
+                            <td><i>[Optional]</i> Any fatal error messages generated during the request</td>
+                        </tr>                        
+                        <tr>
+                            <td><b>warning</b></td>
+                            <td><i>String</i></td>
+                            <td><i>[Optional]</i> Any non-fatal warning messages generated during the request</td>
                         </tr>
                     </tbody>
                 </table>

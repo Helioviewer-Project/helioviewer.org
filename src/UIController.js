@@ -1,15 +1,12 @@
 /**
  * @fileOverview Contains the main application class and controller.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Calendar, FullscreenControl, 
-  KeyboardManager, ImageSelectTool, LayerManager, MediaSettings, MovieBuilder, MessageConsole, Shadowbox, TileLayer,
-  TileLayerAccordion, TileLayerManager, TimeControls, TooltipHelper, UserSettings, ZoomControls, Viewport, 
-  ScreenshotBuilder, document, window, localStorage, extendLocalStorage, getUTCTimestamp, Time, SettingsLoader */
+/*global document, window, localStorage, Class, $, FullscreenControl, KeyboardManager, MessageConsole,  
+  TimeControls, ZoomControls, Viewport, SettingsLoader */
 "use strict";
 var UIController = Class.extend(
     /** @lends UIController.prototype */
@@ -18,17 +15,14 @@ var UIController = Class.extend(
      * Creates a new UIController instance.
      * @constructs
      * 
-     * @param {Object} urlParams        Settings specified via URL
-     * @param {Object} serverSettings   Server settings
+     * @param {Object} urlSettings    Settings specified via URL
+     * @param {Object} serverSettings Server settings
      */
-    init: function (urlParams, serverSettings) {
-        this.urlParams = urlParams;
-
-        // Determine browser support
-        this._checkBrowser();
+    init: function (urlSettings, serverSettings) {
+        this._checkBrowser(); // Determines browser support
         
         this.serverSettings = serverSettings; 
-        this.userSettings   = SettingsLoader.loadSettings(urlParams, serverSettings);
+        this.userSettings   = SettingsLoader.loadSettings(urlSettings, serverSettings);
 
         this._initLoadingIndicator();
         
@@ -47,11 +41,10 @@ var UIController = Class.extend(
      */
     _initViewport: function () {    
         this.viewport = new Viewport({
-            api            : this.api,
             id             : '#helioviewer-viewport',
+            api            : this.api,
             requestDate    : this.timeControls.getDate(),
             timestep       : this.timeControls.getTimeIncrement(),
-            urlStringLayers: this.urlParams.imageLayers  || "",
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,

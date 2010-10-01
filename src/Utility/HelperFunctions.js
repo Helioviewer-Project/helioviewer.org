@@ -6,7 +6,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global console, $, navigator, Storage, hideZoomControls, showZoomControls */
+/*global console: true, $, navigator, Storage, hideZoomControls, showZoomControls */
 "use strict";
 /**
  * @description Outputs a UTC Date string of the format "YYYY/MM/dd"
@@ -173,6 +173,17 @@ Math.lg = function (x) {
 //        $("#message-console").jGrowl(str, { header: '[DEBUG] ' });
 //    };
 //}
+if (typeof(console) === "undefined") {
+    console = {};
+
+    console.log = function (msg) {
+        return false;
+    };
+    
+    console.dir = function (obj) {
+        return false;
+    };
+}
 
 /**
  * @description Checks to see if a given variable is a numeric type
@@ -387,6 +398,27 @@ var layerStringToLayerArray = function (layers) {
  */
 var extractLayerName = function (layer) {
     return layer.split(",").slice(0, -2);
+};
+
+/**
+ * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
+ * component parts and returns a JavaScript representation.
+ *
+ * @param {String} The layer identifier as an underscore-concatenated string
+ * 
+ * @returns {Object} A simple JavaScript object representing the layer parameters
+ */
+var parseLayerString = function (str) {
+    var params = str.split(",");
+    return {
+        observatory : params[0],
+        instrument  : params[1],
+        detector    : params[2],
+        measurement : params[3],
+        visible     : Boolean(parseInt(params[4], 10)),
+        opacity     : parseInt(params[5], 10),
+        server      : parseInt(params[6], 10) || 0
+    };
 };
 
 /**
