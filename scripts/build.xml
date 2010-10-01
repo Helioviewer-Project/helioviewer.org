@@ -9,7 +9,7 @@
 	<target name="build">
         <property name="cssdir"  value="resources/css"/>
         
-		<echo>Building Helioviewer...</echo>
+		<echo>Concatenating JavaScript/CSS</echo>
 
 		<!-- concatenate in two-steps to preserve include order -->
 		<concat destfile="build/helioviewer.js" encoding="UTF-8" eol="lf">
@@ -18,13 +18,25 @@
 		</concat>
 
 		<concat destfile="build/css/helioviewer.css" encoding="UTF-8" eol="lf">
+		    <file file="scripts/concat/Header.css" />
 			<filelist dir="${cssdir}" files="main.css"/>
 		    <fileset dir="${cssdir}" includes="*.css" excludes="main.css"/>
-		</concat>		
+		</concat>
+        
+        <echo>Minifying JavaScript</echo>
 
 		<!-- minify-->
 		<exec dir="scripts/jsmin" executable="jsmin.py" input="build/helioviewer.js" 
-		  output="build/helioviewer.min.js" resolveexecutable="true" />
+		  output="build/helioviewer.min.js.tmp" resolveexecutable="true" />
+          
+        <echo>Adding download notice</echo>  
+        
+        <!-- add header with link to full source code -->
+        <concat destfile="build/helioviewer.min.js" encoding="UTF-8" eol="lf">
+            <file file="scripts/concat/Header.js" />
+            <file file="build/helioviewer.min.js.tmp" />   
+        </concat>
+        <delete file="build/helioviewer.min.js.tmp" />
 		  
 		<echo>Done!</echo>
 	</target>
