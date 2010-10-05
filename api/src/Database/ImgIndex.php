@@ -341,6 +341,9 @@ class Database_ImgIndex
                 LEFT JOIN instrument ON datasource.instrumentId = instrument.id
                 LEFT JOIN detector ON datasource.detectorId = detector.id
                 LEFT JOIN measurement ON datasource.measurementId = measurement.id;";
+        
+        // Use UTF-8 for responses
+        $this->_dbConnection->setEncoding('utf8');
 
         // Fetch available data-sources
         $result = $this->_dbConnection->query($sql);
@@ -389,7 +392,7 @@ class Database_ImgIndex
                     // Alternative measurement descriptors
                     if (preg_match("/^\d*$/", $meas)) {
                         // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
-                        $measurementName = $meas . "\xE2\x81\x9F" . utf8_encode($source["measurement_units"]);
+                        $measurementName = $meas . "\xE2\x81\x9F" . $source["measurement_units"];
                     } else {
                         $measurementName = ucwords(str_replace("-", " ", $meas));
                     }
@@ -419,7 +422,7 @@ class Database_ImgIndex
                     }
                     $tree[$obs]["children"][$inst]["children"][$det]["children"][$meas] = array(
                         "name"          => $measurementName,
-                        "description"   => utf8_encode($source["measurement_description"]),
+                        "description"   => $source["measurement_description"],
                         "nickname"      => $nickname,
                         "sourceId"      => $id,
                         "layeringOrder" => $order
