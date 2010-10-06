@@ -185,7 +185,7 @@ function printAPIDocumentation()
     <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
     <meta name="keywords" content="Helioviewer, hv, solar image viewer, sun, solar, heliosphere,
                                       solar physics, viewer, visualization, space, astronomy, API">
-    <link rel="stylesheet" type="text/css" href="resources/css/api.css" />
+    <link rel="stylesheet" href="resources/css/api.css" />
 </head>
 
 <body>
