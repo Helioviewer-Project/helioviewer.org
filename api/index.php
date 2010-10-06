@@ -27,7 +27,11 @@ $config = new Config("../settings/Config.ini");
 register_shutdown_function('shutdownFunction');
 
 if (isset($_REQUEST['action'])) {
-    $params = $_REQUEST;
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        $params = $_GET;
+    } else {
+        $params = $_POST;
+    }
 }
 
 if (!(isset($params) && loadModule($params))) {
