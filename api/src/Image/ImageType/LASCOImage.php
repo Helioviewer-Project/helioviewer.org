@@ -84,19 +84,6 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         $this->solarCenterOffsetX = $offsetX;
         $this->solarCenterOffsetY = $offsetY;
     }
-
-    /**
-     * Returns the detector/measurement nickname used in filepaths
-     * 
-     * @param string $det  The detector of the image, either C2 or C3
-     * @param string $meas The measurement of the image, always white-light for LASCO.
-     * 
-     * @return string The nickname
-     */
-    public static function getFilePathNickName($det, $meas) 
-    {
-        return "LASCO-$det/$meas";
-    }
     
     /**
      * Gets a string that will be displayed in the image's watermark

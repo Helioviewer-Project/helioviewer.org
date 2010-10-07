@@ -103,7 +103,7 @@ class HelioviewerConsoleInstaller:
         print """\
 ====================================================================
 = Helioviewer Database Population Script                           =
-= Last updated: 2009/04/12                                         =
+= Last updated: 2010/10/07                                         =
 =                                                                  =
 = This script processes JP2 images, extracts their associated      =
 = meta-information and stores it away in a database.               =
