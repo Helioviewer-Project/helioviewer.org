@@ -477,8 +477,8 @@ class Image_SubFieldImage
             }
 
             // Filename & Content-length
-            $exploded = explode("/", $this->outputFile);
-            $filename = end($exploded);
+            $filename = basename($this->outputFile);
+            
             header("Content-Disposition: inline; filename=\"$filename\"");
             
             if (!readfile($this->outputFile)) {
