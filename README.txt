@@ -24,14 +24,14 @@ visit http://www.helioviewer.org.
 If you wish to run your own local copy of Helioviewer.org, you will need the
 following software:
 
-    * Apache 2
-    * MySQL 5
+    * Apache
+    * MySQL
     * PHP 5
     * PHP-GD
-    * ffmpeg-php
+    * PHP Imagick
     * Python
     * Python-MySQLDb
-    * Exiftool
+    * FFmpeg
     * ImageMagick 6.3.2+    
     * PyQt 4.5 (Optional)
     

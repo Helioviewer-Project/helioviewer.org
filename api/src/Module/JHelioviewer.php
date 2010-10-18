@@ -166,11 +166,13 @@ class Module_JHelioviewer implements Module
             );
         } catch (Exception $e) {
             header('Content-type: application/json;charset=UTF-8');
-            echo json_encode(array(
-                "error"   => $e->getMessage(), 
-                "message" => $e->getMessage(), // DEPRECATED (https://bugs.edge.launchpad.net/jhelioviewer/+bug/621223)
-                "uri"     => null
-            ));
+            echo json_encode(
+                array(
+                    "error"   => $e->getMessage(), 
+                    "message" => $e->getMessage(), // DEPRECATED (https://bugs.edge.launchpad.net/jhelioviewer/+bug/621223)
+                    "uri"     => null
+                )
+            );
             return;
         }
 

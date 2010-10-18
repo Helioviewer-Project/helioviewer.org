@@ -351,7 +351,6 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      * Prints summary information including HTTP/JPIP URI as JSON
      *
      * @param bool $jpip    Formats URI as JPIP URL if true
-     * @param bool $frames  Includes individual jpx frame timestamps if true
      * @param bool $verbose Includes any warning messages encountered during file generation if true
      *
      * @return void
