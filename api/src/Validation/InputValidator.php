@@ -121,12 +121,17 @@ class Validation_InputValidator
     
     /**
      * Checks filepaths to check for attempts to access parent directories
+     * 
+     * @param array $files   Filepaths that should be validated
+     * @param array &$params The parameters that were passed in
+     * 
+     * @return void
      */
     public static function checkFilePaths($files, &$params)
     {
         foreach ($files as $file) {
             if (isset($params[$file])) {
-                if(strpos($params[$file], '..')) {
+                if (strpos($params[$file], '..')) {
                     throw new Exception("Invalid file requested: .. not allowed in filenames.");
                 } elseif (preg_match('/[^\/.-\w]/', $params[$file])) {
                     throw new Exception("Invalid file requested. Valid characters for filenames include letters, " .

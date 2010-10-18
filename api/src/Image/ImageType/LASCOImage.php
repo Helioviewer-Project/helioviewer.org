@@ -136,7 +136,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      *  
      *    The region of interest (ROI) below is specified at the original JP2 image scale.
      *
-     * @param Object $imagickImage an initialized Imagick object
+     * @param Object &$imagickImage an initialized Imagick object
      *
      * @return void
      */
