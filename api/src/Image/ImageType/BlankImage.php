@@ -78,20 +78,6 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
     }
     
     /**
-     * Returns the detector/measurement nickname used in filepaths
-     * 
-     * @param string $det  Not used for EIT images but is used in other image types like
-     *                     LASCO, so this parameter is required anyway.
-     * @param string $meas The measurement of the image.
-     * 
-     * @return string The nickname
-     */    
-    public static function getFilePathNickName($det, $meas) 
-    {
-        return $det . "/" . $meas;
-    }
-    
-    /**
      * Overrides SubfieldImage's build() method to do nothing, since no image is being created. 
      * 
      * @return void

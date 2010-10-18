@@ -87,5 +87,16 @@ class Database_DbConnection
         }
         return $result;
     }
+    
+    /**
+     * Sets the encoding to use for the response
+     * 
+     * @param string $encoding Encoding to use
+     * 
+     * @return void
+     */
+    public function setEncoding($encoding) {
+        mysqli_set_charset($this->link, $encoding);
+    }
 }
 ?>

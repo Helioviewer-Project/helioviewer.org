@@ -80,25 +80,6 @@ class Image_ImageType_TEMPLATEImage extends Image_SubFieldImage
     }
     
     /**
-     * Returns the detector/measurement nickname used in filepaths
-     * 
-     * @param string $det  Not used for EIT images but is used in other image types like
-     *                     LASCO, so this parameter is required anyway.
-     * @param string $meas The measurement of the image.
-     * 
-     * @return string The nickname
-     */    
-    public static function getFilePathNickName($det, $meas) 
-    {
-        /*
-         * Enter the appropriate filepath nickname as it should appear. Examples:
-         * "AIA/" . $meas
-         * "LASCO-" . $det . "/" . $meas
-         */ 
-        return "EIT/" . $meas;
-    }
-    
-    /**
      * Gets a string that will be displayed in the image's watermark
      * 
      * @return string watermark name

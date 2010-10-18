@@ -27,7 +27,11 @@ $config = new Config("../settings/Config.ini");
 register_shutdown_function('shutdownFunction');
 
 if (isset($_REQUEST['action'])) {
-    $params = $_REQUEST;
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        $params = $_GET;
+    } else {
+        $params = $_POST;
+    }
 }
 
 if (!(isset($params) && loadModule($params))) {
@@ -185,7 +189,7 @@ function printAPIDocumentation()
     <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool">
     <meta name="keywords" content="Helioviewer, hv, solar image viewer, sun, solar, heliosphere,
                                       solar physics, viewer, visualization, space, astronomy, API">
-    <link rel="stylesheet" type="text/css" href="resources/css/api.css" />
+    <link rel="stylesheet" href="resources/css/api.css" />
 </head>
 
 <body>
