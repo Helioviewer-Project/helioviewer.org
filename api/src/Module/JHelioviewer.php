@@ -115,8 +115,7 @@ class Module_JHelioviewer implements Module
         $fp   = fopen($filepath, 'r');
         $stat = stat($filepath);
 
-        $exploded = explode("/", $filepath);
-        $filename = end($exploded);
+        $filename = basename($filepath);
 
         header("Content-Length: " . $stat['size']);
         header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));

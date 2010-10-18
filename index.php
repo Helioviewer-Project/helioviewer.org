@@ -24,10 +24,10 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
 
     <!-- YUI CSS Reset -->
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts/reset-fonts.css" />
+    <link rel="stylesheet" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts/reset-fonts.css" />
 
     <!-- Layout -->
-    <link rel="stylesheet" href="resources/css/layout.css" type="text/css" />
+    <link rel="stylesheet" href="resources/css/layout.css" />
 
     <!-- Kaltura HTML5 video player -->
     <!-- <script type="text/javascript" src="http://html5.kaltura.org/js"></script> --> 
@@ -40,14 +40,14 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
     <script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
 
-    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" type="text/css" />    
+    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" />    
 
     <!-- Mousewheel support -->
     <script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
 
     <!-- jGrowl -->
     <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" type="text/css" />
+    <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
 
     <!-- imgAreaSelect jQuery plugin -->
     <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
@@ -75,7 +75,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
 
     <!-- ShadowBox -->
-    <link rel="stylesheet" type="text/css" href="lib/shadowbox-3.0.3/shadowbox.css">
+    <link rel="stylesheet" href="lib/shadowbox-3.0.3/shadowbox.css">
     <script type="text/javascript" src="lib/shadowbox-3.0.3/shadowbox.js"></script>
 
     <!-- Helioviewer-Specific -->
@@ -125,17 +125,17 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
         // CSS
         if ($config["compress_css"]) {
-            echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"build/css/helioviewer.css?$version\" />\n\t";
+            echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.css?$version\" />\n\t";
         }
         else {
             $css = array("main.css", "accordions.css", "dialogs.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
             foreach($css as $file)
-                printf("<link rel=\"stylesheet\" type=\"text/css\" href=\"resources/css/%s?$version\" />\n\t", $file);
+                printf("<link rel=\"stylesheet\" href=\"resources/css/%s?$version\" />\n\t", $file);
         }
     ?>
 
     <!-- Theme Modifications -->
-    <link rel="stylesheet" type="text/css" href="resources/css/dot-luv.css">
+    <link rel="stylesheet" href="resources/css/dot-luv.css">
 
     <script type="text/javascript">
         var serverSettings, settingsJSON, urlSettings;

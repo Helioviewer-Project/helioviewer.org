@@ -89,8 +89,7 @@ class Image_JPEG2000_JPXImage
         $fp   = fopen($this->outputFile, 'r');
         $stat = stat($this->outputFile);
 
-        $exploded = explode("/", $this->outputFile);
-        $filename = end($exploded);
+        $filename = basename($this->outputFile);
 
         header("Content-Length: " . $stat['size']);
         header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JPX));

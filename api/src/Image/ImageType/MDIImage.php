@@ -72,20 +72,6 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
     }
     
     /**
-     * Returns the detector/measurement nickname used in filepaths
-     * 
-     * @param string $det  Not used for MDI images but is used in other image types like
-     *                     LASCO, so this parameter is required anyway.
-     * @param string $meas The measurement of the image.
-     * 
-     * @return string The nickname
-     */
-    public static function getFilePathNickName($det, $meas) 
-    {
-        return "MDI/$meas";
-    }
-    
-    /**
      * No color table. Do nothing.
      * 
      * @param string $input  Input file
