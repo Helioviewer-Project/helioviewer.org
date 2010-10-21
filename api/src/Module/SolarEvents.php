@@ -146,7 +146,7 @@ class Module_SolarEvents implements Module
             $screenshots = $this->_checkForFiles($tmpDir . "/screenshots", $ipod, "*");
             $movies      = $this->_checkForFiles($tmpDir . "/movies", $ipod, $format);
             foreach ($screenshots as $url) {
-            	array_push($event->screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
+                array_push($event->screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
             }
             
             foreach ($movies as $url) {
@@ -304,7 +304,7 @@ class Module_SolarEvents implements Module
 
         $files = glob($outputDir . "/*." . $format);
         
-        return $files;    	
+        return $files;        
     }
     
     /**
@@ -515,7 +515,7 @@ class Module_SolarEvents implements Module
                 <br />
                 <br />
                 <pre style="font-size:12px">
-    {
+        {
         "AR": {
             "NOAA SEC Observer": {
                 "frm_url": "N/A",
@@ -560,7 +560,7 @@ class Module_SolarEvents implements Module
                 "count": 4
             }
         }
-    }
+        }
                 </pre>
                 </div>
         

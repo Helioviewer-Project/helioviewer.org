@@ -1,3 +1,4 @@
+require "date"
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
@@ -98,11 +99,11 @@ class Module_Movies implements Module
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
             );
         case "getETAForMovie":
-        	$expected = array(
-        	   "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-        	   "dates"    => array('startTime', 'endTime'),
-        	   "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
-        	);
+            $expected = array(
+               "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "dates"    => array('startTime', 'endTime'),
+               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+            );
         default:
             break;
         }
@@ -148,13 +149,21 @@ class Module_Movies implements Module
         header('Content-type: application/json');
         echo json_encode(array("url" => $filepath));
     }
-    
-    public function queueMovie() {
+
+    /**
+     * Queues a movie in Helioqueuer
+     * 
+     * @return void
+     */
+    public function queueMovie()
+    {
         print "Not yet implemented in Dynamo...";
     }
     
     /**
      * Calculates the ETA for the given movie using width/height and numFrames
+     * 
+     * @return int Number of seconds until the movie has been prepared
      */
     public function getETAForMovie ()
     {

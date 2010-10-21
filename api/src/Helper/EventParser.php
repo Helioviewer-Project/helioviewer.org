@@ -57,15 +57,15 @@ function getLayerInfoForEventType($eventType)
     $sourceIds  = array();
     $imageScale = 0.5999;
     switch($eventType) {
-        case "AR":
-            $sourceIds = array(10, 11, 12, 14);
-            break;
-        case "FL":
-            $sourceIds = array(8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
-            break;
-        default: 
-            $sourceIds = array(10, 11, 12, 13, 14, 15);
-            break;
+    case "AR":
+        $sourceIds = array(10, 11, 12, 14);
+        break;
+    case "FL":
+        $sourceIds = array(8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+        break;
+    default: 
+        $sourceIds = array(10, 11, 12, 13, 14, 15);
+        break;
     }
     
     return array("sourceIds" => $sourceIds, "imageScale" => $imageScale);
