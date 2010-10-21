@@ -73,10 +73,12 @@ class Movie_FFMPEGWrapper
      * @param string $hqFile    The name of the high quality file
      * @param string $filename  The name of the flash video file
      * @param string $outputDir The directory where both files are stored
+     * 
+     * @return void
      */
     public function createFlashVideo($hqFile, $filename, $outputDir)
     {
-    	$cmd = "ffmpeg -i $outputDir/$hqFile -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $outputDir/$filename";
+        $cmd = "ffmpeg -i $outputDir/$hqFile -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $outputDir/$filename";
     
         try {
             exec(escapeshellcmd($cmd));
@@ -103,7 +105,7 @@ class Movie_FFMPEGWrapper
      * @return String the filename of the video
      */
     public function createVideo($filename, $outputDir, $tmpImageDir, $width, $height)
-    {  	
+    {
         // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
         // fps >= 2
         $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;

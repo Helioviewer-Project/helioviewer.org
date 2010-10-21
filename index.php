@@ -6,7 +6,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php printf("<!-- Helioviewer rev. %s, %s -->\n", $config["build_num"], $config["last_update"]);?>
+    <?php printf("<!-- Helioviewer 2.1.0 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="ie=9" />

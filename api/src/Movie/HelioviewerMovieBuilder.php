@@ -41,6 +41,13 @@ class Movie_HelioviewerMovieBuilder
         $this->_imgIndex = new Database_ImgIndex();
     }
     
+    /**
+     * Estimates the time it will take to create the requested movie
+     * 
+     * @param array $params Movie creation parameters
+     * 
+     * @return void
+     */
     public function calculateETA($params)
     {
         $defaults = array(
@@ -51,10 +58,10 @@ class Movie_HelioviewerMovieBuilder
 
         $this->_params = array_merge($defaults, $params);
         list($width, $height, $imageScale) = $this->_limitToMaximumDimensions();
-    	
-    	$layers = getLayerArrayFromString($this->_params['layers']);
-    	list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
-    	
+
+        $layers = getLayerArrayFromString($this->_params['layers']);
+        list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
+        
         $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
         
         $timePerFrame = 0.000001 * $width * $height + 0.25;
@@ -63,14 +70,14 @@ class Movie_HelioviewerMovieBuilder
         header('Content-type: application/json');
         
         try {
-        	$this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
+            $this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
             echo JSON_encode(array("eta" => round($eta)));
         } catch (Exception $e) {
             throw $e;
         }
         return;
     }
-    
+
     /**
      * Prepares the parameters passed in from the api call and makes a movie from them. 
      * 
@@ -155,8 +162,8 @@ class Movie_HelioviewerMovieBuilder
             return $url;
             
         } catch(Exception $e) {
-        	touch($outputDir . "/INVALID");
-       		throw new Exception("Unable to create movie: " . $e->getMessage(), $e->getCode());
+            touch($outputDir . "/INVALID");
+               throw new Exception("Unable to create movie: " . $e->getMessage(), $e->getCode());
         }
     }
     
@@ -172,7 +179,7 @@ class Movie_HelioviewerMovieBuilder
         if (sizeOf($layers) == 0 || sizeOf($layers) > 3) {
             $msg = "Invalid layer choices! You must specify 1-3 comma-separated layernames.";
             throw new Exception($msg);
-        }	
+        }    
     }
     
     /**
@@ -377,19 +384,16 @@ class Movie_HelioviewerMovieBuilder
     /**
      * Takes in meta and layer information and creates movie frames from them.
      * 
-     * @param {Object}  $movieMeta an ImageMetaInformation object that has width, height, and imageScale. 
-     * @param {String}  $layers    a string of layers
-     * @param {ISODate} $startTime date the movie starts on
-     * @param {int}     $timeStep  time step in between images in the frames
-     * @param {int}     $numFrames number of frames in the movie
-     * @param {String}  $tmpDir    the directory where the frames will be stored
+     * @param {Object} $movieMeta  an ImageMetaInformation object that has width, height, and imageScale.
+     * @param {Array}  $timestamps timestamps associated with each frame in the movie 
+     * @param {String} $tmpDir     the directory where the frames will be stored
      * 
      * @return $images an array of built movie frames
      */
     private function _buildFramesFromMetaInformation($movieMeta, $timestamps, $tmpDir) 
     {
-        $builder 	= new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $images 	= array();
+        $builder     = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        $images     = array();
         
         $width  = $movieMeta->width();
         $height = $movieMeta->height();
@@ -401,17 +405,17 @@ class Movie_HelioviewerMovieBuilder
             $isoTime = toISOString(parseUnixTimestamp($time));
             
             $params = array(
-                'width'  	 => $width,
-                'height'	 => $height,
+                'width'       => $width,
+                'height'     => $height,
                 'imageScale' => $scale,
-                'obsDate' 	 => $isoTime,
-                'layers' 	 => $this->_params['layers'],
-                'filename'	 => "frame" . $frameNum++,
-                'quality'	 => $this->_params['quality'],
-                'sharpen'	 => $this->_params['sharpen'],
-                'edges'		 => $this->_params['edges'],
-                'display'	 => false,
-                'x1' 	     => $this->_params['x1'],
+                'obsDate'      => $isoTime,
+                'layers'      => $this->_params['layers'],
+                'filename'     => "frame" . $frameNum++,
+                'quality'     => $this->_params['quality'],
+                'sharpen'     => $this->_params['sharpen'],
+                'edges'         => $this->_params['edges'],
+                'display'     => false,
+                'x1'          => $this->_params['x1'],
                 'x2'         => $this->_params['x2'],
                 'y1'         => $this->_params['y1'],
                 'y2'         => $this->_params['y2'],
@@ -436,11 +440,11 @@ class Movie_HelioviewerMovieBuilder
      * Rescales width, height, and imageScale if the dimensions are larger than the
      * maximum allowed dimensions.
      * 
-     * @return array
+     * @return array The new image width, height and scale to use
      */
     private function _limitToMaximumDimensions()
     {
-    	$imageScale = $this->_params['imageScale'];
+        $imageScale = $this->_params['imageScale'];
         $width      = ($this->_params['x2'] - $this->_params['x1']) / $imageScale;
         $height     = ($this->_params['y2'] - $this->_params['y1']) / $imageScale;  
 
@@ -460,7 +464,7 @@ class Movie_HelioviewerMovieBuilder
      * array if they are not duplicates of sets of images in the timestamp array already. $closestImages
      * is an array with one image per layer, associated with their sourceId.
      * 
-     * @param {Array} $sourceIds An array of source ids, one for each layer
+     * @param {Array} $layers    An array layers to use for movie generation
      * @param {int}   $startTime The Unix Timestamp of the start time
      * @param {float} $timeStep  The cadence or the movie
      * @param {int}   $numFrames The number of frames
@@ -489,8 +493,8 @@ class Movie_HelioviewerMovieBuilder
      * Queries the database to get the closest image to $isoTime for each layer.
      * Returns all images in an associative array with source IDs as the keys. 
      * 
-     * @param {Array} $sourceIds An array of source ids, one for each layer
-     * @param {Date}  $isoTime   The ISO date string of the timestamp
+     * @param {Array} $layers  An array layers to use for movie generation
+     * @param {Date}  $isoTime The ISO date string of the timestamp
      * 
      * @return array
      */
@@ -562,7 +566,7 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @param Int $numFrames number of frames in the movie
      * 
-     * @return Int 
+     * @return Int optimized frame rate
      */
     private function _determineOptimalFrameRate($numFrames)
     {
@@ -590,25 +594,33 @@ class Movie_HelioviewerMovieBuilder
      * 
      * This formula is not accurate for movies with less than 10 frames or less than
      * 400x400 pixels.
+     * 
+     * @param string $filepath  Path to the movie
+     * @param int    $numFrames Number of frames in the movie
+     * @param int    $numLayers Number of layers in each frame
+     * @param int    $width     Movie width
+     * @param int    $height    Movie height
+     * 
+     * @return void
      */
     private function _returnIdAndETA($filepath, $numFrames, $numLayers, $width, $height)
     {
-    	$numPixels = $width * $height;
-    	
-    	$sizeFactor   = 1024*1024 / $numPixels;
-    	
-    	$timePerFrame = 0.000001 * $width * $height + 0.25;
-    	$eta = $timePerFrame * $numFrames;
-    	
-    	$id = str_replace(HV_CACHE_DIR, "", $filepath);
+        $numPixels = $width * $height;
+        
+        $sizeFactor   = 1024*1024 / $numPixels;
+        
+        $timePerFrame = 0.000001 * $width * $height + 0.25;
+        $eta = $timePerFrame * $numFrames;
+        
+        $id = str_replace(HV_CACHE_DIR, "", $filepath);
 
-    	$information = array(
-    	   "id"  => $id,
-    	   "eta" => $eta
-    	);
-    	
+        $information = array(
+           "id"  => $id,
+           "eta" => $eta
+        );
+        
         echo JSON_encode($information);
-    	
-    	return;
+        
+        return;
     }
 }

@@ -67,7 +67,14 @@ class Net_Proxy
         }
     }
     
-    // POST Request
+    /**
+     * Performs a POST request
+     * 
+     *  @param array $params Query parameters
+     *  @param bool  $curl   Whether or not to use cURL to perform the query
+     *  
+     *  @return $string query response text
+     */
     public function post($params, $curl = false)
     {
         $url = $this->_baseURL;

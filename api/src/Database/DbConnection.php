@@ -95,7 +95,8 @@ class Database_DbConnection
      * 
      * @return void
      */
-    public function setEncoding($encoding) {
+    public function setEncoding($encoding)
+    {
         mysqli_set_charset($this->link, $encoding);
     }
 }

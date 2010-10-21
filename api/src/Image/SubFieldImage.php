@@ -317,7 +317,7 @@ class Image_SubFieldImage
     /**
      * Sets compression for images that are not ImageLayers
      * 
-     * @param Object $imagickImage An initialized Imagick object
+     * @param Object &$imagickImage An initialized Imagick object
      * 
      * @return void
      */
@@ -345,7 +345,7 @@ class Image_SubFieldImage
      * LASCOImage.php has a applyAlphaMaskCmd that overrides this one and applies
      * an alpha mask and does some special commands for opacity
      * 
-     * @param Object $imagickImage IMagick Object
+     * @param Object &$imagickImage IMagick Object
      * 
      * @return string
      */
