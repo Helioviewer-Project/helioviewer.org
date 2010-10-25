@@ -54,7 +54,7 @@ class Movie_FFMPEGWrapper
     public function createIpodVideo($hq_filename, $outputDir, $tmpImageDir, $width, $height) 
     {
         $ipodVideoName = $outputDir . "/ipod-$hq_filename";
-        $cmd = "/usr/bin/ffmpeg -i " . $tmpImageDir . "/frame%d.jpg -r " . $this->_frameRate
+        $cmd = HV_FFMPEG . " -i " . $tmpImageDir . "/frame%d.jpg -r " . $this->_frameRate
             . " -f mp4 -b 800k -coder 0 -bt 200k -maxrate 96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 "
             . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " " 
             . $this->_macFlags . " " . $ipodVideoName;
@@ -78,7 +78,7 @@ class Movie_FFMPEGWrapper
      */
     public function createFlashVideo($hqFile, $filename, $outputDir)
     {
-        $cmd = "ffmpeg -i $outputDir/$hqFile -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $outputDir/$filename";
+        $cmd = HV_FFMPEG . " -i $outputDir/$hqFile -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $outputDir/$filename";
     
         try {
             exec(escapeshellcmd($cmd));
@@ -110,7 +110,7 @@ class Movie_FFMPEGWrapper
         // fps >= 2
         $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
 
-        $cmd = "/usr/bin/ffmpeg -r " . $this->_frameRate . " -i " . $tmpImageDir . "/frame%d.jpg"
+        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $tmpImageDir . "/frame%d.jpg"
             . " -r " . $outputRate . " -vcodec libx264 -vpre hq -threads " . HV_FFMPEG_MAX_THREADS . " -b 2048k -s " 
             . $width . "x" . $height . " -y " . $outputDir . "/" . $filename;
             
