@@ -174,7 +174,7 @@ Math.lg = function (x) {
 //    };
 //}
 if (typeof(console) === "undefined") {
-    console = {};
+    window.console = {};
 
     console.log = function (msg) {
         return false;
