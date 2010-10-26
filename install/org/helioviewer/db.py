@@ -21,7 +21,7 @@ def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     createDetectorTable(cursor)
     createMeasurementTable(cursor)
     createImageTable(cursor)
-    createDateIndex(cursor)
+    updateImageTableIndex(cursor)
 
     return cursor
 
@@ -81,19 +81,19 @@ def createDB(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
 
 def createImageTable(cursor):
     sql = \
-    '''CREATE TABLE `image` (
+    '''CREATE TABLE `images` (
       `id`            INT unsigned NOT NULL auto_increment,
       `filepath`      VARCHAR(255) NOT NULL,
       `filename`      VARCHAR(255) NOT NULL,
       `date`    datetime NOT NULL default '0000-00-00 00:00:00',
       `sourceId`    SMALLINT unsigned NOT NULL,
-      PRIMARY KEY  (`id`), INDEX (`id`)
+      PRIMARY KEY  (`id`), KEY `date_index` (`sourceId`,`date`) USING BTREE
     ) DEFAULT CHARSET=utf8;'''
     cursor.execute(sql)
 
 def createSourceTable(cursor):
     cursor.execute(
-    '''CREATE TABLE `datasource` (
+    '''CREATE TABLE `datasources` (
         `id`            SMALLINT unsigned NOT NULL,
         `name`          VARCHAR(127) NOT NULL,
         `description`   VARCHAR(255),
@@ -103,11 +103,11 @@ def createSourceTable(cursor):
         `measurementId` SMALLINT unsigned NOT NULL,
         `layeringOrder` TINYINT NOT NULL,
         `enabled`       BOOLEAN NOT NULL,
-      PRIMARY KEY  (`id`), INDEX (`id`)
+      PRIMARY KEY  (`id`)
     ) DEFAULT CHARSET=utf8;''')
 
     cursor.execute('''
-    INSERT INTO `datasource` VALUES
+    INSERT INTO `datasources` VALUES
         (0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 2, 1, 0),
         (1, 'EIT 195', 'SOHO EIT 195', 0, 0, 0, 4, 1, 0),
         (2, 'EIT 284', 'SOHO EIT 284', 0, 0, 0, 6, 1, 0),
@@ -132,15 +132,15 @@ def createObservatoryTable(cursor):
     """ Creates table to store observatory information """
 
     cursor.execute('''
-    CREATE TABLE `observatory` (
+    CREATE TABLE `observatories` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
-       PRIMARY KEY (`id`), INDEX (`id`)
+       PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
 
     cursor.execute('''
-    INSERT INTO `observatory` VALUES
+    INSERT INTO `observatories` VALUES
         (0, 'SOHO', 'Solar and Heliospheric Observatory'),
         (1, 'TRACE', 'The Transition Region and Coronal Explorer'),
         (2, 'SDO', 'Solar Dynamics Observatory');        
@@ -150,15 +150,15 @@ def createInstrumentTable(cursor):
     """ Creates table to store instrument information """
 
     cursor.execute('''
-    CREATE TABLE `instrument` (
+    CREATE TABLE `instruments` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
-       PRIMARY KEY (`id`), INDEX (`id`)
+       PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
 
     cursor.execute('''
-    INSERT INTO `instrument` VALUES
+    INSERT INTO `instruments` VALUES
         (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
         (1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
         (2, 'MDI',   'Michelson Doppler Imager'),
@@ -172,15 +172,15 @@ def createDetectorTable(cursor):
     """ Creates table to store detector information """
 
     cursor.execute('''
-    CREATE TABLE `detector` (
+    CREATE TABLE `detectors` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
-       PRIMARY KEY (`id`), INDEX (`id`)
+       PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
 
     cursor.execute('''
-    INSERT INTO `detector` VALUES
+    INSERT INTO `detectors` VALUES
         (0, 'EIT',   'EIT'),
         (1, 'C2',    'LASCO C2'),
         (2, 'C3',    'LASCO C3'),
@@ -194,16 +194,16 @@ def createMeasurementTable(cursor):
     """ Creates table to store measurement information """
 
     cursor.execute('''
-    CREATE TABLE `measurement` (
+    CREATE TABLE `measurements` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
       `units`       VARCHAR(20)  NOT NULL,
-       PRIMARY KEY (`id`), INDEX (`id`)
+       PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
 
     cursor.execute(u'''
-    INSERT INTO `measurement` VALUES
+    INSERT INTO `measurements` VALUES
         (0, '94', '94 Ångström extreme ultraviolet', 'Å'),
         (1, '131', '131 Ångström extreme ultraviolet', 'Å'),
         (2, '171', '171 Ångström extreme ultraviolet', 'Å'),
@@ -223,11 +223,11 @@ def createMeasurementTable(cursor):
     
 def enableDataSource(cursor, sourceId):
     """ Marks a single datasource as enabled to signal that there is data for that source """
-    cursor.execute("UPDATE datasource SET enabled=1 WHERE id=%d;" % sourceId)
+    cursor.execute("UPDATE datasources SET enabled=1 WHERE id=%d;" % sourceId)
     
-def createDateIndex(cursor):
-    """ Indexes the table on the date field """
-    cursor.execute("CREATE INDEX date_index USING BTREE ON image (date);")
+def updateImageTableIndex(cursor):
+    """ Updates index on images table """
+    cursor.execute("OPTIMIZE TABLE images;")
 
 def getDataSources(cursor):
     ''' Returns a list of the known datasources '''
@@ -240,17 +240,17 @@ def getDataSources(cursor):
     
     sql = \
     ''' SELECT
-            datasource.id as id,
-            datasource.enabled as enabled,
-            observatory.name as observatory,
-            instrument.name as instrument,
-            detector.name as detector,
-            measurement.name as measurement
-        FROM datasource
-            LEFT JOIN observatory ON datasource.observatoryId = observatory.id 
-            LEFT JOIN instrument ON datasource.instrumentId = instrument.id 
-            LEFT JOIN detector ON datasource.detectorId = detector.id 
-            LEFT JOIN measurement ON datasource.measurementId = measurement.id;'''
+            datasources.id as id,
+            datasources.enabled as enabled,
+            observatories.name as observatory,
+            instruments.name as instrument,
+            detectors.name as detector,
+            measurements.name as measurement
+        FROM datasources
+            LEFT JOIN observatories ON datasources.observatoryId = observatories.id 
+            LEFT JOIN instruments ON datasources.instrumentId = instruments.id 
+            LEFT JOIN detectors ON datasources.detectorId = detectors.id 
+            LEFT JOIN measurements ON datasources.measurementId = measurements.id;'''
 
     # Fetch available data-sources
     cursor.execute(sql)

@@ -43,7 +43,7 @@ def removeFromDatabase(rootdir, filename, dbname, dbuser, dbpass):
         sys.exit()
     
     # First get the filepath    
-    sql = "SELECT CONCAT('%s', filepath, '/', filename) FROM image WHERE filename = '%s'" % (rootdir, filename)
+    sql = "SELECT CONCAT('%s', filepath, '/', filename) FROM images WHERE filename = '%s'" % (rootdir, filename)
     
     if cursor.execute(sql):
         filepath = cursor.fetchone()[0]
@@ -52,7 +52,7 @@ def removeFromDatabase(rootdir, filename, dbname, dbuser, dbpass):
         sys.exit()
     
     # Then remove from the database
-    sql = "DELETE FROM image WHERE filename = '%s'" % filename
+    sql = "DELETE FROM images WHERE filename = '%s'" % filename
     cursor.execute(sql)
     
     return filepath

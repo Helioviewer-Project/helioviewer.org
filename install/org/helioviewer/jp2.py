@@ -214,7 +214,7 @@ def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
 
     
 def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
-    query = "INSERT INTO image VALUES "
+    query = "INSERT INTO images VALUES "
     
     error = ""
     
