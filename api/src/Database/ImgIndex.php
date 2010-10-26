@@ -328,6 +328,7 @@ class Database_ImgIndex
         $sql = "SELECT
                     datasource.name as nickname,
                     datasource.id as id,
+                    datasource.enabled as enabled,
                     datasource.layeringOrder as layeringOrder,
                     measurement.units as measurement_units,";
 
@@ -358,12 +359,14 @@ class Database_ImgIndex
         $tree = array();
 
         foreach ($sources as $source) {
-            $id   = (int) ($source["id"]);
+            
+            $enabled = (bool) $source["enabled"];
 
             // Only include if data is available for the specified source
-            if ($this->getImageCount("1000/01/01 00:00:00", "9999/01/01 00:00:00", $id) > 0) {
+            if ($enabled) {
              
                 // Image parameters
+                $id       = (int) ($source["id"]);
                 $obs      = $source["observatory_name"];
                 $inst     = $source["instrument_name"];
                 $det      = $source["detector_name"];
