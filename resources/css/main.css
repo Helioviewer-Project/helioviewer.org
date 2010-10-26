@@ -3,8 +3,7 @@
 */
 
 /* HTML ELEMENTS */
-html, body    {background: url(../../resources/images/backgrounds/gradient_v5-optimized.png); font-size: 13px;}
-h1            {font:normal 20px Verdana,Arial,Helvetica,sans-serif;}
+html, body    {background: url(../../resources/images/backgrounds/gradient_v5-optimized.png); font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}

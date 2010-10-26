@@ -89,7 +89,7 @@
             <!-- Title -->
             <div id="help-title">
                 <img style="float: left; margin-top: 10px; margin-left: 150px;" src="../images/logos/about.png" alt="Helioviewer.org Logo"/>
-                <h1 style="position: relative; top: 32px; font-size: 2.8em; color: #262424; font-family: arial, verdana, sans-serif; ">Help</h1>
+                <h1 style="position: relative; top: 32px; font-size: 2.8em; color: #262424; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; ">Help</h1>
             </div>
             
             <!-- Menu -->
