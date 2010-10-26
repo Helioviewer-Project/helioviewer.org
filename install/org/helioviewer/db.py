@@ -88,7 +88,7 @@ def createImageTable(cursor):
       `date`    datetime NOT NULL default '0000-00-00 00:00:00',
       `sourceId`    SMALLINT unsigned NOT NULL,
       PRIMARY KEY  (`id`), KEY `date_index` (`sourceId`,`date`) USING BTREE
-    ) DEFAULT CHARSET=utf8;'''
+    ) DEFAULT CHARSET=ascii;'''
     cursor.execute(sql)
 
 def createSourceTable(cursor):
