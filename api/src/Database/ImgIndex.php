@@ -69,31 +69,34 @@ class Database_ImgIndex
 
         $datestr = isoDateToMySQL($date);
 
-        // Search left and right side of image database B-Tree separately
-        $lhs = sprintf("SELECT filepath, filename, date FROM images WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
-        $rhs = sprintf("SELECT filepath, filename, date FROM images WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
-
-        //die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
-
-        $left = mysqli_fetch_array($this->_dbConnection->query($lhs), MYSQL_ASSOC);
-        $right = mysqli_fetch_array($this->_dbConnection->query($rhs), MYSQL_ASSOC);
-
-        $dateTimestamp = toUnixTimestamp($date);
-
-        // Select closest match
-        if (abs($dateTimestamp - toUnixTimestamp($left["date"])) < abs($dateTimestamp - toUnixTimestamp($right["date"]))) {
-            $img = $left;
-        } else {
-            $img = $right;
-        }
+        $sql = sprintf("
+            ( SELECT filepath, filename, date 
+              FROM images 
+              WHERE
+                sourceId = %d AND 
+                date < '%s'
+              ORDER BY date DESC LIMIT 1 )
+            UNION ALL
+            ( SELECT filepath, filename, date
+              FROM images
+              WHERE
+                sourceId = %d AND
+                date >= '%s'
+              ORDER BY date ASC LIMIT 1 )
+            ORDER BY ABS(DATEDIFF(date, '%s')
+            ) LIMIT 1;
+        ", $sourceId, $datestr, $sourceId, $datestr, $datestr);
+        
+        // Query database
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
 
         // Make sure match was found
-        if (is_null($img)) {
+        if (is_null($result)) {
             $source = $this->_getDataSourceName($sourceId);
             throw new Exception("No images of the requested type ($source) are currently available.");
         }
 
-        return $img;
+        return $result;
     }
     
     /**
