@@ -1,14 +1,16 @@
 /**
  * Helioviewer API CSS
  */
-body {font-size: 0.85em;}
+body {font: 13px verdana, liberation sans,bitstream vera sans,freesans,clean,sans-serif;}
 
 .toc {
+	font-size: 1.1em;
     background-color: #E3EFFF;
     color: #111;
     border: 1px solid black;
     width: 400px;
     margin-left:30px;
+	margin-top:4px;
 }
 
 a {
@@ -36,7 +38,6 @@ div.content > div { width: 90%; }
 div.content > div > p {
     margin-left: 20px;
     text-indent: 20px;
-    font-family: verdana, sans-serif;
 }
 
 div > p:first-letter {
