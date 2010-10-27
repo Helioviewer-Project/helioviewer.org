@@ -263,47 +263,49 @@ class Image_SubFieldImage
     protected function buildImage()
     {
         try {
-            $grayscale    = substr($this->outputFile, 0, -3) . "pgm";
-            $intermediate = substr($this->outputFile, 0, -3) . "png";
+            $input = substr($this->outputFile, 0, -3) . "pgm";
 
             // Extract region (PGM)
-            $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
+            $this->sourceJp2->extractRegion($input, $this->roi, $this->reduce);
 
-            $image = new IMagick($grayscale);
-            $image->setImageFormat('PNG'); 
-            $image->setImageDepth(8);
-            $image->setImageType(IMagick::IMGTYPE_GRAYSCALE);
-            $image->writeImage($intermediate);
-            $image->destroy();
+            // Convert to GD-readable format
+            $grayscale = new IMagick($input);
+            $grayscale->setImageFormat('PNG');
+            $grayscale->setImageType(IMagick::IMGTYPE_GRAYSCALE); 
+            $grayscale->setImageDepth(8);
+            $grayscale->setImageCompressionQuality(10);
+            
+            $grayscaleString = $grayscale->getimageblob();
 
-            //Apply color-lookup table
-            $this->setColorPalette($intermediate, $intermediate);
+            // Clean up grayscale image
+            $grayscale->destroy();
+            unlink($input);
+
+            // Apply color table
+            $coloredImageString = $this->setColorPalette($grayscaleString);
             
-            $image = new IMagick($intermediate);
+            $coloredImage = new IMagick();        
+            $coloredImage->readimageblob($coloredImageString);
             
-            $this->setAlphaChannel($image);
-            $this->compressImage($image);
+            $this->setAlphaChannel($coloredImage);
+            $this->compressImage($coloredImage);
             
             // Resize extracted image to correct size before padding.
-            $image->resizeImage(round($this->subfieldRelWidth), round($this->subfieldRelHeight), IMagick::FILTER_TRIANGLE, 0.6);
-            $image->setImageBackgroundColor('transparent');
+            $coloredImage->resizeImage(round($this->subfieldRelWidth), round($this->subfieldRelHeight), IMagick::FILTER_TRIANGLE, 0.6);
+            $coloredImage->setImageBackgroundColor('transparent');
             
             // Places the current image on a larger field of black if the final image is larger than this one
-            $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
+            $coloredImage->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
             
             /* 
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
              * It seems that even if this particular instance of writeImage doesn't take the full time frame, if several instances of it are
              * running PHP will complain.  
              */
-            set_time_limit(60);
-            $image->writeImage($this->outputFile);
-            $image->destroy();
-
-            if ($this->outputFile != $intermediate) {
-                unlink($intermediate);
-            }
-            unlink($grayscale);
+            //set_time_limit(60);
+            
+            $coloredImage->writeImage($this->outputFile);
+            $coloredImage->destroy();
 
         } catch(Exception $e) {
             throw $e;
@@ -401,21 +403,16 @@ class Image_SubFieldImage
      *
      * Note: input and output are usually the same file.
      *
-     * @param string $input  Location of input image
-     * @param string $output Location to save new image to
+     * @param string &$input  Location of input image
      *
-     * @return void
+     * @return String binary string representation of image after processing
      */    
-    protected function setColorPalette($input, $output)
+    protected function setColorPalette(&$input)
     {	
-        $gd   = null;
         $clut = $this->colorTable;
 
-        if (file_exists($input)) {
-            $gd = imagecreatefrompng($input);
-        } else {
-            throw new Exception("Unable to apply color-table: $input does not exist.");
-        }
+        // Read in image string
+        $gd = imagecreatefromstring($input);
 
         if (!$gd) {
             throw new Exception("Unable to apply color-table: $input is not a valid image.");
@@ -423,6 +420,7 @@ class Image_SubFieldImage
 
         $ctable = imagecreatefrompng($clut);
 
+        // Apply color table
         for ($i = 0; $i <= 255; $i++) {
             $rgb = imagecolorat($ctable, 0, $i);
             $r = ($rgb >> 16) & 0xFF;
@@ -431,21 +429,19 @@ class Image_SubFieldImage
             imagecolorset($gd, $i, $r, $g, $b);
         }
 
-        // Enable interlacing
-        imageinterlace($gd, true);
+        // Write new image string
+        ob_start();
 
-        //$this->format == "jpg" ? imagejpeg($gd, $output, HV_JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output);
-        //if ($this->format == "jpg")
-        //    imagejpeg($gd, $output, HV_JPEG_COMPRESSION_QUALITY);
-        //else
-        imagepng($gd, $output);
+        imagepng($gd, NULL);
+        $blob = ob_get_contents();
+        
+        ob_end_clean();
 
-        // Cleanup
-        if ($input != $output) {
-            unlink($input);
-        }
+        // Clean up
         imagedestroy($gd);
         imagedestroy($ctable);
+            
+        return $blob;
     }
 
     /**
