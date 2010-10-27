@@ -37,6 +37,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     protected $watermarkOn;
     protected $buildFilename;
     protected $compress;
+    protected $format;
+    protected $interlace;
 
     /**
      * Create an instance of Image_Screenshot
@@ -52,7 +54,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param string $outputDir   The directory where the screenshot will be stored
      * @param bool   $compress    Whether to compress the image after extracting or not (true for tiles)
      */
-    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, $compress)
+    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
+                                $compress, $format="png", $interlace=true)
     {
         $this->timestamp     = $timestamp;
         $this->quality       = $quality;
@@ -63,7 +66,10 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $this->watermarkOn   = $watermarkOn;
         $this->buildFilename = !$filename;
         $this->compress      = $compress;
+        $this->format        = $format;
+        $this->interlace     = $interlace;
 
+        //parent::__construct($meta, $options, $outputDir, $filename . ".$format");
         parent::__construct($meta, $options, $outputDir, $filename . ".jpg");
     }
 
@@ -88,7 +94,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 $closestImage = $layer['closestImage'];
             }
 
-            $obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
+            $obsInfo 	   = $this->_getObservatoryInformation($layer['sourceId']);
             $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";
             
             $roi = array(
@@ -118,6 +124,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 
         if ($this->buildFilename) {
             $time = str_replace(array(":", "-", "T", "Z"), "_", $this->timestamp);
+            //$this->setOutputFile($time . $filenameInfo . time() . "." . $this->format);
             $this->setOutputFile($time . $filenameInfo . time() . ".jpg");
         }
 
