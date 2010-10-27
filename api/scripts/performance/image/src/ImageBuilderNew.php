@@ -94,9 +94,6 @@ function setColorPalette($input, $clut, $base64 = false)
         imagecolorset($gd, $i, $r, $g, $b);
     }
 
-    // Enable interlacing
-    imageinterlace($gd, true);
-
     // start buffering
     ob_start();
     imagepng($gd, NULL);
