@@ -2,7 +2,7 @@
 .ui-tooltip, .qtip {
     position: absolute;
     display: none;
-    font: 11px Arial, Verdana, Helvetica, sans-serif;
+    font: 11px arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;
     max-width: 600px;
     min-width: 50px;
     border-width: 3px;
