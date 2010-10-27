@@ -12,7 +12,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'HelioviewerScreenshot.php';
-require_once HV_ROOT_DIR . '/api/src/Helper/LayerParser.php';
+require_once 'src/Helper/LayerParser.php';
 /**
  * Image_Screenshot_HelioviewerScreenshotBuilder class definition
  *
@@ -54,13 +54,15 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         $defaults = array(
             'edges'		  => false,
             'sharpen' 	  => false,
-            'quality' 	  => 10,
             'display'	  => true,
             'watermarkOn' => true,
             'filename'    => false,
-            'compress'    => false
+            'compress'    => false,
+            'interlace'   => true,
+            'format'      => 'png',
+            'quality'     => 20
         );
-        $params = array_merge($defaults, $originalParams);
+        $params = array_replace($defaults, $originalParams);
         
         $imageScale = $params['imageScale'];
         $width  	= ($params['x2'] - $params['x1']) / $imageScale;
@@ -75,8 +77,8 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         }
         
         $options = array(
-            'enhanceEdges'	=> $params['edges'] || false,
-            'sharpen' 		=> $params['sharpen'] || false
+            'enhanceEdges' => $params['edges'] || false,
+            'sharpen'      => $params['sharpen'] || false
         );
         
         $imageMeta = new Image_ImageMetaInformation($width, $height, $imageScale);
