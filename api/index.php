@@ -247,7 +247,7 @@ function printAPIDocumentation()
         The general structure of queries is as follows:</p>
     
         <div class="summary-box">
-            <?php echo HV_API_ROOT_URL;?>?action=methodName&param1=value1&param2=value2...
+            <?php echo HV_API_ROOT_URL;?>?action=methodName&amp;param1=value1&amp;param2=value2...
         </div>
     
         <p>The base URL is the same for each of the APIs (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
@@ -267,8 +267,8 @@ function printAPIDocumentation()
 ?>
 </div>
 
-<div style="font-size: 0.7em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-08-17 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+<div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
+    Last Updated: 2010-10-26 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>

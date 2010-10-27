@@ -69,31 +69,34 @@ class Database_ImgIndex
 
         $datestr = isoDateToMySQL($date);
 
-        // Search left and right side of image database B-Tree separately
-        $lhs = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date < '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
-        $rhs = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
-
-        //die("$lhs<br><br><span style='color: green;'>$rhs</span><br><br><hr>");
-
-        $left = mysqli_fetch_array($this->_dbConnection->query($lhs), MYSQL_ASSOC);
-        $right = mysqli_fetch_array($this->_dbConnection->query($rhs), MYSQL_ASSOC);
-
-        $dateTimestamp = toUnixTimestamp($date);
-
-        // Select closest match
-        if (abs($dateTimestamp - toUnixTimestamp($left["date"])) < abs($dateTimestamp - toUnixTimestamp($right["date"]))) {
-            $img = $left;
-        } else {
-            $img = $right;
-        }
+        $sql = sprintf("
+            ( SELECT filepath, filename, date 
+              FROM images 
+              WHERE
+                sourceId = %d AND 
+                date < '%s'
+              ORDER BY date DESC LIMIT 1 )
+            UNION ALL
+            ( SELECT filepath, filename, date
+              FROM images
+              WHERE
+                sourceId = %d AND
+                date >= '%s'
+              ORDER BY date ASC LIMIT 1 )
+            ORDER BY ABS(DATEDIFF(date, '%s')
+            ) LIMIT 1;
+        ", $sourceId, $datestr, $sourceId, $datestr, $datestr);
+        
+        // Query database
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
 
         // Make sure match was found
-        if (is_null($img)) {
+        if (is_null($result)) {
             $source = $this->_getDataSourceName($sourceId);
             throw new Exception("No images of the requested type ($source) are currently available.");
         }
 
-        return $img;
+        return $result;
     }
     
     /**
@@ -111,7 +114,7 @@ class Database_ImgIndex
         $datestr = isoDateToMySQL($date);
 
         // Search database
-        $sql = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date <= '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
+        $sql = sprintf("SELECT filepath, filename, date FROM images WHERE sourceId = %d AND date <= '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
         $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
 
         // Make sure match was founds
@@ -138,7 +141,7 @@ class Database_ImgIndex
         $datestr = isoDateToMySQL($date);
 
         // Search database
-        $sql = sprintf("SELECT filepath, filename, date FROM image WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
+        $sql = sprintf("SELECT filepath, filename, date FROM images WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
         $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
 
         // Make sure match was found
@@ -159,7 +162,7 @@ class Database_ImgIndex
      */
     private function _getDataSourceName ($sourceId)
     {
-        $sql = "SELECT name FROM datasource WHERE id=$sourceId";
+        $sql = "SELECT name FROM datasources WHERE id=$sourceId";
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
         return $result["name"];
     }
@@ -179,7 +182,7 @@ class Database_ImgIndex
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
 
-        $sql = "SELECT COUNT(*) FROM image WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
+        $sql = "SELECT COUNT(*) FROM images WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
         $result = mysqli_fetch_array($this->_dbConnection->query($sql));
         return (int) $result[0];
     }
@@ -200,7 +203,7 @@ class Database_ImgIndex
         $endDate   = isoDateToMySQL($end);
 
         $images = array();
-        $sql = "SELECT * FROM image 
+        $sql = "SELECT * FROM images 
                 WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate' ORDER BY date ASC";
 
         $result = $this->_dbConnection->query($sql);
@@ -257,18 +260,18 @@ class Database_ImgIndex
     {
         $sql = sprintf(
             "SELECT
-                observatory.name AS observatory,
-                instrument.name AS instrument,
-                detector.name AS detector,
-                measurement.name AS measurement,
-                datasource.layeringOrder AS layeringOrder
-            FROM datasource
-                LEFT JOIN observatory ON datasource.observatoryId = observatory.id
-                LEFT JOIN instrument ON datasource.instrumentId = instrument.id
-                LEFT JOIN detector ON datasource.detectorId = detector.id
-                LEFT JOIN measurement ON datasource.measurementId = measurement.id
+                observatories.name AS observatory,
+                instruments.name AS instrument,
+                detectors.name AS detector,
+                measurements.name AS measurement,
+                datasources.layeringOrder AS layeringOrder
+            FROM datasources
+                LEFT JOIN observatories ON datasources.observatoryId = observatories.id
+                LEFT JOIN instruments ON datasources.instrumentId = instruments.id
+                LEFT JOIN detectors ON datasources.detectorId = detectors.id
+                LEFT JOIN measurements ON datasources.measurementId = measurements.id
             WHERE
-                datasource.id='%s'",
+                datasources.id='%s'",
             mysqli_real_escape_string($this->_dbConnection->link, $id)
         );
         $result = $this->_dbConnection->query($sql);
@@ -291,17 +294,17 @@ class Database_ImgIndex
     {
         $sql = sprintf(
             "SELECT
-                datasource.id
-            FROM datasource
-                LEFT JOIN observatory ON datasource.observatoryId = observatory.id
-                LEFT JOIN instrument ON datasource.instrumentId = instrument.id
-                LEFT JOIN detector ON datasource.detectorId = detector.id
-                LEFT JOIN measurement ON datasource.measurementId = measurement.id
+                datasources.id
+            FROM datasources
+                LEFT JOIN observatories ON datasources.observatoryId = observatories.id
+                LEFT JOIN instruments ON datasources.instrumentId = instruments.id
+                LEFT JOIN detectors ON datasources.detectorId = detectors.id
+                LEFT JOIN measurements ON datasources.measurementId = measurements.id
             WHERE
-                observatory.name='%s' AND
-                instrument.name='%s' AND
-                detector.name='%s' AND
-                measurement.name='%s';",
+                observatories.name='%s' AND
+                instruments.name='%s' AND
+                detectors.name='%s' AND
+                measurements.name='%s';",
             mysqli_real_escape_string($this->_dbConnection->link, $obs),
             mysqli_real_escape_string($this->_dbConnection->link, $inst),
             mysqli_real_escape_string($this->_dbConnection->link, $det),
@@ -323,24 +326,27 @@ class Database_ImgIndex
      */
     public function getDataSources ($verbose=false)
     {
-        $fields = array("observatory", "instrument", "detector", "measurement");
+        $fields = array("instrument", "detector", "measurement");
         
         $sql = "SELECT
-                    datasource.name as nickname,
-                    datasource.id as id,
-                    datasource.layeringOrder as layeringOrder,
-                    measurement.units as measurement_units,";
+                    datasources.name as nickname,
+                    datasources.id as id,
+                    datasources.enabled as enabled,
+                    datasources.layeringOrder as layeringOrder,
+                    measurements.units as measurement_units,
+                    observatories.name as observatory_name,
+                    observatories.description as observatory_description, ";
 
         foreach ($fields as $field) {
-            $sql .= sprintf("%s.name as %s_name, %s.description as %s_description,", $field, $field, $field, $field);
+            $sql .= sprintf("%ss.name as %s_name, %ss.description as %s_description,", $field, $field, $field, $field);
         }
      
         $sql = substr($sql, 0, -1) . " " . 
-            "FROM datasource
-                LEFT JOIN observatory ON datasource.observatoryId = observatory.id
-                LEFT JOIN instrument ON datasource.instrumentId = instrument.id
-                LEFT JOIN detector ON datasource.detectorId = detector.id
-                LEFT JOIN measurement ON datasource.measurementId = measurement.id;";
+            "FROM datasources
+                LEFT JOIN observatories ON datasources.observatoryId = observatories.id
+                LEFT JOIN instruments ON datasources.instrumentId = instruments.id
+                LEFT JOIN detectors ON datasources.detectorId = detectors.id
+                LEFT JOIN measurements ON datasources.measurementId = measurements.id;";
         
         // Use UTF-8 for responses
         $this->_dbConnection->setEncoding('utf8');
@@ -358,12 +364,14 @@ class Database_ImgIndex
         $tree = array();
 
         foreach ($sources as $source) {
-            $id   = (int) ($source["id"]);
+            
+            $enabled = (bool) $source["enabled"];
 
             // Only include if data is available for the specified source
-            if ($this->getImageCount("1000/01/01 00:00:00", "9999/01/01 00:00:00", $id) > 0) {
+            if ($enabled) {
              
                 // Image parameters
+                $id       = (int) ($source["id"]);
                 $obs      = $source["observatory_name"];
                 $inst     = $source["instrument_name"];
                 $det      = $source["detector_name"];

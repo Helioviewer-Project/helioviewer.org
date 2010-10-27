@@ -2,7 +2,7 @@
 import os
 from datetime import datetime
 from xml.dom.minidom import parseString
-from org.helioviewer.db import getDataSources
+from org.helioviewer.db import getDataSources, enableDataSource
 
 __INSERTS_PER_QUERY__ = 500
 __STEP_FXN_THROTTLE__ = 50
@@ -206,12 +206,15 @@ def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
         for x in range(len(images) // __INSERTS_PER_QUERY__):
             insertNImages(images, __INSERTS_PER_QUERY__, sources, rootdir, cursor, mysql, stepFxn)
             
+    # Update tree of known data-sources
+    sources = getDataSources(cursor)
+            
     # Process remaining images
     insertNImages(images, remainder, sources, rootdir, cursor, mysql, stepFxn)
 
     
 def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
-    query = "INSERT INTO image VALUES "
+    query = "INSERT INTO images VALUES "
     
     error = ""
     
@@ -228,20 +231,25 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
             rootdir = rootdir[:-1]
         path = path[len(rootdir):]
         
-        # Extract header information
+        # Extract header meta information
         try:
-            meta = extractJP2MetaInfo(img)
+            m = extractJP2MetaInfo(img)
         except:
             error += filename + "\n"
         else:
-            # Source id
-            id = sources[meta["observatory"]][meta["instrument"]][meta["detector"]][meta["measurement"]]
+            # Data Source
+            source = sources[m["observatory"]][m["instrument"]][m["detector"]][m["measurement"]]
+            
+            # Enable datasource if it has not already been
+            if (not source['enabled']):
+                sources[m["observatory"]][m["instrument"]][m["detector"]][m["measurement"]]["enabled"] = True
+                enableDataSource(cursor, source['id'])
         
             # Date
-            date = meta["date"]
+            date = m["date"]
     
             # insert into database
-            query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, date, id)
+            query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, date, source['id'])
         
             # Progressbar
             if stepFxn and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
