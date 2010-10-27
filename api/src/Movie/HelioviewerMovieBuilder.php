@@ -111,8 +111,6 @@ class Movie_HelioviewerMovieBuilder
             'sharpen'      => $this->_params['sharpen']
         );
 
-        $movieMeta = new Image_ImageMetaInformation($width, $height, $imageScale);
-
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
@@ -142,17 +140,16 @@ class Movie_HelioviewerMovieBuilder
             // Subtract 1 because we added an extra frame to the end
             $frameRate = $this->_determineOptimalFrameRate($numFrames - 1);
             
-            
             // Instantiate movie class
             $movie = new Movie_HelioviewerMovie(
                 $startTime, $numFrames, $frameRate, $this->_params['hqFormat'], $options, $filename,
-                $this->_params['quality'], $movieMeta, $outputDir
+                $this->_params['quality'], $width, $height, $imageScale, $outputDir
             );
             
             $tmpImageDir = $outputDir . "/tmp-" . $filename;
             
             // Build movie frames
-            $images      = $this->_buildFramesFromMetaInformation($movieMeta, $timestamps, $tmpImageDir);
+            $images = $this->_buildFramesFromMetaInformation($width, $height, $imageScale, $timestamps, $tmpImageDir);
 
             // Compile movie
             $filepath = $movie->buildMovie($images, $tmpImageDir);
@@ -392,13 +389,12 @@ class Movie_HelioviewerMovieBuilder
     /**
      * Takes in meta and layer information and creates movie frames from them.
      * 
-     * @param {Object} $movieMeta  an ImageMetaInformation object that has width, height, and imageScale.
      * @param {Array}  $timestamps timestamps associated with each frame in the movie 
      * @param {String} $tmpDir     the directory where the frames will be stored
      * 
      * @return $images an array of built movie frames
      */
-    private function _buildFramesFromMetaInformation($movieMeta, $timestamps, $tmpDir) 
+    private function _buildFramesFromMetaInformation($width, $height, $imageScale, $timestamps, $tmpDir) 
     {
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $images  = array();
@@ -407,9 +403,9 @@ class Movie_HelioviewerMovieBuilder
         
         // Movie frame parameters
         $params = array(
-            'width'      => $movieMeta->width(),
-            'height'     => $movieMeta->height(),
-            'imageScale' => $movieMeta->imageScale(),
+            'width'      => $width,
+            'height'     => $height,
+            'imageScale' => $imageScale,
             'layers'     => $this->_params['layers'],
             'quality'    => $this->_params['quality'],
             'sharpen'    => $this->_params['sharpen'],

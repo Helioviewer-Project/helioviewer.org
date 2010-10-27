@@ -44,7 +44,9 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * Create an instance of Image_Screenshot
      *
      * @param int    $timestamp   The unix timestamp of the observation date in the viewport
-     * @param object $meta        An ImageMetaInformation object
+     * @param int    $width       Screenshot width
+     * @param int    $height      Screenshot height
+     * @param float  $scale       Screenshot scale
      * @param array  $options     An array containing true/false values for "EdgeEnhance" and "Sharpen"
      * @param string $filename    Location where the screenshot will be stored
      * @param int    $quality     Screenshot compression quality
@@ -54,7 +56,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param string $outputDir   The directory where the screenshot will be stored
      * @param bool   $compress    Whether to compress the image after extracting or not (true for tiles)
      */
-    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
+    public function __construct($timestamp, $width, $height, $imageScale, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
                                 $compress, $format="png", $interlace=true)
     {
         $this->timestamp     = $timestamp;
@@ -70,7 +72,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $this->interlace     = $interlace;
 
         //parent::__construct($meta, $options, $outputDir, $filename . ".$format");
-        parent::__construct($meta, $options, $outputDir, $filename . ".jpg");
+        parent::__construct($width, $height, $imageScale, $options, $outputDir, $filename . ".jpg");
     }
 
     /**
@@ -162,7 +164,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         }
 
         return $cacheDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
-            $this->metaInfo->imageScale() . "_" . round($roi['left']) . "_" . round($roi['right']) . "x_" . 
+            $this->scale . "_" . round($roi['left']) . "_" . round($roi['right']) . "x_" . 
             round($roi['top']) . "_" . round($roi['bottom']) . "y-op$opacity.png";
     }
 

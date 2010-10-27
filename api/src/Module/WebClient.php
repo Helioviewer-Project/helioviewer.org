@@ -230,42 +230,6 @@ class Module_WebClient implements Module
         header('Content-Type: application/json');
         echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
     }
-    
-    /**
-     * getViewerImage (aka "getCompositeImage")
-     *
-     * Example usage: (outdated!)
-     *     http://helioviewer.org/api/index.php?action=getViewerImage
-     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&imageScale=2.4
-     *         &tileSize=512&xRange=-1,0&yRange=-1,0
-     *     http://helioviewer.org/api/index.php?action=getViewerImage
-     *         &layers=SOH_EIT_EIT_195,SOH_LAS_0C2_0WL
-     *         &timestamps=1065312000,1065312360&imageScale=5.26
-     *         &tileSize=512&xRange=-1,0&yRange=-1,0&edges=false
-     *
-     * Notes:
-     *     Building a UTC timestamp in javascript
-     *         var d = new Date(Date.UTC(2003, 9, 5));
-     *         var unix_ts = d.getTime() * 1000;
-     *
-     * TODO
-     *     = If no params are passed, print out API usage description
-     *       (and possibly a query builder form)...
-     *     = Add support for fuzzy timestamp matching. Could default to exact
-     *       matching unless user specifically requests fuzzy date-matching.
-     *     = Separate out layer details into a Layer PHP class?
-     *     = Update getViewerImage to use "layers" instead of "layers" + "timestamps"
-     *
-     * @return void
-     */
-    public function getViewerImage ()
-    {
-        include_once 'src/Image/CompositeImage.php';
-
-        //Create and display composite image
-        $img = Image_CompositeImage::compositeImageFromQuery($this->_params);
-        $img->printImage();
-    }
 
     /**
      * Handles input validation
@@ -318,8 +282,7 @@ class Module_WebClient implements Module
                 "files" => array('file')
             );
             break;
-        case "getViewerImage":
-            break;
+
         // Any booleans that default to true cannot be listed here because the
         // validation process sets them to false if they are not given.
         case "takeScreenshot":

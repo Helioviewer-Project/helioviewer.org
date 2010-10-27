@@ -80,8 +80,6 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             'enhanceEdges' => $params['edges'] || false,
             'sharpen'      => $params['sharpen'] || false
         );
-        
-        $imageMeta = new Image_ImageMetaInformation($width, $height, $imageScale);
 
         $layerArray = $this->_createMetaInformation(
             $params['layers'],
@@ -90,7 +88,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
-            $imageMeta, $options, 
+            $width, $height, $imageScale, $options, 
             $params['filename'], 
             $params['quality'], $params['watermarkOn'],
             array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
