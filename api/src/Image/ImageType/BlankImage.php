@@ -39,10 +39,8 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      * 
      * @param int    $width        Desired width of the image
      * @param int    $height       Desired height of the image
-     * @param date   $date         Timestamp of the image
      * @param string $sourceJp2    The filepath to the image's JP2 file
      * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
-     * @param string $format       File format
      * @param int    $jp2Width     Width of the JP2 image
      * @param int    $jp2Height    Height of the JP2 image
      * @param int    $jp2Scale     Scale of the JP2 image
@@ -56,7 +54,7 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */     
     public function __construct(
-        $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
+        $width, $height, $sourceJp2, $roi, $jp2Width, $jp2Height, 
         $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
         $opacity, $compress
     ) {
@@ -69,7 +67,7 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
             'bottom' => 512
         );
         parent::__construct(
-            $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+            $sourceJp2, $roi, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
             $outputFile, $offsetX, $offsetY, $opacity, $compress
         );
 

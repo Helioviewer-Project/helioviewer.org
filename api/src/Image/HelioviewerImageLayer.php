@@ -35,7 +35,6 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * 
      * @param string $sourceJp2     Original JP2 image from which the subfield should be derrived
      * @param string $outputFile    Location to output the subfield image to
-     * @param string $format        File format to use when saving the image
      * @param int    $width         Width of the output image
      * @param int    $height        Height of the output image
      * @param float  $imageScale    Scale of the output image in arcseconds/px
@@ -54,13 +53,14 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * @param bool   $compress      Whether to compress the image after extracting or not (true for tiles)
      */
     public function __construct(
-        $sourceJp2, $outputFile, $format, $width, $height, $imageScale, $roi, $instrument, $detector, 
+        $sourceJp2, $outputFile, $width, $height, $imageScale, $roi, $instrument, $detector, 
         $measurement, $layeringOrder, $offsetX, $offsetY, $opacity, $jp2Width, $jp2Height, $jp2Scale, 
         $timestamp, $compress
     ) {
         $this->layeringOrder = $layeringOrder;
         $this->opacity		 = $opacity;
         $this->imageScale    = $imageScale;
+        $this->timestamp     = $timestamp;
 
         $this->_roi = $roi;
         $pixelRoi = $this->_getPixelRoi($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
@@ -71,7 +71,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
             
             include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
             $image = new Image_ImageType_BlankImage(
-               $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
+               $width, $height, $sourceJp2, $pixelRoi, $jp2Width, $jp2Height,
                 $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
             );
             
@@ -82,13 +82,13 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
             include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
 
             $image = new $classname(
-                $width, $height, $timestamp, $sourceJp2, $pixelRoi, $format, $jp2Width, $jp2Height,
+                $width, $height, $sourceJp2, $pixelRoi, $jp2Width, $jp2Height,
                 $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
                 $opacity, $compress
             );
         }
         
-        parent::__construct($timestamp, $image, $outputFile);
+        parent::__construct($image, $outputFile);
         
         $padding = $this->image->computePadding($roi, $imageScale);
         $image->setPadding($padding);

@@ -85,7 +85,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $params['layers'],
             $imageScale, $width, $height, $closestImages
         );
-        
+
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
             $width, $height, $imageScale, $options, 

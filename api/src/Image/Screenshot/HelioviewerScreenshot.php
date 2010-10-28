@@ -113,7 +113,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
             
             $image = new Image_HelioviewerImageLayer(
-                $pathToFile, $tmpOutputFile, 'png', 
+                $pathToFile, $tmpOutputFile, 
                 $layer['width'], $layer['height'], $layer['imageScale'], 
                 $roi, $obsInfo['instrument'], $obsInfo['detector'],
                 $obsInfo['measurement'], $obsInfo['layeringOrder'], 

@@ -34,7 +34,6 @@ class Image_SubFieldImage
     protected $sourceJp2;
     protected $outputFile;
     protected $roi;
-    protected $format;
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
@@ -51,10 +50,8 @@ class Image_SubFieldImage
     /**
      * Creates an Image_SubFieldImage instance
      *
-     * @param string $sourceJp2    Original JP2 image from which the subfield should be derrived
-     * @param date   $date         The timestamp of the image
+     * @param string $jp2          Original JP2 image from which the subfield should be derrived
      * @param array	 $roi          Subfield region of interest
-     * @param string $format       File format to use when saving the subfield image
      * @param int    $jp2Width     Width of the JP2 image at it's natural resolution
      * @param int    $jp2Height    Height of the JP2 image at it's natural resolution
      * @param float  $jp2Scale     Pixel scale of the original JP2 image
@@ -72,13 +69,12 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
+    public function __construct($jp2, $roi, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
         $outputFile, $offsetX, $offsetY, $opacity, $compress
     ) {
         $this->outputFile = $outputFile;
-        $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
+        $this->sourceJp2  = new Image_JPEG2000_JP2Image($jp2, $jp2Width, $jp2Height, $jp2Scale);
         $this->roi        = $roi;
-        $this->format     = $format;
 
         $this->jp2Width  = $jp2Width;
         $this->jp2Height = $jp2Height;
@@ -93,7 +89,7 @@ class Image_SubFieldImage
 
         $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
         $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
-
+        
         $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
         $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
         
@@ -329,12 +325,17 @@ class Image_SubFieldImage
             return;
         }
         
-        $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
+        // Get extension
+        $parts = explode(".", $this->outputFile);
+        $extension = end($parts);
 
-        if ($this->format === "png") {
-            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+        // Apply compression based on image type
+        if ($extension === "png") {
+            $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
             $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
-        } else {
+            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+        } elseif ($extension === "jpg") {
+            $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
             $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
             $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
         }
@@ -466,11 +467,10 @@ class Image_SubFieldImage
 
             header('Content-Length: '.filesize($this->outputFile));
 
-            if ($this->format == "png") {
-                header("Content-Type: image/png");
-            } else {
-                header("Content-Type: image/jpeg");
-            }
+            // Set content-type
+            $fileinfo = new finfo(FILEINFO_MIME);
+            $mimetype = $fileinfo->file($this->outputFile);
+            header("Content-type: " . $mimetype);
 
             // Filename & Content-length
             $filename = basename($this->outputFile);
