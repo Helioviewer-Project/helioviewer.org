@@ -67,7 +67,7 @@ class Movie_HelioviewerMovie
     ) {
         $this->_width  = $width;
         $this->_height = $height;
-        $this->_scale  = $scale;
+        $this->_scale  = $imageScale;
         
         // working directory
         $this->tmpDir = $tmpDir; 

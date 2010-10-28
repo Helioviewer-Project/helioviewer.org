@@ -58,6 +58,7 @@ abstract class Image_Composite_CompositeImage
         $this->cacheDir = HV_CACHE_DIR . "/";
         
         $this->makeDirectory($this->tmpDir);
+
     }
     
     /**
