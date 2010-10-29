@@ -146,7 +146,8 @@ class Movie_HelioviewerMovieBuilder
                 $this->_params['quality'], $width, $height, $imageScale, $outputDir
             );
             
-            $tmpImageDir = $outputDir . "/tmp-" . $filename;
+            //$tmpImageDir = $outputDir . "/tmp-" . $filename;
+            $tmpImageDir = $outputDir . "/frames";
             
             // Build movie frames
             $images = $this->_buildFramesFromMetaInformation($width, $height, $imageScale, $timestamps, $tmpImageDir);
