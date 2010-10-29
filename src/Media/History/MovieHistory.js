@@ -139,10 +139,9 @@ var MovieHistory = History.extend(
                 };
                 $.get("api/index.php", params, callback, "json");
             };
-
-            // Wait for half of the eta, the eta function isn't very accurate and overshoots
-            // if images are small. If eta is zero, wait for 15 seconds.
-            setTimeout(tryToGetMovie, Math.max(data.eta, 30) * 500);
+            
+            // wait and try again
+            setTimeout(tryToGetMovie, Math.max(data.eta, 15) * 1000);
         }
     },
     

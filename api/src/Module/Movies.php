@@ -76,7 +76,8 @@ class Module_Movies implements Module
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"    => array('startTime', 'endTime'),
                 "ints"     => array('frameRate', 'quality', 'numFrames'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "uuids"    => array('uuid')
             );
             break;
         case "playMovie":
@@ -127,9 +128,12 @@ class Module_Movies implements Module
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
         
         $builder = new Movie_HelioviewerMovieBuilder();
-                
+
+        if (!isset($this->_params['uuid']))
+            $this->_params['uuid'] = uuid_create(UUID_TYPE_DEFAULT);
+        
         // Make a temporary directory to store the movie in.
-        $tmpDir = HV_CACHE_DIR . "/movies/" . date("Ymd_His");
+        $tmpDir = HV_CACHE_DIR . "/movies/" . $this->_params['uuid'];
 
         if (!file_exists($tmpDir)) {
             mkdir($tmpDir, 0777, true);
