@@ -64,6 +64,7 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
         );
 
         // MDI has no color table
+        $this->setColorTable(false);
 
         $this->width 	= $width;
         $this->height 	= $height;
@@ -72,14 +73,13 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
     /**
      * No color table. Do nothing.
      * 
-     * @param string $input  Input file
-     * @param string $output Output file
+     * @param string &$input  Input file
      * 
      * @return void
      */
-    protected function setColorPalette($input, $output)
+    protected function setColorPalette(&$input)
     {
-        return;
+        return false;
     }
     
     /**

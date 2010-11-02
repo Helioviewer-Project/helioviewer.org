@@ -273,17 +273,21 @@ class Image_SubFieldImage
             
             $grayscaleString = $grayscale->getimageblob();
 
-            // Clean up grayscale image
-            $grayscale->destroy();
-            unlink($input);
-
-            // Apply color table
-            $coloredImageString = $this->setColorPalette($grayscaleString);
+            // Assume that no color table is needed
+            $coloredImage = $grayscale;
             
-            $coloredImage = new IMagick();        
-            $coloredImage->readimageblob($coloredImageString);
+            // Apply color table if one exists
+            if ($this->colorTable) {
+                $coloredImageString = $this->setColorPalette($grayscaleString);
             
+                $coloredImage = new IMagick();        
+                $coloredImage->readimageblob($coloredImageString);
+            }            
+            
+            // Set alpha channel for images with transparent components
             $this->setAlphaChannel($coloredImage);
+            
+            // Apply compression and interlacing
             $this->compressImage($coloredImage);
             
             // Resize extracted image to correct size before padding.
@@ -301,7 +305,11 @@ class Image_SubFieldImage
             //set_time_limit(60);
             
             $coloredImage->writeImage($this->outputFile);
+            
+            // Clean up
+            $grayscale->destroy();
             $coloredImage->destroy();
+            unlink($input);
 
         } catch(Exception $e) {
             throw $e;
