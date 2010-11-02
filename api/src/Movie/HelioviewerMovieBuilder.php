@@ -154,10 +154,6 @@ class Movie_HelioviewerMovieBuilder
 
             // Compile movie
             $filepath = $movie->buildMovie($images, $tmpImageDir);
-
-            if (!file_exists($filepath)) {
-                throw new Exception('The requested movie is either unavailable or does not exist.');
-            }
             
             $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
             
@@ -418,7 +414,7 @@ class Movie_HelioviewerMovieBuilder
             'watermarkOn'=> $this->_params['watermarkOn'],
             'display'    => false,
             'interlace'  => false,
-            'format'     => 'png' //'bmp'
+            'format'     => 'jpg' //'bmp'
         );
 
         // Compile frames
@@ -432,7 +428,7 @@ class Movie_HelioviewerMovieBuilder
 
         // Copy the last frame so that it actually shows up in the movie for the same amount of time
         // as the rest of the frames.        
-        $lastImage = dirname($image) . "/frame" . $frameNum . ".png";
+        $lastImage = dirname($image) . "/frame" . $frameNum . ".jpg";
         copy($image, $lastImage);
         $images[]  = $lastImage;
         
