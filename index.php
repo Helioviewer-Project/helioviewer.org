@@ -24,7 +24,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
 
     <!-- YUI CSS Reset -->
-    <link rel="stylesheet" href="http://yui.yahooapis.com/2.8.0/build/reset-fonts/reset-fonts.css" />
+    <link rel="stylesheet" href="lib/yui-2.8.2r1/reset-fonts.css" />
 
     <!-- Layout -->
     <link rel="stylesheet" href="resources/css/layout.css" />
