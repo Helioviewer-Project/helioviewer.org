@@ -158,10 +158,11 @@ class Movie_HelioviewerMovieBuilder
             $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
             
             if ($this->_params['display'] === true) {
-                return Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
+                echo Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
+            } else {
+                header('Content-type: application/json');
+                echo json_encode(array("url" => $filepath));   
             }
-
-            return $url;
             
         } catch(Exception $e) {
             touch($outputDir . "/INVALID");

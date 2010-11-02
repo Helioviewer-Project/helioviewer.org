@@ -140,10 +140,7 @@ class Module_Movies implements Module
             chmod($tmpDir, 0777);
         }
 
-        $filepath = $builder->buildMovie($this->_params, $tmpDir);
-        
-        header('Content-type: application/json');
-        echo json_encode(array("url" => $filepath));
+        $builder->buildMovie($this->_params, $tmpDir);
     }
 
     /**
