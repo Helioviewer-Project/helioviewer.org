@@ -47,7 +47,7 @@ var EventManager = LayerManager.extend({
             "endDate"    : new Date(this._date.getTime()).addSeconds(this._windowSize / 2).toISOString()
         };
         
-        $.post("api/index.php", params, $.proxy(this._parseEventFRMs, this), "json");
+        $.get("api/index.php", params, $.proxy(this._parseEventFRMs, this), "json");
     },
     
     /**
