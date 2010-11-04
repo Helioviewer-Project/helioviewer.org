@@ -253,7 +253,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 <script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
 
 <!-- jGrowl -->
-<script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
+<script src="lib/jquery.jgrowl/jquery.jgrowl_compressed.js" type="text/javascript"></script>
 
 <!-- imgAreaSelect jQuery plugin -->
 <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
