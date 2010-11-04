@@ -242,9 +242,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 <!-- <script type="text/javascript" src="http://html5.kaltura.org/js"></script> --> 
 
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
-<script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
+<script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <!--<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.js" type="text/javascript"></script>
 <script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
 <script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
@@ -263,7 +263,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
 <!-- CookieJar -->
 <script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>
-<script type="text/javascript" src="lib/jquery.cookie/jquery.cookie.js"></script>
+<script type="text/javascript" src="lib/jquery.cookie/jquery.cookie.min.js"></script>
 <script type="text/javascript" src="lib/Cookiejar/jquery.cookiejar.pack.js"></script>
 
 <!-- date.js -->
