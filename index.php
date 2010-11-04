@@ -122,7 +122,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
         // CSS
         if ($config["compress_css"]) {
-            echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.css?$version\" />\n\t";
+            echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.min.css?$version\" />\n\t";
         }
         else {
             $css = array("main.css", "layout.css", "accordions.css", "dialogs.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
