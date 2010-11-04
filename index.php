@@ -26,9 +26,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <!-- YUI CSS Reset -->
     <link rel="stylesheet" href="lib/yui-2.8.2r1/reset-fonts.css" />
 
-    <!-- Layout -->
-    <link rel="stylesheet" href="resources/css/layout.css" />
-
     <!-- Kaltura HTML5 video player -->
     <!-- <script type="text/javascript" src="http://html5.kaltura.org/js"></script> --> 
 
@@ -50,7 +47,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
 
     <!-- imgAreaSelect jQuery plugin -->
-    <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
+    <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
     
     <!-- jsTree -->
@@ -128,7 +125,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
             echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.css?$version\" />\n\t";
         }
         else {
-            $css = array("main.css", "accordions.css", "dialogs.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
+            $css = array("main.css", "layout.css", "accordions.css", "dialogs.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
             foreach($css as $file)
                 printf("<link rel=\"stylesheet\" href=\"resources/css/%s?$version\" />\n\t", $file);
         }
