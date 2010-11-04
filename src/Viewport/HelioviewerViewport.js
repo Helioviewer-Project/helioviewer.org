@@ -48,7 +48,7 @@ var HelioviewerViewport = Viewport.extend(
             $(document).trigger("update-viewport");
         };
         
-        $.post(this.api, {action: "getDataSources"}, callback, "json"); 
+        $.get(this.api, {action: "getDataSources"}, callback, "json"); 
     },
     
     /**
