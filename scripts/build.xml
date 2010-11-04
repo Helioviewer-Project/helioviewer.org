@@ -24,12 +24,14 @@
         
         <echo>Minifying JavaScript/CSS</echo>
 
-		<!-- Minify-->
+		<!-- Minify JavaScript-->
 		<exec dir="scripts/jsmin" executable="jsmin.py" input="build/helioviewer.js" 
 		  output="build/helioviewer.min.js.tmp" resolveexecutable="true" />
           
-        <exec dir="scripts/jsmin" executable="jsmin.py" input="build/css/helioviewer.css" 
-          output="build/css/helioviewer.min.css.tmp" resolveexecutable="true" />
+        <!-- Minify CSS -->
+        <exec dir="build/css/" executable="java">
+            <arg line="-jar ../../scripts/yuicompressor/yuicompressor-2.4.2.jar --type css -o helioviewer.min.css.tmp helioviewer.css" />
+        </exec>
           
         <echo>Adding download notice</echo>  
         
