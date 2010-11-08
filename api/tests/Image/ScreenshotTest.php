@@ -43,7 +43,7 @@ class ScreenshotTest extends PHPUnit_Framework_TestCase
 	public function testSingleLayerScreenshotCreation() {
 		require_once 'api/src/Image/Screenshot/HelioviewerScreenshot.php';
 		$meta = new Image_HelioviewerImageMetaInformation(1024, 1024, 1, "SOHO", "EIT", "EIT", 171, $this->roi, 0, 0);
-		$screenshot = new Screenshot_HelioviewerScreenshot($this->time, $meta, array("edges" => false, "sharpen" => false), $this->outputFile, 10);
+		$screenshot = new Screenshot_HelioviewerScreenshot($this->time, $meta, $this->outputFile, 10);
 		$this->assertTrue(isset($screenshot));
 		
 		$screenshot->buildImages(array($meta));
@@ -56,7 +56,7 @@ class ScreenshotTest extends PHPUnit_Framework_TestCase
 		$c2Meta = new Image_HelioviewerImageMetaInformation(1024, 1024, 1, "SOHO", "LASCO", "C2", "white-light", $this->roi, 0, 0);
 		$c3Meta = new Image_HelioviewerImageMetaInformation(1024, 1024, 1, "SOHO", "LASCO", "C3", "white-light", $this->roi, 0, 0);
 				
-		$screenshot = new Screenshot_HelioviewerScreenshot($this->time, $eitMeta, array("edges" => false, "sharpen" => false), $this->outputFile, 10);
+		$screenshot = new Screenshot_HelioviewerScreenshot($this->time, $eitMeta, $this->outputFile, 10);
 		$this->assertTrue(isset($screenshot));
 		
 		$screenshot->buildImages(array($eitMeta, $c2Meta, $c3Meta));	
@@ -72,9 +72,7 @@ class ScreenshotTest extends PHPUnit_Framework_TestCase
 			'width'  	 => 1024,
 			'height'	 => 1024,
 			'filename' 	 => 'testScreenshot' . time() . '.png',
-			'quality' 	 => 10,
-			'edges' 	 => false,
-			'sharpen' 	 => false
+			'quality' 	 => 10
 		);
 		$module = new Module_WebClient($params);
 		$screenshot = $module->takeScreenshot();

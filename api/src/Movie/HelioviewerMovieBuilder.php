@@ -93,8 +93,6 @@ class Movie_HelioviewerMovieBuilder
         $defaults = array(
             'numFrames'   => false,
             'filename'    => false,
-            'sharpen'     => false,
-            'edges'       => false,
             'display'     => true,
             'watermarkOn' => true,
             'endTime'     => false,
@@ -105,11 +103,6 @@ class Movie_HelioviewerMovieBuilder
         $this->_params = array_merge($defaults, $params);
 
         list($width, $height, $imageScale) = $this->_limitToMaximumDimensions();
-        
-        $options = array(
-            'enhanceEdges' => $this->_params['edges'],
-            'sharpen'      => $this->_params['sharpen']
-        );
 
         //Check to make sure values are acceptable
         try {
@@ -142,7 +135,7 @@ class Movie_HelioviewerMovieBuilder
             
             // Instantiate movie class
             $movie = new Movie_HelioviewerMovie(
-                $startTime, $numFrames, $frameRate, $this->_params['hqFormat'], $options, $filename,
+                $startTime, $numFrames, $frameRate, $this->_params['hqFormat'], $filename,
                 $this->_params['quality'], $width, $height, $imageScale, $outputDir
             );
             
@@ -406,8 +399,6 @@ class Movie_HelioviewerMovieBuilder
             'imageScale' => $imageScale,
             'layers'     => $this->_params['layers'],
             'quality'    => $this->_params['quality'],
-            'sharpen'    => $this->_params['sharpen'],
-            'edges'      => $this->_params['edges'],
             'x1'         => $this->_params['x1'],
             'x2'         => $this->_params['x2'],
             'y1'         => $this->_params['y1'],

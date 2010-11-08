@@ -47,7 +47,6 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param int    $width       Screenshot width
      * @param int    $height      Screenshot height
      * @param float  $scale       Screenshot scale
-     * @param array  $options     An array containing true/false values for "EdgeEnhance" and "Sharpen"
      * @param string $filename    Location where the screenshot will be stored
      * @param int    $quality     Screenshot compression quality
      * @param bool   $watermarkOn Whether to watermark the image or not
@@ -56,7 +55,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param string $outputDir   The directory where the screenshot will be stored
      * @param bool   $compress    Whether to compress the image after extracting or not (true for tiles)
      */
-    public function __construct($timestamp, $width, $height, $imageScale, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
+    public function __construct($timestamp, $width, $height, $imageScale, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
                                 $compress, $format="png", $interlace=true)
     {
         $this->timestamp     = $timestamp;
@@ -71,8 +70,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $this->format        = $format;
         $this->interlace     = $interlace;
 
-        //parent::__construct($meta, $options, $outputDir, $filename . ".$format");
-        parent::__construct($width, $height, $imageScale, $options, $outputDir, $filename . ".jpg");
+        //parent::__construct($meta, $outputDir, $filename . ".$format");
+        parent::__construct($width, $height, $imageScale, $outputDir, $filename . ".jpg");
     }
 
     /**

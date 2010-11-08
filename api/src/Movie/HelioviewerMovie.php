@@ -44,7 +44,6 @@ class Movie_HelioviewerMovie
     private $_highQualityFileType;
     private $_watermarkOptions = "-x 720 -y 965 ";
     private $_filename;
-    private $_options;
     private $_quality;
     private $_padDimensions;
 
@@ -55,7 +54,6 @@ class Movie_HelioviewerMovie
      * @param int    $numFrames Number of frames to include
      * @param int    $frameRate Number of frames per second
      * @param string $hqFormat  Format to use for high-quality version of the movie
-     * @param array  $options   An array with ["edges"] => true/false, ["sharpen"] => true/false
      * @param string $filename  Desired filename for the movie
      * @param int    $quality   Movie quality
 
@@ -63,7 +61,7 @@ class Movie_HelioviewerMovie
      */
     public function __construct(
         $startTime, $numFrames, $frameRate, $hqFormat,
-        $options, $filename, $quality, $width, $height, $imageScale, $tmpDir
+        $filename, $quality, $width, $height, $imageScale, $tmpDir
     ) {
         $this->_width  = $width;
         $this->_height = $height;
@@ -77,7 +75,6 @@ class Movie_HelioviewerMovie
         $this->_numFrames  = $numFrames;
         $this->_frameRate  = $frameRate;
         $this->_quality    = $quality;
-        $this->_options    = $options;
 
         $this->_filename = $filename;
 

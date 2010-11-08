@@ -52,8 +52,6 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
-            'edges'		  => false,
-            'sharpen' 	  => false,
             'display'	  => true,
             'watermarkOn' => true,
             'filename'    => false,
@@ -75,11 +73,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $height     *= $scaleFactor;
             $imageScale /= $scaleFactor;
         }
-        
-        $options = array(
-            'enhanceEdges' => $params['edges'] || false,
-            'sharpen'      => $params['sharpen'] || false
-        );
+
 
         $layerArray = $this->_createMetaInformation(
             $params['layers'],
@@ -88,7 +82,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
 
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
-            $width, $height, $imageScale, $options, 
+            $width, $height, $imageScale, 
             $params['filename'], 
             $params['quality'], $params['watermarkOn'],
             array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
