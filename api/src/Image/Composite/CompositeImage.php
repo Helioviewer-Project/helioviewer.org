@@ -28,7 +28,6 @@
 abstract class Image_Composite_CompositeImage
 {
     protected $composite;
-    protected $options;
     protected $tmpDir;
     protected $layerImages;
     protected $cacheDir;
@@ -42,16 +41,14 @@ abstract class Image_Composite_CompositeImage
      * @param int    $width    Image width
      * @param int    $height   Image height
      * @param float  $scale    Image scale
-     * @param array  $options  An array with ["edges"] => true/false, ["sharpen"] => true/false
      * @param string $tmpDir   The temporary directory where images are cached
      * @param string $filename Desired filename of the output
      */
-    protected function __construct($width, $height, $imageScale, $options, $tmpDir, $filename)
+    protected function __construct($width, $height, $imageScale, $tmpDir, $filename)
     {
         $this->width  = $width;
         $this->height = $height;
         $this->scale  = $imageScale;        
-        $this->options    = $options;
         $this->tmpDir     = $tmpDir;
         $this->setOutputFile($filename);
 
@@ -103,15 +100,7 @@ abstract class Image_Composite_CompositeImage
             
                 $this->composite = $output; 
             }
-            //Optional settings
-            /*if ($this->options['enhanceEdges'] == "true") {
-                $this->composite->edgeImage(3);
-            }
-    
-            if ($this->options['sharpen'] == "true") {
-                $this->composite->adaptiveSharpenImage(2,1);
-            }
-            */
+
         } catch(Exception $e) {
             throw new Exception("Unable to compile composite image layers: {$e->getMessage()}");
         }
