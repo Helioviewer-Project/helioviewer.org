@@ -166,14 +166,57 @@ class Module_WebClient implements Module
      */
     public function getTile ()
     {        
-        include_once 'src/Image/Tiling/HelioviewerTileBuilder.php';
-
-        $builder = new Image_Tiling_HelioviewerTileBuilder();
+        require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerImageLayer.php';
+        
+        $params = $this->_params;
         
         // Make sure cache directory is available
         $this->_createImageCacheDir(dirname($this->_params['uri']));
         
-        return $builder->getTile($this->_params);
+        $filepath = HV_CACHE_DIR . $this->getCacheFilename(
+            $params['uri'], $params['imageScale'], $params['x1'], 
+            $params['x2'], $params['y1'], $params['y2'], $params['format']
+        );
+        
+        $jp2File = HV_JP2_DIR . $params['uri'];
+        
+        $roi = array(
+           "top"    => $params['y1'],
+           "left"   => $params['x1'],
+           "bottom" => $params['y2'],
+           "right"  => $params['x2']
+        );
+
+        $tile = new Image_HelioviewerImageLayer(
+            $jp2File, $filepath, $params['size'],
+            $params['size'], $params['imageScale'], $roi, 
+            $params['instrument'], $params['detector'], $params['measurement'], 1, 
+            $params['offsetX'], $params['offsetY'], 100, 
+            $params['jp2Width'], $params['jp2Height'], 
+            $params['jp2Scale'], $params['date'], true
+        );
+        
+        return $tile->display();  
+    }
+    
+    /**
+     * Builds a filename for a cached tile or image based on boundaries and scale
+     * 
+     * @param string $uri    The uri of the original jp2 image
+     * @param float  $scale  The scale of the extracted image
+     * @param float  $x1     The left boundary in arcseconds
+     * @param float  $x2     The right boundary in arcseconds
+     * @param float  $y1     The top boundary in arcseconds
+     * @param float  $y2     The bottom boundary in arcseconds
+     * @param string $format jpg or png
+     * 
+     * @return string
+     */
+    private function getCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
+    {
+        return dirname($uri) . "/" . substr(basename($uri), 0, -4) . "_" . $scale 
+                . "_" . round($x1) . "_" . round($x2) . "x_" . round($y1) . "_"
+                . round($y2) . "y." . $format;
     }
 
     /**
@@ -201,7 +244,7 @@ class Module_WebClient implements Module
      *
      * See the API webpage for example usage.
      * 
-     * Parameters quality, filename, sharpen, edges, and display are optional parameters and can be left out completely.
+     * Parameters quality, filename, and display are optional parameters and can be left out completely.
      * 
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of

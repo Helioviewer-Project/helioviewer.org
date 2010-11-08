@@ -87,23 +87,4 @@ function getSourceIdFromLayerArray($layerArray)
     return $layerArray[0];	
 }
 
-/**
- * Builds a filename for a cached tile or image based on boundaries and scale
- * 
- * @param string $uri    The uri of the original jp2 image
- * @param float  $scale  The scale of the extracted image
- * @param float  $x1     The left boundary in arcseconds
- * @param float  $x2     The right boundary in arcseconds
- * @param float  $y1     The top boundary in arcseconds
- * @param float  $y2     The bottom boundary in arcseconds
- * @param string $format jpg or png
- * 
- * @return string
- */
-function getCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
-{
-    return dirname($uri) . "/" . substr(basename($uri), 0, -4) . "_" . $scale 
-            . "_" . round($x1) . "_" . round($x2) . "x_" . round($y1) . "_"
-            . round($y2) . "y." . $format;
-}
 ?>
