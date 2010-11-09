@@ -46,17 +46,17 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * @param float  $offsetX       Offset of the sun center from the image center
      * @param float  $offsetY       Offset of the sun center from the image center
      * @param float  $opacity       The opacity of the image
-     * @param date   $timestamp     The timestamp of the image
+     * @param string $date          The date of the image
      * @param bool   $compress      Whether to compress the image after extracting or not (true for tiles)
      */
     public function __construct(
         $jp2, $outputFile, $width, $height, $imageScale, $roi, $instrument, $detector, 
-        $measurement, $layeringOrder, $offsetX, $offsetY, $opacity, $timestamp, $compress
+        $measurement, $layeringOrder, $offsetX, $offsetY, $opacity, $date, $compress
     ) {
         $this->layeringOrder = $layeringOrder;
         $this->opacity		 = $opacity;
         $this->imageScale    = $imageScale;
-        $this->timestamp     = $timestamp;
+        $this->date          = $date;
 
         $this->_roi = $roi;
         $pixelRoi = $this->_getPixelRoi($jp2->getWidth(), $jp2->getHeight(), $jp2->getScale(), $offsetX, $offsetY);
@@ -129,12 +129,12 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
     /**
      * Gets the timestamp that will be displayed in the image's watermark
      * 
-     * @return string timestamp
+     * @return string date
      */
-    public function getWaterMarkTimestamp()
+    public function getWaterMarkDateString()
     {
         // Add extra spaces between date and time for readability.
-        return str_replace("T", "   ", $this->timestamp) . "\n";		
+        return str_replace("T", "   ", $this->date) . "\n";		
     }
 
     /**

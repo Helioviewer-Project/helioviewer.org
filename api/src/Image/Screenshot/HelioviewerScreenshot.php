@@ -29,7 +29,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 {
     protected $outputFile;
     protected $layerImages;
-    protected $timestamp;
+    protected $date;
     protected $imageSize;
     protected $offsetLeft;
     protected $offsetRight;
@@ -44,7 +44,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     /**
      * Create an instance of Image_Screenshot
      *
-     * @param int    $timestamp   The unix timestamp of the observation date in the viewport
+     * @param int    $date        observation date string
      * @param int    $width       Screenshot width
      * @param int    $height      Screenshot height
      * @param float  $scale       Screenshot scale
@@ -56,10 +56,10 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param string $outputDir   The directory where the screenshot will be stored
      * @param bool   $compress    Whether to compress the image after extracting or not (true for tiles)
      */
-    public function __construct($timestamp, $width, $height, $imageScale, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
+    public function __construct($date, $width, $height, $imageScale, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
                                 $compress, $format="png", $interlace=true)
     {
-        $this->timestamp     = $timestamp;
+        $this->date          = $date;
         $this->quality       = $quality;
         $this->offsetLeft	 = $offsets['left'];
         $this->offsetTop	 = $offsets['top'];
@@ -129,7 +129,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         }
 
         if ($this->buildFilename) {
-            $time = str_replace(array(":", "-", "T", "Z"), "_", $this->timestamp);
+            $time = str_replace(array(":", "-", "T", "Z"), "_", $this->date);
             //$this->setOutputFile($time . $filenameInfo . time() . "." . $this->format);
             $this->setOutputFile($time . $filenameInfo . time() . ".jpg");
         }
@@ -184,7 +184,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();
         
-        $closestImg = $imgIndex->getClosestImage($this->timestamp, $sourceId);
+        $closestImg = $imgIndex->getClosestImage($this->date, $sourceId);
         return $closestImg;
     }
     
@@ -222,7 +222,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         foreach ($this->layerImages as $layer) {
             $lowerPad -= 12;
             $nameCmd  .= $layer->getWaterMarkName();
-            $timeCmd  .= $layer->getWaterMarkTimestamp();
+            $timeCmd  .= $layer->getWaterMarkDateString();
         }
         
         $black = new IMagickPixel("#000C");
@@ -263,7 +263,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         // Put the names on first, then put the times on as a separate layer so the times are nicely aligned.
         foreach ($this->layerImages as $layer) {
             $nameCmd .= $layer->getWaterMarkName();
-            $timeCmd .= $layer->getWaterMarkTimestamp();
+            $timeCmd .= $layer->getWaterMarkDateString();
         }
 
         // Outline words in black
