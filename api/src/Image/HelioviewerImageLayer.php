@@ -33,7 +33,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
     /**
      * Constructor
      * 
-     * @param string $sourceJp2     Original JP2 image from which the subfield should be derrived
+     * @param string $jp2           Original JP2 image from which the subfield should be derrived
      * @param string $outputFile    Location to output the subfield image to
      * @param int    $width         Width of the output image
      * @param int    $height        Height of the output image
@@ -46,16 +46,12 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * @param float  $offsetX       Offset of the sun center from the image center
      * @param float  $offsetY       Offset of the sun center from the image center
      * @param float  $opacity       The opacity of the image
-     * @param int    $jp2Width      Width of the JP2 image at it's natural resolution
-     * @param int    $jp2Height     Height of the JP2 image at it's natural resolution
-     * @param float  $jp2Scale      Pixel scale of the original JP2 image
      * @param date   $timestamp     The timestamp of the image
      * @param bool   $compress      Whether to compress the image after extracting or not (true for tiles)
      */
     public function __construct(
-        $sourceJp2, $outputFile, $width, $height, $imageScale, $roi, $instrument, $detector, 
-        $measurement, $layeringOrder, $offsetX, $offsetY, $opacity, $jp2Width, $jp2Height, $jp2Scale, 
-        $timestamp, $compress
+        $jp2, $outputFile, $width, $height, $imageScale, $roi, $instrument, $detector, 
+        $measurement, $layeringOrder, $offsetX, $offsetY, $opacity, $timestamp, $compress
     ) {
         $this->layeringOrder = $layeringOrder;
         $this->opacity		 = $opacity;
@@ -63,7 +59,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
         $this->timestamp     = $timestamp;
 
         $this->_roi = $roi;
-        $pixelRoi = $this->_getPixelRoi($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
+        $pixelRoi = $this->_getPixelRoi($jp2->getWidth(), $jp2->getHeight(), $jp2->getScale(), $offsetX, $offsetY);
 
         // Make a blank image if the region of interest does not include this image.
         if ($this->_imageNotVisible($pixelRoi)) {
@@ -71,8 +67,8 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
             
             include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
             $image = new Image_ImageType_BlankImage(
-               $width, $height, $sourceJp2, $pixelRoi, $jp2Width, $jp2Height,
-                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
+               $width, $height, $jp2, $pixelRoi,$imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
+               $opacity, $compress
             );
             
         } else {   	        
@@ -82,8 +78,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
             include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
 
             $image = new $classname(
-                $width, $height, $sourceJp2, $pixelRoi, $jp2Width, $jp2Height,
-                $jp2Scale, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
+                $width, $height, $jp2, $pixelRoi, $imageScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
                 $opacity, $compress
             );
         }
