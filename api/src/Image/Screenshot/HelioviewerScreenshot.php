@@ -11,8 +11,9 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once HV_ROOT_DIR . '/api/src/Image/Composite/CompositeImage.php';
-require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerImageLayer.php';
+require_once 'src/Image/Composite/CompositeImage.php';
+require_once 'src/Image/JPEG2000/JP2Image.php';
+require_once 'src/Image/HelioviewerImageLayer.php';
 /**
  * Image_HelioviewerScreenshot class definition
  *
@@ -104,21 +105,25 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 'bottom' => $this->offsetBottom,
                 'right'  => $this->offsetRight
             );
-       
-            $pathToFile     = $this->_getJP2Path($closestImage);
+            
+            // Instantiate a JP2Image
+            $jp2Filepath = $this->_getJP2Path($closestImage);
+          
+            $jp2 = new Image_JPEG2000_JP2Image(
+                $jp2Filepath, $closestImage['width'], $closestImage['height'], $closestImage['scale']
+            );       
+
             $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $roi, $layer['opacity']);
 
             $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
             
             $image = new Image_HelioviewerImageLayer(
-                $pathToFile, $tmpOutputFile, 
+                $jp2, $tmpOutputFile, 
                 $layer['width'], $layer['height'], $layer['imageScale'], 
                 $roi, $obsInfo['instrument'], $obsInfo['detector'],
                 $obsInfo['measurement'], $obsInfo['layeringOrder'], 
-                $offsetX, $offsetY, $layer['opacity'],
-                $closestImage['width'], $closestImage['height'], 
-                $closestImage['scale'], $closestImage['date'], $this->compress
+                $offsetX, $offsetY, $layer['opacity'], $closestImage['date'], $this->compress
             );
             array_push($this->layerImages, $image);
         }

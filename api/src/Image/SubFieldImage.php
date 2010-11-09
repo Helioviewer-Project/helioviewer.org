@@ -12,7 +12,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require 'JPEG2000/JP2Image.php';
+
 /**
  * Represents a JPEG 2000 sub-field image.
  *
@@ -31,7 +31,7 @@ require 'JPEG2000/JP2Image.php';
  */
 class Image_SubFieldImage
 {
-    protected $sourceJp2;
+    protected $jp2;
     protected $outputFile;
     protected $roi;
     protected $desiredScale;
@@ -52,9 +52,6 @@ class Image_SubFieldImage
      *
      * @param string $jp2          Original JP2 image from which the subfield should be derrived
      * @param array	 $roi          Subfield region of interest
-     * @param int    $jp2Width     Width of the JP2 image at it's natural resolution
-     * @param int    $jp2Height    Height of the JP2 image at it's natural resolution
-     * @param float  $jp2Scale     Pixel scale of the original JP2 image
      * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
@@ -69,29 +66,25 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($jp2, $roi, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY, $opacity, $compress
-    ) {
+    public function __construct($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
+    {
         $this->outputFile = $outputFile;
-        $this->sourceJp2  = new Image_JPEG2000_JP2Image($jp2, $jp2Width, $jp2Height, $jp2Scale);
+        $this->jp2        = $jp2;
         $this->roi        = $roi;
 
-        $this->jp2Width  = $jp2Width;
-        $this->jp2Height = $jp2Height;
-        $this->jp2Scale  = $jp2Scale;
         $this->subfieldWidth  = $roi["right"] - $roi["left"];
         $this->subfieldHeight = $roi["bottom"] - $roi["top"];
 
         $this->desiredScale    = $desiredScale;
-        $this->desiredToActual = $desiredScale / $jp2Scale;
+        $this->desiredToActual = $desiredScale / $jp2->getScale();
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));
 
         $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
         $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
         
-        $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
-        $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
+        $this->jp2RelWidth  = $jp2->getWidth()  /  $this->desiredToActual;
+        $this->jp2RelHeight = $jp2->getHeight() /  $this->desiredToActual;
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
@@ -203,12 +196,12 @@ class Image_SubFieldImage
         $width  = ($roi['right']  - $roi['left']) / $scale;
         $height = ($roi['bottom'] - $roi['top'])  / $scale;
 
-        $centerX = $this->jp2Width  / 2 + $this->offsetX;
-        $centerY = $this->jp2Height / 2 + $this->offsetY;
+        $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
+        $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
         
         $leftToCenter = ($this->roi['left'] - $centerX);
         $topToCenter  = ($this->roi['top']  - $centerY);
-        $scaleFactor  = $this->jp2Scale / $scale;
+        $scaleFactor  = $this->jp2->getScale() / $scale;
         $relLeftToCenter = $leftToCenter * $scaleFactor;
         $relTopToCenter  = $topToCenter  * $scaleFactor;
 
@@ -262,7 +255,7 @@ class Image_SubFieldImage
             $input = substr($this->outputFile, 0, -3) . "pgm";
 
             // Extract region (PGM)
-            $this->sourceJp2->extractRegion($input, $this->roi, $this->reduce);
+            $this->jp2->extractRegion($input, $this->roi, $this->reduce);
 
             // Convert to GD-readable format
             $grayscale = new IMagick($input);

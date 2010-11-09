@@ -165,20 +165,28 @@ class Module_WebClient implements Module
      * @return void
      */
     public function getTile ()
-    {        
-        require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerImageLayer.php';
+    {
+        require_once 'src/Image/JPEG2000/JP2Image.php';
+        require_once 'src/Image/HelioviewerImageLayer.php';
         
         $params = $this->_params;
         
-        // Make sure cache directory is available
+        // Create directories in cache
         $this->_createImageCacheDir(dirname($this->_params['uri']));
         
+        // Tile filepath
         $filepath = HV_CACHE_DIR . $this->getCacheFilename(
             $params['uri'], $params['imageScale'], $params['x1'], 
             $params['x2'], $params['y1'], $params['y2'], $params['format']
         );
         
-        $jp2File = HV_JP2_DIR . $params['uri'];
+        // JP2 filepath
+        $jp2Filepath = HV_JP2_DIR . $params['uri'];
+        
+        // Instantiate a JP2Image
+        $jp2 = new Image_JPEG2000_JP2Image(
+            $jp2Filepath, $this->_params['jp2Width'], $this->_params['jp2Height'], $this->_params['jp2Scale']
+        );
         
         $roi = array(
            "top"    => $params['y1'],
@@ -188,12 +196,11 @@ class Module_WebClient implements Module
         );
 
         $tile = new Image_HelioviewerImageLayer(
-            $jp2File, $filepath, $params['size'],
+            $jp2, $filepath, $params['size'],
             $params['size'], $params['imageScale'], $roi, 
             $params['instrument'], $params['detector'], $params['measurement'], 1, 
             $params['offsetX'], $params['offsetY'], 100, 
-            $params['jp2Width'], $params['jp2Height'], 
-            $params['jp2Scale'], $params['date'], true
+            $params['date'], true
         );
         
         return $tile->display();  
@@ -273,6 +280,27 @@ class Module_WebClient implements Module
         header('Content-Type: application/json');
         echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
     }
+    
+    /**
+     * Creates the directory structure which will be used to cache
+     * generated tiles.
+     *
+     * @param string $filepath The filepath where the image is stored
+     *
+     * @return void
+     *
+     * Note: mkdir may not set permissions properly due to an issue with umask.
+     *       (See http://www.webmasterworld.com/forum88/13215.htm)
+     */
+    private function _createImageCacheDir($filepath)
+    {
+        $cacheDir = HV_CACHE_DIR . $filepath;
+
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+            chmod($cacheDir, 0777);
+        }
+    }
 
     /**
      * Handles input validation
@@ -348,27 +376,6 @@ class Module_WebClient implements Module
         return true;
     }
 
-    /**
-     * Creates the directory structure which will be used to cache
-     * generated tiles.
-     *
-     * @param string $filepath The filepath where the image is stored
-     *
-     * @return void
-     *
-     * Note: mkdir may not set permissions properly due to an issue with umask.
-     *       (See http://www.webmasterworld.com/forum88/13215.htm)
-     */
-    private function _createImageCacheDir($filepath)
-    {
-        $cacheDir = HV_CACHE_DIR . $filepath;
-
-        if (!file_exists($cacheDir)) {
-            mkdir($cacheDir, 0777, true);
-            chmod($cacheDir, 0777);
-        }
-    }
-    
     /**
      * Prints the WebClient module's documentation header
      * 
