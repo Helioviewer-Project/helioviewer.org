@@ -107,10 +107,10 @@ abstract class Image_Composite_CompositeImage
     }
 
     /**
-     * Composites a watermark (the timestamps of the image) onto the lower left corner and the HV logo in the
+     * Composites a watermark (the date strings of the image) onto the lower left corner and the HV logo in the
      * lower right corner.
      *
-     * Layer names are added togeter as one string, and timestamps are added as a separate string,
+     * Layer names are added togeter as one string, and date strings are added as a separate string,
      * to line them up nicely. An example string would  be:
      *
      *      -annotate +20+0 'EIT 304\nLASCO C2\n'
@@ -147,7 +147,7 @@ abstract class Image_Composite_CompositeImage
         $y = $this->height - $watermark->getImageHeight() - 10;
         $imagickImage->compositeImage($watermark, IMagick::COMPOSITE_DISSOLVE, $x, $y);
         
-        // If the image is too small, text won't fit. Don't put a timestamp on it. 
+        // If the image is too small, text won't fit. Don't put a date string on it. 
         if ($this->width > 285) {
             $this->addWaterMarkText($imagickImage);
         }
