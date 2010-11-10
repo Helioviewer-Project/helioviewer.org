@@ -11,8 +11,9 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once HV_ROOT_DIR . '/api/src/Image/Composite/CompositeImage.php';
-require_once HV_ROOT_DIR . '/api/src/Image/HelioviewerImageLayer.php';
+require_once 'src/Image/Composite/CompositeImage.php';
+require_once 'src/Image/JPEG2000/JP2Image.php';
+require_once 'src/Image/HelioviewerImageLayer.php';
 /**
  * Image_HelioviewerScreenshot class definition
  *
@@ -28,7 +29,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 {
     protected $outputFile;
     protected $layerImages;
-    protected $timestamp;
+    protected $date;
     protected $imageSize;
     protected $offsetLeft;
     protected $offsetRight;
@@ -37,13 +38,16 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     protected $watermarkOn;
     protected $buildFilename;
     protected $compress;
+    protected $format;
+    protected $interlace;
 
     /**
      * Create an instance of Image_Screenshot
      *
-     * @param int    $timestamp   The unix timestamp of the observation date in the viewport
-     * @param object $meta        An ImageMetaInformation object
-     * @param array  $options     An array containing true/false values for "EdgeEnhance" and "Sharpen"
+     * @param int    $date        observation date string
+     * @param int    $width       Screenshot width
+     * @param int    $height      Screenshot height
+     * @param float  $scale       Screenshot scale
      * @param string $filename    Location where the screenshot will be stored
      * @param int    $quality     Screenshot compression quality
      * @param bool   $watermarkOn Whether to watermark the image or not
@@ -52,9 +56,10 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param string $outputDir   The directory where the screenshot will be stored
      * @param bool   $compress    Whether to compress the image after extracting or not (true for tiles)
      */
-    public function __construct($timestamp, $meta, $options, $filename, $quality, $watermarkOn, $offsets, $outputDir, $compress)
+    public function __construct($date, $width, $height, $imageScale, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
+                                $compress, $format="png", $interlace=true)
     {
-        $this->timestamp     = $timestamp;
+        $this->date          = $date;
         $this->quality       = $quality;
         $this->offsetLeft	 = $offsets['left'];
         $this->offsetTop	 = $offsets['top'];
@@ -63,8 +68,11 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $this->watermarkOn   = $watermarkOn;
         $this->buildFilename = !$filename;
         $this->compress      = $compress;
+        $this->format        = $format;
+        $this->interlace     = $interlace;
 
-        parent::__construct($meta, $options, $outputDir, $filename . ".jpg");
+        //parent::__construct($meta, $outputDir, $filename . ".$format");
+        parent::__construct($width, $height, $imageScale, $outputDir, $filename . ".jpg");
     }
 
     /**
@@ -88,7 +96,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 $closestImage = $layer['closestImage'];
             }
 
-            $obsInfo 	  = $this->_getObservatoryInformation($layer['sourceId']);
+            $obsInfo 	   = $this->_getObservatoryInformation($layer['sourceId']);
             $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";
             
             $roi = array(
@@ -97,27 +105,32 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 'bottom' => $this->offsetBottom,
                 'right'  => $this->offsetRight
             );
-       
-            $pathToFile     = $this->_getJP2Path($closestImage);
+            
+            // Instantiate a JP2Image
+            $jp2Filepath = $this->_getJP2Path($closestImage);
+          
+            $jp2 = new Image_JPEG2000_JP2Image(
+                $jp2Filepath, $closestImage['width'], $closestImage['height'], $closestImage['scale']
+            );       
+
             $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $roi, $layer['opacity']);
 
             $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
             
             $image = new Image_HelioviewerImageLayer(
-                $pathToFile, $tmpOutputFile, 'png', 
+                $jp2, $tmpOutputFile, 
                 $layer['width'], $layer['height'], $layer['imageScale'], 
                 $roi, $obsInfo['instrument'], $obsInfo['detector'],
                 $obsInfo['measurement'], $obsInfo['layeringOrder'], 
-                $offsetX, $offsetY, $layer['opacity'],
-                $closestImage['width'], $closestImage['height'], 
-                $closestImage['scale'], $closestImage['date'], $this->compress
+                $offsetX, $offsetY, $layer['opacity'], $closestImage['date'], $this->compress
             );
             array_push($this->layerImages, $image);
         }
 
         if ($this->buildFilename) {
-            $time = str_replace(array(":", "-", "T", "Z"), "_", $this->timestamp);
+            $time = str_replace(array(":", "-", "T", "Z"), "_", $this->date);
+            //$this->setOutputFile($time . $filenameInfo . time() . "." . $this->format);
             $this->setOutputFile($time . $filenameInfo . time() . ".jpg");
         }
 
@@ -155,7 +168,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         }
 
         return $cacheDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
-            $this->metaInfo->imageScale() . "_" . round($roi['left']) . "_" . round($roi['right']) . "x_" . 
+            $this->scale . "_" . round($roi['left']) . "_" . round($roi['right']) . "x_" . 
             round($roi['top']) . "_" . round($roi['bottom']) . "y-op$opacity.png";
     }
 
@@ -171,7 +184,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();
         
-        $closestImg = $imgIndex->getClosestImage($this->timestamp, $sourceId);
+        $closestImg = $imgIndex->getClosestImage($this->date, $sourceId);
         return $closestImg;
     }
     
@@ -209,7 +222,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         foreach ($this->layerImages as $layer) {
             $lowerPad -= 12;
             $nameCmd  .= $layer->getWaterMarkName();
-            $timeCmd  .= $layer->getWaterMarkTimestamp();
+            $timeCmd  .= $layer->getWaterMarkDateString();
         }
         
         $black = new IMagickPixel("#000C");
@@ -250,7 +263,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         // Put the names on first, then put the times on as a separate layer so the times are nicely aligned.
         foreach ($this->layerImages as $layer) {
             $nameCmd .= $layer->getWaterMarkName();
-            $timeCmd .= $layer->getWaterMarkTimestamp();
+            $timeCmd .= $layer->getWaterMarkDateString();
         }
 
         // Outline words in black

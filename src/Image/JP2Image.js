@@ -42,7 +42,7 @@ var JP2Image = Class.extend(
             params.server = this.server;
         }
 
-        $.post(this.api, params, $.proxy(this._onImageLoad, this), "json");
+        $.get(this.api, params, $.proxy(this._onImageLoad, this), "json");
     },
     
     /**

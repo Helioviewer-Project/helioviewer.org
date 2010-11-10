@@ -12,7 +12,7 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'HelioviewerScreenshot.php';
-require_once HV_ROOT_DIR . '/api/src/Helper/LayerParser.php';
+require_once 'src/Helper/LayerParser.php';
 /**
  * Image_Screenshot_HelioviewerScreenshotBuilder class definition
  *
@@ -52,15 +52,15 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
-            'edges'		  => false,
-            'sharpen' 	  => false,
-            'quality' 	  => 10,
             'display'	  => true,
             'watermarkOn' => true,
             'filename'    => false,
-            'compress'    => false
+            'compress'    => false,
+            'interlace'   => true,
+            'format'      => 'png',
+            'quality'     => 20
         );
-        $params = array_merge($defaults, $originalParams);
+        $params = array_replace($defaults, $originalParams);
         
         $imageScale = $params['imageScale'];
         $width  	= ($params['x2'] - $params['x1']) / $imageScale;
@@ -73,22 +73,16 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $height     *= $scaleFactor;
             $imageScale /= $scaleFactor;
         }
-        
-        $options = array(
-            'enhanceEdges'	=> $params['edges'] || false,
-            'sharpen' 		=> $params['sharpen'] || false
-        );
-        
-        $imageMeta = new Image_ImageMetaInformation($width, $height, $imageScale);
+
 
         $layerArray = $this->_createMetaInformation(
             $params['layers'],
             $imageScale, $width, $height, $closestImages
         );
-        
+
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
             $params['obsDate'], 
-            $imageMeta, $options, 
+            $width, $height, $imageScale, 
             $params['filename'], 
             $params['quality'], $params['watermarkOn'],
             array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),

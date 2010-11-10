@@ -11,11 +11,6 @@
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
- * 
- * TODO 2010/04/15: Write our own wrapper around FFmpeg? Development of PVT seems to have
- * stopped and since operations we perform are relatively simple, may be easier to write our
- * own wrapper. One consideration is whether or not PVT currently uses the FFmpeg PHP module
- * for any of the methods we call, in which case it may be beneficial for us to do the same.
  */
 require_once 'interface.Module.php';
 
@@ -81,7 +76,8 @@ class Module_Movies implements Module
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"    => array('startTime', 'endTime'),
                 "ints"     => array('frameRate', 'quality', 'numFrames'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "uuids"    => array('uuid')
             );
             break;
         case "playMovie":
@@ -132,21 +128,19 @@ class Module_Movies implements Module
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
         
         $builder = new Movie_HelioviewerMovieBuilder();
-                
-        // Make a temporary directory to store the movie in.
-        $now    = date("Ymd_His");
+
+        if (!isset($this->_params['uuid']))
+            $this->_params['uuid'] = uuid_create(UUID_TYPE_DEFAULT);
         
-        $tmpDir = HV_CACHE_DIR . "/movies/$now";
+        // Make a temporary directory to store the movie in.
+        $tmpDir = HV_CACHE_DIR . "/movies/" . $this->_params['uuid'];
 
         if (!file_exists($tmpDir)) {
             mkdir($tmpDir, 0777, true);
             chmod($tmpDir, 0777);
         }
 
-        $filepath = $builder->buildMovie($this->_params, $tmpDir);
-        
-        header('Content-type: application/json');
-        echo json_encode(array("url" => $filepath));
+        $builder->buildMovie($this->_params, $tmpDir);
     }
 
     /**

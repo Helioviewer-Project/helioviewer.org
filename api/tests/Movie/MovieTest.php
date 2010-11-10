@@ -52,10 +52,9 @@ class MovieTest extends PHPUnit_Framework_TestCase
 /*
 	public function testHelioviewerMovieCreation() {
 		require_once 'api/src/Movie/HelioviewerMovie.php';
-		$options = array('edges' => false, 'sharpen' => false);
 		$hvMovie = new Movie_HelioviewerMovie(
 			$this->startTime, $this->numFrames, $this->frameRate, 'mp4',
-        	$options, $this->timeStep, $this->outputFile, 10, $this->movieMeta
+        	$this->timeStep, $this->outputFile, 10, $this->movieMeta
         );
         $this->assertTrue(isset($hvMovie));
         $images = array();
@@ -96,8 +95,6 @@ class MovieTest extends PHPUnit_Framework_TestCase
 			'startDate'	 => $this->startTime,
 			'timeStep'	 => $this->timeStep,
 			'frameRate'	 => $this->frameRate,
-			'edges'		 => false,
-			'sharpen'	 => false,
 			'numFrames'	 => 20,
 			'hqFormat'	 => "mp4",
 			'quality'	 => 10,

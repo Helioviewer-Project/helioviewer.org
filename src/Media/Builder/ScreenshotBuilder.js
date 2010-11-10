@@ -131,6 +131,6 @@ var ScreenshotBuilder = MediaBuilder.extend(
             "' style='cursor: pointer'>Click here to download. </div>", options]); 
         };
        
-        $.post(this.url, params, callback, "json");
+        $.get(this.url, params, callback, "json");
     }
 });

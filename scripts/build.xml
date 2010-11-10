@@ -1,6 +1,6 @@
 <project name="Helioviewer" default="build" basedir="../">
 	<!-- Helioviewer Apache Ant build.xml. -->
-	<!-- Last updated: April 2010 By Keith -->
+	<!-- Last updated: November 2010 By Keith -->
 	<description>
 		Helioviewer Apache Ant build.xml
     </description>
@@ -11,32 +11,42 @@
         
 		<echo>Concatenating JavaScript/CSS</echo>
 
-		<!-- concatenate in two-steps to preserve include order -->
+		<!-- Concatenate in two-steps to preserve include order -->
 		<concat destfile="build/helioviewer.js" encoding="UTF-8" eol="lf">
 			<fileset dir="src/" includes="Utility/Config.js, Tiling/Layer/Layer.js, Tiling/Layer/TileLayer.js, Tiling/Manager/LayerManager.js, Tiling/Manager/TileLayerManager.js, Viewport/Viewport.js, Viewport/Helper/MouseCoordinates.js, UIController.js" />
 			<fileset dir="src/" includes="**/*.js" excludes="Config.js, Layer.js, LayerManager.js" />
 		</concat>
 
 		<concat destfile="build/css/helioviewer.css" encoding="UTF-8" eol="lf">
-		    <file file="scripts/concat/Header.css" />
 			<filelist dir="${cssdir}" files="main.css"/>
 		    <fileset dir="${cssdir}" includes="*.css" excludes="main.css"/>
 		</concat>
         
-        <echo>Minifying JavaScript</echo>
+        <echo>Minifying JavaScript/CSS</echo>
 
-		<!-- minify-->
+		<!-- Minify JavaScript-->
 		<exec dir="scripts/jsmin" executable="jsmin.py" input="build/helioviewer.js" 
 		  output="build/helioviewer.min.js.tmp" resolveexecutable="true" />
           
+        <!-- Minify CSS -->
+        <exec dir="build/css/" executable="java">
+            <arg line="-jar ../../scripts/yuicompressor/yuicompressor-2.4.2.jar --type css -o helioviewer.min.css.tmp helioviewer.css" />
+        </exec>
+          
         <echo>Adding download notice</echo>  
         
-        <!-- add header with link to full source code -->
+        <!-- Add header with link to full code/CSS -->
         <concat destfile="build/helioviewer.min.js" encoding="UTF-8" eol="lf">
             <file file="scripts/concat/Header.js" />
             <file file="build/helioviewer.min.js.tmp" />   
         </concat>
         <delete file="build/helioviewer.min.js.tmp" />
+        
+        <concat destfile="build/css/helioviewer.min.css" encoding="UTF-8" eol="lf">
+            <file file="scripts/concat/Header.css" />
+            <file file="build/css/helioviewer.min.css.tmp" />   
+        </concat>
+        <delete file="build/css/helioviewer.min.css.tmp" />
 		  
 		<echo>Done!</echo>
 	</target>

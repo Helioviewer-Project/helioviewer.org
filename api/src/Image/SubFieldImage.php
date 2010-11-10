@@ -12,7 +12,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require 'JPEG2000/JP2Image.php';
+
 /**
  * Represents a JPEG 2000 sub-field image.
  *
@@ -31,10 +31,9 @@ require 'JPEG2000/JP2Image.php';
  */
 class Image_SubFieldImage
 {
-    protected $sourceJp2;
+    protected $jp2;
     protected $outputFile;
     protected $roi;
-    protected $format;
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
@@ -51,13 +50,8 @@ class Image_SubFieldImage
     /**
      * Creates an Image_SubFieldImage instance
      *
-     * @param string $sourceJp2    Original JP2 image from which the subfield should be derrived
-     * @param date   $date         The timestamp of the image
+     * @param string $jp2          Original JP2 image from which the subfield should be derrived
      * @param array	 $roi          Subfield region of interest
-     * @param string $format       File format to use when saving the subfield image
-     * @param int    $jp2Width     Width of the JP2 image at it's natural resolution
-     * @param int    $jp2Height    Height of the JP2 image at it's natural resolution
-     * @param float  $jp2Scale     Pixel scale of the original JP2 image
      * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
@@ -72,30 +66,25 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-        $outputFile, $offsetX, $offsetY, $opacity, $compress
-    ) {
+    public function __construct($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
+    {
         $this->outputFile = $outputFile;
-        $this->sourceJp2  = new Image_JPEG2000_JP2Image($sourceJp2, $jp2Width, $jp2Height, $jp2Scale);
+        $this->jp2        = $jp2;
         $this->roi        = $roi;
-        $this->format     = $format;
 
-        $this->jp2Width  = $jp2Width;
-        $this->jp2Height = $jp2Height;
-        $this->jp2Scale  = $jp2Scale;
         $this->subfieldWidth  = $roi["right"] - $roi["left"];
         $this->subfieldHeight = $roi["bottom"] - $roi["top"];
 
         $this->desiredScale    = $desiredScale;
-        $this->desiredToActual = $desiredScale / $jp2Scale;
+        $this->desiredToActual = $desiredScale / $jp2->getScale();
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));
 
         $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
         $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
-
-        $this->jp2RelWidth  = $jp2Width  /  $this->desiredToActual;
-        $this->jp2RelHeight = $jp2Height /  $this->desiredToActual;
+        
+        $this->jp2RelWidth  = $jp2->getWidth()  /  $this->desiredToActual;
+        $this->jp2RelHeight = $jp2->getHeight() /  $this->desiredToActual;
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
@@ -207,12 +196,12 @@ class Image_SubFieldImage
         $width  = ($roi['right']  - $roi['left']) / $scale;
         $height = ($roi['bottom'] - $roi['top'])  / $scale;
 
-        $centerX = $this->jp2Width  / 2 + $this->offsetX;
-        $centerY = $this->jp2Height / 2 + $this->offsetY;
+        $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
+        $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
         
         $leftToCenter = ($this->roi['left'] - $centerX);
         $topToCenter  = ($this->roi['top']  - $centerY);
-        $scaleFactor  = $this->jp2Scale / $scale;
+        $scaleFactor  = $this->jp2->getScale() / $scale;
         $relLeftToCenter = $leftToCenter * $scaleFactor;
         $relTopToCenter  = $topToCenter  * $scaleFactor;
 
@@ -263,47 +252,57 @@ class Image_SubFieldImage
     protected function buildImage()
     {
         try {
-            $grayscale    = substr($this->outputFile, 0, -3) . "pgm";
-            $intermediate = substr($this->outputFile, 0, -3) . "png";
+            $input = substr($this->outputFile, 0, -3) . "pgm";
 
             // Extract region (PGM)
-            $this->sourceJp2->extractRegion($grayscale, $this->roi, $this->reduce);
+            $this->jp2->extractRegion($input, $this->roi, $this->reduce);
 
-            $image = new IMagick($grayscale);
-            $image->setImageFormat('PNG'); 
-            $image->setImageDepth(8);
-            $image->setImageType(IMagick::IMGTYPE_GRAYSCALE);
-            $image->writeImage($intermediate);
-            $image->destroy();
+            // Convert to GD-readable format
+            $grayscale = new IMagick($input);
+            $grayscale->setImageFormat('PNG');
+            $grayscale->setImageType(IMagick::IMGTYPE_GRAYSCALE); 
+            $grayscale->setImageDepth(8);
+            $grayscale->setImageCompressionQuality(10);
+            
+            $grayscaleString = $grayscale->getimageblob();
 
-            //Apply color-lookup table
-            $this->setColorPalette($intermediate, $intermediate);
+            // Assume that no color table is needed
+            $coloredImage = $grayscale;
             
-            $image = new IMagick($intermediate);
+            // Apply color table if one exists
+            if ($this->colorTable) {
+                $coloredImageString = $this->setColorPalette($grayscaleString);
             
-            $this->setAlphaChannel($image);
-            $this->compressImage($image);
+                $coloredImage = new IMagick();        
+                $coloredImage->readimageblob($coloredImageString);
+            }            
+            
+            // Set alpha channel for images with transparent components
+            $this->setAlphaChannel($coloredImage);
+            
+            // Apply compression and interlacing
+            $this->compressImage($coloredImage);
             
             // Resize extracted image to correct size before padding.
-            $image->resizeImage(round($this->subfieldRelWidth), round($this->subfieldRelHeight), IMagick::FILTER_TRIANGLE, 0.6);
-            $image->setImageBackgroundColor('transparent');
+            $coloredImage->resizeImage(round($this->subfieldRelWidth), round($this->subfieldRelHeight), IMagick::FILTER_TRIANGLE, 0.6);
+            $coloredImage->setImageBackgroundColor('transparent');
             
             // Places the current image on a larger field of black if the final image is larger than this one
-            $image->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
+            $coloredImage->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
             
             /* 
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
              * It seems that even if this particular instance of writeImage doesn't take the full time frame, if several instances of it are
              * running PHP will complain.  
              */
-            set_time_limit(60);
-            $image->writeImage($this->outputFile);
-            $image->destroy();
-
-            if ($this->outputFile != $intermediate) {
-                unlink($intermediate);
-            }
-            unlink($grayscale);
+            //set_time_limit(60);
+            
+            $coloredImage->writeImage($this->outputFile);
+            
+            // Clean up
+            $grayscale->destroy();
+            $coloredImage->destroy();
+            unlink($input);
 
         } catch(Exception $e) {
             throw $e;
@@ -327,12 +326,17 @@ class Image_SubFieldImage
             return;
         }
         
-        $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
+        // Get extension
+        $parts = explode(".", $this->outputFile);
+        $extension = end($parts);
 
-        if ($this->format === "png") {
-            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+        // Apply compression based on image type
+        if ($extension === "png") {
+            $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
             $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
-        } else {
+            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+        } elseif ($extension === "jpg") {
+            $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
             $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
             $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
         }
@@ -401,21 +405,16 @@ class Image_SubFieldImage
      *
      * Note: input and output are usually the same file.
      *
-     * @param string $input  Location of input image
-     * @param string $output Location to save new image to
+     * @param string &$input  Location of input image
      *
-     * @return void
+     * @return String binary string representation of image after processing
      */    
-    protected function setColorPalette($input, $output)
+    protected function setColorPalette(&$input)
     {	
-        $gd   = null;
         $clut = $this->colorTable;
 
-        if (file_exists($input)) {
-            $gd = imagecreatefrompng($input);
-        } else {
-            throw new Exception("Unable to apply color-table: $input does not exist.");
-        }
+        // Read in image string
+        $gd = imagecreatefromstring($input);
 
         if (!$gd) {
             throw new Exception("Unable to apply color-table: $input is not a valid image.");
@@ -423,6 +422,7 @@ class Image_SubFieldImage
 
         $ctable = imagecreatefrompng($clut);
 
+        // Apply color table
         for ($i = 0; $i <= 255; $i++) {
             $rgb = imagecolorat($ctable, 0, $i);
             $r = ($rgb >> 16) & 0xFF;
@@ -431,21 +431,19 @@ class Image_SubFieldImage
             imagecolorset($gd, $i, $r, $g, $b);
         }
 
-        // Enable interlacing
-        imageinterlace($gd, true);
+        // Write new image string
+        ob_start();
 
-        //$this->format == "jpg" ? imagejpeg($gd, $output, HV_JPEG_COMPRESSION_QUALITY) : imagepng($gd, $output);
-        //if ($this->format == "jpg")
-        //    imagejpeg($gd, $output, HV_JPEG_COMPRESSION_QUALITY);
-        //else
-        imagepng($gd, $output);
+        imagepng($gd, NULL);
+        $blob = ob_get_contents();
+        
+        ob_end_clean();
 
-        // Cleanup
-        if ($input != $output) {
-            unlink($input);
-        }
+        // Clean up
         imagedestroy($gd);
         imagedestroy($ctable);
+            
+        return $blob;
     }
 
     /**
@@ -470,11 +468,10 @@ class Image_SubFieldImage
 
             header('Content-Length: '.filesize($this->outputFile));
 
-            if ($this->format == "png") {
-                header("Content-Type: image/png");
-            } else {
-                header("Content-Type: image/jpeg");
-            }
+            // Set content-type
+            $fileinfo = new finfo(FILEINFO_MIME);
+            $mimetype = $fileinfo->file($this->outputFile);
+            header("Content-type: " . $mimetype);
 
             // Filename & Content-length
             $filename = basename($this->outputFile);

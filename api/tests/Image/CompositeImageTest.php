@@ -87,7 +87,7 @@ class CompositeImageTest extends PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($this->outputFile);
 		
-		$compImg = new Composite_HelioviewerCompositeImage($meta, array("edges" => false, "sharpen" => false), HV_CACHE_DIR . "/test");
+		$compImg = new Composite_HelioviewerCompositeImage($meta, HV_CACHE_DIR . "/test");
 		$this->assertTrue(isset($compImg));
 		
 		$compImg->compositeImageFromImageArray(array($layer));
@@ -106,7 +106,7 @@ class CompositeImageTest extends PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($outputFile2);
 		
-		$compImg = new Composite_HelioviewerCompositeImage($this->meta, array("edges" => false, "sharpen" => false), HV_CACHE_DIR . "/test");
+		$compImg = new Composite_HelioviewerCompositeImage($this->meta, HV_CACHE_DIR . "/test");
 		$compImg->compositeImageFromImageArray(array($layer1, $layer2));
 		$this->assertFileExists($compImg->getComposite());
 	}
@@ -129,7 +129,7 @@ class CompositeImageTest extends PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($outputFile3);
 		
-		$compImg = new Composite_HelioviewerCompositeImage($this->meta, array("edges" => false, "sharpen" => false), HV_CACHE_DIR . "/test");
+		$compImg = new Composite_HelioviewerCompositeImage($this->meta, HV_CACHE_DIR . "/test");
 		$compImg->compositeImageFromImageArray(array($layer1, $layer2, $layer3));
 		$this->assertFileExists($compImg->getComposite());
 	}

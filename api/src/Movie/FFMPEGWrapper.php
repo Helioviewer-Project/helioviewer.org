@@ -2,12 +2,19 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Movie_FFMPEGWrapper Class Definition
+ * 
+ * Detecting problems with FFmpeg encoding:
+ *  When using exec to call FFmpeg from the command line no useful return code or output
+ *  information is returned. In order to the detect problems then the simplest way is to
+ *  check and make sure the filesize is reasonable.
+ *
  *
  * PHP version 5
  *
  * @category Movie
  * @package  Helioviewer
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -17,6 +24,7 @@
  * @category Movie
  * @package  Helioviewer
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
@@ -58,12 +66,13 @@ class Movie_FFMPEGWrapper
             . " -f mp4 -b 800k -coder 0 -bt 200k -maxrate 96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 "
             . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " " 
             . $this->_macFlags . " " . $ipodVideoName;
+            
+        exec(escapeshellcmd($cmd));
 
-        try {
-            exec(escapeshellcmd($cmd));
-        } catch (Exception $e) {
-            throw new Exception("Unable to create iPod video: " . $e->getMessage());
-        }
+        // Check to ensure that movie size is valid
+        if (filesize($ipodVideoName) < 1000)
+            throw new Exception("FFmpeg error encountered: Unable to create iPod video.");
+
         return $ipodVideoName;
     }
     
@@ -78,13 +87,14 @@ class Movie_FFMPEGWrapper
      */
     public function createFlashVideo($hqFile, $filename, $outputDir)
     {
-        $cmd = HV_FFMPEG . " -i $outputDir/$hqFile -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $outputDir/$filename";
+        $filepath = "$outputDir/$filename";
+        $cmd = HV_FFMPEG . " -i $outputDir/$hqFile -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $filepath";
     
-        try {
-            exec(escapeshellcmd($cmd));
-        } catch (Exception $e) {
-            throw new Exception("Unable to create Flash video: " . $e->getMessage());
-        }
+        exec(escapeshellcmd($cmd));
+
+        // Check to ensure that movie size is valid
+        if (filesize($filepath) < 1000)
+            throw new Exception("FFmpeg error encountered: Unable to create flv.");
     }
     
     /**
@@ -109,16 +119,20 @@ class Movie_FFMPEGWrapper
         // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
         // fps >= 2
         $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
+        
+        $filepath = $outputDir . "/" . $filename;
 
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $tmpImageDir . "/frame%d.jpg"
             . " -r " . $outputRate . " -vcodec libx264 -vpre hq -threads " . HV_FFMPEG_MAX_THREADS . " -b 2048k -s " 
-            . $width . "x" . $height . " -y " . $outputDir . "/" . $filename;
+            . $width . "x" . $height . " -y $filepath";
             
-        try {
-            exec(escapeshellcmd($cmd));
-        } catch (Exception $e) {
-            throw new Exception("Unable to create video: " . $e->getMessage());
-        }
+        exec(escapeshellcmd($cmd));
+            
+        // If FFmpeg segfaults, an empty movie container may still be produced,
+        // check to ensure that movie size is valid
+        if (filesize($filepath) < 1000)
+            throw new Exception("FFmpeg error encountered.");
+
         return $filename;
     }
 }

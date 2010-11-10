@@ -165,15 +165,65 @@ class Module_WebClient implements Module
      * @return void
      */
     public function getTile ()
-    {        
-        include_once 'src/Image/Tiling/HelioviewerTileBuilder.php';
-
-        $builder = new Image_Tiling_HelioviewerTileBuilder();
+    {
+        require_once 'src/Image/JPEG2000/JP2Image.php';
+        require_once 'src/Image/HelioviewerImageLayer.php';
         
-        // Make sure cache directory is available
+        $params = $this->_params;
+        
+        // Create directories in cache
         $this->_createImageCacheDir(dirname($this->_params['uri']));
         
-        return $builder->getTile($this->_params);
+        // Tile filepath
+        $filepath = HV_CACHE_DIR . $this->getCacheFilename(
+            $params['uri'], $params['imageScale'], $params['x1'], 
+            $params['x2'], $params['y1'], $params['y2'], $params['format']
+        );
+        
+        // JP2 filepath
+        $jp2Filepath = HV_JP2_DIR . $params['uri'];
+        
+        // Instantiate a JP2Image
+        $jp2 = new Image_JPEG2000_JP2Image(
+            $jp2Filepath, $this->_params['jp2Width'], $this->_params['jp2Height'], $this->_params['jp2Scale']
+        );
+        
+        $roi = array(
+           "top"    => $params['y1'],
+           "left"   => $params['x1'],
+           "bottom" => $params['y2'],
+           "right"  => $params['x2']
+        );
+
+        $tile = new Image_HelioviewerImageLayer(
+            $jp2, $filepath, $params['size'],
+            $params['size'], $params['imageScale'], $roi, 
+            $params['instrument'], $params['detector'], $params['measurement'], 1, 
+            $params['offsetX'], $params['offsetY'], 100, 
+            $params['date'], true
+        );
+        
+        return $tile->display();  
+    }
+    
+    /**
+     * Builds a filename for a cached tile or image based on boundaries and scale
+     * 
+     * @param string $uri    The uri of the original jp2 image
+     * @param float  $scale  The scale of the extracted image
+     * @param float  $x1     The left boundary in arcseconds
+     * @param float  $x2     The right boundary in arcseconds
+     * @param float  $y1     The top boundary in arcseconds
+     * @param float  $y2     The bottom boundary in arcseconds
+     * @param string $format jpg or png
+     * 
+     * @return string
+     */
+    private function getCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
+    {
+        return dirname($uri) . "/" . substr(basename($uri), 0, -4) . "_" . $scale 
+                . "_" . round($x1) . "_" . round($x2) . "x_" . round($y1) . "_"
+                . round($y2) . "y." . $format;
     }
 
     /**
@@ -201,7 +251,7 @@ class Module_WebClient implements Module
      *
      * See the API webpage for example usage.
      * 
-     * Parameters quality, filename, sharpen, edges, and display are optional parameters and can be left out completely.
+     * Parameters quality, filename, and display are optional parameters and can be left out completely.
      * 
      * Note that filename does NOT have the . extension on it. The reason for
      * this is that in the media settings pop-up dialog, there is no way of
@@ -219,6 +269,7 @@ class Module_WebClient implements Module
 
         $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
         
+        // Display screenshot
         if ($this->_params['display']) {
             $fileinfo = new finfo(FILEINFO_MIME);
             $mimetype = $fileinfo->file($response);
@@ -227,44 +278,30 @@ class Module_WebClient implements Module
             die(file_get_contents($response));
         }
         
+        // Print JSON
         header('Content-Type: application/json');
         echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
     }
     
     /**
-     * getViewerImage (aka "getCompositeImage")
+     * Creates the directory structure which will be used to cache
+     * generated tiles.
      *
-     * Example usage: (outdated!)
-     *     http://helioviewer.org/api/index.php?action=getViewerImage
-     *         &layers=SOH_EIT_EIT_195&timestamps=1065312000&imageScale=2.4
-     *         &tileSize=512&xRange=-1,0&yRange=-1,0
-     *     http://helioviewer.org/api/index.php?action=getViewerImage
-     *         &layers=SOH_EIT_EIT_195,SOH_LAS_0C2_0WL
-     *         &timestamps=1065312000,1065312360&imageScale=5.26
-     *         &tileSize=512&xRange=-1,0&yRange=-1,0&edges=false
-     *
-     * Notes:
-     *     Building a UTC timestamp in javascript
-     *         var d = new Date(Date.UTC(2003, 9, 5));
-     *         var unix_ts = d.getTime() * 1000;
-     *
-     * TODO
-     *     = If no params are passed, print out API usage description
-     *       (and possibly a query builder form)...
-     *     = Add support for fuzzy timestamp matching. Could default to exact
-     *       matching unless user specifically requests fuzzy date-matching.
-     *     = Separate out layer details into a Layer PHP class?
-     *     = Update getViewerImage to use "layers" instead of "layers" + "timestamps"
+     * @param string $filepath The filepath where the image is stored
      *
      * @return void
+     *
+     * Note: mkdir may not set permissions properly due to an issue with umask.
+     *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
-    public function getViewerImage ()
+    private function _createImageCacheDir($filepath)
     {
-        include_once 'src/Image/CompositeImage.php';
+        $cacheDir = HV_CACHE_DIR . $filepath;
 
-        //Create and display composite image
-        $img = Image_CompositeImage::compositeImageFromQuery($this->_params);
-        $img->printImage();
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+            chmod($cacheDir, 0777);
+        }
     }
 
     /**
@@ -318,8 +355,7 @@ class Module_WebClient implements Module
                 "files" => array('file')
             );
             break;
-        case "getViewerImage":
-            break;
+
         // Any booleans that default to true cannot be listed here because the
         // validation process sets them to false if they are not given.
         case "takeScreenshot":
@@ -342,27 +378,6 @@ class Module_WebClient implements Module
         return true;
     }
 
-    /**
-     * Creates the directory structure which will be used to cache
-     * generated tiles.
-     *
-     * @param string $filepath The filepath where the image is stored
-     *
-     * @return void
-     *
-     * Note: mkdir may not set permissions properly due to an issue with umask.
-     *       (See http://www.webmasterworld.com/forum88/13215.htm)
-     */
-    private function _createImageCacheDir($filepath)
-    {
-        $cacheDir = HV_CACHE_DIR . $filepath;
-
-        if (!file_exists($cacheDir)) {
-            mkdir($cacheDir, 0777, true);
-            chmod($cacheDir, 0777);
-        }
-    }
-    
     /**
      * Prints the WebClient module's documentation header
      * 

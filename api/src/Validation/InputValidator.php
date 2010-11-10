@@ -46,7 +46,8 @@ class Validation_InputValidator
             "bools"    => "checkBools",
             "dates"    => "checkDates",
             "urls"     => "checkURLs",
-            "files"    => "checkFilePaths"
+            "files"    => "checkFilePaths",
+            "uuids"    => "checkUUIDs"
         );
 
         // Run validation checks
@@ -178,6 +179,26 @@ class Validation_InputValidator
                     throw new Exception("Invalid value for $float. Please specify an float value.");
                 } else {
                     $params[$float] = (float) $params[$float];
+                }
+            }
+        }
+    }
+    
+    /**
+     * Validates UUIDs
+     *
+     * @param array $uuids   A list of uuids which are used by an action.
+     * @param array &$params The parameters that were passed in
+     *
+     * @return void
+     */
+    public static function checkUUIDs($uuids, &$params)
+    {
+        foreach ($uuids as $uuid) {
+            if (isset($params[$uuid])) {
+                if (!preg_match('/^[a-z0-9]{8}-?[a-z0-9]{4}-?[a-z0-9]{4}-?[a-z0-9]{4}-?[a-z0-9]{12}$/', $params[$uuid])) {
+                    throw new Exception("Invalid identifier. Valid characters for UUIDs include " .
+                    "lowercase letters, digits, and hyphens.");
                 }
             }
         }

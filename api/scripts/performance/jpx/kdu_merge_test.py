@@ -5,7 +5,7 @@ from numpy import std, median
 # JPX lengths to create
 lengths = [100,200,500,1000]
 
-# mont to run tests in
+# month to run tests in (make sure there are no large gaps for interval that will be tested)
 month   = 10
 
 # Command template

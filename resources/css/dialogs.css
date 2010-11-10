@@ -53,10 +53,6 @@ td.layers-name {
 	padding-left: 1em;
 }
 
-td.time-input-field input {
-	width: 6em;
-}
-
 #select-options-tabs input, #select-options-tabs select {
 	font-size: 8pt;
 	padding: 1px;
