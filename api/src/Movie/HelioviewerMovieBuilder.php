@@ -143,7 +143,7 @@ class Movie_HelioviewerMovieBuilder
             $tmpImageDir = $outputDir . "/frames";
             
             // Build movie frames
-            $images = $this->_buildFramesFromMetaInformation($width, $height, $imageScale, $timestamps, $tmpImageDir);
+            $images = $this->_buildFramesFromMetaInformation($imageScale, $timestamps, $tmpImageDir);
 
             // Compile movie
             $filepath = $movie->buildMovie($images, $tmpImageDir);
@@ -385,7 +385,7 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return $images an array of built movie frames
      */
-    private function _buildFramesFromMetaInformation($width, $height, $imageScale, $timestamps, $tmpDir) 
+    private function _buildFramesFromMetaInformation($imageScale, $timestamps, $tmpDir) 
     {
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $images  = array();
@@ -393,17 +393,10 @@ class Movie_HelioviewerMovieBuilder
         $frameNum = 0;
         
         // Movie frame parameters
-        $params = array(
-            'width'      => $width,
-            'height'     => $height,
-            'imageScale' => $imageScale,
-            'layers'     => $this->_params['layers'],
+        $options = array(
             'quality'    => $this->_params['quality'],
-            'x1'         => $this->_params['x1'],
-            'x2'         => $this->_params['x2'],
-            'y1'         => $this->_params['y1'],
-            'y2'         => $this->_params['y2'],
             'watermarkOn'=> $this->_params['watermarkOn'],
+            'outputDir'  => $tmpDir,
             'display'    => false,
             'interlace'  => false,
             'format'     => 'jpg' //'bmp'
@@ -411,10 +404,19 @@ class Movie_HelioviewerMovieBuilder
 
         // Compile frames
         foreach ($timestamps as $time => $closestImages) {
-            $params['obsDate']  = toISOString(parseUnixTimestamp($time));
-            $params['filename'] = "frame" . $frameNum++;
+            $obsDate = toISOString(parseUnixTimestamp($time));
             
-            $image = $builder->takeScreenshot($params, $tmpDir, $closestImages);
+            $options = array_merge($options, array(
+                'filename'      => "frame" . $frameNum++,
+                'closestImages' => $closestImages
+            ));
+                        
+            $image = $builder->takeScreenshot(
+                $this->_params['layers'], $obsDate, $imageScale,
+                $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
+                $options
+            );
+            
             $images[] = $image;
         }
 

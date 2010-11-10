@@ -39,32 +39,29 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
     /**
      * Prepares the parameters passed in from the api call and creates a screenshot from them.
      * 
-     * @param array  $originalParams The original parameters passed in by the API call. These
-     *                               are then merged with $defaults in case some of those
-     *                               parameters weren't specified.
-     * @param string $outputDir      The directory path where the screenshot will be stored.
-     * @param array  $closestImages  An array of the closest images to the timestamp for this
-     *                               screenshot, associated by sourceId as keys.
+     * @param 
      *                              
      * @return string the screenshot
      */
-    public function takeScreenshot($originalParams, $outputDir, $closestImages)
+    public function takeScreenshot($layers, $obsDate, $imageScale, $x1, $x2, $y1, $y2, $options)
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
+            'closestImages' => array(),
+            'outputDir'   => HV_CACHE_DIR . "/screenshots",
+            'format'      => 'png',
             'display'	  => true,
             'watermarkOn' => true,
             'filename'    => false,
             'compress'    => false,
             'interlace'   => true,
-            'format'      => 'png',
             'quality'     => 20
         );
-        $params = array_replace($defaults, $originalParams);
         
-        $imageScale = $params['imageScale'];
-        $width  	= ($params['x2'] - $params['x1']) / $imageScale;
-        $height 	= ($params['y2'] - $params['y1']) / $imageScale;
+        $options = array_replace($defaults, $options);
+        
+        $width  = ($x2 - $x1) / $imageScale;
+        $height = ($y2 - $y1) / $imageScale;
         
         // Limit to maximum dimensions
         if ($width > $this->maxWidth || $height > $this->maxHeight) {
@@ -74,19 +71,16 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
             $imageScale /= $scaleFactor;
         }
 
+        // Screenshot meta information
+        $layerArray = $this->_createMetaInformation($layers, $imageScale, $width, $height, $options['closestImages']);
+        
+        // Region of interest
+        $roi = array('top' => $y1, 'left' => $x1, 'bottom' => $y2, 'right' => $x2);
 
-        $layerArray = $this->_createMetaInformation(
-            $params['layers'],
-            $imageScale, $width, $height, $closestImages
-        );
-
+        // Instantiate a screenshot
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
-            $params['obsDate'], 
-            $width, $height, $imageScale, 
-            $params['filename'], 
-            $params['quality'], $params['watermarkOn'],
-            array('top' => $params['y1'], 'left' => $params['x1'], 'bottom' => $params['y2'], 'right' => $params['x2']),
-            $outputDir, $params['compress']
+            $obsDate, $width, $height, $imageScale, $options['filename'], $options['quality'],
+            $options['watermarkOn'], $roi, $options['outputDir'], $options['compress']
         );
 
         $screenshot->buildImages($layerArray);
@@ -111,14 +105,11 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      * 
      * @return string
      */
-    public function createForEvent($originalParams, $eventInfo, $outputDir)
+    public function createForEvent($params, $eventInfo, $outputDir)
     { 
-        $defaults = array(
-            'ipod'    => false
-        );
+        $params = array_merge($params, array("ipod" => false));
         
-        $params = array_merge($defaults, $originalParams);
-        $params['display'] = false;
+        // Determine filename and output directory
         $filename = "Screenshot_";
         if ($params['ipod'] === "true" || $params['ipod'] === true) {
             $outputDir .= "/iPod";
@@ -126,26 +117,41 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         } else {
             $outputDir .= "/regular";
         }
+        
+        // Use event bounding box as the region of interest
+        $roi = $this->_getBoundingBox($params, $eventInfo);
 
-        $box = $this->_getBoundingBox($params, $eventInfo);
-        $params['x1'] = $box['x1'];
-        $params['x2'] = $box['x2'];
-        $params['y1'] = $box['y1'];
-        $params['y2'] = $box['y2'];
-
+        // Layers
         $layers = $this->_getLayersFromParamsOrSourceIds($params, $eventInfo);
+        
+        // Array to store resulting screenshots
         $files  = array();
+        
+        // Options
+        $options = array(
+            'display' => false
+        );
 
         foreach ($layers as $layer) {
             $layerFilename = $filename . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($layer));
 
             if (!HV_DISABLE_CACHE && file_exists($outputDir . "/" . $layerFilename . ".jpg")) {
+                // If the file already exists in cache, then our work is done
                 $files[] = $outputDir . "/" . $layerFilename . ".jpg";
             } else {
                 try {
-                    $params['filename'] = $layerFilename;
-                    $params['layers']   = $layer;
-                    $files[] = $this->takeScreenshot($params, $outputDir, array());
+                    // Extend options
+                    $options = array_merge($options, array(
+                        "filename"  => $layerFilename,
+                        "outputDir" => $outputDir
+                    ));
+
+                    $files[] = $this->takeScreenshot(
+                        $layer, $params['obsDate'], $params['imageScale'],
+                        $roi['x1'], $roi['x2'], $roi['y1'], $roi['y2'],
+                        $options
+                    );
+                    
                 } catch(Exception $e) {
                     // Ignore any exceptions thrown by takeScreenshot, since they
                     // occur when no image is made and we only care about images that
