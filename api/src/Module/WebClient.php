@@ -196,11 +196,9 @@ class Module_WebClient implements Module
         );
 
         $tile = new Image_HelioviewerImageLayer(
-            $jp2, $filepath, $params['size'],
-            $params['size'], $params['imageScale'], $roi, 
+            $jp2, $filepath, $params['size'], $params['size'], $params['imageScale'], $roi,
             $params['instrument'], $params['detector'], $params['measurement'], 1, 
-            $params['offsetX'], $params['offsetY'], 100, 
-            $params['date'], true
+            $params['offsetX'], $params['offsetY'], 100, $params['date'], true
         );
         
         return $tile->display();  
@@ -265,22 +263,40 @@ class Module_WebClient implements Module
         include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $tmpDir  = HV_CACHE_DIR . "/screenshots";
+        
+        // Screenshot options
+        $options = array(
+            "display" => false
+        );
 
-        $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
+        $file = $builder->takeScreenshot(
+            $this->_params['layers'], $this->_params['obsDate'], $this->_params['imageScale'], 
+            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
+            $options
+        );
+        
+        // TODO 11/10/2010 instead of returning result from takeScreenshot simply return true on success and
+        // and add "display" and "getURL" methods. Moreover, a "display=false" param is already passed into takeScreenshot()!
         
         // Display screenshot
         if ($this->_params['display']) {
-            $fileinfo = new finfo(FILEINFO_MIME);
-            $mimetype = $fileinfo->file($response);
-            header("Content-Disposition: inline; filename=\"" . basename($response) . "\"");
-            header("Content-type: " . $mimetype);
-            die(file_get_contents($response));
+            $this->displayImage($file);
         }
         
         // Print JSON
         header('Content-Type: application/json');
-        echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
+        echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $file)));
+    }
+    
+    /**
+     * Displays an image and stops execution
+     */
+    public function displayImage($filename) {
+        $fileinfo = new finfo(FILEINFO_MIME);
+        $mimetype = $fileinfo->file($filename);
+        header("Content-Disposition: inline; filename=\"" . basename($filename) . "\"");
+        header("Content-type: " . $mimetype);
+        die(file_get_contents($filename));
     }
     
     /**

@@ -75,7 +75,10 @@ class ScreenshotTest extends PHPUnit_Framework_TestCase
 			'quality' 	 => 10
 		);
 		$module = new Module_WebClient($params);
-		$screenshot = $module->takeScreenshot();
+		$screenshot = $module->takeScreenshot(
+            $params['layers'], $params['obsDate'], $params['imageScale'], 
+            $params['x1'], $params['x2'], $params['y1'], $params['y2']
+		);
 		$this->assertFileExists($screenshot);
 	}
 	

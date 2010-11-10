@@ -19,6 +19,7 @@ var Movie = Media.extend(
         this._super(params, dateRequested);
 
         this.time = this.startTime.replace("T", " ");
+        
         // Get rid of the extra .000 if there is one
         if (this.time.length > 20) {
             this.time = this.time.slice(0, -5);
@@ -121,7 +122,7 @@ var Movie = Media.extend(
     getVideoPlayerHTML: function (width, height) {
         var path, file, hqFile, url;
 
-        file   = this.url.match(/[\w]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
+        file   = this.url.match(/[\w-]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
         hqFile = file.replace("flv", this.hqFormat);
         
         // HTML5 Video (Currently only H.264 supported)
