@@ -441,10 +441,10 @@ class Database_ImgIndex
         
         // Set defaults for verbose mode
         if ($verbose) {
-            $tree["SOHO"]["default"] = true;
-            $tree["SOHO"]["children"]["EIT"]["default"] = true;
-            $tree["SOHO"]["children"]["EIT"]["children"]["EIT"]["default"] = true;
-            $tree["SOHO"]["children"]["EIT"]["children"]["EIT"]["children"]["304"]["default"] = true;
+            $tree["SDO"]["default"] = true;
+            $tree["SDO"]["children"]["AIA"]["default"] = true;
+            $tree["SDO"]["children"]["AIA"]["children"]["AIA"]["default"] = true;
+            $tree["SDO"]["children"]["AIA"]["children"]["AIA"]["children"]["171"]["default"] = true;
         }
 
         return $tree;
