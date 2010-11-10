@@ -37,13 +37,8 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
      * 
      * @param int    $width        Desired width of the image
      * @param int    $height       Desired height of the image
-     * @param date   $date         Timestamp of the image
-     * @param string $sourceJp2    The filepath to the image's JP2 file
+     * @param string $jp2          Source JP2 image
      * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
-     * @param string $format       File format
-     * @param int    $jp2Width     Width of the JP2 image
-     * @param int    $jp2Height    Height of the JP2 image
-     * @param int    $jp2Scale     Scale of the JP2 image
      * @param float  $desiredScale Desired scale of the output image
      * @param string $detector     Detector
      * @param string $measurement  Measurement
@@ -54,18 +49,15 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */
     public function __construct(
-        $width, $height, $date, $sourceJp2, $roi, $format, $jp2Width, $jp2Height, 
-        $jp2Scale, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
+        $width, $height, $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
         $opacity, $compress
     ) {
         $this->_measurement = $measurement;
         
-        parent::__construct(
-            $sourceJp2, $date, $roi, $format, $jp2Width, $jp2Height, $jp2Scale, $desiredScale, 
-            $outputFile, $offsetX, $offsetY, $opacity, $compress
-        );
+        parent::__construct($jp2, $roi, $desiredScale,$outputFile, $offsetX, $offsetY, $opacity, $compress);
 
         // MDI has no color table
+        $this->setColorTable(false);
 
         $this->width 	= $width;
         $this->height 	= $height;
@@ -74,14 +66,13 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
     /**
      * No color table. Do nothing.
      * 
-     * @param string $input  Input file
-     * @param string $output Output file
+     * @param string &$input  Input file
      * 
      * @return void
      */
-    protected function setColorPalette($input, $output)
+    protected function setColorPalette(&$input)
     {
-        return;
+        return false;
     }
     
     /**

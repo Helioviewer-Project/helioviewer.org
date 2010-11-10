@@ -8,14 +8,16 @@
  * @category Movie
  * @package  Helioviewer
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once HV_ROOT_DIR . '/api/src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
-require_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovie.php';
-require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
-require_once HV_ROOT_DIR . '/api/src/Helper/LayerParser.php';
-require_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
+require_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+require_once 'src/Movie/HelioviewerMovie.php';
+require_once 'src/Helper/DateTimeConversions.php';
+require_once 'src/Helper/LayerParser.php';
+require_once 'src/Database/ImgIndex.php';
+
 /**
  * Image_Movie_HelioviewerMovieBuilder class definition
  *
@@ -91,8 +93,6 @@ class Movie_HelioviewerMovieBuilder
         $defaults = array(
             'numFrames'   => false,
             'filename'    => false,
-            'sharpen'     => false,
-            'edges'       => false,
             'display'     => true,
             'watermarkOn' => true,
             'endTime'     => false,
@@ -103,18 +103,12 @@ class Movie_HelioviewerMovieBuilder
         $this->_params = array_merge($defaults, $params);
 
         list($width, $height, $imageScale) = $this->_limitToMaximumDimensions();
-        
-        $options = array(
-            'enhanceEdges'  => $this->_params['edges'],
-            'sharpen'       => $this->_params['sharpen']
-        );
-
-        $movieMeta = new Image_ImageMetaInformation($width, $height, $imageScale);
 
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
             $layers = getLayerArrayFromString($this->_params['layers']);
+
             $this->_limitNumLayers($layers);
         
             list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
@@ -135,31 +129,33 @@ class Movie_HelioviewerMovieBuilder
             }
 
             $numFrames = sizeOf($timestamps);
+            
             // Subtract 1 because we added an extra frame to the end
             $frameRate = $this->_determineOptimalFrameRate($numFrames - 1);
             
+            // Instantiate movie class
             $movie = new Movie_HelioviewerMovie(
-                $startTime, $numFrames, $frameRate, $this->_params['hqFormat'], $options, $filename,
-                $this->_params['quality'], $movieMeta, $outputDir
+                $startTime, $numFrames, $frameRate, $this->_params['hqFormat'], $filename,
+                $this->_params['quality'], $width, $height, $imageScale, $outputDir
             );
             
-            $tmpImageDir = $outputDir . "/tmp-" . $filename;
-            $images      = $this->_buildFramesFromMetaInformation($movieMeta, $timestamps, $tmpImageDir);
+            //$tmpImageDir = $outputDir . "/tmp-" . $filename;
+            $tmpImageDir = $outputDir . "/frames";
+            
+            // Build movie frames
+            $images = $this->_buildFramesFromMetaInformation($width, $height, $imageScale, $timestamps, $tmpImageDir);
 
             // Compile movie
             $filepath = $movie->buildMovie($images, $tmpImageDir);
-
-            if (!file_exists($filepath)) {
-                throw new Exception('The requested movie is either unavailable or does not exist.');
-            }
             
             $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
             
             if ($this->_params['display'] === true) {
-                return Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
+                echo Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
+            } else {
+                header('Content-type: application/json');
+                echo json_encode(array("url" => $filepath));   
             }
-
-            return $url;
             
         } catch(Exception $e) {
             touch($outputDir . "/INVALID");
@@ -384,51 +380,46 @@ class Movie_HelioviewerMovieBuilder
     /**
      * Takes in meta and layer information and creates movie frames from them.
      * 
-     * @param {Object} $movieMeta  an ImageMetaInformation object that has width, height, and imageScale.
      * @param {Array}  $timestamps timestamps associated with each frame in the movie 
      * @param {String} $tmpDir     the directory where the frames will be stored
      * 
      * @return $images an array of built movie frames
      */
-    private function _buildFramesFromMetaInformation($movieMeta, $timestamps, $tmpDir) 
+    private function _buildFramesFromMetaInformation($width, $height, $imageScale, $timestamps, $tmpDir) 
     {
-        $builder     = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $images     = array();
-        
-        $width  = $movieMeta->width();
-        $height = $movieMeta->height();
-        $scale  = $movieMeta->imageScale();
+        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        $images  = array();
         
         $frameNum = 0;
+        
+        // Movie frame parameters
+        $params = array(
+            'width'      => $width,
+            'height'     => $height,
+            'imageScale' => $imageScale,
+            'layers'     => $this->_params['layers'],
+            'quality'    => $this->_params['quality'],
+            'x1'         => $this->_params['x1'],
+            'x2'         => $this->_params['x2'],
+            'y1'         => $this->_params['y1'],
+            'y2'         => $this->_params['y2'],
+            'watermarkOn'=> $this->_params['watermarkOn'],
+            'display'    => false,
+            'interlace'  => false,
+            'format'     => 'jpg' //'bmp'
+        );
 
+        // Compile frames
         foreach ($timestamps as $time => $closestImages) {
-            $isoTime = toISOString(parseUnixTimestamp($time));
+            $params['obsDate']  = toISOString(parseUnixTimestamp($time));
+            $params['filename'] = "frame" . $frameNum++;
             
-            $params = array(
-                'width'       => $width,
-                'height'     => $height,
-                'imageScale' => $scale,
-                'obsDate'      => $isoTime,
-                'layers'      => $this->_params['layers'],
-                'filename'     => "frame" . $frameNum++,
-                'quality'     => $this->_params['quality'],
-                'sharpen'     => $this->_params['sharpen'],
-                'edges'         => $this->_params['edges'],
-                'display'     => false,
-                'x1'          => $this->_params['x1'],
-                'x2'         => $this->_params['x2'],
-                'y1'         => $this->_params['y1'],
-                'y2'         => $this->_params['y2'],
-                'watermarkOn'=> $this->_params['watermarkOn']
-            );
-    
             $image = $builder->takeScreenshot($params, $tmpDir, $closestImages);
             $images[] = $image;
         }
 
         // Copy the last frame so that it actually shows up in the movie for the same amount of time
-        // as the rest of the frames. 
-        
+        // as the rest of the frames.        
         $lastImage = dirname($image) . "/frame" . $frameNum . ".jpg";
         copy($image, $lastImage);
         $images[]  = $lastImage;
@@ -580,47 +571,5 @@ class Movie_HelioviewerMovieBuilder
         }
 
         return $frameRate;
-    }
-    
-    /**
-     * Provides a rough estimate of how long it should take to build the movie as
-     * well as a unique id for the movie.
-     * Notes: A 1024x1024 image takes roughly 1.2 second per frame for a single layer,
-     * 1.5 seconds per frame for two layers, and 2 seconds per frame for 3 layers
-     * (including LASCO C3). These are rounded up slightly from actual
-     * values. Time per frame decreases by a factor of roughly 1.5 for movies as 
-     * dimensions decrease by a factor of 4. (a 1024x1024 image has 4x as many pixels 
-     * as a 512x512 image). 
-     * 
-     * This formula is not accurate for movies with less than 10 frames or less than
-     * 400x400 pixels.
-     * 
-     * @param string $filepath  Path to the movie
-     * @param int    $numFrames Number of frames in the movie
-     * @param int    $numLayers Number of layers in each frame
-     * @param int    $width     Movie width
-     * @param int    $height    Movie height
-     * 
-     * @return void
-     */
-    private function _returnIdAndETA($filepath, $numFrames, $numLayers, $width, $height)
-    {
-        $numPixels = $width * $height;
-        
-        $sizeFactor   = 1024*1024 / $numPixels;
-        
-        $timePerFrame = 0.000001 * $width * $height + 0.25;
-        $eta = $timePerFrame * $numFrames;
-        
-        $id = str_replace(HV_CACHE_DIR, "", $filepath);
-
-        $information = array(
-           "id"  => $id,
-           "eta" => $eta
-        );
-        
-        echo JSON_encode($information);
-        
-        return;
     }
 }

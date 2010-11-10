@@ -251,7 +251,7 @@ var TileLayerAccordion = Layer.extend(
             params.server = server;
         }
         
-        $.post("api/index.php", params, function (response) {
+        $.get("api/index.php", params, function (response) {
             self._buildFITSHeaderDialog(name, id, response);
         });
     },

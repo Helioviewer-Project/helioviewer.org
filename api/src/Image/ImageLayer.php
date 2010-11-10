@@ -26,19 +26,16 @@
 abstract class Image_ImageLayer
 {
     protected $outputFile;
-    protected $timestamp;
     protected $image;
     
     /**
      * Constructor
      * 
-     * @param date   $timestamp  The timestamp of the image
      * @param object $image      A built ImageType object
      * @param string $outputFile The output file of the image
      */
-    public function __construct($timestamp, $image, $outputFile)
+    public function __construct($image, $outputFile)
     {
-        $this->timestamp 	= $timestamp;
         $this->outputFile 	= $outputFile;
         $this->image		= $image;
     }
@@ -63,16 +60,6 @@ abstract class Image_ImageLayer
     public function setNewFilePath($filePath) 
     {
         $this->image->setNewFilePath($filePath);
-    }
-    
-    /**
-     * Gets the timestamp
-     * 
-     * @return date timestamp
-     */
-    public function timestamp() 
-    {
-        return $this->timestamp;
     }
 }
 ?>
