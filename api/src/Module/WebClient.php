@@ -269,6 +269,7 @@ class Module_WebClient implements Module
 
         $response = $builder->takeScreenshot($this->_params, $tmpDir, array());
         
+        // Display screenshot
         if ($this->_params['display']) {
             $fileinfo = new finfo(FILEINFO_MIME);
             $mimetype = $fileinfo->file($response);
@@ -277,6 +278,7 @@ class Module_WebClient implements Module
             die(file_get_contents($response));
         }
         
+        // Print JSON
         header('Content-Type: application/json');
         echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $response)));
     }
