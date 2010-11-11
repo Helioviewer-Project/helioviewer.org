@@ -269,6 +269,7 @@ class Module_WebClient implements Module
             "display" => false
         );
 
+        // Build screenshot
         $file = $builder->takeScreenshot(
             $this->_params['layers'], $this->_params['obsDate'], $this->_params['imageScale'], 
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
