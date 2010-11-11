@@ -139,14 +139,13 @@ class Module_SolarEvents implements Module
             $format  = ($ipod === true? "mp4" : "flv");
             
             $tmpDir  = HV_CACHE_DIR . "/events/" . $id;
-            $this->_createEventCacheDir($tmpDir . "/screenshots");
-            $this->_createEventCacheDir($tmpDir . "/movies");
             
             $event->screenshots = array();
             $event->movies      = array();
             
             $screenshots = $this->_checkForFiles($tmpDir . "/screenshots", $ipod, "*");
             $movies      = $this->_checkForFiles($tmpDir . "/movies", $ipod, $format);
+
             foreach ($screenshots as $url) {
                 array_push($event->screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
             }
@@ -171,43 +170,28 @@ class Module_SolarEvents implements Module
      */
     public function getScreenshotsForEvent()
     {
-        include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        $outputDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
+        $ipod       = isset($this->_params['ipod']) && $this->_params['ipod'];
         
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        
-        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
-        
-        $ipod    = isset($this->_params['ipod']) && $this->_params['ipod'];
-        
-        $this->_createEventCacheDir($tmpDir);
-        
-        // Screenshot options
-//        $options = array(
-//            "display" => false
-//        );
-//
-//        // Build screenshot
-//        $file = $builder->takeScreenshot(
-//            $this->_params['layers'], $this->_params['obsDate'], $this->_params['imageScale'], 
-//            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
-//            $options
-//        );
-        
-        $response = $this->_checkForFiles($tmpDir, $ipod, "*");
-        if (empty($response) || HV_DISABLE_CACHE) {
-            if (!$this->_getOnly()) {                    
-                $response = $this->_createForEvent($builder, $tmpDir);
-            }
+        // Get all available screenshots
+        $response = $this->_checkForFiles($outputDir, $ipod, "*");
+
+        // Create non-existent screenshots if requested
+        if (!$this->_getOnly() && (empty($response) || HV_DISABLE_CACHE)) {
+            include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+            $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+            $response = $this->_createForEvent($builder, $outputDir);
         }
 
         $finalResponse = array();
+        
+        // Return URLs instead of Filepaths
         foreach ($response as $filepath) {
             array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
         
         header('Content-Type: application/json');
-        echo JSON_encode($finalResponse);
-        return $finalResponse;
+        echo json_encode($finalResponse);
     }
     
     /**
@@ -219,31 +203,34 @@ class Module_SolarEvents implements Module
      */
     public function getMoviesForEvent () 
     {
-        include_once 'src/Movie/HelioviewerMovieBuilder.php';
+        $outputDir = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/movies";
+        $ipod      = isset($this->_params['ipod']) && $this->_params['ipod'];
         
-        $builder = new Movie_HelioviewerMovieBuilder();
-        $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/movies";
-        $ipod    = isset($this->_params['ipod']) && $this->_params['ipod'];
-        $format  = ($ipod === true? "mp4" : "flv");
-        $this->_createEventCacheDir($tmpDir);
+        // Movie format to look for or create
+        $format = ($ipod === true) ? "mp4" : "*";
         
-        $response = $this->_checkForFiles($tmpDir, $ipod, $format);        
-        if (empty($response) || HV_DISABLE_CACHE) {
-            if (!$this->_getOnly()) {
-                $response = $this->_createForEvent($builder, $tmpDir);
-            }
+        // Get all available movies
+        $response = $this->_checkForFiles($outputDir, $ipod, $format);
+        
+        // Create non-existent movies if requested
+        if (!$this->_getOnly() && (empty($response) || HV_DISABLE_CACHE)) {
+            include_once 'src/Movie/HelioviewerMovieBuilder.php';
+            $builder = new Movie_HelioviewerMovieBuilder();
+            $response = $this->_createForEvent($builder, $outputDir);
         }
         
         $finalResponse = array();
+        
+        // Return URLs instead of Filepaths
         foreach ($response as $filepath) {
-            if ($filepath !== null) {
+            if ($filepath) {
                 array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
             }
         }
-        
+
+        // Display results
         header('Content-Type: application/json');
-        echo JSON_encode($finalResponse);
-        return $finalResponse;
+        echo json_encode($finalResponse);
     }
     
     /**
@@ -257,6 +244,8 @@ class Module_SolarEvents implements Module
      */
     private function _checkForFiles($outputDir, $ipod, $format)
     {
+        $this->_createEventCacheDir($outputDir);
+        
         if ($ipod === true) {
             $outputDir .= "/iPod";
         } else {

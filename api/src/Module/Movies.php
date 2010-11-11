@@ -76,23 +76,14 @@ class Module_Movies implements Module
      */
     public function buildMovie ()
     {
-        include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+        include_once 'src/Movie/HelioviewerMovieBuilder.php';
         
         $builder = new Movie_HelioviewerMovieBuilder();
-        
-        $optionalParameters = array('display', 'endTime', 'hqFormat', 'uuid');
-
-        $options = array();
-        
-        foreach($optionalParameters as $opt) {
-            if (isset($this->_params[$opt]))
-                $options[$opt] = $this->_params[$opt];
-        }
 
         $builder->buildMovie(
-            $this->_params['layers'], $this->_params['startTime'],
-            $this->_params['imageScale'], $this->_params['x1'], $this->_params['x2'],
-            $this->_params['y1'], $this->_params['y2'], $options
+            $this->_params['layers'], $this->_params['startTime'], $this->_params['imageScale'], 
+            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
+            $this->_options
         );
     }
 
@@ -162,29 +153,32 @@ class Module_Movies implements Module
     {
         switch($this->_params['action'])
         {
-        // Any booleans that default to true cannot be listed here because the
-        // validation process sets them to false if they are not given.
         case "buildMovie":
             $expected = array(
-                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "optional" => array('endTime', 'display', 'filename', 'frameRate', 'hqFormat', 'quality', 'numFrames', 'uuid', 'watermarkOn'),
+                "bools"    => array('display', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
-                "ints"     => array('frameRate', 'quality', 'numFrames'),
+                "files"    => array('filename'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "ints"     => array('frameRate', 'quality', 'numFrames'),
                 "uuids"    => array('uuid')
             );
             break;
         case "playMovie":
             $expected = array(
                 "required" => array('file', 'width', 'height'),
+                "files"    => array('file'),
                 "floats"   => array('width', 'height')
             );
             break;
         case "queueMovie":
             $expected = array(
-               "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "bools"    => array('display'),
+               "required" => array('layers', 'startTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "optional" => array('endTime', 'filename', 'frameRate', 'hqFormat', 'quality', 'numFrames', 'watermarkOn'),
                "dates"    => array('startTime', 'endTime'),
-               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "ints"     => array('frameRate', 'quality', 'numFrames')
             );
         default:
             break;

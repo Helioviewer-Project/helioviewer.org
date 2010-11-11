@@ -62,10 +62,8 @@ class Movie_HelioviewerMovieBuilder
             'watermarkOn' => true
         );
         
-        $options = array_merge($defaults, $options);
-
-        //$this->_params = array_merge($defaults, $params);
-
+        $options = array_replace($defaults, $options);
+        
         list($width, $height, $imageScale) = $this->_limitToMaximumDimensions($imageScale, $x1, $x2, $y1, $y2);
 
         //Check to make sure values are acceptable
@@ -75,47 +73,59 @@ class Movie_HelioviewerMovieBuilder
 
             $this->_checkNumLayers($layers);
         
-            list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes($startTimeStr, $options['endTime']);
+            list($startTimestamp, $endTimestamp) = $this->_getStartAndEndTimes($startTimeStr, $options['endTime']);
+            
+            // Some functions expect date strings instead of unix timestamps
+            $startDateString = toISOString(parseUnixTimestamp($startTimestamp));
+            $endDateString   = toISOString(parseUnixTimestamp($endTimestamp));
 
-            $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime, $options['numFrames']);
+            // Compute the optimal number of frames to include in the movie
+            $optimalNumFrames = $this->_getOptimalNumFrames($layers, $startDateString, $endDateString, $options['numFrames']);
             
-            $this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
+            // Create directories in cache to store movies
+            $cacheDir = $this->_createCacheDirectories($options['uuid']);
             
-            $cadence    = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
-            $timestamps = $this->_getTimestamps($layersStr, $startTime, $cadence, $numFrames);
+            $tmpImageDir = $cacheDir . "/frames";
             
-            $this->_validateNumFrames(sizeOf($timestamps), $isoStartTime, $isoEndTime);
+            // Make sure that data was found to create a movie
+            if ($optimalNumFrames == 0) {
+                $msg = sprintf("There are not enough images for the given layers between %s and %s.", 
+                               toReadableISOString($startDateString), toReadableISOString($endDateString));
+
+                throw new Exception($msg, 1);
+            }
             
+            // Compute the optimal movie cadence
+            $cadence = $this->_determineOptimalCadence($startTimestamp, $endTimestamp, $optimalNumFrames);
+            
+            // Find the actual movie frames
+            $timestamps = $this->_getTimestamps($layersStr, $startTimestamp, $cadence, $optimalNumFrames);
+            
+            $numFrames = sizeOf($timestamps);
+            
+            // Make sure that data was found to create a movie
+            if ($numFrames == 0) {
+                $msg = sprintf("There are not enough images for the given layers between %s and %s.", 
+                               toReadableISOString($startDateString), toReadableISOString($endDateString));
+
+                throw new Exception($msg, 1);
+            }
+            
+            // Compute filename
             if (!$options['filename']) {
-                $start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
-                $end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
+                $start = str_replace(array(":", "-", "T", "Z"), "_", $startDateString);
+                $end   = str_replace(array(":", "-", "T", "Z"), "_", $endDateString);
                 $filename = $start . "_" . $end . $this->buildFilename($layers);
             } else {
                 $filename = $options['filename'];
             }
 
-            $numFrames = sizeOf($timestamps);
-            
             // Subtract 1 because we added an extra frame to the end
             $frameRate = $this->_determineOptimalFrameRate($numFrames - 1, $options['frameRate']);
             
-            // Create directories in cache to store movies
-            if ($options['uuid']) {
-                $cacheDir = HV_CACHE_DIR . "/movies/" . $options['uuid'];
-            } else {
-                $cacheDir = HV_CACHE_DIR . "/movies/" . uuid_create(UUID_TYPE_DEFAULT);
-            }            
-
-            if (!file_exists($cacheDir)) {
-                mkdir($cacheDir, 0777, true);
-                chmod($cacheDir, 0777);
-            }
-            
-            $tmpImageDir = $cacheDir . "/frames";
-            
             // Instantiate movie class
             $movie = new Movie_HelioviewerMovie(
-                $startTime, $numFrames, $frameRate, $options['hqFormat'], $filename,
+                $startTimestamp, $numFrames, $frameRate, $options['hqFormat'], $filename,
                 $options['quality'], $width, $height, $imageScale, $cacheDir
             );
 
@@ -143,6 +153,24 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
+     * Create directories in cache used to store movies
+     */
+    private function _createCacheDirectories ($uuid) {
+        if (!$uuid) {
+            $uuid = uuid_create(UUID_TYPE_DEFAULT);
+        }
+
+        $cacheDir = HV_CACHE_DIR . "/movies/" . $uuid;
+
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+            chmod($cacheDir, 0777);
+        }
+        
+        return $cacheDir;
+    }
+    
+    /**
      * Checks to make sure there are between 1 and 3 layers
      * 
      * @param array $layers -- an array of layer strings
@@ -157,54 +185,35 @@ class Movie_HelioviewerMovieBuilder
         }    
     }
     
+
     /**
-     * Checks to make sure there are at least 1 frame in the movie.
-     * 
-     * @param int  $numFrames    Number of frames in the movie
-     * @param date $isoStartTime ISO Date string
-     * @param date $isoEndTime   ISO Date string
-     * 
-     * @return void
-     */
-    private function _validateNumFrames($numFrames, $isoStartTime, $isoEndTime)
-    {
-        if ($numFrames == 0) {
-            $msg = "There are not enough images for the given layers between " . toReadableISOString($isoStartTime) . " and " 
-                 . toReadableISOString($isoEndTime);
-            throw new Exception($msg, 1);
-        }
-    }
-    /**
-     * Figures out startTime and endTime based on parameters. If endTime is not given, endTime defaults to 24 hours after
-     * startTime. If startTime is within a day of "now", startTime defaults to 24 hours before, and endTime becomes the old
-     * startTime to ensure that the user actually has a video to look at. 
+     * Determines appropriate start and end times to use for movie generation and returns timestamps for those times
      *
      * @return array
      */
-    private function _getStartAndEndTimes ($startTimeString, $endTimeString=false)
+    private function _getStartAndEndTimes ($startTimeString, $endTimeString)
     {
-        $isoStartTime  = $startTimeString;
-        $startTime     = toUnixTimestamp($isoStartTime);
+        $startTime = toUnixTimestamp($startTimeString);
         
         // Convert to seconds.
         $defaultWindow = HV_DEFAULT_MOVIE_TIME_WINDOW_IN_HOURS * 3600;
-            
+
+        // If endTime is not given, endTime defaults to 24 hours after startTime.
         if (!$endTimeString) {
-            $now = time();
-            if ($now - $startTime < $defaultWindow) {
-                $startTime -= $defaultWindow;
-                $isoStartTime = toISOString(parseUnixTimestamp($startTime));
-            }
-            
-            $endTime    = $startTime + $defaultWindow;
-            $isoEndTime = toISOString(parseUnixTimestamp($endTime));
-            
+            $endTime = $startTime + $defaultWindow;
         } else {
-            $isoEndTime = $endTimeString;
-            $endTime    = toUnixTimestamp($isoEndTime);
+            $endTime = toUnixTimestamp($endTimeString);
         }
         
-        return array($isoStartTime, $isoEndTime, $startTime, $endTime);
+        $now = time();
+        
+        // If startTime is within a day of "now", then endTime becomes "now" and the startTime becomes "now" - 24H.
+        if ($now - $startTime < $defaultWindow) {
+            $endTime   = $now;
+            $startTime = $now - $defaultWindow;
+        }
+
+        return array($startTime, $endTime);
     }
     
     /**
@@ -217,16 +226,13 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return string
      */
-    public function createForEvent($originalParams, $eventInfo, $outputDir) 
+    public function createForEvent($params, $eventInfo, $outputDir) 
     {
-        $defaults = array(
-           'ipod'    => false
-        );
-        $params = array_merge($defaults, $originalParams);
-        $params['display'] = false;
         $format = ".flv";
         $filename = "";
-        if ($params['ipod'] === "true" || $params['ipod'] === true) {
+        
+        // iPod modifications
+        if (isset($params['ipod']) && $params['ipod']) {
             $params['hqFormat'] = "ipod";
             $outputDir .= "/iPod";
             $format = ".mp4";
@@ -234,29 +240,41 @@ class Movie_HelioviewerMovieBuilder
             $outputDir .= "/regular";
         }
         
+        // Base filename
         $filename .= "Movie_";
         
+        // Compute region of interest
         $box = $this->_getBoundingBox($params, $eventInfo);
-        $params['x1'] = $box['x1'];
-        $params['x2'] = $box['x2'];
-        $params['y1'] = $box['y1'];
-        $params['y2'] = $box['y2'];
 
+        // Break up layer string into separate layers
         $layers = $this->_getLayersFromParamsOrSourceIds($params, $eventInfo);
+        
+        // Array to keep track of movies
         $files  = array();
 
         foreach ($layers as $layer) {
             $layerFilename = $filename . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($layer));
 
+            // If movie already exists, use cached version
             if (!HV_DISABLE_CACHE && file_exists($outputDir . "/" . $layerFilename . $format)) {
                 $files[] = $outputDir . "/" . $layerFilename . $format;
+                
+            // Otherwise generate movie
             } else {
                 try {
-                    $params['filename'] = $layerFilename;
-                    $params['layers']   = $layer;
-                    $files[] = $this->buildMovie($params, $outputDir, true);
+                    
+                    $options = array(
+                        "display"  => false,
+                        "endTime"  => $params['endTime'],
+                        "filename" => $layerFilename
+                    );
+                    
+                    //$files[] = $this->buildMovie($params, $outputDir, true);
+                    $files[] = $this->buildMovie(
+                        $layer, $params['startTime'], $params['imageScale'], $box['x1'], $box['x2'], $box['y1'], $box['y2'],
+                        $options
+                    );
                 } catch(Exception $e) {
-                    // Log these error messages for now. See if they can be avoided in future.
                     throw $e;
                 }
             }
