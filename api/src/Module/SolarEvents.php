@@ -26,6 +26,7 @@ require_once "interface.Module.php";
 class Module_SolarEvents implements Module
 {
     private $_params;
+    private $_options;
 
     /**
      * Constructor
@@ -36,7 +37,8 @@ class Module_SolarEvents implements Module
      */
     public function __construct(&$params)
     {
-        $this->_params = $params;
+        $this->_params  = $params;
+        $this->_options = array();
     }
 
     /**
@@ -161,62 +163,6 @@ class Module_SolarEvents implements Module
     }
 
     /**
-     * validate
-     *
-     * @return bool Returns true if input parameters are valid
-     */
-    public function validate()
-    {
-        switch($this->_params['action'])
-        {
-        case "getEvents":
-            $expected = array(
-                "required" => array('startDate'),
-                "bools"    => array('ipod'),
-                "dates"    => array('startDate', 'endDate')
-            );
-            break;
-        case "getEventFRMs":
-            $expected = array(
-               "required" => array('startDate', 'endDate'),
-               "dates"    => array('startDate', 'endDate')
-            );
-            break;
-        // Any booleans that default to true cannot be listed here because the
-        // validation process sets them to false if they are not given.
-        case "getScreenshotsForEvent": 
-            $expected = array(
-                "required" => array('eventId'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"    => array('obsDate'),
-                "ints"     => array('quality'),
-                "bools"    => array('display', 'getOnly', 'ipod')
-            );
-            break;
-        // Any booleans that default to true cannot be listed here because the
-        // validation process sets them to false if they are not given.
-        case "getMoviesForEvent": 
-            $expected = array(
-                "required" => array('eventId'),
-                "dates"    => array('startTime', 'endTime'),
-                "ints"     => array('frameRate', 'quality', 'numFrames'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "bools"    => array('display', 'getOnly', 'ipod')
-            );
-            break;  
-        default:
-            break;
-        }
-
-        // Check input
-        if (isset($expected)) {
-            Validation_InputValidator::checkInput($expected, $this->_params);
-        }
-
-        return true;
-    }
-    
-    /**
      * Gets a collection of screenshots from the cache as specified by the event ID 
      * in the parameters.
      * See the API webpage for example usage.
@@ -228,9 +174,24 @@ class Module_SolarEvents implements Module
         include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        
         $tmpDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
+        
         $ipod    = isset($this->_params['ipod']) && $this->_params['ipod'];
+        
         $this->_createEventCacheDir($tmpDir);
+        
+        // Screenshot options
+//        $options = array(
+//            "display" => false
+//        );
+//
+//        // Build screenshot
+//        $file = $builder->takeScreenshot(
+//            $this->_params['layers'], $this->_params['obsDate'], $this->_params['imageScale'], 
+//            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
+//            $options
+//        );
         
         $response = $this->_checkForFiles($tmpDir, $ipod, "*");
         if (empty($response) || HV_DISABLE_CACHE) {
@@ -387,6 +348,61 @@ class Module_SolarEvents implements Module
             mkdir($regular, 0777, true);
             chmod($regular, 0777);        
         }
+    }
+    
+    /**
+     * validate
+     *
+     * @return bool Returns true if input parameters are valid
+     */
+    public function validate()
+    {
+        switch($this->_params['action'])
+        {
+        case "getEvents":
+            $expected = array(
+                "required" => array('startDate'),
+                "optional" => array('ipod'),
+                "bools"    => array('ipod'),
+                "dates"    => array('startDate', 'endDate')
+            );
+            break;
+        case "getEventFRMs":
+            $expected = array(
+               "required" => array('startDate', 'endDate'),
+               "dates"    => array('startDate', 'endDate')
+            );
+            break;
+        case "getScreenshotsForEvent": 
+            $expected = array(
+                "required" => array('eventId'),
+                "optional" => array('quality', 'display', 'watermarkOn', 'ipod', 'getOnly'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "dates"    => array('obsDate'), // TODO 11/11/2010: Is obsDate ever used? what about imageScale, roi, etc?
+                "ints"     => array('quality'),
+                "bools"    => array('display', 'getOnly', 'ipod', 'watermarkOn')
+            );
+            break;
+        case "getMoviesForEvent": 
+            $expected = array(
+                "required" => array('eventId'),
+                "optional" => array('numFrames', 'frameRate', 'endTime', 'quality', 'display', 'watermarkOn', 'ipod', 'getOnly'),
+                "dates"    => array('startTime', 'endTime'),
+                "ints"     => array('frameRate', 'quality', 'numFrames'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "bools"    => array('display', 'getOnly', 'ipod', 'watermarkOn')
+            );
+            break;  
+        default:
+            break;
+        }
+
+        // Check input
+        if (isset($expected)) {
+            Validation_InputValidator::checkInput($expected, $this->_params, $this->_options);
+        }
+
+        return true;
     }
     
     /**

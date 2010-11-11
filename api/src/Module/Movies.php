@@ -33,6 +33,7 @@ class Module_Movies implements Module
      * @var mixed
      */
     private $_params;
+    private $_options;
 
     /**
      * Movie module constructor
@@ -42,6 +43,7 @@ class Module_Movies implements Module
     public function __construct(&$params)
     {
         $this->_params = $params;
+        $this->_options = array();
     }
 
     /**
@@ -190,7 +192,7 @@ class Module_Movies implements Module
 
         // Check input
         if (isset($expected)) {
-            Validation_InputValidator::checkInput($expected, $this->_params);
+            Validation_InputValidator::checkInput($expected, $this->_params, $this->_options);
         }
 
         return true;

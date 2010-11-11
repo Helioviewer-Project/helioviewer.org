@@ -26,6 +26,7 @@ require_once "interface.Module.php";
 class Module_WebClient implements Module
 {
     private $_params;
+    private $_options;
 
     /**
      * Constructor
@@ -36,7 +37,8 @@ class Module_WebClient implements Module
      */
     public function __construct(&$params)
     {
-        $this->_params = $params;
+        $this->_params  = $params;
+        $this->_options = array();
     }
 
     /**
@@ -139,12 +141,13 @@ class Module_WebClient implements Module
     {
         include_once 'src/Database/ImgIndex.php';
 
-        $imgIndex = new Database_ImgIndex();
-        $dataSources = json_encode($imgIndex->getDataSources($this->_params['verbose']));
+        $verbose = (isset($this->_options['verbose'])) ? $this->_options['verbose'] : false;
+
+        $imgIndex    = new Database_ImgIndex();
+        $dataSources = $imgIndex->getDataSources($verbose);
 
         header('Content-type: application/json;charset=UTF-8');
-
-        print $dataSources;
+        print json_encode($dataSources);
     }
 
     /**
@@ -263,27 +266,22 @@ class Module_WebClient implements Module
         include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        
-        // Screenshot options
-        $options = array(
-            "display" => false
-        );
 
         // Build screenshot
         $file = $builder->takeScreenshot(
             $this->_params['layers'], $this->_params['obsDate'], $this->_params['imageScale'], 
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
-            $options
+            $this->_options
         );
-        
+
         // TODO 11/10/2010 instead of returning result from takeScreenshot simply return true on success and
         // and add "display" and "getURL" methods. Moreover, a "display=false" param is already passed into takeScreenshot()!
-        
+
         // Display screenshot
-        if ($this->_params['display']) {
+        if (isset($this->_options['display']) && $this->_options['display']) {
             $this->displayImage($file);
         }
-        
+
         // Print JSON
         header('Content-Type: application/json');
         echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $file)));
@@ -344,16 +342,21 @@ class Module_WebClient implements Module
             );
 
             if (isset($this->_params["sourceId"])) {
-                $expected["required"] = array('date', 'sourceId');
-                $expected["ints"]     = array('sourceId');
+                $expected = array_merge($expected, array(
+                    "required" => array('date', 'sourceId'),
+                    "ints"     => array('sourceId')
+                ));
             } else {
-                $expected["required"] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
+                $expected = array_merge($expected, array(
+                    "required" => array('date', 'observatory', 'instrument', 'detector', 'measurement')
+                ));
             }
             break;
 
         case "getDataSources":
             $expected = array(
-               "bools" => array('verbose')
+               "optional" => array('verbose'),
+               "bools"    => array('verbose')
             );
             break;
 
@@ -373,15 +376,15 @@ class Module_WebClient implements Module
             );
             break;
 
-        // Any booleans that default to true cannot be listed here because the
-        // validation process sets them to false if they are not given.
         case "takeScreenshot":
             $expected = array(
                 "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
+                "optional" => array('filename', 'quality', 'display', 'watermarkOn'),
+                "files"    => array('filename'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"	   => array('obsDate'),
                 "ints"     => array('quality'),
-                "bools"    => array('display')
+                "bools"    => array('display', 'watermarkOn')
             );
             break;
         default:
@@ -389,7 +392,7 @@ class Module_WebClient implements Module
         }
 
         if (isset($expected)) {
-            Validation_InputValidator::checkInput($expected, $this->_params);
+            Validation_InputValidator::checkInput($expected, $this->_params, $this->_options);
         }
 
         return true;
