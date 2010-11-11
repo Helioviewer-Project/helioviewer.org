@@ -324,7 +324,7 @@ class Database_ImgIndex
      *
      * @return array A tree representation of the known data sources
      */
-    public function getDataSources ($verbose=false)
+    public function getDataSources ($verbose)
     {
         $fields = array("instrument", "detector", "measurement");
         
