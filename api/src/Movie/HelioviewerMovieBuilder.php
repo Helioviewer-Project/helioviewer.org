@@ -26,13 +26,13 @@ require_once 'src/Database/ImgIndex.php';
  * @category Movie
  * @package  Helioviewer
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
 class Movie_HelioviewerMovieBuilder
 {
-    private $_params;
-    private $_imgIndex;
+    private   $_imgIndex;
     protected $maxWidth  = 1920;
     protected $maxHeight = 1080;
     /**
@@ -44,113 +44,92 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
-     * Estimates the time it will take to create the requested movie
-     * 
-     * @param array $params Movie creation parameters
-     * 
-     * @return void
-     */
-    public function calculateETA($params)
-    {
-        $defaults = array(
-            'numFrames'   => false,
-            'filename'    => false,
-            'endTime'     => false
-        );
-
-        $this->_params = array_merge($defaults, $params);
-        list($width, $height, $imageScale) = $this->_limitToMaximumDimensions();
-
-        $layers = getLayerArrayFromString($this->_params['layers']);
-        list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
-        
-        $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
-        
-        $timePerFrame = 0.000001 * $width * $height + 0.25;
-        $eta = $timePerFrame * $numFrames;
-
-        header('Content-type: application/json');
-        
-        try {
-            $this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
-            echo JSON_encode(array("eta" => round($eta)));
-        } catch (Exception $e) {
-            throw $e;
-        }
-        return;
-    }
-
-    /**
      * Prepares the parameters passed in from the api call and makes a movie from them. 
-     * 
-     * @param {Array}  $params    parameters passed in by the api call. 
-     * @param {String} $outputDir The directory where the movie will be stored
      * 
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function buildMovie($params, $outputDir) 
+    public function buildMovie($layersStr, $startTimeStr, $imageScale, $x1, $x2, $y1, $y2, $options) 
     {
         $defaults = array(
-            'numFrames'   => false,
-            'filename'    => false,
             'display'     => true,
-            'watermarkOn' => true,
             'endTime'     => false,
+            'filename'    => false,
+            'frameRate'   => false,
             'hqFormat'    => "mp4",
-            'quality'     => 10
+            'numFrames'   => false,
+            'quality'     => 10,
+            'uuid'        => false,
+            'watermarkOn' => true
         );
+        
+        $options = array_merge($defaults, $options);
 
-        $this->_params = array_merge($defaults, $params);
+        //$this->_params = array_merge($defaults, $params);
 
-        list($width, $height, $imageScale) = $this->_limitToMaximumDimensions();
+        list($width, $height, $imageScale) = $this->_limitToMaximumDimensions($imageScale, $x1, $x2, $y1, $y2);
 
         //Check to make sure values are acceptable
         try {
             //Limit number of layers to three
-            $layers = getLayerArrayFromString($this->_params['layers']);
+            $layers = getLayerArrayFromString($layersStr);
 
-            $this->_limitNumLayers($layers);
+            $this->_checkNumLayers($layers);
         
-            list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes();
+            list($isoStartTime, $isoEndTime, $startTime, $endTime) = $this->_getStartAndEndTimes($startTimeStr, $options['endTime']);
 
-            $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime);
+            $numFrames = $this->_getOptimalNumFrames($layers, $isoStartTime, $isoEndTime, $options['numFrames']);
+            
             $this->_validateNumFrames($numFrames, $isoStartTime, $isoEndTime);
             
             $cadence    = $this->_determineOptimalCadence($startTime, $endTime, $numFrames);
-            $timestamps = $this->_getTimestamps($this->_params['layers'], $startTime, $cadence, $numFrames);
+            $timestamps = $this->_getTimestamps($layersStr, $startTime, $cadence, $numFrames);
+            
             $this->_validateNumFrames(sizeOf($timestamps), $isoStartTime, $isoEndTime);
             
-            if (!$this->_params['filename']) {
+            if (!$options['filename']) {
                 $start = str_replace(array(":", "-", "T", "Z"), "_", $isoStartTime);
                 $end   = str_replace(array(":", "-", "T", "Z"), "_", $isoEndTime);
                 $filename = $start . "_" . $end . $this->buildFilename($layers);
             } else {
-                $filename = $this->_params['filename'];
+                $filename = $options['filename'];
             }
 
             $numFrames = sizeOf($timestamps);
             
             // Subtract 1 because we added an extra frame to the end
-            $frameRate = $this->_determineOptimalFrameRate($numFrames - 1);
+            $frameRate = $this->_determineOptimalFrameRate($numFrames - 1, $options['frameRate']);
+            
+            // Create directories in cache to store movies
+            if ($options['uuid']) {
+                $cacheDir = HV_CACHE_DIR . "/movies/" . $options['uuid'];
+            } else {
+                $cacheDir = HV_CACHE_DIR . "/movies/" . uuid_create(UUID_TYPE_DEFAULT);
+            }            
+
+            if (!file_exists($cacheDir)) {
+                mkdir($cacheDir, 0777, true);
+                chmod($cacheDir, 0777);
+            }
+            
+            $tmpImageDir = $cacheDir . "/frames";
             
             // Instantiate movie class
             $movie = new Movie_HelioviewerMovie(
-                $startTime, $numFrames, $frameRate, $this->_params['hqFormat'], $filename,
-                $this->_params['quality'], $width, $height, $imageScale, $outputDir
+                $startTime, $numFrames, $frameRate, $options['hqFormat'], $filename,
+                $options['quality'], $width, $height, $imageScale, $cacheDir
             );
-            
-            //$tmpImageDir = $outputDir . "/tmp-" . $filename;
-            $tmpImageDir = $outputDir . "/frames";
-            
+
             // Build movie frames
-            $images = $this->_buildFramesFromMetaInformation($imageScale, $timestamps, $tmpImageDir);
+            $images = $this->_buildFramesFromMetaInformation(
+                $layersStr, $imageScale, $timestamps, $x1, $x2, $y1, $y2, $tmpImageDir, $options['quality'], $options['watermarkOn']
+            );
 
             // Compile movie
             $filepath = $movie->buildMovie($images, $tmpImageDir);
             
             $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
             
-            if ($this->_params['display'] === true) {
+            if ($options['display'] === true) {
                 echo Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
             } else {
                 header('Content-type: application/json');
@@ -158,7 +137,7 @@ class Movie_HelioviewerMovieBuilder
             }
             
         } catch(Exception $e) {
-            touch($outputDir . "/INVALID");
+            touch($cacheDir . "/INVALID");
                throw new Exception("Unable to create movie: " . $e->getMessage(), $e->getCode());
         }
     }
@@ -170,7 +149,7 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return void
      */
-    private function _limitNumLayers ($layers)
+    private function _checkNumLayers ($layers)
     {
         if (sizeOf($layers) == 0 || sizeOf($layers) > 3) {
             $msg = "Invalid layer choices! You must specify 1-3 comma-separated layernames.";
@@ -202,14 +181,15 @@ class Movie_HelioviewerMovieBuilder
      *
      * @return array
      */
-    private function _getStartAndEndTimes ()
+    private function _getStartAndEndTimes ($startTimeString, $endTimeString=false)
     {
-        $isoStartTime  = $this->_params['startTime'];
+        $isoStartTime  = $startTimeString;
         $startTime     = toUnixTimestamp($isoStartTime);
+        
         // Convert to seconds.
         $defaultWindow = HV_DEFAULT_MOVIE_TIME_WINDOW_IN_HOURS * 3600;
             
-        if (!$this->_params['endTime']) {
+        if (!$endTimeString) {
             $now = time();
             if ($now - $startTime < $defaultWindow) {
                 $startTime -= $defaultWindow;
@@ -220,7 +200,7 @@ class Movie_HelioviewerMovieBuilder
             $isoEndTime = toISOString(parseUnixTimestamp($endTime));
             
         } else {
-            $isoEndTime = $this->_params['endTime'];
+            $isoEndTime = $endTimeString;
             $endTime    = toUnixTimestamp($isoEndTime);
         }
         
@@ -385,7 +365,8 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return $images an array of built movie frames
      */
-    private function _buildFramesFromMetaInformation($imageScale, $timestamps, $tmpDir) 
+    //private function _buildFramesFromMetaInformation($imageScale, $timestamps, $tmpDir) 
+    private function _buildFramesFromMetaInformation($layers, $imageScale, $timestamps, $x1, $x2, $y1, $y2, $tmpDir, $quality, $watermarkOn)
     {
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
         $images  = array();
@@ -394,14 +375,14 @@ class Movie_HelioviewerMovieBuilder
         
         // Movie frame parameters
         $options = array(
-            'quality'    => $this->_params['quality'],
-            'watermarkOn'=> $this->_params['watermarkOn'],
+            'quality'    => $quality,
+            'watermarkOn'=> $watermarkOn,
             'outputDir'  => $tmpDir,
             'display'    => false,
             'interlace'  => false,
             'format'     => 'jpg' //'bmp'
         );
-
+        
         // Compile frames
         foreach ($timestamps as $time => $closestImages) {
             $obsDate = toISOString(parseUnixTimestamp($time));
@@ -411,11 +392,7 @@ class Movie_HelioviewerMovieBuilder
                 'closestImages' => $closestImages
             ));
                         
-            $image = $builder->takeScreenshot(
-                $this->_params['layers'], $obsDate, $imageScale,
-                $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
-                $options
-            );
+            $image = $builder->takeScreenshot($layers, $obsDate, $imageScale, $x1, $x2, $y1, $y2, $options);
             
             $images[] = $image;
         }
@@ -435,11 +412,10 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return array The new image width, height and scale to use
      */
-    private function _limitToMaximumDimensions()
+    private function _limitToMaximumDimensions($imageScale, $x1, $x2, $y1, $y2)
     {
-        $imageScale = $this->_params['imageScale'];
-        $width      = ($this->_params['x2'] - $this->_params['x1']) / $imageScale;
-        $height     = ($this->_params['y2'] - $this->_params['y1']) / $imageScale;  
+        $width      = ($x2 - $x1) / $imageScale;
+        $height     = ($y2 - $y1) / $imageScale;  
 
         // Limit to maximum dimensions
         if ($width > $this->maxWidth || $height > $this->maxHeight) {
@@ -518,7 +494,7 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return the number of frames
      */
-    private function _getOptimalNumFrames($layers, $startTime, $endTime)
+    private function _getOptimalNumFrames($layers, $startTime, $endTime, $numFrames)
     {
         $maxInRange = 0;
         
@@ -530,8 +506,8 @@ class Movie_HelioviewerMovieBuilder
         }
 
         // If the user specifies numFrames, use the minimum of their number and the maximum images in range.
-        if ($this->_params['numFrames'] !== false) {
-            $numFrames = min($maxInRange, $this->_params['numFrames']);
+        if ($numFrames !== false) {
+            $numFrames = min($maxInRange, $numFrames);
         } else {
             $numFrames = $maxInRange;
         }
@@ -561,15 +537,15 @@ class Movie_HelioviewerMovieBuilder
      * 
      * @return Int optimized frame rate
      */
-    private function _determineOptimalFrameRate($numFrames)
+    private function _determineOptimalFrameRate($numFrames, $requestedFrameRate)
     {
         $duration  = HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
         $frameRate = $numFrames / $duration;
         
         // Take the smaller number in case the user specifies a larger
         // frame rate than is practical.
-        if (isset($this->_params['frameRate'])) {
-            $frameRate = min($frameRate, $this->_params['frameRate']);
+        if ($requestedFrameRate) {
+            $frameRate = min($frameRate, $requestedFrameRate);
         }
 
         return $frameRate;

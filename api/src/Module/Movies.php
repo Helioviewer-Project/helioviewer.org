@@ -61,57 +61,6 @@ class Module_Movies implements Module
     }
 
     /**
-     * validate
-     *
-     * @return bool Returns true if input parameters are valid
-     */
-    public function validate()
-    {
-        switch($this->_params['action'])
-        {
-        // Any booleans that default to true cannot be listed here because the
-        // validation process sets them to false if they are not given.
-        case "buildMovie":
-            $expected = array(
-                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"    => array('startTime', 'endTime'),
-                "ints"     => array('frameRate', 'quality', 'numFrames'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "uuids"    => array('uuid')
-            );
-            break;
-        case "playMovie":
-            $expected = array(
-                "required" => array('file', 'width', 'height'),
-                "floats"   => array('width', 'height')
-            );
-            break;
-        case "queueMovie":
-            $expected = array(
-               "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "bools"    => array('display'),
-               "dates"    => array('startTime', 'endTime'),
-               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
-            );
-        case "getETAForMovie":
-            $expected = array(
-               "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "dates"    => array('startTime', 'endTime'),
-               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
-            );
-        default:
-            break;
-        }
-
-        // Check input
-        if (isset($expected)) {
-            Validation_InputValidator::checkInput($expected, $this->_params);
-        }
-
-        return true;
-    }
-
-    /**
      * buildMovie
      * See the API webpage for example usage.
      *
@@ -128,19 +77,21 @@ class Module_Movies implements Module
         include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
         
         $builder = new Movie_HelioviewerMovieBuilder();
-
-        if (!isset($this->_params['uuid']))
-            $this->_params['uuid'] = uuid_create(UUID_TYPE_DEFAULT);
         
-        // Make a temporary directory to store the movie in.
-        $tmpDir = HV_CACHE_DIR . "/movies/" . $this->_params['uuid'];
+        $optionalParameters = array('display', 'endTime', 'hqFormat', 'uuid');
 
-        if (!file_exists($tmpDir)) {
-            mkdir($tmpDir, 0777, true);
-            chmod($tmpDir, 0777);
+        $options = array();
+        
+        foreach($optionalParameters as $opt) {
+            if (isset($this->_params[$opt]))
+                $options[$opt] = $this->_params[$opt];
         }
 
-        $builder->buildMovie($this->_params, $tmpDir);
+        $builder->buildMovie(
+            $this->_params['layers'], $this->_params['startTime'],
+            $this->_params['imageScale'], $this->_params['x1'], $this->_params['x2'],
+            $this->_params['y1'], $this->_params['y2'], $options
+        );
     }
 
     /**
@@ -151,19 +102,6 @@ class Module_Movies implements Module
     public function queueMovie()
     {
         print "Not yet implemented in Dynamo...";
-    }
-    
-    /**
-     * Calculates the ETA for the given movie using width/height and numFrames
-     * 
-     * @return int Number of seconds until the movie has been prepared
-     */
-    public function getETAForMovie ()
-    {
-        include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
-        
-        $builder = new Movie_HelioviewerMovieBuilder();
-        return $builder->calculateETA($this->_params);
     }
 
     /**
@@ -211,6 +149,51 @@ class Module_Movies implements Module
         </body>
         </html>
         <?php
+    }
+    
+    /**
+     * validate
+     *
+     * @return bool Returns true if input parameters are valid
+     */
+    public function validate()
+    {
+        switch($this->_params['action'])
+        {
+        // Any booleans that default to true cannot be listed here because the
+        // validation process sets them to false if they are not given.
+        case "buildMovie":
+            $expected = array(
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "dates"    => array('startTime', 'endTime'),
+                "ints"     => array('frameRate', 'quality', 'numFrames'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "uuids"    => array('uuid')
+            );
+            break;
+        case "playMovie":
+            $expected = array(
+                "required" => array('file', 'width', 'height'),
+                "floats"   => array('width', 'height')
+            );
+            break;
+        case "queueMovie":
+            $expected = array(
+               "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "bools"    => array('display'),
+               "dates"    => array('startTime', 'endTime'),
+               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
+            );
+        default:
+            break;
+        }
+
+        // Check input
+        if (isset($expected)) {
+            Validation_InputValidator::checkInput($expected, $this->_params);
+        }
+
+        return true;
     }
     
     /**
