@@ -162,36 +162,22 @@ class Module_SolarEvents implements Module
     }
 
     /**
-     * Gets a collection of screenshots from the cache as specified by the event ID 
-     * in the parameters.
+     * Gets a collection of screenshots from the cache as specified by an event ID
+     *  
      * See the API webpage for example usage.
      *
      * @return image
      */
     public function getScreenshotsForEvent()
     {
-        $outputDir  = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/screenshots";
-        $ipod       = isset($this->_params['ipod']) && $this->_params['ipod'];
+        include_once 'src/Event/SolarEvent.php';
         
-        // Get all available screenshots
-        $response = $this->_checkForFiles($outputDir, $ipod, "*");
-
-        // Create non-existent screenshots if requested
-        if (!$this->_getOnly() && (empty($response) || HV_DISABLE_CACHE)) {
-            include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
-            $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-            $response = $this->_createForEvent($builder, $outputDir);
-        }
-
-        $finalResponse = array();
+        $event = new Event_SolarEvent($this->_params['eventId']);
         
-        // Return URLs instead of Filepaths
-        foreach ($response as $filepath) {
-            array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
-        }
+        $response = $event->getScreenshots();        
         
         header('Content-Type: application/json');
-        echo json_encode($finalResponse);
+        echo json_encode($response);
     }
     
     /**
@@ -216,7 +202,7 @@ class Module_SolarEvents implements Module
         if (!$this->_getOnly() && (empty($response) || HV_DISABLE_CACHE)) {
             include_once 'src/Movie/HelioviewerMovieBuilder.php';
             $builder = new Movie_HelioviewerMovieBuilder();
-            $response = $this->_createForEvent($builder, $outputDir);
+            $response = $this->_createMoviesForEvent($builder, $outputDir);
         }
         
         $finalResponse = array();
@@ -257,6 +243,7 @@ class Module_SolarEvents implements Module
         return $files;        
     }
     
+    
     /**
      * Creates a screenshot or movie based upon the eventId and the parameters specified.
      * 
@@ -266,10 +253,10 @@ class Module_SolarEvents implements Module
      *
      * @return array
      */
-    private function _createForEvent($builder, $tmpDir)
+    private function _createMoviesForEvent($builder, $tmpDir)
     {
         include_once HV_ROOT_DIR . "/api/src/Helper/EventParser.php";
-        $eventInfo = JSON_decode($this->_getSingleEventInformation());
+        $eventInfo = $this->_getSingleEventInformation();
         $result    = $eventInfo->result;
 
         if (!empty($result)) {
@@ -287,10 +274,86 @@ class Module_SolarEvents implements Module
             
             $params = array_merge($info, $this->_params);
 
-            $response = $builder->createForEvent($params, $info, $tmpDir);
+            $response = $builder->createEventMovies($params, $info, $tmpDir);
             return $response;
         }
         return array();
+    }
+
+    
+    /**
+     * Checks to see if the bounding box was given in the parameters or uses eventInfo if it wasn't.
+     * 
+     * @param array $params    The parameters from the API call
+     * @param array $eventInfo an associative array with information gotten from HEK
+     * 
+     * @return array
+     */
+    private function _getBoundingBox($params, $eventInfo)
+    {
+        $box = array();
+        
+        if (!isset($params['x1'])) {
+            $box = $eventInfo['boundingBox'];
+        } else {
+            $box['x1'] = $params['x1'];
+            $box['x2'] = $params['x2'];
+            $box['y1'] = $params['y1'];
+            $box['y2'] = $params['y2'];
+        }
+
+        return $this->_padToMinSize($box, $params['imageScale']);
+    }
+    
+    /**
+     * Pads the bounding box up to a minimum size of roughly 400x400 pixels
+     * 
+     * @param array $box        The bounding box coordinates
+     * @param float $imageScale The scale of the image in arcsec/pixel
+     * 
+     * @return array
+     */    
+    private function _padToMinSize($box, $imageScale)
+    {
+        $minSize = (400 * $imageScale) / 2;
+        $centerX = ($box['x1'] + $box['x2']) / 2;
+        $centerY = ($box['y1'] + $box['y2']) / 2;
+        
+        $minX    = min($centerX - $minSize, $box['x1']);
+        $minY    = min($centerY - $minSize, $box['y1']);
+        $maxX    = max($centerX + $minSize, $box['x2']);
+        $maxY    = max($centerY + $minSize, $box['y2']);
+        
+        return array(
+            "x1" => $minX, 
+            "x2" => $maxX, 
+            "y1" => $minY, 
+            "y2" => $maxY);
+    }
+    
+    /**
+     * Checks to see if layers were specified in the parameters. If not, uses all source
+     * id's from $eventInfo
+     * 
+     * @param array $params    The parameters from the API call
+     * @param array $eventInfo an associative array with information gotten from HEK
+     * 
+     * @return array
+     */    
+    private function _getLayersFromParamsOrSourceIds($params, $eventInfo)
+    {
+        $layers = array();
+
+        if (!isset($params['layers'])) {
+            $sourceIds = $eventInfo['sourceIds'];
+            foreach ($sourceIds as $source) {
+                $layers[] = "[" . $source . ",1,100]";
+            }
+        } else {
+            $layers[] = $params['layers'];
+        }
+        
+        return $layers;
     }
     
     /**
@@ -364,22 +427,14 @@ class Module_SolarEvents implements Module
             break;
         case "getScreenshotsForEvent": 
             $expected = array(
-                "required" => array('eventId'),
-                "optional" => array('quality', 'display', 'watermarkOn', 'ipod', 'getOnly'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"    => array('obsDate'), // TODO 11/11/2010: Is obsDate ever used? what about imageScale, roi, etc?
-                "ints"     => array('quality'),
-                "bools"    => array('display', 'getOnly', 'ipod', 'watermarkOn')
+                "required" => array('eventId')
             );
             break;
         case "getMoviesForEvent": 
             $expected = array(
                 "required" => array('eventId'),
-                "optional" => array('numFrames', 'frameRate', 'endTime', 'quality', 'display', 'watermarkOn', 'ipod', 'getOnly'),
-                "dates"    => array('startTime', 'endTime'),
-                "ints"     => array('frameRate', 'quality', 'numFrames'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "bools"    => array('display', 'getOnly', 'ipod', 'watermarkOn')
+                "optional" => array('ipod'),
+                "bools"    => array('ipod')
             );
             break;  
         default:
@@ -599,19 +654,6 @@ class Module_SolarEvents implements Module
                                 <td width="20%"><i>String</i></td>
                                 <td>The unique ID of the event, as obtained from querying HEK. </td>
                             </tr>
-                            <tr>
-                                <td><b>ipod</b></td>
-                                <td width="20%"><i>Boolean</i></td>
-                                <td><i>[Optional]</i> Whether or not you are looking for the scaled iPod-sized screenshot or the regular-sized screenshot.
-                                    Defaults to false if not specified.</td>
-                            </tr>
-                            <tr>
-                                <td><b>getOnly</b></td>
-                                <td width="20%"><i>Boolean</i></td>
-                                <td><i>[Optional]</i> Whether or not you want images built if they don't exist. Set this to true if you 
-                                    are calling this method from an iPod or other interface where you just want to check for existing files.
-                                    Defaults to false if not specified.</td>
-                            </tr>
                         </tbody>
                     </table>
                     <br />
@@ -627,8 +669,8 @@ class Module_SolarEvents implements Module
                     </a>
                     </span><br />
                     <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
-                        <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
+                        <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
                     </a>
                     </span>
                 </div>

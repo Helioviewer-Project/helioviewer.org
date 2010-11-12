@@ -110,7 +110,7 @@ class Movie_HelioviewerMovieBuilder
 
                 throw new Exception($msg, 1);
             }
-            
+           
             // Compute filename
             if (!$options['filename']) {
                 $start = str_replace(array(":", "-", "T", "Z"), "_", $startDateString);
@@ -128,7 +128,7 @@ class Movie_HelioviewerMovieBuilder
                 $startTimestamp, $numFrames, $frameRate, $options['hqFormat'], $filename,
                 $options['quality'], $width, $height, $imageScale, $cacheDir
             );
-
+            
             // Build movie frames
             $images = $this->_buildFramesFromMetaInformation(
                 $layersStr, $imageScale, $timestamps, $x1, $x2, $y1, $y2, $tmpImageDir, $options['quality'], $options['watermarkOn']
