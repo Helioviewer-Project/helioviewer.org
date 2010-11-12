@@ -2,6 +2,8 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Image_Movie_HelioviewerMovieBuilder class definition
+ * 
+ * TODO 11/12/2010: Make endDate a required field (simplifies processing in many different places)
  *
  * PHP version 5
  *
@@ -57,6 +59,7 @@ class Movie_HelioviewerMovieBuilder
             'frameRate'   => false,
             'hqFormat'    => "mp4",
             'numFrames'   => false,
+            'outputDir'   => "",
             'quality'     => 10,
             'uuid'        => false,
             'watermarkOn' => true
@@ -73,7 +76,7 @@ class Movie_HelioviewerMovieBuilder
 
             $this->_checkNumLayers($layers);
         
-            list($startTimestamp, $endTimestamp) = $this->_getStartAndEndTimes($startTimeStr, $options['endTime']);
+            list($startTimestamp, $endTimestamp) = $this->_getMovieTimeWindow($startTimeStr, $options['endTime']);
             
             // Some functions expect date strings instead of unix timestamps
             $startDateString = toISOString(parseUnixTimestamp($startTimestamp));
@@ -83,7 +86,7 @@ class Movie_HelioviewerMovieBuilder
             $optimalNumFrames = $this->_getOptimalNumFrames($layers, $startDateString, $endDateString, $options['numFrames']);
             
             // Create directories in cache to store movies
-            $cacheDir = $this->_createCacheDirectories($options['uuid']);
+            $cacheDir = $this->_createCacheDirectories($options['uuid'], $options['outputDir']);
             
             $tmpImageDir = $cacheDir . "/frames";
             
@@ -137,14 +140,7 @@ class Movie_HelioviewerMovieBuilder
             // Compile movie
             $filepath = $movie->buildMovie($images, $tmpImageDir);
             
-            $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
-            
-            if ($options['display'] === true) {
-                echo Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
-            } else {
-                header('Content-type: application/json');
-                echo json_encode(array("url" => $filepath));   
-            }
+            return $filepath;
             
         } catch(Exception $e) {
             touch($cacheDir . "/INVALID");
@@ -155,19 +151,21 @@ class Movie_HelioviewerMovieBuilder
     /**
      * Create directories in cache used to store movies
      */
-    private function _createCacheDirectories ($uuid) {
-        if (!$uuid) {
-            $uuid = uuid_create(UUID_TYPE_DEFAULT);
+    private function _createCacheDirectories ($uuid, $dir) {
+        // Regular movie requests use UUIDs and  event movies use the event identifiers
+        if (!$dir) {
+            if (!$uuid) {
+                $uuid = uuid_create(UUID_TYPE_DEFAULT);
+            }
+            $dir = HV_CACHE_DIR . "/movies/" . $uuid;
         }
 
-        $cacheDir = HV_CACHE_DIR . "/movies/" . $uuid;
-
-        if (!file_exists($cacheDir)) {
-            mkdir($cacheDir, 0777, true);
-            chmod($cacheDir, 0777);
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+            chmod($dir, 0777);
         }
         
-        return $cacheDir;
+        return $dir;
     }
     
     /**
@@ -189,9 +187,11 @@ class Movie_HelioviewerMovieBuilder
     /**
      * Determines appropriate start and end times to use for movie generation and returns timestamps for those times
      *
+     * NOTE 11/12/2010: This could create conflicts with user's custom settings when attempting movie near now
+     *
      * @return array
      */
-    private function _getStartAndEndTimes ($startTimeString, $endTimeString)
+    private function _getMovieTimeWindow ($startTimeString, $endTimeString)
     {
         $startTime = toUnixTimestamp($startTimeString);
         
@@ -214,148 +214,6 @@ class Movie_HelioviewerMovieBuilder
         }
 
         return array($startTime, $endTime);
-    }
-    
-    /**
-     * Searches the cache for a movie related to the event and returns the filepath if one exists. If not,
-     * returns false
-     * 
-     * @param array  $originalParams the original parameters passed in by the API call
-     * @param array  $eventInfo      an associative array with information gotten from HEK
-     * @param string $outputDir      the directory path to where the cached file should be stored
-     * 
-     * @return string
-     */
-    public function createForEvent($params, $eventInfo, $outputDir) 
-    {
-        $format = ".flv";
-        $filename = "";
-        
-        // iPod modifications
-        if (isset($params['ipod']) && $params['ipod']) {
-            $params['hqFormat'] = "ipod";
-            $outputDir .= "/iPod";
-            $format = ".mp4";
-        } else {
-            $outputDir .= "/regular";
-        }
-        
-        // Base filename
-        $filename .= "Movie_";
-        
-        // Compute region of interest
-        $box = $this->_getBoundingBox($params, $eventInfo);
-
-        // Break up layer string into separate layers
-        $layers = $this->_getLayersFromParamsOrSourceIds($params, $eventInfo);
-        
-        // Array to keep track of movies
-        $files  = array();
-
-        foreach ($layers as $layer) {
-            $layerFilename = $filename . $params['eventId'] . $this->buildFilename(getLayerArrayFromString($layer));
-
-            // If movie already exists, use cached version
-            if (!HV_DISABLE_CACHE && file_exists($outputDir . "/" . $layerFilename . $format)) {
-                $files[] = $outputDir . "/" . $layerFilename . $format;
-                
-            // Otherwise generate movie
-            } else {
-                try {
-                    
-                    $options = array(
-                        "display"  => false,
-                        "endTime"  => $params['endTime'],
-                        "filename" => $layerFilename
-                    );
-                    
-                    //$files[] = $this->buildMovie($params, $outputDir, true);
-                    $files[] = $this->buildMovie(
-                        $layer, $params['startTime'], $params['imageScale'], $box['x1'], $box['x2'], $box['y1'], $box['y2'],
-                        $options
-                    );
-                } catch(Exception $e) {
-                    throw $e;
-                }
-            }
-        }
-
-        return $files;
-    }
-    
-    /**
-     * Checks to see if the bounding box was given in the parameters or uses eventInfo if it wasn't.
-     * 
-     * @param array $params    The parameters from the API call
-     * @param array $eventInfo an associative array with information gotten from HEK
-     * 
-     * @return array
-     */
-    private function _getBoundingBox($params, $eventInfo)
-    {
-        $box = array();
-        
-        if (!isset($params['x1'])) {
-            $box = $eventInfo['boundingBox'];
-        } else {
-            $box['x1'] = $params['x1'];
-            $box['x2'] = $params['x2'];
-            $box['y1'] = $params['y1'];
-            $box['y2'] = $params['y2'];
-        }
-
-        return $this->_padToMinSize($box, $params['imageScale']);
-    }
-    
-    /**
-     * Pads the bounding box up to a minimum size of roughly 400x400 pixels
-     * 
-     * @param array $box        The bounding box coordinates
-     * @param float $imageScale The scale of the image in arcsec/pixel
-     * 
-     * @return array
-     */
-    private function _padToMinSize($box, $imageScale)
-    {
-        $minSize = (400 * $imageScale) / 2;
-        $centerX = ($box['x1'] + $box['x2']) / 2;
-        $centerY = ($box['y1'] + $box['y2']) / 2;
-        
-        $minX    = min($centerX - $minSize, $box['x1']);
-        $minY    = min($centerY - $minSize, $box['y1']);
-        $maxX    = max($centerX + $minSize, $box['x2']);
-        $maxY    = max($centerY + $minSize, $box['y2']);
-        
-        return array(
-            "x1" => $minX, 
-            "x2" => $maxX, 
-            "y1" => $minY, 
-            "y2" => $maxY);
-    }
-    
-    /**
-     * Checks to see if layers were specified in the parameters. If not, uses all source
-     * id's from $eventInfo
-     * 
-     * @param array $params    The parameters from the API call
-     * @param array $eventInfo an associative array with information gotten from HEK
-     * 
-     * @return array
-     */
-    private function _getLayersFromParamsOrSourceIds($params, $eventInfo)
-    {
-        $layers = array();
-
-        if (!isset($params['layers'])) {
-            $sourceIds = $eventInfo['sourceIds'];
-            foreach ($sourceIds as $source) {
-                $layers[] = "[" . $source . ",1,100]";
-            }
-        } else {
-            $layers[] = $params['layers'];
-        }
-        
-        return $layers;
     }
     
     /**
@@ -400,7 +258,7 @@ class Movie_HelioviewerMovieBuilder
             'interlace'  => false,
             'format'     => 'jpg' //'bmp'
         );
-        
+
         // Compile frames
         foreach ($timestamps as $time => $closestImages) {
             $obsDate = toISOString(parseUnixTimestamp($time));
