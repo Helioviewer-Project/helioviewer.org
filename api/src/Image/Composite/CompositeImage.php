@@ -50,7 +50,7 @@ abstract class Image_Composite_CompositeImage
         $this->height = $height;
         $this->scale  = $imageScale;        
         $this->tmpDir     = $tmpDir;
-        $this->setOutputFile($filename);
+        $this->outputFile = $filename;
 
         $this->cacheDir = HV_CACHE_DIR . "/";
         
@@ -155,26 +155,6 @@ abstract class Image_Composite_CompositeImage
         $watermark->destroy();
     }
     
-    /**
-     * In cases where movie frames are being generated, the naming system of adding time() to the end
-     * of the filename sometimes overwrites duplicate files if they are created fast enough. This checks
-     * to see if the filename is already being used and will recursively append "_" to the name until
-     * a unique filename is found. 
-     * 
-     * @param {string} $filename The output filename
-     * 
-     * @return void
-     */
-    protected function setOutputFile($filename)
-    {
-        if (file_exists($this->tmpDir . "/" . $filename)) {
-            $filename = substr($filename, 0, -4) . "_.jpg";
-            $this->setOutputFile($filename);
-        }
-        else
-            $this->outputFile = $filename;
-    }
-
     /**
      * Composites the layers on top of each other after putting them in the proper order.
      * 
