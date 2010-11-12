@@ -145,6 +145,9 @@ class Event_HEKAdapter
                                  "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox,obs_instrument,obs_channelid"
         );
         
-        return $this->_proxy->query($params, true);	
+        // Decode response
+        $response = JSON_decode($this->_proxy->query($params, true), true);
+
+        return $response["result"][0];
     }
 }
