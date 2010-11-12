@@ -80,11 +80,20 @@ class Module_Movies implements Module
         
         $builder = new Movie_HelioviewerMovieBuilder();
 
-        $builder->buildMovie(
+        $filepath = $builder->buildMovie(
             $this->_params['layers'], $this->_params['startTime'], $this->_params['imageScale'], 
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
             $this->_options
         );
+        
+//        $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
+//            
+//        if ($options['display'] === true) {
+//            echo Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
+//        } else {
+//            header('Content-type: application/json');
+//            echo json_encode(array("url" => $filepath));   
+//        }
     }
 
     /**

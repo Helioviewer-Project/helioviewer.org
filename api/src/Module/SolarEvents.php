@@ -97,70 +97,16 @@ class Module_SolarEvents implements Module
     {
         include_once "src/Event/HEKAdapter.php";
         $hek = new Event_HEKAdapter();
-        
-        // Check for end date
-        if (!isset($this->_params['endDate'])) {
-            include_once "src/Helper/DateTimeConversions.php";
-            $this->_params['endDate'] = getUTCDateString();
-        }
-        
-        // Check for event type
-        if (!isset($this->_params["eventType"])) {
-            $this->_params['eventType'] = "**";
-        }
 
-        $jsonResult = $hek->getEvents(
-            $this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType']
-        );
+        // Query the HEK
+        $events = $hek->getEvents($this->_params['startDate'], $this->_options);
 
-        $ipod   = isset($this->_params['ipod']) && $this->_params['ipod'];
-        $result = $this->_addMediaToEventResponse(json_decode($jsonResult), $ipod);
+        //$result = $this->_addMediaToEventResponse(json_decode($jsonResult), $options['ipod']);
         
         header('Content-Type: application/json');
-        echo json_encode($result);
+        echo json_encode($events);
     }    
     
-    /**
-     * Gets any screenshot/movie files associated with each event in $jsonResult and adds it to the event
-     * object. Sets $jsonResult->result to the array of event objects created.
-     * 
-     * @param object  $jsonResult A json object which has an attribute "result", which is an array of
-     *                            event information.
-     * @param boolean $ipod       Whether to look in the ipod folders or not
-     * 
-     * @return json object
-     */
-    private function _addMediaToEventResponse($jsonResult, $ipod)
-    {
-        $result = array();
-        foreach ($jsonResult->result as $event) {
-            $fullId = explode("/", $event->kb_archivid);
-            $id     = end($fullId);
-            $format = ($ipod === true? "mp4" : "flv");
-            
-            $tmpDir  = HV_CACHE_DIR . "/events/" . $id;
-            
-            $event->screenshots = array();
-            $event->movies      = array();
-            
-            $screenshots = $this->_checkForFiles($tmpDir . "/screenshots", $ipod, "*");
-            $movies      = $this->_checkForFiles($tmpDir . "/movies", $ipod, $format);
-
-            foreach ($screenshots as $url) {
-                array_push($event->screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
-            }
-            
-            foreach ($movies as $url) {
-                array_push($event->movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
-            }
-
-            $result[] = $event;
-        }
-
-        $jsonResult->result = $result;
-        return $jsonResult;
-    }
-
     /**
      * Gets a collection of screenshots from the cache as specified by an event ID
      *  
@@ -181,42 +127,24 @@ class Module_SolarEvents implements Module
     }
     
     /**
-     * Gets a collection of movies from the cache as specified by the event ID 
-     * in the parameters.
+     * Gets a collection of movies from the cache as specified by an event ID
+     *  
      * See the API webpage for example usage.
      *
-     * @return movie URL
+     * @return image
      */
-    public function getMoviesForEvent () 
+    public function getMoviesForEvent()
     {
-        $outputDir = HV_CACHE_DIR . "/events/" . $this->_params['eventId'] . "/movies";
-        $ipod      = isset($this->_params['ipod']) && $this->_params['ipod'];
+        include_once 'src/Event/SolarEvent.php';
         
-        // Movie format to look for or create
-        $format = ($ipod === true) ? "mp4" : "*";
+        $ipod = (isset($this->_options['ipod']) && $this->_options['ipod']);
         
-        // Get all available movies
-        $response = $this->_checkForFiles($outputDir, $ipod, $format);
+        $event = new Event_SolarEvent($this->_params['eventId']);
         
-        // Create non-existent movies if requested
-        if (!$this->_getOnly() && (empty($response) || HV_DISABLE_CACHE)) {
-            include_once 'src/Movie/HelioviewerMovieBuilder.php';
-            $builder = new Movie_HelioviewerMovieBuilder();
-            $response = $this->_createMoviesForEvent($builder, $outputDir);
-        }
+        $response = $event->getMovies($ipod);        
         
-        $finalResponse = array();
-        
-        // Return URLs instead of Filepaths
-        foreach ($response as $filepath) {
-            if ($filepath) {
-                array_push($finalResponse, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
-            }
-        }
-
-        // Display results
         header('Content-Type: application/json');
-        echo json_encode($finalResponse);
+        echo json_encode($response);
     }
     
     /**
@@ -241,142 +169,6 @@ class Module_SolarEvents implements Module
         $files = glob($outputDir . "/*." . $format);
         
         return $files;        
-    }
-    
-    
-    /**
-     * Creates a screenshot or movie based upon the eventId and the parameters specified.
-     * 
-     * @param object $builder -- An instance of HelioviewerScreenshotBuilder or
-     *                           HelioviewerMovieBuilder
-     * @param string $tmpDir  -- The directory where the movie/screenshot will be stored.
-     *
-     * @return array
-     */
-    private function _createMoviesForEvent($builder, $tmpDir)
-    {
-        include_once HV_ROOT_DIR . "/api/src/Helper/EventParser.php";
-        $eventInfo = $this->_getSingleEventInformation();
-        $result    = $eventInfo->result;
-
-        if (!empty($result)) {
-            $result = $result[0];
-            $layerInfo = getLayerInfoForEventType($result->event_type);
-
-            $info = array(
-               "sourceIds"   => $layerInfo['sourceIds'],
-               "imageScale"  => $layerInfo['imageScale'],
-               "boundingBox" => polygonToBoundingBox($result->hpc_bbox),
-               "startTime"   => $result->event_starttime,
-               "endTime"     => $result->event_endtime,
-               "obsDate"     => $result->event_starttime
-            );
-            
-            $params = array_merge($info, $this->_params);
-
-            $response = $builder->createEventMovies($params, $info, $tmpDir);
-            return $response;
-        }
-        return array();
-    }
-
-    
-    /**
-     * Checks to see if the bounding box was given in the parameters or uses eventInfo if it wasn't.
-     * 
-     * @param array $params    The parameters from the API call
-     * @param array $eventInfo an associative array with information gotten from HEK
-     * 
-     * @return array
-     */
-    private function _getBoundingBox($params, $eventInfo)
-    {
-        $box = array();
-        
-        if (!isset($params['x1'])) {
-            $box = $eventInfo['boundingBox'];
-        } else {
-            $box['x1'] = $params['x1'];
-            $box['x2'] = $params['x2'];
-            $box['y1'] = $params['y1'];
-            $box['y2'] = $params['y2'];
-        }
-
-        return $this->_padToMinSize($box, $params['imageScale']);
-    }
-    
-    /**
-     * Pads the bounding box up to a minimum size of roughly 400x400 pixels
-     * 
-     * @param array $box        The bounding box coordinates
-     * @param float $imageScale The scale of the image in arcsec/pixel
-     * 
-     * @return array
-     */    
-    private function _padToMinSize($box, $imageScale)
-    {
-        $minSize = (400 * $imageScale) / 2;
-        $centerX = ($box['x1'] + $box['x2']) / 2;
-        $centerY = ($box['y1'] + $box['y2']) / 2;
-        
-        $minX    = min($centerX - $minSize, $box['x1']);
-        $minY    = min($centerY - $minSize, $box['y1']);
-        $maxX    = max($centerX + $minSize, $box['x2']);
-        $maxY    = max($centerY + $minSize, $box['y2']);
-        
-        return array(
-            "x1" => $minX, 
-            "x2" => $maxX, 
-            "y1" => $minY, 
-            "y2" => $maxY);
-    }
-    
-    /**
-     * Checks to see if layers were specified in the parameters. If not, uses all source
-     * id's from $eventInfo
-     * 
-     * @param array $params    The parameters from the API call
-     * @param array $eventInfo an associative array with information gotten from HEK
-     * 
-     * @return array
-     */    
-    private function _getLayersFromParamsOrSourceIds($params, $eventInfo)
-    {
-        $layers = array();
-
-        if (!isset($params['layers'])) {
-            $sourceIds = $eventInfo['sourceIds'];
-            foreach ($sourceIds as $source) {
-                $layers[] = "[" . $source . ",1,100]";
-            }
-        } else {
-            $layers[] = $params['layers'];
-        }
-        
-        return $layers;
-    }
-    
-    /**
-     * Uses HEKAdapter to get information about a single event from its ID.
-     *
-     * @return object 
-     */
-    private function _getSingleEventInformation()
-    {
-        include_once "src/Event/HEKAdapter.php";
-        $hek = new Event_HEKAdapter();
-
-        return $hek->getEventById($this->_params['eventId']);
-    }
-    
-    /**
-     * Checks to see if 'getOnly' is set to true in $params
-     *
-     * @return boolean
-     */
-    private function _getOnly()
-    {
-        return isset($this->_params['getOnly']) && $this->_params['getOnly'] === true;
     }
     
     /**
@@ -414,7 +206,7 @@ class Module_SolarEvents implements Module
         case "getEvents":
             $expected = array(
                 "required" => array('startDate'),
-                "optional" => array('ipod'),
+                "optional" => array('ipod', 'eventType', 'endDate'),
                 "bools"    => array('ipod'),
                 "dates"    => array('startDate', 'endDate')
             );
@@ -656,10 +448,6 @@ class Module_SolarEvents implements Module
                             </tr>
                         </tbody>
                     </table>
-                    <br />
-                    
-                    The rest of the parameter list is identical to that of <a href="#takeScreenshot" style="color:#3366FF">takeScreenshot</a>, except that you should never
-                    specify <i>filename</i> in the parameters.
                     <br /><br />
                     
                     <span class="example-header">Examples:</span>
@@ -683,7 +471,7 @@ class Module_SolarEvents implements Module
             <li>
             <div id="getMoviesForEvent">Fetching or Creating Event Movies
                 <p>Returns a collection of filepaths to movies of an event. If no movie files exist yet, it will create one or 
-                    more depending on parameters, or will return an empty array if <i>getOnly</i> is set to true.</p>
+                    more depending on parameters.</p>
         
                 <br />
     
@@ -710,25 +498,14 @@ class Module_SolarEvents implements Module
                                 <td><i>[Optional]</i> Whether or not you are looking for the iPod-compatible movie or the regular movie.
                                     Defaults to false if not specified.</td>
                             </tr>
-                            <tr>
-                                <td><b>getOnly</b></td>
-                                <td width="20%"><i>Boolean</i></td>
-                                <td><i>[Optional]</i> Whether or not you want movies built if they don't exist. Set this to true if you 
-                                    are calling this method from an iPod or other interface where you just want to check for existing files.
-                                    Defaults to false if not specified.</td>
-                            </tr>
                         </tbody>
                     </table>
-                    <br />
-                    
-                    The rest of the parameter list is identical to that of <a href="#buildMovie" style="color:#3366FF">buildMovie</a>, except that you should never
-                    specify <i>hqFormat</i> or <i>filename</i> in the parameters, as these are generated based upon the eventId and whether <i>ipod</i> is set to true or false.
                     <br /><br />
                     
                     <span class="example-header">Examples:</span>
                     <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443">
-                        <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR_SPoCA_20101007_085532_20100904T014848_1">
+                        <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR_SPoCA_20101007_085532_20100904T014848_1
                     </a>
                     </span><br />
                     <span class="example-url">

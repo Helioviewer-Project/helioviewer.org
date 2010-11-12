@@ -51,8 +51,11 @@ class Event_SolarEvent
     
     /**
      * Returns a list of screenshots relating to the event
+     * 
+     * @return array URLs of event screenshots
      */
-    public function getScreenshots() {
+    public function getScreenshots()
+    {
         $directory = sprintf("%s/events/%s/screenshots", HV_CACHE_DIR, $this->id);
         
         // If images have already been generated return them
@@ -67,6 +70,32 @@ class Event_SolarEvent
             }
         } else {
             $urls = $this->_createScreenshots($directory);
+        }
+
+        return $urls;
+    }
+    
+    /**
+     * Returns a list of movies relating to the event
+     *
+     * @return array URLs of event movies
+     */
+    public function getMovies ($ipod) 
+    {
+        $directory = sprintf("%s/events/%s/movies", HV_CACHE_DIR, $this->id);
+        
+        // If images have already been generated return them
+        if (!HV_DISABLE_CACHE && file_exists($directory)) {
+            $files = glob("$directory/*");
+            
+            $urls = array();
+
+            // Convert to URLs
+            foreach ($files as $filepath) {
+                array_push($urls, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+            }
+        } else {
+            $urls = $this->_createMovies($directory, $ipod);
         }
 
         return $urls;
@@ -99,7 +128,7 @@ class Event_SolarEvent
         $roi  = $this->_padToMinSize($bbox, $imageScale);
         
         // Take screenshot of event half-way through its duration
-        $obsDate = $this->_getTimeWindowCenter($this->details['event_starttime'], $this->details['event_endtime']);
+        $obsDate = $this->_getTimeWindowCenter();
 
         // Filename prefix
         $filePrefix = "Screenshot_";
@@ -135,27 +164,115 @@ class Event_SolarEvent
     }
     
     /**
+     * Create movies for a single event
+     * 
+     * @param string $dir  Directory to store generated screenshots in
+     *
+     * @return array
+     */
+    private function _createMovies($dir, $ipod)
+    {
+        include_once 'src/Movie/HelioviewerMovieBuilder.php';
+        
+        $builder = new Movie_HelioviewerMovieBuilder();
+        
+        // Create directory to store movies in
+        $this->_createCacheDirectory($dir);        
+        
+        // Datasources for which movies should be created
+        $sourceIds = $this->_getAssociatedDataSources($this->details['event_type']);
+        
+        // Temporarily hard-coded...
+        $imageScale = 0.6; //0.59999
+        
+        // Determine region of interest
+        $bbox = $this->_polygonToBoundingBox($this->details['hpc_bbox']);
+        $roi  = $this->_padToMinSize($bbox, $imageScale);
+        
+        // Select a start and end time for the movie
+        list($startTime, $endTime) = $this->_getMovieTimeWindow();
+        
+        // Format
+        $format = $ipod ? "ipod" : "mp4";
+
+        // Filename prefix
+        $filePrefix = "Movie_";
+        
+        // Array to store resulting movies
+        $movies = array();
+        
+        // Build movies for each data source associated with the event type
+        foreach ($sourceIds as $source) {
+            $layerString = "[" . $source . ",1,100]";
+
+            $filename = $filePrefix . $this->id . "_";
+            
+            // Work-around 11/12/2010: Need to add support for passing in prefix instead of full filename
+            $filename .= $source;
+            
+            // Movie preferences
+            $options = array(
+                "display"   => false,
+                "endTime"   => $endTime,
+                "filename"  => $filename,
+                "hqFormat"  => $format,
+                "outputDir" => $dir
+            );
+
+            // Build movie
+            $filepath = $builder->buildMovie(
+                $layerString, $startTime, $imageScale, $roi['x1'], $roi['x2'], $roi['y1'], $roi['y2'],
+                $options
+            );
+
+            array_push($movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+        }
+        
+        return $movies;
+    }
+    
+    /**
      * Returns a date string for the middle of a specified time window
      * 
-     * @param string $startDateString Start time 
-     * @param string $endDateString   End time
      */
-    private function _getTimeWindowCenter ($startDateString, $endDateString)
+    private function _getTimeWindowCenter ()
     {
         include_once "src/Helper/DateTimeConversions.php";
         
         // If start and end times are the same simply use the start time
-        if ($startDateString === $endDateString) {
-            return $startDateString;
+        if ($this->details['event_starttime'] === $this->details['event_endtime']) {
+            return $this->details['event_starttime'];
         }
         
         // Otherwise choose middle point
-        $start = toUnixTimestamp($startDateString);
-        $end   = toUnixTimestamp($endDateString);
+        $start = toUnixTimestamp($this->details['event_starttime']);
+        $end   = toUnixTimestamp($this->details['event_endtime']);
         
         $middle = $start + (0.5 * ($end - $start));
 
         return toISOString(parseUnixTimestamp($middle));
+    }
+    
+    /**
+     * Returns an optimal time window for an event movie. If unique event start time and end time are both
+     * specified in the event details then those values are used. If the values are the same, then a default
+     * time window of 24 hours is used instead.
+     * 
+     * @return array Start and end date strings
+     */
+    private function _getMovieTimeWindow () {
+        // If start and end times are different use those values
+        if ($this->details['event_starttime'] !== $this->details['event_endtime']) {
+            return array($this->details['event_starttime'], $this->details['event_endtime']);
+        }
+        
+        // Otherwise choose a 24-hour window around the specified time
+        $middle = toUnixTimestamp($this->details['event_starttime']);
+        
+        $start  = toISOString(parseUnixTimestamp($middle - (12 * 60 * 60))); 
+        $end    = toISOString(parseUnixTimestamp($middle + (12 * 60 * 60)));
+        
+        return array($start, $end);
     }
     
     /**
@@ -245,7 +362,7 @@ class Event_SolarEvent
         
         switch($eventType) {
         case "AR":
-            $sourceIds = array(10, 13); //$sourceIds = array(10, 11, 12, 14);            
+            $sourceIds = array(10); //$sourceIds = array(10, 11, 12, 14);            
             break;
         case "FL":
             $sourceIds = array(8, 9, 10, 11, 12, 13, 14, 15, 16, 17);

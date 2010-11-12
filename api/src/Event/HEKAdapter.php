@@ -108,20 +108,36 @@ class Event_HEKAdapter
      * 
      * @return string
      */
-    public function getEvents($startTime, $endTime, $eventType)
+    public function getEvents($startTime, $options)
     {
+        include_once "src/Helper/DateTimeConversions.php";
+         
+        // Default options
+        $defaults = array(
+            'endDate'   => getUTCDateString(),
+            'eventType' => '**',
+            'ipod'      => false
+        );
+        
+        $options = array_replace($defaults, $options);
+        
+        // HEK query parameters
         $params = array(
             "event_starttime" => $startTime,
-            "event_endtime"   => $endTime,
-            "event_type"      => $eventType,
+            "event_endtime"   => $options['endDate'],
+            "event_type"      => $options['eventType'],
             "result_limit"    => 200,
             "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
                                  "obs_observatory,obs_channelid,event_type,hpc_x,hpc_y,hpc_bbox"
         );
 
         //TODO Group similar (identical) events
+        $response = JSON_decode($this->_proxy->query($params, true), true);
+       
+        // Extend response to include any pregenerated screenshots and movies
+        $events = $this->_extendHEKResponse($response['result'], $options['ipod']);
 
-        return $this->_proxy->query($params, true);
+        return $events;
     }
     
     /**
@@ -149,5 +165,49 @@ class Event_HEKAdapter
         $response = JSON_decode($this->_proxy->query($params, true), true);
 
         return $response["result"][0];
+    }
+    
+    /**
+     * Add links to any screenshots and movies that have been generated for the requested event
+     * 
+     * @param boolean $ipod Whether to look in the ipod folders or not
+     */
+    private function _getEventScreenshotsAndMovies(&$response, $ipod)
+    {
+        $result = array();
+        
+        var_dump($response);
+        die();
+
+        foreach ($jsonResult->result as $event) {
+            $fullId = explode("/", $event->kb_archivid);
+            $id     = end($fullId);
+            $format = $ipod ? "mp4" : "flv";
+            
+            $tmpDir  = HV_CACHE_DIR . "/events/" . $id;
+            
+            $event->screenshots = array();
+            $event->movies      = array();
+            
+            // Add screenshots
+            if (file_exists($tmpDir . "/screenshots"))
+            
+            // Add Movies
+            $screenshots = $this->_checkForFiles($tmpDir . "/screenshots", $ipod, "*");
+            $movies      = $this->_checkForFiles($tmpDir . "/movies", $ipod, $format);
+
+            foreach ($screenshots as $url) {
+                array_push($event->screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
+            }
+            
+            foreach ($movies as $url) {
+                array_push($event->movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
+            }
+
+            $result[] = $event;
+        }
+
+        $jsonResult->result = $result;
+        return $jsonResult;
     }
 }
