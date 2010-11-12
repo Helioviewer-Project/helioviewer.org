@@ -131,7 +131,10 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         if ($this->buildFilename) {
             $time = str_replace(array(":", "-", "T", "Z"), "_", $this->date);
             //$this->setOutputFile($time . $filenameInfo . time() . "." . $this->format);
-            $this->setOutputFile($time . $filenameInfo . time() . ".jpg");
+            
+            // 11/12/2010
+            //$this->setOutputFile($time . $filenameInfo . time() . ".jpg");
+            $this->outputFile = $time . $filenameInfo . rand() . ".jpg";
         }
 
         $this->compileImages();

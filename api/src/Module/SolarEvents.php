@@ -113,8 +113,8 @@ class Module_SolarEvents implements Module
             $this->_params['startDate'], $this->_params['endDate'], $this->_params['eventType']
         );
 
-        $ipod       = isset($this->_params['ipod']) && $this->_params['ipod'];
-        $result     = $this->_addMediaToEventResponse(json_decode($jsonResult), $ipod);
+        $ipod   = isset($this->_params['ipod']) && $this->_params['ipod'];
+        $result = $this->_addMediaToEventResponse(json_decode($jsonResult), $ipod);
         
         header('Content-Type: application/json');
         echo json_encode($result);
@@ -134,9 +134,9 @@ class Module_SolarEvents implements Module
     {
         $result = array();
         foreach ($jsonResult->result as $event) {
-            $fullId  = explode("/", $event->kb_archivid);
-            $id      = end($fullId);
-            $format  = ($ipod === true? "mp4" : "flv");
+            $fullId = explode("/", $event->kb_archivid);
+            $id     = end($fullId);
+            $format = ($ipod === true? "mp4" : "flv");
             
             $tmpDir  = HV_CACHE_DIR . "/events/" . $id;
             
