@@ -218,7 +218,9 @@ class Event_SolarEvent
             );
 
             // Build movie
-            $filepath = $builder->buildMovie($layerString, $startTime, $roi, $options);
+            $builder->buildMovie($layerString, $startTime, $roi, $options);
+            
+            $filepath = $builder->getFilepath();
 
             array_push($movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }

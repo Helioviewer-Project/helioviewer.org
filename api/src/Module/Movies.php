@@ -86,17 +86,17 @@ class Module_Movies implements Module
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
             $this->_params['imageScale']
         );
-
-        $filepath = $builder->buildMovie($this->_params['layers'], $this->_params['startTime'], $roi, $this->_options);
         
-//        $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
-//            
-//        if ($options['display'] === true) {
-//            echo Movie_HelioviewerMovie::showMovie($url, $movie->width(), $movie->height());
-//        } else {
-//            header('Content-type: application/json');
-//            echo json_encode(array("url" => $filepath));   
-//        }
+        // Process request
+        $builder->buildMovie($this->_params['layers'], $this->_params['startTime'], $roi, $this->_options);
+        
+        // Output result            
+        if (isset($this->_options['display']) && $this->_options['display']) {
+            echo Movie_HelioviewerMovie::showMovie($builder->getURL(), $movie->width(), $movie->height());
+        } else {
+            header('Content-type: application/json');
+            echo json_encode(array("url" => $builder->getFilepath()));   
+        }
     }
 
     /**

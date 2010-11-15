@@ -101,11 +101,9 @@ class Module_WebClient implements Module
     }
 
     /**
-     * http://helioviewer.org/api/index.php?action=getClosestImage&date=2003-10-05T00:00:00Z&source=0&s=1
-     * 
-     * TODO 01/29/2010 Check to see if server number is within valid range of know authenticated servers.
+     * Finds the closest image available for a given time and datasource
      *
-     * @return void
+     * @return JSON meta information for matching image
      */
     public function getClosestImage ()
     {
@@ -164,6 +162,8 @@ class Module_WebClient implements Module
 
     /**
      * getTile
+     * 
+     * Note: OBSERVATORY NOTE USED!
      *
      * @return void
      */
@@ -220,9 +220,12 @@ class Module_WebClient implements Module
      */
     private function getTileCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
     {
-        return dirname($uri) . "/" . substr(basename($uri), 0, -4) . "_" . $scale 
-                . "_" . round($x1) . "_" . round($x2) . "x_" . round($y1) . "_"
-                . round($y2) . "y." . $format;
+        $baseFilename = substr(basename($uri), 0, -4);
+        
+        return sprintf(
+            "%s/%s_%s_%d_%dx_%d_%dy.%s",
+            dirname($uri), $baseFilename, $scale, round($x1), round($x2), round($y1), round($y2), $format
+        );
     }
 
     /**
@@ -362,8 +365,8 @@ class Module_WebClient implements Module
             break;
 
         case "getTile":
-            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'date', 'imageScale', 'size', 'jp2Width','jp2Height', 'jp2Scale',
-                              'offsetX', 'offsetY', 'format', 'observatory', 'instrument', 'detector', 'measurement');
+            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'date', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
+                              'offsetX', 'offsetY', 'format', 'instrument', 'detector', 'measurement');
             $expected = array(
                 "required" => $required,
                 "files"    => array('uri')
