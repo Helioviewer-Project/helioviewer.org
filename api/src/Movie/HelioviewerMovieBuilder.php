@@ -36,7 +36,8 @@ define("INSUFFICIENT_DATA_EXCEPTION", "There are not enough images for the given
  */
 class Movie_HelioviewerMovieBuilder
 {
-    private   $_imgIndex;
+    private $_imgIndex;
+    private $_filepath;
 
     /**
      * Does not require any parameters or setup.
@@ -111,7 +112,7 @@ class Movie_HelioviewerMovieBuilder
             if ($options['filename']) {
                 $filename = $options['filename'];
             } else {
-                $this->_buildFilename($layers, $startDateString, $endDateString);
+                $filename = $this->_buildFilename($layers, $startDateString, $endDateString);
             }
 
             // Subtract 1 because we added an extra frame to the end
@@ -129,14 +130,33 @@ class Movie_HelioviewerMovieBuilder
             );
 
             // Compile movie
-            $filepath = $movie->build($images, $tmpImageDir);
+            $movie->build($images, $tmpImageDir);
+            
+            // TEMP 11/15/2010: filepath for flash video
+            $this->_filepath = $movie->getFilepath();
 
-            return $filepath;
+            return true;
 
         } catch(Exception $e) {
             touch($cacheDir . "/INVALID");
             throw new Exception("Unable to create movie: " . $e->getMessage(), $e->getCode());
         }
+    }
+    
+    /**
+     * Returns a filepath to the most recently created movie
+     */
+    public function getFilepath()
+    {
+        return $this->_filepath;
+    }
+    
+    /**
+     * Returns a URL to the most recently created movie
+     */
+    public function getURL()
+    {
+        return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->_filepath);
     }
 
     /**

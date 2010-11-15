@@ -44,6 +44,7 @@ class Movie_HelioviewerMovie
     private $_filename;
     private $_quality;
     private $_padDimensions;
+    private $_flashMovie;
 
     /**
      * HelioviewerMovie Constructor
@@ -166,9 +167,21 @@ class Movie_HelioviewerMovie
         
         // Create flash video from that
         $ffmpeg->createFlashVideo($hq_filename, $flash_filename, $this->tmpDir);
-        
+
         $this->_cleanup();
-        return $this->tmpDir . "/" . $flash_filename;
+        
+        // Store filename
+        $this->_flashMovie = $this->tmpDir . "/" . $flash_filename;
+       
+        return true;
+    }
+
+    /**
+     * Returns filepath to the (flash) video
+     */
+    public function getFilepath()
+    {
+        return $this->_flashMovie;
     }
     
     /**
