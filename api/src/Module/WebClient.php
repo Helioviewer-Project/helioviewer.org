@@ -171,6 +171,7 @@ class Module_WebClient implements Module
     {
         require_once 'src/Image/JPEG2000/JP2Image.php';
         require_once 'src/Image/HelioviewerImageLayer.php';
+        require_once 'src/Helper/RegionOfInterest.php';
         
         $params = $this->_params;
         
@@ -178,7 +179,7 @@ class Module_WebClient implements Module
         $this->_createImageCacheDir(dirname($this->_params['uri']));
         
         // Tile filepath
-        $filepath = HV_CACHE_DIR . $this->getCacheFilename(
+        $filepath = HV_CACHE_DIR . $this->getTileCacheFilename(
             $params['uri'], $params['imageScale'], $params['x1'], 
             $params['x2'], $params['y1'], $params['y2'], $params['format']
         );
@@ -191,16 +192,13 @@ class Module_WebClient implements Module
             $jp2Filepath, $this->_params['jp2Width'], $this->_params['jp2Height'], $this->_params['jp2Scale']
         );
         
-        $roi = array(
-           "top"    => $params['y1'],
-           "left"   => $params['x1'],
-           "bottom" => $params['y2'],
-           "right"  => $params['x2']
+        // Regon of interest
+        $roi = new Helper_RegionOfInterest(
+            $params['x1'], $params['x2'], $params['y1'], $params['y2'], $params['imageScale']
         );
 
         $tile = new Image_HelioviewerImageLayer(
-            $jp2, $filepath, $params['size'], $params['size'], $params['imageScale'], $roi,
-            $params['instrument'], $params['detector'], $params['measurement'], 1, 
+            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'], 1, 
             $params['offsetX'], $params['offsetY'], 100, $params['date'], true
         );
         
@@ -220,7 +218,7 @@ class Module_WebClient implements Module
      * 
      * @return string
      */
-    private function getCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
+    private function getTileCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
     {
         return dirname($uri) . "/" . substr(basename($uri), 0, -4) . "_" . $scale 
                 . "_" . round($x1) . "_" . round($x2) . "x_" . round($y1) . "_"
@@ -264,15 +262,18 @@ class Module_WebClient implements Module
     public function takeScreenshot()
     {
         include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        require_once 'src/Helper/RegionOfInterest.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
+        
+        // Regon of interest
+        $roi = new Helper_RegionOfInterest(
+            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
+            $this->_params['imageScale']
+        );
 
         // Build screenshot
-        $file = $builder->takeScreenshot(
-            $this->_params['layers'], $this->_params['obsDate'], $this->_params['imageScale'], 
-            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
-            $this->_options
-        );
+        $file = $builder->takeScreenshot($this->_params['layers'], $this->_params['obsDate'], $roi, $this->_options);
 
         // TODO 11/10/2010 instead of returning result from takeScreenshot simply return true on success and
         // and add "display" and "getURL" methods. Moreover, a "display=false" param is already passed into takeScreenshot()!

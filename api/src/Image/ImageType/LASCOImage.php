@@ -29,17 +29,12 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
 {
     private   $_measurement;
     private   $_detector;
-    protected $tileSize;
-    protected $width;
-    protected $height;
     protected $solarCenterOffsetX;
     protected $solarCenterOffsetY;
     
     /**
      * Constructor
      * 
-     * @param int    $width        Desired width of the image
-     * @param int    $height       Desired height of the image
      * @param string $jp2          Source JP2 image
      * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
      * @param float  $desiredScale Desired scale of the output image
@@ -52,8 +47,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */    
     public function __construct(
-        $width, $height, $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
-        $opacity, $compress
+        $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
     ) {
         $this->_detector    = $detector;
         $this->_measurement = $measurement;
@@ -69,9 +63,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }
-        
-        $this->width 	= $width;
-        $this->height 	= $height;
+
         $this->solarCenterOffsetX = $offsetX;
         $this->solarCenterOffsetY = $offsetY;
     }

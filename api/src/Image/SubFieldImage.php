@@ -187,26 +187,25 @@ class Image_SubFieldImage
      * if the final image is larger.
      * 
      * @param Array $roi   The region of interest in arcseconds of the final image.
-     * @param Float $scale The scale of the image in arcseconds / pixel
      * 
      * @return array with padding
      */
-    public function computePadding($roi, $scale)
+    public function computePadding($roi)
     {
-        $width  = ($roi['right']  - $roi['left']) / $scale;
-        $height = ($roi['bottom'] - $roi['top'])  / $scale;
+        $width  = $roi->getWidth()  / $roi->imageScale();
+        $height = $roi->getHeight() / $roi->imageScale();
 
         $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
         $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
         
         $leftToCenter = ($this->roi['left'] - $centerX);
         $topToCenter  = ($this->roi['top']  - $centerY);
-        $scaleFactor  = $this->jp2->getScale() / $scale;
+        $scaleFactor  = $this->jp2->getScale() / $roi->imageScale();
         $relLeftToCenter = $leftToCenter * $scaleFactor;
         $relTopToCenter  = $topToCenter  * $scaleFactor;
 
-        $left = ($roi['left'] / $scale) - $relLeftToCenter;
-        $top  = ($roi['top']  / $scale) - $relTopToCenter;
+        $left = ($roi->left() / $roi->imageScale()) - $relLeftToCenter;
+        $top  = ($roi->top()  / $roi->imageScale()) - $relTopToCenter;
 
         // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
         // http://www.php.net/manual/en/language.types.float.php#warn.float-precision

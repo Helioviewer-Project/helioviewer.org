@@ -43,7 +43,7 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
      *                              
      * @return string the screenshot
      */
-    public function takeScreenshot($layers, $obsDate, $imageScale, $x1, $x2, $y1, $y2, $options)
+    public function takeScreenshot($layers, $obsDate, $roi, $options)
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
@@ -60,26 +60,26 @@ class Image_Screenshot_HelioviewerScreenshotBuilder
         
         $options = array_replace($defaults, $options);
         
-        $width  = ($x2 - $x1) / $imageScale;
-        $height = ($y2 - $y1) / $imageScale;
+        $pixelWidth  = $roi->getPixelWidth();
+        $pixelHeight = $roi->getPixelHeight();
+        
+        // Image scale (arcseconds/pixel)
+        $imageScale  = $roi->imageScale();
         
         // Limit to maximum dimensions
-        if ($width > $this->maxWidth || $height > $this->maxHeight) {
-            $scaleFactor = min($this->maxWidth / $width, $this->maxHeight / $height);
-            $width      *= $scaleFactor;
-            $height     *= $scaleFactor;
+        if ($pixelWidth > $this->maxWidth || $pixelHeight > $this->maxHeight) {
+            $scaleFactor = min($this->maxWidth / $pixelWidth, $this->maxHeight / $pixelHeight);
+            $pixelWidth *= $scaleFactor;
+            $pixelHeight*= $scaleFactor;
             $imageScale /= $scaleFactor;
         }
 
         // Screenshot meta information
-        $layerArray = $this->_createMetaInformation($layers, $imageScale, $width, $height, $options['closestImages']);
-        
-        // Region of interest
-        $roi = array('top' => $y1, 'left' => $x1, 'bottom' => $y2, 'right' => $x2);
+        $layerArray = $this->_createMetaInformation($layers, $imageScale, $pixelWidth, $pixelHeight, $options['closestImages']);
 
         // Instantiate a screenshot
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
-            $obsDate, $width, $height, $imageScale, $options['filename'], $options['quality'],
+            $obsDate, $pixelWidth, $pixelHeight, $imageScale, $options['filename'], $options['quality'],
             $options['watermarkOn'], $roi, $options['outputDir'], $options['compress']
         );
 

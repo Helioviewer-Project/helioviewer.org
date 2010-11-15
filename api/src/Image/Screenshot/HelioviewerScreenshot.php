@@ -31,10 +31,6 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     protected $layerImages;
     protected $date;
     protected $imageSize;
-    protected $offsetLeft;
-    protected $offsetRight;
-    protected $offsetBottom;
-    protected $offsetTop;
     protected $watermarkOn;
     protected $buildFilename;
     protected $compress;
@@ -51,20 +47,17 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param string $filename    Location where the screenshot will be stored
      * @param int    $quality     Screenshot compression quality
      * @param bool   $watermarkOn Whether to watermark the image or not
-     * @param array  $offsets     The offsets of the top-left and bottom-right corners of the image
+     * @param array  $roi         The offsets of the top-left and bottom-right corners of the image
      *                            from the center of the sun.
      * @param string $outputDir   The directory where the screenshot will be stored
      * @param bool   $compress    Whether to compress the image after extracting or not (true for tiles)
      */
-    public function __construct($date, $width, $height, $imageScale, $filename, $quality, $watermarkOn, $offsets, $outputDir, 
-                                $compress, $format="png", $interlace=true)
+    public function __construct($date, $width, $height, $imageScale, $filename, $quality, $watermarkOn, $roi, 
+                                $outputDir, $compress, $format="png", $interlace=true)
     {
         $this->date          = $date;
         $this->quality       = $quality;
-        $this->offsetLeft	 = $offsets['left'];
-        $this->offsetTop	 = $offsets['top'];
-        $this->offsetBottom	 = $offsets['bottom'];
-        $this->offsetRight	 = $offsets['right'];
+        $this->roi           = $roi;
         $this->watermarkOn   = $watermarkOn;
         $this->buildFilename = !$filename;
         $this->compress      = $compress;
@@ -78,8 +71,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     /**
      * Builds the screenshot.
      *
-     * @param {Array} $layerInfoArray -- An associative array of 
-     * 	sourceId,width,height,imageScale,roi,offsetX,offsetY for each layer
+     * @param {Array} $layerInfoArray -- An associative array of
+     * 	sourceId,width,height,imageScale,offsetX,offsetY for each layer
      *
      * @return void
      */
@@ -98,14 +91,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 
             $obsInfo 	   = $this->_getObservatoryInformation($layer['sourceId']);
             $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";
-            
-            $roi = array(
-                'top'    => $this->offsetTop,
-                'left'   => $this->offsetLeft,
-                'bottom' => $this->offsetBottom,
-                'right'  => $this->offsetRight
-            );
-            
+
             // Instantiate a JP2Image
             $jp2Filepath = $this->_getJP2Path($closestImage);
           
@@ -113,17 +99,14 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 $jp2Filepath, $closestImage['width'], $closestImage['height'], $closestImage['scale']
             );       
 
-            $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $roi, $layer['opacity']);
+            $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $this->roi, $layer['opacity']);
 
             $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
             
             $image = new Image_HelioviewerImageLayer(
-                $jp2, $tmpOutputFile, 
-                $layer['width'], $layer['height'], $layer['imageScale'], 
-                $roi, $obsInfo['instrument'], $obsInfo['detector'],
-                $obsInfo['measurement'], $obsInfo['layeringOrder'], 
-                $offsetX, $offsetY, $layer['opacity'], $closestImage['date'], $this->compress
+                $jp2, $tmpOutputFile, $this->roi, $obsInfo['instrument'], $obsInfo['detector'], $obsInfo['measurement'], 
+                $obsInfo['layeringOrder'], $offsetX, $offsetY, $layer['opacity'], $closestImage['date'], $this->compress
             );
             array_push($this->layerImages, $image);
         }
@@ -156,7 +139,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * Builds a temporary output path where the extracted image will be stored
      * 
      * @param array $closestImage An array containing image meta information, obtained from the database
-     * @param array $roi          The region of interest in arcseconds
+     * @param roi   $roi          The region of interest in arcseconds
      * @param int   $opacity      The opacity of the image from 0 to 100
      * 
      * @return string a string containing the image's temporary output path
@@ -171,8 +154,8 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         }
 
         return $cacheDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
-            $this->scale . "_" . round($roi['left']) . "_" . round($roi['right']) . "x_" . 
-            round($roi['top']) . "_" . round($roi['bottom']) . "y-op$opacity.png";
+            $this->scale . "_" . round($roi->left()) . "_" . round($roi->right()) . "x_" . 
+            round($roi->top()) . "_" . round($roi->bottom()) . "y-op$opacity.png";
     }
 
     /**
