@@ -133,9 +133,11 @@ class Event_HEKAdapter
 
         //TODO Group similar (identical) events
         $response = JSON_decode($this->_proxy->query($params, true), true);
+        
+        $events = $response['result'];
        
         // Extend response to include any pregenerated screenshots and movies
-        $events = $this->_extendHEKResponse($response['result'], $options['ipod']);
+        $this->_extendHEKResponse($events, $options['ipod']);
 
         return $events;
     }
@@ -172,42 +174,47 @@ class Event_HEKAdapter
      * 
      * @param boolean $ipod Whether to look in the ipod folders or not
      */
-    private function _getEventScreenshotsAndMovies(&$response, $ipod)
+    private function _extendHEKResponse(&$originalEvents, $ipod)
     {
-        $result = array();
+        // Movie type to return
+        $movieType = $ipod ? "iPod" : "regular";
         
-        var_dump($response);
-        die();
-
-        foreach ($jsonResult->result as $event) {
-            $fullId = explode("/", $event->kb_archivid);
-            $id     = end($fullId);
-            $format = $ipod ? "mp4" : "flv";
-            
-            $tmpDir  = HV_CACHE_DIR . "/events/" . $id;
-            
-            $event->screenshots = array();
-            $event->movies      = array();
-            
-            // Add screenshots
-            if (file_exists($tmpDir . "/screenshots"))
-            
-            // Add Movies
-            $screenshots = $this->_checkForFiles($tmpDir . "/screenshots", $ipod, "*");
-            $movies      = $this->_checkForFiles($tmpDir . "/movies", $ipod, $format);
-
-            foreach ($screenshots as $url) {
-                array_push($event->screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
-            }
-            
-            foreach ($movies as $url) {
-                array_push($event->movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $url));
-            }
-
-            $result[] = $event;
+        // Function to convert filepaths to URLs
+        function convertFilepaths(&$value) {
+            $value = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $value);
         }
 
-        $jsonResult->result = $result;
-        return $jsonResult;
+        $i = 0;
+        
+        // Loop through events
+        foreach ($originalEvents as $event) {
+            // Get event Id
+            $hekId = explode("/", $event['kb_archivid']);
+            $id    = end($hekId);            
+            
+            $eventDir = HV_CACHE_DIR . "/events/" . $id;
+            
+            // Empty arrays to store matches
+            $screenshots = array();
+            $movies      = array();
+            
+            // Get screenshots
+            if (file_exists("$eventDir/screenshots")) {
+                $screenshots = glob("$eventDir/screenshots/*.*");
+                array_walk($screenshots, "convertFilepaths");
+            }
+            
+            // Get movies            
+            if (file_exists("$eventDir/movies/$movieType")) {
+                $movies = glob("$eventDir/movies/$movieType/*.*");
+                array_walk($movies, "convertFilepaths");
+            }
+
+            // Add screenshots and movies arrays to the result
+            $originalEvents[$i]["screenshots"] = $screenshots;
+            $originalEvents[$i]["movies"]      = $movies;
+            
+            $i++;
+        }
     }
 }
