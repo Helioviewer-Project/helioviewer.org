@@ -16,6 +16,9 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once "src/Event/HEKAdapter.php";
+
+define("SCREENSHOT_MIN_WIDTH" , 400);
+define("SCREENSHOT_MIN_HEIGHT", 400);
 /**
  * Event_SolarEvent class definition
  *
@@ -113,7 +116,7 @@ class Event_SolarEvent
         include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
         
         $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        
+
         // Create directory to store screenshots in
         $this->_createCacheDirectory($dir);        
         
@@ -124,9 +127,8 @@ class Event_SolarEvent
         $imageScale = 0.6; //0.59999
         
         // Determine region of interest
-        $bbox = $this->_polygonToBoundingBox($this->details['hpc_bbox']);
-        $roi  = $this->_padToMinSize($bbox, $imageScale);
-        
+        $roi = $this->_polygonToBoundingBox($this->details['hpc_bbox'], $imageScale);
+
         // Take screenshot of event half-way through its duration
         $obsDate = $this->_getTimeWindowCenter();
 
@@ -152,10 +154,7 @@ class Event_SolarEvent
             );
 
             // Build screenshot
-            $filepath = $builder->takeScreenshot(
-                $layerString, $obsDate, $imageScale, $roi['x1'], $roi['x2'], $roi['y1'], $roi['y2'],
-                $options
-            );
+            $filepath = $builder->takeScreenshot($layerString, $obsDate, $roi, $options);
 
             array_push($screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
@@ -186,8 +185,7 @@ class Event_SolarEvent
         $imageScale = 0.6; //0.59999
         
         // Determine region of interest
-        $bbox = $this->_polygonToBoundingBox($this->details['hpc_bbox']);
-        $roi  = $this->_padToMinSize($bbox, $imageScale);
+        $roi = $this->_polygonToBoundingBox($this->details['hpc_bbox'], $imageScale);
         
         // Select a start and end time for the movie
         list($startTime, $endTime) = $this->_getMovieTimeWindow();
@@ -220,10 +218,7 @@ class Event_SolarEvent
             );
 
             // Build movie
-            $filepath = $builder->buildMovie(
-                $layerString, $startTime, $imageScale, $roi['x1'], $roi['x2'], $roi['y1'], $roi['y2'],
-                $options
-            );
+            $filepath = $builder->buildMovie($layerString, $startTime, $roi, $options);
 
             array_push($movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }
@@ -299,28 +294,37 @@ class Event_SolarEvent
      * 
      * @return array 
      */
-    private function _polygonToBoundingBox($polygon)
+    private function _polygonToBoundingBox($polygon, $imageScale)
     {
+        require_once 'src/Helper/RegionOfInterest.php';
+
         $coordinates = explode(",", str_replace(array("POLYGON", "(", ")"), "", $polygon));
         $x = array();
         $y = array();
         
+        // Break up coordinate pairs
         foreach ($coordinates as $pair) {
             $xy = explode(" ", $pair);
             $x[] = (float)$xy[0];
             $y[] = (float)$xy[1];
         }
     
-        // sort all points by increasing value
+        // Sort all points by increasing value
         sort($x);
         sort($y);
             
-        return array(
+        $bbox = array(
             "x1" => $x[0],
             "x2" => end($x),
             "y1" => $y[0],
             "y2" => end($y)
-        );  
+        );
+        
+        // Make sure bounding box is at least 400x400 pixels
+        $bbox = $this->_padToMinSize($bbox, $imageScale); 
+        
+        // Regon of interest
+        return new Helper_RegionOfInterest($bbox['x1'], $bbox['x2'], $bbox['y1'], $bbox['y2'], $imageScale);
     }
     
     /**
@@ -333,14 +337,13 @@ class Event_SolarEvent
      */    
     private function _padToMinSize($box, $imageScale)
     {
-        $minSize = (400 * $imageScale) / 2;
         $centerX = ($box['x1'] + $box['x2']) / 2;
         $centerY = ($box['y1'] + $box['y2']) / 2;
         
-        $minX    = min($centerX - $minSize, $box['x1']);
-        $minY    = min($centerY - $minSize, $box['y1']);
-        $maxX    = max($centerX + $minSize, $box['x2']);
-        $maxY    = max($centerY + $minSize, $box['y2']);
+        $minX    = min($centerX - (SCREENSHOT_MIN_WIDTH  * $imageScale / 2), $box['x1']);
+        $minY    = min($centerY - (SCREENSHOT_MIN_HEIGHT * $imageScale / 2), $box['y1']);
+        $maxX    = max($centerX + (SCREENSHOT_MIN_WIDTH  * $imageScale / 2), $box['x2']);
+        $maxY    = max($centerY + (SCREENSHOT_MIN_HEIGHT * $imageScale / 2), $box['y2']);
         
         return array(
             "x1" => $minX, 

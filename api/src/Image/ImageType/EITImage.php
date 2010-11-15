@@ -28,15 +28,10 @@ require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
 class Image_ImageType_EITImage extends Image_SubFieldImage
 {
     private   $_measurement;
-    protected $tileSize;
-    protected $width;
-    protected $height;
     
     /**
      * Constructor
      * 
-     * @param int    $width        Desired width of the image
-     * @param int    $height       Desired height of the image
      * @param string $jp2          Source JP2 image
      * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
      * @param float  $desiredScale Desired scale of the output image
@@ -49,8 +44,7 @@ class Image_ImageType_EITImage extends Image_SubFieldImage
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */     
     public function __construct(
-        $width, $height, $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
-        $opacity, $compress
+        $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
     ) {
         $this->_measurement = $measurement;
         
@@ -61,9 +55,6 @@ class Image_ImageType_EITImage extends Image_SubFieldImage
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }
-
-        $this->width 	= $width;
-        $this->height 	= $height;
     }
     
     /**

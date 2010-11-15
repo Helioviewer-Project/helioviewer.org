@@ -82,7 +82,7 @@ class MovieTest extends PHPUnit_Framework_TestCase
         	echo "Built frame\n";
         }
         
-        $file = $hvMovie->buildMovie($images);
+        $file = $hvMovie->build($images);
         $this->assertFileExists($file);
 	}
 */

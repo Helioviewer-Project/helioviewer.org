@@ -29,9 +29,7 @@ require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
 class Movie_HelioviewerMovie
 {
     private $_images = array ();
-    private $_width;
-    private $_height;
-    private $_scale;
+    private $_roi;
     private $_maxFrames;
     private $_startTime;
     private $_endTime;
@@ -59,13 +57,9 @@ class Movie_HelioviewerMovie
 
      * @param String $tmpDir    the directory where the movie will be stored
      */
-    public function __construct(
-        $startTime, $numFrames, $frameRate, $hqFormat,
-        $filename, $quality, $width, $height, $imageScale, $tmpDir
-    ) {
-        $this->_width  = $width;
-        $this->_height = $height;
-        $this->_scale  = $imageScale;
+    public function __construct($startTime, $numFrames, $frameRate, $hqFormat, $filename, $quality, $roi, $tmpDir)
+    {
+        $this->_roi = $roi;
         
         // working directory
         $this->tmpDir = $tmpDir; 
@@ -119,7 +113,7 @@ class Movie_HelioviewerMovie
      */
     public function width()
     {
-        return $this->_width;
+        return $this->_roi->getPixelWidth();
     }
     
     /**
@@ -129,7 +123,7 @@ class Movie_HelioviewerMovie
      */
     public function height()
     {
-        return $this->_height;
+        return $this->_roi->getPixelHeight();
     }
 
     /**
@@ -144,7 +138,7 @@ class Movie_HelioviewerMovie
      *
      * @return void
      */
-    public function buildMovie($builtImages, $tmpImageDir)
+    public function build($builtImages, $tmpImageDir)
     {
         $this->_images = $builtImages;
         $movieName = $this->_filename;
@@ -153,8 +147,8 @@ class Movie_HelioviewerMovie
         $ffmpeg = new Movie_FFMPEGWrapper($this->_frameRate);
         
         // Width and height must be divisible by 2 or ffmpeg will throw an error.
-        $width  = round($this->_width);
-        $height = round($this->_height);
+        $width  = round($this->_roi->getPixelWidth());
+        $height = round($this->_roi->getPixelHeight());
         
         $width  += ($width  % 2 === 0? 0 : 1);
         $height += ($height % 2 === 0? 0 : 1);        
@@ -207,8 +201,8 @@ class Movie_HelioviewerMovie
      */
     private function _setAspectRatios()
     {
-        $width  = $this->_width;
-        $height = $this->_height;
+        $width  = $this->_roi->getPixelWidth();
+        $height = $this->_roi->getPixelHeight();
 
         $ratio = $width / $height;
 

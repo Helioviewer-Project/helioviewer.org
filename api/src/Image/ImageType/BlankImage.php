@@ -37,8 +37,6 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
     /**
      * Constructor
      * 
-     * @param int    $width        Desired width of the image
-     * @param int    $height       Desired height of the image
      * @param string $jp2          Source JP2 image
      * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
      * @param float  $desiredScale Desired scale of the output image
@@ -51,21 +49,11 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */     
     public function __construct(
-        $width, $height, $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, 
-        $opacity, $compress
+        $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
     ) {
         $this->_measurement = $measurement;
 
-        $defaultRoi = array(
-            'left'   => 0,
-            'right'  => 512,
-            'top'    => 0,
-            'bottom' => 512
-        );
         parent::__construct($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress);
-
-        $this->width 	= $width;
-        $this->height 	= $height;
     }
     
     /**
@@ -82,14 +70,13 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      * Overrides SubFieldImage's computePadding() method to avoid unnecessary computation.
      * 
      * @param Array $roi   -- Region of interest
-     * @param Float $scale -- Image Scale
-     * 
+     *
      * @return Array
      */
-    public function computePadding($roi, $scale) 
+    public function computePadding($roi) 
     {
-        $width  = ($roi['right']  - $roi['left']) / $scale;
-        $height = ($roi['bottom'] - $roi['top'])  / $scale;
+        $width  = $roi->getWidth()  / $roi->imageScale();
+        $height = $roi->getHeight() / $roi->imageScale();
         
         return array(
            "gravity" => "northwest",

@@ -77,14 +77,17 @@ class Module_Movies implements Module
     public function buildMovie ()
     {
         include_once 'src/Movie/HelioviewerMovieBuilder.php';
+        require_once 'src/Helper/RegionOfInterest.php';
         
         $builder = new Movie_HelioviewerMovieBuilder();
-
-        $filepath = $builder->buildMovie(
-            $this->_params['layers'], $this->_params['startTime'], $this->_params['imageScale'], 
-            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'],
-            $this->_options
+        
+        // Regon of interest
+        $roi = new Helper_RegionOfInterest(
+            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
+            $this->_params['imageScale']
         );
+
+        $filepath = $builder->buildMovie($this->_params['layers'], $this->_params['startTime'], $roi, $this->_options);
         
 //        $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
 //            
