@@ -148,30 +148,6 @@ class Module_SolarEvents implements Module
     }
     
     /**
-     * Globs a directory to see if there are any files in it.
-     * 
-     * @param string  $outputDir Directory path to where the screenshots or movies are stored
-     * @param boolean $ipod      Whether to look in the ipod folder or regular folder
-     * @param string  $format    File format
-     * 
-     * @return array
-     */
-    private function _checkForFiles($outputDir, $ipod, $format)
-    {
-        $this->_createEventCacheDir($outputDir);
-        
-        if ($ipod === true) {
-            $outputDir .= "/iPod";
-        } else {
-            $outputDir .= "/regular";
-        }
-
-        $files = glob($outputDir . "/*." . $format);
-        
-        return $files;        
-    }
-    
-    /**
      * Creates the directory structure that will be used to store screenshots
      * based upon events. 
      *
