@@ -176,8 +176,8 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      */
     private function _getPixelRoi($width, $height, $scale, $offsetX, $offsetY)
     {
-        $centerX = $width / 2 + $offsetX;
-        $centerY = $width / 2 + $offsetY;
+        $centerX = $width  / 2 + $offsetX;
+        $centerY = $height / 2 + $offsetY;
         
         $top  = max($this->_roi->top()   /$scale + $centerY, 0);
         $left = max($this->_roi->left()  /$scale + $centerX, 0);
