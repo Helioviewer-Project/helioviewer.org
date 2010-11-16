@@ -27,8 +27,7 @@ require_once 'ImageLayer.php';
  */
 class Image_HelioviewerImageLayer extends Image_ImageLayer
 {
-    protected $layeringOrder;
-    protected $opacity;
+    protected $options;
     
     /**
      * Constructor
@@ -39,20 +38,21 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * @param string $instrument    Instrument
      * @param string $detector      Detector
      * @param string $measurement   Measurement
-     * @param int    $layeringOrder What order the image should be composited
      * @param float  $offsetX       Offset of the sun center from the image center
      * @param float  $offsetY       Offset of the sun center from the image center
-     * @param float  $opacity       The opacity of the image
-     * @param string $date          The date of the image
-     * @param bool   $compress      Whether to compress the image after extracting or not (true for tiles)
      */
     public function __construct(
-        $jp2, $outputFile, $roi, $instrument, $detector, $measurement, $layeringOrder,  
-        $offsetX, $offsetY, $opacity, $date, $compress
+        $jp2, $outputFile, $roi, $instrument, $detector, $measurement, $offsetX, $offsetY, $options
     ) {
-        $this->layeringOrder = $layeringOrder;
-        $this->opacity		 = $opacity;
-        $this->date          = $date;
+        // Default options
+        $defaults = array(
+            "date"          => "",
+            "compress"      => true,
+            "layeringOrder" => 1,
+            "opacity"       => 100
+        );
+        
+        $this->options = array_replace($defaults, $options);
 
         // Region of interest
         $this->_roi = $roi;
@@ -65,7 +65,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
             include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
             $image = new Image_ImageType_BlankImage(
                $jp2, $pixelRoi, $roi->imageScale(), $detector, $measurement, $offsetX, $offsetY, 
-               $outputFile,  $opacity, $compress
+               $outputFile,  $this->options['opacity'], $this->options['compress']
             );
             
         } else {   	        
@@ -76,7 +76,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
 
             $image = new $classname(
                 $jp2, $pixelRoi, $roi->imageScale(), $detector, $measurement, $offsetX, $offsetY, $outputFile, 
-                $opacity, $compress
+                $this->options['opacity'], $this->options['compress']
             );
         }
         
@@ -130,7 +130,7 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
     public function getWaterMarkDateString()
     {
         // Add extra spaces between date and time for readability.
-        return str_replace("T", "   ", $this->date) . "\n";		
+        return str_replace("T", "   ", $this->options['date']) . "\n";		
     }
 
     /**
@@ -138,9 +138,9 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * 
      * @return int layeringOrder
      */
-    public function layeringOrder() 
+    public function getLayeringOrder() 
     {
-        return $this->layeringOrder;
+        return $this->options['layeringOrder'];
     }
     
     /**
@@ -148,9 +148,9 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
      * 
      * @return float opacity
      */
-    public function opacity()
+    public function getOpacity()
     {
-        return $this->opacity;
+        return $this->options['opacity'];
     }
     
     /**

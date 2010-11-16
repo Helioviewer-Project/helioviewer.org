@@ -122,7 +122,7 @@ class Module_WebClient implements Module
         $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
 
         // Prepare cache for tiles
-        $this->_createImageCacheDir($result['filepath']);
+        $this->_createTileCacheDir($result['filepath']);
 
         $json = json_encode($result);
 
@@ -139,7 +139,7 @@ class Module_WebClient implements Module
     {
         include_once 'src/Database/ImgIndex.php';
 
-        $verbose = (isset($this->_options['verbose'])) ? $this->_options['verbose'] : false;
+        $verbose = isset($this->_options['verbose']) ? $this->_options['verbose'] : false;
 
         $imgIndex    = new Database_ImgIndex();
         $dataSources = $imgIndex->getDataSources($verbose);
@@ -176,7 +176,7 @@ class Module_WebClient implements Module
         $params = $this->_params;
         
         // Create directories in cache
-        $this->_createImageCacheDir(dirname($this->_params['uri']));
+        $this->_createTileCacheDir(dirname($this->_params['uri']));
         
         // Tile filepath
         $filepath = HV_CACHE_DIR . $this->getTileCacheFilename(
@@ -198,8 +198,8 @@ class Module_WebClient implements Module
         );
 
         $tile = new Image_HelioviewerImageLayer(
-            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'], 1, 
-            $params['offsetX'], $params['offsetY'], 100, $params['date'], true
+            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
+            $params['offsetX'], $params['offsetY'], $this->_options
         );
         
         return $tile->display();  
@@ -313,7 +313,7 @@ class Module_WebClient implements Module
      * Note: mkdir may not set permissions properly due to an issue with umask.
      *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
-    private function _createImageCacheDir($filepath)
+    private function _createTileCacheDir($filepath)
     {
         $cacheDir = HV_CACHE_DIR . $filepath;
 
@@ -365,7 +365,7 @@ class Module_WebClient implements Module
             break;
 
         case "getTile":
-            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'date', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
+            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
                               'offsetX', 'offsetY', 'format', 'instrument', 'detector', 'measurement');
             $expected = array(
                 "required" => $required,

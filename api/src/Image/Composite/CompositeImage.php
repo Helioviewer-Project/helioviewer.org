@@ -248,7 +248,7 @@ abstract class Image_Composite_CompositeImage
         // Push all layering order 1 images into the sortedImages array,
         // push layering order 2 and higher into separate array.
         foreach ($images as $image) {
-            $order = $image->layeringOrder();
+            $order = $image->getLayeringOrder();
             if ($order > 1) {
                 array_push($groups[$order], $image);
             } else {
