@@ -124,10 +124,8 @@ class Module_WebClient implements Module
         // Prepare cache for tiles
         $this->_createTileCacheDir($result['filepath']);
 
-        $json = json_encode($result);
-
         header('Content-Type: application/json');
-        echo $json;
+        echo json_encode($result);
     }
 
     /**
@@ -264,31 +262,30 @@ class Module_WebClient implements Module
      */
     public function takeScreenshot()
     {
-        include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        include_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
         require_once 'src/Helper/RegionOfInterest.php';
-        
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        
+
         // Regon of interest
         $roi = new Helper_RegionOfInterest(
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
             $this->_params['imageScale']
         );
-
-        // Build screenshot
-        $file = $builder->takeScreenshot($this->_params['layers'], $this->_params['obsDate'], $roi, $this->_options);
+        
+        $screenshot = new Image_Screenshot_HelioviewerScreenshot(
+            $this->_params['layers'], $this->_params['obsDate'], $roi, $this->_options
+        );
 
         // TODO 11/10/2010 instead of returning result from takeScreenshot simply return true on success and
         // and add "display" and "getURL" methods. Moreover, a "display=false" param is already passed into takeScreenshot()!
 
         // Display screenshot
         if (isset($this->_options['display']) && $this->_options['display']) {
-            $this->displayImage($file);
+            $this->displayImage($screenshot->getFilepath());
         }
 
         // Print JSON
         header('Content-Type: application/json');
-        echo json_encode(array("url" => str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $file)));
+        echo json_encode(array("url" => $screenshot->getURL()));
     }
     
     /**
@@ -691,19 +688,9 @@ class Module_WebClient implements Module
                             <td>The format of the tile. Should be png if the tile has transparency, as with LASCO images, and jpg if it does not.</td>
                         </tr>
                         <tr>
-                            <td><b>date</b></td>
-                            <td><i>ISO 8601 UTC Date</i></td>
-                            <td>The date of the image</td>
-                        </tr>
-                        <tr>
                             <td><b>imageScale</b></td>
                             <td><i>Float</i></td>
                             <td>The scale of the image in the viewport, in arcseconds per pixel.</td>
-                        </tr>
-                        <tr>
-                            <td><b>size</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The desired tile size in pixels.</td>
                         </tr>
                         <tr>
                             <td><b>jp2Scale</b></td>

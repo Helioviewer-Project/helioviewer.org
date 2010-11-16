@@ -55,7 +55,6 @@ class Movie_HelioviewerMovieBuilder
     public function buildMovie($layersStr, $startTimeStr, $roi, $options)
     {
         $defaults = array(
-            'display'     => true,
             'endTime'     => false,
             'filename'    => false,
             'frameRate'   => false,
@@ -270,7 +269,6 @@ class Movie_HelioviewerMovieBuilder
             'quality'    => $quality,
             'watermarkOn'=> $watermarkOn,
             'outputDir'  => $tmpDir,
-            'display'    => false,
             'interlace'  => false,
             'format'     => 'jpg' //'bmp'
         );

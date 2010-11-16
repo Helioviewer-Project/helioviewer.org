@@ -210,7 +210,6 @@ class Event_SolarEvent
             
             // Movie preferences
             $options = array(
-                "display"   => false,
                 "endTime"   => $endTime,
                 "filename"  => $filename,
                 "hqFormat"  => $format,
