@@ -104,9 +104,17 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
             $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
             
+            // Optional parameters
+            $options = array(
+                "date"          => $closestImage['date'],
+                "compress"      => $this->compress,
+                "layeringOrder" => $obsInfo['layeringOrder'],
+                "opacity"       => $layer['opacity']
+            );
+            
             $image = new Image_HelioviewerImageLayer(
                 $jp2, $tmpOutputFile, $this->roi, $obsInfo['instrument'], $obsInfo['detector'], $obsInfo['measurement'], 
-                $obsInfo['layeringOrder'], $offsetX, $offsetY, $layer['opacity'], $closestImage['date'], $this->compress
+                $offsetX, $offsetY, $options
             );
             array_push($this->layerImages, $image);
         }

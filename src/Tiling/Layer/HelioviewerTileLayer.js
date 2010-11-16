@@ -113,7 +113,6 @@ var HelioviewerTileLayer = TileLayer.extend(
             "y1"          : coordinates.y1,
             "y2"          : coordinates.y2,
             "format"      : format,
-            "date"        : this.image.date,
             "imageScale"  : this.viewportScale,
             "jp2Width"    : this.image.width,
             "jp2Height"   : this.image.height,
