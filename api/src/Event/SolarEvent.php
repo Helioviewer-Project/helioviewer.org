@@ -113,10 +113,8 @@ class Event_SolarEvent
      */
     private function _createScreenshots($dir)
     {
-        include_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+        include_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
         
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-
         // Create directory to store screenshots in
         $this->_createCacheDirectory($dir);        
         
@@ -154,9 +152,10 @@ class Event_SolarEvent
             );
 
             // Build screenshot
-            $filepath = $builder->takeScreenshot($layerString, $obsDate, $roi, $options);
+            $screenshot = new Image_Screenshot_HelioviewerScreenshot($layerString, $obsDate, $roi, $options);
+            $url = $screenshot->getURL();
 
-            array_push($screenshots, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+            array_push($screenshots, $url);
         }
         
         return $screenshots;

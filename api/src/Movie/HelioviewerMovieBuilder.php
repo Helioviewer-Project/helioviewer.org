@@ -14,7 +14,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'src/Image/Screenshot/HelioviewerScreenshotBuilder.php';
+require_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
 require_once 'src/Movie/HelioviewerMovie.php';
 require_once 'src/Helper/DateTimeConversions.php';
 require_once 'src/Helper/LayerParser.php';
@@ -259,8 +259,7 @@ class Movie_HelioviewerMovieBuilder
      */
     private function _buildFramesFromMetaInformation($layers, $roi, $timestamps, $tmpDir, $quality, $watermarkOn)
     {
-        $builder = new Image_Screenshot_HelioviewerScreenshotBuilder();
-        $images  = array();
+        $movieFrames  = array();
 
         $frameNum = 0;
 
@@ -282,18 +281,20 @@ class Movie_HelioviewerMovieBuilder
                 'closestImages' => $closestImages
             ));
 
-            $image = $builder->takeScreenshot($layers, $obsDate, $roi, $options);
+            $screenshot = new Image_Screenshot_HelioviewerScreenshot($layers, $obsDate, $roi, $options);
+            $filepath   = $screenshot->getFilepath(); 
 
-            $images[] = $image;
+            array_push($movieFrames, $filepath);
         }
 
         // Copy the last frame so that it actually shows up in the movie for the same amount of time
         // as the rest of the frames.
-        $lastImage = dirname($image) . "/frame" . $frameNum . ".jpg";
-        copy($image, $lastImage);
-        $images[]  = $lastImage;
+        $lastImage = dirname($filepath) . "/frame" . $frameNum . ".jpg";
+        
+        copy($filepath, $lastImage);
+        array_push($movieFrames, $lastImage);
 
-        return $images;
+        return $movieFrames;
     }
 
     /**
