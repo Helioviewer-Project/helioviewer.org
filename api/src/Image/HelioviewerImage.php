@@ -63,9 +63,10 @@ class Image_HelioviewerImage extends Image_SubFieldImage
         $this->outputFile  = $outputFile;
         
         // SubFieldImage   ($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
-        parent::__construct(
-            $jp2, $roi, $outputFile, $offsetX, $offsetY, $this->options['opacity'], $this->options['compress']
+        $imageSettings = array(
+            "opacity" => $this->options['opacity']
         );
+        parent::__construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $imageSettings);
 
         // Make a blank image if the region of interest does not include this image.
 //        if ($this->_imageNotVisible($pixelRoi)) {
