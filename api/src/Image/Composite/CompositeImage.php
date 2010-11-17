@@ -28,7 +28,6 @@
 abstract class Image_Composite_CompositeImage
 {
     protected $composite;
-    protected $tmpDir;
     protected $layerImages;
     protected $cacheDir;
     protected $width;
@@ -41,36 +40,20 @@ abstract class Image_Composite_CompositeImage
      * @param int    $width    Image width
      * @param int    $height   Image height
      * @param float  $scale    Image scale
-     * @param string $tmpDir   The temporary directory where images are cached
+     * @param string $cacheDir Directory where the composite image should be cached
      * @param string $filename Desired filename of the output
      */
-    protected function __construct($width, $height, $imageScale, $tmpDir, $filename)
+    protected function __construct($width, $height, $imageScale, $cacheDir, $filename)
     {
-        $this->width  = $width;
-        $this->height = $height;
-        $this->scale  = $imageScale;        
-        $this->tmpDir     = $tmpDir;
+        $this->width      = $width;
+        $this->height     = $height;
+        $this->scale      = $imageScale;        
+        $this->cacheDir   = $cacheDir;
         $this->outputFile = $filename;
-
-        $this->cacheDir = HV_CACHE_DIR . "/";
         
-        $this->makeDirectory($this->tmpDir);
-
-    }
-    
-    /**
-     * Creates directories if they do not exist
-     * 
-     * @param string $directory Directory path
-     * 
-     * @return void
-     */
-    protected function makeDirectory($directory) 
-    {
-        if (!file_exists($directory)) {
-            mkdir($directory, 0777, true);
-            chmod($directory, 0777);
-        }
+        $defaults = array(
+            "watermark" => true
+        );
     }
     
     /**
@@ -91,7 +74,7 @@ abstract class Image_Composite_CompositeImage
             } else {
                 // Otherwise, the image has one layer and just needs to be watermarked.
                 $imagickImage = new IMagick($this->layerImages[0]->getFilePathString());
-                $output = $this->tmpDir . "/$this->outputFile";
+                $output = $this->cacheDir . "/$this->outputFile";
 
                 if ($this->watermarkOn === true || $this->watermarkOn === "true") {
                     $this->_watermark($imagickImage);
@@ -125,7 +108,7 @@ abstract class Image_Composite_CompositeImage
      */
     private function _watermark($imagickImage)
     {
-        $output      = $this->tmpDir . "/$this->outputFile";
+        $output      = $this->cacheDir . "/$this->outputFile";
 
         if ($this->width < 200 || $this->height < 200) {
             return;
@@ -163,7 +146,7 @@ abstract class Image_Composite_CompositeImage
     private function _buildComposite()
     {
         $sortedImages 	= $this->sortByLayeringOrder($this->layerImages);
-        $tmpImg 		= $this->tmpDir . "/" . $this->outputFile;
+        $tmpImg 		= $this->cacheDir . "/" . $this->outputFile;
 
         $layerNum = 1;
         $imagickImage = false;

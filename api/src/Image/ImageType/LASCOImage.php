@@ -162,12 +162,12 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
         $imagickImage->setImageExtent($width, $height);
         $imagickImage->compositeImage($mask, IMagick::COMPOSITE_COPYOPACITY, 0, 0);
 
-        if ($this->opacity < 100) {
+        if ($this->options['opacity'] < 100) {
             $mask->negateImage(true);
         
             $imagickImage->setImageClipMask($mask);
-            $imagickImage->setImageOpacity($this->opacity / 100);
-            $imagickImage->setImageFilename(substr($this->outputFile, 0, -4) . "-op" . $this->opacity . ".png");
+            $imagickImage->setImageOpacity($this->options['opacity'] / 100);
+            $imagickImage->setImageFilename(substr($this->outputFile, 0, -4) . "-op" . $this->options['opacity'] . ".png");
         }
 
         $mask->destroy();

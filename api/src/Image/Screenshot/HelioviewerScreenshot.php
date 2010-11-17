@@ -45,7 +45,6 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     {
         // Any settings specified in $this->_params will override $defaults
         $defaults = array(
-            'closestImages' => array(),
             'outputDir'   => HV_CACHE_DIR . "/screenshots",
             'format'      => 'png', // 11/16/2010 Not currently used!
             'watermarkOn' => true,
@@ -66,7 +65,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         parent::__construct($pixelWidth, $pixelHeight, $imageScale, $options['outputDir'], $options['filename'] . ".jpg");
 
         // Screenshot meta information
-        $layerArray = $this->_createMetaInformation($layers, $imageScale, $pixelWidth, $pixelHeight, $options['closestImages']);
+        $layerArray = $this->_createMetaInformation($layers, $imageScale, $pixelWidth, $pixelHeight);
 
         $this->date        = $obsDate;
         $this->roi         = $roi;
@@ -105,13 +104,11 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * @param {float} $imageScale    Scale of the image
      * @param {int}   $width         desired width of the output image
      * @param {int}   $height        desired height of the output image
-     * @param array   $closestImages An array of the closest images to the timestamp for this
-     *                               screenshot, associated by sourceId as keys.
      *
      * @return {Array} $metaArray -- The array containing one meta information 
      * object per layer
      */
-    private function _createMetaInformation($layers, $imageScale, $width, $height, $closestImages)
+    private function _createMetaInformation($layers, $imageScale, $width, $height)
     {
         $layerStrings = getLayerArrayFromString($layers);
 
@@ -127,16 +124,13 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             $opacity    = array_pop($layerArray);
             $visible    = array_pop($layerArray);
 
-            $image = (sizeOf($closestImages) > 0 ? $closestImages[$sourceId] : false);
-
             if ($visible !== 0 && $visible !== "0") {
                 $layerInfoArray = array(
                     'sourceId'     => $sourceId,
                     'width'        => $width,
                     'height'       => $height,
                     'imageScale'   => $imageScale,
-                    'opacity'      => $opacity,
-                    'closestImage' => $image
+                    'opacity'      => $opacity
                 );
                 array_push($metaArray, $layerInfoArray);
             }
@@ -160,11 +154,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
 
         // Find the closest image for each layer, add the layer information string to it
         foreach ($layerInfoArray as $layer) {
-            if (!$layer['closestImage']) {
-                $closestImage = $this->_getClosestImage($layer['sourceId']);
-            } else {
-                $closestImage = $layer['closestImage'];
-            }
+            $closestImage = $this->_getClosestImage($layer['sourceId']);
 
             $obsInfo 	   = $this->_getObservatoryInformation($layer['sourceId']);
             $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";

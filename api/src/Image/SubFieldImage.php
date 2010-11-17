@@ -46,7 +46,7 @@ class Image_SubFieldImage
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
-    protected $compress;
+    protected $options;
 
     /**
      * Creates an Image_SubFieldImage instance
@@ -56,8 +56,6 @@ class Image_SubFieldImage
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
-     * @param int    $opacity      The opacity of the image from 0 to 100
-     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      *
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal
@@ -66,11 +64,21 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $opacity, $compress)
+    public function __construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $options)
     {
         $this->outputFile = $outputFile;
         $this->jp2        = $jp2;
         $this->roi        = $roi;
+        
+        // Default settings
+        $defaults = array(
+            "bitdepth"  => HV_BIT_DEPTH,
+            "interlace" => true,
+            "opacity"   => 100,
+            "rescale"   => IMagick::FILTER_TRIANGLE
+        );
+        
+        $this->imageOptions = array_replace($defaults, $options);
         
         // Source image dimensions
         $jp2Width  = $jp2->getWidth();
@@ -96,9 +104,6 @@ class Image_SubFieldImage
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
-        $this->opacity = $opacity;
-        
-        $this->compress = $compress;
     }
     
     /**
@@ -266,7 +271,7 @@ class Image_SubFieldImage
             $grayscale->setImageFormat('PNG');
             $grayscale->setImageType(IMagick::IMGTYPE_GRAYSCALE); 
             $grayscale->setImageDepth(8);
-            $grayscale->setImageCompressionQuality(10);
+            $grayscale->setImageCompressionQuality(1);
             
             $grayscaleString = $grayscale->getimageblob();
 
@@ -288,16 +293,24 @@ class Image_SubFieldImage
             $this->compressImage($coloredImage);
             
             // Resize extracted image to correct size before padding.
-            $coloredImage->resizeImage(round($this->subfieldRelWidth), round($this->subfieldRelHeight), IMagick::FILTER_TRIANGLE, 0.6);
+            $rescaleBlurFactor =  0.6;
+            
+            $coloredImage->resizeImage(
+                round($this->subfieldRelWidth), round($this->subfieldRelHeight), 
+                $this->imageOptions['rescale'], $rescaleBlurFactor
+            );
             $coloredImage->setImageBackgroundColor('transparent');
             
             // Places the current image on a larger field of black if the final image is larger than this one
-            $coloredImage->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
+            $coloredImage->extentImage(
+                $this->padding['width'], $this->padding['height'],
+                -$this->padding['offsetX'], -$this->padding['offsetY']
+            );
             
             /* 
-             * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
-             * It seems that even if this particular instance of writeImage doesn't take the full time frame, if several instances of it are
-             * running PHP will complain.  
+             * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors 
+             * when movie frames are being made. It seems that even if this particular instance of writeImage 
+             * doesn't take the  full time frame, if several instances of it are running PHP will complain.  
              */
             //set_time_limit(60);
             
@@ -326,10 +339,6 @@ class Image_SubFieldImage
      */
     protected function compressImage(&$imagickImage)
     {
-        if (!$this->compress) {
-            return;
-        }
-        
         // Get extension
         $parts = explode(".", $this->outputFile);
         $extension = end($parts);
@@ -338,14 +347,18 @@ class Image_SubFieldImage
         if ($extension === "png") {
             $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
             $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
-            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            if ($this->imageOptions['interlace']) {
+                $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            }
         } elseif ($extension === "jpg") {
             $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
             $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
-            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
+            if ($this->imageOptions['interlace']) {
+                $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
+            }
         }
-        
-        $imagickImage->setImageDepth(HV_BIT_DEPTH);
+
+        $imagickImage->setImageDepth($this->imageOptions['bitdepth']);
     }
     
     /**
@@ -359,7 +372,7 @@ class Image_SubFieldImage
      */
     protected function setAlphaChannel(&$imagickImage)
     {
-        $imagickImage->setImageOpacity($this->opacity / 100);
+        $imagickImage->setImageOpacity($this->imageOptions['opacity'] / 100);
     }
 
     /**
