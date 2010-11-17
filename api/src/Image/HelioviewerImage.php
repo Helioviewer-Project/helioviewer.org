@@ -12,6 +12,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
+require_once 'SubFieldImage.php';
 /**
  * Image_HelioviewerImage class definition
  *
@@ -24,8 +25,12 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_HelioviewerImage
+class Image_HelioviewerImage extends Image_SubFieldImage
 {
+    protected $instrument;
+    protected $detector;
+    protected $measurement;
+    protected $outputFile;
     protected $options;
     
     /**
@@ -50,55 +55,37 @@ class Image_HelioviewerImage
             "layeringOrder" => 1,
             "opacity"       => 100
         );
-        
         $this->options = array_replace($defaults, $options);
-
-        // Region of interest
-        $this->_roi = $roi;
-        $pixelRoi   = $this->_getPixelRoi($jp2->getWidth(), $jp2->getHeight(), $jp2->getScale(), $offsetX, $offsetY);
+        
+        $this->instrument  = $instrument;
+        $this->detector    = $detector;
+        $this->measurement = $measurement;
+        $this->outputFile  = $outputFile;
+        
+        // SubFieldImage   ($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
+        parent::__construct(
+            $jp2, $roi, $outputFile, $offsetX, $offsetY, $this->options['opacity'], $this->options['compress']
+        );
 
         // Make a blank image if the region of interest does not include this image.
-        if ($this->_imageNotVisible($pixelRoi)) {
-            $outputFile = HV_ROOT_DIR . "/resources/images/transparent_512.png";
-            
-            include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
-            $image = new Image_ImageType_BlankImage(
-               $jp2, $pixelRoi, $roi->imageScale(), $detector, $measurement, $offsetX, $offsetY, 
-               $outputFile,  $this->options['opacity'], $this->options['compress']
-            );
-            
-        } else {   	        
-            $type      = strtoupper($instrument) . "Image";
-            $classname = "Image_ImageType_" . $type;
+//        if ($this->_imageNotVisible($pixelRoi)) {
+//            $outputFile = HV_ROOT_DIR . "/resources/images/transparent_512.png";
+//            
+//            include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
+//            $image = new Image_ImageType_BlankImage(
+//               $jp2, $pixelRoi, $roi->imageScale(), $detector, $measurement, $offsetX, $offsetY, 
+//               $outputFile,  $this->options['opacity'], $this->options['compress']
+//            );
+//        }
         
-            include_once HV_ROOT_DIR . "/api/src/Image/ImageType/$type.php";
-
-            $image = new $classname(
-                $jp2, $pixelRoi, $roi->imageScale(), $detector, $measurement, $offsetX, $offsetY, $outputFile, 
-                $this->options['opacity'], $this->options['compress']
-            );
-        }
-        
-        $this->outputFile = $outputFile;
-        $this->image      = $image;
-
-        $padding = $this->image->computePadding($roi);
-        $image->setPadding($padding);
+        $padding = $this->computePadding($roi);
+        $this->setPadding($padding);
 
         if (HV_DISABLE_CACHE || $this->_imageNotInCache()) {
-            $this->image->build();
+            $this->build();
         }
     }
-    
-    /**
-     * Displays the image
-     * 
-     * @return void
-     */
-    public function display()
-    {
-        $this->image->display();
-    }
+
     /**
      * Determines if the roi is invalid by calculating width and height and seeing if they are
      * less than 0.
@@ -119,7 +106,7 @@ class Image_HelioviewerImage
      */    
     public function getWaterMarkName()
     {
-        return $this->image->getWaterMarkName();
+        return $this->getWaterMarkName();
     }
     
     /**
@@ -171,7 +158,7 @@ class Image_HelioviewerImage
      */
     public function getFilePathString() 
     {
-        return $this->image->outputFile();
+        return $this->outputFile;
     }
 
     /**
@@ -183,36 +170,7 @@ class Image_HelioviewerImage
      */
     public function setNewFilePath($filePath) 
     {
-        $this->image->setNewFilePath($filePath);
-    }
-
-    /**
-     * Converts arcseconds (given in $roi in the constructor) to image pixels
-     * 
-     * @param int   $width   The width of the JP2 image in pixels
-     * @param int   $height  The height of the JP2 image in pixels
-     * @param float $scale   The scale of the JP2 image in arcsec/pixel
-     * @param float $offsetX The offset of the center of the sun from the center of the image
-     * @param float $offsetY The offset of the center of the sun from the center of the image
-     * 
-     * @return array an array of pixel offsets
-     */
-    private function _getPixelRoi($width, $height, $scale, $offsetX, $offsetY)
-    {
-        $centerX = $width  / 2 + $offsetX;
-        $centerY = $height / 2 + $offsetY;
-        
-        $top  = max($this->_roi->top()   /$scale + $centerY, 0);
-        $left = max($this->_roi->left()  /$scale + $centerX, 0);
-        $top  = $top  < 0.1? 0 : $top;
-        $left = $left < 0.1? 0 : $left;
-        
-        return array(
-            'top'    => $top,
-            'left'   => $left,
-            'bottom' => max(min($this->_roi->bottom() /$scale + $centerY, $height), 0),
-            'right'  => max(min($this->_roi->right()  /$scale + $centerX, $width), 0)
-        );
+        $this->setNewFilePath($filePath);
     }
 }
 ?>

@@ -12,7 +12,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
+require_once 'src/Image/HelioviewerImage.php';
 /**
  * Image_ImageType_LASCOImage class definition
  * There is one xxxImage for each type of detector Helioviewer supports.
@@ -25,10 +25,8 @@ require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_ImageType_LASCOImage extends Image_SubFieldImage
+class Image_ImageType_LASCOImage extends Image_HelioviewerImage
 {
-    private   $_measurement;
-    private   $_detector;
     protected $solarCenterOffsetX;
     protected $solarCenterOffsetY;
     
@@ -46,17 +44,11 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      * @param int    $opacity      The opacity of the image from 0 to 100
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */    
-    public function __construct(
-        $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
-    ) {
-        $this->_detector    = $detector;
-        $this->_measurement = $measurement;
-        
-        parent::__construct($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress);
-
-        if ($this->_detector == "C2") {
+    public function __construct($jp2, $outputFile, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    {
+        if ($det == "C2") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Red_Temperature.png";
-        } else if ($this->_detector == "C3") {
+        } else if ($det == "C3") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Blue_White_Linear.png";
         }
         
@@ -66,6 +58,8 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
 
         $this->solarCenterOffsetX = $offsetX;
         $this->solarCenterOffsetY = $offsetY;
+        
+        parent::__construct($jp2, $outputFile, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
@@ -75,7 +69,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
      */    
     public function getWaterMarkName() 
     {
-        return "LASCO $this->_detector\n";
+        return "LASCO $this->detector\n";
     }
 
     /**
@@ -127,7 +121,7 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;
-        $mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
+        $mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_{$this->detector}_Mask.png";
 
         if ($this->reduce > 0) {
             $maskScaleFactor = 1 / pow(2, $this->reduce);
@@ -135,8 +129,10 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
             $maskScaleFactor = 1;
         }
 
-        $maskTopLeftX = ($this->roi['left'] + ($maskWidth  - $this->jp2->getWidth()) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
-        $maskTopLeftY = ($this->roi['top']  + ($maskHeight - $this->jp2->getHeight())/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
+        $maskTopLeftX = ($this->imageSubRegion['left'] + 
+                        ($maskWidth  - $this->jp2->getWidth()) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
+        $maskTopLeftY = ($this->imageSubRegion['top']  + 
+                        ($maskHeight - $this->jp2->getHeight())/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
 
         $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;
@@ -175,74 +171,5 @@ class Image_ImageType_LASCOImage extends Image_SubFieldImage
         }
 
         $mask->destroy();
-    }
-    
-    /**
-     * Does the same thing as setAlphaChannel but with command-line calls instead of IMagick
-     * 
-     * @param string $input The filepath to the image
-     * 
-     * @return void
-     */
-    protected function setAlphaChannelNoImagick($input)
-    {
-        $maskWidth  = 1040;
-        $maskHeight = 1040;
-        $mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_{$this->_detector}_Mask.png";
-
-        if ($this->reduce > 0) {
-            $maskScaleFactor = 1 / pow(2, $this->reduce);
-        } else {
-            $maskScaleFactor = 1;
-        }
-        
-        //var_dump($this);
-        $maskTopLeftX = ($this->roi['left'] + ($maskWidth  - $this->jp2->getWidth()) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
-        $maskTopLeftY = ($this->roi['top']  + ($maskHeight - $this->jp2->getHeight())/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
-
-        $width  = $this->subfieldWidth  * $maskScaleFactor;
-        $height = $this->subfieldHeight * $maskScaleFactor;
-
-        // $maskTopLeft coordinates cannot be negative when cropping, so if they are, adjust the width and height
-        // by the negative offset and crop with zero offsets. Then put the image on the properly-sized image
-        // and offset it correctly.
-        $cropWidth  = round($width  + min($maskTopLeftX, 0));
-        $cropHeight = round($height + min($maskTopLeftY, 0));
-        
-        $gravity   = $this->padding["gravity"];
-        
-        // Imagemagick floors pixel values but they need to be rounded up or down. Rounding cannot be done in the previous lines of code
-        // because some addition needs to take place first.
-        $maskTopLeftX = round($maskTopLeftX);
-        $maskTopLeftY = round($maskTopLeftY);
-        $width = round($width);
-        $height = round($height);
-        
-        $str = "convert -respect-parenthesis ( %s -gravity %s -background black -extent %fx%f ) " .
-               "( %s -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity %s " .
-               "-background black -extent %fx%f%+f%+f ) -alpha off -compose copy_opacity -composite $input";
-        
-        $cmd = sprintf(
-            $str, $input, $gravity, $width, $height, $mask, 100 * $maskScaleFactor,
-            $cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0), 
-            $gravity, $width, $height, ceil($width - $cropWidth), ceil($height - $cropHeight)
-        );
-
-        exec(escapeshellcmd($cmd));
-
-        if ($this->opacity < 100) {
-            $negative = substr($input, 0, -4) . "-mask.png";
-            $str = "convert -negate $mask -resize %f%% -crop %fx%f%+f%+f +repage -monochrome -gravity $gravity " .
-               "-background black -extent %fx%f%+f%+f $negative";
-            $cmd = sprintf(
-                $str, 100 * $maskScaleFactor, $cropWidth, $cropHeight, max($maskTopLeftX, 0), max($maskTopLeftY, 0), 
-                $width, $height, ceil($width - $cropWidth), ceil($height - $cropHeight)
-            );
-
-            exec(escapeshellcmd($cmd));
-
-            $cmd = "convert $input -clip-mask $negative -alpha on -channel o -evaluate set $this->opacity% $input";
-            exec(escapeshellcmd($cmd));
-        }
     }
 }

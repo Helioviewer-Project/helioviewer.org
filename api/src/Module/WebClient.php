@@ -168,7 +168,6 @@ class Module_WebClient implements Module
     public function getTile ()
     {
         require_once 'src/Image/JPEG2000/JP2Image.php';
-        require_once 'src/Image/HelioviewerImage.php';
         require_once 'src/Helper/RegionOfInterest.php';
         
         $params = $this->_params;
@@ -195,9 +194,16 @@ class Module_WebClient implements Module
             $params['x1'], $params['x2'], $params['y1'], $params['y2'], $params['imageScale']
         );
 
-        $tile = new Image_HelioviewerImage(
-            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
-            $params['offsetX'], $params['offsetY'], $this->_options
+        // Choose type of tile to create
+        $type = strtoupper($params['instrument']) . "Image";
+        include_once "src/Image/ImageType/$type.php";
+
+        $classname = "Image_ImageType_" . $type;
+
+        // Create the tile
+        $tile = new $classname(
+                $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
+                $params['offsetX'], $params['offsetY'], $this->_options
         );
         
         return $tile->display();  

@@ -13,7 +13,10 @@
  */
 
 /**
- * A simple class to represent a rectangular region of interest on or around the Sun
+ * A simple class to represent a rectangular region of interest on or around the Sun. Region of interest here refers
+ * to a region of interest in space. This region may be larger than, smaller than, or the same size as a given
+ * image. In order to determine how the region of interest in space translates to an image sub-region, the getPixelROI
+ * method should be used.
  * 
  * @category Helper
  * @package  Helioviewer
@@ -90,6 +93,35 @@ class Helper_RegionOfInterest
 
     public function getPixelHeight() {
         return ($this->_bottom - $this->_top) / $this->_scale;
+    }
+    
+    /**
+     * Returns pixel values for the region of an image that overlaps with this region of interest
+     * 
+     * @param int   $imageWidth  The width of the image in pixels
+     * @param int   $imageHeight The height of the image in pixels
+     * @param float $imageScale  The scale of the image in arcseconds/pixel
+     * @param float $offsetX     The offset of the center of the sun from the center of the image
+     * @param float $offsetY     The offset of the center of the sun from the center of the image
+     * 
+     * @return array an array of pixel offsets
+     */
+    public function getImageSubRegion($imageWidth, $imageHeight, $imageScale, $offsetX, $offsetY)
+    {
+        $centerX = $imageWidth  / 2 + $offsetX;
+        $centerY = $imageHeight / 2 + $offsetY;
+        
+        $top  = max($this->_top   /$imageScale + $centerY, 0);
+        $left = max($this->_left  /$imageScale + $centerX, 0);
+        $top  = $top  < 0.1 ? 0 : $top;
+        $left = $left < 0.1 ? 0 : $left;
+        
+        return array(
+            'top'    => $top,
+            'left'   => $left,
+            'bottom' => max(min($this->_bottom /$imageScale + $centerY, $imageHeight), 0),
+            'right'  => max(min($this->_right  /$imageScale + $centerX, $imageWidth), 0)
+        );
     }
     
     /**
