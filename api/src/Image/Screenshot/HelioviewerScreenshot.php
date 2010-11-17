@@ -14,7 +14,7 @@
  */
 require_once 'src/Image/Composite/CompositeImage.php';
 require_once 'src/Image/JPEG2000/JP2Image.php';
-require_once 'src/Image/HelioviewerImageLayer.php';
+require_once 'src/Image/HelioviewerImage.php';
 require_once 'src/Helper/LayerParser.php';
 /**
  * Image_HelioviewerScreenshot class definition
@@ -189,7 +189,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 "opacity"       => $layer['opacity']
             );
             
-            $image = new Image_HelioviewerImageLayer(
+            $image = new Image_HelioviewerImage(
                 $jp2, $tmpOutputFile, $this->roi, $obsInfo['instrument'], $obsInfo['detector'], $obsInfo['measurement'], 
                 $offsetX, $offsetY, $options
             );
