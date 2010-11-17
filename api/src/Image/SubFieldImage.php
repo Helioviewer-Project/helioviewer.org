@@ -34,6 +34,7 @@ class Image_SubFieldImage
     protected $jp2;
     protected $outputFile;
     protected $roi;
+    protected $imageSubRegion;
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
@@ -52,7 +53,6 @@ class Image_SubFieldImage
      *
      * @param string $jp2          Original JP2 image from which the subfield should be derrived
      * @param array	 $roi          Subfield region of interest
-     * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
@@ -66,25 +66,33 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
+    public function __construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $opacity, $compress)
     {
         $this->outputFile = $outputFile;
         $this->jp2        = $jp2;
         $this->roi        = $roi;
+        
+        // Source image dimensions
+        $jp2Width  = $jp2->getWidth();
+        $jp2Height = $jp2->getHeight();
+        $jp2Scale  = $jp2->getScale(); 
 
-        $this->subfieldWidth  = $roi["right"] - $roi["left"];
-        $this->subfieldHeight = $roi["bottom"] - $roi["top"];
-
-        $this->desiredScale    = $desiredScale;
-        $this->desiredToActual = $desiredScale / $jp2->getScale();
+        // Convert region of interest from arc-seconds to pixels
+        $this->imageSubRegion = $roi->getImageSubRegion($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
+        
+        $this->desiredScale    = $roi->imageScale();
+        $this->desiredToActual = $this->desiredScale / $jp2->getScale();
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));
+        
+        $this->subfieldWidth  = $this->imageSubRegion["right"]  - $this->imageSubRegion["left"];
+        $this->subfieldHeight = $this->imageSubRegion["bottom"] - $this->imageSubRegion["top"];
 
         $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
         $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
         
-        $this->jp2RelWidth  = $jp2->getWidth()  /  $this->desiredToActual;
-        $this->jp2RelHeight = $jp2->getHeight() /  $this->desiredToActual;
+        $this->jp2RelWidth  = $jp2Width  / $this->desiredToActual;
+        $this->jp2RelHeight = $jp2Height / $this->desiredToActual;
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
@@ -190,29 +198,26 @@ class Image_SubFieldImage
      * 
      * @return array with padding
      */
-    public function computePadding($roi)
+    public function computePadding()
     {
-        $width  = $roi->getWidth()  / $roi->imageScale();
-        $height = $roi->getHeight() / $roi->imageScale();
-
         $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
         $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
         
-        $leftToCenter = ($this->roi['left'] - $centerX);
-        $topToCenter  = ($this->roi['top']  - $centerY);
-        $scaleFactor  = $this->jp2->getScale() / $roi->imageScale();
+        $leftToCenter = ($this->imageSubRegion['left'] - $centerX);
+        $topToCenter  = ($this->imageSubRegion['top']  - $centerY);
+        $scaleFactor  = $this->jp2->getScale() / $this->desiredScale;
         $relLeftToCenter = $leftToCenter * $scaleFactor;
         $relTopToCenter  = $topToCenter  * $scaleFactor;
 
-        $left = ($roi->left() / $roi->imageScale()) - $relLeftToCenter;
-        $top  = ($roi->top()  / $roi->imageScale()) - $relTopToCenter;
+        $left = ($this->roi->left() / $this->desiredScale) - $relLeftToCenter;
+        $top  = ($this->roi->top()  / $this->desiredScale) - $relTopToCenter;
 
         // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
         // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
         return array(
            "gravity" => "northwest",
-           "width"   => round($width),
-           "height"  => round($height),
+           "width"   => round($this->roi->getPixelWidth()),
+           "height"  => round($this->roi->getPixelHeight()),
            "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
            "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
         );
@@ -254,7 +259,7 @@ class Image_SubFieldImage
             $input = substr($this->outputFile, 0, -3) . "pgm";
 
             // Extract region (PGM)
-            $this->jp2->extractRegion($input, $this->roi, $this->reduce);
+            $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
 
             // Convert to GD-readable format
             $grayscale = new IMagick($input);

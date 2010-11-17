@@ -189,10 +189,17 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
                 "opacity"       => $layer['opacity']
             );
             
-            $image = new Image_HelioviewerImage(
+            // Choose type of tile to create
+            $type = strtoupper($obsInfo['instrument']) . "Image";
+            include_once "src/Image/ImageType/$type.php";
+            
+            $classname = "Image_ImageType_" . $type;
+    
+            $image = new $classname(
                 $jp2, $tmpOutputFile, $this->roi, $obsInfo['instrument'], $obsInfo['detector'], $obsInfo['measurement'], 
                 $offsetX, $offsetY, $options
             );
+            
             array_push($this->layerImages, $image);
         }
 

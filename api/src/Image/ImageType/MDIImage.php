@@ -12,7 +12,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
+require_once 'src/Image/HelioviewerImage.php';
 /**
  * ImageType_MDIImage class definition
  * There is one xxxImage for each type of detector Helioviewer supports.
@@ -25,10 +25,8 @@ require_once HV_ROOT_DIR . '/api/src/Image/SubFieldImage.php';
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_ImageType_MDIImage extends Image_SubFieldImage
+class Image_ImageType_MDIImage extends Image_HelioviewerImage
 {
-    private $_measurement;
-    
     /**
      * Constructor
      *
@@ -43,15 +41,12 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
      * @param int    $opacity      The opacity of the image from 0 to 100
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */
-    public function __construct(
-        $jp2, $roi, $desiredScale, $detector, $measurement, $offsetX, $offsetY, $outputFile, $opacity, $compress
-    ) {
-        $this->_measurement = $measurement;
-        
-        parent::__construct($jp2, $roi, $desiredScale,$outputFile, $offsetX, $offsetY, $opacity, $compress);
-
+    public function __construct($jp2, $outputFile, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    {
         // MDI has no color table
         $this->setColorTable(false);
+        
+        parent::__construct($jp2, $outputFile, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
@@ -73,6 +68,6 @@ class Image_ImageType_MDIImage extends Image_SubFieldImage
      */
     public function getWaterMarkName() 
     {
-        return "MDI $this->_measurement\n";
+        return "MDI $this->measurement\n";
     }
 }
