@@ -39,27 +39,6 @@ abstract class Image_ImageLayer
         $this->outputFile 	= $outputFile;
         $this->image		= $image;
     }
-    
-    /**
-     * Gets the filepath
-     * 
-     * @return string outputFile
-     */
-    public function getFilePathString() 
-    {
-        return $this->image->outputFile();
-    }
 
-    /**
-     * Sets a new filepath 
-     * 
-     * @param string $filePath New filepath
-     * 
-     * @return void
-     */
-    public function setNewFilePath($filePath) 
-    {
-        $this->image->setNewFilePath($filePath);
-    }
 }
 ?>

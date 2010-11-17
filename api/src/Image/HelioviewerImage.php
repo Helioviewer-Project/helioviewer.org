@@ -1,7 +1,7 @@
 <?php 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Image_HelioviewerImageLayer class definition
+ * Image_HelioviewerImage class definition
  *
  * PHP version 5
  *
@@ -12,9 +12,8 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'ImageLayer.php';
 /**
- * Image_HelioviewerImageLayer class definition
+ * Image_HelioviewerImage class definition
  *
  * PHP version 5
  *
@@ -25,7 +24,7 @@ require_once 'ImageLayer.php';
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_HelioviewerImageLayer extends Image_ImageLayer
+class Image_HelioviewerImage
 {
     protected $options;
     
@@ -80,7 +79,8 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
             );
         }
         
-        parent::__construct($image, $outputFile);
+        $this->outputFile = $outputFile;
+        $this->image      = $image;
 
         $padding = $this->image->computePadding($roi);
         $image->setPadding($padding);
@@ -161,6 +161,29 @@ class Image_HelioviewerImageLayer extends Image_ImageLayer
     private function _imageNotInCache() 
     {
         return !file_exists($this->outputFile);
+    }
+    
+    
+    /**
+     * Gets the filepath
+     * 
+     * @return string outputFile
+     */
+    public function getFilePathString() 
+    {
+        return $this->image->outputFile();
+    }
+
+    /**
+     * Sets a new filepath 
+     * 
+     * @param string $filePath New filepath
+     * 
+     * @return void
+     */
+    public function setNewFilePath($filePath) 
+    {
+        $this->image->setNewFilePath($filePath);
     }
 
     /**
