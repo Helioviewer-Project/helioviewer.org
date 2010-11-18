@@ -64,13 +64,6 @@ class Module_Movies implements Module
 
     /**
      * buildMovie
-     * See the API webpage for example usage.
-     *
-     * For an iPod-compatible format, specify "hqFormat=ipod"
-     * Note that filename does NOT have the . extension on it. The reason for
-     * this is that in the media settings pop-up dialog, there is no way of
-     * knowing ahead of time whether the image is a .png, .tif, .flv, etc,
-     * and in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      *
      * @return void
      */
@@ -92,10 +85,10 @@ class Module_Movies implements Module
         
         // Output result            
         if (isset($this->_options['display']) && $this->_options['display']) {
-            echo Movie_HelioviewerMovie::showMovie($builder->getURL(), $movie->width(), $movie->height());
+            echo $builder->getHTML();
         } else {
             header('Content-type: application/json');
-            echo json_encode(array("url" => $builder->getFilepath()));   
+            echo json_encode(array("url" => $builder->getFilepath() . ".mp4"));   
         }
     }
 
@@ -106,7 +99,7 @@ class Module_Movies implements Module
      */
     public function queueMovie()
     {
-        print "Not yet implemented in Dynamo...";
+        print "Not yet implemented in Dynamo: send request to Helioqueuer instead.";
     }
 
     /**
@@ -168,7 +161,7 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('endTime', 'display', 'filename', 'frameRate', 'hqFormat', 'quality', 'numFrames', 'uuid', 'watermarkOn'),
+                "optional" => array('endTime', 'display', 'filename', 'frameRate', 'quality', 'numFrames', 'uuid', 'watermarkOn'),
                 "bools"    => array('display', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
                 "files"    => array('filename'),
@@ -187,7 +180,7 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                "required" => array('layers', 'startTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "optional" => array('endTime', 'filename', 'frameRate', 'hqFormat', 'quality', 'numFrames', 'watermarkOn'),
+               "optional" => array('endTime', 'filename', 'frameRate', 'quality', 'numFrames', 'watermarkOn'),
                "dates"    => array('startTime', 'endTime'),
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                "ints"     => array('frameRate', 'quality', 'numFrames')
@@ -439,12 +432,6 @@ class Module_Movies implements Module
                                 the filename defaults to a combination of the date, layer names, and image scale.</td>
                         </tr>
                         <tr>
-                            <td><b>hqFormat</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", "avi", and "ipod".
-                                iPod video will come out in mp4 format but extra settings need to be applied so format must be specified as "ipod". </td>
-                        </tr>
-                        <tr>
                             <td><b>display</b></td>
                             <td><i>Boolean</i></td>
                             <td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
@@ -475,8 +462,8 @@ class Module_Movies implements Module
                 </span><br />
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false
                 </a>
                 </span>
                 </div>

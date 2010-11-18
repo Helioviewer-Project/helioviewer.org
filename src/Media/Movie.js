@@ -120,10 +120,12 @@ var Movie = Media.extend(
      * Decides how to display video and returns HTML corresponding to that method
      */
     getVideoPlayerHTML: function (width, height) {
-        var path, file, hqFile, url;
+        var path, file, hqFile, flashFile, url;
 
-        file   = this.url.match(/[\w-]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
-        hqFile = file.replace("flv", this.hqFormat);
+        file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
+        
+        hqFile    = file.replace("mp4", this.hqFormat);
+        flashFile = file.replace("mp4", "flv");
         
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
@@ -140,7 +142,7 @@ var Movie = Media.extend(
 
         // Fallback (flash player)
         else {
-            url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
+            url    = 'api/index.php?action=playMovie&file=' + flashFile + '&width=' + width + '&height=' + height; 
             
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
