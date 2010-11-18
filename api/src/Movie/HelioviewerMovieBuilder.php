@@ -36,15 +36,15 @@ define("INSUFFICIENT_DATA_EXCEPTION", "There are not enough images for the given
  */
 class Movie_HelioviewerMovieBuilder
 {
-    private $_imgIndex;
-    private $_filepath;
+    private $_db;
+    private $_movie;
 
     /**
      * Does not require any parameters or setup.
      */
     public function __construct()
     {
-        $this->_imgIndex = new Database_ImgIndex();
+        $this->_db = new Database_ImgIndex();
     }
 
     /**
@@ -58,7 +58,6 @@ class Movie_HelioviewerMovieBuilder
             'endTime'     => false,
             'filename'    => false,
             'frameRate'   => false,
-            'hqFormat'    => "mp4",
             'numFrames'   => false,
             'outputDir'   => "",
             'quality'     => 10,
@@ -101,7 +100,7 @@ class Movie_HelioviewerMovieBuilder
             $timestamps = $this->_getTimestamps($layersStr, $startTimestamp, $cadence, $optimalNumFrames);
 
             $numFrames = sizeOf($timestamps);
-
+            
             // Make sure that data was found to create a movie
             if ($numFrames == 0) {
                 throw new Exception(INSUFFICIENT_DATA_EXCEPTION, 1);
@@ -118,9 +117,8 @@ class Movie_HelioviewerMovieBuilder
             $frameRate = $this->_determineOptimalFrameRate($numFrames - 1, $options['frameRate']);
 
             // Instantiate movie class
-            $movie = new Movie_HelioviewerMovie(
-                $startTimestamp, $numFrames, $frameRate, $options['hqFormat'], $filename,
-                $options['quality'], $roi, $cacheDir
+            $this->_movie = new Movie_HelioviewerMovie(
+                $startTimestamp, $numFrames, $frameRate, $filename, $roi, $cacheDir
             );
 
             // Build movie frames
@@ -129,12 +127,7 @@ class Movie_HelioviewerMovieBuilder
             );
 
             // Compile movie
-            $movie->build($images, $tmpImageDir);
-            
-            // TEMP 11/15/2010: filepath for flash video
-            $this->_filepath = $movie->getFilepath();
-
-            return true;
+            $this->_movie->build($images);
 
         } catch(Exception $e) {
             touch($cacheDir . "/INVALID");
@@ -147,7 +140,15 @@ class Movie_HelioviewerMovieBuilder
      */
     public function getFilepath()
     {
-        return $this->_filepath;
+        return $this->_movie->getFilepath();
+    }
+    
+    /**
+     * Returns movie player HTML with most recently generated movie loaded
+     */
+    public function getHTML()
+    {
+        return $this->_movie->getMoviePlayerHTML();
     }
     
     /**
@@ -155,7 +156,7 @@ class Movie_HelioviewerMovieBuilder
      */
     public function getURL()
     {
-        return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->_filepath);
+        return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->_movie->getFilepath());
     }
 
     /**
@@ -171,8 +172,8 @@ class Movie_HelioviewerMovieBuilder
         }
 
         if (!file_exists($dir)) {
-            mkdir($dir, 0777, true);
-            chmod($dir, 0777);
+            mkdir("$dir/frames", 0777, true);
+            chmod("$dir/frames", 0777);
         }
 
         return $dir;
@@ -348,7 +349,7 @@ class Movie_HelioviewerMovieBuilder
 
         $images = array();
         foreach ($sourceIds as $id) {
-            $images[$id] = $this->_imgIndex->getClosestImage($isoTime, $id);
+            $images[$id] = $this->_db->getClosestImage($isoTime, $id);
         }
         return $images;
     }
@@ -371,7 +372,7 @@ class Movie_HelioviewerMovieBuilder
             $layerInfo = singleLayerToArray($layer);
             $sourceId  = getSourceIdFromLayerArray($layerInfo);
 
-            $maxInRange = max($maxInRange, $this->_imgIndex->getImageCount($startTime, $endTime, $sourceId));
+            $maxInRange = max($maxInRange, $this->_db->getImageCount($startTime, $endTime, $sourceId));
         }
 
         // If the user specifies numFrames, use the minimum of their number and the maximum images in range.
@@ -417,6 +418,6 @@ class Movie_HelioviewerMovieBuilder
             $frameRate = min($frameRate, $requestedFrameRate);
         }
 
-        return $frameRate;
+        return max(1, $frameRate);
     }
 }

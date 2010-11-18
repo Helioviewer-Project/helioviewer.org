@@ -175,7 +175,7 @@ class Event_SolarEvent
         $builder = new Movie_HelioviewerMovieBuilder();
         
         // Create directory to store movies in
-        $this->_createCacheDirectory($dir);        
+        $this->_createCacheDirectory($dir . "/frames");
         
         // Datasources for which movies should be created
         $sourceIds = $this->_getAssociatedDataSources($this->details['event_type']);
@@ -188,9 +188,6 @@ class Event_SolarEvent
         
         // Select a start and end time for the movie
         list($startTime, $endTime) = $this->_getMovieTimeWindow();
-        
-        // Format
-        $format = $ipod ? "ipod" : "mp4";
 
         // Filename prefix
         $filePrefix = "Movie_";
@@ -211,14 +208,13 @@ class Event_SolarEvent
             $options = array(
                 "endTime"   => $endTime,
                 "filename"  => $filename,
-                "hqFormat"  => $format,
                 "outputDir" => $dir
             );
 
             // Build movie
             $builder->buildMovie($layerString, $startTime, $roi, $options);
             
-            $filepath = $builder->getFilepath();
+            $filepath = $builder->getFilepath() . ".mp4";
 
             array_push($movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
         }

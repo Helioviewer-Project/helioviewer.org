@@ -7,6 +7,7 @@
  *
  * @category Movie
  * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
@@ -22,29 +23,23 @@ require_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
  *
  * @category Movie
  * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
 class Movie_HelioviewerMovie
 {
-    private $_images = array ();
-    private $_roi;
-    private $_maxFrames;
     private $_startTime;
     private $_endTime;
-    private $_timeStep;
+    private $_frames;
     private $_numFrames;
     private $_frameRate;
-    private $_db;
-    private $_filetype = "flv";
-    private $_highQualityLevel = 100;
-    private $_highQualityFileType;
-    private $_watermarkOptions = "-x 720 -y 965 ";
+    private $_roi;
+    private $_directory;
     private $_filename;
-    private $_quality;
     private $_padDimensions;
-    private $_flashMovie;
+    private $_watermarkOptions = "-x 720 -y 965 ";
 
     /**
      * HelioviewerMovie Constructor
@@ -52,79 +47,22 @@ class Movie_HelioviewerMovie
      * @param int    $startTime Requested movie start time (unix timestamp)
      * @param int    $numFrames Number of frames to include
      * @param int    $frameRate Number of frames per second
-     * @param string $hqFormat  Format to use for high-quality version of the movie
-     * @param string $filename  Desired filename for the movie
+     * @param string $filename  Movie filename without any extension
      * @param int    $quality   Movie quality
-
-     * @param String $tmpDir    the directory where the movie will be stored
+     * @param String $dir       The directory where the movie will be stored
      */
-    public function __construct($startTime, $numFrames, $frameRate, $hqFormat, $filename, $quality, $roi, $tmpDir)
+    public function __construct($startTime, $numFrames, $frameRate, $filename, $roi, $dir)
     {
-        $this->_roi = $roi;
-        
-        // working directory
-        $this->tmpDir = $tmpDir; 
-
-        // _startTime is a Unix timestamp in seconds.
+        $this->_roi        = $roi;
         $this->_startTime  = $startTime;
         $this->_numFrames  = $numFrames;
         $this->_frameRate  = $frameRate;
-        $this->_quality    = $quality;
 
-        $this->_filename = $filename;
+        $this->_directory = $dir;
+        $this->_filename  = $filename;
 
-        $this->_padDimensions = $this->_setAspectRatios();
-        $this->_highQualityFiletype = $hqFormat;
-    }
-
-    /**
-     * TODO: implement
-     *
-     * @return void
-     */
-    public function toMovie()
-    {
-
-    }
-
-    /**
-     * TODO: implement
-     *
-     * @return void
-     */
-    public function toArchive()
-    {
-
-    }
-
-    /**
-     * TODO: implement
-     *
-     * @return void
-     */
-    public function getNumFrames()
-    {
-
-    }
-    
-    /**
-     * Get width
-     * 
-     * @return int width
-     */
-    public function width()
-    {
-        return $this->_roi->getPixelWidth();
-    }
-    
-    /**
-     * Get height
-     * 
-     * @return int height
-     */
-    public function height()
-    {
-        return $this->_roi->getPixelHeight();
+        // 11/18/2010 Not currently in use
+        //$this->_padDimensions = $this->_setAspectRatios();
     }
 
     /**
@@ -133,74 +71,69 @@ class Movie_HelioviewerMovie
      * Makes a temporary directory to store frames in, calculates a timestamp for every frame, gets the closest
      * image to each timestamp for each layer. Then takes all layers belonging to one timestamp and makes a movie frame
      * out of it. When done with all movie frames, phpvideotoolkit is used to compile all the frames into a movie.
-     * 
+     *
      * @param array  $builtImages An array of built movie frames (in the form of HelioviewerScreenshot objects)
-     * @param string $tmpImageDir Directory where the individual movie frames are stored.
      *
      * @return void
      */
-    public function build($builtImages, $tmpImageDir)
+    public function build($builtImages)
     {
-        $this->_images = $builtImages;
-        $movieName = $this->_filename;
+        $this->_frames = $builtImages;
 
-        // Need to do something slightly different to get the video to be iPod compatible
+        // Create and FFmpeg encoder instance
         $ffmpeg = new Movie_FFMPEGWrapper($this->_frameRate);
-        
+
         // Width and height must be divisible by 2 or ffmpeg will throw an error.
         $width  = round($this->_roi->getPixelWidth());
         $height = round($this->_roi->getPixelHeight());
-        
-        $width  += ($width  % 2 === 0? 0 : 1);
-        $height += ($height % 2 === 0? 0 : 1);        
-        
-        if ($this->_highQualityFiletype === "ipod") {
-            $hq_filename = "$movieName.mp4";
-            return $ffmpeg->createIpodVideo($hq_filename, $this->tmpDir, $tmpImageDir, $width, $height);
-        }
-        
-        $flash_filename = "$movieName." . $this->_filetype;
-        $hq_filename    = "$movieName." . $this->_highQualityFiletype;
 
-        // Create high quality video
-        $ffmpeg->createVideo($hq_filename, $this->tmpDir, $tmpImageDir, $width, $height);
-        
-        // Create flash video from that
-        $ffmpeg->createFlashVideo($hq_filename, $flash_filename, $this->tmpDir);
+        $width  += ($width  % 2 === 0) ? 0 : 1;
+        $height += ($height % 2 === 0) ? 0 : 1;
+
+        // TODO 11/18/2010: add 'ipod' option to movie requests in place of the 'hqFormat' param
+        $ipod = false;
+
+        if ($ipod) {
+            $ffmpeg->createIpodVideo($this->_directory, $this->_filename, "mp4", $width, $height);
+        }
+
+        // Create an H.264 video using an MPEG-4 (mp4) container format
+        $ffmpeg->createVideo($this->_directory, $this->_filename, "mp4", $width, $height);
+
+        //Create alternative container format options (.mov and .flv)
+        $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "mov");
+        $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "flv");
 
         $this->_cleanup();
-        
-        // Store filename
-        $this->_flashMovie = $this->tmpDir . "/" . $flash_filename;
-       
-        return true;
     }
 
     /**
-     * Returns filepath to the (flash) video
+     * Returns the base filepath for movie without any file extension
      */
     public function getFilepath()
     {
-        return $this->_flashMovie;
+        return $this->_directory . "/" . $this->_filename;
     }
-    
+
     /**
      * Unlinks all images except the first frame used to create the video.
-     * 
+     *
      * @return void
      */
     private function _cleanup ()
     {
-        // Clean up png/tif images that are no longer needed. Leave the first frame for previews.
-        foreach (array_slice($this->_images, 1) as $image) {
-            if (file_exists($image)) {
-                //unlink($image);
-            }     
-        }
+        $preview = array_shift($this->_frames);
+        rename($preview, $this->_directory . "/" . $this->_filename . ".jpg");
         
-        $preview = $this->_images[0];
-        rename($preview, $this->tmpDir . "/" . $this->_filename . ".jpg");
-        touch($this->tmpDir . "/READY");
+        // Clean up movie frame images that are no longer needed
+        foreach ($this->_frames as $image) {
+            if (file_exists($image)) {
+                unlink($image);
+            }
+        }
+
+        rmdir($this->_directory . "/frames");
+        touch($this->_directory . "/READY");
     }
 
     /**
@@ -223,8 +156,8 @@ class Movie_HelioviewerMovie
         /*
         // If width needs to be adjusted but height is fine
         if ($ratio < 16/9) {
-            $adjust = (16/9) * $height / $width;
-            $width *= $adjust;
+        $adjust = (16/9) * $height / $width;
+        $width *= $adjust;
         }
         */
         // Adjust height if necessary
@@ -240,24 +173,21 @@ class Movie_HelioviewerMovie
     /**
      * Displays movie in a Flash player along with a link to the high-quality version
      *
-     * @param string $url    The URL for the movie to be displayed
-     * @param int    $width  Movie width
-     * @param int    $height Movie Height
-     *
-     * @return void
+     * @return string HTML containing a Flash video player with the generated movie loaded
      */
-    public static function showMovie($url, $width, $height)
+    public function getMoviePlayerHTML()
     {
+        $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->getFilepath() . ".flv");
         ?>
-        <!-- MC Media Player -->
-        <script type="text/javascript">
+<!-- MC Media Player -->
+<script type="text/javascript">
             playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
             fpFileURL = "<?php print $url?>";
-            playerSize = "<?php print $width . 'x' . $height?>";
+            playerSize = "<?php print $this->_roi->getPixelWidth() . 'x' . $this->_roi->getPixelHeight()?>";
         </script>
-        <script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js">
+<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js">
         </script>
-        <!-- / MC Media Player -->
+<!-- / MC Media Player -->
         <?php
     }
 }
