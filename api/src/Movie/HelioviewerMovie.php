@@ -184,6 +184,9 @@ class Movie_HelioviewerMovie
         return $dimensions;
     }
     
+    /**
+     * Returns HTML for a video player with the requested movie loaded
+     */
     public function getMoviePlayerHTML()
     {
         $url      = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->getFilepath());
