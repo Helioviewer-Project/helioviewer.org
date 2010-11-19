@@ -81,28 +81,48 @@ class Module_Movies implements Module
         );
         
         // Process request
-        $builder->buildMovie($this->_params['layers'], $this->_params['startTime'], $roi, $this->_options);
+        $movie = $builder->buildMovie($this->_params['layers'], $this->_params['startTime'], $roi, $this->_options);
         
-        // Output result            
+        // If display=true is set, play the move directly         
         if (isset($this->_options['display']) && $this->_options['display']) {
             echo $builder->getHTML();
         } else {
-            header('Content-type: application/json');
+            $urls = $this->_getVideoURLs($builder);
             
-            $filename = $builder->getURL();
-            
-            // If a specific format was requested, return a link for that video
-            if(isset($this->_options['format'])) {
-                echo json_encode(array("url" => $filename . "." . $this->_options['format']));    
+            // Verbose response
+            if (isset($this->_options['verbose']) && $this->_options['verbose']) {
+                $response = array(
+                    "duration"  => $movie->getDuration(),
+                    "frameRate" => $movie->getFrameRate(),
+                    "numFrames" => $movie->getNumFrames(),
+                    "url"       => $urls
+                );                
+            // Simple response
             } else {
-                // Otherwise return URLs for each of the video types generated
-                $urls = array();
-                foreach (array("mp4", "mov", "flv") as $supportedFormat) {
-                    array_push($urls, "$filename.$supportedFormat");
-                }
-                echo json_encode(array("url" => $urls));  
+                $response = array("url" => $urls);
             }
-               
+            
+            // Print result
+            header('Content-type: application/json');
+            print json_encode($response);        }
+    }
+    
+    /**
+     * Returns either a single URL or an array of URLs for the requested video
+     */
+    private function _getVideoURLs(&$builder) {
+        $baseURL = $builder->getURL();
+        
+        // If a specific format was requested, return a link for that video
+        if(isset($this->_options['format'])) {
+            return "$baseURL.{$this->_options['format']}";    
+        } else {
+            // Otherwise return URLs for each of the video types generated
+            $urls = array();
+            foreach (array("mp4", "mov", "flv") as $supportedFormat) {
+                array_push($urls, "$baseURL.$supportedFormat");
+            }
+            return $urls;
         }
     }
 
@@ -123,44 +143,43 @@ class Module_Movies implements Module
      */
     public function playMovie ()
     {
-        $filepath = HV_CACHE_DIR . "/movies/" . $this->_params['file'];
-        
-        list($width, $height) = $this->_getVideoDimensions($filepath);
+        $fullpath = HV_CACHE_DIR . "/movies/" . $this->_params['file'];
         
         // Make sure it exists
-        if (!file_exists($filepath)) {
+        if (!file_exists($fullpath)) {
             throw new Exception("Invalid movie requested");
         }
         
-        $url = HV_CACHE_URL . "/movies/" . $this->_params['file'];
+        // Relative path to video
+        $relpath  = substr(str_replace(HV_ROOT_DIR, "..", $fullpath), 0, -4);
 
+        // Get video dimensions
+        list($width, $height) = $this->_getVideoDimensions($fullpath);
+        
+        $css = "width: {$width}px; height: {$height}px;";
+        
+        $durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
+        
         ?>
-        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-            "http://www.w3.org/TR/html4/strict.dtd">
-        <html>
-        <head>
-            <title>Helioviewer.org QuickMovie</title>
-        </head>
-        <body style="background-color: black; color: #FFF;">
-            <!-- MC Media Player -->
-            <div style="text-align: center;">
-                <script type="text/javascript">
-                    playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-                    fpFileURL = "<?php print $url?>";
-                    fpButtonSize = "48x48";
-                    fpAction = "play";
-                    cpHidePanel = "mouseout";
-                    cpHideDelay = "1";
-                    defaultEndAction = "repeat";
-                    playerSize = "<?php print $width . 'x' . $height?>";
-                </script>
-                <script type="text/javascript"
-                    src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
-                <!-- / MC Media Player -->
-            </div>
-            <br>
-        </body>
-        </html>
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <title>Helioviewer.org - <?php echo $this->_params['file']?></title>            
+    <script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+</head> 
+<body>
+<div style="text-align: center;">
+    <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
+        <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$relpath.jpg"?>" <?php echo $durationHint?>>
+            <source src="<?php echo "$relpath.mp4"?>" /> 
+            <source src="<?php echo "$relpath.mov"?>" />
+            <source src="<?php echo "$relpath.flv"?>" /> 
+        </video>
+    </div>
+</div>
+</body> 
+</html> 
         <?php
     }
     
@@ -198,8 +217,8 @@ class Module_Movies implements Module
             $expected = array(
                 "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 'quality', 
-                                    'numFrames', 'uuid', 'watermarkOn'),
-                "bools"    => array('display', 'ipod', 'watermarkOn'),
+                                    'numFrames', 'uuid', 'verbose', 'watermarkOn'),
+                "bools"    => array('display', 'ipod', 'verbose', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
                 "files"    => array('filename'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
@@ -210,7 +229,9 @@ class Module_Movies implements Module
         case "playMovie":
             $expected = array(
                 "required" => array('file'),
-                "files"    => array('file')
+                "optional" => array('duration'),
+                "files"    => array('file'),
+                "floats"   => array('duration')
             );
             break;
         case "queueMovie":

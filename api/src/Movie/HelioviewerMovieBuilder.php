@@ -128,6 +128,9 @@ class Movie_HelioviewerMovieBuilder
 
             // Compile movie
             $this->_movie->build($images);
+            
+            // Return movie object
+            return $this->_movie;
 
         } catch(Exception $e) {
             touch($cacheDir . "/INVALID");
@@ -152,7 +155,7 @@ class Movie_HelioviewerMovieBuilder
     }
     
     /**
-     * Returns a URL to the most recently created movie
+     * Returns the Base URL to the most recently created movie (without a file extension)
      */
     public function getURL()
     {
