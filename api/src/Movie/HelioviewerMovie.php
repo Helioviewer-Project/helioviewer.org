@@ -60,6 +60,8 @@ class Movie_HelioviewerMovie
 
         $this->_directory = $dir;
         $this->_filename  = $filename;
+        
+        $this->_setMovieDimensions();
 
         // 11/18/2010 Not currently in use
         //$this->_padDimensions = $this->_setAspectRatios();
@@ -83,28 +85,40 @@ class Movie_HelioviewerMovie
         // Create and FFmpeg encoder instance
         $ffmpeg = new Movie_FFMPEGWrapper($this->_frameRate);
 
-        // Width and height must be divisible by 2 or ffmpeg will throw an error.
-        $width  = round($this->_roi->getPixelWidth());
-        $height = round($this->_roi->getPixelHeight());
-
-        $width  += ($width  % 2 === 0) ? 0 : 1;
-        $height += ($height % 2 === 0) ? 0 : 1;
-
         // TODO 11/18/2010: add 'ipod' option to movie requests in place of the 'hqFormat' param
         $ipod = false;
 
         if ($ipod) {
-            $ffmpeg->createIpodVideo($this->_directory, $this->_filename, "mp4", $width, $height);
+            $ffmpeg->createIpodVideo($this->_directory, $this->_filename, "mp4", $this->_width, $this->_height);
         }
 
         // Create an H.264 video using an MPEG-4 (mp4) container format
-        $ffmpeg->createVideo($this->_directory, $this->_filename, "mp4", $width, $height);
+        $ffmpeg->createVideo($this->_directory, $this->_filename, "mp4", $this->_width, $this->_height);
 
         //Create alternative container format options (.mov and .flv)
         $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "mov");
         $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "flv");
 
         $this->_cleanup();
+    }
+
+    /**
+     * Determines dimensions to use for movie and stores them
+     * 
+     * @return void
+     */
+    private function _setMovieDimensions() {
+        $this->_width  = round($this->_roi->getPixelWidth());
+        $this->_height = round($this->_roi->getPixelHeight());
+
+        // Width and height must be divisible by 2 or ffmpeg will throw an error.
+        if ($this->_width % 2 === 1) {
+            $this->_width += 1;
+        }
+        
+        if ($this->_height % 2 === 1) {
+            $this->_height += 1;
+        } 
     }
 
     /**
@@ -169,26 +183,34 @@ class Movie_HelioviewerMovie
         $dimensions = array("width" => $width, "height" => $height);
         return $dimensions;
     }
-
-    /**
-     * Displays movie in a Flash player along with a link to the high-quality version
-     *
-     * @return string HTML containing a Flash video player with the generated movie loaded
-     */
+    
     public function getMoviePlayerHTML()
     {
-        $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->getFilepath() . ".flv");
+        $url      = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->getFilepath());
+        $filepath = str_replace(HV_ROOT_DIR, "../", $this->getFilepath());
+        $css      = "width: {$this->_width}px; height: {$this->_height}px;";
+        $duration = $this->_numFrames / $this->_frameRate;
         ?>
-<!-- MC Media Player -->
-<script type="text/javascript">
-            playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-            fpFileURL = "<?php print $url?>";
-            playerSize = "<?php print $this->_roi->getPixelWidth() . 'x' . $this->_roi->getPixelHeight()?>";
-        </script>
-<script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js">
-        </script>
-<!-- / MC Media Player -->
-        <?php
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <title>Helioviewer.org - <?php echo $this->_filename;?></title>            
+    <script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+</head> 
+<body>
+<div style="text-align: center;">
+    <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
+        <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$filepath.jpg"?>" durationHint="<?php echo $duration?>">
+            <source src="<?php echo "$filepath.mp4"?>" /> 
+            <source src="<?php echo "$filepath.mov"?>" />
+            <source src="<?php echo "$filepath.flv"?>" /> 
+        </video>
+    </div>
+</div>
+</body> 
+</html> 
+        <?php        
     }
 }
 ?>

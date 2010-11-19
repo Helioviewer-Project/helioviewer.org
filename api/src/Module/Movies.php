@@ -73,7 +73,7 @@ class Module_Movies implements Module
         require_once 'src/Helper/RegionOfInterest.php';
         
         $builder = new Movie_HelioviewerMovieBuilder();
-        
+                
         // Regon of interest
         $roi = new Helper_RegionOfInterest(
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
@@ -88,7 +88,21 @@ class Module_Movies implements Module
             echo $builder->getHTML();
         } else {
             header('Content-type: application/json');
-            echo json_encode(array("url" => $builder->getFilepath() . ".mp4"));   
+            
+            $filename = $builder->getURL();
+            
+            // If a specific format was requested, return a link for that video
+            if(isset($this->_options['format'])) {
+                echo json_encode(array("url" => $filename . "." . $this->_options['format']));    
+            } else {
+                // Otherwise return URLs for each of the video types generated
+                $urls = array();
+                foreach (array("mp4", "mov", "flv") as $supportedFormat) {
+                    array_push($urls, "$filename.$supportedFormat");
+                }
+                echo json_encode(array("url" => $urls));  
+            }
+               
         }
     }
 
@@ -161,8 +175,9 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('endTime', 'display', 'filename', 'frameRate', 'quality', 'numFrames', 'uuid', 'watermarkOn'),
-                "bools"    => array('display', 'watermarkOn'),
+                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 'quality', 
+                                    'numFrames', 'uuid', 'watermarkOn'),
+                "bools"    => array('display', 'ipod', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
                 "files"    => array('filename'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
@@ -180,7 +195,8 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                "required" => array('layers', 'startTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "optional" => array('endTime', 'filename', 'frameRate', 'quality', 'numFrames', 'watermarkOn'),
+                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 'quality', 
+                                    'numFrames', 'uuid', 'watermarkOn'),
                "dates"    => array('startTime', 'endTime'),
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                "ints"     => array('frameRate', 'quality', 'numFrames')

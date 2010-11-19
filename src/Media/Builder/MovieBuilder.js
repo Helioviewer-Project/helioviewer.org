@@ -245,7 +245,7 @@ var MovieBuilder = MediaBuilder.extend(
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
-            hqFormat   : this.hqFormat,
+            format     : this.hqFormat,
             display    : false
         };
         

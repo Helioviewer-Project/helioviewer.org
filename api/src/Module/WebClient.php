@@ -172,14 +172,14 @@ class Module_WebClient implements Module
         
         $params = $this->_params;
         
-        // Create directories in cache
-        $this->_createTileCacheDir(dirname($this->_params['uri']));
-        
         // Tile filepath
-        $filepath = HV_CACHE_DIR . $this->getTileCacheFilename(
+        $filepath = HV_CACHE_DIR . "/tiles" . $this->getTileCacheFilename(
             $params['uri'], $params['imageScale'], $params['x1'], 
             $params['x2'], $params['y1'], $params['y2'], $params['format']
         );
+        
+        // Create directories in cache
+        $this->_createTileCacheDir($params['uri']);
         
         // JP2 filepath
         $jp2Filepath = HV_JP2_DIR . $params['uri'];
@@ -318,7 +318,7 @@ class Module_WebClient implements Module
      */
     private function _createTileCacheDir($filepath)
     {
-        $cacheDir = HV_CACHE_DIR . $filepath;
+        $cacheDir = HV_CACHE_DIR . "/tiles" . $filepath;
 
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
