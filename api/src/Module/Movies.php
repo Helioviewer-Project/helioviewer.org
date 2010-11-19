@@ -123,11 +123,12 @@ class Module_Movies implements Module
      */
     public function playMovie ()
     {
-        $width  = $this->_params['width'];
-        $height = $this->_params['height'];
+        $filepath = HV_CACHE_DIR . "/movies/" . $this->_params['file'];
+        
+        list($width, $height) = $this->_getVideoDimensions($filepath);
         
         // Make sure it exists
-        if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
+        if (!file_exists($filepath)) {
             throw new Exception("Invalid movie requested");
         }
         
@@ -164,6 +165,27 @@ class Module_Movies implements Module
     }
     
     /**
+     * Determines the height and width for a given video
+     */
+    private function _getVideoDimensions($file)
+    {
+        $imageDimensions = getimagesize(substr($file, 0, -3) . "jpg");
+        
+        $width  = $imageDimensions[0];
+        $height = $imageDimensions[1];
+        
+        // Videos dimensions are multiples of two
+        if ($width % 2 === 1) {
+            $width += 1;
+        }
+        if ($height % 2 === 1) {
+            $height += 1;
+        }
+        
+        return array($width, $height);
+    }
+    
+    /**
      * validate
      *
      * @return bool Returns true if input parameters are valid
@@ -187,9 +209,8 @@ class Module_Movies implements Module
             break;
         case "playMovie":
             $expected = array(
-                "required" => array('file', 'width', 'height'),
-                "files"    => array('file'),
-                "floats"   => array('width', 'height')
+                "required" => array('file'),
+                "files"    => array('file')
             );
             break;
         case "queueMovie":

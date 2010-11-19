@@ -91,7 +91,7 @@ var Movie = Media.extend(
                         },
             zIndex    : 9999,
             show      : 'fade'
-        }).append(self.getVideoPlayerHTML(dimensions.width, dimensions.height));
+        }).append(self.getVideoPlayerHTML());
     },
     
     /**
@@ -119,7 +119,7 @@ var Movie = Media.extend(
     /**
      * Decides how to display video and returns HTML corresponding to that method
      */
-    getVideoPlayerHTML: function (width, height) {
+    getVideoPlayerHTML: function () {
         var path, file, hqFile, flashFile, url;
 
         file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
@@ -142,7 +142,7 @@ var Movie = Media.extend(
 
         // Fallback (flash player)
         else {
-            url    = 'api/index.php?action=playMovie&file=' + flashFile + '&width=' + width + '&height=' + height; 
+            url = 'api/index.php?action=playMovie&file=' + flashFile;
             
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
