@@ -84,6 +84,7 @@ var MovieHistory = History.extend(
             self.remove(movie);
             return;        
         }
+
         // Options for the jGrowl notification. After it has opened, it will create
         // event listeners for the watch link                               
         options = {
@@ -93,6 +94,8 @@ var MovieHistory = History.extend(
                 var watch = $('#watch-' + movie.id);
 
                 movie.setURL(data.url, movie.id);
+                movie.setDuration(data.duration);
+
                 //self.button.qtip('hide');
                 self.hide();
                 $("#social-buttons").click(); // hides the button qtip

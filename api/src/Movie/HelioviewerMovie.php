@@ -128,6 +128,27 @@ class Movie_HelioviewerMovie
     {
         return $this->_directory . "/" . $this->_filename;
     }
+    
+    /**
+     * Returns the movie frame rate
+     */
+    public function getFrameRate()
+    {
+        return $this->_frameRate;
+    }
+    
+    /**
+     * Returns the number of frames in the movie
+     */
+    public function getNumFrames()
+    {
+        return $this->_numFrames;
+    }
+    
+    public function getDuration()
+    {
+        return $this->_numFrames / $this->_frameRate;
+    }
 
     /**
      * Unlinks all images except the first frame used to create the video.

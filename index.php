@@ -238,11 +238,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 <!-- Usage Dialog -->
 <div id='usage-dialog'></div>
 
-<!-- Kaltura HTML5 video player -->
-<!-- <script type="text/javascript" src="http://html5.kaltura.org/js"></script> --> 
-
 <!-- jQuery -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <!--<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.js" type="text/javascript"></script>
