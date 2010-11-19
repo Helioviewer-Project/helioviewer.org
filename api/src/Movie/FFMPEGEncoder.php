@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Movie_FFMPEGWrapper Class Definition
+ * Movie_FFMPEGEncoder Class Definition
  * 
  * Detecting problems with FFmpeg encoding:
  *  When using exec to call FFmpeg from the command line no useful return code or output
@@ -28,7 +28,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Movie_FFMPEGWrapper
+class Movie_FFMPEGEncoder
 {
     private $_macFlags;
     private $_frameRate;
