@@ -69,10 +69,8 @@ class Module_Movies implements Module
      */
     public function buildMovie ()
     {
-        include_once 'src/Movie/HelioviewerMovieBuilder.php';
+        include_once 'src/Movie/HelioviewerMovie.php';
         require_once 'src/Helper/RegionOfInterest.php';
-        
-        $builder = new Movie_HelioviewerMovieBuilder();
                 
         // Regon of interest
         $roi = new Helper_RegionOfInterest(
@@ -81,13 +79,15 @@ class Module_Movies implements Module
         );
         
         // Process request
-        $movie = $builder->buildMovie($this->_params['layers'], $this->_params['startTime'], $roi, $this->_options);
+        $movie = new Movie_HelioviewerMovie(
+            $this->_params['layers'], $this->_params['startTime'], $roi, $this->_options
+        );
         
         // If display=true is set, play the move directly         
         if (isset($this->_options['display']) && $this->_options['display']) {
-            echo $builder->getHTML();
+            echo $movie->getMoviePlayerHTML();
         } else {
-            $urls = $this->_getVideoURLs($builder);
+            $urls = $this->_getVideoURLs($movie);
             
             // Verbose response
             if (isset($this->_options['verbose']) && $this->_options['verbose']) {
