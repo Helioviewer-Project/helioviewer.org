@@ -89,7 +89,12 @@ class Event_SolarEvent
         
         // If images have already been generated return them
         if (!HV_DISABLE_CACHE && file_exists($directory)) {
-            $files = glob("$directory/*");
+//            $files = array_merge(
+//                glob("$directory/*mp4"),
+//                glob("$directory/*mov"),
+//                glob("$directory/*flv")
+//            );
+            $files = glob("$directory/*.mp4"); // 11/22/2010: When creating movies, request only returns a single filetype
             
             $urls = array();
 
@@ -170,12 +175,10 @@ class Event_SolarEvent
      */
     private function _createMovies($dir, $ipod)
     {
-        include_once 'src/Movie/HelioviewerMovieBuilder.php';
-        
-        $builder = new Movie_HelioviewerMovieBuilder();
+        include_once 'src/Movie/HelioviewerMovie.php';
         
         // Create directory to store movies in
-        $this->_createCacheDirectory($dir . "/frames");
+        //$this->_createCacheDirectory($dir . "/frames"); Should be handled by movie class
         
         // Datasources for which movies should be created
         $sourceIds = $this->_getAssociatedDataSources($this->details['event_type']);
@@ -212,11 +215,11 @@ class Event_SolarEvent
             );
 
             // Build movie
-            $builder->buildMovie($layerString, $startTime, $roi, $options);
+            $movie = new Movie_HelioviewerMovie($layerString, $startTime, $roi, $options);
             
-            $filepath = $builder->getFilepath() . ".mp4";
+            $url   = $movie->getURL() . ".mp4";
 
-            array_push($movies, str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath));
+            array_push($movies, $url);
         }
         
         return $movies;
