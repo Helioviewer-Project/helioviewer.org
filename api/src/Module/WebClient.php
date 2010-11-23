@@ -217,7 +217,6 @@ class Module_WebClient implements Module
      * @param float  $x2     The right boundary in arcseconds
      * @param float  $y1     The top boundary in arcseconds
      * @param float  $y2     The bottom boundary in arcseconds
-     * @param string $format jpg or png
      * 
      * @return string
      */
@@ -693,11 +692,6 @@ class Module_WebClient implements Module
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                         </tr>
                         <tr>
-                            <td><b>format</b></td>
-                            <td><i>String</i></td>
-                            <td>The format of the tile. Should be png if the tile has transparency, as with LASCO images, and jpg if it does not.</td>
-                        </tr>
-                        <tr>
                             <td><b>imageScale</b></td>
                             <td><i>Float</i></td>
                             <td>The scale of the image in the viewport, in arcseconds per pixel.</td>
@@ -753,9 +747,9 @@ class Module_WebClient implements Module
                 </table>   
                 <br />
                 <span class="example-header">Examples:</span> <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&format=jpg&date=2010-06-02+01:00:16&imageScale=5.26&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=5.26&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
                        <?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2
-                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&format=jpg&date=2010-06-02+01:00:16&imageScale=5.26
+                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=5.26
                         &size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171
                         &offsetX=2.66&offsetY=7.32
                     </a>

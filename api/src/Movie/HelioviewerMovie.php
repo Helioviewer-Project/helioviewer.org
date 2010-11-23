@@ -93,6 +93,8 @@ class Movie_HelioviewerMovie
 
         // Compile movie
         $this->_build($images);
+        
+        //$this->_cleanup();
     }
     
     /**
@@ -207,7 +209,7 @@ class Movie_HelioviewerMovie
             'watermarkOn'=> $watermarkOn,
             'outputDir'  => $this->_directory . "/frames",
             'interlace'  => false,
-            'format'     => 'jpg'
+            'format'     => 'bmp'
         );
 
         // Compile frames
@@ -227,7 +229,7 @@ class Movie_HelioviewerMovie
 
         // Copy the last frame so that it actually shows up in the movie for the same amount of time
         // as the rest of the frames.
-        $lastImage = dirname($filepath) . "/frame" . $frameNum . ".jpg";
+        $lastImage = dirname($filepath) . "/frame" . $frameNum . "." . $options['format'];
         
         copy($filepath, $lastImage);
         array_push($movieFrames, $lastImage);
@@ -376,8 +378,6 @@ class Movie_HelioviewerMovie
         //Create alternative container format options (.mov and .flv)
         $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "mov");
         $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "flv");
-
-        $this->_cleanup();
     }
 
     /**
@@ -415,7 +415,7 @@ class Movie_HelioviewerMovie
     private function _cleanup ()
     {
         $preview = array_shift($this->_frames);
-        rename($preview, $this->_directory . "/" . $this->_filename . ".jpg");
+        rename($preview, $this->_directory . "/" . $this->_filename . ".bmp");
         
         // Clean up movie frame images that are no longer needed
         foreach ($this->_frames as $image) {
@@ -518,7 +518,7 @@ class Movie_HelioviewerMovie
 <body>
 <div style="text-align: center;">
     <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
-        <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$filepath.jpg"?>" durationHint="<?php echo $duration?>">
+        <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$filepath.bmp"?>" durationHint="<?php echo $duration?>">
             <source src="<?php echo "$filepath.mp4"?>" /> 
             <source src="<?php echo "$filepath.mov"?>" />
             <source src="<?php echo "$filepath.flv"?>" /> 
