@@ -173,11 +173,10 @@ class Module_WebClient implements Module
         $params = $this->_params;
         
         // Tile filepath
-        $filepath = HV_CACHE_DIR . "/tiles" . $this->getTileCacheFilename(
-            $params['uri'], $params['imageScale'], $params['x1'], 
-            $params['x2'], $params['y1'], $params['y2'], $params['format']
+        $filepath =  $this->getTileCacheFilename(
+            $params['uri'], $params['imageScale'], $params['x1'], $params['x2'], $params['y1'], $params['y2']
         );
-        
+
         // Create directories in cache
         $this->_createTileCacheDir($params['uri']);
         
@@ -202,8 +201,8 @@ class Module_WebClient implements Module
 
         // Create the tile
         $tile = new $classname(
-                $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
-                $params['offsetX'], $params['offsetY'], $this->_options
+            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
+            $params['offsetX'], $params['offsetY'], $this->_options
         );
         
         return $tile->display();  
@@ -222,13 +221,14 @@ class Module_WebClient implements Module
      * 
      * @return string
      */
-    private function getTileCacheFilename($uri, $scale, $x1, $x2, $y1, $y2, $format)
+    private function getTileCacheFilename($uri, $scale, $x1, $x2, $y1, $y2)
     {
-        $baseFilename = substr(basename($uri), 0, -4);
+        $baseDirectory = HV_CACHE_DIR . "/tiles";
+        $baseFilename  = substr(basename($uri), 0, -4);
         
         return sprintf(
-            "%s/%s_%s_%d_%dx_%d_%dy.%s",
-            dirname($uri), $baseFilename, $scale, round($x1), round($x2), round($y1), round($y2), $format
+            "%s%s/%s_%s_%d_%dx_%d_%dy",
+            $baseDirectory, dirname($uri), $baseFilename, $scale, round($x1), round($x2), round($y1), round($y2)
         );
     }
 
@@ -268,7 +268,7 @@ class Module_WebClient implements Module
      */
     public function takeScreenshot()
     {
-        include_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
+        include_once 'src/Image/Composite/HelioviewerCompositeImage.php';
         include_once 'src/Helper/HelioviewerLayers.php';
         include_once 'src/Helper/RegionOfInterest.php';
 
@@ -281,7 +281,7 @@ class Module_WebClient implements Module
             $this->_params['imageScale']
         );
         
-        $screenshot = new Image_Screenshot_HelioviewerScreenshot(
+        $screenshot = new Image_Composite_HelioviewerCompositeImage(
             $layers, $this->_params['obsDate'], $roi, $this->_options
         );
 
@@ -373,7 +373,7 @@ class Module_WebClient implements Module
 
         case "getTile":
             $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
-                              'offsetX', 'offsetY', 'format', 'instrument', 'detector', 'measurement');
+                              'offsetX', 'offsetY', 'instrument', 'detector', 'measurement');
             $expected = array(
                 "required" => $required,
                 "files"    => array('uri')

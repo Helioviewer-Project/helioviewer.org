@@ -40,11 +40,11 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
      * @param string $measurement  Measurement
      * @param int    $offsetX      Offset of the sun center from the image center
      * @param int    $offsetY      Offset of the sun center from the iamge center
-     * @param string $outputFile   Filepath to where the final image will be stored
+     * @param string $filepath     Filepath to where the final image will be stored (not including file extension)
      * @param int    $opacity      The opacity of the image from 0 to 100
      * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      */    
-    public function __construct($jp2, $outputFile, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         if ($det == "C2") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Red_Temperature.png";
@@ -59,7 +59,10 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
         $this->solarCenterOffsetX = $offsetX;
         $this->solarCenterOffsetY = $offsetY;
         
-        parent::__construct($jp2, $outputFile, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        // Use PNG as default format to preserve transparent regions
+        $options["format"] = "png";
+        
+        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
@@ -167,7 +170,7 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
         
             $imagickImage->setImageClipMask($mask);
             $imagickImage->setImageOpacity($this->options['opacity'] / 100);
-            $imagickImage->setImageFilename(substr($this->outputFile, 0, -4) . "-op" . $this->options['opacity'] . ".png");
+            $imagickImage->setImageFilename($this->filepath . "-op" . $this->options['opacity'] . ".png");
         }
 
         $mask->destroy();

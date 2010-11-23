@@ -12,7 +12,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
+require_once 'src/Image/Composite/HelioviewerCompositeImage.php';
 require_once 'src/Helper/DateTimeConversions.php';
 require_once 'src/Database/ImgIndex.php';
 require_once 'src/Movie/FFMPEGEncoder.php';
@@ -207,7 +207,7 @@ class Movie_HelioviewerMovie
             'watermarkOn'=> $watermarkOn,
             'outputDir'  => $this->_directory . "/frames",
             'interlace'  => false,
-            'format'     => 'jpg' //'bmp'
+            'format'     => 'jpg'
         );
 
         // Compile frames
@@ -219,7 +219,7 @@ class Movie_HelioviewerMovie
                 'closestImages' => $closestImages
             ));
 
-            $screenshot = new Image_Screenshot_HelioviewerScreenshot($this->_layers, $obsDate, $this->_roi, $options);
+            $screenshot = new Image_Composite_HelioviewerCompositeImage($this->_layers, $obsDate, $this->_roi, $options);
             $filepath   = $screenshot->getFilepath(); 
 
             array_push($movieFrames, $filepath);
@@ -352,7 +352,7 @@ class Movie_HelioviewerMovie
      * image to each timestamp for each layer. Then takes all layers belonging to one timestamp and makes a movie frame
      * out of it. When done with all movie frames, phpvideotoolkit is used to compile all the frames into a movie.
      *
-     * @param array  $builtImages An array of built movie frames (in the form of HelioviewerScreenshot objects)
+     * @param array  $builtImages An array of built movie frames (in the form of HelioviewerCompositeImage objects)
      *
      * @return void
      */
