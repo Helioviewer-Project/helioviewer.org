@@ -145,8 +145,8 @@ abstract class Image_Composite_CompositeImage
      */
     private function _buildComposite()
     {
-        $sortedImages 	= $this->sortByLayeringOrder($this->layerImages);
-        $tmpImg 		= $this->cacheDir . "/" . $this->outputFile;
+        $sortedImages = $this->sortByLayeringOrder($this->layerImages);
+        $tmpImg       = $this->cacheDir . "/" . $this->outputFile;
 
         $layerNum = 1;
         $imagickImage = false;
