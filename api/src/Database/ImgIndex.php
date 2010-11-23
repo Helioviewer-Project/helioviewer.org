@@ -280,6 +280,36 @@ class Database_ImgIndex
         return $result_array;		
     }
     
+    public function getSourceIdAndLayeringOrder($obs, $inst, $det, $meas)
+    {
+        $sql = sprintf(
+            "SELECT
+                datasources.id,
+                datasources.layeringOrder
+            FROM datasources
+                LEFT JOIN observatories ON datasources.observatoryId = observatories.id
+                LEFT JOIN instruments ON datasources.instrumentId = instruments.id
+                LEFT JOIN detectors ON datasources.detectorId = detectors.id
+                LEFT JOIN measurements ON datasources.measurementId = measurements.id
+            WHERE
+                observatories.name='%s' AND
+                instruments.name='%s' AND
+                detectors.name='%s' AND
+                measurements.name='%s';",
+            mysqli_real_escape_string($this->_dbConnection->link, $obs),
+            mysqli_real_escape_string($this->_dbConnection->link, $inst),
+            mysqli_real_escape_string($this->_dbConnection->link, $det),
+            mysqli_real_escape_string($this->_dbConnection->link, $meas)
+        );
+        $result = $this->_dbConnection->query($sql);
+        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+
+        return array(
+            (int) $result_array["id"],
+            (int) $result_array["layeringOrder"]
+        );
+    }
+    
     /**
      * Returns the sourceId for a given set of parameters.
      *

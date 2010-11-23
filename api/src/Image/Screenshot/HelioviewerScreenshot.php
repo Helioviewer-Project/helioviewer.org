@@ -64,15 +64,13 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         
         parent::__construct($pixelWidth, $pixelHeight, $imageScale, $options['outputDir'], $options['filename'] . ".jpg");
 
-        // Screenshot meta information
-        $layerArray = $this->_createMetaInformation($layers, $imageScale, $pixelWidth, $pixelHeight);
-
+        $this->layers      = $layers;
         $this->date        = $obsDate;
         $this->roi         = $roi;
         $this->watermarkOn = $options['watermarkOn'];
         $this->filename    = $options['filename'];
 
-        $this->buildImages($layerArray);
+        $this->buildImages();
         
         // TEMP
         $this->compositeFilepath = $this->getComposite();
@@ -93,71 +91,22 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
     public function getURL() {
         return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->compositeFilepath);
     }
-    
-    /**
-     * _createMetaInformation
-     * Takes the string representation of a layer from the javascript creates meta information for
-     * each layer. 
-     *
-     * @param {Array} $layers        a string of layers. use functions in LayerParser.php to extract
-     *                               relevant information.
-     * @param {float} $imageScale    Scale of the image
-     * @param {int}   $width         desired width of the output image
-     * @param {int}   $height        desired height of the output image
-     *
-     * @return {Array} $metaArray -- The array containing one meta information 
-     * object per layer
-     */
-    private function _createMetaInformation($layers, $imageScale, $width, $height)
-    {
-        $layerStrings = getLayerArrayFromString($layers);
-
-        $metaArray    = array();
-        
-        if (sizeOf($layerStrings) < 1) {
-            throw new Exception('Invalid layer choices! You must specify at least 1 layer.');
-        }
-        
-        foreach ($layerStrings as $layer) {
-            $layerArray = singleLayerToArray($layer);
-            $sourceId   = getSourceIdFromLayerArray($layerArray);
-            $opacity    = array_pop($layerArray);
-            $visible    = array_pop($layerArray);
-
-            if ($visible !== 0 && $visible !== "0") {
-                $layerInfoArray = array(
-                    'sourceId'     => $sourceId,
-                    'width'        => $width,
-                    'height'       => $height,
-                    'imageScale'   => $imageScale,
-                    'opacity'      => $opacity
-                );
-                array_push($metaArray, $layerInfoArray);
-            }
-        }
-
-        return $metaArray;
-    }
 
     /**
      * Builds the screenshot.
-     *
-     * @param {Array} $layerInfoArray -- An associative array of
-     * 	sourceId,width,height,imageScale,offsetX,offsetY for each layer
-     *
+
      * @return void
      */
-    public function buildImages($layerInfoArray)
+    public function buildImages()
     {
         $filenameInfo = "";
         $this->layerImages = array();
 
         // Find the closest image for each layer, add the layer information string to it
-        foreach ($layerInfoArray as $layer) {
+        foreach ($this->layers->toArray() as $layer) {
             $closestImage = $this->_getClosestImage($layer['sourceId']);
 
-            $obsInfo 	   = $this->_getObservatoryInformation($layer['sourceId']);
-            $filenameInfo .= "_" . $obsInfo['instrument'] . "_" . $obsInfo['detector'] . "_" . $obsInfo['measurement'] . "_";
+            $filenameInfo .= "_" . $layer['instrument'] . "_" . $layer['detector'] . "_" . $layer['measurement'] . "_";
 
             // Instantiate a JP2Image
             $jp2Filepath = $this->_getJP2Path($closestImage);
@@ -174,19 +123,19 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             // Optional parameters
             $options = array(
                 "date"          => $closestImage['date'],
+                "layeringOrder" => $layer['layeringOrder'],
+                "opacity"       => $layer['opacity'],
                 "compress"      => false,
-                "layeringOrder" => $obsInfo['layeringOrder'],
-                "opacity"       => $layer['opacity']
             );
             
             // Choose type of tile to create
-            $type = strtoupper($obsInfo['instrument']) . "Image";
+            $type = strtoupper($layer['instrument']) . "Image";
             include_once "src/Image/ImageType/$type.php";
             
             $classname = "Image_ImageType_" . $type;
     
             $image = new $classname(
-                $jp2, $tmpOutputFile, $this->roi, $obsInfo['instrument'], $obsInfo['detector'], $obsInfo['measurement'], 
+                $jp2, $tmpOutputFile, $this->roi, $layer['instrument'], $layer['detector'], $layer['measurement'], 
                 $offsetX, $offsetY, $options
             );
             
@@ -264,7 +213,7 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      * 
      * @return array an array with the image's obs, inst, det, meas info
      */
-    private function _getObservatoryInformation($sourceId)
+    private function _getDataSourceInformation($sourceId)
     {
         include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();

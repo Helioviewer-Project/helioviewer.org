@@ -8,9 +8,66 @@
  * @category Helper
  * @package  Helioviewer
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
+include_once 'src/Database/ImgIndex.php';
+/**
+ * Takes a Helioviewer layer string of the form [layer1],[layer2],[layer3] where each individual layer
+ * looks like either [obs,inst,det,meas,visible,opacity] or [sourceId,visible,opacity] and returns an array
+ * of associative arrays with all of the relevant information included.
+ */
+function decodeLayerString ($layerString)
+{
+    $layerStringArray = explode("],[", substr($layerString, 1, -1));
+    
+    $layers = array();
+    
+    foreach($layerStringArray as $singleLayerString) {
+        array_push($layers, decodeSingleLayerString($singleLayerString));
+    }
+    
+    return $layers;
+}
+
+/**
+ * Takes a single layer string and converts it to a more convenient associative array, filling in any missing details
+ * 
+ * @param string $layer a single layer represented as a string in one of the two following forms:
+ *                      [obs,inst,det,meas,visible,opacity] or [sourceId,visible,opacity] 
+ * 
+ * @return array Associative array representation of the layer
+ */
+function decodeSingleLayerString ($layerString)
+{
+    $db = new Database_ImgIndex();
+
+    // Break up string into individual components
+    $layerArray = explode(",", $layerString);
+
+    // [obs,inst,det,meas,visible,opacity] 
+    if (sizeOf($layerArray) === 6) {
+        list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
+        $sourceId = $db->getSourceId($observatory, $instrument, $detector, $measurement);
+
+    // [sourceId,visible,opacity]
+    } else if (sizeOf($layerArray === 3)) {
+        list($sourceId, $visible, $opacity) = $layerArray;
+        list($observatory, $instrument, $detector, $measurement, $layeringOrder) = 
+             getDatasourceInformationFromSourceId($sourceId);
+    }
+    
+    // Associative array form
+    return array (
+        "observatory" => $observatory,
+        "instrument"  => $instrument,
+        "detector"    => $detector,
+        "measurement" => $measurement,
+        "visible"     => (bool) $visible,
+        "opacity"     => (int)  $opacity
+    );
+}
 
 /**
  * Takes in a layer string in one of two formats: 
@@ -44,9 +101,16 @@ function extractLayerName ($layer)
  * 
  * @return array
  */
-function getLayerArrayFromString($layers)
+function getLayerArrayFromString($layerString)
 {
-    return explode("],", $layers);
+    $layerStringArray = explode("],[", substr($layerString, 1, -1));
+
+    $layers = array();
+
+    foreach ($layerStringArray as $singleLayer) {
+        $layer = array(
+        );
+    }
 }
 
 /**

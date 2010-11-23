@@ -269,8 +269,12 @@ class Module_WebClient implements Module
     public function takeScreenshot()
     {
         include_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
-        require_once 'src/Helper/RegionOfInterest.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
+        include_once 'src/Helper/RegionOfInterest.php';
 
+        // Data Layers
+        $layers = new Helper_HelioviewerLayers($this->_params['layers']);
+        
         // Regon of interest
         $roi = new Helper_RegionOfInterest(
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
@@ -278,7 +282,7 @@ class Module_WebClient implements Module
         );
         
         $screenshot = new Image_Screenshot_HelioviewerScreenshot(
-            $this->_params['layers'], $this->_params['obsDate'], $roi, $this->_options
+            $layers, $this->_params['obsDate'], $roi, $this->_options
         );
 
         // TODO 11/10/2010 instead of returning result from takeScreenshot simply return true on success and
