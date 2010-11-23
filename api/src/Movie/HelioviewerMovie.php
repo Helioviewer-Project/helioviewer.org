@@ -35,6 +35,9 @@ class Movie_HelioviewerMovie
 {
     private $_db;
     private $_layers;
+    private $_roi;
+    private $_directory;
+    private $_filename;
     private $_startTimestamp;
     private $_startDateString;
     private $_endTimestamp;
@@ -43,11 +46,6 @@ class Movie_HelioviewerMovie
     private $_frameRate;
     private $_estimatedNumFrames;
     private $_actualNumFrames;
-    private $_roi;
-    private $_directory;
-    private $_filename;
-    private $_padDimensions;
-    private $_watermarkOptions = "-x 720 -y 965 ";
     
     /**
      * Prepares the parameters passed in from the api call and makes a movie from them.
@@ -74,7 +72,7 @@ class Movie_HelioviewerMovie
         $this->_roi       = $roi;
         $this->_directory = $this->_createCacheDirectories($options['uuid'], $options['outputDir']);
         $this->_layers    = getLayerArrayFromString($layerStr);
-        
+
         $this->_computeMovieStartAndEndDates($startTimeStr, $options['endTime']);
         
         // Compute the estimated number of frames to include in the movie

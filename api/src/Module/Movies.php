@@ -104,14 +104,15 @@ class Module_Movies implements Module
             
             // Print result
             header('Content-type: application/json');
-            print json_encode($response);        }
+            print json_encode($response);
+        }
     }
     
     /**
      * Returns either a single URL or an array of URLs for the requested video
      */
-    private function _getVideoURLs(&$builder) {
-        $baseURL = $builder->getURL();
+    private function _getVideoURLs (&$movie) {
+        $baseURL = $movie->getURL();
         
         // If a specific format was requested, return a link for that video
         if(isset($this->_options['format'])) {
