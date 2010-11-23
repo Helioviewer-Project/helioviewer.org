@@ -22,6 +22,7 @@
  * @link     http://launchpad.net/helioviewer.org
  * 
  * TODO 11/23/2010: Drop any layers with either visible or opacity set to "0"
+ * TODO 11/23/2010: Check to make sure number of valid layers is > 0 and stop execution otherwise
  * 
  * 
  */

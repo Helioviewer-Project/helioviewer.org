@@ -62,7 +62,7 @@ class Movie_FFMPEGEncoder
     {
         $ipodVideoName = "$directory/ipod-$filename.$format";
         
-        $cmd = HV_FFMPEG . " -i $directory/frames/frame%d.jpg -r " . $this->_frameRate
+        $cmd = HV_FFMPEG . " -i $directory/frames/frame%d.bmp -r " . $this->_frameRate
             . " -f mp4 -b 800k -coder 0 -bt 200k -maxrate 96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 "
             . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " " 
             . $this->_macFlags . " " . $ipodVideoName;
@@ -97,7 +97,7 @@ class Movie_FFMPEGEncoder
         
         $filepath = "$directory/$filename.$format";
 
-        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i $directory/frames/frame%d.jpg"
+        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i $directory/frames/frame%d.bmp"
             . " -r " . $outputRate . " -vcodec libx264 -vpre hq -threads " . HV_FFMPEG_MAX_THREADS . " -b 2048k -s " 
             . $width . "x" . $height . " -y $filepath";
             

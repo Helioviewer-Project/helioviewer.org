@@ -174,7 +174,7 @@ class Module_Movies implements Module
 <body>
 <div style="text-align: center;">
     <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
-        <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$relpath.jpg"?>" <?php echo $durationHint?>>
+        <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$relpath.bmp"?>" <?php echo $durationHint?>>
             <source src="<?php echo "$relpath.mp4"?>" /> 
             <source src="<?php echo "$relpath.mov"?>" />
             <source src="<?php echo "$relpath.flv"?>" /> 
@@ -191,7 +191,7 @@ class Module_Movies implements Module
      */
     private function _getVideoDimensions($file)
     {
-        $imageDimensions = getimagesize(substr($file, 0, -3) . "jpg");
+        $imageDimensions = getimagesize(substr($file, 0, -3) . "bmp");
         
         $width  = $imageDimensions[0];
         $height = $imageDimensions[1];
