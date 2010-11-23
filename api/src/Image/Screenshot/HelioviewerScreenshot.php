@@ -15,7 +15,7 @@
 require_once 'src/Image/Composite/CompositeImage.php';
 require_once 'src/Image/JPEG2000/JP2Image.php';
 require_once 'src/Image/HelioviewerImage.php';
-require_once 'src/Helper/LayerParser.php';
+require_once 'src/Database/ImgIndex.php';
 /**
  * Image_HelioviewerScreenshot class definition
  *
@@ -30,8 +30,9 @@ require_once 'src/Helper/LayerParser.php';
  */
 class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeImage
 {
+    protected $layerImages = array();
+    protected $db;
     protected $outputFile;
-    protected $layerImages;
     protected $date;
     protected $filename;
     protected $watermarkOn;
@@ -64,13 +65,21 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         
         parent::__construct($pixelWidth, $pixelHeight, $imageScale, $options['outputDir'], $options['filename'] . ".jpg");
 
+        $this->db          = new Database_ImgIndex();
         $this->layers      = $layers;
         $this->date        = $obsDate;
         $this->roi         = $roi;
         $this->watermarkOn = $options['watermarkOn'];
         $this->filename    = $options['filename'];
 
+        // Choose a filename if none was specified
+        if (!$this->filename) {
+            $time = str_replace(array(":", "-", "T", "Z"), "_", $this->date);
+            $this->outputFile = $time . $this->layers->toString() . "_" . rand() . ".jpg";
+        }
+        
         $this->buildImages();
+        $this->compileImages();
         
         // TEMP
         $this->compositeFilepath = $this->getComposite();
@@ -99,30 +108,23 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
      */
     public function buildImages()
     {
-        $filenameInfo = "";
-        $this->layerImages = array();
-
         // Find the closest image for each layer, add the layer information string to it
         foreach ($this->layers->toArray() as $layer) {
-            $closestImage = $this->_getClosestImage($layer['sourceId']);
-
-            $filenameInfo .= "_" . $layer['instrument'] . "_" . $layer['detector'] . "_" . $layer['measurement'] . "_";
+            $image = $this->db->getClosestImage($this->date, $layer['sourceId']);
 
             // Instantiate a JP2Image
-            $jp2Filepath = $this->_getJP2Path($closestImage);
+            $jp2Filepath =  HV_JP2_DIR . $image['filepath'] . "/" . $image['filename'];
           
-            $jp2 = new Image_JPEG2000_JP2Image(
-                $jp2Filepath, $closestImage['width'], $closestImage['height'], $closestImage['scale']
-            );       
+            $jp2 = new Image_JPEG2000_JP2Image($jp2Filepath, $image['width'], $image['height'], $image['scale']);
 
-            $tmpOutputFile  = $this->_getTmpOutputPath($closestImage, $this->roi, $layer['opacity']);
+            $tmpFile = $this->_getTmpOutputPath($image['filepath'], $image['filename'], $this->roi, $layer['opacity']);
 
-            $offsetX = $closestImage['sunCenterX'] - $closestImage['width'] /2;
-            $offsetY = $closestImage['height']/2   - $closestImage['sunCenterY'];
-            
+            $offsetX =  $image['sunCenterX']  - ($image['width'] / 2);
+            $offsetY = ($image['height'] / 2) -  $image['sunCenterY'];
+
             // Optional parameters
             $options = array(
-                "date"          => $closestImage['date'],
+                "date"          => $image['date'],
                 "layeringOrder" => $layer['layeringOrder'],
                 "opacity"       => $layer['opacity'],
                 "compress"      => false,
@@ -135,92 +137,46 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
             $classname = "Image_ImageType_" . $type;
     
             $image = new $classname(
-                $jp2, $tmpOutputFile, $this->roi, $layer['instrument'], $layer['detector'], $layer['measurement'], 
+                $jp2, $tmpFile, $this->roi, $layer['instrument'], $layer['detector'], $layer['measurement'], 
                 $offsetX, $offsetY, $options
             );
             
             array_push($this->layerImages, $image);
         }
-
-        if (!$this->filename) {
-            $time = str_replace(array(":", "-", "T", "Z"), "_", $this->date);
-            //$this->setOutputFile($time . $filenameInfo . time() . "." . $this->format);
-            
-            // 11/12/2010
-            //$this->setOutputFile($time . $filenameInfo . time() . ".jpg");
-            $this->outputFile = $time . $filenameInfo . rand() . ".jpg";
-        }
-
-        $this->compileImages();
     }
     
     /**
-     * Gets the path to the JP2 image on disk
-     * 
-     * @param array $closestImage An array containing image meta information, obtained from the database
-     * 
-     * @return string the filepath to the JP2 image
+     * Builds a single layer image
      */
-    private function _getJP2Path($closestImage)
+    private function _buildScreenshotLayer()
     {
-        return HV_JP2_DIR . $closestImage['filepath'] . "/" . $closestImage['filename'];
+        
     }
-    
+
     /**
      * Builds a temporary output path where the extracted image will be stored
-     * 
-     * @param array $closestImage An array containing image meta information, obtained from the database
-     * @param roi   $roi          The region of interest in arcseconds
-     * @param int   $opacity      The opacity of the image from 0 to 100
+
+     * @param string $filepath Filepath of the image 
+     * @param string $filename Filename of the image
+     * @param roi    $roi      The region of interest in arcseconds
+     * @param int    $opacity  The opacity of the image from 0 to 100
      * 
      * @return string a string containing the image's temporary output path
      */
-    private function _getTmpOutputPath($closestImage, $roi, $opacity)
+    private function _getTmpOutputPath($filepath, $filename, $roi, $opacity)
     {
-        $cacheDir = HV_CACHE_DIR . $closestImage['filepath'];
+        $cacheDir = HV_CACHE_DIR . $filepath;
 
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
             chmod($cacheDir, 0777);
         }
 
-        return $cacheDir . "/" . substr($closestImage['filename'], 0, -4) . "_" . 
+        return $cacheDir . "/" . substr($filename, 0, -4) . "_" . 
             $this->scale . "_" . round($roi->left()) . "_" . round($roi->right()) . "x_" . 
             round($roi->top()) . "_" . round($roi->bottom()) . "y-op$opacity.png";
     }
 
-    /**
-     * Queries the database to find the closest image to a given timestamp.
-     *
-     * @param int $sourceId The source ID of the image
-     *
-     * @return array closestImg, an array with the image's id, filepath, filename, date
-     */
-    private function _getClosestImage($sourceId)
-    {
-        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
-        $imgIndex = new Database_ImgIndex();
-        
-        $closestImg = $imgIndex->getClosestImage($this->date, $sourceId);
-        return $closestImg;
-    }
-    
-    /**
-     * If a source ID is passed in as a parameter, the database is queried to get the
-     * image's observatory, instrument, detector, measurement
-     * 
-     * @param int $sourceId the source ID of the image
-     * 
-     * @return array an array with the image's obs, inst, det, meas info
-     */
-    private function _getDataSourceInformation($sourceId)
-    {
-        include_once HV_ROOT_DIR . '/api/src/Database/ImgIndex.php';
-        $imgIndex = new Database_ImgIndex();
-        $result = $imgIndex->getDatasourceInformationFromSourceId($sourceId);
-        return $result;    	
-    }
-    
     /**
      * Builds an imagemagick command to composite watermark text onto the image
      * 
@@ -263,36 +219,6 @@ class Image_Screenshot_HelioviewerScreenshot extends Image_Composite_CompositeIm
         $white->destroy();
         $underText->destroy();
         $text->destroy();
-    }
-    
-    /**
-     * Does the same thing as addWaterMarkText but with no imagick.
-     * returns a string, as it is assumed that this is called from addWatermarkNoImagick()
-     * 
-     * @return string
-     */
-    protected function addWaterMarkTextNoImagick()
-    {
-        $cmd     = "";
-        $nameCmd = "";
-        $timeCmd = "";
-
-        // Put the names on first, then put the times on as a separate layer so the times are nicely aligned.
-        foreach ($this->layerImages as $layer) {
-            $nameCmd .= $layer->getWaterMarkName();
-            $timeCmd .= $layer->getWaterMarkDateString();
-        }
-
-        // Outline words in black
-        $cmd .= " -stroke #000C -strokewidth 2 -annotate +20+0 '$nameCmd'";
-        // Write words in white over outline
-        $cmd .= " -stroke none -fill white -annotate +20+0 '$nameCmd'";
-        // Outline words in black
-        $cmd .= " -stroke #000C -strokewidth 2 -annotate +125+0 '$timeCmd'";
-        // Write words in white
-        $cmd .= " -stroke none -fill white -annotate +125+0 '$timeCmd'";
-
-        return $cmd;
     }
 }
 ?>
