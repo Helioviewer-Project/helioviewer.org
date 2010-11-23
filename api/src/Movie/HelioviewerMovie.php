@@ -14,7 +14,6 @@
  */
 require_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
 require_once 'src/Helper/DateTimeConversions.php';
-require_once 'src/Helper/LayerParser.php';
 require_once 'src/Database/ImgIndex.php';
 require_once 'src/Movie/FFMPEGEncoder.php';
 /**
@@ -52,7 +51,7 @@ class Movie_HelioviewerMovie
      *
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function __construct($layerStr, $startTimeStr, $roi, $options)
+    public function __construct($layers, $startTimeStr, $roi, $options)
     {
         $defaults = array(
             'endTime'     => false,
@@ -69,9 +68,9 @@ class Movie_HelioviewerMovie
         
         $this->_db        = new Database_ImgIndex();
 
+        $this->_layers    = $layers;
         $this->_roi       = $roi;
         $this->_directory = $this->_createCacheDirectories($options['uuid'], $options['outputDir']);
-        $this->_layers    = getLayerArrayFromString($layerStr);
 
         $this->_computeMovieStartAndEndDates($startTimeStr, $options['endTime']);
         
@@ -82,7 +81,7 @@ class Movie_HelioviewerMovie
         $this->_actualNumFrames    = sizeOf($this->_timestamps);
 
         // Check to see if a movie can be created for the specified request parameters
-        $this->_checkRequestParameters(); // $layersStr, $startTimeStr, $roi, $options
+        $this->_checkRequestParameters();
 
         $this->_filename  = $this->_buildFilename($options['filename']);
         $this->_frameRate = $this->_determineOptimalFrameRate($options['frameRate']);
@@ -90,7 +89,7 @@ class Movie_HelioviewerMovie
         $this->_setMovieDimensions();
 
         // Build movie frames
-        $images = $this->_buildMovieFrames($layerStr, $options['quality'], $options['watermarkOn']);
+        $images = $this->_buildMovieFrames($options['quality'], $options['watermarkOn']);
 
         // Compile movie
         $this->_build($images);
@@ -102,7 +101,7 @@ class Movie_HelioviewerMovie
     private function _checkRequestParameters() {
         try {
             // Make sure number of layers is between one and three
-            if (sizeOf($this->_layers) == 0 || sizeOf($this->_layers) > 3) {
+            if ($this->_layers->length() == 0 || $this->_layers->length() > 3) {
                 throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
             }
     
@@ -113,7 +112,6 @@ class Movie_HelioviewerMovie
         } catch(Exception $e) {
             $this->_abort($e);
         }
-
     }
 
     /**
@@ -149,14 +147,7 @@ class Movie_HelioviewerMovie
         $start = str_replace(array(":", "-", "T", "Z"), "_", $this->_startDateString);
         $end   = str_replace(array(":", "-", "T", "Z"), "_", $this->_endDateString);
 
-        // Base filename
-        $filename = $start . "_" . $end;
-
-        // Add layer names
-        foreach ($this->_layers as $layer) {
-            $filename .= "__" . extractLayerName($layer);
-        }
-        return $filename;
+        return sprintf("%s_%s__%s", $start, $end, $this->_layers->toString());
     }
 
     /**
@@ -204,7 +195,7 @@ class Movie_HelioviewerMovie
      *
      * @return $images an array of built movie frames
      */
-    private function _buildMovieFrames($layerString, $quality, $watermarkOn)
+    private function _buildMovieFrames($quality, $watermarkOn)
     {
         $movieFrames  = array();
 
@@ -228,7 +219,7 @@ class Movie_HelioviewerMovie
                 'closestImages' => $closestImages
             ));
 
-            $screenshot = new Image_Screenshot_HelioviewerScreenshot($layerString, $obsDate, $this->_roi, $options);
+            $screenshot = new Image_Screenshot_HelioviewerScreenshot($this->_layers, $obsDate, $this->_roi, $options);
             $filepath   = $screenshot->getFilepath(); 
 
             array_push($movieFrames, $filepath);
@@ -282,9 +273,8 @@ class Movie_HelioviewerMovie
     {
         $sourceIds  = array();
 
-        foreach ($this->_layers as $layer) {
-            $layerInfo = singleLayerToArray($layer);
-            array_push($sourceIds, getSourceIdFromLayerArray($layerInfo));
+        foreach ($this->_layers->toArray() as $layer) {
+            array_push($sourceIds, $layer['sourceId']);
         }
 
         $images = array();
@@ -306,11 +296,8 @@ class Movie_HelioviewerMovie
     {
         $maxInRange = 0;
 
-        foreach ($this->_layers as $layer) {
-            $layerInfo = singleLayerToArray($layer);
-            $sourceId  = getSourceIdFromLayerArray($layerInfo);
-            
-            $count      = $this->_db->getImageCount($this->_startDatestring, $this->_endDateString, $sourceId);
+        foreach ($this->_layers->toArray() as $layer) {
+            $count      = $this->_db->getImageCount($this->_startDatestring, $this->_endDateString, $layer['sourceId']);
             $maxInRange = max($maxInRange, $count);
         }
 
@@ -320,7 +307,8 @@ class Movie_HelioviewerMovie
         } else {
             $numFrames = $maxInRange;
         }
-        return min($numFrames, HV_MAX_MOVIE_FRAMES / sizeOf($this->_layers));
+
+        return min($numFrames, HV_MAX_MOVIE_FRAMES / $this->_layers->length());
     }
 
     /**
