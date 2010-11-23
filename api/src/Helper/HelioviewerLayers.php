@@ -20,7 +20,10 @@
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
- * @see      http://www.lmsal.com/helio-informatics/hpkb/
+ * 
+ * TODO 11/23/2010: Drop any layers with either visible or opacity set to "0"
+ * 
+ * 
  */
 class Helper_HelioviewerLayers
 {
@@ -100,8 +103,14 @@ class Helper_HelioviewerLayers
         // [sourceId,visible,opacity]
         } else if (sizeOf($layerArray === 3)) {
             list($sourceId, $visible, $opacity) = $layerArray;
-            list($observatory, $instrument, $detector, $measurement, $layeringOrder) = 
-                 $this->_db->getDatasourceInformationFromSourceId($sourceId);
+
+            $source = $this->_db->getDatasourceInformationFromSourceId($sourceId);
+
+            $observatory   = $source["observatory"];
+            $instrument    = $source["instrument"];
+            $detector      = $source["detector"];
+            $measurement   = $source["measurement"];
+            $layeringOrder = $source["layeringOrder"];
         }
         
         // Associative array form

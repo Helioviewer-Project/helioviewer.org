@@ -118,7 +118,7 @@ class Event_SolarEvent
      */
     private function _createScreenshots($dir)
     {
-        include_once 'src/Image/Screenshot/HelioviewerScreenshot.php';
+        include_once 'src/Image/Composite/HelioviewerCompositeImage.php';
         include_once 'src/Helper/HelioviewerLayers.php';
         
         // Create directory to store screenshots in
@@ -158,7 +158,7 @@ class Event_SolarEvent
             );
 
             // Build screenshot
-            $screenshot = new Image_Screenshot_HelioviewerScreenshot($layers, $obsDate, $roi, $options);
+            $screenshot = new Image_Composite_HelioviewerCompositeImage($layers, $obsDate, $roi, $options);
             $url = $screenshot->getURL();
 
             array_push($screenshots, $url);

@@ -30,14 +30,14 @@ class Image_HelioviewerImage extends Image_SubFieldImage
     protected $instrument;
     protected $detector;
     protected $measurement;
-    protected $outputFile;
+    protected $filepath;
     protected $options;
     
     /**
      * Constructor
      * 
      * @param string $jp2           Original JP2 image from which the subfield should be derrived
-     * @param string $outputFile    Location to output the subfield image to
+     * @param string $filepath      Location to output the file to (not including a file extension)
      * @param array  $roi           Subfield region of interest in pixels
      * @param string $instrument    Instrument
      * @param string $detector      Detector
@@ -46,12 +46,13 @@ class Image_HelioviewerImage extends Image_SubFieldImage
      * @param float  $offsetY       Offset of the sun center from the image center
      */
     public function __construct(
-        $jp2, $outputFile, $roi, $instrument, $detector, $measurement, $offsetX, $offsetY, $options
+        $jp2, $filepath, $roi, $instrument, $detector, $measurement, $offsetX, $offsetY, $options
     ) {
         // Default options
         $defaults = array(
             "date"          => "",
             "compress"      => true,
+            "format"        => "jpg",
             "layeringOrder" => 1,
             "opacity"       => 100
         );
@@ -60,25 +61,15 @@ class Image_HelioviewerImage extends Image_SubFieldImage
         $this->instrument  = $instrument;
         $this->detector    = $detector;
         $this->measurement = $measurement;
-        $this->outputFile  = $outputFile;
+        $this->filepath    = $filepath . "." . $this->options['format'];
         
         // SubFieldImage   ($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
         $imageSettings = array(
             "opacity" => $this->options['opacity']
         );
-        parent::__construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $imageSettings);
 
-        // Make a blank image if the region of interest does not include this image.
-//        if ($this->_imageNotVisible($pixelRoi)) {
-//            $outputFile = HV_ROOT_DIR . "/resources/images/transparent_512.png";
-//            
-//            include_once HV_ROOT_DIR . "/api/src/Image/ImageType/BlankImage.php";
-//            $image = new Image_ImageType_BlankImage(
-//               $jp2, $pixelRoi, $roi->imageScale(), $detector, $measurement, $offsetX, $offsetY, 
-//               $outputFile,  $this->options['opacity'], $this->options['compress']
-//            );
-//        }
-        
+        parent::__construct($jp2, $roi, $this->filepath, $offsetX, $offsetY, $imageSettings);
+
         $padding = $this->computePadding($roi);
         $this->setPadding($padding);
 
@@ -148,7 +139,7 @@ class Image_HelioviewerImage extends Image_SubFieldImage
      */
     private function _imageNotInCache() 
     {
-        return !file_exists($this->outputFile);
+        return !file_exists($this->filepath);
     }
     
     
@@ -159,7 +150,7 @@ class Image_HelioviewerImage extends Image_SubFieldImage
      */
     public function getFilePathString() 
     {
-        return $this->outputFile;
+        return $this->filepath;
     }
 
     /**
