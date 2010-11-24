@@ -21,7 +21,6 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  * 
- * TODO 11/23/2010: Drop any layers with either visible or opacity set to "0"
  * TODO 11/23/2010: Check to make sure number of valid layers is > 0 and stop execution otherwise
  * 
  * 
@@ -44,9 +43,20 @@ class Helper_HelioviewerLayers
 
         $layerStringArray = explode("],[", substr($layerString, 1, -1));
 
+        // Process individual layers in string
         foreach($layerStringArray as $singleLayerString) {
-            array_push($this->_layers, $this->_decodeSingleLayerString($singleLayerString));
+            $layer = $this->_decodeSingleLayerString($singleLayerString);
+            
+            // Only include layer if it is visible
+            if ($layer['visible'] && ($layer['opacity'] > 0)) {
+                array_push($this->_layers, $layer);
+            }
         }
+        
+        // Check to make sure at least one valid layer was specified
+        if(sizeOf($this->_layers) === 0) {
+            throw new Exception("No valid and visible layers specified for request.");
+        } 
     }
     
     /**
