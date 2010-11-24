@@ -5,8 +5,8 @@
  * TODO: Move helper functions to a separate namespcae? (e.g. $hv)
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global console: true, $, navigator, Storage, hideZoomControls, showZoomControls */
+bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true, console: true */
+/*global window, console, $, navigator, Storage, hideZoomControls, showZoomControls */
 "use strict";
 /**
  * @description Outputs a UTC Date string of the format "YYYY/MM/dd"
