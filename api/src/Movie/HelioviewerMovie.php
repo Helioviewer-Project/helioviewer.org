@@ -59,7 +59,6 @@ class Movie_HelioviewerMovie
             'frameRate'   => false,
             'numFrames'   => false,
             'outputDir'   => "",
-            'quality'     => 10,
             'uuid'        => false,
             'watermarkOn' => true
         );
@@ -89,7 +88,7 @@ class Movie_HelioviewerMovie
         $this->_setMovieDimensions();
 
         // Build movie frames
-        $images = $this->_buildMovieFrames($options['quality'], $options['watermarkOn']);
+        $images = $this->_buildMovieFrames($options['watermarkOn']);
 
         // Compile movie
         $this->_build($images);
@@ -197,7 +196,7 @@ class Movie_HelioviewerMovie
      *
      * @return $images an array of built movie frames
      */
-    private function _buildMovieFrames($quality, $watermarkOn)
+    private function _buildMovieFrames($watermarkOn)
     {
         $movieFrames  = array();
 
@@ -205,11 +204,11 @@ class Movie_HelioviewerMovie
 
         // Movie frame parameters
         $options = array(
-            'quality'    => $quality,
-            'watermarkOn'=> $watermarkOn,
-            'outputDir'  => $this->_directory . "/frames",
+            'compress'   => false,
             'interlace'  => false,
-            'format'     => 'bmp'
+            'format'     => 'bmp',
+            'watermarkOn'=> $watermarkOn,
+            'outputDir'  => $this->_directory . "/frames"
         );
 
         // Compile frames
@@ -308,6 +307,11 @@ class Movie_HelioviewerMovie
             $numFrames = min($maxInRange, $numFrames);
         } else {
             $numFrames = $maxInRange;
+        }
+        
+        // If no images were found in the query range, throw an exception
+        if ($numFrames === 0) {
+            $this->_abort(new Exception("No images available for the requested time range"));
         }
 
         return min($numFrames, HV_MAX_MOVIE_FRAMES / $this->_layers->length());

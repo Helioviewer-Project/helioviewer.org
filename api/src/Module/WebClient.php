@@ -257,11 +257,6 @@ class Module_WebClient implements Module
      * See the API webpage for example usage.
      * 
      * Parameters quality, filename, and display are optional parameters and can be left out completely.
-     * 
-     * Note that filename does NOT have the . extension on it. The reason for
-     * this is that in the media settings pop-up dialog, there is no way of
-     * knowing ahead of time whether the image is a .png, .tif, .flv, etc, and
-     * in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      *
      * @return image/jpeg or JSON
      */
@@ -389,11 +384,10 @@ class Module_WebClient implements Module
         case "takeScreenshot":
             $expected = array(
                 "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('filename', 'quality', 'display', 'watermarkOn'),
+                "optional" => array('filename', 'display', 'watermarkOn'),
                 "files"    => array('filename'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"	   => array('obsDate'),
-                "ints"     => array('quality'),
                 "bools"    => array('display', 'watermarkOn')
             );
             break;
@@ -611,8 +605,8 @@ class Module_WebClient implements Module
                        <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
                     </a>
                     <br /><br />
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&s=1&sourceId=3">
-                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&s=1&sourceId=3
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
+                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
                     </a>
                 </span>
                 

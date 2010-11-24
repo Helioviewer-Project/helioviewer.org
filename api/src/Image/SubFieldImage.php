@@ -73,6 +73,7 @@ class Image_SubFieldImage
         // Default settings
         $defaults = array(
             "bitdepth"  => HV_BIT_DEPTH,
+            "compress"  => true,
             "interlace" => true,
             "opacity"   => 100,
             "rescale"   => IMagick::FILTER_TRIANGLE
@@ -271,7 +272,7 @@ class Image_SubFieldImage
             $grayscale->setImageFormat('PNG');
             $grayscale->setImageType(IMagick::IMGTYPE_GRAYSCALE); 
             $grayscale->setImageDepth(8);
-            $grayscale->setImageCompressionQuality(1);
+            $grayscale->setImageCompressionQuality(10); // Fastest PNG compression setting
             
             $grayscaleString = $grayscale->getimageblob();
 
@@ -343,16 +344,28 @@ class Image_SubFieldImage
         $parts = explode(".", $this->outputFile);
         $extension = end($parts);
 
-        // Apply compression based on image type
+        // Apply compression based on image type for those formats that support it
         if ($extension === "png") {
+            // Compression type
             $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
-            $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
+            
+            // Compression quality
+            $quality = $this->imageOptions['compress'] ? PNG_HIGH_COMPRESSION : PNG_LOW_COMPRESSION;
+            $imagickImage->setImageCompressionQuality($quality);
+            
+            // Interlacing
             if ($this->imageOptions['interlace']) {
                 $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
             }
         } elseif ($extension === "jpg") {
+            // Compression type
             $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
-            $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
+
+            // Compression quality
+            $quality = $this->imageOptions['compress'] ? JPG_HIGH_COMPRESSION : JPG_LOW_COMPRESSION;             
+            $imagickImage->setImageCompressionQuality($quality);
+            
+            // Interlacing
             if ($this->imageOptions['interlace']) {
                 $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
             }
@@ -398,20 +411,9 @@ class Image_SubFieldImage
      */
     private function _abort($filename)
     {
-        $pgm = substr($filename, 0, -3) . "pgm";
-        $png = substr($filename, 0, -3) . "png";
-
-        // Clean up
-        if (file_exists($pgm)) {
-            unlink($pgm);
+        foreach(glob(substr($filename, 0, -3) . "*") as $file) {
+            unlink($file);
         }
-        if (file_exists($png)) {
-            unlink($png);
-        }
-        if (file_exists($filename)) {
-            unlink($filename);
-        }
-
         die();
     }
 

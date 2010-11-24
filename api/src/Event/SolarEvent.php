@@ -177,6 +177,7 @@ class Event_SolarEvent
     private function _createMovies($dir, $ipod)
     {
         include_once 'src/Movie/HelioviewerMovie.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
         
         // Create directory to store movies in
         //$this->_createCacheDirectory($dir . "/frames"); Should be handled by movie class
@@ -201,7 +202,7 @@ class Event_SolarEvent
         
         // Build movies for each data source associated with the event type
         foreach ($sourceIds as $source) {
-            $layerString = "[" . $source . ",1,100]";
+            $layers = new Helper_HelioviewerLayers("[" . $source . ",1,100]");
 
             $filename = $filePrefix . $this->id . "_";
             
@@ -216,9 +217,9 @@ class Event_SolarEvent
             );
 
             // Build movie
-            $movie = new Movie_HelioviewerMovie($layerString, $startTime, $roi, $options);
+            $movie = new Movie_HelioviewerMovie($layers, $startTime, $roi, $options);
             
-            $url   = $movie->getURL() . ".mp4";
+            $url = $movie->getURL() . ".mp4";
 
             array_push($movies, $url);
         }
