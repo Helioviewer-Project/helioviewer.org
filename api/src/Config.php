@@ -34,8 +34,7 @@ class Config
                              "enable_movie_button", "enable_screenshot_button");
                              
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
-                             "png_compression_quality", "jpeg_compression_quality", "ffmpeg_max_threads", 
-                             "max_jpx_frames", "max_movie_frames");
+                             "ffmpeg_max_threads", "max_jpx_frames", "max_movie_frames");
     private $_floats = array("default_image_scale", "min_image_scale", "max_image_scale");
 
     public  $servers;
@@ -109,5 +108,11 @@ class Config
         define("HV_API_ROOT_URL", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
         define("HV_CACHE_DIR", HV_ROOT_DIR . "/cache");
         define("HV_CACHE_URL", HV_WEB_ROOT_URL . "/cache");
+        
+        // Image compression settings (See http://www.imagemagick.org/script/command-line-options.php#quality)
+        define("PNG_LOW_COMPRESSION",  10);  // Faster, large files
+        define("PNG_HIGH_COMPRESSION", 50);  // Slower, smalle files
+        define("JPG_HIGH_COMPRESSION", 80);  // Good quality, small files, faster
+        define("JPG_LOW_COMPRESSION",  100); // Best quality, large files, slower
     }
 }

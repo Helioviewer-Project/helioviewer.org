@@ -2,6 +2,8 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Image_Composite_HelioviewerCompositeImage class definition
+ * 
+ * TODO: Instead of writing intermediate layers as files, store as IMagick objects. 
  *
  * PHP version 5
  *
@@ -50,37 +52,40 @@ class Image_Composite_HelioviewerCompositeImage
      */
     public function __construct($layers, $obsDate, $roi, $options)
     {
-        // Any settings specified in $this->_params will override $defaults
+        // Default image settings (optimized for small filesize)
         $defaults = array(
             'outputDir'   => HV_CACHE_DIR . "/screenshots",
             'format'      => 'jpg',
             'watermarkOn' => true,
             'filename'    => false,
-            'compress'    => false, // 11/16/2010 Not currently used!
-            'interlace'   => true,  // 11/16/2010 Not currently used!
-            'quality'     => 20     // 11/16/2010 Not currently used!
+            'compress'    => true,
+            'interlace'   => true
+
         );
         
         $options = array_replace($defaults, $options);
         
-        $this->width    = $roi->getPixelWidth();
-        $this->height   = $roi->getPixelHeight();
-        $this->scale    = $roi->imageScale();     
-        $this->cacheDir = $options['outputDir'];
+        $this->width  = $roi->getPixelWidth();
+        $this->height = $roi->getPixelHeight();
+        $this->scale  = $roi->imageScale();     
 
-        $this->db       = new Database_ImgIndex();
-        $this->layers   = $layers;
-        $this->date     = $obsDate;
-        $this->roi      = $roi;
-        
-        $this->_format  = $options['format'];
+        $this->db     = new Database_ImgIndex();
+        $this->layers = $layers;
+        $this->date   = $obsDate;
+        $this->roi    = $roi;
+
+        $this->cacheDir   = $options['outputDir'];
+        $this->_format    = $options['format'];
+        $this->_compress  = $options['compress'];
+        $this->_interlace = $options['interlace'];
+        $this->_watermark = $options['watermarkOn'];
 
         // Choose a filename if none was specified
         $this->_filename = $this->_buildFilename($options['filename']);
         
         $this->_imageLayers = $this->_buildCompositeImageLayers();
 
-        $this->_buildCompositeImage($options['watermarkOn']);
+        $this->_buildCompositeImage();
         
         // TEMP
         $this->compositeFilepath = $this->getComposite();
@@ -131,7 +136,7 @@ class Image_Composite_HelioviewerCompositeImage
         $offsetX =  $image['sunCenterX']  - ($image['width'] / 2);
         $offsetY = ($image['height'] / 2) -  $image['sunCenterY'];
 
-        // Optional parameters
+        // Options for individual layers
         $options = array(
             "date"          => $image['date'],
             "format"        => "bmp",
@@ -181,7 +186,7 @@ class Image_Composite_HelioviewerCompositeImage
      *
      * @return void
      */
-    private function _buildCompositeImage($watermarkOn)
+    private function _buildCompositeImage()
     {
         $filepath = $this->cacheDir . "/" . $this->_filename;
         
@@ -212,7 +217,7 @@ class Image_Composite_HelioviewerCompositeImage
             $imagickImage = new IMagick($this->_imageLayers[0]->getFilePathString());
         }
         
-        if ($watermarkOn) {
+        if ($this->_watermark) {
             $this->_addWatermark($imagickImage);
         }
         $this->_finalizeImage($imagickImage, $filepath);                
@@ -229,14 +234,54 @@ class Image_Composite_HelioviewerCompositeImage
      */
     private function _finalizeImage($imagickImage, $output)
     {
-        // Need to up the time limit that imagick is allowed to use to execute commands. 
-        set_time_limit(60);
-        $imagickImage->setImageFormat($this->_format);
-        $imagickImage->setImageInterlaceScheme(IMagick::INTERLACE_LINE);
+        set_time_limit(60); // Need to up the time limit that imagick is allowed to use to execute commands. 
+
+        // Compress image
+        $this->_compressImage($imagickImage);
+
+        // Flatten image and write to disk
         $imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
-        $imagickImage->setImageDepth(8);
         $imagickImage->writeImage($output);
         $imagickImage->destroy();
+    }
+    
+    /**
+     * Sets compression and interlacing settings for the composite image
+     * 
+     * @param Object &$imagickImage An initialized Imagick object
+     * 
+     * @return void
+     */
+    private function _compressImage(&$imagickImage)
+    {
+        // Apply compression based on image type for those formats that support it
+        if ($this->_format === "png") {
+            // Compression type
+            $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
+            
+            // Compression quality
+            $quality = $this->_compress ? PNG_HIGH_COMPRESSION : PNG_LOW_COMPRESSION;
+            $imagickImage->setImageCompressionQuality($quality);
+            
+            // Interlacing
+            if ($this->_interlace) {
+                $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            }
+        } elseif ($this->_format === "jpg") {
+            // Compression type
+            $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
+
+            // Compression quality
+            $quality = $this->_compress ? JPG_HIGH_COMPRESSION : JPG_LOW_COMPRESSION;             
+            $imagickImage->setImageCompressionQuality($quality);
+            
+            // Interlacing
+            if ($this->_interlace) {
+                $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
+            }
+        }
+
+        $imagickImage->setImageDepth(8);
     }
     
     /**

@@ -71,7 +71,7 @@ class Module_Movies implements Module
     {
         include_once 'src/Movie/HelioviewerMovie.php';
         include_once 'src/Helper/HelioviewerLayers.php';
-        require_once 'src/Helper/RegionOfInterest.php';
+        include_once 'src/Helper/RegionOfInterest.php';
                 
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
@@ -219,13 +219,13 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 'quality', 
+                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
                                     'numFrames', 'uuid', 'verbose', 'watermarkOn'),
                 "bools"    => array('display', 'ipod', 'verbose', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
                 "files"    => array('filename'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('frameRate', 'quality', 'numFrames'),
+                "ints"     => array('frameRate', 'numFrames'),
                 "uuids"    => array('uuid')
             );
             break;
@@ -240,11 +240,11 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                "required" => array('layers', 'startTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 'quality', 
+                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
                                     'numFrames', 'uuid', 'watermarkOn'),
                "dates"    => array('startTime', 'endTime'),
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "ints"     => array('frameRate', 'quality', 'numFrames')
+               "ints"     => array('frameRate', 'numFrames')
             );
         default:
             break;
@@ -352,11 +352,6 @@ class Module_Movies implements Module
                             <td><i>Integer</i></td>
                             <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                        </tr>
-                        <tr>
-                            <td><b>quality</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
                         </tr>
                         <tr>
                             <td><b>filename</b></td>
@@ -480,11 +475,6 @@ class Module_Movies implements Module
                             <td><b>frameRate</b></td>
                             <td><i>Integer</i></td>
                             <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
-                        </tr>
-                        <tr>
-                            <td><b>quality</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The quality of the images, from 0-10. If quality is not specified, it defaults to 10.</td>
                         </tr>
                         <tr>
                             <td><b>filename</b></td>

@@ -63,7 +63,6 @@ class Image_HelioviewerImage extends Image_SubFieldImage
         $this->measurement = $measurement;
         $this->filepath    = $filepath . "." . $this->options['format'];
         
-        // SubFieldImage   ($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
         $imageSettings = array(
             "opacity" => $this->options['opacity']
         );
