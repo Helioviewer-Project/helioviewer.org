@@ -107,18 +107,19 @@ var Movie = Media.extend(
     /**
      * Generates HTML to display a Helioviewer movie
      */
-    getVideoPlayerHTML:function (width, height) {
-        var relpath = this.hqFile.match(/cache.*/).pop().slice(0,-4);
+    getVideoPlayerHTML: function (width, height) {
+        var css     = "margin-left: auto; margin-right: auto;",
+            relpath = this.hqFile.match(/cache.*/).pop().slice(0, -4);
         
         if ($.support.video) {
-            width = "100%";
-            height= "99%";
+            width  = "100%";
+            height = "99%";
         }
         
         return '<div style="text-align: center;">' +
                //'<div style="margin-left:auto; margin-right:auto; width:' + width + 'px; height:' + height + 'px;";>' +
                '<div style="margin-left:auto; margin-right:auto; width:' + width + '; height:' + height + ';">' +
-               '<video style="margin-left: auto; margin-right: auto;" poster="' + relpath + '.jpg" durationHint="' + this.duration + '">' +
+               '<video style="' + css + '" poster="' + relpath + '.jpg" durationHint="' + this.duration + '">' +
                     '<source src="' + relpath + '.mp4" />' + 
                     '<source src="' + relpath + '.mov" />' +
                     '<source src="' + relpath + '.flv" />' + 

@@ -405,6 +405,11 @@ class Movie_HelioviewerMovie
 
     /**
      * Cancels movie request
+     * 
+     * TODO 11/24/2010: Cleanup files
+     * TODO 11/24/2010: Instead of using files to mark movie status, could instead use presence of 'frames' directory
+     *                  and expected movies (frames directory is delete after movies are finished). In the longer run, 
+     *                  movie status should be tracked in a database accessible to both Helioviewer and Helioqueuer.
      */
     private function _abort($exception) {
         touch($this->_directory . "/INVALID");
