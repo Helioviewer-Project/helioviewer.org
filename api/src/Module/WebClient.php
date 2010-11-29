@@ -418,6 +418,7 @@ class Module_WebClient implements Module
                     <li><a href="index.php#getTile">Creating a Tile</a></li>
                 </ul>
             </li>
+            <li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>
         <?php
     }
     
@@ -751,6 +752,107 @@ class Module_WebClient implements Module
                 </span>
             </li>
             </ol>
+        </div>
+        <!-- Screenshot API -->
+        <div id="takeScreenshot">
+            <h1>Screenshot API</h1>
+            <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
+            available image is returned.</p>
+    
+            <br />
+    
+            <div class="summary-box"><span
+                style="text-decoration: underline;">Usage:</span><br />
+            <br />
+    
+            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot<br />
+            <br />
+    
+            Supported Parameters:<br />
+            <br />
+    
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="20%"><b>obsDate</b></td>
+                        <td><i>ISO 8601 UTC Date</i></td>
+                        <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
+                    </tr>
+                    <tr>
+                        <td><b>imageScale</b></td>
+                        <td><i>Float</i></td>
+                        <td>The zoom scale of the image. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
+                            a factor of 2. The full-res scale of an EIT image is 5.26.</td>
+                    </tr>
+                    <tr>
+                        <td><b>layers</b></td>
+                        <td><i>String</i></td>
+                        <td>A string of layer information in the following format:<br />
+                            Each layer is comma-separated with these values: [<i>sourceId,visible,opacity</i>]. <br />
+                            If you do not know the sourceId, you can 
+                            alternately send this layer string: [<i>obs,inst,det,meas,opacity]</i>.
+                            Layer strings are separated by commas: [layer1],[layer2],[layer3].</td>
+                    </tr>
+                    <tr>
+                        <td><b>y1</b></td>
+                        <td><i>Integer</i></td>
+                        <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                    </tr>
+                    <tr>
+                        <td><b>x1</b></td>
+                        <td><i>Integer</i></td>
+                        <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                    </tr>
+                    <tr>
+                        <td><b>y2</b></td>
+                        <td><i>Integer</i></td>
+                        <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                    </tr>
+                    <tr>
+                        <td><b>x2</b></td>
+                        <td><i>Integer</i></td>
+                        <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                    </tr>
+                    <tr>
+                        <td><b>filename</b></td>
+                        <td><i>String</i></td>
+                        <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
+                            the filename defaults to a combination of the date, layer names, and image scale.</td>
+                    </tr>
+                    <tr>
+                        <td><b>display</b></td>
+                        <td><i>Boolean</i></td>
+                        <td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
+                            filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
+                    </tr>
+                    <tr>
+                        <td><b>watermarkOn</b></td>
+                        <td><i>Boolean</i></td>
+                        <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the image will not be watermarked.
+                            If left blank, it defaults to true and images will be watermarked.</td>
+                    </tr>
+                </tbody>
+            </table>
+    
+            <br />
+    
+            <span class="example-header">Examples:</span>
+            <span class="example-url">
+            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+            </a>
+            </span><br />
+            <span class="example-url">
+            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+            </a>
+            </span>
+            </div>
+            <br />
         </div>
         <?php
     }
