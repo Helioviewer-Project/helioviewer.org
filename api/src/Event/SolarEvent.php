@@ -17,7 +17,7 @@
  */
 require_once "src/Event/HEKAdapter.php";
 
-define("SCREENSHOT_MIN_WIDTH" , 400);
+define("SCREENSHOT_MIN_WIDTH", 400);
 define("SCREENSHOT_MIN_HEIGHT", 400);
 /**
  * Event_SolarEvent class definition
@@ -40,11 +40,12 @@ class Event_SolarEvent
     /**
      * Creates a new SolarEvent instance
      * 
-     * @param $id string Event id
+     * @param string $id HEK event id
      * 
      * @return void
      */
-    public function __construct($id) {
+    public function __construct($id)
+    {
         $this->id      = $id;
         $this->adapter = new Event_HEKAdapter(); 
         
@@ -80,6 +81,8 @@ class Event_SolarEvent
     
     /**
      * Returns a list of movies relating to the event
+     * 
+     * @param bool $ipod Whether or not to return iPod-compatable moveis
      *
      * @return array URLs of event movies
      */
@@ -89,12 +92,12 @@ class Event_SolarEvent
         
         // If images have already been generated return them
         if (!HV_DISABLE_CACHE && file_exists($directory)) {
-//            $files = array_merge(
-//                glob("$directory/*mp4"),
-//                glob("$directory/*mov"),
-//                glob("$directory/*flv")
-//            );
-            $files = glob("$directory/*.mp4"); // 11/22/2010: When creating movies, request only returns a single filetype
+            $files = array_merge(
+                glob("$directory/*.mp4"),
+                glob("$directory/*.mov"),
+                glob("$directory/*.flv")
+            );
+            //$files = glob("$directory/*.mp4"); // 11/22/2010: When creating movies, request only returns a single type
             
             $urls = array();
 
@@ -112,7 +115,7 @@ class Event_SolarEvent
     /**
      * Create screenshots for a single event
      * 
-     * @param string $dir  Directory to store generated screenshots in
+     * @param string $dir Directory to store generated screenshots in
      *
      * @return array
      */
@@ -171,8 +174,9 @@ class Event_SolarEvent
      * Create movies for a single event
      * 
      * @param string $dir  Directory to store generated screenshots in
+     * @param bool   $ipod Whether or not iPod-compatable movies should be created
      *
-     * @return array
+     * @return array Movies created for the event
      */
     private function _createMovies($dir, $ipod)
     {
@@ -230,6 +234,7 @@ class Event_SolarEvent
     /**
      * Returns a date string for the middle of a specified time window
      * 
+     * @return string Date string
      */
     private function _getTimeWindowCenter ()
     {
@@ -256,7 +261,8 @@ class Event_SolarEvent
      * 
      * @return array Start and end date strings
      */
-    private function _getMovieTimeWindow () {
+    private function _getMovieTimeWindow ()
+    {
         // If start and end times are different use those values
         if ($this->details['event_starttime'] !== $this->details['event_endtime']) {
             return array($this->details['event_starttime'], $this->details['event_endtime']);
@@ -274,7 +280,7 @@ class Event_SolarEvent
     /**
      * Creates the directory structure that will be used to store screenshots based upon events. 
      *
-     * @param string $cacheDir The path to cache/events/eventId
+     * @param string $dir Directory to create
      * 
      * @return void
      */
@@ -291,13 +297,14 @@ class Event_SolarEvent
      * Takes in a polygon string in the format "POLYGON((....))" and parses it to 
      * find a rectangular region that includes the event.
      * 
-     * @param string $polygon The polygon string in the above format
+     * @param string $polygon    The polygon string in the above format
+     * @param float  $imageScale Imagescale corresponding to the region of interest
      * 
-     * @return array 
+     * @return object A Helioviewer RegionOfInterest object 
      */
     private function _polygonToBoundingBox($polygon, $imageScale)
     {
-        require_once 'src/Helper/RegionOfInterest.php';
+        include_once 'src/Helper/RegionOfInterest.php';
 
         $coordinates = explode(",", str_replace(array("POLYGON", "(", ")"), "", $polygon));
         $x = array();
@@ -334,7 +341,7 @@ class Event_SolarEvent
      * @param array $box        The bounding box coordinates
      * @param float $imageScale The scale of the image in arcsec/pixel
      * 
-     * @return array
+     * @return array The padded bounding box coordinates
      */    
     private function _padToMinSize($box, $imageScale)
     {
@@ -358,7 +365,7 @@ class Event_SolarEvent
      * 
      * @param string $eventType The two-letter code for event type
      * 
-     * @return array
+     * @return array A list of datasource ids
      */
     private function _getAssociatedDataSources($eventType)
     {

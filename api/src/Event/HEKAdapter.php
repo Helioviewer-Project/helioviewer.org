@@ -103,8 +103,7 @@ class Event_HEKAdapter
      * Returns a list of events
      * 
      * @param date   $startTime Start time for which events should be retrieved
-     * @param date   $endTime   End time for which events should be retrieved
-     * @param string $eventType The two-letter code(s) for event type(s), or **
+     * @param string $options   Optional parameters
      * 
      * @return string
      */
@@ -172,15 +171,25 @@ class Event_HEKAdapter
     /**
      * Add links to any screenshots and movies that have been generated for the requested event
      * 
-     * @param boolean $ipod Whether to look in the ipod folders or not
+     * @param array   &$originalEvents The original response object
+     * @param boolean $ipod            Whether to look in the ipod folders or not
+     * 
+     * @return void
      */
     private function _extendHEKResponse(&$originalEvents, $ipod)
     {
         // Movie type to return
         $movieType = $ipod ? "iPod" : "regular";
         
-        // Function to convert filepaths to URLs
-        function convertFilepaths(&$value) {
+        /**
+         * Function to convert filepaths to URLs
+         * 
+         * @param string &$value Resource filepath
+         * 
+         * @return void
+         */
+        function convertFilepaths(&$value)
+        {
             $value = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $value);
         }
 

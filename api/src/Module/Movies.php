@@ -27,11 +27,6 @@ require_once 'interface.Module.php';
  */
 class Module_Movies implements Module
 {
-    /**
-     * API Request parameters
-     *
-     * @var mixed
-     */
     private $_params;
     private $_options;
 
@@ -99,8 +94,8 @@ class Module_Movies implements Module
                     "numFrames" => $movie->getNumFrames(),
                     "url"       => $urls
                 );                
-            // Simple response
             } else {
+                // Simple response
                 $response = array("url" => $urls);
             }
             
@@ -112,12 +107,17 @@ class Module_Movies implements Module
     
     /**
      * Returns either a single URL or an array of URLs for the requested video
+     * 
+     * @param object &$movie A HelioviewerMovie instance
+     * 
+     * @return mixed One or more URLs for movies relating to the request
      */
-    private function _getVideoURLs (&$movie) {
+    private function _getVideoURLs (&$movie)
+    {
         $baseURL = $movie->getURL();
         
         // If a specific format was requested, return a link for that video
-        if(isset($this->_options['format'])) {
+        if (isset($this->_options['format'])) {
             return "$baseURL.{$this->_options['format']}";    
         } else {
             // Otherwise return URLs for each of the video types generated
@@ -164,30 +164,34 @@ class Module_Movies implements Module
         $durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
         
         ?>
-<!DOCTYPE html> 
-<html> 
-<head> 
-    <title>Helioviewer.org - <?php echo $this->_params['file']?></title>            
-    <script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
-</head> 
-<body>
-<div style="text-align: center;">
-    <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
-        <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$relpath.bmp"?>" <?php echo $durationHint?>>
-            <source src="<?php echo "$relpath.mp4"?>" /> 
-            <source src="<?php echo "$relpath.mov"?>" />
-            <source src="<?php echo "$relpath.flv"?>" /> 
-        </video>
-    </div>
-</div>
-</body> 
-</html> 
+        <!DOCTYPE html> 
+        <html> 
+        <head> 
+            <title>Helioviewer.org - <?php echo $this->_params['file']?></title>            
+            <script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+        </head> 
+        <body>
+        <div style="text-align: center;">
+            <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
+                <video style="margin-left: auto; margin-right: auto;" <?php echo "poster=\"$relpath.bmp\" $durationHint"?>>
+                    <source src="<?php echo "$relpath.mp4"?>" /> 
+                    <source src="<?php echo "$relpath.mov"?>" />
+                    <source src="<?php echo "$relpath.flv"?>" /> 
+                </video>
+            </div>
+        </div>
+        </body> 
+        </html> 
         <?php
     }
     
     /**
      * Determines the height and width for a given video
+     * 
+     * @param string $file Video filepath
+     * 
+     * @return array The width and height corresponding with the specified video
      */
     private function _getVideoDimensions($file)
     {

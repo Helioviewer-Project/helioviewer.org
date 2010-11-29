@@ -69,8 +69,8 @@ class Database_ImgIndex
 
         $datestr = isoDateToMySQL($date);
 
-        $sql = sprintf("
-            ( SELECT filepath, filename, date 
+        $sql = sprintf(
+            "( SELECT filepath, filename, date 
               FROM images 
               WHERE
                 sourceId = %d AND 
@@ -84,8 +84,9 @@ class Database_ImgIndex
                 date >= '%s'
               ORDER BY date ASC LIMIT 1 )
             ORDER BY ABS(DATEDIFF(date, '%s')
-            ) LIMIT 1;
-        ", $sourceId, $datestr, $sourceId, $datestr, $datestr);
+            ) LIMIT 1;",
+            $sourceId, $datestr, $sourceId, $datestr, $datestr
+        );
         
         // Query database
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
@@ -279,7 +280,18 @@ class Database_ImgIndex
 
         return $result_array;		
     }
-    
+
+    /**
+     * Returns the source Id and layering order associated with a data source specified by it's observatory, instrument,
+     * detector and measurement.
+     * 
+     * @param string $obs  Observatory
+     * @param string $inst Instrument
+     * @param string $det  Detector
+     * @param string $meas Measurement
+     * 
+     * @return array Datasource id and layering order
+     */
     public function getSourceIdAndLayeringOrder($obs, $inst, $det, $meas)
     {
         $sql = sprintf(

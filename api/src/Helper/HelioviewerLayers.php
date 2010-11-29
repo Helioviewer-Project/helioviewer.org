@@ -33,9 +33,10 @@ class Helper_HelioviewerLayers
     /**
      * Creates a new HelioviewerLayers instance
      * 
-     * The constructor accepts a layer string in one of two recognized formats: 
-     * [obs,inst,det,meas,visible,opacity] or [sourceId,visible,opacity]. 
-     * 
+     * @param string $layerString Layer string in one of two recognized formats: 
+     *                            [obs,inst,det,meas,visible,opacity] or [sourceId,visible,opacity].
+     *
+     * @return void
      */
     public function __construct($layerString)
     {
@@ -44,7 +45,7 @@ class Helper_HelioviewerLayers
         $layerStringArray = explode("],[", substr($layerString, 1, -1));
 
         // Process individual layers in string
-        foreach($layerStringArray as $singleLayerString) {
+        foreach ($layerStringArray as $singleLayerString) {
             $layer = $this->_decodeSingleLayerString($singleLayerString);
             
             // Only include layer if it is visible
@@ -54,13 +55,15 @@ class Helper_HelioviewerLayers
         }
         
         // Check to make sure at least one valid layer was specified
-        if(sizeOf($this->_layers) === 0) {
+        if (sizeOf($this->_layers) === 0) {
             throw new Exception("No valid and visible layers specified for request.");
         } 
     }
     
     /**
      * Returns the number of layers in the collection
+     * 
+     * @return int Number of layers in request
      */
     public function length()
     {
@@ -69,6 +72,8 @@ class Helper_HelioviewerLayers
     
     /**
      * Returns the layers as an array of associative arrays
+     *
+     * @return array An array of hashes representing the requested layers
      */
     public function toArray()
     {
@@ -77,6 +82,8 @@ class Helper_HelioviewerLayers
     
     /**
      * Returns a string reprentation of the request layers suitable for use in filenames
+     * 
+     * @return string String representation of the request layers for use in filenames, etc.
      */
     public function toString()
     {
@@ -94,8 +101,8 @@ class Helper_HelioviewerLayers
      * Takes a single layer string and converts it to a more convenient associative array. filling in any 
      * missing details as neccessary
      * 
-     * @param string $layer a single layer represented as a string in one of the two following forms:
-     *                      [obs,inst,det,meas,visible,opacity] or [sourceId,visible,opacity] 
+     * @param string $layerString A single layer represented as a string in one of the two following forms:
+     *                            [obs,inst,det,meas,visible,opacity] or [sourceId,visible,opacity] 
      * 
      * @return array Associative array representation of the layer
      */
@@ -110,9 +117,8 @@ class Helper_HelioviewerLayers
             list($sourceId, $layeringOrder) = $this->_db->getSourceIdAndLayeringOrder(
                 $observatory, $instrument, $detector, $measurement
             );
-    
-        // [sourceId,visible,opacity]
         } else if (sizeOf($layerArray === 3)) {
+            // [sourceId,visible,opacity]
             list($sourceId, $visible, $opacity) = $layerArray;
 
             $source = $this->_db->getDatasourceInformationFromSourceId($sourceId);
