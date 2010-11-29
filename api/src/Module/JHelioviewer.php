@@ -26,11 +26,6 @@ require_once 'interface.Module.php';
  */
 class Module_JHelioviewer implements Module
 {
-    /**
-     * API Request parameters
-     *
-     * @var mixed
-     */
     private $_params;
     private $_options;
 
@@ -48,7 +43,7 @@ class Module_JHelioviewer implements Module
     }
 
     /**
-     * execute
+     * Validates and executes the request
      *
      * @return void
      */
@@ -64,8 +59,7 @@ class Module_JHelioviewer implements Module
     }
 
     /**
-     * Finds the best match for a single JPEG 2000 image and either prints a link to it or displays
-     * it directly.
+     * Finds the best match for a single JPEG 2000 image and either prints a link to it or displays it directly.
      *
      * @return void
      */
@@ -138,14 +132,13 @@ class Module_JHelioviewer implements Module
                 $sourceId, $this->_params['startTime'], $this->_params['endTime'], 
                 $options['cadence'], $options['linked'], $filename
             );
-        // If a problem is encountered, return an error message as JSON
-        } catch (Exception $e) {
             
+        } catch (Exception $e) {
+            // If a problem is encountered, return an error message as JSON            
             header('Content-type: application/json;charset=UTF-8');
             echo json_encode(
                 array(
-                    "error"   => $e->getMessage(), 
-                    "message" => $e->getMessage(), // DEPRECATED (https://bugs.edge.launchpad.net/jhelioviewer/+bug/621223)
+                    "error"   => $e->getMessage(),
                     "uri"     => null
                 )
             );
@@ -166,8 +159,13 @@ class Module_JHelioviewer implements Module
     
     /**
      * Returns the sourceId for the current request
+     * 
+     * @param object &$imgIndex A Helioviewer database instance
+     * 
+     * @return int The id of the datasource specified for the request
      */
-    private function _getSourceId(&$imgIndex) {
+    private function _getSourceId(&$imgIndex)
+    {
         if (isset($this->_params['sourceId'])) {
             return $this->_params['sourceId'];
         }
@@ -181,13 +179,17 @@ class Module_JHelioviewer implements Module
     /**
      * Returns info for a given sourceId
      * 
-     * @param int      $sourceId id of data source
-     * @param ImgIndex $imgIndex database accessor
+     * @param int    $sourceId  Id of data source
+     * @param object &$imgIndex Database accessor
+     * 
+     * @return array An array containing the observatory, instrument, detector and measurement associated with the
+     *               specified datasource id.
      */
-    private function _getSourceIdInfo($sourceId, &$imgIndex) {
-        if(!(isset($this->_params['observatory']) && isset($this->_params['instrument']) && 
-             isset($this->_params['detector'])    && isset($this->_params['measurement']))) {
-            
+    private function _getSourceIdInfo($sourceId, &$imgIndex)
+    {
+        if (!(isset($this->_params['observatory']) && isset($this->_params['instrument'])
+            && isset($this->_params['detector'])    && isset($this->_params['measurement']))
+        ) {
             // Get an associative array of the datasource meta information     
             $info = $imgIndex->getDatasourceInformationFromSourceId($sourceId);
 

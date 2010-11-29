@@ -163,17 +163,17 @@ class Module_WebClient implements Module
     /**
      * Requests a single tile to be used in Helioviewer.org.
      * 
-     * @return Image The image tile
+     * @return object The image tile
      */
     public function getTile ()
     {
-        require_once 'src/Image/JPEG2000/JP2Image.php';
-        require_once 'src/Helper/RegionOfInterest.php';
+        include_once 'src/Image/JPEG2000/JP2Image.php';
+        include_once 'src/Helper/RegionOfInterest.php';
         
         $params = $this->_params;
         
         // Tile filepath
-        $filepath =  $this->getTileCacheFilename(
+        $filepath =  $this->_getTileCacheFilename(
             $params['uri'], $params['imageScale'], $params['x1'], $params['x2'], $params['y1'], $params['y2']
         );
 
@@ -211,16 +211,16 @@ class Module_WebClient implements Module
     /**
      * Builds a filename for a cached tile or image based on boundaries and scale
      * 
-     * @param string $uri    The uri of the original jp2 image
-     * @param float  $scale  The scale of the extracted image
-     * @param float  $x1     The left boundary in arcseconds
-     * @param float  $x2     The right boundary in arcseconds
-     * @param float  $y1     The top boundary in arcseconds
-     * @param float  $y2     The bottom boundary in arcseconds
+     * @param string $uri   The uri of the original jp2 image
+     * @param float  $scale The scale of the extracted image
+     * @param float  $x1    The left boundary in arcseconds
+     * @param float  $x2    The right boundary in arcseconds
+     * @param float  $y1    The top boundary in arcseconds
+     * @param float  $y2    The bottom boundary in arcseconds
      * 
-     * @return string
+     * @return string Filepath to use when locating or creating the tile
      */
-    private function getTileCacheFilename($uri, $scale, $x1, $x2, $y1, $y2)
+    private function _getTileCacheFilename($uri, $scale, $x1, $x2, $y1, $y2)
     {
         $baseDirectory = HV_CACHE_DIR . "/tiles";
         $baseFilename  = substr(basename($uri), 0, -4);
@@ -283,35 +283,24 @@ class Module_WebClient implements Module
         // Display screenshot
         if (isset($this->_options['display']) && $this->_options['display']) {
             $screenshot->display();
-
-        // Print JSON
         } else {
+            // Print JSON
             header('Content-Type: application/json');
             echo json_encode(array("url" => $screenshot->getURL()));            
         }
     }
     
     /**
-     * Displays an image and stops execution
-     */
-    public function displayImage($filename) {
-        $fileinfo = new finfo(FILEINFO_MIME);
-        $mimetype = $fileinfo->file($filename);
-        header("Content-Disposition: inline; filename=\"" . basename($filename) . "\"");
-        header("Content-type: " . $mimetype);
-        die(file_get_contents($filename));
-    }
-    
-    /**
      * Creates the directory structure which will be used to cache
      * generated tiles.
+     * 
+     * Note: mkdir may not set permissions properly due to an issue with umask.
+     *       (See http://www.webmasterworld.com/forum88/13215.htm)
+
      *
      * @param string $filepath The filepath where the image is stored
      *
      * @return void
-     *
-     * Note: mkdir may not set permissions properly due to an issue with umask.
-     *       (See http://www.webmasterworld.com/forum88/13215.htm)
      */
     private function _createTileCacheDir($filepath)
     {
@@ -346,14 +335,17 @@ class Module_WebClient implements Module
             );
 
             if (isset($this->_params["sourceId"])) {
-                $expected = array_merge($expected, array(
+                $expected = array_merge(
+                    $expected, array(
                     "required" => array('date', 'sourceId'),
-                    "ints"     => array('sourceId')
-                ));
+                    "ints"     => array('sourceId'))
+                );
             } else {
-                $expected = array_merge($expected, array(
+                $expected = array_merge(
+                    $expected, array(
                     "required" => array('date', 'observatory', 'instrument', 'detector', 'measurement')
-                ));
+                    )
+                );
             }
             break;
 

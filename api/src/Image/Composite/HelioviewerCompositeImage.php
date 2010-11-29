@@ -46,9 +46,14 @@ class Image_Composite_HelioviewerCompositeImage
     private $_scale;
     
     /**
-     * Prepares the parameters passed in from the api call and creates a composite image from them.
+     * Creates a new HelioviewerCompositeImage instance
+     * 
+     * @param object $layers  A Helper_HelioviewerLayers object representing the requested image layers
+     * @param string $obsDate The date for which the composite image should be created
+     * @param object $roi     The rectangular region of interest defining the composite image's boundaries
+     * @param array  $options A list of optional parameters to use when creating the composite image 
      *                              
-     * @return string the composite image
+     * @return void
      */
     public function __construct($layers, $obsDate, $roi, $options)
     {
@@ -334,6 +339,7 @@ class Image_Composite_HelioviewerCompositeImage
             $this->_addTimestampWatermark($imagickImage);
         }
         
+        // Cleanup
         $watermark->destroy();
     }
     
@@ -376,6 +382,7 @@ class Image_Composite_HelioviewerCompositeImage
         $imagickImage->annotateImage($text, 20, $lowerPad, 0, $nameCmd);
         $imagickImage->annotateImage($text, 125, $lowerPad, 0, $timeCmd);
         
+        // Cleanup
         $black->destroy();
         $white->destroy();
         $underText->destroy();
@@ -464,8 +471,6 @@ class Image_Composite_HelioviewerCompositeImage
     
     /**
      * Destructor
-     * 
-     * TODO: Add destrcutor to SubFieldImage and destroy IMagick object there, too
      */
     public function __destruct() {
         // Destroy IMagick object

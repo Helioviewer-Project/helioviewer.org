@@ -41,6 +41,8 @@ class Helper_RegionOfInterest
      * @param float $y1         Top coordinate in arc-seconds
      * @param float $y2         Bottom coordinate in arc-seconds
      * @param float $imageScale Image scale in arc-seconds/pixel
+     * @param int   $maxWidth   Maximum width allowed
+     * @param int   $maxHeight  Maximum height allowed
      *  
      * @return void
      */
@@ -59,39 +61,93 @@ class Helper_RegionOfInterest
         $this->_limitToMaximumDimensions();
     }
     
-    public function top() {
+    /**
+     * Gets the top coordinate (y1) of the region of interest
+     * 
+     * @return float ROI top coordinate
+     */
+    public function top()
+    {
         return $this->_top;
     }
-    
-    public function left() {
+
+    /**
+     * Gets the left coordinate (x1) of the region of interest
+     * 
+     * @return float ROI left coordinate
+     */
+    public function left()
+    {
         return $this->_left;
     }
     
-    public function bottom() {
+    /**
+     * Gets the bottom coordinate (y2) of the region of interest
+     * 
+     * @return float ROI bottom coordinate
+     */
+    public function bottom()
+    {
         return $this->_bottom;
     }
-    
-    public function right() {
+
+    /**
+     * Gets the right coordinate (x2) of the region of interest
+     * 
+     * @return float ROI right coordinate
+     */
+    public function right()
+    {
         return $this->_right;
     }
     
-    public function imageScale() {
+    /**
+     * Gets the image scale associated with the region of interest in arcseconds/pixel
+     * 
+     * @return float Image scale for the ROI
+     */
+    public function imageScale()
+    {
         return $this->_scale;
     }
     
-    public function getWidth() {
+    /**
+     * Gets the region of interest width in arcseconds
+     * 
+     * @return float ROI width (arcseconds)
+     */
+    public function getWidth()
+    {
         return $this->_right - $this->_left;
     }
     
-    public function getHeight() {
+    /**
+     * Gets the region of interest height in arcseconds
+     * 
+     * @return float ROI height (arcseconds)
+     */
+    public function getHeight()
+    {
         return $this->_bottom - $this->_top;
     }
     
-    public function getPixelWidth() {
+    /**
+     * Gets the region of interest width in pixels on the corresponding JP2 image
+     * 
+     * @return float ROI Width (pixels)
+     */
+    public function getPixelWidth()
+    {
         return ($this->_right - $this->_left) / $this->_scale;
     }
 
-    public function getPixelHeight() {
+    /**
+     * Gets the region of interest height in pixels on the corresponding JP2 image
+     * 
+     * @return float ROI Height (pixels)
+     */
+    public function getPixelHeight()
+    {
         return ($this->_bottom - $this->_top) / $this->_scale;
     }
     
