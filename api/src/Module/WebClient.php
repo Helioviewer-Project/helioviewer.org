@@ -104,6 +104,8 @@ class Module_WebClient implements Module
      * Finds the closest image available for a given time and datasource
      *
      * @return JSON meta information for matching image
+     * 
+     * TODO: Combine with getJP2Image? (e.g. "&display=true")
      */
     public function getClosestImage ()
     {
@@ -159,11 +161,9 @@ class Module_WebClient implements Module
     }
 
     /**
-     * getTile
+     * Requests a single tile to be used in Helioviewer.org.
      * 
-     * Note: OBSERVATORY NOTE USED!
-     *
-     * @return void
+     * @return Image The image tile
      */
     public function getTile ()
     {
@@ -275,21 +275,20 @@ class Module_WebClient implements Module
             $this->_params['imageScale']
         );
         
+        // Create the screenshot
         $screenshot = new Image_Composite_HelioviewerCompositeImage(
             $layers, $this->_params['obsDate'], $roi, $this->_options
         );
 
-        // TODO 11/10/2010 instead of returning result from takeScreenshot simply return true on success and
-        // and add "display" and "getURL" methods. Moreover, a "display=false" param is already passed into takeScreenshot()!
-
         // Display screenshot
         if (isset($this->_options['display']) && $this->_options['display']) {
-            $this->displayImage($screenshot->getFilepath());
-        }
+            $screenshot->display();
 
         // Print JSON
-        header('Content-Type: application/json');
-        echo json_encode(array("url" => $screenshot->getURL()));
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(array("url" => $screenshot->getURL()));            
+        }
     }
     
     /**

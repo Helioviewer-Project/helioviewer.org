@@ -147,7 +147,7 @@ class Image_HelioviewerImage extends Image_SubFieldImage
      * 
      * @return string outputFile
      */
-    public function getFilePathString() 
+    public function getFilepath() 
     {
         return $this->filepath;
     }
