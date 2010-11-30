@@ -27,23 +27,21 @@ require_once 'src/Image/HelioviewerImage.php';
  */
 class Image_ImageType_LASCOImage extends Image_HelioviewerImage
 {
-    protected $solarCenterOffsetX;
-    protected $solarCenterOffsetY;
-    
     /**
-     * Constructor
+     * Creates a new LASCOImage
      * 
-     * @param string $jp2          Source JP2 image
-     * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
-     * @param float  $desiredScale Desired scale of the output image
-     * @param string $detector     Detector
-     * @param string $measurement  Measurement
-     * @param int    $offsetX      Offset of the sun center from the image center
-     * @param int    $offsetY      Offset of the sun center from the iamge center
-     * @param string $filepath     Filepath to where the final image will be stored (not including file extension)
-     * @param int    $opacity      The opacity of the image from 0 to 100
-     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
-     */    
+     * @param string $jp2      Source JP2 image
+     * @param string $filepath Location to output the file to (not including a file extension)
+     * @param array  $roi      Top-left and bottom-right pixel coordinates on the image
+     * @param string $inst     Instrument
+     * @param string $det      Detector
+     * @param string $meas     Measurement
+     * @param int    $offsetX  Offset of the sun center from the image center
+     * @param int    $offsetY  Offset of the sun center from the iamge center
+     * @param array  $options  Optional parameters
+     * 
+     * @return void
+     */ 
     public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         if ($det == "C2") {
@@ -55,9 +53,6 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }
-
-        $this->solarCenterOffsetX = $offsetX;
-        $this->solarCenterOffsetY = $offsetY;
         
         // Use PNG as default format to preserve transparent regions
         $options["format"] = "png";
@@ -68,7 +63,7 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
     /**
      * Gets a string that will be displayed in the image's watermark
      * 
-     * @return string watermark name
+     * @return string Watermark name
      */    
     public function getWaterMarkName() 
     {
@@ -116,11 +111,11 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
      *  
      *    The region of interest (ROI) below is specified at the original JP2 image scale.
      *
-     * @param Object &$imagickImage an initialized Imagick object
+     * @param object $imagickImage an initialized Imagick object
      *
      * @return void
      */
-    protected function setAlphaChannel(&$imagickImage)
+    protected function setAlphaChannel($imagickImage)
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;
@@ -133,9 +128,9 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
         }
 
         $maskTopLeftX = ($this->imageSubRegion['left'] + 
-                        ($maskWidth  - $this->jp2->getWidth()) /2 - $this->solarCenterOffsetX) * $maskScaleFactor;
+                        ($maskWidth  - $this->jp2->getWidth()) /2 - $this->offsetX) * $maskScaleFactor;
         $maskTopLeftY = ($this->imageSubRegion['top']  + 
-                        ($maskHeight - $this->jp2->getHeight())/2 - $this->solarCenterOffsetY) * $maskScaleFactor;
+                        ($maskHeight - $this->jp2->getHeight())/2 - $this->offsetY) * $maskScaleFactor;
 
         $width  = $this->subfieldWidth  * $maskScaleFactor;
         $height = $this->subfieldHeight * $maskScaleFactor;

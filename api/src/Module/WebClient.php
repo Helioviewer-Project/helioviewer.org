@@ -361,7 +361,9 @@ class Module_WebClient implements Module
                               'offsetX', 'offsetY', 'instrument', 'detector', 'measurement');
             $expected = array(
                 "required" => $required,
-                "files"    => array('uri')
+                "floats"   => array('offsetX', 'offsetY', 'imageScale', 'jp2Scale', 'x1', 'x2', 'y1', 'y2'),
+                "files"    => array('uri'),
+                "ints"     => array('jp2Width', 'jp2Height')
             );
             break;
 

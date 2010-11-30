@@ -29,24 +29,18 @@ require_once 'src/Image/HelioviewerImage.php';
  */
 class Image_ImageType_BlankImage extends Image_SubFieldImage
 {
-    private   $_measurement;
-    protected $tileSize;
-    protected $width;
-    protected $height;
-    
     /**
-     * Constructor
+     * Creates a new blank image
      * 
-     * @param string $jp2          Source JP2 image
-     * @param array  $roi          Top-left and bottom-right pixel coordinates on the image
-     * @param float  $desiredScale Desired scale of the output image
-     * @param string $detector     Detector
-     * @param string $measurement  Measurement
-     * @param int    $offsetX      Offset of the sun center from the image center
-     * @param int    $offsetY      Offset of the sun center from the image center
-     * @param string $filepath     Filepath to where the final image will be stored (not including file extension)
-     * @param int    $opacity      The opacity of the image from 0 to 100
-     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
+     * @param string $jp2      Source JP2 image
+     * @param string $filepath Location to output the file to (not including a file extension)
+     * @param array  $roi      Top-left and bottom-right pixel coordinates on the image
+     * @param string $inst     Instrument
+     * @param string $det      Detector
+     * @param string $meas     Measurement
+     * @param int    $offsetX  Offset of the sun center from the image center
+     * @param int    $offsetY  Offset of the sun center from the iamge center
+     * @param array  $options  Optional parameters
      */     
     public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
@@ -66,7 +60,7 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
     /**
      * Overrides SubFieldImage's computePadding() method to avoid unnecessary computation.
      * 
-     * @param Array $roi   -- Region of interest
+     * @param Array $roi Region of interest
      *
      * @return Array
      */
