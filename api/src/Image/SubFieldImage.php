@@ -46,6 +46,8 @@ class Image_SubFieldImage
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
+    protected $offsetX;
+    protected $offsetY;
     protected $options;
 
     /**

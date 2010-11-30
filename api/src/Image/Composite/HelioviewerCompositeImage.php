@@ -104,7 +104,7 @@ class Image_Composite_HelioviewerCompositeImage
      * 
      * TODO: Instead of writing out individual layers as files and then reading them back in simply use the IMagick
      *       objects directly.
-
+     *
      * @return void
      */
     private function _buildCompositeImageLayers()
@@ -127,6 +127,10 @@ class Image_Composite_HelioviewerCompositeImage
     
     /**
      * Builds a single layer image
+     * 
+     * @param array $layer Associative array containing the layer properties
+     * 
+     * @return object A HelioviewerImage instance (e.g. AIAImage or LASCOImage)
      */
     private function _buildImageLayer($layer)
     {
@@ -165,7 +169,7 @@ class Image_Composite_HelioviewerCompositeImage
 
     /**
      * Builds a temporary output path where the extracted image will be stored
-
+     * 
      * @param string $filepath Filepath of the image 
      * @param string $filename Filename of the image
      * @param roi    $roi      The region of interest in arcseconds
@@ -190,7 +194,7 @@ class Image_Composite_HelioviewerCompositeImage
     /**
      * Builds each image separately and then composites them together if necessary.
      *
-     * @return void
+     * @return string Composite image filepath
      */
     private function _buildCompositeImage()
     {
@@ -217,9 +221,8 @@ class Image_Composite_HelioviewerCompositeImage
                     $previous->destroy();
                 }
             }
-
-        // For single layer images the composite image is simply the first image layer
         } else {
+            // For single layer images the composite image is simply the first image layer
             $imagickImage = new IMagick($this->_imageLayers[0]->getFilepath());
         }
         
@@ -257,11 +260,11 @@ class Image_Composite_HelioviewerCompositeImage
     /**
      * Sets compression and interlacing settings for the composite image
      * 
-     * @param Object &$imagickImage An initialized Imagick object
+     * @param object $imagickImage An initialized Imagick object
      * 
      * @return void
      */
-    private function _compressImage(&$imagickImage)
+    private function _compressImage($imagickImage)
     {
         // Apply compression based on image type for those formats that support it
         if ($this->_format === "png") {
@@ -306,7 +309,7 @@ class Image_Composite_HelioviewerCompositeImage
      *
      * These two strings are then layered on top of each other and put in the southwest corner of the image.
      *
-     * @param Object $imagickImage An Imagick object
+     * @param object $imagickImage An Imagick object
      *
      * @return void
      */
@@ -346,7 +349,7 @@ class Image_Composite_HelioviewerCompositeImage
     /**
      * Builds an imagemagick command to composite watermark text onto the image
      * 
-     * @param Object $imagickImage An initialized IMagick object
+     * @param object $imagickImage An initialized IMagick object
      * 
      * @return void
      */
@@ -395,11 +398,11 @@ class Image_Composite_HelioviewerCompositeImage
      * Layering orders that are supported currently are 3 (C3 images), 2 (C2 images), 1 (EIT/MDI images).
      * The array is sorted by increasing layeringOrder.
      *
-     * @param array $images Array of Composite image layers
+     * @param array &$images Array of Composite image layers
      *
      * @return array Array containing the sorted image layers
      */
-    private function _sortByLayeringOrder($images)
+    private function _sortByLayeringOrder(&$images)
     {
         $sortedImages = array();
 
@@ -432,7 +435,9 @@ class Image_Composite_HelioviewerCompositeImage
     /**
      * Builds a filepath to use for the composite image if none was specified
      * 
-     * @param mixed $filename Filename to use if specified
+     * @param string $filename Filename to use if specified
+     * 
+     * @return void
      */
     private function _buildFilename ($filename)
     {
@@ -446,8 +451,11 @@ class Image_Composite_HelioviewerCompositeImage
     
     /**
      * Displays the composite image
+     * 
+     * @return void
      */
-    public function display() {
+    public function display()
+    {
         $fileinfo = new finfo(FILEINFO_MIME);
         $mimetype = $fileinfo->file($this->_filepath);
         header("Content-Disposition: inline; filename=\"" . basename($this->_filepath) . "\"");
@@ -456,23 +464,32 @@ class Image_Composite_HelioviewerCompositeImage
     }
     
     /**
-     * Returns the filepath for the generated composite image 
+     * Returns the filepath for the generated composite image
+     * 
+     * @return string Filepath for the composite image
      */
-    public function getFilepath() {
+    public function getFilepath()
+    {
         return $this->_filepath;
     }
     
     /**
      * Returns a URL to the composite image
+     * 
+     * @return void
      */
-    public function getURL() {
+    public function getURL()
+    {
         return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->_filepath);
     }
     
     /**
      * Destructor
+     * 
+     * @return void
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         // Destroy IMagick object
         if (isset($this->_composite)) {
             $this->_composite->destroy();    
