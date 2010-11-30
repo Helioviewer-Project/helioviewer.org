@@ -33,7 +33,7 @@ def getArguments():
     parser.add_option("-d", "--database-name", dest="dbname",      help="Database name.", default="helioviewer", metavar="DB_Name")
     parser.add_option("-u", "--database-user", dest="dbuser",      help="Database username.", default="helioviewer", metavar="Username")
     parser.add_option("-p", "--database-pw",   dest="dbpass",      help="Database password.", default="helioviewer", metavar="Password")
-    parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name.", default="image", metavar="Table_Name")
+    parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name.", default="images", metavar="Table_Name")
     parser.add_option("-n", "--num-queries",   dest="numqueries",  help="Number of queries to simulate.", default=1000)
     parser.add_option("-c", "--count",         dest="count",       help="Number of rows in the database (queried with COUNT if not specified, which is slow on many transaction safe databases, e.g. postgres)")
     parser.add_option("", "--timing-method",   dest="timingmethod", help="Timing method, possible options are timeit and now", default="timeit")
@@ -281,8 +281,8 @@ def usage(parser):
     parser.print_help()
     print "\n Examples: \n"
     print "    \"query.py summary.txt\""
-    print "    \"query.py -n100 -dhv -uusername -ppassword -timage summary.txt\""
-    print "    \"query.py -n10000 -dhv -uusername -ppassword -timage --postgres summary.txt\"\n"    
+    print "    \"query.py -n100 -dhv -uusername -ppassword -timages summary.txt\""
+    print "    \"query.py -n10000 -dhv -uusername -ppassword -timages --postgres summary.txt\"\n"    
     
 if __name__ == '__main__':
     main(sys.argv)
