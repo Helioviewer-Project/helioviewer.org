@@ -1,34 +1,36 @@
 <?php 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * ImageType_MDIImage class definition
+ * ImageType_HMIImage class definition
  * There is one xxxImage for each type of detector Helioviewer supports.
  * 
  * PHP version 5
  *
  * @category Image
  * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'src/Image/HelioviewerImage.php';
 /**
- * ImageType_MDIImage class definition
+ * ImageType_HMIImage class definition
  * There is one xxxImage for each type of detector Helioviewer supports.
  * 
  * PHP version 5
  *
  * @category Image
  * @package  Helioviewer
+ * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @author   Jaclyn Beck <jaclyn.r.beck@gmail.com>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Image_ImageType_MDIImage extends Image_HelioviewerImage
+class Image_ImageType_HMIImage extends Image_HelioviewerImage
 {
     /**
-     * Creates a new MDIImage
+     * Creates a new HMIImage
      * 
      * @param string $jp2      Source JP2 image
      * @param string $filepath Location to output the file to (not including a file extension)
@@ -44,14 +46,14 @@ class Image_ImageType_MDIImage extends Image_HelioviewerImage
      */ 
     public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
-        // MDI has no color table
+        // HMI has no color table
         $this->setColorTable(false);
         
         parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
-     * MDI does not use a color table; Do nothing.
+     * HMI does not use a color table; Do nothing.
      * 
      * @param string $input Image to apply color table to
      * 
@@ -69,6 +71,6 @@ class Image_ImageType_MDIImage extends Image_HelioviewerImage
      */
     public function getWaterMarkName() 
     {
-        return "MDI $this->measurement\n";
+        return "HMI $this->measurement\n";
     }
 }
