@@ -140,14 +140,18 @@ class Module_Movies implements Module
     }
 
     /**
-     * Gets the movie url and loads it into MC Mediaplayer
+     * Gets the movie url and loads it into Kaltura
+     * 
+     * TODO: 12/07/2010:
+     *  Include video duration (send via client, or write to file in video directory. eventually will go in db).
+     *  Use id instead of filepath? (will still need to treat id as a filepath when validating)
      *
      * @return void
      */
     public function playMovie ()
     {
         $fullpath = HV_CACHE_DIR . "/movies/" . $this->_params['file'];
-        
+
         // Make sure it exists
         if (!file_exists($fullpath)) {
             throw new Exception("Invalid movie requested");
@@ -174,7 +178,7 @@ class Module_Movies implements Module
         <body>
         <div style="text-align: center;">
             <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
-                <video style="margin-left: auto; margin-right: auto;" <?php echo "poster=\"$relpath.bmp\" $durationHint"?>>
+                <video style="margin-left: auto; margin-right: auto;" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
                     <source src="<?php echo "$relpath.mp4"?>" /> 
                     <source src="<?php echo "$relpath.mov"?>" />
                     <source src="<?php echo "$relpath.flv"?>" /> 
@@ -195,7 +199,7 @@ class Module_Movies implements Module
      */
     private function _getVideoDimensions($file)
     {
-        $imageDimensions = getimagesize(substr($file, 0, -3) . "bmp");
+        $imageDimensions = getimagesize(substr($file, 0, -3) . "png");
         
         $width  = $imageDimensions[0];
         $height = $imageDimensions[1];

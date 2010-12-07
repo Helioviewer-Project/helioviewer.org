@@ -221,7 +221,7 @@ class Movie_HelioviewerMovie
             ));
 
             $screenshot = new Image_Composite_HelioviewerCompositeImage($this->_layers, $obsDate, $this->_roi, $options);
-            $filepath   = $screenshot->getFilepath(); 
+            $filepath   = $screenshot->getFilepath();
 
             array_push($movieFrames, $filepath);
         }
@@ -229,9 +229,16 @@ class Movie_HelioviewerMovie
         // Copy the last frame so that it actually shows up in the movie for the same amount of time
         // as the rest of the frames.
         $lastImage = dirname($filepath) . "/frame" . $frameNum . "." . $options['format'];
-        
+
         copy($filepath, $lastImage);
         array_push($movieFrames, $lastImage);
+        
+        // Create preview image
+        $imagickImage = $screenshot->getIMagickImage();
+        $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
+        $imagickImage->setImageCompressionQuality(PNG_LOW_COMPRESSION);
+        $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+        $imagickImage->writeImage($this->_directory . "/" . $this->_filename . ".png");        
 
         return $movieFrames;
     }
