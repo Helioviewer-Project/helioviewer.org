@@ -484,6 +484,15 @@ class Image_Composite_HelioviewerCompositeImage
     }
     
     /**
+     * Returns the IMagick object associated with the composite image
+     * 
+     * @return object IMagick object
+     */
+    public function getIMagickImage() {
+        return $this->_composite;
+    }    
+    
+    /**
      * Destructor
      * 
      * @return void

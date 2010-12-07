@@ -96,35 +96,30 @@ var Movie = Media.extend(
                         },
             zIndex    : 9999,
             show      : 'fade'
-        }).append(self.getVideoPlayerHTML());
-        
-        // Load Kaltura media player
-        if ($('#kaltura').length === 0) {
-            $("head").append('<script id="kaltura" type="text/javascript" src="http://html5.kaltura.org/js"></script>');
-        }
+        }).append(self.getVideoPlayerHTML(dimensions.width, dimensions.height));
     },
     
     /**
      * Generates HTML to display a Helioviewer movie
      */
-    getVideoPlayerHTML: function (width, height) {
-        var css     = "margin-left: auto; margin-right: auto;",
-            relpath = this.hqFile.match(/cache.*/).pop().slice(0, -4);
-        
-        if ($.support.video) {
-            width  = "100%";
-            height = "99%";
-        }
-        
-        return '<div style="text-align: center;">' +
-               //'<div style="margin-left:auto; margin-right:auto; width:' + width + 'px; height:' + height + 'px;";>' +
-               '<div style="margin-left:auto; margin-right:auto; width:' + width + '; height:' + height + ';">' +
-               '<video style="' + css + '" poster="' + relpath + '.jpg" durationHint="' + this.duration + '">' +
-                    '<source src="' + relpath + '.mp4" />' + 
-                    '<source src="' + relpath + '.mov" />' +
-                    '<source src="' + relpath + '.flv" />' + 
-               '</video></div></div>';
-    },
+//    getVideoPlayerHTML: function (width, height) {
+//        var css     = "margin-left: auto; margin-right: auto;",
+//            relpath = this.hqFile.match(/cache.*/).pop().slice(0, -4);
+//        
+//        if ($.support.video) {
+//            width  = "100%";
+//            height = "99%";
+//        }
+//        
+//        return '<div style="text-align: center;">' +
+//               //'<div style="margin-left:auto; margin-right:auto; width:' + width + 'px; height:' + height + 'px;";>' +
+//               '<div style="margin-left:auto; margin-right:auto; width:' + width + '; height:' + height + ';">' +
+//               '<video style="' + css + '" poster="' + relpath + '.jpg" durationHint="' + this.duration + '">' +
+//                    '<source src="' + relpath + '.mp4" />' + 
+//                    '<source src="' + relpath + '.mov" />' +
+//                    '<source src="' + relpath + '.flv" />' + 
+//               '</video></div></div>';
+//    },
     
 //    /**
 //     * Decides how to display video and returns HTML corresponding to that method
@@ -152,40 +147,38 @@ var Movie = Media.extend(
     /**
      * Decides how to display video and returns HTML corresponding to that method
      */
-//    getVideoPlayerHTML: function () {
-//        var path, file, hqFile, flashFile, url;
-//
-//        file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
-//        
-//        hqFile    = file.replace("mp4", this.hqFormat);
-//        flashFile = file.replace("mp4", "flv");
-//        
-//        // HTML5 Video (Currently only H.264 supported)
-//        if ($.support.h264) {
-//            path = this.hqFile.match(/cache.*/).pop();
-////            return "<video id='movie-player-" + this.id + "' src='" + path +
-////                   "' controls preload autoplay width='100%' " + "height='99%'></video>";
+    getVideoPlayerHTML: function (width, height) {
+        var path, file, hqFile, flashFile, url;
+
+        file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
+        
+        hqFile    = file.replace("mp4", this.hqFormat);
+        flashFile = file.replace("mp4", "flv");
+        
+        // HTML5 Video (Currently only H.264 supported)
+        if ($.support.h264) {
+            path = this.hqFile.match(/cache.*/).pop();
 //            return "<video id='movie-player-" + this.id + "' src='" + path +
-//            "' controls preload autoplay width='100%' " + "height='95%'></video>" +
-//            "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-//            "Click here to download a high-quality version.</a>";
-//        
-//
-//        }
-//
-//        // Fallback (flash player)
-//        else {
-//            url = 'api/index.php?action=playMovie&file=' + flashFile;
-//            
-//            return "<div id='movie-player-" + this.id + "'>" + 
-//            "<iframe src=" + url + " width=" + width + " height=" + 
-//                height + " marginheight=0 marginwidth=0 scrolling=no " +
-//                "frameborder=0 /><br /><br />" +
-//                "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-//                    "Click here to download a high-quality version." +
-//                "</a></div>";
-//        }
-//    },
+//                   "' controls preload autoplay width='100%' " + "height='99%'></video>";
+            return "<video id='movie-player-" + this.id + "' src='" + path +
+            "' controls preload autoplay width='100%' " + "height='95%'></video>" +
+            "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
+            "Click here to download a high-quality version.</a>";
+        }
+
+        // Fallback (flash player)
+        else {
+            url = 'api/index.php?action=playMovie&file=' + flashFile;
+            
+            return "<div id='movie-player-" + this.id + "'>" + 
+            "<iframe src=" + url + " width=" + width + " height=" + 
+                height + " marginheight=0 marginwidth=0 scrolling=no " +
+                "frameborder=0 /><br /><br />" +
+                "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
+                    "Click here to download a high-quality version." +
+                "</a></div>";
+        }
+    },
     
     /**
      * Determines dimensions for which movie should be displayed
