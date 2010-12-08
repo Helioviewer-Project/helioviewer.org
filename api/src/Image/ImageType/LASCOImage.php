@@ -115,7 +115,7 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
      *
      * @return void
      */
-    protected function setAlphaChannel($imagickImage)
+    protected function setAlphaChannel(&$imagickImage)
     {
         $maskWidth  = 1040;
         $maskHeight = 1040;
