@@ -214,7 +214,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <div id="footer-container-inner">
             <!-- Meta links -->
             <div id="footer-links">
-                <a href="http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
+                <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://helioviewer.org/wiki/" class="light" target="_blank">Wiki</a>
