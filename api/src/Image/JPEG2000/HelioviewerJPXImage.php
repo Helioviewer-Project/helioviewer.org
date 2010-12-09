@@ -308,7 +308,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
     private function _parseFileGenerationReport()
     {
         if (!file_exists($this->_summaryFile)) {
-            throw new Exception("JPX Summary file does not exist.")
+            throw new Exception("JPX Summary file does not exist.");
         }
         $fp = fopen($this->_summaryFile, "r");
         $contents = fread($fp, filesize($this->_summaryFile));
