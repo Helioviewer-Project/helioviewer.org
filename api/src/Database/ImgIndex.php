@@ -83,10 +83,9 @@ class Database_ImgIndex
                 sourceId = %d AND
                 date >= '%s'
               ORDER BY date ASC LIMIT 1 )
-            ORDER BY ABS(DATEDIFF(date, '%s')
+            ORDER BY ABS(TIMESTAMPDIFF(MICROSECOND, date, '%s')
             ) LIMIT 1;",
-            $sourceId, $datestr, $sourceId, $datestr, $datestr
-        );
+            $sourceId, $datestr, $sourceId, $datestr, $datestr);
         
         // Query database
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
