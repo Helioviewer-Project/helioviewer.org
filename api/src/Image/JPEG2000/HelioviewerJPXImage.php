@@ -61,16 +61,20 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         
         // If the file doesn't exist already, create it
         if (!file_exists($filepath)) {
-            list ($images, $timestamps) = $this->_queryJPXImageFrames();
-            $this->_timestamps = $timestamps;
-            $this->_images     = $images;
-            
-            // Make sure that at least some movie frames were found
-            if (sizeOf($images) > 0) {
-                $this->buildJPXImage($images, $linked);
-            } else {
-                throw new Exception("No images were found for the requested time range.");
-            }            
+            try {
+                list ($images, $timestamps) = $this->_queryJPXImageFrames();
+                $this->_timestamps = $timestamps;
+                $this->_images     = $images;
+                
+                // Make sure that at least some movie frames were found
+                if (sizeOf($images) > 0) {
+                    $this->buildJPXImage($images, $linked);
+                } else {
+                    throw new Exception("No images were found for the requested time range.", 1); // Do not log
+                }
+            } catch (Exception $e) {
+                throw new Exception("Error encountered during JPX creation: {$e->getMessage()}");
+            }
             
             $this->_writeFileGenerationReport();
         }
@@ -232,6 +236,9 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
      */
     private function _parseFileGenerationReport()
     {
+        if (!file_exists($this->_summaryFile)) {
+            throw new Exception("JPX Summary file does not exist.");
+        }
         $fp = fopen($this->_summaryFile, "r");
         $contents = fread($fp, filesize($this->_summaryFile));
 
