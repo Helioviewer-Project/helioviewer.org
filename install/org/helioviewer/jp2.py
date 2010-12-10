@@ -54,22 +54,23 @@ def getObservationDate(dom):
         t = getElementValue(dom, "TIME_OBS")
     except:
         try:
-            # AIA/EIT/MDI (yyyy-mm-ddThh:mm:ss.mmmZ)
+            # AIA/EIT/MDI (yyyy-mm-ddThh:mm:ss.mmm[Z])
             d = getElementValue(dom, "DATE_OBS")
         except:
             print "Unable to find image date... (Not AIA, EIT, MDI, or LASCO)"
         else:
-            # If SDO, first convert to same format as SOHO (yyyy-mm-ddThh:mm:ss.m(m)Z => yyyy-mm-ddThh:mm:ss.mmmZ)
-            if d[21] == "Z":
-                d = d[0:-1] + "00Z"
-            elif d[22] == "Z":
-                d = d[0:-1] + "0Z"
+            # Convert date strings to the form yyyy-mm-ddThh:mm:ss.mmmmmmZ
+            [lhs, rhs] = d.split('.')
+
+            # Python uses microseconds (See: http://bugs.python.org/issue1982)
+            secondsFraction = rhs.strip('Z').ljust(6, "0")
             
-            datestring = d[0:-1] + "000Z" # Python uses microseconds (See: http://bugs.python.org/issue1982)
+            datestring = "%s.%sZ" % (lhs, secondsFraction)
             
             # work-around (MDI sometimes has an "60" in seconds field)
             if datestring[17:19] == "60":
                 datestring = datestring[:17] + "30" + datestring[19:]
+
             #date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
             date = parseISODate(datestring)
     else:
