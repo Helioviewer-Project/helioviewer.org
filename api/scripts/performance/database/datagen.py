@@ -26,7 +26,7 @@ def getArguments():
 	parser.add_option("-n", "--num-records",   dest="numrecords",  help="Number of records per table.", default=1000000)
 	parser.add_option("-c", "--cadence",       dest="cadence",     help="Record cadence in seconds.",   default=10)
 	parser.add_option("-d", "--database-name", dest="dbname",      help="Database name.", default="helioviewer")
-	parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name (If multiple tables are requested, a number will be affixed to each table).", default="image")
+	parser.add_option("-t", "--table-name",    dest="tablename",   help="Table name (If multiple tables are requested, a number will be affixed to each table).", default="images")
 	parser.add_option("-i", "--insert-size",   dest="insertsize",  help="How many records should be included in each INSERT statement", default=10)
 	parser.add_option("-u", "--num-tables",    dest="numtables",   help="The number of tables to create.", default=1)
 	parser.add_option("", "--postgres",      dest="postgres",    help="Whether output should be formatted for use by a PostgreSQL database.", action="store_true")
@@ -197,8 +197,8 @@ def usage(parser):
 	parser.print_help()
 	print "\n Examples: \n"
 	print "    \"datagen.py Test.sql"
-	print "    \"datagen.py -n100000 -c5 -dhv -timage Test.sql\""
-	print "    \"datagen.py -n100000 -c5 -dhv -timage --postgres --numtables=5 Test.sql\"\n"	
+	print "    \"datagen.py -n100000 -c5 -dhv -timages Test.sql\""
+	print "    \"datagen.py -n100000 -c5 -dhv -timages --postgres --numtables=5 Test.sql\"\n"	
 	
 if __name__ == '__main__':
 	main(sys.argv)

@@ -182,6 +182,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 <div style="margin-bottom: 8px;">
                     <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
                     <input type="text" id="time" name="time" value="" style="width:80px">
+                    <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
                 </div>
 
                 <!-- Time Navigation Buttons & Time Increment selector -->
@@ -214,12 +215,13 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         <div id="footer-container-inner">
             <!-- Meta links -->
             <div id="footer-links">
-                <a href="http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
+                <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
-                <a href="http://helioviewer.org/wiki/" class="light" target="_blank">Wiki</a>
+                <a href="http://helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
+                <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
                 <a href="api/" class="light" target="_blank">API</a>
-                <a href="mailto:webmaster@helioviewer.org" class="light">Contact</a>
+                <a href="mailto:keith.hughitt@nasa.gov" class="light">Contact</a>
                 <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
             </div>
         </div>
@@ -238,11 +240,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 <!-- Usage Dialog -->
 <div id='usage-dialog'></div>
 
-<!-- Kaltura HTML5 video player -->
-<!-- <script type="text/javascript" src="http://html5.kaltura.org/js"></script> --> 
-
 <!-- jQuery -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <!--<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.js" type="text/javascript"></script>

@@ -35,12 +35,11 @@ class Validation_InputValidator
      *
      * @return void
      */
-    public static function checkInput(&$expected, &$input)
+    public static function checkInput(&$expected, &$input, &$optional)
     {
         // Validation checks
         $checks = array(
             "required" => "checkForMissingParams",
-            "optional" => "checkOptionalParams",
             "ints"     => "checkInts",
             "floats"   => "checkFloats",
             "bools"    => "checkBools",
@@ -55,6 +54,11 @@ class Validation_InputValidator
             if (isset($expected[$name])) {
                 Validation_InputValidator::$method($expected[$name], $input);
             }
+        }
+
+        // Create array of optional parameters
+        if (isset($expected["optional"])) {
+            Validation_InputValidator::checkOptionalParams($expected["optional"], $input, $optional);
         }
     }
 
@@ -86,11 +90,11 @@ class Validation_InputValidator
      *
      * @return void
      */
-    public static function checkOptionalParams($optional, &$params)
+    public static function checkOptionalParams($optional, &$params, &$options)
     {
         foreach ($optional as $opt) {
-            if (!isset($params[$opt])) {
-                $params[$opt] = null;
+            if (isset($params[$opt])) {
+                $options[$opt] = $params[$opt];
             }
         }
     }
@@ -114,8 +118,6 @@ class Validation_InputValidator
                 } else {
                     throw new Exception("Invalid value for $bool. Please specify a boolean value.");
                 }
-            } else {
-                $params[$bool] = false;
             }
         }
     }

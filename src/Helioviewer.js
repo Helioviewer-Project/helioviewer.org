@@ -132,7 +132,12 @@ var Helioviewer = UIController.extend(
         
         $('#link-button').click($.proxy(this.displayURL, this));
         $('#email-button').click($.proxy(this.displayMailForm, this));
-        $('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
+        
+        // 12/08/2010: Disabling JHelioviewer JNLP launching until better support is added
+        //$('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
+        $('#jhelioviewer-button').click(function () {
+            window.open("http://www.jhelioviewer.org", "_blank")
+        });
         
         // Handle image area select requests
         $(document).bind("enable-select-tool", function (event, callback) {

@@ -69,8 +69,8 @@ class Database_ImgIndex
 
         $datestr = isoDateToMySQL($date);
 
-        $sql = sprintf("
-            ( SELECT filepath, filename, date 
+        $sql = sprintf(
+            "( SELECT filepath, filename, date 
               FROM images 
               WHERE
                 sourceId = %d AND 
@@ -84,8 +84,8 @@ class Database_ImgIndex
                 date >= '%s'
               ORDER BY date ASC LIMIT 1 )
             ORDER BY ABS(TIMESTAMPDIFF(MICROSECOND, date, '%s')
-            ) LIMIT 1;
-        ", $sourceId, $datestr, $sourceId, $datestr, $datestr);
+            ) LIMIT 1;",
+            $sourceId, $datestr, $sourceId, $datestr, $datestr);
         
         // Query database
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
@@ -264,6 +264,7 @@ class Database_ImgIndex
                 instruments.name AS instrument,
                 detectors.name AS detector,
                 measurements.name AS measurement,
+                datasources.name AS name,
                 datasources.layeringOrder AS layeringOrder
             FROM datasources
                 LEFT JOIN observatories ON datasources.observatoryId = observatories.id
@@ -274,10 +275,50 @@ class Database_ImgIndex
                 datasources.id='%s'",
             mysqli_real_escape_string($this->_dbConnection->link, $id)
         );
+
         $result = $this->_dbConnection->query($sql);
         $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
 
         return $result_array;		
+    }
+
+    /**
+     * Returns the source Id, name, and layering order associated with a data source specified by 
+     * it's observatory, instrument, detector and measurement.
+     * 
+     * @param string $obs  Observatory
+     * @param string $inst Instrument
+     * @param string $det  Detector
+     * @param string $meas Measurement
+     * 
+     * @return array Datasource id and layering order
+     */
+    public function getDatasourceInformationFromNames($obs, $inst, $det, $meas)
+    {
+        $sql = sprintf(
+            "SELECT
+                datasources.id AS id,
+                datasources.name AS name,
+                datasources.layeringOrder AS layeringOrder
+            FROM datasources
+                LEFT JOIN observatories ON datasources.observatoryId = observatories.id
+                LEFT JOIN instruments ON datasources.instrumentId = instruments.id
+                LEFT JOIN detectors ON datasources.detectorId = detectors.id
+                LEFT JOIN measurements ON datasources.measurementId = measurements.id
+            WHERE
+                observatories.name='%s' AND
+                instruments.name='%s' AND
+                detectors.name='%s' AND
+                measurements.name='%s';",
+            mysqli_real_escape_string($this->_dbConnection->link, $obs),
+            mysqli_real_escape_string($this->_dbConnection->link, $inst),
+            mysqli_real_escape_string($this->_dbConnection->link, $det),
+            mysqli_real_escape_string($this->_dbConnection->link, $meas)
+        );
+        $result = $this->_dbConnection->query($sql);
+        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+
+        return $result_array;
     }
     
     /**
@@ -324,7 +365,7 @@ class Database_ImgIndex
      *
      * @return array A tree representation of the known data sources
      */
-    public function getDataSources ($verbose=false)
+    public function getDataSources ($verbose)
     {
         $fields = array("instrument", "detector", "measurement");
         

@@ -25,7 +25,7 @@ def main(argv):
          
 def getDataSources(cursor):
     ''' Returns a list of datasources to query '''
-    cursor.execute("SELECT name, id FROM datasource")
+    cursor.execute("SELECT name, id FROM datasources")
     datasources = {}
     
     # Get data sources
@@ -34,7 +34,7 @@ def getDataSources(cursor):
         id   = int(ds[1])
         
         # Only include datasources which for images exist in the database
-        cursor.execute("SELECT COUNT(*) FROM image WHERE sourceId=%d" % id)
+        cursor.execute("SELECT COUNT(*) FROM images WHERE sourceId=%d" % id)
         count = cursor.fetchone()[0]
         
         if count > 0:
@@ -46,9 +46,9 @@ def getFrequencies(cursor, name, id):
     ''' Returns arrays containing the dates queried and the counts for each of those days '''
 
     # Find the start and end dates of available data (set time portion to 00:00:00.000)
-    cursor.execute("SELECT date FROM image WHERE sourceId = %d ORDER BY date ASC LIMIT 1;" % id)
+    cursor.execute("SELECT date FROM images WHERE sourceId = %d ORDER BY date ASC LIMIT 1;" % id)
     startDate = cursor.fetchone()[0].replace(hour=0,minute=0,second=0,microsecond=0)
-    cursor.execute("SELECT date FROM image WHERE sourceId = %d ORDER BY date DESC LIMIT 1;" % id)
+    cursor.execute("SELECT date FROM images WHERE sourceId = %d ORDER BY date DESC LIMIT 1;" % id)
     endDate   = cursor.fetchone()[0].replace(hour=0,minute=0,second=0,microsecond=0)
 
     date = startDate
@@ -60,7 +60,7 @@ def getFrequencies(cursor, name, id):
     ms    = datetime.timedelta(microseconds = 1)
 
     while date <= endDate:
-        sql = "SELECT COUNT(*) FROM image WHERE date BETWEEN '%s' AND '%s' AND sourceId = %d;" % (date, date + day - ms, id)
+        sql = "SELECT COUNT(*) FROM images WHERE date BETWEEN '%s' AND '%s' AND sourceId = %d;" % (date, date + day - ms, id)
         cursor.execute(sql)
         n = int(cursor.fetchone()[0])
         freqs.append(n)

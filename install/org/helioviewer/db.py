@@ -125,7 +125,9 @@ def createSourceTable(cursor):
         (14, 'AIA 335', 'SDO AIA 335',  2, 4, 5, 8, 1, 0),
         (15, 'AIA 1600', 'SDO AIA 1600',  2, 4, 5, 9, 1, 0),
         (16, 'AIA 1700', 'SDO AIA 1700',  2, 4, 5, 10, 1, 0),
-        (17, 'AIA 4500', 'SDO AIA 4500',  2, 4, 5, 11, 1, 0);
+        (17, 'AIA 4500', 'SDO AIA 4500',  2, 4, 5, 11, 1, 0),
+        (18, 'HMI Int', 'SDO HMI Int', 2, 5, 6, 12, 1, 0),
+        (19, 'HMI Mag', 'SDO HMI Mag', 2, 5, 6, 13, 1, 0);
     ''')
 
 def createObservatoryTable(cursor):
@@ -163,7 +165,8 @@ def createInstrumentTable(cursor):
         (1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
         (2, 'MDI',   'Michelson Doppler Imager'),
         (3, 'TRACE', 'TRACE'),
-        (4, 'AIA',   'Atmospheric Imaging Assembly');
+        (4, 'AIA',   'Atmospheric Imaging Assembly'),
+        (5, 'HMI',   'Helioseismic and Magnetic Imager');
     ''')
 
 
@@ -186,7 +189,8 @@ def createDetectorTable(cursor):
         (2, 'C3',    'LASCO C3'),
         (3, 'MDI',   'MDI'),
         (4, 'TRACE', 'TRACE'),
-        (5, 'AIA',   'AIA');
+        (5, 'AIA',   'AIA'),
+        (6, 'HMI',   'HMI');
     ''')
 
 

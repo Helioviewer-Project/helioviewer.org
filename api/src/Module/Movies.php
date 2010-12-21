@@ -27,12 +27,8 @@ require_once 'interface.Module.php';
  */
 class Module_Movies implements Module
 {
-    /**
-     * API Request parameters
-     *
-     * @var mixed
-     */
     private $_params;
+    private $_options;
 
     /**
      * Movie module constructor
@@ -42,6 +38,7 @@ class Module_Movies implements Module
     public function __construct(&$params)
     {
         $this->_params = $params;
+        $this->_options = array();
     }
 
     /**
@@ -61,86 +58,75 @@ class Module_Movies implements Module
     }
 
     /**
-     * validate
-     *
-     * @return bool Returns true if input parameters are valid
-     */
-    public function validate()
-    {
-        switch($this->_params['action'])
-        {
-        // Any booleans that default to true cannot be listed here because the
-        // validation process sets them to false if they are not given.
-        case "buildMovie":
-            $expected = array(
-                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"    => array('startTime', 'endTime'),
-                "ints"     => array('frameRate', 'quality', 'numFrames'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "uuids"    => array('uuid')
-            );
-            break;
-        case "playMovie":
-            $expected = array(
-                "required" => array('file', 'width', 'height'),
-                "floats"   => array('width', 'height')
-            );
-            break;
-        case "queueMovie":
-            $expected = array(
-               "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "bools"    => array('display'),
-               "dates"    => array('startTime', 'endTime'),
-               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
-            );
-        case "getETAForMovie":
-            $expected = array(
-               "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "dates"    => array('startTime', 'endTime'),
-               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2')
-            );
-        default:
-            break;
-        }
-
-        // Check input
-        if (isset($expected)) {
-            Validation_InputValidator::checkInput($expected, $this->_params);
-        }
-
-        return true;
-    }
-
-    /**
      * buildMovie
-     * See the API webpage for example usage.
-     *
-     * For an iPod-compatible format, specify "hqFormat=ipod"
-     * Note that filename does NOT have the . extension on it. The reason for
-     * this is that in the media settings pop-up dialog, there is no way of
-     * knowing ahead of time whether the image is a .png, .tif, .flv, etc,
-     * and in the case of movies, the file is both a .flv and .mov/.asf/.mp4
      *
      * @return void
      */
     public function buildMovie ()
     {
-        include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
+        include_once 'src/Movie/HelioviewerMovie.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
+        include_once 'src/Helper/RegionOfInterest.php';
+                
+        // Data Layers
+        $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
-        $builder = new Movie_HelioviewerMovieBuilder();
-
-        if (!isset($this->_params['uuid']))
-            $this->_params['uuid'] = uuid_create(UUID_TYPE_DEFAULT);
+        // Regon of interest
+        $roi = new Helper_RegionOfInterest(
+            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
+            $this->_params['imageScale']
+        );
         
-        // Make a temporary directory to store the movie in.
-        $tmpDir = HV_CACHE_DIR . "/movies/" . $this->_params['uuid'];
-
-        if (!file_exists($tmpDir)) {
-            mkdir($tmpDir, 0777, true);
-            chmod($tmpDir, 0777);
+        // Process request
+        $movie = new Movie_HelioviewerMovie($layers, $this->_params['startTime'], $roi, $this->_options);
+        
+        // If display=true is set, play the move directly         
+        if (isset($this->_options['display']) && $this->_options['display']) {
+            echo $movie->getMoviePlayerHTML();
+        } else {
+            $urls = $this->_getVideoURLs($movie);
+            
+            // Verbose response
+            if (isset($this->_options['verbose']) && $this->_options['verbose']) {
+                $response = array(
+                    "duration"  => $movie->getDuration(),
+                    "frameRate" => $movie->getFrameRate(),
+                    "numFrames" => $movie->getNumFrames(),
+                    "url"       => $urls
+                );                
+            } else {
+                // Simple response
+                $response = array("url" => $urls);
+            }
+            
+            // Print result
+            header('Content-type: application/json');
+            print json_encode($response);
         }
-
-        $builder->buildMovie($this->_params, $tmpDir);
+    }
+    
+    /**
+     * Returns either a single URL or an array of URLs for the requested video
+     * 
+     * @param object &$movie A HelioviewerMovie instance
+     * 
+     * @return mixed One or more URLs for movies relating to the request
+     */
+    private function _getVideoURLs (&$movie)
+    {
+        $baseURL = $movie->getURL();
+        
+        // If a specific format was requested, return a link for that video
+        if (isset($this->_options['format'])) {
+            return "$baseURL.{$this->_options['format']}";    
+        } else {
+            // Otherwise return URLs for each of the video types generated
+            $urls = array();
+            foreach (array("mp4", "mov", "flv") as $supportedFormat) {
+                array_push($urls, "$baseURL.$supportedFormat");
+            }
+            return $urls;
+        }
     }
 
     /**
@@ -150,67 +136,144 @@ class Module_Movies implements Module
      */
     public function queueMovie()
     {
-        print "Not yet implemented in Dynamo...";
-    }
-    
-    /**
-     * Calculates the ETA for the given movie using width/height and numFrames
-     * 
-     * @return int Number of seconds until the movie has been prepared
-     */
-    public function getETAForMovie ()
-    {
-        include_once HV_ROOT_DIR . '/api/src/Movie/HelioviewerMovieBuilder.php';
-        
-        $builder = new Movie_HelioviewerMovieBuilder();
-        return $builder->calculateETA($this->_params);
+        print "Not yet implemented in Dynamo: send request to Helioqueuer instead.";
     }
 
     /**
-     * Gets the movie url and loads it into MC Mediaplayer
+     * Gets the movie url and loads it into Kaltura
+     * 
+     * TODO: 12/07/2010:
+     *  Include video duration (send via client, or write to file in video directory. eventually will go in db).
+     *  Use id instead of filepath? (will still need to treat id as a filepath when validating)
      *
      * @return void
      */
     public function playMovie ()
     {
-        $width  = $this->_params['width'];
-        $height = $this->_params['height'];
-        
+        $fullpath = HV_CACHE_DIR . "/movies/" . $this->_params['file'];
+
         // Make sure it exists
-        if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
+        if (!file_exists($fullpath)) {
             throw new Exception("Invalid movie requested");
         }
         
-        $url = HV_CACHE_URL . "/movies/" . $this->_params['file'];
+        // Relative path to video
+        $relpath  = substr(str_replace(HV_ROOT_DIR, "..", $fullpath), 0, -4);
 
+        // Get video dimensions
+        list($width, $height) = $this->_getVideoDimensions($fullpath);
+        
+        // Use specified dimensions if set (Simplifies fitting in Helioviewer.org)
+        if (isset($this->_options['width'])) {
+            $width = $this->_options['width'];
+        }
+        if (isset($this->_options['height'])) {
+            $height = $this->_options['height'];
+        }
+        
+        $css = "width: {$width}px; height: {$height}px;";
+        
+        $durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
+        
         ?>
-        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-            "http://www.w3.org/TR/html4/strict.dtd">
-        <html>
-        <head>
-            <title>Helioviewer.org QuickMovie</title>
-        </head>
-        <body style="background-color: black; color: #FFF;">
-            <!-- MC Media Player -->
-            <div style="text-align: center;">
-                <script type="text/javascript">
-                    playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-                    fpFileURL = "<?php print $url?>";
-                    fpButtonSize = "48x48";
-                    fpAction = "play";
-                    cpHidePanel = "mouseout";
-                    cpHideDelay = "1";
-                    defaultEndAction = "repeat";
-                    playerSize = "<?php print $width . 'x' . $height?>";
-                </script>
-                <script type="text/javascript"
-                    src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
-                <!-- / MC Media Player -->
+        <!DOCTYPE html> 
+        <html> 
+        <head> 
+            <title>Helioviewer.org - <?php echo $this->_params['file']?></title>            
+            <script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+            <script type="text/javascript">mw.setConfig('EmbedPlayer.kalturaAttribution', false );</script>
+        </head> 
+        <body>
+        <div style="text-align: center;">
+            <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>">
+                <video style="margin-left: auto; margin-right: auto; <?php echo $css;?>" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
+                    <source src="<?php echo "$relpath.mp4"?>" /> 
+                    <source src="<?php echo "$relpath.mov"?>" />
+                    <source src="<?php echo "$relpath.flv"?>" /> 
+                </video>
             </div>
-            <br>
-        </body>
-        </html>
+        </div>
+        </body> 
+        </html> 
         <?php
+    }
+    
+    /**
+     * Determines the height and width for a given video
+     * 
+     * @param string $file Video filepath
+     * 
+     * @return array The width and height corresponding with the specified video
+     */
+    private function _getVideoDimensions($file)
+    {
+        $imageDimensions = getimagesize(substr($file, 0, -3) . "png");
+        
+        $width  = $imageDimensions[0];
+        $height = $imageDimensions[1];
+        
+        // Videos dimensions are multiples of two
+        if ($width % 2 === 1) {
+            $width += 1;
+        }
+        if ($height % 2 === 1) {
+            $height += 1;
+        }
+        
+        return array($width, $height);
+    }
+    
+    /**
+     * validate
+     *
+     * @return bool Returns true if input parameters are valid
+     */
+    public function validate()
+    {
+        switch($this->_params['action'])
+        {
+        case "buildMovie":
+            $expected = array(
+                "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
+                                    'numFrames', 'uuid', 'verbose', 'watermarkOn'),
+                "bools"    => array('display', 'ipod', 'verbose', 'watermarkOn'),
+                "dates"    => array('startTime', 'endTime'),
+                "files"    => array('filename'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "ints"     => array('frameRate', 'numFrames'),
+                "uuids"    => array('uuid')
+            );
+            break;
+        case "playMovie":
+            $expected = array(
+                "required" => array('file'),
+                "optional" => array('duration', 'width', 'height'),
+                "files"    => array('file'),
+                "floats"   => array('duration'),
+                "ints"     => array('width', 'height')
+            );
+            break;
+        case "queueMovie":
+            $expected = array(
+               "required" => array('layers', 'startTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
+                                    'numFrames', 'uuid', 'watermarkOn'),
+               "dates"    => array('startTime', 'endTime'),
+               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "ints"     => array('frameRate', 'numFrames')
+            );
+        default:
+            break;
+        }
+
+        // Check input
+        if (isset($expected)) {
+            Validation_InputValidator::checkInput($expected, $this->_params, $this->_options);
+        }
+
+        return true;
     }
     
     /**
@@ -222,9 +285,8 @@ class Module_Movies implements Module
     {
         ?>
             <li>
-                <a href="index.php#MovieAPI">Movie and Screenshot API</a>
+                <a href="index.php#MovieAPI">Movie API</a>
                 <ul>
-                    <li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>
                     <li><a href="index.php#buildMovie">Creating a Movie</a></li>
                 </ul>
             </li>
@@ -239,120 +301,11 @@ class Module_Movies implements Module
     public static function printDoc()
     {
         ?>
-        <!-- Movie and Screenshot API -->
+        <!-- Movie API -->
         <div id="MovieAPI">
-            <h1>Movie and Screenshot API:</h1>
-            <p>The movie and screenshot API allows users to download images or time-lapse videos of what they are viewing on the website. </p>
+            <h1>Movie API:</h1>
+            <p>The movie API allows users to create time-lapse videos of what they are viewing on the website. </p>
             <ol style="list-style-type: upper-latin;">
-                <!-- Screenshot API -->
-                <li>
-                <div id="takeScreenshot">Screenshot API
-                <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
-                available image is returned.</p>
-        
-                <br />
-        
-                <div class="summary-box"><span
-                    style="text-decoration: underline;">Usage:</span><br />
-                <br />
-        
-                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot<br />
-                <br />
-        
-                Supported Parameters:<br />
-                <br />
-        
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>obsDate</b></td>
-                            <td><i>ISO 8601 UTC Date</i></td>
-                            <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
-                        </tr>
-                        <tr>
-                            <td><b>imageScale</b></td>
-                            <td><i>Float</i></td>
-                            <td>The zoom scale of the image. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
-                                a factor of 2. The full-res scale of an EIT image is 5.26.</td>
-                        </tr>
-                        <tr>
-                            <td><b>layers</b></td>
-                            <td><i>String</i></td>
-                            <td>A string of layer information in the following format:<br />
-                                Each layer is comma-separated with these values: [<i>sourceId,visible,opacity</i>]. <br />
-                                If you do not know the sourceId, you can 
-                                alternately send this layer string: [<i>obs,inst,det,meas,opacity]</i>.
-                                Layer strings are separated by commas: [layer1],[layer2],[layer3].</td>
-                        </tr>
-                        <tr>
-                            <td><b>y1</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                        </tr>
-                        <tr>
-                            <td><b>x1</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                        </tr>
-                        <tr>
-                            <td><b>y2</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                        </tr>
-                        <tr>
-                            <td><b>x2</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                        </tr>
-                        <tr>
-                            <td><b>quality</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The quality of the image, from 0-10. If quality is not specified, it defaults to 10.</td>
-                        </tr>
-                        <tr>
-                            <td><b>filename</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
-                                the filename defaults to a combination of the date, layer names, and image scale.</td>
-                        </tr>
-                        <tr>
-                            <td><b>display</b></td>
-                            <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
-                                filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
-                        </tr>
-                        <tr>
-                            <td><b>watermarkOn</b></td>
-                            <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the image will not be watermarked.
-                                If left blank, it defaults to true and images will be watermarked.</td>
-                        </tr>
-                    </tbody>
-                </table>
-        
-                <br />
-        
-                <span class="example-header">Examples:</span>
-                <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
-                </a>
-                </span><br />
-                <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
-                </a>
-                </span>
-                </div>
-                </div>
-                </li>
-        
-                <br />
-        
                 <!-- Movie -->
                 <li>
                 <div id="buildMovie">Movie API
@@ -437,21 +390,10 @@ class Module_Movies implements Module
                             <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
                         </tr>
                         <tr>
-                            <td><b>quality</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The quality of the images, from 0-10. If quality is not specified, it defaults to 10.</td>
-                        </tr>
-                        <tr>
                             <td><b>filename</b></td>
                             <td><i>String</i></td>
                             <td><i>[Optional]</i> The desired filename (without the "." extension) of the output image. If no filename is specified,
                                 the filename defaults to a combination of the date, layer names, and image scale.</td>
-                        </tr>
-                        <tr>
-                            <td><b>hqFormat</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> The desired format for the high quality movie file. Currently supported filetypes are "mp4", "mov", "avi", and "ipod".
-                                iPod video will come out in mp4 format but extra settings need to be applied so format must be specified as "ipod". </td>
                         </tr>
                         <tr>
                             <td><b>display</b></td>
@@ -484,8 +426,8 @@ class Module_Movies implements Module
                 </span><br />
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&hqFormat=ipod&display=false&watermarkOn=false
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false
                 </a>
                 </span>
                 </div>

@@ -40,6 +40,10 @@ var Movie = Media.extend(
         this.complete = true;
     },
     
+    setDuration: function (duration) {
+        this.duration = duration;
+    },
+    
     setId: function (id) {
         this.id = id;
     },
@@ -77,6 +81,7 @@ var Movie = Media.extend(
         
         movieDialog = $("#watch-dialog-" + this.id);
         
+        // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions();
         
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
@@ -95,11 +100,33 @@ var Movie = Media.extend(
     },
     
     /**
-     * Decides how to display video and returns HTML corresponding to that method
-     * 
-     * 08/31/2010: Kaltura does not currently support jQuery UI 1.8, and even with 1.7.1
-     * some bugs are present. Try again in future.
+     * Generates HTML to display a Helioviewer movie
      */
+//    getVideoPlayerHTML: function (width, height) {
+//        var css     = "margin-left: auto; margin-right: auto;",
+//            relpath = this.hqFile.match(/cache.*/).pop().slice(0, -4);
+//        
+//        if ($.support.video) {
+//            width  = "100%";
+//            height = "99%";
+//        }
+//        
+//        return '<div style="text-align: center;">' +
+//               //'<div style="margin-left:auto; margin-right:auto; width:' + width + 'px; height:' + height + 'px;";>' +
+//               '<div style="margin-left:auto; margin-right:auto; width:' + width + '; height:' + height + ';">' +
+//               '<video style="' + css + '" poster="' + relpath + '.jpg" durationHint="' + this.duration + '">' +
+//                    '<source src="' + relpath + '.mp4" />' + 
+//                    '<source src="' + relpath + '.mov" />' +
+//                    '<source src="' + relpath + '.flv" />' + 
+//               '</video></div></div>';
+//    },
+    
+//    /**
+//     * Decides how to display video and returns HTML corresponding to that method
+//     * 
+//     * 08/31/2010: Kaltura does not currently support jQuery UI 1.8, and even with 1.7.1
+//     * some bugs are present. Try again in future.
+//     */
 //    getVideoPlayerHTML: function (width, height) {
 //        // Base URL
 //        var path = this.hqFile.match(/cache.*/).pop().slice(0,-3);
@@ -116,14 +143,17 @@ var Movie = Media.extend(
 //             + "</video>";
 //    },
     
+    
     /**
      * Decides how to display video and returns HTML corresponding to that method
      */
     getVideoPlayerHTML: function (width, height) {
-        var path, file, hqFile, url;
+        var path, file, hqFile, flashFile, url;
 
-        file   = this.url.match(/[\w-]*\/[\w-\.]*.flv$/).pop(); // Relative path to movie
-        hqFile = file.replace("flv", this.hqFormat);
+        file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
+        
+        hqFile    = file.replace("mp4", this.hqFormat);
+        flashFile = file.replace("mp4", "flv");
         
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
@@ -134,13 +164,12 @@ var Movie = Media.extend(
             "' controls preload autoplay width='100%' " + "height='95%'></video>" +
             "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
             "Click here to download a high-quality version.</a>";
-        
-
         }
 
         // Fallback (flash player)
         else {
-            url    = 'api/index.php?action=playMovie&file=' + file + '&width=' + width + '&height=' + height; 
+            url = 'api/index.php?action=playMovie&file=' + flashFile + 
+                  '&width=' + width + '&height=' + height + '&duration=' + this.duration;
             
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
@@ -161,8 +190,8 @@ var Movie = Media.extend(
             scaleFactor = Math.max(1, this.width / maxWidth, this.height / maxHeight);
         
         return {
-            "width"  : this.width  / scaleFactor,
-            "height" : this.height / scaleFactor
+            "width"  : Math.floor(this.width  / scaleFactor),
+            "height" : Math.floor(this.height / scaleFactor)
         };
     },
     
@@ -172,6 +201,7 @@ var Movie = Media.extend(
     serialize: function () {
         return {
             dateRequested : this.dateRequested,
+            duration      : this.duration,
             id            : this.id,
             width         : this.width,
             height        : this.height,

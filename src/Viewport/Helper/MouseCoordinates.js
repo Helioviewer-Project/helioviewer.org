@@ -146,7 +146,7 @@ var MouseCoordinates = Class.extend(
      *  Each of the two-letter abbreviations represents the vector <x,y> going from one
      *  location to the other. See wiki documentation below for more details.
      * 
-     * @see http://helioviewer.org/wiki/index.php?title=Co-ordinate_System_I
+     * @see http://helioviewer.org/wiki/Co-ordinate_System_I
      */
     computeMouseCoords: function (screenX, screenY) {
         var VX, negSV, SV, SM, MX, scale, x, y;

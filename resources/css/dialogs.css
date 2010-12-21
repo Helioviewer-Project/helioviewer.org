@@ -18,31 +18,6 @@ span.fits-sort-btn {
     cursor: pointer;
 }
 
-#select-options-tabs {
-	background: transparent; 
-	border: none;
-	font-size: 10pt; 
-	width: 400px; 
-	padding: 0; 
-	margin: 0;
-}
-
-#select-options-tabs ul {
-	background: transparent url(../../lib/jquery.ui-1.8/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
-	border: none;
-	border-bottom: 1px solid #096AC8;
-}
-
-.select-options-table td {
-	font-size: 9pt;
-	padding-right: 10px;
-	padding-bottom: 5px;
-}
-
-.select-options-table th {
-	padding-bottom: 5px;
-}
-
 td.layers-checkbox {
 	text-align: right; 
 	padding-left: 2em;
@@ -53,16 +28,8 @@ td.layers-name {
 	padding-left: 1em;
 }
 
-#select-options-tabs input, #select-options-tabs select {
-	font-size: 8pt;
-	padding: 1px;
-	border-radius: 4px;
-	-moz-border-radius: 4px; 
-	-webkit-border-radius: 4px;
-}
-
 #shadowbox-form button {
-	background: transparent url(../../lib/jquery.ui-1.8/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
+	background: transparent url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-bg_gloss-wave_20_111111_500x100.png) repeat scroll 50% 50%;
 	cursor:pointer;
 	float:right;
 	line-height:1.4em;
@@ -75,7 +42,6 @@ td.layers-name {
 }
 
 #shadowbox-form button:hover {
-	background: transparent url(../../lib/jquery.ui-1.8/css/ui-darkness/images/ui-bg_gloss-wave_25_333333_500x100.png) repeat scroll 50% 50%;
 	border:1px solid #333;
 	color: #d18f61;
 	font-weight:bold;
@@ -85,7 +51,6 @@ td.layers-name {
 }
 
 #shadowbox-form button:active {
-	background: transparent url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-bg_highlight-hard_15_0b3e6f_1x100.png) repeat scroll 50% 50%;
 	border:1px solid #052F57;
 	color:#FFFFFF;				
 }

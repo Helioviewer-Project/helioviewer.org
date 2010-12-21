@@ -16,6 +16,6 @@ The project is funded by <acronym title="European Space Agency">ESA</acronym> an
 <!-- The Helioviewer Team -->
 <div style='width:100%; text-align:center;'>
     <span style="margin-left:auto; margin-right: auto;">
-        For more information, please visit our <a href="http://www.helioviewer.org/wiki" style="text-decoration: underline;" class="light">Wiki</a>.
+        For more information, please visit our <a href="http://helioviewer.org/wiki/Main_Page" style="text-decoration: underline;" class="light">Wiki</a>.
     </span>
 </div>

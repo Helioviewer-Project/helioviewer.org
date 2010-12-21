@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Movie_FFMPEGWrapper Class Definition
+ * Movie_FFMPEGEncoder Class Definition
  * 
  * Detecting problems with FFmpeg encoding:
  *  When using exec to call FFmpeg from the command line no useful return code or output
@@ -28,7 +28,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Movie_FFMPEGWrapper
+class Movie_FFMPEGEncoder
 {
     private $_macFlags;
     private $_frameRate;
@@ -51,18 +51,18 @@ class Movie_FFMPEGWrapper
     /**
      * Creates an ipod-compatible mp4 video
      * 
-     * @param String $hq_filename the filename of the movie
-     * @param String $outputDir   the path where the file will be stored
-     * @param String $tmpImageDir The directory where the individual movie frames are stored
-     * @param int    $width       the width of the video
-     * @param int    $height      the height of the video
+     * @param string $directory  The directory where both files are stored
+     * @param string $filename   Base filename of the video
+     * @param int    $width      The width of the video
+     * @param int    $height     The height of the video
      * 
      * @return String the filename of the ipod video
      */
-    public function createIpodVideo($hq_filename, $outputDir, $tmpImageDir, $width, $height) 
+    public function createIpodVideo($directory, $filename, $format, $width, $height) 
     {
-        $ipodVideoName = $outputDir . "/ipod-$hq_filename";
-        $cmd = HV_FFMPEG . " -i " . $tmpImageDir . "/frame%d.jpg -r " . $this->_frameRate
+        $ipodVideoName = "$directory/ipod-$filename.$format";
+        
+        $cmd = HV_FFMPEG . " -i $directory/frames/frame%d.bmp -r " . $this->_frameRate
             . " -f mp4 -b 800k -coder 0 -bt 200k -maxrate 96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 "
             . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " " 
             . $this->_macFlags . " " . $ipodVideoName;
@@ -77,52 +77,27 @@ class Movie_FFMPEGWrapper
     }
     
     /**
-     * Creates a flash video by converting it from the high quality file
-     * 
-     * @param string $hqFile    The name of the high quality file
-     * @param string $filename  The name of the flash video file
-     * @param string $outputDir The directory where both files are stored
-     * 
-     * @return void
-     */
-    public function createFlashVideo($hqFile, $filename, $outputDir)
-    {
-        $filepath = "$outputDir/$filename";
-        $cmd = HV_FFMPEG . " -i $outputDir/$hqFile -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $filepath";
-    
-        exec(escapeshellcmd($cmd));
-
-        // Check to ensure that movie size is valid
-        if (filesize($filepath) < 1000)
-            throw new Exception("FFmpeg error encountered: Unable to create flv.");
-    }
-    
-    /**
      * Creates a video in whatever format is given in $filename
-     ********* 
-     *  NOTE: Frame rate MUST be specified twice in the command, 
-     *        before and after the input file, or ffmpeg will start
-     *        cutting off frames to adjust for what it thinks is the right
-     *        frameRate. 
-     *********
      * 
-     * @param String $filename    the filename of the movie
-     * @param String $outputDir   the path where the file will be stored
-     * @param String $tmpImageDir The directory where the individual movie frames are stored
+     * NOTE: Frame rate MUST be specified twice in the command, before and after the input file, or ffmpeg will start
+     *       cutting off frames to adjust for what it thinks is the right frameRate. 
+     * 
+     * @param string $directory  The directory where both files are stored
+     * @param string $filename   Base filename of the video
      * @param int    $width       the width of the video
      * @param int    $height      the height of the video
      * 
      * @return String the filename of the video
      */
-    public function createVideo($filename, $outputDir, $tmpImageDir, $width, $height)
+    public function createVideo($directory, $filename, $format, $width, $height)
     {
         // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
         // fps >= 2
         $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
         
-        $filepath = $outputDir . "/" . $filename;
+        $filepath = "$directory/$filename.$format";
 
-        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $tmpImageDir . "/frame%d.jpg"
+        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i $directory/frames/frame%d.bmp"
             . " -r " . $outputRate . " -vcodec libx264 -vpre hq -threads " . HV_FFMPEG_MAX_THREADS . " -b 2048k -s " 
             . $width . "x" . $height . " -y $filepath";
             
@@ -133,7 +108,31 @@ class Movie_FFMPEGWrapper
         if (filesize($filepath) < 1000)
             throw new Exception("FFmpeg error encountered.");
 
-        return $filename;
+        return $filepath;
+    }
+    
+    /**
+     * Creates a flash video by converting it from the high quality file
+     *
+     * @param string $directory  The directory where both files are stored
+     * @param string $filename   Base filename of the video
+     * @param string $origFormat The original container format
+     * @param string $newFormat  The new container format
+     * 
+     * @return void
+     */
+    public function createAlternativeVideoFormat($directory, $filename, $origFormat, $newFormat)
+    {
+        $old = "$directory/$filename.$origFormat";
+        $new = "$directory/$filename.$newFormat";
+        
+        $cmd = HV_FFMPEG . " -i $old -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $new";
+    
+        exec(escapeshellcmd($cmd));
+
+        // Check to ensure that movie size is valid
+        if (filesize($new) < 1000)
+            throw new Exception("FFmpeg error encountered: Unable to create flv.");
     }
 }
 ?>
