@@ -182,6 +182,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 <div style="margin-bottom: 8px;">
                     <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
                     <input type="text" id="time" name="time" value="" style="width:80px">
+                    <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
                 </div>
 
                 <!-- Time Navigation Buttons & Time Increment selector -->
