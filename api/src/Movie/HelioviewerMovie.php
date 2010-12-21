@@ -239,7 +239,8 @@ class Movie_HelioviewerMovie
         $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
         $imagickImage->setImageCompressionQuality(PNG_LOW_COMPRESSION);
         $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
-        $imagickImage->writeImage($this->_directory . "/" . $this->_filename . ".png");        
+        $imagickImage->writeImage($this->_directory . "/" . $this->_filename . ".png");
+        $imagickImage->destroy();
 
         return $movieFrames;
     }
@@ -430,9 +431,6 @@ class Movie_HelioviewerMovie
      */
     private function _cleanup ()
     {
-        $preview = array_shift($this->_frames);
-        rename($preview, $this->_directory . "/" . $this->_filename . ".bmp");
-        
         // Clean up movie frame images that are no longer needed
         foreach ($this->_frames as $image) {
             if (file_exists($image)) {

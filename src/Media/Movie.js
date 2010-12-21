@@ -174,7 +174,7 @@ var Movie = Media.extend(
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
                 height + " marginheight=0 marginwidth=0 scrolling=no " +
-                "frameborder=0 /><br /><br />" +
+                "frameborder=0 /><br />" +
                 "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
                     "Click here to download a high-quality version." +
                 "</a></div>";
