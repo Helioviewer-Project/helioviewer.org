@@ -264,6 +264,7 @@ class Database_ImgIndex
                 instruments.name AS instrument,
                 detectors.name AS detector,
                 measurements.name AS measurement,
+                datasources.name AS name,
                 datasources.layeringOrder AS layeringOrder
             FROM datasources
                 LEFT JOIN observatories ON datasources.observatoryId = observatories.id
@@ -274,6 +275,7 @@ class Database_ImgIndex
                 datasources.id='%s'",
             mysqli_real_escape_string($this->_dbConnection->link, $id)
         );
+
         $result = $this->_dbConnection->query($sql);
         $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
 
@@ -281,8 +283,8 @@ class Database_ImgIndex
     }
 
     /**
-     * Returns the source Id and layering order associated with a data source specified by it's observatory, instrument,
-     * detector and measurement.
+     * Returns the source Id, name, and layering order associated with a data source specified by 
+     * it's observatory, instrument, detector and measurement.
      * 
      * @param string $obs  Observatory
      * @param string $inst Instrument
@@ -291,12 +293,13 @@ class Database_ImgIndex
      * 
      * @return array Datasource id and layering order
      */
-    public function getSourceIdAndLayeringOrder($obs, $inst, $det, $meas)
+    public function getDatasourceInformationFromNames($obs, $inst, $det, $meas)
     {
         $sql = sprintf(
             "SELECT
-                datasources.id,
-                datasources.layeringOrder
+                datasources.id AS id,
+                datasources.name AS name,
+                datasources.layeringOrder AS layeringOrder
             FROM datasources
                 LEFT JOIN observatories ON datasources.observatoryId = observatories.id
                 LEFT JOIN instruments ON datasources.instrumentId = instruments.id
@@ -315,10 +318,7 @@ class Database_ImgIndex
         $result = $this->_dbConnection->query($sql);
         $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
 
-        return array(
-            (int) $result_array["id"],
-            (int) $result_array["layeringOrder"]
-        );
+        return $result_array;
     }
     
     /**
