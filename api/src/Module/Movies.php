@@ -163,6 +163,14 @@ class Module_Movies implements Module
         // Get video dimensions
         list($width, $height) = $this->_getVideoDimensions($fullpath);
         
+        // Use specified dimensions if set (Simplifies fitting in Helioviewer.org)
+        if (isset($this->_options['width'])) {
+            $width = $this->_options['width'];
+        }
+        if (isset($this->_options['height'])) {
+            $height = $this->_options['height'];
+        }
+        
         $css = "width: {$width}px; height: {$height}px;";
         
         $durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
@@ -174,11 +182,12 @@ class Module_Movies implements Module
             <title>Helioviewer.org - <?php echo $this->_params['file']?></title>            
             <script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
             <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+            <script type="text/javascript">mw.setConfig('EmbedPlayer.kalturaAttribution', false );</script>
         </head> 
         <body>
         <div style="text-align: center;">
-            <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
-                <video style="margin-left: auto; margin-right: auto;" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
+            <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>">
+                <video style="margin-left: auto; margin-right: auto; <?php echo $css;?>" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
                     <source src="<?php echo "$relpath.mp4"?>" /> 
                     <source src="<?php echo "$relpath.mov"?>" />
                     <source src="<?php echo "$relpath.flv"?>" /> 
@@ -240,9 +249,10 @@ class Module_Movies implements Module
         case "playMovie":
             $expected = array(
                 "required" => array('file'),
-                "optional" => array('duration'),
+                "optional" => array('duration', 'width', 'height'),
                 "files"    => array('file'),
-                "floats"   => array('duration')
+                "floats"   => array('duration'),
+                "ints"     => array('width', 'height')
             );
             break;
         case "queueMovie":

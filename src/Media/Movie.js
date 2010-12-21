@@ -168,7 +168,8 @@ var Movie = Media.extend(
 
         // Fallback (flash player)
         else {
-            url = 'api/index.php?action=playMovie&file=' + flashFile + "&duration=" + this.duration;
+            url = 'api/index.php?action=playMovie&file=' + flashFile + 
+                  '&width=' + width + '&height=' + height + '&duration=' + this.duration;
             
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
@@ -189,8 +190,8 @@ var Movie = Media.extend(
             scaleFactor = Math.max(1, this.width / maxWidth, this.height / maxHeight);
         
         return {
-            "width"  : this.width  / scaleFactor,
-            "height" : this.height / scaleFactor
+            "width"  : Math.floor(this.width  / scaleFactor),
+            "height" : Math.floor(this.height / scaleFactor)
         };
     },
     
