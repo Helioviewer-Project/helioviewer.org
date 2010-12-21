@@ -168,7 +168,7 @@ var Movie = Media.extend(
 
         // Fallback (flash player)
         else {
-            url = 'api/index.php?action=playMovie&file=' + flashFile;
+            url = 'api/index.php?action=playMovie&file=' + flashFile + "&duration=" + this.duration;
             
             return "<div id='movie-player-" + this.id + "'>" + 
             "<iframe src=" + url + " width=" + width + " height=" + 
@@ -200,6 +200,7 @@ var Movie = Media.extend(
     serialize: function () {
         return {
             dateRequested : this.dateRequested,
+            duration      : this.duration,
             id            : this.id,
             width         : this.width,
             height        : this.height,
