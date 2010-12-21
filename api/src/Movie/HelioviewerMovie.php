@@ -83,6 +83,7 @@ class Movie_HelioviewerMovie
         $this->_checkRequestParameters();
 
         $this->_filename  = $this->_buildFilename($options['filename']);
+        
         $this->_frameRate = $this->_determineOptimalFrameRate($options['frameRate']);
 
         $this->_setMovieDimensions();
@@ -148,7 +149,7 @@ class Movie_HelioviewerMovie
         $start = str_replace(array(":", "-", "T", "Z"), "_", $this->_startDateString);
         $end   = str_replace(array(":", "-", "T", "Z"), "_", $this->_endDateString);
 
-        return sprintf("%s_%s__%s", $start, $end, $this->_layers->toString());
+        return sprintf("%s_%s_%s", $start, $end, $this->_layers->toString());
     }
 
     /**
@@ -185,7 +186,7 @@ class Movie_HelioviewerMovie
         $this->_endTimestamp   = $endTime;
 
         // And also as date strings
-        $this->_startDatestring = toISOString(parseUnixTimestamp($this->_startTimestamp));
+        $this->_startDateString = toISOString(parseUnixTimestamp($this->_startTimestamp));
         $this->_endDateString   = toISOString(parseUnixTimestamp($this->_endTimestamp));
     }
 
@@ -262,7 +263,6 @@ class Movie_HelioviewerMovie
             // Only add frames if they are unique
             if ($closestImages != end($timestamps)) {
                 $timestamps[round($time)] = $closestImages;
-
             }
         }
 
@@ -305,7 +305,7 @@ class Movie_HelioviewerMovie
         $maxInRange = 0;
 
         foreach ($this->_layers->toArray() as $layer) {
-            $count      = $this->_db->getImageCount($this->_startDatestring, $this->_endDateString, $layer['sourceId']);
+            $count      = $this->_db->getImageCount($this->_startDateString, $this->_endDateString, $layer['sourceId']);
             $maxInRange = max($maxInRange, $count);
         }
 

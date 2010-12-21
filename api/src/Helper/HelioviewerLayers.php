@@ -90,7 +90,7 @@ class Helper_HelioviewerLayers
         $layerString = "";
 
         foreach ($this->_layers as $layer) {
-            $layerString .= $layer['instrument'] . "_" . $layer['detector'] . "_" . $layer['measurement'] . "__";
+            $layerString .= str_replace(" ", "_", $layer['name']) . "__";
         }
         
         // remove trailing __
@@ -114,9 +114,14 @@ class Helper_HelioviewerLayers
         // [obs,inst,det,meas,visible,opacity] 
         if (sizeOf($layerArray) === 6) {
             list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
-            list($sourceId, $layeringOrder) = $this->_db->getSourceIdAndLayeringOrder(
+            $info = $this->_db->getDatasourceInformationFromNames(
                 $observatory, $instrument, $detector, $measurement
             );
+            
+            $sourceId      = $info["id"];
+            $name          = $info["name"];
+            $layeringOrder = $info["layeringOrder"];
+            
         } else if (sizeOf($layerArray === 3)) {
             // [sourceId,visible,opacity]
             list($sourceId, $visible, $opacity) = $layerArray;
@@ -128,6 +133,7 @@ class Helper_HelioviewerLayers
             $detector      = $source["detector"];
             $measurement   = $source["measurement"];
             $layeringOrder = $source["layeringOrder"];
+            $name          = $source["name"];
         }
         
         // Associative array form
@@ -136,8 +142,9 @@ class Helper_HelioviewerLayers
             "instrument"    => $instrument,
             "detector"      => $detector,
             "measurement"   => $measurement,
+            "name"          => $name,
             "sourceId"      => (int)  $sourceId,
-            "layeringOrder" => (int) $layeringOrder,
+            "layeringOrder" => (int)  $layeringOrder,
             "visible"       => (bool) $visible,
             "opacity"       => (int)  $opacity
         );
