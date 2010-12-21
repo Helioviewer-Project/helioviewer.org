@@ -34,6 +34,7 @@ class Image_SubFieldImage
     protected $jp2;
     protected $outputFile;
     protected $roi;
+    protected $imageSubRegion;
     protected $desiredScale;
     protected $desiredToActual;
     protected $scaleFactor;
@@ -45,19 +46,18 @@ class Image_SubFieldImage
     protected $jp2Height;
     protected $jp2RelWidth;
     protected $jp2RelHeight;
-    protected $compress;
+    protected $offsetX;
+    protected $offsetY;
+    protected $options;
 
     /**
      * Creates an Image_SubFieldImage instance
      *
      * @param string $jp2          Original JP2 image from which the subfield should be derrived
      * @param array	 $roi          Subfield region of interest
-     * @param float  $desiredScale The requested pixel scale that the subfield image should generated at
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
-     * @param int    $opacity      The opacity of the image from 0 to 100
-     * @param bool   $compress     Whether to compress the image after extracting or not (true for tiles)
      *
      * @TODO: Add optional parameter "noResize" or something similar to allow return images
      * which represent the same region, but may be at a different scale (e.g. tiles). The normal
@@ -66,31 +66,47 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($jp2, $roi, $desiredScale, $outputFile, $offsetX, $offsetY, $opacity, $compress)
+    public function __construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $options)
     {
         $this->outputFile = $outputFile;
         $this->jp2        = $jp2;
         $this->roi        = $roi;
+        
+        // Default settings
+        $defaults = array(
+            "bitdepth"  => HV_BIT_DEPTH,
+            "compress"  => true,
+            "interlace" => true,
+            "opacity"   => 100,
+            "rescale"   => IMagick::FILTER_TRIANGLE
+        );
+        
+        $this->imageOptions = array_replace($defaults, $options);
+        
+        // Source image dimensions
+        $jp2Width  = $jp2->getWidth();
+        $jp2Height = $jp2->getHeight();
+        $jp2Scale  = $jp2->getScale(); 
 
-        $this->subfieldWidth  = $roi["right"] - $roi["left"];
-        $this->subfieldHeight = $roi["bottom"] - $roi["top"];
-
-        $this->desiredScale    = $desiredScale;
-        $this->desiredToActual = $desiredScale / $jp2->getScale();
+        // Convert region of interest from arc-seconds to pixels
+        $this->imageSubRegion = $roi->getImageSubRegion($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
+        
+        $this->desiredScale    = $roi->imageScale();
+        $this->desiredToActual = $this->desiredScale / $jp2->getScale();
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));
+        
+        $this->subfieldWidth  = $this->imageSubRegion["right"]  - $this->imageSubRegion["left"];
+        $this->subfieldHeight = $this->imageSubRegion["bottom"] - $this->imageSubRegion["top"];
 
         $this->subfieldRelWidth  = $this->subfieldWidth  / $this->desiredToActual;
         $this->subfieldRelHeight = $this->subfieldHeight / $this->desiredToActual;
         
-        $this->jp2RelWidth  = $jp2->getWidth()  /  $this->desiredToActual;
-        $this->jp2RelHeight = $jp2->getHeight() /  $this->desiredToActual;
+        $this->jp2RelWidth  = $jp2Width  / $this->desiredToActual;
+        $this->jp2RelHeight = $jp2Height / $this->desiredToActual;
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
-        $this->opacity = $opacity;
-        
-        $this->compress = $compress;
     }
     
     /**
@@ -187,33 +203,29 @@ class Image_SubFieldImage
      * if the final image is larger.
      * 
      * @param Array $roi   The region of interest in arcseconds of the final image.
-     * @param Float $scale The scale of the image in arcseconds / pixel
      * 
      * @return array with padding
      */
-    public function computePadding($roi, $scale)
+    public function computePadding()
     {
-        $width  = ($roi['right']  - $roi['left']) / $scale;
-        $height = ($roi['bottom'] - $roi['top'])  / $scale;
-
         $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
         $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
         
-        $leftToCenter = ($this->roi['left'] - $centerX);
-        $topToCenter  = ($this->roi['top']  - $centerY);
-        $scaleFactor  = $this->jp2->getScale() / $scale;
+        $leftToCenter = ($this->imageSubRegion['left'] - $centerX);
+        $topToCenter  = ($this->imageSubRegion['top']  - $centerY);
+        $scaleFactor  = $this->jp2->getScale() / $this->desiredScale;
         $relLeftToCenter = $leftToCenter * $scaleFactor;
         $relTopToCenter  = $topToCenter  * $scaleFactor;
 
-        $left = ($roi['left'] / $scale) - $relLeftToCenter;
-        $top  = ($roi['top']  / $scale) - $relTopToCenter;
+        $left = ($this->roi->left() / $this->desiredScale) - $relLeftToCenter;
+        $top  = ($this->roi->top()  / $this->desiredScale) - $relTopToCenter;
 
         // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
         // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
         return array(
            "gravity" => "northwest",
-           "width"   => round($width),
-           "height"  => round($height),
+           "width"   => round($this->roi->getPixelWidth()),
+           "height"  => round($this->roi->getPixelHeight()),
            "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
            "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
         );
@@ -255,14 +267,14 @@ class Image_SubFieldImage
             $input = substr($this->outputFile, 0, -3) . "pgm";
 
             // Extract region (PGM)
-            $this->jp2->extractRegion($input, $this->roi, $this->reduce);
+            $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
 
             // Convert to GD-readable format
             $grayscale = new IMagick($input);
             $grayscale->setImageFormat('PNG');
             $grayscale->setImageType(IMagick::IMGTYPE_GRAYSCALE); 
             $grayscale->setImageDepth(8);
-            $grayscale->setImageCompressionQuality(10);
+            $grayscale->setImageCompressionQuality(10); // Fastest PNG compression setting
             
             $grayscaleString = $grayscale->getimageblob();
 
@@ -284,16 +296,24 @@ class Image_SubFieldImage
             $this->compressImage($coloredImage);
             
             // Resize extracted image to correct size before padding.
-            $coloredImage->resizeImage(round($this->subfieldRelWidth), round($this->subfieldRelHeight), IMagick::FILTER_TRIANGLE, 0.6);
+            $rescaleBlurFactor =  0.6;
+            
+            $coloredImage->resizeImage(
+                round($this->subfieldRelWidth), round($this->subfieldRelHeight), 
+                $this->imageOptions['rescale'], $rescaleBlurFactor
+            );
             $coloredImage->setImageBackgroundColor('transparent');
             
             // Places the current image on a larger field of black if the final image is larger than this one
-            $coloredImage->extentImage($this->padding['width'], $this->padding['height'], -$this->padding['offsetX'], -$this->padding['offsetY']);
+            $coloredImage->extentImage(
+                $this->padding['width'], $this->padding['height'],
+                -$this->padding['offsetX'], -$this->padding['offsetY']
+            );
             
             /* 
-             * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors when movie frames are being made.
-             * It seems that even if this particular instance of writeImage doesn't take the full time frame, if several instances of it are
-             * running PHP will complain.  
+             * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors 
+             * when movie frames are being made. It seems that even if this particular instance of writeImage 
+             * doesn't take the  full time frame, if several instances of it are running PHP will complain.  
              */
             //set_time_limit(60);
             
@@ -322,26 +342,38 @@ class Image_SubFieldImage
      */
     protected function compressImage(&$imagickImage)
     {
-        if (!$this->compress) {
-            return;
-        }
-        
         // Get extension
         $parts = explode(".", $this->outputFile);
         $extension = end($parts);
 
-        // Apply compression based on image type
+        // Apply compression based on image type for those formats that support it
         if ($extension === "png") {
+            // Compression type
             $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
-            $imagickImage->setImageCompressionQuality(HV_PNG_COMPRESSION_QUALITY);
-            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            
+            // Compression quality
+            $quality = $this->imageOptions['compress'] ? PNG_HIGH_COMPRESSION : PNG_LOW_COMPRESSION;
+            $imagickImage->setImageCompressionQuality($quality);
+            
+            // Interlacing
+            if ($this->imageOptions['interlace']) {
+                $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
+            }
         } elseif ($extension === "jpg") {
+            // Compression type
             $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
-            $imagickImage->setImageCompressionQuality(HV_JPEG_COMPRESSION_QUALITY);
-            $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
+
+            // Compression quality
+            $quality = $this->imageOptions['compress'] ? JPG_HIGH_COMPRESSION : JPG_LOW_COMPRESSION;             
+            $imagickImage->setImageCompressionQuality($quality);
+            
+            // Interlacing
+            if ($this->imageOptions['interlace']) {
+                $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
+            }
         }
-        
-        $imagickImage->setImageDepth(HV_BIT_DEPTH);
+
+        $imagickImage->setImageDepth($this->imageOptions['bitdepth']);
     }
     
     /**
@@ -355,7 +387,7 @@ class Image_SubFieldImage
      */
     protected function setAlphaChannel(&$imagickImage)
     {
-        $imagickImage->setImageOpacity($this->opacity / 100);
+        $imagickImage->setImageOpacity($this->imageOptions['opacity'] / 100);
     }
 
     /**
@@ -381,20 +413,9 @@ class Image_SubFieldImage
      */
     private function _abort($filename)
     {
-        $pgm = substr($filename, 0, -3) . "pgm";
-        $png = substr($filename, 0, -3) . "png";
-
-        // Clean up
-        if (file_exists($pgm)) {
-            unlink($pgm);
+        foreach(glob(substr($filename, 0, -3) . "*") as $file) {
+            unlink($file);
         }
-        if (file_exists($png)) {
-            unlink($png);
-        }
-        if (file_exists($filename)) {
-            unlink($filename);
-        }
-
         die();
     }
 

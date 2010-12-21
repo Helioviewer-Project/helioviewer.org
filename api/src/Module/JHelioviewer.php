@@ -26,12 +26,8 @@ require_once 'interface.Module.php';
  */
 class Module_JHelioviewer implements Module
 {
-    /**
-     * API Request parameters
-     *
-     * @var mixed
-     */
     private $_params;
+    private $_options;
 
     /**
      * Creates a JHelioviewer module instance
@@ -43,10 +39,11 @@ class Module_JHelioviewer implements Module
     public function __construct(&$params)
     {
         $this->_params = $params;
+        $this->_options = array();
     }
 
     /**
-     * execute
+     * Validates and executes the request
      *
      * @return void
      */
@@ -62,8 +59,7 @@ class Module_JHelioviewer implements Module
     }
 
     /**
-     * Finds the best match for a single JPEG 2000 image and either prints a link to it or displays
-     * it directly.
+     * Finds the best match for a single JPEG 2000 image and either prints a link to it or displays it directly.
      *
      * @return void
      */
@@ -71,28 +67,24 @@ class Module_JHelioviewer implements Module
     {
         include_once 'src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();
+        
+        // Optional parameters
+        $defaults = array(
+            "jpip" => false,
+            "json" => false
+        );
+        
+        $options = array_replace($defaults, $this->_options);
 
-        $date = $this->_params['date'];
+        // Look up sourceId if not specified
+        $sourceId = $this->_getSourceId($imgIndex);
 
-        // TEMP Work-around
-        if ($this->_params['measurement'] == "white light") {
-            $this->_params['measurement'] = "white-light";
-        }
+        // Filepath to JP2 Image
+        $filepath = HV_JP2_DIR . $imgIndex->getJP2FilePath($this->_params['date'], $sourceId);
 
-        // Search by source id
-        if (!isset($this->_params['sourceId'])) {
-            $this->_params['sourceId'] = $imgIndex->getSourceId(
-                $this->_params['observatory'], $this->_params['instrument'],
-                $this->_params['detector'], $this->_params['measurement']
-            );
-        }
-
-        $relativePath = $imgIndex->getJP2FilePath($date, $this->_params['sourceId']);
-
-        $filepath = HV_JP2_DIR . $relativePath;
-
-        if ($this->_params['jpip']) {
-            if ($this->_params['json']) {
+        // Output results
+        if ($options['jpip']) {
+            if ($options['json']) {
                 header('Content-type: application/json;charset=UTF-8');
                 echo json_encode(array("uri" => $this->_getJPIPURL($filepath)));
             } else {
@@ -101,6 +93,147 @@ class Module_JHelioviewer implements Module
         } else {
             $this->_displayJP2($filepath);
         }
+    }
+    
+    /**
+     * Constructs a JPX image series
+     *
+     * @return void
+     */
+    public function getJPX ()
+    {
+        include_once 'src/Image/JPEG2000/HelioviewerJPXImage.php';
+        include_once 'src/Database/ImgIndex.php';
+        
+        $imgIndex = new Database_ImgIndex();
+
+        // Optional parameters
+        $defaults = array(
+            "jpip"    => false,
+            "cadence" => false,
+            "linked"  => false,
+            "verbose" => false
+        );
+        $options = array_replace($defaults, $this->_options);
+        
+        // Both sourceId and observatory, instrument, detector and measurement names are needed
+        $sourceId = $this->_getSourceId($imgIndex);        
+        list($obs, $inst, $det, $meas) = $this->_getSourceIdInfo($sourceId, $imgIndex);
+        
+        // Compute filename
+        $filename = $this->_getJPXFilename(
+            $obs, $inst, $det, $meas, $this->_params['startTime'], $this->_params['endTime'], 
+            $options['cadence'], $options['linked']
+        );
+        
+        // Create JPX image instance
+        try {
+            $jpx = new Image_JPEG2000_HelioviewerJPXImage(
+                $sourceId, $this->_params['startTime'], $this->_params['endTime'], 
+                $options['cadence'], $options['linked'], $filename
+            );
+            
+        } catch (Exception $e) {
+            // If a problem is encountered, return an error message as JSON            
+            header('Content-type: application/json;charset=UTF-8');
+            echo json_encode(
+                array(
+                    "error"   => $e->getMessage(),
+                    "uri"     => null
+                )
+            );
+            return;
+        }
+
+        // Chose appropriate action based on request parameters
+        if ($options['verbose']) {
+            $jpx->printJSON($options['jpip'], $options['verbose']);
+        } else {
+            if ($options['jpip']) {
+                echo $jpx->getJPIPURL();
+            } else {
+                $jpx->displayImage();
+            }            
+        }
+    }
+    
+    /**
+     * Returns the sourceId for the current request
+     * 
+     * @param object &$imgIndex A Helioviewer database instance
+     * 
+     * @return int The id of the datasource specified for the request
+     */
+    private function _getSourceId(&$imgIndex)
+    {
+        if (isset($this->_params['sourceId'])) {
+            return $this->_params['sourceId'];
+        }
+
+        return $imgIndex->getSourceId(
+            $this->_params['observatory'], $this->_params['instrument'],
+            $this->_params['detector'], $this->_params['measurement']
+        );
+    }
+    
+    /**
+     * Returns info for a given sourceId
+     * 
+     * @param int    $sourceId  Id of data source
+     * @param object &$imgIndex Database accessor
+     * 
+     * @return array An array containing the observatory, instrument, detector and measurement associated with the
+     *               specified datasource id.
+     */
+    private function _getSourceIdInfo($sourceId, &$imgIndex)
+    {
+        if (!(isset($this->_params['observatory']) && isset($this->_params['instrument'])
+            && isset($this->_params['detector'])    && isset($this->_params['measurement']))
+        ) {
+            // Get an associative array of the datasource meta information     
+            $info = $imgIndex->getDatasourceInformationFromSourceId($sourceId);
+
+            // Return as an indexed array
+            return array($info['observatory'], $info['instrument'], $info['detector'], $info['measurement']);
+        } else {
+            return array($this->_params['observatory'], $this->_params['instrument'], 
+                         $this->_params['detector'], $this->_params['measurement']);
+        }
+    }
+    
+    /**
+     * Determines filename to use for storing generated JPX image. Filenames are of the form:
+     *
+     *  Obs_Inst_Det_Meas_FROM_TO_BY(L).jpx
+     *
+     * @param string $obs       Observatory
+     * @param string $inst      Instrument
+     * @param string $det       Detector
+     * @param string $meas      Measurement
+     * @param string $startTime Requested start time for JPX (ISO 8601 UTC date string)
+     * @param string $endTime   Requested finish time for JPX (ISO 8601 UTC date string)
+     * @param int    $cadence   Number of seconds between each frame in the image series
+     * @param bool   $linked    Whether or not requested JPX image should be a linked JPX
+     *
+     * @return string Filename to use for generated JPX image
+     */
+    private function _getJPXFilename($obs, $inst, $det, $meas, $startTime, $endTime, $cadence, $linked)
+    {
+        $from = str_replace(":", ".", $startTime);
+        $to   = str_replace(":", ".", $endTime);
+        $filename = implode("_", array($obs, $inst, $det, $meas, "F$from", "T$to"));
+
+        // If cadence was manually specified include it in the filename
+        if ($cadence) {
+            $filename .= "B$cadence";
+        }
+
+        // Differentiate linked JPX files
+        if ($linked) {
+            $filename .= "L";
+        }
+
+        return str_replace(" ", "-", $filename) . ".jpx";
     }
 
     /**
@@ -143,51 +276,6 @@ class Module_JHelioviewer implements Module
         return $jpip;
     }
 
-    /**
-     * Constructs a JPX image series
-     *
-     * @return void
-     */
-    public function getJPX ()
-    {
-        include_once 'src/Image/JPEG2000/HelioviewerJPXImage.php';
-
-        // TEMP Work-around
-        if ($this->_params['measurement'] == "white light") {
-            $this->_params['measurement'] = "white-light";
-        }
-        
-        // Create JPX image instance
-        try {
-            $jpx = new Image_JPEG2000_HelioviewerJPXImage(
-                $this->_params['observatory'], $this->_params['instrument'], $this->_params['detector'],
-                $this->_params['measurement'], $this->_params['sourceId'], $this->_params['startTime'],
-                $this->_params['endTime'], $this->_params['cadence'], $this->_params['linked']
-            );
-        } catch (Exception $e) {
-            header('Content-type: application/json;charset=UTF-8');
-            echo json_encode(
-                array(
-                    "error"   => $e->getMessage(), 
-                    "message" => $e->getMessage(), // DEPRECATED (https://bugs.edge.launchpad.net/jhelioviewer/+bug/621223)
-                    "uri"     => null
-                )
-            );
-            return;
-        }
-
-        // Chose appropriate action based on request parameters
-        if ($this->_params['verbose']) {
-            $jpx->printJSON($this->_params['jpip'], $this->_params['verbose']);
-        } else {
-            if ($this->_params['jpip']) {
-                echo $jpx->getJPIPURL();
-            } else {
-                $jpx->displayImage();
-            }            
-        }
-    }
-    
     /**
      * launchJHelioviewer
      *
@@ -240,10 +328,12 @@ class Module_JHelioviewer implements Module
         {
         case 'getJP2Image':
             $expected = array(
+               'optional' => array('jpip', 'json'),
                'bools' => array('jpip', 'json'),
                'dates' => array('date')
             );
 
+            // Either sourceId or observatory, instrument, detector and measurement must be specified
             if (isset($this->_params['sourceId'])) {
                 $expected['required'] = array('date', 'sourceId');
                 $expected['ints']     = array('sourceId');
@@ -255,11 +345,19 @@ class Module_JHelioviewer implements Module
         case 'getJPX':
             $expected = array(
                 'required' => array('startTime', 'endTime'),
-                'optional' => array('sourceId', 'cadence'),
+                'optional' => array('cadence', 'jpip', 'linked', 'verbose'),
                 'bools'    => array('jpip', 'verbose', 'linked'),
                 'dates'    => array('startTime', 'endTime'),
                 'ints'     => array('cadence')
             );
+            
+            // Either sourceId or observatory, instrument, detector and measurement must be specified
+            if (isset($this->_params['sourceId'])) {
+                $expected['required'] = array('startTime', 'endTime', 'sourceId');
+                $expected['ints']     = array('sourceId');
+            } else {
+                $expected['required'] = array('startTime', 'endTime', 'observatory', 'instrument', 'detector', 'measurement');
+            }
 
             break;
         case "launchJHelioviewer":
@@ -274,7 +372,7 @@ class Module_JHelioviewer implements Module
         }
 
         if (isset($expected)) {
-            Validation_InputValidator::checkInput($expected, $this->_params);
+            Validation_InputValidator::checkInput($expected, $this->_params, $this->_options);
         }
 
         return true;

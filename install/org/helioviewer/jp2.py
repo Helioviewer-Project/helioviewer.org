@@ -101,9 +101,11 @@ def getInstrument(dom):
         #SOHO (LASCO,MDI,EIT)
         inst = getElementValue(dom, "INSTRUME")
         
-        #AIA
+        #SDO (AIA,HMI)
         if inst[0:3] == "AIA":
             inst = "AIA"
+        elif inst[0:3] == "HMI":
+            inst = "HMI"
     except:
         print "Instrument not found."
     
@@ -119,9 +121,11 @@ def getDetector(dom):
             # EIT,MDI,AIA
             det = getElementValue(dom, "INSTRUME")
             
-            #AIA
+            #AIA,HMI
             if det[0:3] == "AIA":
                 det = "AIA"
+            elif det[0:3] == "HMI":
+                det = "HMI"
         except:
             print "Try next Detector..."
     
@@ -130,26 +134,37 @@ def getDetector(dom):
 def getMeasurement(dom):
     ''' Attempts to retrieve the measurement name from the image meta-information '''
     try:
-        #AIA/EIT
-        meas = getElementValue(dom, "WAVELNTH")
+        #HMI
+        content = getElementValue(dom, "CONTENT")
+        
+        if content[0:9] == "CONTINUUM":
+            meas = "continuum"
+        elif content[0:11] == "MAGNETOGRAM":
+            meas = "magnetogram"
+        else:
+            raise
     except:
         try:
-            inst = getElementValue(dom, "INSTRUME")
-
-            #LASCO
-            if inst == "LASCO":
-                meas = "white-light"
-            #MDI
-            elif inst == "MDI":
-                dpcobsr = getElementValue(dom, "DPC_OBSR")
-                if dpcobsr.find("Magnetogram") is not -1:
-                    meas = "magnetogram"
-                else:
-                    meas = "continuum"
-            else:
-                print "Try next measurement detection method..."                
+            #AIA/EIT
+            meas = getElementValue(dom, "WAVELNTH")
         except:
-            print "Try next measurement detection method..."
+            try:
+                inst = getElementValue(dom, "INSTRUME")
+    
+                #LASCO
+                if inst == "LASCO":
+                    meas = "white-light"
+                #MDI
+                elif inst == "MDI":
+                    dpcobsr = getElementValue(dom, "DPC_OBSR")
+                    if dpcobsr.find("Magnetogram") is not -1:
+                        meas = "magnetogram"
+                    else:
+                        meas = "continuum"
+                else:
+                    print "Try next measurement detection method..."                
+            except:
+                print "Try next measurement detection method..."
 
     return meas
 

@@ -63,7 +63,6 @@ function loadModule($params)
         "getMovie"            => "Movies",
         "playMovie"           => "Movies",
         "queueMovie"          => "Movies",
-        "getETAForMovie"      => "Movies",
         "getEventFRMs"           => "SolarEvents",
         "getEvents"              => "SolarEvents",
         "getScreenshotsForEvent" => "SolarEvents",

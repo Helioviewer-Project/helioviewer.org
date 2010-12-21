@@ -236,7 +236,7 @@ var MovieBuilder = MediaBuilder.extend(
         
         // Ajax Request Parameters
         params = {
-            action     : "queueMovie", //action     : "getETAForMovie",
+            action     : "queueMovie",
             layers     : viewportInfo.layers,
             startTime  : currentTime.addHours(-12).toISOString(),
             endTime    : currentTime.addHours(24).toISOString(),
@@ -245,8 +245,9 @@ var MovieBuilder = MediaBuilder.extend(
             x2         : arcsecCoords.x2,
             y1         : arcsecCoords.y1,
             y2         : arcsecCoords.y2,
-            hqFormat   : this.hqFormat,
-            display    : false
+            format     : this.hqFormat,
+            display    : false,
+            verbose    : true
         };
         
         this.hideDialogs();

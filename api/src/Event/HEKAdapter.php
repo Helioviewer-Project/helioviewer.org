@@ -103,25 +103,42 @@ class Event_HEKAdapter
      * Returns a list of events
      * 
      * @param date   $startTime Start time for which events should be retrieved
-     * @param date   $endTime   End time for which events should be retrieved
-     * @param string $eventType The two-letter code(s) for event type(s), or **
+     * @param string $options   Optional parameters
      * 
      * @return string
      */
-    public function getEvents($startTime, $endTime, $eventType)
+    public function getEvents($startTime, $options)
     {
+        include_once "src/Helper/DateTimeConversions.php";
+         
+        // Default options
+        $defaults = array(
+            'endDate'   => getUTCDateString(),
+            'eventType' => '**',
+            'ipod'      => false
+        );
+        
+        $options = array_replace($defaults, $options);
+        
+        // HEK query parameters
         $params = array(
             "event_starttime" => $startTime,
-            "event_endtime"   => $endTime,
-            "event_type"      => $eventType,
+            "event_endtime"   => $options['endDate'],
+            "event_type"      => $options['eventType'],
             "result_limit"    => 200,
             "return"          => "kb_archivid,concept,event_starttime,event_endtime,frm_name,frm_institute," . 
                                  "obs_observatory,obs_channelid,event_type,hpc_x,hpc_y,hpc_bbox"
         );
 
         //TODO Group similar (identical) events
+        $response = JSON_decode($this->_proxy->query($params, true), true);
+        
+        $events = $response['result'];
+       
+        // Extend response to include any pregenerated screenshots and movies
+        $this->_extendHEKResponse($events, $options['ipod']);
 
-        return $this->_proxy->query($params, true);
+        return $events;
     }
     
     /**
@@ -145,6 +162,68 @@ class Event_HEKAdapter
                                  "obs_observatory,event_type,hpc_x,hpc_y,hpc_bbox,obs_instrument,obs_channelid"
         );
         
-        return $this->_proxy->query($params, true);	
+        // Decode response
+        $response = JSON_decode($this->_proxy->query($params, true), true);
+
+        return $response["result"][0];
+    }
+    
+    /**
+     * Add links to any screenshots and movies that have been generated for the requested event
+     * 
+     * @param array   &$originalEvents The original response object
+     * @param boolean $ipod            Whether to look in the ipod folders or not
+     * 
+     * @return void
+     */
+    private function _extendHEKResponse(&$originalEvents, $ipod)
+    {
+        // Movie type to return
+        $movieType = $ipod ? "iPod" : "regular";
+        
+        /**
+         * Function to convert filepaths to URLs
+         * 
+         * @param string &$value Resource filepath
+         * 
+         * @return void
+         */
+        function convertFilepaths(&$value)
+        {
+            $value = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $value);
+        }
+
+        $i = 0;
+        
+        // Loop through events
+        foreach ($originalEvents as $event) {
+            // Get event Id
+            $hekId = explode("/", $event['kb_archivid']);
+            $id    = end($hekId);            
+            
+            $eventDir = HV_CACHE_DIR . "/events/" . $id;
+            
+            // Empty arrays to store matches
+            $screenshots = array();
+            $movies      = array();
+            
+            // Get screenshots
+            if (file_exists("$eventDir/screenshots")) {
+                $screenshots = glob("$eventDir/screenshots/*.*");
+                array_walk($screenshots, "convertFilepaths");
+            }
+            
+            // Get movies            
+            if (file_exists("$eventDir/movies/$movieType")) {
+                $movies = glob("$eventDir/movies/$movieType/*.*");
+                array_walk($movies, "convertFilepaths");
+            }
+
+            // Add screenshots and movies arrays to the result
+            $originalEvents[$i]["screenshots"] = $screenshots;
+            $originalEvents[$i]["movies"]      = $movies;
+            
+            $i++;
+        }
     }
 }

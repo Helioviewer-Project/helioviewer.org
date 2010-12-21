@@ -2,7 +2,7 @@
  * @fileOverview Contains the class definition for an ZoomControls class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
- * @see  The <a href="http://helioviewer.org/mediawiki-1.11.1/index.php?title=Zoom_Levels_and_Observations">HelioViewer Wiki</a>
+ * @see  The <a href="http://helioviewer.org/wiki/Zoom_Levels_and_Observations">HelioViewer Wiki</a>
  *       for more information on zoom levels.
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
