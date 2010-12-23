@@ -46,7 +46,7 @@ var ScreenshotHistory = History.extend(
         var self = this;
         
         $.each(history, function () {
-            self.history.push(new Screenshot(this, this.dateRequested));
+            self.history.push(new Screenshot(this));
         });
         
         this.history = this.history.reverse().slice(0, 12).reverse();

@@ -96,3 +96,6 @@ div.qtip-helioviewer .ui-tooltip-titlebar {
 /*.qtip-helioviewer .ui-tooltip-close {
     color: #FFF;
 }*/
+
+/** Work-around 2010/12/23: Fixes missing border in Firefox, etc */
+.qtip-betweenCorners {min-width: 98%; }
