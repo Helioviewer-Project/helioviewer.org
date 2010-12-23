@@ -236,22 +236,23 @@ var MovieBuilder = MediaBuilder.extend(
         
         // Ajax Request Parameters
         params = {
-            action     : "queueMovie",
-            layers     : viewportInfo.layers,
-            startTime  : currentTime.addHours(-12).toISOString(),
-            endTime    : currentTime.addHours(24).toISOString(),
-            imageScale : viewportInfo.imageScale,
-            x1         : arcsecCoords.x1,
-            x2         : arcsecCoords.x2,
-            y1         : arcsecCoords.y1,
-            y2         : arcsecCoords.y2,
-            format     : this.hqFormat,
-            display    : false,
-            verbose    : true
+            action        : "queueMovie",
+            layers        : viewportInfo.layers,
+            startTime     : currentTime.addHours(-12).toISOString(),
+            endTime       : currentTime.addHours(24).toISOString(),
+            imageScale    : viewportInfo.imageScale,
+            dateRequested : (new Date()).getTime(),
+            x1            : arcsecCoords.x1,
+            x2            : arcsecCoords.x2,
+            y1            : arcsecCoords.y1,
+            y2            : arcsecCoords.y2,
+            format        : this.hqFormat,
+            display       : false,
+            verbose       : true
         };
         
         this.hideDialogs();
-        this.history.queueMovie(params, this.hqFormat, this.url);
+        this.history.queueMovie(params, this.url);
         this.building = false;
     }
 });

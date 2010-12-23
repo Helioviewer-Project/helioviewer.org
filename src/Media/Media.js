@@ -13,9 +13,8 @@ var Media = Class.extend(
      * @constructs
      * @description Calculates its dimensions and holds on to meta information.
      */    
-    init: function (params, dateRequested) {
+    init: function (params) {
         $.extend(this, params);
-        this.dateRequested = dateRequested;
         this.width         = Math.floor((this.x2 - this.x1) / this.imageScale);
         this.height        = Math.floor((this.y2 - this.y1) / this.imageScale);
         this.name          = this.parseName();
