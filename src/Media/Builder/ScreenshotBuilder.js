@@ -78,15 +78,16 @@ var ScreenshotBuilder = MediaBuilder.extend(
         self = this;
 
         params = {
-            action     : "takeScreenshot",
-            layers     : viewportInformation.layers,
-            obsDate    : viewportInformation.time,
-            imageScale : viewportInformation.imageScale,
-            x1         : arcsecCoords.x1,
-            x2         : arcsecCoords.x2,
-            y1         : arcsecCoords.y1,
-            y2         : arcsecCoords.y2,
-            display    : false
+            action        : "takeScreenshot",
+            dateRequested : (new Date()).getTime(),
+            layers        : viewportInformation.layers,
+            obsDate       : viewportInformation.time,
+            imageScale    : viewportInformation.imageScale,
+            x1            : arcsecCoords.x1,
+            x2            : arcsecCoords.x2,
+            y1            : arcsecCoords.y1,
+            y2            : arcsecCoords.y2,
+            display       : false
         };
         
         // Choose server to send request to
@@ -95,7 +96,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
             params.server = server;
         }
 
-        screenshot = new Screenshot(params, (new Date()).getTime());
+        screenshot = new Screenshot(params);
 
         // Response handler
         callback = function (response) {

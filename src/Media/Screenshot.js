@@ -13,8 +13,8 @@ var Screenshot = Media.extend(
      * @constructs
      * @description Holds on to meta information 
      */    
-    init: function (params, dateRequested) {
-        this._super(params, dateRequested);
+    init: function (params) {
+        this._super(params);
         this.time = this.obsDate.replace("T", " ");
         // Get rid of the extra .000 if there is one
         if (this.time.length > 20) {
