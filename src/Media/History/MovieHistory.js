@@ -43,7 +43,7 @@ var MovieHistory = History.extend(
     /**
      * Queues the movie and waits for a return.
      */
-    queueMovie: function (params, hqFormat, apiUrl) {
+    queueMovie: function (params, apiUrl) {
         var callback, movieCallback, message, movie, self = this;
 
         movieCallback = function (movieData) {
@@ -59,7 +59,7 @@ var MovieHistory = History.extend(
                 $(document).trigger("message-console-info", [message]);
             }
             
-            movie = new Movie(params, (new Date()).getTime(), hqFormat);
+            movie = new Movie(params);
             movie.setId(movieData.id);
             self.addToHistory(movie);
             
@@ -97,15 +97,16 @@ var MovieHistory = History.extend(
                 movie.setDuration(data.duration);
 
                 //self.button.qtip('hide');
-                self.hide();
-                $("#social-buttons").click(); // hides the button qtip
+                //self.hide();
+                //$("#social-buttons").click(); // hides the button qtip
+                $(".qtip").not("#qtip-4").qtip("hide"); // Hide history dialog (qtip-4 is image area select confirm)
                 self.save();
                 self.updateTooltips();
     
                 // Open pop-up and display movie
                 //watch.click(function () {
                 watch.live("click", function () {
-                    $(".jGrowl-notification .close").click();
+                    $(".jGrowl-notification .jGrowl-close").click();
                     movie.playMovie();
                 });
             }
@@ -192,7 +193,7 @@ var MovieHistory = History.extend(
     _loadSavedHistory: function (history) {
         var self = this, movie;
         $.each(history, function () {
-            movie = new Movie(this, this.dateRequested);
+            movie = new Movie(this);
             self.history.push(movie);
             if (!movie.complete && movie.id) {
                 self._waitForMovie({}, movie);

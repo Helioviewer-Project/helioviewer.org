@@ -132,8 +132,11 @@ var MediaBuilder = Class.extend(
      * to different elements, or not using qtip plugin.
      */
     hideDialogs: function () {
-        this.button.qtip("hide");
-        this.history.hide();
+        //this.button.qtip("hide");
+        //this.history.hide();
+        
+        // 2010/10/23 Hide everything except for imageAreaSelect confirmation
+        $(".qtip").not("#qtip-4").qtip("hide");
     },
     
     /**

@@ -15,9 +15,27 @@ var Movie = Media.extend(
      * @description Calculates its dimensions and handles movie display. Holds on to information used 
      *  to create the movie.
      */    
-    init: function (params, dateRequested, hqFormat) {
-        this._super(params, dateRequested);
-
+    init: function (params) {
+        this.dateRequested = null;
+        this.duration      = null;
+        this.id            = null;
+        this.width         = null;
+        this.height        = null;
+        this.hqFormat      = null;
+        this.imageScale    = null;
+        this.layers        = null;
+        this.name          = null;
+        this.startTime     = null;
+        this.url           = null;
+        this.x1            = null;
+        this.x2            = null;
+        this.y1            = null;
+        this.y2            = null;
+        this.complete      = null;
+        
+        // Call parent constructor
+        this._super(params);
+        
         this.time = this.startTime.replace("T", " ");
         
         // Get rid of the extra .000 if there is one
@@ -25,18 +43,16 @@ var Movie = Media.extend(
             this.time = this.time.slice(0, -5);
         }
 
-        this.hqFormat = params.hqFormat || hqFormat;
-
+        this.hqFormat = params.hqFormat;
         this.complete = params.complete || false;
         this.url      = params.url      || "";
     },
     
     /**
-     * Sets the url, name, and high quality file
+     * Sets the URL and completed status
      */
     setURL: function (url) {
         this._super(url, this.id);
-        this.hqFile = (url).slice(0, -3) + this.hqFormat;
         this.complete = true;
     },
     
@@ -50,7 +66,7 @@ var Movie = Media.extend(
 
     getTimeDiff: function () {
         if (!this.complete) {
-            return "Processing";
+            return "<span style='color: #aaf373;'>Processing</span>";
         }
         return this._super();
     },
@@ -66,8 +82,12 @@ var Movie = Media.extend(
         var self = this;
         
         this.button.click(function () {
-            self.button.qtip("hide");
-            self.playMovie();
+            //self.button.parents('.qtip')
+            //self.button.qtip("hide");
+            if (self.complete) {
+                $(".qtip").not("#qtip-4").qtip("hide"); // Hide history dialog (qtip-4 is image area select confirm)
+                self.playMovie();                
+            }
         });
     },
     
@@ -77,7 +97,7 @@ var Movie = Media.extend(
     playMovie: function () {
         var file, url, dimensions, movieDialog, self = this;
         
-        $("#movie-button").click();
+        //$("#movie-button").click();
         
         movieDialog = $("#watch-dialog-" + this.id);
         
@@ -104,7 +124,7 @@ var Movie = Media.extend(
      */
 //    getVideoPlayerHTML: function (width, height) {
 //        var css     = "margin-left: auto; margin-right: auto;",
-//            relpath = this.hqFile.match(/cache.*/).pop().slice(0, -4);
+//            relpath = this.url.match(/cache.*/).pop().slice(0, -4);
 //        
 //        if ($.support.video) {
 //            width  = "100%";
@@ -129,7 +149,7 @@ var Movie = Media.extend(
 //     */
 //    getVideoPlayerHTML: function (width, height) {
 //        // Base URL
-//        var path = this.hqFile.match(/cache.*/).pop().slice(0,-3);
+//        var path = this.url.match(/cache.*/).pop().slice(0,-3);
 //        
 //        // Use relative dimensions for browsers which support the video element
 //        if ($.support.video) {
@@ -200,11 +220,10 @@ var Movie = Media.extend(
      */
     serialize: function () {
         return {
+            complete      : this.complete,
             dateRequested : this.dateRequested,
             duration      : this.duration,
             id            : this.id,
-            width         : this.width,
-            height        : this.height,
             imageScale    : this.imageScale,
             layers        : this.layers,
             name          : this.name,
@@ -213,10 +232,7 @@ var Movie = Media.extend(
             x1            : this.x1,
             x2            : this.x2,
             y1            : this.y1,
-            y2            : this.y2,
-            complete      : this.complete,
-            hqFormat      : this.hqFormat,
-            hqFile        : this.hqFile
+            y2            : this.y2
         };
     },
     
@@ -225,7 +241,7 @@ var Movie = Media.extend(
      */
     getInformationTable: function () {        
         var layerArray, table, previewFrame;
-        previewFrame = this.url.slice(0, -3) + "jpg";
+        previewFrame = this.url.slice(0, -3) + "png";
         layerArray = layerStringToLayerArray(this.layers);
         table = "<table>" +
                     "<tr valign='top'>" + 
