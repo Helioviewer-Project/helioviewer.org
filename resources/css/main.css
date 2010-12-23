@@ -201,7 +201,7 @@ span.ui-icon-hover {
 #footer-links {
     text-align: center;
     width: 25%;
-    min-width: 520px;
+    min-width: 580px; /* 520 without 'Download' next to JHelioviewer link */
     margin-left: auto;
     margin-right: auto;        
 }
