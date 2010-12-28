@@ -250,7 +250,7 @@ class Module_SolarEvents implements Module
             <h1>Feature/Event API:</h1>
             <p>Solar feature/event data used by Helioviewer is retrieved through the 
             <a href="http://www.lmsal.com/hek/index.html">Heliophysics Event Knowledgebase (HEK)</a>. While the HEK includes
-            a very <a href="http://www.lmsal.com/hek/api.html">rich and full-features API of it's own</a>, Helioviewer provides
+            a very <a href="http://www.lmsal.com/hek/api.html">rich and full-featured API of it's own</a>, Helioviewer provides
             only a few simple but useful feature/event query methods. Each of these types of queries are described below.</p>
             <ol style="list-style-type: upper-latin;">
         
