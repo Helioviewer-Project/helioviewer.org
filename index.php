@@ -128,18 +128,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                         <?php 
                             }
                         ?>
-                                <!-- Select region button -->
-                                <!--<div id="select-region-button" class="text-btn">
-                                    <span class='ui-icon ui-icon-scissors' style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Select Region</span>
-                                </div>-->
-
-                                <!-- Media settings button -->
-                                <!--<div id="settings-button" class="text-btn">
-                                    <span class='ui-icon ui-icon-gear' style="float: left;"></span>
-                                    <span style="line-height: 1.6em">Media Settings</span>
-                                </div>-->
-
                                 <!-- JHelioviewer -->
                                 <div id="jhelioviewer-button" class="text-btn">
                                     <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
@@ -245,8 +233,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
-<!--<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.js" type="text/javascript"></script>
-<script src="lib/jquery.qtip-2.0-r282/jquery.qtip.tips.js" type="text/javascript"></script>-->
 <script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
@@ -257,9 +243,6 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
 <!-- imgAreaSelect jQuery plugin -->
 <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
-
-<!-- jsTree -->
-<!--<script src="lib/jquery.jsTree-1.0rc/jquery.jstree.js" type="text/javascript"></script>-->
 
 <!-- CookieJar -->
 <script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>
