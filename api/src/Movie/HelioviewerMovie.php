@@ -94,7 +94,7 @@ class Movie_HelioviewerMovie
         // Compile movie
         $this->_build($images);
         
-        //$this->_cleanup();
+        $this->_cleanup();
     }
     
     /**

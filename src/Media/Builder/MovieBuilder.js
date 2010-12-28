@@ -16,7 +16,7 @@ var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
     {
     formats : {
-        "win"   : "avi",
+        "win"   : "mp4",
         "mac"   : "mov",
         "linux" : "mp4",
         "other" : "mp4"
