@@ -10,6 +10,12 @@ bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 1
 var Movie = Media.extend(
     /** @lends Movie.prototype */
     {
+    formats : {
+        "win"   : "mp4",
+        "mac"   : "mov",
+        "linux" : "mp4",
+        "other" : "mp4"
+    },
     /**
      * @constructs
      * @description Calculates its dimensions and handles movie display. Holds on to information used 
@@ -43,7 +49,7 @@ var Movie = Media.extend(
             this.time = this.time.slice(0, -5);
         }
 
-        this.hqFormat = params.hqFormat;
+        this.hqFormat = params.hqFormat || this.formats[getOS()];
         this.complete = params.complete || false;
         this.url      = params.url      || "";
     },
@@ -177,7 +183,7 @@ var Movie = Media.extend(
         
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
-            path = this.hqFile.match(/cache.*/).pop();
+            path = this.url.match(/cache.*/).pop();
 //            return "<video id='movie-player-" + this.id + "' src='" + path +
 //                   "' controls preload autoplay width='100%' " + "height='99%'></video>";
             return "<video id='movie-player-" + this.id + "' src='" + path +

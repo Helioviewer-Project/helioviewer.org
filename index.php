@@ -129,10 +129,11 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                             }
                         ?>
                                 <!-- JHelioviewer -->
-                                <div id="jhelioviewer-button" class="text-btn">
+                                <!-- 2010/12/28: Disabling until JNLP launching is fixed -->
+                                <!-- <div id="jhelioviewer-button" class="text-btn">
                                     <span class="ui-icon ui-icon-arrowthickstop-1-s" style="float: left;"></span>
                                     <span style="line-height: 1.6em">JHelioviewer</span>
-                                </div>
+                                </div> -->
                             </div>
 
                             <!-- Fullscreen toggle -->
@@ -207,7 +208,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
-                <a href="http://jhelioviewer.org" class="light" target="_blank" style="color:#E57A17;">Download JHelioviewer</a>
+                <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
                 <a href="api/" class="light" target="_blank">API</a>
                 <a href="mailto:keith.hughitt@nasa.gov" class="light">Contact</a>
                 <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
