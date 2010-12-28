@@ -98,8 +98,8 @@ class Movie_FFMPEGEncoder
         $filepath = "$directory/$filename.$format";
 
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i $directory/frames/frame%d.bmp"
-            . " -r " . $outputRate . " -vcodec libx264 -vpre hq -threads " . HV_FFMPEG_MAX_THREADS . " -b 2048k -s " 
-            . $width . "x" . $height . " -y $filepath";
+            . " -r " . $outputRate . " -vcodec libx264 -vpre lossless_fast -threads " . HV_FFMPEG_MAX_THREADS 
+            . " -crf 18 -s " . $width . "x" . $height . " -y $filepath";
             
         exec(escapeshellcmd($cmd));
             
