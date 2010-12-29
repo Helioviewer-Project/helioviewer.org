@@ -44,7 +44,7 @@ class Movie_FFMPEGEncoder
     {
         $this->_macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
                     . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 1 -qcomp 0.6 -qmin 10 "
-                    . "-qmax 51 -qdiff 4 -bf 3 -directpred 1 -trellis 1 -wpredp 2 -y";
+                    . "-qmax 51 -qdiff 4 -bf 3 -directpred 1 -trellis 1 -wpredp 2 -an -y";
         $this->_frameRate = $frameRate;
     }
     
@@ -89,17 +89,23 @@ class Movie_FFMPEGEncoder
      * 
      * @return String the filename of the video
      */
-    public function createVideo($directory, $filename, $format, $width, $height)
+    public function createVideo($directory, $filename, $format, $width, $height, $lossless = false)
     {
         // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
         // fps >= 2
         $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
         
+        if ($lossless) {
+            $rateQuality = "";
+        } else {
+            $rateQuality = " -crf 18";
+        }
+        
         $filepath = "$directory/$filename.$format";
 
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i $directory/frames/frame%d.bmp"
             . " -r " . $outputRate . " -vcodec libx264 -vpre lossless_fast -threads " . HV_FFMPEG_MAX_THREADS 
-            . " -crf 18 -s " . $width . "x" . $height . " -y $filepath";
+            . $rateQuality . " -s $width" . "x" . $height . " -an -y $filepath";
             
         exec(escapeshellcmd($cmd));
             
