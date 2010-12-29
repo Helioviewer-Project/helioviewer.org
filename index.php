@@ -45,18 +45,37 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
 
         // CSS
         if ($config["compress_css"]) {
-            echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.min.css?$version\" />\n\t";
+            echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.min.css?$version\" />\n    ";
         }
         else {
             $css = array("main.css", "layout.css", "accordions.css", "dialogs.css", "sliders.css", "timenav.css", "tooltips.css", "viewport.css");
             foreach($css as $file)
-                printf("<link rel=\"stylesheet\" href=\"resources/css/%s?$version\" />\n\t", $file);
+                printf("<link rel=\"stylesheet\" href=\"resources/css/%s?$version\" />\n    ", $file);
         }
     ?>
 
     <!-- Theme Modifications -->
     <link rel="stylesheet" href="resources/css/dot-luv.css">
+    <?php
+        // Load Google Analytics if enabled 
+        if ($config["google_analytics_id"]) {
+    ?>
 
+<!-- Google Analytics -->
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', '<?php echo $config["google_analytics_id"];?>']);
+        _gaq.push(['_trackPageview']);
+        
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        }) ();
+    </script>
+    <?php
+            }
+    ?>
 </head>
 <body>
 
@@ -300,7 +319,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                     "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", 
                     "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
         foreach($js as $file)
-            printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n\t", $file);
+            printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n", $file);
     }
 ?>
 
@@ -316,7 +335,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         if ($.browser.msie && ($.browser.version < 8)) {
             CFInstall.check({mode: "overlay"});
         }
-
+        
         <?php
             printf("settingsJSON = %s;\n", json_encode($config));
 
@@ -337,7 +356,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 $urlSettings['imageScale'] = $_GET['imageScale'];
 
             // Convert to JSON
-            printf("\t\turlSettings = %s;\n", json_encode($urlSettings));
+            printf("\turlSettings = %s;\n", json_encode($urlSettings));
         ?>
         serverSettings = new Config(settingsJSON).toArray();
 
