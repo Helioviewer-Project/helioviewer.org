@@ -383,11 +383,17 @@ class Movie_HelioviewerMovie
         if ($ipod) {
             $ffmpeg->createIpodVideo($this->_directory, $this->_filename, "mp4", $this->_width, $this->_height);
         }
+        
+        // Create a high-quality H.264 video using an MPEG-4 (mp4) container format
+        $ffmpeg->createVideo($this->_directory, $this->_filename . "-hq", "mp4", $this->_width, $this->_height, true);
 
-        // Create an H.264 video using an MPEG-4 (mp4) container format
+        //Create alternative container format options for high-quality video (.mov)
+        $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename . "-hq", "mp4", "mov");
+
+        // Create a medium-quality H.264 video using an MPEG-4 (mp4) container format
         $ffmpeg->createVideo($this->_directory, $this->_filename, "mp4", $this->_width, $this->_height);
 
-        //Create alternative container format options (.mov and .flv)
+        //Create alternative container format options for medium-quality video (.mov and .flv)
         $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "mov");
         $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "flv");
     }
