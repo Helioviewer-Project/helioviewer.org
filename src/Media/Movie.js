@@ -178,7 +178,7 @@ var Movie = Media.extend(
 
         file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
         
-        hqFile    = file.replace("mp4", this.hqFormat);
+        hqFile    = file.replace(".mp4", "-hq." + this.hqFormat);
         flashFile = file.replace("mp4", "flv");
         
         // HTML5 Video (Currently only H.264 supported)
