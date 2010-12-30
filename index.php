@@ -61,7 +61,7 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
         if ($config["google_analytics_id"]) {
     ?>
 
-<!-- Google Analytics -->
+    <!-- Google Analytics -->
     <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', '<?php echo $config["google_analytics_id"];?>']);
