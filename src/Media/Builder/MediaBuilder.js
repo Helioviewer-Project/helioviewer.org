@@ -33,10 +33,14 @@ var MediaBuilder = Class.extend(
      * in the dialog. _setupEventListeners can only be called after the dialog is ready
      * because that function depends on divs that are inside the dialog. 
      */
-    _setupDialogAndEventHandlers: function () {
+    _setupDialogAndEventHandlers: function (xOffset) {
         var self, divContent;
         divContent = this.getDialogDivContent();
         self       = this;
+        
+        if (typeof xOffset === "undefined") {
+            xOffset = 0;
+        }
         
         this.button.qtip({
             position  : {
@@ -44,7 +48,7 @@ var MediaBuilder = Class.extend(
                     target : 'bottomMiddle',
                     tooltip: 'topMiddle'
                 },
-                adjust: { y : 15 }
+                adjust: { x: xOffset, y : 15 }
             },
             show: 'click',
             hide: 'click',                      

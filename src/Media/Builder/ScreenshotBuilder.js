@@ -22,7 +22,7 @@ var ScreenshotBuilder = MediaBuilder.extend(
         this.id      = "screenshot";
         this.servers = servers;
         
-        this._setupDialogAndEventHandlers();
+        this._setupDialogAndEventHandlers(-60);
     },
 
     /**
