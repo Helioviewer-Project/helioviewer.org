@@ -209,7 +209,6 @@ class Module_Movies implements Module
             <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>">
                 <video style="margin-left: auto; margin-right: auto; <?php echo $css;?>" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
                     <source src="<?php echo "$relpath.mp4"?>" /> 
-                    <source src="<?php echo "$relpath.mov"?>" />
                     <source src="<?php echo "$relpath.flv"?>" /> 
                 </video>
             </div>
