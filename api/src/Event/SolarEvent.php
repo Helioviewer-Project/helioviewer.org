@@ -94,7 +94,6 @@ class Event_SolarEvent
         if (!HV_DISABLE_CACHE && file_exists($directory)) {
             $files = array_merge(
                 glob("$directory/*.mp4"),
-                glob("$directory/*.mov"),
                 glob("$directory/*.flv")
             );
             //$files = glob("$directory/*.mp4"); // 11/22/2010: When creating movies, request only returns a single type
