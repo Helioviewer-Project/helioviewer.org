@@ -12,7 +12,7 @@ var Movie = Media.extend(
     {
     formats : {
         "win"   : "mp4",
-        "mac"   : "mov",
+        "mac"   : "mp4",
         "linux" : "mp4",
         "other" : "mp4"
     },
@@ -142,7 +142,6 @@ var Movie = Media.extend(
 //               '<div style="margin-left:auto; margin-right:auto; width:' + width + '; height:' + height + ';">' +
 //               '<video style="' + css + '" poster="' + relpath + '.jpg" durationHint="' + this.duration + '">' +
 //                    '<source src="' + relpath + '.mp4" />' + 
-//                    '<source src="' + relpath + '.mov" />' +
 //                    '<source src="' + relpath + '.flv" />' + 
 //               '</video></div></div>';
 //    },

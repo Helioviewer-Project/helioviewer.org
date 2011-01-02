@@ -17,7 +17,7 @@ var MovieBuilder = MediaBuilder.extend(
     {
     formats : {
         "win"   : "mp4",
-        "mac"   : "mov",
+        "mac"   : "mp4",
         "linux" : "mp4",
         "other" : "mp4"
     },
