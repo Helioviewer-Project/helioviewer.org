@@ -227,9 +227,10 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
+                <a href="http://helioviewer.org/blog" class="light" target="_blank">Blog</a>
                 <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
                 <a href="api/" class="light" target="_blank">API</a>
-                <a href="mailto:keith.hughitt@nasa.gov" class="light">Contact</a>
+                <a href="mailto:contact@helioviewer.org" class="light">Contact</a>
                 <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
             </div>
         </div>
