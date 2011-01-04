@@ -64,3 +64,8 @@ td.layers-name {
     position: relative;
     padding:0px;
 }
+
+.youtube-icon {
+    vertical-align: bottom;
+    margin-left: 5px;
+}
