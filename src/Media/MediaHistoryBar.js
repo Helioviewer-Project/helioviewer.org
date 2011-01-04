@@ -100,7 +100,7 @@ var MediaHistoryBar = Class.extend(
      * this.container is clicked. 
      */
     _setupDialog: function () {
-        var self = this, titleContent, clearButton;
+        var self = this, titleContent, clearButton, xOffset = 0;
         titleContent = "<div style='line-height:1.6em'>" + 
                             this.id.slice(0, 1).toUpperCase() + this.id.slice(1) + " History" + 
                             "<div id='" + this.id + "-clear-history-button' class='text-btn' style='float:right;'>" +
@@ -109,6 +109,11 @@ var MediaHistoryBar = Class.extend(
                             "</div>" + 
                         "</div>";
         
+        // WORK-AROUND 2011/01/04
+        if (this.id === "screenshot") {
+            xOffset = -60;
+        }
+        
         this.container.qtip({
             position: {
                 target: self.button,
@@ -116,7 +121,7 @@ var MediaHistoryBar = Class.extend(
                     target : 'bottomMiddle',
                     tooltip: 'topMiddle'
                 },
-                adjust: { y : 65 }
+                adjust: { x: xOffset, y : 65 }
             },
             show   : {
                 when  : {
