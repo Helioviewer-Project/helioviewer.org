@@ -101,7 +101,7 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var file, url, dimensions, movieDialog, self = this;
+        var file, hqFile, uploadURL, dimensions, movieDialog, self = this;
         
         //$("#movie-button").click();
         
@@ -123,6 +123,29 @@ var Movie = Media.extend(
             zIndex    : 9999,
             show      : 'fade'
         }).append(self.getVideoPlayerHTML(dimensions.width, dimensions.height));
+        
+        // Work-around: re-process file information for YouTube uploads
+        file   = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie        
+        hqFile = file.replace(".mp4", "-hq." + this.hqFormat);
+        
+        // TODO 2011/01/04: Disable keyboard shortcuts when in text fields! (already done for input fields...)
+        
+        // Initialize YouTube upload button
+        $('#youtube-upload-' + this.id).click(function () {
+            // Close movie dialog (Flash player blocks upload form)
+            movieDialog.dialog("close");
+            uploadURL = "api/index.php?action=uploadMovieToYouTube&file=" + hqFile;
+            
+            var uploadHTML = "<div id='youtube-upload-dialog-" + self.id + "'>" +
+                             "<iframe src='" + uploadURL + "' scrolling='no' width='100%' height='100%' style='border: none' />";
+
+            //$("<div id='youtube-upload-dialog-" + self.id + "' />").load(uploadURL).dialog({
+            $(uploadHTML).dialog({
+                "title": "Upload video to YouTube",
+                width : 625,
+                height: 400
+            });
+        });
     },
     
     /**
@@ -173,12 +196,15 @@ var Movie = Media.extend(
      * Decides how to display video and returns HTML corresponding to that method
      */
     getVideoPlayerHTML: function (width, height) {
-        var path, file, hqFile, flashFile, url;
+        var path, file, hqFile, flashFile, url, youtubeBtn;
 
         file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
         
         hqFile    = file.replace(".mp4", "-hq." + this.hqFormat);
         flashFile = file.replace("mp4", "flv");
+        
+        youtubeBtn = "<a id='youtube-upload-" + this.id + "'  href='#'><img class='youtube-icon' " +
+        "src='resources/images/Social.me/24 by 24 pixels/youtube.png' alt='Upload video to YouTube' /></a>";
         
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
@@ -188,7 +214,7 @@ var Movie = Media.extend(
             return "<video id='movie-player-" + this.id + "' src='" + path +
             "' controls preload autoplay width='100%' " + "height='95%'></video>" +
             "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-            "Click here to download a high-quality version.</a>";
+            "Click here to download a high-quality version.</a>" + youtubeBtn;
         }
 
         // Fallback (flash player)
@@ -202,7 +228,7 @@ var Movie = Media.extend(
                 "frameborder=0 /><br />" +
                 "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
                     "Click here to download a high-quality version." +
-                "</a></div>";
+                "</a>" + youtubeBtn + "</div>";
         }
     },
     
