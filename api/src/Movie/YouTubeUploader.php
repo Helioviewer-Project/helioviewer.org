@@ -61,24 +61,6 @@ class Movie_YouTubeUploader
         
         session_start();
         
-        // Log user in if they have not already
-//        if (!isset($_SESSION['sessionToken']) && (!isset($_GET['token']))) {
-//            header("Location: " . $this->_getAuthSubRequestUrl());
-//            return;
-//        } else {
-//            // Trade token for a SESSION authorization
-//            // Exchange single use token for session token
-//            if (!isset($_SESSION['sessionToken']) && isset($_GET['token'])) {
-//                $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
-//            }
-//            
-//            $this->_getAuthSubHttpClient(); 
-//            if (!isset($_POST['ready'])) {
-//                $this->_printForm("index.php");
-//                exit();
-//            }
-//        }
-
         // Authorization
         $this->_authorize();
 
@@ -216,16 +198,8 @@ class Movie_YouTubeUploader
         }
         
         $state = $newEntry->getVideoState();
-        
-        if ($state) {
-          echo 'Upload status for video ID ' . $newEntry->getVideoId() . ' is ' .
-            $state->getName() . ' - ' . $state->getText() . "\n";
-          } else {
-            echo "Not able to retrieve the video status information yet. " . 
-              "Please try again later.\n";
-        }
-        
-        print "<span style='color:white;'>Finished!</span>";
+
+        echo "Finished!";
     }
     
     /**
@@ -262,7 +236,16 @@ class Movie_YouTubeUploader
                 width: 70px;
             }
         </style>
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+        <script type='text/javascript'>
+            $(function () {
+                $("#youtube-video-info").submit(function () {
+                    $("body").empty().html("Finished! Your video should appear on youtube in 1-2 minutes.");
+                    $.post("index.php", $(this).serialize());
+                    return false;    
+                });
+            });
+        </script>
     </head>
     <body>
         <img src='../resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' style="float: left; margin-right: 8px" />
