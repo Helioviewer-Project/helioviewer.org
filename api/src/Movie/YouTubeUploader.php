@@ -61,8 +61,23 @@ class Movie_YouTubeUploader
         
         session_start();
         
-        // Authorization
-        $this->_authorize();
+        // Authentication
+        $this->_authenticate();
+        
+        // Once we have a session token and the user has filled out the form, get an AuthSubHttpClient
+        $this->_httpClient = $this->_getAuthSubHttpClient();
+        
+        // Creates an instance of the Youtube GData object
+        $this->_youTube = $this->_getYoutubeInstance();
+        
+        // Attempt a simple query to make sure session token has not expired
+        try {
+            $this->_youTube->getVideoFeed('http://gdata.youtube.com/feeds/api/users/default/uploads?max-results=1');
+        } catch (Zend_Gdata_App_HttpException $e) {
+            // Re-authenticate
+            unset($_SESSION['sessionToken']);
+            $this->_authenticate();
+        }
 
         // Has the form data been submitted?
         if (!isset($_POST['ready'])) {
@@ -71,12 +86,7 @@ class Movie_YouTubeUploader
         }
         
         // Validate form input... (already gone through InputValidator; just need to make sure title is set, etc)
-        
-        // Once we have a session token and the user has filled out the form, get an AuthSubHttpClient
-        $this->_httpClient = $this->_getAuthSubHttpClient(); 
-        
-        // Creates an instance of the Youtube GData object
-        $this->_youTube = $this->_getYoutubeInstance();
+
         
         $videoEntry = $this->_createGDataVideoEntry();
         
@@ -84,9 +94,9 @@ class Movie_YouTubeUploader
     }
     
     /**
-     * Authorizes Helioviewer to upload videos to the users account
+     * Authenticates Helioviewer to upload videos to the users account
      */
-    private function _authorize()
+    private function _authenticate()
     {
         if (!isset($_SESSION['sessionToken'])) {
             // If no session token exists, check for single-use URL token
@@ -96,7 +106,7 @@ class Movie_YouTubeUploader
             } else {
                 // Otherwise, send user to authorization page
                 header("Location: " . $this->_getAuthSubRequestUrl());
-                return;
+                exit();
             }
         }
     }
@@ -240,7 +250,7 @@ class Movie_YouTubeUploader
         <script type='text/javascript'>
             $(function () {
                 $("#youtube-video-info").submit(function () {
-                    $("body").empty().html("Finished! Your video should appear on youtube in 1-2 minutes.");
+                    $("body").empty().html("<h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.");
                     $.post("index.php", $(this).serialize());
                     return false;    
                 });
