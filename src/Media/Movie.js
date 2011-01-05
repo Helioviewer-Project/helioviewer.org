@@ -142,8 +142,8 @@ var Movie = Media.extend(
             //$("<div id='youtube-upload-dialog-" + self.id + "' />").load(uploadURL).dialog({
             $(uploadHTML).dialog({
                 "title": "Upload video to YouTube",
-                width : 625,
-                height: 400
+                width : 1038, // Optimized for YouTube Login dimensions
+                height: 600
             });
         });
     },
