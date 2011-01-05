@@ -64,6 +64,7 @@ function loadModule($params)
         "playMovie"            => "Movies",
         "queueMovie"           => "Movies",
         "uploadMovieToYouTube" => "Movies",
+        "checkYouTubeAuth"     => "Movies",
         "getEventFRMs"           => "SolarEvents",
         "getEvents"              => "SolarEvents",
         "getScreenshotsForEvent" => "SolarEvents",
