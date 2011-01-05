@@ -145,13 +145,26 @@ class Module_Movies implements Module
     public function uploadMovieToYouTube ()
     {
         include_once 'src/Movie/YouTubeUploader.php';
-        
+
         // Make sure it exists
         if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
             throw new Exception("Invalid movie requested");
         }
+
+        $youtube = new Movie_YouTubeUploader();
+        $youtube->uploadVideo($this->_params['file'], $this->_options);
+    }
+    
+    /**
+     * Checks to see if Helioviewer.org is authorized to upload videos for a user
+     */
+    public function checkYouTubeAuth () {
+        include_once 'src/Movie/YouTubeUploader.php';
         
-        $youtube = new Movie_YouTubeUploader($this->_params['file'], $this->_options);
+        $youtube = new Movie_YouTubeUploader();
+
+        header('Content-type: application/json');
+        print json_encode($youtube->checkYouTubeAuth());
     }
 
     /**
@@ -298,14 +311,18 @@ class Module_Movies implements Module
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                "ints"     => array('frameRate', 'numFrames')
             );
+            break;
         case "uploadMovieToYouTube":
             $expected = array(
                 "required" => array('file'),
-                "optional" => array('title', 'description', 'tags', 'share', 'token'),
+                "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready'),
                 "files"    => array('file'),
-                "bools"    => array('share')
+                "bools"    => array('share', 'ready')
             
             );
+            break;
+        case "checkYouTubeAuth":
+            $expected = array ();
         default:
             break;
         }
