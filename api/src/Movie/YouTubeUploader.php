@@ -63,7 +63,19 @@ class Movie_YouTubeUploader
      */
     public function uploadVideo($fileId, $options)
     {
-        $filepath  = HV_CACHE_DIR . "/movies/$fileId";
+        $filepath = HV_CACHE_DIR . "/movies/$fileId";
+        
+        // Optional parameters
+        $defaults = array(
+            "ready"       => false,
+            "dialogMode"  => false,
+            "share"       => true,
+            "title"       => "",
+            "description" => "",
+            "tags"        => ""
+        );
+        
+        $options = array_replace($defaults, $options);
         
         // Authenticate user
         $this->_authenticate($fileId);
@@ -74,14 +86,14 @@ class Movie_YouTubeUploader
         // Creates an instance of the Youtube GData object
         $this->_youTube = $this->_getYoutubeInstance();
         
-        // Make sure authentication is not expired
+        // If authentication is expired, reauthenticate
         if (!$this->_authenticationIsValid()) {
             $this->_authenticate($fileId);
         }
 
         // Has the form data been submitted?
-        if (!isset($options['ready'])) {
-            $this->_printForm("index.php", $fileId);
+        if (!$options['ready']) {
+            $this->_printForm($fileId, $options['dialogMode']);
             return;
         }
 
@@ -99,9 +111,26 @@ class Movie_YouTubeUploader
         }
         
         $this->_httpClient = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
-
         $this->_youTube    = $this->_getYoutubeInstance();
+
         return $this->_authenticationIsValid();
+    }
+    
+    /**
+     * Authenticates Helioviewer to upload videos to the users account
+     */
+    private function _authenticate($file)
+    {
+        if (!isset($_SESSION['sessionToken'])) {
+            // If no session token exists, check for single-use URL token
+            if (isset($_GET['token'])) {
+                $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
+            } else {
+                // Otherwise, send user to authorization page
+                header("Location: " . $this->_getAuthSubRequestUrl($file));
+                exit();
+            }
+        }
     }
     
     /**
@@ -121,24 +150,6 @@ class Movie_YouTubeUploader
         return true;
     }
     
-    /**
-     * Authenticates Helioviewer to upload videos to the users account
-     */
-    private function _authenticate($file)
-    {
-        if (!isset($_SESSION['sessionToken'])) {
-            // If no session token exists, check for single-use URL token
-            if (isset($_GET['token'])) {
-                // If a single use token exists, trade it in for a session token 
-                $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);   
-            } else {
-                // Otherwise, send user to authorization page
-                header("Location: " . $this->_getAuthSubRequestUrl($file));
-                exit();
-            }
-        }
-    }
-
     /**
      * Creates an instance of a Zend_Gdata_YouTube_VideoEntry using the user-submitted values
      */
@@ -238,33 +249,13 @@ class Movie_YouTubeUploader
      *                  E.g.: "Helioveiwer.org: SDO AIA 171 (January 04th, 01:29:04 UTC)"
      *                  Could even offer multiple formats for title, subsets of keywords, etc
      */
-    private function _printForm($url, $fileId) {
+    private function _printForm($fileId, $dialogMode) {
     ?>
 <!DOCTYPE html> 
 <html> 
 <head> 
     <title>Helioviewer.org - YouTube Video Submission</title>
-    <style type='text/css'>
-        body { background-color: transparent; color: white; text-align: left;}
-        #youtube-video-info label {
-            width: 18%;
-            display: inline-block;
-            text-align: right;
-            vertical-align: top;
-            margin: 5px 5px 0 0;
-        }
-        
-        #youtube-video-info input, #youtube-video-info textarea {
-            margin-top: 5px;
-            width: 75%;
-        }
-        
-        #youtube-video-info #youtube-submit-btn {
-            position: absolute;
-            right: 30px;
-            width: 70px;
-        }
-    </style>
+    <link rel='stylesheet' href='resources/css/youtube.css' /> 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
     <script type='text/javascript'>
             $(function () {
@@ -276,11 +267,12 @@ class Movie_YouTubeUploader
             });
         </script>
 </head>
-<body>
-    <img src='../resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' style="float: left; margin-right: 8px" />
+<body<?php if ($dialogMode) {echo " class='dialog-mode'";}?>>
+    <div id='container'>
+    <img id='youtube-logo' src='../resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
     <h1>Upload Video</h1>
     <br />
-    <form id="youtube-video-info" action="<?php echo $url; ?>" method="post">
+    <form id="youtube-video-info" action="index.php" method="post">
         <!-- Title -->
         <label for="youtube-title">Title:</label>
         <input id="youtube-title" type="text" name="title" placeholder="Your video title" />
@@ -309,6 +301,7 @@ class Movie_YouTubeUploader
         <input type="hidden" name="file" value="<?php echo $fileId; ?>" />
     <input id='youtube-submit-btn' type="submit" value="Submit" />
     </form>
+    </div>
 </body>
 </html>
     <?php

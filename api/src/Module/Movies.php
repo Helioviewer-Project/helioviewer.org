@@ -315,9 +315,9 @@ class Module_Movies implements Module
         case "uploadMovieToYouTube":
             $expected = array(
                 "required" => array('file'),
-                "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready'),
+                "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready', 'dialogMode'),
                 "files"    => array('file'),
-                "bools"    => array('share', 'ready')
+                "bools"    => array('share', 'ready', 'dialogMode')
             
             );
             break;
