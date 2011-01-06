@@ -71,14 +71,18 @@ class Movie_YouTubeUploader
             "dialogMode"  => false,
             "share"       => true,
             "title"       => "",
-            "description" => "",
-            "tags"        => ""
+            "tags"        => "",
+            "description" => "This video was produced by http://www.helioviewer.org. A high quality version of the " .
+                             "movie can be downloaded at http://www.helioviewer.org/path/movie.mp4."
         );
         
         $options = array_replace($defaults, $options);
         
+        // Redirect URL
+        $url = $this->_getPostAuthRedirectURL($fileId, $options);
+        
         // Authenticate user
-        $this->_authenticate($fileId);
+        $this->_authenticate($url);
         
         // Once we have a session token get an AuthSubHttpClient
         $this->_httpClient = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
@@ -88,12 +92,14 @@ class Movie_YouTubeUploader
         
         // If authentication is expired, reauthenticate
         if (!$this->_authenticationIsValid()) {
-            $this->_authenticate($fileId);
+            $this->_authenticate($url);
         }
 
         // Has the form data been submitted?
         if (!$options['ready']) {
-            $this->_printForm($fileId, $options['dialogMode']);
+            $this->_printForm(
+                $fileId, $options['title'], $options['description'], $options['tags'], $options['dialogMode']
+            );
             return;
         }
 
@@ -119,7 +125,7 @@ class Movie_YouTubeUploader
     /**
      * Authenticates Helioviewer to upload videos to the users account
      */
-    private function _authenticate($file)
+    private function _authenticate($url)
     {
         if (!isset($_SESSION['sessionToken'])) {
             // If no session token exists, check for single-use URL token
@@ -127,7 +133,7 @@ class Movie_YouTubeUploader
                 $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
             } else {
                 // Otherwise, send user to authorization page
-                header("Location: " . $this->_getAuthSubRequestUrl($file));
+                header("Location: " . $this->_getAuthSubRequestUrl($url));
                 exit();
             }
         }
@@ -206,6 +212,25 @@ class Movie_YouTubeUploader
     }
     
     /**
+     * Constructs the URL that should be used once authentication has been completed to display the upload form
+     * 
+     * @param string $fileId  Relative path of the file being uploaded
+     * @param array  $options Video options
+     * 
+     * @return string Redirect URL
+     */
+    private function _getPostAuthRedirectURL($fileId, $options)
+    {
+        return HV_API_ROOT_URL . "?" . http_build_query(array(
+            "action"      => "uploadMovieToYouTube",
+            "file"        => $fileId,
+            "title"       => $options["title"],
+            "description" => $options["description"],
+            "tags"        => $options["tags"]
+        ));
+    }
+    
+    /**
      * Initializes a YouTube GData object instance
      */
     private function _getYoutubeInstance()
@@ -249,7 +274,8 @@ class Movie_YouTubeUploader
      *                  E.g.: "Helioveiwer.org: SDO AIA 171 (January 04th, 01:29:04 UTC)"
      *                  Could even offer multiple formats for title, subsets of keywords, etc
      */
-    private function _printForm($fileId, $dialogMode) {
+    private function _printForm($fileId, $title, $description, $tags, $dialogMode) {
+        $filepath = HV_CACHE_URL . "/movies/$fileId";
     ?>
 <!DOCTYPE html> 
 <html> 
@@ -275,17 +301,17 @@ class Movie_YouTubeUploader
     <form id="youtube-video-info" action="index.php" method="post">
         <!-- Title -->
         <label for="youtube-title">Title:</label>
-        <input id="youtube-title" type="text" name="title" placeholder="Your video title" />
+        <input id="youtube-title" type="text" name="title" value="<?php echo $title;?> (Helioviewer.org)" />
         <br />
         
         <!-- Description -->
         <label for="youtube-desc">Description:</label>
-        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" placeholder="Description of the video you are uploading"></textarea>
+        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description"><?php echo $description;?></textarea>
         <br />
         
         <!-- Tags -->
         <label for="youtube-tags">Tags:</label>
-        <input id="youtube-tags" type="text" name="tags" placeholder="Tags (example: Sun, SDO, AIA, Flare).. Choose for user???" />
+        <input id="youtube-tags" type="text" name="tags" value="<?php echo $tags;?>" />
         <br /><br />
         
         <!-- Sharing -->
