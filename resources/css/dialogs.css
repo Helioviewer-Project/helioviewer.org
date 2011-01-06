@@ -65,7 +65,11 @@ td.layers-name {
     padding:0px;
 }
 
-.youtube-icon {
+.video-links a {
+    text-decoration: none;
+}
+
+.video-links img {
     vertical-align: bottom;
-    margin-left: 5px;
+    margin-left: 10px;
 }

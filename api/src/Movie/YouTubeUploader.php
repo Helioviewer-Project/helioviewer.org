@@ -73,7 +73,7 @@ class Movie_YouTubeUploader
             "title"       => "",
             "tags"        => "",
             "description" => "This video was produced by http://www.helioviewer.org. A high quality version of the " .
-                             "movie can be downloaded at http://www.helioviewer.org/path/movie.mp4."
+                             "movie can be downloaded at " . HV_CACHE_URL . "/movies/$fileId."
         );
         
         $options = array_replace($defaults, $options);
@@ -275,7 +275,6 @@ class Movie_YouTubeUploader
      *                  Could even offer multiple formats for title, subsets of keywords, etc
      */
     private function _printForm($fileId, $title, $description, $tags, $dialogMode) {
-        $filepath = HV_CACHE_URL . "/movies/$fileId";
     ?>
 <!DOCTYPE html> 
 <html> 
