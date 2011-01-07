@@ -71,5 +71,10 @@ td.layers-name {
 
 .video-links img {
     vertical-align: bottom;
-    margin-left: 10px;
+    margin-left:  15px;
+    margin-right: 3px;
+}
+
+.video-download-icon {
+    margin-left: 5px;
 }

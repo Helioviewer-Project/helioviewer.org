@@ -101,7 +101,7 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var file, hqFile, dimensions, movieDialog, uploadURL, observatories, tags, self = this;
+        var file, hqFile, dimensions, movieDialog, uploadURL, datasources, tags, self = this;
         
         // Work-around: re-process file information for YouTube uploads
         file   = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie        
@@ -109,17 +109,13 @@ var Movie = Media.extend(
         
         movieDialog = $("#watch-dialog-" + this.id);
         
-        // 2011/01/06 Temporary work-around: compute up with default title & tags
-        tags          = [];
-        observatories = [];
+        // 2011/01/06 Temporary work-around: compute default title & tags (nicer implementation to follow)
+        tags        = [];
+        datasources = [];
 
+        // Tags
         $.each(this.layers.split("],["), function (i, layerStr) {
             var parts = layerStr.replace(']', "").replace('[', "").split(",").slice(0,4);
-            
-            // For now, just include observatories and date in the title (better: "SDO AIA 171/304, SOHO LASCO C2", etc) 
-            if ($.inArray(parts[0], observatories) === -1) {
-                observatories.push(parts[0]);
-            }
             
             // Add observatories, instruments, detectors and measurements to tag list
             $.each(parts, function (i, item) {
@@ -129,8 +125,19 @@ var Movie = Media.extend(
             });
         });
         
+        // Datasources
+        $.each(this.longName.split(", "), function (i, name) {
+            var inst = name.split(" ")[0];
+            
+            if ((inst === "AIA") || (inst ==="HMI")) {
+                datasources.push("SDO " + name);
+            } else {
+                datasources.push("SOHO " + name);
+            }
+        });
+        
         uploadURL =  "api/index.php?action=uploadMovieToYouTube&file=" + hqFile;
-        uploadURL += "&title=" + observatories.join(" ") + " " + this.time;
+        uploadURL += "&title=" + datasources.join(", ") + " (" + this.time.replace(/-/g, "/") + ")";
         uploadURL += "&tags="  + tags.join(" ");
         
         console.log(uploadURL);
@@ -205,7 +212,7 @@ var Movie = Media.extend(
         flashFile = file.replace("mp4", "flv");
         
         downloadLink = "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-                       "<img src='resources/images/icons/001_52.png' alt='Download high-quality video' />Download</a>";
+                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' alt='Download high-quality video' />Download</a>";
         
         youtubeBtn = "<a id='youtube-upload-" + this.id + "'  href='" + uploadURL + "' target='_blank'>" + 
                      "<img class='youtube-icon' src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +

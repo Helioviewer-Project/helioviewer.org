@@ -57,6 +57,11 @@ var Media = Class.extend(
         
         // Get rid of the extra ", " at the front
         name = name.slice(2);
+        
+        // TEMP Work-Around 2011/01/07
+        this.longName = name;
+        
+        // Shorten
         if (name.length > 16) {
             name = name.slice(0, 16) + "...";
         }
