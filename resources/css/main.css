@@ -291,3 +291,38 @@ span.ui-icon-hover {
 #more-articles a:hover {
     color: #D18F16;
 }
+
+#user-uploads-panel {
+    height: 100%;
+    min-height: 150px;
+    font-size: 11px;
+    padding: 2px 2px 8px;
+    margin: 0 5px;
+}
+
+#user-uploads-panel a {
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;  
+}
+
+#user-uploads-panel a:hover {
+    color: #D18F16;  
+}
+
+#user-uploads-panel img {
+    width: 215px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#yt-logo {
+    float: left;
+    margin-right: 5px;
+}
+
+.user-video-thumbnail-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+}

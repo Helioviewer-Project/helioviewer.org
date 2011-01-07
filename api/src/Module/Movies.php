@@ -187,7 +187,7 @@ class Module_Movies implements Module
         }
         
         $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
-               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?safeSearch=strict&max-results=$n";
+               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?max-results=$n&safeSearch=strict";
         
         // Collect videos from the feed
         $videos = array();
