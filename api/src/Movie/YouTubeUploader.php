@@ -72,8 +72,8 @@ class Movie_YouTubeUploader
             "share"       => true,
             "title"       => "",
             "tags"        => "",
-            "description" => "This video was produced by http://www.helioviewer.org. A high quality version of the " .
-                             "movie can be downloaded at " . HV_CACHE_URL . "/movies/$fileId."
+            "description" => "This movie was produced by http://www.helioviewer.org. A high quality version of this " .
+                             "movie can be downloaded from " . HV_CACHE_URL . "/movies/$fileId."
         );
         
         $options = array_replace($defaults, $options);
@@ -176,7 +176,7 @@ class Movie_YouTubeUploader
     
         // Set keywords. Please note that this must be a comma-separated string
         // and that individual keywords cannot contain whitespace
-        $videoEntry->SetVideoTags('Helioviewer.org, ' . $videoInfo['tags']); // ADD Observatory, detectors, etc
+        $videoEntry->SetVideoTags($videoInfo['tags']);
     
         // set some developer tags -- this is optional
         // (see Searching by Developer Tags for more details)
@@ -300,7 +300,7 @@ class Movie_YouTubeUploader
     <form id="youtube-video-info" action="index.php" method="post">
         <!-- Title -->
         <label for="youtube-title">Title:</label>
-        <input id="youtube-title" type="text" name="title" value="<?php echo $title;?> (Helioviewer.org)" />
+        <input id="youtube-title" type="text" name="title" value="<?php echo $title;?>" />
         <br />
         
         <!-- Description -->
