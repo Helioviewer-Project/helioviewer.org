@@ -166,6 +166,39 @@ class Module_Movies implements Module
         header('Content-type: application/json');
         print json_encode($youtube->checkYouTubeAuth());
     }
+    
+    /**
+     * Retrieves recent user-submitted videos form YouTube and displays either an XML feed or HTML
+     * 
+     * TODO: 2011/01/07: Move to a separate class
+     */
+    public function getUserVideos() {
+        require_once 'Zend/Loader.php';
+        Zend_Loader::loadClass('Zend_Gdata_YouTube');
+        
+        $yt = new Zend_Gdata_YouTube(null, null, null, HV_YOUTUBE_DEVELOPER_KEY);
+        $yt->setMajorProtocolVersion(2);
+        
+        $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
+               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org";
+        
+        // Collect videos from the feed
+        $videos = array();
+        
+        // TODO: set setRecorded to set the time?
+        
+        foreach($yt->getVideoFeed($url) as $videoEntry) {
+            array_push($videos, array(
+                "title"   => $videoEntry->getVideoTitle(),
+                "watch"   => $videoEntry->getVideoWatchPageUrl(),
+                "flash"   => $videoEntry->getFlashPlayerUrl(),
+                "thumbnails" => $videoEntry->getVideoThumbnails()
+            ));
+        }
+        
+        header('Content-type: application/json');
+        echo json_encode($videos);        
+    }
 
     /**
      * Gets the movie url and loads it into Kaltura
@@ -321,8 +354,16 @@ class Module_Movies implements Module
             
             );
             break;
+        case "getUserVideos":
+            $expected = array(
+                "optional" => array('n', 'html'),
+                "bools"    => array('html'),
+                "ints"     => array('n')
+            );
+            break;
         case "checkYouTubeAuth":
             $expected = array ();
+            break;
         default:
             break;
         }

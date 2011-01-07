@@ -253,3 +253,41 @@ span.ui-icon-hover {
 /* Google Chrome Frame Installer */
 .chromeFrameOverlayContent  {border:1px solid #303030;}
 .chromeFrameOverlayUnderlay {background: #000; opacity: 0.5;}
+
+/* Social panel */
+#social-panel {
+    height: 100%;
+    min-height: 150px;
+    font-size: 11px;
+    padding: 2px 2px 8px;
+    margin: 0 5px;
+}
+
+#social-panel .blog-entry {
+    margin: 4px 4px 14px 4px;
+}
+
+#social-panel .blog-entry a {
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+#social-panel .blog-entry a:hover {
+    color: #D18F16;
+}
+
+#social-panel .article-date {
+    font-style: italic;
+}
+
+#more-articles {
+    text-align: right;
+}
+
+#more-articles a {
+   text-decoration: none;
+}
+
+#more-articles a:hover {
+    color: #D18F16;
+}
