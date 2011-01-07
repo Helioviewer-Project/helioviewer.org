@@ -211,9 +211,9 @@ unset($config['youtube_developer_key']);
 
         <!-- Right Column -->
         <div id="col3">
-            <div id="right-col-header" style='height: 98px'></div>
-            <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all" style='height: 80px; padding: 2px 2px 8px; margin: 0 5px;'>
-            Test
+            <div id="right-col-header" style='height: 11px'></div>
+            <div style="margin-left: 5px; margin-top: 15px;" class="section-header">News</div>
+            <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all">
             </div>
         </div>
         </div>
@@ -276,6 +276,9 @@ unset($config['youtube_developer_key']);
 
 <!-- date.js -->
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
+
+<!-- jFeed -->
+<script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
