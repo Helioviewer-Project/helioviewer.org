@@ -211,7 +211,10 @@ unset($config['youtube_developer_key']);
 
         <!-- Right Column -->
         <div id="col3">
-            <div id="right-col-header"></div>
+            <div id="right-col-header" style='height: 98px'></div>
+            <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all" style='height: 80px; padding: 2px 2px 8px; margin: 0 5px;'>
+            Test
+            </div>
         </div>
         </div>
     </div>
