@@ -179,14 +179,22 @@ class Module_Movies implements Module
         $yt = new Zend_Gdata_YouTube(null, null, null, HV_YOUTUBE_DEVELOPER_KEY);
         $yt->setMajorProtocolVersion(2);
         
+        // Limit number of results
+        if (isset($this->_options['n'])) {
+            $n = $this->_options['n'];
+        } else {
+            $n = 10;
+        }
+        
         $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
-               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org";
+               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?safeSearch=strict&max-results=$n";
         
         // Collect videos from the feed
         $videos = array();
         
         // TODO: set setRecorded to set the time?
-        
+
+        // Process video entries
         foreach($yt->getVideoFeed($url) as $videoEntry) {
             array_push($videos, array(
                 "title"   => $videoEntry->getVideoTitle(),
@@ -356,8 +364,7 @@ class Module_Movies implements Module
             break;
         case "getUserVideos":
             $expected = array(
-                "optional" => array('n', 'html'),
-                "bools"    => array('html'),
+                "optional" => array('n'),
                 "ints"     => array('n')
             );
             break;
