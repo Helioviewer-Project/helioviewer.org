@@ -1,0 +1,11 @@
+/* Base  */
+body { background: url("../../../resources/images/backgrounds/gradient_v5-optimized.png") repeat scroll 0 0 transparent; color: #2d2e2e; text-align: left;}
+#container {max-width: 570px; margin: 100px auto; position: relative;}
+#youtube-logo{ float: left; margin-left: 47px; margin-right: 8px }
+#youtube-video-info label { width: 18%; display: inline-block; text-align: right; vertical-align: top; margin: 5px 5px 0 0; }
+#youtube-video-info input, #youtube-video-info textarea { margin-top: 5px; width: 75%; }
+#youtube-video-info #youtube-submit-btn { position: absolute; right: 30px; width: 70px; margin-top: 12px; }
+
+/* Dialog */
+body.dialog-mode {background: transparent; color: white;}
+.dialog-mode #container {margin-top: 10px;}
