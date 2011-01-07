@@ -64,3 +64,17 @@ td.layers-name {
     position: relative;
     padding:0px;
 }
+
+.video-links a {
+    text-decoration: none;
+}
+
+.video-links img {
+    vertical-align: bottom;
+    margin-left:  15px;
+    margin-right: 3px;
+}
+
+.video-download-icon {
+    margin-left: 5px;
+}

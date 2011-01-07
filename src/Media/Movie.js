@@ -101,11 +101,46 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var file, url, dimensions, movieDialog, self = this;
+        var file, hqFile, dimensions, movieDialog, uploadURL, datasources, tags, self = this;
         
-        //$("#movie-button").click();
+        // Work-around: re-process file information for YouTube uploads
+        file   = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie        
+        hqFile = file.replace(".mp4", "-hq." + this.hqFormat);
         
         movieDialog = $("#watch-dialog-" + this.id);
+        
+        // 2011/01/06 Temporary work-around: compute default title & tags (nicer implementation to follow)
+        tags        = [];
+        datasources = [];
+
+        // Tags
+        $.each(this.layers.split("],["), function (i, layerStr) {
+            var parts = layerStr.replace(']', "").replace('[', "").split(",").slice(0,4);
+            
+            // Add observatories, instruments, detectors and measurements to tag list
+            $.each(parts, function (i, item) {
+                if ($.inArray(item, tags) === -1) {
+                    tags.push(item);
+                }                
+            });
+        });
+        
+        // Datasources
+        $.each(this.longName.split(", "), function (i, name) {
+            var inst = name.split(" ")[0];
+            
+            if ((inst === "AIA") || (inst ==="HMI")) {
+                datasources.push("SDO " + name);
+            } else {
+                datasources.push("SOHO " + name);
+            }
+        });
+        
+        uploadURL =  "api/index.php?action=uploadMovieToYouTube&file=" + hqFile;
+        uploadURL += "&title=" + datasources.join(", ") + " (" + this.time.replace(/-/g, "/") + ")";
+        uploadURL += "&tags="  + tags.join(" ");
+        
+        console.log(uploadURL);
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions();
@@ -122,73 +157,74 @@ var Movie = Media.extend(
                         },
             zIndex    : 9999,
             show      : 'fade'
-        }).append(self.getVideoPlayerHTML(dimensions.width, dimensions.height));
+        }).append(self.getVideoPlayerHTML(dimensions.width, dimensions.height, uploadURL));
+        
+        // TODO 2011/01/04: Disable keyboard shortcuts when in text fields! (already done for input fields...)
+       
+        // Initialize YouTube upload button
+        $('#youtube-upload-' + this.id).click(function () {
+            var auth = false;
+
+            // Synchronous request (otherwise Google will not allow opening of request in a new tab)
+            jQuery.ajax({
+                async: false,
+                url : "api/index.php?action=checkYouTubeAuth",
+                type: "GET",
+                success: function (response) {
+                    auth = response;
+                }
+            })
+
+            // If user is already authenticated we can simply display the upload form in a dialog
+            if (auth) {
+                self.showYouTubeUploadDialog(uploadURL);
+                return false;
+            }            
+        });
     },
     
     /**
-     * Generates HTML to display a Helioviewer movie
+     * Opens YouTube uploader either in a separate tab or in a dialog
      */
-//    getVideoPlayerHTML: function (width, height) {
-//        var css     = "margin-left: auto; margin-right: auto;",
-//            relpath = this.url.match(/cache.*/).pop().slice(0, -4);
-//        
-//        if ($.support.video) {
-//            width  = "100%";
-//            height = "99%";
-//        }
-//        
-//        return '<div style="text-align: center;">' +
-//               //'<div style="margin-left:auto; margin-right:auto; width:' + width + 'px; height:' + height + 'px;";>' +
-//               '<div style="margin-left:auto; margin-right:auto; width:' + width + '; height:' + height + ';">' +
-//               '<video style="' + css + '" poster="' + relpath + '.jpg" durationHint="' + this.duration + '">' +
-//                    '<source src="' + relpath + '.mp4" />' + 
-//                    '<source src="' + relpath + '.flv" />' + 
-//               '</video></div></div>';
-//    },
-    
-//    /**
-//     * Decides how to display video and returns HTML corresponding to that method
-//     * 
-//     * 08/31/2010: Kaltura does not currently support jQuery UI 1.8, and even with 1.7.1
-//     * some bugs are present. Try again in future.
-//     */
-//    getVideoPlayerHTML: function (width, height) {
-//        // Base URL
-//        var path = this.url.match(/cache.*/).pop().slice(0,-3);
-//        
-//        // Use relative dimensions for browsers which support the video element
-//        if ($.support.video) {
-//            width = "100%";
-//            height= "99%";
-//        }
-//        
-//        return "<video id='movie-player-" + this.id + "' width='" + width + "' " + "height='"
-//               + height + "' poster='" + path + "jpg'>"
-//             + "<source src='" + path + "mp4' /><source src='" + path + "flv' />"
-//             + "</video>";
-//    },
-    
+    showYouTubeUploadDialog: function (url) {
+        // Close movie dialog (Flash player blocks upload form)
+        $("#watch-dialog-" + this.id).dialog("close");
+        
+        var iframe = "<div id='youtube-upload-dialog-" + this.id + "'>" +
+                     "<iframe src='" + url + "&dialogMode=true' scrolling='no' width='100%' height='100%' style='border: none' />";
+
+        $(iframe).dialog({
+            "title" : "Upload video to YouTube",
+            "width" : 640,
+            "height": 480
+        });            
+    },
     
     /**
      * Decides how to display video and returns HTML corresponding to that method
      */
-    getVideoPlayerHTML: function (width, height) {
-        var path, file, hqFile, flashFile, url;
+    getVideoPlayerHTML: function (width, height, uploadURL) {
+        var path, file, hqFile, flashFile, url, uploadURL, downloadLink, youtubeBtn;
 
         file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
         
         hqFile    = file.replace(".mp4", "-hq." + this.hqFormat);
         flashFile = file.replace("mp4", "flv");
         
+        downloadLink = "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
+                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' alt='Download high-quality video' />Download</a>";
+        
+        youtubeBtn = "<a id='youtube-upload-" + this.id + "'  href='" + uploadURL + "' target='_blank'>" + 
+                     "<img class='youtube-icon' src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
+                     "alt='Upload video to YouTube' />Upload</a>";
+        
         // HTML5 Video (Currently only H.264 supported)
         if ($.support.h264) {
             path = this.url.match(/cache.*/).pop();
-//            return "<video id='movie-player-" + this.id + "' src='" + path +
-//                   "' controls preload autoplay width='100%' " + "height='99%'></video>";
+
             return "<video id='movie-player-" + this.id + "' src='" + path +
-            "' controls preload autoplay width='100%' " + "height='95%'></video>" +
-            "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-            "Click here to download a high-quality version.</a>";
+                   "' controls preload autoplay width='100%' " + "height='95%'></video>" + 
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span>";
         }
 
         // Fallback (flash player)
@@ -197,12 +233,9 @@ var Movie = Media.extend(
                   '&width=' + width + '&height=' + height + '&duration=' + this.duration;
             
             return "<div id='movie-player-" + this.id + "'>" + 
-            "<iframe src=" + url + " width=" + width + " height=" + 
-                height + " marginheight=0 marginwidth=0 scrolling=no " +
-                "frameborder=0 /><br />" +
-                "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-                    "Click here to download a high-quality version." +
-                "</a></div>";
+                   "<iframe src=" + url + " width=" + width + " height=" + height + " marginheight=0 marginwidth=0 " +
+                   "scrolling=no frameborder=0 /><br />" + 
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span></div>";
         }
     },
     

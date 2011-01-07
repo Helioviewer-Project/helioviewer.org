@@ -122,7 +122,7 @@ class Module_Movies implements Module
         } else {
             // Otherwise return URLs for each of the video types generated
             $urls = array();
-            foreach (array("mp4", "mov", "flv") as $supportedFormat) {
+            foreach (array("mp4", "flv") as $supportedFormat) {
                 array_push($urls, "$baseURL.$supportedFormat");
             }
             return $urls;
@@ -137,6 +137,34 @@ class Module_Movies implements Module
     public function queueMovie()
     {
         print "Not yet implemented in Dynamo: send request to Helioqueuer instead.";
+    }
+    
+    /**
+     * Uploads a user-created video to YouTube
+     */
+    public function uploadMovieToYouTube ()
+    {
+        include_once 'src/Movie/YouTubeUploader.php';
+
+        // Make sure it exists
+        if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
+            throw new Exception("Invalid movie requested");
+        }
+
+        $youtube = new Movie_YouTubeUploader();
+        $youtube->uploadVideo($this->_params['file'], $this->_options);
+    }
+    
+    /**
+     * Checks to see if Helioviewer.org is authorized to upload videos for a user
+     */
+    public function checkYouTubeAuth () {
+        include_once 'src/Movie/YouTubeUploader.php';
+        
+        $youtube = new Movie_YouTubeUploader();
+
+        header('Content-type: application/json');
+        print json_encode($youtube->checkYouTubeAuth());
     }
 
     /**
@@ -277,12 +305,24 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                "required" => array('layers', 'startTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
-                                    'numFrames', 'uuid', 'watermarkOn'),
+               "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
+                                   'numFrames', 'uuid', 'watermarkOn'),
                "dates"    => array('startTime', 'endTime'),
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                "ints"     => array('frameRate', 'numFrames')
             );
+            break;
+        case "uploadMovieToYouTube":
+            $expected = array(
+                "required" => array('file'),
+                "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready', 'dialogMode'),
+                "files"    => array('file'),
+                "bools"    => array('share', 'ready', 'dialogMode')
+            
+            );
+            break;
+        case "checkYouTubeAuth":
+            $expected = array ();
         default:
             break;
         }

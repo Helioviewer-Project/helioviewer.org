@@ -2,6 +2,7 @@
 $ini = "settings/Config.ini";
 if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
+unset($config['youtube_developer_key']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
