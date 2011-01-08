@@ -503,11 +503,6 @@ class Image_Composite_HelioviewerCompositeImage
         if (isset($this->_composite)) {
             $this->_composite->destroy();    
         }
-       
-        // Delete files used to create composite image
-        foreach ($this->_imageLayers as $tmpFile) {
-            unlink($tmpFile->getFilepath());
-        }
     }
 }
 ?>
