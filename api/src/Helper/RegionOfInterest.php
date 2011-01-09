@@ -11,7 +11,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-
+define("INVALID_REGION_OF_INTEREST", "Requested region has a width or height equal to zero");
 /**
  * A simple class to represent a rectangular region of interest on or around the Sun. Region of interest here refers
  * to a region of interest in space. This region may be larger than, smaller than, or the same size as a given
@@ -57,6 +57,11 @@ class Helper_RegionOfInterest
         // Maximum dimensions allowed for request
         $this->_maxWidth  = $maxWidth;
         $this->_maxHeight = $maxHeight;
+        
+        // Make sure width and height are non-zero
+        if ($this->getWidth() <= 0 || $this->getHeight() <= 0) {
+            throw new Exception(INVALID_REGION_OF_INTEREST, 1);
+        }
 
         $this->_limitToMaximumDimensions();
     }
