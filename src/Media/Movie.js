@@ -138,7 +138,7 @@ var Movie = Media.extend(
         
         uploadURL =  "api/index.php?action=uploadMovieToYouTube&file=" + hqFile;
         uploadURL += "&title=" + datasources.join(", ") + " (" + this.time + " UTC)";
-        uploadURL += "&tags="  + tags.join(" ");
+        uploadURL += "&tags="  + tags.join(", ");
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions();
