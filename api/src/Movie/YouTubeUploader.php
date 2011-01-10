@@ -315,7 +315,7 @@ class Movie_YouTubeUploader
         
         <!-- Tags -->
         <label for="youtube-tags">Tags:</label>
-        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxBytes;?>" value="<?php echo $tags;?>" />
+        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxBytes;?>" value="Helioviewer.org, <?php echo $tags;?>" />
         <br /><br />
         
         <!-- Sharing -->

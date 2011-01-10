@@ -271,8 +271,8 @@ var Helioviewer = UIController.extend(
 
         // Query parameters
         params = {
-            "action": "getUserVideos",
-            "n"     : 3
+            "action"   : "getUserVideos",
+            "pageSize" : 3
         };
         
         // Fetch videos

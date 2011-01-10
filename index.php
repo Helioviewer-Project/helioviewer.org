@@ -223,7 +223,9 @@ unset($config['youtube_developer_key']);
                 <img id='yt-logo' src='resources/images/Social.me/24 by 24 pixels/youtube.png' alt='YouTube Logo' />
                 <span style='line-height: 210%'>Uploads</span>
             </div>
-            <div id="user-uploads-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
+            <div id="user-uploads-panel" class="ui-widget ui-widget-content ui-corner-all">
+                <div id="more-videos"><a alt="The Helioviewer Project Blog" href="blog/">More...</a></div>
+            </div>
         </div>
         </div>
     </div>
