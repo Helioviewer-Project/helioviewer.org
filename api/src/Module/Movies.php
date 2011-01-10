@@ -179,15 +179,20 @@ class Module_Movies implements Module
         $yt = new Zend_Gdata_YouTube(null, null, null, HV_YOUTUBE_DEVELOPER_KEY);
         $yt->setMajorProtocolVersion(2);
         
-        // Limit number of results
-        if (isset($this->_options['n'])) {
-            $n = $this->_options['n'];
-        } else {
-            $n = 10;
-        }
+        // Default options
+        $defaults = array(
+            "pageSize" => 3,
+            "pageNum"  => 1
+        );
         
+        $options = array_replace($defaults, $this->_options);
+
+        // Current page
+        $startIndex = 1 + ($options['pageSize'] * ($options['pageNum'] - 1));
+        
+        // URL to query
         $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
-               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?max-results=$n&safeSearch=strict";
+               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?orderby=published&start-index=$startIndex&max-results={$options['pageSize']}&safeSearch=strict";
         
         // Collect videos from the feed
         $videos = array();
@@ -364,8 +369,8 @@ class Module_Movies implements Module
             break;
         case "getUserVideos":
             $expected = array(
-                "optional" => array('n'),
-                "ints"     => array('n')
+                "optional" => array('pageSize', 'pageNum'),
+                "ints"     => array('pageSize', 'pageNum')
             );
             break;
         case "checkYouTubeAuth":
