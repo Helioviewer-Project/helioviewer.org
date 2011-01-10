@@ -216,15 +216,13 @@ unset($config['youtube_developer_key']);
             <!-- Recent Blog Entries -->
             <div style="margin-left: 5px; margin-top: 15px;" class="section-header">News</div>
             <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
-            <br /><br />
             
             <!-- User-Submitted Videos -->
-            <div style="margin-left: 5px; margin-bottom: 2px; height: 24px;" class="section-header">
-                <img id='yt-logo' src='resources/images/Social.me/24 by 24 pixels/youtube.png' alt='YouTube Logo' />
-                <span style='line-height: 210%'>Uploads</span>
+            <div style="margin: 5px 0px 2px 5px; height: 48px; position: relative;" class="section-header">
+                <img id='yt-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
+                <span style='position: absolute; bottom: 5px;'>Recent Uploads</span>
             </div>
             <div id="user-uploads-panel" class="ui-widget ui-widget-content ui-corner-all">
-                <div id="more-videos"><a alt="The Helioviewer Project Blog" href="blog/">More...</a></div>
             </div>
         </div>
         </div>

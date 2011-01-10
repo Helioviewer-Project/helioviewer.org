@@ -196,16 +196,14 @@ class Module_Movies implements Module
         
         // Collect videos from the feed
         $videos = array();
-        
-        // TODO: set setRecorded to set the time?
 
         // Process video entries
         foreach($yt->getVideoFeed($url) as $videoEntry) {
             array_push($videos, array(
-                "title"   => $videoEntry->getVideoTitle(),
                 "watch"   => $videoEntry->getVideoWatchPageUrl(),
                 "flash"   => $videoEntry->getFlashPlayerUrl(),
-                "thumbnails" => $videoEntry->getVideoThumbnails()
+                "thumbnails" => $videoEntry->getVideoThumbnails(),
+                "published"  => $videoEntry->getPublished()->getText()
             ));
         }
         

@@ -36,7 +36,7 @@ var Helioviewer = UIController.extend(
         
         this._initTooltips();
         
-        this.displayBlogFeed("blog/feed/feed.rss", 3, false);
+        this.displayBlogFeed("blog/feed/", 3, false);
         
         this.displayUserVideos();
 
@@ -267,7 +267,7 @@ var Helioviewer = UIController.extend(
      * Display recent user-submitted videos
      */
     displayUserVideos: function () {
-        var params, html = "";
+        var params, now, html = "";
 
         // Query parameters
         params = {
@@ -277,8 +277,12 @@ var Helioviewer = UIController.extend(
         
         // Fetch videos
         $.getJSON("api/index.php", params, function (videos) {
+            now = new Date().getTime();
+            
             $.each(videos, function (i, vid) {
-                html += "<a target='_blank' href='" + vid.watch + "' alt='" + vid.title + "'>" + vid.title +
+                var when = toFuzzyTime((now - getUTCTimestamp(vid.published)) / 1000) + " ago";
+                
+                html += "<a target='_blank' href='" + vid.watch + "' alt='video thumbnail'>" + when +
                 "<div class='user-video-thumbnail-container'>" +
                 "<img src='" + vid.thumbnails[4].url + "' alt='user video thumbnail' /></div></a><br />";                        
             });
