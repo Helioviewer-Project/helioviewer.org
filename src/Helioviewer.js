@@ -38,7 +38,7 @@ var Helioviewer = UIController.extend(
         
         this.displayBlogFeed("blog/feed/", 3, false);
         
-        this.displayUserVideos();
+        this._userVideos = new UserVideoGallery("#user-video-gallery-main");
 
         var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
             movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
@@ -260,33 +260,6 @@ var Helioviewer = UIController.extend(
                 
                 $("#social-panel").append(html + more);
             }
-        });
-    },
-    
-    /**
-     * Display recent user-submitted videos
-     */
-    displayUserVideos: function () {
-        var params, now, html = "";
-
-        // Query parameters
-        params = {
-            "action"   : "getUserVideos",
-            "pageSize" : 3
-        };
-        
-        // Fetch videos
-        $.getJSON("api/index.php", params, function (videos) {
-            now = new Date().getTime();
-            
-            $.each(videos, function (i, vid) {
-                var when = toFuzzyTime((now - getUTCTimestamp(vid.published)) / 1000) + " ago";
-                
-                html += "<a target='_blank' href='" + vid.watch + "' alt='video thumbnail'>" + when +
-                "<div class='user-video-thumbnail-container'>" +
-                "<img src='" + vid.thumbnails[4].url + "' alt='user video thumbnail' /></div></a><br />";                        
-            });
-            $("#user-uploads-panel").append(html);
         });
     },
     

@@ -222,7 +222,14 @@ unset($config['youtube_developer_key']);
                 <img id='yt-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
                 <span style='position: absolute; bottom: 5px;'>Recent Uploads</span>
             </div>
-            <div id="user-uploads-panel" class="ui-widget ui-widget-content ui-corner-all">
+            <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
+                <a id="user-video-gallery-next" href="#" style='font-style: italic; font-weight: normal; display: inline-block;'>
+                    <div class='ui-icon ui-icon-triangle-1-n' style='width:16px; height:16px;'></div>
+                </a>
+                <div id="user-video-gallery-main"></div>
+                <a id="user-video-gallery-prev" href="#" style='font-style: italic; font-weight: normal; display: inline-block;'>
+                    <div class='ui-icon ui-icon-triangle-1-s' style='width:16px; height:16px;'></div>
+                </a>
             </div>
         </div>
         </div>
@@ -333,7 +340,7 @@ unset($config['youtube_developer_key']);
                     "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
                     "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                     "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-                    "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", 
+                    "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", "UI/UserVideoGallery.js", 
                     "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
         foreach($js as $file)
             printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n", $file);
