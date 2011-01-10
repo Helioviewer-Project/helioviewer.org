@@ -138,7 +138,7 @@ div.text-btn:hover {
     color: #d18f61;
 }
 
-span.ui-icon-hover, div.ui-icon-hover {
+span.ui-icon-hover, div.ui-icon-hover:not(.disabled) {
     background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
@@ -296,9 +296,13 @@ span.ui-icon-hover, div.ui-icon-hover {
     height: 100%;
     min-height: 150px;
     font-size: 11px;
-    padding: 2px 2px 8px;
+    padding: 2px 2px 0 0;
     margin: 0 5px;
     text-align: center;
+}
+
+#user-video-gallery-main {
+    margin-bottom: 5px;
 }
 
 #user-video-gallery a {

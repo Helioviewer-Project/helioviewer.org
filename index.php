@@ -224,7 +224,7 @@ unset($config['youtube_developer_key']);
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
                 <a id="user-video-gallery-next" href="#" style='font-style: italic; font-weight: normal; display: inline-block;'>
-                    <div class='ui-icon ui-icon-triangle-1-n' style='width:16px; height:16px;'></div>
+                    <div class='ui-icon ui-icon-triangle-1-n disabled' style='width:16px; height:16px;'></div>
                 </a>
                 <div id="user-video-gallery-main"></div>
                 <a id="user-video-gallery-prev" href="#" style='font-style: italic; font-weight: normal; display: inline-block;'>
