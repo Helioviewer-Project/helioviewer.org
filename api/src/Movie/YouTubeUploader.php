@@ -95,6 +95,9 @@ class Movie_YouTubeUploader
         // Once we have a session token get an AuthSubHttpClient
         $this->_httpClient = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
         
+        // Increase timeout time to prevent client from timing out during uploads
+        $this->_httpClient->setConfig(array( 'timeout' => 180 ));
+        
         // Creates an instance of the Youtube GData object
         $this->_youTube = $this->_getYoutubeInstance();
         
