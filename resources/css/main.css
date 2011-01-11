@@ -138,7 +138,7 @@ div.text-btn:hover {
     color: #d18f61;
 }
 
-span.ui-icon-hover, div.ui-icon-hover:not(.disabled) {
+span.ui-icon-hover, div.ui-icon-hover {
     background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
@@ -305,6 +305,19 @@ span.ui-icon-hover, div.ui-icon-hover:not(.disabled) {
     margin-bottom: 5px;
 }
 
+#user-video-gallery-spinner {
+	background: url("../../resources/images/ajax-loader.gif");
+	width: 16px;
+	height: 16px;
+	margin: 94px auto;
+}
+
+#user-video-gallery-next, #user-video-gallery-prev {
+	font-style: italic;
+	font-weight: normal;
+	display: inline-block;
+}
+
 #user-video-gallery a {
     font-size: 13px;
     font-weight: 700;
@@ -316,7 +329,8 @@ span.ui-icon-hover, div.ui-icon-hover:not(.disabled) {
 }
 
 #user-video-gallery img {
-    width: 215px;
+    width : 240px;
+	height: 180px;
     margin-left: auto;
     margin-right: auto;
 }

@@ -223,12 +223,14 @@ unset($config['youtube_developer_key']);
                 <span style='position: absolute; bottom: 5px;'>Recent Uploads</span>
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
-                <a id="user-video-gallery-next" href="#" style='font-style: italic; font-weight: normal; display: inline-block;'>
-                    <div class='ui-icon ui-icon-triangle-1-n disabled' style='width:16px; height:16px;'></div>
+                <a id="user-video-gallery-next" href="#">
+                    <div class='ui-icon ui-icon-triangle-1-n'></div>
                 </a>
-                <div id="user-video-gallery-main"></div>
-                <a id="user-video-gallery-prev" href="#" style='font-style: italic; font-weight: normal; display: inline-block;'>
-                    <div class='ui-icon ui-icon-triangle-1-s' style='width:16px; height:16px;'></div>
+                <div id="user-video-gallery-main">
+                    <div id="user-video-gallery-spinner"></div>
+                </div>
+                <a id="user-video-gallery-prev" href="#">
+                    <div class='ui-icon ui-icon-triangle-1-s'></div>
                 </a>
             </div>
         </div>
@@ -388,7 +390,7 @@ unset($config['youtube_developer_key']);
         try {
             helioviewer = new Helioviewer(urlSettings, serverSettings);
         } catch (e) {
-            console.log("Exception: " + e.description);
+            console.log("Exception: " + e.toString() + " (" + e.fileName + ": " + e.lineNumber + ")");
         }
     });
 </script>
