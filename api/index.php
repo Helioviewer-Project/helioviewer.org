@@ -54,6 +54,7 @@ function loadModule($params)
         "getClosestImage"      => "WebClient",
         "getDataSources"       => "WebClient",
         "getJP2Header"         => "WebClient",
+        "getNewsFeed"          => "WebClient",
         "getTile"              => "WebClient",
         "takeScreenshot"       => "WebClient",
         "getJP2Image"          => "JHelioviewer",

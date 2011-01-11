@@ -23,9 +23,10 @@ var UserVideoGallery = Class.extend(
         this._prevPage  = $("#user-video-gallery-prev");
         
         this._pageSize  = this._choosePageSize();
+        this._pageNum   = 1;
 
         this._setupEventHandlers();
-        this._fetchVideos(1, this._pageSize);
+        this._fetchVideos(this._pageNum, this._pageSize);
       
         // TODO 2011/01/10: Add resize handler
     },

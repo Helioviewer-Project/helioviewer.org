@@ -36,7 +36,7 @@ var Helioviewer = UIController.extend(
         
         this._initTooltips();
         
-        this.displayBlogFeed("blog/feed/", 3, false);
+        this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
         
         this._userVideos = new UserVideoGallery();
 

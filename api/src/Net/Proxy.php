@@ -48,7 +48,7 @@ class Net_Proxy
      * 
      * @return mixed Contents of mirrored page
      */
-    public function query($params, $curl = false)
+    public function query($params = array(), $curl = false)
     {
         $url = $this->_baseURL . http_build_query($params);
         
@@ -75,7 +75,7 @@ class Net_Proxy
      *  
      *  @return $string query response text
      */
-    public function post($params, $curl = false)
+    public function post($params = array(), $curl = false)
     {
         $url = $this->_baseURL;
         
