@@ -24,6 +24,8 @@ var UserVideoGallery = Class.extend(
         
         this._maxPageNum  = 50;
         
+        this._working     = false;
+        
         this._pageSize  = this._choosePageSize();
         this._pageNum   = 1;
 
@@ -47,6 +49,8 @@ var UserVideoGallery = Class.extend(
         // Show loading indicator
         this._container.find("a").empty();
         this._loader.show();
+        
+        this._working = true;
 
         // Fetch videos
         $.getJSON("api/index.php", params, $.proxy(this._buildHTML, this));
@@ -73,12 +77,18 @@ var UserVideoGallery = Class.extend(
 
         this._loader.hide();
         this._container.append(html);
+        
+        this._working = false;
     },
     
     /**
      * Go to the previous page
      */
     _prevPage: function () {
+        if (this._working) {
+            return false;
+        }        
+        
         if (this._pageNum < this._maxPageNum) {
             this._pageNum += 1;
         }
@@ -90,6 +100,10 @@ var UserVideoGallery = Class.extend(
      * Go to the next page
      */
     _nextPage: function () {
+        if (this._working) {
+            return false;
+        }
+
         if (this._pageNum > 1) {
             this._pageNum -= 1;
         }

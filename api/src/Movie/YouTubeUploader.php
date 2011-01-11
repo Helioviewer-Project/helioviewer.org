@@ -192,7 +192,7 @@ class Movie_YouTubeUploader
         // set some developer tags -- this is optional
         // (see Searching by Developer Tags for more details)
         if ($videoInfo['share']) {
-            $videoEntry->setVideoDeveloperTags(array('helioviewer.org'));    
+            $videoEntry->setVideoDeveloperTags(array('Helioviewer.org'));    
         }
 
         return $videoEntry;
