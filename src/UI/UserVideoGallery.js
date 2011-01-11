@@ -17,16 +17,18 @@ var UserVideoGallery = Class.extend(
      * @description Creates a new UserVideoGallery component
      */
     init : function () {
-        this._container = $("#user-video-gallery-main");
-        this._loader    = $("#user-video-gallery-spinner");
-        this._nextPage  = $("#user-video-gallery-next");
-        this._prevPage  = $("#user-video-gallery-prev");
+        this._container   = $("#user-video-gallery-main");
+        this._loader      = $("#user-video-gallery-spinner");
+        this._nextPageBtn = $("#user-video-gallery-next");
+        this._prevPageBtn = $("#user-video-gallery-prev");
+        
+        this._maxPageNum  = 50;
         
         this._pageSize  = this._choosePageSize();
         this._pageNum   = 1;
 
         this._setupEventHandlers();
-        this._fetchVideos(this._pageNum, this._pageSize);
+        this._fetchVideos();
       
         // TODO 2011/01/10: Add resize handler
     },
@@ -34,13 +36,17 @@ var UserVideoGallery = Class.extend(
     /**
      * Retrieves a single page of video results and displays them to the user
      */
-    _fetchVideos: function (pageNum, pageSize) {
+    _fetchVideos: function () {
         // Query parameters
         var params = {
             "action"   : "getUserVideos",
-            "pageSize" : pageSize,
-            "pageNum"  : pageNum
+            "pageSize" : this._pageSize,
+            "pageNum"  : this._pageNum
         };
+        
+        // Show loading indicator
+        this._container.find("a").empty();
+        this._loader.show();
 
         // Fetch videos
         $.getJSON("api/index.php", params, $.proxy(this._buildHTML, this));
@@ -73,12 +79,22 @@ var UserVideoGallery = Class.extend(
      * Go to the previous page
      */
     _prevPage: function () {
+        if (this._pageNum < this._maxPageNum) {
+            this._pageNum += 1;
+        }
+        
+        this._fetchVideos();
     },
     
     /**
      * Go to the next page
      */
     _nextPage: function () {
+        if (this._pageNum > 1) {
+            this._pageNum -= 1;
+        }
+        
+        this._fetchVideos();
     },
     
     /**
@@ -100,7 +116,10 @@ var UserVideoGallery = Class.extend(
      */
     _setupEventHandlers: function () {
         // TODO 2011/01/10 Apply hover listen at .ui-icon level?
-        addIconHoverEventListener(this._nextPage);
-        addIconHoverEventListener(this._prevPage);
+        addIconHoverEventListener(this._nextPageBtn);
+        addIconHoverEventListener(this._prevPageBtn);
+        
+        this._nextPageBtn.click($.proxy(this._nextPage, this));
+        this._prevPageBtn.click($.proxy(this._prevPage, this));
     }    
 });
