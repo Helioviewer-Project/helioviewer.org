@@ -81,7 +81,7 @@ class Movie_YouTubeUploader
             "title"       => "",
             "tags"        => "",
             "description" => "This movie was produced by http://www.helioviewer.org. A high quality version of this " .
-                             "movie can be downloaded from " . HV_CACHE_URL . "/movies/$fileId."
+                             "movie can be downloaded from " . HV_CACHE_URL . "/movies/$fileId ."
         );
         
         $options = array_replace($defaults, $options);
