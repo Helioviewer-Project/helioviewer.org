@@ -169,7 +169,7 @@ var MovieHistory = History.extend(
     _addJGrowlHTML: function (id) {
         return  "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
                     " download it." + "<br />(opens in a pop-up)</div>" +
-                "<div id='watch-dialog-" + id + "' style='display:none'>&nbsp;</div>";
+                "<div id='watch-dialog-" + id + "' style='display:none'></div>";
     },
     
     /**
