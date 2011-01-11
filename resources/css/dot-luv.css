@@ -39,3 +39,8 @@ span#timeForwardBtn:hover,
 .layerManagerBtn.hidden:hover {
     background-image: url(../../resources/images/blackGlass/LayerManagerButton_Visibility_Hidden-hover.png);    
 }
+
+.ui-icon {
+	height: 16px;
+	width:  16px;
+}

@@ -16,10 +16,11 @@ var UserVideoGallery = Class.extend(
      * @constructs
      * @description Creates a new UserVideoGallery component
      */
-    init : function (id, next, prev) {
-        this._container = $(id);
-        this._nextPage  = $(next);
-        this._prevPage  = $(prev);
+    init : function () {
+        this._container = $("#user-video-gallery-main");
+        this._loader    = $("#user-video-gallery-spinner");
+        this._nextPage  = $("#user-video-gallery-next");
+        this._prevPage  = $("#user-video-gallery-prev");
         
         this._pageSize  = this._choosePageSize();
 
@@ -34,7 +35,7 @@ var UserVideoGallery = Class.extend(
      */
     _fetchVideos: function (pageNum, pageSize) {
         // Query parameters
-        params = {
+        var params = {
             "action"   : "getUserVideos",
             "pageSize" : pageSize,
             "pageNum"  : pageNum
@@ -63,6 +64,7 @@ var UserVideoGallery = Class.extend(
         // Drop tailing line break
         html = html.slice(0, -6);
 
+        this._loader.hide();
         this._container.append(html);
     },
     
@@ -84,9 +86,9 @@ var UserVideoGallery = Class.extend(
     _choosePageSize: function () {
         var height = $(window).height();
 
-        if (height > 935) {
+        if (height > 1035) {
             return 3;
-        } else if (height > 730) {
+        } else if (height > 780) {
             return 2;
         }        
         return 1;

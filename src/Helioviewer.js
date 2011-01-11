@@ -38,9 +38,7 @@ var Helioviewer = UIController.extend(
         
         this.displayBlogFeed("blog/feed/", 3, false);
         
-        this._userVideos = new UserVideoGallery(
-            "#user-video-gallery-main", "user-video-gallery-next", "#user-video-gallery-prev"
-        );
+        this._userVideos = new UserVideoGallery();
 
         var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
             movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
