@@ -35,6 +35,10 @@ var Helioviewer = UIController.extend(
         this._super(); // Call super method in UIController to load a few extensions
         
         this._initTooltips();
+        
+        this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
+        
+        this._userVideos = new UserVideoGallery();
 
         var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
             movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
@@ -218,6 +222,44 @@ var Helioviewer = UIController.extend(
             title:      "Email",
             height:     455,
             width:      400
+        });
+    },
+    
+    /**
+     * Displays recent news from the Helioviewer Project blog
+     */
+    displayBlogFeed: function (url, n, showDescription, descriptionWordLength) {
+        var html = "";
+        
+        $.getFeed({
+            url: url,
+            success: function(feed) {
+                var link, date, more, description;
+
+                // Grab the n most recent articles
+                $.each(feed.items.slice(0, n), function (i, a) {
+                    link = "<a href='" + a.link + "' alt='" + a.title + "' target='_blank'>" + a.title + "</a><br />";
+                    date = "<div class='article-date'>" + a.updated.slice(0,26) + "UTC</div>";
+                    html += "<div class='blog-entry'>" + link + date;
+                    
+                    // Include description?
+                    if (showDescription) {
+                        description = a.description;
+
+                        // Shorten if requested
+                        if (typeof descriptionWordLength === "number") {
+                            description = description.split(" ").slice(0, descriptionWordLength).join(" ") + " [...]";
+                        }
+                        html += "<div class='article-desc'>" + description + "</div>";
+                    }
+                    
+                    html += "</div>";
+                });
+                
+                more = "<div id='more-articles'><a href='blog/' alt='The Helioviewer Project Blog'>More...</a></div>";
+                
+                $("#social-panel").append(html + more);
+            }
         });
     },
     

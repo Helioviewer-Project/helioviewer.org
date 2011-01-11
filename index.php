@@ -211,7 +211,28 @@ unset($config['youtube_developer_key']);
 
         <!-- Right Column -->
         <div id="col3">
-            <div id="right-col-header"></div>
+            <div id="right-col-header" style='height: 11px'></div>
+            
+            <!-- Recent Blog Entries -->
+            <div style="margin-left: 5px; margin-top: 15px;" class="section-header">News</div>
+            <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
+            
+            <!-- User-Submitted Videos -->
+            <div style="margin: 5px 0px 2px 5px; height: 48px; position: relative;" class="section-header">
+                <img id='yt-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
+                <span style='position: absolute; bottom: 5px;'>Recent Uploads</span>
+            </div>
+            <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
+                <a id="user-video-gallery-next" href="#">
+                    <div class='ui-icon ui-icon-triangle-1-n'></div>
+                </a>
+                <div id="user-video-gallery-main">
+                    <div id="user-video-gallery-spinner"></div>
+                </div>
+                <a id="user-video-gallery-prev" href="#">
+                    <div class='ui-icon ui-icon-triangle-1-s'></div>
+                </a>
+            </div>
         </div>
         </div>
     </div>
@@ -274,6 +295,9 @@ unset($config['youtube_developer_key']);
 <!-- date.js -->
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 
+<!-- jFeed -->
+<script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
+
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
 
@@ -318,7 +342,7 @@ unset($config['youtube_developer_key']);
                     "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
                     "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                     "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-                    "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", 
+                    "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", "UI/UserVideoGallery.js", 
                     "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
         foreach($js as $file)
             printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n", $file);
@@ -366,7 +390,7 @@ unset($config['youtube_developer_key']);
         try {
             helioviewer = new Helioviewer(urlSettings, serverSettings);
         } catch (e) {
-            console.log("Exception: " + e.description);
+            console.log("Exception: " + e.toString() + " (" + e.fileName + ": " + e.lineNumber + ")");
         }
     });
 </script>

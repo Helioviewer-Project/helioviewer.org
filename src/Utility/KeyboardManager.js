@@ -39,7 +39,7 @@ var KeyboardManager = Class.extend(
 
         // Event-handlers
         $(document).keypress(function (e) {
-            if (e.target.tagName !== "INPUT") {
+            if ((e.target.tagName !== "INPUT") && (e.target.tagName !== "TEXTAREA")) {
                 self.onKeyPress(e);
             }
         });

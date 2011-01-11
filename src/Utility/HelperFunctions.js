@@ -239,7 +239,7 @@ var helioprojectiveToSolarRadii = function (hx, hy, scale, rsun) {
  * Takes in a time difference in seconds and converts it to 'fuzzy' time, namely 
  * "5 minutes ago" or "3 days ago"
  * 
- * @input {int} timeDiff -- Difference in time between two values in seconds
+ * @input {int} timeDiff Difference in time between two values in seconds
  */
 var toFuzzyTime = function (timeDiff) {
     if (timeDiff <= 60) {

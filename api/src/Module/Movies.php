@@ -166,6 +166,50 @@ class Module_Movies implements Module
         header('Content-type: application/json');
         print json_encode($youtube->checkYouTubeAuth());
     }
+    
+    /**
+     * Retrieves recent user-submitted videos form YouTube and displays either an XML feed or HTML
+     * 
+     * TODO: 2011/01/07: Move to a separate class
+     */
+    public function getUserVideos() {
+        require_once 'Zend/Loader.php';
+        Zend_Loader::loadClass('Zend_Gdata_YouTube');
+        
+        $yt = new Zend_Gdata_YouTube(null, null, null, HV_YOUTUBE_DEVELOPER_KEY);
+        $yt->setMajorProtocolVersion(2);
+        
+        // Default options
+        $defaults = array(
+            "pageSize" => 3,
+            "pageNum"  => 1
+        );
+        
+        $options = array_replace($defaults, $this->_options);
+
+        // Current page
+        $startIndex = 1 + ($options['pageSize'] * ($options['pageNum'] - 1));
+        
+        // URL to query
+        $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
+               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?orderby=published&start-index=$startIndex&max-results={$options['pageSize']}&safeSearch=strict";
+        
+        // Collect videos from the feed
+        $videos = array();
+
+        // Process video entries
+        foreach($yt->getVideoFeed($url) as $videoEntry) {
+            array_push($videos, array(
+                "watch"   => $videoEntry->getVideoWatchPageUrl(),
+                "flash"   => $videoEntry->getFlashPlayerUrl(),
+                "thumbnails" => $videoEntry->getVideoThumbnails(),
+                "published"  => $videoEntry->getPublished()->getText()
+            ));
+        }
+        
+        header('Content-type: application/json');
+        echo json_encode($videos);        
+    }
 
     /**
      * Gets the movie url and loads it into Kaltura
@@ -321,8 +365,15 @@ class Module_Movies implements Module
             
             );
             break;
+        case "getUserVideos":
+            $expected = array(
+                "optional" => array('pageSize', 'pageNum'),
+                "ints"     => array('pageSize', 'pageNum')
+            );
+            break;
         case "checkYouTubeAuth":
             $expected = array ();
+            break;
         default:
             break;
         }

@@ -291,6 +291,18 @@ class Module_WebClient implements Module
     }
     
     /**
+     * Retrieves a local or remote RSS/Atom news feed
+     */
+    public function getNewsFeed()
+    {
+        include_once 'src/Net/Proxy.php';
+        $proxy = new Net_Proxy(HV_NEWS_FEED_URL);
+        
+        header("Content-Type: text/xml;charset=UTF-8");
+        echo $proxy->query();
+    }
+    
+    /**
      * Creates the directory structure which will be used to cache
      * generated tiles.
      * 
@@ -373,7 +385,8 @@ class Module_WebClient implements Module
                 "files" => array('file')
             );
             break;
-
+        case "getNewsFeed":
+            break;
         case "takeScreenshot":
             $expected = array(
                 "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
