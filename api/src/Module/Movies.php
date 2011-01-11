@@ -181,7 +181,7 @@ class Module_Movies implements Module
         
         // Default options
         $defaults = array(
-            "pageSize" => 3,
+            "pageSize" => 10,
             "pageNum"  => 1
         );
         
@@ -189,24 +189,40 @@ class Module_Movies implements Module
 
         // Current page
         $startIndex = 1 + ($options['pageSize'] * ($options['pageNum'] - 1));
+
+        $pageSize = $options['pageSize'];
         
         // URL to query
         $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
-               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?orderby=published&start-index=$startIndex&max-results={$options['pageSize']}&safeSearch=strict";
+               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?orderby=published&start-index=$startIndex&max-results=$pageSize&safeSearch=strict";
         
         // Collect videos from the feed
         $videos = array();
-
+        
         // Process video entries
         foreach($yt->getVideoFeed($url) as $videoEntry) {
-            array_push($videos, array(
-                "watch"   => $videoEntry->getVideoWatchPageUrl(),
-                "flash"   => $videoEntry->getFlashPlayerUrl(),
-                "thumbnails" => $videoEntry->getVideoThumbnails(),
-                "published"  => $videoEntry->getPublished()->getText()
-            ));
+            $id = $videoEntry->getVideoId();
+
+            // Check to make sure video was not removed by the user
+            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$id?v=2");
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+            
+            $response = curl_exec($handle);
+            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+
+            curl_close($handle);
+
+            // Only add videos with response code 200
+            if ($httpCode == 200) {
+                array_push($videos, array(
+                    "id"      => $id,
+                    "watch"   => $videoEntry->getVideoWatchPageUrl(),
+                    "flash"   => $videoEntry->getFlashPlayerUrl(),
+                    "thumbnails" => $videoEntry->getVideoThumbnails(),
+                    "published"  => $videoEntry->getPublished()->getText()
+                ));
+            }
         }
-        
         header('Content-type: application/json');
         echo json_encode($videos);        
     }

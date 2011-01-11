@@ -21,18 +21,33 @@ var UserVideoGallery = Class.extend(
         this._loader      = $("#user-video-gallery-spinner");
         this._nextPageBtn = $("#user-video-gallery-next");
         this._prevPageBtn = $("#user-video-gallery-prev");
-        
-        this._maxPageNum  = 50;
-        
+
         this._working     = false;
         
-        this._pageSize  = this._choosePageSize();
-        this._pageNum   = 1;
+        // Local
+        this._pageSize = this._choosePageSize();
+        this._pageNum  = 1;
+        
+        // Remote (may differ from local due to deleted videos, etc)
+        this._remotePageSize = 20;
+        this._remotePageNum  = 1;
+        
+        this._videos = [];
 
         this._setupEventHandlers();
         this._fetchVideos();
       
         // TODO 2011/01/10: Add resize handler
+    },
+    
+    /**
+     * Updates video gallery to show new entries
+     */
+    _updateGallery: function () {
+        var startIndex = (this._pageNum - 1) * this._pageSize,
+            endIndex   = Math.min(startIndex + this._pageSize, this._videos.length);
+
+        this._buildHTML(this._videos.slice(startIndex, endIndex));
     },
     
     /**
@@ -42,8 +57,8 @@ var UserVideoGallery = Class.extend(
         // Query parameters
         var params = {
             "action"   : "getUserVideos",
-            "pageSize" : this._pageSize,
-            "pageNum"  : this._pageNum
+            "pageSize" : this._remotePageSize,
+            "pageNum"  : this._remotePageNum
         };
         
         // Show loading indicator
@@ -53,7 +68,15 @@ var UserVideoGallery = Class.extend(
         this._working = true;
 
         // Fetch videos
-        $.getJSON("api/index.php", params, $.proxy(this._buildHTML, this));
+        $.getJSON("api/index.php", params, $.proxy(this._processResponse, this));
+    },
+    
+    /**
+     * Processes response and stores video information locally
+     */
+    _processResponse: function (response) {
+        this._videos = this._videos.concat(response);
+        this._updateGallery();
     },
     
     /**
@@ -62,6 +85,9 @@ var UserVideoGallery = Class.extend(
     _buildHTML: function (videos) {
         var html = "",
             now  = new Date().getTime();
+        
+        // Remove old thumbmails
+        this._container.find("a, br").remove();
         
         $.each(videos, function (i, vid) {
             var when = toFuzzyTime((now - getUTCTimestamp(vid.published)) / 1000) + " ago";
@@ -87,13 +113,23 @@ var UserVideoGallery = Class.extend(
     _prevPage: function () {
         if (this._working) {
             return false;
-        }        
-        
-        if (this._pageNum < this._maxPageNum) {
-            this._pageNum += 1;
         }
         
-        this._fetchVideos();
+        if (this._pageNum < (Math.floor(this._videos.length / this._pageSize))) {
+            this._pageNum += 1;
+            this._updateGallery();
+        }
+            
+            // Fetch more videos if needed
+//            if (this._videos.length < (this._pageNum * this._pageSize - 1)) {
+//                this._remotePageNum += 1;
+//                this._fetchVideos();
+//            } else {
+//                this._updateGallery();
+//            }
+//        }
+        
+        return false;
     },
     
     /**
@@ -106,9 +142,10 @@ var UserVideoGallery = Class.extend(
 
         if (this._pageNum > 1) {
             this._pageNum -= 1;
+            this._updateGallery();
         }
         
-        this._fetchVideos();
+        return false;
     },
     
     /**
