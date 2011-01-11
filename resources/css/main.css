@@ -8,7 +8,7 @@ button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}
 
-#left-col-header {height: 50px; margin-top: -24px;}
+#left-col-header, #right-col-header {height: 50px; margin-top: -24px;}
 
 /** 03/14/2010: Temporary fix for datepicker. TODO: upgrade jQuery UI */
 #ui-datepicker-div {display:none;}
@@ -138,7 +138,7 @@ div.text-btn:hover {
     color: #d18f61;
 }
 
-span.ui-icon-hover {
+span.ui-icon-hover, div.ui-icon-hover {
     background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
@@ -253,3 +253,94 @@ span.ui-icon-hover {
 /* Google Chrome Frame Installer */
 .chromeFrameOverlayContent  {border:1px solid #303030;}
 .chromeFrameOverlayUnderlay {background: #000; opacity: 0.5;}
+
+/* Social panel */
+#social-panel {
+    height: 100%;
+    min-height: 150px;
+    font-size: 11px;
+    padding: 2px 2px 8px;
+    margin: 0 5px;
+}
+
+#social-panel .blog-entry {
+    margin: 4px 4px 14px 4px;
+}
+
+#social-panel .blog-entry a {
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+#social-panel .blog-entry a:hover {
+    color: #D18F16;
+}
+
+#social-panel .article-date {
+    font-style: italic;
+}
+
+#more-articles {
+    text-align: right;
+}
+
+#more-articles a {
+   text-decoration: none;
+}
+
+#more-articles a:hover {
+    color: #D18F16;
+}
+
+#user-video-gallery {
+    height: 100%;
+    min-height: 150px;
+    font-size: 11px;
+    padding: 2px 2px 0 0;
+    margin: 0 5px;
+    text-align: center;
+}
+
+#user-video-gallery-main {
+    margin-bottom: 5px;
+}
+
+#user-video-gallery-spinner {
+	background: url("../../resources/images/ajax-loader.gif");
+	width: 16px;
+	height: 16px;
+	margin: 94px auto;
+}
+
+#user-video-gallery-next, #user-video-gallery-prev {
+	font-style: italic;
+	font-weight: normal;
+	display: inline-block;
+}
+
+#user-video-gallery a {
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;  
+}
+
+#user-video-gallery a:hover {
+    color: #D18F16;  
+}
+
+#user-video-gallery img {
+    width : 240px;
+	height: 180px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#yt-logo {
+    float: left;
+    margin-right: 5px;
+}
+
+.user-video-thumbnail-container {
+    width: 100%;
+    text-align: center;
+}

@@ -3,6 +3,9 @@
 /**
  * Movie_YouTubeUploader Class Definition
  * 
+ * TODO 2011/01/09 Check for other restricted characters ( e.g. < > in description...see reference link below),
+ *      word limits (e.g. keywords), etc. 
+ * 
  * PHP version 5
  *
  * @category Movie
@@ -28,6 +31,11 @@ class Movie_YouTubeUploader
     private $_uploadURL;
     private $_httpClient;
     private $_youTube;
+    
+    //YouTube Limits (http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference)
+    private $_titleMaxBytes       = 100;
+    private $_descriptionMaxBytes = 5000;
+    private $_keywordsMaxBytes    = 500;
     
     /**
      * Creates a new YouTubeUploader instance
@@ -86,6 +94,9 @@ class Movie_YouTubeUploader
         
         // Once we have a session token get an AuthSubHttpClient
         $this->_httpClient = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
+        
+        // Increase timeout time to prevent client from timing out during uploads
+        $this->_httpClient->setConfig(array( 'timeout' => 180 ));
         
         // Creates an instance of the Youtube GData object
         $this->_youTube = $this->_getYoutubeInstance();
@@ -254,12 +265,13 @@ class Movie_YouTubeUploader
      */
     private function _uploadVideoToYouTube ($videoEntry)
     {
+        // TODO check title, desc, keyword length on before making request.
         try {
             $newEntry = $this->_youTube->insertEntry($videoEntry, $this->_uploadURL, 'Zend_Gdata_YouTube_VideoEntry');
         } catch (Zend_Gdata_App_HttpException $httpException) {
-            echo $httpException->getRawResponseBody();
+            throw($httpException);
         } catch (Zend_Gdata_App_Exception $e) {
-            echo $e->getMessage();
+            throw($e);
         }
         
         $state = $newEntry->getVideoState();
@@ -269,10 +281,6 @@ class Movie_YouTubeUploader
     
     /**
      * Displays the YouTube video submission form
-     * 
-     * TODO 2010/01/04: Offer user pre-filled title, description, and tags?
-     *                  E.g.: "Helioveiwer.org: SDO AIA 171 (January 04th, 01:29:04 UTC)"
-     *                  Could even offer multiple formats for title, subsets of keywords, etc
      */
     private function _printForm($fileId, $title, $description, $tags, $dialogMode) {
     ?>
@@ -300,17 +308,17 @@ class Movie_YouTubeUploader
     <form id="youtube-video-info" action="index.php" method="post">
         <!-- Title -->
         <label for="youtube-title">Title:</label>
-        <input id="youtube-title" type="text" name="title" value="<?php echo $title;?>" />
+        <input id="youtube-title" type="text" name="title" maxlength="<?php echo $this->_titleMaxBytes;?>>" value="<?php echo $title;?>" />
         <br />
         
         <!-- Description -->
         <label for="youtube-desc">Description:</label>
-        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description"><?php echo $description;?></textarea>
+        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="<?php echo $this->_descriptionMaxBytes;?>"><?php echo $description;?></textarea>
         <br />
         
         <!-- Tags -->
         <label for="youtube-tags">Tags:</label>
-        <input id="youtube-tags" type="text" name="tags" value="<?php echo $tags;?>" />
+        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxBytes;?>" value="Helioviewer.org, <?php echo $tags;?>" />
         <br /><br />
         
         <!-- Sharing -->
