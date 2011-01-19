@@ -220,7 +220,7 @@ unset($config['youtube_developer_key']);
             <!-- User-Submitted Videos -->
             <div style="margin: 5px 0px 2px 5px; height: 48px; position: relative;" class="section-header">
                 <img id='yt-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
-                <span style='position: absolute; bottom: 5px;'>Recent Uploads</span>
+                <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
                 <a id="user-video-gallery-next" href="#">
