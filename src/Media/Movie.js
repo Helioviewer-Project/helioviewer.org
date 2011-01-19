@@ -101,7 +101,7 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var file, hqFile, dimensions, movieDialog, uploadURL, datasources, tags, self = this;
+        var file, hqFile, dimensions, movieDialog, movieTitle, uploadURL, datasources, tags, self = this;
         
         // Work-around: re-process file information for YouTube uploads
         file   = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie        
@@ -136,8 +136,11 @@ var Movie = Media.extend(
             }
         });
         
+        // Suggested movie title
+        movieTitle = datasources.join(", ") + " (" + this.time + " UTC)";
+        
         uploadURL =  "api/index.php?action=uploadMovieToYouTube&file=" + hqFile;
-        uploadURL += "&title=" + datasources.join(", ") + " (" + this.time + " UTC)";
+        uploadURL += "&title=" + movieTitle;
         uploadURL += "&tags="  + tags.join(", ");
         
         // Make sure dialog fits nicely inside the browser window
@@ -146,7 +149,7 @@ var Movie = Media.extend(
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
         // trying to download it. 
         movieDialog.dialog({
-            title     : "Helioviewer Movie Player",
+            title     : "Movie Player: " + movieTitle,
             width     : dimensions.width  + 34,
             height    : dimensions.height + 104,
             resizable : $.support.h264,

@@ -480,8 +480,8 @@ class Module_WebClient implements Module
                 <br />
         
                 <span class="example-header">Example:</span> <span class="example-url">
-                <a href="<?php echo $rootURL;?>date=2003-10-05T00:00:00Z&amp;imageScale=2.63&amp;imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
-                   <?php echo $rootURL;?>date=2003-10-05T00:00:00Z&imageScale=2.63&imageLayers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+                <a href="<?php echo $rootURL;?>date=2003-10-05T00:00:00Z&amp;imageScale=2.4&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+                   <?php echo $rootURL;?>date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
                 </a>
                 </span>
             </div>
@@ -748,9 +748,9 @@ class Module_WebClient implements Module
                 </table>   
                 <br />
                 <span class="example-header">Examples:</span> <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=5.26&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
                        <?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2
-                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=5.26
+                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8
                         &size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171
                         &offsetX=2.66&offsetY=7.32
                     </a>
@@ -787,8 +787,8 @@ class Module_WebClient implements Module
                     <tr>
                         <td><b>imageScale</b></td>
                         <td><i>Float</i></td>
-                        <td>The zoom scale of the image. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
-                            a factor of 2. The full-res scale of an EIT image is 5.26.</td>
+                        <td>The zoom scale of the image. Default scales that can be used are 0.6, 1.2, 2.4, and so on, increasing or decreasing by 
+                            a factor of 2. The full-res scale of an AIA image is 0.6.</td>
                     </tr>
                     <tr>
                         <td><b>layers</b></td>
