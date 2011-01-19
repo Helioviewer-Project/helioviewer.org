@@ -467,8 +467,8 @@ class Module_Movies implements Module
                         <tr>
                             <td><b>imageScale</b></td>
                             <td><i>Float</i></td>
-                            <td>The zoom scale of the images. Default scales that can be used are 5.26, 10.52, 21.04, and so on, increasing or decreasing by 
-                                a factor of 2. The full-res scale of an EIT image is 5.26.</td>
+                            <td>The zoom scale of the images. Default scales that can be used are 0.6, 1.2, 2.4, and so on, increasing or decreasing by 
+                                a factor of 2. The full-res scale of an AIA image is 0.6.</td>
                         </tr>                
                         <tr>
                             <td><b>layers</b></td>
