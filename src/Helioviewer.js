@@ -5,7 +5,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, UIController, ImageSelectTool, MovieBuilder, TooltipHelper, ViewportController, 
-  ScreenshotBuilder, ScreenshotHistory, MovieHistory, Shadowbox, addIconHoverEventListener */
+  ScreenshotBuilder, ScreenshotHistory, MovieHistory, Shadowbox, addIconHoverEventListener, UserVideoGallery */
 "use strict";
 var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
@@ -233,13 +233,13 @@ var Helioviewer = UIController.extend(
         
         $.getFeed({
             url: url,
-            success: function(feed) {
+            success: function (feed) {
                 var link, date, more, description;
 
                 // Grab the n most recent articles
                 $.each(feed.items.slice(0, n), function (i, a) {
                     link = "<a href='" + a.link + "' alt='" + a.title + "' target='_blank'>" + a.title + "</a><br />";
-                    date = "<div class='article-date'>" + a.updated.slice(0,26) + "UTC</div>";
+                    date = "<div class='article-date'>" + a.updated.slice(0, 26) + "UTC</div>";
                     html += "<div class='blog-entry'>" + link + date;
                     
                     // Include description?
