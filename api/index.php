@@ -467,7 +467,7 @@ function printDocumentationAppendices()
                 <tr>
                     <td>Float</td>
                     <td>A floating point number.</td>
-                    <td>2.63</td>
+                    <td>2.4</td>
                 </tr>
                 <tr>
                     <td>String</td>

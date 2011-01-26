@@ -3,7 +3,7 @@
 */
 
 /* HTML ELEMENTS */
-html, body    {background: url(../../resources/images/backgrounds/gradient_v5-optimized.png); font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;}
+html, body    {background: #20242F url('../../resources/images/backgrounds/gradient_v5-optimized.png') repeat-x; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;}
 button        {cursor:pointer}
 strong    	  {font-weight:bold;}
 input, select {background-color:#F4F4F4;}

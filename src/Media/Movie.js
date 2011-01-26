@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
+/*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray, getOS */
 "use strict";
 var Movie = Media.extend(
     /** @lends Movie.prototype */
@@ -101,10 +101,10 @@ var Movie = Media.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     playMovie: function () {
-        var file, hqFile, dimensions, movieDialog, uploadURL, datasources, tags, self = this;
+        var file, hqFile, dimensions, movieDialog, movieTitle, uploadURL, datasources, tags, self = this;
         
         // Work-around: re-process file information for YouTube uploads
-        file   = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie        
+        file   = this.url.match(/[\w\-]*\/[\w\-\.]*.mp4$/).pop(); // Relative path to movie        
         hqFile = file.replace(".mp4", "-hq." + this.hqFormat);
         
         movieDialog = $("#watch-dialog-" + this.id);
@@ -115,7 +115,7 @@ var Movie = Media.extend(
 
         // Tags
         $.each(this.layers.split("],["), function (i, layerStr) {
-            var parts = layerStr.replace(']', "").replace('[', "").split(",").slice(0,4);
+            var parts = layerStr.replace(']', "").replace('[', "").split(",").slice(0, 4);
             
             // Add observatories, instruments, detectors and measurements to tag list
             $.each(parts, function (i, item) {
@@ -129,15 +129,18 @@ var Movie = Media.extend(
         $.each(this.longName.split(", "), function (i, name) {
             var inst = name.split(" ")[0];
             
-            if ((inst === "AIA") || (inst ==="HMI")) {
+            if ((inst === "AIA") || (inst === "HMI")) {
                 datasources.push("SDO " + name);
             } else {
                 datasources.push("SOHO " + name);
             }
         });
         
+        // Suggested movie title
+        movieTitle = datasources.join(", ") + " (" + this.time + " UTC)";
+        
         uploadURL =  "api/index.php?action=uploadMovieToYouTube&file=" + hqFile;
-        uploadURL += "&title=" + datasources.join(", ") + " (" + this.time + " UTC)";
+        uploadURL += "&title=" + movieTitle;
         uploadURL += "&tags="  + tags.join(", ");
         
         // Make sure dialog fits nicely inside the browser window
@@ -146,7 +149,7 @@ var Movie = Media.extend(
         // Have to append the video player here, otherwise adding it to the div beforehand results in the browser
         // trying to download it. 
         movieDialog.dialog({
-            title     : "Helioviewer Movie Player",
+            title     : "Movie Player: " + movieTitle,
             width     : dimensions.width  + 34,
             height    : dimensions.height + 104,
             resizable : $.support.h264,
@@ -164,14 +167,14 @@ var Movie = Media.extend(
             var auth = false;
 
             // Synchronous request (otherwise Google will not allow opening of request in a new tab)
-            jQuery.ajax({
+            $.ajax({
                 async: false,
                 url : "api/index.php?action=checkYouTubeAuth",
                 type: "GET",
                 success: function (response) {
                     auth = response;
                 }
-            })
+            });
 
             // If user is already authenticated we can simply display the upload form in a dialog
             if (auth) {
@@ -188,8 +191,8 @@ var Movie = Media.extend(
         // Close movie dialog (Flash player blocks upload form)
         $("#watch-dialog-" + this.id).dialog("close");
         
-        var iframe = "<div id='youtube-upload-dialog-" + this.id + "'>" +
-                     "<iframe src='" + url + "&dialogMode=true' scrolling='no' width='100%' height='100%' style='border: none' />";
+        var iframe = "<div id='youtube-upload-dialog-" + this.id + "'>" + "<iframe src='" + url +
+                     "&dialogMode=true' scrolling='no' width='100%' height='100%' style='border: none' />";
 
         $(iframe).dialog({
             "title" : "Upload video to YouTube",
@@ -202,15 +205,16 @@ var Movie = Media.extend(
      * Decides how to display video and returns HTML corresponding to that method
      */
     getVideoPlayerHTML: function (width, height, uploadURL) {
-        var path, file, hqFile, flashFile, url, uploadURL, downloadLink, youtubeBtn;
+        var path, file, hqFile, flashFile, url, downloadLink, youtubeBtn;
 
-        file = this.url.match(/[\w-]*\/[\w-\.]*.mp4$/).pop(); // Relative path to movie
+        file = this.url.match(/[\w\-]*\/[\w\-\.]*.mp4$/).pop(); // Relative path to movie
         
         hqFile    = file.replace(".mp4", "-hq." + this.hqFormat);
         flashFile = file.replace("mp4", "flv");
         
         downloadLink = "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' alt='Download high-quality video' />Download</a>";
+                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' " +
+                       "alt='Download high-quality video' />Download</a>";
         
         youtubeBtn = "<a id='youtube-upload-" + this.id + "'  href='" + uploadURL + "' target='_blank'>" + 
                      "<img class='youtube-icon' src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +

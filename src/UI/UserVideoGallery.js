@@ -7,7 +7,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global $, window, Class, addIconHoverEventListener */
+/*global $, window, Class, addIconHoverEventListener, toFuzzyTime, getUTCTimestamp */
 "use strict";
 var UserVideoGallery = Class.extend(
     /** @lends UserVideoGallery.prototype */
@@ -90,12 +90,15 @@ var UserVideoGallery = Class.extend(
         this._container.find("a, br").remove();
         
         $.each(videos, function (i, vid) {
-            var when = toFuzzyTime((now - getUTCTimestamp(vid.published)) / 1000) + " ago";
+            var when = toFuzzyTime((now - getUTCTimestamp(vid.published)) / 1000) + " ago",
+                img  = $.grep(vid.thumbnails, function (image, i) {
+                    return image.width === "480";
+                }).pop().url;            
             
             html += "<a target='_blank' href='" + vid.watch + "' alt='video thumbnail'>" +
                     "<div class='user-video-thumbnail-container'>" +
                     "<div style='text-align: left; margin-left: 25px;'>" + when + "</div>" +
-                    "<img src='" + vid.thumbnails[4].url + "' alt='user video thumbnail' /></div></a><br />";                        
+                    "<img src='" + img + "' alt='user video thumbnail' /></div></a><br />";
         });
         
         // Drop tailing line break
