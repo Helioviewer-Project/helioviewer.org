@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, addIconHoverEventListener */
+/*global Class, $, setTimeout, window, addIconHoverEventListener */
 "use strict";
 var MediaHistoryBar = Class.extend(
     /** @lends MediaHistoryBar.prototype */

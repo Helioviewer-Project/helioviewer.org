@@ -267,6 +267,9 @@ unset($config['youtube_developer_key']);
 <!-- About dialog -->
 <div id='about-dialog'></div>
 
+<!-- Layer choice dialog -->
+<div id='layer-choice-dialog'></div>
+
 <!-- Usage Dialog -->
 <div id='usage-dialog'></div>
 

@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray, getOS */
+/*global Class, $, setTimeout, window, Media, extractLayerName, layerStringToLayerArray, getOS */
 "use strict";
 var Movie = Media.extend(
     /** @lends Movie.prototype */
