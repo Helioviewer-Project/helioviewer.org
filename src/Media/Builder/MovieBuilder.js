@@ -9,7 +9,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, getUTCTimestamp, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
+/*global Class, $, getUTCTimestamp, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
  extractLayerName */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(
@@ -77,7 +77,7 @@ var MovieBuilder = MediaBuilder.extend(
     
     /**
      * @description Checks to make sure there are 3 or less layers in the movie. If there are more, 
-     *              user is presented with pop-up in Shadowbox asking them to pick 3 layers. Otherwise,
+     *              user is presented with a pop-up asking them to pick 3 layers. Otherwise,
      *              builds the movie.
      * @param {Object} viewportInfo -- An object containing layers, time, imageScale, and coordinates.
      *                     
@@ -108,27 +108,36 @@ var MovieBuilder = MediaBuilder.extend(
     },        
 
     /**
-     * Opens Shadowbox and prompts the user to pick only 3 layers.
+     * Opens a dialog and prompts the user to pick only 3 layers.
      */
     promptForLayers: function (viewportInfo, layers) {
-        var finalLayers = [], self = this;
+        var self = this;
         
-        Shadowbox.open({
-            player:    "html",
+        $("#layer-choice-dialog").dialog({
+            dialogClass: 'helioviewer-layer-choice-dialog',
             width:     450,
             // Adjust height depending on how much space the text takes up (roughly 20 pixels per 
-            // layer name, and a base height of 170)
-            height: 170 + layers.length * 20,
-
-            // Put a table of possible layers + check boxes in shadowbox.
-            content: this.createLayerSelectionTable(layers),       
-            options:    {
-                onFinish: function () {
-                    // Set up event handler for the button
-                    $('#ok-button').click(function () {
-                        self.finalizeLayersAndBuild(viewportInfo);
-                    });
-                }
+            // layer name, and a base height of 160)
+            height: 160 + layers.length * 20,
+            open: function (e) {
+                // Put a table of possible layers + check boxes in dialog.
+                $('.ui-widget-overlay').hide().fadeIn();
+                $(this).html(self.createLayerSelectionTable(layers));
+                $("#ok-button").hover(function (e) {
+                    $(this).addClass('ui-state-hover').removeClass('ui-state-default');
+                },
+                function (e) {
+                    $(this).removeClass('ui-state-hover').addClass('ui-state-default');
+                });
+            },
+            modal: true,
+            title: "Layer selection",
+            resizable: false,
+            close: function () {
+                // Set up event handler for the button
+                $('#ok-button').click(function () {
+                    self.finalizeLayersAndBuild(viewportInfo);
+                });
             }
         });
     },
@@ -154,7 +163,7 @@ var MovieBuilder = MediaBuilder.extend(
         if (finalLayers.length <= 3 && finalLayers.length >= 1) {
             viewportInfo.layers = finalLayers.join(",");
             this.buildMovie(viewportInfo);
-            Shadowbox.close();
+            $("#layer-choice-dialog").dialog("close");
         }
 
         // If the user still hasn't entered a valid number of layers, 
@@ -168,7 +177,7 @@ var MovieBuilder = MediaBuilder.extend(
     },
     
     /**
-     * Creates a table that will pop up in Shadowbox if too many layers are requested.
+     * Creates a table that will pop up if too many layers are requested.
      * The table looks approximately like this:
      * <checkbox>Layername
      * <checkbox>Layername
@@ -177,10 +186,8 @@ var MovieBuilder = MediaBuilder.extend(
      */
     createLayerSelectionTable: function (layers) {
         var table, rawName, name, layerNum, checked;
-        table = '<div id="shadowbox-form" class="ui-widget ui-widget-content ui-corner-all ' + 
-                    'ui-helper-clearfix" style="margin: 10px; padding: 20px; font-size: 12pt;" >' +
-                    'Please select at most 3 layers from the choices below for the movie: <br /><br />' +
-                    '<table id="layers-table">';
+        table = 'Please select at most 3 layers from the choices below for the movie: <br /><br />' +
+                '<table id="layers-table">';
         
         // Get a user-friendly name for each layer. each layer in "layers" is a string: 
         // "obs,inst,det,meas,visible,opacity". Cut off visible and opacity and get rid of
@@ -202,9 +209,9 @@ var MovieBuilder = MediaBuilder.extend(
         
         table +=    '</table>' + 
                     '<div id="buttons" style="text-align: left; float: right;">' +
-                        '<button id="ok-button" class="ui-state-default ui-corner-all">OK</button>' +
-                    '</div>' +
-                '</div>';
+                        '<button id="ok-button" class="ui-button ui-widget ui-state-default ' +
+                        'ui-corner-all ui-button-text-only">OK</button>' +
+                    '</div>';
 
         return table;
     },

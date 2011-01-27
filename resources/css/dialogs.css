@@ -87,6 +87,14 @@ td.layers-name {
     color: white;
 }
 
+.helioviewer-layer-choice-dialog.ui-dialog {
+	margin-top: 80px;
+}
+
+#layer-choice-dialog button {
+	padding: 0.4em 1em;
+}
+
 /* Email dialog */
 #helioviewer-url-box > form > label {
     float:left;
