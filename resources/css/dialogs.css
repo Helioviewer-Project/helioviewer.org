@@ -28,37 +28,6 @@ td.layers-name {
 	padding-left: 1em;
 }
 
-#shadowbox-form button {
-	background: transparent url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-bg_gloss-wave_20_111111_500x100.png) repeat scroll 50% 50%;
-	cursor:pointer;
-	float:right;
-	line-height:1.4em;
-	margin:0.5em 0.4em 0.5em 0;
-	overflow:visible;
-	padding:0.2em 0.6em 0.3em;
-	width:auto;
-	font-family:arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;
-	font-size:12pt;
-}
-
-#shadowbox-form button:hover {
-	border:1px solid #333;
-	color: #d18f61;
-	font-weight:bold;
-	outline-color:-moz-use-text-color;
-	outline-style:none;
-	outline-width:medium;
-}
-
-#shadowbox-form button:active {
-	border:1px solid #052F57;
-	color:#FFFFFF;				
-}
-
-#shadowbox-form h2 {
-	font-size: 14pt;
-}
-
 .fits-header-dialog {
     overflow: auto;
     position: relative;
@@ -77,4 +46,66 @@ td.layers-name {
 
 .video-download-icon {
     margin-left: 5px;
+}
+
+.helioviewer-modal-dialog.ui-dialog {
+	background: none;
+	border: none;
+}
+
+.helioviewer-modal-dialog .ui-dialog-titlebar {
+	background: none;
+	border: none;
+	padding: 0 5px;
+}
+
+.helioviewer-modal-dialog .ui-dialog-titlebar-close {
+	margin: -5px 0 0;
+	color: white;
+}
+
+.helioviewer-modal-dialog .ui-dialog-titlebar-close:hover {
+    background: none;
+	padding: 1px;
+	border: none;
+}
+
+.helioviewer-modal-dialog .ui-widget-header .ui-icon {
+	background-image: url("../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_ffffff_256x240.png")
+}
+
+#url-dialog {
+    background: url("../../resources/images/blackGlass/transparentBG50.png") repeat scroll 0 0 transparent;
+    border: 1px solid #262424;
+	-moz-border-radius: 10px;	
+}
+
+/* URL dialog */
+#helioviewer-url-box {
+    font-size: 13px;
+    padding: 5px;
+    color: white;
+}
+
+.helioviewer-layer-choice-dialog.ui-dialog {
+	margin-top: 80px;
+}
+
+#layer-choice-dialog button {
+	padding: 0.4em 1em;
+}
+
+/* Email dialog */
+#helioviewer-url-box > form > label {
+    float:left;
+    display:block;
+}
+#helioviewer-url-box > form > input[type="text"] {
+    display:block;
+}
+
+#helioviewer-url-box > form > label
+{
+    margin-right: 5px;
+    width: 50px;
 }

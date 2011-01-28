@@ -5,7 +5,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, UIController, ImageSelectTool, MovieBuilder, TooltipHelper, ViewportController, 
-  ScreenshotBuilder, ScreenshotHistory, MovieHistory, Shadowbox, addIconHoverEventListener, UserVideoGallery */
+  ScreenshotBuilder, ScreenshotHistory, MovieHistory, addIconHoverEventListener, UserVideoGallery */
 "use strict";
 var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
@@ -155,31 +155,20 @@ var Helioviewer = UIController.extend(
      * @param {Object} url
      */
     displayURL: function () {
-        var url, w;
+        var url     = this.toURL(),
+            input   = $("#helioviewer-url-input-box");
         
-        // Get URL
-        url = this.toURL();
-        
-        // Shadowbox width
-        w = $('html').width() * 0.7;
-        
-        Shadowbox.open({
-            content:    '<div id="helioviewer-url-box">' +
-                        'Use the following link to refer to current page:' + 
-                        '<form style="margin-top: 5px;">' +
-                        '<input type="text" id="helioviewer-url-input-box" style="width:98%;" value="' + url + '">' +
-                        '</form>' +
-                        '</div>',
-            options: {
-                enableKeys : false,
-                onFinish   : function () {
-                    $("#helioviewer-url-input-box").select();
-                }
-            },
-            player:     "html",
-            title:      "URL",
-            height:     80,
-            width:      w
+        $("#url-dialog").dialog({
+            dialogClass: 'helioviewer-modal-dialog',
+            height    : 100,
+            width     : $('html').width() * 0.7,
+            modal     : true,
+            resizable : false,
+            title     : "URL",
+            open      : function (e) {
+                $('.ui-widget-overlay').hide().fadeIn();
+                input.attr('value', url).select();
+            }
         });
     },
     

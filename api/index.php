@@ -154,6 +154,15 @@ function loadModule($params)
 
             // Local requests
             } else {
+            	$queriesToLog = array("buildMovie", "getJPX", "takeScreenshot", "uploadMovieToYouTube");
+
+            	if (HV_ENABLE_STATISTICS_COLLECTION  && in_array($params["action"], $queriesToLog)) {
+            		include_once 'src/Database/Statistics.php';
+            		$statistics = new Database_Statistics();
+            		$statistics->log($params["action"]);
+            	}            	
+            	
+            	// Execute action
                 $moduleName = $valid_actions[$params["action"]];
                 $className  = "Module_" . $moduleName;
     
