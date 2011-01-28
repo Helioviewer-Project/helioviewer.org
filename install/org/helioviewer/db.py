@@ -21,6 +21,7 @@ def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     createDetectorTable(cursor)
     createMeasurementTable(cursor)
     createImageTable(cursor)
+    createStatisticsTable(cursor)
     updateImageTableIndex(cursor)
 
     return cursor
@@ -85,7 +86,7 @@ def createImageTable(cursor):
       `id`            INT unsigned NOT NULL auto_increment,
       `filepath`      VARCHAR(255) NOT NULL,
       `filename`      VARCHAR(255) NOT NULL,
-      `date`    datetime NOT NULL default '0000-00-00 00:00:00',
+      `date`          datetime NOT NULL default '0000-00-00 00:00:00',
       `sourceId`    SMALLINT unsigned NOT NULL,
       PRIMARY KEY  (`id`), KEY `date_index` (`sourceId`,`date`) USING BTREE
     ) DEFAULT CHARSET=ascii;'''
@@ -224,7 +225,18 @@ def createMeasurementTable(cursor):
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
         (14, 'white-light', 'White Light', 'DN');
     ''')
+
+def createStatisticsTable(cursor):
+    """ Creates a simple table for storing query statistics for selected types of requests """
+    cursor.execute('''
+    CREATE TABLE `statistics` (
+      `id`          INT unsigned NOT NULL auto_increment,
+      `timestamp`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `action`      VARCHAR(32)  NOT NULL,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;''')
     
+
 def enableDataSource(cursor, sourceId):
     """ Marks a single datasource as enabled to signal that there is data for that source """
     cursor.execute("UPDATE datasources SET enabled=1 WHERE id=%d;" % sourceId)

@@ -2,7 +2,8 @@
 $ini = "settings/Config.ini";
 if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
-unset($config['youtube_developer_key']);
+// Remove variables that are not used on the client-side
+unset($config['youtube_developer_key'], $config['enable_statistics_collection']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
