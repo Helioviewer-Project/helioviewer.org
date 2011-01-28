@@ -44,3 +44,7 @@ span#timeForwardBtn:hover,
 	height: 16px;
 	width:  16px;
 }
+.ui-widget-overlay {
+	background: #000;
+	opacity: 0.5;
+}

@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Shadowbox, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
+/*global Class, $, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
 "use strict";
 var Screenshot = Media.extend(
     /** @lends Screenshot.prototype */

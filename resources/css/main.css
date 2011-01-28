@@ -150,21 +150,6 @@ span.ui-icon-hover, div.ui-icon-hover {
 	font-weight: bold;
 }
 
-/* Shadowbox modifications */
-#sb-body, #sb-loading {
-	background: transparent url(../../resources/images/blackGlass/transparentBG50.png);
-    border-color: #262424;
-	border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-}
-
-#sb-wrapper-inner {
-	 border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-}
-
 /* Social & Movie buttons */
 #social-buttons {
     background-color: #2A2A2A;
@@ -215,27 +200,6 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 #footer-links > a:hover {
     color: #d18f61;
-}
-
-/* URL dialog */
-#helioviewer-url-box {
-    padding: 10px;
-    color: white;
-}
-
-/* Email dialog */
-#helioviewer-url-box > form > label {
-    float:left;
-    display:block;
-}
-#helioviewer-url-box > form > input[type="text"] {
-    display:block;
-}
-
-#helioviewer-url-box > form > label
-{
-    margin-right: 5px;
-    width: 50px;
 }
 
 /* jGrowl */

@@ -2,7 +2,8 @@
 $ini = "settings/Config.ini";
 if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
-unset($config['youtube_developer_key']);
+// Remove variables that are not used on the client-side
+unset($config['youtube_developer_key'], $config['enable_statistics_collection']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +33,6 @@ unset($config['youtube_developer_key']);
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" />  
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
-    <link rel="stylesheet" href="lib/shadowbox-3.0.3/shadowbox.css">
 
     <!-- Helioviewer-Specific Styles -->
     <?php
@@ -268,8 +268,21 @@ unset($config['youtube_developer_key']);
 <!-- About dialog -->
 <div id='about-dialog'></div>
 
+<!-- Layer choice dialog -->
+<div id='layer-choice-dialog'></div>
+
 <!-- Usage Dialog -->
 <div id='usage-dialog'></div>
+
+<!-- URL Dialog -->
+<div id='url-dialog' style="display:none;">
+    <div id="helioviewer-url-box">
+        Use the following link to refer to current page:
+        <form style="margin-top: 5px;">
+            <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
+        </form>
+    </div>
+</div>
 
 <!-- jQuery -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
@@ -307,9 +320,6 @@ unset($config['youtube_developer_key']);
 <!-- Pixastic -->
 <!-- $("img.tile[src!=resources/images/transparent_512.gif]"); -->
 <!--<script src="lib/pixastic/pixastic.custom.js" type="text/javascript"></script>-->
-
-<!-- ShadowBox -->
-<script type="text/javascript" src="lib/shadowbox-3.0.3/shadowbox.js"></script>
 
 <!-- Helioviewer JavaScript -->
 <?php 
@@ -351,11 +361,6 @@ unset($config['youtube_developer_key']);
 
 <script type="text/javascript">
     var serverSettings, settingsJSON, urlSettings;
-
-    Shadowbox.init({
-        overlayOpacity: 0.5,
-        troubleElements: ["object", "embed"]
-    });
 
     $(function () {
         if ($.browser.msie && ($.browser.version < 8)) {
