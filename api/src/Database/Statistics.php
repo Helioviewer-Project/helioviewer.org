@@ -49,32 +49,120 @@ class Database_Statistics
     /**
      * Gets latest usage statistics and returns them as JSON
      */
-    public function getUsageStatistics($options)
+    public function getUsageStatistics($resolution)
     {
         require_once 'src/Helper/DateTimeConversions.php';
+        
+        $intervals = $this->_getQueryIntervals($resolution);
+        
+        var_dump($intervals);
+        //$this->_getDailyStats();
 
-        $defaults = array(
-            "startDate" => "1970-01-01 00:00:00",
-            "endDate"   => "9999-01-01 00:00:00"
-        );
+//        $defaults = array(
+//            "startDate" => "1970-01-01 00:00:00",
+//            "endDate"   => "9999-01-01 00:00:00"
+//        );
+//        
+//        $options = array_replace($defaults, $options);
+//        
+//        $options['startDate'] = isoDateToMySQL($options['startDate']);
+//        $options['endDate']   = isoDateToMySQL($options['endDate']);
+//        
+//        $sql = "SELECT action, COUNT(*) as count FROM statistics " . 
+//               "WHERE timestamp BETWEEN '{$options['startDate']}' AND '{$options['endDate']}' GROUP BY action;";
+//        
+//        $result = $this->_dbConnection->query($sql);
+//        
+//        $counts = array();
+//
+//        while ($count = $result->fetch_array(MYSQL_ASSOC)) {
+//            array_push($counts, $count);
+//        }
+//        
+//        return json_encode($counts);
+    }
+    
+    /**
+     * Determines time inverals to collect statistics for
+     */
+    private function _getQueryIntervals($resolution)
+    {
+        date_default_timezone_set('UTC');
         
-        $options = array_replace($defaults, $options);
+        // Variables
+        $date     = new DateTime();
+        $timestep = null;
+        $numSteps = null;
         
-        $options['startDate'] = isoDateToMySQL($options['startDate']);
-        $options['endDate']   = isoDateToMySQL($options['endDate']);
+        // For hourly resolution, keep the hours value, otherwise set to zero
+        $hour = ($resolution == "hourly") ? (int) $date->format("H") : 0;
         
-        $sql = "SELECT action, COUNT(*) as count FROM statistics " . 
-               "WHERE timestamp BETWEEN '{$options['startDate']}' AND '{$options['endDate']}' GROUP BY action;";
+        // Round end time to nearest hour or day to begin with (may round other units later)            
+        $date->setTime($hour, 0, 0);
         
-        $result = $this->_dbConnection->query($sql);
-        
-        $counts = array();
+        // Hourly
+        if ($resolution == "hourly") {
+            $timestep = new DateInterval("PT1H");
+            $numSteps = 24;
 
-        while ($count = $result->fetch_array(MYSQL_ASSOC)) {
-            array_push($counts, $count);
+            $date->add($timestep);
+            
+            // Subtract 24 hours
+            $date->sub(new DateInterval("P1D"));
         }
         
-        return json_encode($counts);
+        // Daily
+        else if ($resolution == "daily") {
+            $timestep = new DateInterval("P1D");
+            $numSteps = 14;
+  
+            $date->add($timestep);
+            
+            // Subtract 2 weeks
+            $date->sub(new DateInterval("P2W"));
+        }
+        
+        // Weekly
+        else if ($resolution == "weekly") {
+            $timestep = new DateInterval("P1W");
+            $numSteps = 12;
+
+            $date->add(new DateInterval("P1D"));
+            
+            // Subtract 2 weeks
+            $date->sub(new DateInterval("P12W"));
+        }
+        
+        // Monthly
+        else if ($resolution == "monthly") {
+            $timestep = new DateInterval("P1M");
+            $numSteps = 12;
+            
+            $date->modify('first day of next month'); // Yay PHP 5.3
+            $date->sub(new DateInterval("P12M"));
+        }
+        
+        // Yearly
+        else if ($resolution == "yearly") {
+            $timestep = new DateInterval("P1Y");
+            $numSteps = 3;
+            
+            $year = (int) $date->format("Y");
+            $date->setDate($year - $numSteps + 1, 1, 1);
+        }
+
+        // Array to store time intervals
+        $intervals = array();
+
+        for ($i=0; $i < $numSteps; $i++) {
+            $startDate = toMySQLDateString($date);
+            $date->add($timestep);
+            $endDate   = toMySQLDateString($date);
+            
+            array_push($intervals, array("start" => $startDate, "end" => $endDate));
+        }
+        
+        return $intervals;
     }
 }
 ?>

@@ -319,11 +319,24 @@ class Module_WebClient implements Module
             throw new Exception("Sorry, usage statistics are not collected for this site.");
         }
         
+        // Determine resolution to use
+        $validResolutions = array("hourly", "daily", "weekly", "monthly", "yearly");
+        if (isset($this->_options['resolution'])) {
+            // Make sure a valid resolution was specified
+            if (!in_array($this->_options['resolution'], $validResolutions)) {
+                $msg = "Invalid resolution specified. Valid options include hourly, daily, weekly, monthly, and yearly";
+                throw new Exception($msg);                
+            }
+        } else {
+            // Default to daily
+            $this->_options['resolution'] = "daily";
+        }
+        
         include_once 'src/Database/Statistics.php';
         $statistics = new Database_Statistics();
 
         //header('Content-Type: application/json');
-        print $statistics->getUsageStatistics($this->_options);
+        print $statistics->getUsageStatistics($this->_options['resolution']);
     }
     
     /**
@@ -413,8 +426,7 @@ class Module_WebClient implements Module
             break;
         case "getUsageStatistics":
             $expected = array(
-                "optional" => array("startDate", "endDate"),
-                "dates"    => array("startDate", "endDate")
+                "optional" => array("resolution")
             );
             break;
         case "takeScreenshot":
