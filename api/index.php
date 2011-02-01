@@ -56,6 +56,7 @@ function loadModule($params)
         "getJP2Header"         => "WebClient",
         "getNewsFeed"          => "WebClient",
         "getTile"              => "WebClient",
+        "getUsageStatistics"   => "WebClient",
         "takeScreenshot"       => "WebClient",
         "getJP2Image"          => "JHelioviewer",
         "getJPX"               => "JHelioviewer",
