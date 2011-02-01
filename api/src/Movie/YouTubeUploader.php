@@ -274,7 +274,14 @@ class Movie_YouTubeUploader
             throw($e);
         }
         
-        $state = $newEntry->getVideoState();
+        // Update usage stats
+        if (HV_ENABLE_STATISTICS_COLLECTION) {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("uploadMovieToYouTube");
+        }
+        
+        //$state = $newEntry->getVideoState();
 
         echo "Finished!";
     }
