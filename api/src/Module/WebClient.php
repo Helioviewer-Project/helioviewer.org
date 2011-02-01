@@ -279,6 +279,13 @@ class Module_WebClient implements Module
         $screenshot = new Image_Composite_HelioviewerCompositeImage(
             $layers, $this->_params['obsDate'], $roi, $this->_options
         );
+        
+        // Update usage stats
+        if (HV_ENABLE_STATISTICS_COLLECTION) {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("takeScreenshot");
+        }
 
         // Display screenshot
         if (isset($this->_options['display']) && $this->_options['display']) {
