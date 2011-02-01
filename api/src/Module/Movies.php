@@ -80,6 +80,13 @@ class Module_Movies implements Module
         // Process request
         $movie = new Movie_HelioviewerMovie($layers, $this->_params['startTime'], $roi, $this->_options);
         
+        // Update usage stats
+        if (HV_ENABLE_STATISTICS_COLLECTION) {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("buildMovie");
+        }
+        
         // If display=true is set, play the move directly         
         if (isset($this->_options['display']) && $this->_options['display']) {
             echo $movie->getMoviePlayerHTML();
