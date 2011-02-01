@@ -93,8 +93,6 @@ class Movie_HelioviewerMovie
 
         // Compile movie
         $this->_build($images);
-        
-        $this->_cleanup();
     }
     
     /**
@@ -427,24 +425,6 @@ class Movie_HelioviewerMovie
     }
 
     /**
-     * Unlinks all images except the first frame used to create the video.
-     *
-     * @return void
-     */
-    private function _cleanup ()
-    {
-        // Clean up movie frame images that are no longer needed
-        foreach ($this->_frames as $image) {
-            if (file_exists($image)) {
-                unlink($image);
-            }
-        }
-
-        rmdir($this->_directory . "/frames");
-        touch($this->_directory . "/READY");
-    }
-
-    /**
      * Adds black border to movie frames if neccessary to guarantee a 16:9 aspect ratio
      *
      * Checks the ratio of width to height and adjusts each dimension so that the
@@ -544,6 +524,24 @@ class Movie_HelioviewerMovie
 </body> 
 </html> 
         <?php        
+    }
+    
+    /**
+     * Destructor
+     * 
+     * @return void
+     */
+    public function __destruct()
+    {
+        // Clean up movie frame images that are no longer needed
+        foreach ($this->_frames as $image) {
+            if (file_exists($image)) {
+                unlink($image);
+            }
+        }
+
+        rmdir($this->_directory . "/frames");
+        touch($this->_directory . "/READY");
     }
 }
 ?>
