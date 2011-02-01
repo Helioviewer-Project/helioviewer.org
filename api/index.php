@@ -154,7 +154,7 @@ function loadModule($params)
 
             // Local requests
             } else {
-            	$queriesToLog = array("buildMovie", "getJPX", "takeScreenshot", "uploadMovieToYouTube");
+            	$queriesToLog = array("getJPX", "takeScreenshot", "uploadMovieToYouTube");
 
             	if (HV_ENABLE_STATISTICS_COLLECTION  && in_array($params["action"], $queriesToLog)) {
             		include_once 'src/Database/Statistics.php';
