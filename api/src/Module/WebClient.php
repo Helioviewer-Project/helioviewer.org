@@ -322,8 +322,8 @@ class Module_WebClient implements Module
         include_once 'src/Database/Statistics.php';
         $statistics = new Database_Statistics();
 
-        header('Content-Type: application/json');
-        print $statistics->getUsageStatistics();
+        //header('Content-Type: application/json');
+        print $statistics->getUsageStatistics($this->_options);
     }
     
     /**
@@ -412,6 +412,10 @@ class Module_WebClient implements Module
         case "getNewsFeed":
             break;
         case "getUsageStatistics":
+            $expected = array(
+                "optional" => array("startDate", "endDate"),
+                "dates"    => array("startDate", "endDate")
+            );
             break;
         case "takeScreenshot":
             $expected = array(

@@ -49,9 +49,24 @@ class Database_Statistics
     /**
      * Gets latest usage statistics and returns them as JSON
      */
-    public function getUsageStatistics()
+    public function getUsageStatistics($options)
     {
-        $result = $this->_dbConnection->query("SELECT action, COUNT(*) as count FROM statistics GROUP BY action;");
+        require_once 'src/Helper/DateTimeConversions.php';
+
+        $defaults = array(
+            "startDate" => "1970-01-01 00:00:00",
+            "endDate"   => "9999-01-01 00:00:00"
+        );
+        
+        $options = array_replace($defaults, $options);
+        
+        $options['startDate'] = isoDateToMySQL($options['startDate']);
+        $options['endDate']   = isoDateToMySQL($options['endDate']);
+        
+        $sql = "SELECT action, COUNT(*) as count FROM statistics " . 
+               "WHERE timestamp BETWEEN '{$options['startDate']}' AND '{$options['endDate']}' GROUP BY action;";
+        
+        $result = $this->_dbConnection->query($sql);
         
         $counts = array();
 
