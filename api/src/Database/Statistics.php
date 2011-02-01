@@ -53,33 +53,73 @@ class Database_Statistics
     {
         require_once 'src/Helper/DateTimeConversions.php';
         
-        $intervals = $this->_getQueryIntervals($resolution);
+        // Determine time intervals to query
+        $interval = $this->_getQueryIntervals($resolution);
         
-        var_dump($intervals);
-        //$this->_getDailyStats();
+        // Array to keep track of counts for each action
+        $counts = array(
+            "buildMovie"           => array(),
+            "getJPX"               => array(),
+            "takeScreenshot"       => array(),
+            "uploadMovieToYouTube" => array()
+        );
+        
+        // Format to use for displaying dates
+        $dateFormat = $this->_getDateFormat($resolution);
+        
+        // Start date
+        $date = $interval['startDate'];
 
-//        $defaults = array(
-//            "startDate" => "1970-01-01 00:00:00",
-//            "endDate"   => "9999-01-01 00:00:00"
-//        );
-//        
-//        $options = array_replace($defaults, $options);
-//        
-//        $options['startDate'] = isoDateToMySQL($options['startDate']);
-//        $options['endDate']   = isoDateToMySQL($options['endDate']);
-//        
-//        $sql = "SELECT action, COUNT(*) as count FROM statistics " . 
-//               "WHERE timestamp BETWEEN '{$options['startDate']}' AND '{$options['endDate']}' GROUP BY action;";
-//        
-//        $result = $this->_dbConnection->query($sql);
-//        
-//        $counts = array();
-//
-//        while ($count = $result->fetch_array(MYSQL_ASSOC)) {
-//            array_push($counts, $count);
-//        }
-//        
-//        return json_encode($counts);
+        // Query each time interval
+        for ($i = 0; $i < $interval["numSteps"]; $i++) {
+            $dateIndex = $date->format($dateFormat); // Format date for array index
+            $dateStart = toMySQLDateString($date);   // MySQL-formatted date string
+
+            // Move to end date for the current interval
+            $date->add($interval['timestep']);
+            
+            // Fill with zeros to begin with
+            foreach ($counts as $action => $arr) {
+                array_push($counts[$action], array($dateIndex => 0));
+            }
+
+            $dateEnd = toMySQLDateString($date);
+
+            $sql = "SELECT action, COUNT(*) as count FROM statistics " . 
+                   "WHERE timestamp BETWEEN '$dateStart' AND '$dateEnd' GROUP BY action;";
+            
+            $result = $this->_dbConnection->query($sql);
+            
+            // And append counts for each action during that interval to the relevant array
+            while ($count = $result->fetch_array(MYSQL_ASSOC)) {
+                $counts[$count['action']][$i][$dateIndex] = (int) $count['count'];
+            }
+        }
+        return json_encode($counts);
+    }
+    
+    /**
+     * Determines date format to use for the x-axis of the requested resolution
+     */
+    private function _getDateFormat($resolution)
+    {
+        switch($resolution) {
+            case "hourly":
+                return "ga"; // 4pm
+                break;
+            case "daily":
+                return "D";   // Tues
+                break;
+            case "weekly":
+                return "M j"; // Feb 3
+                break;
+            case "monthly":
+                return "M y"; // Feb 09
+                break;
+            case "yearly":
+                return "Y";    // 2009
+                
+        }
     }
     
     /**
@@ -152,15 +192,20 @@ class Database_Statistics
         }
 
         // Array to store time intervals
-        $intervals = array();
+        $intervals = array(
+            "startDate" => $date,
+            "timestep"  => $timestep,
+            "numSteps"  => $numSteps
+        );
+//        $intervals = array();
 
-        for ($i=0; $i < $numSteps; $i++) {
-            $startDate = toMySQLDateString($date);
-            $date->add($timestep);
-            $endDate   = toMySQLDateString($date);
-            
-            array_push($intervals, array("start" => $startDate, "end" => $endDate));
-        }
+//        for ($i=0; $i < $numSteps; $i++) {
+//            $startDate = $date;
+//            $date->add($timestep);
+//            $endDate   = $date;
+//            
+//            array_push($intervals, array("start" => $startDate, "end" => $endDate));
+//        }
         
         return $intervals;
     }
