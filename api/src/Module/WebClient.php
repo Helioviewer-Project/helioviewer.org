@@ -310,6 +310,23 @@ class Module_WebClient implements Module
     }
     
     /**
+     * Retrieves the latest usage statistics from the database
+     */
+    public function getUsageStatistics()
+    {
+        // Are usage stats enabled?
+        if (!HV_ENABLE_STATISTICS_COLLECTION) {
+            throw new Exception("Sorry, usage statistics are not collected for this site.");
+        }
+        
+        include_once 'src/Database/Statistics.php';
+        $statistics = new Database_Statistics();
+
+        header('Content-Type: application/json');
+        print $statistics->getUsageStatistics();
+    }
+    
+    /**
      * Creates the directory structure which will be used to cache
      * generated tiles.
      * 
@@ -393,6 +410,8 @@ class Module_WebClient implements Module
             );
             break;
         case "getNewsFeed":
+            break;
+        case "getUsageStatistics":
             break;
         case "takeScreenshot":
             $expected = array(

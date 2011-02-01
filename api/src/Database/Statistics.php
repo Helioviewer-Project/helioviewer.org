@@ -40,9 +40,26 @@ class Database_Statistics
      * 
      * param $type string The action type associated with the query
      */
-    public function log($type) {
+    public function log($type)
+    {
     	$this->_dbConnection->query("INSERT INTO statistics VALUES (NULL, NULL, '$type');");
     	return true;
+    }
+    
+    /**
+     * Gets latest usage statistics and returns them as JSON
+     */
+    public function getUsageStatistics()
+    {
+        $result = $this->_dbConnection->query("SELECT action, COUNT(*) as count FROM statistics GROUP BY action;");
+        
+        $counts = array();
+
+        while ($count = $result->fetch_array(MYSQL_ASSOC)) {
+            array_push($counts, $count);
+        }
+        
+        return json_encode($counts);
     }
 }
 ?>
