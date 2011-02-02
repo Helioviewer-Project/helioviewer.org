@@ -33,9 +33,10 @@ class Movie_YouTubeUploader
     private $_youTube;
     
     //YouTube Limits (http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference)
-    private $_titleMaxBytes       = 100;
-    private $_descriptionMaxBytes = 5000;
-    private $_keywordsMaxBytes    = 500;
+    private $_titleMaxLength    = 100;
+    private $_descriptionLength = 5000;
+    private $_keywordMaxLength  = 30;
+    private $_keywordsMaxLength = 500;
     
     /**
      * Creates a new YouTubeUploader instance
@@ -300,10 +301,29 @@ class Movie_YouTubeUploader
     <script type='text/javascript'>
             $(function () {
                 $("#youtube-video-info").submit(function () {
-                    $("body").empty().html("<h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.");
-                    $.post("index.php", $(this).serialize());
-                    return false;    
+                    if (formIsValid()) {
+                        $("body").empty().html("<h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.");
+                        $.post("index.php", $(this).serialize());
+                    } else {
+						alert("Error: YouTube tags must not exceed " + <?php echo $this->_keywordsMaxLength;?> + " characters.");
+                    }
+
+                    return false;   
                 });
+
+				// Form validation
+				var formIsValid = function() {
+					var valid = true, keywordMaxLength = <?php echo $this->_keywordsMaxLength;?>;
+					
+					// Make sure each keyword is 30 characters or less
+					$.each($("#youtube-tags").attr('value').split(","), function(i, keyword) {
+						if ($.trim(keyword).length > keywordMaxLength) {
+							valid = false;
+						}
+					});
+
+					return valid;
+				};
             });
         </script>
 </head>
@@ -315,17 +335,17 @@ class Movie_YouTubeUploader
     <form id="youtube-video-info" action="index.php" method="post">
         <!-- Title -->
         <label for="youtube-title">Title:</label>
-        <input id="youtube-title" type="text" name="title" maxlength="<?php echo $this->_titleMaxBytes;?>>" value="<?php echo $title;?>" />
+        <input id="youtube-title" type="text" name="title" maxlength="<?php echo $this->_titleMaxLength;?>>" value="<?php echo $title;?>" />
         <br />
         
         <!-- Description -->
         <label for="youtube-desc">Description:</label>
-        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="<?php echo $this->_descriptionMaxBytes;?>"><?php echo $description;?></textarea>
+        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="<?php echo $this->_descriptionMaxLength;?>"><?php echo $description;?></textarea>
         <br />
         
         <!-- Tags -->
         <label for="youtube-tags">Tags:</label>
-        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxBytes;?>" value="Helioviewer.org, <?php echo $tags;?>" />
+        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxLength;?>" value="Helioviewer.org, <?php echo $tags;?>" />
         <br /><br />
         
         <!-- Sharing -->
