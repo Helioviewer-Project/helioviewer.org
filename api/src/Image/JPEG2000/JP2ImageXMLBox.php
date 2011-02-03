@@ -48,6 +48,7 @@ class Image_JPEG2000_JP2ImageXMLBox
     public function getXMLBox ($root)
     {
         if (!file_exists($this->_file)) {
+        	// NOTE 02/02/2011: This error may also be thrown if web server cannot write to cache dir
             $msg = "Unable to access file. Do you have the proper permissions?";
             throw new Exception($msg);
         }
