@@ -1,11 +1,14 @@
 /* Base  */
-body { background: url("../../../resources/images/backgrounds/gradient_v5-optimized.png") repeat scroll 0 0 transparent; color: #2d2e2e; text-align: left;}
-#container {max-width: 570px; margin: 100px auto; position: relative;}
+body {background: url("../../../resources/images/backgrounds/gradient_v5-optimized.png") repeat scroll 0 0 transparent; color: #FFF; text-align: left;}
+#container {max-width: 570px; height: 370px; margin: 100px auto; position: relative; background: url("../../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-bg_gloss-wave_20_111111_500x100.png") repeat-x scroll 50% top #111111; padding: 10px; border: 1px solid #262424; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; -moz-box-shadow: -8px 8px 5px black; -webkit-box-shadow: -8px 8px 5px black; box-shadow: -8px 8px 5px black;}
 #youtube-logo{ float: left; margin-left: 47px; margin-right: 8px }
 #youtube-video-info label { width: 18%; display: inline-block; text-align: right; vertical-align: top; margin: 5px 5px 0 0; }
 #youtube-video-info input, #youtube-video-info textarea { margin-top: 5px; width: 75%; }
-#youtube-video-info #youtube-submit-btn { position: absolute; right: 30px; width: 70px; margin-top: 12px; }
+#youtube-video-info #youtube-submit-btn { float: right; width: 70px; margin-top: 12px; }
+#upload-error-console-container {position: absolute; width: 100%; bottom: 5px;}
+#upload-error-console {margin: auto; width: 82%; border:1px solid #a88a8f; background: #C2B2B5; color: #423637; font-size: 12px; padding: 3px; text-align: center; -moz-border-radius: 2px; -webkit-border-radius: 2px; display:none;}
+#success-message{margin: 100px auto;}
 
 /* Dialog */
-body.dialog-mode {background: transparent; color: white;}
-.dialog-mode #container {margin-top: 10px;}
+body.dialog-mode {background: transparent;}
+.dialog-mode #container {margin-top: 10px; background: transparent; -moz-box-shadow: none; -webkit-shadow: none; box-shadow: none; border: none;}
