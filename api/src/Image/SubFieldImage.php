@@ -323,9 +323,6 @@ class Image_SubFieldImage
             $grayscale->destroy();
             $coloredImage->destroy();
             unlink($input);
-            
-            var_dump($this);
-            die();
 
         } catch(Exception $e) {
             throw $e;
