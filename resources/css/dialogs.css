@@ -15,7 +15,7 @@ td.layers-name {
 }
 
 /* Image header dialog */
-.fits-header-dialog {
+.image-info-dialog {
     overflow: auto;
     position: relative;
     padding:0px;
@@ -39,7 +39,7 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 	color: #D18F61;
 }
 
-.fits-sort-btn {
+.image-info-sort-btn {
     float: right;
 	font-family: Arial,sans-serif;
 	font-size: 12px;
