@@ -142,7 +142,7 @@ var TileLayerAccordion = Layer.extend(
      * This discussion thread</a> for explanation.
      */
     _buildEntryBody: function (id) {
-        var opacitySlide, obs, inst, det, meas, fits;
+        var opacitySlide, obs, inst, det, meas, info;
         
         // Opacity slider placeholder
         opacitySlide = "<div class='layer-select-label'>Opacity: </div>";
@@ -167,10 +167,10 @@ var TileLayerAccordion = Layer.extend(
         meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'>";
         meas += "</select><br><br>";
         
-        fits = "<a href='#' id='showFITSBtn-" + id +
-               "' style='margin-left:170px; color: white; text-decoration: none;'>FITS Header</a><br>";
+        info = "<a href='#' id='image-" + id +
+               "-info-btn' style='margin-left:170px; color: white; text-decoration: none;'>Image Information</a><br>";
         
-        return (opacitySlide + obs + inst + det + meas + fits);
+        return (opacitySlide + obs + inst + det + meas + info);
     },
 
     /**
@@ -224,11 +224,11 @@ var TileLayerAccordion = Layer.extend(
     },
     
     /**
-     * @description Displays the FITS header information associated with a given image
+     * @description Displays the Image header information associated with a given image
      * @param {Object} layer
      */
-    _showFITS: function (id, name, filepath, filename, server) {
-        var params, self = this, dialog = $("#fits-header-" + id);
+    _showImageInfoDialog: function (id, name, filepath, filename, server) {
+        var params, self = this, dialog = $("#image-info-dialog-" + id);
         
         // Check to see if a dialog already exists
         if (dialog.length !== 0) {
@@ -252,27 +252,27 @@ var TileLayerAccordion = Layer.extend(
         }
         
         $.get("api/index.php", params, function (response) {
-            self._buildFITSHeaderDialog(name, id, response);
+            self._buildImageInfoDialog(name, id, response);
         });
     },
     
     /**
-     * Creates a dialog to display a JP2 image XML Box/FITS header
+     * Creates a dialog to display image properties and header tags
      */
-    _buildFITSHeaderDialog: function (name, id, response) {
+    _buildImageInfoDialog: function (name, id, response) {
         var dialog, sortBtn, tabs, html, json;
         
         // Convert from XML to JSON
         json = $.xml2json(response);
     
         // Format results
-        dialog =  $("<div id='fits-header-" + id +  "' class='fits-header-dialog' />");
+        dialog =  $("<div id='image-info-dialog-" + id +  "' class='image-info-dialog' />");
         
         // Header section
         html = "<div class='image-header-dialog-menu'>" +
         	   "<a class='show-fits-tags-btn selected'>[FITS]</a>" +
         	   "<a class='show-helioviewer-tags-btn'>Helioviewer</a>" +
-        	   "<span class='fits-sort-btn'>Abc</span>" +
+        	   "<span class='image-info-sort-btn'>Abc</span>" +
         	   "</div>";
         
         // Separate out Helioviewer-specific tags if not already done (older data may have HV_ tags mixed in with FITS tags)
@@ -303,7 +303,7 @@ var TileLayerAccordion = Layer.extend(
             create   : function (event, ui) {
         		var fitsBtn = dialog.find(".show-fits-tags-btn"),
         		    hvBtn   = dialog.find(".show-helioviewer-tags-btn"),
-        		    sortBtn = dialog.find(".fits-sort-btn");
+        		    sortBtn = dialog.find(".image-info-sort-btn");
 
         		fitsBtn.click(function () {
         			fitsBtn.html("[FITS]")
@@ -418,11 +418,11 @@ var TileLayerAccordion = Layer.extend(
         
         entry.find(".tile-accordion-header-left").html(name);
 
-        // Refresh FITS header event listeners
-        $("#fits-header-" + id).remove();
+        // Refresh Image header event listeners
+        $("#image-info-dialog-" + id).remove();
         
-        entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
-            self._showFITS(id, name, filepath, filename, server);
+        entry.find("#image-" + id + "-info-btn").unbind().bind('click', function () {
+            self._showImageInfoDialog(id, name, filepath, filename, server);
         });
     },
     
