@@ -4,20 +4,6 @@ div#usage-dialog {
     font-family: 'Courier New', Courier, monospace;
 }
 
-div.fits-regular, div.fits-sorted {
-    padding:1.5em 1.7em;
-    font-size: 14px;
-}
-
-span.fits-sort-btn {
-    right:4px;
-    font-weight: bold;
-    font-size: 12px;
-    position: absolute;
-    top:4px;
-    cursor: pointer;
-}
-
 td.layers-checkbox {
 	text-align: right; 
 	padding-left: 2em;
@@ -28,12 +14,49 @@ td.layers-name {
 	padding-left: 1em;
 }
 
+/* Image header dialog */
 .fits-header-dialog {
     overflow: auto;
     position: relative;
     padding:0px;
 }
 
+.image-header-dialog-menu {
+	font-size: 13px;
+	font-family: sans-serif;
+	font-weight: bold;
+	padding-bottom: 5px;
+	border-bottom: 1px solid white;
+}
+
+a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
+	color: #FFF;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.show-fits-tags-btn:hover, .show-helioviewer-tags-btn:hover {
+	color: #D18F61;
+}
+
+.fits-sort-btn {
+    float: right;
+	font-family: Arial,sans-serif;
+	font-size: 12px;
+	margin-right: -12px;
+	margin-top: -6px;
+    cursor: pointer;
+}
+
+.image-header-fits, .image-header-helioviewer {
+    padding:1em;
+    font-size: 12px;
+}
+
+.image-header-tag   {display: inline-block; width: 214px; text-align: right;}
+.image-header-value {display: inline-block; width: 240px; margin-left: 12px;}
+
+/* Video links */
 .video-links a {
     text-decoration: none;
 }
