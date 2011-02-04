@@ -58,7 +58,7 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     font-size: 12px;
 }
 
-.image-header-tag   {display: inline-block; width: 214px; text-align: right;}
+.image-header-tag   {display: inline-block; width: 214px; text-align: right; vertical-align: top;}
 .image-header-value {display: inline-block; width: 240px; margin-left: 12px;}
 
 /* Video links */

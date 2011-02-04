@@ -298,8 +298,8 @@ var TileLayerAccordion = Layer.extend(
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
             title    : "Image Information: " + name,
-            minWidth : 542,
-            width    : 542,
+            minWidth : 546,
+            width    : 546,
             height   : 350,
             draggable: true,
             create   : function (event, ui) {
