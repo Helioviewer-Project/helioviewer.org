@@ -156,7 +156,7 @@ class Module_WebClient implements Module
     public function getJP2Header ()
     {
         include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
-        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"]);
+        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"], "meta");
         $xmlBox->printXMLBox();
     }
 

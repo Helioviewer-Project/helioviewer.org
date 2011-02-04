@@ -191,7 +191,7 @@ var Movie = Media.extend(
         // Close movie dialog (Flash player blocks upload form)
         $("#watch-dialog-" + this.id).dialog("close");
         
-        var iframe = "<div id='youtube-upload-dialog-" + this.id + "'>" + "<iframe src='" + url +
+        var iframe = "<div id='youtube-upload-dialog-" + this.id + "' style='overflow:hidden;'>" + "<iframe src='" + url +
                      "&dialogMode=true' scrolling='no' width='100%' height='100%' style='border: none' />";
 
         $(iframe).dialog({

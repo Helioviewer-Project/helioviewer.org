@@ -260,44 +260,119 @@ var TileLayerAccordion = Layer.extend(
      * Creates a dialog to display a JP2 image XML Box/FITS header
      */
     _buildFITSHeaderDialog: function (name, id, response) {
-        var sortBtn, unsorted, sorted, tags, tag, dialog, json = $.xml2json(response);
+        var dialog, sortBtn, tabs, html, json;
+        
+        // Convert from XML to JSON
+        json = $.xml2json(response);
     
         // Format results
-        dialog =  $("<div id='fits-header-" + id + "' class='fits-header-dialog' />");
+        dialog =  $("<div id='fits-header-" + id +  "' class='fits-header-dialog' />");
         
-        tags = [];
+        // Header section
+        html = "<div class='image-header-dialog-menu'>" +
+        	   "<a class='show-fits-tags-btn selected'>[FITS]</a>" +
+        	   "<a class='show-helioviewer-tags-btn'>Helioviewer</a>" +
+        	   "<span class='fits-sort-btn'>Abc</span>" +
+        	   "</div>";
+        
+        // Separate out Helioviewer-specific tags if not already done (older data may have HV_ tags mixed in with FITS tags)
+        if (!json.helioviewer) {
+        	var tag;
+
+        	json.helioviewer = {};
+        	
+        	$.each(json.fits, function (key, value) {
+        		if (key.substring(0,3) === "HV_") {
+        			json.helioviewer[key.slice(3)] = value;
+        			delete json.fits[key];
+        		}
+        	});
+        }
+
+        // Add FITS and Helioviewer header tag blocks
+        html += "<div class='image-header-fits'>"        + this._generateImageKeywordsSection(json.fits) + "</div>";
+        html += "<div class='image-header-helioviewer' style='display:none;'>" + this._generateImageKeywordsSection(json.helioviewer) + "</div>";
+        
+        dialog.append(html).appendTo("body").dialog({
+            autoOpen : true,
+            title    : "Image Header: " + name,
+            minWidth : 542,
+            width    : 542,
+            height   : 350,
+            draggable: true,
+            create   : function (event, ui) {
+        		var fitsBtn = dialog.find(".show-fits-tags-btn"),
+        		    hvBtn   = dialog.find(".show-helioviewer-tags-btn"),
+        		    sortBtn = dialog.find(".fits-sort-btn");
+
+        		fitsBtn.click(function () {
+        			fitsBtn.html("[FITS]")
+        			hvBtn.html("Helioviewer");
+        			dialog.find(".image-header-fits").show();
+        			dialog.find(".image-header-helioviewer").hide();
+        		});
+        		
+        		hvBtn.click(function () {
+        			fitsBtn.html("FITS")
+        			hvBtn.html("[Helioviewer]");
+        			dialog.find(".image-header-fits").hide();
+        			dialog.find(".image-header-helioviewer").show();
+        		});
+        		
+                // Button to toggle sorting
+        		sortBtn.click(function () {
+        			var sorted = !$(this).hasClass("italic");
+                    $(this).toggleClass("italic");
+                    
+                    if (sorted) {
+                        dialog.find(".unsorted").css('display', 'none');
+                        dialog.find(".sorted").css('display', 'block');
+                    } else {
+                        dialog.find(".sorted").css('display', 'none');
+                        dialog.find(".unsorted").css('display', 'block');
+                    }
+                });
+
+        	}
+        });
+    },
+    
+    /**
+     * Takes a JSON list of image header tags and returns sorted/unsorted HTML
+     */
+    _generateImageKeywordsSection: function (list) {
+        var unsorted, sortFunction, sorted, tag, tags = [];
         
         // Unsorted list
-        unsorted = "<div class='fits-regular'>";
-        $.each(json, function (key, value) {
-            tag = key + ": " + value;
+        unsorted = "<div class='unsorted'>";
+        $.each(list, function (key, value) {
+            tag = "<span class='image-header-tag'>" + key + ": </span>" + "<span class='image-header-value'>" + value + "</span>";
             tags.push(tag);
             unsorted += tag + "<br>";
         });
         unsorted += "</div>";
         
+        // Sort function
+        sortFunction = function(a, b) {
+        	// <span> portion is 31 characters long
+			if (a.slice(31) < b.slice(31)) {
+				return -1;
+			} else if (a.slice(31) > b.slice(31)) {
+				return 1;
+			}			
+			return 0;
+        }
+        
         // Sorted list
-        sorted = "<div class='fits-sorted' style='display: none;'>";
-        $.each(tags.sort(), function () {
+        sorted = "<div class='sorted' style='display: none;'>";
+        $.each(tags.sort(sortFunction), function () {
             sorted += this + "<br>";
         });
         sorted += "</div>";
-        
-        // Button to toggle sorting
-        sortBtn = $("<span class='fits-sort-btn'>Abc</span>").click(function () {
-            $(this).toggleClass("italic");
-            dialog.find(".fits-sorted").toggle();
-            dialog.find(".fits-regular").toggle();
-        });
-        
-        dialog.append(unsorted + sorted).append(sortBtn).appendTo("body").dialog({
-            autoOpen: true,
-            title: "FITS Header: " + name,
-            width: 400,
-            height: 350,
-            draggable: true
-        });        
+
+        return unsorted + sorted;
     },
+    
     /**
      * @description Initialize custom tooltips for each icon in the accordion
      */
