@@ -103,6 +103,8 @@ function toISOString($date)
 /**
  * Takes an ISO string with T's and Z's in it and removes them.
  * 
+ * NOTE 02/01/2011: This method is nearly identical to isoDateToMySQL()
+ * 
  * @param string $string The ISO String
  * 
  * @return string

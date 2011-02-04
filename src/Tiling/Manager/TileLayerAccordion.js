@@ -142,7 +142,7 @@ var TileLayerAccordion = Layer.extend(
      * This discussion thread</a> for explanation.
      */
     _buildEntryBody: function (id) {
-        var opacitySlide, obs, inst, det, meas, fits;
+        var opacitySlide, obs, inst, det, meas, info;
         
         // Opacity slider placeholder
         opacitySlide = "<div class='layer-select-label'>Opacity: </div>";
@@ -167,10 +167,12 @@ var TileLayerAccordion = Layer.extend(
         meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'>";
         meas += "</select><br><br>";
         
-        fits = "<a href='#' id='showFITSBtn-" + id +
-               "' style='margin-left:170px; color: white; text-decoration: none;'>FITS Header</a><br>";
+//        info = "<a href='#' id='image-" + id +
+//               "-info-btn' style='margin-left:170px; color: white; text-decoration: none;'>Image Information</a><br>";
         
-        return (opacitySlide + obs + inst + det + meas + fits);
+        info = "<span id='image-" + id + "-info-btn' class='image-info-dialog-btn ui-icon ui-icon-info'></span>";
+        
+        return (opacitySlide + obs + inst + det + meas + info);
     },
 
     /**
@@ -224,11 +226,11 @@ var TileLayerAccordion = Layer.extend(
     },
     
     /**
-     * @description Displays the FITS header information associated with a given image
+     * @description Displays the Image meta information and properties associated with a given image
      * @param {Object} layer
      */
-    _showFITS: function (id, name, filepath, filename, server) {
-        var params, self = this, dialog = $("#fits-header-" + id);
+    _showImageInfoDialog: function (id, name, filepath, filename, server) {
+        var params, self = this, dialog = $("#image-info-dialog-" + id);
         
         // Check to see if a dialog already exists
         if (dialog.length !== 0) {
@@ -252,52 +254,127 @@ var TileLayerAccordion = Layer.extend(
         }
         
         $.get("api/index.php", params, function (response) {
-            self._buildFITSHeaderDialog(name, id, response);
+            self._buildImageInfoDialog(name, id, response);
         });
     },
     
     /**
-     * Creates a dialog to display a JP2 image XML Box/FITS header
+     * Creates a dialog to display image properties and header tags
      */
-    _buildFITSHeaderDialog: function (name, id, response) {
-        var sortBtn, unsorted, sorted, tags, tag, dialog, json = $.xml2json(response);
+    _buildImageInfoDialog: function (name, id, response) {
+        var dialog, sortBtn, tabs, html, json;
+        
+        // Convert from XML to JSON
+        json = $.xml2json(response);
     
         // Format results
-        dialog =  $("<div id='fits-header-" + id + "' class='fits-header-dialog' />");
+        dialog =  $("<div id='image-info-dialog-" + id +  "' class='image-info-dialog' />");
         
-        tags = [];
+        // Header section
+        html = "<div class='image-info-dialog-menu'>" +
+        	   "<a class='show-fits-tags-btn selected'>[FITS]</a>" +
+        	   "<a class='show-helioviewer-tags-btn'>Helioviewer</a>" +
+        	   "<span class='image-info-sort-btn'>Abc</span>" +
+        	   "</div>";
+        
+        // Separate out Helioviewer-specific tags if not already done (older data may have HV_ tags mixed in with FITS tags)
+        if (!json.helioviewer) {
+        	var tag;
+
+        	json.helioviewer = {};
+        	
+        	$.each(json.fits, function (key, value) {
+        		if (key.substring(0,3) === "HV_") {
+        			json.helioviewer[key.slice(3)] = value;
+        			delete json.fits[key];
+        		}
+        	});
+        }
+
+        // Add FITS and Helioviewer header tag blocks
+        html += "<div class='image-header-fits'>"        + this._generateImageKeywordsSection(json.fits) + "</div>";
+        html += "<div class='image-header-helioviewer' style='display:none;'>" + this._generateImageKeywordsSection(json.helioviewer) + "</div>";
+        
+        dialog.append(html).appendTo("body").dialog({
+            autoOpen : true,
+            title    : "Image Information: " + name,
+            minWidth : 546,
+            width    : 546,
+            height   : 350,
+            draggable: true,
+            create   : function (event, ui) {
+        		var fitsBtn = dialog.find(".show-fits-tags-btn"),
+        		    hvBtn   = dialog.find(".show-helioviewer-tags-btn"),
+        		    sortBtn = dialog.find(".image-info-sort-btn");
+
+        		fitsBtn.click(function () {
+        			fitsBtn.html("[FITS]")
+        			hvBtn.html("Helioviewer");
+        			dialog.find(".image-header-fits").show();
+        			dialog.find(".image-header-helioviewer").hide();
+        		});
+        		
+        		hvBtn.click(function () {
+        			fitsBtn.html("FITS")
+        			hvBtn.html("[Helioviewer]");
+        			dialog.find(".image-header-fits").hide();
+        			dialog.find(".image-header-helioviewer").show();
+        		});
+        		
+                // Button to toggle sorting
+        		sortBtn.click(function () {
+        			var sorted = !$(this).hasClass("italic");
+                    $(this).toggleClass("italic");
+                    
+                    if (sorted) {
+                        dialog.find(".unsorted").css('display', 'none');
+                        dialog.find(".sorted").css('display', 'block');
+                    } else {
+                        dialog.find(".sorted").css('display', 'none');
+                        dialog.find(".unsorted").css('display', 'block');
+                    }
+                });
+
+        	}
+        });
+    },
+    
+    /**
+     * Takes a JSON list of image header tags and returns sorted/unsorted HTML
+     */
+    _generateImageKeywordsSection: function (list) {
+        var unsorted, sortFunction, sorted, tag, tags = [];
         
         // Unsorted list
-        unsorted = "<div class='fits-regular'>";
-        $.each(json, function (key, value) {
-            tag = key + ": " + value;
+        unsorted = "<div class='unsorted'>";
+        $.each(list, function (key, value) {
+            tag = "<span class='image-header-tag'>" + key + ": </span>" + "<span class='image-header-value'>" + value + "</span>";
             tags.push(tag);
             unsorted += tag + "<br>";
         });
         unsorted += "</div>";
         
+        // Sort function
+        sortFunction = function(a, b) {
+        	// <span> portion is 31 characters long
+			if (a.slice(31) < b.slice(31)) {
+				return -1;
+			} else if (a.slice(31) > b.slice(31)) {
+				return 1;
+			}			
+			return 0;
+        }
+        
         // Sorted list
-        sorted = "<div class='fits-sorted' style='display: none;'>";
-        $.each(tags.sort(), function () {
+        sorted = "<div class='sorted' style='display: none;'>";
+        $.each(tags.sort(sortFunction), function () {
             sorted += this + "<br>";
         });
         sorted += "</div>";
-        
-        // Button to toggle sorting
-        sortBtn = $("<span class='fits-sort-btn'>Abc</span>").click(function () {
-            $(this).toggleClass("italic");
-            dialog.find(".fits-sorted").toggle();
-            dialog.find(".fits-regular").toggle();
-        });
-        
-        dialog.append(unsorted + sorted).append(sortBtn).appendTo("body").dialog({
-            autoOpen: true,
-            title: "FITS Header: " + name,
-            width: 400,
-            height: 350,
-            draggable: true
-        });        
+
+        return unsorted + sorted;
     },
+    
     /**
      * @description Initialize custom tooltips for each icon in the accordion
      */
@@ -343,11 +420,11 @@ var TileLayerAccordion = Layer.extend(
         
         entry.find(".tile-accordion-header-left").html(name);
 
-        // Refresh FITS header event listeners
-        $("#fits-header-" + id).remove();
+        // Refresh Image header event listeners
+        $("#image-info-dialog-" + id).remove();
         
-        entry.find("#showFITSBtn-" + id).unbind().bind('click', function () {
-            self._showFITS(id, name, filepath, filename, server);
+        entry.find("#image-" + id + "-info-btn").unbind().bind('click', function () {
+            self._showImageInfoDialog(id, name, filepath, filename, server);
         });
     },
     

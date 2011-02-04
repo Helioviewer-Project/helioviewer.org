@@ -33,9 +33,10 @@ class Movie_YouTubeUploader
     private $_youTube;
     
     //YouTube Limits (http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference)
-    private $_titleMaxBytes       = 100;
-    private $_descriptionMaxBytes = 5000;
-    private $_keywordsMaxBytes    = 500;
+    private $_titleMaxLength       = 100;
+    private $_descriptionMaxLength = 5000;
+    private $_keywordMaxLength     = 30;
+    private $_keywordsMaxLength    = 500;
     
     /**
      * Creates a new YouTubeUploader instance
@@ -274,7 +275,14 @@ class Movie_YouTubeUploader
             throw($e);
         }
         
-        $state = $newEntry->getVideoState();
+        // Update usage stats
+        if (HV_ENABLE_STATISTICS_COLLECTION) {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("uploadMovieToYouTube");
+        }
+        
+        //$state = $newEntry->getVideoState();
 
         echo "Finished!";
     }
@@ -292,11 +300,38 @@ class Movie_YouTubeUploader
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
     <script type='text/javascript'>
             $(function () {
+                var errorMsg, successMsg, errorConsole;
+
                 $("#youtube-video-info").submit(function () {
-                    $("body").empty().html("<h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.");
-                    $.post("index.php", $(this).serialize());
-                    return false;    
+                    if (formIsValid()) {
+                        successMsg = "<div id='success-message'><h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.</div>";
+                        $("#container").empty().html(successMsg);
+                        $.post("index.php", $(this).serialize());
+                    } else {
+                    	errorMsg = "<b>Error:</b> YouTube tags must not be longer than " + <?php echo $this->_keywordMaxLength;?> + " characters each.";
+                    	errorConsole = $("#upload-error-console");
+                    	errorConsole.html(errorMsg).fadeIn(function () {
+							window.setTimeout(function () {
+								errorConsole.fadeOut();
+				            }, 15000);
+						});
+                    }
+                    return false;   
                 });
+
+				// Form validation
+				var formIsValid = function() {
+					var valid = true, keywordMaxLength = <?php echo $this->_keywordMaxLength;?>;
+					
+					// Make sure each keyword is 30 characters or less
+					$.each($("#youtube-tags").attr('value').split(","), function(i, keyword) {
+						if ($.trim(keyword).length > keywordMaxLength) {
+							valid = false;
+						}
+					});
+
+					return valid;
+				};
             });
         </script>
 </head>
@@ -308,32 +343,34 @@ class Movie_YouTubeUploader
     <form id="youtube-video-info" action="index.php" method="post">
         <!-- Title -->
         <label for="youtube-title">Title:</label>
-        <input id="youtube-title" type="text" name="title" maxlength="<?php echo $this->_titleMaxBytes;?>>" value="<?php echo $title;?>" />
+        <input id="youtube-title" type="text" name="title" maxlength="<?php echo $this->_titleMaxLength;?>>" value="<?php echo $title;?>" />
         <br />
         
         <!-- Description -->
         <label for="youtube-desc">Description:</label>
-        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="<?php echo $this->_descriptionMaxBytes;?>"><?php echo $description;?></textarea>
+        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="<?php echo $this->_descriptionMaxLength;?>"><?php echo $description;?></textarea>
         <br />
         
         <!-- Tags -->
         <label for="youtube-tags">Tags:</label>
-        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxBytes;?>" value="Helioviewer.org, <?php echo $tags;?>" />
+        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxLength;?>" value="Helioviewer.org, <?php echo $tags;?>" />
         <br /><br />
         
         <!-- Sharing -->
-        <div style='position: absolute; right: 30px;'>
-        Share my video with other Helioviewer.org users:
-        <input type="checkbox" name="share" value="true" checked="checked" />
-        </div>
+        <div style='float: right; margin-right: 30px;'>
+        <label style='width: 100%; margin: 0px;'>
+        	<input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
+        </label>
         <br />
+        <input id='youtube-submit-btn' type="submit" value="Submit" />
+        </div>
         
         <!-- Hidden fields -->
         <input type="hidden" name="action" value="uploadMovieToYouTube" />
         <input type="hidden" name="ready" value="true" />
         <input type="hidden" name="file" value="<?php echo $fileId; ?>" />
-    <input id='youtube-submit-btn' type="submit" value="Submit" />
     </form>
+    <div id='upload-error-console-container'><div id='upload-error-console'>TEST MESSAGE</div></div>
     </div>
 </body>
 </html>

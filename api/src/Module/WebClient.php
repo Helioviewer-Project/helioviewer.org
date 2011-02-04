@@ -156,7 +156,7 @@ class Module_WebClient implements Module
     public function getJP2Header ()
     {
         include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
-        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"]);
+        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"], "meta");
         $xmlBox->printXMLBox();
     }
 
@@ -279,6 +279,13 @@ class Module_WebClient implements Module
         $screenshot = new Image_Composite_HelioviewerCompositeImage(
             $layers, $this->_params['obsDate'], $roi, $this->_options
         );
+        
+        // Update usage stats
+        if (HV_ENABLE_STATISTICS_COLLECTION) {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("takeScreenshot");
+        }
 
         // Display screenshot
         if (isset($this->_options['display']) && $this->_options['display']) {
@@ -300,6 +307,36 @@ class Module_WebClient implements Module
         
         header("Content-Type: text/xml;charset=UTF-8");
         echo $proxy->query();
+    }
+    
+    /**
+     * Retrieves the latest usage statistics from the database
+     */
+    public function getUsageStatistics()
+    {
+        // Are usage stats enabled?
+        if (!HV_ENABLE_STATISTICS_COLLECTION) {
+            throw new Exception("Sorry, usage statistics are not collected for this site.");
+        }
+        
+        // Determine resolution to use
+        $validResolutions = array("hourly", "daily", "weekly", "monthly", "yearly");
+        if (isset($this->_options['resolution'])) {
+            // Make sure a valid resolution was specified
+            if (!in_array($this->_options['resolution'], $validResolutions)) {
+                $msg = "Invalid resolution specified. Valid options include hourly, daily, weekly, monthly, and yearly";
+                throw new Exception($msg);                
+            }
+        } else {
+            // Default to daily
+            $this->_options['resolution'] = "daily";
+        }
+        
+        include_once 'src/Database/Statistics.php';
+        $statistics = new Database_Statistics();
+
+        header('Content-Type: application/json');
+        print $statistics->getUsageStatistics($this->_options['resolution']);
     }
     
     /**
@@ -386,6 +423,11 @@ class Module_WebClient implements Module
             );
             break;
         case "getNewsFeed":
+            break;
+        case "getUsageStatistics":
+            $expected = array(
+                "optional" => array("resolution")
+            );
             break;
         case "takeScreenshot":
             $expected = array(
