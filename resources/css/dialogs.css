@@ -21,7 +21,12 @@ td.layers-name {
     padding:0px;
 }
 
-.image-header-dialog-menu {
+.image-info-dialog-btn {
+	margin-left: 242px;
+	cursor: pointer;
+}
+
+.image-info-dialog-menu {
 	font-size: 13px;
 	font-family: sans-serif;
 	font-weight: bold;
@@ -100,7 +105,9 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 #url-dialog {
     background: url("../../resources/images/blackGlass/transparentBG50.png") repeat scroll 0 0 transparent;
     border: 1px solid #262424;
-	-moz-border-radius: 10px;	
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-border-radius: 10px;
 }
 
 /* URL dialog */
