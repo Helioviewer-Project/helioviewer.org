@@ -35,6 +35,7 @@ class Movie_YouTubeUploader
     //YouTube Limits (http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference)
     private $_titleMaxLength       = 100;
     private $_descriptionMaxLength = 5000;
+    private $_keywordMinLength     = 2;
     private $_keywordMaxLength     = 30;
     private $_keywordsMaxLength    = 500;
     
@@ -300,37 +301,61 @@ class Movie_YouTubeUploader
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
     <script type='text/javascript'>
             $(function () {
-                var errorMsg, successMsg, errorConsole;
+                var successMsg, errorConsole;
 
+                // Validate and submit form
                 $("#youtube-video-info").submit(function () {
-                    if (formIsValid()) {
-                        successMsg = "<div id='success-message'><h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.</div>";
-                        $("#container").empty().html(successMsg);
-                        $.post("index.php", $(this).serialize());
-                    } else {
-                    	errorMsg = "<b>Error:</b> YouTube tags must not be longer than " + <?php echo $this->_keywordMaxLength;?> + " characters each.";
+                    try {
+                        validateForm();
+                    } catch (ex) {
                     	errorConsole = $("#upload-error-console");
-                    	errorConsole.html(errorMsg).fadeIn(function () {
+                    	errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
 							window.setTimeout(function () {
 								errorConsole.fadeOut();
 				            }, 15000);
 						});
+						return false;
                     }
+
+                    // If input looks good, submit request to YouTube and let user know
+                    successMsg = "<div id='success-message'><h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.</div>";
+                    $("#container").empty().html(successMsg);
+                    $.post("index.php", $(this).serialize());
+
                     return false;   
                 });
 
 				// Form validation
-				var formIsValid = function() {
-					var valid = true, keywordMaxLength = <?php echo $this->_keywordMaxLength;?>;
+				var validateForm = function() {
+					var keywords         = $("#youtube-tags").attr('value'),
+						keywordMinLength = <?php echo $this->_keywordMinLength;?>,
+						keywordMaxLength = <?php echo $this->_keywordMaxLength;?>;
+
+					// User must specify at least one keyword
+					if (keywords.length === 0) {
+						throw "You must specifiy at least one tag for your video.";
+						return;
+					}
 					
-					// Make sure each keyword is 30 characters or less
-					$.each($("#youtube-tags").attr('value').split(","), function(i, keyword) {
-						if ($.trim(keyword).length > keywordMaxLength) {
-							valid = false;
+					// Make sure each keywords are between 2 and 30 characters each
+					$.each(keywords.split(","), function(i, keyword) {
+						var len = $.trim(keyword).length;
+
+						if (len > keywordMaxLength) {
+							throw "YouTube tags must not be longer than " + keywordMaxLength + " characters each.";
+						} else if (len < keywordMinLength) {
+							throw "YouTube tags must be at least " + keywordMinLength + " characters each.";
 						}
+						return;						
 					});
 
-					return valid;
+					// < and > are not allowed in title, description or keywords
+					$.each($("input[type='text'], textarea"), function (i, input) {
+						if ($(input).attr('value').match(/[<>]/)) {
+							throw "< and > characters are not allowed";
+						}
+						return;
+					});
 				};
             });
         </script>
