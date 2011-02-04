@@ -167,8 +167,10 @@ var TileLayerAccordion = Layer.extend(
         meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'>";
         meas += "</select><br><br>";
         
-        info = "<a href='#' id='image-" + id +
-               "-info-btn' style='margin-left:170px; color: white; text-decoration: none;'>Image Information</a><br>";
+//        info = "<a href='#' id='image-" + id +
+//               "-info-btn' style='margin-left:170px; color: white; text-decoration: none;'>Image Information</a><br>";
+        
+        info = "<span id='image-" + id + "-info-btn' class='image-info-dialog-btn ui-icon ui-icon-info'></span>";
         
         return (opacitySlide + obs + inst + det + meas + info);
     },
@@ -224,7 +226,7 @@ var TileLayerAccordion = Layer.extend(
     },
     
     /**
-     * @description Displays the Image header information associated with a given image
+     * @description Displays the Image meta information and properties associated with a given image
      * @param {Object} layer
      */
     _showImageInfoDialog: function (id, name, filepath, filename, server) {
@@ -269,7 +271,7 @@ var TileLayerAccordion = Layer.extend(
         dialog =  $("<div id='image-info-dialog-" + id +  "' class='image-info-dialog' />");
         
         // Header section
-        html = "<div class='image-header-dialog-menu'>" +
+        html = "<div class='image-info-dialog-menu'>" +
         	   "<a class='show-fits-tags-btn selected'>[FITS]</a>" +
         	   "<a class='show-helioviewer-tags-btn'>Helioviewer</a>" +
         	   "<span class='image-info-sort-btn'>Abc</span>" +
@@ -295,7 +297,7 @@ var TileLayerAccordion = Layer.extend(
         
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
-            title    : "Image Header: " + name,
+            title    : "Image Information: " + name,
             minWidth : 542,
             width    : 542,
             height   : 350,
