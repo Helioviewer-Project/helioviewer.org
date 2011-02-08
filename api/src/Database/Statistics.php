@@ -64,6 +64,14 @@ class Database_Statistics
             "uploadMovieToYouTube" => array()
         );
         
+        // Summary array
+        $summary = array(
+            "buildMovie"           => 0,
+            "getJPX"               => 0,
+            "takeScreenshot"       => 0,
+            "uploadMovieToYouTube" => 0
+        );
+        
         // Format to use for displaying dates
         $dateFormat = $this->_getDateFormat($resolution);
         
@@ -93,8 +101,13 @@ class Database_Statistics
             // And append counts for each action during that interval to the relevant array
             while ($count = $result->fetch_array(MYSQL_ASSOC)) {
                 $counts[$count['action']][$i][$dateIndex] = (int) $count['count'];
+                $summary[$count['action']] += (int) $count['count'];
             }
         }
+        
+        // Include summary info
+        $counts['summary'] = $summary;        
+        
         return json_encode($counts);
     }
     
