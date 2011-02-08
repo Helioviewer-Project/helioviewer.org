@@ -31,7 +31,7 @@
 class Config
 {
     private $_bools  = array("distributed_mode_enabled", "disable_cache", "helioqueuer_enabled",
-                             "enable_movie_button", "enable_screenshot_button", "enable_statistics_collection");
+                             "enable_statistics_collection");
                              
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
                              "ffmpeg_max_threads", "max_jpx_frames", "max_movie_frames");
