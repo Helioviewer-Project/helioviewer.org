@@ -1,0 +1,12 @@
+#main {text-align: center; margin:0px auto; width: 80%;}
+#header {height: 64px; font-size:2em; vertical-align: middle; margin-top: 50px; margin-bottom: 26px;}
+#headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:1.2em;}
+#footer {font-size: 10px;}
+#overview {font-size: 1em; height:30px;}
+#numScreenshots {color: #8e305c;}
+#numMovies {color: #5d8f31;}
+#numJPXMovies {color: #315d8f;}
+#visualizations {margin-bottom: 0px;}
+#pieChart {width: 45%; display: inline-block;}
+#barCharts {width: 45%; display: inline-block; vertical-align: top; margin-top: 100px;}
+.summaryCount {font-weight: bold; font-size:1.5em; cursor: pointer;}

@@ -11,7 +11,7 @@ var MovieHistory = History.extend(
     {
     /**
      * @constructs
-     * @param history -- an array of saved history from UserSettings. May be null or empty.
+     * @param history An array of saved history from UserSettings. May be null or empty.
      */    
     init: function (history) {
         this.id = "movie";
@@ -25,10 +25,6 @@ var MovieHistory = History.extend(
      */
     addToHistory: function (item) {
         this._super(item);
-        this.save();
-    },
-    
-    save: function () {
         $(document).trigger("save-setting", ["movie-history", this._serialize()]);
     },
     
@@ -39,7 +35,7 @@ var MovieHistory = History.extend(
         this._super();
         $(document).trigger("save-setting", ["movie-history", this.history]);
     },
-    
+
     /**
      * Queues the movie and waits for a return.
      */
@@ -63,13 +59,67 @@ var MovieHistory = History.extend(
             movie.setId(movieData.id);
             self.addToHistory(movie);
             
-            self.save();
+            $(document).trigger("save-setting", ["movie-history", self._serialize()]);
             
             $("#movie-button").removeClass("working");
             self._waitForMovie(movieData, movie);
         };
         
         $.post("api/index.php", params, movieCallback, "json");
+    },
+    
+    /**
+     * Creates the html that will go in the jgrowl notification when the video is done.
+     */
+    _addJGrowlHTML: function (id) {
+        return  "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
+                    " download it." + "<br />(opens in a pop-up)</div>" +
+                "<div id='watch-dialog-" + id + "' style='display:none'></div>";
+    },
+    
+    /**
+     * Adds an item to the content string and also adds an emtpy div where the watch
+     * dialog will be created.
+     * 
+     * @param {Object} item A Movie object
+     */
+    _addToContentString: function (item) {
+        return  this._super(item) + 
+                "<div id='watch-dialog-" + item.id + "' style='display:none'>" +
+                "</div>";
+    },
+    
+    /**
+     * 
+     */
+    _handleDataErrors: function (data) {
+        if (data === null) {
+            $(document).trigger("message-console-info", "Unable to process request. Please try again later.");
+            return true;
+        } else if (data.error) {
+            $(document).trigger("message-console-info", [data.error]);
+            return true;
+        }
+        return false;
+    },
+    
+    /**
+     * Takes in an array of history gotten from UserSettings and creates Movie objects from it.
+     * Slices the array down to 12 objects.
+     * 
+     * @input {Array} history An array of saved movie histories
+     */
+    _loadSavedHistory: function (history) {
+        var self = this, movie;
+        $.each(history, function () {
+            movie = new Movie(this);
+            self.history.push(movie);
+            if (!movie.complete && movie.id) {
+                self._waitForMovie({}, movie);
+            }
+        });
+
+        this.history = this.history.reverse().slice(0, 12).reverse();
     },
     
     /**
@@ -93,12 +143,6 @@ var MovieHistory = History.extend(
             open  : function () {
                 var watch = $('#watch-' + movie.id);
 
-                movie.setURL(data.url, movie.id);
-                movie.setDuration(data.duration);
-
-                //self.button.qtip('hide');
-                //self.hide();
-                //$("#social-buttons").click(); // hides the button qtip
                 $(".qtip").not("#qtip-4").qtip("hide"); // Hide history dialog (qtip-4 is image area select confirm)
                 self.save();
                 self.updateTooltips();
@@ -130,6 +174,8 @@ var MovieHistory = History.extend(
             return;     
             
         } else if (data.url) {
+            movie.setURL(data.url, movie.id);
+            movie.setDuration(data.duration);
             this._notifyUser(data, movie);
         } else {
             tryToGetMovie = function () {
@@ -147,59 +193,5 @@ var MovieHistory = History.extend(
             // wait and try again
             setTimeout(tryToGetMovie, Math.max(data.eta, 15) * 1000);
         }
-    },
-    
-    /**
-     * 
-     */
-    _handleDataErrors: function (data) {
-        if (data === null) {
-            $(document).trigger("message-console-info", "Unable to process request. Please try again later.");
-            return true;
-        } else if (data.error) {
-            $(document).trigger("message-console-info", [data.error]);
-            return true;
-        }
-        return false;
-    },
-    
-    /**
-     * Creates the html that will go in the jgrowl notification when the video is done.
-     */
-    _addJGrowlHTML: function (id) {
-        return  "<div id='watch-" + id + "' style='cursor:pointer;'>Click here to watch or" +
-                    " download it." + "<br />(opens in a pop-up)</div>" +
-                "<div id='watch-dialog-" + id + "' style='display:none'></div>";
-    },
-    
-    /**
-     * Adds an item to the content string and also adds an emtpy div where the watch
-     * dialog will be created.
-     * 
-     * @param {Object} item A Movie object
-     */
-    _addToContentString: function (item) {
-        return  this._super(item) + 
-                "<div id='watch-dialog-" + item.id + "' style='display:none'>" +
-                "</div>";
-    },
-    
-    /**
-     * Takes in an array of history gotten from UserSettings and creates Movie objects from it.
-     * Slices the array down to 12 objects.
-     * 
-     * @input {Array} history An array of saved movie histories
-     */
-    _loadSavedHistory: function (history) {
-        var self = this, movie;
-        $.each(history, function () {
-            movie = new Movie(this);
-            self.history.push(movie);
-            if (!movie.complete && movie.id) {
-                self._waitForMovie({}, movie);
-            }
-        });
-
-        this.history = this.history.reverse().slice(0, 12).reverse();
     }
 });

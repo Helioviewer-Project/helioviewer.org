@@ -16,8 +16,7 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["distributed_mode_enabled", "disable_cache", "enable_movie_button", "enable_screenshot_button",
-                       "helioqueuer_enabled"];
+        this.bools  = ["distributed_mode_enabled", "disable_cache", "helioqueuer_enabled"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "bit_depth", "num_colors", "max_movie_frames",
                        "max_tile_layers"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];

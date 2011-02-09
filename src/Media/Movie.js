@@ -10,12 +10,6 @@ bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 1
 var Movie = Media.extend(
     /** @lends Movie.prototype */
     {
-    formats : {
-        "win"   : "mp4",
-        "mac"   : "mp4",
-        "linux" : "mp4",
-        "other" : "mp4"
-    },
     /**
      * @constructs
      * @description Calculates its dimensions and handles movie display. Holds on to information used 
@@ -49,27 +43,62 @@ var Movie = Media.extend(
             this.time = this.time.slice(0, -5);
         }
 
-        this.hqFormat = params.hqFormat || this.formats[getOS()];
+        this.hqFormat = params.hqFormat || "mp4";
         this.complete = params.complete || false;
         this.url      = params.url      || "";
     },
     
     /**
-     * Sets the URL and completed status
+     * Creates a table element with information about the movie.
      */
-    setURL: function (url) {
-        this._super(url, this.id);
-        this.complete = true;
+    getInformationTable: function () {        
+        var layerArray, table, previewFrame;
+        previewFrame = this.url.slice(0, -3) + "png";
+        layerArray = layerStringToLayerArray(this.layers);
+        table = "<table>" +
+                    "<tr valign='top'>" + 
+                        "<td><b>Layers: </b></td>" +
+                        "<td>";
+        $.each(layerArray, function () {
+            table = table + "<dt>" + extractLayerName(this).join(" ") + "</dt>";
+        });
+        table = table + "</td>" + 
+                    "</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                        "<td><b>Start Time: </b></td>" +
+                        "<td>" + this.time + "</td>" + 
+                    "</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
+                    "<tr>" + 
+                        "<td><b>Image Scale:&nbsp;&nbsp;</b></td>" +
+                        "<td>" + this.imageScale + " arcsec/px</td>" + 
+                    "</tr>" +
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>" +
+                    "<tr>" + 
+                        "<td><b>Dimensions: </b></td>" + 
+                        "<td>" + this.width + "x" + this.height + " px</td>" + 
+                    "</tr>" + 
+                    "<tr>" +
+                        "<td>&nbsp;</td>" +
+                    "</tr>";
+        if (this.complete) {
+            table = table +
+                    "<tr valign='top'>" + 
+                        "<td><b>Preview: </b></td>" + 
+                        "<td><img src=" + previewFrame + " width=150 /></td>" + 
+                    "</tr>";
+        }
+        table = table + "</table>";
+        return table;
     },
     
-    setDuration: function (duration) {
-        this.duration = duration;
-    },
-    
-    setId: function (id) {
-        this.id = id;
-    },
-
     getTimeDiff: function () {
         if (!this.complete) {
             return "<span style='color: #aaf373;'>Processing</span>";
@@ -78,23 +107,57 @@ var Movie = Media.extend(
     },
     
     /**
-     * Creates a tooltip that pops up with information about the movie
-     * when its link is moused over. Also sets up an event listener for the
-     * link to trigger playing the movie. 
+     * Determines dimensions for which movie should be displayed
      */
-    setupTooltip: function () {
-        this._super();
-
-        var self = this;
+    getVideoPlayerDimensions: function () {
+        var maxWidth    = $(window).width() * 0.80,
+            maxHeight   = $(window).height() * 0.80,
+            scaleFactor = Math.max(1, this.width / maxWidth, this.height / maxHeight);
         
-        this.button.click(function () {
-            //self.button.parents('.qtip')
-            //self.button.qtip("hide");
-            if (self.complete) {
-                $(".qtip").not("#qtip-4").qtip("hide"); // Hide history dialog (qtip-4 is image area select confirm)
-                self.playMovie();                
-            }
-        });
+        return {
+            "width"  : Math.floor(this.width  / scaleFactor),
+            "height" : Math.floor(this.height / scaleFactor)
+        };
+    },
+    
+    /**
+     * Decides how to display video and returns HTML corresponding to that method
+     */
+    getVideoPlayerHTML: function (width, height, uploadURL) {
+        var path, file, hqFile, flashFile, url, downloadLink, youtubeBtn;
+
+        file = this.url.match(/[\w\-]*\/[\w\-\.]*.mp4$/).pop(); // Relative path to movie
+        
+        hqFile    = file.replace(".mp4", "-hq." + this.hqFormat);
+        flashFile = file.replace("mp4", "flv");
+        
+        downloadLink = "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
+                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' " +
+                       "alt='Download high-quality video' />Download</a>";
+        
+        youtubeBtn = "<a id='youtube-upload-" + this.id + "'  href='" + uploadURL + "' target='_blank'>" + 
+                     "<img class='youtube-icon' src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
+                     "alt='Upload video to YouTube' />Upload</a>";
+        
+        // HTML5 Video (Currently only H.264 supported)
+        if ($.support.h264) {
+            path = this.url.match(/cache.*/).pop();
+
+            return "<video id='movie-player-" + this.id + "' src='" + path +
+                   "' controls preload autoplay width='100%' " + "height='95%'></video>" + 
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span>";
+        }
+
+        // Fallback (flash player)
+        else {
+            url = 'api/index.php?action=playMovie&file=' + flashFile + 
+                  '&width=' + width + '&height=' + height + '&duration=' + this.duration;
+            
+            return "<div id='movie-player-" + this.id + "'>" + 
+                   "<iframe src=" + url + " width=" + width + " height=" + height + " marginheight=0 marginwidth=0 " +
+                   "scrolling=no frameborder=0 /><br />" + 
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span></div>";
+        }
     },
     
     /**
@@ -185,77 +248,6 @@ var Movie = Media.extend(
     },
     
     /**
-     * Opens YouTube uploader either in a separate tab or in a dialog
-     */
-    showYouTubeUploadDialog: function (url) {
-        // Close movie dialog (Flash player blocks upload form)
-        $("#watch-dialog-" + this.id).dialog("close");
-        
-        var iframe = "<div id='youtube-upload-dialog-" + this.id + "' style='overflow:hidden;'>" + "<iframe src='" + url +
-                     "&dialogMode=true' scrolling='no' width='100%' height='100%' style='border: none' />";
-
-        $(iframe).dialog({
-            "title" : "Upload video to YouTube",
-            "width" : 640,
-            "height": 480
-        });            
-    },
-    
-    /**
-     * Decides how to display video and returns HTML corresponding to that method
-     */
-    getVideoPlayerHTML: function (width, height, uploadURL) {
-        var path, file, hqFile, flashFile, url, downloadLink, youtubeBtn;
-
-        file = this.url.match(/[\w\-]*\/[\w\-\.]*.mp4$/).pop(); // Relative path to movie
-        
-        hqFile    = file.replace(".mp4", "-hq." + this.hqFormat);
-        flashFile = file.replace("mp4", "flv");
-        
-        downloadLink = "<a target='_parent' href='api/index.php?action=downloadFile&uri=movies/" + hqFile + "'>" +
-                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' " +
-                       "alt='Download high-quality video' />Download</a>";
-        
-        youtubeBtn = "<a id='youtube-upload-" + this.id + "'  href='" + uploadURL + "' target='_blank'>" + 
-                     "<img class='youtube-icon' src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
-                     "alt='Upload video to YouTube' />Upload</a>";
-        
-        // HTML5 Video (Currently only H.264 supported)
-        if ($.support.h264) {
-            path = this.url.match(/cache.*/).pop();
-
-            return "<video id='movie-player-" + this.id + "' src='" + path +
-                   "' controls preload autoplay width='100%' " + "height='95%'></video>" + 
-                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span>";
-        }
-
-        // Fallback (flash player)
-        else {
-            url = 'api/index.php?action=playMovie&file=' + flashFile + 
-                  '&width=' + width + '&height=' + height + '&duration=' + this.duration;
-            
-            return "<div id='movie-player-" + this.id + "'>" + 
-                   "<iframe src=" + url + " width=" + width + " height=" + height + " marginheight=0 marginwidth=0 " +
-                   "scrolling=no frameborder=0 /><br />" + 
-                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span></div>";
-        }
-    },
-    
-    /**
-     * Determines dimensions for which movie should be displayed
-     */
-    getVideoPlayerDimensions: function () {
-        var maxWidth    = $(window).width() * 0.80,
-            maxHeight   = $(window).height() * 0.80,
-            scaleFactor = Math.max(1, this.width / maxWidth, this.height / maxHeight);
-        
-        return {
-            "width"  : Math.floor(this.width  / scaleFactor),
-            "height" : Math.floor(this.height / scaleFactor)
-        };
-    },
-    
-    /**
      * Puts information about the movie into an array for storage in UserSettings.
      */
     serialize: function () {
@@ -276,54 +268,56 @@ var Movie = Media.extend(
         };
     },
     
+    setDuration: function (duration) {
+        this.duration = duration;
+    },
+    
+    setId: function (id) {
+        this.id = id;
+    },
+    
     /**
-     * Creates a table element with information about the movie.
+     * Creates a tooltip that pops up with information about the movie
+     * when its link is moused over. Also sets up an event listener for the
+     * link to trigger playing the movie. 
      */
-    getInformationTable: function () {        
-        var layerArray, table, previewFrame;
-        previewFrame = this.url.slice(0, -3) + "png";
-        layerArray = layerStringToLayerArray(this.layers);
-        table = "<table>" +
-                    "<tr valign='top'>" + 
-                        "<td><b>Layers: </b></td>" +
-                        "<td>";
-        $.each(layerArray, function () {
-            table = table + "<dt>" + extractLayerName(this).join(" ") + "</dt>";
+    setupTooltip: function () {
+        this._super();
+
+        var self = this;
+        
+        this.button.click(function () {
+            //self.button.parents('.qtip')
+            //self.button.qtip("hide");
+            if (self.complete) {
+                $(".qtip").not("#qtip-4").qtip("hide"); // Hide history dialog (qtip-4 is image area select confirm)
+                self.playMovie();                
+            }
         });
-        table = table + "</td>" + 
-                    "</tr>" +
-                    "<tr>" +
-                        "<td>&nbsp;</td>" +
-                    "</tr>" +
-                    "<tr>" +
-                        "<td><b>Start Time: </b></td>" +
-                        "<td>" + this.time + "</td>" + 
-                    "</tr>" +
-                    "<tr>" +
-                        "<td>&nbsp;</td>" +
-                    "</tr>" +
-                    "<tr>" + 
-                        "<td><b>Image Scale:&nbsp;&nbsp;</b></td>" +
-                        "<td>" + this.imageScale + " arcsec/px</td>" + 
-                    "</tr>" +
-                    "<tr>" +
-                        "<td>&nbsp;</td>" +
-                    "</tr>" +
-                    "<tr>" + 
-                        "<td><b>Dimensions: </b></td>" + 
-                        "<td>" + this.width + "x" + this.height + " px</td>" + 
-                    "</tr>" + 
-                    "<tr>" +
-                        "<td>&nbsp;</td>" +
-                    "</tr>";
-        if (this.complete) {
-            table = table +
-                    "<tr valign='top'>" + 
-                        "<td><b>Preview: </b></td>" + 
-                        "<td><img src=" + previewFrame + " width=150 /></td>" + 
-                    "</tr>";
-        }
-        table = table + "</table>";
-        return table;
+    },
+    
+    /**
+     * Sets the URL and completed status
+     */
+    setURL: function (url) {
+        this._super(url, this.id);
+        this.complete = true;
+    },
+
+    /**
+     * Opens YouTube uploader either in a separate tab or in a dialog
+     */
+    showYouTubeUploadDialog: function (url) {
+        // Close movie dialog (Flash player blocks upload form)
+        $("#watch-dialog-" + this.id).dialog("close");
+        
+        var iframe = "<div id='youtube-upload-dialog-" + this.id + "' style='overflow:hidden;'>" + "<iframe src='" +
+                     url + "&dialogMode=true' scrolling='no' width='100%' height='100%' style='border: none' />";
+
+        $(iframe).dialog({
+            "title" : "Upload video to YouTube",
+            "width" : 640,
+            "height": 480
+        });            
     }
 });

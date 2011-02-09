@@ -125,29 +125,19 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
                                     <span class="ui-icon ui-icon-mail-closed" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Email</span>
                                 </div>-->
-                        <?php 
-                            if ($config["enable_movie_button"])
-                            {
-                        ?>
+
                                 <!-- Movie button -->
                                 <div id="movie-button" class="text-btn">
                                     <span class="ui-icon ui-icon-video" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Movie</span>
                                 </div>
-                        <?php 
-                            }
-                            
-                            if ($config["enable_screenshot_button"])
-                            {
-                        ?>                      
+
                                 <!-- Screenshot button -->
                                 <div id="screenshot-button" class="text-btn">
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
-                        <?php 
-                            }
-                        ?>
+
                                 <!-- JHelioviewer -->
                                 <!-- 2010/12/28: Disabling until JNLP launching is fixed -->
                                 <!-- <div id="jhelioviewer-button" class="text-btn">
@@ -259,8 +249,6 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
     </div>
 </div>
 <!-- end Footer -->
-
-<!-- TODO: Create dialog and loading indicator nodes on the fly -->
 
 <!-- Loading Indicator -->
 <div id="loading" style="display: none">Loading...</div>

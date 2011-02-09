@@ -24,37 +24,6 @@ var ScreenshotBuilder = MediaBuilder.extend(
         
         this._setupDialogAndEventHandlers(-60);
     },
-
-    /**
-     * Called after _setupDialogAndEventHandlers is finished initializing the dialog. 
-     * Creates event listeners for the "Full Viewport" and "Select Area" buttons in the
-     * dialog. "Full Viewport" takes a screenshot immediately, "Select Area" triggers 
-     * the ImageSelectTool and provides it with a callback function to takeScreenshot().
-     */
-    _setupEventListeners: function () {
-        var self = this, viewportInfo;
-        
-        this.fullVPButton     = $("#" + this.id + "-full-viewport");
-        this.selectAreaButton = $("#" + this.id + "-select-area");
-        
-        this._super();
-        
-        this.fullVPButton.click(function () {
-            self.hideDialogs();
-            viewportInfo = self.viewport.getViewportInformation();
-            self.takeScreenshot(viewportInfo);
-        });
-        
-        this.selectAreaButton.click(function () {
-            self.hideDialogs();
-            $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
-        });
-        
-        // Close any open jGrowl notifications
-        this.button.click(function () {
-            $(".jGrowl-notification .close").click();
-        });
-    },
     
     /**
      * @description Gathers all necessary information to generate a screenshot, and then displays the
@@ -133,5 +102,36 @@ var ScreenshotBuilder = MediaBuilder.extend(
         };
        
         $.get(this.url, params, callback, "json");
+    },
+    
+    /**
+     * Called after _setupDialogAndEventHandlers is finished initializing the dialog. 
+     * Creates event listeners for the "Full Viewport" and "Select Area" buttons in the
+     * dialog. "Full Viewport" takes a screenshot immediately, "Select Area" triggers 
+     * the ImageSelectTool and provides it with a callback function to takeScreenshot().
+     */
+    _setupEventListeners: function () {
+        var self = this, viewportInfo;
+        
+        this.fullVPButton     = $("#" + this.id + "-full-viewport");
+        this.selectAreaButton = $("#" + this.id + "-select-area");
+        
+        this._super();
+        
+        this.fullVPButton.click(function () {
+            self.hideDialogs();
+            viewportInfo = self.viewport.getViewportInformation();
+            self.takeScreenshot(viewportInfo);
+        });
+        
+        this.selectAreaButton.click(function () {
+            self.hideDialogs();
+            $(document).trigger("enable-select-tool", $.proxy(self.takeScreenshot, self));
+        });
+        
+        // Close any open jGrowl notifications
+        this.button.click(function () {
+            $(".jGrowl-notification .close").click();
+        });
     }
 });

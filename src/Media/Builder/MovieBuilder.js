@@ -15,13 +15,7 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
 var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
     {
-    formats : {
-        "win"   : "mp4",
-        "mac"   : "mp4",
-        "linux" : "mp4",
-        "other" : "mp4"
-    },
-    proxied : false,
+
     /**
      * @constructs
      * @description Loads default options, grabs mediaSettings, sets up event listener for the movie button
@@ -33,147 +27,54 @@ var MovieBuilder = MediaBuilder.extend(
         this.button   = $("#movie-button");
         this.percent  = 0;
         this.id       = "movie";
-
-        this.hqFormat = this.formats[getOS()];
+        this.hqFormat = "mp4";
 
         this._setupDialogAndEventHandlers();
     },
     
     /**
-     * Called after _setupDialogAndEventHandlers is finished initializing the dialog. 
-     * Creates event listeners for the "Full Viewport" and "Select Area" buttons in the
-     * dialog. "Full Viewport" makes a movie immediately, "Select Area" triggers 
-     * the ImageSelectTool and provides it with a callback function to validateAndBuild().
+     * @description Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.
+     *                 Upon completion, it displays a notification that lets the user click to view it in a popup. 
+     * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
-    _setupEventListeners: function () {
-        var self = this, viewportInfo;
+    buildMovie: function (viewportInfo) {
+        var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
+            movie, url, self = this;
         
-        this.fullVPButton     = $("#" + this.id + "-full-viewport");
-        this.selectAreaButton = $("#" + this.id + "-select-area");
-
-        this._super();
-    
-        this.fullVPButton.click(function () {
-            self.hideDialogs();
-            
-            if (self.building) {
-                $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
-            } else {
-                viewportInfo = self.viewport.getViewportInformation();
-                self.validateAndBuild(viewportInfo);
-            }
-        });
-    
-        this.selectAreaButton.click(function () {
-            self.hideDialogs();
-            
-            if (self.building) {
-                $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
-            } else {
-                $(document).trigger("enable-select-tool", $.proxy(self.validateAndBuild, self));
-            }
-        });
-    },
-    
-    /**
-     * @description Checks to make sure there are 3 or less layers in the movie. If there are more, 
-     *              user is presented with a pop-up asking them to pick 3 layers. Otherwise,
-     *              builds the movie.
-     * @param {Object} viewportInfo -- An object containing layers, time, imageScale, and coordinates.
-     *                     
-     */
-    validateAndBuild: function (viewportInfo) {
-        if (!this.ensureValidArea(viewportInfo)) {
-            $(document).trigger("message-console-warn", ["The area you have selected is too small to " +
-                "create a movie. Please try again."]);
-            return;
-            
-        } else if (!this.ensureValidLayers(viewportInfo)) {
-            $(document).trigger("message-console-warn", ["You must have at least one layer in your movie. " +
-                "Please try again."]);
-            return;
-        }
+        this.building = true;
+        this.button.addClass("working");
         
-        var layers = layerStringToLayerArray(viewportInfo.layers);
-
-        // If there are between 1 and 3 layers, continue building.
-        if (layers.length <= 3 && layers.length >= 1) {
-            this.buildMovie(viewportInfo);
-        }    
+        arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
         
-        // Otherwise, prompt the user to pick 3 layers.
-        else {
-            this.promptForLayers(viewportInfo, layers);
-        }
-    },        
-
-    /**
-     * Opens a dialog and prompts the user to pick only 3 layers.
-     */
-    promptForLayers: function (viewportInfo, layers) {
-        var self = this;
+        realVPSize = this.viewport.getViewportInformation().coordinates;
+        vpHeight   = realVPSize.bottom - realVPSize.top;
         
-        $("#layer-choice-dialog").dialog({
-            dialogClass: 'helioviewer-layer-choice-dialog',
-            width:     450,
-            // Adjust height depending on how much space the text takes up (roughly 20 pixels per 
-            // layer name, and a base height of 160)
-            height: 160 + layers.length * 20,
-            open: function (e) {
-                // Put a table of possible layers + check boxes in dialog.
-                $('.ui-widget-overlay').hide().fadeIn();
-                $(this).html(self.createLayerSelectionTable(layers));
-                $("#ok-button").hover(function (e) {
-                    $(this).addClass('ui-state-hover').removeClass('ui-state-default');
-                },
-                function (e) {
-                    $(this).removeClass('ui-state-hover').addClass('ui-state-default');
-                });
-            },
-            modal: true,
-            title: "Layer selection",
-            resizable: false,
-            close: function () {
-                // Set up event handler for the button
-                $('#ok-button').click(function () {
-                    self.finalizeLayersAndBuild(viewportInfo);
-                });
-            }
-        });
-    },
-    
-    /**
-     * Checks to see if the user has picked 3 or fewer layers and will make a movie if they have.
-     * If not, does nothing and warns the user to pick 1-3 layers.
-     */
-    finalizeLayersAndBuild: function (viewportInfo) {
-        var checkboxes, finalLayers = [], msg;
-        checkboxes = $('td.layers-checkbox');
-    
-        // checkboxes is an array of each <td.layers-checkbox> that exists in the table
-        // this.firstChild is an <input type=checkbox> and is used to get the value.
-        $.each(checkboxes, function () {
-            // If the checkbox is selected, add that layer.
-            if (this.firstChild.checked) {
-                finalLayers.push(this.firstChild.value);
-            }
-        });
-
-        // Set the new layers in viewportInfo and build the movie.
-        if (finalLayers.length <= 3 && finalLayers.length >= 1) {
-            viewportInfo.layers = finalLayers.join(",");
-            this.buildMovie(viewportInfo);
-            $("#layer-choice-dialog").dialog("close");
-        }
-
-        // If the user still hasn't entered a valid number of layers, 
-        // keep the prompt open and warn them
-        else {
-            // clear out finalLayers and try again
-            finalLayers = [];
-            msg = "Please select between 1 and 3 layers.";
-            $(document).trigger("message-console-log", [msg]);
-        }
+        coordinates = viewportInfo.coordinates;
+        movieHeight = coordinates.bottom - coordinates.top;
+        
+        // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
+        currentTime = new Date(getUTCTimestamp(viewportInfo.time));
+        
+        // Ajax Request Parameters
+        params = {
+            action        : "queueMovie",
+            layers        : viewportInfo.layers,
+            startTime     : currentTime.addHours(-12).toISOString(),
+            endTime       : currentTime.addHours(24).toISOString(),
+            imageScale    : viewportInfo.imageScale,
+            dateRequested : (new Date()).getTime(),
+            x1            : arcsecCoords.x1,
+            x2            : arcsecCoords.x2,
+            y1            : arcsecCoords.y1,
+            y2            : arcsecCoords.y2,
+            format        : this.hqFormat,
+            display       : false,
+            verbose       : true
+        };
+        
+        this.hideDialogs();
+        this.history.queueMovie(params, this.url);
+        this.building = false;
     },
     
     /**
@@ -217,49 +118,139 @@ var MovieBuilder = MediaBuilder.extend(
     },
     
     /**
-     * @description Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.
-     *                 Upon completion, it displays a notification that lets the user click to view it in a popup. 
-     * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
+     * Checks to see if the user has picked 3 or fewer layers and will make a movie if they have.
+     * If not, does nothing and warns the user to pick 1-3 layers.
      */
-    buildMovie: function (viewportInfo) {
-        var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            movie, url, self = this;
-        
-        //console.log("building = true");
+    finalizeLayersAndBuild: function (viewportInfo) {
+        var checkboxes, finalLayers = [], msg;
+        checkboxes = $('td.layers-checkbox');
+    
+        // checkboxes is an array of each <td.layers-checkbox> that exists in the table
+        // this.firstChild is an <input type=checkbox> and is used to get the value.
+        $.each(checkboxes, function () {
+            // If the checkbox is selected, add that layer.
+            if (this.firstChild.checked) {
+                finalLayers.push(this.firstChild.value);
+            }
+        });
 
-        this.building = true;
-        this.button.addClass("working");
+        // Set the new layers in viewportInfo and build the movie.
+        if (finalLayers.length <= 3 && finalLayers.length >= 1) {
+            viewportInfo.layers = finalLayers.join(",");
+            this.buildMovie(viewportInfo);
+            $("#layer-choice-dialog").dialog("close");
+        }
+
+        // If the user still hasn't entered a valid number of layers, 
+        // keep the prompt open and warn them
+        else {
+            // clear out finalLayers and try again
+            finalLayers = [];
+            msg = "Please select between 1 and 3 layers.";
+            $(document).trigger("message-console-log", [msg]);
+        }
+    },
+    
+    /**
+     * Opens a dialog and prompts the user to pick only 3 layers.
+     */
+    promptForLayers: function (viewportInfo, layers) {
+        var self = this;
         
-        arcsecCoords  = this.toArcsecCoords(viewportInfo.coordinates, viewportInfo.imageScale);
+        $("#layer-choice-dialog").dialog({
+            dialogClass: 'helioviewer-layer-choice-dialog',
+            width:     450,
+            // Adjust height depending on how much space the text takes up (roughly 20 pixels per 
+            // layer name, and a base height of 160)
+            height: 160 + layers.length * 20,
+            open: function (e) {
+                // Put a table of possible layers + check boxes in dialog.
+                $('.ui-widget-overlay').hide().fadeIn();
+                $(this).html(self.createLayerSelectionTable(layers));
+                $("#ok-button").hover(function (e) {
+                    $(this).addClass('ui-state-hover').removeClass('ui-state-default');
+                },
+                function (e) {
+                    $(this).removeClass('ui-state-hover').addClass('ui-state-default');
+                });
+            },
+            modal: true,
+            title: "Layer selection",
+            resizable: false,
+            close: function () {
+                // Set up event handler for the button
+                $('#ok-button').click(function () {
+                    self.finalizeLayersAndBuild(viewportInfo);
+                });
+            }
+        });
+    },
+    
+    /**
+     * @description Checks to make sure there are 3 or less layers in the movie. If there are more, 
+     *              user is presented with a pop-up asking them to pick 3 layers. Otherwise,
+     *              builds the movie.
+     * @param {Object} viewportInfo -- An object containing layers, time, imageScale, and coordinates.
+     *                     
+     */
+    validateAndBuild: function (viewportInfo) {
+        if (!this.ensureValidArea(viewportInfo)) {
+            $(document).trigger("message-console-warn", ["The area you have selected is too small to " +
+                "create a movie. Please try again."]);
+            return;
+            
+        } else if (!this.ensureValidLayers(viewportInfo)) {
+            $(document).trigger("message-console-warn", ["You must have at least one layer in your movie. " +
+                "Please try again."]);
+            return;
+        }
         
-        realVPSize = this.viewport.getViewportInformation().coordinates;
-        vpHeight   = realVPSize.bottom - realVPSize.top;
+        var layers = layerStringToLayerArray(viewportInfo.layers);
+
+        // If there are between 1 and 3 layers, continue building.
+        if (layers.length <= 3 && layers.length >= 1) {
+            this.buildMovie(viewportInfo);
+        }    
         
-        coordinates = viewportInfo.coordinates;
-        movieHeight = coordinates.bottom - coordinates.top;
+        // Otherwise, prompt the user to pick 3 layers.
+        else {
+            this.promptForLayers(viewportInfo, layers);
+        }
+    },        
+
+    /**
+     * Called after _setupDialogAndEventHandlers is finished initializing the dialog. 
+     * Creates event listeners for the "Full Viewport" and "Select Area" buttons in the
+     * dialog. "Full Viewport" makes a movie immediately, "Select Area" triggers 
+     * the ImageSelectTool and provides it with a callback function to validateAndBuild().
+     */
+    _setupEventListeners: function () {
+        var self = this, viewportInfo;
         
-        // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
-        currentTime = new Date(getUTCTimestamp(viewportInfo.time));
-        
-        // Ajax Request Parameters
-        params = {
-            action        : "queueMovie",
-            layers        : viewportInfo.layers,
-            startTime     : currentTime.addHours(-12).toISOString(),
-            endTime       : currentTime.addHours(24).toISOString(),
-            imageScale    : viewportInfo.imageScale,
-            dateRequested : (new Date()).getTime(),
-            x1            : arcsecCoords.x1,
-            x2            : arcsecCoords.x2,
-            y1            : arcsecCoords.y1,
-            y2            : arcsecCoords.y2,
-            format        : this.hqFormat,
-            display       : false,
-            verbose       : true
-        };
-        
-        this.hideDialogs();
-        this.history.queueMovie(params, this.url);
-        this.building = false;
+        this.fullVPButton     = $("#" + this.id + "-full-viewport");
+        this.selectAreaButton = $("#" + this.id + "-select-area");
+
+        this._super();
+    
+        this.fullVPButton.click(function () {
+            self.hideDialogs();
+            
+            if (self.building) {
+                $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
+            } else {
+                viewportInfo = self.viewport.getViewportInformation();
+                self.validateAndBuild(viewportInfo);
+            }
+        });
+    
+        this.selectAreaButton.click(function () {
+            self.hideDialogs();
+            
+            if (self.building) {
+                $(document).trigger("message-console-log", ["A link to your video will be available shortly."]);
+            } else {
+                $(document).trigger("enable-select-tool", $.proxy(self.validateAndBuild, self));
+            }
+        });
     }
 });
