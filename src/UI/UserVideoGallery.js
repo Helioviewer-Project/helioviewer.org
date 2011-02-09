@@ -75,6 +75,11 @@ var UserVideoGallery = Class.extend(
      * Processes response and stores video information locally
      */
     _processResponse: function (response) {
+        if (response.error) {
+            $("#user-video-gallery-main").html("<b>Error:</b> Did you specify a valid YouTube API key in Config.ini?");
+            return;
+        }
+        
         this._videos = this._videos.concat(response);
         this._updateGallery();
     },
