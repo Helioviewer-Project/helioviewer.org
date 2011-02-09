@@ -135,7 +135,7 @@ var Helioviewer = UIController.extend(
         var self = this;
         
         $('#link-button').click($.proxy(this.displayURL, this));
-        $('#email-button').click($.proxy(this.displayMailForm, this));
+        //$('#email-button').click($.proxy(this.displayMailForm, this));
         
         // 12/08/2010: Disabling JHelioviewer JNLP launching until better support is added
         //$('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
@@ -180,38 +180,29 @@ var Helioviewer = UIController.extend(
      */
     displayMailForm: function () {
         // Get URL
-        var url = this.toURL();
+        var html, url = this.toURL();
         
-        Shadowbox.open({
-            content:    '<div id="helioviewer-url-box">' +
-                        'Who would you like to send this page to?<br>' + 
-                        '<form style="margin-top:15px;">' +
-                        '<label>From:</label>' +
-                        '<input type="email" placeholder="from@example.com" class="email-input-field" ' +
-                        'id="email-from" value="Your Email Address"></input><br>' +
-                        '<label>To:</label>' +
-                        '<input type="email" placeholder="to@example.com" class="email-input-field" id="email-from" ' + 
-                        'value="Recipient\'s Email Address"></input>' +
-                        '<label style="float:none; margin-top: 10px;">Message: </label>' + 
-                        '<textarea style="width: 370px; height: 270px; margin-top: 8px;">Check this out:\n\n' + url +
-                        '</textarea>' + 
-                        '<span style="float: right; margin-top:8px;">' + 
-                        '<input type="submit" value="Send"></input>' +
-                        '</span></form>' +
-                        '</div>',
-            options: {
-                enableKeys : false,
-                onFinish: function () {
-                    $(".email-input-field").one("click", function (e) {
-                        this.value = "";
-                    });
-                }
-            },
-            player:     "html",
-            title:      "Email",
-            height:     455,
-            width:      400
-        });
+        html = '<div id="helioviewer-url-box">' +
+               'Who would you like to send this page to?<br>' + 
+               '<form style="margin-top:15px;">' +
+               '<label>From:</label>' +
+               '<input type="email" placeholder="from@example.com" class="email-input-field" ' +
+               'id="email-from" value="Your Email Address"></input><br>' +
+               '<label>To:</label>' +
+               '<input type="email" placeholder="to@example.com" class="email-input-field" id="email-from" ' + 
+               'value="Recipient\'s Email Address"></input>' +
+               '<label style="float:none; margin-top: 10px;">Message: </label>' + 
+               '<textarea style="width: 370px; height: 270px; margin-top: 8px;">Check this out:\n\n' + url +
+               '</textarea>' + 
+               '<span style="float: right; margin-top:8px;">' + 
+               '<input type="submit" value="Send"></input>' +
+               '</span></form>' +
+               '</div>';
+        
+        //        $(".email-input-field").one("click", function (e) {
+        //            this.value = "";
+        //        });
+        
     },
     
     /**
@@ -286,7 +277,7 @@ var Helioviewer = UIController.extend(
         $(document).trigger("message-console-info", 
             ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to check out our " +
              "<a href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" " +
-             "class=\"message-console-link\" target=\"_blank\"> User Guide</a>.", {life: 15000}]
+             "class=\"message-console-link\" target=\"_blank\"> User Guide</a>.", {life: 20000}]
         ).trigger("save-setting", ["showWelcomeMsg", false]);
     },
     

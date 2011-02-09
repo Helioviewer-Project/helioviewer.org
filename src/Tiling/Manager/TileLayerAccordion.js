@@ -262,7 +262,7 @@ var TileLayerAccordion = Layer.extend(
      * Creates a dialog to display image properties and header tags
      */
     _buildImageInfoDialog: function (name, id, response) {
-        var dialog, sortBtn, tabs, html, json;
+        var dialog, sortBtn, tabs, html, tag, json;
         
         // Convert from XML to JSON
         json = $.xml2json(response);
@@ -272,28 +272,28 @@ var TileLayerAccordion = Layer.extend(
         
         // Header section
         html = "<div class='image-info-dialog-menu'>" +
-        	   "<a class='show-fits-tags-btn selected'>[FITS]</a>" +
-        	   "<a class='show-helioviewer-tags-btn'>Helioviewer</a>" +
-        	   "<span class='image-info-sort-btn'>Abc</span>" +
-        	   "</div>";
+               "<a class='show-fits-tags-btn selected'>[FITS]</a>" +
+               "<a class='show-helioviewer-tags-btn'>Helioviewer</a>" +
+               "<span class='image-info-sort-btn'>Abc</span>" +
+               "</div>";
         
-        // Separate out Helioviewer-specific tags if not already done (older data may have HV_ tags mixed in with FITS tags)
+        // Separate out Helioviewer-specific tags if not already done 
+        //(older data may have HV_ tags mixed in with FITS tags)
         if (!json.helioviewer) {
-        	var tag;
-
-        	json.helioviewer = {};
-        	
-        	$.each(json.fits, function (key, value) {
-        		if (key.substring(0,3) === "HV_") {
-        			json.helioviewer[key.slice(3)] = value;
-        			delete json.fits[key];
-        		}
-        	});
+            json.helioviewer = {};
+            
+            $.each(json.fits, function (key, value) {
+                if (key.substring(0, 3) === "HV_") {
+                    json.helioviewer[key.slice(3)] = value;
+                    delete json.fits[key];
+                }
+            });
         }
 
         // Add FITS and Helioviewer header tag blocks
-        html += "<div class='image-header-fits'>"        + this._generateImageKeywordsSection(json.fits) + "</div>";
-        html += "<div class='image-header-helioviewer' style='display:none;'>" + this._generateImageKeywordsSection(json.helioviewer) + "</div>";
+        html += "<div class='image-header-fits'>"        + this._generateImageKeywordsSection(json.fits) + "</div>" +
+                "<div class='image-header-helioviewer' style='display:none;'>" + 
+                this._generateImageKeywordsSection(json.helioviewer) + "</div>";
         
         dialog.append(html).appendTo("body").dialog({
             autoOpen : true,
@@ -303,27 +303,27 @@ var TileLayerAccordion = Layer.extend(
             height   : 350,
             draggable: true,
             create   : function (event, ui) {
-        		var fitsBtn = dialog.find(".show-fits-tags-btn"),
-        		    hvBtn   = dialog.find(".show-helioviewer-tags-btn"),
-        		    sortBtn = dialog.find(".image-info-sort-btn");
+                var fitsBtn = dialog.find(".show-fits-tags-btn"),
+                    hvBtn   = dialog.find(".show-helioviewer-tags-btn"),
+                    sortBtn = dialog.find(".image-info-sort-btn");
 
-        		fitsBtn.click(function () {
-        			fitsBtn.html("[FITS]")
-        			hvBtn.html("Helioviewer");
-        			dialog.find(".image-header-fits").show();
-        			dialog.find(".image-header-helioviewer").hide();
-        		});
-        		
-        		hvBtn.click(function () {
-        			fitsBtn.html("FITS")
-        			hvBtn.html("[Helioviewer]");
-        			dialog.find(".image-header-fits").hide();
-        			dialog.find(".image-header-helioviewer").show();
-        		});
-        		
+                fitsBtn.click(function () {
+                    fitsBtn.html("[FITS]");
+                    hvBtn.html("Helioviewer");
+                    dialog.find(".image-header-fits").show();
+                    dialog.find(".image-header-helioviewer").hide();
+                });
+                
+                hvBtn.click(function () {
+                    fitsBtn.html("FITS");
+                    hvBtn.html("[Helioviewer]");
+                    dialog.find(".image-header-fits").hide();
+                    dialog.find(".image-header-helioviewer").show();
+                });
+                
                 // Button to toggle sorting
-        		sortBtn.click(function () {
-        			var sorted = !$(this).hasClass("italic");
+                sortBtn.click(function () {
+                    var sorted = !$(this).hasClass("italic");
                     $(this).toggleClass("italic");
                     
                     if (sorted) {
@@ -335,7 +335,7 @@ var TileLayerAccordion = Layer.extend(
                     }
                 });
 
-        	}
+            }
         });
     },
     
@@ -348,22 +348,23 @@ var TileLayerAccordion = Layer.extend(
         // Unsorted list
         unsorted = "<div class='unsorted'>";
         $.each(list, function (key, value) {
-            tag = "<span class='image-header-tag'>" + key + ": </span>" + "<span class='image-header-value'>" + value + "</span>";
+            tag = "<span class='image-header-tag'>" + key + ": </span>" + 
+                  "<span class='image-header-value'>" + value + "</span>";
             tags.push(tag);
             unsorted += tag + "<br>";
         });
         unsorted += "</div>";
         
         // Sort function
-        sortFunction = function(a, b) {
-        	// <span> portion is 31 characters long
-			if (a.slice(31) < b.slice(31)) {
-				return -1;
-			} else if (a.slice(31) > b.slice(31)) {
-				return 1;
-			}			
-			return 0;
-        }
+        sortFunction = function (a, b) {
+            // <span> portion is 31 characters long
+            if (a.slice(31) < b.slice(31)) {
+                return -1;
+            } else if (a.slice(31) > b.slice(31)) {
+                return 1;
+            }            
+            return 0;
+        };
         
         // Sorted list
         sorted = "<div class='sorted' style='display: none;'>";
