@@ -21,11 +21,28 @@ var Media = Class.extend(
     },
     
     /**
-     * Sets the url and name
+     * Gets the difference between "now" and this object's date and 
+     * returns it in "fuzzy time", i.e. "5 minutes ago" or 
+     * "1 day ago"
      */
-    setURL: function (url, id) {
-        this.url  = url;
-        this.id   = id;
+    getTimeDiff: function () {
+        var now, diff;
+        now = new Date();
+        // Translate time diff from milliseconds to seconds
+        diff = (now.getTime() - this.dateRequested) / 1000;
+
+        return toFuzzyTime(diff) + " ago";
+    },
+    
+    /**
+     * Figures out what part of the layer name is relevant to display.
+     * The layer is given as an array: {inst, det, meas}
+     */
+    parseLayer: function (layer) {
+        if (layer[0] === "LASCO") {
+            return layer[1];
+        }
+        return layer[2];
     },
     
     /**
@@ -70,28 +87,15 @@ var Media = Class.extend(
     },
     
     /**
-     * Figures out what part of the layer name is relevant to display.
-     * The layer is given as an array: {inst, det, meas}
+     * Removes divs that were created by the tooltip.
      */
-    parseLayer: function (layer) {
-        if (layer[0] === "LASCO") {
-            return layer[1];
-        }
-        return layer[2];
-    },
-    
-    /**
-     * Gets the difference between "now" and this object's date and 
-     * returns it in "fuzzy time", i.e. "5 minutes ago" or 
-     * "1 day ago"
-     */
-    getTimeDiff: function () {
-        var now, diff;
-        now = new Date();
-        // Translate time diff from milliseconds to seconds
-        diff = (now.getTime() - this.dateRequested) / 1000;
+    removeTooltip: function () {
+        this.button = $("#" + this.id);
 
-        return toFuzzyTime(diff) + " ago";
+        var api = this.button.qtip("api");
+        if (api.elements && api.elements.tooltip) {
+            api.elements.tooltip.remove();
+        }
     },
     
     /**
@@ -128,14 +132,10 @@ var Media = Class.extend(
     },
     
     /**
-     * Removes divs that were created by the tooltip.
+     * Sets the url and name
      */
-    removeTooltip: function () {
-        this.button = $("#" + this.id);
-
-        var api = this.button.qtip("api");
-        if (api.elements && api.elements.tooltip) {
-            api.elements.tooltip.remove();
-        }
+    setURL: function (url, id) {
+        this.url  = url;
+        this.id   = id;
     }
 });
