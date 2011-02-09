@@ -132,9 +132,8 @@ var History = Class.extend(
                 content = self._addToContentString(this) + content;
             });
         }
-        
-        //      Slice off the last "<br />" at the end.
-        return content;//.slice(0, -6);
+
+        return content;
     },
     
     /**
