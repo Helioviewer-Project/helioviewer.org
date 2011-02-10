@@ -1,12 +1,16 @@
 #main {text-align: center; margin:0px auto; width: 80%;}
-#header {height: 64px; font-size:2em; vertical-align: middle; margin-top: 50px; margin-bottom: 26px;}
+#header {font-size:2em; vertical-align: middle; margin-top: 15px; margin-bottom: 26px;}
 #headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:1.2em;}
-#footer {font-size: 10px;}
-#overview {font-size: 1em; height:30px;}
+#footer {font-size: 0.6em;}
+#overview {}
 #numScreenshots {color: #8e305c;}
 #numMovies {color: #5d8f31;}
 #numJPXMovies {color: #315d8f;}
-#visualizations {margin-bottom: 0px;}
-#pieChart {width: 45%; display: inline-block;}
-#barCharts {width: 45%; display: inline-block; vertical-align: top; margin-top: 100px;}
+#visualizations {margin: 10px 0;}
+#pieChart {width: 45%; display: inline-block; overflow: hidden;}
+#barCharts {width: 45%; display: inline-block; overflow: hidden; vertical-align: top;}
 .summaryCount {font-weight: bold; font-size:1.5em; cursor: pointer;}
+
+@media screen and (max-width: 800px) {  
+    #header {font-size: 1.5em;}
+}
