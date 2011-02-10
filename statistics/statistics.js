@@ -25,10 +25,10 @@ var getUsageStatistics = function(timeInterval) {
  * @return void
  */
 var displayUsageStatistics = function (data, timeInterval) {
-    var pieChartHeight, barChartHeight, summary, max;
+    var pieChartHeight, barChartHeight, barChartMargin, summary, max;
 
     // Determine how much space is available to plot charts
-    pieChartHeight = Math.min(0.4 * $(window).width(), $(window).height() - 100);
+    pieChartHeight = Math.min(0.4 * $(window).width(), $(window).height());
     barChartHeight = Math.min(150, pieChartHeight / 3);
     
     // Overview text
@@ -42,7 +42,10 @@ var displayUsageStatistics = function (data, timeInterval) {
     createColumnChart('takeScreenshot', data['takeScreenshot'], 'Screenshot', barChartHeight, "#8e305c");
     createColumnChart('buildMovie', data['buildMovie'], 'Movie', barChartHeight, "#5d8f31");
     createColumnChart('getJPX', data['getJPX'], 'JPX', barChartHeight, "#315d8f");
-  
+    
+    // Spreads bar graphs out a bit if space permits
+    barChartMargin = Math.round(($("#visualizations").height() - $("#barCharts").height()) / 6);
+    $(".columnChart").css("margin", barChartMargin + "px 0");
 }
 
 /**
@@ -105,7 +108,7 @@ var createColumnChart = function (id, rows, desc, height, color) {
         row++;
     });
 
-    $("#barCharts").append('<div id="' + id + 'Chart"></div>');
+    $("#barCharts").append('<div id="' + id + 'Chart" class="columnChart"></div>');
 
     chart = new google.visualization.ColumnChart(document.getElementById(id + "Chart"));
     chart.draw(data, {
@@ -142,5 +145,5 @@ var createPieChart = function (id, totals, size) {
     data.setValue(2, 1, totals['getJPX']);
 
     chart = new google.visualization.PieChart(document.getElementById(id));
-    chart.draw(data, {width: size, height: size, colors: ["#8e305c", "#5d8f31", "#315d8f"], title: "Frequency of request"});
+    chart.draw(data, {width: size, height: size, colors: ["#8e305c", "#5d8f31", "#315d8f"], title: "Frequency of requests"});
 };

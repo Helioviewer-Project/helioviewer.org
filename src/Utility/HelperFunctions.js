@@ -441,3 +441,53 @@ function createUUID() {
     uuid = s.join("");
     return uuid;
 }
+
+/**
+ * Maps iPhone/Android touch events to normal mouse events so that dragging, etc can be done.
+ * 
+ * @see http://ross.posterous.com/2008/08/19/iphone-touch-events-in-javascript/
+ */
+function touchHandler(event)
+{
+    var touches, first, type, simulatedEvent;
+    
+    touches = event.changedTouches;
+    first   = touches[0];
+    type    = "";
+
+    switch(event.type)
+    {
+        case "touchstart":
+            type = "mousedown";
+            break;
+        case "touchmove":
+            type="mousemove";
+            break;        
+        case "touchend":
+            type="mouseup";
+            break;
+        default:
+            return;
+    }
+    
+    simulatedEvent = document.createEvent("MouseEvent");
+    simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
+                                  first.clientX, first.clientY, false, false, false, false, 0, null);
+
+    first.target.dispatchEvent(simulatedEvent);
+    event.preventDefault();
+}
+
+/**
+ * Maps the touch handler events to mouse events for a given element using the touchHandler event listener above
+ * 
+ * @param element HTML element to assign events to
+ * 
+ * @return void
+ */
+function assignTouchHandlers(element) {
+    element.addEventListener("touchstart", touchHandler, true);
+    element.addEventListener("touchmove", touchHandler, true);
+    element.addEventListener("touchend", touchHandler, true);
+    element.addEventListener("touchcancel", touchHandler, true);    
+}

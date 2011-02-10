@@ -198,7 +198,7 @@ var TileLayerAccordion = Layer.extend(
      * @param {Object} layer The layer being added
      */
     _setupEventHandlers: function (id) {
-        var toggleVisibility, removeLayer, ids, self = this,
+        var toggleVisibility, opacityHandle, removeLayer, self = this,
             visibilityBtn = $("#visibilityBtn-" + id),
             removeBtn     = $("#removeBtn-" + id);
 
@@ -218,9 +218,10 @@ var TileLayerAccordion = Layer.extend(
             e.stopPropagation();
         };
         
-        ids = ["#observatory-select-" + id, "#instrument-select-" + id, "#detector-select-" +
-              id, "#measurement-select-" + id];
-
+        // Fix drag and drop for mobile browsers\
+        opacityHandle = $("#" + id + " .ui-slider-handle")[0];
+        assignTouchHandlers(opacityHandle);
+        
         visibilityBtn.bind('click', this, toggleVisibility);
         removeBtn.bind('click', removeLayer);
     },

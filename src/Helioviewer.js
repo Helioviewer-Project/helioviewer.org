@@ -148,6 +148,11 @@ var Helioviewer = UIController.extend(
         $('#social-buttons .text-btn').each(function (i, item) {
             addIconHoverEventListener($(this)); 
         });
+        
+        // Fix drag and drop for mobile browsers
+        $("#helioviewer-viewport, .ui-slider-handle").each(function () {
+            assignTouchHandlers(this);
+        });
     },
     
     /**
