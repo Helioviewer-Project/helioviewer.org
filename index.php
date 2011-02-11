@@ -378,13 +378,7 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
             printf("\turlSettings = %s;\n", json_encode($urlSettings));
         ?>
         serverSettings = new Config(settingsJSON).toArray();
-
-        // Catch any exceptions that arise during execution
-        try {
-            helioviewer = new Helioviewer(urlSettings, serverSettings);
-        } catch (e) {
-            console.log("Exception: " + e.toString() + " (" + e.fileName + ": " + e.lineNumber + ")");
-        }
+        helioviewer    = new Helioviewer(urlSettings, serverSettings);
     });
 </script>
 
