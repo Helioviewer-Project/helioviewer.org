@@ -39,7 +39,7 @@ var Helioviewer = UIController.extend(
         this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
         
         this._userVideos = new UserVideoGallery();
-
+        
         var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
             movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
 
@@ -82,6 +82,7 @@ var Helioviewer = UIController.extend(
      * @description Sets up event-handlers for dialog components
      */
     _setupDialogs: function () {
+        var self = this;
         
         // About dialog
         this._setupDialog("#helioviewer-about", "#about-dialog", {
@@ -92,6 +93,23 @@ var Helioviewer = UIController.extend(
         //Keyboard shortcuts dialog
         this._setupDialog("#helioviewer-usage", "#usage-dialog", {
             "title": "Helioviewer - Usage Tips"
+        });
+        
+        // TEMP Feb 11, 2011
+        $("#settings-button").click(function (e) {
+                $("#settings-dialog").dialog({
+                    title: "Helioviewer - Settings",
+                    create: function (e) {
+                        var currentValue = self.userSettings.get("movieLength"),
+                            select = $(this).find("#settings-movie-length");
+
+                        // Select default value and bind event listener
+                        select.find("[value = " + currentValue + "]").attr("selected", "selected");
+                        select.bind('change', function (e) {
+                            self.userSettings.set("movieLength", parseInt(this.value));
+                        });                              
+                    }
+                });
         });
     },
     
