@@ -39,7 +39,7 @@ var MovieBuilder = MediaBuilder.extend(
      */
     buildMovie: function (viewportInfo) {
         var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            movie, url, self = this;
+            movie, movieLength, url, self = this;
         
         this.building = true;
         this.button.addClass("working");
@@ -52,6 +52,8 @@ var MovieBuilder = MediaBuilder.extend(
         coordinates = viewportInfo.coordinates;
         movieHeight = coordinates.bottom - coordinates.top;
         
+        movieLength = Helioviewer.userSettings.get("movieLength");
+        
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = new Date(getUTCTimestamp(viewportInfo.time));
         
@@ -59,8 +61,8 @@ var MovieBuilder = MediaBuilder.extend(
         params = {
             action        : "queueMovie",
             layers        : viewportInfo.layers,
-            startTime     : currentTime.addHours(-12).toISOString(),
-            endTime       : currentTime.addHours(24).toISOString(),
+            startTime     : currentTime.addSeconds(-movieLength / 2).toISOString(),
+            endTime       : currentTime.addSeconds(movieLength).toISOString(),
             imageScale    : viewportInfo.imageScale,
             dateRequested : (new Date()).getTime(),
             x1            : arcsecCoords.x1,

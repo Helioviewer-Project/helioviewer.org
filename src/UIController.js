@@ -23,7 +23,7 @@ var UIController = Class.extend(
         
         this.serverSettings = serverSettings; 
         this.userSettings   = SettingsLoader.loadSettings(urlSettings, serverSettings);
-
+        
         this._initLoadingIndicator();
         
         this.timeControls = new TimeControls(this.userSettings.get('date'), this.serverSettings.timeIncrementSecs,

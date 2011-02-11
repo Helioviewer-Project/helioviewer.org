@@ -22,6 +22,9 @@ var Helioviewer = UIController.extend(
         // Calling super will load settings, init viewport, and call _loadExtensions()
         this._super(urlSettings, serverSettings);
         
+        // User settings should be globally accessible
+        Helioviewer.userSettings = this.userSettings;
+        
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
@@ -98,8 +101,15 @@ var Helioviewer = UIController.extend(
         // TEMP Feb 11, 2011
         $("#settings-button").click(function (e) {
                 $("#settings-dialog").dialog({
-                    title: "Helioviewer - Settings",
-                    create: function (e) {
+                    "buttons": {
+                        "Ok": function() {
+                            $(this).dialog("close");
+                         }
+                    } ,
+                    "title": "Helioviewer - Settings",
+                    "width": 400,
+                    "resizable": false,
+                    "create": function (e) {
                         var currentValue = self.userSettings.get("movieLength"),
                             select = $(this).find("#settings-movie-length");
 
