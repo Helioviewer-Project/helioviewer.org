@@ -18,8 +18,10 @@ var SettingsLoader = (
     loadSettings: function (urlSettings, serverSettings) {
         var defaults    = this._getDefaultSettings(serverSettings),
             constraints = {
-                "minImageScale": serverSettings.minImageScale,
-                "maxImageScale": serverSettings.maxImageScale
+                "minImageScale" : serverSettings.minImageScale,
+                "maxImageScale" : serverSettings.maxImageScale,
+                "minMovieLength": 300,
+                "maxMovieLength": 2629744
             };
         
         return new UserSettings(defaults, urlSettings, constraints);
@@ -36,6 +38,7 @@ var SettingsLoader = (
         return {
             date            : getUTCTimestamp(serverSettings.defaultObsTime),
             imageScale      : serverSettings.defaultImageScale,
+            movieLength     : 86400,
             version         : serverSettings.version,
             warnMouseCoords : true,
             showWelcomeMsg  : true,

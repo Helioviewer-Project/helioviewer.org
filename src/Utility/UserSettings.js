@@ -239,6 +239,12 @@ var UserSettings = Class.extend(
                 self._validator.checkTimestamp(movie["dateRequested"]);
             });
             break;
+        case "movieLength":
+            this._validator.checkInt(value, {
+                "min": this._constraints.minMovieLength,
+                "max": this._constraints.maxMovieLength
+            });
+            break;
         case "screenshot-history":
             $.each(value, function (i, screenshot) {
                 self._validator.checkTimestamp(screenshot["dateRequested"]);

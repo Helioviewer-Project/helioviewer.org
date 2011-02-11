@@ -137,6 +137,12 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
+                                
+                                <!-- Settings button -->
+                                <div id="settings-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-gear" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Settings</span>
+                                </div>
 
                                 <!-- JHelioviewer -->
                                 <!-- 2010/12/28: Disabling until JNLP launching is fixed -->
@@ -258,6 +264,19 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
 
 <!-- Layer choice dialog -->
 <div id='layer-choice-dialog'></div>
+
+<!-- Settings dialog -->
+<div id='settings-dialog' style='display:none;'>
+    Movie Duration: 
+    <select id='settings-movie-length' name='movie-length'>
+        <option value='3600'>1 hour</option>
+        <option value='10800'>3 hours</option>
+        <option value='21600'>6 hours</option>
+        <option value='43200'>12 hours</option>
+        <option value='86400'>24 hours</option>
+        <option value='172800'>48 hours</option>
+    </select>
+</div>
 
 <!-- Usage Dialog -->
 <div id='usage-dialog'></div>
