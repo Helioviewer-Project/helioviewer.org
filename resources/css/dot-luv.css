@@ -48,3 +48,5 @@ span#timeForwardBtn:hover,
 	background: #000;
 	opacity: 0.5;
 }
+
+.ui-dialog {font-size: 1em;}
