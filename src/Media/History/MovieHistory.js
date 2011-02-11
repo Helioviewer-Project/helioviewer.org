@@ -25,7 +25,7 @@ var MovieHistory = History.extend(
      */
     addToHistory: function (item) {
         this._super(item);
-        $(document).trigger("save-setting", ["movie-history", this._serialize()]);
+        self.save();
     },
     
     /**
@@ -59,13 +59,20 @@ var MovieHistory = History.extend(
             movie.setId(movieData.id);
             self.addToHistory(movie);
             
-            $(document).trigger("save-setting", ["movie-history", self._serialize()]);
+            self.save();
             
             $("#movie-button").removeClass("working");
             self._waitForMovie(movieData, movie);
         };
         
         $.post("api/index.php", params, movieCallback, "json");
+    },
+    
+    /**
+     * Saves movie history
+     */
+    save: function () {
+        $(document).trigger("save-setting", ["movie-history", this._serialize()]);
     },
     
     /**
