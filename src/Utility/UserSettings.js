@@ -38,6 +38,17 @@ var UserSettings = Class.extend(
         
         this._setupEventHandlers();
     },
+    
+    /**
+     * Gets a specified setting
+     * 
+     * @param {String} key The setting to retrieve
+     * 
+     * @returns {Object} The value of the desired setting
+     */
+    get: function (key) {
+        return this.settings[key];
+    },
 
     /**
      * Saves a specified setting
@@ -67,14 +78,30 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * Gets a specified setting
-     * 
-     * @param {String} key The setting to retrieve
-     * 
-     * @returns {Object} The value of the desired setting
+     * Checks all stored settings to make sure that they are compatible with version of Helioviewer loaded
      */
-    get: function (key) {
-        return this.settings[key];
+    _checkSettings: function () {
+        var self = this;
+
+        // Check each of the expected settings
+        $.each(this._defaults, function (key, value) {
+            
+            // If no value is set, use default
+            if (typeof self.settings[key] == "undefined") {
+                self.set(key, value);
+            } else {
+                // Otherwise make sure existing value is compatible
+                try {
+                    self._validate(key, self.settings[key]);
+                } catch (e) {
+                    // Use default values for any settings that don't have the proper structure
+                    self.set(key, value);
+                }                
+            }
+        });
+        
+        // Update version number
+        this.set("version", this._defaults['version']);
     },
     
     /**
@@ -111,8 +138,37 @@ var UserSettings = Class.extend(
         // Instead of reseting user settings whenever the version is different, do a check on each
         // item to make sure its valid, reset those items which are invalid, and then update the 
         // stored version number.
-        if (this.get('version') !== this._defaults.version) {
-            this._loadDefaults();
+        if (this.get('version') < this._defaults.version) {
+            //this._loadDefaults();
+            this._checkSettings();
+        }
+    },
+    
+    /**
+     * Loads defaults user settings
+     */
+    _loadDefaults: function () {
+        if ($.support.localStorage) {
+            localStorage.clear();
+            localStorage.setItem("settings", $.toJSON(this._defaults));
+        }
+        else {
+            this.cookies.set("settings", this._defaults);
+        }
+            
+        this.settings = this._defaults;
+    },
+    
+    /**
+     * Retrieves the saved user settings and saved them locally
+     */
+    _loadSavedSettings: function () {
+        if ($.support.localStorage) {
+            this.settings = $.evalJSON(localStorage.getItem("settings"));
+        }
+        // Otherwise, check type and return
+        else {
+            this.settings = this.cookies.get("settings");
         }
     },
     
@@ -190,34 +246,6 @@ var UserSettings = Class.extend(
             break;
         default:
             break;        
-        }
-    },
-    
-    /**
-     * Loads defaults user settings
-     */
-    _loadDefaults: function () {
-        if ($.support.localStorage) {
-            localStorage.clear();
-            localStorage.setItem("settings", $.toJSON(this._defaults));
-        }
-        else {
-            this.cookies.set("settings", this._defaults);
-        }
-            
-        this.settings = this._defaults;
-    },
-    
-    /**
-     * Retrieves the saved user settings and saved them locally
-     */
-    _loadSavedSettings: function () {
-        if ($.support.localStorage) {
-            this.settings = $.evalJSON(localStorage.getItem("settings"));
-        }
-        // Otherwise, check type and return
-        else {
-            this.settings = this.cookies.get("settings");
         }
     }
 });
