@@ -266,16 +266,20 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
 <div id='layer-choice-dialog'></div>
 
 <!-- Settings dialog -->
-<div id='settings-dialog' style='display:none;'>
+<div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'>
     Movie Duration: 
     <select id='settings-movie-length' name='movie-length'>
-        <option value='3600'>1 hour</option>
         <option value='10800'>3 hours</option>
         <option value='21600'>6 hours</option>
         <option value='43200'>12 hours</option>
-        <option value='86400'>24 hours</option>
-        <option value='172800'>48 hours</option>
+        <option value='86400'>1 day</option>
+        <option value='172800'>2 days</option>
+        <option value='604800'>1 week</option>
     </select>
+    <br /><br />
+    <span style='font-size: 0.8em;'><b>Note:</b> When making a movie, your current observation time will become the center
+    of the movie. For example, if your observation time is set to "12:00:00" and you
+    choose to make a 6 hour movie, then movie will start at "09:00:00" and end at "15:00:00".</span>
 </div>
 
 <!-- Usage Dialog -->
