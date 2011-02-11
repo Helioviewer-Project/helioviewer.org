@@ -21,6 +21,21 @@ var InputValidator = Class.extend(
     checkDate: function (value, opts) {
         
     },
+
+    /**
+     * Checks value to make sure it is a valid integer and that it falls within specified constraints
+     */
+    checkInt: function (value, opts) {
+        var options = {
+            "min": -Infinity,
+            "max": Infinity
+        };
+        $.extend(options, opts || {});
+        
+        if (isNaN(value) || value < options.min || value > options.max || parseInt(value) != value.toString()) {
+            throw "Unacceptable integer value specified.";
+        }
+    },
     
     /**
      * Checks value to make sure it is a valid float and that it falls within specified constraints

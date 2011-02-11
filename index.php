@@ -137,6 +137,12 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
+                                
+                                <!-- Settings button -->
+                                <div id="settings-button" class="text-btn">
+                                    <span class="ui-icon ui-icon-gear" style="float: left;"></span>
+                                    <span style="line-height: 1.6em">Settings</span>
+                                </div>
 
                                 <!-- JHelioviewer -->
                                 <!-- 2010/12/28: Disabling until JNLP launching is fixed -->
@@ -258,6 +264,23 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
 
 <!-- Layer choice dialog -->
 <div id='layer-choice-dialog'></div>
+
+<!-- Settings dialog -->
+<div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'>
+    Movie Duration: 
+    <select id='settings-movie-length' name='movie-length'>
+        <option value='10800'>3 hours</option>
+        <option value='21600'>6 hours</option>
+        <option value='43200'>12 hours</option>
+        <option value='86400'>1 day</option>
+        <option value='172800'>2 days</option>
+        <option value='604800'>1 week</option>
+    </select>
+    <br /><br />
+    <span style='font-size: 0.8em;'><b>Note:</b> When making a movie, your current observation time will become the center
+    of the movie. For example, if your observation time is set to "12:00:00" and you
+    choose to make a 6 hour movie, then movie will start at "09:00:00" and end at "15:00:00".</span>
+</div>
 
 <!-- Usage Dialog -->
 <div id='usage-dialog'></div>
