@@ -25,7 +25,7 @@ var MovieHistory = History.extend(
      */
     addToHistory: function (item) {
         this._super(item);
-        self.save();
+        this.save();
     },
     
     /**
