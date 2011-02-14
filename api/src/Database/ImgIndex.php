@@ -181,8 +181,9 @@ class Database_ImgIndex
         include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
-
+        
         $sql = "SELECT COUNT(*) FROM images WHERE sourceId=$sourceId AND date BETWEEN '$startDate' AND '$endDate'";
+        
         $result = mysqli_fetch_array($this->_dbConnection->query($sql));
         return (int) $result[0];
     }
