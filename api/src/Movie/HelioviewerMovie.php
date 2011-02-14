@@ -141,9 +141,7 @@ class Movie_HelioviewerMovie
         for ($i = 0; $i < $numFrames; $i++) {
         	$index = round($i * (sizeOf($entireRange) / $numFrames));
         	array_push($timestamps, $entireRange[$index]['date']);
-        	var_dump($entireRange[$index]['date']);
         }
-        die();
         return $timestamps;        
     }
 
