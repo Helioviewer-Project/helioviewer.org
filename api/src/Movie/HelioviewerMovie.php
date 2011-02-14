@@ -51,7 +51,7 @@ class Movie_HelioviewerMovie
      *
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function __construct($layers, $startTimeStr, $roi, $options)
+    public function __construct($layers, $startTimeStr, $endTimeStr, $roi, $options)
     {
         $defaults = array(
             'endTime'     => false,
@@ -70,8 +70,14 @@ class Movie_HelioviewerMovie
         $this->_layers    = $layers;
         $this->_roi       = $roi;
         $this->_directory = $this->_createCacheDirectories($options['uuid'], $options['outputDir']);
+        
+        // Store Values as timestamps
+        $this->_startTimestamp = toUnixTimestamp($startTimeStr);
+        $this->_endTimestamp   = toUnixTimestamp($endTimeStr);
 
-        $this->_computeMovieStartAndEndDates($startTimeStr, $options['endTime']);
+        // And also as date strings
+        $this->_startDateString = toISOString(parseUnixTimestamp($this->_startTimestamp));
+        $this->_endDateString   = toISOString(parseUnixTimestamp($this->_endTimestamp));
         
         // Compute the estimated number of frames to include in the movie
         $this->_estimatedNumFrames = $this->_getEstimatedNumFrames($options['numFrames']);
@@ -148,44 +154,6 @@ class Movie_HelioviewerMovie
         $end   = str_replace(array(":", "-", "T", "Z"), "_", $this->_endDateString);
 
         return sprintf("%s_%s_%s", $start, $end, $this->_layers->toString());
-    }
-
-    /**
-     * Determines appropriate start and end times to use for movie generation and returns timestamps for those times
-     *
-     * NOTE 11/12/2010: This could create conflicts with user's custom settings when attempting movie near now
-     *
-     * @return void
-     */
-    private function _computeMovieStartAndEndDates ($startTimeString, $endTimeString)
-    {
-        $startTime = toUnixTimestamp($startTimeString);
-
-        // Convert to seconds.
-        $defaultWindow = HV_DEFAULT_MOVIE_TIME_WINDOW_IN_HOURS * 3600;
-
-        // If endTime is not given, endTime defaults to 24 hours after startTime.
-        if (!$endTimeString) {
-            $endTime = $startTime + $defaultWindow;
-        } else {
-            $endTime = toUnixTimestamp($endTimeString);
-        }
-
-        $now = time();
-
-        // If startTime is within a day of "now", then endTime becomes "now" and the startTime becomes "now" - 24H.
-        if ($now - $startTime < $defaultWindow) {
-            $endTime   = $now;
-            $startTime = $now - $defaultWindow;
-        }
-        
-        // Store Values as timestamps
-        $this->_startTimestamp = $startTime;
-        $this->_endTimestamp   = $endTime;
-
-        // And also as date strings
-        $this->_startDateString = toISOString(parseUnixTimestamp($this->_startTimestamp));
-        $this->_endDateString   = toISOString(parseUnixTimestamp($this->_endTimestamp));
     }
 
     /**
