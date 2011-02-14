@@ -139,10 +139,11 @@ class Movie_HelioviewerMovie
         // Sub-sample range so that only $numFrames timestamps are returned
         $timestamps = array();
         for ($i = 0; $i < $numFrames; $i++) {
-        	$index = round($i + (sizeOf($entireRange) / $numFrames));
+        	$index = round($i * (sizeOf($entireRange) / $numFrames));
         	array_push($timestamps, $entireRange[$index]['date']);
+        	var_dump($entireRange[$index]['date']);
         }
-        
+        die();
         return $timestamps;        
     }
 
