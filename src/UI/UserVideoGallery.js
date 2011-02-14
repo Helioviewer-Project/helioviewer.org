@@ -171,6 +171,19 @@ var UserVideoGallery = Class.extend(
     },
     
     /**
+     * Enables scrolling through video gallery pages using the mouse wheel
+     */
+    _onMouseWheelMove: function (e, delta) {
+        if (delta > 0) {
+            this._nextPage();
+        } else {
+            this._prevPage();
+        }
+        console.log("mouse wheel trigger...");
+        return false;
+    },
+    
+    /**
      * Setup event handlers
      */
     _setupEventHandlers: function () {
@@ -180,5 +193,7 @@ var UserVideoGallery = Class.extend(
         
         this._nextPageBtn.click($.proxy(this._nextPage, this));
         this._prevPageBtn.click($.proxy(this._prevPage, this));
+        
+        this._container.mousewheel($.proxy(this._onMouseWheelMove, this));
     }    
 });
