@@ -26,7 +26,8 @@ var UserVideoGallery = Class.extend(
         
         // Local
         this._pageSize = this._choosePageSize();
-        this._pageNum  = 1;
+        //this._pageNum  = 1;
+        this._startIndex = 0;
         
         // Remote (may differ from local due to deleted videos, etc)
         this._remotePageSize = 20;
@@ -36,18 +37,15 @@ var UserVideoGallery = Class.extend(
 
         this._setupEventHandlers();
         this._fetchVideos();
-      
-        // TODO 2011/01/10: Add resize handler
     },
     
     /**
      * Updates video gallery to show new entries
      */
     _updateGallery: function () {
-        var startIndex = (this._pageNum - 1) * this._pageSize,
-            endIndex   = Math.min(startIndex + this._pageSize, this._videos.length);
+        var endIndex   = Math.min(this._startIndex + this._pageSize, this._videos.length);
 
-        this._buildHTML(this._videos.slice(startIndex, endIndex));
+        this._buildHTML(this._videos.slice(this._startIndex, endIndex));
     },
     
     /**
@@ -123,8 +121,8 @@ var UserVideoGallery = Class.extend(
             return false;
         }
         
-        if (this._pageNum < (Math.floor(this._videos.length / this._pageSize))) {
-            this._pageNum += 1;
+        if (this._startIndex + this._pageSize < this._videos.length) {
+            this._startIndex += this._pageSize;
             this._updateGallery();
         }
             
@@ -148,8 +146,8 @@ var UserVideoGallery = Class.extend(
             return false;
         }
 
-        if (this._pageNum > 1) {
-            this._pageNum -= 1;
+        if (this._startIndex > 0) {
+            this._startIndex = Math.max(0, this._startIndex - this._pageSize);
             this._updateGallery();
         }
         
@@ -179,8 +177,31 @@ var UserVideoGallery = Class.extend(
         } else {
             this._prevPage();
         }
-        console.log("mouse wheel trigger...");
         return false;
+    },
+    
+    /**
+     * Resize user video gallery to use up any available space
+     */
+    _onResize: function (e) {
+        var oldPageSize = this._pageSize;
+        
+        // Determine new optimal pageSize
+        this._pageSize = this._choosePageSize();
+        
+        // Don't update HTML no videos have been retrieved yet
+        if (this._videos.length === 0) {
+            return;
+        }
+        
+        // Only update HTML if the page size has changed
+        if (this._pageSize !== oldPageSize) {
+            // Expand gallery size when currently displaying last page and resizing
+            if (this._startIndex + this._pageSize > this._videos.length) {
+                this._startIndex = this._videos.length - this._pageSize;
+            }
+            this._updateGallery();            
+        }
     },
     
     /**
@@ -194,6 +215,8 @@ var UserVideoGallery = Class.extend(
         this._nextPageBtn.click($.proxy(this._nextPage, this));
         this._prevPageBtn.click($.proxy(this._prevPage, this));
         
+        $(window).resize($.proxy(this._onResize, this));
+
         this._container.mousewheel($.proxy(this._onMouseWheelMove, this));
     }    
 });
