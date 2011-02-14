@@ -71,6 +71,11 @@ class Module_Movies implements Module
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
+        //Make sure number of layers is between one and three
+        if ($layers->length() == 0 || $layers->length() > 3) {
+            throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
+        }
+        
         // Regon of interest
         $roi = new Helper_RegionOfInterest(
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 

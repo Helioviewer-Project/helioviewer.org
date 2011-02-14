@@ -43,18 +43,16 @@ class Movie_HelioviewerMovie
     private $_endDateString;
     private $_frames;
     private $_frameRate;
-    private $_estimatedNumFrames;
-    private $_actualNumFrames;
+    private $_numFrames;
     
     /**
      * Prepares the parameters passed in from the api call and makes a movie from them.
      *
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function __construct($layers, $startTimeStr, $endTimeStr, $roi, $options)
+    public function __construct($layers, $startDateString, $endDateString, $roi, $options)
     {
         $defaults = array(
-            'endTime'     => false,
             'filename'    => false,
             'frameRate'   => false,
             'numFrames'   => false,
@@ -64,36 +62,34 @@ class Movie_HelioviewerMovie
         );
 
         $options = array_replace($defaults, $options);
-        
-        $this->_db        = new Database_ImgIndex();
 
+        $this->_db        = new Database_ImgIndex();
         $this->_layers    = $layers;
         $this->_roi       = $roi;
         $this->_directory = $this->_createCacheDirectories($options['uuid'], $options['outputDir']);
-        
-        // Store Values as timestamps
-        $this->_startTimestamp = toUnixTimestamp($startTimeStr);
-        $this->_endTimestamp   = toUnixTimestamp($endTimeStr);
 
-        // And also as date strings
-        $this->_startDateString = toISOString(parseUnixTimestamp($this->_startTimestamp));
-        $this->_endDateString   = toISOString(parseUnixTimestamp($this->_endTimestamp));
-        
-        // Compute the estimated number of frames to include in the movie
-        $this->_estimatedNumFrames = $this->_getEstimatedNumFrames($options['numFrames']);
-        $this->_cadence            = $this->_determineOptimalCadence();  // Movie cadence        
-        $this->_timestamps         = $this->_getTimestamps(); // Times to match for each movie frame
-        $this->_actualNumFrames    = sizeOf($this->_timestamps);
+        $this->_startDateString = $startDateString;
+        $this->_endDateString   = $endDateString;
 
-        // Check to see if a movie can be created for the specified request parameters
-        $this->_checkRequestParameters();
+        // Also store as timestamps
+        $this->_startTimestamp = toUnixTimestamp($startDateString);
+        $this->_endTimestamp   = toUnixTimestamp($endDateString);
+
+        // Get timestamps for frames in the key movie layer
+        $this->_timestamps = $this->_getTimeStamps();
+
+        $this->_numFrames  = sizeOf($this->_timestamps);
+
+        if ($this->_numFrames == 0) {
+        	$this->_abort("No images available for the requested time range");
+        }
 
         $this->_filename  = $this->_buildFilename($options['filename']);
         
         $this->_frameRate = $this->_determineOptimalFrameRate($options['frameRate']);
 
         $this->_setMovieDimensions();
-
+        
         // Build movie frames
         $images = $this->_buildMovieFrames($options['watermarkOn']);
 
@@ -102,28 +98,59 @@ class Movie_HelioviewerMovie
     }
     
     /**
-     * Validates movie request parameters to ensure that a movie could be made for the request
+     * Returns an array of the timestamps for the key movie layer
+     * 
+     * For single layer movies, the number of frames will be either HV_MAX_MOVIE_FRAMES, or the number of
+     * images available for the requested time range. For multi-layer movies, the number of frames included
+     * may be reduced to ensure that the total number of SubFieldImages needed does not exceed HV_MAX_MOVIE_FRAMES
      */
-    private function _checkRequestParameters() {
-        try {
-            // Make sure number of layers is between one and three
-            if ($this->_layers->length() == 0 || $this->_layers->length() > 3) {
-                throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
-            }
-    
-            // Make sure that data was found to create a movie
-            if ($this->_actualNumFrames == 0) {
-                throw new Exception("There are not enough images for the given layers for the given request times.", 1);
-            }
-        } catch(Exception $e) {
-            $this->_abort($e);
+    private function _getTimeStamps()
+    {
+        $layerCounts = array();
+
+        // Determine the number of images that are available for the request duration for each layer
+        foreach ($this->_layers->toArray() as $layer) {
+            $n = $this->_db->getImageCount($this->_startDateString, $this->_endDateString, $layer['sourceId']);
+            $layerCounts[$layer['sourceId']] = $n;
         }
+
+        // Choose the maximum number of frames that can be generated without exceeded the server limits defined
+        // by HV_MAX_MOVIE_FRAMES
+        $numFrames       = 0;
+        $imagesRemaining = HV_MAX_MOVIE_FRAMES;
+        $layersRemaining = $this->_layers->length();
+        
+        // Sort counts from smallest to largest
+        asort($layerCounts);
+        
+        // Determine number of frames to create
+        foreach($layerCounts as $dataSource => $count) {
+            $numFrames = min($count, ($imagesRemaining / $layersRemaining));
+            $imagesRemaining -= $numFrames;
+            $layersRemaining -= 1;
+        }
+        
+        // Number of frames to use
+        $numFrames = floor($numFrames);
+
+        // Get the entire range of available images between the movie start and end time 
+        $entireRange = $this->_db->getImageRange($this->_startDateString, $this->_endDateString, $dataSource);
+        
+        // Sub-sample range so that only $numFrames timestamps are returned
+        $timestamps = array();
+        for ($i = 0; $i < $numFrames; $i++) {
+        	$index = round($i + (sizeOf($entireRange) / $numFrames));
+        	array_push($timestamps, $entireRange[$index]['date']);
+        }
+        
+        return $timestamps;        
     }
 
     /**
      * Create directories in cache used to store movies
      */
-    private function _createCacheDirectories ($uuid, $dir) {
+    private function _createCacheDirectories ($uuid, $dir)
+    {
         // Regular movie requests use UUIDs and  event movies use the event identifiers
         if (!$dir) {
             if (!$uuid) {
@@ -179,20 +206,18 @@ class Movie_HelioviewerMovie
         );
 
         // Compile frames
-        foreach ($this->_timestamps as $time => $closestImages) {
-            $obsDate = toISOString(parseUnixTimestamp($time));
-
+        foreach ($this->_timestamps as $time) {
             $options = array_merge($options, array(
-                'filename'      => "frame" . $frameNum++,
-                'closestImages' => $closestImages
+                'filename' => "frame" . $frameNum++
             ));
 
-            $screenshot = new Image_Composite_HelioviewerCompositeImage($this->_layers, $obsDate, $this->_roi, $options);
+            $screenshot = new Image_Composite_HelioviewerCompositeImage($this->_layers, $time, $this->_roi, $options);
             $filepath   = $screenshot->getFilepath();
 
             array_push($movieFrames, $filepath);
         }
 
+        // TODO 2011/02/14: Verify that this is still necessary
         // Copy the last frame so that it actually shows up in the movie for the same amount of time
         // as the rest of the frames.
         $lastImage = dirname($filepath) . "/frame" . $frameNum . "." . $options['format'];
@@ -201,6 +226,7 @@ class Movie_HelioviewerMovie
         array_push($movieFrames, $lastImage);
         
         // Create preview image
+        // TODO: Use middle frame instead last one...
         $imagickImage = $screenshot->getIMagickImage();
         $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
         $imagickImage->setImageCompressionQuality(PNG_LOW_COMPRESSION);
@@ -212,101 +238,6 @@ class Movie_HelioviewerMovie
     }
 
     /**
-     * Fetches the closest images from the database for each given time. Adds them to the timestamp
-     * array if they are not duplicates of sets of images in the timestamp array already. $closestImages
-     * is an array with one image per layer, associated with their sourceId.
-     *
-     * @return array
-     */
-    private function _getTimestamps()
-    {
-        $timestamps   = array();
-        $endTimestamp = $this->_startTimestamp + $this->_estimatedNumFrames * $this->_cadence;
-
-        for ($time = $this->_startTimestamp; $time < $endTimestamp; $time += $this->_cadence) {
-            $isoTime = toISOString(parseUnixTimestamp(round($time)));
-            $closestImages = $this->_getClosestImagesForTime($isoTime);
-
-            // Only add frames if they are unique
-            if ($closestImages != end($timestamps)) {
-                $timestamps[round($time)] = $closestImages;
-            }
-        }
-
-        return $timestamps;
-    }
-
-    /**
-     * Queries the database to get the closest image to $isoTime for each layer.
-     * Returns all images in an associative array with source IDs as the keys.
-     *
-     * @param {Date}  $isoTime The ISO date string of the timestamp
-     *
-     * @return array
-     */
-    private function _getClosestImagesForTime($isoTime)
-    {
-        $sourceIds  = array();
-
-        foreach ($this->_layers->toArray() as $layer) {
-            array_push($sourceIds, $layer['sourceId']);
-        }
-
-        $images = array();
-        foreach ($sourceIds as $id) {
-            $images[$id] = $this->_db->getClosestImage($isoTime, $id);
-        }
-        return $images;
-    }
-
-    /**
-     * Uses the startTime and endTime to determine how many frames to make, up to 120.
-     *
-     * @param Date  $startTime ISO date
-     * @param Date  $endTime   ISO date
-     *
-     * @return the number of frames
-     */
-    private function _getEstimatedNumFrames($numFrames)
-    {
-        $maxInRange = 0;
-
-        foreach ($this->_layers->toArray() as $layer) {
-            $count      = $this->_db->getImageCount($this->_startDateString, $this->_endDateString, $layer['sourceId']);
-            $maxInRange = max($maxInRange, $count);
-        }
-
-        // If the user specifies numFrames, use the minimum of their number and the maximum images in range.
-        if ($numFrames !== false) {
-            $numFrames = min($maxInRange, $numFrames);
-        } else {
-            $numFrames = $maxInRange;
-        }
-        
-        // If no images were found in the query range, throw an exception
-        if ($numFrames === 0) {
-            $this->_abort(new Exception("No images available for the requested time range"));
-        }
-
-        return min($numFrames, HV_MAX_MOVIE_FRAMES / $this->_layers->length());
-    }
-
-    /**
-     * Uses the startTime, endTime, and numFrames to calculate the amount of time in between
-     * each frame.
-     *
-     * @param Date $startTime Unix Timestamp
-     * @param Date $endTime   Unix Timestamp
-     * @param Int  $numFrames number of frames in the movie
-     *
-     * @return the number of seconds in between each frame
-     */
-    private function _determineOptimalCadence()
-    {
-        return ($this->_endTimestamp - $this->_startTimestamp) / $this->_estimatedNumFrames;
-    }
-
-    /**
      * Uses numFrames to calculate the frame rate that should
      * be used when encoding the movie.
      *
@@ -315,7 +246,7 @@ class Movie_HelioviewerMovie
     private function _determineOptimalFrameRate($requestedFrameRate)
     {
         // Subtract 1 because we added an extra frame to the end
-        $frameRate = ($this->_actualNumFrames - 1 ) / HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
+        $frameRate = ($this->_numFrames - 1 ) / HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
 
         // Take the smaller number in case the user specifies a larger frame rate than is practical.
         if ($requestedFrameRate) {
@@ -387,9 +318,9 @@ class Movie_HelioviewerMovie
      *                  and expected movies (frames directory is delete after movies are finished). In the longer run, 
      *                  movie status should be tracked in a database accessible to both Helioviewer and Helioqueuer.
      */
-    private function _abort($exception) {
+    private function _abort($msg) {
         touch($this->_directory . "/INVALID");
-        throw new Exception("Unable to create movie: " . $exception->getMessage(), $exception->getCode());
+        throw new Exception("Unable to create movie: " . $msg, 1);
     }
 
     /**
@@ -455,12 +386,12 @@ class Movie_HelioviewerMovie
      */
     public function getNumFrames()
     {
-        return $this->_actualNumFrames;
+        return $this->_numFrames;
     }
     
     public function getDuration()
     {
-        return $this->_actualNumFrames / $this->_frameRate;
+        return $this->_numFrames / $this->_frameRate;
     }
     
     /**
@@ -470,7 +401,7 @@ class Movie_HelioviewerMovie
     {
         $filepath = str_replace(HV_ROOT_DIR, "../", $this->getFilepath());
         $css      = "width: {$this->_width}px; height: {$this->_height}px;";
-        $duration = $this->_actualNumFrames / $this->_frameRate;
+        $duration = $this->_numFrames / $this->_frameRate;
         ?>
 <!DOCTYPE html> 
 <html> 
