@@ -71,6 +71,11 @@ class Module_Movies implements Module
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
+        //Make sure number of layers is between one and three
+        if ($layers->length() == 0 || $layers->length() > 3) {
+            throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
+        }
+        
         // Regon of interest
         $roi = new Helper_RegionOfInterest(
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
@@ -78,7 +83,9 @@ class Module_Movies implements Module
         );
         
         // Process request
-        $movie = new Movie_HelioviewerMovie($layers, $this->_params['startTime'], $roi, $this->_options);
+        $movie = new Movie_HelioviewerMovie(
+            $layers, $this->_params['startTime'], $this->_params['endTime'], $roi, $this->_options
+        );
         
         // Update usage stats
         if (HV_ENABLE_STATISTICS_COLLECTION) {
@@ -349,8 +356,8 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "optional" => array('display', 'filename', 'format', 'frameRate', 'ipod', 
                                     'numFrames', 'uuid', 'verbose', 'watermarkOn'),
                 "bools"    => array('display', 'ipod', 'verbose', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
@@ -371,8 +378,8 @@ class Module_Movies implements Module
             break;
         case "queueMovie":
             $expected = array(
-               "required" => array('layers', 'startTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "optional" => array('display', 'endTime', 'filename', 'format', 'frameRate', 'ipod', 
+               "required" => array('layers', 'startTime', 'endTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+               "optional" => array('display', 'filename', 'format', 'frameRate', 'ipod', 
                                    'numFrames', 'uuid', 'watermarkOn'),
                "dates"    => array('startTime', 'endTime'),
                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
@@ -468,8 +475,8 @@ class Module_Movies implements Module
                         <tr>
                             <td><b>endTime</b></td>
                             <td><i>ISO 8601 UTC Date</i></td>
-                            <td><i>[Optional but Recommended]</i> Desired ending timestamp of the movie. Time step and number of frames will be figured out from the range
-                                between startTime and endTime. If no endTime is specified, time frame will default to 24 hours.</td>
+                            <td>Desired ending timestamp of the movie. Time step and number of frames will be figured out from the range
+                                between startTime and endTime.</td>
                         </tr>
                         <tr>
                             <td><b>imageScale</b></td>
