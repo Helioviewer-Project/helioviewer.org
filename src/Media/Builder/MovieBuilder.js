@@ -10,7 +10,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, getUTCTimestamp, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
- extractLayerName */
+ extractLayerName, Helioviewer */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
