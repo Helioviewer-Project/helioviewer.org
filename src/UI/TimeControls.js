@@ -14,8 +14,9 @@ var TimeControls = Class.extend(
     /** @lends TimeControls.prototype */
     {
     /**
+     * Creates a new TimeControl component
+     * 
      * @constructs
-     * @description Creates a new TimeControl component
      * @param {Int} initialDate        Timestamp of the initial date to use
      * @param {Int}    increment       The initial amount of time to move forward or backwards, in seconds.
      * @param {String} dateId          The id of the date form field associated with the Time.
@@ -41,7 +42,9 @@ var TimeControls = Class.extend(
     },
 
     /**
-     * @description Returns the current observation date as a JavaScript Date object
+     * Returns the current observation date as a JavaScript Date object
+     * 
+     * @returns int Unix timestamp representing the current observation date in UTC
      */    
     getDate: function () {
         return new Date(this._date.getTime()); // return by value
