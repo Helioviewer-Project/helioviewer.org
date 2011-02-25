@@ -57,8 +57,6 @@ var MovieBuilder = MediaBuilder.extend(
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = new Date(getUTCTimestamp(viewportInfo.time));
         
-        console.log("Before: " + currentTime.toISOString());
-        
         // Work-around 2011/02/25
         // We want shift start and end time if needed to ensure that entire
         // duration will be used. For now, we will assume that the most
