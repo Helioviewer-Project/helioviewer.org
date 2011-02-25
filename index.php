@@ -183,7 +183,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 <div style="margin-bottom: 4px; position: relative;">
                     <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
                     <input type="text" id="date" name="date" value="">
-                    <span id="timeNowBtn" title="Move the  Observation Date/Time to the present time.">now</span>
+                    <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
                 </div>
 
                 <!-- Observation Time -->
