@@ -299,6 +299,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 </div>
 
 <?php
+    // Firebug Lite
+    if (isset($_GET['fblite']) && ((bool) $_GET['fblite'] == true)) {
+?>
+<script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
+<?php
+    }
     if ($config["compress_js"]) {
 ?>
 
