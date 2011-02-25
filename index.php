@@ -4,6 +4,9 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
 // Remove variables that are not used on the client-side
 unset($config['youtube_developer_key'], $config['enable_statistics_collection']);
+// Debug support
+if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
+    $config['compress_js'] = $config['compress_css'] = false;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +79,7 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
     </script>
     <?php
             }
-    ?>
+?>
 </head>
 <body>
 
@@ -180,7 +183,7 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
                 <div style="margin-bottom: 4px; position: relative;">
                     <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
                     <input type="text" id="date" name="date" value="">
-                    <span id="timeNowBtn" title="Move the  Observation Date/Time to the present time.">now</span>
+                    <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
                 </div>
 
                 <!-- Observation Time -->
@@ -295,8 +298,18 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
     </div>
 </div>
 
+<?php
+    // Firebug Lite
+    if (isset($_GET['fblite']) && ((bool) $_GET['fblite'] == true)) {
+?>
+<script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>
+<?php
+    }
+    if ($config["compress_js"]) {
+?>
+
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
@@ -311,11 +324,6 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
 <!-- imgAreaSelect jQuery plugin -->
 <script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
 
-<!-- CookieJar -->
-<script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>
-<script type="text/javascript" src="lib/jquery.cookie/jquery.cookie.min.js"></script>
-<script type="text/javascript" src="lib/Cookiejar/jquery.cookiejar.pack.js"></script>
-
 <!-- date.js -->
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 
@@ -324,6 +332,43 @@ unset($config['youtube_developer_key'], $config['enable_statistics_collection'])
 
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
+
+<?php
+    } else {
+?>
+
+<!-- jQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.js" type="text/javascript"></script>
+<script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
+<script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.js" type="text/javascript"></script>
+
+<!-- Mousewheel support -->
+<script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.js" type="text/javascript"></script>
+
+<!-- jGrowl -->
+<script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
+
+<!-- imgAreaSelect jQuery plugin -->
+<script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
+
+<!-- date.js -->
+<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
+
+<!-- jFeed -->
+<script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
+
+<!-- XML to JSON -->
+<script src="lib/jquery.xml2json/jquery.xml2json.js" type="text/javascript" language="javascript"></script>
+
+<?php
+}
+?>
+<!-- CookieJar -->
+<script type="text/javascript" src="lib/jquery.json-2.2/jquery.json-2.2.min.js"></script>
+<script type="text/javascript" src="lib/jquery.cookie/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="lib/Cookiejar/jquery.cookiejar.pack.js"></script>
 
 <!-- Simile -->
 <!--<script src="http://static.simile.mit.edu/timeline/api-2.2.0/timeline-api.js" type="text/javascript"></script>-->

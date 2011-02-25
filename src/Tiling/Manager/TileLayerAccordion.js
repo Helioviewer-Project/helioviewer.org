@@ -9,17 +9,17 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, Layer, TreeSelect, TileLayer, getUTCTimestamp */
+/*global Class, $, Layer, TreeSelect, TileLayer, getUTCTimestamp, assignTouchHandlersz */
 "use strict";
 var TileLayerAccordion = Layer.extend(
     /** @lends TileLayerAccordion.prototype */
     {
     /**
-     * @constructs
-     * @description Creates a new TileLayerAccordion
+     * Creates a new Tile Layer accordion user interface component
+     * 
      * @param {Object} tileLayers Reference to the application layer manager
-     * @param {String} containerId ID for the outermost continer where the layer 
-     * manager user interface should be constructed
+     * @param {String} containerId ID for the outermost continer where the layer
+     *                 manager user interface should be constructed
      */
     init: function (containerId, dataSources, observationDate) {
         this.container        = $(containerId);
@@ -43,7 +43,8 @@ var TileLayerAccordion = Layer.extend(
     },
 
     /**
-     * @description Adds a new entry to the tile layer accordion
+     * Adds a new entry to the tile layer accordion
+     * 
      * @param {Object} layer The new layer to add
      */
     addLayer: function (event, index, id, name, observatory, instrument, detector, measurement, date, 
