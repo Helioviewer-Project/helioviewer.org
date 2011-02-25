@@ -14,8 +14,9 @@ var TimeControls = Class.extend(
     /** @lends TimeControls.prototype */
     {
     /**
+     * Creates a new TimeControl component
+     * 
      * @constructs
-     * @description Creates a new TimeControl component
      * @param {Int} initialDate        Timestamp of the initial date to use
      * @param {Int}    increment       The initial amount of time to move forward or backwards, in seconds.
      * @param {String} dateId          The id of the date form field associated with the Time.
@@ -41,7 +42,9 @@ var TimeControls = Class.extend(
     },
 
     /**
-     * @description Returns the current observation date as a JavaScript Date object
+     * Returns the current observation date as a JavaScript Date object
+     * 
+     * @returns int Unix timestamp representing the current observation date in UTC
      */    
     getDate: function () {
         return new Date(this._date.getTime()); // return by value
@@ -62,26 +65,65 @@ var TimeControls = Class.extend(
     },
     
     /**
-     * @description returns the contents of the time input field
+     * Returns the contents of the time input field
      */
     getTimeField: function () {
         return this._timeInput.val();  
     },
     
     /**
-     * @description Returns the time increment currently displayed in Helioviewer.
+     * Returns the time increment currently displayed in Helioviewer.
      * @return {int} this._timeIncrement -- time increment in secons
      */
     getTimeIncrement: function () {
         return this._timeIncrement;
     },
     
+    /**
+     * Sets the observation date to that of the most recent available image for
+     * the currently loaded layers
+     * 
+     * @return void
+     */
     goToPresent: function () {
-        this.setDate(new Date());
+        var callback, layers, date, mostRecent = new Date(0, 0, 0), self = this;
+        
+        callback = function (dataSources) {
+            
+            // Let's cheat a bit
+            layers = [];
+            $(".tile-accordion-header-left").each(function () {
+                layers.push($(this).html());
+            })
+            
+            // Check each datasource
+            $.each(dataSources, function (observatory, instruments) {
+                $.each(instruments, function (inst, detectors) {
+                    $.each(detectors, function (det, measurements) {
+                        $.each(measurements, function (meas, properties) {
+                            // Ignore datasources that are not being used
+                            if ($.inArray(this.nickname, layers) === -1) {
+                                return true; //continue
+                            }
+                            // Find the date of the most recently available
+                            // image from the layers that are loaded
+                            date = Date.parse(this.end).toUTCDate();
+                            if (date > mostRecent) {
+                                mostRecent = date;
+                            }
+                        });
+                    });
+                });
+            });
+            self.setDate(mostRecent);
+        }
+        
+        $.get("api/index.php", {action: "getDataSources"}, callback, "json");
     },
     
     /**
-     * @description Sets the desired viewing date and time.
+     * Sets the desired viewing date and time.
+     * 
      * @param {Date} date A JavaScript Date object with the new time to use
      */
     setDate: function (date) {
@@ -90,14 +132,14 @@ var TimeControls = Class.extend(
     },
       
    /**
-    * @description Move back one time incremement
+    * Moves back one time incremement
     */
     timePrevious: function () {
         this._addSeconds(-this._timeIncrement);
     },
     
     /**
-     * @function Move forward one time increment
+     * Moves forward one time increment
      */
     timeNext: function () {
         this._addSeconds(this._timeIncrement);

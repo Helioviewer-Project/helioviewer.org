@@ -10,7 +10,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, $, getUTCTimestamp, setTimeout, window, MediaBuilder, Movie, getOS, layerStringToLayerArray,
- extractLayerName */
+ extractLayerName, Helioviewer */
 "use strict";
 var MovieBuilder = MediaBuilder.extend(
     /** @lends MovieBuilder.prototype */
@@ -38,7 +38,7 @@ var MovieBuilder = MediaBuilder.extend(
      * @param {Object} viewportInfo -- An object containing coordinates, layers, imageScale, and time 
      */
     buildMovie: function (viewportInfo) {
-        var options, params, currentTime, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
+        var options, params, currentTime, now, diff, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
             movie, movieLength, url, self = this;
         
         this.building = true;
@@ -57,6 +57,16 @@ var MovieBuilder = MediaBuilder.extend(
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = new Date(getUTCTimestamp(viewportInfo.time));
         
+        console.log("Before: " + currentTime.toISOString());
+        
+        // Work-around 2011/02/25
+        // We want shift start and end time if needed to ensure that entire
+        // duration will be used. For now, we will assume that the most
+        // recent data available is close to now() to make things simple
+        now = new Date();
+        diff = new Date(currentTime.getTime()).addSeconds(movieLength / 2).getTime() - now.getTime();
+        currentTime.addSeconds(Math.min(0, -diff / 1000));
+
         // Ajax Request Parameters
         params = {
             action        : "queueMovie",

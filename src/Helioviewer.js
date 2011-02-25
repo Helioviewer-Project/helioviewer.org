@@ -5,7 +5,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, UIController, ImageSelectTool, MovieBuilder, TooltipHelper, ViewportController, 
-  ScreenshotBuilder, ScreenshotHistory, MovieHistory, addIconHoverEventListener, UserVideoGallery */
+  ScreenshotBuilder, ScreenshotHistory, MovieHistory, addIconHoverEventListener, UserVideoGallery, assignTouchHandlers */
 "use strict";
 var Helioviewer = UIController.extend(
     /** @lends Helioviewer.prototype */
@@ -36,7 +36,7 @@ var Helioviewer = UIController.extend(
      */
     _loadExtensions: function () {
         this._super(); // Call super method in UIController to load a few extensions
-        
+
         this._initTooltips();
         
         this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
@@ -100,26 +100,26 @@ var Helioviewer = UIController.extend(
         
         // TEMP Feb 11, 2011
         $("#settings-button").click(function (e) {
-                $("#settings-dialog").dialog({
-                    "buttons": {
-                        "Ok": function() {
-                            $(this).dialog("close");
-                         }
-                    } ,
-                    "title": "Helioviewer - Settings",
-                    "width": 400,
-                    "resizable": false,
-                    "create": function (e) {
-                        var currentValue = self.userSettings.get("movieLength"),
-                            select = $(this).find("#settings-movie-length");
-
-                        // Select default value and bind event listener
-                        select.find("[value = " + currentValue + "]").attr("selected", "selected");
-                        select.bind('change', function (e) {
-                            self.userSettings.set("movieLength", parseInt(this.value));
-                        });                              
+            $("#settings-dialog").dialog({
+                "buttons": {
+                    "Ok": function () {
+                        $(this).dialog("close");
                     }
-                });
+                },
+                "title": "Helioviewer - Settings",
+                "width": 400,
+                "resizable": false,
+                "create": function (e) {
+                    var currentValue = self.userSettings.get("movieLength"),
+                        select = $(this).find("#settings-movie-length");
+
+                    // Select default value and bind event listener
+                    select.find("[value = " + currentValue + "]").attr("selected", "selected");
+                    select.bind('change', function (e) {
+                        self.userSettings.set("movieLength", parseInt(this.value, 10));
+                    });                              
+                }
+            });
         });
     },
     

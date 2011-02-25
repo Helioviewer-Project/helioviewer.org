@@ -85,7 +85,8 @@ class Database_ImgIndex
               ORDER BY date ASC LIMIT 1 )
             ORDER BY ABS(TIMESTAMPDIFF(MICROSECOND, date, '%s')
             ) LIMIT 1;",
-            $sourceId, $datestr, $sourceId, $datestr, $datestr);
+            $sourceId, $datestr, $sourceId, $datestr, $datestr
+        );
         
         // Query database
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
@@ -357,6 +358,26 @@ class Database_ImgIndex
 
         return (int) ($result_array["id"]);
     }
+    
+    /**
+     * Returns the oldest image for a given datasource
+     */
+    public function getOldestImage($sourceId)
+    {
+    	$sql = "SELECT date FROM images WHERE sourceId=$sourceId ORDER BY date ASC LIMIT 1";
+    	$result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);    	
+    	return $result['date'];
+    }
+    
+    /**
+     * Returns the newest image for a given datasource
+     */
+    public function getNewestImage($sourceId)
+    {
+        $sql = "SELECT date FROM images WHERE sourceId=$sourceId ORDER BY date DESC LIMIT 1";
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);        
+        return $result['date'];
+    }    
 
     /**
      * Returns a list of the known data sources
@@ -410,74 +431,83 @@ class Database_ImgIndex
             $enabled = (bool) $source["enabled"];
 
             // Only include if data is available for the specified source
-            if ($enabled) {
+            if (!$enabled) {
+            	continue;
+            }
              
-                // Image parameters
-                $id       = (int) ($source["id"]);
-                $obs      = $source["observatory_name"];
-                $inst     = $source["instrument_name"];
-                $det      = $source["detector_name"];
-                $meas     = $source["measurement_name"];
-                $nickname = $source["nickname"];
-                $order    = (int) ($source["layeringOrder"]);
-    
-                // Build tree
-                if (!$verbose) {
-                    // Normal
-                    if (!isset($tree[$obs])) {
-                        $tree[$obs] = array();
-                    }
-                    if (!isset($tree[$obs][$inst])) {
-                        $tree[$obs][$inst] = array();
-                    }
-                    if (!isset($tree[$obs][$inst][$det])) {
-                        $tree[$obs][$inst][$det] = array();
-                    }
-                    $tree[$obs][$inst][$det][$meas] = array(
-                        "sourceId"      => $id,
-                        "nickname"      => $nickname,
-                        "layeringOrder" => $order
-                    );
+            // Image parameters
+            $id       = (int) ($source["id"]);
+            $obs      = $source["observatory_name"];
+            $inst     = $source["instrument_name"];
+            $det      = $source["detector_name"];
+            $meas     = $source["measurement_name"];
+            $nickname = $source["nickname"];
+            $order    = (int) ($source["layeringOrder"]);
+            
+            // Availability
+            $oldest = $this->getOldestImage($id);
+            $newest = $this->getNewestImage($id);
+
+            // Build tree
+            if (!$verbose) {
+                // Normal
+                if (!isset($tree[$obs])) {
+                    $tree[$obs] = array();
+                }
+                if (!isset($tree[$obs][$inst])) {
+                    $tree[$obs][$inst] = array();
+                }
+                if (!isset($tree[$obs][$inst][$det])) {
+                    $tree[$obs][$inst][$det] = array();
+                }
+                $tree[$obs][$inst][$det][$meas] = array(
+                    "sourceId"      => $id,
+                    "nickname"      => $nickname,
+                    "layeringOrder" => $order,
+                    "start"         => $oldest,
+                    "end"           => $newest
+                );
+            } else {
+                // Alternative measurement descriptors
+                if (preg_match("/^\d*$/", $meas)) {
+                    // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
+                    $measurementName = $meas . "\xE2\x81\x9F" . $source["measurement_units"];
                 } else {
-                    // Alternative measurement descriptors
-                    if (preg_match("/^\d*$/", $meas)) {
-                        // \u205f = \xE2\x81\x9F = MEDIUM MATHEMATICAL SPACE
-                        $measurementName = $meas . "\xE2\x81\x9F" . $source["measurement_units"];
-                    } else {
-                        $measurementName = ucwords(str_replace("-", " ", $meas));
-                    }
-                   
-                 
-                    // Verbose
-                    if (!isset($tree[$obs])) {
-                        $tree[$obs] = array(
-                            "name"        => $obs,
-                            "description" => $source["observatory_description"],
-                            "children" => array()
-                        );
-                    }
-                    if (!isset($tree[$obs]["children"][$inst])) {
-                        $tree[$obs]["children"][$inst] = array(
-                            "name"        => $inst,
-                            "description" => $source["instrument_description"],
-                            "children"   => array()
-                        );
-                    }
-                    if (!isset($tree[$obs]["children"][$inst]["children"][$det])) {
-                        $tree[$obs]["children"][$inst]["children"][$det] = array(
-                            "name"        => $det,
-                            "description" => $source["detector_description"],
-                            "children" => array()
-                        );
-                    }
-                    $tree[$obs]["children"][$inst]["children"][$det]["children"][$meas] = array(
-                        "name"          => $measurementName,
-                        "description"   => $source["measurement_description"],
-                        "nickname"      => $nickname,
-                        "sourceId"      => $id,
-                        "layeringOrder" => $order
+                    $measurementName = ucwords(str_replace("-", " ", $meas));
+                }
+               
+             
+                // Verbose
+                if (!isset($tree[$obs])) {
+                    $tree[$obs] = array(
+                        "name"        => $obs,
+                        "description" => $source["observatory_description"],
+                        "children" => array()
                     );
-                }                
+                }
+                if (!isset($tree[$obs]["children"][$inst])) {
+                    $tree[$obs]["children"][$inst] = array(
+                        "name"        => $inst,
+                        "description" => $source["instrument_description"],
+                        "children"   => array()
+                    );
+                }
+                if (!isset($tree[$obs]["children"][$inst]["children"][$det])) {
+                    $tree[$obs]["children"][$inst]["children"][$det] = array(
+                        "name"        => $det,
+                        "description" => $source["detector_description"],
+                        "children" => array()
+                    );
+                }
+                $tree[$obs]["children"][$inst]["children"][$det]["children"][$meas] = array(
+                    "name"          => $measurementName,
+                    "description"   => $source["measurement_description"],
+                    "nickname"      => $nickname,
+                    "sourceId"      => $id,
+                    "layeringOrder" => $order,
+                    "start"         => $oldest,
+                    "end"           => $newest
+                );
             }
         }
         
