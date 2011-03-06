@@ -486,6 +486,9 @@ function touchHandler(event)
  * @return void
  */
 function assignTouchHandlers(element) {
+    if (!element.addEventListener) {
+        return; // IE 8 and under
+    }
     element.addEventListener("touchstart", touchHandler, true);
     element.addEventListener("touchmove", touchHandler, true);
     element.addEventListener("touchend", touchHandler, true);
