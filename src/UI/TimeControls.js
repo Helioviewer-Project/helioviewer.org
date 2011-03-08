@@ -94,7 +94,7 @@ var TimeControls = Class.extend(
             layers = [];
             $(".tile-accordion-header-left").each(function () {
                 layers.push($(this).html());
-            })
+            });
             
             // Check each datasource
             $.each(dataSources, function (observatory, instruments) {
@@ -116,7 +116,7 @@ var TimeControls = Class.extend(
                 });
             });
             self.setDate(mostRecent);
-        }
+        };
         
         $.get("api/index.php", {action: "getDataSources"}, callback, "json");
     },
