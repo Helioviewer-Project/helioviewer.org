@@ -87,7 +87,7 @@ var UserSettings = Class.extend(
         $.each(this._defaults, function (key, value) {
             
             // If no value is set, use default
-            if (typeof self.settings[key] == "undefined") {
+            if (typeof self.settings[key] === "undefined") {
                 self.set(key, value);
             } else {
                 // Otherwise make sure existing value is compatible
