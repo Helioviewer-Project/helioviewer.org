@@ -32,7 +32,7 @@ var InputValidator = Class.extend(
         };
         $.extend(options, opts || {});
         
-        if (isNaN(value) || value < options.min || value > options.max || parseInt(value) != value.toString()) {
+        if (isNaN(value) || value < options.min || value > options.max || parseInt(value, 10) !== value.toString()) {
             throw "Unacceptable integer value specified.";
         }
     },
