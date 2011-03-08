@@ -455,19 +455,18 @@ function touchHandler(event)
     first   = touches[0];
     type    = "";
 
-    switch(event.type)
-    {
-        case "touchstart":
-            type = "mousedown";
-            break;
-        case "touchmove":
-            type="mousemove";
-            break;        
-        case "touchend":
-            type="mouseup";
-            break;
-        default:
-            return;
+    switch (event.type) {
+    case "touchstart":
+        type = "mousedown";
+        break;
+    case "touchmove":
+        type = "mousemove";
+        break;        
+    case "touchend":
+        type = "mouseup";
+        break;
+    default:
+        return;
     }
     
     simulatedEvent = document.createEvent("MouseEvent");
