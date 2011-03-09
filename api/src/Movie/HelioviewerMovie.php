@@ -207,13 +207,18 @@ class Movie_HelioviewerMovie
         // Compile frames
         foreach ($this->_timestamps as $time) {
             $options = array_merge($options, array(
-                'filename' => "frame" . $frameNum++
+                'filename' => "frame" . $frameNum
             ));
 
-            $screenshot = new Image_Composite_HelioviewerCompositeImage($this->_layers, $time, $this->_roi, $options);
-            $filepath   = $screenshot->getFilepath();
-
-            array_push($movieFrames, $filepath);
+            try {
+	            $screenshot = new Image_Composite_HelioviewerCompositeImage($this->_layers, $time, $this->_roi, $options);
+	            $filepath   = $screenshot->getFilepath();
+	            $frameNum++;
+	            array_push($movieFrames, $filepath);
+            } catch (Exception $e) {
+            	// Recover if failure occurs on a single frame
+            	$this->_numFrames--;
+            }
         }
 
         // TODO 2011/02/14: Verify that this is still necessary
