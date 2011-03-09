@@ -30,7 +30,7 @@ var UserVideoGallery = Class.extend(
         this._startIndex = 0;
         
         // Remote (may differ from local due to deleted videos, etc)
-        this._remotePageSize = 20;
+        this._remotePageSize = 40;
         this._remotePageNum  = 1;
         
         this._videos = [];
