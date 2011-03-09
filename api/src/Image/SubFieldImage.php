@@ -325,10 +325,9 @@ class Image_SubFieldImage
             unlink($input);
 
         } catch(Exception $e) {
-            throw $e;
-                      
-            //Clean-up and exit
+            // Clean-up intermediate files
             $this->_abort($this->outputFile);
+            throw $e;
         }
     }
     
@@ -416,7 +415,6 @@ class Image_SubFieldImage
         foreach(glob(substr($filename, 0, -3) . "*") as $file) {
             unlink($file);
         }
-        die();
     }
 
     /**
