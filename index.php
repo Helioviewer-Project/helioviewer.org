@@ -394,7 +394,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
         echo "<script src=\"$compressed?$version\" type=\"text/javascript\"></script>\n\t";
     }
     else {
-        $js = array("Utility/Config.js", "UIController.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
+        $js = array("Utility/Config.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
                     "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
                     "Tiling/Layer/HelioviewerTileLayer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js",  
                     "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", "Events/EventManager.js", 
