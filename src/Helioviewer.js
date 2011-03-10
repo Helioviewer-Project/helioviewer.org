@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, window, $, UIController, ImageSelectTool, MovieBuilder, 
+/*global document, window, $, ImageSelectTool, MovieBuilder, 
   TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, addIconHoverEventListener, UserVideoGallery, assignTouchHandlers */
 "use strict";
@@ -22,23 +22,44 @@ var Helioviewer = Class.extend(
     init: function (urlSettings, serverSettings) {
         this._checkBrowser(); // Determines browser support
         
-        this.serverSettings = serverSettings; 
-        this.userSettings   = SettingsLoader.loadSettings(urlSettings, serverSettings);
+        this.serverSettings = serverSettings;
+        this.api            = "api/index.php";
+        
+        // User settings are globally accessible
+        Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
         
         this._initLoadingIndicator();
         
-        this.timeControls = new TimeControls(this.userSettings.get('date'), this.serverSettings.timeIncrementSecs,
-                                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+        this.timeControls = new TimeControls(Helioviewer.userSettings.get('date'), 
+                                             this.serverSettings.timeIncrementSecs,
+                                             '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
 
-        this.api = "api/index.php";
-        
         // Get available data sources and initialize viewport
         this._initViewport();
-        this._loadExtensions();
+
+        this.messageConsole = new MessageConsole();
+        this.keyboard       = new KeyboardManager();
         
-        // User settings should be globally accessible
-        Helioviewer.userSettings = this.userSettings;
+        // User Interface components
+        this.zoomControls   = new ZoomControls('#zoomControls', Helioviewer.userSettings.get('imageScale'),
+                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
+
+        this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
+
+        this._initTooltips();
         
+        this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
+        
+        this._userVideos = new UserVideoGallery();
+        
+        var screenshotHistory = new ScreenshotHistory(Helioviewer.userSettings.get('screenshot-history')),
+            movieHistory      = new MovieHistory(Helioviewer.userSettings.get('movie-history'));
+
+        this.imageSelectTool   = new ImageSelectTool();
+        
+        this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
+        this.screenshotBuilder = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
+
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
@@ -94,35 +115,6 @@ var Helioviewer = Class.extend(
     },
     
     /**
-     * Loads the message console, keyboard shortcut manager, tooltips, zoom controls, and
-     * full screen controls. the movie builder, screenshot builder, and image select tool.
-     */
-    _loadExtensions: function () {
-        this.messageConsole = new MessageConsole();
-        this.keyboard       = new KeyboardManager();
-        
-        // User Interface components
-        this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
-                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
-
-        this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
-
-        this._initTooltips();
-        
-        this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
-        
-        this._userVideos = new UserVideoGallery();
-        
-        var screenshotHistory = new ScreenshotHistory(this.userSettings.get('screenshot-history')),
-            movieHistory      = new MovieHistory(this.userSettings.get('movie-history'));
-
-        this.imageSelectTool   = new ImageSelectTool();
-        
-        this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
-        this.screenshotBuilder = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
-    },
-    
-    /**
      * Initializes tooltip manager and adds custom tooltips for basic navigation elements
      */
     _initTooltips: function () {
@@ -145,9 +137,9 @@ var Helioviewer = Class.extend(
             minImageScale  : this.serverSettings.minImageScale,
             maxImageScale  : this.serverSettings.maxImageScale,
             prefetch       : this.serverSettings.prefetchSize,
-            tileLayers     : this.userSettings.get('tileLayers'),
-            imageScale     : this.userSettings.get('imageScale'),
-            warnMouseCoords: this.userSettings.get('warnMouseCoords')
+            tileLayers     : Helioviewer.userSettings.get('tileLayers'),
+            imageScale     : Helioviewer.userSettings.get('imageScale'),
+            warnMouseCoords: Helioviewer.userSettings.get('warnMouseCoords')
         });   
     },
     
@@ -180,13 +172,13 @@ var Helioviewer = Class.extend(
                 "width": 400,
                 "resizable": false,
                 "create": function (e) {
-                    var currentValue = self.userSettings.get("movieLength"),
+                    var currentValue = Helioviewer.userSettings.get("movieLength"),
                         select = $(this).find("#settings-movie-length");
 
                     // Select default value and bind event listener
                     select.find("[value = " + currentValue + "]").attr("selected", "selected");
                     select.bind('change', function (e) {
-                        self.userSettings.set("movieLength", parseInt(this.value, 10));
+                        Helioviewer.userSettings.set("movieLength", parseInt(this.value, 10));
                     });                              
                 }
             });
@@ -373,7 +365,7 @@ var Helioviewer = Class.extend(
      * Displays welcome message on user's first visit
      */
     _displayGreeting: function () {
-        if (!this.userSettings.get('showWelcomeMsg')) {
+        if (!Helioviewer.userSettings.get('showWelcomeMsg')) {
             return;
         }
 
