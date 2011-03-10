@@ -34,21 +34,5 @@ var ScreenshotHistory = History.extend(
     clear: function () {
         this._super();
         $(document).trigger("save-setting", ["screenshot-history", this.history]);
-    },
-    
-    /**
-     * Takes in an array of history gotten from UserSettings and creates Screenshot objects from it.
-     * Slices the array down to 12 objects.
-     * 
-     * @input {Array} history An array of saved screenshot histories
-     */
-    _loadSavedHistory: function (history) {
-        var self = this;
-        
-        $.each(history, function () {
-            self.history.push(new Screenshot(this));
-        });
-        
-        this.history = this.history.reverse().slice(0, 12).reverse();
     }
 });
