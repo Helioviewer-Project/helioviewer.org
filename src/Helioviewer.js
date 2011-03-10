@@ -8,7 +8,7 @@
   TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, addIconHoverEventListener, UserVideoGallery, assignTouchHandlers */
 "use strict";
-var Helioviewer = UIController.extend(
+var Helioviewer = Class.extend(
     /** @lends Helioviewer.prototype */
     {
     /**
@@ -20,8 +20,21 @@ var Helioviewer = UIController.extend(
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
     init: function (urlSettings, serverSettings) {
-        // Calling super will load settings, init viewport, and call _loadExtensions()
-        this._super(urlSettings, serverSettings);
+        this._checkBrowser(); // Determines browser support
+        
+        this.serverSettings = serverSettings; 
+        this.userSettings   = SettingsLoader.loadSettings(urlSettings, serverSettings);
+        
+        this._initLoadingIndicator();
+        
+        this.timeControls = new TimeControls(this.userSettings.get('date'), this.serverSettings.timeIncrementSecs,
+                                            '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+
+        this.api = "api/index.php";
+        
+        // Get available data sources and initialize viewport
+        this._initViewport();
+        this._loadExtensions();
         
         // User settings should be globally accessible
         Helioviewer.userSettings = this.userSettings;
@@ -31,12 +44,68 @@ var Helioviewer = UIController.extend(
         this._displayGreeting();
     },
     
+    
+    /**
+     * @description Checks browser support for various features used in Helioviewer
+     */
+    _checkBrowser: function () {
+        // Base support
+        $.extend($.support, {
+            "localStorage" : ('localStorage' in window) && window['localStorage'] !== null,
+            "nativeJSON"   : typeof (JSON) !== "undefined",
+            "video"        : !!document.createElement('video').canPlayType,
+            "h264"         : false,
+            "ogg"          : false,
+            "vp8"          : false
+        });
+        
+        // HTML5 Video Support
+        if ($.support.video) {
+            var v = document.createElement("video");
+            
+            // VP8/WebM
+            if (v.canPlayType('video/webm; codecs="vp8"')) {
+                $.support.vp8 = true;
+            }
+            
+            // Ogg Theora
+            if (v.canPlayType('video/ogg; codecs="theora"')) {
+                $.support.ogg = true;
+            }
+            
+            // H.264
+            if (v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
+                $.support.h264 = true;
+            }
+            
+        }
+    },
+    
+    /**
+     * @description Sets up a simple AJAX-request loading indicator
+     */
+    _initLoadingIndicator: function () {
+        $(document).ajaxStart(function () {
+            $('#loading').show();
+        })
+        .ajaxStop(function () {
+            $('#loading').hide();
+        });  
+    },
+    
     /**
      * Loads the message console, keyboard shortcut manager, tooltips, zoom controls, and
      * full screen controls. the movie builder, screenshot builder, and image select tool.
      */
     _loadExtensions: function () {
-        this._super(); // Call super method in UIController to load a few extensions
+        this.messageConsole = new MessageConsole();
+        this.keyboard       = new KeyboardManager();
+        
+        // User Interface components
+        this.zoomControls   = new ZoomControls('#zoomControls', this.userSettings.get('imageScale'),
+                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
+
+        this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
 
         this._initTooltips();
         
