@@ -13,9 +13,15 @@ var Screenshot = Media.extend(
      * @constructs
      * @description Holds on to meta information 
      */    
-    init: function (params) {
+    init: function (params, url) {
         this._super(params);
+        
+        if (typeof url !== "undefined") {
+            this.url = url;
+            this.id  = url.slice(-14, -4);
+        }
         this.time = this.obsDate.replace("T", " ");
+        
         // Get rid of the extra .000 if there is one
         if (this.time.length > 20) {
             this.time = this.time.slice(0, -5);
@@ -33,6 +39,24 @@ var Screenshot = Media.extend(
             $(document).trigger("message-console-warn", ["There was an error retrieving your " +
                                 "screenshot. Please try again later or refresh the page."]);
         }
+    },
+    
+    /**
+     * Returns the screenshot identifier
+     * 
+     * @return {String} screenshot id
+     */
+    getId: function () {
+        return this.id;
+    },
+    
+    /**
+     * Returns the human-readible name for the screenshot
+     * 
+     * @return {String} screenshot name
+     */
+    getName: function () {
+        return this.name;
     },
     
     /**
