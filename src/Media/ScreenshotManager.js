@@ -22,6 +22,20 @@ var ScreenshotManager = MediaManager.extend(
     },
     
     /**
+     * Adds a new screenshot
+     */
+    add: function (params, url) {
+        var screenshot = new Screenshot(params, url);
+
+        if (this.history.unshift(screenshot) > 12) {
+            this.history = this.history.slice(0, 12);            
+        };
+
+        Helioviewer.userSettings.set("screenshot-history", this.history);
+        return screenshot;
+    },
+    
+    /**
      * Returns an array containing Screenshot objects for the screenshots currently being tracked
      */
     toArray: function () {
@@ -40,7 +54,5 @@ var ScreenshotManager = MediaManager.extend(
         $.each(screenshots, function () {
             self.history.push(new Screenshot(this));
         });
-        
-        this.history = this.history.reverse().slice(0, 12).reverse();
     }
 });

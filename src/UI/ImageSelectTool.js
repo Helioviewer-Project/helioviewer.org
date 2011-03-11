@@ -26,7 +26,7 @@ var ImageSelectTool = Class.extend(
     /**
      * Activates the plugin or disables it if it is already active
      */
-    enableAreaSelect: function (viewportInfo, callback) {
+    enableAreaSelect: function (callback) {
         var imgContainer, transImg, body = $("body");
     
         // If the user has already pushed the button but not done anything, this will turn the feature off.
@@ -64,7 +64,7 @@ var ImageSelectTool = Class.extend(
             */
             imgContainer = body.append('<div id="imgContainer"></div>');
 
-            this.selectArea(viewportInfo, callback);
+            this.selectArea(callback);
         }
     },
     
@@ -75,7 +75,7 @@ var ImageSelectTool = Class.extend(
      *                 "selection" is x1, y1, x2, y2, width, and height.
      *                 See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation. 
      */
-    selectArea: function (viewportInfo, callback) {
+    selectArea: function (callback) {
         var area, self = this;
         
         // Use imgAreaSelect on the transparent region to get the top, left, bottom, and right 
@@ -102,13 +102,13 @@ var ImageSelectTool = Class.extend(
         });
 
         this.doneButton.click(function () {
-            self.submitSelectedArea(area, viewportInfo, callback);
+            self.submitSelectedArea(area, callback);
         });
         
         $(document).keypress(function (e) {
             // Enter key
             if (e.which === 13) {
-                self.submitSelectedArea(area, viewportInfo, callback);
+                self.submitSelectedArea(area, callback);
             }
         });
         
@@ -124,26 +124,24 @@ var ImageSelectTool = Class.extend(
      * selected area, cleans up divs created by the plugin, and uses the callback 
      * function to complete movie/screenshot building.
      */
-    submitSelectedArea: function (area, viewportInfo, callback) {
+    submitSelectedArea: function (area, callback) {
         var selection, visibleCoords, coords, maxCoords;
         if (area) {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
 
-            visibleCoords = viewportInfo.coordinates;
+            visibleCoords = helioviewer.getViewportRegionOfInterest();
 
-            coords = {
+            roi = {
                 top     : visibleCoords.top  + selection.y1,
                 left    : visibleCoords.left + selection.x1,
                 bottom  : visibleCoords.top  + selection.y2,
                 right   : visibleCoords.left + selection.x2
             };
 
-            viewportInfo.coordinates = coords;
-
             this.cleanup();
-            callback(viewportInfo);
+            callback(roi);
         }
     },
     

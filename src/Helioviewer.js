@@ -234,7 +234,7 @@ var Helioviewer = Class.extend(
         
         // Handle image area select requests
         $(document).bind("enable-select-tool", function (event, callback) {
-            self.imageSelectTool.enableAreaSelect(self.viewport.getViewportInformation(), callback);
+            self.imageSelectTool.enableAreaSelect(callback);
         });
 
         $('#social-buttons .text-btn').each(function (i, item) {
@@ -403,6 +403,15 @@ var Helioviewer = Class.extend(
      */
     getImageScale: function () {
         return this.viewport.getImageScale();
+    },
+    
+    /**
+     * Returns an array of the Helioviewer servers that should be used for requests
+     * 
+     * @return {Array} Helioviewer servers to use
+     */
+    getServers: function () {
+        return this.serverSettings.servers;
     },
     
     /**
