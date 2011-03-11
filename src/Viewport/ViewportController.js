@@ -91,6 +91,14 @@ var ViewportController = Class.extend(
     },
     
     /**
+     * Returns the coordinates for the top-left and bottom-right corners of the current
+     * region of interest displayed in the viewport
+     */
+    getRegionOfInterest: function () {
+        return this.movementHelper.getViewportCoords();
+    },
+    
+    /**
      * Gets information about the viewport including date, layers, viewport coordinates, and scale
      * and returns them as an array or calls the callback function if it's provided.
      */    

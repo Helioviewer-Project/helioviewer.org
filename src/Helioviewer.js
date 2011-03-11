@@ -379,6 +379,42 @@ var Helioviewer = Class.extend(
     },
     
     /**
+     * Returns the current observation date
+     * 
+     * @return {Date} observation date
+     */
+    getDate: function () {
+        return this.timeControls.getDate();
+    },
+    
+    /**
+     * Returns the currently loaded layers
+     * 
+     * @return {String} Serialized layer string
+     */
+    getLayers: function () {
+        return this.viewport.serialize();
+    },
+    
+    /**
+     * Returns the currently displayed image scale
+     *
+     * @return {Float} image scale in arc-seconds/pixel
+     */
+    getImageScale: function () {
+        return this.viewport.getImageScale();
+    },
+    
+    /**
+     * Returns the top-left and bottom-right coordinates for the viewport region of interest
+     * 
+     * @return {Object} Current ROI 
+     */
+    getViewportRegionOfInterest: function () {
+        return this.viewport.getRegionOfInterest();
+    },
+    
+    /**
      * Builds a URL for the current view
      *
      * @TODO: Add support for viewport offset, event layers, opacity
@@ -405,4 +441,3 @@ var Helioviewer = Class.extend(
         return url;
     }
 });
-
