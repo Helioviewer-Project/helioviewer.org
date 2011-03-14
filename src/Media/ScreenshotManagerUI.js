@@ -18,9 +18,15 @@ var ScreenshotManagerUI = Class.extend(
     init: function (model) {
         this._screenshots = model;
         
-        this._container = null;
-        this._history   = null;
-        this._btn       = $("#screenshot-button");
+        this._btn = $("#screenshot-button");
+        
+        this._container       = null;
+        this._history         = null;
+        this._buildBtns       = null;
+        this._fullViewportBtn = null;
+        this._selectAreaBtn   = null;
+        this._historyTitle    = null;
+        this._clearBtn        = null;
 
         this._initUI();
         this._initEvents();
@@ -39,6 +45,7 @@ var ScreenshotManagerUI = Class.extend(
      * Shows the screenshot manager
      */
     show: function () {
+        this._refresh();
         this._container.show();
     },
     
@@ -46,24 +53,34 @@ var ScreenshotManagerUI = Class.extend(
      * Toggles the visibility of the screenshot manager
      */
     toggle: function () {
-        this._container.toggle();
+        if (this._container.is(":visible")) {
+            this.hide();
+        } else {
+            this.show();
+        }
     },
     
     /**
      * Adds a single screenshot entry to the history
      */
     _addScreenshot: function (screenshot) {
-        var html = "<div class='history-entry'>" +
-           "<div id='" + screenshot.getId() + "' class='text-btn' style='float:left'>" + screenshot.getName() + 
-           "</div>" +
-           "<div style='float:right; font-size: 8pt;'><i>" + screenshot.getTimeDiff() + "</i></div><br /><br />" +
-           "</div>";
+        var id, html;
+        
+        html = "<div id='" + screenshot.getId() + "' class='history-entry'>" +
+               "<div class='text-btn' style='float:left'>" + screenshot.getName() + 
+               "</div>" +
+               "<div class='time-elapsed' style='float:right; font-size: 8pt; font-style:italic;'></div><br /><br />" +
+               "</div>";
         
         this._history.prepend(html);
 
         if (this._history.find(".history-entry").length > 12) {
-            this._removeScreenshot();
+            id = this._history.find(".history-entry").last().attr('id');
+            this._removeScreenshot(id);
+            this._screenshots.remove(id);
         }
+        
+        this._historyTitle.show();
     },
     
     /**
@@ -120,13 +137,21 @@ var ScreenshotManagerUI = Class.extend(
             self.hide();
             $(document).trigger("enable-select-tool", $.proxy(self._takeScreenshot, self));
         });
+        
+        this._clearBtn.click(function () {
+            $.each(self._screenshots.toArray(), function (i, screenshot) {
+                self._removeScreenshot(screenshot.getId());
+            })
+            self._screenshots.empty();
+        });
     },
     
     /**
      * Initializes the ScreenshotManager user interface
      */
     _initUI: function () {
-        var html = "<div id='screenshot-manager-container' style='position: absolute; top: 25px; right: 20px; width: 190px; background: #2A2A2A; font-size: 11px; padding: 10px; -moz-border-radius:5px; color: white;'>" +
+        var html = "<div id='screenshot-manager-container' style='position: absolute; top: 25px; right: 20px; width: 190px; background: #2A2A2A; font-size: 11px; padding: 10px; -moz-border-radius:5px; color: white; display: none;'>" +
+                   "<div id='screenshot-manager-build-btns' style='height: 18px;'>" +
                    "<div id='screenshot-manager-full-viewport' class='text-btn'>" +
                        "<span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>" +
                        "<span style='line-height: 1.6em'>Full Viewport</span>" +
@@ -134,8 +159,8 @@ var ScreenshotManagerUI = Class.extend(
                    "<div id='screenshot-manager-select-area' class='text-btn' style='float:right;'>" +
                        "<span class='ui-icon ui-icon-scissors' style='float:left;'></span>" +
                        "<span style='line-height: 1.6em'>Select Area</span>" + 
-                   "</div><br /><br />" +
-                   "<div id='screenshot-history-title' style='line-height:1.6em; font-weight: bold; padding: 9px 0px; border-top: 1px solid;'>" +
+                   "</div></div>" +
+                   "<div id='screenshot-history-title' style='line-height:1.6em; font-weight: bold; padding: 9px 0px; border-top: 1px solid; display: none; margin-top: 7px;'>" +
                        "Screenshot History" + 
                        "<div id='screenshot-clear-history-button' class='text-btn' style='float:right;'>" +
                            "<span class='ui-icon ui-icon-trash' style='float:left;' />" +
@@ -148,8 +173,10 @@ var ScreenshotManagerUI = Class.extend(
         this._container = $(html).appendTo("#helioviewer-viewport-container-inner");
         this._history   = $("#screenshot-history");
 
+        this._buildBtns       = $("#screenshot-manager-build-btns");
         this._fullViewportBtn = $("#screenshot-manager-full-viewport");
         this._selectAreaBtn   = $("#screenshot-manager-select-area");
+        this._historyTitle    = $("#screenshot-history-title");
         this._clearBtn        = $("#screenshot-clear-history-button");
     },
     
@@ -165,10 +192,25 @@ var ScreenshotManagerUI = Class.extend(
     },
     
     /**
-     * Removes a single screenshot from the bottom of the history
+     * Refreshes status information for screenshots in the history
      */
-    _removeScreenshot: function () {
-        this._history.find(".history-entry").last().remove();
+    _refresh: function () {
+        $.each(this._screenshots.toArray(), function (i, screenshot) {
+            $("#" + screenshot.getId()).find(".time-elapsed").html(screenshot.getTimeDiff());
+        });
+    },
+    
+    /**
+     * Removes a single screenshot from the history.
+     * 
+     * @param {String} Identifier of the screenshot to be removed
+     */
+    _removeScreenshot: function (id) {
+        $("#" + id).unbind().remove();
+        
+        if (this._history.find(".history-entry").length === 0) {
+            this._historyTitle.hide();
+        }
     },
     
     /**
