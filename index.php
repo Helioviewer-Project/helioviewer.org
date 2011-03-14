@@ -36,6 +36,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" />  
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
+    <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
+    <!--<link rel="stylesheet" href="resources/css/tooltips.css" /> -->
 
     <!-- Helioviewer-Specific Styles -->
     <?php
@@ -313,7 +315,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
-<script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.min.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
 <script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
@@ -330,6 +331,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 <!-- jFeed -->
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 
+<!-- qTip -->
+<script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
+
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
 
@@ -342,7 +346,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
-<script src="lib/jquery.qtip-1.0-r54/jquery.qtip-1.0.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
 <script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.js" type="text/javascript"></script>
@@ -358,6 +361,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 
 <!-- jFeed -->
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
+
+<!-- qTip -->
+<script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
 
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.js" type="text/javascript" language="javascript"></script>
@@ -401,7 +407,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                     "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
                     "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js",
                     "Media/MediaManager.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",   
-                    "UI/MessageConsole.js", "Media/Media.js", "Media/Screenshot.js",  
+                    "UI/MessageConsole.js", "Media/Screenshot.js",  
                     "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js",  
                     "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                     "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
