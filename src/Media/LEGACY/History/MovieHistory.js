@@ -50,7 +50,7 @@ var MovieHistory = History.extend(
             
             if (movieData.eta) {
                 message = "Your video is processing and will be available in approximately " + 
-                          toFuzzyTime(movieData.eta) + ". You may view it at any time after " +
+                          Date.parseUTCDate(movieData.eta).getElapsedTime() + ". You may view it at any time after " +
                           "it is ready by clicking the 'Movie' button.";
                 $(document).trigger("message-console-info", [message]);
             }

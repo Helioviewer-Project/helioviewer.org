@@ -2,12 +2,10 @@
  * @fileOverview Contains the class definition for an UserVideoGallery class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * 
- * TODO 2011/01/10: Add a loading indicator
- * 
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global $, window, Class, addIconHoverEventListener, toFuzzyTime, getUTCTimestamp */
+/*global $, window, Class, addIconHoverEventListener */
 "use strict";
 var UserVideoGallery = Class.extend(
     /** @lends UserVideoGallery.prototype */
@@ -86,14 +84,13 @@ var UserVideoGallery = Class.extend(
      * Builds video gallery HTML
      */
     _buildHTML: function (videos) {
-        var html = "",
-            now  = new Date().getTime();
-        
+        var html = "";
+
         // Remove old thumbmails
         this._container.find("a, br").remove();
         
         $.each(videos, function (i, vid) {
-            var when = toFuzzyTime((now - getUTCTimestamp(vid.published)) / 1000) + " ago",
+            var when = new Date.parseUTCDate(vid.published).getElapsedTime() + " ago",
                 img  = $.grep(vid.thumbnails, function (image, i) {
                     return image.width === "480";
                 }).pop().url;            

@@ -107,7 +107,7 @@ var TimeControls = Class.extend(
                             }
                             // Find the date of the most recently available
                             // image from the layers that are loaded
-                            date = Date.parse(this.end).toUTCDate();
+                            date = Date.parseUTCDate(this.end);
                             if (date > mostRecent) {
                                 mostRecent = date;
                             }
@@ -280,7 +280,7 @@ var TimeControls = Class.extend(
      * Returns a JavaScript Date object with the user's local timezone offset factored out
      */
     _timeFieldsToDateObj: function () {
-        return Date.parse(this.getDateField() + " " + this.getTimeField()).toUTCDate();
+        return Date.parseUTCDate(this.getDateField() + " " + this.getTimeField());
     },
     
     /**

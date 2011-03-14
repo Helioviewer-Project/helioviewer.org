@@ -28,8 +28,8 @@ var ScreenshotManager = MediaManager.extend(
     /**
      * Adds a new screenshot
      */
-    add: function (params, url) {
-        var screenshot = new Screenshot(params, url);
+    add: function (id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2) {
+        var screenshot = new Screenshot(id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2);
 
         if (this._history.unshift(screenshot) > 12) {
             this._history = this._history.slice(0, 12);            
@@ -62,7 +62,7 @@ var ScreenshotManager = MediaManager.extend(
         var self = this;
 
         $.each(this._history, function (i, screenshot) {
-            if (screenshot.getId() === id) {
+            if (screenshot.id === id) {
                 self._history[i] = null;
                 self._history.splice(i, 1);
                 self._save();
@@ -87,8 +87,11 @@ var ScreenshotManager = MediaManager.extend(
     _loadSavedScreenshots: function (screenshots) {
         var self = this;
         
-        $.each(screenshots, function () {
-            self._history.push(new Screenshot(this));
+        $.each(screenshots, function (i, screenshot) {
+            self._history.push(new Screenshot(
+                screenshot.id, screenshot.imageScale, screenshot.layers, screenshot.dateRequested, 
+                screenshot.obsDate, screenshot.x1, screenshot.x2, screenshot.y1, screenshot.y2
+            ));
         });
     },
     

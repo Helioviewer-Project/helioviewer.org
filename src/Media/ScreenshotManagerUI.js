@@ -66,8 +66,8 @@ var ScreenshotManagerUI = Class.extend(
     _addScreenshot: function (screenshot) {
         var id, html;
         
-        html = "<div id='" + screenshot.getId() + "' class='history-entry'>" +
-               "<div class='text-btn' style='float:left'>" + screenshot.getName() + 
+        html = "<div id='" + screenshot.id + "' class='history-entry'>" +
+               "<div class='text-btn' style='float:left'>" + screenshot.name + 
                "</div>" +
                "<div class='time-elapsed' style='float:right; font-size: 8pt; font-style:italic;'></div><br /><br />" +
                "</div>";
@@ -89,7 +89,7 @@ var ScreenshotManagerUI = Class.extend(
     _displayDownloadNotification: function (screenshot) {
         var jGrowlOpts, id, link, self = this;
         
-        id = screenshot.getId();
+        id = screenshot.id;
         
         // Options for the jGrowl notification
         jGrowlOpts = {
@@ -140,7 +140,7 @@ var ScreenshotManagerUI = Class.extend(
         
         this._clearBtn.click(function () {
             $.each(self._screenshots.toArray(), function (i, screenshot) {
-                self._removeScreenshot(screenshot.getId());
+                self._removeScreenshot(screenshot.id);
             })
             self._screenshots.empty();
         });
@@ -196,7 +196,7 @@ var ScreenshotManagerUI = Class.extend(
      */
     _refresh: function () {
         $.each(this._screenshots.toArray(), function (i, screenshot) {
-            $("#" + screenshot.getId()).find(".time-elapsed").html(screenshot.getTimeDiff());
+            $("#" + screenshot.id).find(".time-elapsed").html(screenshot.dateRequested.getElapsedTime());
         });
     },
     
@@ -237,10 +237,10 @@ var ScreenshotManagerUI = Class.extend(
 
         params = $.extend({
             action        : "takeScreenshot",
-            dateRequested : (new Date()).getTime(),
+            dateRequested : new Date().toISOString(),
+            imageScale    : imageScale,
             layers        : layers,
             obsDate       : date,
-            imageScale    : imageScale,
             display       : false
         }, this._toArcsecCoords(roi, imageScale));
         
@@ -256,7 +256,11 @@ var ScreenshotManagerUI = Class.extend(
                 $(document).trigger("message-console-info", "Unable to create screenshot. Please try again later.");
                 return;
             }
-            screenshot = self._screenshots.add(params, response.url);
+            
+            screenshot = self._screenshots.add(
+                    response.id, params.imageScale, params.layers, params.dateRequested, params.obsDate, 
+                    params.x1, params.x2, params.y1, params.y2
+            );
             self._addScreenshot(screenshot);
             self._displayDownloadNotification(screenshot);
         });
