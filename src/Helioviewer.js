@@ -120,7 +120,7 @@ var Helioviewer = Class.extend(
      * Initializes tooltip manager and adds custom tooltips for basic navigation elements
      */
     _initTooltips: function () {
-        this.tooltips = new TooltipHelper(true);
+        this.tooltips = new TooltipHelper();
         $(document).trigger('create-tooltip', ["#timeBackBtn, #timeForwardBtn, #center-button"])
                    .trigger('create-tooltip', ["#fullscreen-btn", "topRight"]);
     },
