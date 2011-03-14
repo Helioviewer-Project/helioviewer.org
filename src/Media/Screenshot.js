@@ -13,67 +13,28 @@ var Screenshot = Class.extend(
      * @constructs
      * @description Holds on to meta information 
      */    
-    init: function (params, url) {
-        $.extend(this, params);
+    init: function (id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2) {
+        this.id            = id;
+        this.imageScale    = imageScale;
+        this.layers        = layers;
+        this.dateRequested = Date.parseUTCDate(dateRequested);
+        this.obsDate       = Date.parseUTCDate(obsDate);
+        this.x1            = x1;
+        this.x2            = x2;
+        this.y1            = y1;
+        this.y2            = y2;
+        
         this.width  = Math.floor((this.x2 - this.x1) / this.imageScale);
         this.height = Math.floor((this.y2 - this.y1) / this.imageScale);
-        this.name   = this.parseName();
-        
-        if (typeof url !== "undefined") {
-            this.url = url;
-            this.id  = url.slice(-14, -4);
-        }
-        this.time = this.obsDate.replace("T", " ");
-        
-        // Get rid of the extra .000 if there is one
-        if (this.time.length > 20) {
-            this.time = this.time.slice(0, -5);
-        }
+
+        this.name   = this.computeName();
     },
     
     /**
      * @description Opens the download dialog
      */
     download: function () {
-        if (this.url) {
-            var file = this.url.match(/[\w]*\/[\w-\.]*.[jpg|png]$/).pop(); // Relative path to screenshot
-            window.open('api/index.php?action=downloadFile&uri=' + file, '_parent');
-        } else {
-            $(document).trigger("message-console-warn", ["There was an error retrieving your " +
-                                "screenshot. Please try again later or refresh the page."]);
-        }
-    },
-    
-    /**
-     * Returns the screenshot identifier
-     * 
-     * @return {String} screenshot id
-     */
-    getId: function () {
-        return this.id;
-    },
-    
-    /**
-     * Returns the human-readible name for the screenshot
-     * 
-     * @return {String} screenshot name
-     */
-    getName: function () {
-        return this.name;
-    },
-    
-    /**
-     * Gets the difference between "now" and this object's date and 
-     * returns it in "fuzzy time", i.e. "5 minutes ago" or 
-     * "1 day ago"
-     */
-    getTimeDiff: function () {
-        var now, diff;
-        now = new Date();
-        // Translate time diff from milliseconds to seconds
-        diff = (now.getTime() - this.dateRequested) / 1000;
-
-        return toFuzzyTime(diff) + " ago";
+        //window.open('api/index.php?action=downloadFile&uri=' + file, '_parent');
     },
     
     /**
@@ -93,7 +54,7 @@ var Screenshot = Class.extend(
      * EIT 171/304, LASCO C2/C3
      * Will crop names that are too long and append ellipses.
      */
-    parseName: function () {
+    computeName: function () {
         var rawName, layerArray, name, currentInstrument, self = this;
         
         layerArray = layerStringToLayerArray(this.layers).sort();
@@ -133,15 +94,11 @@ var Screenshot = Class.extend(
      */    
     serialize: function () {
         return {
-            dateRequested : this.dateRequested,
             id            : this.id,
-            width         : this.width,
-            height        : this.height,
             imageScale    : this.imageScale,
             layers        : this.layers,
-            name          : this.name,
+            dateRequested : this.dateRequested,
             obsDate       : this.obsDate,
-            url           : this.url,
             x1            : this.x1,
             x2            : this.x2,
             y1            : this.y1,
