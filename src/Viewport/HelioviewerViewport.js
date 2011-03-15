@@ -43,7 +43,7 @@ var HelioviewerViewport = Viewport.extend(
                                   self.servers, self.tileLayers);
         
             // Initialize event layers
-            self._eventLayerManager = new EventManager(self.requestDate, 86400, self.getRSun());
+            //self._eventLayerManager = new EventManager(self.requestDate, 86400, self.getRSun());
         
             $(document).trigger("update-viewport");
         };
