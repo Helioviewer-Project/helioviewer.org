@@ -39,8 +39,10 @@ var SettingsLoader = (
             date            : getUTCTimestamp(serverSettings.defaultObsTime),
             imageScale      : serverSettings.defaultImageScale,
             movieLength     : 86400,
+            movies          : [],
             version         : serverSettings.version,
             warnMouseCoords : true,
+            screenshots     : [],
             showWelcomeMsg  : true,
             tileLayers : [{
                 server     : 0,

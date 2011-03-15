@@ -27,6 +27,18 @@ var ScreenshotManager = MediaManager.extend(
     
     /**
      * Adds a new screenshot
+     * 
+     * @param {Int}     id            Screenshot id
+     * @param {Float}   imageScale    Image scale for the screenshot
+     * @param {String}  layers        Layers in the screenshot serialized as a string
+     * @param {String}  dateRequested Date string for when the screenshot was requested
+     * @param {String}  obsDate       The observation date for which the screenshot was generated
+     * @param {Float}   x1            Top-left corner x-coordinate
+     * @param {Float}   y1            Top-left corner y-coordinate
+     * @param {Float}   x2            Bottom-right corner x-coordinate
+     * @param {Float}   y2            Bottom-right corner y-coordinate
+     * 
+     * @return {Screenshot} A Screenshot object
      */
     add: function (id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2) {
         var screenshot = new Screenshot(id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2);
@@ -99,6 +111,6 @@ var ScreenshotManager = MediaManager.extend(
      * Saves the current list of screenshots
      */
     _save: function () {
-        Helioviewer.userSettings.set("screenshot-history", this._history);
+        Helioviewer.userSettings.set("screenshots", this._history);
     }
 });

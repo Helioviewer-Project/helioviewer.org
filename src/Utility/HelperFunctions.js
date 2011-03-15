@@ -79,10 +79,14 @@ Date.prototype.getElapsedTime = function () {
  * @return {Date} UTC JavaScript Date object
  */
 Date.parseUTCDate = function (s) {
-    return new Date(Date.UTC(
-        s.substring(0, 4), parseInt(s.substring(5, 7), 10) - 1, s.substring(8, 10),
-        s.substring(11, 13), s.substring(14, 16), s.substring(17, 19) 
-    ));
+    try {
+        return new Date(Date.UTC(
+            s.substring(0, 4), parseInt(s.substring(5, 7), 10) - 1, s.substring(8, 10),
+            s.substring(11, 13), s.substring(14, 16), s.substring(17, 19) 
+        ));
+    } catch (e) {
+        throw "Invalid UTC date string";
+    }
 };
 
 /**
