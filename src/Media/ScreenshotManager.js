@@ -84,6 +84,17 @@ var ScreenshotManager = MediaManager.extend(
     },
     
     /**
+     * Iterates through its history and gets a serialized array of each object's
+     * information that needs to be saved. Adds it to serialHistory and returns
+     * that for saving in UserSettings.
+     */
+    serialize: function () {
+        return $.map(this._history, function (item, i) {
+            return item.serialize();
+        });
+    },
+    
+    /**
      * Returns an array containing Screenshot objects for the screenshots currently being tracked
      */
     toArray: function () {
@@ -111,6 +122,6 @@ var ScreenshotManager = MediaManager.extend(
      * Saves the current list of screenshots
      */
     _save: function () {
-        Helioviewer.userSettings.set("screenshots", this._history);
+        Helioviewer.userSettings.set("screenshots", this.serialize());
     }
 });
