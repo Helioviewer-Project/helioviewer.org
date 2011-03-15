@@ -86,7 +86,7 @@ def createImageTable(cursor):
       `id`            INT unsigned NOT NULL auto_increment,
       `filepath`      VARCHAR(255) NOT NULL,
       `filename`      VARCHAR(255) NOT NULL,
-      `date`          datetime NOT NULL default '0000-00-00 00:00:00',
+      `date`          datetime NOT NULL,
       `sourceId`    SMALLINT unsigned NOT NULL,
       PRIMARY KEY  (`id`), KEY `date_index` (`sourceId`,`date`) USING BTREE
     ) DEFAULT CHARSET=ascii;'''
@@ -165,7 +165,7 @@ def createInstrumentTable(cursor):
         (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
         (1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
         (2, 'MDI',   'Michelson Doppler Imager'),
-        (3, 'TRACE', 'TRACE'),
+        (3, 'TRACE', 'The Transition Region and Coronal Explorer'),
         (4, 'AIA',   'Atmospheric Imaging Assembly'),
         (5, 'HMI',   'Helioseismic and Magnetic Imager');
     ''')
@@ -225,6 +225,51 @@ def createMeasurementTable(cursor):
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
         (14, 'white-light', 'White Light', 'DN');
     ''')
+    
+def createMovieshotsTable(cursor):
+    """ Creates a simple table for storing information about movies built on Helioviewer.org 
+        Note: Region of interest coordinates are stored in arc-seconds even though request is done
+              in pixels in order to make it easier to find screenshots with similar ROIs regardless of scale.
+    """
+    cursor.execute('''
+    CREATE TABLE `movies` (
+      `id`                INT unsigned NOT NULL auto_increment,
+      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `status`            VARCHAR(255) NOT NULL,
+      `startDate`         datetime,
+      `endDate`           datetime,
+      `numFrames`         INT,
+      `frameRate`         FLOAT,
+      `imageScale`        FLOAT NOT NULL,
+      `dataSourceString`  VARCHAR(255) NOT NULL,
+      `dataSourceBitMask` BIGINT,
+      `regionOfInterest`  POLYGON NOT NULL,
+      `mp4`               BOOLEAN DEFAULT FALSE,
+      `webm`              BOOLEAN DEFAULT FALSE,
+      `youTubeShared`     BOOLEAN DEFAULT FALSE,
+      `youTubeReady`      BOOLEAN DEFAULT FALSE,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;''')
+    
+def createScreenshotsTable(cursor):
+    """ Creates a simple table for storing information about screenshots built on Helioviewer.org 
+        Note: Region of interest coordinates are stored in arc-seconds even though request is done
+              in pixels in order to make it easier to find screenshots with similar ROIs regardless of scale.
+    """
+    
+    #INSERT INTO screenshots VALUES (NULL, NULL, '2010-09-04 12:00:00', 0.6, PolygonFromText('POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))'), '[SDO,AIA,AIA,171,1,100]', 00000000001000000000);
+    
+    cursor.execute('''
+    CREATE TABLE `screenshots` (
+      `id`                INT unsigned NOT NULL auto_increment,
+      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `observationDate`   datetime NOT NULL,
+      `imageScale`        FLOAT,
+      `regionOfInterest`  POLYGON NOT NULL,
+      `dataSourceString`  VARCHAR(255) NOT NULL,
+      `dataSourceBitMask` BIGINT,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;''')
 
 def createStatisticsTable(cursor):
     """ Creates a simple table for storing query statistics for selected types of requests """
