@@ -11,7 +11,17 @@ var Screenshot = Class.extend(
     {
     /**
      * @constructs
-     * @description Holds on to meta information 
+     * Creates a new Screenshot instance
+     * 
+     * @param {Int}     id            Screenshot id
+     * @param {Float}   imageScale    Image scale for the screenshot
+     * @param {String}  layers        Layers in the screenshot serialized as a string
+     * @param {String}  dateRequested Date string for when the screenshot was requested
+     * @param {String}  obsDate       The observation date for which the screenshot was generated
+     * @param {Float}   x1            Top-left corner x-coordinate
+     * @param {Float}   y1            Top-left corner y-coordinate
+     * @param {Float}   x2            Bottom-right corner x-coordinate
+     * @param {Float}   y2            Bottom-right corner y-coordinate
      */    
     init: function (id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2) {
         this.id            = id;
@@ -31,7 +41,7 @@ var Screenshot = Class.extend(
     },
     
     /**
-     * @description Opens the download dialog
+     * Opens the download dialog
      */
     download: function () {
         //window.open('api/index.php?action=downloadFile&uri=' + file, '_parent');

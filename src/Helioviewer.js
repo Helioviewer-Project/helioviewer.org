@@ -54,12 +54,12 @@ var Helioviewer = Class.extend(
         
         this.imageSelectTool   = new ImageSelectTool();
         
-        this._screenshotManager   = new ScreenshotManager(Helioviewer.userSettings.get('screenshot-history'));
+        this._screenshotManager   = new ScreenshotManager(Helioviewer.userSettings.get('screenshots'));
         this._screenshotManagerUI = new ScreenshotManagerUI(this._screenshotManager);
-        //var screenshotHistory = new ScreenshotHistory(Helioviewer.userSettings.get('screenshot-history')),
+        //var screenshotHistory = new ScreenshotHistory(Helioviewer.userSettings.get('screenshots')),
         //this.screenshotBuilder = new ScreenshotBuilder(this.viewport, this.serverSettings.servers, screenshotHistory);
 
-        //var movieHistory       = new MovieHistory(Helioviewer.userSettings.get('movie-history'));
+        //var movieHistory       = new MovieHistory(Helioviewer.userSettings.get('movies'));
         //this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
 
         this._setupDialogs();

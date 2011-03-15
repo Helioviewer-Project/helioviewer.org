@@ -133,13 +133,8 @@ var UserSettings = Class.extend(
             this._loadSavedSettings();
         }
             
-        // If version is out of date, reset settings
-        // TODO 09/02/2010:
-        // Instead of reseting user settings whenever the version is different, do a check on each
-        // item to make sure its valid, reset those items which are invalid, and then update the 
-        // stored version number.
+        // If version is out of date, check settings
         if (this.get('version') < this._defaults.version) {
-            //this._loadDefaults();
             this._checkSettings();
         }
     },
@@ -234,9 +229,9 @@ var UserSettings = Class.extend(
                 "max": this._constraints.maxImageScale
             });
             break;
-        case "movie-history":
+        case "movies":
             $.each(value, function (i, movie) {
-                self._validator.checkTimestamp(movie["dateRequested"]);
+                self._validator.checkDateString(movie["dateRequested"]);
             });
             break;
         case "movieLength":
@@ -245,9 +240,9 @@ var UserSettings = Class.extend(
                 "max": this._constraints.maxMovieLength
             });
             break;
-        case "screenshot-history":
+        case "screenshots":
             $.each(value, function (i, screenshot) {
-                self._validator.checkTimestamp(screenshot["dateRequested"]);
+                self._validator.checkDateString(screenshot["dateRequested"]);
             });
             break;
         default:

@@ -33,7 +33,7 @@ var MovieHistory = History.extend(
      */
     clear: function () {
         this._super();
-        $(document).trigger("save-setting", ["movie-history", this.history]);
+        $(document).trigger("save-setting", ["movies", this.history]);
     },
 
     /**
@@ -72,7 +72,7 @@ var MovieHistory = History.extend(
      * Saves movie history
      */
     save: function () {
-        $(document).trigger("save-setting", ["movie-history", this._serialize()]);
+        $(document).trigger("save-setting", ["movies", this._serialize()]);
     },
     
     /**
