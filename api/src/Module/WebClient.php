@@ -263,8 +263,12 @@ class Module_WebClient implements Module
     public function takeScreenshot()
     {
         include_once 'src/Image/Composite/HelioviewerCompositeImage.php';
+        include_once 'src/Helper/DateTimeConversions.php';
         include_once 'src/Helper/HelioviewerLayers.php';
         include_once 'src/Helper/RegionOfInterest.php';
+        include_once 'src/Database/DbConnection.php';
+        
+        //TODO Mar 16, 2011: Create a separate "Screenshot" subclass of CompositeImage?
 
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
@@ -274,6 +278,31 @@ class Module_WebClient implements Module
             $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
             $this->_params['imageScale']
         );
+        
+        // TEMP
+        if (isset($this->_options['watermarkOn'])) {
+        	$watermarkOn = $this->_params['watermarkOn'];
+        } else {
+        	$watermarkOn = true;
+        }
+        
+        
+        $db  = new Database_DbConnection();
+        
+        // Add to screenshots table and get an id
+        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d);", 
+            isoDateToMySQL($this->_params['obsDate']),
+            $this->_params['imageScale'],
+            $roi->getPolygonString(),
+            $watermarkOn,
+            $this->_params['layers'],
+            bindec($layers->getBitMask())
+        );
+        
+        var_dump($sql);
+        die();
+        
+        $db->query("");
         
         // Create the screenshot
         $screenshot = new Image_Composite_HelioviewerCompositeImage(
@@ -432,8 +461,7 @@ class Module_WebClient implements Module
         case "takeScreenshot":
             $expected = array(
                 "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('filename', 'display', 'watermarkOn'),
-                "files"    => array('filename'),
+                "optional" => array('display', 'watermarkOn'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"	   => array('obsDate'),
                 "bools"    => array('display', 'watermarkOn')

@@ -186,6 +186,29 @@ class Helper_RegionOfInterest
     }
     
     /**
+     * Returns a polygon string representation of the region of interest of the form POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))
+     * where each item between commas is an x & y coordinate for one of the corners of the roi.
+     *
+     * Example:
+     * 
+     *    p1-------p2
+     *    |        |
+     *    |        |
+     *    p4-------p3
+     * 
+     * @return string Polygon representation of the region of interest
+     */
+    public function getPolygonString()
+    {
+       $p1 = $this->_left  . " " . $this->_top;
+       $p2 = $this->_right . " " . $this->_top;
+       $p3 = $this->_right . " " . $this->_bottom;
+       $p4 = $this->_left  . " " . $this->_bottom;
+       
+       return sprintf("POLYGON((%s))", implode(array($p1, $p2, $p3, $p4, $p1), ","));
+    }
+    
+    /**
      * Adjusts imageScale if neccessary so that entire region of interest fits within a maximum width and height
      * 
      * @return void

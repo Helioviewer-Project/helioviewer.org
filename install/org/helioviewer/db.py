@@ -21,6 +21,7 @@ def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     createDetectorTable(cursor)
     createMeasurementTable(cursor)
     createImageTable(cursor)
+    createScreenshotsTable(cursor)
     createStatisticsTable(cursor)
     updateImageTableIndex(cursor)
 
@@ -236,18 +237,21 @@ def createMovieshotsTable(cursor):
       `id`                INT unsigned NOT NULL auto_increment,
       `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `status`            VARCHAR(255) NOT NULL,
+      `reqStartDate`      datetime,
+      `reqEndDate`        datetime,
       `startDate`         datetime,
       `endDate`           datetime,
       `numFrames`         INT,
+      `reqFrames`         INT,
       `frameRate`         FLOAT,
       `imageScale`        FLOAT NOT NULL,
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT,
       `regionOfInterest`  POLYGON NOT NULL,
+      `watermark`         BOOLEAN DEFAULT TRUE,
+      `mobile`            BOOLEAN DEFAULT FALSE,
       `mp4`               BOOLEAN DEFAULT FALSE,
-      `webm`              BOOLEAN DEFAULT FALSE,
-      `youTubeShared`     BOOLEAN DEFAULT FALSE,
-      `youTubeReady`      BOOLEAN DEFAULT FALSE,
+      `webm`              BOOLEAN DEFAULT FALSE
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
     
@@ -266,6 +270,7 @@ def createScreenshotsTable(cursor):
       `observationDate`   datetime NOT NULL,
       `imageScale`        FLOAT,
       `regionOfInterest`  POLYGON NOT NULL,
+      `watermark`         BOOLEAN DEFAULT TRUE,
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT,
        PRIMARY KEY (`id`)
