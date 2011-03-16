@@ -520,20 +520,14 @@ class Module_Movies implements Module
                         <tr>
                             <td><b>numFrames</b></td>
                             <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> If you want a specific number of frames rather than the optimal number, you can specify 
-                                    the number of frames you would like to include in the movie. You may have between 10 and 120 frames. If
-                                    numFrames is not specified, the optimal cadence and number of frames will be calculated for you.</td>
+                            <td><i>[Optional]</i> The maximum number of frames that will be used during movie creation. 
+                                    You may have between 10 and 300 frames. The default value is 300.
+                            </td>
                         </tr>
                         <tr>
                             <td><b>frameRate</b></td>
                             <td><i>Integer</i></td>
                             <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
-                        </tr>
-                        <tr>
-                            <td><b>filename</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> The desired filename (without the "." extension) of the output image. If no filename is specified,
-                                the filename defaults to a combination of the date, layer names, and image scale.</td>
                         </tr>
                         <tr>
                             <td><b>display</b></td>
@@ -564,12 +558,14 @@ class Module_Movies implements Module
                     <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
+                <!--
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
                 <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false">
                     <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false
                 </a>
                 </span>
+                 -->
                 </div>
             </div>
         

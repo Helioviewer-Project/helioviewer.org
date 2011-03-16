@@ -81,6 +81,29 @@ class Helper_HelioviewerLayers
     }
     
     /**
+     * Returns a bitmask (binary string) representation of the datasources included in the HelioviewerLayers object
+     * 
+     * @return {string} A bitmask string, e.g. "10010000000000"
+     */
+    public function getBitMask()
+    {
+        $ids = array();
+        
+        foreach($this->_layers as $layer) {
+        	array_push($ids, $layer['sourceId']);
+        }
+        rsort($ids);
+        
+        $bitArray = array_pad(array(), $ids[0] + 1, 0);
+        
+        foreach ($ids as $id) {
+            $bitArray[$ids[0] - $id] = 1;
+        }
+
+        return implode($bitArray);
+    }
+    
+    /**
      * Returns a string reprentation of the request layers suitable for use in filenames
      * 
      * @return string String representation of the request layers for use in filenames, etc.
