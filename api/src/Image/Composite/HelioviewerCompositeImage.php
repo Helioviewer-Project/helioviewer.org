@@ -30,20 +30,22 @@ require_once 'src/Database/ImgIndex.php';
  */
 class Image_Composite_HelioviewerCompositeImage
 {
-    
-    private $_date;
-    private $_db;
-    private $_cacheDir;
-    private $_composite;
-    private $_imageLayers;
-    private $_filename;
-    private $_filepath;
-    private $_format;
-    private $_layers;
-    private $_roi;
-    private $_width;
-    private $_height;
-    private $_scale;
+    private   $_cache = array();
+	private   $_composite;
+	private   $_dir;
+    private   $_imageLayers;
+    private   $_filepath;
+    private   $_filename;
+    protected $compress;
+    protected $date;    
+    protected $db;
+    protected $height;
+    protected $interlace;
+    protected $layers;
+    protected $roi;
+    protected $scale;
+    protected $watermark;
+    protected $width;
     
     /**
      * Creates a new HelioviewerCompositeImage instance
@@ -59,44 +61,25 @@ class Image_Composite_HelioviewerCompositeImage
     {
         // Default image settings (optimized for small filesize)
         $defaults = array(
-            'outputDir'   => HV_CACHE_DIR . "/screenshots",
-            'format'      => 'jpg',
             'watermarkOn' => true,
-            'filename'    => false,
             'compress'    => true,
             'interlace'   => true
         );
-        
+
         $options = array_replace($defaults, $options);
+
+        $this->width  = $roi->getPixelWidth();
+        $this->height = $roi->getPixelHeight();
+        $this->scale  = $roi->imageScale();     
+
+        $this->db     = new Database_ImgIndex();
+        $this->layers = $layers;
+        $this->date   = $obsDate;
+        $this->roi    = $roi;
         
-        $this->_width  = $roi->getPixelWidth();
-        $this->_height = $roi->getPixelHeight();
-        $this->_scale  = $roi->imageScale();     
-
-        $this->_db     = new Database_ImgIndex();
-        $this->_layers = $layers;
-        $this->_date   = $obsDate;
-        $this->_roi    = $roi;
-
-        $this->_cacheDir  = $options['outputDir'];
-        $this->_format    = $options['format'];
-        $this->_compress  = $options['compress'];
-        $this->_interlace = $options['interlace'];
-        $this->_watermark = $options['watermarkOn'];
-
-        // Choose a filename if none was specified
-        $this->_filename = $this->_buildFilename($options['filename']);
-        
-        // Build individual layers
-        $this->_imageLayers = $this->_buildCompositeImageLayers();
-
-        // Composite layers and create the final image
-        $this->_filepath = $this->_buildCompositeImage();
-        
-        // Check to see if composite image was successfully created
-        if (!file_exists($this->_filepath)) {
-            throw new Exception('The requested image is either unavailable or does not exist.');
-        }
+        $this->compress  = $options['compress'];
+        $this->interlace = $options['interlace'];
+        $this->watermark = $options['watermarkOn'];
     }
     
     /**
@@ -112,7 +95,7 @@ class Image_Composite_HelioviewerCompositeImage
         $imageLayers = array();
 
         // Find the closest image for each layer, add the layer information string to it
-        foreach ($this->_layers->toArray() as $layer) {
+        foreach ($this->layers->toArray() as $layer) {
             $image = $this->_buildImageLayer($layer);
             array_push($imageLayers, $image);
         }
@@ -134,14 +117,12 @@ class Image_Composite_HelioviewerCompositeImage
      */
     private function _buildImageLayer($layer)
     {
-        $image = $this->_db->getClosestImage($this->_date, $layer['sourceId']);
+        $image = $this->db->getClosestImage($this->date, $layer['sourceId']);
 
         // Instantiate a JP2Image
         $jp2Filepath = HV_JP2_DIR . $image['filepath'] . "/" . $image['filename'];
       
         $jp2 = new Image_JPEG2000_JP2Image($jp2Filepath, $image['width'], $image['height'], $image['scale']);
-
-        $tmpFile = $this->_getTmpOutputPath($image['filepath'], $image['filename'], $this->_roi, $layer['opacity']);
 
         $offsetX =  $image['sunCenterX']  - ($image['width'] / 2);
         $offsetY = ($image['height'] / 2) -  $image['sunCenterY'];
@@ -149,11 +130,14 @@ class Image_Composite_HelioviewerCompositeImage
         // Options for individual layers
         $options = array(
             "date"          => $image['date'],
-            "format"        => "bmp",
             "layeringOrder" => $layer['layeringOrder'],
             "opacity"       => $layer['opacity'],
-            "compress"      => false,
+            "compress"      => false
         );
+        
+        // Choose a temporary filename to use for storing intermediate image
+        $tmpFile = $this->_dir . "/" . rand() . ".bmp";
+        array_push($this->_cache, $tmpFile);
         
         // Choose type of tile to create
         $type = strtoupper($layer['instrument']) . "Image";
@@ -162,33 +146,9 @@ class Image_Composite_HelioviewerCompositeImage
         $classname = "Image_ImageType_" . $type;
 
         return new $classname(
-            $jp2, $tmpFile, $this->_roi, $layer['instrument'], $layer['detector'], $layer['measurement'], 
+            $jp2, $tmpFile, $this->roi, $layer['instrument'], $layer['detector'], $layer['measurement'], 
             $offsetX, $offsetY, $options
         );
-    }
-
-    /**
-     * Builds a temporary output path where the extracted image will be stored
-     * 
-     * @param string $filepath Filepath of the image 
-     * @param string $filename Filename of the image
-     * @param roi    $roi      The region of interest in arcseconds
-     * @param int    $opacity  The opacity of the image from 0 to 100
-     * 
-     * @return string a string containing the image's temporary output path
-     */
-    private function _getTmpOutputPath($filepath, $filename, $roi, $opacity)
-    {
-        $cacheDir = HV_CACHE_DIR . $filepath;
-
-        if (!file_exists($cacheDir)) {
-            mkdir($cacheDir, 0777, true);
-            chmod($cacheDir, 0777);
-        }
-
-        return $cacheDir . "/" . substr($filename, 0, -4) . "_" . 
-            $this->_scale . "_" . round($roi->left()) . "_" . round($roi->right()) . "x_" . 
-            round($roi->top()) . "_" . round($roi->bottom()) . "y-op$opacity";
     }
 
     /**
@@ -198,13 +158,6 @@ class Image_Composite_HelioviewerCompositeImage
      */
     private function _buildCompositeImage()
     {
-        $filepath = $this->_cacheDir . "/" . $this->_filename;
-        
-        if (!file_exists($this->_cacheDir)) {
-            mkdir($this->_cacheDir, 0777, true);
-            chmod($this->_cacheDir, 0777);
-        }
-        
         // Composite images on top of one another if there are multiple layers.
         if (sizeOf($this->_imageLayers) > 1) {
             $sortedImages = $this->_sortByLayeringOrder($this->_imageLayers);
@@ -226,15 +179,13 @@ class Image_Composite_HelioviewerCompositeImage
             $imagickImage = new IMagick($this->_imageLayers[0]->getFilepath());
         }
         
-        if ($this->_watermark) {
+        if ($this->watermark) {
             $this->_addWatermark($imagickImage);
         }
         $this->_finalizeImage($imagickImage, $filepath);
 
         // Store the IMagick composite image
         $this->_composite = $imagickImage;
-        
-        return $filepath;
     }
 
     /**
@@ -247,7 +198,7 @@ class Image_Composite_HelioviewerCompositeImage
      */
     private function _finalizeImage($imagickImage, $output)
     {
-        set_time_limit(60); // Need to up the time limit that imagick is allowed to use to execute commands. 
+        //set_time_limit(60); // Need to up the time limit that imagick is allowed to use to execute commands. 
 
         // Compress image
         $this->_compressImage($imagickImage);
@@ -272,11 +223,11 @@ class Image_Composite_HelioviewerCompositeImage
             $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
             
             // Compression quality
-            $quality = $this->_compress ? PNG_HIGH_COMPRESSION : PNG_LOW_COMPRESSION;
+            $quality = $this->compress ? PNG_HIGH_COMPRESSION : PNG_LOW_COMPRESSION;
             $imagickImage->setImageCompressionQuality($quality);
             
             // Interlacing
-            if ($this->_interlace) {
+            if ($this->interlace) {
                 $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
             }
         } elseif ($this->_format === "jpg") {
@@ -284,11 +235,11 @@ class Image_Composite_HelioviewerCompositeImage
             $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
 
             // Compression quality
-            $quality = $this->_compress ? JPG_HIGH_COMPRESSION : JPG_LOW_COMPRESSION;             
+            $quality = $this->compress ? JPG_HIGH_COMPRESSION : JPG_LOW_COMPRESSION;             
             $imagickImage->setImageCompressionQuality($quality);
             
             // Interlacing
-            if ($this->_interlace) {
+            if ($this->interlace) {
                 $imagickImage->setInterlaceScheme(IMagick::INTERLACE_LINE);
             }
         }
@@ -315,30 +266,28 @@ class Image_Composite_HelioviewerCompositeImage
      */
     private function _addWatermark($imagickImage)
     {
-        $output = $this->_cacheDir . "/$this->_filename";
-
-        if ($this->_width < 200 || $this->_height < 200) {
+        if ($this->width < 200 || $this->height < 200) {
             return;
         }
         
         $watermark   = new IMagick(HV_ROOT_DIR . "/api/resources/images/watermark_small_black_border.png");
         
         // If the image is too small, use only the circle, not the url, and scale it so it fits the image.
-        if ($this->_width / 300 < 2) {
+        if ($this->width / 300 < 2) {
             $watermark->readImage(HV_ROOT_DIR . "/api/resources/images/watermark_circle_small_black_border.png");
-            $scale = ($this->_width / 2) / 300;
+            $scale = ($this->width / 2) / 300;
             $width = $watermark->getImageWidth();
             $watermark->scaleImage($width * $scale, $width * $scale);     
         }
         
         // For whatever reason, compositeImage() doesn't carry over gravity settings so the offsets must
         // be relative to the top left corner of the image rather than the desired gravity. 
-        $x = $this->_width  - $watermark->getImageWidth()  - 10;
-        $y = $this->_height - $watermark->getImageHeight() - 10;
+        $x = $this->width  - $watermark->getImageWidth()  - 10;
+        $y = $this->height - $watermark->getImageHeight() - 10;
         $imagickImage->compositeImage($watermark, IMagick::COMPOSITE_DISSOLVE, $x, $y);
         
         // If the image is too small, text won't fit. Don't put a date string on it. 
-        if ($this->_width > 285) {
+        if ($this->width > 285) {
             $this->_addTimestampWatermark($imagickImage);
         }
         
@@ -433,21 +382,38 @@ class Image_Composite_HelioviewerCompositeImage
     }
     
     /**
-     * Builds a filepath to use for the composite image if none was specified
+     * Builds the screenshot and saves it to the path specified
      * 
-     * @param string $filename Filename to use if specified
+     * @param string filepath Filepath to save the screenshot to
      * 
      * @return void
      */
-    private function _buildFilename ($filename)
+    public function build($filepath)
     {
-        if ($filename) {
-            return "$filename.{$this->_format}";
-        }
+    	$this->_filepath = $filepath;
 
-        $time = str_replace(array(":", "-", "T", "Z"), "_", $this->_date);
-        return $time . $this->_layers->toString() . "_" . rand() . ".{$this->_format}";
+        $path_parts = pathinfo($filepath);
+        $this->_dir      = $path_parts['dirname']; 
+    	$this->_filename = $path_parts['basename'];
+    	$this->_format   = $path_parts['extension'];
+    	
+        if (!file_exists($this->_dir)) {
+            mkdir($this->_dir, 0777, true);
+            chmod($this->_dir, 0777);
+        }
+    	
+        // Build individual layers
+        $this->_imageLayers = $this->_buildCompositeImageLayers();
+
+        // Composite layers and create the final image
+        $this->_buildCompositeImage();
+        
+        // Check to see if composite image was successfully created
+        if (!file_exists($this->_filepath)) {
+            throw new Exception('The requested image is either unavailable or does not exist.');
+        }
     }
+
     
     /**
      * Displays the composite image
@@ -458,7 +424,7 @@ class Image_Composite_HelioviewerCompositeImage
     {
         $fileinfo = new finfo(FILEINFO_MIME);
         $mimetype = $fileinfo->file($this->_filepath);
-        header("Content-Disposition: inline; filename=\"" . basename($this->_filepath) . "\"");
+        header("Content-Disposition: inline; filename=\"" . $this->_filename . "\"");
         header("Content-type: " . $mimetype);
         echo $this->_composite;
     }
@@ -503,6 +469,10 @@ class Image_Composite_HelioviewerCompositeImage
         // Destroy IMagick object
         if (isset($this->_composite)) {
             $this->_composite->destroy();    
+        }
+
+        foreach($this->_cache as $tmpFile) {
+        	unlink($tmpFile);
         }
     }
 }

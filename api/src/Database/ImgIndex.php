@@ -36,6 +36,30 @@ class Database_ImgIndex
         include_once 'DbConnection.php';
         $this->_dbConnection = new Database_DbConnection();
     }
+    
+    /**
+     * Adds a new screenshot entry to the database and returns its identifier
+     * 
+     * @return int identifier for the screenshot
+     */
+    public function insertScreenshot($date, $scale, $roi, $watermark, $layers, $bitmask)
+    {
+    	include_once 'src/Helper/DateTimeConversions.php';
+    	
+        // Add to screenshots table and get an id
+        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d);", 
+            isoDateToMySQL($date),
+            $scale,
+            $roi,
+            $watermark,
+            $layers,
+            bindec($bitmask)
+        );
+        
+        $this->_dbConnection->query($sql);
+        
+        return $this->_dbConnection->getInsertId();
+    }
 
     /**
      * Finds the closest available image to the requested one, and returns information from
