@@ -62,6 +62,32 @@ class Database_ImgIndex
     }
     
     /**
+     * Adds a new movie entry to the database and returns its identifier
+     * 
+     * @return int identifier for the movie
+     */
+    public function insertMovie(
+        $reqStartDate, $reqEndDate, $imageScale, $roi, $watermark, $layers, $bitmask
+    ) {
+        include_once 'src/Helper/DateTimeConversions.php';
+        
+        // Add to screenshots table and get an id
+        $sql = sprintf(
+            "INSERT INTO movies VALUES(NULL, NULL, 'PROCESSING', '%s', '%s', NULL, NULL, NULL, NULL, %f, 
+             PolygonFromText('%s'), %b, '%s', %d, NULL, NULL, NULL);", 
+            isoDateToMySQL($reqStartDate),
+            isoDateToMySQL($reqEndDate),
+            $imageScale,
+            $roi,
+            $watermark,
+            $layers,
+            bindec($bitmask)
+        );
+        $this->_dbConnection->query($sql);
+        return $this->_dbConnection->getInsertId();
+    }
+    
+    /**
      * Returns the information associated with the screenshot with the specified id
      * 
      * @param $id

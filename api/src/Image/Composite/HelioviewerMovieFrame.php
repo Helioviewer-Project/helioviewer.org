@@ -31,5 +31,6 @@ class Image_Composite_HelioviewerMovieFrame extends Image_Composite_HelioviewerC
      */
     public function __construct($layers, $obsDate, $roi, $options)
     {
+        parent::__construct($layers, $obsDate, $roi, $options);
     }
 }

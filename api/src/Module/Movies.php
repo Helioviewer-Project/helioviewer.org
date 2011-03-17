@@ -357,14 +357,11 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'filename', 'format', 'frameRate', 'ipod', 
-                                    'numFrames', 'uuid', 'verbose', 'watermarkOn'),
-                "bools"    => array('display', 'ipod', 'verbose', 'watermarkOn'),
+                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermarkOn'),
+                "bools"    => array('display', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
-                "files"    => array('filename'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('frameRate', 'numFrames'),
-                "uuids"    => array('uuid')
+                "ints"     => array('frameRate', 'maxFrames')
             );
             break;
         case "playMovie":
@@ -378,12 +375,12 @@ class Module_Movies implements Module
             break;
         case "queueMovie":
             $expected = array(
-               "required" => array('layers', 'startTime', 'endTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "optional" => array('display', 'filename', 'format', 'frameRate', 'ipod', 
-                                   'numFrames', 'uuid', 'watermarkOn'),
-               "dates"    => array('startTime', 'endTime'),
-               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "ints"     => array('frameRate', 'numFrames')
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermarkOn'),
+                "bools"    => array('display', 'watermarkOn'),
+                "dates"    => array('startTime', 'endTime'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "ints"     => array('frameRate', 'maxFrames')
             );
             break;
         case "uploadMovieToYouTube":
