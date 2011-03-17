@@ -37,7 +37,7 @@ class Image_HelioviewerImage extends Image_SubFieldImage
      * Constructor
      * 
      * @param string $jp2           Original JP2 image from which the subfield should be derrived
-     * @param string $filepath      Location to output the file to (not including a file extension)
+     * @param string $filepath      Location to output the file to
      * @param array  $roi           Subfield region of interest in pixels
      * @param string $instrument    Instrument
      * @param string $detector      Detector
@@ -52,7 +52,6 @@ class Image_HelioviewerImage extends Image_SubFieldImage
         $defaults = array(
             "date"          => "",
             "compress"      => true,
-            "format"        => "jpg",
             "layeringOrder" => 1,
             "opacity"       => 100
         );
@@ -61,7 +60,7 @@ class Image_HelioviewerImage extends Image_SubFieldImage
         $this->instrument  = $instrument;
         $this->detector    = $detector;
         $this->measurement = $measurement;
-        $this->filepath    = $filepath . "." . $this->options['format'];
+        $this->filepath    = $filepath;
         
         $imageSettings = array(
             "opacity" => $this->options['opacity']

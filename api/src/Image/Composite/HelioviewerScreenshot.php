@@ -26,6 +26,8 @@ require_once 'src/Image/Composite/HelioviewerCompositeImage.php';
  */
 class Image_Composite_HelioviewerScreenshot extends Image_Composite_HelioviewerCompositeImage
 {
+	public $id;
+	
 	/**
 	 * Creates a new screenshot
 	 */
@@ -33,32 +35,10 @@ class Image_Composite_HelioviewerScreenshot extends Image_Composite_HelioviewerC
     {
     	parent::__construct($layers, $obsDate, $roi, $options);
     	
-        $this->_id = $this->_getScreenshotId();
+        $this->id = $this->_getScreenshotId();
+    	$this->build($this->_buildFilepath());
 
-    	$filepath = $this->_buildFilepath();
-    	
-    	var_dump($filepath);
-    	die();
-
-    	//$this->build($filepath);    	
     	//TODO: Either include a status field in db, or remove entry if build fails?
-    }
-    
-    /**
-     * Adds the screenshot to the database and returns its assigned identifier
-     * 
-     * @return int Screenshot id
-     */
-    private function _getScreenshotId()
-    {
-    	return $this->db->insertScreenshot(
-            $this->date,
-            $this->scale,
-            $this->roi->getPolygonString(),
-            $this->watermark,
-            $this->layers->serialize(),
-            $this->layers->getBitMask()
-        );
     }
     
     /**
@@ -68,14 +48,29 @@ class Image_Composite_HelioviewerScreenshot extends Image_Composite_HelioviewerC
      */
     private function _buildFilepath ()
     {
-    	date_default_timezone_set('UTC');
-
     	return sprintf("%s/screenshots/%s/%s/%s_%s.jpg", 
     	   HV_CACHE_DIR,
     	   date("Y/m/d"),
-    	   $this->_id,
+    	   $this->id,
     	   substr(str_replace(array(":", "-", "T", "Z"), "_", $this->date), 0, -5),
     	   $this->layers->toString()    	   
     	);
+    }
+    
+    /**
+     * Adds the screenshot to the database and returns its assigned identifier
+     * 
+     * @return int Screenshot id
+     */
+    private function _getScreenshotId()
+    {
+        return $this->db->insertScreenshot(
+            $this->date,
+            $this->scale,
+            $this->roi->getPolygonString(),
+            $this->watermark,
+            $this->layers->serialize(),
+            $this->layers->getBitMask()
+        );
     }
 }

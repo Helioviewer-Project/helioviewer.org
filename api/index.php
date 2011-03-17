@@ -23,7 +23,7 @@
  */
 require_once "src/Config.php";
 $config = new Config("../settings/Config.ini");
-
+date_default_timezone_set('UTC');
 register_shutdown_function('shutdownFunction');
 
 if (isset($_REQUEST['action'])) {
@@ -50,7 +50,7 @@ if (!(isset($params) && loadModule($params))) {
 function loadModule($params)
 {
     $valid_actions = array(
-        "downloadFile"         => "WebClient",
+        "downloadScreenshot"   => "WebClient",
         "getClosestImage"      => "WebClient",
         "getDataSources"       => "WebClient",
         "getJP2Header"         => "WebClient",
@@ -692,6 +692,4 @@ function shutDownFunction() {
         handleError(sprintf("%s:%d - %s", $error['file'], $error['line'], $error['message']));
     } 
 }
-
-
 ?>
