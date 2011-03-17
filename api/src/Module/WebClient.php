@@ -65,13 +65,33 @@ class Module_WebClient implements Module
      *
      * @return void
      */
-    public function downloadFile()
+    public function downloadScreenshot()
     {
-        $file = HV_CACHE_DIR . "/" . $this->_params['uri'];
+        include_once 'src/Database/ImgIndex.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
+        
+        $imgIndex = new Database_ImgIndex();
+        
+        $info = $imgIndex->getScreenshot($this->_params['id']);
+        
+        $layers = new Helper_HelioviewerLayers($info['dataSourceString']);
+        
+        $dir =  sprintf("%s/screenshots/%s/%s/", 
+           HV_CACHE_DIR,
+           str_replace("-", "/", substr($info['timestamp'], 0, 10)),
+           $this->_params['id']   
+        );
+        
+        $filename = sprintf("%s_%s.jpg",
+            str_replace(array(":", "-", " "), "_", $info['observationDate']),
+            $layers->toString()
+        );
+
+        $filepath = $dir . $filename;
 
         // Make sure file exists
-        if (!file_exists($file)) {
-            throw new Exception("Unable to locate the requested file: $file");
+        if (!file_exists($filepath)) {
+            throw new Exception("Unable to locate the requested file: $filepath");
         }
 
         // Set HTTP headers
@@ -79,25 +99,25 @@ class Module_WebClient implements Module
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Cache-Control: private", false); // required for certain browsers
-        header("Content-Disposition: attachment; filename=\"" . basename($file) . "\"");
+        header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
         header("Content-Transfer-Encoding: binary");
-        header("Content-Length: " . filesize($file));
+        header("Content-Length: " . filesize($filepath));
 
         // Mime type
-        $parts = explode(".", $file);
-        $extension = end($parts);
-        
-        if (in_array($extension, array("jp2", "jpx"))) {
-            $mimetype = "image/$extension";
-        } else if (in_array($extension, array("ogg", "ogv", "webm"))) {
-            $mimetype = "video/$extension";
-        } else {        
-            $fileinfo = new finfo(FILEINFO_MIME);
-            $mimetype = $fileinfo->file($file);
-        }
-        header("Content-type: " . $mimetype);
+//        $parts = explode(".", $filename);
+//        $extension = end($parts);
+//        
+//        if (in_array($extension, array("jp2", "jpx"))) {
+//            $mimetype = "image/$extension";
+//        } else if (in_array($extension, array("ogg", "ogv", "webm"))) {
+//            $mimetype = "video/$extension";
+//        } else {        
+//            $fileinfo = new finfo(FILEINFO_MIME);
+//            $mimetype = $fileinfo->file($filepath);
+//        }
+        header("Content-type: image/png");
 
-        echo file_get_contents($file);
+        echo file_get_contents($filepath);
     }
 
     /**
@@ -226,7 +246,7 @@ class Module_WebClient implements Module
         $baseFilename  = substr(basename($uri), 0, -4);
         
         return sprintf(
-            "%s%s/%s_%s_%d_%dx_%d_%dy",
+            "%s%s/%s_%s_%d_%dx_%d_%dy.jpg",
             $baseDirectory, dirname($uri), $baseFilename, $scale, round($x1), round($x2), round($y1), round($y2)
         );
     }
@@ -293,7 +313,7 @@ class Module_WebClient implements Module
         } else {
             // Print JSON
             header('Content-Type: application/json');
-            echo json_encode(array("url" => $screenshot->getURL()));            
+            echo json_encode(array("id" => $screenshot->id));            
         }
     }
     
@@ -353,11 +373,11 @@ class Module_WebClient implements Module
      */
     private function _createTileCacheDir($filepath)
     {
-        $cacheDir = HV_CACHE_DIR . "/tiles" . $filepath;
+        $cacheDir = HV_CACHE_DIR . "/tiles" . dirname($filepath);
 
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
-            chmod($cacheDir, 0777);
+            //chmod($cacheDir, 0777);
         }
     }
 
@@ -371,10 +391,10 @@ class Module_WebClient implements Module
     {
         switch($this->_params['action']) {
 
-        case "downloadFile":
+        case "downloadScreenshot":
             $expected = array(
-               "required" => array('uri'),
-               "files"    => array('uri')
+               "required" => array('id'),
+               "ints"    => array('id')
             );
             break;
 

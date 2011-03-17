@@ -31,7 +31,7 @@ class Image_ImageType_EITImage extends Image_HelioviewerImage
      * Creates a new EITImage
      * 
      * @param string $jp2      Source JP2 image
-     * @param string $filepath Location to output the file to (not including a file extension)
+     * @param string $filepath Location to output the file to
      * @param array  $roi      Top-left and bottom-right pixel coordinates on the image
      * @param string $inst     Instrument
      * @param string $det      Detector

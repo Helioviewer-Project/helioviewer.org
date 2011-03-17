@@ -60,6 +60,17 @@ class Database_ImgIndex
         
         return $this->_dbConnection->getInsertId();
     }
+    
+    /**
+     * Returns the information associated with the screenshot with the specified id
+     * 
+     * @param $id
+     */
+    public function getScreenshot($id)
+    {
+    	$sql = "SELECT * FROM screenshots WHERE id=$id";
+    	return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+    }
 
     /**
      * Finds the closest available image to the requested one, and returns information from

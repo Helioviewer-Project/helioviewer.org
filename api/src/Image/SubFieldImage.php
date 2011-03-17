@@ -108,17 +108,6 @@ class Image_SubFieldImage
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
     }
-    
-    /**
-     * Called by classes that may not have direct access to protected function buildImage.
-     * Change buildImage to buildImageNoImagick() to use command-line calls instead of imagick.
-     * 
-     * @return void
-     */
-    public function build() 
-    {
-        $this->buildImage();
-    }
 
     /**
      * Sets parameters (gravity and size) for any padding which should be applied to extracted subfield image
@@ -199,39 +188,6 @@ class Image_SubFieldImage
     }
     
     /**
-     * Figures out where the extracted image lies inside the final image
-     * if the final image is larger.
-     * 
-     * @param Array $roi   The region of interest in arcseconds of the final image.
-     * 
-     * @return array with padding
-     */
-    public function computePadding()
-    {
-        $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
-        $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
-        
-        $leftToCenter = ($this->imageSubRegion['left'] - $centerX);
-        $topToCenter  = ($this->imageSubRegion['top']  - $centerY);
-        $scaleFactor  = $this->jp2->getScale() / $this->desiredScale;
-        $relLeftToCenter = $leftToCenter * $scaleFactor;
-        $relTopToCenter  = $topToCenter  * $scaleFactor;
-
-        $left = ($this->roi->left() / $this->desiredScale) - $relLeftToCenter;
-        $top  = ($this->roi->top()  / $this->desiredScale) - $relTopToCenter;
-
-        // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
-        // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
-        return array(
-           "gravity" => "northwest",
-           "width"   => round($this->roi->getPixelWidth()),
-           "height"  => round($this->roi->getPixelHeight()),
-           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
-           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
-        );
-    }
-    
-    /**
      * Builds the requested subfield image.
      *
      * Normalizing request & native image scales:
@@ -254,18 +210,17 @@ class Image_SubFieldImage
      *     
      *          The subfield requested is at a higher image scale (LOWER quality) than the source JP2.
      *         
-     * @TODO: Normalize quality scale.
-     * 
+     * @TODO: Normalize quality scale. 
      * @TODO: Create a cleanup array with names of files to be wiped after processing is complete?
      * @TODO: Move generation of intermediate file to separate method
      *
      * @return void
      */
-    protected function buildImage()
+    protected function build()
     {
         try {
             $input = substr($this->outputFile, 0, -3) . "pgm";
-
+            
             // Extract region (PGM)
             $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
 
@@ -331,7 +286,6 @@ class Image_SubFieldImage
         }
     }
     
-
     /**
      * Sets compression for images that are not ImageLayers
      * 
@@ -373,6 +327,39 @@ class Image_SubFieldImage
         }
 
         $imagickImage->setImageDepth($this->imageOptions['bitdepth']);
+    }
+    
+    /**
+     * Figures out where the extracted image lies inside the final image
+     * if the final image is larger.
+     * 
+     * @param Array $roi   The region of interest in arcseconds of the final image.
+     * 
+     * @return array with padding
+     */
+    public function computePadding()
+    {
+        $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
+        $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
+        
+        $leftToCenter = ($this->imageSubRegion['left'] - $centerX);
+        $topToCenter  = ($this->imageSubRegion['top']  - $centerY);
+        $scaleFactor  = $this->jp2->getScale() / $this->desiredScale;
+        $relLeftToCenter = $leftToCenter * $scaleFactor;
+        $relTopToCenter  = $topToCenter  * $scaleFactor;
+
+        $left = ($this->roi->left() / $this->desiredScale) - $relLeftToCenter;
+        $top  = ($this->roi->top()  / $this->desiredScale) - $relTopToCenter;
+
+        // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
+        // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
+        return array(
+           "gravity" => "northwest",
+           "width"   => round($this->roi->getPixelWidth()),
+           "height"  => round($this->roi->getPixelHeight()),
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
+        );
     }
     
     /**

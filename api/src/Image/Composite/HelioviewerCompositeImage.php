@@ -182,7 +182,7 @@ class Image_Composite_HelioviewerCompositeImage
         if ($this->watermark) {
             $this->_addWatermark($imagickImage);
         }
-        $this->_finalizeImage($imagickImage, $filepath);
+        $this->_finalizeImage($imagickImage, $this->_filepath);
 
         // Store the IMagick composite image
         $this->_composite = $imagickImage;
@@ -399,7 +399,6 @@ class Image_Composite_HelioviewerCompositeImage
     	
         if (!file_exists($this->_dir)) {
             mkdir($this->_dir, 0777, true);
-            chmod($this->_dir, 0777);
         }
     	
         // Build individual layers
@@ -428,27 +427,7 @@ class Image_Composite_HelioviewerCompositeImage
         header("Content-type: " . $mimetype);
         echo $this->_composite;
     }
-    
-    /**
-     * Returns the filepath for the generated composite image
-     * 
-     * @return string Filepath for the composite image
-     */
-    public function getFilepath()
-    {
-        return $this->_filepath;
-    }
-    
-    /**
-     * Returns a URL to the composite image
-     * 
-     * @return void
-     */
-    public function getURL()
-    {
-        return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->_filepath);
-    }
-    
+
     /**
      * Returns the IMagick object associated with the composite image
      * 
