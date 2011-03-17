@@ -22,6 +22,7 @@ def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     createMeasurementTable(cursor)
     createImageTable(cursor)
     createScreenshotsTable(cursor)
+    createMoviesTable(cursor)
     createStatisticsTable(cursor)
     updateImageTableIndex(cursor)
 
@@ -227,7 +228,7 @@ def createMeasurementTable(cursor):
         (14, 'white-light', 'White Light', 'DN');
     ''')
     
-def createMovieshotsTable(cursor):
+def createMoviesTable(cursor):
     """ Creates a simple table for storing information about movies built on Helioviewer.org 
         Note: Region of interest coordinates are stored in arc-seconds even though request is done
               in pixels in order to make it easier to find screenshots with similar ROIs regardless of scale.
@@ -242,16 +243,15 @@ def createMovieshotsTable(cursor):
       `startDate`         datetime,
       `endDate`           datetime,
       `numFrames`         INT,
-      `reqFrames`         INT,
       `frameRate`         FLOAT,
       `imageScale`        FLOAT NOT NULL,
-      `dataSourceString`  VARCHAR(255) NOT NULL,
-      `dataSourceBitMask` BIGINT,
       `regionOfInterest`  POLYGON NOT NULL,
       `watermark`         BOOLEAN DEFAULT TRUE,
+      `dataSourceString`  VARCHAR(255) NOT NULL,
+      `dataSourceBitMask` BIGINT,
       `mobile`            BOOLEAN DEFAULT FALSE,
       `mp4`               BOOLEAN DEFAULT FALSE,
-      `webm`              BOOLEAN DEFAULT FALSE
+      `webm`              BOOLEAN DEFAULT FALSE,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
     
