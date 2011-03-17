@@ -231,6 +231,7 @@ class Movie_HelioviewerMovie
         
         // Create preview image
         // TODO: Use middle frame instead last one...
+        // TODO: Create standardized thumbnail sizes (e.g. thumbnail-med.png = 480x320, etc)
         $imagickImage = $screenshot->getIMagickImage();
         $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
         $imagickImage->setImageCompressionQuality(PNG_LOW_COMPRESSION);

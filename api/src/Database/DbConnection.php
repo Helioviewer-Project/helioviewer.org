@@ -71,6 +71,16 @@ class Database_DbConnection
         mysqli_select_db($this->link, $this->_dbname);
         mysqli_query($this->link, "SET @@session.time_zone = '+00:00'");
     }
+    
+    /**
+     * Gets the id returned from an auto-increment INSERT query
+     * 
+     * @return int Insert id
+     */
+    public function getInsertId()
+    {
+    	return $this->link->insert_id;
+    }
 
     /**
      * Queries database

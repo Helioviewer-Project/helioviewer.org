@@ -28,6 +28,7 @@
 class Helper_HelioviewerLayers
 {
     private $_layers = array();
+    private $_layerString;
     private $_db;
     
     /**
@@ -40,6 +41,8 @@ class Helper_HelioviewerLayers
      */
     public function __construct($layerString)
     {
+    	$this->_layerString = $layerString;
+
         $this->_db = new Database_ImgIndex();
 
         $layerStringArray = explode("],[", substr($layerString, 1, -1));
@@ -101,6 +104,16 @@ class Helper_HelioviewerLayers
         }
 
         return implode($bitArray);
+    }
+    
+    /**
+     * Returns a string representation of the request layers suitable for use in queries
+     * 
+     * @return string String representation of the request layers for use API queries
+     */
+    public function serialize()
+    {
+    	return $this->_layerString;
     }
     
     /**

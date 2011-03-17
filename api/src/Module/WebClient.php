@@ -262,14 +262,10 @@ class Module_WebClient implements Module
      */
     public function takeScreenshot()
     {
-        include_once 'src/Image/Composite/HelioviewerCompositeImage.php';
-        include_once 'src/Helper/DateTimeConversions.php';
+        include_once 'src/Image/Composite/HelioviewerScreenshot.php';
         include_once 'src/Helper/HelioviewerLayers.php';
         include_once 'src/Helper/RegionOfInterest.php';
-        include_once 'src/Database/DbConnection.php';
         
-        //TODO Mar 16, 2011: Create a separate "Screenshot" subclass of CompositeImage?
-
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
@@ -279,33 +275,8 @@ class Module_WebClient implements Module
             $this->_params['imageScale']
         );
         
-        // TEMP
-        if (isset($this->_options['watermarkOn'])) {
-        	$watermarkOn = $this->_params['watermarkOn'];
-        } else {
-        	$watermarkOn = true;
-        }
-        
-        
-        $db  = new Database_DbConnection();
-        
-        // Add to screenshots table and get an id
-        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d);", 
-            isoDateToMySQL($this->_params['obsDate']),
-            $this->_params['imageScale'],
-            $roi->getPolygonString(),
-            $watermarkOn,
-            $this->_params['layers'],
-            bindec($layers->getBitMask())
-        );
-        
-        var_dump($sql);
-        die();
-        
-        $db->query("");
-        
         // Create the screenshot
-        $screenshot = new Image_Composite_HelioviewerCompositeImage(
+        $screenshot = new Image_Composite_HelioviewerScreenshot(
             $layers, $this->_params['obsDate'], $roi, $this->_options
         );
         
@@ -892,12 +863,6 @@ class Module_WebClient implements Module
                         <td><i>Integer</i></td>
                         <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
                             if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                    </tr>
-                    <tr>
-                        <td><b>filename</b></td>
-                        <td><i>String</i></td>
-                        <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
-                            the filename defaults to a combination of the date, layer names, and image scale.</td>
                     </tr>
                     <tr>
                         <td><b>display</b></td>
