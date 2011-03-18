@@ -74,7 +74,7 @@ class Database_ImgIndex
         // Add to screenshots table and get an id
         $sql = sprintf(
             "INSERT INTO movies VALUES(NULL, NULL, 'PROCESSING', '%s', '%s', NULL, NULL, NULL, NULL, %f, 
-             PolygonFromText('%s'), %b, '%s', %d, NULL, NULL, NULL);", 
+             PolygonFromText('%s'), %b, '%s', %d, NULL, NULL, NULL, NULL, NULL, NULL);", 
             isoDateToMySQL($reqStartDate),
             isoDateToMySQL($reqEndDate),
             $imageScale,

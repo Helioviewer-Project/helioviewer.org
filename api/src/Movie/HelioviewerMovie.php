@@ -76,9 +76,6 @@ class Movie_HelioviewerMovie
         // Also store as timestamps
         $this->_startTimestamp = toUnixTimestamp($startDateString);
         $this->_endTimestamp   = toUnixTimestamp($endDateString);
-        
-        var_dump($this);
-        die();
 
         // Get timestamps for frames in the key movie layer
         $this->_timestamps = $this->_getTimeStamps($options['maxFrames']);
