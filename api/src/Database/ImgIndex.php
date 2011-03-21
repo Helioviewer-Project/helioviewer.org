@@ -88,6 +88,43 @@ class Database_ImgIndex
     }
     
     /**
+     * Gets the current status for a given movie
+     * 
+     * @return string The movie status
+     */
+    public function getMovieStatus($id)
+    {
+        $sql = "SELECT status FROM movies WHERE id=$id";
+        $row = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        return $row['status'];
+    }
+    
+    /**
+     * Updates movie entry with new information
+     * 
+     * @return void
+     */
+    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
+    {
+    	$sql = sprintf(
+    	   "UPDATE movies 
+    	     SET startDate='%s', endDate='%s', numFrames=%f, frameFrame=%f, width=%d, height=%d
+    	     WHERE id=%d",
+    	   $startDate, $endDate, $numFrames, $frameRate, $width, $height, $id
+    	);
+    	
+    	$this->_dbConnection->query($sql);
+    }
+    
+    /**
+     * Updates movie entry and marks it as being "finished"
+     */
+    public function markMovieAsFinished($id)
+    {
+    	$this->_dbConnection->query("UPDATE movies SET status='FINISHED', actWaitInSecs=NOW() - timestamp, mp4=1");
+    }
+    
+    /**
      * Returns the information associated with the screenshot with the specified id
      * 
      * @param $id

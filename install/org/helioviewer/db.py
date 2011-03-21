@@ -238,12 +238,8 @@ def createMoviesTable(cursor):
       `id`                INT unsigned NOT NULL auto_increment,
       `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `status`            VARCHAR(255) NOT NULL,
-      `reqStartDate`      datetime,
-      `reqEndDate`        datetime,
-      `startDate`         datetime,
-      `endDate`           datetime,
-      `numFrames`         INT,
-      `frameRate`         FLOAT,
+      `reqStartDate`      datetime NOT NULL,
+      `reqEndDate`        datetime NOT NULL,
       `imageScale`        FLOAT NOT NULL,
       `regionOfInterest`  POLYGON NOT NULL,
       `watermark`         BOOLEAN DEFAULT TRUE,
@@ -252,6 +248,12 @@ def createMoviesTable(cursor):
       `initialQueuePos`   INT,
       `estWaitInSecs`     INT,
       `actWaitInSecs`     INT,
+      `startDate`         datetime,
+      `endDate`           datetime,
+      `numFrames`         INT,
+      `frameRate`         FLOAT,
+      `width`             INT,
+      `height`            INT,
       `mobile`            BOOLEAN DEFAULT FALSE,
       `mp4`               BOOLEAN DEFAULT FALSE,
       `webm`              BOOLEAN DEFAULT FALSE,
@@ -264,7 +266,7 @@ def createScreenshotsTable(cursor):
               in pixels in order to make it easier to find screenshots with similar ROIs regardless of scale.
     """
     
-    #INSERT INTO screenshots VALUES (NULL, NULL, '2010-09-04 12:00:00', 0.6, PolygonFromText('POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))'), '[SDO,AIA,AIA,171,1,100]', 00000000001000000000);
+    #INSERT INTO screenshots VALUES (NULL, NULL, '2010-09-04 12:00:00', 0.6, PolygonFromText('POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))'), true,  '[SDO,AIA,AIA,171,1,100]', 22);
     
     cursor.execute('''
     CREATE TABLE `screenshots` (

@@ -84,8 +84,16 @@ class Module_Movies implements Module
         
         // Process request
         $movie = new Movie_HelioviewerMovie(
-            $layers, $this->_params['startTime'], $this->_params['endTime'], $roi, $this->_options
+            $this->_params['id'], $layers, $this->_params['startTime'], $this->_params['endTime'], $roi, $this->_options
         );
+        
+        // Check to make sure we have not already started processing the movie
+        if ($movie->getStatus() !== "QUEUED") {
+        	throw new Exception("The requested movie is either currently being built or has already been built");
+        }
+        
+        // Build the movie
+        $movie->build();
         
         // Update usage stats
         if (HV_ENABLE_STATISTICS_COLLECTION) {
@@ -356,12 +364,12 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "required" => array('id', 'startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermarkOn'),
                 "bools"    => array('display', 'watermarkOn'),
                 "dates"    => array('startTime', 'endTime'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('frameRate', 'maxFrames')
+                "ints"     => array('id', 'frameRate', 'maxFrames')
             );
             break;
         case "playMovie":

@@ -51,7 +51,7 @@ class Movie_HelioviewerMovie
      *
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function __construct($layers, $startDateString, $endDateString, $roi, $options)
+    public function __construct($id, $layers, $startDateString, $endDateString, $roi, $options)
     {
         $defaults = array(
             'format'      => "mp4",
@@ -60,6 +60,8 @@ class Movie_HelioviewerMovie
             'watermarkOn' => true
         );
         $options = array_replace($defaults, $options);
+        
+        $this->id         = $id;
 
         $this->_db        = new Database_ImgIndex();
         $this->_layers    = $layers;
@@ -67,104 +69,20 @@ class Movie_HelioviewerMovie
         
         $this->_startDateString = $startDateString;
         $this->_endDateString   = $endDateString;
-
-        $this->id = $this->_getMovieId($options['watermarkOn']);
-        
-        $this->_directory = $this->_buildDir();
-        $this->_filename  = $this->_buildFilename($options['format']);
-        
-        // Also store as timestamps
-        $this->_startTimestamp = toUnixTimestamp($startDateString);
-        $this->_endTimestamp   = toUnixTimestamp($endDateString);
-
-        // Get timestamps for frames in the key movie layer
-        $this->_timestamps = $this->_getTimeStamps($options['maxFrames']);
-
-        $this->_numFrames  = sizeOf($this->_timestamps);
-
-        if ($this->_numFrames == 0) {
-        	$this->_abort("No images available for the requested time range");
-        }
-
-        //$this->_filename  = $this->_buildFilename($options['filename']);
-        
-        $this->_frameRate = $this->_determineOptimalFrameRate($options['frameRate']);
-
-        $this->_setMovieDimensions();
-        
-        // Build movie frames
-        $images = $this->_buildMovieFrames($options['watermarkOn']);
-
-        // Compile movie
-        $this->_build($images);
     }
     
     /**
-     * Adds the movie to the database and returns its assigned identifier
+     * Cancels movie request
      * 
-     * @return int Movie id
+     * TODO 11/24/2010: Instead of using files to mark movie status, could instead use presence of 'frames' directory
+     *                  and expected movies (frames directory is delete after movies are finished). In the longer run, 
+     *                  movie status should be tracked in a database accessible to both Helioviewer and Helioqueuer.
      */
-    private function _getMovieId($watermarkOn)
-    {
-        return $this->_db->insertMovie(
-            $this->_startDateString,
-            $this->_endDateString,
-            $this->_roi->imageScale(),
-            $this->_roi->getPolygonString(),
-            $watermarkOn,
-            $this->_layers->serialize(),
-            $this->_layers->getBitMask()
-        );
+    private function _abort($msg) {
+        touch($this->_directory . "/INVALID");
+        throw new Exception("Unable to create movie: " . $msg, 1);
     }
     
-    /**
-     * Returns an array of the timestamps for the key movie layer
-     * 
-     * For single layer movies, the number of frames will be either HV_MAX_MOVIE_FRAMES, or the number of
-     * images available for the requested time range. For multi-layer movies, the number of frames included
-     * may be reduced to ensure that the total number of SubFieldImages needed does not exceed HV_MAX_MOVIE_FRAMES
-     */
-    private function _getTimeStamps($maxFrames)
-    {
-        $layerCounts = array();
-
-        // Determine the number of images that are available for the request duration for each layer
-        foreach ($this->_layers->toArray() as $layer) {
-            $n = $this->_db->getImageCount($this->_startDateString, $this->_endDateString, $layer['sourceId']);
-            $layerCounts[$layer['sourceId']] = $n;
-        }
-
-        // Choose the maximum number of frames that can be generated without exceeded the server limits defined
-        // by HV_MAX_MOVIE_FRAMES
-        $numFrames       = 0;
-        $imagesRemaining = $maxFrames;
-        $layersRemaining = $this->_layers->length();
-        
-        // Sort counts from smallest to largest
-        asort($layerCounts);
-        
-        // Determine number of frames to create
-        foreach($layerCounts as $dataSource => $count) {
-            $numFrames = min($count, ($imagesRemaining / $layersRemaining));
-            $imagesRemaining -= $numFrames;
-            $layersRemaining -= 1;
-        }
-        
-        // Number of frames to use
-        $numFrames = floor($numFrames);
-
-        // Get the entire range of available images between the movie start and end time 
-        $entireRange = $this->_db->getImageRange($this->_startDateString, $this->_endDateString, $dataSource);
-        
-        // Sub-sample range so that only $numFrames timestamps are returned
-        $timestamps = array();
-        for ($i = 0; $i < $numFrames; $i++) {
-        	$index = round($i * (sizeOf($entireRange) / $numFrames));
-        	array_push($timestamps, $entireRange[$index]['date']);
-        }
-        return $timestamps;        
-    }
-
     /**
      * Determines the directory to store the movie in.
      * 
@@ -279,19 +197,12 @@ class Movie_HelioviewerMovie
      *
      * @return void
      */
-    private function _build($builtImages)
+    private function _buildMovie($builtImages)
     {
         $this->_frames = $builtImages;
 
         // Create and FFmpeg encoder instance
         $ffmpeg = new Movie_FFMPEGEncoder($this->_frameRate);
-
-        // TODO 11/18/2010: add 'ipod' option to movie requests in place of the 'hqFormat' param
-        $ipod = false;
-
-        if ($ipod) {
-            $ffmpeg->createIpodVideo($this->_directory, $this->_filename, "mp4", $this->_width, $this->_height);
-        }
         
         // Create a high-quality H.264 video using an MPEG-4 (mp4) container format
         $ffmpeg->createVideo($this->_directory, $this->_filename . "-hq", "mp4", $this->_width, $this->_height, "ultrafast", 15);
@@ -301,6 +212,54 @@ class Movie_HelioviewerMovie
 
         //Create alternative container format options for medium-quality video (.flv)
         $ffmpeg->createAlternativeVideoFormat($this->_directory, $this->_filename, "mp4", "flv");
+    }
+    
+    /**
+     * Returns an array of the timestamps for the key movie layer
+     * 
+     * For single layer movies, the number of frames will be either HV_MAX_MOVIE_FRAMES, or the number of
+     * images available for the requested time range. For multi-layer movies, the number of frames included
+     * may be reduced to ensure that the total number of SubFieldImages needed does not exceed HV_MAX_MOVIE_FRAMES
+     */
+    private function _getTimeStamps($maxFrames)
+    {
+        $layerCounts = array();
+
+        // Determine the number of images that are available for the request duration for each layer
+        foreach ($this->_layers->toArray() as $layer) {
+            $n = $this->_db->getImageCount($this->_startDateString, $this->_endDateString, $layer['sourceId']);
+            $layerCounts[$layer['sourceId']] = $n;
+        }
+
+        // Choose the maximum number of frames that can be generated without exceeded the server limits defined
+        // by HV_MAX_MOVIE_FRAMES
+        $numFrames       = 0;
+        $imagesRemaining = $maxFrames;
+        $layersRemaining = $this->_layers->length();
+        
+        // Sort counts from smallest to largest
+        asort($layerCounts);
+        
+        // Determine number of frames to create
+        foreach($layerCounts as $dataSource => $count) {
+            $numFrames = min($count, ($imagesRemaining / $layersRemaining));
+            $imagesRemaining -= $numFrames;
+            $layersRemaining -= 1;
+        }
+        
+        // Number of frames to use
+        $numFrames = floor($numFrames);
+
+        // Get the entire range of available images between the movie start and end time 
+        $entireRange = $this->_db->getImageRange($this->_startDateString, $this->_endDateString, $dataSource);
+        
+        // Sub-sample range so that only $numFrames timestamps are returned
+        $timestamps = array();
+        for ($i = 0; $i < $numFrames; $i++) {
+            $index = round($i * (sizeOf($entireRange) / $numFrames));
+            array_push($timestamps, $entireRange[$index]['date']);
+        }
+        return $timestamps;        
     }
 
     /**
@@ -320,19 +279,6 @@ class Movie_HelioviewerMovie
         if ($this->_height % 2 === 1) {
             $this->_height += 1;
         } 
-    }
-
-    /**
-     * Cancels movie request
-     * 
-     * TODO 11/24/2010: Cleanup files
-     * TODO 11/24/2010: Instead of using files to mark movie status, could instead use presence of 'frames' directory
-     *                  and expected movies (frames directory is delete after movies are finished). In the longer run, 
-     *                  movie status should be tracked in a database accessible to both Helioviewer and Helioqueuer.
-     */
-    private function _abort($msg) {
-        touch($this->_directory . "/INVALID");
-        throw new Exception("Unable to create movie: " . $msg, 1);
     }
 
     /**
@@ -370,6 +316,51 @@ class Movie_HelioviewerMovie
     }
     
     /**
+     * Build the movie frames and movie
+     */
+    public function build()
+    {
+        //$this->id = $this->_getMovieId($options['watermarkOn']);
+        
+        $this->_directory = $this->_buildDir();
+        $this->_filename  = $this->_buildFilename($options['format']);
+        
+        // Also store as timestamps
+        $this->_startTimestamp = toUnixTimestamp($this->_startDateString);
+        $this->_endTimestamp   = toUnixTimestamp($this->_endDateString);
+
+        // Get timestamps for frames in the key movie layer
+        $this->_timestamps = $this->_getTimeStamps($options['maxFrames']);
+
+        $this->_numFrames  = sizeOf($this->_timestamps);
+
+        if ($this->_numFrames == 0) {
+            $this->_abort("No images available for the requested time range");
+        }
+
+        //$this->_filename  = $this->_buildFilename($options['filename']);
+        
+        $this->_frameRate = $this->_determineOptimalFrameRate($options['frameRate']);
+
+        $this->_setMovieDimensions();
+        
+        // Update movie entry in database with new details
+        $this->_db->storeMovieProperties(
+            $this->id, $this->_startDateString, $this->_endDateString,
+            $this->_numFrames, $this->_frameRate, $this->_width, $this->_height
+        );
+        
+        // Build movie frames
+        $images = $this->_buildMovieFrames($options['watermarkOn']);
+
+        // Compile movie
+        $this->_buildMovie($images);
+        
+        // Make as complete
+        $this->_db->markMovieAsFinished($this->id);
+    }
+    
+    /**
      * Returns the base filepath for movie without any file extension
      */
     public function getFilepath()
@@ -377,12 +368,9 @@ class Movie_HelioviewerMovie
         return $this->_directory . "/" . $this->_filename;
     }
     
-    /**
-     * Returns the Base URL to the most recently created movie (without a file extension)
-     */
-    public function getURL()
+    public function getDuration()
     {
-        return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->getFilepath());
+        return $this->_numFrames / $this->_frameRate;
     }
     
     /**
@@ -399,11 +387,6 @@ class Movie_HelioviewerMovie
     public function getNumFrames()
     {
         return $this->_numFrames;
-    }
-    
-    public function getDuration()
-    {
-        return $this->_numFrames / $this->_frameRate;
     }
     
     /**
@@ -435,6 +418,24 @@ class Movie_HelioviewerMovie
 </body> 
 </html> 
         <?php        
+    }
+    
+    /**
+     * Returns the movie's current status
+     * 
+     * @return string The current movie status. Possible values include: QUEUED, PROCESSING, FINISHED
+     */
+    public function getStatus() 
+    {
+        return $this->db->getMovieStatus($this->id);
+    }    
+    
+    /**
+     * Returns the Base URL to the most recently created movie (without a file extension)
+     */
+    public function getURL()
+    {
+        return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->getFilepath());
     }
     
     /**
