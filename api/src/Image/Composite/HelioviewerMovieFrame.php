@@ -27,10 +27,11 @@ require_once 'src/Image/Composite/HelioviewerCompositeImage.php';
 class Image_Composite_HelioviewerMovieFrame extends Image_Composite_HelioviewerCompositeImage
 {
     /**
-     * desc
+     * Helioviewer movie frame
      */
-    public function __construct($layers, $obsDate, $roi, $options)
+    public function __construct($filepath, $layers, $obsDate, $roi, $options)
     {
         parent::__construct($layers, $obsDate, $roi, $options);
+        $this->build($filepath);
     }
 }

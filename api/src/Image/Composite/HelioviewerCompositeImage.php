@@ -61,9 +61,10 @@ class Image_Composite_HelioviewerCompositeImage
     {
         // Default image settings (optimized for small filesize)
         $defaults = array(
-            'watermarkOn' => true,
-            'compress'    => true,
-            'interlace'   => true
+            'database'  => false,
+            'watermark' => true,
+            'compress'  => true,
+            'interlace' => true
         );
 
         $options = array_replace($defaults, $options);
@@ -72,14 +73,14 @@ class Image_Composite_HelioviewerCompositeImage
         $this->height = $roi->getPixelHeight();
         $this->scale  = $roi->imageScale();     
 
-        $this->db     = new Database_ImgIndex();
+        $this->db     = $options['database'] ? $options['database'] : new Database_ImgIndex();
         $this->layers = $layers;
         $this->date   = $obsDate;
         $this->roi    = $roi;
         
         $this->compress  = $options['compress'];
         $this->interlace = $options['interlace'];
-        $this->watermark = $options['watermarkOn'];
+        $this->watermark = $options['watermark'];
     }
     
     /**

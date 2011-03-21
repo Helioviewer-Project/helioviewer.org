@@ -82,6 +82,11 @@ class Module_Movies implements Module
             $this->_params['imageScale']
         );
         
+        // Make sure movie doesn't exceed maximum number of frames allowed
+        if (isset($this->_options['maxFrames'])) {
+            $this->_options['maxFrames'] = min(HV_MAX_MOVIE_FRAMES, $this->_options['maxFrames']);
+        }        
+        
         // Process request
         $movie = new Movie_HelioviewerMovie(
             $this->_params['id'], $layers, $this->_params['startTime'], $this->_params['endTime'], $roi, $this->_options
@@ -112,8 +117,8 @@ class Module_Movies implements Module
             if (isset($this->_options['verbose']) && $this->_options['verbose']) {
                 $response = array(
                     "duration"  => $movie->getDuration(),
-                    "frameRate" => $movie->getFrameRate(),
-                    "numFrames" => $movie->getNumFrames(),
+                    "frameRate" => $movie->frameRate,
+                    "numFrames" => $movie->numFrames,
                     "url"       => $urls
                 );                
             } else {
@@ -365,11 +370,11 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('id', 'startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermarkOn'),
-                "bools"    => array('display', 'watermarkOn'),
+                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermark'),
+                "bools"    => array('display', 'watermark'),
                 "dates"    => array('startTime', 'endTime'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('id', 'frameRate', 'maxFrames')
+                "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
+                "ints"     => array('id', 'maxFrames')
             );
             break;
         case "playMovie":
@@ -384,11 +389,11 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermarkOn'),
-                "bools"    => array('display', 'watermarkOn'),
+                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermark'),
+                "bools"    => array('display', 'watermark'),
                 "dates"    => array('startTime', 'endTime'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('frameRate', 'maxFrames')
+                "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
+                "ints"     => array('maxFrames')
             );
             break;
         case "uploadMovieToYouTube":
@@ -541,9 +546,9 @@ class Module_Movies implements Module
                                 filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
                         </tr>
                         <tr>
-                            <td><b>watermarkOn</b></td>
+                            <td><b>watermark</b></td>
                             <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the images will not be watermarked, 
+                            <td><i>[Optional]</i> Enables turning watermarking on or off. If watermark is set to false, the images will not be watermarked, 
                                 which will speed up movie generation time but you will have no timestamps on the movie. If left blank, it defaults to true 
                                 and images will be watermarked.</td>
                         </tr>
@@ -566,8 +571,8 @@ class Module_Movies implements Module
                 <!--
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false">
+                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false
                 </a>
                 </span>
                  -->

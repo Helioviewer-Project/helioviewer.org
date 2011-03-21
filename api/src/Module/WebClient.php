@@ -452,10 +452,10 @@ class Module_WebClient implements Module
         case "takeScreenshot":
             $expected = array(
                 "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'watermarkOn'),
+                "optional" => array('display', 'watermark'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
                 "dates"	   => array('obsDate'),
-                "bools"    => array('display', 'watermarkOn')
+                "bools"    => array('display', 'watermark')
             );
             break;
         default:
@@ -891,9 +891,9 @@ class Module_WebClient implements Module
                             filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
                     </tr>
                     <tr>
-                        <td><b>watermarkOn</b></td>
+                        <td><b>watermark</b></td>
                         <td><i>Boolean</i></td>
-                        <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the image will not be watermarked.
+                        <td><i>[Optional]</i> Enables turning watermarking on or off. If watermark is set to false, the image will not be watermarked.
                             If left blank, it defaults to true and images will be watermarked.</td>
                     </tr>
                 </tbody>
