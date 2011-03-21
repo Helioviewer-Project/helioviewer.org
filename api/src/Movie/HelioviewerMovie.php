@@ -32,8 +32,9 @@ require_once 'src/Movie/FFMPEGEncoder.php';
  */
 class Movie_HelioviewerMovie
 {
-	protected $id;
+    protected $id;
     private $_db;
+    private $_options;
     private $_layers;
     private $_roi;
     private $_directory;
@@ -59,7 +60,7 @@ class Movie_HelioviewerMovie
             'maxFrames'   => HV_MAX_MOVIE_FRAMES,
             'watermarkOn' => true
         );
-        $options = array_replace($defaults, $options);
+        $this->_options = array_replace($defaults, $options);
         
         $this->id         = $id;
 
@@ -323,16 +324,16 @@ class Movie_HelioviewerMovie
         //$this->id = $this->_getMovieId($options['watermarkOn']);
         
         $this->_directory = $this->_buildDir();
-        $this->_filename  = $this->_buildFilename($options['format']);
+        $this->_filename  = $this->_buildFilename($this->_options['format']);
         
         // Also store as timestamps
         $this->_startTimestamp = toUnixTimestamp($this->_startDateString);
         $this->_endTimestamp   = toUnixTimestamp($this->_endDateString);
 
         // Get timestamps for frames in the key movie layer
-        $this->_timestamps = $this->_getTimeStamps($options['maxFrames']);
+        $this->_timestamps = $this->_getTimeStamps($this->_options['maxFrames']);
 
-        $this->_numFrames  = sizeOf($this->_timestamps);
+        $this->_numFrames = sizeOf($this->_timestamps);
 
         if ($this->_numFrames == 0) {
             $this->_abort("No images available for the requested time range");
@@ -340,7 +341,7 @@ class Movie_HelioviewerMovie
 
         //$this->_filename  = $this->_buildFilename($options['filename']);
         
-        $this->_frameRate = $this->_determineOptimalFrameRate($options['frameRate']);
+        $this->_frameRate = $this->_determineOptimalFrameRate($this->_options['frameRate']);
 
         $this->_setMovieDimensions();
         
@@ -351,7 +352,7 @@ class Movie_HelioviewerMovie
         );
         
         // Build movie frames
-        $images = $this->_buildMovieFrames($options['watermarkOn']);
+        $images = $this->_buildMovieFrames($this->_options['watermarkOn']);
 
         // Compile movie
         $this->_buildMovie($images);
@@ -427,7 +428,7 @@ class Movie_HelioviewerMovie
      */
     public function getStatus() 
     {
-        return $this->db->getMovieStatus($this->id);
+        return $this->_db->getMovieStatus($this->id);
     }    
     
     /**
