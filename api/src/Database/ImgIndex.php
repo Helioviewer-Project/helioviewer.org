@@ -108,11 +108,10 @@ class Database_ImgIndex
     {
     	$sql = sprintf(
     	   "UPDATE movies 
-    	     SET startDate='%s', endDate='%s', numFrames=%f, frameFrame=%f, width=%d, height=%d
+    	     SET status='PROCESSING', startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, width=%d, height=%d
     	     WHERE id=%d",
     	   $startDate, $endDate, $numFrames, $frameRate, $width, $height, $id
     	);
-    	
     	$this->_dbConnection->query($sql);
     }
     
@@ -121,7 +120,16 @@ class Database_ImgIndex
      */
     public function markMovieAsFinished($id)
     {
-    	$this->_dbConnection->query("UPDATE movies SET status='FINISHED', actWaitInSecs=NOW() - timestamp, mp4=1");
+        $sql = "UPDATE movies SET status='FINISHED', actWaitInSecs=NOW() - timestamp, mp4=1 WHERE id=$id";
+    	$this->_dbConnection->query($sql);
+    }
+    
+    /**
+     * Updates movie entry and marks it as being "finished"
+     */
+    public function markMovieAsInvalid($id)
+    {
+        $this->_dbConnection->query("UPDATE movies SET status='ERROR' WHERE id=$id");
     }
     
     /**
