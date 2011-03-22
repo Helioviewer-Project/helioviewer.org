@@ -74,7 +74,7 @@ function loadModule($params)
         "getMoviesForEvent"      => "SolarEvents"
     );
     
-    $helioqueuer_tasks = array ("queueMovie", "getMovie");
+    $helioqueuer_tasks = array ("queueMovie");
     
     include_once "src/Validation/InputValidator.php";
 

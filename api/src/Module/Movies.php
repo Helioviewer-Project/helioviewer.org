@@ -167,6 +167,26 @@ class Module_Movies implements Module
     }
     
     /**
+     * Checks to see if a movie is available and returns either a link to the movie if it is ready or progress
+     * information otherwise
+     * 
+     * @return void
+     */
+    public function getMovie ()
+    {
+        require_once 'src/Database/ImgIndex.php';
+        $db = new Database_ImgIndex();
+
+        // Default to mp4
+        $format = isset($this->_options['format']) ? $this->_options['format'] : "mp4";
+        
+        // Get movie information
+        $info = $db->getMovieInformation($this->_params['id']);
+        
+        $dir = sprintf("%s/movies/%s/%s/", HV_CACHE_DIR, str_replace("-", "/", substr($info['timestamp'], 0, 10)), $this->_params['id']);
+    }
+    
+    /**
      * Uploads a user-created video to YouTube
      */
     public function uploadMovieToYouTube ()
@@ -375,6 +395,13 @@ class Module_Movies implements Module
                 "dates"    => array('startTime', 'endTime'),
                 "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
                 "ints"     => array('id', 'maxFrames')
+            );
+            break;
+        case "getMovie":
+            $expected = array(
+                "required" => array('id'),
+                "optional" => array('format'),
+                "ints"     => array('id', 'format')
             );
             break;
         case "playMovie":
