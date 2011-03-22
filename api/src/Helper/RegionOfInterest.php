@@ -209,6 +209,24 @@ class Helper_RegionOfInterest
     }
     
     /**
+     * Parses a polygon string and returns an array containing x&y coordinates of the top-left and bottom-right
+     * corners of the region of interest in arc-seconds
+     * 
+     * @param string $polygon Polygon string
+     * @param float $imageScale Image scale in arc-seconds/pixel
+     * 
+     * @return Helper_RegionOfInterest A new instance of Helper_RegionOfInterest
+     */
+    public static function parsePolygonString($polygon, $imageScale)
+    {
+        $points      = explode(",", substr($polygon, 9, -2));        
+        $topLeft     = explode(" ", $points[0]);
+        $bottomRight = explode(" ", $points[2]);
+        
+        return new Helper_RegionOfInterest($topLeft[0], $bottomRight[0], $topLeft[1], $bottomRight[1], $imageScale);
+    }
+    
+    /**
      * Adjusts imageScale if neccessary so that entire region of interest fits within a maximum width and height
      * 
      * @return void

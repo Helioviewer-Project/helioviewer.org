@@ -65,32 +65,9 @@ class Module_Movies implements Module
     public function buildMovie ()
     {
         include_once 'src/Movie/HelioviewerMovie.php';
-        include_once 'src/Helper/HelioviewerLayers.php';
-        include_once 'src/Helper/RegionOfInterest.php';
-                
-        // Data Layers
-        $layers = new Helper_HelioviewerLayers($this->_params['layers']);
-        
-        //Make sure number of layers is between one and three
-        if ($layers->length() == 0 || $layers->length() > 3) {
-            throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
-        }
-        
-        // Regon of interest
-        $roi = new Helper_RegionOfInterest(
-            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
-            $this->_params['imageScale']
-        );
-        
-        // Make sure movie doesn't exceed maximum number of frames allowed
-        if (isset($this->_options['maxFrames'])) {
-            $this->_options['maxFrames'] = min(HV_MAX_MOVIE_FRAMES, $this->_options['maxFrames']);
-        }        
         
         // Process request
-        $movie = new Movie_HelioviewerMovie(
-            $this->_params['id'], $layers, $this->_params['startTime'], $this->_params['endTime'], $roi, $this->_options
-        );
+        $movie = new Movie_HelioviewerMovie($this->_params['id']);
         
         // Check to make sure we have not already started processing the movie
         if ($movie->getStatus() !== "QUEUED") {
@@ -101,34 +78,11 @@ class Module_Movies implements Module
         $movie->build();
         
         // Update usage stats
+        // TODO 2011/03/22: Generaltize statistics logging: move to index.php and create a list of actions to log
         if (HV_ENABLE_STATISTICS_COLLECTION) {
             include_once 'src/Database/Statistics.php';
             $statistics = new Database_Statistics();
             $statistics->log("buildMovie");
-        }
-        
-        // If display=true is set, play the move directly         
-        if (isset($this->_options['display']) && $this->_options['display']) {
-            echo $movie->getMoviePlayerHTML();
-        } else {
-            $urls = $this->_getVideoURLs($movie);
-            
-            // Verbose response
-            if (isset($this->_options['verbose']) && $this->_options['verbose']) {
-                $response = array(
-                    "duration"  => $movie->getDuration(),
-                    "frameRate" => $movie->frameRate,
-                    "numFrames" => $movie->numFrames,
-                    "url"       => $urls
-                );                
-            } else {
-                // Simple response
-                $response = array("url" => $urls);
-            }
-            
-            // Print result
-            header('Content-type: application/json');
-            print json_encode($response);
         }
     }
     
@@ -389,12 +343,8 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('id', 'startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermark'),
-                "bools"    => array('display', 'watermark'),
-                "dates"    => array('startTime', 'endTime'),
-                "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('id', 'maxFrames')
+                "required" => array('id'),
+                "ints"     => array('id')
             );
             break;
         case "getMovie":
@@ -416,8 +366,8 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'format', 'frameRate', 'maxFrames', 'watermark'),
-                "bools"    => array('display', 'watermark'),
+                "optional" => array('format', 'frameRate', 'maxFrames', 'watermark'),
+                "bools"    => array('watermark'),
                 "dates"    => array('startTime', 'endTime'),
                 "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
                 "ints"     => array('maxFrames')
@@ -464,7 +414,7 @@ class Module_Movies implements Module
             <li>
                 <a href="index.php#MovieAPI">Movie API</a>
                 <ul>
-                    <li><a href="index.php#buildMovie">Creating a Movie</a></li>
+                    <li><a href="index.php#queueMovie">Creating a Movie</a></li>
                 </ul>
             </li>
         <?php
@@ -485,7 +435,7 @@ class Module_Movies implements Module
             <ol style="list-style-type: upper-latin;">
                 <!-- Movie -->
                 <li>
-                <div id="buildMovie">Movie API
+                <div id="queueMovie">Movie API
                 <p>Returns filepaths to a flash video and a high quality video consisting of 10-100 movie frames. The movie frames are chosen by matching the closest image
                 available at each step within the specified range of dates, and are automatically generated using the Screenshot API calls.</p>
         
@@ -495,7 +445,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo HV_API_ROOT_URL;?>?action=buildMovie<br />
+                <?php echo HV_API_ROOT_URL;?>?action=queueMovie<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -586,20 +536,20 @@ class Module_Movies implements Module
                 
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <!--
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false">
+                    <?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false
                 </a>
                 </span>
                  -->

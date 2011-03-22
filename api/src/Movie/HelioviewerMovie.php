@@ -13,6 +13,8 @@
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'src/Image/Composite/HelioviewerMovieFrame.php';
+require_once 'src/Helper/HelioviewerLayers.php';
+require_once 'src/Helper/RegionOfInterest.php';
 require_once 'src/Helper/DateTimeConversions.php';
 require_once 'src/Database/ImgIndex.php';
 require_once 'src/Movie/FFMPEGEncoder.php';
@@ -34,17 +36,19 @@ class Movie_HelioviewerMovie
 {
     protected $id;
     protected $frameRate;
+    protected $maxFrames;
     protected $numFrames;
     protected $startDate;
     protected $endDate;
     protected $directory;
     protected $filename;
+    protected $watermark;
     private $_db;
-    private $_options;
     private $_layers;
     private $_roi;
     private $_startTimestamp;
     private $_endTimestamp;
+    private $_status;
     private $_frames = array();
 
     
@@ -53,24 +57,26 @@ class Movie_HelioviewerMovie
      *
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function __construct($id, $layers, $startDateString, $endDateString, $roi, $options)
+    public function __construct($id)
     {
-        $defaults = array(
-            'format'    => "mp4",
-            'frameRate' => false,
-            'maxFrames' => HV_MAX_MOVIE_FRAMES,
-            'watermark' => true
-        );
-        $this->_options = array_replace($defaults, $options);
+        $this->_db = new Database_ImgIndex();
+        $info = $this->_db->getMovieInformation($id);
         
         $this->id         = $id;
+        $this->startDate  = $info['reqStartDate'];
+        $this->endDate    = $info['reqEndDate'];
+        $this->format     = $info['reqFormat'];
+        $this->imageScale = $info['imageScale'];
+        $this->frameRate  = $info['frameRate'];
+        $this->maxFrames  = $info['maxFrames'];
+        $this->watermark  = $info['watermark'];
+        $this->_status    = $info['status'];
 
-        $this->_db        = new Database_ImgIndex();
-        $this->_layers    = $layers;
-        $this->_roi       = $roi;
+        // Data Layers
+        $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
         
-        $this->startDate = $startDateString;
-        $this->endDate   = $endDateString;
+        // Regon of interest
+        $this->_roi = Helper_RegionOfInterest::parsePolygonString($info['roi'], $info['imageScale']);
     }
     
     /**
@@ -101,8 +107,8 @@ class Movie_HelioviewerMovie
      * @return string Movie filename
      */
     private function _buildFilename($extension) {
-        $start = str_replace(array(":", "-", "T", "Z"), "_", $this->startDate);
-        $end   = str_replace(array(":", "-", "T", "Z"), "_", $this->endDate);
+        $start = str_replace(array(":", "-", " "), "_", $this->startDate);
+        $end   = str_replace(array(":", "-", " "), "_", $this->endDate);
 
         return sprintf("%s_%s_%s.%s", $start, $end, $this->_layers->toString(), $extension);
     }
@@ -214,7 +220,7 @@ class Movie_HelioviewerMovie
         // Choose the maximum number of frames that can be generated without exceeded the server limits defined
         // by HV_MAX_MOVIE_FRAMES
         $numFrames       = 0;
-        $imagesRemaining = $this->_options['maxFrames'];
+        $imagesRemaining = $this->maxFrames;
         $layersRemaining = $this->_layers->length();
         
         // Sort counts from smallest to largest
@@ -303,7 +309,7 @@ class Movie_HelioviewerMovie
         set_time_limit(180); // Extend time limit to avoid timeouts
         
         $this->directory = $this->_buildDir();
-        $this->filename  = $this->_buildFilename($this->_options['format']);
+        $this->filename  = $this->_buildFilename($this->format);
         
         // Also store as timestamps
         $this->_startTimestamp = toUnixTimestamp($this->startDate);
@@ -318,7 +324,7 @@ class Movie_HelioviewerMovie
             $this->_abort("No images available for the requested time range");
         }
         
-        $this->frameRate = $this->_determineOptimalFrameRate($this->_options['frameRate']);
+        $this->frameRate = $this->_determineOptimalFrameRate($this->frameRate);
 
         $this->_setMovieDimensions();
         
@@ -329,7 +335,7 @@ class Movie_HelioviewerMovie
         );
         
         // Build movie frames
-        $this->_buildMovieFrames($this->_options['watermark']);
+        $this->_buildMovieFrames($this->watermark);
 
         // Compile movie
         $this->_buildMovie();
@@ -389,7 +395,7 @@ class Movie_HelioviewerMovie
      */
     public function getStatus() 
     {
-        return $this->_db->getMovieStatus($this->id);
+        return $this->_status;
     }    
     
     /**
