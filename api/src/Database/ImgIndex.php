@@ -106,7 +106,8 @@ class Database_ImgIndex
      */
     public function getMovieInformation($id)
     {
-        return mysqli_fetch_array($this->_dbConnection->query("SELECT * FROM movies WHERE id=$id"), MYSQL_ASSOC);
+        $sql = "SELECT *, AsText(regionOfInterest) as roi FROM movies WHERE id=$id";
+        return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
     }
     
     /**
