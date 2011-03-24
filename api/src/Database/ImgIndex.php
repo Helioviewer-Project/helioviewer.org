@@ -104,9 +104,11 @@ class Database_ImgIndex
      * 
      * @return string The movie information
      */
-    public function getMovieInformation($id)
+    public function getMovieInformation($id, $format)
     {
-        $sql = "SELECT *, AsText(regionOfInterest) as roi FROM movies WHERE id=$id";
+        $sql = "SELECT *, AsText(regionOfInterest) as roi FROM movies " .
+               "LEFT JOIN movieFormats ON movies.id = movieFormats.movieId " . 
+               "WHERE movies.id=$id AND movieFormats.format='$format'";
         return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
     }
     
@@ -115,23 +117,37 @@ class Database_ImgIndex
      * 
      * @return void
      */
-    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
+    public function storeMovieProperties($id, $format, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
     {
+        // Update movies table
     	$sql = sprintf(
     	   "UPDATE movies 
-    	     SET status='PROCESSING', startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, width=%d, height=%d
+    	     SET startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, width=%d, height=%d
     	     WHERE id=%d",
     	   $startDate, $endDate, $numFrames, $frameRate, $width, $height, $id
     	);
     	$this->_dbConnection->query($sql);
+    	
+    	// Update movieFormats table
+    	$this->_dbConnection->query("UPDATE movieFormats SET status='PROCESSING' WHERE id=$id AND format='$format'");
+    }
+    
+    /**
+     * 
+     */
+    public function finishedBuildingMovieFrames($id, $format)
+    {
+        $this->_dbConnection->query("UPDATE movies SET actWaitInSecs=NOW() - timestamp WHERE id=$id");
+        $this->_dbConnection->query("UPDATE movieFormats SET timestamp=NOW() WHERE id=$id AND format='$format'");
     }
     
     /**
      * Updates movie entry and marks it as being "finished"
      */
-    public function markMovieAsFinished($id)
+    public function markMovieAsFinished($id, $format)
     {
-        $sql = "UPDATE movies SET status='FINISHED', actWaitInSecs=NOW() - timestamp, mp4=1 WHERE id=$id";
+        $sql = "UPDATE movieFormats SET status='FINISHED', actWaitInSecs=NOW() - timestamp " . 
+               "WHERE id=$id AND format='$format'";
     	$this->_dbConnection->query($sql);
     }
     
