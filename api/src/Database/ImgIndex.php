@@ -62,44 +62,6 @@ class Database_ImgIndex
     }
     
     /**
-     * Adds a new movie entry to the database and returns its identifier
-     * 
-     * @return int identifier for the movie
-     */
-    public function insertMovie(
-        $reqStartDate, $reqEndDate, $imageScale, $roi, $watermark, $layers, $bitmask
-    ) {
-        include_once 'src/Helper/DateTimeConversions.php';
-        
-        // Add to screenshots table and get an id
-        $sql = sprintf(
-            "INSERT INTO movies VALUES(NULL, NULL, 'PROCESSING', '%s', '%s', NULL, NULL, NULL, NULL, %f, 
-             PolygonFromText('%s'), %b, '%s', %d, NULL, NULL, NULL, NULL, NULL, NULL);", 
-            isoDateToMySQL($reqStartDate),
-            isoDateToMySQL($reqEndDate),
-            $imageScale,
-            $roi,
-            $watermark,
-            $layers,
-            bindec($bitmask)
-        );
-        $this->_dbConnection->query($sql);
-        return $this->_dbConnection->getInsertId();
-    }
-    
-    /**
-     * Gets the current status for a given movie
-     * 
-     * @return string The movie status
-     */
-    public function getMovieStatus($id)
-    {
-        $sql = "SELECT status FROM movies WHERE id=$id";
-        $row = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
-        return $row['status'];
-    }
-    
-    /**
      * Returns a single movie entry
      * 
      * @return string The movie information
@@ -129,25 +91,25 @@ class Database_ImgIndex
     	$this->_dbConnection->query($sql);
     	
     	// Update movieFormats table
-    	$this->_dbConnection->query("UPDATE movieFormats SET status='PROCESSING' WHERE id=$id AND format='$format'");
+    	$this->_dbConnection->query("UPDATE movieFormats SET status='PROCESSING' WHERE movieId=$id AND format='$format'");
     }
     
     /**
      * 
      */
-    public function finishedBuildingMovieFrames($id, $format)
+    public function finishedBuildingMovieFrames($id, $format, $procTime)
     {
-        $this->_dbConnection->query("UPDATE movies SET actWaitInSecs=NOW() - timestamp WHERE id=$id");
-        $this->_dbConnection->query("UPDATE movieFormats SET timestamp=NOW() WHERE id=$id AND format='$format'");
+        $this->_dbConnection->query("UPDATE movies SET procTime=$procTime WHERE id=$id");
+        //$this->_dbConnection->query("UPDATE movieFormats SET =NOW() WHERE movieId=$id AND format='$format'");
     }
     
     /**
      * Updates movie entry and marks it as being "finished"
      */
-    public function markMovieAsFinished($id, $format)
+    public function markMovieAsFinished($id, $format, $procTime)
     {
-        $sql = "UPDATE movieFormats SET status='FINISHED', actWaitInSecs=NOW() - timestamp " . 
-               "WHERE id=$id AND format='$format'";
+        $sql = "UPDATE movieFormats SET status='FINISHED', procTime=$procTime " . 
+               "WHERE movieId=$id AND format='$format'";
     	$this->_dbConnection->query($sql);
     }
     

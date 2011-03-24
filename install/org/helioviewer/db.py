@@ -23,6 +23,7 @@ def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     createImageTable(cursor)
     createScreenshotsTable(cursor)
     createMoviesTable(cursor)
+    createMovieFormatsTable(cursor)
     createStatisticsTable(cursor)
     updateImageTableIndex(cursor)
 
@@ -236,6 +237,7 @@ def createMoviesTable(cursor):
     cursor.execute('''
     CREATE TABLE `movies` (
       `id`                INT unsigned NOT NULL auto_increment,
+      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
       `reqStartDate`      datetime NOT NULL,
       `reqEndDate`        datetime NOT NULL,
       `imageScale`        FLOAT NOT NULL,
@@ -245,14 +247,12 @@ def createMoviesTable(cursor):
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT,
       `frameRate`         FLOAT,
-      `estQueueWait`      INT,
       `startDate`         datetime,
       `endDate`           datetime,
       `numFrames`         INT,
       `width`             INT,
       `height`            INT,
-      `startTimestamp`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      `endTimestamp`      TIMESTAMP,
+      `procTime`          INT,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
     
@@ -266,10 +266,7 @@ def createMovieFormatsTable(cursor):
       `movieId`           INT unsigned NOT NULL,
       `format`            VARCHAR(255) NOT NULL,
       `status`            VARCHAR(255) NOT NULL,
-      `priority`          INT NOT NULL,
-      `estQueueWait`      INT,
-      `startTimestamp`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      `endTimestamp`      TIMESTAMP,
+      `procTime`          INT,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
     
