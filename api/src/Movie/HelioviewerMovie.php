@@ -43,15 +43,12 @@ class Movie_HelioviewerMovie
     protected $directory;
     protected $filename;
     protected $format;
+    protected $timestamp;
     protected $watermark;
 
     private $_db;
     private $_layers;
     private $_roi;
-    private $_startTimestamp;
-    private $_endTimestamp;
-    private $_status;
-    private $_timestamp;
     private $_frames = array();
 
     
@@ -72,9 +69,8 @@ class Movie_HelioviewerMovie
         $this->imageScale = $info['imageScale'];
         $this->frameRate  = $info['frameRate'];
         $this->maxFrames  = $info['maxFrames'];
+        $this->timestamp  = $info['timestamp'];
         $this->watermark  = $info['watermark'];
-        $this->_status    = $info['status'];
-        $this->_timestamp = $info['timestamp'];
 
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
@@ -100,7 +96,7 @@ class Movie_HelioviewerMovie
      */
     private function _buildDir ()
     {
-        $date = str_replace("-", "/", substr($this->_timestamp, 0, 10));
+        $date = str_replace("-", "/", substr($this->timestamp, 0, 10));
         return sprintf("%s/movies/%s/%s/", HV_CACHE_DIR, $date, $this->id);
     }
 
@@ -312,10 +308,11 @@ class Movie_HelioviewerMovie
     public function build()
     {
         // Check to make sure we have not already started processing the movie
-        if ($this->status !== "QUEUED") {
-            throw new Exception("The requested movie is either currently being built or has already been built");
-        }
-        
+//        if ($this->status !== "QUEUED") {
+//            throw new Exception("The requested movie is either currently being built or has already been built");
+//        }
+        $t1 = time();
+
         $this->directory = $this->_buildDir();
         $this->filename  = $this->_buildFilename($this->format);
         
@@ -345,14 +342,18 @@ class Movie_HelioviewerMovie
         // Build movie frames
         $this->_buildMovieFrames($this->watermark);
         
+        $t2 = time();
+        
         // Update status and log time to build frames
-        $this->_db->finishedBuildingMovieFrames($this->id, $this->format);
+        $this->_db->finishedBuildingMovieFrames($this->id, $this->format, $t2 - $t1);
 
         // Compile movie
         $this->_buildMovie();
         
+        $t3 = time();
+        
         // Mark movie as completed
-        $this->_db->markMovieAsFinished($this->id, $this->format);
+        $this->_db->markMovieAsFinished($this->id, $this->format, $t3 - $t2);
     }
     
     /**
@@ -398,16 +399,6 @@ class Movie_HelioviewerMovie
 </html> 
         <?php        
     }
-    
-    /**
-     * Returns the movie's current status
-     * 
-     * @return string The current movie status. Possible values include: QUEUED, PROCESSING, FINISHED
-     */
-    public function getStatus($format) 
-    {
-        return $this->_status;            
-    }    
     
     /**
      * Returns the Base URL to the most recently created movie (without a file extension)
