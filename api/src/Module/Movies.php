@@ -67,18 +67,14 @@ class Module_Movies implements Module
         include_once 'src/Movie/HelioviewerMovie.php';
         
         // Process request
-        $movie = new Movie_HelioviewerMovie($this->_params['id']);
-        
-        // Check to make sure we have not already started processing the movie
-        if ($movie->getStatus() !== "QUEUED") {
-        	throw new Exception("The requested movie is either currently being built or has already been built");
-        }
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
         
         // Build the movie
         $movie->build();
         
         // Update usage stats
         // TODO 2011/03/22: Generaltize statistics logging: move to index.php and create a list of actions to log
+        // TODO 2011/03/24: Log stats at time of queuing to avoid overcounting movie requests
         if (HV_ENABLE_STATISTICS_COLLECTION) {
             include_once 'src/Database/Statistics.php';
             $statistics = new Database_Statistics();
@@ -128,16 +124,13 @@ class Module_Movies implements Module
      */
     public function getMovie ()
     {
-        require_once 'src/Database/ImgIndex.php';
-        $db = new Database_ImgIndex();
+        include_once 'src/Movie/HelioviewerMovie.php';
+        
+        // Process request
+        $movie = new Movie_HelioviewerMovie($this->_params['id']);
 
         // Default to mp4
         $format = isset($this->_options['format']) ? $this->_options['format'] : "mp4";
-        
-        // Get movie information
-        $info = $db->getMovieInformation($this->_params['id']);
-        
-        $dir = sprintf("%s/movies/%s/%s/", HV_CACHE_DIR, str_replace("-", "/", substr($info['timestamp'], 0, 10)), $this->_params['id']);
     }
     
     /**
@@ -343,7 +336,7 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('id'),
+                "required" => array('id', 'format'),
                 "ints"     => array('id')
             );
             break;

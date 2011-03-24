@@ -59,6 +59,8 @@ class Image_Composite_HelioviewerCompositeImage
      */
     public function __construct($layers, $obsDate, $roi, $options)
     {
+        set_time_limit(90); // Extend time limit to avoid timeouts
+        
         // Default image settings (optimized for small filesize)
         $defaults = array(
             'database'  => false,

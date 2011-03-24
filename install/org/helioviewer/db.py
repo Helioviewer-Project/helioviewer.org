@@ -237,28 +237,40 @@ def createMoviesTable(cursor):
     CREATE TABLE `movies` (
       `id`                INT unsigned NOT NULL auto_increment,
       `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      `status`            VARCHAR(255) NOT NULL,
       `reqStartDate`      datetime NOT NULL,
       `reqEndDate`        datetime NOT NULL,
       `imageScale`        FLOAT NOT NULL,
       `regionOfInterest`  POLYGON NOT NULL,
       `maxFrames`         INT NOT NULL,
-      `reqFormat`         VARCHAR(15) NOT NULL,
-      `frameRate`         FLOAT,
       `watermark`         BOOLEAN NOT NULL,
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT,
-      `initialQueuePos`   INT,
-      `estWaitInSecs`     INT,
-      `actWaitInSecs`     INT,
       `startDate`         datetime,
       `endDate`           datetime,
+      `frameRate`         FLOAT,
       `numFrames`         INT,
       `width`             INT,
       `height`            INT,
-      `mobile`            BOOLEAN DEFAULT FALSE,
-      `mp4`               BOOLEAN DEFAULT FALSE,
-      `webm`              BOOLEAN DEFAULT FALSE,
+      `estWaitInSecs`     INT NOT NULL,
+      `actWaitInSecs`     INT,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;''')
+    
+def createMovieFormatsTable(cursor):
+    """ Creates a table to keep track of the processing status for each format (mp4, web, etc) movie that needs
+        to be created for a given movie request.
+    """
+    cursor.execute('''
+    CREATE TABLE `movieFormats` (
+      `id`                INT unsigned NOT NULL auto_increment,
+      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `movieId`           INT unsigned NOT NULL,
+      `format`            VARCHAR(255) NOT NULL,
+      `status`            VARCHAR(255) NOT NULL,
+      `initialQueuePos`   INT NOT NULL,
+      `priority`          INT NOT NULL,
+      `estWaitInSecs`     INT NOT NULL,
+      `actWaitInSecs`     INT,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
     
