@@ -236,7 +236,6 @@ def createMoviesTable(cursor):
     cursor.execute('''
     CREATE TABLE `movies` (
       `id`                INT unsigned NOT NULL auto_increment,
-      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `reqStartDate`      datetime NOT NULL,
       `reqEndDate`        datetime NOT NULL,
       `imageScale`        FLOAT NOT NULL,
@@ -245,14 +244,15 @@ def createMoviesTable(cursor):
       `watermark`         BOOLEAN NOT NULL,
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT,
+      `frameRate`         FLOAT,
+      `estQueueWait`      INT,
       `startDate`         datetime,
       `endDate`           datetime,
-      `frameRate`         FLOAT,
       `numFrames`         INT,
       `width`             INT,
       `height`            INT,
-      `estWaitInSecs`     INT NOT NULL,
-      `actWaitInSecs`     INT,
+      `startTimestamp`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `endTimestamp`      TIMESTAMP,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
     
@@ -263,14 +263,13 @@ def createMovieFormatsTable(cursor):
     cursor.execute('''
     CREATE TABLE `movieFormats` (
       `id`                INT unsigned NOT NULL auto_increment,
-      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `movieId`           INT unsigned NOT NULL,
       `format`            VARCHAR(255) NOT NULL,
       `status`            VARCHAR(255) NOT NULL,
-      `initialQueuePos`   INT NOT NULL,
       `priority`          INT NOT NULL,
-      `estWaitInSecs`     INT NOT NULL,
-      `actWaitInSecs`     INT,
+      `estQueueWait`      INT,
+      `startTimestamp`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `endTimestamp`      TIMESTAMP,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;''')
     
