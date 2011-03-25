@@ -109,7 +109,7 @@ class Movie_HelioviewerMovie
             
             $t2 = time();
             
-            $this->_db->finishedBuildingMovieFrames($this->id, $ $t2 - $t1); // Update status and log time to build frames
+            $this->_db->finishedBuildingMovieFrames($this->id, $t2 - $t1); // Update status and log time to build frames
         } else {
             $this->filename = $this->_buildFilename($this->format);
         }
@@ -248,16 +248,18 @@ class Movie_HelioviewerMovie
     private function _buildMovie()
     {
         // Create and FFmpeg encoder instance
-        $ffmpeg = new Movie_FFMPEGEncoder($this->frameRate);
-        
-        // Create a high-quality H.264 video using an MPEG-4 (mp4) container format
-        $ffmpeg->createVideo($this->directory, $this->filename . "-hq", "mp4", $this->_width, $this->_height, "ultrafast", 15);
+        $ffmpeg = new Movie_FFMPEGEncoder(
+            $this->directory, $this->filename, $this->frameRate, $this->width, $this->height
+        );
 
-        // Create a medium-quality H.264 video using an MPEG-4 (mp4) container format
-        $ffmpeg->createVideo($this->directory, $this->filename, "mp4", $this->_width, $this->_height);
+        // Create a medium and high quality VP8/H.264 videos
+        $ffmpeg->createVideo();
+        $ffmpeg->createHQVideo();
 
         //Create alternative container format options for medium-quality video (.flv)
-        $ffmpeg->createAlternativeVideoFormat($this->directory, $this->filename, "mp4", "flv");
+        if ($this->format == "mp4") {
+            $ffmpeg->createFlashVideo();            
+        }
     }
     
     /**
