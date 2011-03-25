@@ -38,20 +38,23 @@ class Movie_HelioviewerMovie
     protected $frameRate;
     protected $maxFrames;
     protected $numFrames;
+    protected $reqStartDate;
+    protected $reqEndDate;
     protected $startDate;
     protected $endDate;
     protected $directory;
     protected $filename;
     protected $format;
+    protected $status;
     protected $timestamp;
     protected $watermark;
 
     private $_db;
     private $_layers;
     private $_roi;
-    private $_frames = array();
+    private $_timestamps = array();
+    private $_frames     = array();
 
-    
     /**
      * Prepares the parameters passed in from the api call and makes a movie from them.
      *
@@ -62,21 +65,77 @@ class Movie_HelioviewerMovie
         $this->_db = new Database_ImgIndex();
         $info = $this->_db->getMovieInformation($id, $format);
         
-        $this->id         = $id;
-        $this->format     = $format;
-        $this->startDate  = $info['reqStartDate'];
-        $this->endDate    = $info['reqEndDate'];
-        $this->imageScale = $info['imageScale'];
-        $this->frameRate  = $info['frameRate'];
-        $this->maxFrames  = $info['maxFrames'];
-        $this->timestamp  = $info['timestamp'];
-        $this->watermark  = $info['watermark'];
-
+        $this->id           = $id;
+        $this->format       = $format;
+        $this->reqStartDate = $info['reqStartDate'];
+        $this->reqEndDate   = $info['reqEndDate'];
+        $this->startDate    = $info['startDate'];
+        $this->endDate      = $info['endDate'];
+        $this->imageScale   = $info['imageScale'];
+        $this->frameRate    = $info['frameRate'];
+        $this->maxFrames    = $info['maxFrames'];
+        $this->status       = $info['status'];
+        $this->timestamp    = $info['timestamp'];
+        $this->watermark    = $info['watermark'];
+        
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
         
         // Regon of interest
         $this->_roi = Helper_RegionOfInterest::parsePolygonString($info['roi'], $info['imageScale']);
+    }
+    
+    /**
+     * Build the movie frames and movie
+     */
+    public function build()
+    {
+        // Check to make sure we have not already started processing the movie
+        if ($this->status !== "QUEUED") {
+            throw new Exception("The requested movie is either currently being built or has already been built");
+        }
+        
+        $this->_db->markMovieAsProcessing($this->id, $this->format);
+
+        $this->directory = $this->_buildDir();
+
+        // If the movie frames have not been built create them
+        if (!file_exists($this->directory . "frames")) {
+            $t1 = time();   
+                     
+            $this->_getTimeStamps();      // Get timestamps for frames in the key movie layer
+            $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, numFrames and dimensions
+            $this->_buildMovieFrames($this->watermark); // Build movie frames
+            
+            $t2 = time();
+            
+            $this->_db->finishedBuildingMovieFrames($this->id, $ $t2 - $t1); // Update status and log time to build frames
+        } else {
+            $this->filename = $this->_buildFilename($this->format);
+        }
+        
+        $t3 = time();
+
+        // Compile movie
+        $this->_buildMovie();
+        
+        $t4 = time();
+        
+        // Mark movie as completed
+        $this->_db->markMovieAsFinished($this->id, $this->format, $t4 - $t3);
+    }
+    
+    /**
+     * Returns the base filepath for movie without any file extension
+     */
+    public function getFilepath($format)
+    {
+        return $this->_buildDir() . $this->_buildFilename($format);
+    }
+    
+    public function getDuration()
+    {
+        return $this->numFrames / $this->frameRate;
     }
     
     /**
@@ -214,7 +273,7 @@ class Movie_HelioviewerMovie
 
         // Determine the number of images that are available for the request duration for each layer
         foreach ($this->_layers->toArray() as $layer) {
-            $n = $this->_db->getImageCount($this->startDate, $this->endDate, $layer['sourceId']);
+            $n = $this->_db->getImageCount($this->reqStartDate, $this->reqEndDate, $layer['sourceId']);
             $layerCounts[$layer['sourceId']] = $n;
         }
 
@@ -238,15 +297,13 @@ class Movie_HelioviewerMovie
         $numFrames = floor($numFrames);
 
         // Get the entire range of available images between the movie start and end time 
-        $entireRange = $this->_db->getImageRange($this->startDate, $this->endDate, $dataSource);
+        $entireRange = $this->_db->getImageRange($this->reqStartDate, $this->reqEndDate, $dataSource);
         
         // Sub-sample range so that only $numFrames timestamps are returned
-        $timestamps = array();
         for ($i = 0; $i < $numFrames; $i++) {
             $index = round($i * (sizeOf($entireRange) / $numFrames));
-            array_push($timestamps, $entireRange[$index]['date']);
-        }
-        return $timestamps;        
+            array_push($this->_timestamps, $entireRange[$index]['date']);
+        }       
     }
 
     /**
@@ -266,6 +323,34 @@ class Movie_HelioviewerMovie
         if ($this->_height % 2 === 1) {
             $this->_height += 1;
         } 
+    }
+    
+    /**
+     * Determines some of the movie details and saves them to the database record
+     */
+    private function _setMovieProperties()
+    {
+        // Store actual start and end dates that will be used for the movie
+        $this->_startDate = $this->_timestamps[0];
+        $this->_endDate   = $this->_timestamps[sizeOf($this->_timestamps) - 1];
+
+        $this->filename = $this->_buildFilename($this->format);
+        
+        $this->numFrames = sizeOf($this->_timestamps);
+
+        if ($this->numFrames == 0) {
+            $this->_abort("No images available for the requested time range");
+        }
+
+        $this->frameRate = $this->_determineOptimalFrameRate($this->frameRate);
+
+        $this->_setMovieDimensions();
+
+        // Update movie entry in database with new details
+        $this->_db->storeMovieProperties(
+            $this->id, $this->startDate, $this->endDate, 
+            $this->numFrames, $this->frameRate, $this->_width, $this->_height
+        );
     }
 
     /**
@@ -303,73 +388,6 @@ class Movie_HelioviewerMovie
     }
     
     /**
-     * Build the movie frames and movie
-     */
-    public function build()
-    {
-        // Check to make sure we have not already started processing the movie
-//        if ($this->status !== "QUEUED") {
-//            throw new Exception("The requested movie is either currently being built or has already been built");
-//        }
-        $t1 = time();
-
-        $this->directory = $this->_buildDir();
-        $this->filename  = $this->_buildFilename($this->format);
-        
-        // Also store as timestamps
-        $this->_startTimestamp = toUnixTimestamp($this->startDate);
-        $this->_endTimestamp   = toUnixTimestamp($this->endDate);
-
-        // Get timestamps for frames in the key movie layer
-        $this->_timestamps = $this->_getTimeStamps();
-
-        $this->numFrames = sizeOf($this->_timestamps);
-
-        if ($this->numFrames == 0) {
-            $this->_abort("No images available for the requested time range");
-        }
-        
-        $this->frameRate = $this->_determineOptimalFrameRate($this->frameRate);
-
-        $this->_setMovieDimensions();
-        
-        // Update movie entry in database with new details
-        $this->_db->storeMovieProperties(
-            $this->id, $this->format, isoDateToMySQL($this->startDate), isoDateToMySQL($this->endDate),
-            $this->numFrames, $this->frameRate, $this->_width, $this->_height
-        );
-        
-        // Build movie frames
-        $this->_buildMovieFrames($this->watermark);
-        
-        $t2 = time();
-        
-        // Update status and log time to build frames
-        $this->_db->finishedBuildingMovieFrames($this->id, $this->format, $t2 - $t1);
-
-        // Compile movie
-        $this->_buildMovie();
-        
-        $t3 = time();
-        
-        // Mark movie as completed
-        $this->_db->markMovieAsFinished($this->id, $this->format, $t3 - $t2);
-    }
-    
-    /**
-     * Returns the base filepath for movie without any file extension
-     */
-    public function getFilepath($format)
-    {
-        return $this->_buildDir() . $this->_buildFilename($format);
-    }
-    
-    public function getDuration()
-    {
-        return $this->numFrames / $this->frameRate;
-    }
-    
-    /**
      * Returns HTML for a video player with the requested movie loaded
      */
     public function getMoviePlayerHTML()
@@ -398,14 +416,6 @@ class Movie_HelioviewerMovie
 </body> 
 </html> 
         <?php        
-    }
-    
-    /**
-     * Returns the Base URL to the most recently created movie (without a file extension)
-     */
-    public function getURL()
-    {
-        return str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $this->getFilepath());
     }
     
     /**
