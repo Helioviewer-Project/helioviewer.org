@@ -79,7 +79,7 @@ class Database_ImgIndex
      * 
      * @return void
      */
-    public function storeMovieProperties($id, $format, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
+    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
     {
         // Update movies table
     	$sql = sprintf(
@@ -89,22 +89,36 @@ class Database_ImgIndex
     	   $startDate, $endDate, $numFrames, $frameRate, $width, $height, $id
     	);
     	$this->_dbConnection->query($sql);
-    	
-    	// Update movieFormats table
-    	$this->_dbConnection->query("UPDATE movieFormats SET status='PROCESSING' WHERE movieId=$id AND format='$format'");
     }
     
     /**
      * 
      */
-    public function finishedBuildingMovieFrames($id, $format, $procTime)
+    public function finishedBuildingMovieFrames($id, $procTime)
     {
         $this->_dbConnection->query("UPDATE movies SET procTime=$procTime WHERE id=$id");
-        //$this->_dbConnection->query("UPDATE movieFormats SET =NOW() WHERE movieId=$id AND format='$format'");
+    }
+    
+    /**
+     * Updates movie entry and marks it as "processing"
+     * 
+     * @param $id       int     Movie identifier
+     * @param $format   string  Format being processed
+     * 
+     * @return void
+     */
+    public function markMovieAsProcessing($id, $format)
+    {
+        $sql = "UPDATE movieFormats SET status='PROCESSING' WHERE movieId=$id AND format='$format'";
+        $this->_dbConnection->query($sql);
     }
     
     /**
      * Updates movie entry and marks it as being "finished"
+     * 
+     * @param $id       int     Movie identifier
+     * @param $format   string  Format being processed
+     * @param $procTime int     Number of seconds it took to encode the movie
      */
     public function markMovieAsFinished($id, $format, $procTime)
     {
