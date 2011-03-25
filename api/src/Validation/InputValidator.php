@@ -40,6 +40,7 @@ class Validation_InputValidator
         // Validation checks
         $checks = array(
             "required" => "checkForMissingParams",
+            "alphanum" => "checkAlphaNumericStrings",
             "ints"     => "checkInts",
             "floats"   => "checkFloats",
             "bools"    => "checkBools",
@@ -95,6 +96,27 @@ class Validation_InputValidator
         foreach ($optional as $opt) {
             if (isset($params[$opt])) {
                 $options[$opt] = $params[$opt];
+            }
+        }
+    }
+    
+    /**
+     * Checks alphanumeric entries to make sure they do not include invalid characters
+     * 
+     * @param array $strings A list of alphanumeric parameters which are used by an action.
+     * @param array &$params The parameters that were passed in
+     * 
+     * @return void
+     */
+    public static function checkAlphaNumericStrings($strings, &$params)
+    {
+        foreach ($strings as $str) {
+            if (isset($params[$str])) {
+                if (!preg_match('/^[a-zA-Z0-9]*$/', $params[$str])) {
+                    throw new Exception(
+                        "Invalid value for $str. Valid strings must consist of only letters and numbers."
+                    );
+                }
             }
         }
     }
