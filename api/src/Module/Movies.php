@@ -337,14 +337,15 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('id', 'format'),
+                "alphanum" => array('format'),
                 "ints"     => array('id')
             );
             break;
         case "getMovie":
             $expected = array(
-                "required" => array('id'),
-                "optional" => array('format'),
-                "ints"     => array('id', 'format')
+                "required" => array('id', 'format'),
+                "alphanum" => array('format'),
+                "ints"     => array('id')
             );
             break;
         case "playMovie":
@@ -358,8 +359,9 @@ class Module_Movies implements Module
             break;
         case "queueMovie":
             $expected = array(
-                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('format', 'frameRate', 'maxFrames', 'watermark'),
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2', 'format'),
+                "optional" => array('frameRate', 'maxFrames', 'watermark'),
+                "alphanum" => array('format'),
                 "bools"    => array('watermark'),
                 "dates"    => array('startTime', 'endTime'),
                 "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
