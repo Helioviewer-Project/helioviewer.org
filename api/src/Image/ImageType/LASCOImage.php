@@ -54,9 +54,6 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
             $this->setColorTable($colorTable);
         }
         
-        // Use PNG as default format to preserve transparent regions
-        $filepath = substr($filepath, 0, -3) . "png";
-        
         parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
