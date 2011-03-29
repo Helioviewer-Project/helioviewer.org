@@ -234,14 +234,14 @@ class Movie_HelioviewerMovie
      */
     private function _cleanUp()
     {
+        $dir = $this->directory . "frames/";
+        
         // Clean up movie frame images that are no longer needed
-        foreach ($this->_frames as $image) {
-            if (file_exists($image)) {
-                unlink($image);
+        if (file_exists($dir)) {
+            foreach (glob("$dir*") as $image) {
+                unlink($image);            
             }
-        }
-        if (file_exists($this->directory . "/frames")) {
-            rmdir($this->directory . "/frames");    
+            rmdir($dir);    
         }   
     }
     
