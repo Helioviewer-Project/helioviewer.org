@@ -185,6 +185,7 @@ class Image_Composite_HelioviewerCompositeImage
         if ($this->watermark) {
             $this->_addWatermark($imagickImage);
         }
+        
         $this->_finalizeImage($imagickImage, $this->_filepath);
 
         // Store the IMagick composite image
@@ -205,6 +206,14 @@ class Image_Composite_HelioviewerCompositeImage
 
         // Compress image
         $this->_compressImage($imagickImage);
+        
+        // Add comment
+        $comment = sprintf(
+            "Image created by http://helioviewer.org using data from %s near %s",
+            $this->layers->toHumanReadableString(),
+            $this->date
+        );
+        $imagickImage->commentImage($comment);
 
         // Flatten image and write to disk
         $imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
