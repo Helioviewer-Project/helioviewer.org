@@ -46,14 +46,16 @@ class Movie_FFMPEGEncoder
      * 
      * @return void
      */
-    public function __construct($directory, $filename, $format, $frameRate, $width, $height)
+    public function __construct($directory, $filename, $frameRate, $width, $height)
     {
+        $info = pathinfo($filename);
+        
         $this->_directory = $directory;
         $this->_filename  = $filename;
-        $this->_format    = $format;
         $this->_frameRate = $frameRate;
         $this->_width     = $width;
         $this->_height    = $height;
+        $this->_format    = $info['extension'];
 
         $this->_macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
                     . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 1 -qcomp 0.6 -qmin 10 "
@@ -65,49 +67,62 @@ class Movie_FFMPEGEncoder
      */
     public function createVideo()
     {
-        $file = sprintf("%s/%s.%s", $this->_directory, $this->_filename, $this->_format);
+        $outputFile = $this->_directory . $this->_filename;
 
         if ($this->_format == "mp4") {
-            $this->_createH264Video($file);
+            $this->_createH264Video($outputFile);
         } else if ($this->_format == "webm") {
-            $this->_createWebMVideo($file);
+            $this->_createWebMVideo($outputFile);
         }
         
         // If FFmpeg segfaults, an empty movie container may still be produced,
-        if (filesize($file) < 1000)
+        if (filesize($outputFile) < 1000)
             throw new Exception("FFmpeg error encountered.");
 
-        return $file;
+        return $outputFile;
     }
     
     /**
-     * Creates a high quality vidoe
+     * Creates a high quality video
      */
     public function createHQVideo()
     {
-        $file = sprintf("%s/%s-hq.%s", $this->_directory, $this->_filename, $this->_format);
+        $outputFile = sprintf("%s%s-hq.%s", $this->_directory, substr($this->_filename, 0, -4), $this->_format);
         
         if ($this->_format == "mp4") {
-            $this->_createH264Video($file, "ultrafast", 15);
+            $this->_createH264Video($outputFile, "ultrafast", 15);
         } else if ($this->_format == "webm") {
-            $this->_createWebMVideo($file, 1);
+            $this->_createWebMVideo($outputFile, 1);
         }
         
         // If FFmpeg segfaults, an empty movie container may still be produced
-        if (filesize($file) < 1000)
+        if (filesize($outputFile) < 1000)
             throw new Exception("FFmpeg error encountered.");
 
-        return $file;
+        return $outputFile;
     }
     
     /**
      * Creates a WebM + VP8 video
      */
-    public function createWebMVideo($file, $qmax=10)
+    private function _createWebMVideo($outputFile, $qmax=10)
     {
-        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "/frames/frame%d.bmp"
-            . " -r " . $outputRate . " -f webm -vcodec libvpx -qmax $qmax -threads " . HV_FFMPEG_MAX_THREADS 
-            . " -s " . $this->_width . "x" . $this->_height . " -an -y $file";
+        //$cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "/frames/frame%d.bmp"
+        //    . " -r " . $this->_frameRate . " -f webm -vcodec libvpx -qmax $qmax -threads " . HV_FFMPEG_MAX_THREADS 
+        //    . " -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
+        $cmd = sprintf(
+            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmax %d -threads %d -s %dx%d -an -y %s",
+            HV_FFMPEG,
+            $this->_frameRate,
+            $this->_directory,
+            $this->_frameRate,
+            $qmax,
+            HV_FFMPEG_MAX_THREADS,
+            $this->_width,
+            $this->_height,
+            $outputFile            
+        );
+        
         exec(escapeshellcmd($cmd));
     }
     
@@ -122,14 +137,14 @@ class Movie_FFMPEGEncoder
      * 
      * @return String the filename of the video
      */
-    private function _createH264Video($file, $preset="lossless_fast", $crf=18)
+    private function _createH264Video($outputFile, $preset="lossless_fast", $crf=18)
     {
         // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
         // fps >= 2
         //$outputRate = substr($this->_filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "/frames/frame%d.bmp"
-            . " -r " . $outputRate . " -vcodec libx264 -vpre $preset -threads " . HV_FFMPEG_MAX_THREADS 
-            . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $file";
+            . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset -threads " . HV_FFMPEG_MAX_THREADS 
+            . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
         exec(escapeshellcmd($cmd));
     }
     
@@ -145,14 +160,14 @@ class Movie_FFMPEGEncoder
      */
     public function createFlashVideo()
     {
-        $file = $this->_directory . "/" . $this->_filename;
+        $file = $this->_directory . "/" . substr($this->_filename, 0, -4);
         
         $cmd = HV_FFMPEG . " -i $file.mp4 -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $file.flv";
     
         exec(escapeshellcmd($cmd));
 
         // Check to ensure that movie size is valid
-        if (filesize($new) < 1000)
+        if (filesize($file . ".flv") < 1000)
             throw new Exception("FFmpeg error encountered: Unable to create flv.");
     }
     
