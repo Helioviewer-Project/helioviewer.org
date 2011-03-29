@@ -138,8 +138,11 @@ class Image_Composite_HelioviewerCompositeImage
             "compress"      => false
         );
         
+        // For layers with transparent regions use PNG
+        $ext = $layer['layeringOrder'] > 1 ? "png" : "bmp";
+        
         // Choose a temporary filename to use for storing intermediate image
-        $tmpFile = $this->_dir . "/" . rand() . ".bmp";
+        $tmpFile = $this->_dir . "/" . rand() . ".$ext";
         array_push($this->_cache, $tmpFile);
         
         // Choose type of tile to create

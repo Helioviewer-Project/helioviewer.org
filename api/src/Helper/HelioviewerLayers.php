@@ -29,6 +29,7 @@ class Helper_HelioviewerLayers
 {
     private $_layers = array();
     private $_layerString;
+    private $_layerTree;
     private $_db;
     
     /**
@@ -57,6 +58,9 @@ class Helper_HelioviewerLayers
             }
         }
         
+        // Store a tree representation of the layers for generating human-readable strings
+        $this->_createLayerTree();
+
         // Check to make sure at least one valid layer was specified
         if (sizeOf($this->_layers) === 0) {
             throw new Exception("No valid and visible layers specified for request.");
@@ -76,7 +80,7 @@ class Helper_HelioviewerLayers
     /**
      * Returns the layers as an array of associative arrays
      *
-     * @return array An array of hashes representing the requested layers
+     * @return array An array of hashes repre$layersenting the requested layers
      */
     public function toArray()
     {
@@ -123,10 +127,23 @@ class Helper_HelioviewerLayers
      */
     public function toHumanReadableString()
     {
+        $strings = array();
+        
         $layerString = "";
         
-        foreach ($this->_layers as $layer) {
-            $layerString .= $layer['name'] . ", ";
+        foreach ($this->_layerTree as $obs=>$names) {
+            if (!isset($strings[$obs])) {
+                $strings[$obs] = "$obs ";
+            }
+            foreach ($names as $nameLHS=>$nameRHS) {
+                $strings[$obs] .= "$nameLHS ";
+                
+                foreach ($nameRHS as $name) {
+                    $strings[$obs] .= "$name/";
+                }
+                $strings[$obs] = substr($strings[$obs], 0, -1) . ", ";
+            }
+            $layerString .= $strings[$obs];
         }
         
         // remove trailing __
@@ -148,6 +165,31 @@ class Helper_HelioviewerLayers
         
         // remove trailing __
         return substr($layerString, 0, -2);
+    }
+    
+    /**
+     * Creates a tree representation of the layers
+     * 
+     * @return void
+     */
+    private function _createLayerTree()
+    {
+        $tree = array();
+    
+        foreach ($this->_layers as $layer) {
+            $obs = $layer['observatory'];
+            list($name1, $name2) = explode(" ", $layer['name']);
+            
+            if (!isset($tree[$obs])) {
+                $tree[$obs] = array();
+            }
+            if (!isset($tree[$obs][$name1])) {
+                $tree[$obs][$name1] = array();
+            }
+            array_push($tree[$obs][$name1], $name2);            
+        }
+        
+        $this->_layerTree = $tree;
     }
     
     /**
