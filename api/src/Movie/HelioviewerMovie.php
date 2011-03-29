@@ -98,7 +98,7 @@ class Movie_HelioviewerMovie
         if ($this->status !== "QUEUED") {
             throw new Exception("The requested movie is either currently being built or has already been built");
         }
-        
+
         $this->_db->markMovieAsProcessing($this->id, $this->format);
 
         $this->directory = $this->_buildDir();
@@ -127,6 +127,11 @@ class Movie_HelioviewerMovie
         
         // Mark movie as completed
         $this->_db->markMovieAsFinished($this->id, $this->format, $t4 - $t3);
+        
+        // If all of the queued videos have been created remove frames
+        if ($this->_db->getNumUnfinishedMovies($this->id) === 0) {
+            $this->_cleanUp();
+        }
     }
     
     /**
@@ -223,6 +228,24 @@ class Movie_HelioviewerMovie
     }
     
     /**
+     * Remove movie frames and directory
+     * 
+     * @return void
+     */
+    private function _cleanUp()
+    {
+        // Clean up movie frame images that are no longer needed
+        foreach ($this->_frames as $image) {
+            if (file_exists($image)) {
+                unlink($image);
+            }
+        }
+        if (file_exists($this->directory . "/frames")) {
+            rmdir($this->directory . "/frames");    
+        }   
+    }
+    
+    /**
      * Creates preview images of several different sizes
      */
     private function _createPreviewImages(&$screenshot)
@@ -232,7 +255,22 @@ class Movie_HelioviewerMovie
         $preview->setImageCompression(IMagick::COMPRESSION_LZW);
         $preview->setImageCompressionQuality(PNG_LOW_COMPRESSION);
         $preview->setInterlaceScheme(IMagick::INTERLACE_PLANE);
-        $preview->writeImage($this->directory . "/" . substr($this->filename, 0, -3) . "png");
+        
+        // Thumbnail sizes to create
+        $sizes = array(
+            "large"  => array(640, 480),
+            "medium" => array(320, 240),
+            "small"  => array(160, 120)
+        );
+        
+        foreach ($sizes as $name=>$dimensions) {
+            $thumb = $preview->clone();            
+            $thumb->thumbnailImage($dimensions[0], $dimensions[1], true);
+            $thumb->writeImage($this->directory . "/preview-$name.png");
+            $thumb->destroy();
+        } 
+        $preview->writeImage($this->directory . "/preview-full.png");  
+        
         $preview->destroy();   
     }
 
@@ -437,24 +475,6 @@ class Movie_HelioviewerMovie
 </body> 
 </html> 
         <?php        
-    }
-    
-    /**
-     * Destructor
-     * 
-     * @return void
-     */
-    public function __destruct()
-    {
-        // Clean up movie frame images that are no longer needed
-//        foreach ($this->_frames as $image) {
-//            if (file_exists($image)) {
-//                unlink($image);
-//            }
-//        }
-//        if (file_exists($this->directory . "/frames")) {
-//            rmdir($this->directory . "/frames");    
-//        }
     }
 }
 ?>

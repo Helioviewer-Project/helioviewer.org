@@ -74,6 +74,13 @@ class Database_ImgIndex
         return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
     }
     
+    public function getNumUnfinishedMovies($id)
+    {
+        $sql = "SELECT COUNT(*) FROM movieFormats WHERE movieId=$id AND status!='FINISHED'";
+        $row = mysqli_fetch_array($this->_dbConnection->query($sql));
+        return (int) array_pop($row);
+    }
+    
     /**
      * Updates movie entry with new information
      * 
