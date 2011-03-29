@@ -117,6 +117,23 @@ class Helper_HelioviewerLayers
     }
     
     /**
+     * Returns a human-readable representation of the request layers
+     * 
+     * @return string Human-readable string
+     */
+    public function toHumanReadableString()
+    {
+        $layerString = "";
+        
+        foreach ($this->_layers as $layer) {
+            $layerString .= $layer['name'] . ", ";
+        }
+        
+        // remove trailing __
+        return substr($layerString, 0, -2);
+    }
+    
+    /**
      * Returns a string reprentation of the request layers suitable for use in filenames
      * 
      * @return string String representation of the request layers for use in filenames, etc.
