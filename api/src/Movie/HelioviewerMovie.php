@@ -42,6 +42,8 @@ class Movie_HelioviewerMovie
     protected $reqEndDate;
     protected $startDate;
     protected $endDate;
+    protected $width;
+    protected $height;
     protected $directory;
     protected $filename;
     protected $format;
@@ -74,6 +76,8 @@ class Movie_HelioviewerMovie
         $this->imageScale   = $info['imageScale'];
         $this->frameRate    = $info['frameRate'];
         $this->maxFrames    = $info['maxFrames'];
+        $this->width        = $info['width'];
+        $this->height       = $info['height'];
         $this->status       = $info['status'];
         $this->timestamp    = $info['timestamp'];
         $this->watermark    = $info['watermark'];
@@ -194,6 +198,9 @@ class Movie_HelioviewerMovie
             'interlace'  => false,
             'watermark'=> $watermark
         );
+        
+        // Index of preview frame
+        $previewIndex = floor($this->numFrames / 2);
 
         // Compile frames
         foreach ($this->_timestamps as $time) {
@@ -201,20 +208,32 @@ class Movie_HelioviewerMovie
 
             try {
 	            $screenshot = new Image_Composite_HelioviewerMovieFrame($filepath, $this->_layers, $time, $this->_roi, $options);
+	            
+	            if ($frameNum == $previewIndex) {
+	                $previewImage = $screenshot; // Make a copy of frame to be used for preview images
+	            }
+
 	            $frameNum++;
 	            array_push($this->_frames, $filepath);
             } catch (Exception $e) {
             	$this->numFrames--; // Recover if failure occurs on a single frame
             }
         }
-        
+        $this->_createPreviewImages($previewImage);
+    }
+    
+    /**
+     * Creates preview images of several different sizes
+     */
+    private function _createPreviewImages(&$screenshot)
+    {
         // Create preview image
         $preview = $screenshot->getIMagickImage();
         $preview->setImageCompression(IMagick::COMPRESSION_LZW);
         $preview->setImageCompressionQuality(PNG_LOW_COMPRESSION);
         $preview->setInterlaceScheme(IMagick::INTERLACE_PLANE);
-        $preview->writeImage($this->directory . "/" . $this->filename . ".png");
-        $preview->destroy();
+        $preview->writeImage($this->directory . "/" . substr($this->filename, 0, -3) . "png");
+        $preview->destroy();   
     }
 
     /**
@@ -314,16 +333,16 @@ class Movie_HelioviewerMovie
      * @return void
      */
     private function _setMovieDimensions() {
-        $this->_width  = round($this->_roi->getPixelWidth());
-        $this->_height = round($this->_roi->getPixelHeight());
+        $this->width  = round($this->_roi->getPixelWidth());
+        $this->height = round($this->_roi->getPixelHeight());
 
         // Width and height must be divisible by 2 or ffmpeg will throw an error.
-        if ($this->_width % 2 === 1) {
-            $this->_width += 1;
+        if ($this->width % 2 === 1) {
+            $this->width += 1;
         }
         
-        if ($this->_height % 2 === 1) {
-            $this->_height += 1;
+        if ($this->height % 2 === 1) {
+            $this->height += 1;
         } 
     }
     
@@ -333,8 +352,8 @@ class Movie_HelioviewerMovie
     private function _setMovieProperties()
     {
         // Store actual start and end dates that will be used for the movie
-        $this->_startDate = $this->_timestamps[0];
-        $this->_endDate   = $this->_timestamps[sizeOf($this->_timestamps) - 1];
+        $this->startDate = $this->_timestamps[0];
+        $this->endDate   = $this->_timestamps[sizeOf($this->_timestamps) - 1];
 
         $this->filename = $this->_buildFilename($this->format);
         
@@ -351,7 +370,7 @@ class Movie_HelioviewerMovie
         // Update movie entry in database with new details
         $this->_db->storeMovieProperties(
             $this->id, $this->startDate, $this->endDate, 
-            $this->numFrames, $this->frameRate, $this->_width, $this->_height
+            $this->numFrames, $this->frameRate, $this->width, $this->height
         );
     }
 
@@ -395,7 +414,7 @@ class Movie_HelioviewerMovie
     public function getMoviePlayerHTML()
     {
         $filepath = str_replace(HV_ROOT_DIR, "../", $this->getFilepath());
-        $css      = "width: {$this->_width}px; height: {$this->_height}px;";
+        $css      = "width: {$this->width}px; height: {$this->height}px;";
         $duration = $this->numFrames / $this->frameRate;
         ?>
 <!DOCTYPE html> 
@@ -428,14 +447,14 @@ class Movie_HelioviewerMovie
     public function __destruct()
     {
         // Clean up movie frame images that are no longer needed
-        foreach ($this->_frames as $image) {
-            if (file_exists($image)) {
-                unlink($image);
-            }
-        }
-        if (file_exists($this->directory . "/frames")) {
-            rmdir($this->directory . "/frames");    
-        }
+//        foreach ($this->_frames as $image) {
+//            if (file_exists($image)) {
+//                unlink($image);
+//            }
+//        }
+//        if (file_exists($this->directory . "/frames")) {
+//            rmdir($this->directory . "/frames");    
+//        }
     }
 }
 ?>
