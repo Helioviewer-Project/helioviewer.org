@@ -304,9 +304,40 @@ class Movie_HelioviewerMovie
      */
     private function _buildMovie()
     {
+        date_default_timezone_set('UTC');
+        
+        // Compute movie meta-data
+        $layerString = $this->_layers->toHumanReadableString();
+        
+        // Date string
+        if (substr($this->startDate, 0, 9) == substr($this->endDate, 0, 9)) {
+            $dateString = sprintf("%s - %s UTC", $this->startDate, substr($this->endDate, 10));
+        } else {
+            $dateString = sprintf("%s - %s UTC", $this->startDate, $this->endDate);
+        }
+        
+        // URL
+        $url = "http://www.helioviewer.org/api/?action=getMovie&id={$this->id}&format={$this->format}";
+        
+        // Title
+        $title = sprintf("%s (%s)", $layerString, $dateString);
+        
+        // Description
+        $description = sprintf(
+            "The Sun as seen through %s from %s.", 
+            $layerString, str_replace("-", "to", $dateString)
+        );
+        
+        // Comment
+        $comment = sprintf(
+            "This movie was produced by Helioviewer.org on %s UTC. The original movie can be found at %s.", 
+            date("F j, Y, g:i a"), $url
+        );
+
         // Create and FFmpeg encoder instance
         $ffmpeg = new Movie_FFMPEGEncoder(
-            $this->directory, $this->filename, $this->frameRate, $this->width, $this->height
+            $this->directory, $this->filename, $this->frameRate, $this->width, $this->height,
+            $title, $description, $comment
         );
 
         // Create a medium and high quality VP8/H.264 videos

@@ -37,7 +37,9 @@ class Movie_FFMPEGEncoder
     private $_frameRate;
     private $_width;
     private $_height;
-    private $_macFlags;
+    private $_title;
+    private $_description;
+    private $_comment;    
     
     /**
      * Constructor
@@ -46,20 +48,19 @@ class Movie_FFMPEGEncoder
      * 
      * @return void
      */
-    public function __construct($directory, $filename, $frameRate, $width, $height)
+    public function __construct($directory, $filename, $frameRate, $width, $height, $title, $description, $comment)
     {
         $info = pathinfo($filename);
         
-        $this->_directory = $directory;
-        $this->_filename  = $filename;
-        $this->_frameRate = $frameRate;
-        $this->_width     = $width;
-        $this->_height    = $height;
-        $this->_format    = $info['extension'];
-
-        $this->_macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
-                    . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 1 -qcomp 0.6 -qmin 10 "
-                    . "-qmax 51 -qdiff 4 -bf 3 -directpred 1 -trellis 1 -wpredp 2 -an -y";
+        $this->_directory   = $directory;
+        $this->_filename    = $filename;
+        $this->_frameRate   = $frameRate;
+        $this->_width       = $width;
+        $this->_height      = $height;
+        $this->_title       = $title;
+        $this->_description = $description;
+        $this->_comment     = $comment;
+        $this->_format      = $info['extension'];
     }
     
     /**
@@ -111,19 +112,20 @@ class Movie_FFMPEGEncoder
         //    . " -r " . $this->_frameRate . " -f webm -vcodec libvpx -qmax $qmax -threads " . HV_FFMPEG_MAX_THREADS 
         //    . " -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
         $cmd = sprintf(
-            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmax %d -threads %d -s %dx%d -an -y %s",
+            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmax %d %s -threads %d -s %dx%d -an -y %s",
             HV_FFMPEG,
             $this->_frameRate,
             $this->_directory,
             $this->_frameRate,
             $qmax,
+            $this->_getMetaDataString(),
             HV_FFMPEG_MAX_THREADS,
             $this->_width,
             $this->_height,
             $outputFile            
         );
         
-        exec(escapeshellcmd($cmd));
+        exec($cmd);
     }
     
     /**
@@ -142,10 +144,11 @@ class Movie_FFMPEGEncoder
         // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
         // fps >= 2
         //$outputRate = substr($this->_filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
-        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "/frames/frame%d.bmp"
-            . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset -threads " . HV_FFMPEG_MAX_THREADS 
-            . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
-        exec(escapeshellcmd($cmd));
+        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "frames/frame%d.bmp"
+            . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset " . $this->_getMetaDataString() . "-threads " 
+            . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
+
+        exec($cmd);
     }
     
     /**
@@ -162,9 +165,10 @@ class Movie_FFMPEGEncoder
     {
         $file = $this->_directory . "/" . substr($this->_filename, 0, -4);
         
-        $cmd = HV_FFMPEG . " -i $file.mp4 -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $file.flv";
+        $cmd = HV_FFMPEG . " -i $file.mp4 -vcodec copy " . $this->_getMetaDataString()
+             . "-threads " . HV_FFMPEG_MAX_THREADS . " $file.flv";
     
-        exec(escapeshellcmd($cmd));
+        exec($cmd);
 
         // Check to ensure that movie size is valid
         if (filesize($file . ".flv") < 1000)
@@ -184,18 +188,36 @@ class Movie_FFMPEGEncoder
     {
         $ipodVideoName = $this->_directory . "/ipod-" . $this->_filename . "." . $format;
         
+        $macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
+                  . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 1 -qcomp 0.6 -qmin 10 "
+                  . "-qmax 51 -qdiff 4 -bf 3 -directpred 1 -trellis 1 -wpredp 2 -an -y";
+        
         $cmd = HV_FFMPEG . " -i " . $this->_directory . "/frames/frame%d.bmp -r " . $this->_frameRate
             . " -f mp4 -b 800k -coder 0 -bt 200k -maxrate 96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 "
-            . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " " 
-            . $this->_macFlags . " " . $ipodVideoName;
+            . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " $macFlags $ipodVideoName";
             
-        exec(escapeshellcmd($cmd));
+        exec($cmd);
 
         // Check to ensure that movie size is valid
         if (filesize($ipodVideoName) < 1000)
             throw new Exception("FFmpeg error encountered: Unable to create iPod video.");
 
         return $ipodVideoName;
+    }
+    
+    /**
+     * Creates the portion of the ffmpeg command relating to metadata properties
+     */
+    private function _getMetaDataString()
+    {
+        return sprintf(
+            '-metadata title="%s" -metadata composer="Helioviewer.org" -metadata year="%d" ' . 
+            '-metadata description="%s" -metadata comment="%s" ',
+            $this->_title,
+            date("Y"),
+            $this->_description,
+            $this->_comment
+        );
     }
 }
 ?>
