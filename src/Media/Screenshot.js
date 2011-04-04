@@ -17,18 +17,18 @@ var Screenshot = Class.extend(
      * @param {Float}   imageScale    Image scale for the screenshot
      * @param {String}  layers        Layers in the screenshot serialized as a string
      * @param {String}  dateRequested Date string for when the screenshot was requested
-     * @param {String}  obsDate       The observation date for which the screenshot was generated
+     * @param {String}  date          The observation date for which the screenshot was generated
      * @param {Float}   x1            Top-left corner x-coordinate
      * @param {Float}   y1            Top-left corner y-coordinate
      * @param {Float}   x2            Bottom-right corner x-coordinate
      * @param {Float}   y2            Bottom-right corner y-coordinate
      */    
-    init: function (id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2) {
+    init: function (id, imageScale, layers, dateRequested, date, x1, x2, y1, y2) {
         this.id            = id;
         this.imageScale    = imageScale;
         this.layers        = layers;
         this.dateRequested = Date.parseUTCDate(dateRequested);
-        this.obsDate       = Date.parseUTCDate(obsDate);
+        this.date          = Date.parseUTCDate(date);
         this.x1            = x1;
         this.x2            = x2;
         this.y1            = y1;
@@ -108,7 +108,7 @@ var Screenshot = Class.extend(
             imageScale    : this.imageScale,
             layers        : this.layers,
             dateRequested : this.dateRequested.toISOString(),
-            obsDate       : this.obsDate.toISOString(),
+            date          : this.date.toISOString(),
             x1            : this.x1,
             x2            : this.x2,
             y1            : this.y1,

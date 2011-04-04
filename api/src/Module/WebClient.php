@@ -297,7 +297,7 @@ class Module_WebClient implements Module
         
         // Create the screenshot
         $screenshot = new Image_Composite_HelioviewerScreenshot(
-            $layers, $this->_params['obsDate'], $roi, $this->_options
+            $layers, $this->_params['date'], $roi, $this->_options
         );
         
         // Update usage stats
@@ -312,7 +312,7 @@ class Module_WebClient implements Module
             $screenshot->display();
         } else {
             // Print JSON
-            //header('Content-Type: application/json');
+            header('Content-Type: application/json');
             echo json_encode(array("id" => $screenshot->id));            
         }
     }
@@ -377,7 +377,6 @@ class Module_WebClient implements Module
 
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
-            //chmod($cacheDir, 0777);
         }
     }
 
@@ -394,7 +393,7 @@ class Module_WebClient implements Module
         case "downloadScreenshot":
             $expected = array(
                "required" => array('id'),
-               "ints"    => array('id')
+               "ints"     => array('id')
             );
             break;
 
@@ -439,22 +438,23 @@ class Module_WebClient implements Module
         case "getJP2Header":
             $expected = array(
                 "required" => array('file'),
-                "files" => array('file')
+                "files"    => array('file')
             );
             break;
         case "getNewsFeed":
             break;
         case "getUsageStatistics":
             $expected = array(
-                "optional" => array("resolution")
+                "optional" => array("resolution"),
+                "alphanum" => array("resolution")
             );
             break;
         case "takeScreenshot":
             $expected = array(
-                "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
+                "required" => array('date', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
                 "optional" => array('display', 'watermark'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"	   => array('obsDate'),
+                "dates"	   => array('date'),
                 "bools"    => array('display', 'watermark')
             );
             break;
@@ -841,7 +841,7 @@ class Module_WebClient implements Module
             <table class="param-list" cellspacing="10">
                 <tbody valign="top">
                     <tr>
-                        <td width="20%"><b>obsDate</b></td>
+                        <td width="20%"><b>date</b></td>
                         <td><i>ISO 8601 UTC Date</i></td>
                         <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
                     </tr>
@@ -903,13 +903,13 @@ class Module_WebClient implements Module
     
             <span class="example-header">Examples:</span>
             <span class="example-url">
-            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
             </a>
             </span><br />
             <span class="example-url">
-            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
             </a>
             </span>
             </div>

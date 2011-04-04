@@ -240,7 +240,7 @@ var ScreenshotManagerUI = Class.extend(
             dateRequested : new Date().toISOString(),
             imageScale    : imageScale,
             layers        : layers,
-            obsDate       : date,
+            date          : date,
             display       : false
         }, this._toArcsecCoords(roi, imageScale));
         
@@ -258,7 +258,7 @@ var ScreenshotManagerUI = Class.extend(
             }
             
             screenshot = self._screenshots.add(
-                    response.id, params.imageScale, params.layers, params.dateRequested, params.obsDate, 
+                    response.id, params.imageScale, params.layers, params.dateRequested, params.date, 
                     params.x1, params.x2, params.y1, params.y2
             );
             self._addScreenshot(screenshot);
