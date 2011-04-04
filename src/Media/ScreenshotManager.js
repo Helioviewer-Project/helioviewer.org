@@ -32,7 +32,7 @@ var ScreenshotManager = MediaManager.extend(
      * @param {Float}   imageScale    Image scale for the screenshot
      * @param {String}  layers        Layers in the screenshot serialized as a string
      * @param {String}  dateRequested Date string for when the screenshot was requested
-     * @param {String}  obsDate       The observation date for which the screenshot was generated
+     * @param {String}  date          The observation date for which the screenshot was generated
      * @param {Float}   x1            Top-left corner x-coordinate
      * @param {Float}   y1            Top-left corner y-coordinate
      * @param {Float}   x2            Bottom-right corner x-coordinate
@@ -40,8 +40,8 @@ var ScreenshotManager = MediaManager.extend(
      * 
      * @return {Screenshot} A Screenshot object
      */
-    add: function (id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2) {
-        var screenshot = new Screenshot(id, imageScale, layers, dateRequested, obsDate, x1, x2, y1, y2);
+    add: function (id, imageScale, layers, dateRequested, date, x1, x2, y1, y2) {
+        var screenshot = new Screenshot(id, imageScale, layers, dateRequested, date, x1, x2, y1, y2);
 
         if (this._history.unshift(screenshot) > 12) {
             this._history = this._history.slice(0, 12);            
@@ -113,7 +113,7 @@ var ScreenshotManager = MediaManager.extend(
         $.each(screenshots, function (i, screenshot) {
             self._history.push(new Screenshot(
                 screenshot.id, screenshot.imageScale, screenshot.layers, screenshot.dateRequested, 
-                screenshot.obsDate, screenshot.x1, screenshot.x2, screenshot.y1, screenshot.y2
+                screenshot.date, screenshot.x1, screenshot.x2, screenshot.y1, screenshot.y2
             ));
         });
     },

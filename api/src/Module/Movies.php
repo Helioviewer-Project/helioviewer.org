@@ -81,30 +81,6 @@ class Module_Movies implements Module
             $statistics->log("buildMovie");
         }
     }
-    
-    /**
-     * Returns either a single URL or an array of URLs for the requested video
-     * 
-     * @param object &$movie A HelioviewerMovie instance
-     * 
-     * @return mixed One or more URLs for movies relating to the request
-     */
-    private function _getVideoURLs (&$movie)
-    {
-        $baseURL = $movie->getURL();
-        
-        // If a specific format was requested, return a link for that video
-        if (isset($this->_options['format'])) {
-            return "$baseURL.{$this->_options['format']}";    
-        } else {
-            // Otherwise return URLs for each of the video types generated
-            $urls = array();
-            foreach (array("mp4", "flv") as $supportedFormat) {
-                array_push($urls, "$baseURL.$supportedFormat");
-            }
-            return $urls;
-        }
-    }
 
     /**
      * Queues a movie in Helioqueuer
@@ -127,10 +103,7 @@ class Module_Movies implements Module
         include_once 'src/Movie/HelioviewerMovie.php';
         
         // Process request
-        $movie = new Movie_HelioviewerMovie($this->_params['id']);
-
-        // Default to mp4
-        $format = $this->_options['format'];
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_options['format']);
     }
     
     /**
