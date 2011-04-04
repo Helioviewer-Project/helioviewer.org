@@ -130,7 +130,7 @@ class Module_Movies implements Module
         $movie = new Movie_HelioviewerMovie($this->_params['id']);
 
         // Default to mp4
-        $format = isset($this->_options['format']) ? $this->_options['format'] : "mp4";
+        $format = $this->_options['format'];
     }
     
     /**
@@ -138,24 +138,29 @@ class Module_Movies implements Module
      */
     public function uploadMovieToYouTube ()
     {
-        include_once 'src/Movie/YouTubeUploader.php';
-
-        // Make sure it exists
-        if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
+        include_once 'src/Movie/HelioviewerMovie.php';
+        include_once 'src/Movie/YouTube.php';
+        
+        // Process request
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], "mp4");
+        
+        if ($movie->status !== "FINISHED") {
             throw new Exception("Invalid movie requested");
         }
+        
+        $file = $movie->getFilepath(true);
 
-        $youtube = new Movie_YouTubeUploader();
-        $youtube->uploadVideo($this->_params['file'], $this->_options);
+        $youtube = new Movie_YouTube();
+        $youtube->uploadVideo($file, $this->_options);
     }
     
     /**
      * Checks to see if Helioviewer.org is authorized to upload videos for a user
      */
     public function checkYouTubeAuth () {
-        include_once 'src/Movie/YouTubeUploader.php';
+        include_once 'src/Movie/YouTube.php';
         
-        $youtube = new Movie_YouTubeUploader();
+        $youtube = new Movie_YouTube();
 
         header('Content-type: application/json');
         print json_encode($youtube->checkYouTubeAuth());
@@ -167,56 +172,19 @@ class Module_Movies implements Module
      * TODO: 2011/01/07: Move to a separate class
      */
     public function getUserVideos() {
-        require_once 'Zend/Loader.php';
-        Zend_Loader::loadClass('Zend_Gdata_YouTube');
-        
-        $yt = new Zend_Gdata_YouTube(null, null, null, HV_YOUTUBE_DEVELOPER_KEY);
-        $yt->setMajorProtocolVersion(2);
-        
+        include_once 'src/Movie/YouTube.php';
+
         // Default options
         $defaults = array(
             "pageSize" => 10,
             "pageNum"  => 1
         );
-        
         $options = array_replace($defaults, $this->_options);
-
-        // Current page
-        $startIndex = 1 + ($options['pageSize'] * ($options['pageNum'] - 1));
-
-        $pageSize = $options['pageSize'];
         
-        // URL to query
-        $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
-               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?orderby=published&start-index=$startIndex&max-results=$pageSize&safeSearch=strict";
+        $youtube = new Movie_YouTube();
         
-        // Collect videos from the feed
-        $videos = array();
-        
-        // Process video entries
-        foreach($yt->getVideoFeed($url) as $videoEntry) {
-            $id = $videoEntry->getVideoId();
+        $videos = $youtube->getUserVideos($options['pageSize'], $options['pageNum']);
 
-            // Check to make sure video was not removed by the user
-            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$id?v=2");
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-            
-            $response = curl_exec($handle);
-            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-
-            curl_close($handle);
-
-            // Only add videos with response code 200
-            if ($httpCode == 200) {
-                array_push($videos, array(
-                    "id"      => $id,
-                    "watch"   => $videoEntry->getVideoWatchPageUrl(),
-                    "flash"   => $videoEntry->getFlashPlayerUrl(),
-                    "thumbnails" => $videoEntry->getVideoThumbnails(),
-                    "published"  => $videoEntry->getPublished()->getText()
-                ));
-            }
-        }
         header('Content-type: application/json');
         echo json_encode($videos);        
     }
@@ -243,7 +211,7 @@ class Module_Movies implements Module
         $relpath  = substr(str_replace(HV_ROOT_DIR, "..", $fullpath), 0, -4);
 
         // Get video dimensions
-        list($width, $height) = $this->_getVideoDimensions($fullpath);
+        //list($width, $height) = $this->_getVideoDimensions($fullpath);
         
         // Use specified dimensions if set (Simplifies fitting in Helioviewer.org)
         if (isset($this->_options['width'])) {
@@ -301,31 +269,6 @@ class Module_Movies implements Module
     }
     
     /**
-     * Determines the height and width for a given video
-     * 
-     * @param string $file Video filepath
-     * 
-     * @return array The width and height corresponding with the specified video
-     */
-    private function _getVideoDimensions($file)
-    {
-        $imageDimensions = getimagesize(substr($file, 0, -3) . "png");
-        
-        $width  = $imageDimensions[0];
-        $height = $imageDimensions[1];
-        
-        // Videos dimensions are multiples of two
-        if ($width % 2 === 1) {
-            $width += 1;
-        }
-        if ($height % 2 === 1) {
-            $height += 1;
-        }
-        
-        return array($width, $height);
-    }
-    
-    /**
      * validate
      *
      * @return bool Returns true if input parameters are valid
@@ -370,9 +313,9 @@ class Module_Movies implements Module
             break;
         case "uploadMovieToYouTube":
             $expected = array(
-                "required" => array('file'),
+                "required" => array('id'),
                 "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready', 'dialogMode'),
-                "files"    => array('file'),
+                "ints"     => array('id'),
                 "bools"    => array('share', 'ready', 'dialogMode')
             
             );

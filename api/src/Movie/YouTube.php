@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Movie_YouTubeUploader Class Definition
+ * Movie_YouTube Class Definition
  * 
  * TODO 2011/01/09 Check for other restricted characters ( e.g. < > in description...see reference link below),
  *      word limits (e.g. keywords), etc. 
@@ -23,7 +23,7 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class Movie_YouTubeUploader
+class Movie_YouTube
 {
     private $_appId;
     private $_clientId;
@@ -40,7 +40,7 @@ class Movie_YouTubeUploader
     private $_keywordsMaxLength    = 500;
     
     /**
-     * Creates a new YouTubeUploader instance
+     * Creates a new YouTube instance
      *
      * @return void
      */
@@ -124,7 +124,8 @@ class Movie_YouTubeUploader
     /**
      * Checks to see if a user is Helioveiwer.org is currently authorized to interact with a user's YouTube account.
      */
-    public function checkYouTubeAuth() {
+    public function checkYouTubeAuth()
+    {
         if (!isset($_SESSION['sessionToken'])) {
             return false;
         }
@@ -133,6 +134,54 @@ class Movie_YouTubeUploader
         $this->_youTube    = $this->_getYoutubeInstance();
 
         return $this->_authenticationIsValid();
+    }
+    
+    /**
+     * Returns a list of videos uploaded to YouTube by Helioviewer.org users
+     */
+    public function getUserVideos($pageSize, $pageNum)
+    {
+        Zend_Loader::loadClass('Zend_Gdata_YouTube');
+        
+        $yt = new Zend_Gdata_YouTube(null, null, null, HV_YOUTUBE_DEVELOPER_KEY);
+        $yt->setMajorProtocolVersion(2);
+        
+        // Current page
+        $startIndex = 1 + ($pageSize * ($pageNum - 1));
+        
+        // URL to query
+        $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
+               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?orderby=published&start-index=$startIndex&max-results=$pageSize&safeSearch=strict";
+        
+        // Collect videos from the feed
+        $videos = array();
+        
+        // Process video entries
+        foreach($yt->getVideoFeed($url) as $videoEntry) {
+            $id = $videoEntry->getVideoId();
+
+            // Check to make sure video was not removed by the user
+            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$id?v=2");
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+            
+            $response = curl_exec($handle);
+            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+
+            curl_close($handle);
+
+            // Only add videos with response code 200
+            if ($httpCode == 200) {
+                array_push($videos, array(
+                    "id"      => $id,
+                    "watch"   => $videoEntry->getVideoWatchPageUrl(),
+                    "flash"   => $videoEntry->getFlashPlayerUrl(),
+                    "thumbnails" => $videoEntry->getVideoThumbnails(),
+                    "published"  => $videoEntry->getPublished()->getText()
+                ));
+            }
+        }
+        
+        return $videos;
     }
     
     /**
