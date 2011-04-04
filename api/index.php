@@ -126,7 +126,7 @@ function loadModule($params)
                     $response = $proxy->query($params, true);
                 }
                 
-                //header('Content-type: application/json;charset=UTF-8');
+                header('Content-type: application/json;charset=UTF-8');
                 
                 // Make sure a response was recieved
                 if ($response) {
@@ -258,7 +258,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-10-26 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2011-04-04 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
 </div>
 
 </body>
@@ -294,13 +294,18 @@ function printDocumentationAppendices()
                 <td><strong>Description:</strong></td>
             </tr>
             <tr>
+                <td>SDO</td>
+                <td>SDO (Solar Dynamics Observatory)</td>
+            </tr>
+            <tr>
                 <td>SOHO</td>
                 <td>SOHO (Solar and Heliospheric Observatory)</td>
             </tr>
+            <!--
             <tr>
                 <td>TRACE</td>
                 <td>TRACE (Transition Region and Coronal Explorer)</td>
-            </tr>
+            </tr>-->
         </table>
 
         <br />
@@ -311,6 +316,10 @@ function printDocumentationAppendices()
             <tr>
                 <td width="140px"><strong>Identifier:</strong></td>
                 <td><strong>Description:</strong></td>
+            </tr>
+            <tr>
+                <td>AIA</td>
+                <td>AIA (Atmospheric Imaging Assembly)</td>
             </tr>
             <tr>
                 <td>EIT</td>
@@ -324,10 +333,12 @@ function printDocumentationAppendices()
                 <td>MDI</td>
                 <td>MDI (The Michelson Doppler Imager)</td>
             </tr>
+            <!--
             <tr>
                 <td>TRACE</td>
                 <td>TRACE (Transition Region and Coronal Explorer)</td>
             </tr>
+             -->
         </table>
 
         <br />
@@ -338,6 +349,10 @@ function printDocumentationAppendices()
             <tr>
                 <td width="140px"><strong>Identifier:</strong></td>
                 <td><strong>Description:</strong></td>
+            </tr>
+            <tr>
+                <td>AIA</td>
+                <td>AIA (Atmospheric Imaging Assembly)</td>
             </tr>
             <tr>
                 <td>C2</td>
@@ -368,12 +383,28 @@ function printDocumentationAppendices()
                 <td><strong>Description:</strong></td>
             </tr>
             <tr>
+                <td>94</td>
+                <td>94 Ångström</td>
+            </tr>
+            <tr>
+                <td>131</td>
+                <td>131 Ångström</td>
+            </tr>
+            <tr>
                 <td>171</td>
                 <td>171 Ångström</td>
             </tr>
             <tr>
+                <td>193</td>
+                <td>193 Ångström</td>
+            </tr>
+            <tr>
                 <td>195</td>
                 <td>195 Ångström</td>
+            </tr>
+            <tr>
+                <td>211</td>
+                <td>211 Ångström</td>
             </tr>
             <tr>
                 <td>284</td>
@@ -382,6 +413,22 @@ function printDocumentationAppendices()
             <tr>
                 <td>304</td>
                 <td>304 Ångström</td>
+            </tr>
+            <tr>
+                <td>335</td>
+                <td>335 Ångström</td>
+            </tr>
+            <tr>
+                <td>1600</td>
+                <td>1600 Ångström</td>
+            </tr>
+            <tr>
+                <td>1700</td>
+                <td>1700 Ångström</td>
+            </tr>
+            <tr>
+                <td>4500</td>
+                <td>4500 Ångström</td>
             </tr>
             <tr>
                 <td>white-light</td>
