@@ -5,7 +5,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window, showButtonsInViewport, hideButtonsInViewport, addIconHoverEventListener */
+/*global Class, $, window, addIconHoverEventListener */
 "use strict";
 var ImageSelectTool = Class.extend(
     /** @lends ImageSelectTool.prototype */
@@ -20,10 +20,13 @@ var ImageSelectTool = Class.extend(
         this.active = false;
 
         this.vpDomNode    = $("#helioviewer-viewport");
-        this.container    = $("#image-area-select");
+        this.buttons      = $("#image-area-select-buttons");
+        this.container    = $("#image-area-select-container");
         this.doneButton   = $("#done-selecting-image");
         this.cancelButton = $("#cancel-selecting-image");
         this.helpButton   = $("#help-selecting-image");
+        
+        this.vpButtons = $("#zoomControls, #center-button, #social-buttons, #fullscreen-btn, #mouse-coords");
 
         this._setupHelpDialog();
         
@@ -53,7 +56,7 @@ var ImageSelectTool = Class.extend(
             this.height = this.vpDomNode.height();
         
             /* 
-            * Create a temporary transparent image that spans the height and width of the viewport.
+            * Displays a temporary transparent image that spans the height and width of the viewport.
             * Necessary because the viewport image is done in tiles and imgAreaSelect cannot cross 
             * over tile boundaries. Add the transparent image to the viewport, on top of the other tiles.
             * 
@@ -61,10 +64,7 @@ var ImageSelectTool = Class.extend(
             * inside this div. It is necessary to specify a z-index because otherwise it gets added underneath
             * the rest of the tiles and the plugin will not work.
             */
-            $('<img id="transparent-image" src="resources/images/transparent_512.png" alt="" width="' +
-                   this.width + '" height="' + this.height + '" />')
-            .css({'position': 'relative', 'cursor': 'crosshair', 'z-index': 5})
-            .appendTo(this.vpDomNode);
+            this.container.show();
             
             /* Make a temporary container for imgAreaSelect to put all of its divs into.
             * Note that this container must be OUTSIDE of the viewport because otherwise the plugin's boundaries
@@ -86,9 +86,9 @@ var ImageSelectTool = Class.extend(
     selectArea: function (callback) {
         var area, self = this;
         
-        // Use imgAreaSelect on the transparent region to get the top, left, bottom, and right 
-        // coordinates of the selected region. 
-        area = $("#transparent-image").imgAreaSelect({ 
+        // Use imgAreaSelect on the transparent region to get the 
+        // top, left, bottom, and right coordinates of the selected region. 
+        area = this.container.imgAreaSelect({
             instance: true,
             handles : true,
             parent  : "#imgContainer",
@@ -97,8 +97,8 @@ var ImageSelectTool = Class.extend(
             y1      : this.height / 4,
             y2      : this.height * 3 / 4,
             onInit  : function () {
-                self.container.show();
-                hideButtonsInViewport();
+                self.vpButtons.hide('fast');
+                self.buttons.show();
             }
         });
         
@@ -196,11 +196,13 @@ var ImageSelectTool = Class.extend(
      * @TODO: add error checking if the divs are already gone for whatever reason.
      */    
     cleanup: function () {
+        this.buttons.hide();
+        this.container.imgAreaSelect({remove: true});
+
+        this.vpButtons.show('fast');
+
         this.container.hide();
-        $("#transparent-image").imgAreaSelect({remove: true});
-        showButtonsInViewport();
-        
-        $('#imgContainer, #transparent-image').remove();
+        $('#imgContainer').remove();
         this.doneButton.unbind('click');
         this.cancelButton.unbind('click');
         this.helpButton.qtip("hide");

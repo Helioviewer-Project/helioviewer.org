@@ -308,3 +308,33 @@ span.ui-icon-hover, div.ui-icon-hover {
     width: 100%;
     text-align: center;
 }
+
+/* Image Area Select */
+#image-area-select-buttons {
+    position: absolute;
+    top:0px;
+    right:0px;
+    width: 150px;
+    background: #2A2A2A;
+    font-size: 13px;
+    padding: 8px;
+    -moz-border-radius: 0 0 0px 5px;
+    -webkit-border-radius: 0 0 0px 5px;
+    color: white;
+    z-index: 10;
+    display: none;
+}
+
+#image-area-select-container {
+    background: url(resources/images/transparent_512.png);
+    position: relative;
+    cursor: crosshair;
+    z-index: 5;
+    width:100%;
+    height:100%;
+    display: none;
+}
+
+#image-area-select-buttons .ui-icon {
+    float: left;
+}
