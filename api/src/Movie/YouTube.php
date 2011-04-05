@@ -71,10 +71,9 @@ class Movie_YouTube
      *  2) Display video description form
      *  3) Process submitted video form items and upload movie
      */
-    public function uploadVideo($fileId, $options)
+    public function uploadVideo($id, $filepath, $options)
     {
-        $filepath = HV_CACHE_DIR . "/movies/$fileId";
-        
+
         // Optional parameters
         $defaults = array(
             "ready"       => false,
@@ -83,13 +82,13 @@ class Movie_YouTube
             "title"       => "",
             "tags"        => "",
             "description" => "This movie was produced by http://www.helioviewer.org. A high quality version of this " .
-                             "movie can be downloaded from " . HV_CACHE_URL . "/movies/$fileId ."
+                             "movie can be downloaded from ...."
         );
         
         $options = array_replace($defaults, $options);
         
         // Redirect URL
-        $url = $this->_getPostAuthRedirectURL($fileId, $options);
+        $url = $this->_getPostAuthRedirectURL($id, $options);
         
         // Authenticate user
         $this->_authenticate($url);
@@ -111,7 +110,7 @@ class Movie_YouTube
         // Has the form data been submitted?
         if (!$options['ready']) {
             $this->_printForm(
-                $fileId, $options['title'], $options['description'], $options['tags'], $options['dialogMode']
+                $id, $options['title'], $options['description'], $options['tags'], $options['dialogMode']
             );
             return;
         }
@@ -281,11 +280,11 @@ class Movie_YouTube
      * 
      * @return string Redirect URL
      */
-    private function _getPostAuthRedirectURL($fileId, $options)
+    private function _getPostAuthRedirectURL($id, $options)
     {
         return HV_API_ROOT_URL . "?" . http_build_query(array(
             "action"      => "uploadMovieToYouTube",
-            "file"        => $fileId,
+            "id"          => $id,
             "title"       => $options["title"],
             "description" => $options["description"],
             "tags"        => $options["tags"]
@@ -340,7 +339,7 @@ class Movie_YouTube
     /**
      * Displays the YouTube video submission form
      */
-    private function _printForm($fileId, $title, $description, $tags, $dialogMode) {
+    private function _printForm($id, $title, $description, $tags, $dialogMode) {
     ?>
 <!DOCTYPE html> 
 <html> 
@@ -442,9 +441,9 @@ class Movie_YouTube
         <!-- Hidden fields -->
         <input type="hidden" name="action" value="uploadMovieToYouTube" />
         <input type="hidden" name="ready" value="true" />
-        <input type="hidden" name="file" value="<?php echo $fileId; ?>" />
+        <input type="hidden" name="id" value="<?php echo $id; ?>" />
     </form>
-    <div id='upload-error-console-container'><div id='upload-error-console'>TEST MESSAGE</div></div>
+    <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
     </div>
 </body>
 </html>

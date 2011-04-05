@@ -124,7 +124,7 @@ class Module_Movies implements Module
         $file = $movie->getFilepath(true);
 
         $youtube = new Movie_YouTube();
-        $youtube->uploadVideo($file, $this->_options);
+        $youtube->uploadVideo($this->_params['id'], $file, $this->_options);
     }
     
     /**

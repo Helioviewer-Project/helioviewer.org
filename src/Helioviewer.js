@@ -232,11 +232,6 @@ var Helioviewer = Class.extend(
         // 12/08/2010: Disabling JHelioviewer JNLP launching until better support is added
         //$('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
         
-        // Handle image area select requests
-        $(document).bind("enable-select-tool", function (event, callback) {
-            self.imageSelectTool.enableAreaSelect(callback);
-        });
-
         $('#social-buttons .text-btn').each(function (i, item) {
             addIconHoverEventListener($(this)); 
         });

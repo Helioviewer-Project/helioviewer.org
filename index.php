@@ -101,9 +101,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                     <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
                         <div id="helioviewer-viewport-container-inner" style="top:3%; width:97%; height:94%">
                             <div id="helioviewer-viewport">
+                                <!-- Movement sandbox -->
                                 <div id="sandbox" style="position: absolute;">
                                     <div id="moving-container" style="left: 0; top: 0"></div>
                                 </div>
+                                
+                                <!-- Message console -->
                                 <div id="message-console"></div>
                             </div>
 
@@ -166,6 +169,21 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                             <div id="mouse-coords" style="display: none;">
                                 <div id="mouse-coords-x"></div>
                                 <div id="mouse-coords-y"></div>
+                            </div>
+                        </div>
+
+                        <!-- Image area select tool -->
+                        <div id='image-area-select' style='position: absolute; top: 14px; right: 18px; width: 150px; background: #2A2A2A; font-size: 13px; padding: 8px; -moz-border-radius: 0 0 0px 5px; color: white; z-index: 10; display: none;'>
+                            <div id='done-selecting-image' class='text-btn'>
+                                <span class='ui-icon ui-icon-circle-check' style='float: left;'></span>
+                                <span>Done</span>
+                            </div> 
+                            <div id='cancel-selecting-image' class='text-btn'> 
+                                <span class='ui-icon ui-icon-circle-close' style='float:left;'></span>
+                                <span>Cancel</span>
+                            </div>
+                            <div id='help-selecting-image' class='text-btn' style='float: right;'> 
+                                <span class='ui-icon ui-icon-info'></span>
                             </div>
                         </div>
                     </div>
