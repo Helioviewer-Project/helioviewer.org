@@ -44,7 +44,7 @@ var Screenshot = Class.extend(
      * Opens the download dialog
      */
     download: function () {
-        //window.open('api/index.php?action=downloadScreenshot&id=' + id, '_parent');
+        window.open('api/index.php?action=downloadScreenshot&id=' + this.id, '_parent');
     },
     
     /**
