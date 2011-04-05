@@ -6,7 +6,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true, console: true */
-/*global window, console, $, navigator, Storage, hideZoomControls, showZoomControls */
+/*global window, console, $, navigator, Storage */
 "use strict";
 /**
  * @description Outputs a UTC Date string of the format "YYYY/MM/dd"
@@ -369,28 +369,6 @@ var addIconHoverEventListener = function (container) {
             }
         );
     }
-};
-
-/**
- * Helper function to hide all buttons that exist in the viewport.
- * hideZoomControls is in ZoomControls.js
- */
-var hideButtonsInViewport = function () {
-    hideZoomControls();
-    $("#social-buttons").hide("fast");
-    $("#center-button").hide("fast");
-    $("#fullscreen-btn").hide("fast");
-};
-
-/**
- * Helper function to show all buttons that exist inside the viewport.
- * showZoomControls is in ZoomControls.js
- */
-var showButtonsInViewport = function () {
-    showZoomControls();
-    $("#social-buttons").show("fast");
-    $("#center-button").show("fast");
-    $("#fullscreen-btn").show("fast");
 };
 
 /**
