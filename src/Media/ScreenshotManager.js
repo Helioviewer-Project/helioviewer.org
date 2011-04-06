@@ -18,11 +18,7 @@ var ScreenshotManager = MediaManager.extend(
      * Creates a new ScreenshotManager instance 
      */    
     init: function (screenshots) {
-        this._history = [];
-
-        if (screenshots) {
-            this._loadSavedScreenshots(screenshots);
-        }
+        this._history = screenshots;
     },
     
     /**
@@ -41,7 +37,18 @@ var ScreenshotManager = MediaManager.extend(
      * @return {Screenshot} A Screenshot object
      */
     add: function (id, imageScale, layers, dateRequested, date, x1, x2, y1, y2) {
-        var screenshot = new Screenshot(id, imageScale, layers, dateRequested, date, x1, x2, y1, y2);
+        var screenshot = {
+            "id"            : id,
+            "imageScale"    : imageScale,
+            "layers"        : layers,
+            "dateRequested" : dateRequested,
+            "date"          : date,
+            "x1"            : x1,
+            "x2"            : x2,
+            "y1"            : y1,
+            "y2"            : y2,
+            "name"          : this._getName(layers)
+        }; 
 
         if (this._history.unshift(screenshot) > 12) {
             this._history = this._history.slice(0, 12);            
@@ -49,6 +56,38 @@ var ScreenshotManager = MediaManager.extend(
 
         this._save();
         return screenshot;
+    },
+    
+    /**
+     * Creates the name that will be displayed in the history.
+     * Groups layers together by detector, ex: 
+     * EIT 171/304, LASCO C2/C3
+     * Will crop names that are too long and append ellipses.
+     */
+    _getName: function (layerString) {
+        var layer, layerArray, currentInstrument, name = "";
+        
+        layerArray = layerStringToLayerArray(layerString).sort();
+        
+        $.each(layerArray, function (i, layer) {
+            layer = extractLayerName(this).slice(1);
+
+            if (layer[0] !== currentInstrument) {
+                currentInstrument = layer[0];
+                name += ", " + currentInstrument + " ";
+            } else {
+                name += "/";
+            }
+
+            // For LASCO include detector in name, otherwise include measurement
+            if (layer[0] === "LASCO") {
+                name += layer[1];
+            } else {
+                name += layer[2];
+            }
+        });
+        
+        return name.slice(2); // Get rid of the extra ", " at the front
     },
     
     /**
@@ -89,9 +128,7 @@ var ScreenshotManager = MediaManager.extend(
      * that for saving in UserSettings.
      */
     serialize: function () {
-        return $.map(this._history, function (item, i) {
-            return item.serialize();
-        });
+        return this._history;
     },
     
     /**
@@ -102,26 +139,9 @@ var ScreenshotManager = MediaManager.extend(
     },
     
     /**
-     * Takes in an array of history gotten from UserSettings and creates Screenshot objects from it.
-     * Slices the array down to 12 objects.
-     * 
-     * @input {Array} history An array of saved screenshot histories
-     */
-    _loadSavedScreenshots: function (screenshots) {
-        var self = this;
-        
-        $.each(screenshots, function (i, screenshot) {
-            self._history.push(new Screenshot(
-                screenshot.id, screenshot.imageScale, screenshot.layers, screenshot.dateRequested, 
-                screenshot.date, screenshot.x1, screenshot.x2, screenshot.y1, screenshot.y2
-            ));
-        });
-    },
-    
-    /**
      * Saves the current list of screenshots
      */
     _save: function () {
-        Helioviewer.userSettings.set("screenshots", this.serialize());
+        Helioviewer.userSettings.set("screenshots", this._history);
     }
 });
