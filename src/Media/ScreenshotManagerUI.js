@@ -53,21 +53,21 @@ var ScreenshotManagerUI = Class.extend(
      * Toggles the visibility of the screenshot manager
      */
     toggle: function () {
-        if (this._container.is(":visible")) {
-            this.hide();
-        } else {
-            this.show();
-        }
+        this._container.toggle();
     },
     
     /**
      * Adds a single screenshot entry to the history
      */
     _addScreenshot: function (screenshot) {
-        var id, html;
+        var id, html, name = screenshot.name;
+
+        if (name.length > 16) {
+            name = name.slice(0, 16) + "...";
+        }
         
         html = "<div id='" + screenshot.id + "' class='history-entry'>" +
-               "<div class='text-btn' style='float:left'>" + screenshot.name + 
+               "<div class='text-btn' style='float:left'>" + name + 
                "</div>" +
                "<div class='time-elapsed' style='float:right; font-size: 8pt; font-style:italic;'></div><br /><br />" +
                "</div>";
@@ -86,10 +86,8 @@ var ScreenshotManagerUI = Class.extend(
     /**
      * Displays a jGrowl notification to the user informing them that their download has completed
      */
-    _displayDownloadNotification: function (screenshot) {
-        var jGrowlOpts, id, link, self = this;
-        
-        id = screenshot.id;
+    _displayDownloadNotification: function (id) {
+        var jGrowlOpts, link, self = this;
         
         // Options for the jGrowl notification
         jGrowlOpts = {
@@ -99,15 +97,16 @@ var ScreenshotManagerUI = Class.extend(
                 self.hide();
 
                 // open callback now called before dom-nodes are added to screen so $.live used
-                $("#screenshot-" + id).live('click', function () {
-                    $(".jGrowl-notification .close").click();
-                    screenshot.download();
-                });
+//                $("#screenshot-" + id).live('click', function () {
+//                    $(".jGrowl-notification .close").click();
+//                    window.open('api/index.php?action=downloadScreenshot&id=' + id, '_parent');
+//                });
             }
         };
         
         // Download link
-        link = "<div id='screenshot-" + id + "' style='cursor: pointer'>Click here to download. </div>";
+        //link = "<div id='screenshot-" + id + "' style='cursor: pointer'>Click here to download. </div>";
+        link = "<a href='api/index.php?action=downloadScreenshot&id=" + id + "' target='_parent' style=''>Click here to download. </a>";
 
         // Create the jGrowl notification.
         $(document).trigger("message-console-info", [link, jGrowlOpts]);
@@ -196,7 +195,8 @@ var ScreenshotManagerUI = Class.extend(
      */
     _refresh: function () {
         $.each(this._screenshots.toArray(), function (i, screenshot) {
-            $("#" + screenshot.id).find(".time-elapsed").html(screenshot.dateRequested.getElapsedTime());
+            var elapsedTime = Date.parseUTCDate(screenshot.dateRequested).getElapsedTime()
+            $("#" + screenshot.id).find(".time-elapsed").html(elapsedTime);
         });
     },
     
@@ -258,11 +258,11 @@ var ScreenshotManagerUI = Class.extend(
             }
             
             screenshot = self._screenshots.add(
-                    response.id, params.imageScale, params.layers, params.dateRequested, params.date, 
-                    params.x1, params.x2, params.y1, params.y2
+                response.id, params.imageScale, params.layers, params.dateRequested, params.date, 
+                params.x1, params.x2, params.y1, params.y2
             );
             self._addScreenshot(screenshot);
-            self._displayDownloadNotification(screenshot);
+            self._displayDownloadNotification(screenshot.id);
         });
     },
     

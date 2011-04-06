@@ -1,5 +1,7 @@
 /**
  * @author Jaclyn Beck
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
+ * 
  * @fileoverview A class that deals with using the imgAreaSelect plugin, which allows the user to click and drag 
  *                 to select a subregion of the image in the viewport. 
  */
