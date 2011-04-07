@@ -174,6 +174,50 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                                 <div id="mouse-coords-x"></div>
                                 <div id="mouse-coords-y"></div>
                             </div>
+                            
+                            <!-- Screenshot Manager -->
+                            <div id='screenshot-manager-container' class='media-manager-container'>
+                                <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
+                                    <div id='screenshot-manager-full-viewport' class='text-btn'>
+                                        <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
+                                        <span style='line-height: 1.6em'>Full Viewport</span>
+                                    </div>
+                                    <div id='screenshot-manager-select-area' class='text-btn' style='float:right;'>
+                                        <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
+                                        <span style='line-height: 1.6em'>Select Area</span> 
+                                    </div>
+                                </div>
+                                <div id='screenshot-history-title' class='media-history-title'>
+                                    Screenshot History    
+                                    <div id='screenshot-clear-history-button' class='text-btn' style='float:right;'>
+                                        <span class='ui-icon ui-icon-trash' style='float:left;'></span>
+                                        <span style='font-weight:normal'><i>Clear</i></span>
+                                    </div> 
+                                </div>
+                                <div id='screenshot-history'></div>
+                            </div>
+                            <!-- Movie Manager -->
+                            <div id='movie-manager-container' class='media-manager-container'>
+                                <div id='movie-manager-build-btns' class='media-manager-build-btns'>
+                                    <div id='movie-manager-full-viewport' class='text-btn'>
+                                        <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
+                                        <span style='line-height: 1.6em'>Full Viewport</span>
+                                    </div>
+                                    <div id='movie-manager-select-area' class='text-btn' style='float:right;'>
+                                        <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
+                                        <span style='line-height: 1.6em'>Select Area</span> 
+                                    </div>
+                                </div>
+                                <div id='movie-history-title' class='media-history-title'>
+                                    movie History    
+                                    <div id='movie-clear-history-button' class='text-btn' style='float:right;'>
+                                        <span class='ui-icon ui-icon-trash' style='float:left;'></span>
+                                        <span style='font-weight:normal'><i>Clear</i></span>
+                                    </div> 
+                                </div>
+                                <div id='movie-history'></div>
+                            </div>
+
                             <!-- Image area select tool -->
                             <div id='image-area-select-buttons'>
                                 <div id='done-selecting-image' class='text-btn'>

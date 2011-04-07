@@ -48,13 +48,9 @@ var ScreenshotManager = MediaManager.extend(
             "y1"            : y1,
             "y2"            : y2,
             "name"          : this._getName(layers)
-        }; 
-
-        if (this._history.unshift(screenshot) > 12) {
-            this._history = this._history.slice(0, 12);            
         };
+        this._super(screenshot);
 
-        this._save();
         return screenshot;
     },
     

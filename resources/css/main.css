@@ -343,3 +343,31 @@ span.ui-icon-hover, div.ui-icon-hover {
 #image-area-select-buttons .ui-icon {
     float: left;
 }
+
+/* Screenshot and Movie Managers */
+.media-manager-container {
+    position: absolute;
+    top: 25px;
+    right: 20px;
+    width: 190px;
+    background: #2A2A2A;
+    font-size: 11px;
+    padding: 10px;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    color: white;
+    display: none;
+}
+
+.media-manager-build-btns {
+    height: 18px;
+}
+
+.media-history-title {
+    line-height:1.6em;
+    font-weight: bold;
+    padding: 9px 0px;
+    border-top: 1px solid;
+    display: none;
+    margin-top: 7px;
+}
