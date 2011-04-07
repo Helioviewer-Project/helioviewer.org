@@ -1,23 +1,23 @@
 /**
- * ScreenshotManagerUI class definition
+ * MovieManagerUI class definition
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global MediaManagerUI, ScreenshotManager, Helioviewer, $ */
+/*global $, MovieManager, MediaManagerUI, Helioviewer */
 "use strict";
-var ScreenshotManagerUI = MediaManagerUI.extend(
-    /** @lends ScreenshotManagerUI */
+var MovieManagerUI = MediaManagerUI.extend(
+    /** @lends MovieManagerUI */
     {
     /**
      * @constructs
-     * Creates a new ScreenshotManagerUI instance
+     * Creates a new MovieManagerUI instance
      * 
-     * @param {ScreenshotManager} model ScreenshotManager instance
+     * @param {MovieManager} model MovieManager instance
      */    
-    init: function () {
-        this._manager = new ScreenshotManager(Helioviewer.userSettings.get('screenshots'));
-        this._super("screenshot");
+    init: function (movieManager) {
+        this._manager = new MovieManager(Helioviewer.userSettings.get('movies'));;
+        this._super("movie");
 
         this._initEvents();
     },
@@ -31,22 +31,28 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         // Options for the jGrowl notification
         jGrowlOpts = {
             sticky: true,
-            header: "Your screenshot is ready!",
+            header: "Your movie is ready!",
             open:    function () {
                 self.hide();
+
+                // open callback now called before dom-nodes are added to screen so $.live used
+//                $("#movie-" + id).live('click', function () {
+//                    $(".jGrowl-notification .close").click();
+//                    window.open('api/index.php?action=downloadMovie&id=' + id, '_parent');
+//                });
             }
         };
         
         // Download link
-        link = "<a href='api/index.php?action=downloadScreenshot&id=" + id 
-             + "' target='_parent' style=''>Click here to download. </a>";
+        //link = "<div id='movie-" + id + "' style='cursor: pointer'>Click here to download. </div>";
+        link = "<a href='api/index.php?action=downloadMovie&id=" + id + "' target='_parent' style=''>Click here to download. </a>";
 
         // Create the jGrowl notification.
         $(document).trigger("message-console-info", [link, jGrowlOpts]);
     },
     
     /**
-     * Initializes ScreenshotManager-related event handlers
+     * Initializes MovieManager-related event handlers
      */
     _initEvents: function () {
         var self = this;
@@ -55,22 +61,22 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         
         this._fullViewportBtn.click(function () {
             self.hide();
-            self._takeScreenshot();
+            //self._takeMovie();
         });
         
         this._selectAreaBtn.click(function () {
             self.hide();
-            $(document).trigger("enable-select-tool", $.proxy(self._takeScreenshot, self));
+            //$(document).trigger("enable-select-tool", $.proxy(self._takeMovie, self));
         });
     },
 
     /**
-     * @description Gathers all necessary information to generate a screenshot, and then displays the
+     * @description Gathers all necessary information to generate a movie, and then displays the
      *              image when it is ready.
      * @param {Object} roi Region of interest to use in place of the current viewport roi
      */
-    _takeScreenshot: function (roi) {
-        var params, imageScale, layers, server, screenshot, self = this; 
+    _takeMovie: function (roi) {
+        var params, imageScale, layers, server, movie, self = this; 
         
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
@@ -85,7 +91,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         };
 
         params = $.extend({
-            action        : "takeScreenshot",
+            action        : "takeMovie",
             dateRequested : new Date().toISOString(),
             imageScale    : imageScale,
             layers        : layers,
@@ -102,34 +108,16 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
             if ((response === null) || response.error) {
-                $(document).trigger("message-console-info", "Unable to create screenshot. Please try again later.");
+                $(document).trigger("message-console-info", "Unable to create movie. Please try again later.");
                 return;
             }
             
-            screenshot = self._manager.add(
+            movie = self._manager.add(
                 response.id, params.imageScale, params.layers, params.dateRequested, params.date, 
                 params.x1, params.x2, params.y1, params.y2
             );
-            self._addItem(screenshot);
-            self._displayDownloadNotification(screenshot.id);
+            self._addItem(movie);
+            self._displayDownloadNotification(movie.id);
         });
-    },
-    
-    /**
-     * Validates the screenshot request and displays an error message if there is a problem
-     * 
-     * @return {Boolean} Returns true if the request is valid
-     */
-    _validateRequest: function (roi, layers) {
-        if (roi.bottom - roi.top < 50 || roi.right - roi.left < 50) {
-            $(document).trigger("message-console-warn", ["The area you have selected is too small to " +
-                    "create a screenshot. Please try again."]);
-            return false;
-        } else if (layers.length === 0) {
-            $(document).trigger("message-console-warn", ["You must have at least one layer in your " +
-                    "screenshot. Please try again."]);
-            return false;
-        }
-        return true;
     }
 });
