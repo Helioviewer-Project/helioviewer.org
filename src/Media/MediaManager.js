@@ -50,12 +50,23 @@ var MediaManager = Class.extend(
     },
     
     /**
-     * Removes all screenshots
+     * Adds an item
+     */
+    add: function (item) {
+        if (this._history.unshift(item) > 12) {
+            this._history = this._history.slice(0, 12);            
+        };
+
+        this._save();  
+    },
+    
+    /**
+     * Removes all items
      */
     empty: function () {
         var self = this;
 
-        $.each(this._history, function (i, screenshot) {
+        $.each(this._history, function (i, item) {
             self._history[i] = null;
         });
         
@@ -64,9 +75,9 @@ var MediaManager = Class.extend(
     },
     
     /**
-     * Removes a screenshot
+     * Removes a item
      * 
-     * @param {String} id Screenshot to be removed
+     * @param {String} id Item to be removed
      */
     remove: function (id) {
         var self = this;
@@ -91,7 +102,7 @@ var MediaManager = Class.extend(
     },
     
     /**
-     * Returns an array containing Screenshot objects for the screenshots currently being tracked
+     * Returns an array containing objects for the items currently being tracked
      */
     toArray: function () {
         return this._history;

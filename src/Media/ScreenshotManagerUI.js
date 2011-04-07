@@ -18,19 +18,16 @@ var ScreenshotManagerUI = Class.extend(
     init: function (model) {
         this._screenshots = model;
         
-        this._btn = $("#screenshot-button");
-        
-        this._container       = null;
-        this._history         = null;
-        this._buildBtns       = null;
-        this._fullViewportBtn = null;
-        this._selectAreaBtn   = null;
-        this._historyTitle    = null;
-        this._clearBtn        = null;
+        this._btn             = $("#screenshot-button");
+        this._container       = $("#screenshot-manager-container");
+        this._history         = $("#screenshot-history");
+        this._buildBtns       = $("#screenshot-manager-build-btns");
+        this._fullViewportBtn = $("#screenshot-manager-full-viewport");
+        this._selectAreaBtn   = $("#screenshot-manager-select-area");
+        this._historyTitle    = $("#screenshot-history-title");
+        this._clearBtn        = $("#screenshot-clear-history-button");
 
-        this._initUI();
         this._initEvents();
-        
         this._loadScreenshots();
     },
     
@@ -148,41 +145,7 @@ var ScreenshotManagerUI = Class.extend(
             self._screenshots.empty();
         });
     },
-    
-    /**
-     * Initializes the ScreenshotManager user interface
-     */
-    _initUI: function () {
-        var html = "<div id='screenshot-manager-container' style='position: absolute; top: 25px; right: 20px; width: 190px; background: #2A2A2A; font-size: 11px; padding: 10px; -moz-border-radius:5px; color: white; display: none;'>" +
-                   "<div id='screenshot-manager-build-btns' style='height: 18px;'>" +
-                   "<div id='screenshot-manager-full-viewport' class='text-btn'>" +
-                       "<span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>" +
-                       "<span style='line-height: 1.6em'>Full Viewport</span>" +
-                   "</div>" +
-                   "<div id='screenshot-manager-select-area' class='text-btn' style='float:right;'>" +
-                       "<span class='ui-icon ui-icon-scissors' style='float:left;'></span>" +
-                       "<span style='line-height: 1.6em'>Select Area</span>" + 
-                   "</div></div>" +
-                   "<div id='screenshot-history-title' style='line-height:1.6em; font-weight: bold; padding: 9px 0px; border-top: 1px solid; display: none; margin-top: 7px;'>" +
-                       "Screenshot History" + 
-                       "<div id='screenshot-clear-history-button' class='text-btn' style='float:right;'>" +
-                           "<span class='ui-icon ui-icon-trash' style='float:left;' />" +
-                           "<span style='font-weight:normal'><i>Clear</i></span>" +
-                       "</div>" + 
-                   "</div>" +
-                   "<div id='screenshot-history'></div>"
-                   "</div>";
-        
-        this._container = $(html).appendTo("#helioviewer-viewport-container-inner");
-        this._history   = $("#screenshot-history");
 
-        this._buildBtns       = $("#screenshot-manager-build-btns");
-        this._fullViewportBtn = $("#screenshot-manager-full-viewport");
-        this._selectAreaBtn   = $("#screenshot-manager-select-area");
-        this._historyTitle    = $("#screenshot-history-title");
-        this._clearBtn        = $("#screenshot-clear-history-button");
-    },
-    
     /**
      * Creates HTML for screenshot history entries
      */
