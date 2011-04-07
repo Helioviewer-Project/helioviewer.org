@@ -472,7 +472,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                     "Tiling/Layer/HelioviewerTileLayer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js",  
                     "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", "Events/EventManager.js", 
                     "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
-                    "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js",
+                    "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js", "Media/MediaManagerUI.js",
                     "Media/MediaManager.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",   
                     "UI/MessageConsole.js", "Media/Screenshot.js",  
                     "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js",  
