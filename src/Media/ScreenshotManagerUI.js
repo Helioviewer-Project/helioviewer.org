@@ -53,7 +53,11 @@ var ScreenshotManagerUI = Class.extend(
      * Toggles the visibility of the screenshot manager
      */
     toggle: function () {
-        this._container.toggle();
+        if (this._container.is(":visible")) {
+            this.hide();
+        } else {
+            this.show();
+        }
     },
     
     /**

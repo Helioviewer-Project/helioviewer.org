@@ -18,99 +18,67 @@ var MediaManager = Class.extend(
     },
     
     /**
-     * Adds an item to the history array and slices the array down to 12 items. Oldest items are chopped off
-     * in favor of new items.
-     * 
-     * @input {Object} item Either a Screenshot or Movie object.
+     * Creates the name that will be displayed in the history.
+     * Groups layers together by detector, ex: 
+     * EIT 171/304, LASCO C2/C3
+     * Will crop names that are too long and append ellipses.
      */
-    addToHistory: function (item) {
-        this.history.push(item);
-        this.history = this.history.reverse().slice(0, 12).reverse();
+    _getName: function (layerString) {
+        var layer, layerArray, currentInstrument, name = "";
         
-        //this.updateTooltips();
-    },
-
-    /**
-     * Empties history.
-     */
-    clear: function () {
-        //this.removeTooltips();
-        this.history = [];
-    },
-    
-    /**
-     * Removes an item from history.
-     */
-    remove: function (item) {
-        //this.removeTooltips();
-        this.history = $.grep(this.history, function (h) {
-            return h.id !== item.id;
-        });
-
-//            if ((this.history.length === 0) && this.historyBar) {
-//                this.historyBar.clearHistory();
-//            } else {
-//                this.updateTooltips();
-//            }
-//            this.save();
-    },    
-    
-    /**
-     * Iterates through its history and tells each object to remove its
-     * information tooltip in preparation to make a new one. 
-     */
-//        removeTooltips: function () {
-//            $.each(this.history, function () {
-//                this.removeTooltip();
-//            });
-//        },
-    
-    /**
-     * 
-     */
-    setup: function () {
-        var content = this._createContentString();
-        this.historyBar = new MediaHistoryBar(this.id, content);
+        layerArray = layerStringToLayerArray(layerString).sort();
         
-        $(document).bind('setup-' + this.id + '-history-tooltips', $.proxy(this.setupTooltips, this));
-        $(document).bind('clear-' + this.id + '-history', $.proxy(this.clear, this));
-    },
-    
-    /**
-     * Iterates through its history and tells each object to create its
-     * information tooltip.
-     */
-    setupTooltips: function () {
-        $.each(this.history, function () {
-            this.setupTooltip();
-        });
-    },
-    
-    /**
-     * Update tooltips
-     */
-    updateTooltips: function () {
-        this.removeTooltips();
-        if (this.historyBar) {
-            var content = this._createContentString();
-            this.historyBar.addToHistory(content);
-        }
-    },
-    
-    /**
-     * Adds divs for all history items including a text link and time ago.
-     * Adds the items in reverse chronological order. 
-     */
-    _createContentString: function () {
-        var self = this, content = "";
-    
-        if (this.history.length > 0) {
-            $.each(this.history, function () {
-                content = self._addToContentString(this) + content;
-            });
-        }
+        $.each(layerArray, function (i, layer) {
+            layer = extractLayerName(this).slice(1);
 
-        return content;
+            if (layer[0] !== currentInstrument) {
+                currentInstrument = layer[0];
+                name += ", " + currentInstrument + " ";
+            } else {
+                name += "/";
+            }
+
+            // For LASCO include detector in name, otherwise include measurement
+            if (layer[0] === "LASCO") {
+                name += layer[1];
+            } else {
+                name += layer[2];
+            }
+        });
+        
+        return name.slice(2); // Get rid of the extra ", " at the front
+    },
+    
+    /**
+     * Removes all screenshots
+     */
+    empty: function () {
+        var self = this;
+
+        $.each(this._history, function (i, screenshot) {
+            self._history[i] = null;
+        });
+        
+        self._history = [];
+        self._save();
+    },
+    
+    /**
+     * Removes a screenshot
+     * 
+     * @param {String} id Screenshot to be removed
+     */
+    remove: function (id) {
+        var self = this;
+
+        $.each(this._history, function (i, item) {
+            if (item.id === id) {
+                self._history[i] = null;
+                self._history.splice(i, 1);
+                self._save();
+                return;
+            }
+        });
     },
     
     /**
@@ -118,11 +86,14 @@ var MediaManager = Class.extend(
      * information that needs to be saved. Adds it to serialHistory and returns
      * that for saving in UserSettings.
      */
-    _serialize: function () {
-        var serialHistory = [];
-        $.each(this.history, function () {
-            serialHistory.push(this.serialize());
-        });
-        return serialHistory;
+    serialize: function () {
+        return this._history;
+    },
+    
+    /**
+     * Returns an array containing Screenshot objects for the screenshots currently being tracked
+     */
+    toArray: function () {
+        return this._history;
     }
 });
