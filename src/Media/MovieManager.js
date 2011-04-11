@@ -39,13 +39,12 @@ var MovieManager = MediaManager.extend(
      * @param {Float}   y2            Bottom-right corner y-coordinate
      * @param {Int}     width         Movie width
      * @param {Int}     height        Movie height
-     * @param {Bool}    ready         Whether or not the movie has finished processing
      * 
      * @return {Movie} A Movie object
      */
     add: function (
             id, duration, imageScale, layers, dateRequested, startDate, endDate, 
-            frameRate, numFrames, x1, x2, y1, y2, width, height, ready
+            frameRate, numFrames, x1, x2, y1, y2, width, height
     ) {
         var movie = {
             "id"            : id,
@@ -63,11 +62,51 @@ var MovieManager = MediaManager.extend(
             "y2"            : y2,
             "width"         : width,
             "height"        : height,
-            "status"        : status,
+            "ready"         : true,
             "name"          : this._getName(layers)
         }; 
         this._super(movie);
         return screenshot;
+    },
+    
+    /**
+     * Adds a movie that is currently being processed
+     * 
+     * @param {Int}     id            Movie id
+     * @param {Float}   imageScale    Image scale for the movie
+     * @param {String}  layers        Layers in the movie serialized as a string
+     * @param {String}  dateRequested Date string for when the movie was requested
+     * @param {String}  startDate     Observation date associated with the first movie frame
+     * @param {String}  endDate       Observation date associated with the last movie frame
+     * @param {Float}   x1            Top-left corner x-coordinate
+     * @param {Float}   y1            Top-left corner y-coordinate
+     * @param {Float}   x2            Bottom-right corner x-coordinate
+     * @param {Float}   y2            Bottom-right corner y-coordinate
+     * 
+     * @return {Movie} A Movie object
+     */
+    queue: function (id, imageScale, layers, dateRequested, startDate, endDate, x1, x2, y1, y2) {
+        var movie = {
+            "id"            : id,
+            "imageScale"    : imageScale,
+            "layers"        : layers,
+            "dateRequested" : dateRequested,
+            "startDate"     : startDate,
+            "endDate"       : endDate,
+            "x1"            : x1,
+            "x2"            : x2,
+            "y1"            : y1,
+            "y2"            : y2,
+            "ready"         : false,
+            "name"          : this._getName(layers)
+        };
+
+        if (this._history.unshift(item) > 12) {
+            this._history = this._history.slice(0, 12);            
+        };
+
+        this._save();  
+        return movie;
     },
     
     /**

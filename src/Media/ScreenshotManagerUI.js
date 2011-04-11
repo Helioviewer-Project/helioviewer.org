@@ -86,7 +86,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
 
         params = $.extend({
             action        : "takeScreenshot",
-            dateRequested : new Date().toISOString(),
             imageScale    : imageScale,
             layers        : layers,
             date          : helioviewer.getDate().toISOString(),
@@ -107,29 +106,11 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             }
             
             screenshot = self._manager.add(
-                response.id, params.imageScale, params.layers, params.dateRequested, params.date, 
+                response.id, params.imageScale, params.layers, new Date().toISOString(), params.date, 
                 params.x1, params.x2, params.y1, params.y2
             );
             self._addItem(screenshot);
             self._displayDownloadNotification(screenshot.id);
         });
-    },
-    
-    /**
-     * Validates the screenshot request and displays an error message if there is a problem
-     * 
-     * @return {Boolean} Returns true if the request is valid
-     */
-    _validateRequest: function (roi, layers) {
-        if (roi.bottom - roi.top < 50 || roi.right - roi.left < 50) {
-            $(document).trigger("message-console-warn", ["The area you have selected is too small to " +
-                    "create a screenshot. Please try again."]);
-            return false;
-        } else if (layers.length === 0) {
-            $(document).trigger("message-console-warn", ["You must have at least one layer in your " +
-                    "screenshot. Please try again."]);
-            return false;
-        }
-        return true;
     }
 });
