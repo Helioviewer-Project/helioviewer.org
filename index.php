@@ -474,7 +474,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                     "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
                     "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js", "Media/MediaManagerUI.js",
                     "Media/MediaManager.js", "Media/MovieManager.js", "Media/MovieManagerUI.js",
-                    "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js", "Media/Screenshot.js",  
+                    "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
                     "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
                     "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                     "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 

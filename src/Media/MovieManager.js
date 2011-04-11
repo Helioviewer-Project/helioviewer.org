@@ -103,7 +103,7 @@ var MovieManager = MediaManager.extend(
             "name"          : this._getName(layers)
         };
 
-        if (this._history.unshift(item) > 12) {
+        if (this._history.unshift(movie) > 12) {
             this._history = this._history.slice(0, 12);            
         };
 

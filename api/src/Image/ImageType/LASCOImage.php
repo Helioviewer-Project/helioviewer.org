@@ -49,11 +49,13 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
         } else if ($det == "C3") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Blue_White_Linear.png";
         }
-        
+
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }
         
+        $filepath = substr($filepath, 0, -3) . "png";
+
         parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
