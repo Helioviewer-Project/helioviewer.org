@@ -152,8 +152,10 @@ var MediaManagerUI = Class.extend(
 
         // Hide all jGrow notifications when opening the media manager
         this._btn.click(function () {
-           self.toggle();
-           $(".jGrowl-notification .close").click();
+            if (!self.working) {
+                self.toggle();
+                $(".jGrowl-notification .close").click();
+            }
         });
         
         // Clear buttons removes all saved items
