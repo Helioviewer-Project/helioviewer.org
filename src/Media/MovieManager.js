@@ -19,6 +19,7 @@ var MovieManager = MediaManager.extend(
      */    
     init: function (movies) {
         this._history = movies;
+        this.format   = $.support.vp8 ? "webm" : "mp4";
     },
     
     /**
@@ -66,7 +67,8 @@ var MovieManager = MediaManager.extend(
             "name"          : this._getName(layers)
         }; 
         this._super(movie);
-        return screenshot;
+
+        return movie;
     },
     
     /**
@@ -107,6 +109,67 @@ var MovieManager = MediaManager.extend(
 
         this._save();  
         return movie;
+    },
+    
+    /**
+     * Updates stored information for a given movie and notify user that movie is available
+     * 
+     * @param {Int}     id            Movie id
+     * @param {Float}   duration      Movie duration in seconds
+     * @param {Float}   frameRate     Movie frame-rate in frames/sec
+     * @param {Int}     numFrames     Total number of frames in the movie
+     * @param {Int}     width         Movie width
+     * @param {Int}     height        Movie height
+     */
+    update: function (id, duration, frameRate, numFrames, width, height) {
+        var index = null;
+
+        // Find the index in the history array
+        $.each(this._history, function (i, item) {
+            if (item.id == id) {
+                index = i;
+            }
+        });
+        
+        // Add the new values
+        $.merge(this._history[index], {
+            "duration" : duration,
+            "frameRate": frameRate,
+            "numFrames": numFrames,
+            "width"    : width,
+            "height"   : height,
+            "ready"    : true
+        });
+        
+        // Notify user
+        $(document).trigger("message-console-info", "Your movie is ready!");
+    },
+    
+    /**
+     * Monitors a queued movie and notifies the user when it becomes available
+     */
+    _monitorQueuedMovie: function (id, eta)
+    {
+        var queryMovieStatus, self = this;
+
+        queryMovieStatus = function () {
+            callback = function (response) {
+                if (response.status !== "FINISHED") {
+                    self._monitorQueuedMovie(id, response.eta);                    
+                }  else {
+                    self.update(id, response.duration, response.frameRate, response.numFrames,
+                                response.width, response.height);
+                }
+            };
+            
+            params = {
+                "action" : "getMovie", 
+                "id"     : movie.id,
+                "format" : self.format
+            };
+            $.get("api/index.php", params, callback, "json");
+        };
+        setTimeout(queryMovieStatus, Math.max(eta, 15) * 1000);
     },
     
     /**

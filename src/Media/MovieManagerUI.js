@@ -18,9 +18,6 @@ var MovieManagerUI = MediaManagerUI.extend(
     init: function (movieManager) {
         this._manager = new MovieManager(Helioviewer.userSettings.get('movies'));;
         this._super("movie");
-        
-        this._format = $.support.vp8 ? "webm" : "mp4";
-
         this._initEvents();
     },
     
@@ -54,59 +51,30 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
-     * Initializes MovieManager-related event handlers
-     */
-    _initEvents: function () {
-        var self = this;
-       
-        this._super();
-        
-        this._fullViewportBtn.click(function () {
-            self.hide();
-            self._buildMovie();
-        });
-        
-        this._selectAreaBtn.click(function () {
-            self.hide();
-            //$(document).trigger("enable-select-tool", $.proxy(self._takeMovie, self));
-        });
-    },
-
-    /**
      * Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.
      * Upon completion, it displays a notification that lets the user click to view it in a popup. 
      */
     _buildMovie: function (roi) {
-        var options, params, currentTime, now, diff, arcsecCoords, realVPSize, vpHeight, coordinates, movieHeight, 
-            movie, movieLength, url, self = this;
+        var params, imageScale, layers, roi, currentTime, now, diff, movieLength, self = this;
 
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
         }
 
         imageScale = helioviewer.getImageScale();
-        layers     = helioviewer.getLayers();
-        
+        layers = helioviewer.getLayers();
+
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
             return;
         };
 
-        // If more than three layers are currently loaded prompt the user to pick the layers they wish to include
-        if (layers.length > 3) {
-            this.promptForLayers(layers);
-            return;
-        }    
-
         this.building = true;
-        this.button.addClass("working");
 
-
-        
         movieLength = Helioviewer.userSettings.get("movieLength");
         
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
-        currentTime = new Date(getUTCTimestamp(viewportInfo.time));
+        currentTime = helioviewer.getDate();
         
         // We want shift start and end time if needed to ensure that entire
         // duration will be used. For now, we will assume that the most
@@ -122,7 +90,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             layers        : layers,
             startTime     : currentTime.addSeconds(-movieLength / 2).toISOString(),
             endTime       : currentTime.addSeconds(movieLength).toISOString(),
-            format        : this._format
+            format        : this._manager.format
         }, this._toArcsecCoords(roi, imageScale));
         
         // AJAX Responder
@@ -132,7 +100,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 return;
             }
 
-            movie = self._manager.add(
+            var movie = self._manager.queue(
                 response.id, params.imageScale, params.layers, new Date().toISOString(), params.startTime,
                 params.endTime, params.x1, params.x2, params.y1, params.y2
             );
@@ -140,116 +108,42 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
 
         this.hideDialogs();
-        this.button.removeClass("working");
         this.building = false;
     },
     
     /**
-     * Creates a table that will pop up if too many layers are requested.
-     * The table looks approximately like this:
-     * <checkbox>Layername
-     * <checkbox>Layername
-     * ...
-     * <okButton>
+     * Initializes MovieManager-related event handlers
      */
-    createLayerSelectionTable: function (layers) {
-        var table, rawName, name, layerNum, checked;
-        table = 'Please select at most 3 layers from the choices below for the movie: <br /><br />' +
-                '<table id="layers-table">';
-        
-        // Get a user-friendly name for each layer. each layer in "layers" is a string: 
-        // "obs,inst,det,meas,visible,opacity". Cut off visible and opacity and get rid of
-        // square brackets.
-        layerNum = 1;
-        $.each(layers, function () {
-            rawName = extractLayerName(this);
-            name = rawName.join(" ");
-            // Only check the first 3 layers by default.
-            checked = layerNum < 4 ? 'checked=true' : "";
-
-            table +=    '<tr>' +
-                            '<td class="layers-checkbox"><input type=checkbox name="layers" ' + 
-                                checked + ' value="[' + this + ']"/></td>' +
-                            '<td class="layers-name">' + name + '</td>' + 
-                        '</tr>';
-            layerNum += 1;
-        });
-        
-        table +=    '</table>' + 
-                    '<div id="buttons" style="text-align: left; float: right;">' +
-                        '<button id="ok-button" class="ui-button ui-widget ui-state-default ' +
-                        'ui-corner-all ui-button-text-only">OK</button>' +
-                    '</div>';
-
-        return table;
-    },
-    
-    /**
-     * Checks to see if the user has picked 3 or fewer layers and will make a movie if they have.
-     * If not, does nothing and warns the user to pick 1-3 layers.
-     */
-    finalizeLayersAndBuild: function (viewportInfo) {
-        var checkboxes, finalLayers = [], msg;
-        checkboxes = $('td.layers-checkbox');
-    
-        // checkboxes is an array of each <td.layers-checkbox> that exists in the table
-        // this.firstChild is an <input type=checkbox> and is used to get the value.
-        $.each(checkboxes, function () {
-            // If the checkbox is selected, add that layer.
-            if (this.firstChild.checked) {
-                finalLayers.push(this.firstChild.value);
-            }
-        });
-
-        // Set the new layers in viewportInfo and build the movie.
-        if (finalLayers.length <= 3 && finalLayers.length >= 1) {
-            viewportInfo.layers = finalLayers.join(",");
-            this.buildMovie(viewportInfo);
-            $("#layer-choice-dialog").dialog("close");
-        }
-
-        // If the user still hasn't entered a valid number of layers, 
-        // keep the prompt open and warn them
-        else {
-            // clear out finalLayers and try again
-            finalLayers = [];
-            msg = "Please select between 1 and 3 layers.";
-            $(document).trigger("message-console-log", [msg]);
-        }
-    },
-    
-    /**
-     * Opens a dialog and prompts the user to pick only 3 layers.
-     */
-    promptForLayers: function (viewportInfo, layers) {
+    _initEvents: function () {
         var self = this;
+       
+        this._super();
         
-        $("#layer-choice-dialog").dialog({
-            dialogClass: 'helioviewer-layer-choice-dialog',
-            width:     450,
-            // Adjust height depending on how much space the text takes up (roughly 20 pixels per 
-            // layer name, and a base height of 160)
-            height: 160 + layers.length * 20,
-            open: function (e) {
-                // Put a table of possible layers + check boxes in dialog.
-                $('.ui-widget-overlay').hide().fadeIn();
-                $(this).html(self.createLayerSelectionTable(layers));
-                $("#ok-button").hover(function (e) {
-                    $(this).addClass('ui-state-hover').removeClass('ui-state-default');
-                },
-                function (e) {
-                    $(this).removeClass('ui-state-hover').addClass('ui-state-default');
-                });
-            },
-            modal: true,
-            title: "Layer selection",
-            resizable: false,
-            close: function () {
-                // Set up event handler for the button
-                $('#ok-button').click(function () {
-                    self.finalizeLayersAndBuild(viewportInfo);
-                });
-            }
+        this._fullViewportBtn.click(function () {
+            self.hide();
+            self._buildMovie();
         });
+        
+        this._selectAreaBtn.click(function () {
+            self.hide();
+            $(document).trigger("enable-select-tool", $.proxy(self._buildMovie, self));
+        });
+    },
+    
+    /**
+     * Validates the request and returns false if any of the requirements are not met
+     */
+    _validateRequest: function (roi, layerString) {
+        var visibleLayers = $.grep(layerStringToLayerArray(layerString), function (layer, i) {
+            var parts=layer.split(",");
+            return (parts[4] === "1" && parts[5] !== "0");
+        });
+
+        if (visibleLayers.length > 3) {
+            $(document).trigger("message-console-warn", ["Movies cannot have more than three layers. " +
+        		"Please hide/remove layers until there are no more than three layers visible."]);
+            return false;
+        }
+        return this._super(roi, layerString);
     }
 });
