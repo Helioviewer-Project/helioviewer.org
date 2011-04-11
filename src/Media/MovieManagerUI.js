@@ -107,7 +107,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             self._addItem(movie);
         });
 
-        this.hideDialogs();
+        //this.hideDialogs();
         this.building = false;
     },
     
