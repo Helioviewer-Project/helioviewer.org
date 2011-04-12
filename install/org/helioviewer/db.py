@@ -131,7 +131,19 @@ def createSourceTable(cursor):
         (16, 'AIA 1700', 'SDO AIA 1700',  2, 4, 5, 10, 1, 0),
         (17, 'AIA 4500', 'SDO AIA 4500',  2, 4, 5, 11, 1, 0),
         (18, 'HMI Int', 'SDO HMI Int', 2, 5, 6, 12, 1, 0),
-        (19, 'HMI Mag', 'SDO HMI Mag', 2, 5, 6, 13, 1, 0);
+        (19, 'HMI Mag', 'SDO HMI Mag', 2, 5, 6, 13, 1, 0),
+        (20, 'EUVI 171', 'STEREO A EUVI 171', 3, 6, 7, 2, 1, 0),
+        (21, 'EUVI 195', 'STEREO A EUVI 195', 3, 6, 7, 4, 1, 0),
+        (22, 'EUVI 284', 'STEREO A EUVI 284', 3, 6, 7, 6, 1, 0),
+        (23, 'EUVI 304', 'STEREO A EUVI 304', 3, 6, 7, 7, 1, 0),
+        (24, 'EUVI 171', 'STEREO B EUVI 171', 4, 6, 7, 2, 1, 0),
+        (25, 'EUVI 195', 'STEREO B EUVI 195', 4, 6, 7, 4, 1, 0),
+        (26, 'EUVI 284', 'STEREO B EUVI 284', 4, 6, 7, 6, 1, 0),
+        (27, 'EUVI 304', 'STEREO B EUVI 304', 4, 6, 7, 7, 1, 0),
+        (28, 'COR1', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
+        (29, 'COR2', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
+        (30, 'COR1', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
+        (31, 'COR2', 'STEREO B COR2', 4, 6, 9, 14, 3, 0);
     ''')
 
 def createObservatoryTable(cursor):
@@ -149,7 +161,9 @@ def createObservatoryTable(cursor):
     INSERT INTO `observatories` VALUES
         (0, 'SOHO', 'Solar and Heliospheric Observatory'),
         (1, 'TRACE', 'The Transition Region and Coronal Explorer'),
-        (2, 'SDO', 'Solar Dynamics Observatory');        
+        (2, 'SDO', 'Solar Dynamics Observatory'),
+        (3, 'STEREO_A', 'Solar Terrestrial Relations Observatory Ahead'),
+        (4, 'STEREO_B', 'Solar Terrestrial Relations Observatory Behind');
     ''')
 
 def createInstrumentTable(cursor):
@@ -165,12 +179,13 @@ def createInstrumentTable(cursor):
 
     cursor.execute('''
     INSERT INTO `instruments` VALUES
-        (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
-        (1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
-        (2, 'MDI',   'Michelson Doppler Imager'),
-        (3, 'TRACE', 'The Transition Region and Coronal Explorer'),
-        (4, 'AIA',   'Atmospheric Imaging Assembly'),
-        (5, 'HMI',   'Helioseismic and Magnetic Imager');
+        (0, 'EIT',    'Extreme ultraviolet Imaging Telescope'),
+        (1, 'LASCO',  'The Large Angle Spectrometric Coronagraph'),
+        (2, 'MDI',    'Michelson Doppler Imager'),
+        (3, 'TRACE',  'The Transition Region and Coronal Explorer'),
+        (4, 'AIA',    'Atmospheric Imaging Assembly'),
+        (5, 'HMI',    'Helioseismic and Magnetic Imager'),
+        (6, 'SECCHI', 'Sun Earth Connection Coronal and Heliospheric Investigation');
     ''')
 
 
@@ -188,13 +203,16 @@ def createDetectorTable(cursor):
 
     cursor.execute('''
     INSERT INTO `detectors` VALUES
-        (0, 'EIT',   'EIT'),
-        (1, 'C2',    'LASCO C2'),
-        (2, 'C3',    'LASCO C3'),
-        (3, 'MDI',   'MDI'),
-        (4, 'TRACE', 'TRACE'),
-        (5, 'AIA',   'AIA'),
-        (6, 'HMI',   'HMI');
+        (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
+        (1, 'C2',    'Coronograph 2'),
+        (2, 'C3',    'Coronograph 3'),
+        (3, 'MDI',   'Michelson Doppler Imager'),
+        (4, 'TRACE', 'The Transition Region and Coronal Explorer'),
+        (5, 'AIA',   'Atmospheric Imaging Assembly'),
+        (6, 'HMI',   'Helioseismic and Magnetic Imager'),
+        (7, 'EUVI',  'Extreme Ultraviolet Imager'),
+        (8, 'COR1',  'Coronograph 1'),
+        (9, 'COR2',  'Coronograph 2');
     ''')
 
 
