@@ -26,8 +26,6 @@ def traverseDirectory (path):
 def extractJP2MetaInfo (img):
     ''' Extracts useful meta-information from a given JP2 image and
         returns a dictionary of that information.'''
-    # TODO: (2009/08/18)
-    # Create a method to try and sniff the dataSource type before processing? Or do lazily?
 
     # Get XMLBox as DOM
     try:
@@ -35,138 +33,124 @@ def extractJP2MetaInfo (img):
         fits = dom.getElementsByTagName("fits")[0]
     except:
         print "Error retrieving JP2 XML Box."
+        
+    # Detect image type and fetch require meta information
+    telescop = getElementValue(fits, "TELESCOP")
+    detector = getElementValue(fits, "DETECTOR")
+    instrumu = getElementValue(fits, "INSTRUME")
     
-    # Meta info (TODO 2009/08/25: support requests to both XML-Box & FITS header, e.g. using pyfits)
-    meta = {
-        "date"       : getObservationDate(fits),
-        "observatory": getObservatory(fits),
-        "instrument" : getInstrument(fits),
-        "detector"   : getDetector(fits),
-        "measurement": getMeasurement(fits)
-    }
+    if telescop == 'SDO/AIA':
+        datatype = "aia"
+    elif telescop == 'SDO/HMI':
+        datatype = "hmi"
+    elif detector == 'EUVI':
+        datetype = "euvi"
+    elif (detector == 'COR1') or (detector == 'COR2'):
+        datatype = "cor"
+    elif instrumu == 'EIT':
+        datatype = "eit"
+    elif instrumu == 'LASCO':
+        datatype = "lasco"
+    elif instrumu == 'MDI':
+        datatype = "mdi"
+        
+    return _get_header_tags(fits, datatype)
+
+def _get_header_tags(fits, type_):
+    """Returns a normalized dictionary of header values
     
-    return meta
-
-def getObservationDate(dom):
-    ''' Attempts to retrieve the observation date from the image meta-information '''
-    try:
-        # LASCO (yyyy-mm-dd + hh:mm:ss.mmm)
-        t = getElementValue(dom, "TIME_OBS")
-    except:
-        try:
-            # AIA/EIT/MDI (yyyy-mm-ddThh:mm:ss.mmm[Z])
-            d = getElementValue(dom, "DATE_OBS")
-        except:
-            print "Unable to find image date... (Not AIA, EIT, MDI, or LASCO)"
-        else:
-            # Convert date strings to the form yyyy-mm-ddThh:mm:ss.mmmmmmZ
-            [lhs, rhs] = d.split('.')
-
-            # Python uses microseconds (See: http://bugs.python.org/issue1982)
-            secondsFraction = rhs.strip('Z').ljust(6, "0")
+    A normalized mapping of important header values is created and returned.
+    Not all of the header values are used, but instead only those that are
+    required for the Map class to function are included. Note that some values
+    may be cast to new types in the process.
+    
+    Parameters
+    ----------
+    fits : dict
+        A dictionary container the header keywords from the file being read in
+    type_ : str
+        A short string describing the type of data being mapped
+    
+    Returns
+    -------
+    out : dict
+        A new mapped dictionary of useful header values
+    """
+    date_fmt1 = "%Y-%m-%dT%H:%M:%S.%f"
+    date_fmt2 = "%Y-%m-%dT%H:%M:%S.%fZ"
+    
+    if type_ == "aia":
+        return {
+            "date": datetime.strptime(
+                getElementValue(fits, "DATE-OBS"), date_fmt1),
+            "detector": "AIA",
+            "instrument": "AIA",
+            "measurement": getElementValue(fits, "WAVELNTH"),
+            "observatory": "SDO"
+        }
+    elif type_ == "hmi":
+        return {
+            "date": datetime.strptime(
+                getElementValue(fits, "DATE-OBS"), date_fmt1),
+            "detector": "HMI",
+            "instrument": "HMI",
+            "measurement": getElementValue(fits, "CONTENT").lower(),
+            "observatory": "SDO"
+        }
+    elif type_ == "euvi":
+        return {
+            "date": datetime.strptime(
+                getElementValue(fits, "DATE_OBS"), date_fmt1),
+            "detector": "EUVI",
+            "instrument": "SECCHI",
+            "measurement": getElementValue(fits, "WAVELNTH"),
+            "observatory": getElementValue(fits, "OBSRVTRY)
+        }
+    elif type_ == "cor":
+        return {
+            "date": datetime.strptime(
+                getElementValue(fits, "DATE_OBS"), date_fmt1),
+            "detector": getElementValue(fits, "DETECTOR"),
+            "instrument": "SECCHI",
+            "measurement": getElementValue(fits, "WAVELNTH"),
+            "observatory": getElementValue(fits, "OBSRVTRY)
+        }
+    elif type_ == "eit":
+        return {
+            "date": datetime.strptime(
+                getElementValue(fits, "DATE-OBS"), date_fmt1),
+            "detector": "EIT",
+            "instrument": "EIT",
+            "measurement": getElementValue(fits, "WAVELNTH"),
+            "observatory": "SOHO"
+        }
+    elif type_ == "lasco":
+        datestr = "%sT%s" % (getElementValue(fits, "DATE_OBS"), getElementValue(fits, "TIME_OBS"))
+        return {
+            "date": datetime.strptime(datestr, date_fmt1),
+            "detector": getElementValue(fits, "DETECTOR"),
+            "instrument": "LASCO",
+            "measurement": getElementValue(fits, "WAVELNTH"),
+            "observatory": "SOHO"
+        }
+    elif type_ == "mdi":
+        datestr = getElementValue(fits, "DATE_OBS")
             
-            datestring = "%s.%sZ" % (lhs, secondsFraction)
-            
-            # work-around (MDI sometimes has an "60" in seconds field)
-            if datestring[17:19] == "60":
-                datestring = datestring[:17] + "30" + datestring[19:]
-
-            #date = datetime.strptime(datestring, "%Y-%m-%dT%H:%M:%S.%fZ")
-            date = parseISODate(datestring)
-    else:
-        d = getElementValue(dom, "DATE_OBS")
-        datestring = "%sT%s000Z" % (d, t)
-        #date = datetime.strptime(datestring, "%Y/%m/%dT%H:%M:%S.%fZ")
-        date = parseISODate(datestring)
+        # MDI sometimes has an "60" in seconds field
+        if datestr[17:19] == "60":
+            datestr = datestr[:17] + "30" + datestr[19:]
         
-    return date        
-    
-def getObservatory(dom):
-    ''' Attempts to retrieve the observatory name from the image meta-information '''
-    try:
-        # SOHO
-        obs = getElementValue(dom, "TELESCOP")
+        # Measurement
+        dpcobsr = getElementValue(fits, "DPC_OBSR")
+        meas = "Magnetogram" if dpcobsr.find('Mag') != -1 else "Continuum"
         
-        # SDO
-        if obs[0:3] == "SDO":
-            obs = "SDO"
-    except:
-        print "Observatory not found."
-        
-    return obs
-    
-def getInstrument(dom):
-    ''' Attempts to retrieve the instrument name from the image meta-information '''
-    try:
-        #SOHO (LASCO,MDI,EIT)
-        inst = getElementValue(dom, "INSTRUME")
-        
-        #SDO (AIA,HMI)
-        if inst[0:3] == "AIA":
-            inst = "AIA"
-        elif inst[0:3] == "HMI":
-            inst = "HMI"
-    except:
-        print "Instrument not found."
-    
-    return inst
-    
-def getDetector(dom):
-    ''' Attempts to retrieve the detector name from the image meta-information '''
-    try:
-        #LASCO
-        det = getElementValue(dom, "DETECTOR")
-    except:
-        try:
-            # EIT,MDI,AIA
-            det = getElementValue(dom, "INSTRUME")
-            
-            #AIA,HMI
-            if det[0:3] == "AIA":
-                det = "AIA"
-            elif det[0:3] == "HMI":
-                det = "HMI"
-        except:
-            print "Try next Detector..."
-    
-    return det
-    
-def getMeasurement(dom):
-    ''' Attempts to retrieve the measurement name from the image meta-information '''
-    try:
-        #HMI
-        content = getElementValue(dom, "CONTENT")
-        
-        if content[0:9] == "CONTINUUM":
-            meas = "continuum"
-        elif content[0:11] == "MAGNETOGRAM":
-            meas = "magnetogram"
-        else:
-            raise
-    except:
-        try:
-            #AIA/EIT
-            meas = getElementValue(dom, "WAVELNTH")
-        except:
-            try:
-                inst = getElementValue(dom, "INSTRUME")
-    
-                #LASCO
-                if inst == "LASCO":
-                    meas = "white-light"
-                #MDI
-                elif inst == "MDI":
-                    dpcobsr = getElementValue(dom, "DPC_OBSR")
-                    if dpcobsr.find("Magnetogram") is not -1:
-                        meas = "magnetogram"
-                    else:
-                        meas = "continuum"
-                else:
-                    print "Try next measurement detection method..."                
-            except:
-                print "Try next measurement detection method..."
-
-    return meas
+        return {
+            "date": datetime.strptime(datestr, date_fmt2),
+            "det": "MDI",
+            "instrument": "MDI",
+            "measurement": meas,
+            "observatory": "SOHO"
+        }
 
 def getElementValue(dom, name):
     ''' Retrieves the value of a unique dom-node element or returns false if element is not found/ more than one '''
@@ -193,16 +177,6 @@ def getJP2XMLBox(file, root):
 
     # 2010/04/12 TEMP Work-around for AIA invalid XML
     return xml.replace("&", "&amp;")
-
-def parseISODate (d):
-    '''
-        In order to support older versions of Python (2.4+), the newer datetime.strptime
-        methods have been replaced with simpler string parsing methods for the time being.
-            Python 2.5 - strptime method added
-            Python 2.6 - %f format switch for microseconds added
-    '''
-    return datetime(int(d[0:4]), int(d[5:7]), int(d[8:10]), int(d[11:13]), int(d[14:16]), int(d[17:19]), int(d[20:26]))
-    
 
 def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
     ''' Processes a collection of JPEG2000 Images. '''
