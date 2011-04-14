@@ -2,20 +2,23 @@
 import os
 from datetime import datetime
 from xml.dom.minidom import parseString
-from org.helioviewer.db import getDataSources, enableDataSource
+from org.helioviewer.db import get_datasources, enable_datasource
 
 __INSERTS_PER_QUERY__ = 500
 __STEP_FXN_THROTTLE__ = 50
 
-def traverseDirectory (path):
-    ''' Traverses file-tree starting with the specified path and builds a
-        list of the available images '''
+def traverse_directory(path):
+    '''Searches a directory for JPEG2000 images.
+    
+    Traverses file-tree starting with the specified path and builds a list of
+    the available images.
+    '''
     images = []
 
     for child in os.listdir(path):
         node = os.path.join(path, child)
         if os.path.isdir(node):
-            newImgs = traverseDirectory(node)
+            newImgs = traverse_directory(node)
             images.extend(newImgs)
         else:
             if node[-3:] == "jp2":
@@ -23,21 +26,24 @@ def traverseDirectory (path):
 
     return images
 
-def extractJP2MetaInfo (img):
-    ''' Extracts useful meta-information from a given JP2 image and
-        returns a dictionary of that information.'''
+def extract_JP2_info(img):
+    '''Gets required information from an image's header tags.
+    
+     Extracts useful meta-information from a given JP2 image and returns a
+     dictionary of that information.
+    '''
 
     # Get XMLBox as DOM
     try:
-        dom = parseString(getJP2XMLBox(img, "meta"))
+        dom = parseString(get_JP2_XMLBox(img, "meta"))
         fits = dom.getElementsByTagName("fits")[0]
     except:
         print "Error retrieving JP2 XML Box."
         
     # Detect image type and fetch require meta information
-    telescop = getElementValue(fits, "TELESCOP")
-    detector = getElementValue(fits, "DETECTOR")
-    instrumu = getElementValue(fits, "INSTRUME")
+    telescop = get_element_value(fits, "TELESCOP")
+    detector = get_element_value(fits, "DETECTOR")
+    instrumu = get_element_value(fits, "INSTRUME")
     
     if telescop == 'SDO/AIA':
         datatype = "aia"
@@ -54,7 +60,12 @@ def extractJP2MetaInfo (img):
     elif instrumu == 'MDI':
         datatype = "mdi"
         
-    return _get_header_tags(fits, datatype)
+    try:
+        info = _get_header_tags(fits, datatype)
+    except:
+        print "Error parsing JP2 header"   
+
+    return info
 
 def _get_header_tags(fits, type_):
     """Returns a normalized dictionary of header values
@@ -77,93 +88,104 @@ def _get_header_tags(fits, type_):
         A new mapped dictionary of useful header values
     """
     date_fmt1 = "%Y-%m-%dT%H:%M:%S.%f"
-    date_fmt2 = "%Y-%m-%dT%H:%M:%S.%fZ"
+    date_fmt2 = "%Y/%m/%dT%H:%M:%S.%f"
+    date_fmt3 = "%Y-%m-%dT%H:%M:%S.%fZ"
+    
     
     if type_ == "aia":
+        # Note: Trailing "Z" in date was dropped on 2010/12/07 
         return {
             "date": datetime.strptime(
-                getElementValue(fits, "DATE-OBS"), date_fmt1),
+                get_element_value(fits, "DATE-OBS")[0:22], date_fmt1),
             "detector": "AIA",
             "instrument": "AIA",
-            "measurement": getElementValue(fits, "WAVELNTH"),
+            "measurement": get_element_value(fits, "WAVELNTH"),
             "observatory": "SDO"
         }
     elif type_ == "hmi":
+        meas = get_element_value(fits, "CONTENT").split(" ")[0].lower()
         return {
             "date": datetime.strptime(
-                getElementValue(fits, "DATE-OBS"), date_fmt1),
+                get_element_value(fits, "DATE-OBS"), date_fmt3),
             "detector": "HMI",
             "instrument": "HMI",
-            "measurement": getElementValue(fits, "CONTENT").lower(),
+            "measurement": meas,
             "observatory": "SDO"
         }
     elif type_ == "euvi":
         return {
             "date": datetime.strptime(
-                getElementValue(fits, "DATE_OBS"), date_fmt1),
+                get_element_value(fits, "DATE_OBS"), date_fmt1),
             "detector": "EUVI",
             "instrument": "SECCHI",
-            "measurement": getElementValue(fits, "WAVELNTH"),
-            "observatory": getElementValue(fits, "OBSRVTRY)
+            "measurement": get_element_value(fits, "WAVELNTH"),
+            "observatory": get_element_value(fits, "OBSRVTRY")
         }
     elif type_ == "cor":
         return {
             "date": datetime.strptime(
-                getElementValue(fits, "DATE_OBS"), date_fmt1),
-            "detector": getElementValue(fits, "DETECTOR"),
+                get_element_value(fits, "DATE_OBS"), date_fmt1),
+            "detector": get_element_value(fits, "DETECTOR"),
             "instrument": "SECCHI",
-            "measurement": getElementValue(fits, "WAVELNTH"),
-            "observatory": getElementValue(fits, "OBSRVTRY)
+            "measurement": get_element_value(fits, "WAVELNTH"),
+            "observatory": get_element_value(fits, "OBSRVTRY")
         }
     elif type_ == "eit":
         return {
             "date": datetime.strptime(
-                getElementValue(fits, "DATE-OBS"), date_fmt1),
+                get_element_value(fits, "DATE-OBS"), date_fmt1),
             "detector": "EIT",
             "instrument": "EIT",
-            "measurement": getElementValue(fits, "WAVELNTH"),
+            "measurement": get_element_value(fits, "WAVELNTH"),
             "observatory": "SOHO"
         }
     elif type_ == "lasco":
-        datestr = "%sT%s" % (getElementValue(fits, "DATE_OBS"), getElementValue(fits, "TIME_OBS"))
+        datestr = "%sT%s" % (get_element_value(fits, "DATE_OBS"), get_element_value(fits, "TIME_OBS"))
         return {
-            "date": datetime.strptime(datestr, date_fmt1),
-            "detector": getElementValue(fits, "DETECTOR"),
+            "date": datetime.strptime(datestr, date_fmt2),
+            "detector": get_element_value(fits, "DETECTOR"),
             "instrument": "LASCO",
-            "measurement": getElementValue(fits, "WAVELNTH"),
+            "measurement": "white-light",
             "observatory": "SOHO"
         }
     elif type_ == "mdi":
-        datestr = getElementValue(fits, "DATE_OBS")
+        datestr = get_element_value(fits, "DATE_OBS")
             
         # MDI sometimes has an "60" in seconds field
         if datestr[17:19] == "60":
             datestr = datestr[:17] + "30" + datestr[19:]
         
         # Measurement
-        dpcobsr = getElementValue(fits, "DPC_OBSR")
-        meas = "Magnetogram" if dpcobsr.find('Mag') != -1 else "Continuum"
+        dpcobsr = get_element_value(fits, "DPC_OBSR")
+        meas = "magnetogram" if dpcobsr.find('Mag') != -1 else "continuum"
         
         return {
-            "date": datetime.strptime(datestr, date_fmt2),
-            "det": "MDI",
+            "date": datetime.strptime(datestr, date_fmt3),
+            "detector": "MDI",
             "instrument": "MDI",
             "measurement": meas,
             "observatory": "SOHO"
         }
 
-def getElementValue(dom, name):
-    ''' Retrieves the value of a unique dom-node element or returns false if element is not found/ more than one '''
+def get_element_value(dom, name):
+    '''Gets the value for the specified dom-node if it exists.
+    
+    Retrieves the value of a unique dom-node element or returns false if element
+    is not found/ more than one.
+    '''
     element = dom.getElementsByTagName(name)
 
     if element:
         return element[0].childNodes[0].nodeValue
     else:
-        raise Exception("Element not found")
+        return None
 
-def getJP2XMLBox(file, root):
-    ''' Given a filename and the name of the root node, extracts
-        the XML header box from a JP2 image '''
+def get_JP2_XMLBox(file, root):
+    '''Extracts the XML box from a JPEG 2000 image.
+    
+    Given a filename and the name of the root node, extracts the XML header box
+    from a JP2 image.
+    '''
     fp = open(file, 'rb')
 
     xml = ""
@@ -178,8 +200,8 @@ def getJP2XMLBox(file, root):
     # 2010/04/12 TEMP Work-around for AIA invalid XML
     return xml.replace("&", "&amp;")
 
-def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
-    ''' Processes a collection of JPEG2000 Images. '''
+def process_jp2_images (images, rootdir, cursor, mysql, stepFxn=None):
+    '''Processes a collection of JPEG2000 Images'''
     
     if mysql:
         import MySQLdb
@@ -189,21 +211,23 @@ def processJPEG2000Images (images, rootdir, cursor, mysql, stepFxn=None):
     remainder = len(images) % __INSERTS_PER_QUERY__
 
     # Return tree of known data-sources
-    sources = getDataSources(cursor)
+    sources = get_datasources(cursor)
     
     # Insert images into database, 500 at a time
     if len(images) >= __INSERTS_PER_QUERY__:
         for x in range(len(images) // __INSERTS_PER_QUERY__):
-            insertNImages(images, __INSERTS_PER_QUERY__, sources, rootdir, cursor, mysql, stepFxn)
+            insert_n_images(images, __INSERTS_PER_QUERY__, sources,
+                          rootdir, cursor, mysql, stepFxn)
             
     # Update tree of known data-sources
-    sources = getDataSources(cursor)
+    sources = get_datasources(cursor)
             
     # Process remaining images
-    insertNImages(images, remainder, sources, rootdir, cursor, mysql, stepFxn)
+    insert_n_images(images, remainder, sources, rootdir, cursor, mysql, stepFxn)
 
     
-def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
+def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
+    """Inserts multiple images into a database using a single query"""
     query = "INSERT INTO images VALUES "
     
     error = ""
@@ -223,8 +247,13 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         
         # Extract header meta information
         try:
-            m = extractJP2MetaInfo(img)
+            m = extract_JP2_info(img)
         except:
+            print("Doh!")
+            print(img)
+            print(m)
+            import sys
+            sys.exit()
             error += filename + "\n"
         else:
             # Data Source
@@ -233,7 +262,7 @@ def insertNImages(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
             # Enable datasource if it has not already been
             if (not source['enabled']):
                 sources[m["observatory"]][m["instrument"]][m["detector"]][m["measurement"]]["enabled"] = True
-                enableDataSource(cursor, source['id'])
+                enable_datasource(cursor, source['id'])
         
             # Date
             date = m["date"]

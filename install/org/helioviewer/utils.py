@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 
-def checkModules(modules):
-    ''' Checks for module's existence and attempts to suggest a possible solution for any mising module required '''
+def check_modules(modules):
+    '''Checks for required modules
+    
+    Checks for module's existence and attempts to suggest a possible solution 
+    for any mising module required
+    '''
     missing = []
 
     for module in modules:
@@ -21,7 +25,7 @@ def checkModules(modules):
         print ""
 
         # Determine OS
-        system = getOS()
+        system = get_OS()
 
         knownpackages = True
 
@@ -62,14 +66,11 @@ def checkModules(modules):
         print msg
         sys.exit(2)
 
-def getOS():
-    ''' Determine operating system in order to suggest module installation method '''
-    if (os.uname()[3].lower().find("ubuntu") != -1):
+def get_OS():
+    '''Attempt to determine OS in order to suggest module installation method'''
+    if os.uname()[3].lower().find("ubuntu") != -1:
         return "ubuntu"
-    elif (os.uname()[2].find("fc") != -1):
+    elif os.uname()[2].find("fc") != -1:
         return "fedora"
     else:
         return "other"
-    
-def checkPath(path):
-    return os.path.isdir(path)
