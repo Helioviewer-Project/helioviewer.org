@@ -3,7 +3,7 @@
 
 ###############################################################################
 # Helioviewer Database Installation Tool
-# Last Updated: 2009/04/12
+# Last Updated: 2011/04/14
 #
 # TODO 01/17/2010:
 #    Let user specify dbname
@@ -16,7 +16,7 @@ from optparse import OptionParser, OptionError, IndentedHelpFormatter
 
 def main(argv):
     ''' Main application access point '''
-    options = getArguments()
+    options = get_arguments()
     
     # Installation method
     if options.textinstall:
@@ -35,12 +35,12 @@ def main(argv):
             from org.helioviewer.HelioviewerInstallWizard import loadGUIInstaller
             loadGUIInstaller(argv)
         
-def getArguments():
+def get_arguments():
     ''' Gets command-line arguments and handles validation '''
     parser = OptionParser("%prog [options] [file1 file2 file3...]", formatter=IndentedHelpFormatter(4,100))
     
-    parser.add_option("-t", "--text-install",  dest="textinstall", help="launches the text-based installation tool", action="store_true")
-    parser.add_option("-m", "--database-type", dest="dbtype",      help="Database type [mysql|postgres]", default="mysql")
+    parser.add_option("-t", "--text-install",  dest="textinstall", help="Text-based installation", action="store_true")
+    parser.add_option("-m", "--database-type", dest="dbtype",      help="Database [mysql|postgres]", default="mysql")
     parser.add_option("-d", "--database-name", dest="dbname",      help="Database to insert images into")
     parser.add_option("-u", "--database-user", dest="dbuser",      help="Helioviewer.org database user")
     parser.add_option("-p", "--database-pass", dest="dbpass",      help="Helioviewer.org database password")

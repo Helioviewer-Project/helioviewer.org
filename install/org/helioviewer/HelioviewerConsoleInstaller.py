@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import sys, os
+import sys
+import os
 from org.helioviewer.jp2 import *
 from org.helioviewer.db  import *
 from org.helioviewer.utils import *
@@ -10,7 +11,7 @@ class HelioviewerConsoleInstaller:
         self.options = options
         
     def getFilePath(self):
-        ''' Prompts the user for the directory information '''
+        '''Prompts the user for the directory information'''
     
         path = raw_input("Location of JP2 Images: ")
         while not os.path.isdir(path):
@@ -78,7 +79,7 @@ class HelioviewerConsoleInstaller:
             else:
                 mysql = False
             
-            if not checkDBInfo(dbuser, dbpass, mysql):
+            if not check_db_info(dbuser, dbpass, mysql):
                 print "Unable to connect to the database. Please check your login information and try again."
             else:
                 return dbuser,dbpass,mysql        
@@ -119,7 +120,7 @@ def loadTextInstaller(options):
     path = app.getFilePath()
     
     # Locate jp2 images in specified filepath
-    images = traverseDirectory(path)
+    images = traverse_directory(path)
     
     # Check to make sure the filepath contains jp2 images
     if len(images) is 0:
@@ -141,7 +142,7 @@ def loadTextInstaller(options):
         dbuser, dbpass, mysql = app.getDatabaseInfo()
 
         # Setup database schema
-        cursor = setupDatabaseSchema(dbuser, dbpass, dbname, hvuser, hvpass, mysql)
+        cursor = setup_database_schema(dbuser, dbpass, dbname, hvuser, hvpass, mysql)
     
     else:
         # Get database information
@@ -151,12 +152,12 @@ def loadTextInstaller(options):
         print "Please enter Helioviewer.org database user information"
         dbuser, dbpass, mysql = app.getDatabaseInfo()
         
-        cursor = getDatabaseCursor(dbname, dbuser, dbpass, mysql)
+        cursor = get_db_cursor(dbname, dbuser, dbpass, mysql)
 
     print "Processing Images..."
 
     # Insert image information into database
-    processJPEG2000Images(images, path, cursor, mysql)
+    process_jp2_images(images, path, cursor, mysql)
     
     #print("Creating database index")        
     #createDateIndex(cursor)
@@ -175,12 +176,12 @@ def loadUpdater(options):
     else:
         mysql = False
         
-    cursor = getDatabaseCursor(options.dbname, options.dbuser, options.dbpass, mysql)
+    cursor = get_db_cursor(options.dbname, options.dbuser, options.dbpass, mysql)
 
     print "Processing Images..."
 
     # Insert image information into database
-    processJPEG2000Images(options.files, options.basedir, cursor, mysql)
+    process_jp2_images(options.files, options.basedir, cursor, mysql)
     
     cursor.close()
 
