@@ -37,8 +37,9 @@ def extract_JP2_info(img):
     try:
         dom = parseString(get_JP2_XMLBox(img, "meta"))
         fits = dom.getElementsByTagName("fits")[0]
-    except:
+    except e:
         print "Error retrieving JP2 XML Box."
+        raise e
         
     # Detect image type and fetch require meta information
     telescop = get_element_value(fits, "TELESCOP")
@@ -47,7 +48,7 @@ def extract_JP2_info(img):
     
     if telescop == 'SDO/AIA':
         datatype = "aia"
-    elif telescop == 'SDO/HMI':
+    elif instrumu[0:3] == 'HMI':
         datatype = "hmi"
     elif detector == 'EUVI':
         datetype = "euvi"
@@ -62,8 +63,9 @@ def extract_JP2_info(img):
         
     try:
         info = _get_header_tags(fits, datatype)
-    except:
-        print "Error parsing JP2 header"   
+    except e:
+        print "Error parsing JP2 header"
+        raise e 
 
     return info
 
@@ -103,10 +105,11 @@ def _get_header_tags(fits, type_):
             "observatory": "SDO"
         }
     elif type_ == "hmi":
+        # Note: Trailing "Z" in date was dropped on 2010/12/07
         meas = get_element_value(fits, "CONTENT").split(" ")[0].lower()
         return {
             "date": datetime.strptime(
-                get_element_value(fits, "DATE-OBS"), date_fmt3),
+                get_element_value(fits, "DATE-OBS")[0:22], date_fmt1),
             "detector": "HMI",
             "instrument": "HMI",
             "measurement": meas,
@@ -133,7 +136,7 @@ def _get_header_tags(fits, type_):
     elif type_ == "eit":
         return {
             "date": datetime.strptime(
-                get_element_value(fits, "DATE-OBS"), date_fmt1),
+                get_element_value(fits, "DATE_OBS"), date_fmt3),
             "detector": "EIT",
             "instrument": "EIT",
             "measurement": get_element_value(fits, "WAVELNTH"),
