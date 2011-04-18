@@ -301,6 +301,14 @@ function printDocumentationAppendices()
                 <td>SOHO</td>
                 <td>SOHO (Solar and Heliospheric Observatory)</td>
             </tr>
+            <tr>
+                <td>STEREO_A</td>
+                <td>STEREO_A (Solar Terrestrial Relations Observatory Ahead)</td>
+            </tr>
+            <tr>
+                <td>STEREO_B</td>
+                <td>STEREO_B (Solar Terrestrial Relations Observatory Behind)</td>
+            </tr>
             <!--
             <tr>
                 <td>TRACE</td>
@@ -326,12 +334,20 @@ function printDocumentationAppendices()
                 <td>EIT (Extreme ultraviolet Imaging Telescope)</td>
             </tr>
             <tr>
+                <td>HMI</td>
+                <td>HMI (Helioseismic and Magnetic Imager)</td>
+            </tr>
+            <tr>
                 <td>LASCO</td>
                 <td>LASCO (Large Angle and Spectrometric Coronagraph Experiment)</td>
             </tr>
             <tr>
                 <td>MDI</td>
                 <td>MDI (The Michelson Doppler Imager)</td>
+            </tr>
+            <tr>
+                <td>SECCHI</td>
+                <td>SECCHI (Sun Earth Connection Coronal and Heliospheric Investigation)</td>
             </tr>
             <!--
             <tr>
@@ -363,8 +379,24 @@ function printDocumentationAppendices()
                 <td>LASCO C3</td>
             </tr>
             <tr>
+                <td>COR1</td>
+                <td>Coronagraph 1</td>
+            </tr>
+            <tr>
+                <td>COR2</td>
+                <td>Coronagraph 2</td>
+            </tr>
+            <tr>
                 <td>EIT</td>
                 <td>EIT (Extreme ultraviolet Imaging Telescope)</td>
+            </tr>
+            <tr>
+                <td>EUVI</td>
+                <td>EUVI (Extreme ultraviolet Imager)</td>
+            </tr>
+            <tr>
+                <td>HMI</td>
+                <td>HMI (Helioseismic and Magnetic Imager)</td>
             </tr>
             <tr>
                 <td>MDI</td>

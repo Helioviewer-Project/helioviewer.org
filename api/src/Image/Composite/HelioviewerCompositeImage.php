@@ -145,8 +145,16 @@ class Image_Composite_HelioviewerCompositeImage
         $tmpFile = $this->_dir . "/" . rand() . ".$ext";
         array_push($this->_cache, $tmpFile);
         
-        // Choose type of tile to create
-        $type = strtoupper($layer['instrument']) . "Image";
+        // Choose type of image to create
+        if ($layer['instrument'] == "SECCHI") {
+            if (substr($layer['detector'], 0, 3) == "COR") {
+                $type = "CORImage";
+            } else {
+                $type = strtoupper($layer['detector']) . "Image";
+            }
+        } else {
+            $type = strtoupper($layer['instrument']) . "Image";
+        }
         include_once "src/Image/ImageType/$type.php";
         
         $classname = "Image_ImageType_" . $type;

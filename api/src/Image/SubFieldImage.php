@@ -364,7 +364,7 @@ class Image_SubFieldImage
     
     /**
      * Default behavior for images is to just set their opacity.
-     * LASCOImage.php has a applyAlphaMaskCmd that overrides this one and applies
+     * LASCOImage.php and CORImage.php have an applyAlphaMaskCmd that overrides this one and applies
      * an alpha mask and does some special commands for opacity
      * 
      * @param Object &$imagickImage IMagick Object
