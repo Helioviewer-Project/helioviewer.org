@@ -214,7 +214,17 @@ class Module_WebClient implements Module
         );
 
         // Choose type of tile to create
-        $type = strtoupper($params['instrument']) . "Image";
+        // TODO 2011/04/18: Generalize process of choosing class to use
+        if ($params['instrument'] == "SECCHI") {
+            if (substr($params['detector'], 0, 3) == "COR") {
+                $type = "CORImage";
+            } else {
+                $type = strtoupper($params['detector']) . "Image";
+            }
+        } else {
+            $type = strtoupper($params['instrument']) . "Image";
+        }
+        
         include_once "src/Image/ImageType/$type.php";
 
         $classname = "Image_ImageType_" . $type;

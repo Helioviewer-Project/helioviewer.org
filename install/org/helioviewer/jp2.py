@@ -37,33 +37,33 @@ def extract_JP2_info(img):
     try:
         dom = parseString(get_JP2_XMLBox(img, "meta"))
         fits = dom.getElementsByTagName("fits")[0]
-    except e:
+    except Exception as e:
         print "Error retrieving JP2 XML Box."
         raise e
         
     # Detect image type and fetch require meta information
     telescop = get_element_value(fits, "TELESCOP")
     detector = get_element_value(fits, "DETECTOR")
-    instrumu = get_element_value(fits, "INSTRUME")
+    instrume = get_element_value(fits, "INSTRUME")
     
     if telescop == 'SDO/AIA':
         datatype = "aia"
-    elif instrumu[0:3] == 'HMI':
+    elif instrume[0:3] == 'HMI':
         datatype = "hmi"
     elif detector == 'EUVI':
-        datetype = "euvi"
+        datatype = "euvi"
     elif (detector == 'COR1') or (detector == 'COR2'):
         datatype = "cor"
-    elif instrumu == 'EIT':
+    elif instrume == 'EIT':
         datatype = "eit"
-    elif instrumu == 'LASCO':
+    elif instrume == 'LASCO':
         datatype = "lasco"
-    elif instrumu == 'MDI':
+    elif instrume == 'MDI':
         datatype = "mdi"
         
     try:
         info = _get_header_tags(fits, datatype)
-    except e:
+    except Exception as e:
         print "Error parsing JP2 header"
         raise e 
 
@@ -130,7 +130,7 @@ def _get_header_tags(fits, type_):
                 get_element_value(fits, "DATE_OBS"), date_fmt1),
             "detector": get_element_value(fits, "DETECTOR"),
             "instrument": "SECCHI",
-            "measurement": get_element_value(fits, "WAVELNTH"),
+            "measurement": "white-light",
             "observatory": get_element_value(fits, "OBSRVTRY")
         }
     elif type_ == "eit":
@@ -254,7 +254,6 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         except:
             print("Doh!")
             print(img)
-            print(m)
             import sys
             sys.exit()
             error += filename + "\n"
