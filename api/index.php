@@ -1,6 +1,6 @@
 <?php
 /**
- * Helioviewer Web Server (Dynamo)
+ * Helioviewer Web Server
  *
  * PHP version 5
  *
@@ -15,8 +15,6 @@
  *  = Explain use of sourceId for faster querying.
  *
  * TODO 01/27/2010
- *  = Discuss with JHV team about using source ID's instead of string
- *    identifiers to speed up method calls.
  *  = Add method to WebClient to print config file (e.g. for stand-alone
  *    web-client install to connect with)
  *  = Add getPlugins method to JHelioviewer module (empty function for now)

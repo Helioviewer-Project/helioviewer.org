@@ -355,6 +355,7 @@ class Database_ImgIndex
                 "height"     => (int) $dimensions[1],
                 "sunCenterX" => (float) $center[0],
                 "sunCenterY" => (float) $center[1],
+                "dsun"       => (float) $xmlBox->getDSun()
             );
         } catch (Exception $e) {
             throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()));

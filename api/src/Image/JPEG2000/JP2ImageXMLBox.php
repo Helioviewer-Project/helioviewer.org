@@ -84,6 +84,48 @@ class Image_JPEG2000_JP2ImageXMLBox
         header('Content-type: text/xml');
         echo $this->_xmlString;
     }
+    
+    /**
+     * Returns the distance to the sun in meters
+     * 
+     * For images where dsun is not specified it can be determined using:
+     * 
+     *    dsun = (rsun_1au / rsun_image) * dsun_1au
+     */
+    public function getDSun()
+    {
+        // Constants
+        $au          = 149597870700.0;
+        $rsun_at_1au = 959.644;
+        
+        try {
+            $dsun = $this->_getElementValue("DSUN_OBS");
+        } catch (Exception $e) {
+            try {
+                $rsun = $this->_getElementValue("SOLAR_R");
+            } catch (Exception $e) {
+                $rsun = $this->_getElementValue("RADIUS"); // pixels
+            }
+            if (isset($rsun)) {
+                $scale = $this->_getElementValue("CDELT1");
+                $dsun = ($rsun_at_1au / ($rsun * $scale)) * $au;
+            }
+        }
+        
+        // HMI continuum images may have DSUN = 0.00
+        // MDI may have rsun=0.00
+        // LASCO does not have either rsun/dsun
+        if (!isset($dsun) || $dsun <= 0) {
+            $dsun = $au;
+        }
+        
+        // Check to make sure header information is valid
+        if ((filter_var($dsun, FILTER_VALIDATE_FLOAT) === false) || ($dsun <= 0)) {
+            throw new Exception("Invalid value for DSUN: $dsun");
+        }
+        
+        return $dsun;
+    }
 
     /**
      * Returns the dimensions for a given image

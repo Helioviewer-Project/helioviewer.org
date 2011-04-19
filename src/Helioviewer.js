@@ -416,7 +416,6 @@ var Helioviewer = Class.extend(
      * Builds a URL for the current view
      *
      * @TODO: Add support for viewport offset, event layers, opacity
-     * @TODO: Make into a static method for use by Jetpack, etc? http://www.ruby-forum.com/topic/154386
      * 
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
@@ -437,5 +436,13 @@ var Helioviewer = Class.extend(
               "&imageLayers=" + imageLayers;
 
         return url;
+    },
+    
+    /**
+     * Sun-related Constants
+     */
+    constants: {
+        au: 149597870700, // 1 au in meters (http://maia.usno.navy.mil/NSFA/IAU2009_consts.html)
+        rsun: 695700000,  // radius of the sun in meters (JHelioviewer)
     }
 });
