@@ -44,7 +44,7 @@ class Image_ImageType_CORImage extends Image_HelioviewerImage
      * 
      * @return void
      */ 
-    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         if ($det == "COR1") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Green-White_Linear.png";
@@ -58,7 +58,7 @@ class Image_ImageType_CORImage extends Image_HelioviewerImage
         
         $filepath = substr($filepath, 0, -3) . "png";
 
-        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**

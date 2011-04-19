@@ -66,7 +66,7 @@ class Image_SubFieldImage
      * @TODO: Rename "jp2scale" syntax to "nativeImageScale" to get away from JP2-specific terminology
      *        ("desiredScale" -> "desiredImageScale" or "requestedImageScale")
       */
-    public function __construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $roi, $dsun, $outputFile, $offsetX, $offsetY, $options)
     {
         $this->outputFile = $outputFile;
         $this->jp2        = $jp2;
@@ -91,7 +91,9 @@ class Image_SubFieldImage
         // Convert region of interest from arc-seconds to pixels
         $this->imageSubRegion = $roi->getImageSubRegion($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
         
-        $this->desiredScale    = $roi->imageScale();
+        // Desired image scale (normalized to 1au)
+        $this->desiredScale    = $roi->imageScale() * ($dsun / HV_CONSTANT_AU);
+        
         $this->desiredToActual = $this->desiredScale / $jp2->getScale();
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));

@@ -42,7 +42,7 @@ class Image_ImageType_EITImage extends Image_HelioviewerImage
      * 
      * @return void
      */   
-    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/SOHO_EIT_$meas.png";
 
@@ -50,7 +50,7 @@ class Image_ImageType_EITImage extends Image_HelioviewerImage
             $this->setColorTable($colorTable);
         }
         
-        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**

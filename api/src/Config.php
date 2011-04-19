@@ -109,6 +109,8 @@ class Config
         define("HV_CACHE_DIR", HV_ROOT_DIR . "/cache");
         define("HV_CACHE_URL", HV_WEB_ROOT_URL . "/cache");
         
+        define("HV_CONSTANT_AU", 149597870700); // 1 au in meters (http://maia.usno.navy.mil/NSFA/IAU2009_consts.html)
+        
         // Image compression settings (See http://www.imagemagick.org/script/command-line-options.php#quality)
         define("PNG_LOW_COMPRESSION",  10);  // Faster, large files
         define("PNG_HIGH_COMPRESSION", 50);  // Slower, smalle files

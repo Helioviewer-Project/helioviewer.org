@@ -42,12 +42,12 @@ class Image_ImageType_EUVIImage extends Image_HelioviewerImage
      * 
      * @return void
      */     
-    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/STEREO_EUVI_$meas.png";
         $this->setColorTable($colorTable);
         
-        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**

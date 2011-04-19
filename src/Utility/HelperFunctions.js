@@ -251,8 +251,6 @@ $.isNumber = function (x) {
  * @input {Float} rsun  The radius of the sun in pixels at the current resolution
  * 
  * @return {Object} Returns an object literal containing the converted x and y coordinates.
- * 
- * @see Viewport.getRSun
  */
 var solarRadiiToHelioprojective = function (rx, ry, scale, rsun) {
     var rsunInArcSeconds = rsun * scale;

@@ -183,6 +183,9 @@ class Module_WebClient implements Module
     /**
      * Requests a single tile to be used in Helioviewer.org.
      * 
+     * TODO 2011/04/19: How much longer would it take to request tiles if meta data was refetched
+     * from database instead of being passed in?
+     * 
      * @return object The image tile
      */
     public function getTile ()
@@ -231,7 +234,7 @@ class Module_WebClient implements Module
 
         // Create the tile
         $tile = new $classname(
-            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
+            $jp2, $filepath, $roi, $params['dsun'], $params['instrument'], $params['detector'], $params['measurement'],  
             $params['offsetX'], $params['offsetY'], $this->_options
         );
         
@@ -435,11 +438,11 @@ class Module_WebClient implements Module
             break;
 
         case "getTile":
-            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
+            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'dsun', 'imageScale', 'dsun', 'jp2Width','jp2Height', 'jp2Scale',
                               'offsetX', 'offsetY', 'instrument', 'detector', 'measurement');
             $expected = array(
                 "required" => $required,
-                "floats"   => array('offsetX', 'offsetY', 'imageScale', 'jp2Scale', 'x1', 'x2', 'y1', 'y2'),
+                "floats"   => array('dsun', 'offsetX', 'offsetY', 'imageScale', 'jp2Scale', 'x1', 'x2', 'y1', 'y2'),
                 "files"    => array('uri'),
                 "ints"     => array('jp2Width', 'jp2Height')
             );
@@ -764,6 +767,11 @@ class Module_WebClient implements Module
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                         </tr>
                         <tr>
+                            <td><b>dsun</b></td>
+                            <td><i>Float</i></td>
+                            <td>Distance to the Sun in meters.</td>
+                        </tr>
+                        <tr>
                             <td><b>imageScale</b></td>
                             <td><i>Float</i></td>
                             <td>The scale of the image in the viewport, in arcseconds per pixel.</td>
@@ -819,9 +827,9 @@ class Module_WebClient implements Module
                 </table>   
                 <br />
                 <span class="example-header">Examples:</span> <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
+                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8&dsun=149345600880.12&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
                        <?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2
-                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8
+                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8&dsun=149345600880.12
                         &size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171
                         &offsetX=2.66&offsetY=7.32
                     </a>
