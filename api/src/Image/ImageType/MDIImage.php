@@ -42,12 +42,12 @@ class Image_ImageType_MDIImage extends Image_HelioviewerImage
      * 
      * @return void
      */ 
-    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         // MDI has no color table
         $this->setColorTable(false);
         
-        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**

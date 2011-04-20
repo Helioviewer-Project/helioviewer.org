@@ -44,21 +44,21 @@ class Image_ImageType_CORImage extends Image_HelioviewerImage
      * 
      * @return void
      */ 
-    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         if ($det == "COR1") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Green-White_Linear.png";
         } else if ($det == "COR2") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Red_Temperature.png";
         }
-
+        
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }
         
         $filepath = substr($filepath, 0, -3) . "png";
 
-        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
@@ -118,17 +118,18 @@ class Image_ImageType_CORImage extends Image_HelioviewerImage
      */
     protected function setAlphaChannel(&$imagickImage)
     {
-        $maskWidth  = 1040;
-        $maskHeight = 1040;
-        #$mask       = HV_ROOT_DIR . "/api/resources/images/alpha-masks/COR_{$this->detector}_Mask.png";
-        
         if ($this->detector == "COR1") {
-            $mask = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_C2_Mask.png";
+            $maskWidth  = 520;
+            $maskHeight = 520;
         } else {
-            $mask = HV_ROOT_DIR . "/api/resources/images/alpha-masks/LASCO_C3_Mask.png";
+            $maskWidth  = 2080;
+            $maskHeight = 2080;
         }
         
-
+        $dir = HV_ROOT_DIR . "/api/resources/images/alpha-masks/";
+        $which = substr($this->observatory, -1);
+        $mask = sprintf("%s%s-%s_Mask.png", $dir, $this->detector, $which);
+        
         if ($this->reduce > 0) {
             $maskScaleFactor = 1 / pow(2, $this->reduce);
         } else {

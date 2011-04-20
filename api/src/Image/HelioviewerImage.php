@@ -46,7 +46,7 @@ class Image_HelioviewerImage extends Image_SubFieldImage
      * @param float  $offsetY       Offset of the sun center from the image center
      */
     public function __construct(
-        $jp2, $filepath, $roi, $instrument, $detector, $measurement, $offsetX, $offsetY, $options
+        $jp2, $filepath, $roi, $observatory, $instrument, $detector, $measurement, $offsetX, $offsetY, $options
     ) {
         // Default options
         $defaults = array(
@@ -57,6 +57,7 @@ class Image_HelioviewerImage extends Image_SubFieldImage
         );
         $this->options = array_replace($defaults, $options);
         
+        $this->observatory = $observatory;
         $this->instrument  = $instrument;
         $this->detector    = $detector;
         $this->measurement = $measurement;

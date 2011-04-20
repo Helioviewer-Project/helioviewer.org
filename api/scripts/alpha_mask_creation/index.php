@@ -7,15 +7,6 @@
     // Note: In order to run properly, the script expects to find a 
     //       writable directory named "out" in the current working directory.
     //
-
-    // Mask properties
-    $width  = 1040;
-    $height = 1040;
-    $crpix1 = $width  / 2;
-    $crpix2 = $height / 2;
-    
-    // Solar Radii in Arcseconds
-    $rsunArcSeconds = 959.705;
     
     // 2011/04/19 Normalize with respect to 1 AU
 
@@ -25,6 +16,7 @@
         "width"      => 1040,
         "height"     => 1040,
         "imageScale" => 11.9,
+        "rsun"       => 959.705,
         "roccInner"  => 2.415, // 1.05 * orig
         "roccOuter"  => 7.7    // 0.9625 * orig
     );
@@ -35,36 +27,69 @@
         "width"      => 1040,
         "height"     => 1040,
         "imageScale" => 56.0,
+        "rsun"       => 959.705,
         "roccInner"  => 4.62,    // 1.05 * orig
         "roccOuter"  => 30.31875 // 0.9625 * orig
     );
     
-    // COR1
+    // COR1 A&B
     // http://www.springerlink.com/content/u040662v341354u5/fulltext.pdf
-    $cor1 = array(
-        "filename"   => "COR1_Mask.png",
-        "width"      => 1040,
-        "height"     => 1040,
-        "imageScale" => 11.9,
-        "roccInner"  => 1.4,
-        "roccOuter"  => 4
+    $cor1a = array(
+        "filename"   => "COR1-A_Mask.png",
+        "width"      => 520,
+        "height"     => 520,
+        "imageScale" => 15.008600,
+        "rsun"       => 992.91301,
+        "roccInner"  => 1.52, //1.4
+        "roccOuter"  => 4.4  //4
+    );
+    
+    $cor1b = array(
+        "filename"   => "COR1-B_Mask.png",
+        "width"      => 520,
+        "height"     => 520,
+        "imageScale" => 15.008600,
+        "rsun"       => 884.55757,
+        "roccInner"  => 1.52, //1.4
+        "roccOuter"  => 4.4  //4
+    );
+    
+    // COR2
+    $cor2a = array(
+        "filename"   => "COR2-A_Mask.png",
+        "width"      => 2080,
+        "height"     => 2080,
+        "imageScale" => 15.008600,
+        "rsun"       => 992.91208,
+        "roccInner"  => 2.8, // just guessing...
+        "roccOuter"  => 16
+    );
+    
+    $cor2b = array(
+        "filename"   => "COR2-B_Mask.png",
+        "width"      => 2080,
+        "height"     => 2080,
+        "imageScale" => 15.008600,
+        "rsun"       => 884.55531,
+        "roccInner"  => 2.8,
+        "roccOuter"  => 15
     );
     
     
     // Create masks
-    foreach(array($c2, $c3) as $mask) {
+    foreach(array($c2, $c3, $cor1a, $cor2a, $cor1b, $cor2b) as $mask) {
         echo "<b>Generating {$mask['filename']}...</b><br><br>";
 
         // Solar Radii in pixels
-        $rsun = $rsunArcSeconds / $mask["imageScale"];
+        $rsunInPixels = $mask["rsun"] / $mask["imageScale"];
         
         // crpix1 & 2 approximate values (ideal case)
         $crpix1 = $mask['width'] / 2;
-        $crpix1 = $mask['height'] / 2;
+        $crpix2 = $mask['height'] / 2;
         
         // Convert to pixels
-        $radiusInner  = $mask['roccInner'] * $rsun;
-        $radiusOuter  = $mask['roccOuter'] * $rsun;
+        $radiusInner  = $mask['roccInner'] * $rsunInPixels;
+        $radiusOuter  = $mask['roccOuter'] * $rsunInPixels;
         $innerCircleY = $crpix2 + $radiusInner;
         $outerCircleY = $crpix2 + $radiusOuter;
         

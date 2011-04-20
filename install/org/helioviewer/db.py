@@ -147,18 +147,18 @@ def create_datasource_table(cursor):
         (17, 'AIA 4500', 'SDO AIA 4500',  2, 4, 5, 11, 1, 0),
         (18, 'HMI Int', 'SDO HMI Int', 2, 5, 6, 12, 1, 0),
         (19, 'HMI Mag', 'SDO HMI Mag', 2, 5, 6, 13, 1, 0),
-        (20, 'EUVI 171', 'STEREO A EUVI 171', 3, 6, 7, 2, 1, 0),
-        (21, 'EUVI 195', 'STEREO A EUVI 195', 3, 6, 7, 4, 1, 0),
-        (22, 'EUVI 284', 'STEREO A EUVI 284', 3, 6, 7, 6, 1, 0),
-        (23, 'EUVI 304', 'STEREO A EUVI 304', 3, 6, 7, 7, 1, 0),
-        (24, 'EUVI 171', 'STEREO B EUVI 171', 4, 6, 7, 2, 1, 0),
-        (25, 'EUVI 195', 'STEREO B EUVI 195', 4, 6, 7, 4, 1, 0),
-        (26, 'EUVI 284', 'STEREO B EUVI 284', 4, 6, 7, 6, 1, 0),
-        (27, 'EUVI 304', 'STEREO B EUVI 304', 4, 6, 7, 7, 1, 0),
-        (28, 'COR1', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
-        (29, 'COR2', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
-        (30, 'COR1', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
-        (31, 'COR2', 'STEREO B COR2', 4, 6, 9, 14, 3, 0);
+        (20, 'EUVI-A 171', 'STEREO A EUVI 171', 3, 6, 7, 2, 1, 0),
+        (21, 'EUVI-A 195', 'STEREO A EUVI 195', 3, 6, 7, 4, 1, 0),
+        (22, 'EUVI-A 284', 'STEREO A EUVI 284', 3, 6, 7, 6, 1, 0),
+        (23, 'EUVI-A 304', 'STEREO A EUVI 304', 3, 6, 7, 7, 1, 0),
+        (24, 'EUVI-B 171', 'STEREO B EUVI 171', 4, 6, 7, 2, 1, 0),
+        (25, 'EUVI-B 195', 'STEREO B EUVI 195', 4, 6, 7, 4, 1, 0),
+        (26, 'EUVI-B 284', 'STEREO B EUVI 284', 4, 6, 7, 6, 1, 0),
+        (27, 'EUVI-B 304', 'STEREO B EUVI 304', 4, 6, 7, 7, 1, 0),
+        (28, 'COR1-A', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
+        (29, 'COR2-A', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
+        (30, 'COR1-B', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
+        (31, 'COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0);
     """)
 
 def create_observatory_table(cursor):

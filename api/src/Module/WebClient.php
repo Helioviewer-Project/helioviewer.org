@@ -234,7 +234,8 @@ class Module_WebClient implements Module
 
         // Create the tile
         $tile = new $classname(
-            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
+            $jp2, $filepath, $roi, $params['observatory'], 
+            $params['instrument'], $params['detector'], $params['measurement'],  
             $params['offsetX'], $params['offsetY'], $this->_options
         );
         
@@ -439,7 +440,7 @@ class Module_WebClient implements Module
 
         case "getTile":
             $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
-                              'offsetX', 'offsetY', 'instrument', 'detector', 'measurement');
+                              'offsetX', 'offsetY', 'observatory', 'instrument', 'detector', 'measurement');
             $expected = array(
                 "required" => $required,
                 "floats"   => array('offsetX', 'offsetY', 'imageScale', 'jp2Scale', 'x1', 'x2', 'y1', 'y2'),
