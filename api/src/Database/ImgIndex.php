@@ -348,14 +348,18 @@ class Database_ImgIndex
 
             $dimensions = $xmlBox->getImageDimensions();
             $center     = $xmlBox->getSunCenter();
+            $imageScale = (float) $xmlBox->getImagePlateScale();
+            $dsun       = (float) $xmlBox->getDSun();
+            
+            // Normalize image scale
+            $imageScale = $imageScale * ($dsun / HV_CONSTANT_AU);
 
             $meta = array(
-                "scale"      => (float) $xmlBox->getImagePlateScale(),
+                "scale"      => $imageScale,
                 "width"      => (int) $dimensions[0],
                 "height"     => (int) $dimensions[1],
                 "sunCenterX" => (float) $center[0],
-                "sunCenterY" => (float) $center[1],
-                "dsun"       => (float) $xmlBox->getDSun()
+                "sunCenterY" => (float) $center[1]
             );
         } catch (Exception $e) {
             throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()));

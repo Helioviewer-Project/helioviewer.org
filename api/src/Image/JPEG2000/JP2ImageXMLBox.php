@@ -94,29 +94,30 @@ class Image_JPEG2000_JP2ImageXMLBox
      */
     public function getDSun()
     {
-        // Constants
-        $au          = 149597870700.0;
-        $rsun_at_1au = 959.644;
-        
         try {
+            // AIA, EUVI, COR 
             $dsun = $this->_getElementValue("DSUN_OBS");
         } catch (Exception $e) {
             try {
+                // EIT
                 $rsun = $this->_getElementValue("SOLAR_R");
             } catch (Exception $e) {
-                $rsun = $this->_getElementValue("RADIUS"); // pixels
+                try {
+                    // MDI
+                    $rsun = $this->_getElementValue("RADIUS");
+                } catch (Exception $e) {
+                }
             }
             if (isset($rsun)) {
                 $scale = $this->_getElementValue("CDELT1");
-                $dsun = ($rsun_at_1au / ($rsun * $scale)) * $au;
+                $dsun = (HV_CONSTANT_RSUN / ($rsun * $scale)) * HV_CONSTANT_AU;
             }
         }
         
         // HMI continuum images may have DSUN = 0.00
-        // MDI may have rsun=0.00
-        // LASCO does not have either rsun/dsun
+        // LASCO/MDI may have rsun=0.00
         if (!isset($dsun) || $dsun <= 0) {
-            $dsun = $au;
+            $dsun = HV_CONSTANT_AU;
         }
         
         // Check to make sure header information is valid

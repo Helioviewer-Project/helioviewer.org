@@ -44,12 +44,12 @@ class Image_ImageType_HMIImage extends Image_HelioviewerImage
      * 
      * @return void
      */ 
-    public function __construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         // HMI has no color table
         $this->setColorTable(false);
         
-        parent::__construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
