@@ -160,7 +160,7 @@ class Image_Composite_HelioviewerCompositeImage
         $classname = "Image_ImageType_" . $type;
 
         return new $classname(
-            $jp2, $tmpFile, $this->roi, $layer['instrument'], $layer['detector'], $layer['measurement'], 
+            $jp2, $tmpFile, $this->roi, $layer['observatory'], $layer['instrument'], $layer['detector'], $layer['measurement'], 
             $offsetX, $offsetY, $options
         );
     }
