@@ -42,9 +42,9 @@ class Image_ImageType_BlankImage extends Image_SubFieldImage
      * @param int    $offsetY  Offset of the sun center from the iamge center
      * @param array  $options  Optional parameters
      */     
-    public function __construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
-        parent::__construct($jp2, $filepath, $roi, $dsun, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
