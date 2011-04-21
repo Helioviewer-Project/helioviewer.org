@@ -8,8 +8,6 @@
     //       writable directory named "out" in the current working directory.
     //
     
-    // 2011/04/19 Normalize with respect to 1 AU
-
     // LASCO C2
     $c2 = array(
         "filename"   => "LASCO_C2_Mask.png",
@@ -33,46 +31,46 @@
     );
     
     // COR1 A&B
-    // http://www.springerlink.com/content/u040662v341354u5/fulltext.pdf
+    // COR 1 & 2 values chosen by hand
     $cor1a = array(
         "filename"   => "COR1-A_Mask.png",
-        "width"      => 520,
-        "height"     => 520,
+        "width"      => 2048,
+        "height"     => 2048,
         "imageScale" => 15.008600,
         "rsun"       => 992.91301,
-        "roccInner"  => 1.52, //1.4
-        "roccOuter"  => 4.4  //4
+        "roccInner"  => 5.85,
+        "roccOuter"  => 17.4
     );
     
     $cor1b = array(
         "filename"   => "COR1-B_Mask.png",
-        "width"      => 520,
-        "height"     => 520,
+        "width"      => 2048,
+        "height"     => 2048,
         "imageScale" => 15.008600,
         "rsun"       => 884.55757,
-        "roccInner"  => 1.52, //1.4
-        "roccOuter"  => 4.4  //4
+        "roccInner"  => 6.5, //6.4, //6.55,
+        "roccOuter"  => 19 //20
     );
     
     // COR2
     $cor2a = array(
         "filename"   => "COR2-A_Mask.png",
-        "width"      => 2080,
-        "height"     => 2080,
+        "width"      => 2048,
+        "height"     => 2048,
         "imageScale" => 15.008600,
         "rsun"       => 992.91208,
-        "roccInner"  => 2.8, // just guessing...
-        "roccOuter"  => 16
+        "roccInner"  => 2.7,
+        "roccOuter"  => 15.75
     );
     
     $cor2b = array(
         "filename"   => "COR2-B_Mask.png",
-        "width"      => 2080,
-        "height"     => 2080,
+        "width"      => 2048,
+        "height"     => 2048,
         "imageScale" => 15.008600,
         "rsun"       => 884.55531,
-        "roccInner"  => 2.8,
-        "roccOuter"  => 15
+        "roccInner"  => 3.67,
+        "roccOuter"  => 17.7
     );
     
     
@@ -83,15 +81,28 @@
         // Solar Radii in pixels
         $rsunInPixels = $mask["rsun"] / $mask["imageScale"];
         
-        // crpix1 & 2 approximate values (ideal case)
-        $crpix1 = $mask['width'] / 2;
-        $crpix2 = $mask['height'] / 2;
+        // Mask is centered by default
+        $innerX = $mask['width'] / 2;
+        $innerY = $mask['height'] / 2;
+        $outerX = $mask['width'] / 2;
+        $outerY = $mask['height'] / 2;
+        
+        // Offset COR2-B images
+        if ($mask['filename'] == "COR2-B_Mask.png") {
+            $innerX += 19;
+            $innerY += 28;
+            $outerY -= 2;
+            $outerX -= 5;
+        } else if ($mask['filename'] == "COR1-B_Mask.png") {
+            $innerX += 2;
+            $innerY += 27;
+        }
         
         // Convert to pixels
         $radiusInner  = $mask['roccInner'] * $rsunInPixels;
         $radiusOuter  = $mask['roccOuter'] * $rsunInPixels;
-        $innerCircleY = $crpix2 + $radiusInner;
-        $outerCircleY = $crpix2 + $radiusOuter;
+        $innerCircleY = $innerY + $radiusInner;
+        $outerCircleY = $outerY + $radiusOuter;
         
         // The ImageMagick circle primitive makes a disk (filled) or 
         // circle (unfilled).Give the center and any point on the perimeter.
@@ -100,8 +111,8 @@
                '-monochrome out/%s';
         
         $cmd = sprintf(
-            $cmd, $mask['width'], $mask['height'], $crpix1, $crpix2, $crpix1,
-            $outerCircleY, $crpix1, $crpix2, $crpix1, $innerCircleY,
+            $cmd, $mask['width'], $mask['height'], $outerX, $outerY, $outerX,
+            $outerCircleY, $innerX, $innerY, $innerX, $innerCircleY,
             $mask['filename']
         );
         //$cmd = "convert -size {$mask['width']}x{$mask['height']} xc:black -fill white -draw \"circle $crpix1,$crpix2 $crpix1,$outerCircleY\"" .

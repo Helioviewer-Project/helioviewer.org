@@ -155,10 +155,10 @@ def create_datasource_table(cursor):
         (25, 'EUVI-B 195', 'STEREO B EUVI 195', 4, 6, 7, 4, 1, 0),
         (26, 'EUVI-B 284', 'STEREO B EUVI 284', 4, 6, 7, 6, 1, 0),
         (27, 'EUVI-B 304', 'STEREO B EUVI 304', 4, 6, 7, 7, 1, 0),
-        (28, 'COR1-A', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
-        (29, 'COR2-A', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
-        (30, 'COR1-B', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
-        (31, 'COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0);
+        (28, 'SECCHI COR1-A', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
+        (29, 'SECCHI COR2-A', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
+        (30, 'SECCHI COR1-B', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
+        (31, 'SECCHI COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0);
     """)
 
 def create_observatory_table(cursor):

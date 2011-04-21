@@ -81,7 +81,7 @@ var MediaManagerUI = Class.extend(
         // Make sure the list contains no more than twelve items
         if (this._historyBody.find(".history-entry").length > 12) {
             id = this._historyBody.find(".history-entry").last().attr('id');
-            this._removeScreenshot(id);
+            this._removeItem(id);
             this._manager.remove(id);
         }
         
