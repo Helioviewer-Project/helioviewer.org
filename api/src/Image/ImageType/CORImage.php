@@ -119,11 +119,11 @@ class Image_ImageType_CORImage extends Image_HelioviewerImage
     protected function setAlphaChannel(&$imagickImage)
     {
         if ($this->detector == "COR1") {
-            $maskWidth  = 520;
-            $maskHeight = 520;
+            $maskWidth  = 512;
+            $maskHeight = 512;
         } else {
-            $maskWidth  = 2080;
-            $maskHeight = 2080;
+            $maskWidth  = 2048;
+            $maskHeight = 2048;
         }
         
         $dir = HV_ROOT_DIR . "/api/resources/images/alpha-masks/";
