@@ -101,8 +101,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             }
 
             var movie = self._manager.queue(
-                response.id, params.imageScale, params.layers, new Date().toISOString(), params.startTime,
-                params.endTime, params.x1, params.x2, params.y1, params.y2
+                response.id, response.eta, params.imageScale, params.layers, 
+                new Date().toISOString(), params.startTime, params.endTime, 
+                params.x1, params.x2, params.y1, params.y2
             );
             self._addItem(movie);
         });

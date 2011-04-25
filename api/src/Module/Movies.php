@@ -103,7 +103,22 @@ class Module_Movies implements Module
         include_once 'src/Movie/HelioviewerMovie.php';
         
         // Process request
-        $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_options['format']);
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
+        
+        header('Content-type: application/json');
+        
+        // If the movie is finished return movie info
+        if ($movie->status == "FINISHED") {            
+            print json_encode($movie->getCompletedMovieInformation());
+        } else {
+            // Otherwise have the client try again in 30s
+            // TODO 2011/04/25: Once HQ has been ported to PHP, eta should be estimated
+            // instead of returning a static eta each time.
+            print json_encode(array(
+                "status" => $movie->status,
+                "eta"    => 30
+            ));            
+        }
     }
     
     /**
