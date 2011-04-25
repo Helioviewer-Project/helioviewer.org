@@ -20,6 +20,14 @@ var MovieManager = MediaManager.extend(
     init: function (movies) {
         this._history = movies;
         this.format   = $.support.vp8 ? "webm" : "mp4";
+        
+        // Check status of any previously unfinished movie requests
+        var self = this;
+        $.each(movies, function (i, movie) {
+            if (!movie.ready) {
+                self._monitorQueuedMovie(movie.id, 0);
+            }
+        });
     },
     
     /**
@@ -75,6 +83,7 @@ var MovieManager = MediaManager.extend(
      * Adds a movie that is currently being processed
      * 
      * @param {Int}     id            Movie id
+     * @param {Int}     eta           Estimated time in seconds before movie is ready
      * @param {Float}   imageScale    Image scale for the movie
      * @param {String}  layers        Layers in the movie serialized as a string
      * @param {String}  dateRequested Date string for when the movie was requested
@@ -87,7 +96,7 @@ var MovieManager = MediaManager.extend(
      * 
      * @return {Movie} A Movie object
      */
-    queue: function (id, imageScale, layers, dateRequested, startDate, endDate, x1, x2, y1, y2) {
+    queue: function (id, eta, imageScale, layers, dateRequested, startDate, endDate, x1, x2, y1, y2) {
         var movie = {
             "id"            : id,
             "imageScale"    : imageScale,
@@ -106,6 +115,8 @@ var MovieManager = MediaManager.extend(
         if (this._history.unshift(movie) > 12) {
             this._history = this._history.slice(0, 12);            
         };
+        
+        this._monitorQueuedMovie(id, eta);
 
         this._save();  
         return movie;
@@ -115,13 +126,14 @@ var MovieManager = MediaManager.extend(
      * Updates stored information for a given movie and notify user that movie is available
      * 
      * @param {Int}     id            Movie id
-     * @param {Float}   duration      Movie duration in seconds
      * @param {Float}   frameRate     Movie frame-rate in frames/sec
      * @param {Int}     numFrames     Total number of frames in the movie
+     * @param {String}  startDate     The actual movie start date
+     * @param {String}  endDate       The actual movie end date
      * @param {Int}     width         Movie width
      * @param {Int}     height        Movie height
      */
-    update: function (id, duration, frameRate, numFrames, width, height) {
+    update: function (id, frameRate, numFrames, startDate, endDate, width, height) {
         var index = null;
 
         // Find the index in the history array
@@ -133,13 +145,16 @@ var MovieManager = MediaManager.extend(
         
         // Add the new values
         $.merge(this._history[index], {
-            "duration" : duration,
-            "frameRate": frameRate,
-            "numFrames": numFrames,
-            "width"    : width,
-            "height"   : height,
-            "ready"    : true
+            "frameRate" : frameRate,
+            "numFrames" : numFrames,
+            "startDate" : startDate,
+            "endDate"   : endDate,
+            "width"     : width,
+            "height"    : height,
+            "ready"     : true
         });
+        
+        this._save();
         
         // Notify user
         $(document).trigger("message-console-info", "Your movie is ready!");
@@ -154,22 +169,23 @@ var MovieManager = MediaManager.extend(
 
         queryMovieStatus = function () {
             callback = function (response) {
-                if (response.status !== "FINISHED") {
+                if (response.eta) {
                     self._monitorQueuedMovie(id, response.eta);                    
                 }  else {
-                    self.update(id, response.duration, response.frameRate, response.numFrames,
+                    self.update(id, response.frameRate, response.numFrames,
+                                response.startDate, response.endDate,
                                 response.width, response.height);
                 }
             };
             
             params = {
                 "action" : "getMovie", 
-                "id"     : movie.id,
+                "id"     : id,
                 "format" : self.format
             };
             $.get("api/index.php", params, callback, "json");
         };
-        setTimeout(queryMovieStatus, Math.max(eta, 15) * 1000);
+        setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
     },
     
     /**

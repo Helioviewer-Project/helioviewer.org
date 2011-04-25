@@ -72,14 +72,15 @@ class Movie_HelioviewerMovie
         $this->reqEndDate   = $info['reqEndDate'];
         $this->startDate    = $info['startDate'];
         $this->endDate      = $info['endDate'];
-        $this->imageScale   = $info['imageScale'];
-        $this->frameRate    = $info['frameRate'];
-        $this->maxFrames    = $info['maxFrames'];
-        $this->width        = $info['width'];
-        $this->height       = $info['height'];
         $this->status       = $info['status'];
         $this->timestamp    = $info['timestamp'];
-        $this->watermark    = $info['watermark'];
+        $this->imageScale   = (float) $info['imageScale'];
+        $this->frameRate    = (float) $info['frameRate'];
+        $this->numFrames    = (int) $info['numFrames'];
+        $this->maxFrames    = (int) $info['maxFrames'];
+        $this->width        = (int) $info['width'];
+        $this->height       = (int) $info['height'];
+        $this->watermark    = (bool) $info['watermark'];
         
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
@@ -135,6 +136,22 @@ class Movie_HelioviewerMovie
         }
     }
     
+    /**
+     * Returns information about the completed movie
+     * 
+     * @return array A list of movie properties and a URL to the finished movie
+     */
+    public function getCompletedMovieInformation() {
+        return array(
+            "frameRate" => $this->frameRate,
+            "numFrames" => $this->numFrames,
+            "startDate" => $this->startDate,
+            "endDate"   => $this->endDate,
+            "width"     => $this->width,
+            "height"    => $this->height
+        );
+    }
+
     /**
      * Returns the base filepath for movie without any file extension
      */

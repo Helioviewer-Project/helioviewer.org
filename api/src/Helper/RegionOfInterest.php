@@ -48,11 +48,11 @@ class Helper_RegionOfInterest
      */
     public function __construct($x1, $x2, $y1, $y2, $imageScale, $maxWidth=1920, $maxHeight=1080)
     {
-        $this->_top    = $y1;
-        $this->_left   = $x1;
-        $this->_bottom = $y2;
-        $this->_right  = $x2;
-        $this->_scale  = $imageScale;
+        $this->_top    = (float) $y1;
+        $this->_left   = (float) $x1;
+        $this->_bottom = (float) $y2;
+        $this->_right  = (float) $x2;
+        $this->_scale  = (float) $imageScale;
         
         // Maximum dimensions allowed for request
         $this->_maxWidth  = $maxWidth;
