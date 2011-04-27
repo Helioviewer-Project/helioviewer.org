@@ -498,7 +498,30 @@ class Database_ImgIndex
         $sql = "SELECT date FROM images WHERE sourceId=$sourceId ORDER BY date DESC LIMIT 1";
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);        
         return $result['date'];
-    }    
+    }
+    
+    /**
+     * Returns a list of datasources sorted by instrument
+     * 
+     * @return array A list of datasources sorted by instrument
+     */
+    public function getDataSourcesByInstrument ()
+    {
+        $result = $this->_dbConnection->query("SELECT * FROM instruments ORDER BY name");
+        
+        $instruments = array();
+
+        while($instrument = mysqli_fetch_assoc($result)) {
+            $instruments[$instrument['name']] = array();
+            $sql = sprintf("SELECT * FROM datasources WHERE instrumentId=%d ORDER BY name", $instrument['id']);
+            $datasources = $this->_dbConnection->query($sql);
+            while($ds = mysqli_fetch_assoc($datasources)) {
+                array_push($instruments[$instrument['name']], $ds);
+            }
+        }
+        
+        return $instruments;
+    }
 
     /**
      * Returns a list of the known data sources
