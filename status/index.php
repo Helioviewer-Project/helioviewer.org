@@ -15,8 +15,8 @@
         #currentTime {font-size:0.8em; font-style: italic;}
         #statuses {margin-left: auto; margin-right: auto; width:65%; min-width:480px; text-align: left; font-size:0.9em;}
         .instrument {font-weight: bold; cursor: pointer;}
-        .datasource {display: none; background-color: #F9F9F9;}
-        .status-icon {width: 18px; height: 18px; mask: url(mask.svg#mask); -webkit-mask-box-image: url(mask.svg);}
+        .datasource {display: none; color: gray;}
+        .status-icon {width: 18px; height: 18px;}
     </style>
 </head>
 <body>
@@ -38,51 +38,56 @@
         include_once "../api/src/Database/ImgIndex.php";
         include_once "../api/src/Config.php";
 
-       /**
-        * Returns a CSS RGB triplet ranging from green (close to requested time)
-        * to yellow (some deviation from requested time) to red (requested 
-        * time differs strongly from actual time).
-        * 
-        * @param float $weight  Numeric ranging from 0.0 (green) to 1.0 (red)
-        * @param int   $rOffset Offset to add to red value
-        * @param int   $gOffset Offset to add to green value
-        * @param int   $bOffset Offset to add to blue value
-        */
-        function chooseTimeStampColor($weight, $rOffset=0, $gOffset=0, $bOffset=0) {
-            $red   = min(255, $rOffset + (int)(2 * $weight * 255));
-            $green = min(255, $gOffset + (int)(2 * 255 * (1 - $weight)));
-            $blue  = $bOffset;
-
-            return sprintf("rgb(%d,%d,%d)", $red, $green, $blue);
+        /**
+         * computeStatusLevel
+         * 
+         * @param {int}    $elapsed
+         * @param {string} $inst
+         */
+        function computeStatusLevel($elapsed, $inst) {
+            // Default values
+            $t1 = 7200;  // 2 hrs
+            $t2 = 14400; // 4 hrs
+            $t3 = 43200; // 12 hrs
+            $t4 = 86400; // 24 hrs
+            
+            if ($inst == "EIT") {
+                $t1 = 7 * 3600;
+                $t2 = 12 * 3600;
+                $t3 = 24 * 3600;
+                $t4 = 48 * 3600;                
+            } else if ($inst == "LASCO") {
+                $t1 = 6 * 3600;
+                $t2 = 12 * 3600;
+                $t3 = 24 * 3600;
+                $t4 = 48 * 3600;   
+            }
+ 
+            if ($elapsed <= $t1) {
+                return 1;
+            } else if ($elapsed <= $t2) {
+                return 2;
+            } else if ($elapsed <= $t3) {
+                return 3;
+            } else {
+                return 4;
+            }
         }
         
         /**
-         * Computes the weight to use when choosing a color based off
-         * the image cadence (min) and some reasonable lag time (max)
+         * getStatusIcon
          * 
-         * weight = e^[-(t_elapsed - t_min) / t_max]
-         * 
-         * @param int    $elapsed Number of elapsed seconds
-         * @param string $inst    Name of the instrument
-         * 
-         * @return float a value from 0 (green) to 1 (red)
+         * @var unknown_type
          */
-        function computeStatusWeight($elapsed, $inst) {
-            // Default values
-            $min = 3600;  // 1 hr
-            $max = 86400; // 24 hrs
+        function getStatusIcon($level) {
+            $levels = array(
+                1 => "green",
+                2 => "yellow",
+                3 => "orange",
+                4 => "red"
+            );
             
-            if ($inst == "EIT") {
-                $min = 7 * 3600;
-                $max = 48 * 3600;                
-            } else if ($inst == "LASCO") {
-                $min = 6 * 3600;
-                $max = 48 * 3600;   
-            } else if ($inst == "HMI") {
-                $max = 12 * 3600;
-            }
-
-            return exp(- min(($elapsed - $min), 0) / $max);
+            return sprintf("<img class='status-icon' src='status_icon_%s.png' alt='%s status icon' />", $levels[$level], $levels[$level]);
         }
         
         $config = new Config("../settings/Config.ini");
@@ -111,9 +116,9 @@
         // Create table of datasource statuses
         foreach($instruments as $name => $datasources) {
             $oldest = array(
-                "weight"      => 0,
-                "datetime"    => null,
-                "icon"        => null
+                "level"    => 0,
+                "datetime" => null,
+                "icon"     => null
             );
             $maxElapsed = 0;
             $oldestDate = null;
@@ -122,14 +127,14 @@
             // Create table row for a single datasource
             foreach($datasources as $ds) {
                 
-                // Determine weight of status icon
+                // Determine status icon to use
                 $date = $imgIndex->getNewestImage($ds['id']);
                 $elapsed = $now - strtotime($date);
-                $weight = computeStatusWeight($elapsed, $name);
+                $level = computeStatusLevel($elapsed, $name);
                 
                 // Create status icon
-                $icon = sprintf("<div class='status-icon' style='background-color:%s' />", chooseTimeStampColor($weight));
-                
+                $icon = getStatusIcon($level);
+
                 // Convert to human-readable date
                 $timestamp = strtotime($date);
                 $datetime = new DateTime("@$timestamp");
@@ -141,9 +146,9 @@
                 $subTableHTML .= sprintf($tableRow, $classes, "&nbsp;&nbsp;&nbsp;&nbsp;" . $ds['name'], $datetime->format('M j H:i:s'), $icon);
                 
                 // If the elapsed time is greater than previous max store it
-                if ($weight > $oldest['weight']) {
+                if ($level > $oldest['level']) {
                     $oldest = array(
-                        'weight'   => $weight,
+                        'level'   => $level,
                         'datetime' => $datetime,
                         'icon'     => $icon
                     );
@@ -169,19 +174,19 @@
                 <th>Status</th>
             </tr>
             <tr>
-                <td><div class='status-icon' style='background-color:<?php echo chooseTimeStampColor(0);?>'></div></td>
+                <td></td>
                 <td>:)</td>
             </tr>
             <tr>
-                <td><div class='status-icon' style='background-color:<?php echo chooseTimeStampColor(0.33);?>'></div></td>
+                <td></td>
                 <td>:|</td>
             </tr>
             <tr>
-                <td><div class='status-icon' style='background-color:<?php echo chooseTimeStampColor(0.66);?>'></div></td>
+                <td></td>
                 <td>:(</td>
             </tr>
             <tr>
-                <td><div class='status-icon' style='background-color:<?php echo chooseTimeStampColor(1);?>'></div></td>
+                <td></td>
                 <td>:*(</td>
             </tr>
         </table>
@@ -194,12 +199,46 @@
     <!-- JavaScript -->
     <script type='text/javascript'>
     $(function() {
+        var locateStorageEnabled, jsonEnabled;
+
+        // Check for localStorage and native JSON support
+        locateStorageEnabled = ('localStorage' in window) && 
+                                window['localStorage'] !== null;
+
+        jsonEnabled = typeof (JSON) !== "undefined";
+
+        // Initialize localStorage
+        if (locateStorageEnabled && jsonEnabled) {
+            if (!localStorage.dataMonitorOpenGroups) {
+                localStorage.dataMonitorOpenGroups = "[]";
+            } else {
+                $.each(JSON.parse(localStorage.dataMonitorOpenGroups), function (i, inst) {
+                    $(".datasource." + inst).show();
+                });
+            }
+        }
+
+        // Instrument click-handler
         $(".instrument").click(function (e) {
             var inst = $($(this).find("td")[0]).text();
-
             $(".datasource." + inst).toggle();
+
+            if (locateStorageEnabled && jsonEnabled) {
+                var open, index;
+
+                open = JSON.parse(localStorage.dataMonitorOpenGroups);
+
+                // Add or remove instrument from list of opened groups
+                index = $.inArray(inst, open);
+                if (index == -1) {
+                    open.push(inst);
+                } else {
+                    open.splice(index, 1);
+                }
+                localStorage.dataMonitorOpenGroups = JSON.stringify(open);
+            }
         });
-    });    
+    });
     </script>
 </body>
 </html>
