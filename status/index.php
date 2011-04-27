@@ -8,16 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Helioviewer.org - Data Monitor</title>
-    <style type='text/css'>
-        #main {width:40%; margin: 20px auto; text-align: center;}
-        #header {vertical-align: middle; margin: 15px auto 26px auto;}
-        #headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:2.4em;}
-        #currentTime {font-size:0.8em; font-style: italic;}
-        #statuses {margin-left: auto; margin-right: auto; width:65%; min-width:480px; text-align: left; font-size:0.9em;}
-        .instrument {font-weight: bold; cursor: pointer;}
-        .datasource {display: none; color: gray;}
-        .status-icon {width: 18px; height: 18px;}
-    </style>
+    <link rel="stylesheet" href="status.css" />
 </head>
 <body>
     <div id='main'>
@@ -26,15 +17,28 @@
         <div id='headerText'>The Helioviewer Project - Data Monitor</div>
         <div id='currentTime'>Current time: <?php echo $now;?></div>
     </div>
+    
+    <!-- Legend -->
+    <div id='legend-container'>
+        <div id='legend'>
+            <img class='status-icon' src='icons/status_icon_green.png' alt='green status icon' />
+            <span style='margin-right: 34px;'>Up to date</span>
+            <img class='status-icon' src='icons/status_icon_yellow.png' alt='yellow status icon' />
+            <span style='margin-right: 34px;'>Lagging</span>
+            <img class='status-icon' src='icons/status_icon_orange.png' alt='orange status icon' />
+            <span style='margin-right: 34px;'>Lagging a lot</span>
+            <img class='status-icon' src='icons/status_icon_red.png' alt='red status icon' />
+            <span>Uh oh!</span>
+        </div>
+    </div>
 
     <table id='statuses'>
-    <tr style='font-weight:bold; background: #444; color: #fff;'>
+    <tr id='status-headers'>
         <th width='100'>Datasource</th>
         <th width='100'>Latest Image</th>
-        <th width='50' align='center'>Status</th>
+        <th width='50' align='center'>Status <span id='info'>(?)</span></th>
     </tr>    
     <?php
-        include_once "../api/src/Database/DbConnection.php";
         include_once "../api/src/Database/ImgIndex.php";
         include_once "../api/src/Config.php";
 
@@ -87,7 +91,9 @@
                 4 => "red"
             );
             
-            return sprintf("<img class='status-icon' src='status_icon_%s.png' alt='%s status icon' />", $levels[$level], $levels[$level]);
+            $icon = "<img class='status-icon' src='icons/status_icon_%s.png' alt='%s status icon' />";
+            
+            return sprintf($icon, $levels[$level], $levels[$level]);
         }
         
         $config = new Config("../settings/Config.ini");
@@ -95,21 +101,10 @@
         // Current time
         $now = time();
         
-        $db = new Database_DbConnection();
         $imgIndex = new Database_ImgIndex();
         
         // Get a list of the datasources grouped by instrument
-        $result = $db->query("SELECT * FROM instruments ORDER BY name");
-        
-        $instruments = array();
-
-        while($instrument = mysqli_fetch_assoc($result)) {
-            $instruments[$instrument['name']] = array();
-            $datasources = $db->query(sprintf("SELECT * FROM datasources WHERE instrumentId=%d ORDER BY name", $instrument['id']));
-            while($ds = mysqli_fetch_assoc($datasources)) {
-                array_push($instruments[$instrument['name']], $ds);
-            }
-        }
+        $instruments = $imgIndex->getDataSourcesByInstrument();
         
         $tableRow = "<tr class='%s'><td>%s</td><td>%s</td><td align='center'>%s</td></tr>";
         
@@ -164,81 +159,10 @@
         }
     ?>
     </table>
-    
-    <!-- Legend -->
-    <!--
-    <div id='legend' style='border: 1px solid black; margin: 0 auto; padding: 10px;'>
-        <table>
-            <tr>
-                <th>Icon</th>
-                <th>Status</th>
-            </tr>
-            <tr>
-                <td></td>
-                <td>:)</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>:|</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>:(</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>:*(</td>
-            </tr>
-        </table>
     </div>
-    </div> -->
 
-    <!-- jQuery -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-    
     <!-- JavaScript -->
-    <script type='text/javascript'>
-    $(function() {
-        var locateStorageEnabled, jsonEnabled;
-
-        // Check for localStorage and native JSON support
-        locateStorageEnabled = ('localStorage' in window) && 
-                                window['localStorage'] !== null;
-
-        jsonEnabled = typeof (JSON) !== "undefined";
-
-        // Initialize localStorage
-        if (locateStorageEnabled && jsonEnabled) {
-            if (!localStorage.dataMonitorOpenGroups) {
-                localStorage.dataMonitorOpenGroups = "[]";
-            } else {
-                $.each(JSON.parse(localStorage.dataMonitorOpenGroups), function (i, inst) {
-                    $(".datasource." + inst).show();
-                });
-            }
-        }
-
-        // Instrument click-handler
-        $(".instrument").click(function (e) {
-            var inst = $($(this).find("td")[0]).text();
-            $(".datasource." + inst).toggle();
-
-            if (locateStorageEnabled && jsonEnabled) {
-                var open, index;
-
-                open = JSON.parse(localStorage.dataMonitorOpenGroups);
-
-                // Add or remove instrument from list of opened groups
-                index = $.inArray(inst, open);
-                if (index == -1) {
-                    open.push(inst);
-                } else {
-                    open.splice(index, 1);
-                }
-                localStorage.dataMonitorOpenGroups = JSON.stringify(open);
-            }
-        });
-    });
-    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="status.js" type="text/javascript"></script>
 </body>
 </html>
