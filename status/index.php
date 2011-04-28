@@ -9,6 +9,8 @@
     <meta charset="utf-8" />
     <title>Helioviewer.org - Data Monitor</title>
     <link rel="stylesheet" href="status.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="status.js" type="text/javascript"></script>
 </head>
 <body>
     <div id='main'>
@@ -22,11 +24,11 @@
     <div id='legend-container'>
         <div id='legend'>
             <img class='status-icon' src='icons/status_icon_green.png' alt='green status icon' />
-            <span style='margin-right: 34px;'>Up to date</span>
+            <span style='margin-right: 28px;'>Up to date</span>
             <img class='status-icon' src='icons/status_icon_yellow.png' alt='yellow status icon' />
-            <span style='margin-right: 34px;'>Lagging</span>
+            <span style='margin-right: 28px;'>Lagging</span>
             <img class='status-icon' src='icons/status_icon_orange.png' alt='orange status icon' />
-            <span style='margin-right: 34px;'>Lagging a lot</span>
+            <span style='margin-right: 28px;'>Lagging a lot</span>
             <img class='status-icon' src='icons/status_icon_red.png' alt='red status icon' />
             <span>Uh oh!</span>
         </div>
@@ -106,6 +108,9 @@
         // Get a list of the datasources grouped by instrument
         $instruments = $imgIndex->getDataSourcesByInstrument();
         
+        //var_dump($instruments);
+        //die();
+        
         $tableRow = "<tr class='%s'><td>%s</td><td>%s</td><td align='center'>%s</td></tr>";
         
         // Create table of datasource statuses
@@ -132,7 +137,9 @@
 
                 // Convert to human-readable date
                 $timestamp = strtotime($date);
-                $datetime = new DateTime("@$timestamp");
+
+                $datetime = new DateTime();
+                $datetime->setTimestamp($timestamp);
                 
                 // CSS classes for row
                 $classes = "datasource $name";
@@ -160,9 +167,5 @@
     ?>
     </table>
     </div>
-
-    <!-- JavaScript -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
-    <script src="status.js" type="text/javascript"></script>
 </body>
 </html>
