@@ -378,7 +378,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>-->
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.6/jquery-ui.js" type="text/javascript"></script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>

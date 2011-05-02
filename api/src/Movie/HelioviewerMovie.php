@@ -123,7 +123,12 @@ class Movie_HelioviewerMovie
         $t3 = time();
 
         // Compile movie
-        $this->_buildMovie();
+        try {
+            $this->_buildMovie();
+        } catch (Exception $e) {
+            $t4 = time();
+            $this->_abort("Error encountered during video encoding.", $t4 - $t3);
+        }
         
         $t4 = time();
         
@@ -170,8 +175,8 @@ class Movie_HelioviewerMovie
      * 
      * @param string $msg Error message
      */
-    private function _abort($msg) {
-        $this->_db->markMovieAsInvlid($this->_id);
+    private function _abort($msg, $procTime=0) {
+        $this->_db->markMovieAsInvalid($this->_id, $procTime);
         throw new Exception("Unable to create movie: " . $msg, 1);
     }
     
@@ -510,7 +515,7 @@ class Movie_HelioviewerMovie
 <!DOCTYPE html> 
 <html> 
 <head> 
-    <title>Helioviewer.org - <?php echo $this->filename;?></title>            
+    <title>Helioviewer.org - <?php echo $this -> filename;?></title>            
     <script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
 </head> 
@@ -526,7 +531,7 @@ class Movie_HelioviewerMovie
 </div>
 </body> 
 </html> 
-        <?php        
+        <?php
     }
-}
+    }
 ?>
