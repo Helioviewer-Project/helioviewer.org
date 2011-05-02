@@ -168,6 +168,8 @@ var MovieManager = MediaManager.extend(
         var queryMovieStatus, self = this;
 
         queryMovieStatus = function () {
+            var params, callback;
+            
             callback = function (response) {
                 if (response.eta) {
                     self._monitorQueuedMovie(id, response.eta);                    
