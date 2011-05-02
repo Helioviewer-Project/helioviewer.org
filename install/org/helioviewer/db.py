@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Helioviewer.org installer database funtions"""
 import sys
 import os
 
@@ -51,7 +52,11 @@ def check_db_info(adminuser, adminpass, mysql):
     """ Validate database login information """
     try:
         if mysql:
-            import MySQLdb
+            try:
+                import MySQLdb
+            except ImportError, e:
+                print e
+                return False
             db = MySQLdb.connect(user=adminuser, passwd=adminpass)
         else:
             import pgdb

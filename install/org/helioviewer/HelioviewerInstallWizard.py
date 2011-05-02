@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
+import math
+import getpass
 from PyQt4 import QtCore, QtGui
 from org.helioviewer.InstallWizard import Ui_InstallWizard
 from org.helioviewer.jp2 import *
@@ -67,8 +69,8 @@ class HelioviewerInstallWizard(QtGui.QWizard):
             self.images = traverse_directory(jp2dir)
             n = len(self.images)
 
-            if n is 0:
-                print "No JPEG 2000 images found. Exiting installation."
+            if n == 0:
+                print("No JPEG 2000 images found. Exiting installation.")
                 sys.exit(2)
             else:
                 self.ui.installProgress.setMaximum(n // __STEP_FXN_THROTTLE__)
