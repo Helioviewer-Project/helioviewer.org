@@ -55,18 +55,16 @@
             $t1 = 7200;  // 2 hrs
             $t2 = 14400; // 4 hrs
             $t3 = 43200; // 12 hrs
-            $t4 = 86400; // 24 hrs
+            $t4 = 604800; // 1 week
             
             if ($inst == "EIT") {
                 $t1 = 7 * 3600;
                 $t2 = 12 * 3600;
                 $t3 = 24 * 3600;
-                $t4 = 48 * 3600;                
             } else if ($inst == "LASCO") {
                 $t1 = 6 * 3600;
                 $t2 = 12 * 3600;
                 $t3 = 24 * 3600;
-                $t4 = 48 * 3600;   
             }
  
             if ($elapsed <= $t1) {
@@ -75,8 +73,10 @@
                 return 2;
             } else if ($elapsed <= $t3) {
                 return 3;
-            } else {
+            } else if ($elapsed <= $t4){
                 return 4;
+            } else {
+                return 5;
             }
         }
         
@@ -90,7 +90,8 @@
                 1 => "green",
                 2 => "yellow",
                 3 => "orange",
-                4 => "red"
+                4 => "red",
+                5 => "gray"
             );
             
             $icon = "<img class='status-icon' src='icons/status_icon_%s.png' alt='%s status icon' />";
