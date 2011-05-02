@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Helioviewer.org JPEG 2000 processing functions"""
 import os
 from datetime import datetime
 from xml.dom.minidom import parseString
@@ -38,7 +39,7 @@ def extract_JP2_info(img):
         dom = parseString(get_JP2_XMLBox(img, "meta"))
         fits = dom.getElementsByTagName("fits")[0]
     except Exception as e:
-        print "Error retrieving JP2 XML Box."
+        print("Error retrieving JP2 XML Box.")
         raise e
         
     # Detect image type and fetch require meta information
@@ -64,7 +65,7 @@ def extract_JP2_info(img):
     try:
         info = _get_header_tags(fits, datatype)
     except Exception as e:
-        print "Error parsing JP2 header"
+        print("Error parsing JP2 header")
         raise e 
 
     return info
@@ -239,7 +240,7 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         # Grab next image
         img = images.pop()
     
-        print "Processing image: " + img
+        print("Processing image: " + img)
         
         path, filename = os.path.split(img)
         
@@ -252,10 +253,7 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         try:
             m = extract_JP2_info(img)
         except:
-            print("Doh!")
-            print(img)
-            import sys
-            sys.exit()
+            print "Error processing %s" % filename
             error += filename + "\n"
         else:
             # Data Source
@@ -290,5 +288,5 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         cursor.execute(query)
     
     except Exception, e:
-        print "Error: " + e.args[1]
+        print("Error: " + e.args[1])
     
