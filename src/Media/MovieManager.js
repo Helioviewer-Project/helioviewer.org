@@ -24,7 +24,7 @@ var MovieManager = MediaManager.extend(
         // Check status of any previously unfinished movie requests
         var self = this;
         $.each(movies, function (i, movie) {
-            if (!movie.ready) {
+            if ((movie.status === "QUEUED") || (movie.status === "PROCESSING")) {
                 self._monitorQueuedMovie(movie.id, 0);
             }
         });
@@ -108,7 +108,7 @@ var MovieManager = MediaManager.extend(
             "x2"            : x2,
             "y1"            : y1,
             "y2"            : y2,
-            "ready"         : false,
+            "status"        : "QUEUED",
             "name"          : this._getName(layers)
         };
 
@@ -151,7 +151,7 @@ var MovieManager = MediaManager.extend(
             "endDate"   : endDate,
             "width"     : width,
             "height"    : height,
-            "ready"     : true
+            "status"    : "FINISHED"
         });
         
         this._save();
@@ -171,8 +171,10 @@ var MovieManager = MediaManager.extend(
             var params, callback;
             
             callback = function (response) {
-                if (response.eta) {
-                    self._monitorQueuedMovie(id, response.eta);                    
+                if (response.status == "QUEUED" || response.status == "PROCESSING") {
+                    self._monitorQueuedMovie(id, response.eta);
+                } else if (response.error) {
+                    self._abort(id);
                 }  else {
                     self.update(id, response.frameRate, response.numFrames,
                                 response.startDate, response.endDate,
@@ -188,6 +190,30 @@ var MovieManager = MediaManager.extend(
             $.get("api/index.php", params, callback, "json");
         };
         setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
+    },
+    
+    /**
+     * Aborts a failed movie request
+     */
+    _abort: function (id) {
+        var index = null;
+
+        // Find the index in the history array
+        $.each(this._history, function (i, item) {
+            if (item.id == id) {
+                index = i;
+            }
+        });
+
+        // Mark as failed
+        this._history[index]["status"] = "ERROR";        
+        this._save();
+
+        // Notify user
+        $error = "Sorry, we are unable to create your movie at this time. " +
+                 "Please try again later.";
+
+        $(document).trigger("message-console-info", $error);
     },
     
     /**

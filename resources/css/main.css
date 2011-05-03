@@ -124,6 +124,17 @@ a.light:hover {
     color: #d18f61;
 }
 
+.status {
+    float:right;
+    font-size: 8pt;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.processing {
+    color: #aaf373;
+}
+
 /* Text+icon buttons */
 
 div.text-btn {

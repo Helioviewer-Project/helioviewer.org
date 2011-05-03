@@ -71,9 +71,8 @@ var MediaManagerUI = Class.extend(
         
         // HTML for a single row in the history dialog
         html = "<div id='" + item.id + "' class='history-entry'>" +
-               "<div class='text-btn' style='float:left'>" + name + 
-               "</div>" +
-               "<div class='time-elapsed' style='float:right; font-size: 8pt; font-style:italic;'></div><br /><br />" +
+               "<div class='text-btn' style='float:left'>" + name + "</div>" +
+               "<div class='status'></div>" + 
                "</div>";
         
         this._historyBody.prepend(html);
@@ -109,8 +108,8 @@ var MediaManagerUI = Class.extend(
     _loadSavedItems: function () {
         var self = this;
 
-        $.each(this._manager.toArray(), function (i, screenshot) {
-            self._addItem(screenshot);
+        $.each(this._manager.toArray(), function (i, item) {
+            self._addItem(item);
         });
     },
     
@@ -118,10 +117,13 @@ var MediaManagerUI = Class.extend(
      * Refreshes status information for screenshots or movies in the history
      */
     _refresh: function () {
-        // Update the elapsed time information for each row in the history
+        // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
-            var elapsedTime = Date.parseUTCDate(item.dateRequested).getElapsedTime()
-            $("#" + item.id).find(".time-elapsed").html(elapsedTime);
+            var status, elapsedTime;
+            
+            status = $("#" + item.id).find(".status");
+            elapsedTime = Date.parseUTCDate(item.dateRequested).getElapsedTime();
+            status.html(elapsedTime);                
         });
     },
     

@@ -93,6 +93,9 @@ class Database_DbConnection
     {
         $result = mysqli_query($this->link, $query);
         if (!$result) {
+            var_dump($this);
+            var_dump($query);
+            die();
             throw new Exception(sprintf("Error executing database query (%s): %s", $query), mysqli_error($this->link));
         }
         return $result;

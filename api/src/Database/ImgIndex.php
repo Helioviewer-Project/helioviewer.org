@@ -139,7 +139,7 @@ class Database_ImgIndex
      */
     public function markMovieAsInvalid($id)
     {
-        $this->_dbConnection->query("UPDATE movies SET status='ERROR' WHERE id=$id");
+        $this->_dbConnection->query("UPDATE movieFormats SET status='ERROR' WHERE id=$id");
     }
     
     /**
