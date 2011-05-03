@@ -77,7 +77,7 @@ class Movie_FFMPEGEncoder
         }
         
         // If FFmpeg segfaults, an empty movie container may still be produced,
-        if (filesize($outputFile) < 1000)
+        if (!file_exists($outputFile) || filesize($outputFile) < 1000)
             throw new Exception("FFmpeg error encountered.");
 
         return $outputFile;
@@ -88,7 +88,8 @@ class Movie_FFMPEGEncoder
      */
     public function createHQVideo()
     {
-        $outputFile = sprintf("%s%s-hq.%s", $this->_directory, substr($this->_filename, 0, -4), $this->_format);
+        $baseFilename = substr($this->_filename, 0, -(sizeOf($this->_format + 1)));
+        $outputFile = sprintf("%s%s-hq.%s", $this->_directory, $baseFilename, $this->_format);
         
         if ($this->_format == "mp4") {
             $this->_createH264Video($outputFile, "ultrafast", 15);
@@ -97,14 +98,14 @@ class Movie_FFMPEGEncoder
         }
         
         // If FFmpeg segfaults, an empty movie container may still be produced
-        if (filesize($outputFile) < 1000)
+        if (!file_exists($outputFile) || filesize($outputFile) < 1000)
             throw new Exception("FFmpeg error encountered.");
 
         return $outputFile;
     }
     
     /**
-     * Creates a WebM + VP8 video
+     * Creates a WebM/VP8 video
      */
     private function _createWebMVideo($outputFile, $qmax=10)
     {
@@ -112,7 +113,7 @@ class Movie_FFMPEGEncoder
         //    . " -r " . $this->_frameRate . " -f webm -vcodec libvpx -qmax $qmax -threads " . HV_FFMPEG_MAX_THREADS 
         //    . " -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
         $cmd = sprintf(
-            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmax %d %s -threads %d -s %dx%d -an -y %s",
+            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmin 1 -qmax %d %s -threads %d -s %dx%d -an -y %s 2>%s",
             HV_FFMPEG,
             $this->_frameRate,
             $this->_directory,
@@ -122,10 +123,12 @@ class Movie_FFMPEGEncoder
             HV_FFMPEG_MAX_THREADS,
             $this->_width,
             $this->_height,
-            $outputFile            
+            $outputFile,
+            $this->_directory . "ffmpeg.log"
         );
         
-        exec($cmd);
+        // Run FFmpeg        
+        $output = shell_exec($cmd);
     }
     
     /**
@@ -146,8 +149,10 @@ class Movie_FFMPEGEncoder
         //$outputRate = substr($this->_filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "frames/frame%d.bmp"
             . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset " . $this->_getMetaDataString() . "-threads " 
-            . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
-
+            . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile 2>"
+            . $this->_directory . 'ffmpeg.log';
+            
+        // Run FFmpeg
         exec($cmd);
     }
     

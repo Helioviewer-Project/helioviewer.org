@@ -132,6 +132,28 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
+     * Refreshes status information for movies in the history
+     */
+    _refresh: function () {
+        // Update the status information for each row in the history
+        $.each(this._manager.toArray(), function (i, item) {
+            var status = $("#" + item.id).find(".status");
+
+            // For completed entries, display elapsed time
+            if (item.status == "FINISHED") {
+                var elapsedTime = Date.parseUTCDate(item.dateRequested).getElapsedTime();
+                status.html(elapsedTime);                
+            // For failed movie requests, display an error
+            } else if (item.status == "ERROR") {
+                status.html("Error")
+            // Otherwise show the item as processing
+            } else {
+                status.html("<span class='processing'>Processing</span>");
+            }
+        });
+    },
+    
+    /**
      * Validates the request and returns false if any of the requirements are not met
      */
     _validateRequest: function (roi, layerString) {

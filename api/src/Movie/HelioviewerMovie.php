@@ -176,7 +176,7 @@ class Movie_HelioviewerMovie
      * @param string $msg Error message
      */
     private function _abort($msg, $procTime=0) {
-        $this->_db->markMovieAsInvalid($this->_id, $procTime);
+        $this->_db->markMovieAsInvalid($this->id, $procTime);
         throw new Exception("Unable to create movie: " . $msg, 1);
     }
     
@@ -351,7 +351,7 @@ class Movie_HelioviewerMovie
         // Description
         $description = sprintf(
             "The Sun as seen through %s from %s.", 
-            $layerString, str_replace("-", "to", $dateString)
+            $layerString, str_replace("-", " to ", $dateString)
         );
         
         // Comment

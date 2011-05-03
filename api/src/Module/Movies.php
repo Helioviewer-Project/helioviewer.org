@@ -109,16 +109,22 @@ class Module_Movies implements Module
         
         // If the movie is finished return movie info
         if ($movie->status == "FINISHED") {            
-            print json_encode($movie->getCompletedMovieInformation());
+            $response = $movie->getCompletedMovieInformation();
+        } else if ($movie->status == "ERROR") {
+            $response = array(
+                "error" => "Sorry, we are unable to create your movie at this time. Please try again later."
+            );
         } else {
-            // Otherwise have the client try again in 30s
+            // Otherwise have the client try again in 15s
             // TODO 2011/04/25: Once HQ has been ported to PHP, eta should be estimated
             // instead of returning a static eta each time.
-            print json_encode(array(
+            $response = array(
                 "status" => $movie->status,
-                "eta"    => 30
-            ));            
+                "eta"    => 15
+            );
         }
+        
+        print json_encode($response);
     }
     
     /**
