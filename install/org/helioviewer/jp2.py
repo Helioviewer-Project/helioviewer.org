@@ -252,8 +252,8 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         # Extract header meta information
         try:
             m = extract_JP2_info(img)
-        except:
-            print "Error processing %s" % filename
+        except Exception as e:
+            print("Error processing %s" % filename)
             error += filename + "\n"
         else:
             # Data Source
@@ -287,6 +287,6 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     try:
         cursor.execute(query)
     
-    except Exception, e:
+    except Exception as e:
         print("Error: " + e.args[1])
     

@@ -13,7 +13,10 @@
 #    python remove.py filename.jp2 [filename2.jp2 ...]
 #    
 ###############################################################################
-import sys, os, shutil, MySQLdb
+import sys
+import os
+import shutil
+import MySQLdb
 
 def main(argv):
     rootdir = "/var/www/jp2/LATEST"

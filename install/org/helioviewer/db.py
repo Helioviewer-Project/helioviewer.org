@@ -54,16 +54,16 @@ def check_db_info(adminuser, adminpass, mysql):
         if mysql:
             try:
                 import MySQLdb
-            except ImportError, e:
-                print e
+            except ImportError as e:
+                print(e)
                 return False
             db = MySQLdb.connect(user=adminuser, passwd=adminpass)
         else:
             import pgdb
             db = pgdb.connect(database="postgres", user=adminuser, 
                               password=adminpass)
-    except MySQLdb.Error, e:
-        print e
+    except MySQLdb.Error as e:
+        print(e)
         return False
 
     db.close()
@@ -85,8 +85,8 @@ def create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
            cursor = db.cursor()
            cursor.execute(create_str)
            cursor.execute(grant_str)
-        except adaptor.Error, e:
-            print "Error: " + e.args[1]
+        except adaptor.Error as e:
+            print("Error: " + e.args[1])
             sys.exit(2)
     else:
         try:
@@ -95,8 +95,8 @@ def create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
             cursor = db.cursor()
             cursor.execute(create_str)
             cursor.execute(grant_str)
-        except Exception, e:
-            print "Error: " + e.args[1]
+        except Exception as e:
+            print("Error: " + e.args[1])
             sys.exit(2)
 
     cursor.close()
@@ -248,7 +248,8 @@ def create_measurement_table(cursor):
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
 
-    cursor.execute(u"""
+    # 2011/05/03: changed from u""" string for Python 3 compatability
+    cursor.execute("""
     INSERT INTO `measurements` VALUES
         (0, '94', '94 Ångström extreme ultraviolet', 'Å'),
         (1, '131', '131 Ångström extreme ultraviolet', 'Å'),
@@ -264,8 +265,7 @@ def create_measurement_table(cursor):
         (11, '4500', '4500 Ångström extreme ultraviolet', 'Å'),
         (12, 'continuum', 'Intensitygram', 'DN'),
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
-        (14, 'white-light', 'White Light', 'DN');
-    """)
+        (14, 'white-light', 'White Light', 'DN');""")
     
 def create_movies_table(cursor):
     """Creates movie table
