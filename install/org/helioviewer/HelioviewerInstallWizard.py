@@ -6,7 +6,6 @@ from PyQt4 import QtCore, QtGui
 from org.helioviewer.InstallWizard import Ui_InstallWizard
 from org.helioviewer.jp2 import *
 from org.helioviewer.db  import *
-from org.helioviewer.utils import *
 
 __INTRO_PAGE__ = 0
 __DBADMIN_PAGE__ = 1

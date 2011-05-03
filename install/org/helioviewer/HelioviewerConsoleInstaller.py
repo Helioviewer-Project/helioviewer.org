@@ -4,11 +4,9 @@ import sys
 import os
 import math
 import getpass
-import commands
 from datetime import datetime
 from org.helioviewer.jp2 import *
 from org.helioviewer.db  import *
-from org.helioviewer.utils import *
 
 class HelioviewerConsoleInstaller:
     """Text-based installer class"""
@@ -18,10 +16,10 @@ class HelioviewerConsoleInstaller:
     def getFilePath(self):
         '''Prompts the user for the directory information'''
     
-        path = raw_input("Location of JP2 Images: ")
+        path = get_input("Location of JP2 Images: ")
         while not os.path.isdir(path):
             print("That is not a valid directory! Please try again.")
-            path = raw_input("Location of JP2 Images: ")
+            path = get_input("Location of JP2 Images: ")
     
         return path
     
@@ -33,17 +31,17 @@ class HelioviewerConsoleInstaller:
             print("Please select the desired database to use for installation:")
             print("   [1] MySQL")
             print("   [2] PostgreSQL")
-            choice = int(raw_input("Choice: "))
+            choice = get_input("Choice: ")
             
-            if choice not in [1,2]:
+            if choice not in ['1', '2']:
                 print("Sorry, that is not a valid choice.")
             else:
-                return dbtypes[choice]
+                return dbtypes[int(choice)]
             
     def getDatabasename(self):
         ''' Prompts the user for the database name '''
 
-        dbname = raw_input("    Database name [helioviewer]: ")
+        dbname = get_input("    Database name [helioviewer]: ")
    
         # Default values
         if not dbname: dbname = "helioviewer"
@@ -59,12 +57,12 @@ class HelioviewerConsoleInstaller:
                   "Helioviewer.org?:")
             print("   [1] Yes")
             print("   [2] No")
-            choice = int(raw_input("Choice: "))
+            choice = get_input("Choice: ")
             
-            if choice not in [1,2]:
+            if choice not in ['1', '2']:
                 print("Sorry, that is not a valid choice.")
             else:
-                return options[choice]
+                return options[int(choice)]
     
     def getDatabaseInfo(self):
         ''' Gets database type and administrator login information '''
@@ -72,7 +70,7 @@ class HelioviewerConsoleInstaller:
         
         while True:  
             dbtype = self.getDatabaseType()
-            dbuser = raw_input("    Username: ")        
+            dbuser = get_input("    Username: ")        
             dbpass = getpass.getpass("    Password: ")
         
             # Default values
@@ -92,8 +90,8 @@ class HelioviewerConsoleInstaller:
         ''' Prompts the user for the required database information '''
 
         # Get new user information (Todo 2009/08/24: validate input form)
-        dbuser = raw_input("    Username [helioviewer]: ")
-        dbpass = raw_input("    Password [helioviewer]: ")
+        dbuser = get_input("    Username [helioviewer]: ")
+        dbpass = get_input("    Password [helioviewer]: ")
     
         # Default values
         if not dbuser:
@@ -185,4 +183,10 @@ def loadUpdater(options):
     cursor.close()
 
     print("Finished!")
+    
+# raw_input
+if sys.version_info[0] >= 3:
+    get_input = input
+else:
+    get_input = raw_input
 
