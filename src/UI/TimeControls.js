@@ -220,7 +220,7 @@ var TimeControls = Class.extend(
             dateFormat     : 'yy/mm/dd',
             mandatory      : true,
             showOn         : 'button',
-            yearRange      : '1993:2010',
+            yearRange      : '1993:2013',
             onSelect       : function (dateStr) {
                 window.setTimeout(function () {
                     self._onTextFieldChange();

@@ -258,7 +258,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 <!-- Observation Time -->
                 <div style="margin-bottom: 8px;">
                     <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
-                    <input id="time" name="time" value="" style="width:80px" type="time" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
+                    <input id="time" name="time" value="" style="width:80px" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
                     <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
                 </div>
 
