@@ -33,7 +33,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     <link rel="stylesheet" href="lib/yui-2.8.2r1/reset-fonts.css" />
 
     <!-- Plugin Styles -->
-    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.custom.css" />  
+    <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.12.custom.css" />  
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
     <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
@@ -378,10 +378,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <!-- jQuery -->
-<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>-->
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.6/jquery-ui.js" type="text/javascript"></script>
-
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.6.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
@@ -410,10 +408,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <!-- jQuery -->
-<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
 <script src="http://code.jquery.com/jquery-1.6.js" type="text/javascript"></script>
-
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
