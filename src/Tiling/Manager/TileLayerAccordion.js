@@ -109,7 +109,7 @@ var TileLayerAccordion = Layer.extend(
         
         this.selectMenus = new TreeSelect(ids, this._dataSources, selected, function (leaf) {
             $(document).trigger("tile-layer-data-source-changed",
-                [id, $(obs).attr("value"), $(inst).attr("value"), $(det).attr("value"), $(meas).attr("value"), 
+                [id, $(obs).prop("value"), $(inst).prop("value"), $(det).prop("value"), $(meas).prop("value"), 
                 leaf.sourceId, leaf.nickname, leaf.layeringOrder]
              );
         });
