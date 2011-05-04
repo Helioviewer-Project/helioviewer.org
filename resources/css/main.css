@@ -342,7 +342,6 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 #image-area-select-container {
-    background: url(resources/images/transparent_512.png);
     position: relative;
     cursor: crosshair;
     z-index: 5;
