@@ -41,7 +41,7 @@ var TreeSelect = Class.extend(
         $.each(this.selectIds, function (depth, id) {
             $(id + " > option").each(function (index, option) {
                 if (option.value === self.selected[depth]) {
-                    $(id).attr("selectedIndex", index);     
+                    $(id).prop("selectedIndex", index);     
                 }
             });
         });

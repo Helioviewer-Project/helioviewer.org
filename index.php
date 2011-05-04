@@ -251,14 +251,14 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 <!--  Observation Date -->
                 <div style="margin-bottom: 4px; position: relative;">
                     <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
-                    <input type="text" id="date" name="date" value="">
+                    <input type="text" id="date" name="date" value="" maxlength='10'>
                     <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
                 </div>
 
                 <!-- Observation Time -->
                 <div style="margin-bottom: 8px;">
                     <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
-                    <input type="text" id="time" name="time" value="" style="width:80px">
+                    <input id="time" name="time" value="" style="width:80px" type="time" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
                     <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
                 </div>
 
@@ -410,7 +410,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
+<script src="http://code.jquery.com/jquery-1.6.js" type="text/javascript"></script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
