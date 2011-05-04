@@ -144,7 +144,7 @@ var MovieManager = MediaManager.extend(
         });
         
         // Add the new values
-        $.merge(this._history[index], {
+        $.extend(this._history[index], {
             "frameRate" : frameRate,
             "numFrames" : numFrames,
             "startDate" : startDate,
