@@ -35,7 +35,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     <!-- Plugin Styles -->
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.12.custom.css" />  
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
-    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.2/css/imgareaselect-default.css" />
+    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
     <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
     <!--<link rel="stylesheet" href="resources/css/tooltips.css" /> -->
 
@@ -389,7 +389,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 <script src="lib/jquery.jgrowl/jquery.jgrowl_compressed.js" type="text/javascript"></script>
 
 <!-- imgAreaSelect jQuery plugin -->
-<script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
+<script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
 
 <!-- date.js -->
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -419,7 +419,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 <script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
 
 <!-- imgAreaSelect jQuery plugin -->
-<script src="lib/jquery.imgareaselect-0.9.2/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
+<script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
 
 <!-- date.js -->
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
