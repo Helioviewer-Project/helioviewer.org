@@ -88,7 +88,7 @@ class Movie_FFMPEGEncoder
      */
     public function createHQVideo()
     {
-        $baseFilename = substr($this->_filename, 0, -(sizeOf($this->_format + 1)));
+        $baseFilename = substr($this->_filename, 0, -strlen($this->_format) - 1);
         $outputFile = sprintf("%s%s-hq.%s", $this->_directory, $baseFilename, $this->_format);
         
         if ($this->_format == "mp4") {
@@ -126,7 +126,7 @@ class Movie_FFMPEGEncoder
             $outputFile,
             $this->_directory . "ffmpeg.log"
         );
-        
+
         // Run FFmpeg        
         $output = shell_exec($cmd);
     }
@@ -144,16 +144,13 @@ class Movie_FFMPEGEncoder
      */
     private function _createH264Video($outputFile, $preset="lossless_fast", $crf=18)
     {
-        // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
-        // fps >= 2
-        //$outputRate = substr($this->_filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "frames/frame%d.bmp"
             . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset " . $this->_getMetaDataString() . "-threads " 
             . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile 2>"
             . $this->_directory . 'ffmpeg.log';
             
         // Run FFmpeg
-        exec($cmd);
+        $output = shell_exec($cmd);
     }
     
     /**
@@ -168,7 +165,7 @@ class Movie_FFMPEGEncoder
      */
     public function createFlashVideo()
     {
-        $file = $this->_directory . "/" . substr($this->_filename, 0, -4);
+        $file = $this->_directory . substr($this->_filename, 0, -4);
         
         $cmd = HV_FFMPEG . " -i $file.mp4 -vcodec copy " . $this->_getMetaDataString()
              . "-threads " . HV_FFMPEG_MAX_THREADS . " $file.flv";
