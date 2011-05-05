@@ -41,6 +41,7 @@ var MediaManagerUI = Class.extend(
      * Shows the media manager
      */
     show: function () {
+        $(".media-manager-container").hide();
         this._refresh();
         this._container.show();
     },
@@ -62,7 +63,7 @@ var MediaManagerUI = Class.extend(
      * @param {Object} The movie or screenshot to be added 
      */
     _addItem: function (item) {
-        var id, html, name = item.name;
+        var htmlId, html, last, name = item.name;
 
         // Shorten names to fit inside the history dialog        
         if (name.length > 16) {
@@ -70,7 +71,9 @@ var MediaManagerUI = Class.extend(
         }
         
         // HTML for a single row in the history dialog
-        html = "<div id='" + item.id + "' class='history-entry'>" +
+        htmlId = this._type + "-" + item.id;
+
+        html = "<div id='" + htmlId + "' class='history-entry'>" +
                "<div class='text-btn' style='float:left'>" + name + "</div>" +
                "<div class='status'></div>" + 
                "</div>";
@@ -79,9 +82,9 @@ var MediaManagerUI = Class.extend(
 
         // Make sure the list contains no more than twelve items
         if (this._historyBody.find(".history-entry").length > 12) {
-            id = this._historyBody.find(".history-entry").last().attr('id');
-            this._removeItem(id);
-            this._manager.remove(id);
+            last = this._historyBody.find(".history-entry").last().attr('id');
+            this._removeItem(last);
+            this._manager.remove(last);
         }
         
         // Show the history section title if it is not already visible
@@ -117,11 +120,13 @@ var MediaManagerUI = Class.extend(
      * Refreshes status information for screenshots or movies in the history
      */
     _refresh: function () {
+        var type = this._type;
+
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
             var status, elapsedTime;
             
-            status = $("#" + item.id).find(".status");
+            status = $("#" + type + "-" + item.id).find(".status");
             elapsedTime = Date.parseUTCDate(item.dateRequested).getElapsedTime();
             status.html(elapsedTime);                
         });
