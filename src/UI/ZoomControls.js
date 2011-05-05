@@ -21,24 +21,13 @@ var ZoomControls = Class.extend(
         this.imageScale    = imageScale;
         this.minImageScale = minImageScale;
         this.maxImageScale = maxImageScale;
+        
+        this.zoomInBtn  = $('#zoomControlZoomIn');
+        this.zoomSlider = $('#zoomControlSlider');
+        this.zoomOutBtn = $('#zoomControlZoomOut');
 
-        this._buildUI();
         this._initSlider();
-        this._setupTooltips();
         this._initEventHandlers();
-    },
-
-    /**
-     * @description Sets up tooltips for zoom controls
-     */
-    _setupTooltips: function () {
-        var description, targets;
-        
-        description = "Drag this handle up and down to zoom in and out of the displayed image.";
-        $("#zoomControlSlider > .ui-slider-handle").attr("title", description);
-        
-        targets = "#zoomControlZoomOut, #zoomControlZoomIn, #zoomControlHandle, #zoomControlSlider > .ui-slider-handle";
-        $(document).trigger('create-tooltip', [targets]);
     },
   
     /**
@@ -56,20 +45,7 @@ var ZoomControls = Class.extend(
     _setImageScale: function (v) {
         $(document).trigger('image-scale-changed', [this.increments[v]]);
     },
-    
-    /**
-     * @description sets up zoom control UI element
-     */
-    _buildUI: function () {
-        this.zoomInBtn  = $('<div id="zoomControlZoomIn" title="Zoom in.">+</div>');
-        this.zoomSlider = $('<div id="zoomControlSlider"></div>');
-        this.zoomOutBtn = $('<div id="zoomControlZoomOut" title="Zoom out.">-</div>');
 
-        var sliderContainer = $('<div id="zoomSliderContainer"></div>').append(this.zoomSlider);
-
-        $(this.id).append(this.zoomInBtn).append(sliderContainer).append(this.zoomOutBtn);
-    },
-    
     /**
      * @description Initializes zoom level slider
      */
@@ -95,6 +71,10 @@ var ZoomControls = Class.extend(
             orientation: 'vertical',
             value: $.inArray(this.imageScale, this.increments)
         });
+        
+        // Add tooltip text
+        var description = "Drag this handle up and down to zoom in and out of the displayed image.";
+        $("#zoomControlSlider > .ui-slider-handle").attr('title', description);
     },
 
     /**

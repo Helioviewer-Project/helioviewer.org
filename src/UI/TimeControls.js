@@ -245,7 +245,7 @@ var TimeControls = Class.extend(
             });
         
         // Tooltips
-        $(document).trigger('create-tooltip', [btnId]);
+        btn.qtip();
     },
     
     /**
