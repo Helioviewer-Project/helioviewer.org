@@ -9,7 +9,7 @@
 *   http://en.wikipedia.org/wiki/MIT_License
 *   http://en.wikipedia.org/wiki/GNU_General_Public_License
 *
-* Date: Wed Mar 9 22:07:29 2011 +0000
+* Date: Mon May 2 20:24:21 2011 +0100
 */
 
 /* Fluid class for determining actual width in IE */
@@ -20,11 +20,11 @@
 	float: left !important;
 }
 
-.ui-tooltip, .qtip, .ui-tooltip-hidden{
+.ui-tooltip, .qtip{
 	position: absolute;
-	left: -31000px;
-	top: -31000px;
-	display: block;
+	left: -28000px;
+	top: -28000px;
+	display: none;
 
 	max-width: 280px;
 	min-width: 50px;
@@ -106,6 +106,11 @@
 /* Applied to 'focused' tooltips e.g. most recently displayed/interacted with */
 .ui-tooltip-focus{
 
+}
+
+/* Applied on hover of tooltips i.e. added/removed on mouseenter/mouseleave respectively */
+.ui-tooltip-hover{
+	
 }
 
 
@@ -259,7 +264,6 @@
 	.ui-tooltip-blue .ui-state-default .ui-tooltip-icon{
 		background-position: -2px 0;
 	}.ui-tooltip .ui-tooltip-tip{
-	position: absolute;
 	margin: 0 auto;
 	overflow: hidden;
 
@@ -270,6 +274,8 @@
 
 	.ui-tooltip .ui-tooltip-tip,
 	.ui-tooltip .ui-tooltip-tip *{
+		position: absolute;
+		
 		line-height: 0.1px !important;
 		font-size: 0.1px !important;
 		color: #123456;
@@ -278,7 +284,7 @@
 		border: 0px dashed transparent;
 	}
 
-#qtip-overlay{
+	.ui-tooltip .ui-tooltip-tip canvas{ position: static; }#qtip-overlay{
 	position: absolute;
 	left: -10000em;
 	top: -10000em;
@@ -301,6 +307,9 @@
 	.ui-tooltip-shadow .ui-tooltip-content{
 		filter: progid:DXImageTransform.Microsoft.Shadow(Color='gray', Direction=135, Strength=3);
 		-ms-filter:"progid:DXImageTransform.Microsoft.Shadow(Color='gray', Direction=135, Strength=3)";
+
+		_margin-bottom: -3px; /* IE6 */
+		.margin-bottom: -3px; /* IE7 */
 	}
 
 
@@ -378,12 +387,12 @@
 	-moz-box-shadow: 0 0 12px #333;
 	box-shadow: 0 0 12px #333;
 }
+
 	/* IE Specific */
 	.ui-tooltip-jtools .ui-tooltip-titlebar{
 		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A);
 		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A)";
 	}
-	
 	.ui-tooltip-jtools .ui-tooltip-content{
 		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323);
 		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323)";
@@ -436,8 +445,7 @@
 
 /* Tipsy style */
 .ui-tooltip-tipsy{
-	border: 0 solid #000;
-	border: 0 solid rgba(0,0,0,.87);
+	border: 0;
 }
 
 	.ui-tooltip-tipsy .ui-tooltip-titlebar,
@@ -448,7 +456,7 @@
 		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#D9000000,endColorstr=#D9000000)";
 		
 		color: white;
-		border: 0 dashed transparent;
+		border: 0px transparent;
 
 		font-size: 11px;
 		font-family: 'Lucida Grande', sans-serif;
