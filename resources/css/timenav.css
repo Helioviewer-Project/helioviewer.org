@@ -1,11 +1,14 @@
-/* Time Navigation */
-.timestamp {
-	font-size:1.0em;
-    font-weight: normal;
-    margin-left: 0px;
-    line-height: 1.6em;
-    position: absolute;
-    left: 120px;
+/* Observation controls */
+#observation-controls {
+    padding: 2px 2px 8px 2px;
+    margin: 0px 5px 0px 5px;
+    border: 1px solid black;
+    color: white;
+    font-size: 0.95em;
+}
+
+#observation-controls input, #observation-controls select {
+    border: 1px solid #5c5c5c;
 }
 
 #timeBackBtn, #timeForwardBtn {
@@ -13,20 +16,20 @@
 }
 
 #timeBackBtn {
-	float: left;
+    float: left;
 }
 
 #timeNowBtn {
-	position: absolute;
-	top: 7px;
-	right: 50px;
-	font-size: 11px;
-	font-style: italic;
-	cursor: pointer;
-	font-weight: 700;
+    position: absolute;
+    top: 7px;
+    right: 50px;
+    font-size: 11px;
+    font-style: italic;
+    cursor: pointer;
+    font-weight: 700;
 }
 #timeNowBtn:hover {
-	color: #D18F61;
+    color: #D18F61;
 }
 
 #timestep-select {
@@ -34,4 +37,22 @@
     border: none;
     margin-right: 1px;
     float: left;
+}
+
+/* Calendar */
+#date {
+    width:80px;
+    vertical-align: top;
+    margin-right: 2px;
+    margin-top: 1px;
+}
+
+/* Layer timestamps */
+.timestamp {
+    font-size:1.0em;
+    font-weight: normal;
+    margin-left: 0px;
+    line-height: 1.6em;
+    position: absolute;
+    left: 120px;
 }

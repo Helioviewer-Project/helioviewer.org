@@ -3,30 +3,43 @@
 */
 
 /* HTML ELEMENTS */
-html, body    {background: #20242F url('../../resources/images/backgrounds/gradient_v5-optimized.png') repeat-x; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;}
-button        {cursor:pointer}
-strong    	  {font-weight:bold;}
+html, body {background: #20242F url('../../resources/images/backgrounds/gradient_v5-optimized.png') repeat-x; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;}
+button     {cursor:pointer}
+strong     {font-weight:bold;}
 #col2 input, #col2 select {background-color:#F4F4F4;}
-
 #left-col-header, #right-col-header {height: 50px; margin-top: -24px;}
 
-/** 03/14/2010: Temporary fix for datepicker. TODO: upgrade jQuery UI */
-#ui-datepicker-div {display:none;}
+/* Google Chrome Frame Installer */
+.chromeFrameOverlayContent  {border:1px solid #303030;}
+.chromeFrameOverlayUnderlay {background: #000; opacity: 0.5;}
 
-/* Loading Indicator */
-#loading {position: absolute; right: 3px; padding: 3px; font-size: 12px; background-color:#858585; color: #F0F0F0;}
-
-/* Observation controls */
-#observation-controls {
-    padding: 2px 2px 8px 2px;
-    margin: 0px 5px 0px 5px;
-    border: 1px solid black;
-    color: white;
-    font-size: 0.95em;
+/* Text styles */
+a.dark {
+    text-decoration: none;
+    font-weight: bold;
+    color: #262424;
+    }
+a.dark:hover {
+    color: #d18f61;
+    }
+a.light {
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    color: #E8E8E8;
+}
+a.light:hover {
+    color: #d18f61;
 }
 
-#observation-controls > div > input, #observation-controls > div > select {
-    border: 1px solid #5c5c5c;
+/* Loading Indicator */
+#loading {
+    position: absolute;
+    right: 3px;
+    padding: 3px;
+    font-size: 12px;
+    background-color:#858585;
+    color: #F0F0F0;
 }
 
 /* Center button */
@@ -51,7 +64,7 @@ strong    	  {font-weight:bold;}
     line-height: 1.0;
 }
 
-/* Coordinates */
+/* Mouse Coordinates */
 #mouse-coords {
 	background: transparent;
 	color: white;
@@ -69,14 +82,6 @@ strong    	  {font-weight:bold;}
     float: left;
 }
 
-/* Zoom controls */
-#zoomControls {
-    position: absolute;
-    left: 16px;
-    top:39px;
-    z-index:20;
-}
-
 /* Message Console */
 #message-console .message-console-link {
 	text-decoration: none;
@@ -89,54 +94,7 @@ strong    	  {font-weight:bold;}
 	color: #e03d76;
 }
 
-/* Calendar */
-#date {
-	width:80px;
-    vertical-align: top;
-	margin-right: 2px;
-    margin-top: 1px;
-}
-
-/* Movie Builder */
-img#movieBuilder {
-	position: relative;
-	cursor: pointer;
-	margin: 2px;
-	vertical-align: middle;
-	top: -4px;
-}
-
-a.dark {
-	text-decoration: none;
-	font-weight: bold;
-	color: #262424;
-	}
-a.dark:hover {
-    color: #d18f61;
-	}
-a.light {
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bold;
-    color: #E8E8E8;
-}
-a.light:hover {
-    color: #d18f61;
-}
-
-.status {
-    float:right;
-    font-size: 8pt;
-    font-style: italic;
-    margin-bottom: 10px;
-}
-
-.processing {
-    color: #aaf373;
-}
-
-/* Text+icon buttons */
-
+/* Text-icon buttons */
 div.text-btn {
     cursor: pointer;
     display: inline-block;
@@ -153,30 +111,8 @@ span.ui-icon-hover, div.ui-icon-hover {
     background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
-.italic {
-    font-style: italic;
-}
-
 .section-header {
 	font-weight: bold;
-}
-
-/* Social & Movie buttons */
-#social-buttons {
-    background-color: #2A2A2A;
-    position: absolute;
-    right: 17px;
-    top:0px;
-    padding: 1px 0px 1px 8px;
-    border-top: 0px;
-    border-bottom: 1px solid #262424;
-    border-left: 1px solid #262424;
-    border-right: 0px;
-    font-size: 11px;
-    height: 15px;
-	border-bottom-left-radius: 20px;
-    -moz-border-radius-bottomleft: 20px;
-    -webkit-border-bottom-left-radius: 20px;
 }
 
 /** Meta links **/
@@ -221,7 +157,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 #message-console .jGrowl-notification, #message-console .jGrowl-closer {
-   background: Azure;
+   background-color: #CCD9D9;
    color: #262424;
 }
 
@@ -230,11 +166,25 @@ span.ui-icon-hover, div.ui-icon-hover {
     color: #262424;
 }
 
-/* Google Chrome Frame Installer */
-.chromeFrameOverlayContent  {border:1px solid #303030;}
-.chromeFrameOverlayUnderlay {background: #000; opacity: 0.5;}
+/* Social & Movie buttons */
+#social-buttons {
+    background-color: #2A2A2A;
+    position: absolute;
+    right: 17px;
+    top:0px;
+    padding: 1px 0px 1px 8px;
+    border-top: 0px;
+    border-bottom: 1px solid #262424;
+    border-left: 1px solid #262424;
+    border-right: 0px;
+    font-size: 11px;
+    height: 15px;
+    border-bottom-left-radius: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+}
 
-/* Social panel */
+/* Blog entries */
 #social-panel {
     height: 100%;
     min-height: 150px;
@@ -272,59 +222,6 @@ span.ui-icon-hover, div.ui-icon-hover {
     color: #D18F16;
 }
 
-#user-video-gallery {
-    height: 100%;
-    min-height: 150px;
-    font-size: 11px;
-    padding: 2px 2px 0 0;
-    margin: 0 5px;
-    text-align: center;
-}
-
-#user-video-gallery-main {
-    margin-bottom: 5px;
-}
-
-#user-video-gallery-spinner {
-	background: url("../../resources/images/ajax-loader.gif");
-	width: 16px;
-	height: 16px;
-	margin: 94px auto;
-}
-
-#user-video-gallery-next, #user-video-gallery-prev {
-	font-style: italic;
-	font-weight: normal;
-	display: inline-block;
-}
-
-#user-video-gallery a {
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;  
-}
-
-#user-video-gallery a:hover {
-    color: #D18F16;  
-}
-
-#user-video-gallery img {
-    width : 240px;
-	height: 180px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#yt-logo {
-    float: left;
-    margin-right: 5px;
-}
-
-.user-video-thumbnail-container {
-    width: 100%;
-    text-align: center;
-}
-
 /* Image Area Select */
 #image-area-select-buttons {
     position: absolute;
@@ -352,32 +249,4 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 #image-area-select-buttons .ui-icon {
     float: left;
-}
-
-/* Screenshot and Movie Managers */
-.media-manager-container {
-    position: absolute;
-    top: 25px;
-    right: 20px;
-    width: 190px;
-    background: #2A2A2A;
-    font-size: 11px;
-    padding: 10px;
-    -moz-border-radius:5px;
-    -webkit-border-radius:5px;
-    color: white;
-    display: none;
-}
-
-.media-manager-build-btns {
-    height: 18px;
-}
-
-.media-history-title {
-    line-height:1.6em;
-    font-weight: bold;
-    padding: 9px 0px;
-    border-top: 1px solid;
-    display: none;
-    margin-top: 7px;
 }

@@ -54,9 +54,11 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
             echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.min.css?$version\" />\n    ";
         }
         else {
-            $css = array("main.css", "layout.css", "accordions.css", "dialogs.css", "sliders.css", "timenav.css", "viewport.css");
+            $css = array("main", "layout", "accordions", "dialogs", 
+                         "media-manager", "sliders", "timenav", 
+                         "video-gallery", "viewport");
             foreach($css as $file)
-                printf("<link rel=\"stylesheet\" href=\"resources/css/%s?$version\" />\n    ", $file);
+                printf("<link rel=\"stylesheet\" href=\"resources/css/%s.css?$version\" />\n    ", $file);
         }
     ?>
 

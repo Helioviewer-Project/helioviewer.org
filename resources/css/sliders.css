@@ -1,4 +1,11 @@
 /* Zoom Level Slider */
+#zoomControls {
+    position: absolute;
+    left: 16px;
+    top:39px;
+    z-index:20;
+}
+
 #zoomControlSlider {
     background: transparent none repeat scroll 0 0;
     width: 100%;
