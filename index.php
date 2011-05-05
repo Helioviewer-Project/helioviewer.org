@@ -37,7 +37,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
     <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
     <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
-    <!--<link rel="stylesheet" href="resources/css/tooltips.css" /> -->
 
     <!-- Helioviewer-Specific Styles -->
     <?php
@@ -119,7 +118,13 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                             <!-- UI COMPONENTS -->
 
                             <!--  Zoom Controls -->
-                            <div id="zoomControls"></div>
+                            <div id="zoomControls">
+                                <div id="zoomControlZoomIn" title="Zoom in.">+</div>
+                                <div id="zoomSliderContainer">
+                                    <div id="zoomControlSlider"></div>
+                                </div>
+                                <div id="zoomControlZoomOut" title="Zoom out.">-</div>
+                            </div>
 
                             <!-- Center button -->
                             <div id="center-button" title="Center the image on the screen.">
@@ -129,7 +134,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                             <!--Social buttons -->
                             <div id="social-buttons">
                                 <!-- Link button -->
-                                <div id="link-button" class="text-btn">
+                                <div id="link-button" class="text-btn" title="Get a link to the current page.">
                                     <span class="ui-icon ui-icon-link" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Link</span>
                                 </div>
@@ -141,19 +146,19 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                                 </div>-->
 
                                 <!-- Movie button -->
-                                <div id="movie-button" class="text-btn">
+                                <div id="movie-button" class="text-btn" title="Create a movie.">
                                     <span class="ui-icon ui-icon-video" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Movie</span>
                                 </div>
 
                                 <!-- Screenshot button -->
-                                <div id="screenshot-button" class="text-btn">
+                                <div id="screenshot-button" class="text-btn" title="Create a screenshot.">
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
                                 
                                 <!-- Settings button -->
-                                <div id="settings-button" class="text-btn">
+                                <div id="settings-button" class="text-btn" title="Open Helioviewer settings dialog.">
                                     <span class="ui-icon ui-icon-gear" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Settings</span>
                                 </div>
@@ -293,13 +298,13 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
-                <a id="user-video-gallery-next" href="#">
+                <a id="user-video-gallery-next" href="#" title="Go to next page.">
                     <div class='ui-icon ui-icon-triangle-1-n'></div>
                 </a>
                 <div id="user-video-gallery-main">
                     <div id="user-video-gallery-spinner"></div>
                 </div>
-                <a id="user-video-gallery-prev" href="#">
+                <a id="user-video-gallery-prev" href="#" title="Go to previous page.">
                     <div class='ui-icon ui-icon-triangle-1-s'></div>
                 </a>
             </div>
@@ -400,7 +405,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 
 <!-- qTip -->
-<script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
+<script src="lib/jquery.qTip2/jquery.qtip.pack.js" type="text/javascript"></script>
 
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
@@ -476,7 +481,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                     "Media/MediaManager.js", "Media/MovieManager.js", "Media/MovieManagerUI.js",
                     "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
                     "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
-                    "UI/TimeControls.js", "UI/TooltipHelper.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
+                    "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                     "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
                     "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                     "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 

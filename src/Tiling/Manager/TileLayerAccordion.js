@@ -382,7 +382,16 @@ var TileLayerAccordion = Layer.extend(
      * @description Initialize custom tooltips for each icon in the accordion
      */
     _setupTooltips: function (id) {
-        $(document).trigger('create-tooltip', ["#visibilityBtn-tile-" + id + ", #removeBtn-tile-" + id]);
+        // $("#visibilityBtn-tile-" + id + ", #removeBtn-tile-" + id).qtip({
+            // style: {
+                // classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+            // }
+        // });
+        $("#" + id + " *[title]").qtip({
+            style: {
+                classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+            }
+        });
     },
     
     /**
@@ -390,8 +399,7 @@ var TileLayerAccordion = Layer.extend(
      * @param {String} id
      */
     _removeTooltips: function (id) {
-        $("#visibilityBtn-" + id).qtip("destroy");
-        $("#removeBtn-"     + id).qtip("destroy");
+        $("#" + id + " *[title]").qtip("destroy");
     },
 
     /**
