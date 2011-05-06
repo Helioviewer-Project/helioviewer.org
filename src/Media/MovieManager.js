@@ -176,7 +176,7 @@ var MovieManager = MediaManager.extend(
             };
             
             params = {
-                "action" : "getMovie", 
+                "action" : "getMovieStatus", 
                 "id"     : id,
                 "format" : self.format
             };

@@ -83,13 +83,54 @@ class Module_Movies implements Module
     }
 
     /**
-     * Queues a movie in Helioqueuer
+     * Checks to see if the requested movie is available and if so returns
+     * it as a file-attachment
      * 
-     * @return void
+     * @return file Requested movie
      */
-    public function queueMovie()
+    public function downloadMovie ()
     {
-        print "Not yet implemented in Dynamo: send request to Helioqueuer instead.";
+        include_once 'src/Movie/HelioviewerMovie.php';
+        
+        // Load movie
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], 
+                                            $this->_params['format']);
+                                  
+        // Default options
+        $defaults = array(
+            "hq" => false
+        );
+        $options = array_replace($defaults, $this->_options);
+        
+        
+        // If the movie is finished return the file as an attachment
+        if ($movie->status == "FINISHED") {
+            // Get filepath
+            $filepath = $movie->getFilepath($options['hq']);
+            $filename = basename($filepath);
+            
+            // Set HTTP headers
+            header("Pragma: public");
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: private", false);
+            header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
+            header("Content-Transfer-Encoding: binary");
+            header("Content-Length: " . filesize($filepath));
+            header("Content-type: video/" . $this->_params['format']);
+            
+            // Return movie data
+            echo file_get_contents($filepath);
+            
+        // Otherwise return an error
+        } else {
+            header('Content-type: application/json');
+            $response = array(
+                "error" => "The movie you requested is either being processed
+                            or does not exist."
+            );
+            print json_encode($response);
+        }
     }
     
     /**
@@ -98,7 +139,7 @@ class Module_Movies implements Module
      * 
      * @return void
      */
-    public function getMovie ()
+    public function getMovieStatus ()
     {
         include_once 'src/Movie/HelioviewerMovie.php';
         
@@ -194,39 +235,44 @@ class Module_Movies implements Module
      */
     public function playMovie ()
     {
-        $fullpath = HV_CACHE_DIR . "/movies/" . $this->_params['file'];
+        include_once 'src/Movie/HelioviewerMovie.php';
+        
+        // Load movie
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], 
+                                            $this->_params['format']);
+                                  
+        // Default options
+        $defaults = array(
+            "hq" => false
+        );
+        $options = array_replace($defaults, $this->_options);
 
-        // Make sure it exists
-        if (!file_exists($fullpath)) {
-            throw new Exception("Invalid movie requested");
+        // Return an error if movie is not available
+        if ($movie->status != "FINISHED") {
+            header('Content-type: application/json');
+            $response = array(
+                "error" => "The movie you requested is either being processed
+                            or does not exist."
+            );
+            print json_encode($response);
+            return;
         }
         
-        // Relative path to video
-        $relpath  = substr(str_replace(HV_ROOT_DIR, "..", $fullpath), 0, -4);
-
-        // Get video dimensions
-        //list($width, $height) = $this->_getVideoDimensions($fullpath);
+        // Get filepath
+        $filepath = $movie->getFilepath($options['hq']);
+        $filename = basename($filepath);        
         
-        // Use specified dimensions if set (Simplifies fitting in Helioviewer.org)
-        if (isset($this->_options['width'])) {
-            $width = $this->_options['width'];
-        }
-        if (isset($this->_options['height'])) {
-            $height = $this->_options['height'];
-        }
-        
-        $css = "width: {$width}px; height: {$height}px;";
-        
-        $durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
+        //$css = "width: {$movie->width}px; height: {$movie->height}px;";
+        //$durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
         
         // For MC Media Player
-        $url = HV_CACHE_URL . "/movies/" . $this->_params['file'];
+        $url = "http://www.helioviewer.org/api/?action=downloadMovie&id={movie->id}&format={$movie->format}";
 
         ?>
         <!DOCTYPE html> 
         <html> 
         <head> 
-            <title>Helioviewer.org - <?php echo $this->_params['file']?></title>            
+            <title>Helioviewer.org - <?php echo $filename?></title>            
             <!--<script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
             <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
         </head> 
@@ -243,7 +289,7 @@ class Module_Movies implements Module
                 cpHidePanel = "mouseout";
                 cpHideDelay = "1";
                 defaultEndAction = "repeat";
-                playerSize = "<?php print $width . 'x' . $height?>";
+                playerSize = "<?php print $movie->width . 'x' . $movie_>height?>";
             </script>
             <script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
         </div>
@@ -278,7 +324,16 @@ class Module_Movies implements Module
                 "ints"     => array('id')
             );
             break;
-        case "getMovie":
+        case "downloadMovie":
+            $expected = array(
+                "required" => array('id', 'format'),
+                "optional" => array('hq'),
+                "alphanum" => array('format'),
+                "bools"    => array('hq'),
+                "ints"     => array('id')
+            );
+            break;
+        case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
                 "alphanum" => array('format'),
@@ -287,11 +342,11 @@ class Module_Movies implements Module
             break;
         case "playMovie":
             $expected = array(
-                "required" => array('file'),
-                "optional" => array('duration', 'width', 'height'),
-                "files"    => array('file'),
-                "floats"   => array('duration'),
-                "ints"     => array('width', 'height')
+                "required" => array('id', 'format'),
+                "optional" => array('hq'),
+                "alphanum" => array('format'),
+                "bools"    => array('hq'),
+                "ints"     => array('id')
             );
             break;
         case "queueMovie":
