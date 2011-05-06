@@ -87,11 +87,6 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 	padding: 0 5px;
 }
 
-.helioviewer-modal-dialog .ui-dialog-titlebar-close {
-	margin: -5px 0 0;
-	color: white;
-}
-
 .helioviewer-modal-dialog .ui-dialog-titlebar-close:hover {
     background: none;
 	padding: 1px;

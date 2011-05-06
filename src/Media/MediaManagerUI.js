@@ -29,7 +29,7 @@ var MediaManagerUI = Class.extend(
         
         this._loadSavedItems();
     },
-    
+
     /**
      * Hides the media manager
      */
@@ -73,10 +73,13 @@ var MediaManagerUI = Class.extend(
         // HTML for a single row in the history dialog
         htmlId = this._type + "-" + item.id;
 
-        html = "<div id='" + htmlId + "' class='history-entry'>" +
+        html = $("<div id='" + htmlId + "' class='history-entry'>" +
                "<div class='text-btn' style='float:left'>" + name + "</div>" +
                "<div class='status'></div>" + 
-               "</div>";
+               "</div>");
+               
+        // Store id with dom-node for easy access
+        html.data("id", item.id);
         
         this._historyBody.prepend(html);
 
@@ -86,6 +89,10 @@ var MediaManagerUI = Class.extend(
             this._removeItem(last);
             this._manager.remove(last);
         }
+        
+        // Setup hover and click event-handlers
+        // 2011/05/06: Let's first try using live()
+        //this._setupEventHandlers(item);
         
         // Show the history section title if it is not already visible
         this._historyTitle.show();

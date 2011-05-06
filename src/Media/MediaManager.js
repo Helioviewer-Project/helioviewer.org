@@ -61,6 +61,22 @@ var MediaManager = Class.extend(
     },
     
     /**
+     * Returns the item with the specified id if it exists
+     */
+    get: function (id) {
+        var index = null;
+
+        // Find the index in the history array
+        $.each(this._history, function (i, item) {
+            if (item.id == id) {
+                index = i;
+            }
+        });
+
+        return this._history[index];
+    },
+    
+    /**
      * Removes all items
      */
     empty: function () {

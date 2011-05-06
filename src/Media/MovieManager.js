@@ -134,17 +134,10 @@ var MovieManager = MediaManager.extend(
      * @param {Int}     height        Movie height
      */
     update: function (id, frameRate, numFrames, startDate, endDate, width, height) {
-        var index = null;
-
-        // Find the index in the history array
-        $.each(this._history, function (i, item) {
-            if (item.id == id) {
-                index = i;
-            }
-        });
+        var movie = this.get(id);
         
         // Add the new values
-        $.extend(this._history[index], {
+        $.extend(movie, {
             "frameRate" : frameRate,
             "numFrames" : numFrames,
             "startDate" : startDate,
@@ -196,17 +189,10 @@ var MovieManager = MediaManager.extend(
      * Aborts a failed movie request
      */
     _abort: function (id) {
-        var index = null;
-
-        // Find the index in the history array
-        $.each(this._history, function (i, item) {
-            if (item.id == id) {
-                index = i;
-            }
-        });
+        var movie = this.get(id);
 
         // Mark as failed
-        this._history[index]["status"] = "ERROR";        
+        movie["status"] = "ERROR";        
         this._save();
 
         // Notify user

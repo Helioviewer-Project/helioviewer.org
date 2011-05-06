@@ -11,7 +11,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php printf("<!-- Helioviewer 2.1.0 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
+    <?php printf("<!-- Helioviewer 2.2.0 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="ie=9" />
@@ -73,6 +73,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', '<?php echo $config["google_analytics_id"];?>']);
         _gaq.push(['_trackPageview']);
+        _gaq.push(['_trackPageLoadTime']);
         
         (function() {
             var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
