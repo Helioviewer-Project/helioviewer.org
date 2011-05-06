@@ -120,6 +120,7 @@ var MovieManagerUI = MediaManagerUI.extend(
        
         this._super();
         
+        // ROI selection buttons
         this._fullViewportBtn.click(function () {
             self.hide();
             self._buildMovie();
@@ -129,6 +130,194 @@ var MovieManagerUI = MediaManagerUI.extend(
             self.hide();
             $(document).trigger("enable-select-tool", $.proxy(self._buildMovie, self));
         });
+        
+        // Setup hover and click handlers for movie history items
+        $("#movie-history .history-entry")
+           .live('click', $.proxy(this._onMovieClick, this))
+           .live('mouseover mouseout', $.proxy(this._onMovieHover, this));
+    },
+    
+    /**
+     * If the movie is ready, play the movie in a popup dialog. Otherwise do
+     * nothing.
+     */
+    _onMovieClick: function (event) {
+        var id, movie, dialog, action;
+        
+        id    = $(event.currentTarget).data('id'),
+        movie = this._manager.get(id);
+        
+        // If the movie is ready, open movie player
+        if (movie.status === "FINISHED") {
+            dialog = $("movie-player-" + id);
+
+            // If the dialog has already been created, toggle display
+            if (dialog.length > 0) {
+                action = dialog.dialog('isOpen') ? "close" : "open";
+                dialog.dialog(action);
+                
+            // Otherwise create and display the movie player dialog
+            } else {
+                this._createMoviePlayerDialog(movie);
+            }
+        } else {
+            return;
+        }
+    },
+   
+   /**
+    * Shows movie details and preview.
+    */
+    _onMovieHover: function (event) {
+        if (event.type == 'mouseover') {
+            //console.log('hover on'); 
+        } else {
+            //console.log('hover off'); 
+        }
+    },
+   
+    /**
+     * @description Opens a pop-up with the movie player in it.
+     */
+    _createMoviePlayerDialog: function (movie) {
+        var dimensions, movieTitle, uploadURL, datasources, tags, html, 
+            dialog, self = this;
+        
+        // 2011/01/06 Temporary work-around: compute default title & tags 
+        // (nicer implementation to follow)
+        tags        = [];
+        datasources = [];
+
+        // Tags
+        $.each(movie.layers.split("],["), function (i, layerStr) {
+            var parts = layerStr.replace(']', "").replace('[', "")
+                        .split(",").slice(0, 4);
+            
+            // Add observatories, instruments, detectors and 
+            // measurements to tag list
+            $.each(parts, function (i, item) {
+                if ($.inArray(item, tags) === -1) {
+                    tags.push(item);
+                }                
+            });
+        });
+        
+        // Datasources
+        $.each(movie.name.split(", "), function (i, name) {
+            var inst = name.split(" ")[0];
+            
+            if ((inst === "AIA") || (inst === "HMI")) {
+                datasources.push("SDO " + name);
+            } else {
+                datasources.push("SOHO " + name);
+            }
+        });
+        
+        // Suggested movie title
+        movieTitle = datasources.join(", ") + " (" + movie.startDate + " UTC)";
+        
+        uploadURL =  "api/index.php?action=uploadMovieToYouTube&id=" + movie.id;
+        uploadURL += "&title=" + movieTitle;
+        uploadURL += "&tags="  + tags.join(", ");
+        
+        // Make sure dialog fits nicely inside the browser window
+        dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
+        
+        // Movie player HTML
+        html = self.getVideoPlayerHTML(movie.id, dimensions.width, 
+                                       dimensions.height, uploadURL);
+                                       
+        dialog = $("<div id='movie-player-" + movie.id + "'></div>")
+                 .append(html);
+        
+        // Have to append the video player here, otherwise adding it to the div
+        // beforehand results in the browser attempting to download it. 
+        dialog.dialog({
+            title     : "Movie Player: " + movieTitle,
+            width     : dimensions.width  + 34,
+            height    : dimensions.height + 104,
+            resizable : $.support.h264 || $.support.vp8,
+            close     : function () {
+                            $(this).empty();
+                        },
+            zIndex    : 9999,
+            show      : 'fade'
+        });
+        
+        // TODO 2011/01/04: Disable keyboard shortcuts when in text fields! 
+        // (already done for input fields...)
+       
+        // Initialize YouTube upload button
+        $('#youtube-upload-' + movie.id).click(function () {
+            var auth = false;
+
+            // Synchronous request (otherwise Google will not allow opening of 
+            // request in a new tab)
+            $.ajax({
+                async: false,
+                url : "api/index.php?action=checkYouTubeAuth",
+                type: "GET",
+                success: function (response) {
+                    auth = response;
+                }
+            });
+
+            // If user is already authenticated we can simply display the 
+            // upload form in a dialog
+            if (auth) {
+                self.showYouTubeUploadDialog(uploadURL);
+                return false;
+            }            
+        });
+    },
+    
+    /**
+     * Determines dimensions for which movie should be displayed
+     */
+    getVideoPlayerDimensions: function (width, height) {
+        var maxWidth    = $(window).width() * 0.80,
+            maxHeight   = $(window).height() * 0.80,
+            scaleFactor = Math.max(1, width / maxWidth, height / maxHeight);
+        
+        return {
+            "width"  : Math.floor(width  / scaleFactor),
+            "height" : Math.floor(height / scaleFactor)
+        };
+    },
+    
+    /**
+     * Decides how to display video and returns HTML corresponding to that method
+     */
+    getVideoPlayerHTML: function (id, width, height, uploadURL) {
+        var url, downloadLink, youtubeBtn;
+
+        url = "api/index.php?action=downloadMovie&id=" + id + 
+              "&format=" + this._manager.format;
+
+        downloadLink = "<a target='_parent' href='" + url + "'>" +
+                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' " +
+                       "alt='Download high-quality video' />Download</a>";
+        
+        youtubeBtn = "<a id='youtube-upload-" + id + "'  href='" + uploadURL + "' target='_blank'>" + 
+                     "<img class='youtube-icon' src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
+                     "alt='Upload video to YouTube' />Upload</a>";
+        
+        // HTML5 Video (H.264 or WebM)
+        if ($.support.vp8 || $.support.vp8) {
+            return "<video id='movie-player-" + id + "' src='" + url +
+                   "' controls preload autoplay width='100%' " + "height='95%'></video>" + 
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span>";
+        }
+
+        // Fallback (flash player)
+        else {
+            url = 'api/index.php?action=playMovie&id=' + id + '&format=flv';
+            
+            return "<div id='movie-player-" + id + "'>" + 
+                   "<iframe src=" + url + " width=" + width + " height=" + height + " marginheight=0 marginwidth=0 " +
+                   "scrolling=no frameborder=0 /><br />" + 
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span></div>";
+        }
     },
     
     /**
@@ -137,7 +326,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     _refresh: function () {
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
-            var status = $("#" + item.id).find(".status");
+            var status = $("#movie-" + item.id).find(".status");
 
             // For completed entries, display elapsed time
             if (item.status == "FINISHED") {

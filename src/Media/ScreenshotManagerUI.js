@@ -53,6 +53,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
        
         this._super();
         
+        // Screenshot ROI selection buttons
         this._fullViewportBtn.click(function () {
             self.hide();
             self._takeScreenshot();
@@ -62,6 +63,29 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             self.hide();
             $(document).trigger("enable-select-tool", $.proxy(self._takeScreenshot, self));
         });
+        
+        // Setup hover and click handlers for history items
+        $("#screenshot-history .history-entry")
+           .live('click', $.proxy(this._onScreenshotClick, this))
+           .live('mouseover mouseout', $.proxy(this._onScreenshotHover, this));
+    },
+    
+    /**
+     * When a screenshot history entry is clicked, and the screenshot has
+     * finished processing, download the screenshot. Otherwise do nothing.
+     */
+    _onScreenshotClick: function (event) {
+        var id = $(event.currentTarget).data('id'),
+            url = "api/index.php?action=downloadScreenshot&id=" + id;
+        window.open(url, '_parent');
+    },
+   
+    _onScreenshotHover: function (event) {
+        if (event.type == 'mouseover') {
+            //console.log('hover on'); 
+        } else {
+            //console.log('hover off'); 
+        }
     },
 
     /**
