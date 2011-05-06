@@ -118,7 +118,7 @@
         foreach($instruments as $name => $datasources) {
             $oldest = array(
                 "level"    => 0,
-                "datetime" => null,
+                "datetime" => new DateTime(),
                 "icon"     => null
             );
             $maxElapsed = 0;
@@ -149,7 +149,7 @@
                 $subTableHTML .= sprintf($tableRow, $classes, "&nbsp;&nbsp;&nbsp;&nbsp;" . $ds['name'], $datetime->format('M j H:i:s'), $icon);
                 
                 // If the elapsed time is greater than previous max store it
-                if ($level > $oldest['level']) {
+                if ($datetime < $oldest['datetime']) {
                     $oldest = array(
                         'level'   => $level,
                         'datetime' => $datetime,
