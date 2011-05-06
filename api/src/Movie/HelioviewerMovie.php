@@ -151,6 +151,7 @@ class Movie_HelioviewerMovie
             "frameRate" => $this->frameRate,
             "numFrames" => $this->numFrames,
             "startDate" => $this->startDate,
+            "status"    => $this->status,
             "endDate"   => $this->endDate,
             "width"     => $this->width,
             "height"    => $this->height
@@ -343,7 +344,7 @@ class Movie_HelioviewerMovie
         }
         
         // URL
-        $url = "http://www.helioviewer.org/api/?action=getMovie&id={$this->id}&format={$this->format}";
+        $url = "http://www.helioviewer.org/api/?action=downloadMovie&id={$this->id}&format={$this->format}";
         
         // Title
         $title = sprintf("%s (%s)", $layerString, $dateString);
