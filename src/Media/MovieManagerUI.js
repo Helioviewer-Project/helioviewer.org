@@ -212,9 +212,12 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Movie player HTML
         html = self.getVideoPlayerHTML(movie.id, dimensions.width, 
                                        dimensions.height, uploadURL);
-                                       
-        dialog = $("<div id='movie-player-" + movie.id + "'></div>")
-                 .append(html);
+        
+        // Movie player dialog
+        dialog = $(
+            "<div id='movie-player-" + movie.id + "' " + 
+            "class='movie-player-dialog'></div>"
+        ).append(html);
         
         // Have to append the video player here, otherwise adding it to the div
         // beforehand results in the browser attempting to download it. 
@@ -235,7 +238,9 @@ var MovieManagerUI = MediaManagerUI.extend(
        
         // Initialize YouTube upload button
         $('#youtube-upload-' + movie.id).click(function () {
-            var auth = false;
+            var loadingIndicator, auth = false;
+            
+            loadingIndicator = $("#loading").show();
 
             // Synchronous request (otherwise Google will not allow opening of 
             // request in a new tab)
@@ -247,13 +252,34 @@ var MovieManagerUI = MediaManagerUI.extend(
                     auth = response;
                 }
             });
+            
+            loadingIndicator.hide();
 
             // If user is already authenticated we can simply display the 
             // upload form in a dialog
             if (auth) {
-                self.showYouTubeUploadDialog(uploadURL);
+                self.showYouTubeUploadDialog(uploadURL, movie.id);
                 return false;
             }            
+        });
+    },
+    
+    /**
+     * Opens YouTube uploader either in a separate tab or in a dialog
+     */
+    showYouTubeUploadDialog: function (url, id) {
+        // Hide movie dialogs (Flash player blocks upload form)
+        $(".movie-player-dialog").dialog("close");
+        
+        var iframe = "<div class='youtube-upload-dialog'>" + 
+                     "<iframe src='" + url + "&dialogMode=true' " + 
+                     "scrolling='no' width='100%' height='100%' " + 
+                     "style='border: none' /></div>";
+
+        $(iframe).dialog({
+            "title" : "Upload video to YouTube",
+            "width" : 640,
+            "height": 480
         });
     },
     

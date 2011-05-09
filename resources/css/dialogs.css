@@ -134,3 +134,7 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     margin-right: 5px;
     width: 50px;
 }
+
+.youtube-upload-dialog {
+    overflow: hidden;    
+}

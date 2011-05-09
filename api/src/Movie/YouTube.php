@@ -3,8 +3,9 @@
 /**
  * Movie_YouTube Class Definition
  * 
- * TODO 2011/01/09 Check for other restricted characters ( e.g. < > in description...see reference link below),
- *      word limits (e.g. keywords), etc. 
+ * TODO 2011/01/09 Check for other restricted characters (e.g. '<' and '>')
+ * word limits (e.g. keywords), etc. See reference below. 
+ *       
  * 
  * PHP version 5
  *
@@ -73,16 +74,16 @@ class Movie_YouTube
      */
     public function uploadVideo($id, $filepath, $options)
     {
-
         // Optional parameters
         $defaults = array(
             "ready"       => false,
             "dialogMode"  => false,
-            "share"       => true,
+            "share"       => false,
             "title"       => "",
             "tags"        => "",
-            "description" => "This movie was produced by http://www.helioviewer.org. A high quality version of this " .
-                             "movie can be downloaded from ...."
+            "description" => "This movie was produced by Helioviewer.org. " .
+                             "A high quality version of this movie can be " .
+                             "downloaded from http://www.helioviewer.org/api/?action=downloadMovie&id=$id&hq=true"
         );
         
         $options = array_replace($defaults, $options);
@@ -117,7 +118,7 @@ class Movie_YouTube
 
         $videoEntry = $this->_createGDataVideoEntry($filepath, $options);
 
-        $this->_uploadVideoToYouTube($videoEntry);
+        $this->_uploadVideoToYouTube($id, $options, $videoEntry);
     }
     
     /**
@@ -300,7 +301,10 @@ class Movie_YouTube
         Zend_Loader::loadClass('Zend_Gdata_YouTube');
         
         // Instantiate Youtube object
-        $yt = new Zend_Gdata_YouTube($this->_httpClient, $this->_appId, $this->_clientId, HV_YOUTUBE_DEVELOPER_KEY);
+        $yt = new Zend_Gdata_YouTube(
+            $this->_httpClient, $this->_appId, $this->_clientId, 
+            HV_YOUTUBE_DEVELOPER_KEY
+        );
         $yt->setMajorProtocolVersion(2); // Use API version 2
         
         return $yt;
@@ -309,20 +313,24 @@ class Movie_YouTube
     /**
      * Uploads a single video to YouTube
      * 
-     * @param Zend_Gdata_YouTube_VideoEntry $videoEntry A video entry object describing the video to be uploaded
+     * @param int                           $id         Movie id
+     * @param array                         $options    Movie options
+     * @param Zend_Gdata_YouTube_VideoEntry $videoEntry A video entry object 
+     * describing the video to be uploaded
      * 
      * @return void
      */
-    private function _uploadVideoToYouTube ($videoEntry)
+    private function _uploadVideoToYouTube ($id, $options, $videoEntry)
     {
-        // TODO check title, desc, keyword length on before making request.
-        try {
-            $newEntry = $this->_youTube->insertEntry($videoEntry, $this->_uploadURL, 'Zend_Gdata_YouTube_VideoEntry');
-        } catch (Zend_Gdata_App_HttpException $httpException) {
-            throw($httpException);
-        } catch (Zend_Gdata_App_Exception $e) {
-            throw($e);
-        }
+        // try {
+            // $newEntry = $this->_youTube->insertEntry(
+                // $videoEntry, $this->_uploadURL, 'Zend_Gdata_YouTube_VideoEntry'
+            // );
+        // } catch (Zend_Gdata_App_HttpException $httpException) {
+            // throw($httpException);
+        // } catch (Zend_Gdata_App_Exception $e) {
+            // throw($e);
+        // }
         
         // Update usage stats
         if (HV_ENABLE_STATISTICS_COLLECTION) {
@@ -330,6 +338,14 @@ class Movie_YouTube
             $statistics = new Database_Statistics();
             $statistics->log("uploadMovieToYouTube");
         }
+        
+        // Add entry to YouTube table
+        include_once 'src/Database/MovieDatabase.php';
+        
+        $movies = new Database_MovieDatabase($id, $options['title'], 
+            $options['tags']);
+        $movies->insertYouTubeMovie($id, $options['title'], 
+            $options['description'], $options['tags'], $options['share']);
         
         //$state = $newEntry->getVideoState();
 
@@ -346,7 +362,8 @@ class Movie_YouTube
 <head> 
     <title>Helioviewer.org - YouTube Video Submission</title>
     <link rel='stylesheet' href='resources/css/youtube.css' /> 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" 
+        type="text/javascript"></script>
     <script type='text/javascript'>
             $(function () {
                 var successMsg, errorConsole;

@@ -151,7 +151,6 @@ var MovieManager = MediaManager.extend(
         
         // Notify user
         this._displayDownloadNotification(movie);
-        //$(document).trigger("message-console-info", "Your movie is ready!");
     },
     
     /**
@@ -165,13 +164,12 @@ var MovieManager = MediaManager.extend(
         jGrowlOpts = {
             sticky: true,
             header: "Your movie is ready!",
-            open:    function () {
-                self.hide();
+            open:    function (msg) {
+                msg.find(".message-console-movie-ready").data("movie", movie);
             }
         };
-        message = $("<span class='message-console-movie-ready'>" +
-                    "Click here to watch or download it.</span>")
-                    .data('movie', movie);
+        message = "<span class='message-console-movie-ready'>" +
+                    "Click here to watch or download it.</span>";
 
         // Create the jGrowl notification.
         $(document).trigger("message-console-info", [message, jGrowlOpts]);

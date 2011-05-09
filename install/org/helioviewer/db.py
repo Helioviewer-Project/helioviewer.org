@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Helioviewer.org installer database funtions"""
+"""Helioviewer.org installer database functions"""
 import sys
 import os
 
@@ -26,6 +26,7 @@ def setup_database_schema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     create_screenshots_table(cursor)
     create_movies_table(cursor)
     create_movie_formats_table(cursor)
+    create_youtube_table(cursor)
     create_statistics_table(cursor)
     update_image_table_index(cursor)
 
@@ -49,7 +50,7 @@ def get_db_cursor(dbname, dbuser, dbpass, mysql):
     return db.cursor()
 
 def check_db_info(adminuser, adminpass, mysql):
-    """ Validate database login information """
+    """Validate database login information"""
     try:
         if mysql:
             try:
@@ -187,7 +188,7 @@ def create_observatory_table(cursor):
     """)
 
 def create_instrument_table(cursor):
-    """ Creates table to store instrument information """
+    """Creates table to store instrument information"""
 
     cursor.execute("""
     CREATE TABLE `instruments` (
@@ -312,6 +313,23 @@ def create_movie_formats_table(cursor):
       `format`            VARCHAR(255) NOT NULL,
       `status`            VARCHAR(255) NOT NULL,
       `procTime`          INT,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;""")
+    
+def create_youtube_table(cursor):
+    """Creates a table to track shared movie uploads.
+    
+    Creates table to keep track of movies that have been uploaded to YouTube 
+    and shared with other Helioviewer users.
+    """
+    cursor.execute("""
+    CREATE TABLE `youtube` (
+      `id`          INT unsigned NOT NULL auto_increment,
+      `movieId`     INT unsigned NOT NULL,
+      `title`       VARCHAR(100) NOT NULL,
+      `description` VARCHAR(5000) NOT NULL,
+      `keywords`    VARCHAR(500) NOT NULL,
+      `shared`      BOOLEAN NOT NULL,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
     
