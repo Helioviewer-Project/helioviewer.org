@@ -83,7 +83,8 @@ class Movie_YouTube
             "tags"        => "",
             "description" => "This movie was produced by Helioviewer.org. " .
                              "A high quality version of this movie can be " .
-                             "downloaded from http://www.helioviewer.org/api/?action=downloadMovie&id=$id&hq=true"
+                             "downloaded from " . HV_API_ROOT_URL . 
+                             "?action=downloadMovie&id=$id&format=mp4&hq=true"
         );
         
         $options = array_replace($defaults, $options);
@@ -94,11 +95,19 @@ class Movie_YouTube
         // Authenticate user
         $this->_authenticate($url);
         
+        // Has the form data been submitted?
+        if (!$options['ready']) {
+            $this->_printForm(
+                $id, $options['title'], $options['description'], $options['tags'], $options['dialogMode']
+            );
+            return;
+        }
+        
         // Once we have a session token get an AuthSubHttpClient
         $this->_httpClient = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
         
         // Increase timeout time to prevent client from timing out during uploads
-        $this->_httpClient->setConfig(array( 'timeout' => 180 ));
+        $this->_httpClient->setConfig(array( 'timeout' => 300 ));
         
         // Creates an instance of the Youtube GData object
         $this->_youTube = $this->_getYoutubeInstance();
@@ -106,14 +115,6 @@ class Movie_YouTube
         // If authentication is expired, reauthenticate
         if (!$this->_authenticationIsValid()) {
             $this->_authenticate($url);
-        }
-
-        // Has the form data been submitted?
-        if (!$options['ready']) {
-            $this->_printForm(
-                $id, $options['title'], $options['description'], $options['tags'], $options['dialogMode']
-            );
-            return;
         }
 
         $videoEntry = $this->_createGDataVideoEntry($filepath, $options);
@@ -322,15 +323,19 @@ class Movie_YouTube
      */
     private function _uploadVideoToYouTube ($id, $options, $videoEntry)
     {
-        // try {
-            // $newEntry = $this->_youTube->insertEntry(
-                // $videoEntry, $this->_uploadURL, 'Zend_Gdata_YouTube_VideoEntry'
-            // );
-        // } catch (Zend_Gdata_App_HttpException $httpException) {
-            // throw($httpException);
-        // } catch (Zend_Gdata_App_Exception $e) {
-            // throw($e);
-        // }
+        try {
+            $newEntry = $this->_youTube->insertEntry(
+                $videoEntry, $this->_uploadURL, 'Zend_Gdata_YouTube_VideoEntry'
+            );
+        } catch (Zend_Gdata_App_HttpException $httpException) {
+            throw($httpException);
+        } catch (Zend_Gdata_App_Exception $e) {
+            throw($e);
+        }
+
+        // http://www.youtube.com/watch?v=DoBgczEScvE&feature=youtube_gdata_player        
+        $newEntry->setMajorProtocolVersion(2);
+        $youtubeId = $newEntry->getVideoId();
         
         // Update usage stats
         if (HV_ENABLE_STATISTICS_COLLECTION) {
@@ -342,12 +347,9 @@ class Movie_YouTube
         // Add entry to YouTube table
         include_once 'src/Database/MovieDatabase.php';
         
-        $movies = new Database_MovieDatabase($id, $options['title'], 
-            $options['tags']);
-        $movies->insertYouTubeMovie($id, $options['title'], 
+        $movies = new Database_MovieDatabase();
+        $movies->insertYouTubeMovie($id, $youtubeId, $options['title'], 
             $options['description'], $options['tags'], $options['share']);
-        
-        //$state = $newEntry->getVideoState();
 
         echo "Finished!";
     }
