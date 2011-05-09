@@ -28,6 +28,7 @@ class Database_DbConnection
     private $_dbname   = HV_DB_NAME;
     private $_user     = HV_DB_USER;
     private $_password = HV_DB_PASS;
+    public  $link;
 
     /**
      * Create a DbConnection instance
@@ -64,9 +65,9 @@ class Database_DbConnection
     public function connect()
     {
         if (!$this->link = mysqli_connect($this->_host, $this->_user, $this->_password)) {
-            //die('Error connecting to data base: ' . mysqli_error($this->link));
-            throw new Exception("Database not configured properly. Please check the database configuration file to
-            make sure that the information is correct.");
+            throw new Exception("Database not configured properly. Please " + 
+            "check the database configuration file to make sure that the " +
+            "information is correct.");
         }
         mysqli_select_db($this->link, $this->_dbname);
         mysqli_query($this->link, "SET @@session.time_zone = '+00:00'");
@@ -93,9 +94,6 @@ class Database_DbConnection
     {
         $result = mysqli_query($this->link, $query);
         if (!$result) {
-            var_dump($this);
-            var_dump($query);
-            die();
             throw new Exception(sprintf("Error executing database query (%s): %s", $query), mysqli_error($this->link));
         }
         return $result;

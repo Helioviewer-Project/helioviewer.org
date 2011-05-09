@@ -170,6 +170,8 @@ class Module_Movies implements Module
     
     /**
      * Uploads a user-created video to YouTube
+     * 
+     * TODO 2011/05/09: Make sure movie hasn't already been uploaded
      */
     public function uploadMovieToYouTube ()
     {
