@@ -61,7 +61,7 @@ class Movie_HelioviewerMovie
      *
      * @return {String} a url to the movie, or the movie will display.
      */
-    public function __construct($id, $format)
+    public function __construct($id, $format="mp4")
     {
         $this->_db = new Database_ImgIndex();
         $info = $this->_db->getMovieInformation($id, $format);
@@ -81,7 +81,7 @@ class Movie_HelioviewerMovie
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
         $this->watermark    = (bool) $info['watermark'];
-        
+
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
         
@@ -156,6 +156,22 @@ class Movie_HelioviewerMovie
             "width"     => $this->width,
             "height"    => $this->height
         );
+    }
+    
+    /**
+     * Returns an array of filepaths to the movie's preview images
+     */
+    public function getPreviewImages()
+    {
+        $url = str_replace(HV_CACHE_DIR, HV_CACHE_URL, $this->_buildDir());
+        
+        $images = array();
+        
+        foreach (array("small", "medium", "large", "full")  as $size) {
+            array_push($images, $url . "preview-$size.png");
+        }
+        
+        return $images;
     }
 
     /**

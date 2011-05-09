@@ -41,18 +41,37 @@ class Database_MovieDatabase
      * 
      * @return void
      */
-    public function insertYouTubeMovie($id, $title, $desc, $keywords, $share)
+    public function insertYouTubeMovie($id, $youtubeId,  $title, $desc, $keywords, $share)
     {
        // Create the prepared statement
-       $sql = "INSERT INTO youtube values (NULL, ?, ?, ?, ?, ?)";
+       $sql = "INSERT INTO youtube values (NULL, ?, ?, NULL, ?, ?, ?, ?)";
 
         if ($stmt = $this->_dbConnection->link->prepare($sql)) {
-            $stmt->bind_param('isssi', $id, $title, $desc, $keywords, $share);
+            $stmt->bind_param('issssi', $id, $youtubeId, $title, $desc, 
+                $keywords, $share);
             $stmt->execute();
             $stmt->close();    
         }
         else {
-            printf("Prepared Statement Error: %s\n", $mysqli->error);
+            printf("Prepared Statement Error: %s\n", $this->_dbConnection->link->error);
         }  
+    }
+    
+    /**
+     * Gets a list of videos recently shared on YouTube
+     */
+    public function getSharedVideos($startIndex, $num)
+    {
+        $sql = "SELECT movieId, youtubeId, timestamp FROM youtube WHERE " .
+               "shared=1 ORDER BY id DESC LIMIT $startIndex, $num;";
+               
+        $videos = array();
+
+        $result = $this->_dbConnection->query($sql);
+        while ($row = $result->fetch_array(MYSQL_ASSOC)) {
+            array_push($videos, $row);
+        }
+        
+        return $videos;
     }
 }

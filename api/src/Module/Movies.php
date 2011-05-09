@@ -204,12 +204,14 @@ class Module_Movies implements Module
     }
     
     /**
-     * Retrieves recent user-submitted videos form YouTube and displays either an XML feed or HTML
-     * 
-     * TODO: 2011/01/07: Move to a separate class
+     * Retrieves recent user-submitted videos from YouTube and returns the
+     * result as a JSON array.
      */
     public function getUserVideos() {
-        include_once 'src/Movie/YouTube.php';
+        include_once 'src/Database/MovieDatabase.php';
+        include_once 'src/Movie/HelioviewerMovie.php';
+        
+        $movies = new Database_MovieDatabase();
 
         // Default options
         $defaults = array(
@@ -217,10 +219,42 @@ class Module_Movies implements Module
             "pageNum"  => 1
         );
         $options = array_replace($defaults, $this->_options);
+
+        $pageSize = $options['pageSize'];
+        $pageNum  = $options['pageNum'];
+                
+         // Current page
+        $startIndex = $pageSize * ($pageNum - 1);
+
+        // PGet a list of recent videos
+        $videos = array();
         
-        $youtube = new Movie_YouTube();
-        
-        $videos = $youtube->getUserVideos($options['pageSize'], $options['pageNum']);
+        foreach($movies->getSharedVideos($startIndex, $pageSize) as $video) {
+            $youtubeId = $video['youtubeId'];
+            $movieId   = $video['movieId'];
+            
+            // Load movie
+            $movie = new Movie_HelioviewerMovie($movieId);
+            
+            // Check to make sure video was not removed by the user
+            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$youtubeId?v=2");
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+            
+            $response = curl_exec($handle);
+            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+
+            curl_close($handle);
+
+            // Only add videos with response code 200
+            if ($httpCode == 200) {
+                array_push($videos, array(
+                    "id"  => $movieId,
+                    "url" => "http://www.youtube.com/watch?v=$youtubeId&feature=youtube_gdata_player",
+                    "thumbnails" => $movie->getPreviewImages(),
+                    "timestamp"  => $video['timestamp']
+                ));
+            }
+        }
 
         header('Content-type: application/json');
         echo json_encode($videos);        
