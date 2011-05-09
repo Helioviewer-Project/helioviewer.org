@@ -217,7 +217,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                                     </div>
                                 </div>
                                 <div id='movie-history-title' class='media-history-title'>
-                                    movie History    
+                                    Movie History    
                                     <div id='movie-clear-history-button' class='text-btn' style='float:right;'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>

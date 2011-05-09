@@ -2,8 +2,9 @@
  * MovieManagerUI class definition
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false,  
+eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true, 
+newcap: true, immed: true, maxlen: 120, sub: true */
 /*global $, MovieManager, MediaManagerUI, Helioviewer */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
@@ -16,46 +17,20 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @param {MovieManager} model MovieManager instance
      */    
     init: function (movieManager) {
-        this._manager = new MovieManager(Helioviewer.userSettings.get('movies'));;
+        var movies = Helioviewer.userSettings.get('movies');
+        this._manager = new MovieManager(movies);
         this._super("movie");
         this._initEvents();
     },
     
     /**
-     * Displays a jGrowl notification to the user informing them that their download has completed
-     */
-    _displayDownloadNotification: function (id) {
-        var jGrowlOpts, link, self = this;
-        
-        // Options for the jGrowl notification
-        jGrowlOpts = {
-            sticky: true,
-            header: "Your movie is ready!",
-            open:    function () {
-                self.hide();
-
-                // open callback now called before dom-nodes are added to screen so $.live used
-//                $("#movie-" + id).live('click', function () {
-//                    $(".jGrowl-notification .close").click();
-//                    window.open('api/index.php?action=downloadMovie&id=' + id, '_parent');
-//                });
-            }
-        };
-        
-        // Download link
-        //link = "<div id='movie-" + id + "' style='cursor: pointer'>Click here to download. </div>";
-        link = "<a href='api/index.php?action=downloadMovie&id=" + id + "' target='_parent' style=''>Click here to download. </a>";
-
-        // Create the jGrowl notification.
-        $(document).trigger("message-console-info", [link, jGrowlOpts]);
-    },
-    
-    /**
-     * Uses the layers passed in to send an Ajax request to api.php, to have it build a movie.
-     * Upon completion, it displays a notification that lets the user click to view it in a popup. 
+     * Uses the layers passed in to send an Ajax request to api.php, to have it 
+     * build a movie. Upon completion, it displays a notification that lets the
+     * user click to view it in a popup. 
      */
     _buildMovie: function (roi) {
-        var params, imageScale, layers, roi, currentTime, now, diff, movieLength, self = this;
+        var params, imageScale, layers, roi, currentTime, endTime,
+            now, diff, movieLength, self = this;
 
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
@@ -79,8 +54,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         // We want shift start and end time if needed to ensure that entire
         // duration will be used. For now, we will assume that the most
         // recent data available is close to now() to make things simple
+        endTime = helioviewer.getDate().addSeconds(movieLength / 2);
+
         now = new Date();
-        diff = new Date(currentTime.getTime()).addSeconds(movieLength / 2).getTime() - now.getTime();
+        diff = endTime.getTime() - now.getTime();
         currentTime.addSeconds(Math.min(0, -diff / 1000));
         
         // Ajax Request Parameters
@@ -96,7 +73,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
             if ((response === null) || response.error) {
-                $(document).trigger("message-console-info", "Unable to create movie. Please try again later.");
+                var msg = "Unable to create movie. Please try again later.";
+                $(document).trigger("message-console-info", msg);
                 return;
             }
 
@@ -135,6 +113,14 @@ var MovieManagerUI = MediaManagerUI.extend(
         $("#movie-history .history-entry")
            .live('click', $.proxy(this._onMovieClick, this))
            .live('mouseover mouseout', $.proxy(this._onMovieHover, this));
+           
+        
+        // Download completion notification link
+        $(".message-console-movie-ready").live('click', function (event) {
+            $(".jGrowl-notification .close").click();
+            var movie    = $(event.currentTarget).data('movie');            
+            self._createMoviePlayerDialog(movie);
+        });
     },
     
     /**
@@ -144,7 +130,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     _onMovieClick: function (event) {
         var id, movie, dialog, action;
         
-        id    = $(event.currentTarget).data('id'),
+        id    = $(event.currentTarget).data('id');
         movie = this._manager.get(id);
         
         // If the movie is ready, open movie player
@@ -292,7 +278,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         var url, downloadLink, youtubeBtn;
 
         url = "api/index.php?action=downloadMovie&id=" + id + 
-              "&format=" + this._manager.format;
+              "&format=" + this._manager.format + "&hq=true";
 
         downloadLink = "<a target='_parent' href='" + url + "'>" +
                        "<img class='video-download-icon' src='resources/images/icons/001_52.png' " +

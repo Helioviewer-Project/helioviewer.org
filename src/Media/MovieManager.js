@@ -150,7 +150,31 @@ var MovieManager = MediaManager.extend(
         this._save();
         
         // Notify user
-        $(document).trigger("message-console-info", "Your movie is ready!");
+        this._displayDownloadNotification(movie);
+        //$(document).trigger("message-console-info", "Your movie is ready!");
+    },
+    
+    /**
+     * Displays a jGrowl notification to the user informing them that their 
+     * download has completed
+     */
+    _displayDownloadNotification: function (movie) {
+        var jGrowlOpts, message, self = this;
+        
+        // Options for the jGrowl notification
+        jGrowlOpts = {
+            sticky: true,
+            header: "Your movie is ready!",
+            open:    function () {
+                self.hide();
+            }
+        };
+        message = $("<span class='message-console-movie-ready'>" +
+                    "Click here to watch or download it.</span>")
+                    .data('movie', movie);
+
+        // Create the jGrowl notification.
+        $(document).trigger("message-console-info", [message, jGrowlOpts]);
     },
     
     /**
