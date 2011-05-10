@@ -225,7 +225,7 @@ class Image_SubFieldImage
             
             // Extract region (PGM)
             $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
-
+			
             // Convert to GD-readable format
             $grayscale = new IMagick($input);
             $grayscale->setImageFormat('PNG');
@@ -234,7 +234,7 @@ class Image_SubFieldImage
             $grayscale->setImageCompressionQuality(10); // Fastest PNG compression setting
             
             $grayscaleString = $grayscale->getimageblob();
-
+			
             // Assume that no color table is needed
             $coloredImage = $grayscale;
             
@@ -244,14 +244,14 @@ class Image_SubFieldImage
             
                 $coloredImage = new IMagick();        
                 $coloredImage->readimageblob($coloredImageString);
-            }            
+            }    
             
             // Set alpha channel for images with transparent components
             $this->setAlphaChannel($coloredImage);
             
             // Apply compression and interlacing
             $this->compressImage($coloredImage);
-            
+			
             // Resize extracted image to correct size before padding.
             $rescaleBlurFactor =  0.6;
             
@@ -260,12 +260,19 @@ class Image_SubFieldImage
                 $this->imageOptions['rescale'], $rescaleBlurFactor
             );
             $coloredImage->setImageBackgroundColor('transparent');
-            
+
             // Places the current image on a larger field of black if the final image is larger than this one
             $coloredImage->extentImage(
                 $this->padding['width'], $this->padding['height'],
                 -$this->padding['offsetX'], -$this->padding['offsetY']
             );
+			
+			// 2011-05-10: On Arch (newer version of PHP/IM) below is needed to
+			// properly extend the image
+            // $coloredImage->extentImage(
+                // $this->padding['width'], $this->padding['height'],
+                // $this->padding['offsetX'], $this->padding['offsetY']
+            // );
             
             /* 
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors 
