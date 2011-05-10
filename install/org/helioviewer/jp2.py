@@ -47,13 +47,13 @@ def extract_JP2_info(img):
     detector = get_element_value(fits, "DETECTOR")
     instrume = get_element_value(fits, "INSTRUME")
     
-    if telescop == 'SDO/AIA':
+    if instrume[0:3] == 'AIA':
         datatype = "aia"
     elif instrume[0:3] == 'HMI':
         datatype = "hmi"
     elif detector == 'EUVI':
         datatype = "euvi"
-    elif (detector == 'COR1') or (detector == 'COR2'):
+    elif detector[0:3] == "COR":
         datatype = "cor"
     elif instrume == 'EIT':
         datatype = "eit"
