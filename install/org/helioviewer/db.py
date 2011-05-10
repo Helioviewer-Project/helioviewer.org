@@ -47,6 +47,7 @@ def get_db_cursor(dbname, dbuser, dbpass, mysql):
         db = pgdb.connect(use_unicode=True, charset = "utf8", database=dbname, 
                           user=dbuser, password=dbpass)
     
+    db.autocommit(True)
     return db.cursor()
 
 def check_db_info(adminuser, adminpass, mysql):
