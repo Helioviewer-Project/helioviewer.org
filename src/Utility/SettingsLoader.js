@@ -35,8 +35,15 @@ var SettingsLoader = (
      * @returns {Object} The default Helioviewer.org settings
      */
     _getDefaultSettings: function (serverSettings) {
+        // Use current date (UTC) for default observation time
+        var date = new Date(+new Date);
+        
+        // Round off minutes and seconds
+        date.setSeconds(0);
+        date.addMinutes(1);
+
         return {
-            date            : getUTCTimestamp(serverSettings.defaultObsTime),
+            date            : date.getTime(),
             imageScale      : serverSettings.defaultImageScale,
             movieLength     : 86400,
             movies          : [],
