@@ -100,26 +100,30 @@ class Movie_HelioviewerMovie
         }
 
         $this->_db->markMovieAsProcessing($this->id, $this->format);
-
-        $this->directory = $this->_buildDir();
-
-        // If the movie frames have not been built create them
-        if (!file_exists($this->directory . "frames")) {
-            require_once 'src/Image/Composite/HelioviewerMovieFrame.php';
-
-            $t1 = time();   
-                     
-            $this->_getTimeStamps();      // Get timestamps for frames in the key movie layer
-            $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, numFrames and dimensions
-            $this->_buildMovieFrames($this->watermark); // Build movie frames
-            
-            $t2 = time();
-            
-            $this->_db->finishedBuildingMovieFrames($this->id, $t2 - $t1); // Update status and log time to build frames
-        } else {
-            $this->filename = $this->_buildFilename();
-        }
         
+        try {
+            $this->directory = $this->_buildDir();
+    
+            // If the movie frames have not been built create them
+            if (!file_exists($this->directory . "frames")) {
+                require_once 'src/Image/Composite/HelioviewerMovieFrame.php';
+    
+                $t1 = time();   
+                         
+                $this->_getTimeStamps();      // Get timestamps for frames in the key movie layer
+                $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, numFrames and dimensions
+                $this->_buildMovieFrames($this->watermark); // Build movie frames
+                
+                $t2 = time();
+                
+                $this->_db->finishedBuildingMovieFrames($this->id, $t2 - $t1); // Update status and log time to build frames
+            } else {
+                $this->filename = $this->_buildFilename();
+            }
+        } catch (Exception $e) {
+            $this->_abort("Error encountered during movie frame compilation");
+        }
+
         $t3 = time();
 
         // Compile movie
@@ -167,7 +171,7 @@ class Movie_HelioviewerMovie
         
         $images = array();
         
-        foreach (array("small", "medium", "large", "full")  as $size) {
+        foreach (array("icon", "small", "medium", "large", "full")  as $size) {
             $images[$size] = $url . "preview-$size.png";
         }
         
@@ -302,12 +306,21 @@ class Movie_HelioviewerMovie
         $sizes = array(
             "large"  => array(640, 480),
             "medium" => array(320, 240),
-            "small"  => array(160, 120)
+            "small"  => array(240, 180),
+            "icon"   => array(64, 64)            
         );
         
         foreach ($sizes as $name=>$dimensions) {
-            $thumb = $preview->clone();            
+            $thumb = $preview->clone();
             $thumb->thumbnailImage($dimensions[0], $dimensions[1], true);
+            
+            // Add black border to reach desired preview image sizes
+            $borderWidth  = ceil(($dimensions[0] - $thumb->getImageWidth()) / 2);
+            $borderHeight = ceil(($dimensions[1] - $thumb->getImageHeight()) / 2);
+            
+            $thumb->borderImage("black", $borderWidth, $borderHeight);
+            $thumb->cropImage($dimensions[0], $dimensions[1], 0, 0);
+            
             $thumb->writeImage($this->directory . "/preview-$name.png");
             $thumb->destroy();
         } 

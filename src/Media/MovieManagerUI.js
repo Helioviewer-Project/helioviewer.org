@@ -6,7 +6,7 @@
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
 /*global $, window, MovieManager, MediaManagerUI, Helioviewer, helioviewer,
-  layerStringToLayerArray */
+  layerStringToLayerArray, humanReadableNumSeconds */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
     /** @lends MovieManagerUI */
@@ -77,7 +77,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
-            var msg, movie;
+            var msg, movie, waitTime;
 
             if ((response === null) || response.error) {
                 msg = "Unable to create movie. Please try again later.";
@@ -91,6 +91,12 @@ var MovieManagerUI = MediaManagerUI.extend(
                 params.x1, params.x2, params.y1, params.y2
             );
             self._addItem(movie);
+            
+            waitTime = humanReadableNumSeconds(response.eta);
+            msg = "Your video is processing and will be available in " + 
+                  "approximately " + waitTime + ". You may view it at any " +
+                  "time after it is ready by clicking the 'Movie' button";
+            $(document).trigger("message-console-info", msg);
         });
 
         //this.hideDialogs();
@@ -364,7 +370,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 status.html(elapsedTime);                
             // For failed movie requests, display an error
             } else if (item.status === "ERROR") {
-                status.html("Error");
+                status.html("<span style='color:LightCoral;'>Error</span>");
             // Otherwise show the item as processing
             } else {
                 status.html("<span class='processing'>Processing</span>");

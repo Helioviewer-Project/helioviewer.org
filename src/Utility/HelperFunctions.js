@@ -41,33 +41,13 @@ Date.prototype.toUTCDate = function () {
 };
 
 /**
- * Takes in a time difference in seconds and converts it to elapsed time, e.g. "5 minutes ago" or "3 days ago"
+ * Takes in a time difference in seconds and converts it to elapsed time, 
+ * e.g. "5 minutes ago" or "3 days ago"
  */
 Date.prototype.getElapsedTime = function () {
     // Elapsed time in seconds
     var diff = (new Date().getTime() - this.getTime()) / 1000;
-    
-    if (diff <= 60) {
-        return Math.ceil(diff) + " seconds";
-    } else if (diff <= 119) {
-        // Since it's flooring values, any number under 2 minutes (120 seconds) 
-        // should come up as "1 minute ago" rather than "1 minutes ago"
-        return "1 minute";
-    } else if (diff <= 3600) {
-        return Math.floor(diff / 60) + " minutes";
-    } else if (diff <= 7199) {
-        // Same as above, any number under 2 hours (7200 seconds)
-        // should come up as "1 hour ago" rather than "1 hours ago"
-        return "1 hour";
-    } else if (diff <= 86400) {
-        return Math.floor(diff / 3600) + " hours";
-    } else if (diff <= 172799) {
-        // Same as above, any number under 2 days (172800 seconds)
-        // should come up as "1 day ago" rather than "1 days ago"
-        return "1 day";
-    } else {
-        return Math.floor(diff / 86400) + " days";
-    }    
+    return humanReadableNumSeconds(diff);
 };
 
 /**
@@ -88,6 +68,34 @@ Date.parseUTCDate = function (s) {
         throw "Invalid UTC date string";
     }
 };
+
+/**
+ * Takes a number of seconds and returns a human-readable representation of
+ * the interval
+ */
+var humanReadableNumSeconds = function (seconds) {
+    if (seconds <= 60) {
+        return Math.ceil(seconds) + " seconds";
+    } else if (seconds <= 119) {
+        // Since it's flooring values, any number under 2 minutes (120 seconds) 
+        // should come up as "1 minute ago" rather than "1 minutes ago"
+        return "1 minute";
+    } else if (seconds <= 3600) {
+        return Math.floor(seconds / 60) + " minutes";
+    } else if (seconds <= 7199) {
+        // Same as above, any number under 2 hours (7200 seconds)
+        // should come up as "1 hour ago" rather than "1 hours ago"
+        return "1 hour";
+    } else if (seconds <= 86400) {
+        return Math.floor(seconds / 3600) + " hours";
+    } else if (seconds <= 172799) {
+        // Same as above, any number under 2 days (172800 seconds)
+        // should come up as "1 day ago" rather than "1 days ago"
+        return "1 day";
+    } else {
+        return Math.floor(seconds / 86400) + " days";
+    }   
+} 
 
 /**
  * Normalizes behavior for Date.toISOString

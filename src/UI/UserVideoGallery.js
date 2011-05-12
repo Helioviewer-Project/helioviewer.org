@@ -98,7 +98,7 @@ var UserVideoGallery = Class.extend(
         $.each(videos, function (i, vid) {
             var when = new Date.parseUTCDate(vid.published)
                                .getElapsedTime() + " ago",
-                img = vid.thumbnails['medium'];          
+                img = vid.thumbnails['small'];          
             
             html += "<a target='_blank' href='" + vid.url + "' " + 
                     "alt='video thumbnail'>" +

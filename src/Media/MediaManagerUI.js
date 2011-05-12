@@ -117,9 +117,13 @@ var MediaManagerUI = Class.extend(
      * Create history entries for items from previous sessions
      */
     _loadSavedItems: function () {
-        var self = this;
+        var sorted, self = this;
+        
+        sorted = this._manager.toArray().sort(function (a, b) {
+            return a.id - b.id; 
+        });
 
-        $.each(this._manager.toArray(), function (i, item) {
+        $.each(sorted, function (i, item) {
             self._addItem(item);
         });
     },

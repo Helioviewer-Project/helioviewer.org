@@ -157,7 +157,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 #message-console .jGrowl-notification, #message-console .jGrowl-closer {
-   background-color: #CCD9D9;
+   background: #CCD9D9;
    color: #262424;
 }
 
