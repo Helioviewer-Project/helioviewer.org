@@ -222,7 +222,7 @@ var MovieManager = MediaManager.extend(
         error = "Sorry, we are unable to create your movie at this time. " +
                  "Please try again later.";
 
-        $(document).trigger("message-console-info", error);
+        $(document).trigger("message-console-error", [error, {"sticky": true}]);
     },
     
     /**
