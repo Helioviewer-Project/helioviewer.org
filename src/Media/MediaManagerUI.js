@@ -2,9 +2,10 @@
  * MediaManagerUI class definition
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, setTimeout, window, Media, extractLayerName, addIconHoverEventListener */
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
+eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
+newcap: true, immed: true, maxlen: 80, sub: true */
+/*global Class, $, pixelsToArcseconds, addIconHoverEventListener */
 "use strict";
 var MediaManagerUI = Class.extend(
     /** @lends MediaManagerUI */
@@ -131,11 +132,11 @@ var MediaManagerUI = Class.extend(
 
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
-            var status, elapsedTime;
+            var status, elapsed;
             
             status = $("#" + type + "-" + item.id).find(".status");
-            elapsedTime = Date.parseUTCDate(item.dateRequested).getElapsedTime();
-            status.html(elapsedTime);                
+            elapsed = Date.parseUTCDate(item.dateRequested).getElapsedTime();
+            status.html(elapsed);                
         });
     },
     
@@ -176,24 +177,34 @@ var MediaManagerUI = Class.extend(
         this._clearBtn.click(function () {
             $.each(self._manager.toArray(), function (i, item) {
                 self._removeItem(item.id);
-            })
+            });
             self._manager.empty();
         });
     },
     
     /**
-     * Validates the screenshot or movie request and displays an error message if there is a problem
+     * Validates the screenshot or movie request and displays an error message 
+     * if there is a problem
      * 
      * @return {Boolean} Returns true if the request is valid
      */
     _validateRequest: function (roi, layers) {
+        var message;
+
+        // Selected area too small
         if (roi.bottom - roi.top < 50 || roi.right - roi.left < 50) {
-            $(document).trigger("message-console-warn", ["The area you have selected is too small to create a " +
-                this._type + ". Please try again."]);
+            message = "The area you have selected is too small to create a " +
+                      this._type + ". Please try again.";
+            $(document).trigger("message-console-warn", [message]);
+
             return false;
+
+        // No visible layers
         } else if (layers.length === 0) {
-            $(document).trigger("message-console-warn", ["You must have at least one layer in your " + this._type +
-                ". Please try again."]);
+            message = "You must have at least one layer in your " + this._type +
+                      ". Please try again.";
+            $(document).trigger("message-console-warn", [message]);
+
             return false;
         }
         return true;

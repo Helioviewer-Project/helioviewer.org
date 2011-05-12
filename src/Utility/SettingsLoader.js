@@ -36,7 +36,7 @@ var SettingsLoader = (
      */
     _getDefaultSettings: function (serverSettings) {
         // Use current date (UTC) for default observation time
-        var date = new Date(+new Date);
+        var date = new Date(+new Date());
         
         // Round off minutes and seconds
         date.setSeconds(0);

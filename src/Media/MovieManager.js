@@ -8,7 +8,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
+/*global Helioviewer, MediaManager, $, setTimeout */
 "use strict";
 var MovieManager = MediaManager.extend(
     /** @lends MovieManager.prototype */
@@ -114,7 +114,7 @@ var MovieManager = MediaManager.extend(
 
         if (this._history.unshift(movie) > 12) {
             this._history = this._history.slice(0, 12);            
-        };
+        }
         
         this._monitorQueuedMovie(id, eta);
 
@@ -186,7 +186,8 @@ var MovieManager = MediaManager.extend(
             var params, callback;
             
             callback = function (response) {
-                if (response.status == "QUEUED" || response.status == "PROCESSING") {
+                if (response.status === "QUEUED" || 
+                    response.status === "PROCESSING") {
                     self._monitorQueuedMovie(id, response.eta);
                 } else if (response.error) {
                     self._abort(id);
@@ -211,17 +212,17 @@ var MovieManager = MediaManager.extend(
      * Aborts a failed movie request
      */
     _abort: function (id) {
-        var movie = this.get(id);
+        var error, movie = this.get(id);
 
         // Mark as failed
         movie["status"] = "ERROR";        
         this._save();
 
         // Notify user
-        $error = "Sorry, we are unable to create your movie at this time. " +
+        error = "Sorry, we are unable to create your movie at this time. " +
                  "Please try again later.";
 
-        $(document).trigger("message-console-info", $error);
+        $(document).trigger("message-console-info", error);
     },
     
     /**
