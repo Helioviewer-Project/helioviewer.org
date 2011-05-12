@@ -71,8 +71,11 @@ var UserVideoGallery = Class.extend(
      * Processes response and stores video information locally
      */
     _processResponse: function (response) {
+        var error = "<b>Error:</b> Did you specify a valid YouTube API key "
+                  + "in Config.ini?";
+
         if (response.error) {
-            $("#user-video-gallery-main").html("<b>Error:</b> Did you specify a valid YouTube API key in Config.ini?");
+            $("#user-video-gallery-main").html(error);
             return;
         }
         
@@ -91,11 +94,9 @@ var UserVideoGallery = Class.extend(
         
         $.each(videos, function (i, vid) {
             var when = new Date.parseUTCDate(vid.published).getElapsedTime() + " ago",
-                img  = $.grep(vid.thumbnails, function (image, i) {
-                    return image.width === "480";
-                }).pop().url;            
+                img = vid.thumbnails['medium'];          
             
-            html += "<a target='_blank' href='" + vid.watch + "' alt='video thumbnail'>" +
+            html += "<a target='_blank' href='" + vid.url + "' alt='video thumbnail'>" +
                     "<div class='user-video-thumbnail-container'>" +
                     "<div style='text-align: left; margin-left: 25px;'>" + when + "</div>" +
                     "<img src='" + img + "' alt='user video thumbnail' /></div></a><br />";

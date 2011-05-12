@@ -251,7 +251,7 @@ class Module_Movies implements Module
                     "id"  => $movieId,
                     "url" => "http://www.youtube.com/watch?v=$youtubeId&feature=youtube_gdata_player",
                     "thumbnails" => $movie->getPreviewImages(),
-                    "timestamp"  => $video['timestamp']
+                    "published"  => $video['timestamp']
                 ));
             }
         }
