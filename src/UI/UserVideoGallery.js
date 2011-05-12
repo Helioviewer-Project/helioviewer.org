@@ -3,8 +3,9 @@
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * 
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
+eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
+newcap: true, immed: true, maxlen: 80, sub: true */
 /*global $, window, Class, addIconHoverEventListener */
 "use strict";
 var UserVideoGallery = Class.extend(
@@ -41,7 +42,8 @@ var UserVideoGallery = Class.extend(
      * Updates video gallery to show new entries
      */
     _updateGallery: function () {
-        var endIndex   = Math.min(this._startIndex + this._pageSize, this._videos.length);
+        var endIndex = Math.min(this._startIndex + this._pageSize, 
+                                this._videos.length);
 
         this._buildHTML(this._videos.slice(this._startIndex, endIndex));
     },
@@ -64,15 +66,16 @@ var UserVideoGallery = Class.extend(
         this._working = true;
 
         // Fetch videos
-        $.getJSON("api/index.php", params, $.proxy(this._processResponse, this));
+        $.getJSON("api/index.php", params, 
+                  $.proxy(this._processResponse, this));
     },
     
     /**
      * Processes response and stores video information locally
      */
     _processResponse: function (response) {
-        var error = "<b>Error:</b> Did you specify a valid YouTube API key "
-                  + "in Config.ini?";
+        var error = "<b>Error:</b> Did you specify a valid YouTube API key " +
+                    "in Config.ini?";
 
         if (response.error) {
             $("#user-video-gallery-main").html(error);
@@ -93,13 +96,17 @@ var UserVideoGallery = Class.extend(
         this._container.find("a, br").remove();
         
         $.each(videos, function (i, vid) {
-            var when = new Date.parseUTCDate(vid.published).getElapsedTime() + " ago",
+            var when = new Date.parseUTCDate(vid.published)
+                               .getElapsedTime() + " ago",
                 img = vid.thumbnails['medium'];          
             
-            html += "<a target='_blank' href='" + vid.url + "' alt='video thumbnail'>" +
+            html += "<a target='_blank' href='" + vid.url + "' " + 
+                    "alt='video thumbnail'>" +
                     "<div class='user-video-thumbnail-container'>" +
-                    "<div style='text-align: left; margin-left: 25px;'>" + when + "</div>" +
-                    "<img src='" + img + "' alt='user video thumbnail' /></div></a><br />";
+                    "<div style='text-align: left; margin-left: 25px;'>" + 
+                    when + "</div>" +
+                    "<img src='" + img + "' alt='user video thumbnail' />" + 
+                    "</div></a><br />";
         });
         
         // Drop tailing line break
@@ -153,7 +160,8 @@ var UserVideoGallery = Class.extend(
     },
     
     /**
-     * Performs a quick check on the browser height to decide how many video thumbnails to show at once
+     * Performs a quick check on the browser height to decide how many video 
+     * thumbnails to show at once
      */
     _choosePageSize: function () {
         var height = $(window).height();
@@ -194,7 +202,8 @@ var UserVideoGallery = Class.extend(
         
         // Only update HTML if the page size has changed
         if (this._pageSize !== oldPageSize) {
-            // Expand gallery size when currently displaying last page and resizing
+            // Expand gallery size when currently displaying last page and 
+            // resizing
             if (this._startIndex + this._pageSize > this._videos.length) {
                 this._startIndex = this._videos.length - this._pageSize;
             }

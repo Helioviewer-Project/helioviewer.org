@@ -8,7 +8,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, setTimeout, window, Media, extractLayerName, layerStringToLayerArray */
+/*global $, Helioviewer, MediaManager */
 "use strict";
 var ScreenshotManager = MediaManager.extend(
     /** @lends ScreenshotManager.prototype */

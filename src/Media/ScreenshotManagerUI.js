@@ -2,9 +2,11 @@
  * ScreenshotManagerUI class definition
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global MediaManagerUI, ScreenshotManager, Helioviewer, $ */
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
+eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
+newcap: true, immed: true, maxlen: 80, sub: true */
+/*global $, window, Helioviewer, helioviewer, MediaManagerUI, ScreenshotManager
+*/
 "use strict";
 var ScreenshotManagerUI = MediaManagerUI.extend(
     /** @lends ScreenshotManagerUI */
@@ -16,14 +18,17 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * @param {ScreenshotManager} model ScreenshotManager instance
      */    
     init: function () {
-        this._manager = new ScreenshotManager(Helioviewer.userSettings.get('screenshots'));
+        var screenshots = Helioviewer.userSettings.get('screenshots');
+        this._manager = new ScreenshotManager(screenshots);
+
         this._super("screenshot");
 
         this._initEvents();
     },
     
     /**
-     * Displays a jGrowl notification to the user informing them that their download has completed
+     * Displays a jGrowl notification to the user informing them that their 
+     * download has completed
      */
     _displayDownloadNotification: function (id) {
         var jGrowlOpts, link, self = this;
@@ -38,8 +43,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         };
         
         // Download link
-        link = "<a href='api/index.php?action=downloadScreenshot&id=" + id 
-             + "' target='_parent' style=''>Click here to download. </a>";
+        link = "<a href='api/index.php?action=downloadScreenshot&id=" + id +
+               "' target='_parent' style=''>Click here to download. </a>";
 
         // Create the jGrowl notification.
         $(document).trigger("message-console-info", [link, jGrowlOpts]);
@@ -61,7 +66,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         
         this._selectAreaBtn.click(function () {
             self.hide();
-            $(document).trigger("enable-select-tool", $.proxy(self._takeScreenshot, self));
+            $(document).trigger("enable-select-tool", 
+                                $.proxy(self._takeScreenshot, self));
         });
         
         // Setup hover and click handlers for history items
@@ -81,7 +87,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     },
    
     _onScreenshotHover: function (event) {
-        if (event.type == 'mouseover') {
+        if (event.type === 'mouseover') {
             //console.log('hover on'); 
         } else {
             //console.log('hover off'); 
@@ -89,9 +95,11 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     },
 
     /**
-     * @description Gathers all necessary information to generate a screenshot, and then displays the
-     *              image when it is ready.
-     * @param {Object} roi Region of interest to use in place of the current viewport roi
+     * Gathers all necessary information to generate a screenshot, and then 
+     * displays the image when it is ready.
+     * 
+     * @param {Object} roi Region of interest to use in place of the current \
+     * viewport roi
      */
     _takeScreenshot: function (roi) {
         var params, imageScale, layers, server, screenshot, self = this; 
@@ -106,7 +114,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
             return;
-        };
+        }
 
         params = $.extend({
             action        : "takeScreenshot",
@@ -125,12 +133,14 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
             if ((response === null) || response.error) {
-                $(document).trigger("message-console-info", "Unable to create screenshot. Please try again later.");
+                $(document).trigger("message-console-info", 
+                    "Unable to create screenshot. Please try again later.");
                 return;
             }
             
             screenshot = self._manager.add(
-                response.id, params.imageScale, params.layers, new Date().toISOString(), params.date, 
+                response.id, params.imageScale, params.layers, 
+                new Date().toISOString(), params.date, 
                 params.x1, params.x2, params.y1, params.y2
             );
             self._addItem(screenshot);

@@ -2,10 +2,11 @@
  * MovieManagerUI class definition
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false,  
-eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true, 
-newcap: true, immed: true, maxlen: 120, sub: true */
-/*global $, MovieManager, MediaManagerUI, Helioviewer */
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
+eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
+newcap: true, immed: true, maxlen: 80, sub: true */
+/*global $, window, MovieManager, MediaManagerUI, Helioviewer, helioviewer,
+  layerStringToLayerArray */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
     /** @lends MovieManagerUI */
@@ -29,8 +30,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * user click to view it in a popup. 
      */
     _buildMovie: function (roi) {
-        var params, imageScale, layers, roi, currentTime, endTime,
-            now, diff, movieLength, self = this;
+        var params, imageScale, layers, currentTime, endTime, startTimeStr,
+            endTimeStr, now, diff, movieLength, self = this;
 
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
@@ -42,7 +43,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
             return;
-        };
+        }
 
         this.building = true;
 
@@ -60,25 +61,31 @@ var MovieManagerUI = MediaManagerUI.extend(
         diff = endTime.getTime() - now.getTime();
         currentTime.addSeconds(Math.min(0, -diff / 1000));
         
+        // Start and end datetime strings
+        startTimeStr = currentTime.addSeconds(-movieLength / 2).toISOString();
+        endTimeStr   = currentTime.addSeconds(movieLength).toISOString();
+        
         // Ajax Request Parameters
         params = $.extend({
             action        : "queueMovie",
             imageScale    : imageScale,
             layers        : layers,
-            startTime     : currentTime.addSeconds(-movieLength / 2).toISOString(),
-            endTime       : currentTime.addSeconds(movieLength).toISOString(),
+            startTime     : startTimeStr,
+            endTime       : endTimeStr,
             format        : this._manager.format
         }, this._toArcsecCoords(roi, imageScale));
         
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
+            var msg, movie;
+
             if ((response === null) || response.error) {
-                var msg = "Unable to create movie. Please try again later.";
+                msg = "Unable to create movie. Please try again later.";
                 $(document).trigger("message-console-info", msg);
                 return;
             }
 
-            var movie = self._manager.queue(
+            movie = self._manager.queue(
                 response.id, response.eta, params.imageScale, params.layers, 
                 new Date().toISOString(), params.startTime, params.endTime, 
                 params.x1, params.x2, params.y1, params.y2
@@ -106,7 +113,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         this._selectAreaBtn.click(function () {
             self.hide();
-            $(document).trigger("enable-select-tool", $.proxy(self._buildMovie, self));
+            $(document).trigger("enable-select-tool", 
+                                $.proxy(self._buildMovie, self));
         });
         
         // Setup hover and click handlers for movie history items
@@ -155,7 +163,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     * Shows movie details and preview.
     */
     _onMovieHover: function (event) {
-        if (event.type == 'mouseover') {
+        if (event.type === 'mouseover') {
             //console.log('hover on'); 
         } else {
             //console.log('hover off'); 
@@ -298,7 +306,8 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
-     * Decides how to display video and returns HTML corresponding to that method
+     * Decides how to display video and returns HTML corresponding to that 
+     * method
      */
     getVideoPlayerHTML: function (id, width, height, uploadURL) {
         var url, downloadLink, youtubeBtn;
@@ -307,18 +316,22 @@ var MovieManagerUI = MediaManagerUI.extend(
               "&format=" + this._manager.format + "&hq=true";
 
         downloadLink = "<a target='_parent' href='" + url + "'>" +
-                       "<img class='video-download-icon' src='resources/images/icons/001_52.png' " +
-                       "alt='Download high-quality video' />Download</a>";
+            "<img class='video-download-icon' " + 
+            "src='resources/images/icons/001_52.png' " +
+            "alt='Download high-quality video' />Download</a>";
         
-        youtubeBtn = "<a id='youtube-upload-" + id + "'  href='" + uploadURL + "' target='_blank'>" + 
-                     "<img class='youtube-icon' src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
-                     "alt='Upload video to YouTube' />Upload</a>";
+        youtubeBtn = "<a id='youtube-upload-" + id + "'  href='" + uploadURL + 
+            "' target='_blank'><img class='youtube-icon' " + 
+            "src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
+            "alt='Upload video to YouTube' />Upload</a>";
         
         // HTML5 Video (H.264 or WebM)
         if ($.support.vp8 || $.support.vp8) {
             return "<video id='movie-player-" + id + "' src='" + url +
-                   "' controls preload autoplay width='100%' " + "height='95%'></video>" + 
-                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span>";
+                   "' controls preload autoplay width='100%' " + 
+                   "height='95%'></video>" + 
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + 
+                   "</span>";
         }
 
         // Fallback (flash player)
@@ -326,9 +339,11 @@ var MovieManagerUI = MediaManagerUI.extend(
             url = 'api/index.php?action=playMovie&id=' + id + '&format=flv';
             
             return "<div id='movie-player-" + id + "'>" + 
-                   "<iframe src=" + url + " width=" + width + " height=" + height + " marginheight=0 marginwidth=0 " +
+                   "<iframe src=" + url + " width=" + width +  
+                   "height=" + height + " marginheight=0 marginwidth=0 " +
                    "scrolling=no frameborder=0 /><br />" + 
-                   "<span class='video-links'>" + downloadLink + youtubeBtn + "</span></div>";
+                   "<span class='video-links'>" + downloadLink + youtubeBtn + 
+                   "</span></div>";
         }
     },
     
@@ -336,17 +351,20 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Refreshes status information for movies in the history
      */
     _refresh: function () {
+        var status, elapsedTime;
+        
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
-            var status = $("#movie-" + item.id).find(".status");
+            status = $("#movie-" + item.id).find(".status");
 
             // For completed entries, display elapsed time
-            if (item.status == "FINISHED") {
-                var elapsedTime = Date.parseUTCDate(item.dateRequested).getElapsedTime();
+            if (item.status === "FINISHED") {
+                elapsedTime = Date.parseUTCDate(item.dateRequested)
+                                  .getElapsedTime();
                 status.html(elapsedTime);                
             // For failed movie requests, display an error
-            } else if (item.status == "ERROR") {
-                status.html("Error")
+            } else if (item.status === "ERROR") {
+                status.html("Error");
             // Otherwise show the item as processing
             } else {
                 status.html("<span class='processing'>Processing</span>");
@@ -355,17 +373,25 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
-     * Validates the request and returns false if any of the requirements are not met
+     * Validates the request and returns false if any of the requirements are 
+     * not met
      */
     _validateRequest: function (roi, layerString) {
-        var visibleLayers = $.grep(layerStringToLayerArray(layerString), function (layer, i) {
-            var parts=layer.split(",");
+        var layers, visibleLayers, message;
+        
+        layers = layerStringToLayerArray(layerString);
+        visibleLayers = $.grep(layers, function (layer, i) {
+            var parts = layer.split(",");
             return (parts[4] === "1" && parts[5] !== "0");
         });
 
         if (visibleLayers.length > 3) {
-            $(document).trigger("message-console-warn", ["Movies cannot have more than three layers. " +
-        		"Please hide/remove layers until there are no more than three layers visible."]);
+            message = "Movies cannot have more than three layers. " +
+                      "Please hide/remove layers until there are no more " +
+                      "than three layers visible.";
+
+            $(document).trigger("message-console-warn", [message]);
+
             return false;
         }
         return this._super(roi, layerString);

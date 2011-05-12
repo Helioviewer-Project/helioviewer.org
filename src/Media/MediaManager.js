@@ -55,7 +55,7 @@ var MediaManager = Class.extend(
     add: function (item) {
         if (this._history.unshift(item) > 12) {
             this._history = this._history.slice(0, 12);            
-        };
+        }
 
         this._save();  
     },
@@ -68,7 +68,7 @@ var MediaManager = Class.extend(
 
         // Find the index in the history array
         $.each(this._history, function (i, item) {
-            if (item.id == id) {
+            if (item.id === id) {
                 index = i;
             }
         });

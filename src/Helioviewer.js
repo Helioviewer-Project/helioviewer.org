@@ -4,9 +4,11 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, window, $, ImageSelectTool, MovieBuilder, 
+/*global document, window, $, Class, ImageSelectTool, MovieBuilder, 
   TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
-  MovieHistory, addIconHoverEventListener, UserVideoGallery, assignTouchHandlers */
+  MovieHistory, addIconHoverEventListener, UserVideoGallery, MessageConsole,
+  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl,
+  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers */
 "use strict";
 var Helioviewer = Class.extend(
     /** @lends Helioviewer.prototype */
@@ -459,6 +461,6 @@ var Helioviewer = Class.extend(
      */
     constants: {
         au: 149597870700, // 1 au in meters (http://maia.usno.navy.mil/NSFA/IAU2009_consts.html)
-        rsun: 695700000,  // radius of the sun in meters (JHelioviewer)
+        rsun: 695700000  // radius of the sun in meters (JHelioviewer)
     }
 });

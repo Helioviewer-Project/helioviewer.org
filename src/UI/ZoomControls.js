@@ -1,20 +1,19 @@
 /**
  * @fileOverview Contains the class definition for an ZoomControls class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
- * @see  The <a href="http://helioviewer.org/wiki/Zoom_Levels_and_Observations">HelioViewer Wiki</a>
- *       for more information on zoom levels.
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $ */
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
+eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
+newcap: true, immed: true, maxlen: 80, sub: true */
+/*globals $, Class */
 "use strict";
 var ZoomControls = Class.extend(
     /** @lends ZoomControls.prototype */
     {
     /**
      * @constructs
-     * @description Creates a new ZoomControl
+     * 
+     * Creates a new ZoomControl
      */
     init: function (id, imageScale, minImageScale, maxImageScale) {       
         this.id            = id;
@@ -31,7 +30,8 @@ var ZoomControls = Class.extend(
     },
   
     /**
-     * @description Adjusts the zoom-control slider
+     * Adjusts the zoom-control slider
+     * 
      * @param {Integer} v The new zoom value.
      */
     _onSlide: function (v) {
@@ -39,7 +39,9 @@ var ZoomControls = Class.extend(
     },
     
     /**
-     * @description Translates from jQuery slider values to zoom-levels, and updates the zoom-level.
+     * Translates from jQuery slider values to zoom-levels, and updates the 
+     * zoom-level.
+     * 
      * @param {Object} v jQuery slider value
      */
     _setImageScale: function (v) {
@@ -50,7 +52,7 @@ var ZoomControls = Class.extend(
      * @description Initializes zoom level slider
      */
     _initSlider: function () {
-        var i, self = this;
+        var i, description, self = this;
         
         // Zoom-level steps
         this. increments = [];
@@ -73,7 +75,8 @@ var ZoomControls = Class.extend(
         });
         
         // Add tooltip text
-        var description = "Drag this handle up and down to zoom in and out of the displayed image.";
+        description = "Drag this handle up and down to zoom in and out of " + 
+                      "the displayed image.";
         $("#zoomControlSlider > .ui-slider-handle").attr('title', description);
     },
 
@@ -121,6 +124,7 @@ var ZoomControls = Class.extend(
     _initEventHandlers: function () {
         this.zoomInBtn.click($.proxy(this._onZoomInBtnClick, this));
         this.zoomOutBtn.click($.proxy(this._onZoomOutBtnClick, this));
-        $("#helioviewer-viewport").mousewheel($.proxy(this._onMouseWheelMove, this));
+        $("#helioviewer-viewport").mousewheel(
+            $.proxy(this._onMouseWheelMove, this));
     }
 });
