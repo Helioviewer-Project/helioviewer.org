@@ -168,7 +168,7 @@ class Movie_HelioviewerMovie
         $images = array();
         
         foreach (array("small", "medium", "large", "full")  as $size) {
-            array_push($images, $url . "preview-$size.png");
+            $images[$size] = $url . "preview-$size.png";
         }
         
         return $images;
