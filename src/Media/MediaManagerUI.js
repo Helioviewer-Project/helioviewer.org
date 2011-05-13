@@ -27,6 +27,8 @@ var MediaManagerUI = Class.extend(
         this._historyTitle    = $("#" + type + "-history-title");
         this._historyBody     = $("#" + type + "-history");
         this._clearBtn        = $("#" + type + "-clear-history-button");
+        this._tooltips        = $("#social-buttons div");
+        this._allContainers   = $(".media-manager-container");
         
         this._loadSavedItems();
     },
@@ -36,13 +38,15 @@ var MediaManagerUI = Class.extend(
      */
     hide: function () {
         this._container.hide();
+        this._tooltips.qtip("enable");
     },
     
     /**
      * Shows the media manager
      */
     show: function () {
-        $(".media-manager-container").hide();
+        this._allContainers.hide();
+        this._tooltips.qtip("disable");
         this._refresh();
         this._container.show();
     },
@@ -105,7 +109,7 @@ var MediaManagerUI = Class.extend(
      * @param {Int} Identifier of the screenshot to be removed
      */
     _removeItem: function (id) {
-        $("#" + id).unbind().remove();
+        $("#" + this._type + "-" + id).unbind().remove();
         
         // Hide the history section if the last entry was removed
         if (this._historyBody.find(".history-entry").length === 0) {
