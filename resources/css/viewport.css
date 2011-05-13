@@ -2,6 +2,9 @@
 #helioviewer-viewport-container-inner {
 	position: relative;
 	display: block;
+    top:3%;
+    width:97%;
+    height:94%;
 	margin-left:auto;
 	margin-right: auto;
 	border: 1px solid #262424;

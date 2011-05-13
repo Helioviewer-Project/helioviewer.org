@@ -128,9 +128,6 @@ var Helioviewer = Class.extend(
         
         // Fullscreen
         $("#fullscreen-btn, .text-btn").qtip({
-            show: {
-                delay: 1000
-            },
             position: {
                 my: "top right",
                 at: "bottom middle"

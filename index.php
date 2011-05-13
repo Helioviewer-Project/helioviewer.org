@@ -101,11 +101,11 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 <div id="col1">
                     <!-- Viewport -->
                     <div id="helioviewer-viewport-container-outer" class="ui-widget ui-widget-content ui-corner-all">
-                        <div id="helioviewer-viewport-container-inner" style="top:3%; width:97%; height:94%">
+                        <div id="helioviewer-viewport-container-inner">
                             <div id="helioviewer-viewport">
                                 <!-- Movement sandbox -->
                                 <div id="sandbox" style="position: absolute;">
-                                    <div id="moving-container" style="left: 0; top: 0"></div>
+                                    <div id="moving-container"></div>
                                 </div>
                                 
                                 <!-- Message console -->
@@ -251,28 +251,30 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
         <!-- Left Column -->
         <div id="col2">
             <div id="left-col-header">
-                <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo" style="margin-top:24px; margin-left: 9px;">
+                <a href='http://www.helioviewer.org'>
+                    <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
+                </a>
             </div>
             <br><br>
             <div class="section-header" style="margin-left:5px; margin-top: 15px;">Time</div>
             <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
                 <!--  Observation Date -->
-                <div style="margin-bottom: 4px; position: relative;">
-                    <div style="width: 78px; margin-top:3px; float: left; font-weight: 600;">Date:</div>
+                <div id="observation-date-container">
+                    <div id="observation-date-label">Date:</div>
                     <input type="text" id="date" name="date" value="" maxlength='10'>
                     <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
                 </div>
 
                 <!-- Observation Time -->
-                <div style="margin-bottom: 8px;">
-                    <div style="float: left; width: 78px; font-weight: 600;">Time:</div>
+                <div id="observation-time-container">
+                    <div id="observation-time-label">Time:</div>
                     <input id="time" name="time" value="" style="width:80px" type="text" maxlength="8" pattern="[\d]{2}:[\d]{2}:[\d]{2}">
                     <span style='font-size: 11px; font-weight: 700; margin-left: 2px;'>UTC</span>
                 </div>
 
                 <!-- Time Navigation Buttons & Time Increment selector -->
                 <div>
-                    <div style="float: left; width: 78px; font-weight: 600;">Time-step:</div>
+                    <div id="time-navigation-buttons">Time-step:</div>
                     <select id="timestep-select" name="time-step"></select>
                     <span id="timeBackBtn" class="ui-icon ui-icon-circle-arrow-w" title="Move the Observation Date/Time backward one time-step"></span>
                     <span id="timeForwardBtn" class="ui-icon ui-icon-circle-arrow-e" title="Move the Observation Date/Time forward one time-step"></span>
@@ -294,8 +296,10 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
             <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
             
             <!-- User-Submitted Videos -->
-            <div style="margin: 5px 0px 2px 5px; height: 48px; position: relative;" class="section-header">
-                <img id='yt-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
+            <div id="user-video-gallery-header" class="section-header">
+                <a href="http://www.youtube.com/user/Helioviewer" target="_blank">
+                    <img id='youtube-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
+                </a>
                 <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
