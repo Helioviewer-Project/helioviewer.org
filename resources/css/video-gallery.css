@@ -1,3 +1,9 @@
+#user-video-gallery-header {
+    position: relative;
+    margin: 5px 0px 2px 5px;
+    height: 48px;
+}
+
 #user-video-gallery {
     height: 100%;
     min-height: 150px;
@@ -41,7 +47,7 @@
     margin-right: auto;
 }
 
-#yt-logo {
+#youtube-logo {
     float: left;
     margin-right: 5px;
 }

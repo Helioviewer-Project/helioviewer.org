@@ -32,6 +32,12 @@ a.light:hover {
     color: #d18f61;
 }
 
+/* Logo */
+#helioviewer-logo-main {
+    margin-top:24px;
+    margin-left: 9px;
+}
+
 /* Loading Indicator */
 #loading {
     position: absolute;

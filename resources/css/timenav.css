@@ -11,6 +11,34 @@
     border: 1px solid #5c5c5c;
 }
 
+#observation-date-container {
+    position: relative;
+    margin-bottom: 4px;
+}
+
+#observation-date-label {
+    float: left;
+    width: 78px;
+    margin-top:3px;
+    font-weight: 600;
+}
+
+#observation-time-label {
+    float: left;
+    width: 78px;
+    font-weight: 600;
+}
+
+#observation-time-container {
+    margin-bottom: 8px;
+}
+
+#time-navigation-buttons {
+    float: left;
+    width: 78px;
+    font-weight: 600;    
+}
+
 #timeBackBtn, #timeForwardBtn {
     cursor: pointer;
 }
