@@ -82,7 +82,7 @@ class Module_WebClient implements Module
            $this->_params['id']   
         );
         
-        $filename = sprintf("%s_%s.jpg",
+        $filename = sprintf("%s_%s.png",
             str_replace(array(":", "-", " "), "_", $info['observationDate']),
             $layers->toString()
         );

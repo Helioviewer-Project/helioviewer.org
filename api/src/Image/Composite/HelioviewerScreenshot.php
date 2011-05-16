@@ -48,7 +48,7 @@ class Image_Composite_HelioviewerScreenshot extends Image_Composite_HelioviewerC
      */
     private function _buildFilepath ()
     {
-    	return sprintf("%s/screenshots/%s/%s/%s_%s.jpg", 
+    	return sprintf("%s/screenshots/%s/%s/%s_%s.png", 
     	   HV_CACHE_DIR,
     	   date("Y/m/d"),
     	   $this->id,
