@@ -5,7 +5,6 @@ body {
     margin:0;
     padding:0;
     width:100%;
-    background:#fff;
     min-width:972px;   /* Minimum width of layout - remove line if not required */
                        /* The min-width property does not work in old versions of Internet Explorer */
 }
