@@ -100,15 +100,23 @@ var humanReadableNumSeconds = function (seconds) {
 /**
  * Normalizes behavior for Date.toISOString
  * 
- * Browsers with native support for toISOString return a quoted date string, whereas other browsers
- * return unquoted date string.
- * 
+ * Fixes two issues:
+ *   1. Browsers with native support for toISOString return a quoted date string, 
+ *      whereas other browsers return unquoted date string.
+ *   2. IE8 doesn't include milliseconds
+ *
  * @see http://code.google.com/p/datejs/issues/detail?id=54
  * 
  */
 var toISOString = Date.prototype.toISOString;
 Date.prototype.toISOString = function () {
-    return toISOString.call(this).replace(/"/g, '');
+    var date = toISOString.call(this).replace(/"/g, '');
+    
+    if (date.length == 20) {
+        date = date.substring(0, 19) + ".000Z";
+    }
+    
+    return date;
 };
 
 /**

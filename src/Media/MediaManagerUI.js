@@ -47,6 +47,7 @@ var MediaManagerUI = Class.extend(
     show: function () {
         this._allContainers.hide();
         this._tooltips.qtip("disable");
+        $(".qtip").hide(); // IE Fix
         this._refresh();
         this._container.show();
     },

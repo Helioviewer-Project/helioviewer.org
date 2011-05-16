@@ -44,7 +44,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         
         // Download link
         link = "<a href='api/index.php?action=downloadScreenshot&id=" + id +
-               "' target='_parent' style=''>Click here to download. </a>";
+               "'>Click here to download. </a>";
 
         // Create the jGrowl notification.
         $(document).trigger("message-console-info", [link, jGrowlOpts]);
