@@ -44,7 +44,9 @@ var ViewportMovementHelper = Class.extend(
      * @param {Event} event an Event object
      */
     mouseDown: function (event) {
-        this.domNode.css("cursor", "all-scroll");
+        //this.domNode.css("cursor", "all-scroll");
+        //this.domNode.addClass("dragging");
+        this.domNode.css("cursor", "url('../../resources/cursors/grabbing.cur'), url('resources/cursors/grabbing.cur'), move");
     
         // Don't do anything if entire image is already visible
         if ((this.sandbox.width() === 0) && (this.sandbox.height() === 0)) {
@@ -64,7 +66,8 @@ var ViewportMovementHelper = Class.extend(
      * @param {Event} event Event object
      */    
     mouseUp: function (event) {
-        this.domNode.css("cursor", "pointer");
+        this.domNode.removeClass("dragging");
+        this.domNode.css("cursor", "");
         if (this.isMoving) {
             this._endMoving();
         }
