@@ -294,53 +294,33 @@ class Module_Movies implements Module
             return;
         }
         
+        $dimensions = "width: {$movie->width}px; height: {$movie->height}px;";
+
         // Get filepath
         $filepath = $movie->getFilepath($options['hq']);
         $filename = basename($filepath);        
         
-        //$css = "width: {$movie->width}px; height: {$movie->height}px;";
-        //$durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
-        
-        // For MC Media Player
+        // Movie URL
         $url = HV_API_ROOT_URL . "?action=downloadMovie&id={$movie->id}&format={$movie->format}";
         ?>
 <!DOCTYPE html> 
 <html> 
 <head> 
-    <title>Helioviewer.org - <?php echo $filename?></title>            
-    <!--<script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
+    <title>Helioviewer.org - <?php echo $filename?></title>
+    <script src="../lib/flowplayer/flowplayer-3.2.6.js"></script>            
 </head> 
 <body>
-    <!-- 2010/12/21 Going back to MC Media player for now for better full screen experience -->
-    <!-- MC Media Player -->
+    <!-- Movie player -->
     <div style="text-align: center;">
-        <script type="text/javascript">
-            playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-            fpFileURL = "<?php print $url?>";
-            fpButtonSize = "48x48";
-            fpAction = "play";
-            cpHidePanel = "mouseout";
-            cpHideDelay = "1";
-            defaultEndAction = "repeat";
-            playerSize = "<?php print $movie->width . 'x' . $movie->height?>";
-        </script>
-        <script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
+        <a href="<?php echo $url;?>" 
+           style="display:block; <?php print $dimensions;?>"
+           id="player">
+        </a>
     </div>
     <br>
-    <?php
-            /**
-            <!--
-            <div style="text-align: center;">
-                <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>">
-                    <video style="margin-left: auto; margin-right: auto; <?php echo $css;?>" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
-                        <source src="<?php echo "$relpath.mp4"?>" /> 
-                        <source src="<?php echo "$relpath.flv"?>" /> 
-                    </video>
-                </div>
-            </div>-->
-            */
-    ?>
+    <script language="JavaScript">
+        flowplayer("player", "../lib/flowplayer/flowplayer-3.2.7.swf");
+    </script>
 </body> 
 </html> 
         <?php
