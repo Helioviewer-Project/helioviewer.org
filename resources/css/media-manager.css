@@ -16,6 +16,14 @@
     display: none;
 }
 
+#screenshot-manager-container {
+    right: 15px;
+}
+
+#movie-manager-container {
+    right: 75px;
+}
+
 .history-entry {
     height: 22px
 }

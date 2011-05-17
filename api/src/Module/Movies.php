@@ -302,45 +302,47 @@ class Module_Movies implements Module
         //$durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
         
         // For MC Media Player
-        $url = "http://www.helioviewer.org/api/?action=downloadMovie&id={movie->id}&format={$movie->format}";
-
+        $url = HV_API_ROOT_URL . "?action=downloadMovie&id={$movie->id}&format={$movie->format}";
         ?>
-        <!DOCTYPE html> 
-        <html> 
-        <head> 
-            <title>Helioviewer.org - <?php echo $filename?></title>            
-            <!--<script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
-            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
-        </head> 
-        <body>
-        
-        <!-- 2010/12/21 Going back to MC Media player for now for better full screen experience -->
-        <!-- MC Media Player -->
-        <div style="text-align: center;">
-            <script type="text/javascript">
-                playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-                fpFileURL = "<?php print $url?>";
-                fpButtonSize = "48x48";
-                fpAction = "play";
-                cpHidePanel = "mouseout";
-                cpHideDelay = "1";
-                defaultEndAction = "repeat";
-                playerSize = "<?php print $movie->width . 'x' . $movie_>height?>";
-            </script>
-            <script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
-        </div>
-        <br>
-        <!--
-        <div style="text-align: center;">
-            <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>">
-                <video style="margin-left: auto; margin-right: auto; <?php echo $css;?>" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
-                    <source src="<?php echo "$relpath.mp4"?>" /> 
-                    <source src="<?php echo "$relpath.flv"?>" /> 
-                </video>
-            </div>
-        </div>-->
-        </body> 
-        </html> 
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <title>Helioviewer.org - <?php echo $filename?></title>            
+    <!--<script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
+</head> 
+<body>
+    <!-- 2010/12/21 Going back to MC Media player for now for better full screen experience -->
+    <!-- MC Media Player -->
+    <div style="text-align: center;">
+        <script type="text/javascript">
+            playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
+            fpFileURL = "<?php print $url?>";
+            fpButtonSize = "48x48";
+            fpAction = "play";
+            cpHidePanel = "mouseout";
+            cpHideDelay = "1";
+            defaultEndAction = "repeat";
+            playerSize = "<?php print $movie->width . 'x' . $movie->height?>";
+        </script>
+        <script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
+    </div>
+    <br>
+    <?php
+            /**
+            <!--
+            <div style="text-align: center;">
+                <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>">
+                    <video style="margin-left: auto; margin-right: auto; <?php echo $css;?>" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
+                        <source src="<?php echo "$relpath.mp4"?>" /> 
+                        <source src="<?php echo "$relpath.flv"?>" /> 
+                    </video>
+                </div>
+            </div>-->
+            */
+    ?>
+</body> 
+</html> 
         <?php
     }
     
