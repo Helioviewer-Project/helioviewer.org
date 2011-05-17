@@ -342,11 +342,13 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Fallback (flash player)
         else {
-            url = 'api/index.php?action=playMovie&id=' + id + '&format=flv';
+            url = 'api/index.php?action=playMovie&id=' + id +
+                  '&width=' + width + "&height=" + height + 
+                  '&format=flv';
             
             return "<div id='movie-player-" + id + "'>" + 
-                   "<iframe src=" + url + " width=" + width +  
-                   "height=" + height + " marginheight=0 marginwidth=0 " +
+                   "<iframe src=" + url + " width='" + width +  
+                   "' height='" + height + "' marginheight=0 marginwidth=0 " +
                    "scrolling=no frameborder=0 /><br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn + 
                    "</span></div>";

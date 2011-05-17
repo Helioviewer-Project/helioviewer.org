@@ -279,7 +279,9 @@ class Module_Movies implements Module
                                   
         // Default options
         $defaults = array(
-            "hq" => false
+            "hq"     => false,
+            "width"  => $movie->width,
+            "height" => $movie->height
         );
         $options = array_replace($defaults, $this->_options);
 
@@ -293,8 +295,9 @@ class Module_Movies implements Module
             print json_encode($response);
             return;
         }
-        
-        $dimensions = "width: {$movie->width}px; height: {$movie->height}px;";
+
+        $dimensions = sprintf("width: %dpx; height: %dpx;",
+            $options['width'], $options['height']);
 
         // Get filepath
         $filepath = $movie->getFilepath($options['hq']);
@@ -311,15 +314,13 @@ class Module_Movies implements Module
 </head> 
 <body>
     <!-- Movie player -->
-    <div style="text-align: center;">
-        <a href="<?php echo $url;?>" 
-           style="display:block; <?php print $dimensions;?>"
-           id="player">
-        </a>
-    </div>
+    <a href="<?php echo urlencode($url);?>" 
+       style="display:block; <?php print $dimensions;?>"
+       id="movie-player">
+    </a>
     <br>
-    <script language="JavaScript">
-        flowplayer("player", "../lib/flowplayer/flowplayer-3.2.7.swf");
+    <script language="javascript">
+        flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.7.swf");
     </script>
 </body> 
 </html> 
@@ -361,10 +362,10 @@ class Module_Movies implements Module
         case "playMovie":
             $expected = array(
                 "required" => array('id', 'format'),
-                "optional" => array('hq'),
+                "optional" => array('hq', 'width', 'height'),
                 "alphanum" => array('format'),
                 "bools"    => array('hq'),
-                "ints"     => array('id')
+                "ints"     => array('id', 'width', 'height')
             );
             break;
         case "queueMovie":
