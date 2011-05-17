@@ -184,7 +184,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                             </div>
                             
                             <!-- Screenshot Manager -->
-                            <div id='screenshot-manager-container' class='media-manager-container'>
+                            <div id='screenshot-manager-container' class='media-manager-container glow'>
                                 <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
                                     <div id='screenshot-manager-full-viewport' class='text-btn'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
@@ -205,7 +205,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                                 <div id='screenshot-history'></div>
                             </div>
                             <!-- Movie Manager -->
-                            <div id='movie-manager-container' class='media-manager-container'>
+                            <div id='movie-manager-container' class='media-manager-container glow'>
                                 <div id='movie-manager-build-btns' class='media-manager-build-btns'>
                                     <div id='movie-manager-full-viewport' class='text-btn'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
@@ -257,7 +257,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
             </div>
             <br><br>
             <div class="section-header" style="margin-left:5px; margin-top: 15px;">Time</div>
-            <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all">
+            <div id="observation-controls" class="ui-widget ui-widget-content ui-corner-all shadow">
                 <!--  Observation Date -->
                 <div id="observation-date-container">
                     <div id="observation-date-label">Date:</div>
@@ -293,7 +293,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
             
             <!-- Recent Blog Entries -->
             <div style="margin-left: 5px; margin-top: 15px;" class="section-header">News</div>
-            <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all"></div>
+            <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
             
             <!-- User-Submitted Videos -->
             <div id="user-video-gallery-header" class="section-header">
@@ -302,7 +302,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 </a>
                 <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
             </div>
-            <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all">
+            <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
                 <a id="user-video-gallery-next" href="#" title="Go to next page.">
                     <div class='ui-icon ui-icon-triangle-1-n'></div>
                 </a>

@@ -11,6 +11,7 @@
     padding: 10px;
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
+    /*border: 1px solid #A9A9A9;*/
     color: white;
     display: none;
 }

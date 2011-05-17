@@ -1,5 +1,7 @@
 /* Tile and Event layer accordions */
-#tileLayerAccordion, #eventAccordion {margin:0 5px 0 5px;}
+#tileLayerAccordion, #eventAccordion {
+    margin:0 5px 0 5px;
+}
 #TileLayerAccordion-Container, #EventLayerAccordion-Container {
 	margin-top: 2px;
     font-size: 0.8em;

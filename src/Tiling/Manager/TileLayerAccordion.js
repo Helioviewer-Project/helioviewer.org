@@ -74,7 +74,7 @@ var TileLayerAccordion = Layer.extend(
                         "' title='Toggle layer visibility'></span>";
         removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + id +
                     "' title='Remove layer'></span>";
-        head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all'>" + 
+        head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all shadow'>" + 
                "<span class=tile-accordion-header-left>" + name +
                "</span><span class=tile-accordion-header-right><span class=timestamp></span>" + 
                "<span class=accordion-header-divider>|</span>" + visibilityBtn + removeBtn + "</span></div>";
