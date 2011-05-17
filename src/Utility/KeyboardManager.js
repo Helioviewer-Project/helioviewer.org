@@ -35,14 +35,58 @@ var KeyboardManager = Class.extend(
      * From there it is also simple to add support for diagonal movement, etc.
      */
     _initEventHandlers: function () {
-        var self = this;
+        var key, self = this;
 
         // Event-handlers
         $(document).keypress(function (e) {
             if ((e.target.tagName !== "INPUT") && (e.target.tagName !== "TEXTAREA")) {
-                self.onKeyPress(e);
+                key = self._getKeyCode(e);
+                self.onKeyPress(key);
             }
         });
+        
+        // Webkit responds to arrow keys on keydown event
+        if ($.browser.webkit) {
+            $(document).keydown(function (e) {
+                if ((e.target.tagName !== "INPUT") && (e.target.tagName !== "TEXTAREA")) {
+                    key = self._getKeyCode(e);
+
+                    if (key === 37 || key === 38 || key === 39 || key === 40) {
+                        self.onKeyPress(key);
+                    }
+                }
+            });
+        }
+        
+        // IE responds to arrow keys on keyup event
+        if ($.browser.msie) {
+            $(document).keyup(function (e) {
+                if ((e.target.tagName !== "INPUT") && (e.target.tagName !== "TEXTAREA")) {
+                    key = self._getKeyCode(e);
+
+                    if (key === 37 || key === 38 || key === 39 || key === 40) {
+                        self.onKeyPress(key);
+                    }
+                }
+            });
+        }
+    },
+    
+    /**
+     * Returns a normalized keycode for the given keypress/keydown event
+     */
+    _getKeyCode: function (e) {
+        var key;
+        
+        // Letters use Event.which, while arrows, etc. use Event.keyCode
+        if (e.keyCode) {
+            key = e.keyCode;
+        }
+        else if (e.which) {
+            key = e.which;
+        }
+        
+        return key;
     },
 
     /**
@@ -60,19 +104,9 @@ var KeyboardManager = Class.extend(
      *     etc..
      *  }
      */
-    onKeyPress: function (e) {
-        var key, character;
-        
-        // Letters use Event.which, while arrows, etc. use Event.keyCode
-        if (e.keyCode) {
-            key = e.keyCode;
-        }
-        else if (e.which) {
-            key = e.which;
-        }
-
+    onKeyPress: function (key) {
         // Get character pressed (letters, etc)
-        character = String.fromCharCode(key);
+        var character = String.fromCharCode(key);
 
         // Arrow keys
         if (key === 37 || key === 38 || key === 39 || key === 40) {
