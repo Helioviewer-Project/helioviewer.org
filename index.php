@@ -297,7 +297,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
             
             <!-- User-Submitted Videos -->
             <div id="user-video-gallery-header" class="section-header">
-                <a href="http://www.youtube.com/user/Helioviewer" target="_blank">
+                <a href="http://www.youtube.com/user/Helioviewer" target="_blank" style='text-decoration: none;'>
                     <img id='youtube-logo' src='resources/images/Social.me/48 by 48 pixels/youtube.png' alt='YouTube Logo' />
                 </a>
                 <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
