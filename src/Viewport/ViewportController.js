@@ -23,8 +23,13 @@ var ViewportController = Class.extend(
         var mouseCoords     = new HelioviewerMouseCoordinates(options.imageScale, this._rsunInArcseconds, 
                                                               options.warnMouseCoords);
         this.viewport       = new HelioviewerViewport(options);
+        
         // Viewport must be resized before movement helper and sandbox are initialized.
         this.viewport.resize();
+        
+        // Display viewport shadow
+        this.viewport.shadow.show();
+        
         this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
         
         this._initEventHandlers();

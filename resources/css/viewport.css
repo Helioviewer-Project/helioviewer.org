@@ -10,11 +10,22 @@
 	border: 1px solid #262424;
 }
 #helioviewer-viewport-container-outer {
-  height: 520px;
-  border:1px solid black;
-  border-radius: 25px;
-  -moz-border-radius: 25px;
-  -webkit-border-radius: 25px;
+    height: 520px;
+    border:1px solid black;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+}
+
+#helioviewer-viewport-container-shadow {
+    position: absolute;
+    top: 24px;
+    left: 284px;
+    display: none;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    z-index: -1;
 }
 
 #helioviewer-viewport {
