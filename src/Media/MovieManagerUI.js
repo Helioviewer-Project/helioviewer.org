@@ -175,6 +175,27 @@ var MovieManagerUI = MediaManagerUI.extend(
             //console.log('hover off'); 
         }
     },
+    
+    /**
+     * Creates HTML for a preview tooltip with a preview thumbnail, 
+     * if available, and some basic information about the screenshot or movie
+     */
+    _buildPreviewTooltipHTML: function (movie) {
+        var html = "<div style='text-align: center;'>" + 
+            "<img src='" + movie.thumbnail +
+            "' width='95%' alt='preview thumbnail' /></div>" + 
+            "<table class='preview-tooltip'>" +
+            "<tr><td><b>Start:</b></td><td>" + movie.startDate + "</td></tr>" +
+            "<tr><td><b>End:</b></td><td>" + movie.endDate + "</td></tr>" +
+            "<tr><td><b>Scale:</b></td><td>" + movie.imageScale + 
+            " arcsec/px</td></tr>" +
+            "<tr><td><b>Dimensions:</b></td><td>" + movie.width + 
+            "x" + movie.height +
+            " px</td></tr>" +
+            "</table>";
+            
+        return html;
+    },
    
     /**
      * @description Opens a pop-up with the movie player in it.

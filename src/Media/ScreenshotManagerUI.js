@@ -77,6 +77,32 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     },
     
     /**
+     * Creates HTML for a preview tooltip with a preview thumbnail, 
+     * if available, and some basic information about the screenshot or movie
+     */
+    _buildPreviewTooltipHTML: function (screenshot) {
+        var width, height, date, html;
+        
+        width  = Math.round(screenshot.x2 - screenshot.x1);
+        height = Math.round(screenshot.y2 - screenshot.y1);
+        
+        date = screenshot.date.substr(0, 19).replace(/T/, " "); 
+        
+        html = "<div style='text-align: center;'>" + 
+            "<img src='api/?action=downloadScreenshot&id=" + screenshot.id +
+            "' width='95%' alt='preview thumbnail' /></div>" + 
+            "<table class='preview-tooltip'>" +
+            "<tr><td><b>Date:</b></td><td>" + date + "</td></tr>" +
+            "<tr><td><b>Scale:</b></td><td>" + screenshot.imageScale + 
+            " arcsec/px</td></tr>" +
+            "<tr><td><b>Dimensions:</b></td><td>" + width + 
+            "x" + height + " px</td></tr>" +
+            "</table>";
+            
+        return html;
+    },
+    
+    /**
      * When a screenshot history entry is clicked, and the screenshot has
      * finished processing, download the screenshot. Otherwise do nothing.
      */

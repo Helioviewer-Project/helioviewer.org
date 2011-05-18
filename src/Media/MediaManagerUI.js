@@ -88,6 +88,9 @@ var MediaManagerUI = Class.extend(
         html.data("id", item.id);
         
         this._historyBody.prepend(html);
+        
+        // Create a preview tooltip
+        this._buildPreviewTooltip(item);
 
         // Make sure the list contains no more than twelve items
         if (this._historyBody.find(".history-entry").length > 12) {
@@ -102,6 +105,34 @@ var MediaManagerUI = Class.extend(
         
         // Show the history section title if it is not already visible
         this._historyTitle.show();
+    },
+    
+    /**
+     * Creates a simple preview tooltip which pops up when the user moves
+     * the mouse over the specified history entry.
+     */
+    _buildPreviewTooltip: function (item) {
+        var self = this;
+
+        $("#" + this._type + "-" + item.id).qtip({
+            content: {
+                title: {
+                    text: item.name
+                },
+                text: self._buildPreviewTooltipHTML(item),
+            },
+            position: {
+                adjust: {
+                    x: -10,
+                    y: -1
+                },
+                my: "right top",
+                at: "left center"
+            },
+            style: {
+                classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+            }
+        });
     },
     
     /**
@@ -135,9 +166,13 @@ var MediaManagerUI = Class.extend(
     
     /**
      * Refreshes status information for screenshots or movies in the history
+     * and preview tooltip positions
      */
     _refresh: function () {
         var type = this._type;
+        
+        // Update preview tooltip positioning
+        this._historyBody.find(".qtip").qtip('reposition');
 
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {

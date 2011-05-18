@@ -152,13 +152,14 @@ class Movie_HelioviewerMovie
      */
     public function getCompletedMovieInformation() {
         return array(
-            "frameRate" => $this->frameRate,
-            "numFrames" => $this->numFrames,
-            "startDate" => $this->startDate,
-            "status"    => $this->status,
-            "endDate"   => $this->endDate,
-            "width"     => $this->width,
-            "height"    => $this->height
+            "frameRate"  => $this->frameRate,
+            "numFrames"  => $this->numFrames,
+            "startDate"  => $this->startDate,
+            "status"     => $this->status,
+            "endDate"    => $this->endDate,
+            "width"      => $this->width,
+            "height"     => $this->height,
+            "thumbnails" => $this->getPreviewImages()
         );
     }
     
