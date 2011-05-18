@@ -25,7 +25,8 @@
 }
 
 .history-entry {
-    height: 22px
+    height: 14px;
+    padding: 4px 0px;
 }
 
 .media-manager-build-btns {
@@ -50,3 +51,9 @@
 .processing {
     color: #aaf373;
 }
+
+.preview-tooltip {
+    border-collapse: separate;
+    border-spacing: 10px;
+}
+

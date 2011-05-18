@@ -133,7 +133,9 @@ var MovieManager = MediaManager.extend(
      * @param {Int}     width         Movie width
      * @param {Int}     height        Movie height
      */
-    update: function (id, frameRate, numFrames, startDate, endDate, width, height) {
+    update: function (id, frameRate, numFrames, startDate, endDate, width, 
+        height, thumbnails) {
+
         var movie = this.get(id);
         
         // Add the new values
@@ -144,7 +146,8 @@ var MovieManager = MediaManager.extend(
             "endDate"   : endDate,
             "width"     : width,
             "height"    : height,
-            "status"    : "FINISHED"
+            "status"    : "FINISHED",
+            "thumbnail" : thumbnails.small
         });
         
         this._save();
@@ -194,7 +197,8 @@ var MovieManager = MediaManager.extend(
                 }  else {
                     self.update(id, response.frameRate, response.numFrames,
                                 response.startDate, response.endDate,
-                                response.width, response.height);
+                                response.width, response.height,
+                                response.thumbnails);
                 }
             };
             
