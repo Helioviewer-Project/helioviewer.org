@@ -70,10 +70,9 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
                                 $.proxy(self._takeScreenshot, self));
         });
         
-        // Setup hover and click handlers for history items
+        // Setup click handler for history items
         $("#screenshot-history .history-entry")
-           .live('click', $.proxy(this._onScreenshotClick, this))
-           .live('mouseover mouseout', $.proxy(this._onScreenshotHover, this));
+           .live('click', $.proxy(this._onScreenshotClick, this));
     },
     
     /**
@@ -110,14 +109,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         var id = $(event.currentTarget).data('id'),
             url = "api/index.php?action=downloadScreenshot&id=" + id;
         window.open(url, '_parent');
-    },
-   
-    _onScreenshotHover: function (event) {
-        if (event.type === 'mouseover') {
-            //console.log('hover on'); 
-        } else {
-            //console.log('hover off'); 
-        }
     },
 
     /**
