@@ -343,6 +343,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 <!-- Loading Indicator -->
 <div id="loading" style="display: none">Loading...</div>
 
+<!-- Viewport shadow -->
+<div id='helioviewer-viewport-container-shadow' class='shadow'></div>
+
 <!-- About dialog -->
 <div id='about-dialog'></div>
 

@@ -64,6 +64,7 @@ body {
     width:280px;
     position:relative;
     left:2px;
+    padding-bottom: 5px;
     overflow:hidden;
 }
 #footer {
