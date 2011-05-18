@@ -212,6 +212,17 @@ var UserVideoGallery = Class.extend(
     },
     
     /**
+     * Hover event handler
+     */
+    _onVideoHover: function (event) {
+        if (event.type === 'mouseover') {
+            $(this).find("img").addClass("video-glow");
+        } else {
+            $(this).find("img").removeClass("video-glow"); 
+        }
+    },
+    
+    /**
      * Setup event handlers
      */
     _setupEventHandlers: function () {
@@ -223,6 +234,10 @@ var UserVideoGallery = Class.extend(
         this._prevPageBtn.click($.proxy(this._prevPage, this));
         
         $(window).resize($.proxy(this._onResize, this));
+        
+        // Setup hover event handler
+        this._container.find("a")
+            .live('mouseover mouseout', this._onVideoHover);
 
         this._container.mousewheel($.proxy(this._onMouseWheelMove, this));
     }    
