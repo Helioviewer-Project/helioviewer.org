@@ -120,20 +120,23 @@ var Helioviewer = Class.extend(
      * Add tooltips to static HTML buttons and elements
      */
     _initTooltips: function () {
-        $("*[title]:not(#fullscreen-btn,.text-btn)").qtip({
+        // Overide qTip defaults
+        $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            show: {
+                delay: 1000
+            },
             style: {
                 classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
             }
         });
+        
+        $("*[title]:not(#fullscreen-btn,.text-btn)").qtip();
         
         // Fullscreen
         $("#fullscreen-btn, .text-btn").qtip({
             position: {
                 my: "top right",
                 at: "bottom middle"
-            },
-            style: {
-                classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
             }
         });
     },

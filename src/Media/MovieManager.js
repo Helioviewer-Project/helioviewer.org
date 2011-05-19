@@ -152,6 +152,9 @@ var MovieManager = MediaManager.extend(
         
         this._save();
         
+        // Update preview tooltip
+        $(document).trigger("movie-ready", [movie]);
+        
         // Notify user
         this._displayDownloadNotification(movie);
     },

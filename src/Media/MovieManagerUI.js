@@ -132,8 +132,14 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Download completion notification link
         $(".message-console-movie-ready").live('click', function (event) {
             $(".jGrowl-notification .close").click();
-            var movie    = $(event.currentTarget).data('movie');            
+            var movie = $(event.currentTarget).data('movie');            
             self._createMoviePlayerDialog(movie);
+        });
+        
+        // Update tooltip when movie is finished downloading
+        $(document).bind("movie-ready", function (event, movie) {
+            $("#" + self._type + "-" + movie.id).qtip("destroy");
+            self._buildPreviewTooltip(movie);
         });
     },
     
@@ -181,18 +187,30 @@ var MovieManagerUI = MediaManagerUI.extend(
      * if available, and some basic information about the screenshot or movie
      */
     _buildPreviewTooltipHTML: function (movie) {
-        var html = "<div style='text-align: center;'>" + 
-            "<img src='" + movie.thumbnail +
-            "' width='95%' alt='preview thumbnail' /></div>" + 
-            "<table class='preview-tooltip'>" +
+        var width, height, html = "";
+        
+        if (movie.status === "FINISHED") {
+            html += "<div style='text-align: center;'>" + 
+                "<img src='" + movie.thumbnail +
+                "' width='95%' alt='preview thumbnail' /></div>";
+                
+            width  = movie.width;
+            height = movie.height;
+        } else {
+            width  = Math.round(movie.x2 - movie.x1);
+            height = Math.round(movie.y2 - movie.y1);
+        }
+
+        html += "<table class='preview-tooltip'>" +
             "<tr><td><b>Start:</b></td><td>" + movie.startDate + "</td></tr>" +
             "<tr><td><b>End:</b></td><td>" + movie.endDate + "</td></tr>" +
-            "<tr><td><b>Scale:</b></td><td>" + movie.imageScale + 
+            "<tr><td><b>Scale:</b></td><td>" + movie.imageScale.toFixed(2) + 
             " arcsec/px</td></tr>" +
-            "<tr><td><b>Dimensions:</b></td><td>" + movie.width + 
-            "x" + movie.height +
+            "<tr><td><b>Dimensions:</b></td><td>" + width + 
+            "x" + height +
             " px</td></tr>" +
             "</table>";
+
             
         return html;
     },

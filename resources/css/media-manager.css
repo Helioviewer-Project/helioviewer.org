@@ -57,3 +57,7 @@
     border-spacing: 10px;
 }
 
+.screenshot-preview {
+    max-width: 95%;
+    max-height: 180px;
+}
