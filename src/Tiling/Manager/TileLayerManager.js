@@ -10,7 +10,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global LayerManager, TileLayer, Layer, $ */
+/*global Helioviewer, LayerManager, TileLayer, Layer, $ */
 "use strict";
 var TileLayerManager = LayerManager.extend(
 /** @lends TileLayerManager.prototype */
@@ -47,7 +47,7 @@ var TileLayerManager = LayerManager.extend(
      */
     save: function () {
         var layers = this.toJSON();
-        $(document).trigger("save-setting", [ "tileLayers", layers ]);
+        Helioviewer.userSettings.set("state.tileLayers", layers);
     },
     
     /**

@@ -18,7 +18,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * @param {ScreenshotManager} model ScreenshotManager instance
      */    
     init: function () {
-        var screenshots = Helioviewer.userSettings.get('screenshots');
+        var screenshots = Helioviewer.userSettings.get('history.screenshots');
         this._manager = new ScreenshotManager(screenshots);
 
         this._super("screenshot");

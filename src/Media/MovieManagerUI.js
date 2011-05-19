@@ -18,7 +18,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @param {MovieManager} model MovieManager instance
      */    
     init: function (movieManager) {
-        var movies = Helioviewer.userSettings.get('movies');
+        var movies = Helioviewer.userSettings.get('history.movies');
         this._manager = new MovieManager(movies);
         this._super("movie");
         this._initEvents();
@@ -47,7 +47,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         this.building = true;
 
-        movieLength = Helioviewer.userSettings.get("movieLength");
+        movieLength = Helioviewer.userSettings.get("defaults.movies.duration");
         
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = helioviewer.getDate();
