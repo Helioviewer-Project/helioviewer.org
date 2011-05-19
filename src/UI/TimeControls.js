@@ -245,11 +245,7 @@ var TimeControls = Class.extend(
             });
         
         // Tooltips
-        btn.qtip({
-            style: {
-                classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
-            }
-        });
+        btn.qtip();
     },
     
     /**

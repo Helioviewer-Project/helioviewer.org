@@ -320,7 +320,12 @@ class Module_Movies implements Module
     </a>
     <br>
     <script language="javascript">
-        flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.7.swf");
+        flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.7.swf", {
+            clip: {
+                autoBuffering: true,
+                scaling: "fit"
+            }
+        });
     </script>
 </body> 
 </html> 

@@ -82,17 +82,20 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     _buildPreviewTooltipHTML: function (screenshot) {
         var width, height, date, html;
         
-        width  = Math.round(screenshot.x2 - screenshot.x1);
-        height = Math.round(screenshot.y2 - screenshot.y1);
+        width  = Math.round((screenshot.x2 - screenshot.x1) / 
+                    screenshot.imageScale);
+        height = Math.round((screenshot.y2 - screenshot.y1) / 
+                    screenshot.imageScale);
         
         date = screenshot.date.substr(0, 19).replace(/T/, " "); 
         
         html = "<div style='text-align: center;'>" + 
             "<img src='api/?action=downloadScreenshot&id=" + screenshot.id +
-            "' width='95%' alt='preview thumbnail' /></div>" + 
+            "' alt='preview thumbnail' class='screenshot-preview' /></div>" + 
             "<table class='preview-tooltip'>" +
             "<tr><td><b>Date:</b></td><td>" + date + "</td></tr>" +
-            "<tr><td><b>Scale:</b></td><td>" + screenshot.imageScale + 
+            "<tr><td><b>Scale:</b></td><td>" + 
+            screenshot.imageScale.toFixed(2) + 
             " arcsec/px</td></tr>" +
             "<tr><td><b>Dimensions:</b></td><td>" + width + 
             "x" + height + " px</td></tr>" +

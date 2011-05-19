@@ -181,13 +181,7 @@ var ImageSelectTool = Class.extend(
                 text: "Resize by dragging the edges of the selection.<br /> Move the selection by clicking inside " +
                         "and dragging it.<br /> Click and drag outside the selected area to start " +
                         "a new selection.<br /> Click \"Done\" when you have finished to submit."
-            },            
-            show: 'mouseover',
-            hide: 'mouseout',
-            style: {
-                classes: "ui-tooltip-light ui-tooltip-rounded"
             }
-
         });
     },
 

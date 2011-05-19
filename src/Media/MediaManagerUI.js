@@ -47,6 +47,7 @@ var MediaManagerUI = Class.extend(
     show: function () {
         this._allContainers.hide();
         this._tooltips.qtip("disable");
+        $(".jGrowl").jGrowl("close");
         $(".qtip").hide(); // IE Fix
         this._refresh();
         this._container.show();
@@ -129,8 +130,8 @@ var MediaManagerUI = Class.extend(
                 my: "right top",
                 at: "left center"
             },
-            style: {
-                classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+            show: {
+                delay: 140
             }
         });
     },
@@ -141,7 +142,7 @@ var MediaManagerUI = Class.extend(
      * @param {Int} Identifier of the screenshot to be removed
      */
     _removeItem: function (id) {
-        $("#" + this._type + "-" + id).unbind().remove();
+        $("#" + this._type + "-" + id).qtip("destroy").unbind().remove();
         
         // Hide the history section if the last entry was removed
         if (this._historyBody.find(".history-entry").length === 0) {
