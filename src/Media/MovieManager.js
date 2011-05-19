@@ -236,6 +236,6 @@ var MovieManager = MediaManager.extend(
      * Saves the current list of movies
      */
     _save: function () {
-        Helioviewer.userSettings.set("movies", this._history);
+        Helioviewer.userSettings.set("history.movies", this._history);
     }
 });

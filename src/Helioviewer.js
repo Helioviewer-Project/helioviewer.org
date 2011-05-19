@@ -17,8 +17,8 @@ var Helioviewer = Class.extend(
      * Creates a new Helioviewer instance.
      * @constructs
      * 
-     * @param {Object} urlSettings    Client-specified settings to load. Includes imageLayers,
-     *                                date, and imageScale. May be empty.
+     * @param {Object} urlSettings Client-specified settings to load.
+     *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
     init: function (urlSettings, serverSettings) {
@@ -28,13 +28,13 @@ var Helioviewer = Class.extend(
         this.api            = "api/index.php";
         
         // User settings are globally accessible
-        Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
+        Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, 
+            serverSettings);
         
         this._initLoadingIndicator();
         
-        this.timeControls = new TimeControls(Helioviewer.userSettings.get('date'), 
-                                             this.serverSettings.timeIncrementSecs,
-                                             '#date', '#time', '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+        this.timeControls = new TimeControls('#date', '#time', 
+            '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
 
         // Get available data sources and initialize viewport
         this._initViewport();
@@ -43,7 +43,7 @@ var Helioviewer = Class.extend(
         this.keyboard       = new KeyboardManager();
         
         // User Interface components
-        this.zoomControls   = new ZoomControls('#zoomControls', Helioviewer.userSettings.get('imageScale'),
+        this.zoomControls   = new ZoomControls('#zoomControls', Helioviewer.userSettings.get('state.imageScale'),
                                                this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
@@ -58,9 +58,6 @@ var Helioviewer = Class.extend(
         
         this._screenshotManagerUI = new ScreenshotManagerUI();
         this._movieManagerUI      = new MovieManagerUI();
-
-        //var movieHistory       = new MovieHistory(Helioviewer.userSettings.get('movies'));
-        //this.movieBuilder      = new MovieBuilder(this.viewport, movieHistory);
 
         this._setupDialogs();
         this._initEventHandlers();
@@ -155,9 +152,9 @@ var Helioviewer = Class.extend(
             minImageScale  : this.serverSettings.minImageScale,
             maxImageScale  : this.serverSettings.maxImageScale,
             prefetch       : this.serverSettings.prefetchSize,
-            tileLayers     : Helioviewer.userSettings.get('tileLayers'),
-            imageScale     : Helioviewer.userSettings.get('imageScale'),
-            warnMouseCoords: Helioviewer.userSettings.get('warnMouseCoords')
+            tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
+            imageScale     : Helioviewer.userSettings.get('state.imageScale'),
+            warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
     },
     
@@ -190,13 +187,15 @@ var Helioviewer = Class.extend(
                 "width": 400,
                 "resizable": false,
                 "create": function (e) {
-                    var currentValue = Helioviewer.userSettings.get("movieLength"),
+                    var currentValue = Helioviewer.userSettings.get(
+                        "defaults.movies.duration"),
                         select = $(this).find("#settings-movie-length");
 
                     // Select default value and bind event listener
                     select.find("[value = " + currentValue + "]").attr("selected", "selected");
                     select.bind('change', function (e) {
-                        Helioviewer.userSettings.set("movieLength", parseInt(this.value, 10));
+                        Helioviewer.userSettings.set("defaults.movies.duration",
+                            parseInt(this.value, 10));
                     });                              
                 }
             });
@@ -374,15 +373,17 @@ var Helioviewer = Class.extend(
      * Displays welcome message on user's first visit
      */
     _displayGreeting: function () {
-        if (!Helioviewer.userSettings.get('showWelcomeMsg')) {
+        if (!Helioviewer.userSettings.get("notifications.welcome")) {
             return;
         }
 
         $(document).trigger("message-console-info", 
             ["<b>Welcome to Helioviewer.org</b>, a solar data browser. First time here? Be sure to check out our " +
-             "<a href=\"http://helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" " +
+             "<a href=\"http://wiki.helioviewer.org/wiki/index.php?title=Helioviewer.org_User_Guide\" " +
              "class=\"message-console-link\" target=\"_blank\"> User Guide</a>.", {life: 20000}]
-        ).trigger("save-setting", ["showWelcomeMsg", false]);
+        );
+        
+        Helioviewer.userSettings.set("notifications.welcome", false);
     },
     
     /**

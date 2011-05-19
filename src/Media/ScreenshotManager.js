@@ -58,6 +58,6 @@ var ScreenshotManager = MediaManager.extend(
      * Saves the current list of screenshots
      */
     _save: function () {
-        Helioviewer.userSettings.set("screenshots", this._history);
+        Helioviewer.userSettings.set("history.screenshots", this._history);
     }
 });

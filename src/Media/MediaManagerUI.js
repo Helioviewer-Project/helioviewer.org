@@ -120,7 +120,7 @@ var MediaManagerUI = Class.extend(
                 title: {
                     text: item.name
                 },
-                text: self._buildPreviewTooltipHTML(item),
+                text: self._buildPreviewTooltipHTML(item)
             },
             position: {
                 adjust: {

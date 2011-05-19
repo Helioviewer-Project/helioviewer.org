@@ -8,7 +8,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global $, window, Class */
+/*global $, Helioviewer, window, Class */
 "use strict";
 var TimeControls = Class.extend(
     /** @lends TimeControls.prototype */
@@ -17,17 +17,19 @@ var TimeControls = Class.extend(
      * Creates a new TimeControl component
      * 
      * @constructs
-     * @param {Int} initialDate        Timestamp of the initial date to use
-     * @param {Int}    increment       The initial amount of time to move forward or backwards, in seconds.
      * @param {String} dateId          The id of the date form field associated with the Time.
      * @param {String} timeId          The id of the time form field associated with the Time.
      * @param {String} incrementSelect The id of the HTML element for selecting the time increment
      * @param {String} backBtn         The id of the time "Back" button
      * @param {String} forwardBtn      The id of the time "Forward" button
      */
-    init : function (timestamp, increment, dateInput, timeInput, incrementSelect, backBtn, forwardBtn) {
-        this._date          = new Date(timestamp);
-        this._timeIncrement = increment;
+    init : function (dateInput, timeInput, incrementSelect, backBtn, forwardBtn) {
+        if (Helioviewer.userSettings.get("defaults.date") === "latest") {
+            this._date = new Date(+new Date());
+        } else {
+            this._date = Helioviewer.userSettings.get("state.date");
+        }
+        this._timeIncrement = Helioviewer.userSettings.get("state.timeStep");
 
         this._dateInput       = $(dateInput);
         this._timeInput       = $(timeInput);
@@ -253,8 +255,8 @@ var TimeControls = Class.extend(
      */
     _onDateChange: function () {
         this._updateInputFields();
-        $(document).trigger("save-setting", ["date", this._date.getTime()])
-                   .trigger("observation-time-changed", [this._date]);
+        Helioviewer.userSettings.set("state.date", this._date.getTime());
+        $(document).trigger("observation-time-changed", [this._date]);
     },
     
     /**

@@ -83,7 +83,7 @@ var ViewportController = Class.extend(
         this.updateViewportRanges();
 
         // store new value
-        $(document).trigger("save-setting", ["imageScale", imageScale]);
+        Helioviewer.userSettings.set("state.imageScale", imageScale);
     },
     
     /**
