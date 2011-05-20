@@ -147,13 +147,13 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                                 </div>-->
 
                                 <!-- Movie button -->
-                                <div id="movie-button" class="text-btn" title="Create a movie.">
+                                <div id="movie-button" class="text-btn">
                                     <span class="ui-icon ui-icon-video" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Movie</span>
                                 </div>
 
                                 <!-- Screenshot button -->
-                                <div id="screenshot-button" class="text-btn" title="Create a screenshot.">
+                                <div id="screenshot-button" class="text-btn">
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
