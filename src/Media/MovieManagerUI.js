@@ -72,7 +72,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             layers        : layers,
             startTime     : startTimeStr,
             endTime       : endTimeStr,
-            format        : this._manager.format
+            format        : this._manager.format,
+            watermark     : true
         }, this._toArcsecCoords(roi, imageScale));
         
         // AJAX Responder

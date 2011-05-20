@@ -103,7 +103,8 @@ var TreeSelect = Class.extend(
                 
                 // get choices
                 for (var choice in eval(nav)) {
-                    opt = $("<option value='" + choice + "'>" + choice + "</option>");
+                    opt = $("<option value='" + choice + "'>" + 
+                          choice.replace(/_/, "-") + "</option>");
                     select.append(opt);
                 }
                 
