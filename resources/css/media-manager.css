@@ -61,3 +61,7 @@
     max-width: 95%;
     max-height: 180px;
 }
+
+.message-console-movie-ready {
+    cursor: pointer;
+}

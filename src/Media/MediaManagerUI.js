@@ -46,11 +46,11 @@ var MediaManagerUI = Class.extend(
      */
     show: function () {
         this._allContainers.hide();
-        this._tooltips.qtip("disable");
         $(".jGrowl").jGrowl("close");
-        $(".qtip").hide(); // IE Fix
+        //$(".qtip").hide(); // IE Fix
         this._refresh();
         this._container.show();
+        this._tooltips.qtip("hide").qtip("disable");
     },
     
     /**
