@@ -47,7 +47,6 @@ var MediaManagerUI = Class.extend(
     show: function () {
         this._allContainers.hide();
         $(".jGrowl").jGrowl("close");
-        //$(".qtip").hide(); // IE Fix
         this._refresh();
         this._container.show();
         this._tooltips.qtip("hide").qtip("disable");

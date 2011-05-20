@@ -53,22 +53,26 @@ var TreeSelect = Class.extend(
      * @param {Object} newChoice
      */
     _updateSelected: function (depth, newChoice) {
-        var nav, getFirstItem, i;
+        var nav, selectField, i;
         
         this.selected[depth] = newChoice;
         
-        // Function to get the first item in an array
-        getFirstItem = function (arr) {
+        // Function to determine which field should be selected
+        selectField = function (original, arr) {
+            if (original in arr) {
+                return original;
+            }
             for (var item in arr) {
                 return item;
             }
         };
         
-        // For each item below the selected parameter, use first available value
+        // For each item below the selected parameter, preserve the value if
+        // possible, otherwise use first available value
         nav = "this.tree";
         for (i = 0; i < this.height; i += 1) {
             if (i > depth) {
-                this.selected[i] = getFirstItem(eval(nav));
+                this.selected[i] = selectField(this.selected[i], eval(nav));
             }
             nav += '["' + this.selected[i] + '"]';
         }
@@ -82,7 +86,7 @@ var TreeSelect = Class.extend(
      * @param {Object} startDepth
      */
     _updateSelectMenus: function (startDepth) {
-        var select, i, nav, opt, self = this;
+        var select, choice, i, nav, opt, self = this;
         
         $.each(this.selectIds, function (depth, id) {
             if (depth >= startDepth) {
@@ -102,6 +106,10 @@ var TreeSelect = Class.extend(
                     opt = $("<option value='" + choice + "'>" + choice + "</option>");
                     select.append(opt);
                 }
+                
+                // set selected value
+                choice = self.selected[depth];
+                select.find("option[value=" + choice + "]").prop("selected", true);
             }
         });
     },
