@@ -80,7 +80,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             var msg, movie, waitTime;
 
             if ((response === null) || response.error) {
-                msg = "Unable to create movie. Please try again later.";
+                msg = "We are unable to create a movie for the time you " +
+                    "requested. Please select a different time range and try " +
+                    "again.";
                 $(document).trigger("message-console-info", msg);
                 return;
             }

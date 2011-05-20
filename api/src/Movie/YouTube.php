@@ -337,13 +337,6 @@ class Movie_YouTube
         $newEntry->setMajorProtocolVersion(2);
         $youtubeId = $newEntry->getVideoId();
         
-        // Update usage stats
-        if (HV_ENABLE_STATISTICS_COLLECTION) {
-            include_once 'src/Database/Statistics.php';
-            $statistics = new Database_Statistics();
-            $statistics->log("uploadMovieToYouTube");
-        }
-        
         // Add entry to YouTube table
         include_once 'src/Database/MovieDatabase.php';
         
