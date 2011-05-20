@@ -135,10 +135,6 @@ var TimeControls = Class.extend(
     _setInitialDate: function () {
         if (Helioviewer.userSettings.get("defaults.date") === "latest") {
             this._date = new Date(+new Date());
-            
-            // Round off minutes and seconds
-            //this._date.setSeconds(0);
-            //this._date.addMinutes(1);
         } else {
             this._date = Helioviewer.userSettings.get("state.date");
         }
