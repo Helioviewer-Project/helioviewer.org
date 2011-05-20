@@ -144,13 +144,6 @@ class Module_JHelioviewer implements Module
             );
             return;
         }
-        
-        // Update usage stats
-        if (HV_ENABLE_STATISTICS_COLLECTION) {
-            include_once 'src/Database/Statistics.php';
-            $statistics = new Database_Statistics();
-            $statistics->log("getJPX");
-        }
 
         // Chose appropriate action based on request parameters
         if ($options['verbose']) {

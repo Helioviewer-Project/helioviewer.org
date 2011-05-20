@@ -71,15 +71,6 @@ class Module_Movies implements Module
         
         // Build the movie
         $movie->build();
-        
-        // Update usage stats
-        // TODO 2011/03/22: Generaltize statistics logging: move to index.php and create a list of actions to log
-        // TODO 2011/03/24: Log stats at time of queuing to avoid overcounting movie requests
-        if (HV_ENABLE_STATISTICS_COLLECTION) {
-            include_once 'src/Database/Statistics.php';
-            $statistics = new Database_Statistics();
-            $statistics->log("buildMovie");
-        }
     }
 
     /**

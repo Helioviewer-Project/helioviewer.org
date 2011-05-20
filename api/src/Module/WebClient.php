@@ -314,13 +314,6 @@ class Module_WebClient implements Module
             $layers, $this->_params['date'], $roi, $this->_options
         );
         
-        // Update usage stats
-        if (HV_ENABLE_STATISTICS_COLLECTION) {
-            include_once 'src/Database/Statistics.php';
-            $statistics = new Database_Statistics();
-            $statistics->log("takeScreenshot");
-        }
-
         // Display screenshot
         if (isset($this->_options['display']) && $this->_options['display']) {
             $screenshot->display();
