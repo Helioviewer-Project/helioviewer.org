@@ -245,10 +245,10 @@ class Movie_HelioviewerMovie
 
         // Movie frame parameters
         $options = array(
-            'database'   => $this->_db,
-            'compress'   => false,
-            'interlace'  => false,
-            'watermark'=> $watermark
+            'database'  => $this->_db,
+            'compress'  => false,
+            'interlace' => false,
+            'watermark' => $watermark
         );
         
         // Index of preview frame
