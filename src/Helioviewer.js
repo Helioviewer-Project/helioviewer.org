@@ -32,6 +32,7 @@ var Helioviewer = Class.extend(
             serverSettings);
         
         this._initLoadingIndicator();
+        this._initTooltips();
         
         this.timeControls = new TimeControls('#date', '#time', 
             '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
@@ -47,8 +48,6 @@ var Helioviewer = Class.extend(
                                                this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
-
-        this._initTooltips();
         
         this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
         
