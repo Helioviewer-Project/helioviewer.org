@@ -231,6 +231,9 @@ class Module_WebClient implements Module
         include_once "src/Image/ImageType/$type.php";
 
         $classname = "Image_ImageType_" . $type;
+        
+        // Keep separate statistics for cached tiles
+        $cached = file_exists($filepath);
 
         // Create the tile
         $tile = new $classname(
@@ -239,7 +242,15 @@ class Module_WebClient implements Module
             $params['offsetX'], $params['offsetY'], $this->_options
         );
         
-        return $tile->display();  
+        $tile->display();
+        
+        // Log cached tile request now and exit to avoid double-counting
+        if (HV_ENABLE_STATISTICS_COLLECTION && $cached) {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("getCachedTile");
+            exit(0);
+        }
     }
     
     /**
