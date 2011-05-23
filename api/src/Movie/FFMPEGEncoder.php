@@ -208,6 +208,19 @@ class Movie_FFMPEGEncoder
     }
     
     /**
+     * Adjusts the movie format that is used when encoding videos
+     * 
+     * @param {string} $format Extension for the format to switch to
+     * 
+     * @return void
+     */
+    public function setFormat($format) {
+        $this->_format = $format;
+        $this->_filename = str_replace(array("webm", "mp4"), $format, 
+                            $this->_filename);
+    }
+    
+    /**
      * Creates the portion of the ffmpeg command relating to metadata properties
      */
     private function _getMetaDataString()

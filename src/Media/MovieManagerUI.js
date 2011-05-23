@@ -361,9 +361,9 @@ var MovieManagerUI = MediaManagerUI.extend(
         var url, downloadLink, youtubeBtn;
 
         url = "api/index.php?action=downloadMovie&id=" + id + 
-              "&format=" + this._manager.format + "&hq=true";
+              "&format=" + this._manager.format;
 
-        downloadLink = "<a target='_parent' href='" + url + "'>" +
+        downloadLink = "<a target='_parent' href='" + url + "&hq=true'>" +
             "<img class='video-download-icon' " + 
             "src='resources/images/icons/001_52.png' " +
             "alt='Download high-quality video' />Download</a>";

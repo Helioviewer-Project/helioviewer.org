@@ -77,7 +77,7 @@ class Movie_HelioviewerMovie
         $this->imageScale   = (float) $info['imageScale'];
         $this->frameRate    = (float) $info['frameRate'];
         $this->numFrames    = (int) $info['numFrames'];
-        $this->maxFrames    = (int) $info['maxFrames'];
+        $this->maxFrames    = min((int) $info['maxFrames'], HV_MAX_MOVIE_FRAMES);
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
         $this->watermark    = (bool) $info['watermark'];
@@ -133,11 +133,6 @@ class Movie_HelioviewerMovie
             $t4 = time();
             $this->_abort("Error encountered during video encoding.", $t4 - $t3);
         }
-        
-        $t4 = time();
-        
-        // Mark movie as completed
-        $this->_db->markMovieAsFinished($this->id, $this->format, $t4 - $t3);
         
         // If all of the queued videos have been created remove frames
         if ($this->_db->getNumUnfinishedMovies($this->id) === 0) {
@@ -390,20 +385,42 @@ class Movie_HelioviewerMovie
             "This movie was produced by Helioviewer.org on %s UTC. The original movie can be found at %s.", 
             date("F j, Y, g:i a"), $url
         );
-
+        
+        // MP4 filename
+        $filename = str_replace("webm", "mp4", $this->filename);
+        
         // Create and FFmpeg encoder instance
         $ffmpeg = new Movie_FFMPEGEncoder(
-            $this->directory, $this->filename, $this->frameRate, $this->width, $this->height,
-            $title, $description, $comment
+            $this->directory, $filename, $this->frameRate, $this->width, 
+            $this->height, $title, $description, $comment
         );
+        
+        // Keep track of processing time for webm/mp4 encoding
+        $t1 = time();
 
-        // Create a medium and high quality VP8/H.264 videos
-        $ffmpeg->createVideo();
-        $ffmpeg->createHQVideo();
+        // Create H.264 videos if they do not already exist
+        if (!file_exists(realpath($this->directory . $filename))) {
+            $ffmpeg->createVideo();
+            $ffmpeg->createHQVideo();
+            $ffmpeg->createFlashVideo();
+            
+            $t2 = time();
+                    
+            // Mark movie as completed
+            $this->_db->markMovieAsFinished($this->id, "mp4", $t2 - $t1);
+        }
 
-        //Create alternative container format options for medium-quality video (.flv)
-        if ($this->format == "mp4") {
-            $ffmpeg->createFlashVideo();            
+        $t3 = time();
+        
+        //Create a Low-quality webm movie for in-browser use if requested
+        if ($this->format == "webm") {
+            $ffmpeg->setFormat("webm");
+            $ffmpeg->createVideo();
+            
+            $t4 = time();
+                    
+            // Mark movie as completed
+            $this->_db->markMovieAsFinished($this->id, "webm", $t4 - $t3);
         }
     }
     
