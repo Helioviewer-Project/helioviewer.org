@@ -92,16 +92,12 @@ var MediaManagerUI = Class.extend(
         // Create a preview tooltip
         this._buildPreviewTooltip(item);
 
-        // Make sure the list contains no more than twelve items
-        if (this._historyBody.find(".history-entry").length > 12) {
-            last = this._historyBody.find(".history-entry").last().attr('id');
+        // Remove any entries beyond limit
+        if (this._historyBody.find(".history-entry").length > 
+            this._manager._historyLimit) {
+            last = this._historyBody.find(".history-entry").last().data('id');
             this._removeItem(last);
-            this._manager.remove(last);
         }
-        
-        // Setup hover and click event-handlers
-        // 2011/05/06: Let's first try using live()
-        //this._setupEventHandlers(item);
         
         // Show the history section title if it is not already visible
         this._historyTitle.show();

@@ -18,7 +18,7 @@ var MovieManager = MediaManager.extend(
      * Creates a new MovieManager instance 
      */    
     init: function (movies) {
-        this._history = movies;
+        this._super(movies);
         this.format   = $.support.vp8 ? "webm" : "mp4";
         
         // Check status of any previously unfinished movie requests
@@ -112,8 +112,8 @@ var MovieManager = MediaManager.extend(
             "name"          : this._getName(layers)
         };
 
-        if (this._history.unshift(movie) > 12) {
-            this._history = this._history.slice(0, 12);            
+        if (this._history.unshift(movie) > 5) {
+            this._history = this._history.slice(0, 5);            
         }
         
         this._monitorQueuedMovie(id, eta);

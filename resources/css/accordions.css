@@ -61,7 +61,7 @@ div.accordion-arrow {
 }
 
 span.event-accordion-header-left {display: block; width:65%; float: left; margin-top:2px;}
-span.tile-accordion-header-left  {display: block; width:35%; float: left; margin-top:2px;}
+span.tile-accordion-header-left  {display: block; width:37%; float: left; margin-top:2px;}
 span.event-accordion-header-right, span.tile-accordion-header-right {display: block; text-align: right; height: 16px;}
 
 /* TileLayerAccordion Styles */
