@@ -18,7 +18,7 @@ var ScreenshotManager = MediaManager.extend(
      * Creates a new ScreenshotManager instance 
      */    
     init: function (screenshots) {
-        this._history = screenshots;
+        this._super(screenshots);
     },
     
     /**

@@ -13,36 +13,56 @@ var MediaManager = Class.extend(
      * @constructs
      * @param {Array} history Items saved in the user's history
      */    
-    init: function (history) {
-
+    init: function (savedItems) {
+        this._history = savedItems;
+        this._historyLimit = 10;
     },
     
     /**
      * Creates the name that will be displayed in the history.
-     * Groups layers together by detector, ex: 
-     * EIT 171/304, LASCO C2/C3
+     * Groups layers together by detector, e.g. "EIT 171/304, LASCO C2/C3"
      * Will crop names that are too long and append ellipses.
      */
     _getName: function (layerString) {
-        var layer, layerArray, currentInstrument, name = "";
+        var layer, layerArray, observatory, instrument, detector, measurement, 
+            currentGroup, name = "";
         
         layerArray = layerStringToLayerArray(layerString).sort();
         
         $.each(layerArray, function (i, layer) {
-            layer = extractLayerName(this).slice(1);
+            layer = extractLayerName(this);
+            
+            observatory = layer[0];
+            instrument  = layer[1];
+            detector    = layer[2];
+            measurement = layer[3];
 
-            if (layer[0] !== currentInstrument) {
-                currentInstrument = layer[0];
-                name += ", " + currentInstrument + " ";
-            } else {
+            // Add instrument or detector if its not already present, otherwise
+            // add a backslash and move onto the right-hand side
+            if (currentGroup == instrument || currentGroup == detector) {
                 name += "/";
+            } else {
+                // For STEREO use detector for the Left-hand side
+                if (instrument === "SECCHI") {
+                    currentGroup = detector;
+                    // Add "A" or "B" to differentiate spacecraft
+                    name += ", " + detector + "-" + 
+                            observatory.substr(-1) + " ";
+                } else {
+                    // Otherwise use the instrument name
+                    currentGroup = instrument;
+                    name += ", " + instrument + " ";
+                }
             }
 
-            // For LASCO include detector in name, otherwise include measurement
-            if (layer[0] === "LASCO") {
-                name += layer[1];
+            // For LASCO, use the detector for the right-hand side
+            if (instrument === "LASCO") {
+                name += detector;
+            } else if (detector.substr(0, 3) === "COR") {
+                // For COR1 & 2 images
+                
             } else {
-                name += layer[2];
+                name += measurement;
             }
         });
         
@@ -53,8 +73,8 @@ var MediaManager = Class.extend(
      * Adds an item
      */
     add: function (item) {
-        if (this._history.unshift(item) > 12) {
-            this._history = this._history.slice(0, 12);            
+        if (this._history.unshift(item) > this._historyLimit) {
+            this._history = this._history.slice(0, this._historyLimit);            
         }
 
         this._save();  
@@ -107,20 +127,11 @@ var MediaManager = Class.extend(
             }
         });
     },
-    
-    /**
-     * Iterates through its history and gets a serialized array of each object's
-     * information that needs to be saved. Adds it to serialHistory and returns
-     * that for saving in UserSettings.
-     */
-    serialize: function () {
-        return this._history;
-    },
-    
+
     /**
      * Returns an array containing objects for the items currently being tracked
      */
     toArray: function () {
-        return this._history;
+        return $.extend([], this._history);
     }
 });
