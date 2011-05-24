@@ -2,6 +2,8 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * Movie_HelioviewerMovie Class Definition
+ * 
+ * 2011/05/24: http://flowplayer.org/plugins/streaming/pseudostreaming.html#prepare
  *
  * PHP version 5
  *

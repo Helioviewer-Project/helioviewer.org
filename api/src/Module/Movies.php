@@ -305,10 +305,10 @@ class Module_Movies implements Module
 </head> 
 <body>
     <!-- Movie player -->
-    <a href="<?php echo urlencode($url);?>" 
+    <div href="<?php echo urlencode($url);?>" 
        style="display:block; <?php print $dimensions;?>"
        id="movie-player">
-    </a>
+    </div>
     <br>
     <script language="javascript">
         flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.7.swf", {
