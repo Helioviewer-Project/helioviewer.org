@@ -24,13 +24,15 @@
     <div id='legend-container'>
         <div id='legend'>
             <img class='status-icon' src='icons/status_icon_green.png' alt='green status icon' />
-            <span style='margin-right: 28px;'>Up to date</span>
+            <span class='status-text'>Up to date</span>
             <img class='status-icon' src='icons/status_icon_yellow.png' alt='yellow status icon' />
-            <span style='margin-right: 28px;'>Lagging</span>
+            <span class='status-text'>Lagging</span>
             <img class='status-icon' src='icons/status_icon_orange.png' alt='orange status icon' />
-            <span style='margin-right: 28px;'>Lagging a lot</span>
+            <span class='status-text'>Lagging a lot</span>
             <img class='status-icon' src='icons/status_icon_red.png' alt='red status icon' />
-            <span>Uh oh!</span>
+            <span class='status-text'>Uh oh!</span>
+            <img class='status-icon' src='icons/status_icon_gray.png' alt='gray status icon' />
+            <span>Inactive</span>
         </div>
     </div>
 
@@ -108,10 +110,7 @@
         
         // Get a list of the datasources grouped by instrument
         $instruments = $imgIndex->getDataSourcesByInstrument();
-        
-        //var_dump($instruments);
-        //die();
-        
+
         $tableRow = "<tr class='%s'><td>%s</td><td>%s</td><td align='center'>%s</td></tr>";
         
         // Create table of datasource statuses

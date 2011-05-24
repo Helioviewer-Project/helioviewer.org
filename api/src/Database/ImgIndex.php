@@ -512,7 +512,8 @@ class Database_ImgIndex
      */
     public function getDataSourcesByInstrument ()
     {
-        $result = $this->_dbConnection->query("SELECT * FROM instruments ORDER BY name");
+        // 2011/05/24: Hiding TRACE for now
+        $result = $this->_dbConnection->query("SELECT * FROM instruments WHERE name != 'TRACE' ORDER BY name");
         
         $instruments = array();
 
