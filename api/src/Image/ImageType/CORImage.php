@@ -68,7 +68,8 @@ class Image_ImageType_CORImage extends Image_HelioviewerImage
      */    
     public function getWaterMarkName() 
     {
-        return "SECCHI $this->detector\n";
+        $which = substr($this->observatory, -1);
+        return "$this->detector-$which\n";
     }
 
     /**
