@@ -66,6 +66,11 @@
     cursor: pointer;
 }
 
+.video-links a:focus
+{
+    outline: none;
+}
+
 #movie-button.selected, #screenshot-button.selected {
     
 }

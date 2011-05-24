@@ -56,6 +56,7 @@ class Image_ImageType_EUVIImage extends Image_HelioviewerImage
      */
     public function getWaterMarkName() 
     {
-        return "EUVI $this->measurement\n";
+        $which = substr($this->observatory, -1);
+        return "EUVI-$which $this->measurement\n";
     }
 }
