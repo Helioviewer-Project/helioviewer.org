@@ -169,35 +169,34 @@ var Helioviewer = Class.extend(
             height : 300
         });
 
-        //Keyboard shortcuts dialog
+        // Keyboard shortcuts dialog
         this._setupDialog("#helioviewer-usage", "#usage-dialog", {
             "title": "Helioviewer - Usage Tips"
         });
         
-        // TEMP Feb 11, 2011
-        $("#settings-button").click(function (e) {
-            $("#settings-dialog").dialog({
-                "buttons": {
-                    "Ok": function () {
-                        $(this).dialog("close");
-                    }
-                },
-                "title": "Helioviewer - Settings",
-                "width": 400,
-                "resizable": false,
-                "create": function (e) {
-                    var currentValue = Helioviewer.userSettings.get(
-                        "defaults.movies.duration"),
-                        select = $(this).find("#settings-movie-length");
-
-                    // Select default value and bind event listener
-                    select.find("[value = " + currentValue + "]").attr("selected", "selected");
-                    select.bind('change', function (e) {
-                        Helioviewer.userSettings.set("defaults.movies.duration",
-                            parseInt(this.value, 10));
-                    });                              
+        // Settings dialog
+        this._setupDialog("#settings-button", "#settings-dialog", {
+            "buttons": {
+                "Ok": function () {
+                    $(this).dialog("close");
                 }
-            });
+            },
+            "title": "Helioviewer - Settings",
+            "width": 400,
+            "height": 'auto',
+            "resizable": false,
+            "create": function (e) {
+                var currentValue = Helioviewer.userSettings.get(
+                    "defaults.movies.duration"),
+                    select = $(this).find("#settings-movie-length");
+
+                // Select default value and bind event listener
+                select.find("[value = " + currentValue + "]").attr("selected", "selected");
+                select.bind('change', function (e) {
+                    Helioviewer.userSettings.set("defaults.movies.duration",
+                        parseInt(this.value, 10));
+                });                              
+            }
         });
     },
     
