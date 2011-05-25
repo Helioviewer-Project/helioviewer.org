@@ -130,7 +130,7 @@ class Movie_HelioviewerMovie
 
         // Compile movie
         try {
-            $this->_buildMovie();
+            $this->_encodeMovie();
         } catch (Exception $e) {
             $t4 = time();
             $this->_abort("Error encountered during video encoding.", $t4 - $t3);
@@ -196,6 +196,7 @@ class Movie_HelioviewerMovie
      */
     private function _abort($msg, $procTime=0) {
         $this->_db->markMovieAsInvalid($this->id, $procTime);
+        $this->_cleanUp();
         throw new Exception("Unable to create movie: " . $msg, 1);
     }
     
@@ -355,7 +356,7 @@ class Movie_HelioviewerMovie
      *
      * @return void
      */
-    private function _buildMovie()
+    private function _encodeMovie()
     {
         require_once 'src/Movie/FFMPEGEncoder.php';
         date_default_timezone_set('UTC');

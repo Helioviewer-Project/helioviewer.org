@@ -61,6 +61,8 @@ class Movie_FFMPEGEncoder
         $this->_description = $description;
         $this->_comment     = $comment;
         $this->_format      = $info['extension'];
+        
+        $this->_log = fopen($directory . 'ffmpeg.log', 'a');
     }
     
     /**
@@ -113,7 +115,7 @@ class Movie_FFMPEGEncoder
         //    . " -r " . $this->_frameRate . " -f webm -vcodec libvpx -qmax $qmax -threads " . HV_FFMPEG_MAX_THREADS 
         //    . " -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
         $cmd = sprintf(
-            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmin 1 -qmax %d %s -threads %d -s %dx%d -an -y %s 2>%s",
+            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmin 1 -qmax %d %s -threads %d -s %dx%d -an -y %s 2>/dev/null",
             HV_FFMPEG,
             $this->_frameRate,
             $this->_directory,
@@ -123,9 +125,10 @@ class Movie_FFMPEGEncoder
             HV_FFMPEG_MAX_THREADS,
             $this->_width,
             $this->_height,
-            $outputFile,
-            $this->_directory . "ffmpeg.log"
+            $outputFile
         );
+        
+        $this->_logCommand($cmd);
 
         // Run FFmpeg        
         $output = shell_exec($cmd);
@@ -146,8 +149,9 @@ class Movie_FFMPEGEncoder
     {
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "frames/frame%d.bmp"
             . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset " . $this->_getMetaDataString() . "-threads " 
-            . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile 2>"
-            . $this->_directory . 'ffmpeg.log';
+            . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile 2>/dev/null";
+            
+        $this->_logCommand($cmd);
             
         // Run FFmpeg
         $output = shell_exec($cmd);
@@ -167,9 +171,15 @@ class Movie_FFMPEGEncoder
     {
         $file = $this->_directory . substr($this->_filename, 0, -4);
         
-        $cmd = HV_FFMPEG . " -i $file.mp4 -vcodec copy " . $this->_getMetaDataString()
-             . "-threads " . HV_FFMPEG_MAX_THREADS . " $file.flv";
-    
+        $cmd = sprintf("%s -i %s.mp4 -vcodec copy %s -threads %d %s.flv 2>/dev/null",
+            HV_FFMPEG,
+            $file,
+            $this->_getMetaDataString(),
+            HV_FFMPEG_MAX_THREADS,
+            $file
+        );
+
+        $this->_logCommand($cmd);
         exec($cmd);
 
         // Check to ensure that movie size is valid
@@ -219,6 +229,16 @@ class Movie_FFMPEGEncoder
         $this->_filename = str_replace(array("webm", "mp4"), $format, 
                             $this->_filename);
     }
+
+    /**    
+     * Log FFmpeg command
+     */
+    private function _logCommand($cmd)
+    {
+        $message = "========================================================\n" 
+                 . "$cmd\n";
+        fwrite($this->_log, $message);
+    }
     
     /**
      * Creates the portion of the ffmpeg command relating to metadata properties
@@ -231,7 +251,7 @@ class Movie_FFMPEGEncoder
             $this->_title,
             date("Y"),
             $this->_description,
-            $this->_comment
+            str_replace(array("mp4", "webm"), $this->_format, $this->_comment)
         );
     }
 }

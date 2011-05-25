@@ -229,8 +229,10 @@ var MovieManager = MediaManager.extend(
         this._save();
 
         // Notify user
-        error = "Sorry, we are unable to create your movie at this time. " +
-                 "Please try again later.";
+        error = "Sorry, we were unable to create the movie you requested. " +
+                "This usually means that there are not enough images for the " +
+                "time range requested. Please try adjusting the observation " + 
+                "date or movie duration and try creating a new movie.";
 
         $(document).trigger("message-console-error", [error, {"sticky": true}]);
     },
