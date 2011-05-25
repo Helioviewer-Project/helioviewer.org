@@ -171,7 +171,10 @@ var MovieManager = MediaManager.extend(
             sticky: true,
             header: "Your movie is ready!",
             open:    function (msg) {
-                msg.find(".message-console-movie-ready").data("movie", movie);
+                msg.find(".message-console-movie-ready").data("movie", movie)
+                   .click(function (e) {
+                   msg.trigger("jGrowl.close");
+                });
             }
         };
         message = "<span class='message-console-movie-ready'>" +
