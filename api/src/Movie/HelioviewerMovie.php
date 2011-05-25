@@ -156,7 +156,8 @@ class Movie_HelioviewerMovie
             "endDate"    => $this->endDate,
             "width"      => $this->width,
             "height"     => $this->height,
-            "thumbnails" => $this->getPreviewImages()
+            "thumbnails" => $this->getPreviewImages(),
+            "url"        => $this->getURL()
         );
     }
     
@@ -165,12 +166,12 @@ class Movie_HelioviewerMovie
      */
     public function getPreviewImages()
     {
-        $url = str_replace(HV_CACHE_DIR, HV_CACHE_URL, $this->_buildDir());
+        $rootURL = str_replace(HV_CACHE_DIR, HV_CACHE_URL, $this->_buildDir());
         
         $images = array();
         
         foreach (array("icon", "small", "medium", "large", "full")  as $size) {
-            $images[$size] = $url . "preview-$size.png";
+            $images[$size] = $rootURL . "preview-$size.png";
         }
         
         return $images;
@@ -187,6 +188,12 @@ class Movie_HelioviewerMovie
     public function getDuration()
     {
         return $this->numFrames / $this->frameRate;
+    }
+    
+    public function getURL()
+    {
+        return str_replace(HV_CACHE_DIR, HV_CACHE_URL, $this->_buildDir()) .
+                $this->_buildFilename();
     }
     
     /**
