@@ -134,7 +134,6 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Download completion notification link
         $(".message-console-movie-ready").live('click', function (event) {
-            $(".jGrowl-notification .close").click();
             var movie = $(event.currentTarget).data('movie');            
             self._createMoviePlayerDialog(movie);
         });

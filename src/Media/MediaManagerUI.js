@@ -46,7 +46,7 @@ var MediaManagerUI = Class.extend(
      */
     show: function () {
         this._allContainers.hide();
-        $(".jGrowl").jGrowl("close");
+        $(".jGrowl-notification").trigger("jGrowl.close");
         this._refresh();
         this._container.show();
         this._tooltips.qtip("hide").qtip("disable");
@@ -209,7 +209,7 @@ var MediaManagerUI = Class.extend(
         this._btn.click(function () {
             if (!self.working) {
                 self.toggle();
-                $(".jGrowl-notification .close").click();
+                $(".jGrowl-notification").trigger("jGrowl.close");
             }
         });
         
