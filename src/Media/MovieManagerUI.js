@@ -358,12 +358,12 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     getVideoPlayerHTML: function (id, width, height, uploadURL, url) {
         var downloadURL, downloadLink, youtubeBtn;
-
+        
         downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
-              "&format=" + this._manager.format;
+                      "&format=mp4&hq=true";
 
-        downloadLink = "<a target='_parent' href='" + downloadURL + 
-            "&hq=true'><img class='video-download-icon' " + 
+        downloadLink = "<a target='_parent' href='" + downloadURL + "'>" + 
+            "<img class='video-download-icon' " + 
             "src='resources/images/icons/001_52.png' " +
             "alt='Download high-quality video' />Download</a>";
         
@@ -373,10 +373,14 @@ var MovieManagerUI = MediaManagerUI.extend(
             "alt='Upload video to YouTube' />Upload</a>";
         
         // HTML5 Video (H.264 or WebM)
-        if ($.support.vp8 || $.support.vp8) {
+        if ($.support.vp8 || $.support.h264) {
+            // Work-around: use relative paths to simplify debugging
+            url = url.substr(url.search("cache"));
+            
+            // IE9 only supports relative dimensions specified using CSS
             return "<video id='movie-player-" + id + "' src='" + url +
-                   "' controls preload autoplay width='100%' " + 
-                   "height='95%'></video>" + 
+                   "' controls preload autoplay" + 
+                   " style='width:100%; height: 95%;'></video>" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn + 
                    "</span>";
         }
