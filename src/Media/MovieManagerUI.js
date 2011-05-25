@@ -221,13 +221,11 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     _createMoviePlayerDialog: function (movie) {
-        var dimensions, movieTitle, uploadURL, datasources, tags, html, 
+        var dimensions, movieTitle, uploadURL, tags, html, 
             dialog, self = this;
         
-        // 2011/01/06 Temporary work-around: compute default title & tags 
-        // (nicer implementation to follow)
-        tags        = [];
-        datasources = [];
+        // Suggested YouTube tags  
+        tags = [];
 
         // Tags
         $.each(movie.layers.split("],["), function (i, layerStr) {
@@ -243,19 +241,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             });
         });
         
-        // Datasources
-        $.each(movie.name.split(", "), function (i, name) {
-            var inst = name.split(" ")[0];
-            
-            if ((inst === "AIA") || (inst === "HMI")) {
-                datasources.push("SDO " + name);
-            } else {
-                datasources.push("SOHO " + name);
-            }
-        });
-        
         // Suggested movie title
-        movieTitle = datasources.join(", ") + " (" + movie.startDate + " UTC)";
+        movieTitle = movie.name + " (" + movie.startDate + " - " +
+                     movie.endDate + " UTC)";
         
         uploadURL =  "api/index.php?action=uploadMovieToYouTube&id=" + movie.id;
         uploadURL += "&title=" + movieTitle;
