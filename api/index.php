@@ -268,7 +268,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2011-04-04 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2011-05-25 | <a href="mailto:contact@helioviewer.org">Questions?</a>
 </div>
 
 </body>

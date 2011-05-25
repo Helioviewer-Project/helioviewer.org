@@ -229,7 +229,7 @@ class Movie_HelioviewerMovie
         $start = str_replace(array(":", "-", " "), "_", $this->startDate);
         $end   = str_replace(array(":", "-", " "), "_", $this->endDate);
         
-        $suffix = ($highQuality && $this->format != "flv") ? "-hq" : "";
+        $suffix = ($highQuality && $this->format == "mp4") ? "-hq" : "";
 
         return sprintf("%s_%s_%s%s.%s", $start, $end, $this->_layers->toString(), $suffix, $this->format);
     }
