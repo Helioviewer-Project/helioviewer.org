@@ -266,7 +266,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Movie player HTML
         html = self.getVideoPlayerHTML(movie.id, dimensions.width, 
-                                       dimensions.height, uploadURL);
+                                       dimensions.height, uploadURL, movie.url);
         
         // Movie player dialog
         dialog = $(
@@ -356,14 +356,14 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Decides how to display video and returns HTML corresponding to that 
      * method
      */
-    getVideoPlayerHTML: function (id, width, height, uploadURL) {
-        var url, downloadLink, youtubeBtn;
+    getVideoPlayerHTML: function (id, width, height, uploadURL, url) {
+        var downloadURL, downloadLink, youtubeBtn;
 
-        url = "api/index.php?action=downloadMovie&id=" + id + 
+        downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
               "&format=" + this._manager.format;
 
-        downloadLink = "<a target='_parent' href='" + url + "&hq=true'>" +
-            "<img class='video-download-icon' " + 
+        downloadLink = "<a target='_parent' href='" + downloadURL + 
+            "&hq=true'><img class='video-download-icon' " + 
             "src='resources/images/icons/001_52.png' " +
             "alt='Download high-quality video' />Download</a>";
         

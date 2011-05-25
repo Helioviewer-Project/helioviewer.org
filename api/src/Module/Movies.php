@@ -252,11 +252,14 @@ class Module_Movies implements Module
     }
 
     /**
-     * Gets the movie url and loads it into Kaltura
-     * 
-     * TODO: 12/07/2010:
-     *  Include video duration (send via client, or write to file in video directory. eventually will go in db).
-     *  Use id instead of filepath? (will still need to treat id as a filepath when validating)
+     * Generates HTML for a video player with the specified movie loaded
+     *
+     * 2011/05/25
+     * Using direct links to movies to enable support for byte range requests
+     * and provide a better movie experience in Chromium.
+     *  
+     * See: https://groups.google.com/a/webmproject.org/group/webm-discuss
+     * /browse_thread/thread/061f3ffa200d26a9/1ce5f06c76c9cb2d#1ce5f06c76c9cb2d
      *
      * @return void
      */
@@ -292,10 +295,10 @@ class Module_Movies implements Module
 
         // Get filepath
         $filepath = $movie->getFilepath($options['hq']);
-        $filename = basename($filepath);        
+        $filename = basename($filepath);  
         
         // Movie URL
-        $url = HV_API_ROOT_URL . "?action=downloadMovie&id={$movie->id}&format={$movie->format}";
+        $url = ".." . str_replace(HV_ROOT_DIR, "", $filepath);
         ?>
 <!DOCTYPE html> 
 <html> 
