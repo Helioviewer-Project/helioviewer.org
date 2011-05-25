@@ -14,9 +14,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     <?php printf("<!-- Helioviewer 2.2.0 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="ie=9" />
-    <meta http-equiv="X-UA-Compatible" content="ie=8" />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
     <meta name="keywords" content="Helioviewer, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
     
@@ -25,7 +22,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     <link rel="shortcut icon" href="favicon.ico" />
         
     <!--[if IE]>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
     <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
@@ -504,10 +500,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     var serverSettings, settingsJSON, urlSettings;
 
     $(function () {
-        if ($.browser.msie && ($.browser.version < 8)) {
-            CFInstall.check({mode: "overlay"});
-        }
-        
         <?php
             printf("settingsJSON = %s;\n", json_encode($config));
 
