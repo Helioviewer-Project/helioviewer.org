@@ -59,7 +59,9 @@ class Database_Statistics
         // Array to keep track of counts for each action
         $counts = array(
             "buildMovie"           => array(),
+            "getClosestImage"      => array(),
             "getJPX"               => array(),
+            "getTile"              => array(),
             "takeScreenshot"       => array(),
             "uploadMovieToYouTube" => array()
         );
@@ -67,7 +69,9 @@ class Database_Statistics
         // Summary array
         $summary = array(
             "buildMovie"           => 0,
+            "getClosestImage"      => 0,
             "getJPX"               => 0,
+            "getTile"              => 0,
             "takeScreenshot"       => 0,
             "uploadMovieToYouTube" => 0
         );
@@ -100,8 +104,16 @@ class Database_Statistics
             
             // And append counts for each action during that interval to the relevant array
             while ($count = $result->fetch_array(MYSQL_ASSOC)) {
-                $counts[$count['action']][$i][$dateIndex] = (int) $count['count'];
-                $summary[$count['action']] += (int) $count['count'];
+                $num = (int) $count['count'];
+
+                // Each movie request results in two buildMovie requests
+                // Divide in half to avoid double-counting.
+                if ($count['action'] == "buildMovie") {
+                    $num = ceil($num / 2);
+                }
+                
+                $counts[$count['action']][$i][$dateIndex] = $num;
+                $summary[$count['action']] += $num;
             }
         }
         

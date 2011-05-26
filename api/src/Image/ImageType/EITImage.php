@@ -31,7 +31,7 @@ class Image_ImageType_EITImage extends Image_HelioviewerImage
      * Creates a new EITImage
      * 
      * @param string $jp2      Source JP2 image
-     * @param string $filepath Location to output the file to (not including a file extension)
+     * @param string $filepath Location to output the file to
      * @param array  $roi      Top-left and bottom-right pixel coordinates on the image
      * @param string $inst     Instrument
      * @param string $det      Detector
@@ -42,7 +42,7 @@ class Image_ImageType_EITImage extends Image_HelioviewerImage
      * 
      * @return void
      */   
-    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/SOHO_EIT_$meas.png";
 
@@ -50,7 +50,7 @@ class Image_ImageType_EITImage extends Image_HelioviewerImage
             $this->setColorTable($colorTable);
         }
         
-        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**

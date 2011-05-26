@@ -117,6 +117,7 @@ var HelioviewerTileLayer = TileLayer.extend(
             "jp2Width"    : this.image.width,
             "jp2Height"   : this.image.height,
             "jp2Scale"    : this.image.scale,
+            "observatory" : this.image.observatory,
             "instrument"  : this.image.instrument,
             "detector"    : this.image.detector,
             "measurement" : this.image.measurement,

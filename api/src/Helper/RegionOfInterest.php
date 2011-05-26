@@ -48,11 +48,11 @@ class Helper_RegionOfInterest
      */
     public function __construct($x1, $x2, $y1, $y2, $imageScale, $maxWidth=1920, $maxHeight=1080)
     {
-        $this->_top    = $y1;
-        $this->_left   = $x1;
-        $this->_bottom = $y2;
-        $this->_right  = $x2;
-        $this->_scale  = $imageScale;
+        $this->_top    = (float) $y1;
+        $this->_left   = (float) $x1;
+        $this->_bottom = (float) $y2;
+        $this->_right  = (float) $x2;
+        $this->_scale  = (float) $imageScale;
         
         // Maximum dimensions allowed for request
         $this->_maxWidth  = $maxWidth;
@@ -183,6 +183,47 @@ class Helper_RegionOfInterest
             'bottom' => max(min($this->_bottom /$imageScale + $centerY, $imageHeight), 0),
             'right'  => max(min($this->_right  /$imageScale + $centerX, $imageWidth), 0)
         );
+    }
+    
+    /**
+     * Returns a polygon string representation of the region of interest of the form POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))
+     * where each item between commas is an x & y coordinate for one of the corners of the roi.
+     *
+     * Example:
+     * 
+     *    p1-------p2
+     *    |        |
+     *    |        |
+     *    p4-------p3
+     * 
+     * @return string Polygon representation of the region of interest
+     */
+    public function getPolygonString()
+    {
+       $p1 = $this->_left  . " " . $this->_top;
+       $p2 = $this->_right . " " . $this->_top;
+       $p3 = $this->_right . " " . $this->_bottom;
+       $p4 = $this->_left  . " " . $this->_bottom;
+       
+       return sprintf("POLYGON((%s))", implode(array($p1, $p2, $p3, $p4, $p1), ","));
+    }
+    
+    /**
+     * Parses a polygon string and returns an array containing x&y coordinates of the top-left and bottom-right
+     * corners of the region of interest in arc-seconds
+     * 
+     * @param string $polygon Polygon string
+     * @param float $imageScale Image scale in arc-seconds/pixel
+     * 
+     * @return Helper_RegionOfInterest A new instance of Helper_RegionOfInterest
+     */
+    public static function parsePolygonString($polygon, $imageScale)
+    {
+        $points      = explode(",", substr($polygon, 9, -2));        
+        $topLeft     = explode(" ", $points[0]);
+        $bottomRight = explode(" ", $points[2]);
+        
+        return new Helper_RegionOfInterest($topLeft[0], $bottomRight[0], $topLeft[1], $bottomRight[1], $imageScale);
     }
     
     /**

@@ -32,7 +32,11 @@
 # processed already exist in the database. As such its important to make sure
 # that only new images are placed in the directories to be processed.
 ###############################################################################
-import sys,os,commands,shutil,time
+import sys
+import os
+import commands
+import shutil
+import time
 
 def main(argv):
     ''' Processes incoming JP2 files and moves them to proper location '''

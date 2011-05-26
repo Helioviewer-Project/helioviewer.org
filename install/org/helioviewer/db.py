@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-import sys, os
+"""Helioviewer.org installer database functions"""
+import sys
+import os
 
-def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
-    ''' Sets up Helioviewer.org database schema '''
+def setup_database_schema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
+    """Sets up Helioviewer.org database schema"""
     if mysql:
         import MySQLdb
         adaptor = MySQLdb
@@ -10,91 +12,114 @@ def setupDatabaseSchema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
         import pgdb
         adaptor = pgdb
 
-    createDB(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor)
+    create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor)
 
     # connect to helioviewer database
-    cursor = getDatabaseCursor(dbname, dbuser, dbpass, mysql)
+    cursor = get_db_cursor(dbname, dbuser, dbpass, mysql)
 
-    createSourceTable(cursor)
-    createObservatoryTable(cursor)
-    createInstrumentTable(cursor)
-    createDetectorTable(cursor)
-    createMeasurementTable(cursor)
-    createImageTable(cursor)
-    createStatisticsTable(cursor)
-    updateImageTableIndex(cursor)
+    create_datasource_table(cursor)
+    create_observatory_table(cursor)
+    create_instrument_table(cursor)
+    create_detector_table(cursor)
+    create_measurement_table(cursor)
+    create_image_table(cursor)
+    create_screenshots_table(cursor)
+    create_movies_table(cursor)
+    create_movie_formats_table(cursor)
+    create_youtube_table(cursor)
+    create_statistics_table(cursor)
+    update_image_table_index(cursor)
 
     return cursor
 
-def getDatabaseCursor(dbname, dbuser, dbpass, mysql):
-    ''' Creates a database connection '''
+def get_db_cursor(dbname, dbuser, dbpass, mysql):
+    """Creates a database connection"""
     if mysql:
         import MySQLdb
     else:
         import pgdb
     
     if mysql:
-        db = MySQLdb.connect(use_unicode=True, charset = "utf8", host="localhost", db=dbname, user=dbuser, passwd=dbpass)
+        db = MySQLdb.connect(use_unicode=True, charset = "utf8", 
+                             host="localhost", db=dbname, user=dbuser, 
+                             passwd=dbpass)
     else:
-        db = pgdb.connect(use_unicode=True, charset = "utf8", database=dbname, user=dbuser, password=dbpass)
+        db = pgdb.connect(use_unicode=True, charset = "utf8", database=dbname, 
+                          user=dbuser, password=dbpass)
     
+    db.autocommit(True)
     return db.cursor()
 
-def checkDBInfo(adminuser, adminpass, mysql):
-    ''' Validate database login information '''
+def check_db_info(adminuser, adminpass, mysql):
+    """Validate database login information"""
     try:
         if mysql:
-            import MySQLdb
+            try:
+                import MySQLdb
+            except ImportError as e:
+                print(e)
+                return False
             db = MySQLdb.connect(user=adminuser, passwd=adminpass)
         else:
             import pgdb
-            db = pgdb.connect(database="postgres", user=adminuser, password=adminpass)
-    except MySQLdb.Error, e:
-        print e
+            db = pgdb.connect(database="postgres", user=adminuser, 
+                              password=adminpass)
+    except MySQLdb.Error as e:
+        print(e)
         return False
 
     db.close()
     return True
 
-def createDB(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
-    ''' Creates database
-        TODO (2009/08/18) Catch error case when db already exists, and gracefully exit '''
+def create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
+    """Creates Helioviewer database
+    
+    TODO (2009/08/18) Catch error when db already exists and gracefully exit
+    """
+    
+    create_str = "CREATE DATABASE IF NOT EXISTS %s;" % dbname
+    grant_str = "GRANT ALL ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (
+                dbname, dbuser, dbpass)
+    
     if mysql:
         try:
            db = adaptor.connect(user=adminuser, passwd=adminpass)
            cursor = db.cursor()
-           cursor.execute("CREATE DATABASE IF NOT EXISTS %s;" % dbname)
-           cursor.execute("GRANT ALL ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbname, dbuser, dbpass))
-        except adaptor.Error, e:
-            print "Error: " + e.args[1]
+           cursor.execute(create_str)
+           cursor.execute(grant_str)
+        except adaptor.Error as e:
+            print("Error: " + e.args[1])
             sys.exit(2)
     else:
         try:
-            db = adaptor.connect(database="postgres", user=adminuser, password=adminpass)
+            db = adaptor.connect(database="postgres", user=adminuser, 
+                                 password=adminpass)
             cursor = db.cursor()
-            cursor.execute("CREATE DATABASE IF NOT EXISTS %s;" % dbname)
-            cursor.execute("GRANT ALL ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (dbname, dbuser, dbpass))
-        except Exception, e:
-            print "Error: " + e.args[1]
+            cursor.execute(create_str)
+            cursor.execute(grant_str)
+        except Exception as e:
+            print("Error: " + e.args[1])
             sys.exit(2)
 
     cursor.close()
 
-def createImageTable(cursor):
+def create_image_table(cursor):
+    """Creates table to store image information"""
     sql = \
-    '''CREATE TABLE `images` (
+    """CREATE TABLE `images` (
       `id`            INT unsigned NOT NULL auto_increment,
       `filepath`      VARCHAR(255) NOT NULL,
       `filename`      VARCHAR(255) NOT NULL,
-      `date`          datetime NOT NULL default '0000-00-00 00:00:00',
+      `date`          datetime NOT NULL,
       `sourceId`    SMALLINT unsigned NOT NULL,
       PRIMARY KEY  (`id`), KEY `date_index` (`sourceId`,`date`) USING BTREE
-    ) DEFAULT CHARSET=ascii;'''
+    ) DEFAULT CHARSET=ascii;"""
     cursor.execute(sql)
 
-def createSourceTable(cursor):
+def create_datasource_table(cursor):
+    """Creates a table with the known datasources"""
     cursor.execute(
-    '''CREATE TABLE `datasources` (
+    """CREATE TABLE `datasources` (
         `id`            SMALLINT unsigned NOT NULL,
         `name`          VARCHAR(127) NOT NULL,
         `description`   VARCHAR(255),
@@ -105,9 +130,9 @@ def createSourceTable(cursor):
         `layeringOrder` TINYINT NOT NULL,
         `enabled`       BOOLEAN NOT NULL,
       PRIMARY KEY  (`id`)
-    ) DEFAULT CHARSET=utf8;''')
+    ) DEFAULT CHARSET=utf8;""")
 
-    cursor.execute('''
+    cursor.execute("""
     INSERT INTO `datasources` VALUES
         (0, 'EIT 171', 'SOHO EIT 171', 0, 0, 0, 2, 1, 0),
         (1, 'EIT 195', 'SOHO EIT 195', 0, 0, 0, 4, 1, 0),
@@ -128,86 +153,105 @@ def createSourceTable(cursor):
         (16, 'AIA 1700', 'SDO AIA 1700',  2, 4, 5, 10, 1, 0),
         (17, 'AIA 4500', 'SDO AIA 4500',  2, 4, 5, 11, 1, 0),
         (18, 'HMI Int', 'SDO HMI Int', 2, 5, 6, 12, 1, 0),
-        (19, 'HMI Mag', 'SDO HMI Mag', 2, 5, 6, 13, 1, 0);
-    ''')
+        (19, 'HMI Mag', 'SDO HMI Mag', 2, 5, 6, 13, 1, 0),
+        (20, 'EUVI-A 171', 'STEREO A EUVI 171', 3, 6, 7, 2, 1, 0),
+        (21, 'EUVI-A 195', 'STEREO A EUVI 195', 3, 6, 7, 4, 1, 0),
+        (22, 'EUVI-A 284', 'STEREO A EUVI 284', 3, 6, 7, 6, 1, 0),
+        (23, 'EUVI-A 304', 'STEREO A EUVI 304', 3, 6, 7, 7, 1, 0),
+        (24, 'EUVI-B 171', 'STEREO B EUVI 171', 4, 6, 7, 2, 1, 0),
+        (25, 'EUVI-B 195', 'STEREO B EUVI 195', 4, 6, 7, 4, 1, 0),
+        (26, 'EUVI-B 284', 'STEREO B EUVI 284', 4, 6, 7, 6, 1, 0),
+        (27, 'EUVI-B 304', 'STEREO B EUVI 304', 4, 6, 7, 7, 1, 0),
+        (28, 'COR1-A', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
+        (29, 'COR2-A', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
+        (30, 'COR1-B', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
+        (31, 'COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0);
+    """)
 
-def createObservatoryTable(cursor):
-    """ Creates table to store observatory information """
+def create_observatory_table(cursor):
+    """Creates table to store observatory information"""
 
-    cursor.execute('''
+    cursor.execute("""
     CREATE TABLE `observatories` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
        PRIMARY KEY (`id`)
-    ) DEFAULT CHARSET=utf8;''')
+    ) DEFAULT CHARSET=utf8;""")
 
-    cursor.execute('''
+    cursor.execute("""
     INSERT INTO `observatories` VALUES
         (0, 'SOHO', 'Solar and Heliospheric Observatory'),
         (1, 'TRACE', 'The Transition Region and Coronal Explorer'),
-        (2, 'SDO', 'Solar Dynamics Observatory');        
-    ''')
+        (2, 'SDO', 'Solar Dynamics Observatory'),
+        (3, 'STEREO_A', 'Solar Terrestrial Relations Observatory Ahead'),
+        (4, 'STEREO_B', 'Solar Terrestrial Relations Observatory Behind');
+    """)
 
-def createInstrumentTable(cursor):
-    """ Creates table to store instrument information """
+def create_instrument_table(cursor):
+    """Creates table to store instrument information"""
 
-    cursor.execute('''
+    cursor.execute("""
     CREATE TABLE `instruments` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
        PRIMARY KEY (`id`)
-    ) DEFAULT CHARSET=utf8;''')
+    ) DEFAULT CHARSET=utf8;""")
 
-    cursor.execute('''
+    cursor.execute("""
     INSERT INTO `instruments` VALUES
-        (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
-        (1, 'LASCO', 'The Large Angle Spectrometric Coronagraph'),
-        (2, 'MDI',   'Michelson Doppler Imager'),
-        (3, 'TRACE', 'TRACE'),
-        (4, 'AIA',   'Atmospheric Imaging Assembly'),
-        (5, 'HMI',   'Helioseismic and Magnetic Imager');
-    ''')
+        (0, 'EIT',    'Extreme ultraviolet Imaging Telescope'),
+        (1, 'LASCO',  'The Large Angle Spectrometric Coronagraph'),
+        (2, 'MDI',    'Michelson Doppler Imager'),
+        (3, 'TRACE',  'The Transition Region and Coronal Explorer'),
+        (4, 'AIA',    'Atmospheric Imaging Assembly'),
+        (5, 'HMI',    'Helioseismic and Magnetic Imager'),
+        (6, 'SECCHI', 'Sun Earth Connection Coronal and Heliospheric Investigation');
+    """)
 
 
 
-def createDetectorTable(cursor):
+def create_detector_table(cursor):
     """ Creates table to store detector information """
 
-    cursor.execute('''
+    cursor.execute("""
     CREATE TABLE `detectors` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
        PRIMARY KEY (`id`)
-    ) DEFAULT CHARSET=utf8;''')
+    ) DEFAULT CHARSET=utf8;""")
 
-    cursor.execute('''
+    cursor.execute("""
     INSERT INTO `detectors` VALUES
-        (0, 'EIT',   'EIT'),
-        (1, 'C2',    'LASCO C2'),
-        (2, 'C3',    'LASCO C3'),
-        (3, 'MDI',   'MDI'),
-        (4, 'TRACE', 'TRACE'),
-        (5, 'AIA',   'AIA'),
-        (6, 'HMI',   'HMI');
-    ''')
+        (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
+        (1, 'C2',    'Coronograph 2'),
+        (2, 'C3',    'Coronograph 3'),
+        (3, 'MDI',   'Michelson Doppler Imager'),
+        (4, 'TRACE', 'The Transition Region and Coronal Explorer'),
+        (5, 'AIA',   'Atmospheric Imaging Assembly'),
+        (6, 'HMI',   'Helioseismic and Magnetic Imager'),
+        (7, 'EUVI',  'Extreme Ultraviolet Imager'),
+        (8, 'COR1',  'Coronograph 1'),
+        (9, 'COR2',  'Coronograph 2');
+    """)
 
 
-def createMeasurementTable(cursor):
-    """ Creates table to store measurement information """
+def create_measurement_table(cursor):
+    """Creates table to store measurement information"""
 
-    cursor.execute('''
+    cursor.execute("""
     CREATE TABLE `measurements` (
       `id`          SMALLINT unsigned NOT NULL,
       `name`        VARCHAR(255) NOT NULL,
       `description` VARCHAR(255) NOT NULL,
       `units`       VARCHAR(20)  NOT NULL,
        PRIMARY KEY (`id`)
-    ) DEFAULT CHARSET=utf8;''')
+    ) DEFAULT CHARSET=utf8;""")
 
-    cursor.execute(u'''
+    # 2011/05/03: changed from u""" string for Python 3 compatability
+    cursor.execute("""
     INSERT INTO `measurements` VALUES
         (0, '94', '94 Ångström extreme ultraviolet', 'Å'),
         (1, '131', '131 Ångström extreme ultraviolet', 'Å'),
@@ -223,39 +267,137 @@ def createMeasurementTable(cursor):
         (11, '4500', '4500 Ångström extreme ultraviolet', 'Å'),
         (12, 'continuum', 'Intensitygram', 'DN'),
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
-        (14, 'white-light', 'White Light', 'DN');
-    ''')
+        (14, 'white-light', 'White Light', 'DN');""")
+    
+def create_movies_table(cursor):
+    """Creates movie table
+    
+    Creates a simple table for storing information about movies built on
+    Helioviewer.org.
+    
+    Note: Region of interest coordinates are stored in arc-seconds even though
+    request is done in pixels in order to make it easier to find screenshots
+    with similar ROIs regardless of scale.
+    """
+    cursor.execute("""
+    CREATE TABLE `movies` (
+      `id`                INT unsigned NOT NULL auto_increment,
+      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+      `reqStartDate`      datetime NOT NULL,
+      `reqEndDate`        datetime NOT NULL,
+      `imageScale`        FLOAT NOT NULL,
+      `regionOfInterest`  POLYGON NOT NULL,
+      `maxFrames`         INT NOT NULL,
+      `watermark`         BOOLEAN NOT NULL,
+      `dataSourceString`  VARCHAR(255) NOT NULL,
+      `dataSourceBitMask` BIGINT,
+      `frameRate`         FLOAT,
+      `startDate`         datetime,
+      `endDate`           datetime,
+      `numFrames`         INT,
+      `width`             INT,
+      `height`            INT,
+      `procTime`          INT,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;""")
+    
+def create_movie_formats_table(cursor):
+    """Creates movie formats table
+    
+    Creates a table to keep track of the processing status for each format 
+    (mp4, web, etc) movie that needsto be created for a given movie request.
+    """
+    cursor.execute("""
+    CREATE TABLE `movieFormats` (
+      `id`                INT unsigned NOT NULL auto_increment,
+      `movieId`           INT unsigned NOT NULL,
+      `format`            VARCHAR(255) NOT NULL,
+      `status`            VARCHAR(255) NOT NULL,
+      `procTime`          INT,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;""")
+    
+def create_youtube_table(cursor):
+    """Creates a table to track shared movie uploads.
+    
+    Creates table to keep track of movies that have been uploaded to YouTube 
+    and shared with other Helioviewer users.
+    """
+    cursor.execute("""
+    CREATE TABLE `youtube` (
+      `id`          INT unsigned NOT NULL auto_increment,
+      `movieId`     INT unsigned NOT NULL,
+      `youtubeId`   VARCHAR(16) NOT NULL,
+      `timestamp`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `title`       VARCHAR(100) NOT NULL,
+      `description` VARCHAR(5000) NOT NULL,
+      `keywords`    VARCHAR(500) NOT NULL,
+      `shared`      BOOLEAN NOT NULL,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;""")
+    
+def create_screenshots_table(cursor):
+    """Creates screenshot table
+    
+    Creates a simple table for storing information about screenshots built on
+    Helioviewer.org 
+    
+    Note: Region of interest coordinates are stored in arc-seconds even though
+    request is done in pixels in order to make it easier to find screenshots
+    with similar ROIs regardless of scale.
+    """
+    
+    cursor.execute("""
+    CREATE TABLE `screenshots` (
+      `id`                INT unsigned NOT NULL auto_increment,
+      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `observationDate`   datetime NOT NULL,
+      `imageScale`        FLOAT,
+      `regionOfInterest`  POLYGON NOT NULL,
+      `watermark`         BOOLEAN DEFAULT TRUE,
+      `dataSourceString`  VARCHAR(255) NOT NULL,
+      `dataSourceBitMask` BIGINT,
+       PRIMARY KEY (`id`)
+    ) DEFAULT CHARSET=utf8;""")
 
-def createStatisticsTable(cursor):
-    """ Creates a simple table for storing query statistics for selected types of requests """
-    cursor.execute('''
+def create_statistics_table(cursor):
+    """Creates a table to keep query statistics
+    
+    Creates a simple table for storing query statistics for selected types of 
+    requests
+    """
+    cursor.execute("""
     CREATE TABLE `statistics` (
       `id`          INT unsigned NOT NULL auto_increment,
       `timestamp`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `action`      VARCHAR(32)  NOT NULL,
        PRIMARY KEY (`id`)
-    ) DEFAULT CHARSET=utf8;''')
+    ) DEFAULT CHARSET=utf8;""")
     
 
-def enableDataSource(cursor, sourceId):
-    """ Marks a single datasource as enabled to signal that there is data for that source """
+def enable_datasource(cursor, sourceId):
+    """Enables datasource
+    
+    Marks a single datasource as enabled to signal that there is data for that
+    source 
+    """
     cursor.execute("UPDATE datasources SET enabled=1 WHERE id=%d;" % sourceId)
     
-def updateImageTableIndex(cursor):
-    """ Updates index on images table """
+def update_image_table_index(cursor):
+    """Updates index on images table"""
     cursor.execute("OPTIMIZE TABLE images;")
 
-def getDataSources(cursor):
-    ''' Returns a list of the known datasources '''
+def get_datasources(cursor):
+    """Returns a list of the known datasources"""
     __SOURCE_ID_IDX__ = 0
-    __ENABLED_IDX__   = 1
-    __OBS_NAME_IDX__  = 2
+    __ENABLED_IDX__ = 1
+    __OBS_NAME_IDX__ = 2
     __INST_NAME_IDX__ = 3
-    __DET_NAME_IDX__  = 4
+    __DET_NAME_IDX__ = 4
     __MEAS_NAME_IDX__ = 5
     
     sql = \
-    ''' SELECT
+    """ SELECT
             datasources.id as id,
             datasources.enabled as enabled,
             observatories.name as observatory,
@@ -263,10 +405,14 @@ def getDataSources(cursor):
             detectors.name as detector,
             measurements.name as measurement
         FROM datasources
-            LEFT JOIN observatories ON datasources.observatoryId = observatories.id 
-            LEFT JOIN instruments ON datasources.instrumentId = instruments.id 
-            LEFT JOIN detectors ON datasources.detectorId = detectors.id 
-            LEFT JOIN measurements ON datasources.measurementId = measurements.id;'''
+            LEFT JOIN observatories
+            ON datasources.observatoryId=observatories.id 
+            LEFT JOIN instruments
+            ON datasources.instrumentId=instruments.id 
+            LEFT JOIN detectors
+            ON datasources.detectorId=detectors.id 
+            LEFT JOIN measurements
+            ON datasources.measurementId=measurements.id;"""
 
     # Fetch available data-sources
     cursor.execute(sql)
@@ -277,11 +423,11 @@ def getDataSources(cursor):
     
     for source in results:
         # Image parameters
-        obs     = source[__OBS_NAME_IDX__]
-        inst    = source[__INST_NAME_IDX__]
-        det     = source[__DET_NAME_IDX__]
-        meas    = source[__MEAS_NAME_IDX__]
-        id      = int(source[__SOURCE_ID_IDX__])
+        obs = source[__OBS_NAME_IDX__]
+        inst = source[__INST_NAME_IDX__]
+        det = source[__DET_NAME_IDX__]
+        meas = source[__MEAS_NAME_IDX__]
+        id = int(source[__SOURCE_ID_IDX__])
         enabled = bool(source[__ENABLED_IDX__])
         
         # Build tree

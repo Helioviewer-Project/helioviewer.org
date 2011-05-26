@@ -12,7 +12,7 @@ To request a new feature or to report a bug, visit
 For the most up-to-date documentation on Helioviewer.org and related efforts,
 see the official wiki at
   
-    http://helioviewer.org/wiki/
+    http://wiki.helioviewer.org/wiki/
 
 ======================================================================
 
@@ -38,7 +38,7 @@ following software:
 INSTALLATION:
 
 Instructions for installing Helioviewer.org are available online at
-http://helioviewer.org/wiki/index.php?title=Installing_Helioviewer.org
+http://wiki.helioviewer.org/wiki/index.php?title=Installing_Helioviewer.org
 
 LICENSE:
 

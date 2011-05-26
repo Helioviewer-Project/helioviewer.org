@@ -65,160 +65,174 @@ class Module_Movies implements Module
     public function buildMovie ()
     {
         include_once 'src/Movie/HelioviewerMovie.php';
-        include_once 'src/Helper/HelioviewerLayers.php';
-        include_once 'src/Helper/RegionOfInterest.php';
-                
-        // Data Layers
-        $layers = new Helper_HelioviewerLayers($this->_params['layers']);
-        
-        //Make sure number of layers is between one and three
-        if ($layers->length() == 0 || $layers->length() > 3) {
-            throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
-        }
-        
-        // Regon of interest
-        $roi = new Helper_RegionOfInterest(
-            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
-            $this->_params['imageScale']
-        );
         
         // Process request
-        $movie = new Movie_HelioviewerMovie(
-            $layers, $this->_params['startTime'], $this->_params['endTime'], $roi, $this->_options
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
+        
+        // Build the movie
+        $movie->build();
+    }
+
+    /**
+     * Checks to see if the requested movie is available and if so returns
+     * it as a file-attachment
+     * 
+     * @return file Requested movie
+     */
+    public function downloadMovie ()
+    {
+        include_once 'src/Movie/HelioviewerMovie.php';
+        
+        // Load movie
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], 
+                                            $this->_params['format']);
+                                  
+        // Default options
+        $defaults = array(
+            "hq" => false
         );
+        $options = array_replace($defaults, $this->_options);
         
-        // Update usage stats
-        if (HV_ENABLE_STATISTICS_COLLECTION) {
-            include_once 'src/Database/Statistics.php';
-            $statistics = new Database_Statistics();
-            $statistics->log("buildMovie");
-        }
         
-        // If display=true is set, play the move directly         
-        if (isset($this->_options['display']) && $this->_options['display']) {
-            echo $movie->getMoviePlayerHTML();
+        // If the movie is finished return the file as an attachment
+        if ($movie->status == "FINISHED") {
+            // Get filepath
+            $filepath = $movie->getFilepath($options['hq']);
+            $filename = basename($filepath);
+            
+            // Set HTTP headers
+            header("Pragma: public");
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: private", false);
+            header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
+            header("Content-Transfer-Encoding: binary");
+            header("Content-Length: " . filesize($filepath));
+            header("Content-type: video/" . $this->_params['format']);
+            
+            // Return movie data
+            echo file_get_contents($filepath);
+            
+        // Otherwise return an error
         } else {
-            $urls = $this->_getVideoURLs($movie);
-            
-            // Verbose response
-            if (isset($this->_options['verbose']) && $this->_options['verbose']) {
-                $response = array(
-                    "duration"  => $movie->getDuration(),
-                    "frameRate" => $movie->getFrameRate(),
-                    "numFrames" => $movie->getNumFrames(),
-                    "url"       => $urls
-                );                
-            } else {
-                // Simple response
-                $response = array("url" => $urls);
-            }
-            
-            // Print result
             header('Content-type: application/json');
+            $response = array(
+                "error" => "The movie you requested is either being processed
+                            or does not exist."
+            );
             print json_encode($response);
         }
     }
     
     /**
-     * Returns either a single URL or an array of URLs for the requested video
-     * 
-     * @param object &$movie A HelioviewerMovie instance
-     * 
-     * @return mixed One or more URLs for movies relating to the request
-     */
-    private function _getVideoURLs (&$movie)
-    {
-        $baseURL = $movie->getURL();
-        
-        // If a specific format was requested, return a link for that video
-        if (isset($this->_options['format'])) {
-            return "$baseURL.{$this->_options['format']}";    
-        } else {
-            // Otherwise return URLs for each of the video types generated
-            $urls = array();
-            foreach (array("mp4", "flv") as $supportedFormat) {
-                array_push($urls, "$baseURL.$supportedFormat");
-            }
-            return $urls;
-        }
-    }
-
-    /**
-     * Queues a movie in Helioqueuer
+     * Checks to see if a movie is available and returns either a link to the movie if it is ready or progress
+     * information otherwise
      * 
      * @return void
      */
-    public function queueMovie()
+    public function getMovieStatus ()
     {
-        print "Not yet implemented in Dynamo: send request to Helioqueuer instead.";
+        include_once 'src/Movie/HelioviewerMovie.php';
+        
+        // Process request
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
+        
+        header('Content-type: application/json');
+        
+        // If the movie is finished return movie info
+        if ($movie->status == "FINISHED") {            
+            $response = $movie->getCompletedMovieInformation();
+        } else if ($movie->status == "ERROR") {
+            $response = array(
+                "error" => "Sorry, we are unable to create your movie at this time. Please try again later."
+            );
+        } else {
+            // Otherwise have the client try again in 15s
+            // TODO 2011/04/25: Once HQ has been ported to PHP, eta should be estimated
+            // instead of returning a static eta each time.
+            $response = array(
+                "status" => $movie->status,
+                "eta"    => 15
+            );
+        }
+        
+        print json_encode($response);
     }
     
     /**
      * Uploads a user-created video to YouTube
+     * 
+     * TODO 2011/05/09: Make sure movie hasn't already been uploaded
      */
     public function uploadMovieToYouTube ()
     {
-        include_once 'src/Movie/YouTubeUploader.php';
-
-        // Make sure it exists
-        if (!file_exists(HV_CACHE_DIR . "/movies/" . $this->_params['file'])) {
+        include_once 'src/Movie/HelioviewerMovie.php';
+        include_once 'src/Movie/YouTube.php';
+        
+        // Process request
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], "mp4");
+        
+        if ($movie->status !== "FINISHED") {
             throw new Exception("Invalid movie requested");
         }
+        
+        $file = $movie->getFilepath(true);
 
-        $youtube = new Movie_YouTubeUploader();
-        $youtube->uploadVideo($this->_params['file'], $this->_options);
+        $youtube = new Movie_YouTube();
+        $youtube->uploadVideo($this->_params['id'], $file, $this->_options);
     }
     
     /**
      * Checks to see if Helioviewer.org is authorized to upload videos for a user
      */
     public function checkYouTubeAuth () {
-        include_once 'src/Movie/YouTubeUploader.php';
+        include_once 'src/Movie/YouTube.php';
         
-        $youtube = new Movie_YouTubeUploader();
+        $youtube = new Movie_YouTube();
 
         header('Content-type: application/json');
         print json_encode($youtube->checkYouTubeAuth());
     }
     
     /**
-     * Retrieves recent user-submitted videos form YouTube and displays either an XML feed or HTML
-     * 
-     * TODO: 2011/01/07: Move to a separate class
+     * Retrieves recent user-submitted videos from YouTube and returns the
+     * result as a JSON array.
      */
     public function getUserVideos() {
-        require_once 'Zend/Loader.php';
-        Zend_Loader::loadClass('Zend_Gdata_YouTube');
+        include_once 'src/Database/MovieDatabase.php';
+        include_once 'src/Movie/HelioviewerMovie.php';
+        include_once 'lib/alphaID/alphaID.php';
         
-        $yt = new Zend_Gdata_YouTube(null, null, null, HV_YOUTUBE_DEVELOPER_KEY);
-        $yt->setMajorProtocolVersion(2);
-        
+        $movies = new Database_MovieDatabase();
+
         // Default options
         $defaults = array(
             "pageSize" => 10,
             "pageNum"  => 1
         );
-        
         $options = array_replace($defaults, $this->_options);
 
-        // Current page
-        $startIndex = 1 + ($options['pageSize'] * ($options['pageNum'] - 1));
-
         $pageSize = $options['pageSize'];
-        
-        // URL to query
-        $url = 'http://gdata.youtube.com/feeds/api/videos/-/%7Bhttp%3A%2F%2Fgdata.youtube.com' .
-               '%2Fschemas%2F2007%2Fdevelopertags.cat%7D' . "Helioviewer.org?orderby=published&start-index=$startIndex&max-results=$pageSize&safeSearch=strict";
-        
-        // Collect videos from the feed
+        $pageNum  = $options['pageNum'];
+                
+         // Current page
+        $startIndex = $pageSize * ($pageNum - 1);
+
+        // PGet a list of recent videos
         $videos = array();
         
-        // Process video entries
-        foreach($yt->getVideoFeed($url) as $videoEntry) {
-            $id = $videoEntry->getVideoId();
-
+        foreach($movies->getSharedVideos($startIndex, $pageSize) as $video) {
+            $youtubeId = $video['youtubeId'];
+            $movieId   = $video['movieId'];
+             
+            // Convert id
+            $movieId = alphaID($video['movieId'], true, 5, HV_MOVIE_ID_PASS);
+            
+            // Load movie
+            $movie = new Movie_HelioviewerMovie($movieId);
+            
             // Check to make sure video was not removed by the user
-            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$id?v=2");
+            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$youtubeId?v=2");
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
             
             $response = curl_exec($handle);
@@ -229,120 +243,91 @@ class Module_Movies implements Module
             // Only add videos with response code 200
             if ($httpCode == 200) {
                 array_push($videos, array(
-                    "id"      => $id,
-                    "watch"   => $videoEntry->getVideoWatchPageUrl(),
-                    "flash"   => $videoEntry->getFlashPlayerUrl(),
-                    "thumbnails" => $videoEntry->getVideoThumbnails(),
-                    "published"  => $videoEntry->getPublished()->getText()
+                    "id"  => $movieId,
+                    "url" => "http://www.youtube.com/watch?v=$youtubeId&feature=youtube_gdata_player",
+                    "thumbnails" => $movie->getPreviewImages(),
+                    "published"  => $video['timestamp']
                 ));
             }
         }
+
         header('Content-type: application/json');
         echo json_encode($videos);        
     }
 
     /**
-     * Gets the movie url and loads it into Kaltura
-     * 
-     * TODO: 12/07/2010:
-     *  Include video duration (send via client, or write to file in video directory. eventually will go in db).
-     *  Use id instead of filepath? (will still need to treat id as a filepath when validating)
+     * Generates HTML for a video player with the specified movie loaded
+     *
+     * 2011/05/25
+     * Using direct links to movies to enable support for byte range requests
+     * and provide a better movie experience in Chromium.
+     *  
+     * See: https://groups.google.com/a/webmproject.org/group/webm-discuss
+     * /browse_thread/thread/061f3ffa200d26a9/1ce5f06c76c9cb2d#1ce5f06c76c9cb2d
      *
      * @return void
      */
     public function playMovie ()
     {
-        $fullpath = HV_CACHE_DIR . "/movies/" . $this->_params['file'];
+        include_once 'src/Movie/HelioviewerMovie.php';
+        
+        // Load movie
+        $movie = new Movie_HelioviewerMovie($this->_params['id'], 
+                                            $this->_params['format']);
+                                  
+        // Default options
+        $defaults = array(
+            "hq"     => false,
+            "width"  => $movie->width,
+            "height" => $movie->height
+        );
+        $options = array_replace($defaults, $this->_options);
 
-        // Make sure it exists
-        if (!file_exists($fullpath)) {
-            throw new Exception("Invalid movie requested");
+        // Return an error if movie is not available
+        if ($movie->status != "FINISHED") {
+            header('Content-type: application/json');
+            $response = array(
+                "error" => "The movie you requested is either being processed
+                            or does not exist."
+            );
+            print json_encode($response);
+            return;
         }
-        
-        // Relative path to video
-        $relpath  = substr(str_replace(HV_ROOT_DIR, "..", $fullpath), 0, -4);
 
-        // Get video dimensions
-        list($width, $height) = $this->_getVideoDimensions($fullpath);
-        
-        // Use specified dimensions if set (Simplifies fitting in Helioviewer.org)
-        if (isset($this->_options['width'])) {
-            $width = $this->_options['width'];
-        }
-        if (isset($this->_options['height'])) {
-            $height = $this->_options['height'];
-        }
-        
-        $css = "width: {$width}px; height: {$height}px;";
-        
-        $durationHint = isset($this->_options['duration']) ? "durationHint=\"{$this->_options['duration']}\"" : "";
-        
-        // For MC Media Player
-        $url = HV_CACHE_URL . "/movies/" . $this->_params['file'];
+        $dimensions = sprintf("width: %dpx; height: %dpx;",
+            $options['width'], $options['height']);
 
+        // Get filepath
+        $filepath = $movie->getFilepath($options['hq']);
+        $filename = basename($filepath);  
+        
+        // Movie URL
+        $url = ".." . str_replace(HV_ROOT_DIR, "", $filepath);
         ?>
-        <!DOCTYPE html> 
-        <html> 
-        <head> 
-            <title>Helioviewer.org - <?php echo $this->_params['file']?></title>            
-            <!--<script type="text/javascript" src="http://html5.kaltura.org/js"></script> 
-            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" type="text/javascript"></script>-->
-        </head> 
-        <body>
-        
-        <!-- 2010/12/21 Going back to MC Media player for now for better full screen experience -->
-        <!-- MC Media Player -->
-        <div style="text-align: center;">
-            <script type="text/javascript">
-                playerFile = "http://www.mcmediaplayer.com/public/mcmp_0.8.swf";
-                fpFileURL = "<?php print $url?>";
-                fpButtonSize = "48x48";
-                fpAction = "play";
-                cpHidePanel = "mouseout";
-                cpHideDelay = "1";
-                defaultEndAction = "repeat";
-                playerSize = "<?php print $width . 'x' . $height?>";
-            </script>
-            <script type="text/javascript" src="http://www.mcmediaplayer.com/public/mcmp_0.8.js"></script>
-        </div>
-        <br>
-        <!--
-        <div style="text-align: center;">
-            <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>">
-                <video style="margin-left: auto; margin-right: auto; <?php echo $css;?>" <?php echo "poster=\"$relpath.png\" $durationHint"?>>
-                    <source src="<?php echo "$relpath.mp4"?>" /> 
-                    <source src="<?php echo "$relpath.flv"?>" /> 
-                </video>
-            </div>
-        </div>-->
-        </body> 
-        </html> 
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <title>Helioviewer.org - <?php echo $filename?></title>
+    <script src="../lib/flowplayer/flowplayer-3.2.6.js"></script>            
+</head> 
+<body>
+    <!-- Movie player -->
+    <div href="<?php echo urlencode($url);?>" 
+       style="display:block; <?php print $dimensions;?>"
+       id="movie-player">
+    </div>
+    <br>
+    <script language="javascript">
+        flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.7.swf", {
+            clip: {
+                autoBuffering: true,
+                scaling: "fit"
+            }
+        });
+    </script>
+</body> 
+</html> 
         <?php
-    }
-    
-    /**
-     * Determines the height and width for a given video
-     * 
-     * @param string $file Video filepath
-     * 
-     * @return array The width and height corresponding with the specified video
-     */
-    private function _getVideoDimensions($file)
-    {
-        $imageDimensions = getimagesize(substr($file, 0, -3) . "png");
-        
-        $width  = $imageDimensions[0];
-        $height = $imageDimensions[1];
-        
-        // Videos dimensions are multiples of two
-        if ($width % 2 === 1) {
-            $width += 1;
-        }
-        if ($height % 2 === 1) {
-            $height += 1;
-        }
-        
-        return array($width, $height);
     }
     
     /**
@@ -356,41 +341,49 @@ class Module_Movies implements Module
         {
         case "buildMovie":
             $expected = array(
-                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'filename', 'format', 'frameRate', 'ipod', 
-                                    'numFrames', 'uuid', 'verbose', 'watermarkOn'),
-                "bools"    => array('display', 'ipod', 'verbose', 'watermarkOn'),
-                "dates"    => array('startTime', 'endTime'),
-                "files"    => array('filename'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('frameRate', 'numFrames'),
-                "uuids"    => array('uuid')
+                "required" => array('id', 'format'),
+                "alphanum" => array('id', 'format')
+            );
+            break;
+        case "downloadMovie":
+            $expected = array(
+                "required" => array('id', 'format'),
+                "optional" => array('hq'),
+                "alphanum" => array('id', 'format'),
+                "bools"    => array('hq')
+            );
+            break;
+        case "getMovieStatus":
+            $expected = array(
+                "required" => array('id', 'format'),
+                "alphanum" => array('id', 'format')
             );
             break;
         case "playMovie":
             $expected = array(
-                "required" => array('file'),
-                "optional" => array('duration', 'width', 'height'),
-                "files"    => array('file'),
-                "floats"   => array('duration'),
+                "required" => array('id', 'format'),
+                "optional" => array('hq', 'width', 'height'),
+                "alphanum" => array('id', 'format'),
+                "bools"    => array('hq'),
                 "ints"     => array('width', 'height')
             );
             break;
         case "queueMovie":
             $expected = array(
-               "required" => array('layers', 'startTime', 'endTime', 'imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "optional" => array('display', 'filename', 'format', 'frameRate', 'ipod', 
-                                   'numFrames', 'uuid', 'watermarkOn'),
-               "dates"    => array('startTime', 'endTime'),
-               "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-               "ints"     => array('frameRate', 'numFrames')
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2', 'format'),
+                "optional" => array('frameRate', 'maxFrames', 'watermark'),
+                "alphanum" => array('format'),
+                "bools"    => array('watermark'),
+                "dates"    => array('startTime', 'endTime'),
+                "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
+                "ints"     => array('maxFrames')
             );
             break;
         case "uploadMovieToYouTube":
             $expected = array(
-                "required" => array('file'),
+                "required" => array('id'),
                 "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready', 'dialogMode'),
-                "files"    => array('file'),
+                "alphanum" => array('id'),
                 "bools"    => array('share', 'ready', 'dialogMode')
             
             );
@@ -427,7 +420,7 @@ class Module_Movies implements Module
             <li>
                 <a href="index.php#MovieAPI">Movie API</a>
                 <ul>
-                    <li><a href="index.php#buildMovie">Creating a Movie</a></li>
+                    <li><a href="index.php#queueMovie">Creating a Movie</a></li>
                 </ul>
             </li>
         <?php
@@ -448,7 +441,7 @@ class Module_Movies implements Module
             <ol style="list-style-type: upper-latin;">
                 <!-- Movie -->
                 <li>
-                <div id="buildMovie">Movie API
+                <div id="queueMovie">Movie API
                 <p>Returns filepaths to a flash video and a high quality video consisting of 10-100 movie frames. The movie frames are chosen by matching the closest image
                 available at each step within the specified range of dates, and are automatically generated using the Screenshot API calls.</p>
         
@@ -458,7 +451,7 @@ class Module_Movies implements Module
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
         
-                <?php echo HV_API_ROOT_URL;?>?action=buildMovie<br />
+                <?php echo HV_API_ROOT_URL;?>?action=queueMovie<br />
                 <br />
         
                 Supported Parameters:<br />
@@ -520,20 +513,14 @@ class Module_Movies implements Module
                         <tr>
                             <td><b>numFrames</b></td>
                             <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> If you want a specific number of frames rather than the optimal number, you can specify 
-                                    the number of frames you would like to include in the movie. You may have between 10 and 120 frames. If
-                                    numFrames is not specified, the optimal cadence and number of frames will be calculated for you.</td>
+                            <td><i>[Optional]</i> The maximum number of frames that will be used during movie creation. 
+                                    You may have between 10 and 300 frames. The default value is 300.
+                            </td>
                         </tr>
                         <tr>
                             <td><b>frameRate</b></td>
                             <td><i>Integer</i></td>
                             <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
-                        </tr>
-                        <tr>
-                            <td><b>filename</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> The desired filename (without the "." extension) of the output image. If no filename is specified,
-                                the filename defaults to a combination of the date, layer names, and image scale.</td>
                         </tr>
                         <tr>
                             <td><b>display</b></td>
@@ -542,9 +529,9 @@ class Module_Movies implements Module
                                 filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
                         </tr>
                         <tr>
-                            <td><b>watermarkOn</b></td>
+                            <td><b>watermark</b></td>
                             <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the images will not be watermarked, 
+                            <td><i>[Optional]</i> Enables turning watermarking on or off. If watermark is set to false, the images will not be watermarked, 
                                 which will speed up movie generation time but you will have no timestamps on the movie. If left blank, it defaults to true 
                                 and images will be watermarked.</td>
                         </tr>
@@ -555,21 +542,23 @@ class Module_Movies implements Module
                 
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                    <?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=21.04&layers=[SOHO,EIT,EIT,304,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span><br />
+                <!--
                 <span class="example-url">
                 <i>iPod Video:</i><br /><br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false">
-                    <?php echo HV_API_ROOT_URL;?>?action=buildMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermarkOn=false
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-02T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false">
+                    <?php echo HV_API_ROOT_URL;?>?action=queueMovie&startTime=2010-03-01T12:12:12Z&endTime=2010-03-04T12:12:12Z&imageScale=8.416&layers=[1,1,100]&x1=-1347&y1=-1347&x2=1347&y2=1347&display=false&watermark=false
                 </a>
                 </span>
+                 -->
                 </div>
             </div>
         

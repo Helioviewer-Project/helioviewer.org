@@ -35,8 +35,6 @@ var UserSettings = Class.extend(
         
         // Process URL parameters
         this._processURLSettings(urlSettings);
-        
-        this._setupEventHandlers();
     },
     
     /**
@@ -47,7 +45,16 @@ var UserSettings = Class.extend(
      * @returns {Object} The value of the desired setting
      */
     get: function (key) {
-        return this.settings[key];
+        var lookup = key.split(".");
+        
+        // Nesting depth is limited to three levels
+        if (lookup.length === 1) {
+            return this.settings[key];                
+        } else if (lookup.length === 2) {
+            return this.settings[lookup[0]][lookup[1]];
+        }
+        
+        return this.settings[lookup[0]][lookup[1]][lookup[2]];
     },
 
     /**
@@ -64,7 +71,15 @@ var UserSettings = Class.extend(
         }
         
         // Update settings
-        this.settings[key] = value;
+        var lookup = key.split(".");
+        
+        if (lookup.length === 1) {
+            this.settings[key] = value;                
+        } else if (lookup.length === 2) {
+            this.settings[lookup[0]][lookup[1]] = value;
+        } else {
+            this.settings[lookup[0]][lookup[1]][lookup[2]] = value;
+        }
 
         // localStorage
         if ($.support.localStorage) {
@@ -78,30 +93,14 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * Checks all stored settings to make sure that they are compatible with version of Helioviewer loaded
+     * Removes all existing settings
      */
-    _checkSettings: function () {
-        var self = this;
-
-        // Check each of the expected settings
-        $.each(this._defaults, function (key, value) {
-            
-            // If no value is set, use default
-            if (typeof self.settings[key] === "undefined") {
-                self.set(key, value);
-            } else {
-                // Otherwise make sure existing value is compatible
-                try {
-                    self._validate(key, self.settings[key]);
-                } catch (e) {
-                    // Use default values for any settings that don't have the proper structure
-                    self.set(key, value);
-                }                
-            }
-        });
-        
-        // Update version number
-        this.set("version", this._defaults['version']);
+    _empty: function () {
+        if ($.support.localStorage) {
+            localStorage.removeItem("settings");
+        } else {
+            $.cookieJar("empty");
+        }
     },
     
     /**
@@ -110,8 +109,6 @@ var UserSettings = Class.extend(
      * @returns {Boolean} Returns true if stored Helioviewer.org settings are detected
      */
     _exists: function () {
-        //return ($.support.localStorage ? (localStorage.getItem("settings") !== null) 
-        // : (this.cookies.getKeys().length > 0));
         return ($.support.localStorage ? (localStorage.getItem("settings") !== null) 
                 : (this.cookies.toString().length > 2));
     },
@@ -132,15 +129,10 @@ var UserSettings = Class.extend(
         else {
             this._loadSavedSettings();
         }
-            
-        // If version is out of date, reset settings
-        // TODO 09/02/2010:
-        // Instead of reseting user settings whenever the version is different, do a check on each
-        // item to make sure its valid, reset those items which are invalid, and then update the 
-        // stored version number.
+
+        // If version is out of date, load defaults
         if (this.get('version') < this._defaults.version) {
-            //this._loadDefaults();
-            this._checkSettings();
+            this._loadDefaults();
         }
     },
     
@@ -148,8 +140,9 @@ var UserSettings = Class.extend(
      * Loads defaults user settings
      */
     _loadDefaults: function () {
+        this._empty();
+
         if ($.support.localStorage) {
-            localStorage.clear();
             localStorage.setItem("settings", $.toJSON(this._defaults));
         }
         else {
@@ -203,17 +196,6 @@ var UserSettings = Class.extend(
     },
     
     /**
-     * Sets up event-handlers
-     */
-    _setupEventHandlers: function () {
-        var self = this;
-        
-        $(document).bind("save-setting", function (event, key, value) {
-            self.set(key, value);
-        });
-    },
-    
-    /**
      * Validates a setting (Currently checks observation date and image scale)
      * 
      * @param {String} setting The setting to be validated
@@ -225,29 +207,29 @@ var UserSettings = Class.extend(
         var self = this;
         
         switch (setting) {
-        case "date":
+        case "state.date":
             this._validator.checkTimestamp(value);
             break;
-        case "imageScale":
+        case "state.imageScale":
             this._validator.checkFloat(value, {
                 "min": this._constraints.minImageScale,
                 "max": this._constraints.maxImageScale
             });
             break;
-        case "movie-history":
+        case "history.movies":
             $.each(value, function (i, movie) {
-                self._validator.checkTimestamp(movie["dateRequested"]);
+                self._validator.checkDateString(movie["dateRequested"]);
             });
             break;
-        case "movieLength":
+        case "history.screenshots":
+            $.each(value, function (i, screenshot) {
+                self._validator.checkDateString(screenshot["dateRequested"]);
+            });
+            break;
+        case "defaults.movies.duration":
             this._validator.checkInt(value, {
                 "min": this._constraints.minMovieLength,
                 "max": this._constraints.maxMovieLength
-            });
-            break;
-        case "screenshot-history":
-            $.each(value, function (i, screenshot) {
-                self._validator.checkTimestamp(screenshot["dateRequested"]);
             });
             break;
         default:

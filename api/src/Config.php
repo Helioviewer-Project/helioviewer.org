@@ -70,8 +70,8 @@ class Config
 
         $this->_setAdditionalParams();
         
-        $dbconfig = substr($file, 0, strripos($file, "/")) . "/Database.php";
-        include_once $dbconfig;
+        $keys = substr($file, 0, strripos($file, "/")) . "/Private.php";
+        include_once $keys;
     }
 
     /**
@@ -108,6 +108,9 @@ class Config
         define("HV_API_ROOT_URL", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
         define("HV_CACHE_DIR", HV_ROOT_DIR . "/cache");
         define("HV_CACHE_URL", HV_WEB_ROOT_URL . "/cache");
+        
+        define("HV_CONSTANT_AU", 149597870700); // 1 au in meters (http://maia.usno.navy.mil/NSFA/IAU2009_consts.html)
+        define("HV_CONSTANT_RSUN", 959.644); // Solar radius in arc-seconds at 1 au
         
         // Image compression settings (See http://www.imagemagick.org/script/command-line-options.php#quality)
         define("PNG_LOW_COMPRESSION",  10);  // Faster, large files

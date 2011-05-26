@@ -13,7 +13,7 @@
 
 		<!-- Concatenate in two-steps to preserve include order -->
 		<concat destfile="build/helioviewer.js" encoding="UTF-8" eol="lf">
-			<fileset dir="src/" includes="Utility/Config.js, Tiling/Layer/Layer.js, Tiling/Layer/TileLayer.js, Tiling/Manager/LayerManager.js, Tiling/Manager/TileLayerManager.js, Viewport/Viewport.js, Viewport/Helper/MouseCoordinates.js, UIController.js" />
+			<fileset dir="src/" includes="Utility/Config.js, Tiling/Layer/Layer.js, Tiling/Layer/TileLayer.js, Tiling/Manager/LayerManager.js, Tiling/Manager/TileLayerManager.js, Viewport/Viewport.js, Viewport/Helper/MouseCoordinates.js" />
 			<fileset dir="src/" includes="**/*.js" excludes="Config.js, Layer.js, LayerManager.js" />
 		</concat>
 

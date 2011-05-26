@@ -91,7 +91,9 @@ class Image_SubFieldImage
         // Convert region of interest from arc-seconds to pixels
         $this->imageSubRegion = $roi->getImageSubRegion($jp2Width, $jp2Height, $jp2Scale, $offsetX, $offsetY);
         
+        // Desired image scale (normalized to 1au)
         $this->desiredScale    = $roi->imageScale();
+        
         $this->desiredToActual = $this->desiredScale / $jp2->getScale();
         $this->scaleFactor     = log($this->desiredToActual, 2);
         $this->reduce          = max(0, floor($this->scaleFactor));
@@ -107,17 +109,6 @@ class Image_SubFieldImage
         
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
-    }
-    
-    /**
-     * Called by classes that may not have direct access to protected function buildImage.
-     * Change buildImage to buildImageNoImagick() to use command-line calls instead of imagick.
-     * 
-     * @return void
-     */
-    public function build() 
-    {
-        $this->buildImage();
     }
 
     /**
@@ -199,39 +190,6 @@ class Image_SubFieldImage
     }
     
     /**
-     * Figures out where the extracted image lies inside the final image
-     * if the final image is larger.
-     * 
-     * @param Array $roi   The region of interest in arcseconds of the final image.
-     * 
-     * @return array with padding
-     */
-    public function computePadding()
-    {
-        $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
-        $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
-        
-        $leftToCenter = ($this->imageSubRegion['left'] - $centerX);
-        $topToCenter  = ($this->imageSubRegion['top']  - $centerY);
-        $scaleFactor  = $this->jp2->getScale() / $this->desiredScale;
-        $relLeftToCenter = $leftToCenter * $scaleFactor;
-        $relTopToCenter  = $topToCenter  * $scaleFactor;
-
-        $left = ($this->roi->left() / $this->desiredScale) - $relLeftToCenter;
-        $top  = ($this->roi->top()  / $this->desiredScale) - $relTopToCenter;
-
-        // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
-        // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
-        return array(
-           "gravity" => "northwest",
-           "width"   => round($this->roi->getPixelWidth()),
-           "height"  => round($this->roi->getPixelHeight()),
-           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
-           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
-        );
-    }
-    
-    /**
      * Builds the requested subfield image.
      *
      * Normalizing request & native image scales:
@@ -254,21 +212,20 @@ class Image_SubFieldImage
      *     
      *          The subfield requested is at a higher image scale (LOWER quality) than the source JP2.
      *         
-     * @TODO: Normalize quality scale.
-     * 
+     * @TODO: Normalize quality scale. 
      * @TODO: Create a cleanup array with names of files to be wiped after processing is complete?
      * @TODO: Move generation of intermediate file to separate method
      *
      * @return void
      */
-    protected function buildImage()
+    protected function build()
     {
         try {
             $input = substr($this->outputFile, 0, -3) . "pgm";
-
+            
             // Extract region (PGM)
             $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
-
+			
             // Convert to GD-readable format
             $grayscale = new IMagick($input);
             $grayscale->setImageFormat('PNG');
@@ -277,7 +234,7 @@ class Image_SubFieldImage
             $grayscale->setImageCompressionQuality(10); // Fastest PNG compression setting
             
             $grayscaleString = $grayscale->getimageblob();
-
+			
             // Assume that no color table is needed
             $coloredImage = $grayscale;
             
@@ -287,14 +244,14 @@ class Image_SubFieldImage
             
                 $coloredImage = new IMagick();        
                 $coloredImage->readimageblob($coloredImageString);
-            }            
+            }    
             
             // Set alpha channel for images with transparent components
             $this->setAlphaChannel($coloredImage);
             
             // Apply compression and interlacing
             $this->compressImage($coloredImage);
-            
+			
             // Resize extracted image to correct size before padding.
             $rescaleBlurFactor =  0.6;
             
@@ -303,12 +260,19 @@ class Image_SubFieldImage
                 $this->imageOptions['rescale'], $rescaleBlurFactor
             );
             $coloredImage->setImageBackgroundColor('transparent');
-            
+
             // Places the current image on a larger field of black if the final image is larger than this one
             $coloredImage->extentImage(
                 $this->padding['width'], $this->padding['height'],
                 -$this->padding['offsetX'], -$this->padding['offsetY']
             );
+			
+			// 2011-05-10: On Arch (newer version of PHP/IM) below is needed to
+			// properly extend the image
+            // $coloredImage->extentImage(
+                // $this->padding['width'], $this->padding['height'],
+                // $this->padding['offsetX'], $this->padding['offsetY']
+            // );
             
             /* 
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors 
@@ -331,7 +295,6 @@ class Image_SubFieldImage
         }
     }
     
-
     /**
      * Sets compression for images that are not ImageLayers
      * 
@@ -376,8 +339,41 @@ class Image_SubFieldImage
     }
     
     /**
+     * Figures out where the extracted image lies inside the final image
+     * if the final image is larger.
+     * 
+     * @param Array $roi   The region of interest in arcseconds of the final image.
+     * 
+     * @return array with padding
+     */
+    public function computePadding()
+    {
+        $centerX = $this->jp2->getWidth()  / 2 + $this->offsetX;
+        $centerY = $this->jp2->getHeight() / 2 + $this->offsetY;
+        
+        $leftToCenter = ($this->imageSubRegion['left'] - $centerX);
+        $topToCenter  = ($this->imageSubRegion['top']  - $centerY);
+        $scaleFactor  = $this->jp2->getScale() / $this->desiredScale;
+        $relLeftToCenter = $leftToCenter * $scaleFactor;
+        $relTopToCenter  = $topToCenter  * $scaleFactor;
+
+        $left = ($this->roi->left() / $this->desiredScale) - $relLeftToCenter;
+        $top  = ($this->roi->top()  / $this->desiredScale) - $relTopToCenter;
+
+        // Rounding to prevent inprecision during later implicit integer casting (Imagick->extentImage)
+        // http://www.php.net/manual/en/language.types.float.php#warn.float-precision
+        return array(
+           "gravity" => "northwest",
+           "width"   => round($this->roi->getPixelWidth()),
+           "height"  => round($this->roi->getPixelHeight()),
+           "offsetX" => ($left < 0.001 && $left > -0.001)? 0 : round($left),
+           "offsetY" => ($top  < 0.001 && $top  > -0.001)? 0 : round($top)
+        );
+    }
+    
+    /**
      * Default behavior for images is to just set their opacity.
-     * LASCOImage.php has a applyAlphaMaskCmd that overrides this one and applies
+     * LASCOImage.php and CORImage.php have an applyAlphaMaskCmd that overrides this one and applies
      * an alpha mask and does some special commands for opacity
      * 
      * @param Object &$imagickImage IMagick Object

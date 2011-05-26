@@ -1,6 +1,6 @@
 <?php
 /**
- * Helioviewer Web Server (Dynamo)
+ * Helioviewer Web Server
  *
  * PHP version 5
  *
@@ -15,15 +15,13 @@
  *  = Explain use of sourceId for faster querying.
  *
  * TODO 01/27/2010
- *  = Discuss with JHV team about using source ID's instead of string
- *    identifiers to speed up method calls.
  *  = Add method to WebClient to print config file (e.g. for stand-alone
  *    web-client install to connect with)
  *  = Add getPlugins method to JHelioviewer module (empty function for now)
  */
 require_once "src/Config.php";
 $config = new Config("../settings/Config.ini");
-
+date_default_timezone_set('UTC');
 register_shutdown_function('shutdownFunction');
 
 if (isset($_REQUEST['action'])) {
@@ -50,7 +48,7 @@ if (!(isset($params) && loadModule($params))) {
 function loadModule($params)
 {
     $valid_actions = array(
-        "downloadFile"         => "WebClient",
+        "downloadScreenshot"   => "WebClient",
         "getClosestImage"      => "WebClient",
         "getDataSources"       => "WebClient",
         "getJP2Header"         => "WebClient",
@@ -62,7 +60,8 @@ function loadModule($params)
         "getJPX"               => "JHelioviewer",
         "launchJHelioviewer"   => "JHelioviewer",
         "buildMovie"           => "Movies",
-        "getMovie"             => "Movies",
+        "downloadMovie"        => "Movies",
+        "getMovieStatus"       => "Movies",
         "playMovie"            => "Movies",
         "queueMovie"           => "Movies",
         "uploadMovieToYouTube" => "Movies",
@@ -74,7 +73,7 @@ function loadModule($params)
         "getMoviesForEvent"      => "SolarEvents"
     );
     
-    $helioqueuer_tasks = array ("queueMovie", "getMovie");
+    $helioqueuer_tasks = array ("queueMovie");
     
     include_once "src/Validation/InputValidator.php";
 
@@ -110,19 +109,7 @@ function loadModule($params)
             } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
                 $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
                 unset ($params['action']);
-                
-                // NOTE 08/26/2010: file_get_contents sometimes returns empty responses. switching to cURL 
-                
-                //$opts = array('http' =>
-                //    array(
-                //       'method'  => $_SERVER['REQUEST_METHOD'],
-                //        'header'  => 'Content-type: application/x-www-form-urlencoded',
-                //        'content' => http_build_query($params)
-                //    )
-                //);
-                
-                //$context  = stream_context_create($opts);
-                
+                                
                 // Set up handler to respond to warnings emitted by file_get_contents
                 function catchWarning($errno, $errstr, $errfile, $errline, array $errcontext) {
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
@@ -130,25 +117,22 @@ function loadModule($params)
                 set_error_handler('catchWarning');
                 
                 include_once 'src/Net/Proxy.php';
-                header('Content-type: application/json;charset=UTF-8');
                 $proxy = new Net_Proxy($url . "?");
                 
                 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-                    echo $proxy->post($params, true);    
+                    $response = $proxy->post($params, true);    
                 } else {
-                    echo $proxy->query($params, true);
+                    $response = $proxy->query($params, true);
                 }
                 
+                header('Content-type: application/json;charset=UTF-8');
                 
-                // Attempt to forward request to Helioqueuer
-                //try {
-                //    echo file_get_contents($url, false, $context);
-                //} catch (Exception $e) {
-                    // Helioqueuer inaccessable
-                //    if (preg_match("/Connection refused/", $e->getMessage())) {
-                //        handleError("Unable to access Helioqueuer. Is the server online?", true);
-                //    }                    
-                //}
+                // Make sure a response was recieved
+                if ($response) {
+                    echo $response;
+                } else {
+                    handleError("Helioqueuer is currently unresponsive");
+                }
                 
                 // Restore normal behavior for dealing with warnings
                 restore_error_handler();
@@ -163,6 +147,17 @@ function loadModule($params)
     
                 $module = new $className($params);
                 $module->execute();
+                
+                // Update usage stats
+                $actions_to_keep_stats_for = array("getClosestImage", 
+                    "buildMovie", "getTile", "takeScreenshot", "getJPX",
+                    "uploadMovieToYouTube");
+                
+                if (HV_ENABLE_STATISTICS_COLLECTION && in_array($params["action"], $actions_to_keep_stats_for)) {
+                    include_once 'src/Database/Statistics.php';
+                    $statistics = new Database_Statistics();
+                    $statistics->log($params["action"]);
+                }
             }
 
         }
@@ -273,7 +268,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2010-10-26 | <a href="mailto:webmaster@helioviewer.org">Questions?</a>
+    Last Updated: 2011-05-25 | <a href="mailto:contact@helioviewer.org">Questions?</a>
 </div>
 
 </body>
@@ -309,13 +304,26 @@ function printDocumentationAppendices()
                 <td><strong>Description:</strong></td>
             </tr>
             <tr>
+                <td>SDO</td>
+                <td>SDO (Solar Dynamics Observatory)</td>
+            </tr>
+            <tr>
                 <td>SOHO</td>
                 <td>SOHO (Solar and Heliospheric Observatory)</td>
             </tr>
             <tr>
+                <td>STEREO_A</td>
+                <td>STEREO_A (Solar Terrestrial Relations Observatory Ahead)</td>
+            </tr>
+            <tr>
+                <td>STEREO_B</td>
+                <td>STEREO_B (Solar Terrestrial Relations Observatory Behind)</td>
+            </tr>
+            <!--
+            <tr>
                 <td>TRACE</td>
                 <td>TRACE (Transition Region and Coronal Explorer)</td>
-            </tr>
+            </tr>-->
         </table>
 
         <br />
@@ -328,8 +336,16 @@ function printDocumentationAppendices()
                 <td><strong>Description:</strong></td>
             </tr>
             <tr>
+                <td>AIA</td>
+                <td>AIA (Atmospheric Imaging Assembly)</td>
+            </tr>
+            <tr>
                 <td>EIT</td>
                 <td>EIT (Extreme ultraviolet Imaging Telescope)</td>
+            </tr>
+            <tr>
+                <td>HMI</td>
+                <td>HMI (Helioseismic and Magnetic Imager)</td>
             </tr>
             <tr>
                 <td>LASCO</td>
@@ -340,9 +356,15 @@ function printDocumentationAppendices()
                 <td>MDI (The Michelson Doppler Imager)</td>
             </tr>
             <tr>
+                <td>SECCHI</td>
+                <td>SECCHI (Sun Earth Connection Coronal and Heliospheric Investigation)</td>
+            </tr>
+            <!--
+            <tr>
                 <td>TRACE</td>
                 <td>TRACE (Transition Region and Coronal Explorer)</td>
             </tr>
+             -->
         </table>
 
         <br />
@@ -355,6 +377,10 @@ function printDocumentationAppendices()
                 <td><strong>Description:</strong></td>
             </tr>
             <tr>
+                <td>AIA</td>
+                <td>AIA (Atmospheric Imaging Assembly)</td>
+            </tr>
+            <tr>
                 <td>C2</td>
                 <td>LASCO C2</td>
             </tr>
@@ -363,8 +389,24 @@ function printDocumentationAppendices()
                 <td>LASCO C3</td>
             </tr>
             <tr>
+                <td>COR1</td>
+                <td>Coronagraph 1</td>
+            </tr>
+            <tr>
+                <td>COR2</td>
+                <td>Coronagraph 2</td>
+            </tr>
+            <tr>
                 <td>EIT</td>
                 <td>EIT (Extreme ultraviolet Imaging Telescope)</td>
+            </tr>
+            <tr>
+                <td>EUVI</td>
+                <td>EUVI (Extreme ultraviolet Imager)</td>
+            </tr>
+            <tr>
+                <td>HMI</td>
+                <td>HMI (Helioseismic and Magnetic Imager)</td>
             </tr>
             <tr>
                 <td>MDI</td>
@@ -383,12 +425,28 @@ function printDocumentationAppendices()
                 <td><strong>Description:</strong></td>
             </tr>
             <tr>
+                <td>94</td>
+                <td>94 Ångström</td>
+            </tr>
+            <tr>
+                <td>131</td>
+                <td>131 Ångström</td>
+            </tr>
+            <tr>
                 <td>171</td>
                 <td>171 Ångström</td>
             </tr>
             <tr>
+                <td>193</td>
+                <td>193 Ångström</td>
+            </tr>
+            <tr>
                 <td>195</td>
                 <td>195 Ångström</td>
+            </tr>
+            <tr>
+                <td>211</td>
+                <td>211 Ångström</td>
             </tr>
             <tr>
                 <td>284</td>
@@ -397,6 +455,22 @@ function printDocumentationAppendices()
             <tr>
                 <td>304</td>
                 <td>304 Ångström</td>
+            </tr>
+            <tr>
+                <td>335</td>
+                <td>335 Ångström</td>
+            </tr>
+            <tr>
+                <td>1600</td>
+                <td>1600 Ångström</td>
+            </tr>
+            <tr>
+                <td>1700</td>
+                <td>1700 Ångström</td>
+            </tr>
+            <tr>
+                <td>4500</td>
+                <td>4500 Ångström</td>
             </tr>
             <tr>
                 <td>white-light</td>
@@ -692,6 +766,4 @@ function shutDownFunction() {
         handleError(sprintf("%s:%d - %s", $error['file'], $error['line'], $error['message']));
     } 
 }
-
-
 ?>

@@ -32,15 +32,79 @@ var SettingsLoader = (
      * 
      * TODO 10/01/2010: Add check when adding default layer to make sure it is available.
      * 
+     * @param {Object} Helioviewer.org server-specified defaults
+     * 
      * @returns {Object} The default Helioviewer.org settings
      */
     _getDefaultSettings: function (serverSettings) {
+        // Use current date (UTC) for default observation time
+        var date = new Date(+new Date());
+
         return {
-            date            : getUTCTimestamp(serverSettings.defaultObsTime),
+            // Default settings
+            defaults: {
+                date: "latest", // "previous" | "latest" | "custom"
+                movies: {
+                    cadence: "auto", // "auto" | number of seconds
+                    duration: 86400,
+                    format: "mp4"
+                }        
+            },
+            // Saved movie and screenshots 
+            history: {
+                movies: [],
+                screenshots: []
+            },
+            // Single-time notifications and warning messages
+            notifications: {
+                coordinates: true,
+                welcome: true
+            },
+            // Application state
+            state: {
+                centerX: 0,
+                centerY: 0,
+                date: date.getTime(),
+                eventLayers: [],
+                imageScale: serverSettings.defaultImageScale,
+                tileLayers: [{
+                    server     : 0,
+                    observatory: 'SDO',
+                    instrument : 'AIA',
+                    detector   : 'AIA',
+                    measurement: '304',
+                    visible    : true,
+                    opacity    : 100
+                }],
+                timeStep: 86400
+            },
+            version: serverSettings.version
+        };
+    },
+    
+    /**
+     * Creates a hash containing the default settings to use. Change default settings here.
+     * 
+     * TODO 10/01/2010: Add check when adding default layer to make sure it is available.
+     * 
+     * @returns {Object} The default Helioviewer.org settings
+     */
+    _OLDgetDefaultSettings: function (serverSettings) {
+        // Use current date (UTC) for default observation time
+        var date = new Date(+new Date());
+        
+        // Round off minutes and seconds
+        date.setSeconds(0);
+        date.addMinutes(1);
+
+        return {
+            date            : date.getTime(),
             imageScale      : serverSettings.defaultImageScale,
             movieLength     : 86400,
+            movies          : [],
             version         : serverSettings.version,
             warnMouseCoords : true,
+            screenshots     : [],
             showWelcomeMsg  : true,
             tileLayers : [{
                 server     : 0,

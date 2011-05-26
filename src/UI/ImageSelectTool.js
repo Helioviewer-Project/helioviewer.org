@@ -1,33 +1,46 @@
 /**
  * @author Jaclyn Beck
+ * @author Keith Hughitt <keith.hughitt@nasa.gov>
+ * 
  * @fileoverview A class that deals with using the imgAreaSelect plugin, which allows the user to click and drag 
  *                 to select a subregion of the image in the viewport. 
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window, showButtonsInViewport, hideButtonsInViewport, addIconHoverEventListener */
+/*global Class, $, window, helioviewer, addIconHoverEventListener */
 "use strict";
 var ImageSelectTool = Class.extend(
     /** @lends ImageSelectTool.prototype */
     {
     /**
      * @constructs
-     * @description Sets up an event handler for the select region button and finds the divs where
-     *                 the fake transparent image will be inserted
+     * Sets up an event handler for the select region button and finds the divs where
+     * the fake transparent image will be inserted
      *                 
      */
     init: function () {
-        this.active     = false;
-        this.vpDomNode  = $("#helioviewer-viewport");
+        this.active = false;
 
-        this._setupFinishedButton();
+        this.vpDomNode    = $("#helioviewer-viewport");
+        this.buttons      = $("#image-area-select-buttons");
+        this.container    = $("#image-area-select-container");
+        this.doneButton   = $("#done-selecting-image");
+        this.cancelButton = $("#cancel-selecting-image");
+        this.helpButton   = $("#help-selecting-image");
+        
+        this.vpButtons = $("#zoomControls, #center-button, #social-buttons, #fullscreen-btn, #mouse-coords");
+
+        this._setupHelpDialog();
+        
+        // Handle image area select requests
+        $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
 
     /**
      * Activates the plugin or disables it if it is already active
      */
-    enableAreaSelect: function (viewportInfo, callback) {
-        var imgContainer, transImg, body = $("body");
+    enableAreaSelect: function (event, callback) {
+        var imgContainer, body = $("body");
     
         // If the user has already pushed the button but not done anything, this will turn the feature off.
         if (this.active) {
@@ -45,7 +58,7 @@ var ImageSelectTool = Class.extend(
             this.height = this.vpDomNode.height();
         
             /* 
-            * Create a temporary transparent image that spans the height and width of the viewport.
+            * Displays a temporary transparent image that spans the height and width of the viewport.
             * Necessary because the viewport image is done in tiles and imgAreaSelect cannot cross 
             * over tile boundaries. Add the transparent image to the viewport, on top of the other tiles.
             * 
@@ -53,10 +66,7 @@ var ImageSelectTool = Class.extend(
             * inside this div. It is necessary to specify a z-index because otherwise it gets added underneath
             * the rest of the tiles and the plugin will not work.
             */
-            transImg = $('<img id="transparent-image" src="resources/images/transparent_512.png" alt="" width="' +
-                   this.width + '" height="' + this.height + '" />');
-            transImg.css({'position': 'relative', 'cursor': 'crosshair', 'z-index': 5});
-            transImg.appendTo(this.vpDomNode);
+            this.container.show();
             
             /* Make a temporary container for imgAreaSelect to put all of its divs into.
             * Note that this container must be OUTSIDE of the viewport because otherwise the plugin's boundaries
@@ -64,7 +74,7 @@ var ImageSelectTool = Class.extend(
             */
             imgContainer = body.append('<div id="imgContainer"></div>');
 
-            this.selectArea(viewportInfo, callback);
+            this.selectArea(callback);
         }
     },
     
@@ -75,12 +85,12 @@ var ImageSelectTool = Class.extend(
      *                 "selection" is x1, y1, x2, y2, width, and height.
      *                 See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation. 
      */
-    selectArea: function (viewportInfo, callback) {
+    selectArea: function (callback) {
         var area, self = this;
         
-        // Use imgAreaSelect on the transparent region to get the top, left, bottom, and right 
-        // coordinates of the selected region. 
-        area = $("#transparent-image").imgAreaSelect({ 
+        // Use imgAreaSelect on the transparent region to get the 
+        // top, left, bottom, and right coordinates of the selected region. 
+        area = this.container.imgAreaSelect({
             instance: true,
             handles : true,
             parent  : "#imgContainer",
@@ -89,8 +99,8 @@ var ImageSelectTool = Class.extend(
             y1      : this.height / 4,
             y2      : this.height * 3 / 4,
             onInit  : function () {
-                self.vpDomNode.qtip("show");
-                hideButtonsInViewport();
+                self.vpButtons.hide('fast');
+                self.buttons.show();
             }
         });
         
@@ -102,13 +112,13 @@ var ImageSelectTool = Class.extend(
         });
 
         this.doneButton.click(function () {
-            self.submitSelectedArea(area, viewportInfo, callback);
+            self.submitSelectedArea(area, callback);
         });
         
         $(document).keypress(function (e) {
             // Enter key
             if (e.which === 13) {
-                self.submitSelectedArea(area, viewportInfo, callback);
+                self.submitSelectedArea(area, callback);
             }
         });
         
@@ -124,71 +134,26 @@ var ImageSelectTool = Class.extend(
      * selected area, cleans up divs created by the plugin, and uses the callback 
      * function to complete movie/screenshot building.
      */
-    submitSelectedArea: function (area, viewportInfo, callback) {
-        var selection, visibleCoords, coords, maxCoords;
+    submitSelectedArea: function (area, callback) {
+        var selection, visibleCoords, roi;
+
         if (area) {
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
 
-            visibleCoords = viewportInfo.coordinates;
+            visibleCoords = helioviewer.getViewportRegionOfInterest();
 
-            coords = {
+            roi = {
                 top     : visibleCoords.top  + selection.y1,
                 left    : visibleCoords.left + selection.x1,
                 bottom  : visibleCoords.top  + selection.y2,
                 right   : visibleCoords.left + selection.x2
             };
 
-            viewportInfo.coordinates = coords;
-
             this.cleanup();
-            callback(viewportInfo);
+            callback(roi);
         }
-    },
-    
-    /**
-     * Adds a bar in the upper-right corner of the viewport with buttons for "Done", 
-     * "Cancel", and "Help"
-     */
-    _setupFinishedButton: function () {
-        var self = this;
-        this.vpDomNode.qtip({
-            position: {
-                corner: {
-                    target: 'topRight',
-                    tooltip: 'topRight'
-                }
-            },      
-            content: {
-                text : "<div id='done-selecting-image' class='text-btn'>" +
-                            "<span class='ui-icon ui-icon-circle-check' style='float: left;'></span>" +
-                            "<span>Done</span>" +
-                        "</div>" + 
-                        "<div id='cancel-selecting-image' class='text-btn'>" + 
-                            "<span class='ui-icon ui-icon-circle-close' style='float:left;' />" + 
-                            "<span>Cancel</span>" + 
-                        "</div>" +
-                        "<div id='help-selecting-image' class='text-btn' style='float: right;'>" + 
-                            "<span class='ui-icon ui-icon-info'></span>" +
-                        "</div>"
-            },
-            show: false,
-            hide: false,
-            style: {
-                name: "mediaDark",
-                "font-size": "10pt",
-                width: 'auto'
-            },
-            api: { 
-                onRender: function () {
-                    self.doneButton   = $("#done-selecting-image");
-                    self.cancelButton = $("#cancel-selecting-image");
-                    self.helpButton   = $("#help-selecting-image");
-                    self._setupHelpDialog();
-                }
-            }
-        });
     },
     
     /**
@@ -204,34 +169,18 @@ var ImageSelectTool = Class.extend(
      * Sets up a help tooltip that pops up when the help button is moused over
      */
     _setupHelpDialog: function () {
-        var api, qtip;
-        api  = this.vpDomNode.qtip("api");
-        qtip = api.elements.tooltip;
-        
         this.helpButton.qtip({
             position: {
-                corner: {
-                    target: 'bottomLeft',
-                    tooltip: 'topRight'
-                }
+                my: 'top right',
+                at: 'bottom left'
             },
             content: {
-                title: "Help",
+                title: {
+                    text: "Help"
+                },
                 text: "Resize by dragging the edges of the selection.<br /> Move the selection by clicking inside " +
                         "and dragging it.<br /> Click and drag outside the selected area to start " +
                         "a new selection.<br /> Click \"Done\" when you have finished to submit."
-            },
-            adjust: { y: 100 },
-            show: 'mouseover',
-            hide: 'mouseout',
-            style: {
-                tip: 'topRight',
-                name: 'simple',
-                width: 'auto',
-                "text-align": 'left',
-                title: {
-                    background: '#FFF'
-                }
             }
         });
     },
@@ -243,18 +192,19 @@ var ImageSelectTool = Class.extend(
      * @TODO: add error checking if the divs are already gone for whatever reason.
      */    
     cleanup: function () {
-        this.vpDomNode.qtip("hide");
-        $("#transparent-image").imgAreaSelect({remove: true});
-        showButtonsInViewport();
-        
-        $('#imgContainer, #transparent-image').remove();
+        this.buttons.hide();
+        this.container.imgAreaSelect({remove: true});
+
+        this.vpButtons.show('fast');
+
+        this.container.hide();
+        $('#imgContainer').remove();
         this.doneButton.unbind('click');
         this.cancelButton.unbind('click');
         this.helpButton.qtip("hide");
         this.active = false;
         
         $("body").removeClass('disable-fullscreen-mode');
-        $(document).unbind('keypress');
-        $(document).trigger('re-enable-keyboard-shortcuts');
+        $(document).unbind('keypress').trigger('re-enable-keyboard-shortcuts');
     }
 });

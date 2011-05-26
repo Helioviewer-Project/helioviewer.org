@@ -1,6 +1,81 @@
                     
                     RELEASE NOTES
                     
+Helioviewer.org 2.2.0
+======================
+
+Helioviewer.org 2.2.0 is a major release including a number of stability and
+performance improvements, as well as a large amount of bug fixes. The main focus
+of this release is the recently added movie and screenshot creation 
+capabilities. A large amount of work has been done to improve the reliability
+of those features, and also to pave the way for new functionality which will be
+added in upcoming releases and will be directed at giving users more fine-tuned 
+control over the movie creation process. Other changes include:
+
+New features:
+
+ * STEREO EUVI/COR image support
+ * WebM support
+ * IE9 HTML5 video support added
+ * YouTube video sharing support added
+ * New flash video player (Flowplayer)
+ * Improved screenshot quality
+ * Better mobile support (drag and drop, working sliders, etc)
+ * Added a data monitor page (http://www.helioviewer.org/status)
+   
+Bug fixes:
+
+ * Fixed bug #693901 Enable lookup of video properties using only its id
+ * Fixed bug #332020 Double-click zoom functioning incorrectly
+ * Fixed bug #602756 Optimize movie generation when near end of available data
+ * Fixed bug #662607 HTML5 Video format choice should be based on browser and 
+   not OS
+ * Fixed bug #662897 Avoid using compressed images during movie frame generation
+ * Fixed bug #692574 Generate WebM videos for each movie request
+ * Fixed bug #701509 Use RSUN instead of CDELT when scaling EIT images
+ * Fixed bug #730701 Speed up time with which shared videos appear on 
+   Helioviewer.org
+ * Fixed bug #735617 Store meta-information for tiles and screenshots generated 
+   by Helioviewer.org
+ * Fixed bug #781148 Use current time as default observation time
+ * Fixed bug #193782 Cursor bug in IE
+ * Fixed bug #609225 When attempting to use the Flash video browser, perform 
+   check for Flash support
+ * Fixed bug #612506 Movie pop-up menu returns NaN for older movies
+ * Fixed bug #621798 Use jQuery instead of Shadowbox when displaying 
+   Helioviewer.org Link
+ * Fixed bug #783483 IE: background image disappears in fullscreen mode
+ * Fixed bug #785792 When changing one field in a layer (e.g. observatory) 
+   attempt to preserve all other properties
+ * Fixed bug #691081 Add a "Share on Youtube" button
+ * Fixed bug #696346 Add metadata to generated movies
+ * Fixed bug #624817 Media History clear button stops working
+ * Fixed bug #666756 First getDataSources query after new data is added becomes 
+   very slow
+ * Fixed bug #605020 Helioviewer.org Movies should not include redundant frames
+ * Fixed bug #614001 Movie history does not disappear when creating movie
+ * Fixed bug #712095 Helioviewer-specific header tags not displayed in 
+   information dialog for newer images
+ * Fixed bug #725539 When building movies, ignore failures limited to a single 
+   frame
+ * Fixed bug #387365 Slider bars do not work on Safari on iPod touch
+ * Fixed bug #666809 Timestamp text overlaps icons on some Linux systems
+ * Fixed bug #669895 For movie generation failures specify whether failure 
+   occured during image creation or movie encoding
+ * Fixed bug #697191 High-quality video download button is cut-off on some 
+   browsers/display screens
+ * Fixed bug #700024 Metalinks not easily readable on large screens
+ * Fixed bug #704980 Suggestion for a better movie player dialog box title
+ * Fixed bug #376995 Make JP2 creation information available via helioviewer.org
+ 
+Library updates:
+
+ * jQuery (1.4.2 => 1.6)
+ * jQuery imgAreaSelect (0.9.2 => 0.9.5)
+ * jQuery jGrowl (1.2.4 => 1.2.5)
+ * jQuery qTip (1.0 r54 => 2.0.0pre)
+ * jQuery UI (1.8 => 1.8.12)
+                    
 Helioviewer.org 2.1.0
 ======================
 

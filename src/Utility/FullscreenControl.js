@@ -30,6 +30,7 @@ var FullscreenControl = Class.extend(
         this.col1pad  = $('#col1pad');
         this.col2     = $('#col2');
         this.viewport = $('#helioviewer-viewport-container-outer');
+        this.shadow   = $('#helioviewer-viewport-container-shadow');
         this.sandbox  = $('#sandbox');
         this.header   = $('#header');
         this.meta     = $('#footer-container-outer');
@@ -76,6 +77,12 @@ var FullscreenControl = Class.extend(
         }, this.speed,
         function () {
             $(document).trigger('update-viewport');
+            self.shadow.css({
+                "width": self.viewport.width(),
+                "height": self.viewport.height(),
+                "top": 4,
+                "left": 4
+            });
             self.panels.hide();
             self.body.removeClass('disable-fullscreen-mode');
         });
@@ -112,16 +119,25 @@ var FullscreenControl = Class.extend(
      * Disable fullscreen mode
      */
     disableFullscreenMode: function () {
-        var self = this;
-        
+        var offset, self = this;
+
+        this.shadow.hide();
         this.panels.show();
                 
         this.colmid.animate({ 
             left:  this.origColMidLeft
         }, this.speed,
         function () {
+            offset = self.viewport.offset();
+
             self.meta.show();
             self.body.css('overflow', 'visible');
+            self.shadow.css({
+                "width": self.viewport.width(),
+                "height": self.viewport.height(),
+                "top": offset.top,
+                "left": offset.left
+            }).show();
             self.body.removeClass('disable-fullscreen-mode');
         });
         

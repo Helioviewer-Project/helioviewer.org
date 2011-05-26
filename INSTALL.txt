@@ -2,4 +2,4 @@ For the most up-to-date installation instructions, including platform-specific
 installation guides for several different versions of Linux, please see the
 Wiki documentation, located at:
 
-http://helioviewer.org/wiki/index.php?title=Installing_Helioviewer.org
+http://wiki.helioviewer.org/wiki/index.php?title=Installing_Helioviewer.org

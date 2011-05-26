@@ -31,7 +31,7 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
      * Creates a new LASCOImage
      * 
      * @param string $jp2      Source JP2 image
-     * @param string $filepath Location to output the file to (not including a file extension)
+     * @param string $filepath Location to output the file to
      * @param array  $roi      Top-left and bottom-right pixel coordinates on the image
      * @param string $inst     Instrument
      * @param string $det      Detector
@@ -42,22 +42,21 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
      * 
      * @return void
      */ 
-    public function __construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
         if ($det == "C2") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Red_Temperature.png";
         } else if ($det == "C3") {
             $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Blue_White_Linear.png";
         }
-        
+
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
         }
         
-        // Use PNG as default format to preserve transparent regions
-        $options["format"] = "png";
-        
-        parent::__construct($jp2, $filepath, $roi, $inst, $det, $meas, $offsetX, $offsetY, $options);
+        $filepath = substr($filepath, 0, -3) . "png";
+
+        parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
     /**
@@ -165,7 +164,8 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
         
             $imagickImage->setImageClipMask($mask);
             $imagickImage->setImageOpacity($this->options['opacity'] / 100);
-            $imagickImage->setImageFilename($this->filepath . "-op" . $this->options['opacity'] . ".png");
+            //Mar 17,2011!!!
+            //$imagickImage->setImageFilename($this->filepath . "-op" . $this->options['opacity'] . ".png");
         }
 
         $mask->destroy();

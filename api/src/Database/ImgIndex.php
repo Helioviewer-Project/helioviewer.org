@@ -36,6 +36,127 @@ class Database_ImgIndex
         include_once 'DbConnection.php';
         $this->_dbConnection = new Database_DbConnection();
     }
+    
+    /**
+     * Adds a new screenshot entry to the database and returns its identifier
+     * 
+     * @return int identifier for the screenshot
+     */
+    public function insertScreenshot($date, $scale, $roi, $watermark, $layers, $bitmask)
+    {
+    	include_once 'src/Helper/DateTimeConversions.php';
+    	
+        // Add to screenshots table and get an id
+        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d);", 
+            isoDateToMySQL($date),
+            $scale,
+            $roi,
+            $watermark,
+            $layers,
+            bindec($bitmask)
+        );
+        
+        $this->_dbConnection->query($sql);
+        
+        return $this->_dbConnection->getInsertId();
+    }
+    
+    /**
+     * Returns a single movie entry
+     * 
+     * @return string The movie information
+     */
+    public function getMovieInformation($id, $format)
+    {
+        // FLV status is same as MP4
+        if ($format == "flv") {
+            $format = "mp4";
+        }
+
+        $sql = "SELECT *, AsText(regionOfInterest) as roi FROM movies " .
+               "LEFT JOIN movieFormats ON movies.id = movieFormats.movieId " . 
+               "WHERE movies.id=$id AND movieFormats.format='$format'";
+        return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+    }
+    
+    public function getNumUnfinishedMovies($id)
+    {
+        $sql = "SELECT COUNT(*) FROM movieFormats WHERE movieId=$id AND status!='FINISHED'";
+        $row = mysqli_fetch_array($this->_dbConnection->query($sql));
+        return (int) array_pop($row);
+    }
+    
+    /**
+     * Updates movie entry with new information
+     * 
+     * @return void
+     */
+    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
+    {
+        // Update movies table
+    	$sql = sprintf(
+    	   "UPDATE movies 
+    	     SET startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, width=%d, height=%d
+    	     WHERE id=%d",
+    	   $startDate, $endDate, $numFrames, $frameRate, $width, $height, $id
+    	);
+    	$this->_dbConnection->query($sql);
+    }
+    
+    /**
+     * 
+     */
+    public function finishedBuildingMovieFrames($id, $procTime)
+    {
+        $this->_dbConnection->query("UPDATE movies SET procTime=$procTime WHERE id=$id");
+    }
+    
+    /**
+     * Updates movie entry and marks it as "processing"
+     * 
+     * @param $id       int     Movie identifier
+     * @param $format   string  Format being processed
+     * 
+     * @return void
+     */
+    public function markMovieAsProcessing($id, $format)
+    {
+        $sql = "UPDATE movieFormats SET status='PROCESSING' WHERE movieId=$id AND format='$format'";
+        $this->_dbConnection->query($sql);
+    }
+    
+    /**
+     * Updates movie entry and marks it as being "finished"
+     * 
+     * @param $id       int     Movie identifier
+     * @param $format   string  Format being processed
+     * @param $procTime int     Number of seconds it took to encode the movie
+     */
+    public function markMovieAsFinished($id, $format, $procTime)
+    {
+        $sql = "UPDATE movieFormats SET status='FINISHED', procTime=$procTime " . 
+               "WHERE movieId=$id AND format='$format'";
+    	$this->_dbConnection->query($sql);
+    }
+    
+    /**
+     * Updates movie entry and marks it as being "finished"
+     */
+    public function markMovieAsInvalid($id)
+    {
+        $this->_dbConnection->query("UPDATE movieFormats SET status='ERROR', procTime=NULL WHERE movieId=$id");
+    }
+    
+    /**
+     * Returns the information associated with the screenshot with the specified id
+     * 
+     * @param $id
+     */
+    public function getScreenshot($id)
+    {
+    	$sql = "SELECT * FROM screenshots WHERE id=$id";
+    	return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+    }
 
     /**
      * Finds the closest available image to the requested one, and returns information from
@@ -232,13 +353,18 @@ class Database_ImgIndex
 
             $dimensions = $xmlBox->getImageDimensions();
             $center     = $xmlBox->getSunCenter();
+            $imageScale = (float) $xmlBox->getImagePlateScale();
+            $dsun       = (float) $xmlBox->getDSun();
+            
+            // Normalize image scale
+            $imageScale = $imageScale * ($dsun / HV_CONSTANT_AU);
 
             $meta = array(
-                "scale"      => (float) $xmlBox->getImagePlateScale(),
+                "scale"      => $imageScale,
                 "width"      => (int) $dimensions[0],
                 "height"     => (int) $dimensions[1],
                 "sunCenterX" => (float) $center[0],
-                "sunCenterY" => (float) $center[1],
+                "sunCenterY" => (float) $center[1]
             );
         } catch (Exception $e) {
             throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()));
@@ -377,7 +503,31 @@ class Database_ImgIndex
         $sql = "SELECT date FROM images WHERE sourceId=$sourceId ORDER BY date DESC LIMIT 1";
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);        
         return $result['date'];
-    }    
+    }
+    
+    /**
+     * Returns a list of datasources sorted by instrument
+     * 
+     * @return array A list of datasources sorted by instrument
+     */
+    public function getDataSourcesByInstrument ()
+    {
+        // 2011/05/24: Hiding TRACE for now
+        $result = $this->_dbConnection->query("SELECT * FROM instruments WHERE name != 'TRACE' ORDER BY name");
+        
+        $instruments = array();
+
+        while($instrument = mysqli_fetch_assoc($result)) {
+            $instruments[$instrument['name']] = array();
+            $sql = sprintf("SELECT * FROM datasources WHERE instrumentId=%d ORDER BY name", $instrument['id']);
+            $datasources = $this->_dbConnection->query($sql);
+            while($ds = mysqli_fetch_assoc($datasources)) {
+                array_push($instruments[$instrument['name']], $ds);
+            }
+        }
+        
+        return $instruments;
+    }
 
     /**
      * Returns a list of the known data sources
