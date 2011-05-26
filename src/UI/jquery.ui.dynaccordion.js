@@ -53,7 +53,7 @@ bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 12
             // Build HTML
             header  = $('<div class="dynaccordion-tab">' + arrow + o.header + '</div>');
             body    = $('<div class="dynaccordion-cell ui-accordion-content ui-helper-reset ui-widget-content ' + 
-                        'ui-corner-bottom ui-corner-top">' + o.cell + '</div>');
+                        'ui-corner-bottom ui-corner-top shadow">' + o.cell + '</div>');
             domNode = $('<div class="dynaccordion-section" id="' + id + '"></div>').append(header).append(body);
                
             // Add new section to appropriate location

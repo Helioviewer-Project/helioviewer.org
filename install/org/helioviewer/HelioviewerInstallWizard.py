@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
+import math
+import getpass
 from PyQt4 import QtCore, QtGui
 from org.helioviewer.InstallWizard import Ui_InstallWizard
 from org.helioviewer.jp2 import *
 from org.helioviewer.db  import *
-from org.helioviewer.utils import *
 
 __INTRO_PAGE__ = 0
 __DBADMIN_PAGE__ = 1
@@ -28,7 +29,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         self.ui = Ui_InstallWizard()
         self.ui.setupUi(self)        
         
-        self.logfile = open("error.log", "a")
+        self.logfile = open("failed.log", "a")
         
         self.installComplete = False
         
@@ -64,11 +65,11 @@ class HelioviewerInstallWizard(QtGui.QWizard):
             jp2dir = str(self.ui.jp2RootDirInput.text())
             
             self.ui.statusMsg.setText("Searching for JPEG 2000 Images...")
-            self.images = traverseDirectory(jp2dir)
+            self.images = traverse_directory(jp2dir)
             n = len(self.images)
 
-            if n is 0:
-                print "No JPEG 2000 images found. Exiting installation."
+            if n == 0:
+                print("No JPEG 2000 images found. Exiting installation.")
                 sys.exit(2)
             else:
                 self.ui.installProgress.setMaximum(n // __STEP_FXN_THROTTLE__)
@@ -87,7 +88,7 @@ If this is correct, please press "Start" to begin processing.
 
         # Database type & administrator information
         if page is __DBADMIN_PAGE__:
-            canConnect = checkDBInfo(str(self.ui.dbAdminUserName.text()), str(self.ui.dbAdminPassword.text()), self.ui.mysqlRadioBtn.isChecked())
+            canConnect = check_db_info(str(self.ui.dbAdminUserName.text()), str(self.ui.dbAdminPassword.text()), self.ui.mysqlRadioBtn.isChecked())
             if not canConnect:
                 self.ui.dbAdminStatus.setText("<span style='color: red;'>Unable to connect to the database. Please check your login information and try again.</span>")
             else:
@@ -96,7 +97,7 @@ If this is correct, please press "Start" to begin processing.
 
         # JP2 Archive location
         elif page is __JP2DIR_PAGE__:
-            pathExists = checkPath(self.ui.jp2RootDirInput.text())
+            pathExists = os.path.isdir(self.ui.jp2RootDirInput.text())
             if not pathExists:
                 self.ui.jp2ArchiveStatus.setText("<span style='color: red;'>Not a valid location. Please check the filepath and permissions and try again.</span>")
             else:
@@ -119,9 +120,9 @@ If this is correct, please press "Start" to begin processing.
 
         self.ui.statusMsg.setText("Creating database schema")
 
-        cursor = setupDatabaseSchema(admin, adminpass, hvdb, hvuser, hvpass, mysql)
+        cursor = setup_database_schema(admin, adminpass, hvdb, hvuser, hvpass, mysql)
 
-        processJPEG2000Images(self.images, jp2dir, cursor, mysql, self.updateProgress)
+        process_jp2_images(self.images, jp2dir, cursor, mysql, self.updateProgress)
     
         cursor.close()
         #self.ui.installProgress.setValue(len(images))

@@ -45,6 +45,7 @@ var Viewport = Class.extend(
         this.domNode   = $(this.id);
         this.innerNode = $(this.id + '-container-inner');
         this.outerNode = $(this.id + '-container-outer');
+        this.shadow    = $(this.id + '-container-shadow');
         
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;    
@@ -61,15 +62,20 @@ var Viewport = Class.extend(
      * Gets the window height and resizes the viewport to fit within it
      */
     resize: function () {
-        var oldDimensions, height;
+        var oldDimensions, width, height;
     
         // Get dimensions
         oldDimensions = this.dimensions;
+
         // Ensure minimum height
         height = Math.max(this.minHeight, $(window).height() - this._getPadHeight());
 
         //Update viewport height
         this.outerNode.height(height);
+        
+        // Update viewport shadow
+        width  = this.outerNode.width();
+        this.shadow.width(width).height(height);
 
         // Update viewport dimensions
         this._updateDimensions();
@@ -137,12 +143,5 @@ var Viewport = Class.extend(
             width : this.domNode.width(),
             height: this.domNode.height()
         };
-    },
-    
-    // 2009/07/06 TODO: Return image scale, x & y offset, fullscreen status?
-    toString: function () {
-    },    
-    
-    toJSON: function () {
     }
 });

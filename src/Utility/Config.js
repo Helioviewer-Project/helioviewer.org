@@ -66,7 +66,6 @@ var Config = Class.extend(
     toArray: function () {
         return {
             'version'             : this.params["build_num"],
-            'defaultObsTime'      : this.params["default_obs_time"],
             'defaultImageScale'   : this.params["default_image_scale"],
             'minImageScale'       : this.params["min_image_scale"],
             'maxImageScale'       : this.params["max_image_scale"],

@@ -30,6 +30,13 @@ var ViewportMovementHelper = Class.extend(
 
         var center = this._getCenter();
         this.sandboxHelper = new SandboxHelper(center.x, center.y);
+        
+        // Determine URL to grabbing cursor
+        if ($.browser.msie) {
+            this._cursorCSS = "url('resources/cursors/grabbing.cur'), move";
+        } else {
+            this._cursorCSS = 'move';
+        }
     },
     
     /**
@@ -44,7 +51,7 @@ var ViewportMovementHelper = Class.extend(
      * @param {Event} event an Event object
      */
     mouseDown: function (event) {
-        this.domNode.css("cursor", "all-scroll");
+        this.domNode.css("cursor", this._cursorCSS);
     
         // Don't do anything if entire image is already visible
         if ((this.sandbox.width() === 0) && (this.sandbox.height() === 0)) {
@@ -64,7 +71,7 @@ var ViewportMovementHelper = Class.extend(
      * @param {Event} event Event object
      */    
     mouseUp: function (event) {
-        this.domNode.css("cursor", "pointer");
+        this.domNode.css("cursor", "");
         if (this.isMoving) {
             this._endMoving();
         }

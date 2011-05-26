@@ -53,7 +53,7 @@ var MessageConsole = Class.extend(
      */
     error: function (msg, options) {
         $("#message-console").jGrowl(msg, options);
-        $("#helioviewer-viewport-container-outer").effect("shake", { times: 1 });
+        //$("#helioviewer-viewport-container-outer").effect("shake", { times: 1 });
     },
     
     /**

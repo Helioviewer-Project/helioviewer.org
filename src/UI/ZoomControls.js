@@ -1,48 +1,37 @@
 /**
  * @fileOverview Contains the class definition for an ZoomControls class.
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * @author <a href="mailto:patrick.schmiedel@gmx.net">Patrick Schmiedel</a>
- * @see  The <a href="http://helioviewer.org/wiki/Zoom_Levels_and_Observations">HelioViewer Wiki</a>
- *       for more information on zoom levels.
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
-bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $ */
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
+eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
+newcap: true, immed: true, maxlen: 80, sub: true */
+/*globals $, Class */
 "use strict";
 var ZoomControls = Class.extend(
     /** @lends ZoomControls.prototype */
     {
     /**
      * @constructs
-     * @description Creates a new ZoomControl
+     * 
+     * Creates a new ZoomControl
      */
     init: function (id, imageScale, minImageScale, maxImageScale) {       
         this.id            = id;
         this.imageScale    = imageScale;
         this.minImageScale = minImageScale;
         this.maxImageScale = maxImageScale;
+        
+        this.zoomInBtn  = $('#zoomControlZoomIn');
+        this.zoomSlider = $('#zoomControlSlider');
+        this.zoomOutBtn = $('#zoomControlZoomOut');
 
-        this._buildUI();
         this._initSlider();
-        this._setupTooltips();
         this._initEventHandlers();
-    },
-
-    /**
-     * @description Sets up tooltips for zoom controls
-     */
-    _setupTooltips: function () {
-        var description, targets;
-        
-        description = "Drag this handle up and down to zoom in and out of the displayed image.";
-        $("#zoomControlSlider > .ui-slider-handle").attr("title", description);
-        
-        targets = "#zoomControlZoomOut, #zoomControlZoomIn, #zoomControlHandle, #zoomControlSlider > .ui-slider-handle";
-        $(document).trigger('create-tooltip', [targets]);
     },
   
     /**
-     * @description Adjusts the zoom-control slider
+     * Adjusts the zoom-control slider
+     * 
      * @param {Integer} v The new zoom value.
      */
     _onSlide: function (v) {
@@ -50,31 +39,20 @@ var ZoomControls = Class.extend(
     },
     
     /**
-     * @description Translates from jQuery slider values to zoom-levels, and updates the zoom-level.
+     * Translates from jQuery slider values to zoom-levels, and updates the 
+     * zoom-level.
+     * 
      * @param {Object} v jQuery slider value
      */
     _setImageScale: function (v) {
         $(document).trigger('image-scale-changed', [this.increments[v]]);
     },
-    
-    /**
-     * @description sets up zoom control UI element
-     */
-    _buildUI: function () {
-        this.zoomInBtn  = $('<div id="zoomControlZoomIn" title="Zoom in.">+</div>');
-        this.zoomSlider = $('<div id="zoomControlSlider"></div>');
-        this.zoomOutBtn = $('<div id="zoomControlZoomOut" title="Zoom out.">-</div>');
 
-        var sliderContainer = $('<div id="zoomSliderContainer"></div>').append(this.zoomSlider);
-
-        $(this.id).append(this.zoomInBtn).append(sliderContainer).append(this.zoomOutBtn);
-    },
-    
     /**
      * @description Initializes zoom level slider
      */
     _initSlider: function () {
-        var i, self = this;
+        var i, description, self = this;
         
         // Zoom-level steps
         this. increments = [];
@@ -95,6 +73,11 @@ var ZoomControls = Class.extend(
             orientation: 'vertical',
             value: $.inArray(this.imageScale, this.increments)
         });
+        
+        // Add tooltip text
+        description = "Drag this handle up and down to zoom in and out of " + 
+                      "the displayed image.";
+        $("#zoomControlSlider > .ui-slider-handle").attr('title', description);
     },
 
     /**
@@ -141,25 +124,7 @@ var ZoomControls = Class.extend(
     _initEventHandlers: function () {
         this.zoomInBtn.click($.proxy(this._onZoomInBtnClick, this));
         this.zoomOutBtn.click($.proxy(this._onZoomOutBtnClick, this));
-        $("#helioviewer-viewport").mousewheel($.proxy(this._onMouseWheelMove, this));
-        
+        $("#helioviewer-viewport").mousewheel(
+            $.proxy(this._onMouseWheelMove, this));
     }
 });
-
-/**
- * Helper function to hide the zoom controls
- */
-var hideZoomControls = function () {
-    $("#zoomSliderContainer").hide("fast");
-    $("#zoomControlZoomIn").hide("fast");
-    $("#zoomControlZoomOut").hide("fast");
-};
-
-/**
- * Helper function to show the zoom controls
- */
-var showZoomControls = function () {
-    $("#zoomSliderContainer").show("fast");
-    $("#zoomControlZoomIn").show("fast");
-    $("#zoomControlZoomOut").show("fast");
-};

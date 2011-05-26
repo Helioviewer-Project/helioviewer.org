@@ -16,10 +16,12 @@ var InputValidator = Class.extend(
     },
     
     /**
-     * checkDate
+     * Checks to make sure that the string is a valid UTC date string of
+     * 2011-03-14 17:41:39, 2011-03-14T17:41:39, or 2011-03-14T17:41:39.000Z
      */
-    checkDate: function (value, opts) {
-        
+    checkDateString: function (value, opts) {
+        var t = Date.parseUTCDate(value);
+        t = null;
     },
 
     /**
@@ -32,7 +34,8 @@ var InputValidator = Class.extend(
         };
         $.extend(options, opts || {});
         
-        if (isNaN(value) || value < options.min || value > options.max || parseInt(value, 10) !== value.toString()) {
+        if (isNaN(value) || value < options.min || value > options.max || 
+           (typeof value === "string" && parseInt(value, 10) !== value.toString())) {
             throw "Unacceptable integer value specified.";
         }
     },

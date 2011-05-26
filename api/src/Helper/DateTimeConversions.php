@@ -58,7 +58,10 @@ function getUTCDateString()
 function parseUnixTimestamp($timestamp)
 {
     date_default_timezone_set('UTC');
-    return new DateTime("@$timestamp");
+    $datetime = new DateTime();
+    $datetime->setTimestamp($timestamp);
+    
+    return $datetime;
 }
 
 /**

@@ -40,6 +40,21 @@ var TileLayerAccordion = Layer.extend(
         $(document).bind("create-tile-layer-accordion-entry", $.proxy(this.addLayer, this))
                    .bind("update-tile-layer-accordion-entry", $.proxy(this._updateAccordionEntry, this))
                    .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this));
+                   
+        // Tooltips
+        this.container.delegate("span[title]", 'mouseover', function (event) {
+            $(this).qtip({
+                overwrite: false,
+                show: {
+                    event: event.type,
+                    ready: true
+                }
+            }, event);
+        })
+        .each(function (i) {
+            $.attr(this, 'oldtitle', $.attr(this, 'title'));
+            this.removeAttribute('title');
+        });
     },
 
     /**
@@ -58,7 +73,6 @@ var TileLayerAccordion = Layer.extend(
         this._initOpacitySlider(id, opacity, onOpacityChange);        
         this._setupEventHandlers(id);
         this._updateTimeStamp(id, date);
-        this._setupTooltips(id);
     },
 
     /**
@@ -74,7 +88,7 @@ var TileLayerAccordion = Layer.extend(
                         "' title='Toggle layer visibility'></span>";
         removeBtn = "<span class='ui-icon ui-icon-closethick removeBtn' id='removeBtn-" + id +
                     "' title='Remove layer'></span>";
-        head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all'>" + 
+        head = "<div class='layer-Head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all shadow'>" + 
                "<span class=tile-accordion-header-left>" + name +
                "</span><span class=tile-accordion-header-right><span class=timestamp></span>" + 
                "<span class=accordion-header-divider>|</span>" + visibilityBtn + removeBtn + "</span></div>";
@@ -109,7 +123,7 @@ var TileLayerAccordion = Layer.extend(
         
         this.selectMenus = new TreeSelect(ids, this._dataSources, selected, function (leaf) {
             $(document).trigger("tile-layer-data-source-changed",
-                [id, $(obs).attr("value"), $(inst).attr("value"), $(det).attr("value"), $(meas).attr("value"), 
+                [id, $(obs).prop("value"), $(inst).prop("value"), $(det).prop("value"), $(meas).prop("value"), 
                 leaf.sourceId, leaf.nickname, leaf.layeringOrder]
              );
         });
@@ -168,10 +182,9 @@ var TileLayerAccordion = Layer.extend(
         meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'>";
         meas += "</select><br><br>";
         
-//        info = "<a href='#' id='image-" + id +
-//               "-info-btn' style='margin-left:170px; color: white; text-decoration: none;'>Image Information</a><br>";
-        
-        info = "<span id='image-" + id + "-info-btn' class='image-info-dialog-btn ui-icon ui-icon-info'></span>";
+        info = "<span id='image-" + id + "-info-btn'" + 
+               " class='image-info-dialog-btn ui-icon ui-icon-info'" +
+               " title='Display image header'></span>";
         
         return (opacitySlide + obs + inst + det + meas + info);
     },
@@ -379,19 +392,11 @@ var TileLayerAccordion = Layer.extend(
     },
     
     /**
-     * @description Initialize custom tooltips for each icon in the accordion
-     */
-    _setupTooltips: function (id) {
-        $(document).trigger('create-tooltip', ["#visibilityBtn-tile-" + id + ", #removeBtn-tile-" + id]);
-    },
-    
-    /**
      * @description Unbinds event-handlers relating to accordion header tooltips
      * @param {String} id
      */
     _removeTooltips: function (id) {
-        $("#visibilityBtn-" + id).qtip("destroy");
-        $("#removeBtn-"     + id).qtip("destroy");
+        $("#" + id + " *[oldtitle]").qtip("destroy");
     },
 
     /**

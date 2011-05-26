@@ -30,8 +30,16 @@
  */
 class Movie_FFMPEGEncoder
 {
-    private $_macFlags;
+    
+    private $_directory;
+    private $_filename;
+    private $_format;
     private $_frameRate;
+    private $_width;
+    private $_height;
+    private $_title;
+    private $_description;
+    private $_comment;    
     
     /**
      * Constructor
@@ -40,40 +48,90 @@ class Movie_FFMPEGEncoder
      * 
      * @return void
      */
-    public function __construct($frameRate)
+    public function __construct($directory, $filename, $frameRate, $width, $height, $title, $description, $comment)
     {
-        $this->_macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
-                    . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 1 -qcomp 0.6 -qmin 10 "
-                    . "-qmax 51 -qdiff 4 -bf 3 -directpred 1 -trellis 1 -wpredp 2 -an -y";
-        $this->_frameRate = $frameRate;
+        $info = pathinfo($filename);
+        
+        $this->_directory   = $directory;
+        $this->_filename    = $filename;
+        $this->_frameRate   = $frameRate;
+        $this->_width       = $width;
+        $this->_height      = $height;
+        $this->_title       = $title;
+        $this->_description = $description;
+        $this->_comment     = $comment;
+        $this->_format      = $info['extension'];
+        
+        $this->_log = fopen($directory . 'ffmpeg.log', 'a');
     }
     
     /**
-     * Creates an ipod-compatible mp4 video
-     * 
-     * @param string $directory  The directory where both files are stored
-     * @param string $filename   Base filename of the video
-     * @param int    $width      The width of the video
-     * @param int    $height     The height of the video
-     * 
-     * @return String the filename of the ipod video
+     * Creates a medium quality video
      */
-    public function createIpodVideo($directory, $filename, $format, $width, $height) 
+    public function createVideo()
     {
-        $ipodVideoName = "$directory/ipod-$filename.$format";
+        $outputFile = $this->_directory . $this->_filename;
+
+        if ($this->_format == "mp4") {
+            $this->_createH264Video($outputFile);
+        } else if ($this->_format == "webm") {
+            $this->_createWebMVideo($outputFile);
+        }
         
-        $cmd = HV_FFMPEG . " -i $directory/frames/frame%d.bmp -r " . $this->_frameRate
-            . " -f mp4 -b 800k -coder 0 -bt 200k -maxrate 96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 "
-            . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " " 
-            . $this->_macFlags . " " . $ipodVideoName;
-            
-        exec(escapeshellcmd($cmd));
+        // If FFmpeg segfaults, an empty movie container may still be produced,
+        if (!file_exists($outputFile) || filesize($outputFile) < 1000)
+            throw new Exception("FFmpeg error encountered.");
 
-        // Check to ensure that movie size is valid
-        if (filesize($ipodVideoName) < 1000)
-            throw new Exception("FFmpeg error encountered: Unable to create iPod video.");
+        return $outputFile;
+    }
+    
+    /**
+     * Creates a high quality video
+     */
+    public function createHQVideo()
+    {
+        $baseFilename = substr($this->_filename, 0, -strlen($this->_format) - 1);
+        $outputFile = sprintf("%s%s-hq.%s", $this->_directory, $baseFilename, $this->_format);
+        
+        if ($this->_format == "mp4") {
+            $this->_createH264Video($outputFile, "ultrafast", 15);
+        } else if ($this->_format == "webm") {
+            $this->_createWebMVideo($outputFile, 1);
+        }
+        
+        // If FFmpeg segfaults, an empty movie container may still be produced
+        if (!file_exists($outputFile) || filesize($outputFile) < 1000)
+            throw new Exception("FFmpeg error encountered.");
 
-        return $ipodVideoName;
+        return $outputFile;
+    }
+    
+    /**
+     * Creates a WebM/VP8 video
+     */
+    private function _createWebMVideo($outputFile, $qmax=10)
+    {
+        //$cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "/frames/frame%d.bmp"
+        //    . " -r " . $this->_frameRate . " -f webm -vcodec libvpx -qmax $qmax -threads " . HV_FFMPEG_MAX_THREADS 
+        //    . " -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile";
+        $cmd = sprintf(
+            "%s -r %f -i %sframes/frame%%d.bmp -r %f -f webm -vcodec libvpx -qmin 1 -qmax %d %s -threads %d -s %dx%d -an -y %s 2>/dev/null",
+            HV_FFMPEG,
+            $this->_frameRate,
+            $this->_directory,
+            $this->_frameRate,
+            $qmax,
+            $this->_getMetaDataString(),
+            HV_FFMPEG_MAX_THREADS,
+            $this->_width,
+            $this->_height,
+            $outputFile
+        );
+        
+        $this->_logCommand($cmd);
+
+        // Run FFmpeg        
+        $output = shell_exec($cmd);
     }
     
     /**
@@ -81,34 +139,22 @@ class Movie_FFMPEGEncoder
      * 
      * NOTE: Frame rate MUST be specified twice in the command, before and after the input file, or ffmpeg will start
      *       cutting off frames to adjust for what it thinks is the right frameRate. 
-     * 
-     * @param string $directory  The directory where both files are stored
-     * @param string $filename   Base filename of the video
+     *
      * @param int    $width       the width of the video
      * @param int    $height      the height of the video
      * 
      * @return String the filename of the video
      */
-    public function createVideo($directory, $filename, $format, $width, $height, $preset="lossless_fast", $crf=18)
+    private function _createH264Video($outputFile, $preset="lossless_fast", $crf=18)
     {
-        // MCMedia player can't play videos with < 1 fps and 1 fps plays oddly. So ensure
-        // fps >= 2
-        $outputRate = substr($filename, -3) === "flv" ? max($this->_frameRate, 2) : $this->_frameRate;
-        
-        $filepath = "$directory/$filename.$format";
-
-        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i $directory/frames/frame%d.bmp"
-            . " -r " . $outputRate . " -vcodec libx264 -vpre $preset -threads " . HV_FFMPEG_MAX_THREADS 
-            . " -crf $crf -s $width" . "x" . $height . " -an -y $filepath";
+        $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "frames/frame%d.bmp"
+            . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset " . $this->_getMetaDataString() . "-threads " 
+            . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile 2>/dev/null";
             
-        exec(escapeshellcmd($cmd));
+        $this->_logCommand($cmd);
             
-        // If FFmpeg segfaults, an empty movie container may still be produced,
-        // check to ensure that movie size is valid
-        if (filesize($filepath) < 1000)
-            throw new Exception("FFmpeg error encountered.");
-
-        return $filepath;
+        // Run FFmpeg
+        $output = shell_exec($cmd);
     }
     
     /**
@@ -121,18 +167,92 @@ class Movie_FFMPEGEncoder
      * 
      * @return void
      */
-    public function createAlternativeVideoFormat($directory, $filename, $origFormat, $newFormat)
+    public function createFlashVideo()
     {
-        $old = "$directory/$filename.$origFormat";
-        $new = "$directory/$filename.$newFormat";
+        $file = $this->_directory . substr($this->_filename, 0, -4);
         
-        $cmd = HV_FFMPEG . " -i $old -vcodec copy -threads " . HV_FFMPEG_MAX_THREADS . " $new";
-    
-        exec(escapeshellcmd($cmd));
+        $cmd = sprintf("%s -i %s.mp4 -vcodec copy %s -threads %d %s.flv 2>/dev/null",
+            HV_FFMPEG,
+            $file,
+            $this->_getMetaDataString(),
+            HV_FFMPEG_MAX_THREADS,
+            $file
+        );
+
+        $this->_logCommand($cmd);
+        exec($cmd);
 
         // Check to ensure that movie size is valid
-        if (filesize($new) < 1000)
+        if (filesize($file . ".flv") < 1000)
             throw new Exception("FFmpeg error encountered: Unable to create flv.");
+    }
+    
+    
+    /**
+     * Creates an ipod-compatible mp4 video
+
+     * @param int    $width      The width of the video
+     * @param int    $height     The height of the video
+     * 
+     * @return String the filename of the ipod video
+     */
+    public function createIpodVideo($format, $width, $height) 
+    {
+        $ipodVideoName = $this->_directory . "/ipod-" . $this->_filename . "." . $format;
+        
+        $macFlags = "-flags +loop -cmp +chroma -vcodec libx264 -me_method 'hex' -me_range 16 "
+                  . "-keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -b_strategy 1 -qcomp 0.6 -qmin 10 "
+                  . "-qmax 51 -qdiff 4 -bf 3 -directpred 1 -trellis 1 -wpredp 2 -an -y";
+        
+        $cmd = HV_FFMPEG . " -i " . $this->_directory . "/frames/frame%d.bmp -r " . $this->_frameRate
+            . " -f mp4 -b 800k -coder 0 -bt 200k -maxrate 96k -bufsize 96k -rc_eq 'blurCplx^(1-qComp)' -level 30 "
+            . "-refs 1 -subq 5 -g 30 -s " . $width . "x" . $height . " $macFlags $ipodVideoName";
+            
+        exec($cmd);
+
+        // Check to ensure that movie size is valid
+        if (filesize($ipodVideoName) < 1000)
+            throw new Exception("FFmpeg error encountered: Unable to create iPod video.");
+
+        return $ipodVideoName;
+    }
+    
+    /**
+     * Adjusts the movie format that is used when encoding videos
+     * 
+     * @param {string} $format Extension for the format to switch to
+     * 
+     * @return void
+     */
+    public function setFormat($format) {
+        $this->_format = $format;
+        $this->_filename = str_replace(array("webm", "mp4"), $format, 
+                            $this->_filename);
+    }
+
+    /**    
+     * Log FFmpeg command
+     */
+    private function _logCommand($cmd)
+    {
+        $message = "========================================================\n" 
+                 . "$cmd\n";
+        fwrite($this->_log, $message);
+    }
+    
+    /**
+     * Creates the portion of the ffmpeg command relating to metadata properties
+     */
+    private function _getMetaDataString()
+    {
+        return sprintf(
+            '-metadata title="%s" -metadata composer="Helioviewer.org" -metadata year="%d" ' . 
+            '-metadata description="%s" -metadata comment="%s" ',
+            $this->_title,
+            date("Y"),
+            $this->_description,
+            str_replace(array("mp4", "webm"), $this->_format, $this->_comment)
+        );
     }
 }
 ?>

@@ -1,5 +1,6 @@
 #!/usr/bin/python                                                                                                
-import os, datetime
+import os
+import datetime
 from numpy import std, median
 
 # JPX lengths to create

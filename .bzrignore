@@ -15,6 +15,7 @@ log/*
 install/tools/icons
 settings/Config.ini
 settings/Database.php
+settings/Private.php
 tags
 docs/files.html
 docs/index.html

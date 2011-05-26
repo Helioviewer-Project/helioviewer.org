@@ -6,8 +6,37 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true, console: true */
-/*global window, console, $, navigator, Storage, hideZoomControls, showZoomControls */
+/*global window, console, $, navigator, Storage */
 "use strict";
+
+/**
+ * Takes a number of seconds and returns a human-readable representation of
+ * the interval
+ */
+var humanReadableNumSeconds = function (seconds) {
+    if (seconds <= 60) {
+        return Math.ceil(seconds) + " seconds";
+    } else if (seconds <= 119) {
+        // Since it's flooring values, any number under 2 minutes (120 seconds) 
+        // should come up as "1 minute ago" rather than "1 minutes ago"
+        return "1 minute";
+    } else if (seconds <= 3600) {
+        return Math.floor(seconds / 60) + " minutes";
+    } else if (seconds <= 7199) {
+        // Same as above, any number under 2 hours (7200 seconds)
+        // should come up as "1 hour ago" rather than "1 hours ago"
+        return "1 hour";
+    } else if (seconds <= 86400) {
+        return Math.floor(seconds / 3600) + " hours";
+    } else if (seconds <= 172799) {
+        // Same as above, any number under 2 days (172800 seconds)
+        // should come up as "1 day ago" rather than "1 days ago"
+        return "1 day";
+    } else {
+        return Math.floor(seconds / 86400) + " days";
+    }   
+};
+
 /**
  * @description Outputs a UTC Date string of the format "YYYY/MM/dd"
  * @returns {String} Datestring.
@@ -41,17 +70,72 @@ Date.prototype.toUTCDate = function () {
 };
 
 /**
+ * Takes in a time difference in seconds and converts it to elapsed time, 
+ * e.g. "5 minutes ago" or "3 days ago"
+ */
+Date.prototype.getElapsedTime = function () {
+    // Elapsed time in seconds
+    var diff = (new Date().getTime() - this.getTime()) / 1000;
+    return humanReadableNumSeconds(diff);
+};
+
+/**
+ * Parses dates and returns a UTC JavaScript date object.
+ * 
+ * @param  {String} s A UTC date string of the form 2011-03-14 17:41:39, 
+ *                    2011-03-14T17:41:39, or 2011-03-14T17:41:39.000Z
+ *                    
+ * @return {Date} UTC JavaScript Date object
+ */
+Date.parseUTCDate = function (s) {
+    try {
+        return new Date(Date.UTC(
+            s.substring(0, 4), parseInt(s.substring(5, 7), 10) - 1, s.substring(8, 10),
+            s.substring(11, 13), s.substring(14, 16), s.substring(17, 19) 
+        ));
+    } catch (e) {
+        throw "Invalid UTC date string";
+    }
+};
+
+/**
  * Normalizes behavior for Date.toISOString
  * 
- * Browsers with native support for toISOString return a quoted date string, whereas other browsers
- * return unquoted date string.
- * 
+ * Fixes two issues:
+ *   1. Browsers with native support for toISOString return a quoted date string, 
+ *      whereas other browsers return unquoted date string.
+ *   2. IE8 doesn't include milliseconds
+ *
  * @see http://code.google.com/p/datejs/issues/detail?id=54
  * 
  */
 var toISOString = Date.prototype.toISOString;
 Date.prototype.toISOString = function () {
-    return toISOString.call(this).replace(/"/g, '');
+    var date = toISOString.call(this).replace(/"/g, '');
+    
+    if (date.length === 20) {
+        date = date.substring(0, 19) + ".000Z";
+    }
+    
+    return date;
+};
+
+/**
+ * @description Converts a ISO 8601 UTC formatted date string into a (UTC) Unix timestamp
+ *  e.g. "2003-10-05T00:00:00Z" => 1065312000000
+ */
+var getUTCTimestamp = function (date) {
+    var year, month, day, hours, minutes, seconds, ms;
+    
+    year    = parseInt(date.substr(0, 4), 10);
+    month   = parseInt(date.substr(5, 2), 10) - 1;
+    day     = parseInt(date.substr(8, 2), 10);
+    hours   = parseInt(date.substr(11, 2), 10);
+    minutes = parseInt(date.substr(14, 2), 10);
+    seconds = parseInt(date.substr(17, 2), 10);
+    ms = 0;
+
+    return Date.UTC(year, month, day, hours, minutes, seconds, ms);
 };
 
 /**
@@ -74,24 +158,6 @@ String.prototype.padLeft = function (padding, minLength) {
  */
 var loadCSS = function (filename) {
     $("head").append("<link rel='stylesheet' type='text/css' href='" + filename + "' />");
-};
-
-/**
- * @description Converts a ISO 8601 UTC formatted date string into a (UTC) Unix timestamp
- *  e.g. "2003-10-05T00:00:00Z" => 1065312000000
- */
-var getUTCTimestamp = function (date) {
-    var year, month, day, hours, minutes, seconds, ms;
-    
-    year    = parseInt(date.substr(0, 4), 10);
-    month   = parseInt(date.substr(5, 2), 10) - 1;
-    day     = parseInt(date.substr(8, 2), 10);
-    hours   = parseInt(date.substr(11, 2), 10);
-    minutes = parseInt(date.substr(14, 2), 10);
-    seconds = parseInt(date.substr(17, 2), 10);
-    ms = 0;
-
-    return Date.UTC(year, month, day, hours, minutes, seconds, ms);
 };
 
 /**
@@ -202,8 +268,6 @@ $.isNumber = function (x) {
  * @input {Float} rsun  The radius of the sun in pixels at the current resolution
  * 
  * @return {Object} Returns an object literal containing the converted x and y coordinates.
- * 
- * @see Viewport.getRSun
  */
 var solarRadiiToHelioprojective = function (rx, ry, scale, rsun) {
     var rsunInArcSeconds = rsun * scale;
@@ -233,41 +297,6 @@ var helioprojectiveToSolarRadii = function (hx, hy, scale, rsun) {
         x: hx / rsunInArcSeconds,
         y: hy / rsunInArcSeconds 
     };
-};
-
-/**
- * Takes in a time difference in seconds and converts it to 'fuzzy' time, namely 
- * "5 minutes ago" or "3 days ago"
- * 
- * @input {int} timeDiff Difference in time between two values in seconds
- */
-var toFuzzyTime = function (timeDiff) {
-    if (timeDiff <= 60) {
-        return Math.ceil(timeDiff) + " seconds";
-    } else if (timeDiff <= 119) {
-        // Since it's flooring values, any number under 2 minutes (120 seconds) 
-        // should come up as "1 minute ago" rather than "1 minutes ago"
-        return "1 minute";
-    
-    } else if (timeDiff <= 3600) {
-        return Math.floor(timeDiff / 60) + " minutes";
-    
-    } else if (timeDiff <= 7199) {
-        // Same as above, any number under 2 hours (7200 seconds)
-        // should come up as "1 hour ago" rather than "1 hours ago"
-        return "1 hour";
-    
-    } else if (timeDiff <= 86400) {
-        return Math.floor(timeDiff / 3600) + " hours";
-    
-    } else if (timeDiff <= 172799) {
-        // Same as above, any number under 2 days (172800 seconds)
-        // should come up as "1 day ago" rather than "1 days ago"
-        return "1 day";
-    
-    } else {
-        return Math.floor(timeDiff / 86400) + " days";
-    }    
 };
 
 /**
@@ -355,28 +384,6 @@ var addIconHoverEventListener = function (container) {
             }
         );
     }
-};
-
-/**
- * Helper function to hide all buttons that exist in the viewport.
- * hideZoomControls is in ZoomControls.js
- */
-var hideButtonsInViewport = function () {
-    hideZoomControls();
-    $("#social-buttons").hide("fast");
-    $("#center-button").hide("fast");
-    $("#fullscreen-btn").hide("fast");
-};
-
-/**
- * Helper function to show all buttons that exist inside the viewport.
- * showZoomControls is in ZoomControls.js
- */
-var showButtonsInViewport = function () {
-    showZoomControls();
-    $("#social-buttons").show("fast");
-    $("#center-button").show("fast");
-    $("#fullscreen-btn").show("fast");
 };
 
 /**

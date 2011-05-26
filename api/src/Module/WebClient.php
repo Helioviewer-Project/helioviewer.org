@@ -65,13 +65,33 @@ class Module_WebClient implements Module
      *
      * @return void
      */
-    public function downloadFile()
+    public function downloadScreenshot()
     {
-        $file = HV_CACHE_DIR . "/" . $this->_params['uri'];
+        include_once 'src/Database/ImgIndex.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
+        
+        $imgIndex = new Database_ImgIndex();
+        
+        $info = $imgIndex->getScreenshot($this->_params['id']);
+        
+        $layers = new Helper_HelioviewerLayers($info['dataSourceString']);
+        
+        $dir =  sprintf("%s/screenshots/%s/%s/", 
+           HV_CACHE_DIR,
+           str_replace("-", "/", substr($info['timestamp'], 0, 10)),
+           $this->_params['id']   
+        );
+        
+        $filename = sprintf("%s_%s.png",
+            str_replace(array(":", "-", " "), "_", $info['observationDate']),
+            $layers->toString()
+        );
+
+        $filepath = $dir . $filename;
 
         // Make sure file exists
-        if (!file_exists($file)) {
-            throw new Exception("Unable to locate the requested file: $file");
+        if (!file_exists($filepath)) {
+            throw new Exception("Unable to locate the requested file: $filepath");
         }
 
         // Set HTTP headers
@@ -79,25 +99,25 @@ class Module_WebClient implements Module
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Cache-Control: private", false); // required for certain browsers
-        header("Content-Disposition: attachment; filename=\"" . basename($file) . "\"");
+        header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
         header("Content-Transfer-Encoding: binary");
-        header("Content-Length: " . filesize($file));
+        header("Content-Length: " . filesize($filepath));
 
         // Mime type
-        $parts = explode(".", $file);
-        $extension = end($parts);
-        
-        if (in_array($extension, array("jp2", "jpx"))) {
-            $mimetype = "image/$extension";
-        } else if (in_array($extension, array("ogg", "ogv", "webm"))) {
-            $mimetype = "video/$extension";
-        } else {        
-            $fileinfo = new finfo(FILEINFO_MIME);
-            $mimetype = $fileinfo->file($file);
-        }
-        header("Content-type: " . $mimetype);
+//        $parts = explode(".", $filename);
+//        $extension = end($parts);
+//        
+//        if (in_array($extension, array("jp2", "jpx"))) {
+//            $mimetype = "image/$extension";
+//        } else if (in_array($extension, array("ogg", "ogv", "webm"))) {
+//            $mimetype = "video/$extension";
+//        } else {        
+//            $fileinfo = new finfo(FILEINFO_MIME);
+//            $mimetype = $fileinfo->file($filepath);
+//        }
+        header("Content-type: image/png");
 
-        echo file_get_contents($file);
+        echo file_get_contents($filepath);
     }
 
     /**
@@ -163,6 +183,9 @@ class Module_WebClient implements Module
     /**
      * Requests a single tile to be used in Helioviewer.org.
      * 
+     * TODO 2011/04/19: How much longer would it take to request tiles if meta data was refetched
+     * from database instead of being passed in?
+     * 
      * @return object The image tile
      */
     public function getTile ()
@@ -194,18 +217,40 @@ class Module_WebClient implements Module
         );
 
         // Choose type of tile to create
-        $type = strtoupper($params['instrument']) . "Image";
+        // TODO 2011/04/18: Generalize process of choosing class to use
+        if ($params['instrument'] == "SECCHI") {
+            if (substr($params['detector'], 0, 3) == "COR") {
+                $type = "CORImage";
+            } else {
+                $type = strtoupper($params['detector']) . "Image";
+            }
+        } else {
+            $type = strtoupper($params['instrument']) . "Image";
+        }
+        
         include_once "src/Image/ImageType/$type.php";
 
         $classname = "Image_ImageType_" . $type;
+        
+        // Keep separate statistics for cached tiles
+        $cached = file_exists($filepath);
 
         // Create the tile
         $tile = new $classname(
-            $jp2, $filepath, $roi, $params['instrument'], $params['detector'], $params['measurement'],  
+            $jp2, $filepath, $roi, $params['observatory'], 
+            $params['instrument'], $params['detector'], $params['measurement'],  
             $params['offsetX'], $params['offsetY'], $this->_options
         );
         
-        return $tile->display();  
+        $tile->display();
+        
+        // Log cached tile request now and exit to avoid double-counting
+        if (HV_ENABLE_STATISTICS_COLLECTION && $cached) {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("getCachedTile");
+            exit(0);
+        }
     }
     
     /**
@@ -226,7 +271,7 @@ class Module_WebClient implements Module
         $baseFilename  = substr(basename($uri), 0, -4);
         
         return sprintf(
-            "%s%s/%s_%s_%d_%dx_%d_%dy",
+            "%s%s/%s_%s_%d_%dx_%d_%dy.jpg",
             $baseDirectory, dirname($uri), $baseFilename, $scale, round($x1), round($x2), round($y1), round($y2)
         );
     }
@@ -262,10 +307,10 @@ class Module_WebClient implements Module
      */
     public function takeScreenshot()
     {
-        include_once 'src/Image/Composite/HelioviewerCompositeImage.php';
+        include_once 'src/Image/Composite/HelioviewerScreenshot.php';
         include_once 'src/Helper/HelioviewerLayers.php';
         include_once 'src/Helper/RegionOfInterest.php';
-
+        
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
@@ -276,24 +321,17 @@ class Module_WebClient implements Module
         );
         
         // Create the screenshot
-        $screenshot = new Image_Composite_HelioviewerCompositeImage(
-            $layers, $this->_params['obsDate'], $roi, $this->_options
+        $screenshot = new Image_Composite_HelioviewerScreenshot(
+            $layers, $this->_params['date'], $roi, $this->_options
         );
         
-        // Update usage stats
-        if (HV_ENABLE_STATISTICS_COLLECTION) {
-            include_once 'src/Database/Statistics.php';
-            $statistics = new Database_Statistics();
-            $statistics->log("takeScreenshot");
-        }
-
         // Display screenshot
         if (isset($this->_options['display']) && $this->_options['display']) {
             $screenshot->display();
         } else {
             // Print JSON
             header('Content-Type: application/json');
-            echo json_encode(array("url" => $screenshot->getURL()));            
+            echo json_encode(array("id" => $screenshot->id));            
         }
     }
     
@@ -353,11 +391,10 @@ class Module_WebClient implements Module
      */
     private function _createTileCacheDir($filepath)
     {
-        $cacheDir = HV_CACHE_DIR . "/tiles" . $filepath;
+        $cacheDir = HV_CACHE_DIR . "/tiles" . dirname($filepath);
 
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
-            chmod($cacheDir, 0777);
         }
     }
 
@@ -371,10 +408,10 @@ class Module_WebClient implements Module
     {
         switch($this->_params['action']) {
 
-        case "downloadFile":
+        case "downloadScreenshot":
             $expected = array(
-               "required" => array('uri'),
-               "files"    => array('uri')
+               "required" => array('id'),
+               "ints"     => array('id')
             );
             break;
 
@@ -407,7 +444,7 @@ class Module_WebClient implements Module
 
         case "getTile":
             $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
-                              'offsetX', 'offsetY', 'instrument', 'detector', 'measurement');
+                              'offsetX', 'offsetY', 'observatory', 'instrument', 'detector', 'measurement');
             $expected = array(
                 "required" => $required,
                 "floats"   => array('offsetX', 'offsetY', 'imageScale', 'jp2Scale', 'x1', 'x2', 'y1', 'y2'),
@@ -419,24 +456,24 @@ class Module_WebClient implements Module
         case "getJP2Header":
             $expected = array(
                 "required" => array('file'),
-                "files" => array('file')
+                "files"    => array('file')
             );
             break;
         case "getNewsFeed":
             break;
         case "getUsageStatistics":
             $expected = array(
-                "optional" => array("resolution")
+                "optional" => array("resolution"),
+                "alphanum" => array("resolution")
             );
             break;
         case "takeScreenshot":
             $expected = array(
-                "required" => array('obsDate', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('filename', 'display', 'watermarkOn'),
-                "files"    => array('filename'),
+                "required" => array('date', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
+                "optional" => array('display', 'watermark'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
-                "dates"	   => array('obsDate'),
-                "bools"    => array('display', 'watermarkOn')
+                "dates"	   => array('date'),
+                "bools"    => array('display', 'watermark')
             );
             break;
         default:
@@ -822,7 +859,7 @@ class Module_WebClient implements Module
             <table class="param-list" cellspacing="10">
                 <tbody valign="top">
                     <tr>
-                        <td width="20%"><b>obsDate</b></td>
+                        <td width="20%"><b>date</b></td>
                         <td><i>ISO 8601 UTC Date</i></td>
                         <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
                     </tr>
@@ -866,21 +903,15 @@ class Module_WebClient implements Module
                             if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                     </tr>
                     <tr>
-                        <td><b>filename</b></td>
-                        <td><i>String</i></td>
-                        <td><i>[Optional]</i> The desired filename (without the ".png" extension) of the output image. If no filename is specified,
-                            the filename defaults to a combination of the date, layer names, and image scale.</td>
-                    </tr>
-                    <tr>
                         <td><b>display</b></td>
                         <td><i>Boolean</i></td>
                         <td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
                             filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
                     </tr>
                     <tr>
-                        <td><b>watermarkOn</b></td>
+                        <td><b>watermark</b></td>
                         <td><i>Boolean</i></td>
-                        <td><i>[Optional]</i> Enables turning watermarking on or off. If watermarkOn is set to false, the image will not be watermarked.
+                        <td><i>[Optional]</i> Enables turning watermarking on or off. If watermark is set to false, the image will not be watermarked.
                             If left blank, it defaults to true and images will be watermarked.</td>
                     </tr>
                 </tbody>
@@ -890,13 +921,13 @@ class Module_WebClient implements Module
     
             <span class="example-header">Examples:</span>
             <span class="example-url">
-            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
             </a>
             </span><br />
             <span class="example-url">
-            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&obsDate=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
             </a>
             </span>
             </div>

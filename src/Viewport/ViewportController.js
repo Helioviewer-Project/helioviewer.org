@@ -6,8 +6,8 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, document, window, TileLayerManager, HelioviewerMouseCoordinates, ViewportMovementHelper,
-HelioviewerViewport */
+/*global Class, $, document, window, TileLayerManager, Helioviewer
+HelioviewerMouseCoordinates, ViewportMovementHelper, HelioviewerViewport */
 "use strict";
 var ViewportController = Class.extend(
     /** @lends ViewportController.prototype */
@@ -23,8 +23,13 @@ var ViewportController = Class.extend(
         var mouseCoords     = new HelioviewerMouseCoordinates(options.imageScale, this._rsunInArcseconds, 
                                                               options.warnMouseCoords);
         this.viewport       = new HelioviewerViewport(options);
+        
         // Viewport must be resized before movement helper and sandbox are initialized.
         this.viewport.resize();
+        
+        // Display viewport shadow
+        this.viewport.shadow.show();
+        
         this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
         
         this._initEventHandlers();
@@ -78,7 +83,7 @@ var ViewportController = Class.extend(
         this.updateViewportRanges();
 
         // store new value
-        $(document).trigger("save-setting", ["imageScale", imageScale]);
+        Helioviewer.userSettings.set("state.imageScale", imageScale);
     },
     
     /**
@@ -88,6 +93,14 @@ var ViewportController = Class.extend(
         this.movementHelper.update();
         var coordinates = this.movementHelper.getViewportCoords();
         this.viewport.updateViewportRanges(coordinates);
+    },
+    
+    /**
+     * Returns the coordinates for the top-left and bottom-right corners of the current
+     * region of interest displayed in the viewport
+     */
+    getRegionOfInterest: function () {
+        return this.movementHelper.getViewportCoords();
     },
     
     /**
