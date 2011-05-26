@@ -223,13 +223,13 @@ class Module_Movies implements Module
         
         foreach($movies->getSharedVideos($startIndex, $pageSize) as $video) {
             $youtubeId = $video['youtubeId'];
-            $movieId   = $video['movieId'];
+            $movieId   = (int) $video['movieId'];
              
             // Convert id
-            $movieId = alphaID($video['movieId'], true, 5, HV_MOVIE_ID_PASS);
+            $publicId = alphaID($movieId, false, 5, HV_MOVIE_ID_PASS);
             
             // Load movie
-            $movie = new Movie_HelioviewerMovie($movieId);
+            $movie = new Movie_HelioviewerMovie($publicId);
             
             // Check to make sure video was not removed by the user
             $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$youtubeId?v=2");
@@ -243,7 +243,7 @@ class Module_Movies implements Module
             // Only add videos with response code 200
             if ($httpCode == 200) {
                 array_push($videos, array(
-                    "id"  => $movieId,
+                    "id"  => $publicId,
                     "url" => "http://www.youtube.com/watch?v=$youtubeId&feature=youtube_gdata_player",
                     "thumbnails" => $movie->getPreviewImages(),
                     "published"  => $video['timestamp']

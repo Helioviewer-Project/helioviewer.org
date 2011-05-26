@@ -339,9 +339,12 @@ class Movie_YouTube
         
         // Add entry to YouTube table
         include_once 'src/Database/MovieDatabase.php';
+        include_once 'lib/alphaID/alphaID.php';
+        
+        $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
         
         $movies = new Database_MovieDatabase();
-        $movies->insertYouTubeMovie($id, $youtubeId, $options['title'], 
+        $movies->insertYouTubeMovie($movieId, $youtubeId, $options['title'], 
             $options['description'], $options['tags'], $options['share']);
 
         echo "Finished!";
