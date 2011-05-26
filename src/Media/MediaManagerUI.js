@@ -209,7 +209,6 @@ var MediaManagerUI = Class.extend(
         this._btn.click(function () {
             if (!self.working) {
                 self.toggle();
-                $(".jGrowl-notification").trigger("jGrowl.close");
             }
         });
         

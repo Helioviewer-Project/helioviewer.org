@@ -38,7 +38,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             sticky: true,
             header: "Your screenshot is ready!",
             open:    function (msg) {
-                self.hide();
                 msg.click(function (e) {
                    msg.trigger("jGrowl.close");
                 });
