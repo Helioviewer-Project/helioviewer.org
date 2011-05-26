@@ -201,6 +201,7 @@ class Module_Movies implements Module
     public function getUserVideos() {
         include_once 'src/Database/MovieDatabase.php';
         include_once 'src/Movie/HelioviewerMovie.php';
+        include_once 'lib/alphaID/alphaID.php';
         
         $movies = new Database_MovieDatabase();
 
@@ -223,6 +224,9 @@ class Module_Movies implements Module
         foreach($movies->getSharedVideos($startIndex, $pageSize) as $video) {
             $youtubeId = $video['youtubeId'];
             $movieId   = $video['movieId'];
+             
+            // Convert id
+            $movieId = alphaID($video['movieId'], true, 5, HV_MOVIE_ID_PASS);
             
             // Load movie
             $movie = new Movie_HelioviewerMovie($movieId);
@@ -338,33 +342,30 @@ class Module_Movies implements Module
         case "buildMovie":
             $expected = array(
                 "required" => array('id', 'format'),
-                "alphanum" => array('format'),
-                "ints"     => array('id')
+                "alphanum" => array('id', 'format')
             );
             break;
         case "downloadMovie":
             $expected = array(
                 "required" => array('id', 'format'),
                 "optional" => array('hq'),
-                "alphanum" => array('format'),
-                "bools"    => array('hq'),
-                "ints"     => array('id')
+                "alphanum" => array('id', 'format'),
+                "bools"    => array('hq')
             );
             break;
         case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
-                "alphanum" => array('format'),
-                "ints"     => array('id')
+                "alphanum" => array('id', 'format')
             );
             break;
         case "playMovie":
             $expected = array(
                 "required" => array('id', 'format'),
                 "optional" => array('hq', 'width', 'height'),
-                "alphanum" => array('format'),
+                "alphanum" => array('id', 'format'),
                 "bools"    => array('hq'),
-                "ints"     => array('id', 'width', 'height')
+                "ints"     => array('width', 'height')
             );
             break;
         case "queueMovie":
@@ -382,7 +383,7 @@ class Module_Movies implements Module
             $expected = array(
                 "required" => array('id'),
                 "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready', 'dialogMode'),
-                "ints"     => array('id'),
+                "alphanum" => array('id'),
                 "bools"    => array('share', 'ready', 'dialogMode')
             
             );
