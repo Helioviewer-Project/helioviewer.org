@@ -3,7 +3,7 @@ $ini = "settings/Config.ini";
 if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
 // Remove variables that are not used on the client-side
-unset($config['youtube_developer_key'], $config['enable_statistics_collection']);
+unset($config['enable_statistics_collection']);
 // Debug support
 if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
     $config['compress_js'] = $config['compress_css'] = false;

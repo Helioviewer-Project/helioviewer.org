@@ -70,8 +70,8 @@ class Config
 
         $this->_setAdditionalParams();
         
-        $dbconfig = substr($file, 0, strripos($file, "/")) . "/Database.php";
-        include_once $dbconfig;
+        $keys = substr($file, 0, strripos($file, "/")) . "/Private.php";
+        include_once $keys;
     }
 
     /**
