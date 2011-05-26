@@ -236,8 +236,8 @@ var UserVideoGallery = Class.extend(
         $(window).resize($.proxy(this._onResize, this));
         
         // Setup hover event handler
-        this._container.find("a")
-            .live('mouseover mouseout', this._onVideoHover);
+        //this._container.find("a")
+        //    .live('mouseover mouseout', this._onVideoHover);
 
         this._container.mousewheel($.proxy(this._onMouseWheelMove, this));
     }    
