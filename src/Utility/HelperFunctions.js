@@ -35,7 +35,7 @@ var humanReadableNumSeconds = function (seconds) {
     } else {
         return Math.floor(seconds / 86400) + " days";
     }   
-}
+};
 
 /**
  * @description Outputs a UTC Date string of the format "YYYY/MM/dd"
@@ -95,7 +95,7 @@ Date.parseUTCDate = function (s) {
         ));
     } catch (e) {
         throw "Invalid UTC date string";
-    };
+    }
 };
 
 /**

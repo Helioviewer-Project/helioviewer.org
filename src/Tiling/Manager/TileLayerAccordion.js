@@ -42,18 +42,18 @@ var TileLayerAccordion = Layer.extend(
                    .bind("observation-time-changed", $.proxy(this._onObservationTimeChange, this));
                    
         // Tooltips
-        this.container.delegate("span[title]", 'mouseover', function(event) {
-           $(this).qtip({
-              overwrite: false,
-              show: {
-                 event: event.type,
-                 ready: true
-              }
-           }, event);
+        this.container.delegate("span[title]", 'mouseover', function (event) {
+            $(this).qtip({
+                overwrite: false,
+                show: {
+                    event: event.type,
+                    ready: true
+                }
+            }, event);
         })
-        .each(function(i) {
-           $.attr(this, 'oldtitle', $.attr(this, 'title'));
-           this.removeAttribute('title');
+        .each(function (i) {
+            $.attr(this, 'oldtitle', $.attr(this, 'title'));
+            this.removeAttribute('title');
         });
     },
 

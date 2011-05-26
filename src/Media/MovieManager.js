@@ -174,7 +174,7 @@ var MovieManager = MediaManager.extend(
             open:    function (msg) {
                 msg.find(".message-console-movie-ready").data("movie", movie)
                    .click(function (e) {
-                   msg.trigger("jGrowl.close");
+                    msg.trigger("jGrowl.close");
                 });
             }
         };
