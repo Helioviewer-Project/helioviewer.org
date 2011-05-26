@@ -39,7 +39,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             header: "Your screenshot is ready!",
             open:    function (msg) {
                 msg.click(function (e) {
-                   msg.trigger("jGrowl.close");
+                    msg.trigger("jGrowl.close");
                 });
             }
         };

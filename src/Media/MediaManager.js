@@ -39,7 +39,7 @@ var MediaManager = Class.extend(
 
             // Add instrument or detector if its not already present, otherwise
             // add a backslash and move onto the right-hand side
-            if (currentGroup == instrument || currentGroup == detector) {
+            if (currentGroup === instrument || currentGroup === detector) {
                 name += "/";
             } else {
                 // For STEREO use detector for the Left-hand side
