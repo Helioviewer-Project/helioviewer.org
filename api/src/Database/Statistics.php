@@ -105,12 +105,6 @@ class Database_Statistics
             // And append counts for each action during that interval to the relevant array
             while ($count = $result->fetch_array(MYSQL_ASSOC)) {
                 $num = (int) $count['count'];
-
-                // Each movie request results in two buildMovie requests
-                // Divide in half to avoid double-counting.
-                if ($count['action'] == "buildMovie") {
-                    $num = ceil($num / 2);
-                }
                 
                 $counts[$count['action']][$i][$dateIndex] = $num;
                 $summary[$count['action']] += $num;
