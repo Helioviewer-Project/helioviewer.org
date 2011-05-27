@@ -34,8 +34,11 @@ var Helioviewer = Class.extend(
         this._initLoadingIndicator();
         this._initTooltips();
         
+        // Use URL date if specified
+        var urlDate = urlSettings.date ? Date.parseUTCDate(urlSettings.date) : false;
+
         this.timeControls = new TimeControls('#date', '#time', 
-            '#timestep-select', '#timeBackBtn', '#timeForwardBtn');
+            '#timestep-select', '#timeBackBtn', '#timeForwardBtn', urlDate);
 
         // Get available data sources and initialize viewport
         this._initViewport();

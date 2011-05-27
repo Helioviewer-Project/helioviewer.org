@@ -167,18 +167,16 @@ var UserSettings = Class.extend(
     
     /**
      * Processes and validates any URL parameters that have been set
+     * 
+     * Note that date is handled separately in TimeControls
      */
     _processURLSettings: function (urlSettings) {
-        if (urlSettings.date) {
-            this.set("date", getUTCTimestamp(urlSettings.date));
-        }
-
         if (urlSettings.imageScale) {
-            this.set("imageScale", parseFloat(urlSettings.imageScale));
+            this.set("state.imageScale", parseFloat(urlSettings.imageScale));
         }
         
         if (urlSettings.imageLayers) {
-            this.set("tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
+            this.set("state.tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
         }
     },
     
