@@ -59,6 +59,7 @@ class Database_Statistics
         // Array to keep track of counts for each action
         $counts = array(
             "buildMovie"           => array(),
+            "getCachedTile"        => array(),
             "getClosestImage"      => array(),
             "getJPX"               => array(),
             "getTile"              => array(),
@@ -69,6 +70,7 @@ class Database_Statistics
         // Summary array
         $summary = array(
             "buildMovie"           => 0,
+            "getCachedTile"        => 0,
             "getClosestImage"      => 0,
             "getJPX"               => 0,
             "getTile"              => 0,
@@ -94,7 +96,6 @@ class Database_Statistics
             foreach ($counts as $action => $arr) {
                 array_push($counts[$action], array($dateIndex => 0));
             }
-
             $dateEnd = toMySQLDateString($date);
 
             $sql = "SELECT action, COUNT(*) as count FROM statistics " . 
