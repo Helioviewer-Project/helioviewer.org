@@ -139,6 +139,13 @@ class Movie_HelioviewerMovie
             $t4 = time();
             $this->_abort("Error encountered during video encoding.", $t4 - $t3);
         }
+		
+		// Log buildMovie in statistics table
+        if (HV_ENABLE_STATISTICS_COLLECTION && $this->format == "mp4") {
+            include_once 'src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("buildMovie");
+        }
         
         // If all of the queued videos have been created remove frames
         if ($this->_db->getNumUnfinishedMovies($this->id) === 0) {
