@@ -47,7 +47,7 @@ class Movie_YouTube
      */
     public function __construct()
     {
-        require_once 'Zend/Loader.php';
+        include_once 'Zend/Loader.php';
         Zend_Loader::loadClass('Zend_Gdata_AuthSub');
         
         $this->_appId     = "Helioviewer.org User Video Uploader";
@@ -62,8 +62,8 @@ class Movie_YouTube
     /**
      * Authenticates user and uploads video to YouTube
      * 
-     * @param string $fileId    Relative path (uuid/filename.ext) to the file to be uploaded
-     * @param array  $videoInfo Video information including the video title, description, tags and sharing.
+     * @param string $id      Public id of the video to be uploaded
+     * @param array  $options Video information including the video title, description, tags and sharing.
      * 
      * Currently the video upload process occurs in 2-3 steps, depending on whether the site has already
      * been authorized or not:
@@ -71,8 +71,10 @@ class Movie_YouTube
      *  1) If the user has not been authorized, redirect to YouTube authorization page
      *  2) Display video description form
      *  3) Process submitted video form items and upload movie
+     * 
+     * @return void
      */
-    public function uploadVideo($id, $filepath, $options)
+    public function uploadVideo($id, $options)
     {
         // Optional parameters
         $defaults = array(
@@ -124,6 +126,8 @@ class Movie_YouTube
     
     /**
      * Checks to see if a user is Helioveiwer.org is currently authorized to interact with a user's YouTube account.
+     * 
+     * @return bool Returns true if the user has been authenticated by YouTube
      */
     public function checkYouTubeAuth()
     {
@@ -139,6 +143,12 @@ class Movie_YouTube
     
     /**
      * Returns a list of videos uploaded to YouTube by Helioviewer.org users
+     * 
+     * @param int $pageSize The number of results to be included in a single page.
+     * @param int $pageNum  The current page of results to display
+     * 
+     * @return array An array of associative arrays containing properties of movies uploaded to YouTube
+     * by Helioviewer.org users.
      */
     public function getUserVideos($pageSize, $pageNum)
     {
@@ -158,12 +168,12 @@ class Movie_YouTube
         $videos = array();
         
         // Process video entries
-        foreach($yt->getVideoFeed($url) as $videoEntry) {
+        foreach ($yt->getVideoFeed($url) as $videoEntry) {
             $id = $videoEntry->getVideoId();
 
             // Check to make sure video was not removed by the user
             $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$id?v=2");
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
             
             $response = curl_exec($handle);
             $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
@@ -172,13 +182,15 @@ class Movie_YouTube
 
             // Only add videos with response code 200
             if ($httpCode == 200) {
-                array_push($videos, array(
-                    "id"      => $id,
-                    "watch"   => $videoEntry->getVideoWatchPageUrl(),
-                    "flash"   => $videoEntry->getFlashPlayerUrl(),
-                    "thumbnails" => $videoEntry->getVideoThumbnails(),
-                    "published"  => $videoEntry->getPublished()->getText()
-                ));
+                array_push(
+                    $videos, array(
+                        "id"      => $id,
+                        "watch"   => $videoEntry->getVideoWatchPageUrl(),
+                        "flash"   => $videoEntry->getFlashPlayerUrl(),
+                        "thumbnails" => $videoEntry->getVideoThumbnails(),
+                        "published"  => $videoEntry->getPublished()->getText()
+                    )
+                );
             }
         }
         
@@ -186,7 +198,15 @@ class Movie_YouTube
     }
     
     /**
-     * Authenticates Helioviewer to upload videos to the users account
+     * Authenticates Helioviewer to upload videos to the users account.
+     * 
+     * Function first checks to see if a session token already exists. If none
+     * is found, the user is either redirected to an authentication URL, or
+     * if stores sessions token if it was just retrieved.     * 
+     * 
+     * @param string $url Upload query URL
+     * 
+     * @return void
      */
     private function _authenticate($url)
     {
@@ -205,7 +225,8 @@ class Movie_YouTube
     /**
      * Checks to see if the user is currently authenticated, and that any previous authentication is not expired
      * 
-     * @return bool Returns true if the user is authenticated and that authentication is still good, and false otherwise
+     * @return bool Returns true if the user is authenticated and that 
+     * authentication is still good, and false otherwise
      */
     private function _authenticationIsValid()
     {
@@ -221,6 +242,11 @@ class Movie_YouTube
     
     /**
      * Creates an instance of a Zend_Gdata_YouTube_VideoEntry using the user-submitted values
+     * 
+     * @param string $filepath  Path to the video
+     * @param array  $videoInfo Array containing user choices for title, description, etc.
+     * 
+     * @return Zend_Gdata_YouTube_VideoEntry Video entry
      */
     private function _createGDataVideoEntry($filepath, $videoInfo)
     {
@@ -252,8 +278,13 @@ class Movie_YouTube
     
     /**
      * Creates an instance of a Zend_Gdata_App_MediaFileSource
+     * 
+     * @param string $filepath Path of the video file
+     * 
+     * @return Zend_Gdata_App_MediaFileSource media source associated with the video to be uploaded
      */
-    private function _createMediaFileSource($filepath) {
+    private function _createMediaFileSource($filepath)
+    {
         // Create a new Zend_Gdata_App_MediaFileSource object
         $filesource = $this->_youTube->newMediaFileSource($filepath);
         $filesource->setContentType('video/mp4');
@@ -267,6 +298,12 @@ class Movie_YouTube
 
     /** 
      * Gets a Authorization link
+     * 
+     * TODO: 2011/06/01 Is $file still being passed around?
+     * 
+     * @param string $file Filepath for video to be uploaded
+     * 
+     * @return string YouTube Authentication URL
      */
     private function _getAuthSubRequestUrl($file)
     {
@@ -277,24 +314,28 @@ class Movie_YouTube
     /**
      * Constructs the URL that should be used once authentication has been completed to display the upload form
      * 
-     * @param string $fileId  Relative path of the file being uploaded
+     * @param string $id      Video ID
      * @param array  $options Video options
      * 
      * @return string Redirect URL
      */
     private function _getPostAuthRedirectURL($id, $options)
     {
-        return HV_API_ROOT_URL . "?" . http_build_query(array(
-            "action"      => "uploadMovieToYouTube",
-            "id"          => $id,
-            "title"       => $options["title"],
-            "description" => $options["description"],
-            "tags"        => $options["tags"]
-        ));
+        return HV_API_ROOT_URL . "?" . http_build_query(
+            array(
+                "action"      => "uploadMovieToYouTube",
+                "id"          => $id,
+                "title"       => $options["title"],
+                "description" => $options["description"],
+                "tags"        => $options["tags"]
+            )
+        );
     }
     
     /**
      * Initializes a YouTube GData object instance
+     * 
+     * @return Zend_Gdata_YouTube A YouTube object instance
      */
     private function _getYoutubeInstance()
     {
@@ -344,124 +385,140 @@ class Movie_YouTube
         $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
         
         $movies = new Database_MovieDatabase();
-        $movies->insertYouTubeMovie($movieId, $youtubeId, $options['title'], 
-            $options['description'], $options['tags'], $options['share']);
+        $movies->insertYouTubeMovie(
+            $movieId, $youtubeId, $options['title'], 
+            $options['description'], $options['tags'], $options['share']
+        );
 
         echo "Finished!";
     }
     
     /**
      * Displays the YouTube video submission form
+     * 
+     * @param string $id          Video ID
+     * @param string $title       Text to display in the title field
+     * @param string $description Text to display in the description field
+     * @param string $tags        Text to display in the keywords field
+     * @param bool   $dialogMode  Whether or not to style the form for use inside a dialog on Helioviewer.org
+     * 
+     * @return void
      */
-    private function _printForm($id, $title, $description, $tags, $dialogMode) {
-    ?>
-<!DOCTYPE html> 
-<html> 
-<head> 
-    <title>Helioviewer.org - YouTube Video Submission</title>
-    <link rel='stylesheet' href='resources/css/youtube.css' /> 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" 
-        type="text/javascript"></script>
-    <script type='text/javascript'>
-            $(function () {
-                var successMsg, errorConsole;
-
-                // Validate and submit form
-                $("#youtube-video-info").submit(function () {
-                    try {
-                        validateForm();
-                    } catch (ex) {
-                    	errorConsole = $("#upload-error-console");
-                    	errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
-							window.setTimeout(function () {
-								errorConsole.fadeOut();
-				            }, 15000);
-						});
-						return false;
-                    }
-
-                    // If input looks good, submit request to YouTube and let user know
-                    successMsg = "<div id='success-message'><h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.</div>";
-                    $("#container").empty().html(successMsg);
-                    $.post("index.php", $(this).serialize());
-
-                    return false;   
-                });
-
-				// Form validation
-				var validateForm = function() {
-					var keywords         = $("#youtube-tags").attr('value'),
-						keywordMinLength = <?php echo $this->_keywordMinLength;?>,
-						keywordMaxLength = <?php echo $this->_keywordMaxLength;?>;
-
-					// User must specify at least one keyword
-					if (keywords.length === 0) {
-						throw "You must specifiy at least one tag for your video.";
-						return;
-					}
-					
-					// Make sure each keywords are between 2 and 30 characters each
-					$.each(keywords.split(","), function(i, keyword) {
-						var len = $.trim(keyword).length;
-
-						if (len > keywordMaxLength) {
-							throw "YouTube tags must not be longer than " + keywordMaxLength + " characters each.";
-						} else if (len < keywordMinLength) {
-							throw "YouTube tags must be at least " + keywordMinLength + " characters each.";
-						}
-						return;						
-					});
-
-					// < and > are not allowed in title, description or keywords
-					$.each($("input[type='text'], textarea"), function (i, input) {
-						if ($(input).attr('value').match(/[<>]/)) {
-							throw "< and > characters are not allowed";
-						}
-						return;
-					});
-				};
-            });
-        </script>
-</head>
-<body<?php if ($dialogMode) {echo " class='dialog-mode'";}?>>
-    <div id='container'>
-    <img id='youtube-logo' src='../resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
-    <h1>Upload Video</h1>
-    <br />
-    <form id="youtube-video-info" action="index.php" method="post">
-        <!-- Title -->
-        <label for="youtube-title">Title:</label>
-        <input id="youtube-title" type="text" name="title" maxlength="<?php echo $this->_titleMaxLength;?>>" value="<?php echo $title;?>" />
-        <br />
+    private function _printForm($id, $title, $description, $tags, $dialogMode)
+    {
+        ?>
+        <!DOCTYPE html> 
+        <html> 
+        <head> 
+            <title>Helioviewer.org - YouTube Video Submission</title>
+            <link rel='stylesheet' href='resources/css/youtube.css' /> 
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js" 
+                type="text/javascript"></script>
+            <script type='text/javascript'>
+                    $(function () {
+                        var successMsg, errorConsole;
         
-        <!-- Description -->
-        <label for="youtube-desc">Description:</label>
-        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="<?php echo $this->_descriptionMaxLength;?>"><?php echo $description;?></textarea>
-        <br />
+                        // Validate and submit form
+                        $("#youtube-video-info").submit(function () {
+                            try {
+                                validateForm();
+                            } catch (ex) {
+                            	errorConsole = $("#upload-error-console");
+                            	errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
+        							window.setTimeout(function () {
+        								errorConsole.fadeOut();
+        				            }, 15000);
+        						});
+        						return false;
+                            }
         
-        <!-- Tags -->
-        <label for="youtube-tags">Tags:</label>
-        <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxLength;?>" value="Helioviewer.org, <?php echo $tags;?>" />
-        <br /><br />
+                            // If input looks good, submit request to YouTube and let user know
+                            successMsg = "<div id='success-message'><h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.</div>";
+                            $("#container").empty().html(successMsg);
+                            $.post("index.php", $(this).serialize());
         
-        <!-- Sharing -->
-        <div style='float: right; margin-right: 30px;'>
-        <label style='width: 100%; margin: 0px;'>
-        	<input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
-        </label>
-        <br />
-        <input id='youtube-submit-btn' type="submit" value="Submit" />
-        </div>
+                            return false;   
+                        });
         
-        <!-- Hidden fields -->
-        <input type="hidden" name="action" value="uploadMovieToYouTube" />
-        <input type="hidden" name="ready" value="true" />
-        <input type="hidden" name="id" value="<?php echo $id; ?>" />
-    </form>
-    <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
-    </div>
-</body>
-</html>
+        				// Form validation
+        				var validateForm = function() {
+        					var keywords         = $("#youtube-tags").attr('value'),
+        						keywordMinLength = <?php echo $this->_keywordMinLength;?>,
+        						keywordMaxLength = <?php echo $this->_keywordMaxLength;?>;
+        
+        					// User must specify at least one keyword
+        					if (keywords.length === 0) {
+        						throw "You must specifiy at least one tag for your video.";
+        						return;
+        					}
+        					
+        					// Make sure each keywords are between 2 and 30 characters each
+        					$.each(keywords.split(","), function(i, keyword) {
+        						var len = $.trim(keyword).length;
+        
+        						if (len > keywordMaxLength) {
+        							throw "YouTube tags must not be longer than " + keywordMaxLength + " characters each.";
+        						} else if (len < keywordMinLength) {
+        							throw "YouTube tags must be at least " + keywordMinLength + " characters each.";
+        						}
+        						return;						
+        					});
+        
+        					// < and > are not allowed in title, description or keywords
+        					$.each($("input[type='text'], textarea"), function (i, input) {
+        						if ($(input).attr('value').match(/[<>]/)) {
+        							throw "< and > characters are not allowed";
+        						}
+        						return;
+        					});
+        				};
+                    });
+                </script>
+        </head>
+        <body
+        <?php
+        if ($dialogMode) {
+            echo " class='dialog-mode'";
+        }
+        ?>>
+            <div id='container'>
+            <img id='youtube-logo' src='../resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
+            <h1>Upload Video</h1>
+            <br />
+            <form id="youtube-video-info" action="index.php" method="post">
+                <!-- Title -->
+                <label for="youtube-title">Title:</label>
+                <input id="youtube-title" type="text" name="title" maxlength="<?php echo $this->_titleMaxLength;?>>" value="<?php echo $title;?>" />
+                <br />
+                
+                <!-- Description -->
+                <label for="youtube-desc">Description:</label>
+                <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="<?php echo $this->_descriptionMaxLength;?>"><?php echo $description;?></textarea>
+                <br />
+                
+                <!-- Tags -->
+                <label for="youtube-tags">Tags:</label>
+                <input id="youtube-tags" type="text" name="tags" maxlength="<?php echo $this->_keywordsMaxLength;?>" value="Helioviewer.org, <?php echo $tags;?>" />
+                <br /><br />
+                
+                <!-- Sharing -->
+                <div style='float: right; margin-right: 30px;'>
+                <label style='width: 100%; margin: 0px;'>
+                	<input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
+                </label>
+                <br />
+                <input id='youtube-submit-btn' type="submit" value="Submit" />
+                </div>
+                
+                <!-- Hidden fields -->
+                <input type="hidden" name="action" value="uploadMovieToYouTube" />
+                <input type="hidden" name="ready" value="true" />
+                <input type="hidden" name="id" value="<?php echo $id; ?>" />
+            </form>
+            <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
+            </div>
+        </body>
+        </html>
     <?php
     }
 }
