@@ -175,11 +175,9 @@ class Module_Movies implements Module
         if ($movie->status !== "FINISHED") {
             throw new Exception("Invalid movie requested");
         }
-        
-        $file = $movie->getFilepath(true);
 
         $youtube = new Movie_YouTube();
-        $youtube->uploadVideo($this->_params['id'], $file, $this->_options);
+        $youtube->uploadVideo($this->_params['id'], $this->_options);
     }
     
     /**
