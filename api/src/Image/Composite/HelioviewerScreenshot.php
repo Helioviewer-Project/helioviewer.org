@@ -52,7 +52,7 @@ class Image_Composite_HelioviewerScreenshot extends Image_Composite_HelioviewerC
     	   HV_CACHE_DIR,
     	   date("Y/m/d"),
     	   $this->id,
-    	   substr(str_replace(array(":", "-", "T", "Z"), "_", $this->date), 0, -5),
+    	   substr(str_replace(array(":", "-", "T", "Z"), "_", $this->date), 0, 19),
     	   $this->layers->toString()    	   
     	);
     }
