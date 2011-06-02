@@ -32,6 +32,7 @@ class Validation_InputValidator
      *
      * @param array &$expected Types of checks required for request
      * @param array &$input    Actual request parameters
+     * @param array &$optional Array to store optional parameters in
      *
      * @return void
      */
@@ -88,6 +89,7 @@ class Validation_InputValidator
      *
      * @param array $optional A list of the optional parameters for a given action
      * @param array &$params  The parameters that were passed in
+     * @param array &$options Array to store any specified optional parameters in
      *
      * @return void
      */
@@ -159,8 +161,10 @@ class Validation_InputValidator
                 if (strpos($params[$file], '..')) {
                     throw new Exception("Invalid file requested: .. not allowed in filenames.");
                 } elseif (preg_match('/[^\/.-\w]/', $params[$file])) {
-                    throw new Exception("Invalid file requested. Valid characters for filenames include letters, " .
-                    "digits, underscores, hyphens and periods.");
+                    throw new Exception(
+                        "Invalid file requested. Valid characters for filenames include letters, " .
+                        "digits, underscores, hyphens and periods."
+                    );
                 }
             }
         }
@@ -221,8 +225,10 @@ class Validation_InputValidator
         foreach ($uuids as $uuid) {
             if (isset($params[$uuid])) {
                 if (!preg_match('/^[a-z0-9]{8}-?[a-z0-9]{4}-?[a-z0-9]{4}-?[a-z0-9]{4}-?[a-z0-9]{12}$/', $params[$uuid])) {
-                    throw new Exception("Invalid identifier. Valid characters for UUIDs include " .
-                    "lowercase letters, digits, and hyphens.");
+                    throw new Exception(
+                        "Invalid identifier. Valid characters for UUIDs include " .
+                        "lowercase letters, digits, and hyphens."
+                    );
                 }
             }
         }
