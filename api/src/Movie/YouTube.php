@@ -74,7 +74,7 @@ class Movie_YouTube
      * 
      * @return void
      */
-    public function uploadVideo($id, $options)
+    public function uploadVideo($id, $filepath, $options)
     {
         // Optional parameters
         $defaults = array(
