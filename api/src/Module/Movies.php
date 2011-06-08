@@ -239,7 +239,7 @@ class Module_Movies implements Module
             // $response = curl_exec($handle);
             // $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 
-            curl_close($handle);
+            //curl_close($handle);
 
             // Only add videos with response code 200
             //if ($httpCode == 200) {
