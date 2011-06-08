@@ -138,7 +138,6 @@ class Database_Statistics
                 break;
             case "yearly":
                 return "Y";    // 2009
-                
         }
     }
     
