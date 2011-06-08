@@ -109,7 +109,7 @@ class Movie_FFMPEGEncoder
     /**
      * Creates a WebM/VP8 video
      */
-    private function _createWebMVideo($outputFile, $qmax=10)
+    private function _createWebMVideo($outputFile, $qmax=40)
     {
         //$cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "/frames/frame%d.bmp"
         //    . " -r " . $this->_frameRate . " -f webm -vcodec libvpx -qmax $qmax -threads " . HV_FFMPEG_MAX_THREADS 
