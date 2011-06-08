@@ -172,26 +172,28 @@ class Movie_YouTube
             $id = $videoEntry->getVideoId();
 
             // Check to make sure video was not removed by the user
-            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$id?v=2");
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-            
-            $response = curl_exec($handle);
-            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+            // 2011/06/08: Disabling for now since this delays time before videos
+            // show up on site
+            // $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$id?v=2");
+            // curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+//             
+            // $response = curl_exec($handle);
+            // $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 
-            curl_close($handle);
+            //curl_close($handle);
 
             // Only add videos with response code 200
-            if ($httpCode == 200) {
-                array_push(
-                    $videos, array(
-                        "id"      => $id,
-                        "watch"   => $videoEntry->getVideoWatchPageUrl(),
-                        "flash"   => $videoEntry->getFlashPlayerUrl(),
-                        "thumbnails" => $videoEntry->getVideoThumbnails(),
-                        "published"  => $videoEntry->getPublished()->getText()
-                    )
-                );
-            }
+            //if ($httpCode == 200) {
+            array_push(
+                $videos, array(
+                    "id"      => $id,
+                    "watch"   => $videoEntry->getVideoWatchPageUrl(),
+                    "flash"   => $videoEntry->getFlashPlayerUrl(),
+                    "thumbnails" => $videoEntry->getVideoThumbnails(),
+                    "published"  => $videoEntry->getPublished()->getText()
+                )
+            );
+            //}
         }
         
         return $videos;
