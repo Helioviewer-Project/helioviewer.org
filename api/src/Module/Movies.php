@@ -232,23 +232,24 @@ class Module_Movies implements Module
             $movie = new Movie_HelioviewerMovie($publicId);
             
             // Check to make sure video was not removed by the user
-            $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$youtubeId?v=2");
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
-            
-            $response = curl_exec($handle);
-            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+            // 2011/06/08: Disabling for now since this delays time before videos
+            // $handle = curl_init("http://gdata.youtube.com/feeds/api/videos/$youtubeId?v=2");
+            // curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+
+            // $response = curl_exec($handle);
+            // $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 
             curl_close($handle);
 
             // Only add videos with response code 200
-            if ($httpCode == 200) {
-                array_push($videos, array(
-                    "id"  => $publicId,
-                    "url" => "http://www.youtube.com/watch?v=$youtubeId&feature=youtube_gdata_player",
-                    "thumbnails" => $movie->getPreviewImages(),
-                    "published"  => $video['timestamp']
-                ));
-            }
+            //if ($httpCode == 200) {
+            array_push($videos, array(
+                "id"  => $publicId,
+                "url" => "http://www.youtube.com/watch?v=$youtubeId",
+                "thumbnails" => $movie->getPreviewImages(),
+                "published"  => $video['timestamp']
+            ));
+            //}
         }
 
         header('Content-type: application/json');
