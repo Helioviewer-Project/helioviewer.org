@@ -247,8 +247,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
         <!-- Left Column -->
         <div id="col2">
             <div id="left-col-header">
-                <a href='http://www.helioviewer.org'>
-                    <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
+                <a href='<?php echo $config['web_root_url'];?>'>
+                    <img src="<?php echo $config['main_logo'];?>" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
                 </a>
             </div>
             <br><br>
@@ -328,7 +328,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 <a href="http://helioviewer.org/blog" class="light" target="_blank">Blog</a>
                 <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
                 <a href="api/" class="light" target="_blank">API</a>
-                <a href="mailto:contact@helioviewer.org" class="light">Contact</a>
+                <a href="mailto:<?php echo $config['contact_email']; ?>" class="light">Contact</a>
                 <a href="https://bugs.launchpad.net/helioviewer.org/" class="light" style="margin-right:2px;" target="_blank">Report Problem</a>
             </div>
         </div>

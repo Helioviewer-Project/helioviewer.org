@@ -199,7 +199,7 @@ function printAPIDocumentation()
 <body>
 
 <!-- Logo -->
-<img alt="Helioviewer Logo" src="resources/images/about.png" style="float: left;">
+<img alt="Helioviewer Logo" src="<?php echo HV_API_LOGO; ?>" style="float: left;">
 <h1 style="position: relative; top: 22px;">API</h1>
 <br />
 
@@ -272,7 +272,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2011-05-25 | <a href="mailto:contact@helioviewer.org">Questions?</a>
+    Last Updated: 2011-05-25 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
 </div>
 
 </body>
@@ -694,7 +694,7 @@ function printHTMLErrorMsg($msg)
 <body>
     <div style='width: 50%; margin-left: auto; margin-right: auto; margin-top: 250px;
                 text-align: center; font-size: 14px;'>
-    <img src='resources/images/about.png' alt='Helioviewer logo'></img><br>
+    <img src='<?php echo HV_API_LOGO; ?>' alt='Helioviewer logo'></img><br>
     <b>Error:</b> <?php echo $msg;?><br>
     </div>
 </body>
