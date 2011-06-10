@@ -560,6 +560,12 @@ class Database_ImgIndex
                 LEFT JOIN instruments ON datasources.instrumentId = instruments.id
                 LEFT JOIN detectors ON datasources.detectorId = detectors.id
                 LEFT JOIN measurements ON datasources.measurementId = measurements.id;";
+                
+        // 2011/06/10 Temporarily hiding STEREO from verbose output (used by
+        // JHelioviewer.) Will remove when JHelioviewer adds support.
+        if ($verbose) {
+            $sql = substr($sql, 0, -1) . " " . 'WHERE observatories.name NOT IN ("STEREO_A", "STEREO_B");';
+        }
         
         // Use UTF-8 for responses
         $this->_dbConnection->setEncoding('utf8');
