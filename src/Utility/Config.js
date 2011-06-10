@@ -73,6 +73,7 @@ var Config = Class.extend(
             'prefetchSize'        : this.params["prefetch_size"],
             'timeIncrementSecs'   : this.params["default_timestep"],
             'servers'             : this.params["server"],
+            'newsURL'             : this.params["news_url"],
             'rootURL'             : this.params["web_root_url"],
             'hqEnabled'           : this.params["helioqueuer_enabled"]
         };
