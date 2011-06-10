@@ -247,8 +247,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
         <!-- Left Column -->
         <div id="col2">
             <div id="left-col-header">
-                <a href='http://www.helioviewer.org'>
-                    <img src="resources/images/logos/simple.png" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
+                <a href='<?php echo $config['web_root_url'];?>'>
+                    <img src="<?php echo $config['main_logo'];?>" id="helioviewer-logo-main" alt="Helioviewer.org Logo">
                 </a>
             </div>
             <br><br>
