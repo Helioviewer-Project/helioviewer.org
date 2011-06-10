@@ -312,11 +312,11 @@ var Helioviewer = Class.extend(
     /**
      * Displays recent news from the Helioviewer Project blog
      */
-    displayBlogFeed: function (url, n, showDescription, descriptionWordLength) {
-        var html = "";
+    displayBlogFeed: function (feed, n, showDescription, descriptionWordLength) {
+        var url = this.serverSettings.newsURL, html = "";
         
         $.getFeed({
-            url: url,
+            url: feed,
             success: function (feed) {
                 var link, date, more, description;
 
@@ -340,7 +340,8 @@ var Helioviewer = Class.extend(
                     html += "</div>";
                 });
                 
-                more = "<div id='more-articles'><a href='blog/' alt='The Helioviewer Project Blog'>More...</a></div>";
+                more = "<div id='more-articles'><a href='" + url +
+                       "' alt='The Helioviewer Project Blog'>More...</a></div>";
                 
                 $("#social-panel").append(html + more);
             }

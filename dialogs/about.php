@@ -2,7 +2,7 @@
 if (!$config = parse_ini_file("../settings/Config.ini"))
     die("Missing config file!");
 ?>
-<img src="resources/images/logos/about_white.png" alt="Helioviewer.org Logo"><br>
+<img src="<?php echo $config['about_logo']; ?>" alt="Helioviewer.org Logo"><br>
 <div style="width:100%; text-align: center;">
     <span style="margin-left: auto; margin-right: auto; font-size:small;"><?php printf("Last Updated: %s (2.2.0)", $config["last_update"]); ?></span>
 </div>

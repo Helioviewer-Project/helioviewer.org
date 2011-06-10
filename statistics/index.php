@@ -1,3 +1,11 @@
+<?php
+    $validResolutions = array("hourly", "daily", "weekly", "monthly", "yearly");
+    if (isset($_GET['resolution']) && in_array($_GET['resolution'], $validResolutions)) {
+        $resolution = $_GET['resolution'];
+    } else {
+        $resolution = "daily";
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,7 +17,7 @@
         google.load("jquery", "1.5");
         google.load("visualization", "1", {packages:["corechart"]});
         google.setOnLoadCallback(function (e) {
-            getUsageStatistics("daily");
+            getUsageStatistics("<?php echo $resolution;?>");
         });
     </script>
 </head>
