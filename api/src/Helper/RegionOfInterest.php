@@ -46,7 +46,7 @@ class Helper_RegionOfInterest
      *  
      * @return void
      */
-    public function __construct($x1, $x2, $y1, $y2, $imageScale, $maxWidth=1920, $maxHeight=1080)
+    public function __construct($x1, $x2, $y1, $y2, $imageScale, $maxWidth=1920, $maxHeight=1200)
     {
         $this->_top    = (float) $y1;
         $this->_left   = (float) $x1;
