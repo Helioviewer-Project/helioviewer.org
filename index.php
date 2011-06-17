@@ -4,9 +4,14 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
 // Remove variables that are not used on the client-side
 unset($config['enable_statistics_collection']);
+
 // Debug support
-if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
+if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
+    $debug = true;
     $config['compress_js'] = $config['compress_css'] = false;
+} else {
+    $debug = false;    
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -497,7 +502,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <script type="text/javascript">
-    var serverSettings, settingsJSON, urlSettings;
+    var serverSettings, settingsJSON, urlSettings, debug;
 
     $(function () {
         <?php
@@ -521,9 +526,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 
             // Convert to JSON
             printf("\turlSettings = %s;\n", json_encode($urlSettings));
+            
+            // Debugging support
+            printf("\tdebug = %s;\n", json_encode($debug));
         ?>
         serverSettings = new Config(settingsJSON).toArray();
-        helioviewer    = new Helioviewer(urlSettings, serverSettings);
+        helioviewer    = new Helioviewer(urlSettings, serverSettings, debug);
     });
 </script>
 

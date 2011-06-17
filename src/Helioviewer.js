@@ -21,7 +21,7 @@ var Helioviewer = Class.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (urlSettings, serverSettings) {
+    init: function (urlSettings, serverSettings, debug) {
         this._checkBrowser(); // Determines browser support
         
         this.serverSettings = serverSettings;
@@ -30,6 +30,11 @@ var Helioviewer = Class.extend(
         // User settings are globally accessible
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, 
             serverSettings);
+            
+        // Debugging helpers
+        if (debug) {
+            this._showDebugHelpers();
+        }
         
         this._initLoadingIndicator();
         this._initTooltips();
@@ -233,6 +238,20 @@ var Helioviewer = Class.extend(
                 btn.addClass("dialog-loaded");
             }
             return false; 
+        });
+    },
+    
+    /**
+     * Enables some debugging helpers that display extra information to help
+     * during development
+     */
+    _showDebugHelpers: function () {
+        var dimensions, win = $(window);
+        
+        dimensions = $("<div id='debug-dimensions'></div>").appendTo("body");
+
+        win.resize(function (e) {
+            dimensions.html(win.width() + "x" + win.height());
         });
     },
 
