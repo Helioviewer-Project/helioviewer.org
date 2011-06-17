@@ -74,7 +74,7 @@ a.light:hover {
 /* Center button */
 #center-button {
     background: transparent url(../../resources/images/blackGlass/transparentBGWhite.png);
-    font-size: 0.8em;
+    font-size: 13.5px;
 	width:54px;
 	height:16px;
 	position: absolute;

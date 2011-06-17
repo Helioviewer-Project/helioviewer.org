@@ -1,7 +1,7 @@
 #main {text-align: center; margin:0px auto; width: 80%;}
-#header {font-size:2em; vertical-align: middle; margin-top: 15px; margin-bottom: 26px;}
-#headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:1.2em;}
-#footer {font-size: 0.6em;}
+#header {font-size:32px; vertical-align: middle; margin-top: 15px; margin-bottom: 26px;}
+#headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:38px;}
+#footer {font-size: 9.6px;}
 #overview {}
 #numScreenshots {color: #8e305c;}
 #numMovies {color: #5d8f31;}
@@ -9,8 +9,8 @@
 #visualizations {margin: 10px 0;}
 #pieChart {width: 45%; display: inline-block; overflow: hidden;}
 #barCharts {width: 45%; display: inline-block; overflow: hidden; vertical-align: top;}
-.summaryCount {font-weight: bold; font-size:1.5em; cursor: pointer;}
+.summaryCount {font-weight: bold; font-size:24px; cursor: pointer;}
 
 @media screen and (max-width: 800px) {  
-    #header {font-size: 1.5em;}
+    #header {font-size: 24px;}
 }

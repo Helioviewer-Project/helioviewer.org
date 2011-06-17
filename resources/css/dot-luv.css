@@ -52,4 +52,4 @@ span#timeForwardBtn:hover,
     background: url("../../resources/images/blackGlass/transparentBG75.png") repeat scroll 0 0 transparent;
 }
 
-.ui-dialog {font-size: 1em;}
+.ui-dialog {font-size: 13px;}

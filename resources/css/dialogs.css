@@ -1,17 +1,8 @@
+/* Usage dialog */
 div#usage-dialog {
-    font-size: 0.85em;
+    font-size: 14px;
     color: #DFE5CF;
     font-family: 'Courier New', Courier, monospace;
-}
-
-td.layers-checkbox {
-	text-align: right; 
-	padding-left: 2em;
-}
-
-td.layers-name {
-	font-size: 8pt; 
-	padding-left: 1em;
 }
 
 /* Image header dialog */
@@ -54,7 +45,7 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 }
 
 .image-header-fits, .image-header-helioviewer {
-    padding:1em;
+    padding:12px;
     font-size: 12px;
 }
 
@@ -110,14 +101,6 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     font-size: 13px;
     padding: 5px;
     color: white;
-}
-
-.helioviewer-layer-choice-dialog.ui-dialog {
-	margin-top: 80px;
-}
-
-#layer-choice-dialog button {
-	padding: 0.4em 1em;
 }
 
 /* Email dialog */
