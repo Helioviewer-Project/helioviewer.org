@@ -5,8 +5,10 @@
 /* HTML ELEMENTS */
 html, body {
     background-image: url('../../resources/images/backgrounds/gradient_v5-optimized.png');
-    background-color: transparent;
+    background-color: #20242F;
     background-repeat: repeat-x;
+    /*background-size: 40px 100%;
+    -webkit-background-size: 40px 100%;*/
     font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;
 }
 button {

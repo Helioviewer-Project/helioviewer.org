@@ -26,7 +26,7 @@ var Helioviewer = Class.extend(
         
         this.serverSettings = serverSettings;
         this.api            = "api/index.php";
-        
+
         // User settings are globally accessible
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, 
             serverSettings);
