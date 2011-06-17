@@ -279,3 +279,11 @@ span.ui-icon-hover, div.ui-icon-hover {
 #image-area-select-buttons .ui-icon {
     float: left;
 }
+
+/** Debugging */
+#debug-dimensions {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+    color: white;
+}
