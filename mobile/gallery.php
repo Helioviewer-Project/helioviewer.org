@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8" />
     <title>Helioviewer.org - Video Gallery</title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" />
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
-    <script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>
 </head>
 <body>
-    <div data-role="page"> 
-    <div data-role="header">Hv.org - Video Gallery</div> 
+    <div id="main" data-role="page"> 
+    <div data-role="header" data-theme="b"><h1>Helioviewer.org - Video Gallery</h1></div> 
     <div data-role="content">
-        <ul id="videos" data-role="listview" data-theme="g">
+        <ul id="videos" data-role="listview">
         </ul>
     </div> 
     <div data-role="footer"></div> 
@@ -33,9 +33,14 @@
                     
                     date = new Date.parseUTCDate(video.published).getElapsedTime() + " ago";
                     
-                    html = "<li><a href='" + video.url + "'><img src='" + video.thumbnails.medium + "' /></a></li>";
+                    html = "<li><a href='" + video.url + "'><img src='" + 
+                           video.thumbnails.small + "' /><h3>" + date + "</h3>" +
+                           "<p>description</p>" +
+                           "</a></li>";
                     $videos.append(html);
                 });
+                
+                $videos.listview("refresh");
             };
             
             $.getJSON("../api/", params, callback);
