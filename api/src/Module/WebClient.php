@@ -497,13 +497,13 @@ class Module_WebClient implements Module
         ?>
             <li><a href="index.php#CustomView">Loading Custom Settings</a></li>
             <li>
-                <a href="index.php#TilingAPI">Tiling</a>
+                <a href="index.php#ScreenshotAPI">Screenshots</a>
                 <ul>
-                    <li><a href="index.php#getClosestImage">Finding an Image</a></li>
-                    <li><a href="index.php#getTile">Creating a Tile</a></li>
+                    <li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>
+                    <li><a href="index.php#downloadScreenshot">Retrieving a Screenshot</a></li>
                 </ul>
             </li>
-            <li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>
+            <!--<li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>-->
         <?php
     }
     
@@ -519,7 +519,7 @@ class Module_WebClient implements Module
         <!-- Custom View API-->
         <div id="CustomView">
             <h1>Custom View API:</h1>
-            <p>The custom view API enables the user to load a specific set of parameters into Helioviewer: "view," here, simply
+            <p>The custom view API enables the user to load a specific set of parameters into Helioviewer.org: "view," here, simply
             means a given set of observation parameters. This is useful for dynamically loading a specific view or observation
             into Helioviewer using a URL.</p>
         
@@ -551,7 +551,7 @@ class Module_WebClient implements Module
                             <td><i>2d List</i></td>
                             <td>A comma-separated list of the image layers to be
                             displayed. Each image layer should be of the form:
-                            [OBSERVATORY,INSTRUMENT,DETECTOR, MEASUREMENT,VISIBLE,OPACITY].</td>
+                            [OBSERVATORY,INSTRUMENT,DETECTOR,MEASUREMENT,VISIBLE,OPACITY].</td>
                         </tr>
                     </tbody>
                 </table>
@@ -559,8 +559,8 @@ class Module_WebClient implements Module
                 <br />
         
                 <span class="example-header">Example:</span> <span class="example-url">
-                <a href="<?php echo $rootURL;?>date=2003-10-05T00:00:00Z&amp;imageScale=2.4&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
-                   <?php echo $rootURL;?>date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+                <a href="<?php echo $rootURL;?>date=2011-06-01T00:00:00Z&amp;imageScale=2.4204409&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+                   <?php echo $rootURL;?>date=2011-06-01T00:00:00Z&imageScale=2.4204409&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
                 </a>
                 </span>
             </div>
@@ -568,184 +568,58 @@ class Module_WebClient implements Module
 
         <br />
         
-        <!-- Tiling API -->
-        <div id="TilingAPI">
-            <h1>Tiling API:</h1>
-            <p>Requesting a image tile in Helioviewer.org occurs in two steps. During the first step a request is made
-               in order to find the nearest image to the specified time. Once an image has been found, the URI associated
-               with the image can then be used in subsequent tile requests.</p>
-        
+        <!-- Screenshot API -->
+        <div id="ScreenshotAPI">
+            
+            <h1>Screenshots</h1>
+            <p></p>
+                The Screenshot API provides a way for users to create custom single-layer and composite images using Helioviewer.org. Depending on how you plan to use the screenshot, the process
+                can be handled in either one or two steps. In the simplest case, <a href='#takeScreenshot'>takeScreenshot</a> is called with "display=true" and an image is returned directly. Alternatively,
+                when the display parameter is not set to true in the request an identifier is returned which can then be used by the <a href='#downloadScreenshot'>downloadScreenshot</a> method to display the image.
+                This is useful when you want to provide a reusable link to the image you create.
             <br />
         
             <ol style="list-style-type: upper-latin;">
-     
-            <!-- Closest Image API -->
-            <li>
-            <div id="getClosestImage">Finding the Closest Image:
-            <p>The result of this first request will include some basic information about the 
-               nearest image match available. This information can then be used to make tile requests.</p>
-    
-            <br />
-    
-    
-            <div class="summary-box">
-                <span style="text-decoration: underline;">Usage:</span>
-                <br />
-                <br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage">
-                    <?php echo HV_API_ROOT_URL;?>?action=getClosestImage
-                </a>
                 
-                <br /><br />
-                Supported Parameters:
-                <br /><br />
+            <li>
+            <div id="takeScreenshot">
+                <h1>Creating a Screenshot</h1>
+                <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
+                available image is returned.</p>
+        
+                <br />
+        
+                <div class="summary-box"><span
+                    style="text-decoration: underline;">Usage:</span><br />
+                <br />
+        
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot<br />
+                <br />
+        
+                Supported Parameters:<br />
+                <br />
         
                 <table class="param-list" cellspacing="10">
                     <tbody valign="top">
                         <tr>
                             <td width="20%"><b>date</b></td>
-                            <td width="25%"><i>ISO 8601 UTC Date</i></td>
-                            <td width="55%">The desired image date</td>
+                            <td><i>ISO 8601 UTC Date</i></td>
+                            <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
                         </tr>
                         <tr>
-                            <td><b>observatory</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> Observatory</td>
-                        </tr>
-                        <tr>
-                            <td><b>instrument</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> Instrument</td>
-                        </tr>
-                        <tr>
-                            <td><b>detector</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> Detector</td>
-                        </tr>
-                        <tr>
-                            <td><b>measurement</b></td>
-                            <td><i>String</i></td>
-                            <td><i>[Optional]</i> Measurement</td>
-                        </tr>
-                        <tr>
-                            <td><b>sourceId</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The image data source identifier.</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <br /><br />
-                Result:
-                <br /><br />
-        
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>filename</b></td>
-                            <td width="25%"><i>String</i></td>
-                            <td width="55%">The filename of the matched image</td>
-                        </tr>
-                        <tr>
-                            <td><b>filepath</b></td>
-                            <td><i>String</i></td>
-                            <td>The location of the matched image</td>
-                        </tr>
-                        <tr>
-                            <td><b>date</b></td>
-                            <td><i>Date String</i></td>
-                            <td>The date of of the matched image</td>
-                        </tr>
-                        <tr>
-                            <td><b>scale</b></td>
+                            <td><b>imageScale</b></td>
                             <td><i>Float</i></td>
-                            <td>The image's native spatial scale, in arc-seconds/pixel</td>
+                            <td>The zoom scale of the image. Default scales that can be used are 0.6, 1.2, 2.4, and so on, increasing or decreasing by 
+                                a factor of 2. The full-res scale of an AIA image is 0.6.</td>
                         </tr>
                         <tr>
-                            <td><b>width</b></td>
-                            <td><i>Integer</i></td>
-                            <td>Image width</td>
-                        </tr>
-                        <tr>
-                            <td><b>height</b></td>
-                            <td><i>Integer</i></td>
-                            <td>Image width</td>
-                        </tr>
-                        <tr>
-                            <td><b>sunCenterX</b></td>
-                            <td><i>Float</i></td>
-                            <td>Distance from image left to the solar center, in pixels</td>
-                        </tr>
-                        <tr>
-                            <td><b>sunCenterY</b></td>
-                            <td><i>Float</i></td>
-                            <td>Distance from image bottom to the solar center, in pixels</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <br />
-        
-                <span class="example-header">Examples:</span> <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
-                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
-                    </a>
-                    <br /><br />
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3">
-                       <?php echo HV_API_ROOT_URL;?>?action=getClosestImage&date=2010-06-24T00:00:00.000Z&sourceId=3
-                    </a>
-                </span>
-                
-            </div>
-    
-            <br />
-            
-            <!-- Closest Image API Notes -->
-            <div class="summary-box" style="background-color: #E3EFFF;">
-            <span style="text-decoration: underline;">Notes:</span>
-            <br />
-            <ul>
-                <li>
-                <p>At least one of the methods for specifying the image source, either a sourceId or the image 
-                observatory, instrument, detector and measurement must be included in the request. </p>
-                </li>
-            </ul>
-            </div>
-            
-            </li>
-            
-            <br />
-            
-            <!-- getTile API -->
-            <li>
-            <div id="getTile">Creating a Tile:
-            <p>Once you have determined the image for which you wish to retrieve a tile from using the above
-               <a href="#getClosestImage" />getClosestImage</a> request, you are ready to begin requesting tiles
-               for that image. Tiles are requesting by specifying the identifier for the image you wish to tile, in
-               this case simply the filename of the image, the spatial scale that the tile should be generated at,..</p>
-    
-            <br />
-    
-    
-            <div class="summary-box">
-                <span style="text-decoration: underline;">Usage:</span>
-                <br />
-                <br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile">
-                    <?php echo HV_API_ROOT_URL;?>?action=getTile
-                </a>
-                            
-                <br /><br />
-                Supported Parameters:
-                <br /><br />
-        
-                <table class="param-list" cellspacing="10">
-                    <tbody valign="top">
-                        <tr>
-                            <td width="20%"><b>uri</b></td>
-                            <td width="25%"><i>String</i></td>
-                            <td width="55%">The filepath to the JP2 image that will be tiled. The filepath is relative to the main JP2
-                                directory, parts like /var/www/jp2 can be left out.</td>
+                            <td><b>layers</b></td>
+                            <td><i>String</i></td>
+                            <td>A string of layer information in the following format:<br />
+                                Each layer is comma-separated with these values: [<i>sourceId,visible,opacity</i>]. <br />
+                                If you do not know the sourceId, you can 
+                                alternately send this layer string: [<i>obs,inst,det,meas,opacity]</i>.
+                                Layer strings are separated by commas: [layer1],[layer2],[layer3].</td>
                         </tr>
                         <tr>
                             <td><b>y1</b></td>
@@ -772,166 +646,77 @@ class Module_WebClient implements Module
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                         </tr>
                         <tr>
-                            <td><b>imageScale</b></td>
-                            <td><i>Float</i></td>
-                            <td>The scale of the image in the viewport, in arcseconds per pixel.</td>
+                            <td><b>display</b></td>
+                            <td><i>Boolean</i></td>
+                            <td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
+                                filepath to the screenshot will be returned. If display is not specified, it will default to true (Default=false).</td>
                         </tr>
                         <tr>
-                            <td><b>jp2Scale</b></td>
-                            <td><i>Float</i></td>
-                            <td>The native scale of the JP2 image in arcseconds per pixel.</td>
-                        </tr>
-                        <tr>
-                            <td><b>jp2Height</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The height of the JP2 image in pixels.</td>
-                        </tr>
-                        <tr>
-                            <td><b>jp2Width</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The width of the JP2 image in pixels.</td>
-                        </tr>
-                        <tr>
-                            <td><b>observatory</b></td>
-                            <td><i>String</i></td>
-                            <td>Observatory</td>
-                        </tr>
-                        <tr>
-                            <td><b>instrument</b></td>
-                            <td><i>String</i></td>
-                            <td>Instrument</td>
-                        </tr>
-                        <tr>
-                            <td><b>detector</b></td>
-                            <td><i>String</i></td>
-                            <td>Detector</td>
-                        </tr>
-                        <tr>
-                            <td><b>measurement</b></td>
-                            <td><i>String</i></td>
-                            <td>Measurement</td>
-                        </tr>
-                        <tr>
-                            <td><b>offsetX</b></td>
-                            <td><i>Float</i></td>
-                            <td>The offset of the center of the sun from the center of the JP2 image in pixels
-                                at the image's native resolution.</td>
-                        </tr>
-                        <tr>
-                            <td><b>offsetY</b></td>
-                            <td><i>Float</i></td>
-                            <td>The offset of the center of the sun from the center of the JP2 image in pixels
-                                at the image's native resolution.</td>
+                            <td><b>watermark</b></td>
+                            <td><i>Boolean</i></td>
+                            <td><i>[Optional]</i> Whether or not the include the timestamps and the Helioviewer.org logo in the screenshot (Default=true).</td>
                         </tr>
                     </tbody>
-                </table>   
+                </table>
+        
                 <br />
-                <span class="example-header">Examples:</span> <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2&x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8&size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&offsetX=2.66&offsetY=7.32">
-                       <?php echo HV_API_ROOT_URL;?>?action=getTile&uri=/EIT/171/2010/06/02/2010_06_02__01_00_16_255__SOHO_EIT_EIT_171.jp2
-                        &x1=-2700.1158&x2=-6.995800000000215&y1=-19.2516&y2=2673.8684&date=2010-06-02+01:00:16&imageScale=4.8
-                        &size=512&jp2Width=1024&jp2Height=1024&jp2Scale=2.63&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171
-                        &offsetX=2.66&offsetY=7.32
-                    </a>
-                    <br /><br />
+        
+                <span class="example-header">Examples:</span>
+                <span class="example-url">
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2011-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000&display=true">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2011-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000&display=true
+                </a>
+                </span><br />
+                <span class="example-url">
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2011-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2011-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
+                </a>
                 </span>
-            </li>
-            </ol>
-        </div>
-        <!-- Screenshot API -->
-        <div id="takeScreenshot">
-            <h1>Screenshot API</h1>
-            <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
-            available image is returned.</p>
-    
-            <br />
-    
-            <div class="summary-box"><span
-                style="text-decoration: underline;">Usage:</span><br />
-            <br />
-    
-            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot<br />
-            <br />
-    
-            Supported Parameters:<br />
-            <br />
-    
-            <table class="param-list" cellspacing="10">
-                <tbody valign="top">
-                    <tr>
-                        <td width="20%"><b>date</b></td>
-                        <td><i>ISO 8601 UTC Date</i></td>
-                        <td>Timestamp of the output image. The closest timestamp for each layer will be found if an exact match is not found.</td>
-                    </tr>
-                    <tr>
-                        <td><b>imageScale</b></td>
-                        <td><i>Float</i></td>
-                        <td>The zoom scale of the image. Default scales that can be used are 0.6, 1.2, 2.4, and so on, increasing or decreasing by 
-                            a factor of 2. The full-res scale of an AIA image is 0.6.</td>
-                    </tr>
-                    <tr>
-                        <td><b>layers</b></td>
-                        <td><i>String</i></td>
-                        <td>A string of layer information in the following format:<br />
-                            Each layer is comma-separated with these values: [<i>sourceId,visible,opacity</i>]. <br />
-                            If you do not know the sourceId, you can 
-                            alternately send this layer string: [<i>obs,inst,det,meas,opacity]</i>.
-                            Layer strings are separated by commas: [layer1],[layer2],[layer3].</td>
-                    </tr>
-                    <tr>
-                        <td><b>y1</b></td>
-                        <td><i>Integer</i></td>
-                        <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
-                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                    </tr>
-                    <tr>
-                        <td><b>x1</b></td>
-                        <td><i>Integer</i></td>
-                        <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
-                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                    </tr>
-                    <tr>
-                        <td><b>y2</b></td>
-                        <td><i>Integer</i></td>
-                        <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
-                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
-                    </tr>
-                    <tr>
-                        <td><b>x2</b></td>
-                        <td><i>Integer</i></td>
-                        <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
-                            if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
-                    </tr>
-                    <tr>
-                        <td><b>display</b></td>
-                        <td><i>Boolean</i></td>
-                        <td><i>[Optional]</i> If display is true, the screenshot will display on the page when it is ready. If display is false, the
-                            filepath to the screenshot will be returned. If display is not specified, it will default to true.</td>
-                    </tr>
-                    <tr>
-                        <td><b>watermark</b></td>
-                        <td><i>Boolean</i></td>
-                        <td><i>[Optional]</i> Enables turning watermarking on or off. If watermark is set to false, the image will not be watermarked.
-                            If left blank, it defaults to true and images will be watermarked.</td>
-                    </tr>
-                </tbody>
-            </table>
-    
-            <br />
-    
-            <span class="example-header">Examples:</span>
-            <span class="example-url">
-            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[3,1,100],[4,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
-            </a>
-            </span><br />
-            <span class="example-url">
-            <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000">
-            <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2010-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
-            </a>
-            </span>
+                </div>
+                <br />
             </div>
-            <br />
+            </li>
+            
+            <li>
+            <div id="downloadScreenshot">
+                <h1>Retrieving an Existing Screenshot</h1>
+                <p>Displays the screenshot associated with the specified id.</p>
+        
+                <br />
+        
+                <div class="summary-box"><span
+                    style="text-decoration: underline;">Usage:</span><br />
+                <br />
+        
+                <?php echo HV_API_ROOT_URL;?>?action=downloadScreenshot<br />
+                <br />
+        
+                Supported Parameters:<br />
+                <br />
+        
+                <table class="param-list" cellspacing="10">
+                    <tbody valign="top">
+                        <tr>
+                            <td width="20%"><b>id</b></td>
+                            <td><i>int</i></td>
+                            <td>The screenshot id as returned from <a href='#takeScreenshot'>takeScreenshot</a>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+        
+                <br />
+        
+                <span class="example-header">Example:</span>
+                <span class="example-url">
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=downloadScreenshot&id=181">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&id=181
+                </a>
+                </span><br />
+
+                </div>
+                <br />
+            </div>
+            </li>
         </div>
         <?php
     }
