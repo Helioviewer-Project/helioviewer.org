@@ -252,8 +252,14 @@ class Module_Movies implements Module
             //}
         }
 
+        // HTML
+        /**if ($options['html']) {
+            foreach ($videos as $vid) {
+                printf("<a href='%s'><img src='%s' /><h3>%s</h3></a>", $vid["url"], $vid["thumbnails"]["small"], "test");
+            }
+        } else {**/
         header('Content-type: application/json');
-        echo json_encode($videos);        
+        echo json_encode($videos);
     }
 
     /**
