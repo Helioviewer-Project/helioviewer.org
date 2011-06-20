@@ -272,7 +272,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2011-05-25 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
+    Last Updated: 2011-06-20 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
 </div>
 
 </body>
@@ -538,6 +538,11 @@ function printDocumentationAppendices()
                     <td width="25%"><strong>Type:</strong></td>
                     <td width="45%"><strong>Description:</strong></td>
                     <td><strong>Example:</strong></td>
+                </tr>
+                <tr>
+                    <td>Boolean</td>
+                    <td>A boolean value.</td>
+                    <td>true</td>
                 </tr>
                 <tr>
                     <td>Integer</td>
