@@ -218,7 +218,7 @@ function printAPIDocumentation()
         <ol style="list-style-type: upper-latin;">
             <li><a href="index.php#Identifiers">Identifiers</a></li>
             <li><a href="index.php#VariableTypes"> Variable Types </a></li>
-            <li><a href="index.php#ArcsecondConversions">Arcsecond Conversions</a></li>
+            <li><a href="index.php#Coordinates">Coordinates</a></li>
         </ol>
     </li>
 </ol>
@@ -600,74 +600,154 @@ function printDocumentationAppendices()
         </li>
         <br />
 
-        <!-- Appendix C: Pixel and Arcsecond Conversions -->
+        <!-- Appendix C: Working with Coordinates -->
         <li>
-        <div id="ArcsecondConversions">Pixel to Arcsecond Conversions
-        <p>This appendix contains a list of JPEG2000 image scales for some layer types and how to convert 
-            between pixels on the image and arcseconds.</p>
+        <div id="Coordinates">Working with Coordinates in Helioviewer.org
+        <p>Several of the API methods supported by Helioviewer.org require you 
+           to specify a region of interest (ROI) in <a href="http://en.wikipedia.org/wiki/Minute_of_arc#Symbols.2C_abbreviations_and_subdivisions">arcseconds</a>, 
+           a unit of measurement commonly used by astronomers and solar scientists.
+           This overview provides a brief overview of how Helioviewer.org handles coordinates,
+           and the process for converting between pixel coordinates and arcseconds.</p>
+           
+       <p>Coordinates used in Helioviewer API requests should be given in arcseconds from
+          the center of the Sun. The below image depicts the location of the origin, and the direction
+          of the axes. An example ROI is also shown with the coordinates required by many requests indicated.</p>
+        
+        <div style='width: 100%; text-align: center;'>
+            <img src='resources/images/Helioviewer_ROI_Overview.png' src='Helioviewer.org Coordinates Example Diagram' style='margin-left: auto; margin-right: auto;'/>
+        </div>
+        
+        <p>When working with coordinates in Helioviewer.org, it is also important to understand the spatial scale
+           of the images you are viewing and requesting. Each type of image (AIA, LASCO, etc) shows the Sun at
+           some spatial scale or resolution. That is, each image pixel represents a certain number of arcseconds, 
+           and that ratio of arcseconds to pixels is reffered to as the "imageScale" for that image. Each of the
+           different image types have their own native image scale, which is the number of arcseconds a pixel of
+           the image represents when viewed at its native resolution.
+           
+           Below is a table listing the average native image scales and dimensions (in pixels) for images found on Helioviewer:
+        </p>
+           
         <div class="summary-box" style="background-color: #E3EFFF;">
         <br />
         <table class="param-list" cellspacing="10">
             <tbody valign="top">
                 <tr>
-                    <td width="40%"><strong>Layer Type:</strong></td>
-                    <td width="35%"><strong>Scale (arcsec/pixel)</strong></td>
-                    <td><strong>Width (arcsec)</strong></td>
+                    <td width="40%"><strong>Image Type:</strong></td>
+                    <td width="35%"><strong>Dimensions (pixels)</strong></td>
+                    <td width="35%"><strong>Image Scale (arcseconds/pixel)</strong></td>
                 </tr>
                 <tr>
-                    <td>EIT (all measurements)</td>
+                    <td>AIA</td>
+                    <td>4096 x 4096</td>
+                    <td>0.6</td>
+                </tr>
+                <tr>
+                    <td>COR-1</td>
+                    <td>512 x 512</td>
+                    <td>15.0</td>
+                </tr>
+                <tr>
+                    <td>COR-2</td>
+                    <td>2048 x 2048</td>
+                    <td>14.7</td>
+                </tr>
+                <tr>
+                    <td>EIT</td>
+                    <td>1024 x 1024</td>
                     <td>2.63</td>
-                    <td>2693.12</td>
+                </tr>
+                <tr>
+                    <td>HMI</td>
+                    <td>4096 x 4096</td>
+                    <td>0.6</td>
                 </tr>
                 <tr>
                     <td>LASCO C2</td>
+                    <td>1024 x 1024</td>
                     <td>11.9</td>
-                    <td>12185.6</td>
                 </tr>
                 <tr>
                     <td>LASCO C3</td>
+                    <td>1024 x 1024</td>
                     <td>56</td>
-                    <td>57344</td>
                 </tr>
                 <tr>
-                    <td>MDI (all measurements)</td>
+                    <td>MDI</td>
+                    <td>1024 x 1024</td>
                     <td>1.985707</td>
-                    <td>2033.364</td>
                 </tr>
             </tbody>
         </table>
-        <br />
-        To convert between arseconds and pixels, you must know something about the dimensions of the original JPEG2000 image and
-        the coordinates of the center of the sun. <br /><br />
-        Center coordinates can be found in the FITS header of an image under CRPIX1 (x-offset) and 
-        CRPIX2 (y-offset from the <i>bottom</i> of the image). Therefore the y-offset must be adjusted to reflect that the origin is in the top left
-        corner instead of the bottom left corner (simply take newYOffset = ySize - yOffset).<br /><br />
-        Most SOHO images are 1024x1024 pixels.<br /><br />
-        
-        Let's say we want to find out the offset in arcseconds of the top left corner of an EIT image (Coordinates 0,0). We'll use some example numbers: <br /><br />
-        width = height = 1024 px<br />
-        xOffset = 514.660 px<br />
-        yOffset = 1024 - 505.19 = 518.81 px<br /><br />
-        
-        First convert the top-left coordinates (0,0) into their offsets from the center of the sun (514.660,518.81) by subtracting the center coordinates
-        from the top-left coordinates.<br />
-        Top-left coordinates are now (-514.660, -518.81)<br /><br />
-        
-        Next use the scale listed above to convert these offsets to arcseconds: <br />
-        -514.660 px * 2.63 arcsec/px <br />
-        = -1353.5558 arcseconds from center on x-axis<br /><br />
-        -518.81 px * 2.63 arcsec/px <br />
-        = -1364.4703 arcseconds from center on y-axis<br /><br />
-        
-        Putting those together, the formula to find an offset for each coordinate is:<br />
-        x = (xCoord - xOffset) * scale or<br />
-        y = (yCoord - (imageHeight - yOffset)) * scale<br /><br />
-        
-        Therefore your x1 value is -1353.5558 and your y1 value is -1364.4703. This same formula can be used to find x2 and y2.
 
         <br />
-        <br />
+        <strong>Note:</strong> The values listed above are average values. Often, the image scale and dimensions for a given
+        type of image tends to stay the same over time, and as such you can often use the above values as-is. Occasionally, however,
+        the scale or dimensions will vary. If you find that you are getting unexpected results, or would like a higher level of
+        precision, you should first use the getClosestImage method to determine the exact dimensions and scale for the image you are
+        requesting.
         </div>
+
+        <p>The smaller the (native) image scale is, the more detail you can see. 
+           For example, AIA has a much smaller native image scale (0.6"/px) than
+           EIT does (2.63"/px) which is why you can see a lot more detail in AIA
+           images.
+        </p>
+           
+        <p>You are not limited to creating screenshots and movies at an image's native
+           resolution, however, and so in an API request the imageScale specified
+           need not (and in the case of composite images, often cannot) be the same
+           as an images native resolution.
+        </p>
+           
+        <p>For example, suppose you wanted to request an AIA image that is "zoomed out"
+           by a factor of two. In this case, you would double the imageScale, so instead
+           of 0.6, you would request an image scale of 1.2. Simiarly, when making a request
+           which includes multiple layers, each of the layers will be scaled to match the
+           imageScale you requested.
+        </p>
+         
+        <p>To makes things more clear, below are some example requests, and the imageScale and ROI corresponding with that request.</p>
+        
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <br />
+        <span style='text-decoration: underline'>Examples:</span><br /><br />
+        
+        <b>1) A complete AIA image at 1/4 its natural resolution</b>
+        
+        <p>In this case the desired image scale is 4 x (natural scale) = 4 x 0.6 = 2.4. Now to determine the ROI coordinates,
+           we must first determine how large the image will be at the specified scale. AIA is normally 4096x4096, so at 1/4 its
+           natural resolution it will be 1024x1024 pixels. Since the origin is in the middle of the Sun (which here is in the middle
+           of the Sun), there top-left corner is 512 pixels up and to the left (-512, -512), and the bottom-right corner is 512 pixels down and
+           to the right (512, 512). Since the ROI must be specified in arcseconds, and not in pixels, we multiply by the desired imageScale:
+           512 x 2.4 = 1228.8.
+           <br /><br />
+           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=2.4&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true">
+               http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=2.4&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true
+           </a>
+           
+        <br /><br />
+        <b>2) The top-right quadrant of an EIT image at 200% magnification</b>
+        
+        <p>First, determine the desired image scale = 1/2 x (EIT native image scale) = 1/2 x 2.63 = 1.315. At this scale, the image which
+           would normally be 1024x1024 pixels is now 2048x2048 pixels, and the coordinates for the ROI in pixels would is (0,-1024), (1024,0). To convert
+           to arcseconds we multiple the pixel values by the arcsecond/pixel ratio (the imageScale) to get (0, -1346.56), (1346.56, 0).
+
+           <br /><br />
+           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true">
+               http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true
+           </a>
+        </p>
+        </div>
+        
+        <p>Finally, don't forget that you can use Helioviewer.org to check the coordinates and see if they are as you expect.
+           Pressing the "m" key will enable mouse-coordinates in Helioviewer.org. Initially, the coordinates will be displayed
+           in arcseconds. Note, however, that the y-axis displayed for mouse-coordinates is the reverse of what is expected for
+           API requests. This difference is due to differences in how solar scientists typically work with the images, and how
+           computer scientists and web developers work with images: solar scientists usually expect the data to increase from
+           bottom to top, while computer scientists work with images from top to bottom. To get around this you can simply flip
+           the sign for the y-coordinate you see on Helioviewer.org when mouse-coordinates are being displayed.</p>
+         
+         
         </div>
         </li>
 
