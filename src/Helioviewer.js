@@ -59,7 +59,7 @@ var Helioviewer = Class.extend(
         
         this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
         
-        this._userVideos = new UserVideoGallery();
+        this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
         
         this.imageSelectTool   = new ImageSelectTool();
         
@@ -338,6 +338,12 @@ var Helioviewer = Class.extend(
             url: feed,
             success: function (feed) {
                 var link, date, more, description;
+                
+                // Display message if there was an error retrieving the feed
+                if (!feed.items) {
+                    $("#social-panel").append("Unable to retrieve news feed...");
+                    return;
+                }
 
                 // Grab the n most recent articles
                 $.each(feed.items.slice(0, n), function (i, a) {

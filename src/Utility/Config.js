@@ -75,6 +75,7 @@ var Config = Class.extend(
             'servers'             : this.params["server"],
             'newsURL'             : this.params["news_url"],
             'rootURL'             : this.params["web_root_url"],
+            'videoFeed'           : this.params["user_video_feed"],
             'hqEnabled'           : this.params["helioqueuer_enabled"],
             'contactEmail'        : this.params["contact_email"]
         };
