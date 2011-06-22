@@ -15,13 +15,16 @@ var UserVideoGallery = Class.extend(
      * @constructs
      * @description Creates a new UserVideoGallery component
      */
-    init : function () {
+    init : function (url) {
         this._container   = $("#user-video-gallery-main");
         this._loader      = $("#user-video-gallery-spinner");
         this._nextPageBtn = $("#user-video-gallery-next");
         this._prevPageBtn = $("#user-video-gallery-prev");
 
         this._working     = false;
+        
+        // Feed URL
+        this.url = url || "api/?action=getUserVideos"
         
         // Local
         this._pageSize = this._choosePageSize();
@@ -54,7 +57,6 @@ var UserVideoGallery = Class.extend(
     _fetchVideos: function () {
         // Query parameters
         var params = {
-            "action"   : "getUserVideos",
             "pageSize" : this._remotePageSize,
             "pageNum"  : this._remotePageNum
         };
@@ -66,23 +68,31 @@ var UserVideoGallery = Class.extend(
         this._working = true;
 
         // Fetch videos
-        $.getJSON("api/index.php", params, 
-                  $.proxy(this._processResponse, this));
+        $.getJSON(this.url, params, $.proxy(this._processResponse, this));
     },
     
     /**
      * Processes response and stores video information locally
      */
     _processResponse: function (response) {
-        var error = "<b>Error:</b> Did you specify a valid YouTube API key " +
-                    "in Config.ini?";
+        var videos, error;
 
         if (response.error) {
+            error = "<b>Error:</b> Did you specify a valid YouTube API key " +
+                    "in Config.ini?";
             $("#user-video-gallery-main").html(error);
             return;
         }
         
-        this._videos = this._videos.concat(response);
+        // Yahoo Pipes output
+        if (response.count) {
+            videos = response.value.items[0].json;
+        } else {
+            // Local feed
+            videos = response;
+        }
+        
+        this._videos = this._videos.concat(videos);
         this._updateGallery();
     },
     
