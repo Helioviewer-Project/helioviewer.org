@@ -143,6 +143,12 @@ var MovieManagerUI = MediaManagerUI.extend(
             $("#" + self._type + "-" + movie.id).qtip("destroy");
             self._buildPreviewTooltip(movie);
         });
+        
+        // Upload form submission
+        $("#youtube-video-info").submit(function () {
+            self.submitVideoUploadForm();
+            return false;
+        });
     },
     
     /**
@@ -213,7 +219,6 @@ var MovieManagerUI = MediaManagerUI.extend(
             " px</td></tr>" +
             "</table>";
 
-            
         return html;
     },
    
@@ -221,40 +226,14 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     _createMoviePlayerDialog: function (movie) {
-        var dimensions, movieTitle, uploadURL, tags, html, 
-            dialog, self = this;
-        
-        // Suggested YouTube tags  
-        tags = [];
-
-        // Tags
-        $.each(movie.layers.split("],["), function (i, layerStr) {
-            var parts = layerStr.replace(']', "").replace('[', "")
-                        .split(",").slice(0, 4);
-            
-            // Add observatories, instruments, detectors and 
-            // measurements to tag list
-            $.each(parts, function (i, item) {
-                if ($.inArray(item, tags) === -1) {
-                    tags.push(item);
-                }                
-            });
-        });
-        
-        // Suggested movie title
-        movieTitle = movie.name + " (" + movie.startDate + " - " +
-                     movie.endDate + " UTC)";
-        
-        uploadURL =  "api/index.php?action=uploadMovieToYouTube&id=" + movie.id;
-        uploadURL += "&title=" + movieTitle;
-        uploadURL += "&tags="  + tags.join(", ");
+        var dimensions, title, uploadURL, html, dialog, self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
         
         // Movie player HTML
         html = self.getVideoPlayerHTML(movie.id, dimensions.width, 
-                                       dimensions.height, uploadURL, movie.url);
+                                       dimensions.height, movie.url);
         
         // Movie player dialog
         dialog = $(
@@ -262,10 +241,14 @@ var MovieManagerUI = MediaManagerUI.extend(
             "class='movie-player-dialog'></div>"
         ).append(html);
         
+        // Movie dialog title
+        title = movie.name + " (" + movie.startDate + " - " + 
+                movie.endDate + " UTC)";
+        
         // Have to append the video player here, otherwise adding it to the div
         // beforehand results in the browser attempting to download it. 
         dialog.dialog({
-            title     : "Movie Player: " + movieTitle,
+            title     : "Movie Player: " + title,
             width     : dimensions.width  + 34,
             height    : dimensions.height + 104,
             resizable : $.support.h264 || $.support.vp8,
@@ -281,48 +264,141 @@ var MovieManagerUI = MediaManagerUI.extend(
        
         // Initialize YouTube upload button
         $('#youtube-upload-' + movie.id).click(function () {
-            var loadingIndicator, auth = false;
-            
-            loadingIndicator = $("#loading").show();
+            self.showYouTubeUploadDialog(movie);
+            return false;
+        });
+    },
+       
+    /**
+     * Opens YouTube uploader either in a separate tab or in a dialog
+     */
+    showYouTubeUploadDialog: function (movie) {
+        var title, tags, description;
+        
+        // Suggested movie title
+        title = movie.name + " (" + movie.startDate + " - " + 
+                movie.endDate + " UTC)";
+        
+        // Suggested YouTube tags  
+        tags = [];
 
-            // Synchronous request (otherwise Google will not allow opening of 
-            // request in a new tab)
-            $.ajax({
-                async: false,
-                url : "api/index.php?action=checkYouTubeAuth",
-                type: "GET",
-                success: function (response) {
-                    auth = response;
-                }
+        $.each(movie.layers.split("],["), function (i, layerStr) {
+            var parts = layerStr.replace(']', "").replace('[', "")
+                        .split(",").slice(0, 4);
+            
+            // Add observatories, instruments, detectors and measurements
+            $.each(parts, function (i, item) {
+                if ($.inArray(item, tags) === -1) {
+                    tags.push(item);
+                }                
             });
-            
-            loadingIndicator.hide();
+        });
+                     
+        // Suggested Description
+        description = "This movie was produced by Helioviewer.org. " +
+                      "A high quality version of this movie can be " +
+                      "downloaded from " + helioviewer.serverSettings.rootURL +
+                      "/?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true";
+                     
+        // Update form defaults
+        $("#youtube-title").val(title);
+        $("#youtube-tags").val(tags);
+        $("#youtube-desc").val(description);
+        $("#youtube-movie-id").val(movie.id);
 
-            // If user is already authenticated we can simply display the 
-            // upload form in a dialog
-            if (auth) {
-                self.showYouTubeUploadDialog(uploadURL, movie.id);
-                return false;
-            }            
+        // Hide movie dialogs (Flash player blocks upload form)
+        $(".movie-player-dialog").dialog("close");
+
+        // Open upload dialog
+        $("#upload-dialog").dialog({
+            "title" : "Upload video to YouTube",
+            "width" : 550,
+            "height": 440
         });
     },
     
     /**
-     * Opens YouTube uploader either in a separate tab or in a dialog
+     * 
      */
-    showYouTubeUploadDialog: function (url, id) {
-        // Hide movie dialogs (Flash player blocks upload form)
-        $(".movie-player-dialog").dialog("close");
-        
-        var iframe = "<div class='youtube-upload-dialog'>" + 
-                     "<iframe src='" + url + "&dialogMode=true' " + 
-                     "scrolling='no' width='100%' height='100%' " + 
-                     "style='border: none' /></div>";
+    submitVideoUploadForm: function (event) {
+        var params, successMsg, errorConsole, loadingIndicator, url, auth = false;
+            
+        // Validate and submit form
+        try {
+            this._validateVideoUploadForm();
+        } catch (ex) {
+            errorConsole = $("#upload-error-console");
+            errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
+                window.setTimeout(function () {
+                    errorConsole.fadeOut();
+                }, 15000);
+            });
+            return false;
+        }
+            
+        loadingIndicator = $("#loading").show();
 
-        $(iframe).dialog({
-            "title" : "Upload video to YouTube",
-            "width" : 640,
-            "height": 480
+        // Synchronous request (otherwise Google will not allow opening of 
+        // request in a new tab)
+        $.ajax({
+            async: false,
+            url : "api/index.php?action=checkYouTubeAuth",
+            type: "GET",
+            success: function (response) {
+                auth = response;
+            }
+        });
+        
+        loadingIndicator.hide();
+        
+        url = "api/index.php?" + $("#youtube-video-info").serialize();
+        
+        if (auth) {
+            $.getJSON(url + "&action=uploadMovieToYouTube");
+        } else {
+            window.open(url + "&action=getYouTubeAuth", "_blank");
+        }
+        
+        $("#upload-dialog").dialog("close");
+    
+        // If input looks good, submit request to YouTube and let user know
+        // successMsg = "<div id='success-message'><h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.</div>";
+        // $("#container").empty().html(successMsg);
+        return false;
+    },
+    
+    /**
+     * 
+     */
+    _validateVideoUploadForm: function () {
+        var keywords         = $("#youtube-tags").val(),
+            keywordMinLength = 2,
+            keywordMaxLength = 30;
+    
+        // User must specify at least one keyword
+        if (keywords.length === 0) {
+            throw "You must specifiy at least one tag for your video.";
+            return;
+        }
+        
+        // Make sure each keywords are between 2 and 30 characters each
+        $.each(keywords.split(","), function(i, keyword) {
+            var len = $.trim(keyword).length;
+    
+            if (len > keywordMaxLength) {
+                throw "YouTube tags must not be longer than " + keywordMaxLength + " characters each.";
+            } else if (len < keywordMinLength) {
+                throw "YouTube tags must be at least " + keywordMinLength + " characters each.";
+            }
+            return;                     
+        });
+    
+        // < and > are not allowed in title, description or keywords
+        $.each($("#youtube-video-info input[type='text'], #youtube-video-info textarea"), function (i, input) {
+            if ($(input).val().match(/[<>]/)) {
+                throw "< and > characters are not allowed";
+            }
+            return;
         });
     },
     
@@ -344,7 +420,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Decides how to display video and returns HTML corresponding to that 
      * method
      */
-    getVideoPlayerHTML: function (id, width, height, uploadURL, url) {
+    getVideoPlayerHTML: function (id, width, height, url) {
         var downloadURL, downloadLink, youtubeBtn;
         
         downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
@@ -355,8 +431,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             "src='resources/images/icons/001_52.png' " +
             "alt='Download high-quality video' />Download</a>";
         
-        youtubeBtn = "<a id='youtube-upload-" + id + "'  href='" + uploadURL + 
-            "' target='_blank'><img class='youtube-icon' " + 
+        youtubeBtn = "<a id='youtube-upload-" + id + "'  href='#' " + 
+            "target='_blank'><img class='youtube-icon' " + 
             "src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
             "alt='Upload video to YouTube' />Upload</a>";
         

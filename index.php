@@ -51,7 +51,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
         else {
             $css = array("main", "layout", "accordions", "dialogs", 
                          "media-manager", "sliders", "timenav", 
-                         "video-gallery", "viewport");
+                         "video-gallery", "viewport", "youtube");
             foreach($css as $file)
                 printf("<link rel=\"stylesheet\" href=\"resources/css/%s.css?$version\" />\n    ", $file);
         }
@@ -376,6 +376,43 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
             <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
         </form>
     </div>
+</div>
+
+<!-- Video Upload Dialog -->
+<div id='upload-dialog' style="display: none">
+    <img id='youtube-logo-60' src='resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
+    <h1>Upload Video</h1>
+    <br />
+    <!--Limits: http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference -->
+    <form id="youtube-video-info" action="api/index.php" method="post">
+        <!-- Title -->
+        <label for="youtube-title">Title:</label>
+        <input id="youtube-title" type="text" name="title" maxlength="100" />
+        <br />
+        
+        <!-- Description -->
+        <label for="youtube-desc">Description:</label>
+        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="5000"></textarea>
+        <br />
+        
+        <!-- Tags -->
+        <label for="youtube-tags">Tags:</label>
+        <input id="youtube-tags" type="text" name="tags" maxlength="500" value="" />
+        <br /><br />
+        
+        <!-- Sharing -->
+        <div style='float: right; margin-right: 30px;'>
+        <label style='width: 100%; margin: 0px;'>
+            <input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
+        </label>
+        <br />
+        <input id='youtube-submit-btn' type="submit" value="Submit" />
+        </div>
+        
+        <!-- Hidden fields -->
+        <input id="youtube-movie-id" type="hidden" name="id" value="" />
+    </form>
+    <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
 </div>
 
 <?php
