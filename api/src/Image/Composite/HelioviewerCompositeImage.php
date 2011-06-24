@@ -242,6 +242,9 @@ class Image_Composite_HelioviewerCompositeImage
     {
         // Apply compression based on image type for those formats that support it
         if ($this->_format === "png") {
+            // Set filetype
+            $imagickImage->setImageFormat("PNG");
+            
             // Compression type
             $imagickImage->setImageCompression(IMagick::COMPRESSION_LZW);
             
@@ -254,6 +257,9 @@ class Image_Composite_HelioviewerCompositeImage
                 $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
             }
         } elseif ($this->_format === "jpg") {
+            // Set filetype
+            $imagickImage->setImageFormat("JPG");
+            
             // Compression type
             $imagickImage->setImageCompression(IMagick::COMPRESSION_JPEG);
 
