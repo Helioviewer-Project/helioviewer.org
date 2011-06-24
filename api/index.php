@@ -66,6 +66,7 @@ function loadModule($params)
         "queueMovie"           => "Movies",
         "uploadMovieToYouTube" => "Movies",
         "checkYouTubeAuth"     => "Movies",
+        "getYouTubeAuth"       => "Movies",
         "getUserVideos"        => "Movies",
         "getEventFRMs"           => "SolarEvents",
         "getEvents"              => "SolarEvents",
@@ -609,9 +610,10 @@ function printDocumentationAppendices()
            This overview provides a brief overview of how Helioviewer.org handles coordinates,
            and the process for converting between pixel coordinates and arcseconds.</p>
            
-       <p>Coordinates used in Helioviewer API requests should be given in arcseconds from
-          the center of the Sun. The below image depicts the location of the origin, and the direction
-          of the axes. An example ROI is also shown with the coordinates required by many requests indicated.</p>
+       <p>Coordinates used in Helioviewer API requests should be given in 
+          arcseconds from the center of the Sun. The below image depicts the 
+          location of the origin, and the direction of the axes, for 
+          co-ordinates used in a Helioviewer API request.</p>
         
         <div style='width: 100%; text-align: center;'>
             <img src='resources/images/Helioviewer_ROI_Overview.png' src='Helioviewer.org Coordinates Example Diagram' style='margin-left: auto; margin-right: auto;'/>
@@ -739,14 +741,17 @@ function printDocumentationAppendices()
         </p>
         </div>
         
-        <p>Finally, don't forget that you can use Helioviewer.org to check the coordinates and see if they are as you expect.
-           Pressing the "m" key will enable mouse-coordinates in Helioviewer.org. Initially, the coordinates will be displayed
-           in arcseconds. Note, however, that the y-axis displayed for mouse-coordinates is the reverse of what is expected for
-           API requests. This difference is due to differences in how solar scientists typically work with the images, and how
-           computer scientists and web developers work with images: solar scientists usually expect the data to increase from
-           bottom to top, while computer scientists work with images from top to bottom. To get around this you can simply flip
-           the sign for the y-coordinate you see on Helioviewer.org when mouse-coordinates are being displayed.</p>
-         
+        <p>Finally, don't forget that you can use Helioviewer.org to check the 
+           coordinates and see if they are as you expect. Pressing the "m" key 
+           will return the position of the mouse pointer in Helioviewer.org 
+           viewport. Initially, the coordinates will be displayed in 
+           arcseconds. Note, however, that the y-axis value displayed for 
+           mouse-coordinates has the opposite sign to that passed in API 
+           requests. This is because the mouse position is returned in a 
+           coordinate system which is commonly used in solar physics. To get 
+           around this you can simply flip the sign for the y-coordinate you 
+           see on Helioviewer.org when mouse-coordinates are being displayed.
+        </p>         
          
         </div>
         </li>
