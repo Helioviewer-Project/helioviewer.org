@@ -56,7 +56,7 @@ var Helioviewer = Class.extend(
         
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
         
-        this.imageSelectTool   = new ImageSelectTool();
+        this.imageSelectTool = new ImageSelectTool();
         
         this._screenshotManagerUI = new ScreenshotManagerUI();
         this._movieManagerUI      = new MovieManagerUI();
