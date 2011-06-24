@@ -160,6 +160,40 @@ class Module_Movies implements Module
     }
     
     /**
+     * Checks to see if Helioviewer.org is authorized to upload videos for a user
+     */
+    public function checkYouTubeAuth ()
+    {
+        include_once 'src/Movie/YouTube.php';
+        
+        $youtube = new Movie_YouTube();
+
+        header('Content-type: application/json');
+        print json_encode($youtube->checkYouTubeAuth());
+    }
+
+    /**
+     * Requests authorization for Helioviewer.org to upload videos on behalf
+     * of the user.
+     */
+    public function getYouTubeAuth()
+    {
+        include_once 'src/Movie/YouTube.php';
+        
+        // Store form data for later use
+        session_start();
+
+        $_SESSION['video-id'] = $this->_params["id"];
+        $_SESSION['video-title'] = $this->_params["title"];
+        $_SESSION['video-description'] = $this->_params["description"];
+        $_SESSION['video-tags'] = $this->_params["tags"];
+        $_SESSION['video-share'] = $this->_params["share"];
+        
+        $youtube = new Movie_YouTube();
+        $youtube->getYouTubeAuth($this->_params['id']);
+    }
+    
+    /**
      * Uploads a user-created video to YouTube
      * 
      * TODO 2011/05/09: Make sure movie hasn't already been uploaded
@@ -175,30 +209,58 @@ class Module_Movies implements Module
         if ($movie->status !== "FINISHED") {
             throw new Exception("Invalid movie requested");
         }
+        
+        // If this was not the first upload for the current session, then
+        // the form data will have been passed in as GET variables
+        if (isset($this->_options["title"])) {
+            $id          = $this->_params["id"];
+            $title       = $this->_options["title"];
+            $description = $this->_options["description"];
+            $tags        = $this->_options["tags"];
+            $share       = $this->_options["share"];
+        } else {
+            // Otherwise read form data back in from session variables
+            session_start();
 
-        $file = $movie->getFilepath(true);
+            $id          = $_SESSION['video-id'];
+            $title       = $_SESSION['video-title'];
+            $description = $_SESSION['video-description'];
+            $tags        = $_SESSION['video-tags'];
+            $share       = $_SESSION['video-share'];
+        }
         
         $youtube = new Movie_YouTube();
-        $youtube->uploadVideo($this->_params['id'], $file, $this->_options);
-    }
-    
-    /**
-     * Checks to see if Helioviewer.org is authorized to upload videos for a user
-     */
-    public function checkYouTubeAuth () {
-        include_once 'src/Movie/YouTube.php';
+        $video = $youtube->uploadVideo($movie, $id, $title, $description, $tags, $share);
         
-        $youtube = new Movie_YouTube();
-
-        header('Content-type: application/json');
-        print json_encode($youtube->checkYouTubeAuth());
+        // Output result
+        if (isset($this->_options['html']) && $this->_options['html']) {
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Helioviewer.org - YouTube upload complete</title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <meta charset="utf-8" />
+</head>
+<body style='text-align: center;'>
+    <div style='margin-top: 200px;'>
+        <span style='font-size: 32px;'>Finished!</span><br />
+        Your video should appear on youtube in 1-2 minutes.
+    </div>
+</body>
+<?php
+        } else {
+            header('Content-type: application/json');
+            echo json_encode(array("id" => $video->getVideoId()));
+        }      
     }
     
     /**
      * Retrieves recent user-submitted videos from YouTube and returns the
      * result as a JSON array.
      */
-    public function getUserVideos() {
+    public function getUserVideos()
+    {
         include_once 'src/Database/MovieDatabase.php';
         include_once 'src/Movie/HelioviewerMovie.php';
         include_once 'lib/alphaID/alphaID.php';
@@ -389,10 +451,9 @@ class Module_Movies implements Module
         case "uploadMovieToYouTube":
             $expected = array(
                 "required" => array('id'),
-                "optional" => array('title', 'description', 'tags', 'share', 'token', 'ready', 'dialogMode'),
+                "optional" => array('title', 'description', 'tags', 'share', 'token', 'html'),
                 "alphanum" => array('id'),
-                "bools"    => array('share', 'ready', 'dialogMode')
-            
+                "bools"    => array('share', 'html')
             );
             break;
         case "getUserVideos":
@@ -402,8 +463,14 @@ class Module_Movies implements Module
             );
             break;
         case "checkYouTubeAuth":
-            $expected = array ();
+            $expected = array();
             break;
+        case "getYouTubeAuth":
+            $expected = array(
+                "required" => array('id', 'title', 'description', 'tags', 'share'),
+                "alphanum" => array('id'),
+                "bools"    => array('share')
+            );
         default:
             break;
         }
