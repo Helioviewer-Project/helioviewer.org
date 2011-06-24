@@ -1,13 +1,12 @@
 /* Base  */
-/*#upload-dialog {max-width: 570px; height: 370px; margin: 100px auto; position: relative;}*/
 #upload-dialog {color: white; margin-top: 10px; -moz-box-shadow: none; -webkit-shadow: none; box-shadow: none; border: none;}
 #upload-dialog h1 {font-size:32px; font-weight: 700; font-family: serif; line-height: 39px; margin: 21.4333px 0px;}
 #upload-dialog label {font-size: 16px;}
-#youtube-logo-60 { float: left; margin-left: 47px; margin-right: 8px }
+#youtube-logo-large { float: left; margin-left: 47px; margin-right: 8px }
 #youtube-video-info label { width: 18%; display: inline-block; text-align: right; vertical-align: top; margin: 5px 5px 0 0; }
 #youtube-video-info input, #youtube-video-info textarea { margin-top: 5px; width: 75%; }
 #youtube-video-info #youtube-submit-btn { float: right; width: 70px; margin-top: 12px; }
-#upload-error-console-container {position: absolute; width: 100%; bottom: 5px;}
+#upload-error-console-container {position: absolute; width: 95%; bottom: 20px;}
 #upload-error-console {margin: auto; width: 82%; border:1px solid #a88a8f; background: #C2B2B5; color: #423637; font-size: 12px; padding: 3px; text-align: center; -moz-border-radius: 2px; -webkit-border-radius: 2px; display:none;}
 #success-message{margin: 100px auto;}
 

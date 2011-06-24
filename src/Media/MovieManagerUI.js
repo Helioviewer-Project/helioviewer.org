@@ -338,8 +338,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             
         loadingIndicator = $("#loading").show();
 
-        // Synchronous request (otherwise Google will not allow opening of 
-        // request in a new tab)
+        // Check authorization using a synchronous request (otherwise Google 
+        //  will not allow opening of request in a new tab)
         $.ajax({
             async: false,
             url : "api/index.php?action=checkYouTubeAuth",
@@ -351,29 +351,37 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         loadingIndicator.hide();
         
+        // Base URL
         url = "api/index.php?" + $("#youtube-video-info").serialize();
-        
+
+        // If the user has already authorized Helioviewer, upload the movie
         if (auth) {
             $.getJSON(url + "&action=uploadMovieToYouTube");
         } else {
+            // Otherwise open an authorization page in a new tab/window
             window.open(url + "&action=getYouTubeAuth", "_blank");
         }
         
+        // Close the dialog
         $("#upload-dialog").dialog("close");
-    
-        // If input looks good, submit request to YouTube and let user know
-        // successMsg = "<div id='success-message'><h1>Finished!</h1>Your video should appear on youtube in 1-2 minutes.</div>";
-        // $("#container").empty().html(successMsg);
         return false;
     },
     
     /**
+     * Validates title, description and keyword fields for YouTube upload.
      * 
+     * @see http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference
      */
     _validateVideoUploadForm: function () {
         var keywords         = $("#youtube-tags").val(),
             keywordMinLength = 2,
             keywordMaxLength = 30;
+            
+        // Make sure the title field is not empty
+        if ($("#youtube-title").val().length === 0) {
+            throw "Please specify a title for the movie.";
+            return;
+        }
     
         // User must specify at least one keyword
         if (keywords.length === 0) {

@@ -380,10 +380,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 
 <!-- Video Upload Dialog -->
 <div id='upload-dialog' style="display: none">
-    <img id='youtube-logo-60' src='resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
+    <img id='youtube-logo-large' src='resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
     <h1>Upload Video</h1>
     <br />
-    <!--Limits: http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference -->
     <form id="youtube-video-info" action="api/index.php" method="post">
         <!-- Title -->
         <label for="youtube-title">Title:</label>
