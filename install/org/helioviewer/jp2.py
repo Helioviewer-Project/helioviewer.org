@@ -232,7 +232,12 @@ def process_jp2_images (images, rootdir, cursor, mysql, stepFxn=None):
     
 def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     """Inserts multiple images into a database using a single query"""
-    query = "INSERT INTO images VALUES "
+    
+    # 2011/06/27
+    # Using IGNORE to avoid accidentally adding the same image twice:
+    # There is currently an issue with the hv_fetch code which results in
+    # some images being processed multiple times.
+    query = "INSERT IGNORE INTO images VALUES "
     
     error = ""
     
@@ -282,6 +287,8 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     
     # Remove trailing comma
     query = query[:-1] + ";"
+    
+    print query
         
     # Execute query
     try:
