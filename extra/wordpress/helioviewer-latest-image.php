@@ -1,7 +1,7 @@
 <?php
 /**
  * @package Helioviewer
- * @version 0.1
+ * @version 0.8
  */
 /*
 Plugin Name: Helioviewer.org - Latest Image
