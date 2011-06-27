@@ -1,9 +1,11 @@
 === Helioviewer.org - Latest Image ===
+Contributors: keith.hughitt
+Stable tag: trunk
 Tags: sun, solar, science, astronomy, helioviewer
 Requires at least: 3.0.0
 Tested up to: 3.1.3
 
-Displays the latest image of the Sun from [Helioviewer.org](http://helioviewer.org). 
+Displays the latest image of the Sun from [Helioviewer.org](http://helioviewer.org).
 
 == Description ==
 
@@ -20,8 +22,5 @@ from one of several different data sources including SDO and SOHO.
 
 == Changelog ==
 
-= 0.8 =
-Added support for using a custom title, random images and rounded corners.
-
-= 0.5 =
-Initial release.
+= 0.8 : 2011-06-27 =
+Initial release

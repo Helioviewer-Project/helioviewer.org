@@ -21,7 +21,7 @@ class HelioviewerLatestImageWidget extends WP_Widget {
         parent::WP_Widget(
             false, 
             $name='Helioviewer.org - Latest Image', 
-            array("description" => "Displays the most recent image of the Sun from Helioviewer.org.")
+            array('description' => 'Displays the most recent image of the Sun from Helioviewer.org.')
         );
     }
 
@@ -30,16 +30,16 @@ class HelioviewerLatestImageWidget extends WP_Widget {
         extract( $args );
         
         // Select random layer to use, if enabled
-        if ($instance['datasource'] == "random") {
+        if ($instance['datasource'] == 'random') {
             $opts = array(
-                "[SDO,AIA,AIA,131,1,100]",
-                "[SDO,AIA,AIA,171,1,100]",
-                "[SDO,AIA,AIA,193,1,100]",
-                "[SDO,AIA,AIA,211,1,100]",
-                "[SDO,AIA,AIA,304,1,100]",
-                "[SDO,AIA,AIA,335,1,100]",
-                "[SDO,HMI,HMI,continuum,1,100]",
-                "[SDO,HMI,HMI,magnetogram,1,100]"
+                '[SDO,AIA,AIA,131,1,100]',
+                '[SDO,AIA,AIA,171,1,100]',
+                '[SDO,AIA,AIA,193,1,100]',
+                '[SDO,AIA,AIA,211,1,100]',
+                '[SDO,AIA,AIA,304,1,100]',
+                '[SDO,AIA,AIA,335,1,100]',
+                '[SDO,HMI,HMI,continuum,1,100]',
+                '[SDO,HMI,HMI,magnetogram,1,100]'
             );
             $datasource = $opts[array_rand($opts)];
         } else {
@@ -78,43 +78,43 @@ class HelioviewerLatestImageWidget extends WP_Widget {
     function form($instance) {
         $datasource = esc_attr($instance['datasource']);
         $title = esc_attr($instance['title']);
-        $roundedCorners = esc_attr($instance['roundedCorners']) == "true" ? "checked='checked'" : "";
+        $roundedCorners = esc_attr($instance['roundedCorners']) == 'true' ? 'checked="checked"' : '';
         
         if (!$title) {
-            $title = "Latest Image of the Sun";
+            $title = 'Latest Image of the Sun';
         }
         
         // Title
-        echo "<label for=\"" . $this->get_field_id("title") . "\" style='font-size:12px;'>Title:<br />";
-        echo "<input type='text' name=\"" . $this->get_field_name("title") . "\" value='$title' class='widefat' /><br /><br />";
-        echo "</label>";
+        echo '<label for="' . $this->get_field_id('title') . '" style="font-size:12px;">Title:<br />';
+        echo '<input type="text" name="' . $this->get_field_name('title') . "\" value=\"$title\" class=\"widefat\" /><br /><br />";
+        echo '</label>';
         
         // Layer choice
         $opts = array(
-            "AIA 131" => "[SDO,AIA,AIA,131,1,100]",
-            "AIA 171" => "[SDO,AIA,AIA,171,1,100]",
-            "AIA 193" => "[SDO,AIA,AIA,193,1,100]",
-            "AIA 211" => "[SDO,AIA,AIA,211,1,100]",
-            "AIA 304" => "[SDO,AIA,AIA,304,1,100]",
-            "AIA 335" => "[SDO,AIA,AIA,335,1,100]",
-            "HMI Continuum" => "[SDO,HMI,HMI,continuum,1,100]",
-            "HMI Magnetogram" => "[SDO,HMI,HMI,magnetogram,1,100]",
-            "Random" => "random"
+            'AIA 131'         => '[SDO,AIA,AIA,131,1,100]',
+            'AIA 171'         => '[SDO,AIA,AIA,171,1,100]',
+            'AIA 193'         => '[SDO,AIA,AIA,193,1,100]',
+            'AIA 211'         => '[SDO,AIA,AIA,211,1,100]',
+            'AIA 304'         => '[SDO,AIA,AIA,304,1,100]',
+            'AIA 335'         => '[SDO,AIA,AIA,335,1,100]',
+            'HMI Continuum'   => '[SDO,HMI,HMI,continuum,1,100]',
+            'HMI Magnetogram' => '[SDO,HMI,HMI,magnetogram,1,100]',
+            'Random'          => 'random'
         );
         
-        echo "<label for=\"" . $this->get_field_id("datasource") . "\" style='font-size:12px;'>Image Type:<br />";
-        echo "<select id=\"" . $this->get_field_id("datasource") . "\" name=\"" . $this->get_field_name("datasource") . "\">";
+        echo '<label for="' . $this->get_field_id('datasource') . '" style="font-size:12px;">Image Type:<br />';
+        echo '<select id="' . $this->get_field_id('datasource') . '" name="' . $this->get_field_name('datasource') . '">';
         
         foreach($opts as $name => $value) {
-            $selected = $datasource == $value ? " selected=\"selected\"" : "";
+            $selected = $datasource == $value ? ' selected="selected"' : '';
             echo "<option value='$value'$selected>$name</option>"; 
         }
-        echo "</select></label><br /><br />";
+        echo '</select></label><br /><br />';
         
         // Rounded Corners
-        echo "<label for=\"" . $this->get_field_id("roundedCorners") . "\" style='font-size:12px;'>Rounded Corners:";
-        echo "<input type='checkbox' name=\"" . $this->get_field_name("roundedCorners") . "\" $roundedCorners value='true' /><br />";
-        echo "</label>";
+        echo '<label for="' . $this->get_field_id('roundedCorners') . '" style="font-size:12px;">Rounded Corners:';
+        echo '<input type="checkbox" name="' . $this->get_field_name('roundedCorners') . "\" $roundedCorners value=\"true\" /><br />";
+        echo '</label>';
     }
 
 } // class HelioviewerLatestImageWidget
