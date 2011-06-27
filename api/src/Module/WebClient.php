@@ -116,7 +116,6 @@ class Module_WebClient implements Module
 //            $mimetype = $fileinfo->file($filepath);
 //        }
         header("Content-type: image/png");
-
         echo file_get_contents($filepath);
     }
 
