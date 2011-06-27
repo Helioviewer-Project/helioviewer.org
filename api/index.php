@@ -714,23 +714,23 @@ function printDocumentationAppendices()
         <br />
         <span style='text-decoration: underline'>Examples:</span><br /><br />
         
-        <b>1) A complete AIA image at 1/4 its natural resolution</b>
+        <b>1) A complete AIA image at 1/16 its natural resolution (zoomed out four times)</b>
         
-        <p>In this case the desired image scale is 4 x (natural scale) = 4 x 0.6 = 2.4. Now to determine the ROI coordinates,
-           we must first determine how large the image will be at the specified scale. AIA is normally 4096x4096, so at 1/4 its
-           natural resolution it will be 1024x1024 pixels. Since the origin is in the middle of the Sun (which here is in the middle
-           of the Sun), there top-left corner is 512 pixels up and to the left (-512, -512), and the bottom-right corner is 512 pixels down and
-           to the right (512, 512). Since the ROI must be specified in arcseconds, and not in pixels, we multiply by the desired imageScale:
-           512 x 2.4 = 1228.8.
+        <p>In this case the desired image scale is 2^4 x (natural scale) = 16 x 0.6 = 9.6. Now to determine the ROI coordinates,
+           we must first determine how large the image will be at the specified scale. AIA is normally 4096x4096, so at 1/16 its
+           natural resolution it will be 256x256 pixels. Since the origin is in the middle of the Sun (which here is in the middle
+           of the Sun), there top-left corner is 128 pixels up and to the left (-128, -128), and the bottom-right corner is 128 pixels down and
+           to the right (128, 128). Since the ROI must be specified in arcseconds, and not in pixels, we multiply by the desired imageScale:
+           128 x 9.6 = 1228.8.
            <br /><br />
-           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=2.4&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true">
-               http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=2.4&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true
+           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true">
+               http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true
            </a>
            
         <br /><br />
         <b>2) The top-right quadrant of an EIT image at 200% magnification</b>
         
-        <p>First, determine the desired image scale = 1/2 x (EIT native image scale) = 1/2 x 2.63 = 1.315. At this scale, the image which
+        <p>First, determine the desired image scale = 1 / 2^1 x (EIT native image scale) = 1/2 x 2.63 = 1.315. At this scale, the image which
            would normally be 1024x1024 pixels is now 2048x2048 pixels, and the coordinates for the ROI in pixels would is (0,-1024), (1024,0). To convert
            to arcseconds we multiple the pixel values by the arcsecond/pixel ratio (the imageScale) to get (0, -1346.56), (1346.56, 0).
 
