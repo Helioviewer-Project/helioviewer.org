@@ -106,13 +106,15 @@ def create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
 def create_image_table(cursor):
     """Creates table to store image information"""
     sql = \
-    """CREATE TABLE `images` (
+    """CREATE TABLE `images2` (
       `id`            INT unsigned NOT NULL auto_increment,
       `filepath`      VARCHAR(255) NOT NULL,
       `filename`      VARCHAR(255) NOT NULL,
       `date`          datetime NOT NULL,
       `sourceId`    SMALLINT unsigned NOT NULL,
-      PRIMARY KEY  (`id`), KEY `date_index` (`sourceId`,`date`) USING BTREE
+      PRIMARY KEY  (`id`),
+      KEY `date_index` (`sourceId`,`date`) USING BTREE,
+      UNIQUE INDEX filename_idx(filename)
     ) DEFAULT CHARSET=ascii;"""
     cursor.execute(sql)
 
