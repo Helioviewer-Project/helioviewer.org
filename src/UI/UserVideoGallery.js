@@ -86,7 +86,7 @@ var UserVideoGallery = Class.extend(
         
         // Yahoo Pipes output
         if (response.count) {
-            videos = response.value.items[0].json;
+            videos = response.value.items;
         } else {
             // Local feed
             videos = response;
