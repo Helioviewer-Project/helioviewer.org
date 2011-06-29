@@ -244,7 +244,7 @@ var TileLayerAccordion = Layer.extend(
      * @description Displays the Image meta information and properties associated with a given image
      * @param {Object} layer
      */
-    _showImageInfoDialog: function (id, name, filepath, filename, server) {
+    _showImageInfoDialog: function (id, name, imageId, server) {
         var params, self = this, dialog = $("#image-info-dialog-" + id);
         
         // Check to see if a dialog already exists
@@ -261,7 +261,7 @@ var TileLayerAccordion = Layer.extend(
         // Request parameters
         params = {
             action : "getJP2Header",
-            file   : filepath + "/" + filename            
+            id     : imageId
         };
         
         if (server > 0) {
@@ -421,7 +421,7 @@ var TileLayerAccordion = Layer.extend(
     /**
      * 
      */
-    _updateAccordionEntry: function (event, id, name, opacity, date, filepath, filename, server) {
+    _updateAccordionEntry: function (event, id, name, opacity, date, imageId, server) {
         var entry = $("#" + id), self = this;
         
         this._updateTimeStamp(id, date);
@@ -432,7 +432,7 @@ var TileLayerAccordion = Layer.extend(
         $("#image-info-dialog-" + id).remove();
         
         entry.find("#image-" + id + "-info-btn").unbind().bind('click', function () {
-            self._showImageInfoDialog(id, name, filepath, filename, server);
+            self._showImageInfoDialog(id, name, imageId, server);
         });
     },
     

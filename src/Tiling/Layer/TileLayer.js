@@ -95,6 +95,7 @@ var TileLayer = Layer.extend(
      */
     _updateDimensions: function () {
         var scaleFactor, offsetX, offsetY;
+
         // Ratio of original JP2 image scale to the viewport/desired image scale
         scaleFactor = this.image.scale / this.viewportScale;
 

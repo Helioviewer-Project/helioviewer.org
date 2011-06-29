@@ -129,7 +129,6 @@ class Module_WebClient implements Module
     public function getClosestImage ()
     {
         include_once 'src/Database/ImgIndex.php';
-        
         $imgIndex = new Database_ImgIndex();
 
         // Convert human-readable params to sourceId if needed
@@ -140,13 +139,23 @@ class Module_WebClient implements Module
             );
         }
 
-        $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
+        $image = $imgIndex->getImageFromDatabase($this->_params['date'], $this->_params['sourceId']);
+        
+        // Read JPEG 2000 header
+        $file = HV_JP2_DIR . $image["filepath"] . "/" .$image["filename"];
+        $xmlBox = $imgIndex->extractJP2MetaInfo($file);
 
         // Prepare cache for tiles
-        $this->_createTileCacheDir($result['filepath']);
-
+        $this->_createTileCacheDir($image['filepath']);
+        
+        // Return date and id
+        $response = array_merge(array(
+            "id"   => $image['id'],
+            "date" => $image['date']
+        ), $xmlBox);
+        
         header('Content-Type: application/json');
-        echo json_encode($result);
+        echo json_encode($response);
     }
 
     /**
@@ -174,8 +183,15 @@ class Module_WebClient implements Module
      */
     public function getJP2Header ()
     {
+        include_once 'src/Database/ImgIndex.php';
         include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
-        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"], "meta");
+
+        $imgIndex = new Database_ImgIndex();
+        $image = $imgIndex->getImageInformation($this->_params['id']);
+        
+        $filepath = HV_JP2_DIR . $image['filepath'] . "/" . $image['filename'];
+
+        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($filepath, "meta");
         $xmlBox->printXMLBox();
     }
 
@@ -499,8 +515,8 @@ class Module_WebClient implements Module
 
         case "getJP2Header":
             $expected = array(
-                "required" => array('file'),
-                "files"    => array('file')
+                "required" => array('id'),
+                "ints"     => array('id')
             );
             break;
         case "getNewsFeed":
