@@ -86,7 +86,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         }
         $(document).trigger("update-tile-layer-accordion-entry", 
                             [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
-                                this.image.filepath, this.image.filename, this.image.server]);
+                                this.image.id, this.image.server]);
     },
     
     /**
