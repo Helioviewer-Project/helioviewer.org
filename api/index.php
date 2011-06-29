@@ -10,6 +10,9 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  *
+ * TODO 06/28/2011
+ *  = Reuse database connection for statistics and other methods that need it? * 
+ * 
  * TODO 01/28/2010
  *  = Document getDataSources, getJP2Header, and getClosestImage methods.
  *  = Explain use of sourceId for faster querying.

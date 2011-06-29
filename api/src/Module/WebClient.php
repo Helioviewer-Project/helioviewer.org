@@ -192,6 +192,12 @@ class Module_WebClient implements Module
         include_once 'src/Image/JPEG2000/JP2Image.php';
         include_once 'src/Helper/RegionOfInterest.php';
         
+        // TEST
+        include_once 'src/Database/DbConnection.php';
+        $this->_dbConnection = new Database_DbConnection();
+        $sql = "SELECT * FROM images WHERE id=642";
+        $trash = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        
         $params = $this->_params;
         
         // Tile filepath

@@ -191,14 +191,14 @@ class Database_ImgIndex
         $datestr = isoDateToMySQL($date);
 
         $sql = sprintf(
-            "( SELECT filepath, filename, date 
+            "( SELECT id, filepath, filename, date 
               FROM images 
               WHERE
                 sourceId = %d AND 
                 date < '%s'
               ORDER BY date DESC LIMIT 1 )
             UNION ALL
-            ( SELECT filepath, filename, date
+            ( SELECT id, filepath, filename, date
               FROM images
               WHERE
                 sourceId = %d AND

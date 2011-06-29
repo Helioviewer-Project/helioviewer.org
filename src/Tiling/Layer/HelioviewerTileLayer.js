@@ -90,9 +90,7 @@ var HelioviewerTileLayer = TileLayer.extend(
     },
     
     /**
-     * @description Returns a formatted string representing a query for a single tile
-     * 
-     * TODO 02/25/2010: What would be performance loss from re-fetching meta information on server-side?
+     * Returns a formatted string representing a query for a single tile
      */
     getTileURL: function (x, y) {
         var file, format, coordinates, params;
