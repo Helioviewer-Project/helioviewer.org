@@ -298,7 +298,7 @@ class Module_WebClient implements Module
         $right  = $right  * $jp2Scale;        
         
         // Regon of interest
-        return new Helper_RegionOfInterest($left, $right, $top, $bottom, $scale);
+        return new Helper_RegionOfInterest($left, $top, $right, $bottom, $scale);
     }
 
 // var tileCoordinatesToArcseconds = function (x, y, scale, jp2Scale, tileSize, offsetX, offsetY) {
@@ -377,11 +377,29 @@ class Module_WebClient implements Module
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
-        // Regon of interest
-        $roi = new Helper_RegionOfInterest(
-            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
-            $this->_params['imageScale']
-        );
+        // Region of interest: x1, x2, y1, y2
+        if (isset($this->_options['x1']) && isset($this->_options['y1']) && 
+            isset($this->_options['x2']) && isset($this->_options['y2'])) {
+
+            $x1 = $this->_options['x1'];
+            $y1 = $this->_options['y1'];
+            $x2 = $this->_options['x2'];
+            $y2 = $this->_options['y2'];
+        } else if (isset($this->_options['x0']) && isset($this->_options['y0']) && 
+                   isset($this->_options['width']) && isset($this->_options['height'])) {
+
+            // Region of interest: x0, y0, width, height
+            $x1 = $this->_options['x0'] - 0.5 * $this->_options['width']  * $this->_params['imageScale'];
+            $y1 = $this->_options['y0'] - 0.5 * $this->_options['height'] * $this->_params['imageScale'];
+            $x2 = $this->_options['x0'] + 0.5 * $this->_options['width']  * $this->_params['imageScale'];
+            $y2 = $this->_options['y0'] + 0.5 * $this->_options['height'] * $this->_params['imageScale'];
+        } else {
+            throw new Exception("Region of interest not specified: you must specify values for " . 
+                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.");
+        }
+        
+        // Create RegionOfInterest helper object
+        $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
         
         // Create the screenshot
         $screenshot = new Image_Composite_HelioviewerScreenshot(
@@ -529,9 +547,10 @@ class Module_WebClient implements Module
             break;
         case "takeScreenshot":
             $expected = array(
-                "required" => array('date', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'watermark'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "required" => array('date', 'imageScale', 'layers'),
+                "optional" => array('display', 'watermark', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0', 'width', 'height'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0'),
+                "ints"     => array('width', 'height'),
                 "dates"	   => array('date'),
                 "bools"    => array('display', 'watermark')
             );

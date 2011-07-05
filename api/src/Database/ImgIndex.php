@@ -179,6 +179,24 @@ class Database_ImgIndex
     }
 
     /**
+     * Finds the closest available image to the requested one, and returns information from
+     * database and XML box.
+     *
+     * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
+     * @param int    $sourceId An identifier specifying the image type or source requested.
+     *
+     * @return array Information about the image match including it's location, time, scale, and dimensions.
+     */
+    public function getClosestImage($date, $sourceId)
+    {
+        $img      = $this->getImageFromDatabase($date, $sourceId);
+        $filename = HV_JP2_DIR . $img["filepath"] . "/" .$img["filename"];
+        $xmlBox   = $this->extractJP2MetaInfo($filename);
+
+        return array_merge($img, $xmlBox);
+    }
+
+    /**
      * Queries database and finds the best matching image.
      *
      * @param string $date     A UTC date string of the form "2003-10-05T00:00:00Z."
