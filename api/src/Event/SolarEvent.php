@@ -331,7 +331,7 @@ class Event_SolarEvent
         $bbox = $this->_padToMinSize($bbox, $imageScale); 
         
         // Regon of interest
-        return new Helper_RegionOfInterest($bbox['x1'], $bbox['x2'], $bbox['y1'], $bbox['y2'], $imageScale);
+        return new Helper_RegionOfInterest($bbox['x1'], $bbox['y1'], $bbox['x2'], $bbox['y2'], $imageScale);
     }
     
     /**
