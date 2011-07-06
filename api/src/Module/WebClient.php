@@ -630,7 +630,7 @@ class Module_WebClient implements Module
                             <td><i>2d List</i></td>
                             <td>A comma-separated list of the image layers to be
                             displayed. Each image layer should be of the form:
-                            [OBSERVATORY,INSTRUMENT,DETECTOR,MEASUREMENT,VISIBLE,OPACITY].</td>
+                            [OBSERVATORY, INSTRUMENT, DETECTOR, MEASUREMENT, VISIBLE, OPACITY].</td>
                         </tr>
                     </tbody>
                 </table>
