@@ -223,7 +223,7 @@ class Helper_RegionOfInterest
         $topLeft     = explode(" ", $points[0]);
         $bottomRight = explode(" ", $points[2]);
         
-        return new Helper_RegionOfInterest($topLeft[0], $bottomRight[0], $topLeft[1], $bottomRight[1], $imageScale);
+        return new Helper_RegionOfInterest($topLeft[0], $topLeft[1], $bottomRight[0], $bottomRight[1], $imageScale);
     }
     
     /**
