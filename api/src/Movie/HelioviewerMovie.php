@@ -87,7 +87,7 @@ class Movie_HelioviewerMovie
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
         $this->watermark    = (bool) $info['watermark'];
-
+        
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
         
