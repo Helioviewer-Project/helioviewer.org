@@ -663,7 +663,7 @@ function printDocumentationAppendices()
            to the right (128, 128). Since the ROI must be specified in arcseconds, and not in pixels, we multiply by the desired imageScale:
            128 x 9.6 = 1228.8.
            <br /><br />
-           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true">
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true">
                http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true
            </a>
            
@@ -675,7 +675,7 @@ function printDocumentationAppendices()
            to arcseconds we multiple the pixel values by the arcsecond/pixel ratio (the imageScale) to get (0, -1346.56), (1346.56, 0).
 
            <br /><br />
-           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true">
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true">
                http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true
            </a>
         </p>
@@ -695,6 +695,50 @@ function printDocumentationAppendices()
         
         <h3 id="#PixelCoordinates">Pixels</h3>
         
+        <p>
+        Alternatively, if you prefer to explicityly specify the pixel dimensions for the image or movie,
+        you can specify the center of your ROI in arc-seconds (x0, y0), relative to the center of the sun,
+        and the width and height of the ROI in pixels. Although you are still required to work with Arcseconds
+        for this method for some of the parameters, this provides a simple way to ensure that the resulting
+        image or movie is a specific size in pixels.
+        </p>
+        
+        <div style='width: 100%; text-align: center;'>
+            <img src='resources/images/Helioviewer_ROI_Pixels_Overview.png' src='Helioviewer.org Coordinates Example Diagram (Pixels)' style='margin-left: auto; margin-right: auto;'/>
+        </div>
+        
+        <p>
+        Similar to the first method, you will also need to specify the <a href="#ImageScale">image scale</a> 
+        to use, in arcseconds/pixel.
+        </p>
+        
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <br />
+        <span style='text-decoration: underline'>Examples:</span><br /><br />
+        
+        <b>1) A complete EIT image at it's natural resolution</b>
+        
+        <p>According to the <a href="#ImageScaleTable">table of image scales</a> shown below, the native image scale for EIT is 2.63 arcseconds/pixel,
+           and the image dimensions are 1024 x 1024 pixels.</p>
+           <br /><br />
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=2.63&x0=0&y0=0&width=1024&height=1024&display=true">
+               http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=2.63&x0=0&y0=0&width=1024&height=1024&display=true
+           </a>
+           
+        <br /><br />
+        <b>2) A 1024 x 768 sub-region centered at the top-right corner of an AIA 131 image, centered at the top-right quadrant, and
+            the natural scale of AIA.</b>
+        
+        <p>Since we want to center the image in the top-right corner, we need to figure out what arcsecond coordinates correspond to the pixel
+            coordinates (1024, -1024). At its native resolution, AIA images have an image scale of 0.6 arcseconds/pixel, so we multiple the pixel
+            coordinates by this ratio to get the corresponding arcsecond values.</p>
+
+           <br /><br />
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SDO,AIA,AIA,131,1,100]&imageScale=0.6&x0=614.4&y0=-614.4&width=1024&height=768&display=true">
+               http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SDO,AIA,AIA,131,1,100]&imageScale=0.6&x0=614.4&y0=-614.4&width=1024&height=768&display=true
+           </a>
+        </div>
+        
         <h3 id="#ImageScale">Image Scale</h3>
             <p>When working with coordinates in Helioviewer.org, it is also important to understand the spatial scale
                of the images you are viewing and requesting. Each type of image (AIA, LASCO, etc) shows the Sun at
@@ -706,7 +750,7 @@ function printDocumentationAppendices()
                Below is a table listing the average native image scales and dimensions (in pixels) for images found on Helioviewer:
             </p>
                
-            <div class="summary-box" style="background-color: #E3EFFF;">
+            <div id="ImageScaleTable" class="summary-box" style="background-color: #E3EFFF;">
             <br />
             <table class="param-list" cellspacing="10">
                 <tbody valign="top">
