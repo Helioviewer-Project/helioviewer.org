@@ -161,6 +161,8 @@ var Helioviewer = Class.extend(
             prefetch       : this.serverSettings.prefetchSize,
             tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
             imageScale     : Helioviewer.userSettings.get('state.imageScale'),
+            centerX        : Helioviewer.userSettings.get('state.centerX'),
+            centerY        : Helioviewer.userSettings.get('state.centerY'),
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
     },
@@ -466,7 +468,7 @@ var Helioviewer = Class.extend(
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
     toURL: function () {
-        var url, date, imageScale, imageLayers;
+        var url, date, imageScale, imageLayers, roi, centerX, centerY;
         
         // Add timestamp
         date = this.timeControls.toISOString();
@@ -476,6 +478,12 @@ var Helioviewer = Class.extend(
         
         // Image layers
         imageLayers = this.viewport.serialize();
+        
+        // Centering information
+        roi = this.viewport.getRegionOfInterest();
+        
+        centerX = (roi.left + roi.right)  / 2;
+        centerY = (roi.top  + roi.bottom) / 2;
         
         // Build URL
         url = this.serverSettings.rootURL + "/?date=" + date + "&imageScale=" + imageScale +

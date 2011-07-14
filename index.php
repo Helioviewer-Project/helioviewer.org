@@ -430,7 +430,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 ?>
 
 <!-- jQuery -->
-<script src="http://code.jquery.com/jquery-1.6.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.6.2.min.js" type="text/javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 
@@ -460,7 +460,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 ?>
 
 <!-- jQuery -->
-<script src="http://code.jquery.com/jquery-1.6.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.6.2.js" type="text/javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 

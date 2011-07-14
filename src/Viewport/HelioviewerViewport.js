@@ -19,14 +19,14 @@ var HelioviewerViewport = Viewport.extend(
      */
     init: function (options) {
         this._super(options);
-        this._getDataSources();
+        //this._getDataSources();
     },
     
     /**
      * Gets datasources and initializes the tileLayerAccordion and the tileLayerManager/eventLayerManager, 
      * and resizes when done.
      */
-    _getDataSources: function () {
+    loadDataSources: function () {
         var callback, tileLayerAccordion, self = this;
         
         callback = function (dataSources) {

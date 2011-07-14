@@ -20,16 +20,24 @@ var ViewportMovementHelper = Class.extend(
     
     /**
      * @constructs
-     * @description Creates a new ViewportMovementHelper
+     * Creates a new ViewportMovementHelper
+     * 
+     * @param centerX Horizontal offset from center in pixels
+     * @param centerY Vertical offset from center in pixels
      */
-    init: function (domNode, mouseCoords) {
+    init: function (domNode, mouseCoords, offsetX, offsetY) {
         this.domNode         = $(domNode);
         this.sandbox         = $("#sandbox");
         this.movingContainer = $("#moving-container");
         this.mouseCoords     = mouseCoords;
 
         var center = this._getCenter();
-        this.sandboxHelper = new SandboxHelper(center.x, center.y);
+        
+        // Factor in offset
+        var centerX = center.x - offsetX,
+            centerY = center.y - offsetY;
+        
+        this.sandboxHelper = new SandboxHelper(centerX, centerY);
         
         // Determine URL to grabbing cursor
         if ($.browser.msie) {
@@ -162,16 +170,19 @@ var ViewportMovementHelper = Class.extend(
      * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
      */
     getViewportCoords: function () {
-        var sb, mc;
+        var sb, mc, left, top;
         
         sb = this.sandbox.position();
         mc = this.movingContainer.position();
+        
+        left = parseInt(-(sb.left + mc.left), 10);
+        top  = parseInt(-(sb.top + mc.top), 10);
 
         return {
-            left:  -(sb.left + mc.left),
-            top :  -(sb.top + mc.top),
-            right:  this.domNode.width()  - (sb.left + mc.left),
-            bottom: this.domNode.height() - (sb.top + mc.top)
+            left:  left,
+            top :  top,
+            right:  this.domNode.width()  + left,
+            bottom: this.domNode.height() + top
         };
     },
     
