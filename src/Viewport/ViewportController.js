@@ -20,7 +20,8 @@ var ViewportController = Class.extend(
     init: function (options) {
         this.domNode        = $("#helioviewer-viewport");
         this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
-        var mouseCoords     = new HelioviewerMouseCoordinates(options.imageScale, this._rsunInArcseconds, 
+        
+        this.mouseCoords     = new HelioviewerMouseCoordinates(options.imageScale, this._rsunInArcseconds, 
                                                               options.warnMouseCoords);
         this.viewport       = new HelioviewerViewport(options);
         
@@ -30,8 +31,14 @@ var ViewportController = Class.extend(
         // Display viewport shadow
         this.viewport.shadow.show();
         
-        this.movementHelper = new ViewportMovementHelper(this.domNode, mouseCoords);
+        // Compute center offset in pixels
+        var centerX = options.centerX / options.imageScale,
+            centerY = options.centerY / options.imageScale;
+
+        this.movementHelper = new ViewportMovementHelper(this.domNode, this.mouseCoords, centerX, centerY);
         
+        this.viewport.loadDataSources();
+       
         this._initEventHandlers();
     },
 
@@ -40,12 +47,12 @@ var ViewportController = Class.extend(
      */
     _initEventHandlers: function () {
         $(document).bind("image-scale-changed",             $.proxy(this.zoomViewport, this))
-                   .bind("update-viewport",                 $.proxy(this.updateViewportRanges, this))
-                   .bind("move-viewport mousemove mouseup", $.proxy(this.moveViewport, this))
+                   .bind("update-viewport",                 $.proxy(this.updateViewport, this))
+                   .bind("move-viewport mousemove mouseup", $.proxy(this.onMouseMove, this))
                    .bind("resize-viewport",                 $.proxy(this.resizeViewport, this))
                    .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this));
         
-        $(this.domNode).bind("mousedown", $.proxy(this.moveViewport, this));
+        $(this.domNode).bind("mousedown", $.proxy(this.onMouseMove, this));
         this.domNode.dblclick($.proxy(this.doubleClick, this));
         
         $('#center-button').click($.proxy(this.centerViewport, this));
@@ -55,7 +62,7 @@ var ViewportController = Class.extend(
     /**
      * Moves the viewport and triggers update function calls
      */
-    moveViewport: function (event, x, y) {
+    onMouseMove: function (event, x, y) {
         switch (event.type) {
         case "mouseup":
             this.movementHelper.mouseUp(event);
@@ -80,7 +87,8 @@ var ViewportController = Class.extend(
         
         // Moves the viewport to the correct position after zooming
         this.movementHelper.zoomTo(imageScale);
-        this.updateViewportRanges();
+        
+        this.updateViewport();
 
         // store new value
         Helioviewer.userSettings.set("state.imageScale", imageScale);
@@ -89,9 +97,14 @@ var ViewportController = Class.extend(
     /**
      * Tells the viewport to update itself and its tile layers
      */
-    updateViewportRanges: function () {
+    updateViewport: function () {
         this.movementHelper.update();
         var coordinates = this.movementHelper.getViewportCoords();
+        
+        // Updated saved settings
+        Helioviewer.userSettings.set("state.centerX", coordinates.left + coordinates.right);
+        Helioviewer.userSettings.set("state.centerY", coordinates.top + coordinates.bottom);
+        
         this.viewport.updateViewportRanges(coordinates);
     },
     
@@ -118,7 +131,19 @@ var ViewportController = Class.extend(
      */
     centerViewport: function () {
         this.movementHelper.centerViewport();
-        this.updateViewportRanges();
+        this.updateViewport();
+        Helioviewer.userSettings.set("state.centerX", 0);
+        Helioviewer.userSettings.set("state.centerY", 0);
+    },
+    
+    /**
+     * Centers the viewport about a point
+     * 
+     * @param int x
+     * @param int y 
+     */
+    setViewportCenter: function (x, y) {
+        this.movementHelper.moveViewport(x, y);
     },
     
     /**
@@ -126,7 +151,7 @@ var ViewportController = Class.extend(
      */
     resizeViewport: function () {
         if (this.viewport.resize()) {
-            this.updateViewportRanges();
+            this.updateViewport();
         }
     },
 
