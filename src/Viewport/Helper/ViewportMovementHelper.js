@@ -31,13 +31,12 @@ var ViewportMovementHelper = Class.extend(
         this.movingContainer = $("#moving-container");
         this.mouseCoords     = mouseCoords;
 
+        // Initialize sandbox
         var center = this._getCenter();
+        this.sandboxHelper = new SandboxHelper(center.x, center.y);
         
-        // Factor in offset
-        var centerX = center.x - offsetX,
-            centerY = center.y - offsetY;
-        
-        this.sandboxHelper = new SandboxHelper(centerX, centerY);
+        // Load previous offset
+        //this.movingContainer.css({"left": offsetX, "top": offsetY});
         
         // Determine URL to grabbing cursor
         if ($.browser.msie) {
@@ -296,7 +295,7 @@ var ViewportMovementHelper = Class.extend(
 
         // Check throttle
         if (this.moveCounter === 0) {
-            $(document).trigger("update-viewport");
+            $(document).trigger("update-viewport", [true]);
         }
     },
     
@@ -315,7 +314,7 @@ var ViewportMovementHelper = Class.extend(
     _endMoving: function () {
         this.isMoving = false;
         this.mouseCoords.enable();
-        $(document).trigger("update-viewport");
+        $(document).trigger("update-viewport", [true]);
     },
     
     /**

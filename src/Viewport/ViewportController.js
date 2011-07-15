@@ -47,7 +47,7 @@ var ViewportController = Class.extend(
      */
     _initEventHandlers: function () {
         $(document).bind("image-scale-changed",             $.proxy(this.zoomViewport, this))
-                   .bind("update-viewport",                 $.proxy(this.updateViewport, this))
+                   .bind("update-viewport",                 $.proxy(this.onUpdateViewport, this))
                    .bind("move-viewport mousemove mouseup", $.proxy(this.onMouseMove, this))
                    .bind("resize-viewport",                 $.proxy(this.resizeViewport, this))
                    .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this));
@@ -95,15 +95,32 @@ var ViewportController = Class.extend(
     },
     
     /**
+     * Event handler for viewport update requests
+     */
+    onUpdateViewport: function (event, storeCoordinates) {
+        if (typeof storeCoordinates == "undefined") {
+            storeCoordinates = false;
+        }
+        
+        this.updateViewport(storeCoordinates);
+    },
+    
+    /**
      * Tells the viewport to update itself and its tile layers
      */
-    updateViewport: function () {
+    updateViewport: function (storeCoordinates) {
+        if (typeof storeCoordinates == "undefined") {
+            storeCoordinates = false;
+        }
+        
         this.movementHelper.update();
         var coordinates = this.movementHelper.getViewportCoords();
         
         // Updated saved settings
-        Helioviewer.userSettings.set("state.centerX", coordinates.left + coordinates.right);
-        Helioviewer.userSettings.set("state.centerY", coordinates.top + coordinates.bottom);
+        if (storeCoordinates) {
+            Helioviewer.userSettings.set("state.centerX", coordinates.left + coordinates.right);
+            Helioviewer.userSettings.set("state.centerY", coordinates.top + coordinates.bottom);
+        }
         
         this.viewport.updateViewportRanges(coordinates);
     },
