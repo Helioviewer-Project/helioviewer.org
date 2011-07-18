@@ -169,19 +169,30 @@ var ViewportMovementHelper = Class.extend(
      * @returns {Object} The coordinates for the top-left and bottom-right corners of the viewport
      */
     getViewportCoords: function () {
-        var sb, mc, left, top;
+        var sb, mc, left, top, vpWidth, vpHeight;
         
         sb = this.sandbox.position();
         mc = this.movingContainer.position();
         
         left = parseInt(-(sb.left + mc.left), 10);
         top  = parseInt(-(sb.top + mc.top), 10);
+        
+        // If dimension is an odd value, add one to ensure that (0, 0) is in center
+        vpWidth  = this.domNode.width();
+        vpHeight = this.domNode.height();
+        
+        if (vpWidth % 2 === 1) {
+            vpWidth += 1;
+        }
+        if (vpHeight % 2 === 1) {
+            vpHeight += 1;
+        }
 
         return {
             left:  left,
             top :  top,
-            right:  this.domNode.width()  + left,
-            bottom: this.domNode.height() + top
+            right:  vpWidth  + left,
+            bottom: vpHeight + top
         };
     },
     

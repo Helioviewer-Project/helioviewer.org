@@ -48,6 +48,7 @@ var ViewportController = Class.extend(
     _initEventHandlers: function () {
         $(document).bind("image-scale-changed",             $.proxy(this.zoomViewport, this))
                    .bind("update-viewport",                 $.proxy(this.onUpdateViewport, this))
+                   .bind("load-saved-roi-position",         $.proxy(this.loadROIPosition, this))
                    .bind("move-viewport mousemove mouseup", $.proxy(this.onMouseMove, this))
                    .bind("resize-viewport",                 $.proxy(this.resizeViewport, this))
                    .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this));
@@ -106,20 +107,53 @@ var ViewportController = Class.extend(
     },
     
     /**
+     * Sets up initial viewport properties and loads previous settings
+     * 
+     * Load previous centering settings by shifting moving container which
+     * represents the solar center. In the simplest case, the Sun is centered,
+     * and the moving container should be in the middle of the viewport sandbox
+     */ 
+    loadROIPosition: function (event) {
+        var sandbox, sbWidth, sbHeight, centerX, centerY;
+        
+        console.log("sandbox: " + $("#sandbox").width() + ", " + $("#sandbox").height());
+
+        sandbox = $("#sandbox");
+        sbWidth  = sandbox.width();
+        sbHeight = sandbox.height();
+        
+        centerX = Helioviewer.userSettings.get("state.centerX") / self.imageScale;
+        centerY = Helioviewer.userSettings.get("state.centerY") / self.imageScale;
+
+        $("#moving-container").css({
+            "left": sbWidth  - Math.max(0, Math.min(sbWidth,  Math.round(sbWidth  / 2 + centerX))),
+            "top" : sbHeight - Math.max(0, Math.min(sbHeight, Math.round(sbHeight / 2 + centerY)))
+        });
+    },
+    
+    /**
      * Tells the viewport to update itself and its tile layers
      */
     updateViewport: function (storeCoordinates) {
+        var coordinates, imageScale, offsetX, offsetY;
+
         if (typeof storeCoordinates == "undefined") {
             storeCoordinates = false;
         }
         
         this.movementHelper.update();
-        var coordinates = this.movementHelper.getViewportCoords();
+        coordinates = this.movementHelper.getViewportCoords();
+        
+        // ROI Offset from solar center (in arc-seconds)
+        imageScale = this.getImageScale();
+
+        offsetX = imageScale * (coordinates.left + coordinates.right);
+        offsetY = imageScale * (coordinates.top + coordinates.bottom);
         
         // Updated saved settings
         if (storeCoordinates) {
-            Helioviewer.userSettings.set("state.centerX", coordinates.left + coordinates.right);
-            Helioviewer.userSettings.set("state.centerY", coordinates.top + coordinates.bottom);
+            Helioviewer.userSettings.set("state.centerX", offsetX);
+            Helioviewer.userSettings.set("state.centerY", offsetY);
         }
         
         this.viewport.updateViewportRanges(coordinates);

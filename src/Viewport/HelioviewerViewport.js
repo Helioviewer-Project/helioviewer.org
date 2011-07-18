@@ -30,8 +30,6 @@ var HelioviewerViewport = Viewport.extend(
         var callback, tileLayerAccordion, self = this;
         
         callback = function (dataSources) {
-            var centerX, centerY;
-
             self.dataSources = dataSources;
 
             tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, self.requestDate);
@@ -41,15 +39,8 @@ var HelioviewerViewport = Viewport.extend(
                                   self.tileSize, self.imageScale, self.maxTileLayers,
                                   self.servers, self.tileLayers);
                                   
-            // Load previous centering
-            //centerX = Helioviewer.userSettings.get("state.centerX") / self.imageScale;
-            //centerY = Helioviewer.userSettings.get("state.centerY") / self.imageScale;
-            
-            //$("#moving-container").css({"left": centerX, "top": centerY});
-        
             // Initialize event layers
             //self._eventLayerManager = new EventManager(self.requestDate, 86400, self.getRSun());
-        
             $(document).trigger("update-viewport");
         };
         
