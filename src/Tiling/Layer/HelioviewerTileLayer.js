@@ -81,7 +81,6 @@ var HelioviewerTileLayer = TileLayer.extend(
             this.tileLoader.reloadTiles(false);
 
             // Update viewport sandbox if necessary
-
             $(document).trigger("tile-layer-finished-loading", [this.getDimensions()]);
         }
         $(document).trigger("update-tile-layer-accordion-entry", 

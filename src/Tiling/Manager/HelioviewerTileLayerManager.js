@@ -29,6 +29,10 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                         "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
 
         this._loadStartingLayers(startingLayers);
+        
+        this._layersLoaded = 0;
+        this._finishedLoading = false;
+        $(document).bind("viewport-max-dimensions-updated", $.proxy(this._onViewportUpdated, this));
     },
 
     /**
@@ -93,10 +97,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        var layer, basicParams, baseURL, numLayers, i, self = this;
-        
-        numLayers = layers.length;
-        i = 0;
+        var layer, basicParams, baseURL, self = this;
 
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
@@ -111,14 +112,20 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                                   params.layeringOrder, params.server);
 
             self.addLayer(layer);
-
-            i += 1;
-            
-            // Once the final layer has been loaded, load positioning from previous session
-            if (i == numLayers) {
-                $(document).trigger("load-saved-roi-position");
-            }
         });
+    },
+    
+    /**
+     * Checks to see if all of the layers have finished loading for the first time,
+     * and if so, loads centering information from previous session
+     */
+    _onViewportUpdated: function () {
+        var numLayers = Helioviewer.userSettings.get("state.tileLayers").length;
+        this._layersLoaded += 1;
+        
+        if (!this._finishedLoading && this._layersLoaded === numLayers) {
+            $(document).trigger("load-saved-roi-position");
+        }
     },
     
     /**

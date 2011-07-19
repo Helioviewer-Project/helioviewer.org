@@ -55,6 +55,8 @@ var LayerManager = Class.extend(
     updateMaxDimensions: function (event) {
         var type = event.type.split("-")[0];
         this.refreshMaxDimensions(type);
+        
+        $(document).trigger("viewport-max-dimensions-updated");
     },
     
     /**
