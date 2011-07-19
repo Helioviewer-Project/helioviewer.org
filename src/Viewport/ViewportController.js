@@ -122,13 +122,15 @@ var ViewportController = Class.extend(
         sbWidth  = sandbox.width();
         sbHeight = sandbox.height();
         
-        centerX = Helioviewer.userSettings.get("state.centerX") / self.imageScale;
-        centerY = Helioviewer.userSettings.get("state.centerY") / self.imageScale;
+        centerX = Helioviewer.userSettings.get("state.centerX") / this.getImageScale();
+        centerY = Helioviewer.userSettings.get("state.centerY") / this.getImageScale();
 
         $("#moving-container").css({
             "left": sbWidth  - Math.max(0, Math.min(sbWidth,  Math.round(sbWidth  / 2 + centerX))),
             "top" : sbHeight - Math.max(0, Math.min(sbHeight, Math.round(sbHeight / 2 + centerY)))
         });
+        
+        this.updateViewport();
     },
     
     /**
