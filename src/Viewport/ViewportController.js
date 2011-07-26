@@ -25,6 +25,9 @@ var ViewportController = Class.extend(
                                                               options.warnMouseCoords);
         this.viewport       = new HelioviewerViewport(options);
         
+        // Store a reference to the sandbox
+        this._sandbox = $("#sandbox");
+        
         // Viewport must be resized before movement helper and sandbox are initialized.
         this.viewport.resize();
         
@@ -144,13 +147,17 @@ var ViewportController = Class.extend(
         }
         
         this.movementHelper.update();
+        
+        // Pixel coordinates for the ROI edges
         coordinates = this.movementHelper.getViewportCoords();
         
-        // ROI Offset from solar center (in arc-seconds)
         imageScale = this.getImageScale();
 
-        offsetX = imageScale * (coordinates.left + coordinates.right);
-        offsetY = imageScale * (coordinates.top + coordinates.bottom);
+        // ROI Offset from solar center (in arc-seconds)
+        offsetX = imageScale * ((coordinates.left + coordinates.right) / 2);
+        offsetY = imageScale * ((coordinates.top + coordinates.bottom) / 2);
+        // offsetX = imageScale * (this._sandbox.width() / 2);
+        // offsetY = imageScale * (this._sandbox.height() / 2);
         
         // Updated saved settings
         if (storeCoordinates) {
