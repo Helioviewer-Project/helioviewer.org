@@ -125,8 +125,8 @@ var ViewportController = Class.extend(
         sbWidth  = sandbox.width();
         sbHeight = sandbox.height();
         
-        centerX = Helioviewer.userSettings.get("state.centerX") / this.getImageScale();
-        centerY = Helioviewer.userSettings.get("state.centerY") / this.getImageScale();
+        centerX = - Helioviewer.userSettings.get("state.centerX") / this.getImageScale();
+        centerY = - Helioviewer.userSettings.get("state.centerY") / this.getImageScale();
 
         $("#moving-container").css({
             "left": sbWidth  - Math.max(0, Math.min(sbWidth,  Math.round(sbWidth  / 2 + centerX))),
@@ -154,10 +154,8 @@ var ViewportController = Class.extend(
         imageScale = this.getImageScale();
 
         // ROI Offset from solar center (in arc-seconds)
-        offsetX = imageScale * ((coordinates.left + coordinates.right) / 2);
-        offsetY = imageScale * ((coordinates.top + coordinates.bottom) / 2);
-        // offsetX = imageScale * (this._sandbox.width() / 2);
-        // offsetY = imageScale * (this._sandbox.height() / 2);
+        offsetX = -imageScale * ((coordinates.left + coordinates.right) / 2);
+        offsetY = -imageScale * ((coordinates.top + coordinates.bottom) / 2);
         
         // Updated saved settings
         if (storeCoordinates) {

@@ -21,8 +21,8 @@ var SandboxHelper = Class.extend(
      */
     center: function () {
         var top, left;
-        left = Math.round(0.5 * this.domNode.width());
-        top  = Math.round(0.5 * this.domNode.height());
+        left = 0.5 * this.domNode.width();
+        top  = 0.5 * this.domNode.height();
 
         this.moveContainerTo(left, top);
     },
