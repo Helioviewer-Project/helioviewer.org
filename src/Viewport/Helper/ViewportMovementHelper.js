@@ -174,8 +174,8 @@ var ViewportMovementHelper = Class.extend(
         sb = this.sandbox.position();
         mc = this.movingContainer.position();
         
-        left = parseInt(-(sb.left + mc.left), 10);
-        top  = parseInt(-(sb.top + mc.top), 10);
+        left = -(sb.left + mc.left);
+        top  = -(sb.top + mc.top);
         
         // If dimension is an odd value, add one to ensure that (0, 0) is in center
         vpWidth  = this.domNode.width();
@@ -337,8 +337,8 @@ var ViewportMovementHelper = Class.extend(
      */
     _getCenter: function () {
         return {
-            x: Math.round(this.domNode.width()  / 2),
-            y: Math.round(this.domNode.height() / 2)
+            x: this.domNode.width()  / 2,
+            y: this.domNode.height() / 2
         };
     },
     
