@@ -9,7 +9,7 @@ __INSERTS_PER_QUERY__ = 500
 __STEP_FXN_THROTTLE__ = 50
 
 def traverse_directory(path):
-    '''Searches a directory for JPEG2000 images.
+    '''Searches a directory for JPEG 2000 images.
     
     Traverses file-tree starting with the specified path and builds a list of
     the available images.
@@ -27,7 +27,7 @@ def traverse_directory(path):
 
     return images
 
-def extract_JP2_info(img):
+def parse_header(img):
     '''Gets required information from an image's header tags.
     
      Extracts useful meta-information from a given JP2 image and returns a
@@ -36,7 +36,7 @@ def extract_JP2_info(img):
 
     # Get XMLBox as DOM
     try:
-        dom = parseString(get_JP2_XMLBox(img, "meta"))
+        dom = parseString(read_xmlbox(img, "meta"))
         fits = dom.getElementsByTagName("fits")[0]
     except Exception as e:
         print("Error retrieving JP2 XML Box.")
@@ -184,7 +184,7 @@ def get_element_value(dom, name):
     else:
         return None
 
-def get_JP2_XMLBox(file, root):
+def read_xmlbox(file, root):
     '''Extracts the XML box from a JPEG 2000 image.
     
     Given a filename and the name of the root node, extracts the XML header box
@@ -205,7 +205,7 @@ def get_JP2_XMLBox(file, root):
     return xml.replace("&", "&amp;")
 
 def process_jp2_images (images, rootdir, cursor, mysql, stepFxn=None):
-    '''Processes a collection of JPEG2000 Images'''
+    '''Processes a collection of JPEG 2000 Images'''
     
     if mysql:
         import MySQLdb
@@ -256,10 +256,10 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         
         # Extract header meta information
         try:
-            m = extract_JP2_info(img)
+            m = parse_header(img)
         except Exception as e:
             print("Error processing %s" % filename)
-            error += filename + "\n"
+            error += "Unable to process header for %s (%s)\n" % (filename, e)
         else:
             # Data Source
             source = sources[m["observatory"]][m["instrument"]][m["detector"]][m["measurement"]]
