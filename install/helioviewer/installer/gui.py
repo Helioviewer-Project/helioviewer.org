@@ -29,19 +29,15 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         self.ui = Ui_InstallWizard()
         self.ui.setupUi(self)        
         
-        self.logfile = open("failed.log", "a")
-        
-        self.installComplete = False
-        
-        self.postSetup()
-        self.initEvents()
-
-    def postSetup(self):
         self.setPixmap(QtGui.QWizard.LogoPixmap, QtGui.QPixmap(":/Logos/color.png"))
-        self.setupValidators()
+        
+        self.logfile = open("failed.log", "a")
+        self.install_finished = False
+        
+        self.setup_validators()
+        self.init_events()
 
-
-    def setupValidators(self):
+    def setup_validators(self):
         # Mandatory fields
         self.ui.dbAdminPage.registerField("dbAdminUserName*", self.ui.dbAdminUserName)
         self.ui.dbAdminPage.registerField("dbAdminPassword*", self.ui.dbAdminPassword)
@@ -50,7 +46,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
         self.ui.hvDatabaseSetupPage.registerField("hvPassword*", self.ui.hvPassword)
 
         alphanum = QtGui.QRegExpValidator(QtCore.QRegExp("[\w$]*"), self)
-        passwd   = QtGui.QRegExpValidator(QtCore.QRegExp("[\w!@#\$%\^&\*\(\)_\+\.,\?'\"]*"), self)
+        passwd = QtGui.QRegExpValidator(QtCore.QRegExp("[\w!@#\$%\^&\*\(\)_\+\.,\?'\"]*"), self)
 
         # DB Admin Info
         self.ui.dbAdminUserName.setValidator(alphanum)
@@ -78,7 +74,7 @@ Found %d JPEG2000 images.
 
 If this is correct, please press "Start" to begin processing.
                 """ % n)
-            #self.processImages()
+            #self.process_images()
 
     def validateCurrentPage(self):
         ''' Validates information for a given page '''
@@ -106,15 +102,15 @@ If this is correct, please press "Start" to begin processing.
         
         # Install page
         elif page is __INSTALL_PAGE__:
-            return self.installComplete
+            return self.install_finished
 
         # No validation required
         else:
             return True
 
-    def processImages(self):
+    def process_images(self):
         ''' Process JPEG 2000 archive and enter information into the database '''
-        admin, adminpass, hvdb, hvuser, hvpass, jp2dir, mysql = self.getFormFields()
+        admin, adminpass, hvdb, hvuser, hvpass, jp2dir, mysql = self.get_form_fields()
 
         self.ui.startProcessingBtn.setEnabled(False)
 
@@ -122,20 +118,20 @@ If this is correct, please press "Start" to begin processing.
 
         cursor = setup_database_schema(admin, adminpass, hvdb, hvuser, hvpass, mysql)
 
-        process_jp2_images(self.images, jp2dir, cursor, mysql, self.updateProgress)
+        process_jp2_images(self.images, jp2dir, cursor, mysql, self.update_progress)
     
         cursor.close()
         #self.ui.installProgress.setValue(len(images))
     
         self.ui.statusMsg.setText("Finished!")
-        self.installComplete = True
+        self.install_finished = True
     
-    def updateProgress(self, img):
+    def update_progress(self, img):
         value = self.ui.installProgress.value() + 1
         self.ui.installProgress.setValue(value)
         self.ui.statusMsg.setText("Processing image:\n    %s" % img)
 
-    def getFormFields(self):
+    def get_form_fields(self):
         ''' Grab form information '''
         mysql = self.ui.mysqlRadioBtn.isChecked()
         admin = str(self.ui.dbAdminUserName.text())
@@ -147,11 +143,11 @@ If this is correct, please press "Start" to begin processing.
 
         return admin, adminpass, hvdb, hvuser, hvpass, jp2dir, mysql
 
-    def initEvents(self):
-        QtCore.QObject.connect(self.ui.jp2BrowseBtn, QtCore.SIGNAL("clicked()"), self.openBrowseDialog)
-        QtCore.QObject.connect(self.ui.startProcessingBtn, QtCore.SIGNAL("clicked()"), self.processImages)
+    def init_events(self):
+        QtCore.QObject.connect(self.ui.jp2BrowseBtn, QtCore.SIGNAL("clicked()"), self.open_browse_dialog)
+        QtCore.QObject.connect(self.ui.startProcessingBtn, QtCore.SIGNAL("clicked()"), self.process_images)
 
-    def openBrowseDialog(self):
+    def open_browse_dialog(self):
         fd = QtGui.QFileDialog(self)
         directory = fd.getExistingDirectory()
         self.ui.jp2RootDirInput.setText(directory)
