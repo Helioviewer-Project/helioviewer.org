@@ -3,7 +3,7 @@
 """
 Helioviewer Database Installation Tool
 
-Last Updated: 2011/05/01
+Last Updated: 2011/07/27
 
 TODO 01/17/2010:
 * Let user specify dbname
@@ -19,20 +19,21 @@ def main(argv):
     
     # Installation method
     if options.textinstall:
-        from org.helioviewer.HelioviewerConsoleInstaller import loadTextInstaller
-        loadTextInstaller(options)
+        import helioviewer.installer.console
+        helioviewer.installer.console.install(options)
     elif options.update:
-        from org.helioviewer.HelioviewerConsoleInstaller import loadUpdater
-        loadUpdater(options)
+        import helioviewer.installer.console
+        helioviewer.installer.console.update(options)
     else:
+        # Look for Qt support
         try:
             import PyQt4
         except:
-            from org.helioviewer.HelioviewerConsoleInstaller import loadTextInstaller
-            loadTextInstaller(options)
+            import helioviewer.installer.console
+            helioviewer.installer.console.install(options)
         else:
-            from org.helioviewer.HelioviewerInstallWizard import loadGUIInstaller
-            loadGUIInstaller(argv)
+            import helioviewer.installer.gui
+            helioviewer.installer.gui.install(options)
         
 def get_arguments():
     ''' Gets command-line arguments and handles validation '''
@@ -61,7 +62,7 @@ def get_arguments():
     except:
         sys.exit(2)
         
-    # update-mode
+    # Updates only deal with processing new images
     if options.update:
         if len(args) == 0:
             print("No files to process. Exiting installer.")
@@ -72,4 +73,3 @@ def get_arguments():
 
 if __name__ == '__main__':
 	main(sys.argv)
-    

@@ -3,7 +3,7 @@
 import os
 from datetime import datetime
 from xml.dom.minidom import parseString
-from org.helioviewer.db import get_datasources, enable_datasource
+from helioviewer.db import get_datasources, enable_datasource
 
 __INSERTS_PER_QUERY__ = 500
 __STEP_FXN_THROTTLE__ = 50

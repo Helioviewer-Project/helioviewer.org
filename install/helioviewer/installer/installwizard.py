@@ -365,4 +365,4 @@ class Ui_InstallWizard(object):
         self.finishedPage.setTitle(QtGui.QApplication.translate("InstallWizard", "Finished!", None, QtGui.QApplication.UnicodeUTF8))
         self.finishedPageDesc.setText(QtGui.QApplication.translate("InstallWizard", "You have successfully installed the Helioviewer database.", None, QtGui.QApplication.UnicodeUTF8))
 
-from . import hv_rc
+from helioviewer.resources import hv_rc
