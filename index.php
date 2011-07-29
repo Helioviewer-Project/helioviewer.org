@@ -16,10 +16,10 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php printf("<!-- Helioviewer 2.2.0 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
+    <?php printf("<!-- Helioviewer.org 2.2.1 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
-    <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
+    <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
     <meta name="keywords" content="Helioviewer, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
     
     <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
@@ -553,6 +553,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                 $imageLayers = preg_split("/\],\[/", $imageLayersString);
                 $urlSettings['imageLayers'] = $imageLayers;
             }
+            
+            if (isset($_GET['centerX']))
+                $urlSettings['centerX'] = $_GET['centerX'];
+            
+            if (isset($_GET['centerY']))
+                $urlSettings['centerY'] = $_GET['centerY'];
 
             if (isset($_GET['date']))
                 $urlSettings['date'] = $_GET['date'];

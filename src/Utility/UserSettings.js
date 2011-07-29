@@ -175,6 +175,14 @@ var UserSettings = Class.extend(
             this.set("state.imageScale", parseFloat(urlSettings.imageScale));
         }
         
+        if (urlSettings.centerX) {
+            this.set("state.centerX", parseFloat(urlSettings.centerX))
+        }
+        
+        if (urlSettings.centerY) {
+            this.set("state.centerY", parseFloat(urlSettings.centerY))
+        }
+        
         if (urlSettings.imageLayers) {
             this.set("state.tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
         }
