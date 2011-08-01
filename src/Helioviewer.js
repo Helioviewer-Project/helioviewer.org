@@ -468,28 +468,15 @@ var Helioviewer = Class.extend(
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
     toURL: function () {
-        var url, date, imageScale, imageLayers, roi, centerX, centerY;
-        
-        // Add timestamp
-        date = this.timeControls.toISOString();
-    
-        // Add image scale
-        imageScale = this.viewport.getImageScale();
-        
-        // Image layers
-        imageLayers = this.viewport.serialize();
-        
-        // Centering information
-        roi = this.viewport.getRegionOfInterest();
-        
-        centerX = (roi.left + roi.right)  / 2;
-        centerY = (roi.top  + roi.bottom) / 2;
-        
-        // Build URL
-        url = this.serverSettings.rootURL + "/?date=" + date + "&imageScale=" + imageScale +
-              "&imageLayers=" + imageLayers;
-
-        return url;
+        var params = {
+            "date"        : this.timeControls.toISOString(),
+            "imageScale"  : this.viewport.getImageScale(),
+            "centerX"     : Helioviewer.userSettings.get("state.centerX"),
+            "centerY"     : Helioviewer.userSettings.get("state.centerY"), 
+            "imageLayers" : this.viewport.serialize()
+        };
+        return this.serverSettings.rootURL + "/?" + 
+               decodeURIComponent($.param(params));
     },
     
     /**
