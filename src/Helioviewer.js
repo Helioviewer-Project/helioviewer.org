@@ -468,8 +468,9 @@ var Helioviewer = Class.extend(
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
     toURL: function () {
+
         var params = {
-            "date"        : this.timeControls.toISOString(),
+            "date"        : this.viewport.getMiddleObservationTime().toISOString(),
             "imageScale"  : this.viewport.getImageScale(),
             "centerX"     : Helioviewer.userSettings.get("state.centerX"),
             "centerY"     : Helioviewer.userSettings.get("state.centerY"), 
