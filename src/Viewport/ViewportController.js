@@ -119,7 +119,7 @@ var ViewportController = Class.extend(
     loadROIPosition: function (event) {
         var sandbox, sbWidth, sbHeight, centerX, centerY;
         
-        console.log("sandbox: " + $("#sandbox").width() + ", " + $("#sandbox").height());
+        //console.log("sandbox: " + $("#sandbox").width() + ", " + $("#sandbox").height());
 
         sandbox = $("#sandbox");
         sbWidth  = sandbox.width();
@@ -164,6 +164,36 @@ var ViewportController = Class.extend(
         }
         
         this.viewport.updateViewportRanges(coordinates);
+    },
+    
+    /**
+     * Returns the middle time of all of the layers currently loaded
+     */
+    getMiddleObservationTime: function() {
+        var startDate, endDate, difference, dates = [];
+
+        // Get the observation dates associated with each later
+        $.each(this.viewport._tileLayerManager._layers, function (i, layer) {
+            dates.push(layer.image.date);
+        });
+        
+        // If there is only one layer loaded then use its date
+        if (dates.length === 1) {
+            return Date.parseUTCDate(dates[0]);
+        }
+        
+        // Otherwise, sort the list
+        dates.sort();
+        
+        // Add half the difference in seconds to the start date and return it
+        startDate = Date.parseUTCDate(dates[0]);
+        endDate   = Date.parseUTCDate(dates[dates.length - 1]);
+        
+        difference = (endDate.getTime() - startDate.getTime()) / 1000 / 2;
+        
+        startDate.addSeconds(difference);
+        
+        return startDate;
     },
     
     /**
