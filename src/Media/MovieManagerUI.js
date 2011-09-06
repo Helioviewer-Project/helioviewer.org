@@ -411,6 +411,49 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
+     * Adds a movie to the history using it's id
+     */
+    addMovieUsingId: function (id) {
+        var callback, params, movie, self = this;
+        
+        callback = function(response) {
+            if (response.status === "FINISHED") {
+                // id, duration, imageScale, layers, dateRequested, startDate, endDate, 
+                // frameRate, numFrames, x1, x2, y1, y2, width, height
+                movie = self._manager.add(
+                    id,
+                    response.duration,
+                    response.imageScale,
+                    response.layers,
+                    response.timestamp.replace(" ", "T") + ".000Z",
+                    response.startDate,
+                    response.endDate,
+                    response.frameRate,
+                    response.numFrames,
+                    response.x1,
+                    response.x2,
+                    response.y1,
+                    response.y2,
+                    response.width,
+                    response.height,
+                    response.thumbnails.small,
+                    response.url
+                );
+                
+                self._addItem(movie);
+            }
+        }
+        
+        params = {
+            "action" : "getMovieStatus", 
+            "id"     : id,
+            "format" : self._manager.format,
+            "verbose": true
+        };
+        $.get("api/index.php", params, callback, "json");
+    },
+    
+    /**
      * Determines dimensions for which movie should be displayed
      */
     getVideoPlayerDimensions: function (width, height) {

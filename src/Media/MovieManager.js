@@ -53,7 +53,7 @@ var MovieManager = MediaManager.extend(
      */
     add: function (
             id, duration, imageScale, layers, dateRequested, startDate, endDate, 
-            frameRate, numFrames, x1, x2, y1, y2, width, height
+            frameRate, numFrames, x1, x2, y1, y2, width, height, thumbnail, url
     ) {
         var movie = {
             "id"            : id,
@@ -72,7 +72,10 @@ var MovieManager = MediaManager.extend(
             "width"         : width,
             "height"        : height,
             "ready"         : true,
-            "name"          : this._getName(layers)
+            "name"          : this._getName(layers),
+            "status"        : "FINISHED",
+            "thumbnail"     : thumbnail,
+            "url"           : url
         }; 
         this._super(movie);
 
