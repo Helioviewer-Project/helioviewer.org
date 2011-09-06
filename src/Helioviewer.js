@@ -69,6 +69,11 @@ var Helioviewer = Class.extend(
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
+        
+        // Play movie if id is specified
+        if (urlSettings.movieId) {
+            this._loadMovie(urlSettings.movieId);
+        }
     },
     
     
@@ -165,6 +170,17 @@ var Helioviewer = Class.extend(
             centerY        : Helioviewer.userSettings.get('state.centerY'),
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
+    },
+    
+    /**
+     * Adds a movie to the user's history and displays the movie
+     * 
+     * @param string movieId Identifier of the movie to be shown
+     */
+    _loadMovie: function (movieId) {
+        if (!this._movieManagerUI.has(movieId)) {
+            this._movieManagerUI.addMovieUsingId(movieId);
+        }
     },
     
     /**

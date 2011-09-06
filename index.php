@@ -565,6 +565,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 
             if (isset($_GET['imageScale']))
                 $urlSettings['imageScale'] = $_GET['imageScale'];
+            
+            if(isset($_GET['movieId']))
+                $urlSettings['movieId'] = $_GET['movieId'];
 
             // Convert to JSON
             printf("\turlSettings = %s;\n", json_encode($urlSettings));

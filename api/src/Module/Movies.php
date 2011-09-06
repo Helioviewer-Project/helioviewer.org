@@ -136,12 +136,13 @@ class Module_Movies implements Module
         
         // Process request
         $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
+        $verbose = isset($this->_options['verbose']) ? $this->_options['verbose'] : false;
         
         header('Content-type: application/json');
         
         // If the movie is finished return movie info
         if ($movie->status == "FINISHED") {            
-            $response = $movie->getCompletedMovieInformation();
+            $response = $movie->getCompletedMovieInformation($verbose);
         } else if ($movie->status == "ERROR") {
             $response = array(
                 "error" => "Sorry, we are unable to create your movie at this time. Please try again later."
@@ -425,7 +426,10 @@ class Module_Movies implements Module
         case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
-                "alphanum" => array('id', 'format')
+                "optional" => array('verbose'),
+                "alphanum" => array('id', 'format'),
+                "bools"    => array('verbose')
+                
             );
             break;
         case "playMovie":
