@@ -180,6 +180,8 @@ var Helioviewer = Class.extend(
     _loadMovie: function (movieId) {
         if (!this._movieManagerUI.has(movieId)) {
             this._movieManagerUI.addMovieUsingId(movieId);
+        } else {
+            this._movieManagerUI.playMovie(movieId);            
         }
     },
     

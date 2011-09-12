@@ -25,6 +25,20 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
+     * Plays the movie with the specified id if it is ready
+     */
+    playMovie: function (id) {
+        var movie = this._manager.get(id);
+        
+        // If the movie is ready, open movie player
+        if (movie.status === "FINISHED") {
+            this._createMoviePlayerDialog(movie);
+        } else {
+            return;
+        }
+    },
+    
+    /**
      * Uses the layers passed in to send an Ajax request to api.php, to have it 
      * build a movie. Upon completion, it displays a notification that lets the
      * user click to view it in a popup. 
@@ -441,6 +455,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 );
                 
                 self._addItem(movie);
+                self._createMoviePlayerDialog(movie)
             }
         }
         
