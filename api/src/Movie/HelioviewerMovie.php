@@ -71,6 +71,10 @@ class Movie_HelioviewerMovie
         $id = alphaID($publicId, true, 5, HV_MOVIE_ID_PASS);
         $info = $this->_db->getMovieInformation($id, $format);
         
+        if (is_null($info)) {
+             throw new Exception("Unable to find the requested movie.");
+        }
+        
         $this->id           = $id;
         $this->publicId     = $publicId;
         $this->format       = $format;
