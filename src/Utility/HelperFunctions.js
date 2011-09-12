@@ -318,48 +318,6 @@ var pixelsToArcseconds = function (coordinates, scale) {
 };
 
 /**
- * Converts tile coordinates into arcseconds. Finds relative tile size (if you enlarged or shrunk the tile
- * so that the image in the tile is at the same resolution as the jp2 image) and uses that to calculate
- * pixels, then arcseconds. 
- * 
- * Since x and y are with respect to the center of the image and we want arcseconds 
- * to be the same, we do not need to do any adjusting. 
- * 
- * A tile at (0,0) has its top left corner in the exact center of the jp2 image, so its heliocentric 
- * pixel coordinates would be 0*relativeTileSize, or 0,0 as well. A tile at (-1,-1) is one tile up and to
- * the left of the (0,0) tile, so its heliocentric pixel coordinates would be calculated as
- * -1*relativeTileSize, and so on.
- * 
- * Pixels are adjusted by the solar center offset to make sure that multiple layers are aligned correctly.
- * Finally, pixel coordinates are multiplied by the scale of the jp2 image (arcseconds per pixel) to get the
- * measurement in arcseconds. 
- * 
- * @input {int}   x        tile x-coordinate
- * @input {int}   y        tile y-coordinate
- * @input {float} scale    scale of the image in the viewport
- * @input {float} jp2Scale scale of the jp2 image on disk
- * @input {int}   tileSize desired size of the tile (usually 512px)
- * @input {float} offsetX  x-offset of the sun's center from the center of the jp2 image
- * @input {float} offsetY  y-offset of the sun's center from the center of the jp2 image
- */
-var tileCoordinatesToArcseconds = function (x, y, scale, jp2Scale, tileSize, offsetX, offsetY) {
-    var relativeTileSize, top, left, bottom, right;
-    relativeTileSize = tileSize * scale / jp2Scale;
-
-    top  = y * relativeTileSize - offsetY;
-    left = x * relativeTileSize - offsetX;
-    bottom = top  + relativeTileSize;
-    right  = left + relativeTileSize;
-
-    return {
-        y1 : top  * jp2Scale,
-        x1 : left * jp2Scale,
-        y2 : bottom * jp2Scale,
-        x2 : right  * jp2Scale
-    };
-};
-
-/**
  * Takes in a container and adds an event listener so that when the
  * container is hovered over, its icon will highlight too, and when 
  * done hovering, the icon goes back to normal. Necessary for some of

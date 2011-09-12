@@ -5,8 +5,10 @@
 /* HTML ELEMENTS */
 html, body {
     background-image: url('../../resources/images/backgrounds/gradient_v5-optimized.png');
-    background-color: transparent;
+    background-color: #20242F;
     background-repeat: repeat-x;
+    /*background-size: 40px 100%;
+    -webkit-background-size: 40px 100%;*/
     font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;
 }
 button {
@@ -72,7 +74,7 @@ a.light:hover {
 /* Center button */
 #center-button {
     background: transparent url(../../resources/images/blackGlass/transparentBGWhite.png);
-    font-size: 0.8em;
+    font-size: 13.5px;
 	width:54px;
 	height:16px;
 	position: absolute;
@@ -276,4 +278,12 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 #image-area-select-buttons .ui-icon {
     float: left;
+}
+
+/** Debugging */
+#debug-dimensions {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+    color: white;
 }

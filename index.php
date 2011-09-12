@@ -4,17 +4,22 @@ if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
 // Remove variables that are not used on the client-side
 unset($config['enable_statistics_collection']);
+
 // Debug support
-if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
+if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
+    $debug = true;
     $config['compress_js'] = $config['compress_css'] = false;
+} else {
+    $debug = false;    
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php printf("<!-- Helioviewer 2.2.0 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
+    <?php printf("<!-- Helioviewer.org 2.2.1 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
-    <meta name="description" content="Helioviewer - Solar and heliospheric image visualization tool" />
+    <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
     <meta name="keywords" content="Helioviewer, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
     
     <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
@@ -425,7 +430,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <!-- jQuery -->
-<script src="http://code.jquery.com/jquery-1.6.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.6.2.min.js" type="text/javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 
@@ -455,7 +460,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <!-- jQuery -->
-<script src="http://code.jquery.com/jquery-1.6.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.6.2.js" type="text/javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 
@@ -533,7 +538,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
 ?>
 
 <script type="text/javascript">
-    var serverSettings, settingsJSON, urlSettings;
+    var serverSettings, settingsJSON, urlSettings, debug;
 
     $(function () {
         <?php
@@ -548,18 +553,30 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true))
                 $imageLayers = preg_split("/\],\[/", $imageLayersString);
                 $urlSettings['imageLayers'] = $imageLayers;
             }
+            
+            if (isset($_GET['centerX']))
+                $urlSettings['centerX'] = $_GET['centerX'];
+            
+            if (isset($_GET['centerY']))
+                $urlSettings['centerY'] = $_GET['centerY'];
 
             if (isset($_GET['date']))
                 $urlSettings['date'] = $_GET['date'];
 
             if (isset($_GET['imageScale']))
                 $urlSettings['imageScale'] = $_GET['imageScale'];
+            
+            if(isset($_GET['movieId']))
+                $urlSettings['movieId'] = $_GET['movieId'];
 
             // Convert to JSON
             printf("\turlSettings = %s;\n", json_encode($urlSettings));
+            
+            // Debugging support
+            printf("\tdebug = %s;\n", json_encode($debug));
         ?>
         serverSettings = new Config(settingsJSON).toArray();
-        helioviewer    = new Helioviewer(urlSettings, serverSettings);
+        helioviewer    = new Helioviewer(urlSettings, serverSettings, debug);
     });
 </script>
 

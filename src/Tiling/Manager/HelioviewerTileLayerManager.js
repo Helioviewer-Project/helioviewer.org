@@ -24,11 +24,29 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
 		            servers, startingLayers, urlLayers);
 
-        this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light", "SOHO,LASCO,C3,white-light", 
-                        "SOHO,MDI,MDI,magnetogram", "SOHO,MDI,MDI,continuum", "SDO,AIA,AIA,171",
-                        "SOHO,EIT,EIT,171", "SOHO,EIT,EIT,284", "SOHO,EIT,EIT,195" ];
+        // The order in which new layers are added
+        this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light", 
+                        "SOHO,LASCO,C3,white-light", "SOHO,MDI,MDI,magnetogram",
+                        "SOHO,MDI,MDI,continuum" ];
+                        
+        // Handle STEREO separately
+        this._stereoAQueue = [ "STEREO_A,SECCHI,EUVI,304", 
+                              "STEREO_A,SECCHI,COR1,white-light", 
+                              "STEREO_A,SECCHI,COR2,white-light", 
+                              "STEREO_A,SECCHI,EUVI,171",
+                              "STEREO_A,SECCHI,EUVI,195" ];
+                              
+        this._stereoBQueue = [ "STEREO_B,SECCHI,EUVI,304", 
+                              "STEREO_B,SECCHI,COR1,white-light", 
+                              "STEREO_B,SECCHI,COR2,white-light", 
+                              "STEREO_B,SECCHI,EUVI,171",
+                              "STEREO_B,SECCHI,EUVI,195" ];
 
         this._loadStartingLayers(startingLayers);
+        
+        this._layersLoaded = 0;
+        this._finishedLoading = false;
+        $(document).bind("viewport-max-dimensions-updated", $.proxy(this._onViewportUpdated, this));
     },
 
     /**
@@ -53,12 +71,30 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         $.each(this._layers, function () {
             currentLayers.push(this.image.getLayerName());
         });
-
-        // remove existing layers from queue
-        queue = $.grep(this._queue, function (item, i) {
-            return ($.inArray(item, currentLayers) === -1);
-        });
         
+        // Remove existing layers from queue
+        if (!!currentLayers.length) {
+            // STEREO A
+            if (currentLayers[0].substr(0, 8) === "STEREO_A") {
+                queue = $.grep(this._stereoAQueue, function (item, i) {
+                    return ($.inArray(item, currentLayers) === -1);
+                });                
+            } else if (currentLayers[0].substr(0, 8) === "STEREO_B") {
+                // STEREO B
+                queue = $.grep(this._stereoBQueue, function (item, i) {
+                    return ($.inArray(item, currentLayers) === -1);
+                });    
+            } else {
+                // SOHO, SDO, etc
+                queue = $.grep(this._queue, function (item, i) {
+                    return ($.inArray(item, currentLayers) === -1);
+                });
+            }
+        } else {
+            queue = this._queue.slice(); // make a copy
+        }
+        
+        // Select tiling server
         server = this._selectTilingServer();
 
         // Pull off the next layer on the queue
@@ -109,6 +145,19 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
 
             self.addLayer(layer);
         });
+    },
+    
+    /**
+     * Checks to see if all of the layers have finished loading for the first time,
+     * and if so, loads centering information from previous session
+     */
+    _onViewportUpdated: function () {
+        var numLayers = Helioviewer.userSettings.get("state.tileLayers").length;
+        this._layersLoaded += 1;
+        
+        if (!this._finishedLoading && this._layersLoaded === numLayers) {
+            $(document).trigger("load-saved-roi-position");
+        }
     },
     
     /**

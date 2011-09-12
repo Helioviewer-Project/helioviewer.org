@@ -22,7 +22,7 @@ var SandboxHelper = Class.extend(
     center: function () {
         var top, left;
         left = 0.5 * this.domNode.width();
-        top = 0.5 * this.domNode.height();
+        top  = 0.5 * this.domNode.height();
 
         this.moveContainerTo(left, top);
     },
@@ -76,6 +76,6 @@ var SandboxHelper = Class.extend(
     },
         
     moveContainerTo: function (x, y) {
-        this.movingContainer.css({left: x + 'px', top: y + 'px'});
+        this.movingContainer.css({left: x, top: y});
     }
 });

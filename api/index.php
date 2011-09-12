@@ -10,6 +10,9 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  *
+ * TODO 06/28/2011
+ *  = Reuse database connection for statistics and other methods that need it? * 
+ * 
  * TODO 01/28/2010
  *  = Document getDataSources, getJP2Header, and getClosestImage methods.
  *  = Explain use of sourceId for faster querying.
@@ -219,7 +222,13 @@ function printAPIDocumentation()
         <ol style="list-style-type: upper-latin;">
             <li><a href="index.php#Identifiers">Identifiers</a></li>
             <li><a href="index.php#VariableTypes"> Variable Types </a></li>
-            <li><a href="index.php#Coordinates">Coordinates</a></li>
+            <li><a href="index.php#Coordinates">Coordinates</a>
+                <ul>
+                    <li style='list-style-type: circle;'><a href="index.php#ArcsecondCoordinates">Arcseconds</a>
+                    <li style='list-style-type: circle;'><a href="index.php#PixelCoordinates">Pixels</a>
+                    <li style='list-style-type: circle;'><a href="index.php#ImageScale">Image Scale</a>
+                </ul>
+            </li>
         </ol>
     </li>
 </ol>
@@ -241,10 +250,10 @@ function printAPIDocumentation()
         offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
         strings. The simplest APIs require only a single URI, and result in some resource being returned, e.g. a movie or
         <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading a particular "view"
-        into Helioviewer. Some of the API's are more complex and involve two steps. For example, in order to get a
+        into Helioviewer. Some API methods are more complex and involve two steps. For example, in order to get a
         list of solar events for a certain period of time, first a query is usually made to see which Feature Recognition
         Methods (or FRMs) include events for that time period. A second query then returns a list of features/events are 
-        fetched using a second query. 
+        fetched using a second query.
         
         <br />
         <br />
@@ -255,8 +264,8 @@ function printAPIDocumentation()
             <?php echo HV_API_ROOT_URL;?>?action=methodName&amp;param1=value1&amp;param2=value2...
         </div>
     
-        <p>The base URL is the same for each of the APIs (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
-        The "action" parameter is required and specifies the specific functionality to access. In addition, other parameters
+        <p>The base URL is the same for each of the API methods (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
+        The "action" parameter is required for all requests and specifies the specific functionality to access. In addition, other parameters
         may also be required depending on the specific API being accessed. The one exception to this rule is the
         <a href="index.php#CustomView">Custom View API</a> which is accessed from
         <a href="http://www.helioviewer.org/index.php"> http://www.helioviewer.org/index.php</a> and does not require an
@@ -273,7 +282,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2011-06-20 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
+    Last Updated: 2011-07-06 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
 </div>
 
 </body>
@@ -604,111 +613,42 @@ function printDocumentationAppendices()
         <!-- Appendix C: Working with Coordinates -->
         <li>
         <div id="Coordinates">Working with Coordinates in Helioviewer.org
+            
+        <h3>Overview</h3>
+
         <p>Several of the API methods supported by Helioviewer.org require you 
-           to specify a region of interest (ROI) in <a href="http://en.wikipedia.org/wiki/Minute_of_arc#Symbols.2C_abbreviations_and_subdivisions">arcseconds</a>, 
-           a unit of measurement commonly used by astronomers and solar scientists.
-           This overview provides a brief overview of how Helioviewer.org handles coordinates,
-           and the process for converting between pixel coordinates and arcseconds.</p>
+           to specify a rectangular region of interest or "ROI", which is simply
+           the portion of the image or movie you are interested in.</p>
            
-       <p>Coordinates used in Helioviewer API requests should be given in 
-          arcseconds from the center of the Sun. The below image depicts the 
-          location of the origin, and the direction of the axes, for 
-          co-ordinates used in a Helioviewer API request.</p>
+           There are two different methods for specifying region of interest 
+           (ROI) in Helioivewer.org API requests. The first method is to
+           specify the coordinates for the top-left and bottom-right corners of 
+           the ROI in <a href="http://en.wikipedia.org/wiki/Minute_of_arc#Symbols.2C_abbreviations_and_subdivisions">arcseconds</a>. 
+           The other option is to specify the position of the center of your 
+           ROI in arcseconds and the dimensions for the ROI in pixels. In 
+           either case you will also need to specify an image scale in 
+           arcseconds per pixel.
+           
+           This appendix provides a description of how each of these methods
+           can be used in API requests, and how to determine the appropriate
+           arcsecond values to use to reach a desired effect.
+           
+        <h3 id="#ArcsecondCoordinates">Arcseconds</h3>
+           
+       <p>The first method for specifying an ROI in a Helioviewer.org API
+          request is to specify the coordinates for the top-left (x1, y1) and
+          bottom-right (x2, y2) corners of the ROI in arcseconds, with the 
+          origin at the center of the Sun. The below image depicts the location 
+          of the origin, and the direction of the axes, for this style 
+          request.</p>
         
         <div style='width: 100%; text-align: center;'>
-            <img src='resources/images/Helioviewer_ROI_Overview.png' src='Helioviewer.org Coordinates Example Diagram' style='margin-left: auto; margin-right: auto;'/>
+            <img src='resources/images/Helioviewer_ROI_Arcseconds_Overview.png' src='Helioviewer.org Coordinates Example Diagram (Arcseconds)' style='margin-left: auto; margin-right: auto;'/>
         </div>
         
-        <p>When working with coordinates in Helioviewer.org, it is also important to understand the spatial scale
-           of the images you are viewing and requesting. Each type of image (AIA, LASCO, etc) shows the Sun at
-           some spatial scale or resolution. That is, each image pixel represents a certain number of arcseconds, 
-           and that ratio of arcseconds to pixels is reffered to as the "imageScale" for that image. Each of the
-           different image types have their own native image scale, which is the number of arcseconds a pixel of
-           the image represents when viewed at its native resolution.
-           
-           Below is a table listing the average native image scales and dimensions (in pixels) for images found on Helioviewer:
-        </p>
-           
-        <div class="summary-box" style="background-color: #E3EFFF;">
-        <br />
-        <table class="param-list" cellspacing="10">
-            <tbody valign="top">
-                <tr>
-                    <td width="40%"><strong>Image Type:</strong></td>
-                    <td width="35%"><strong>Dimensions (pixels)</strong></td>
-                    <td width="35%"><strong>Image Scale (arcseconds/pixel)</strong></td>
-                </tr>
-                <tr>
-                    <td>AIA</td>
-                    <td>4096 x 4096</td>
-                    <td>0.6</td>
-                </tr>
-                <tr>
-                    <td>COR-1</td>
-                    <td>512 x 512</td>
-                    <td>15.0</td>
-                </tr>
-                <tr>
-                    <td>COR-2</td>
-                    <td>2048 x 2048</td>
-                    <td>14.7</td>
-                </tr>
-                <tr>
-                    <td>EIT</td>
-                    <td>1024 x 1024</td>
-                    <td>2.63</td>
-                </tr>
-                <tr>
-                    <td>HMI</td>
-                    <td>4096 x 4096</td>
-                    <td>0.6</td>
-                </tr>
-                <tr>
-                    <td>LASCO C2</td>
-                    <td>1024 x 1024</td>
-                    <td>11.9</td>
-                </tr>
-                <tr>
-                    <td>LASCO C3</td>
-                    <td>1024 x 1024</td>
-                    <td>56</td>
-                </tr>
-                <tr>
-                    <td>MDI</td>
-                    <td>1024 x 1024</td>
-                    <td>1.985707</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <br />
-        <strong>Note:</strong> The values listed above are average values. Often, the image scale and dimensions for a given
-        type of image tends to stay the same over time, and as such you can often use the above values as-is. Occasionally, however,
-        the scale or dimensions will vary. If you find that you are getting unexpected results, or would like a higher level of
-        precision, you should first use the getClosestImage method to determine the exact dimensions and scale for the image you are
-        requesting.
-        </div>
-
-        <p>The smaller the (native) image scale is, the more detail you can see. 
-           For example, AIA has a much smaller native image scale (0.6"/px) than
-           EIT does (2.63"/px) which is why you can see a lot more detail in AIA
-           images.
-        </p>
-           
-        <p>You are not limited to creating screenshots and movies at an image's native
-           resolution, however, and so in an API request the imageScale specified
-           need not (and in the case of composite images, often cannot) be the same
-           as an images native resolution.
-        </p>
-           
-        <p>For example, suppose you wanted to request an AIA image that is "zoomed out"
-           by a factor of two. In this case, you would double the imageScale, so instead
-           of 0.6, you would request an image scale of 1.2. Simiarly, when making a request
-           which includes multiple layers, each of the layers will be scaled to match the
-           imageScale you requested.
-        </p>
-         
-        <p>To makes things more clear, below are some example requests, and the imageScale and ROI corresponding with that request.</p>
+        <p>To makes things more clear, below are some example requests, and the 
+           <a href="#ImageScale">imageScale</a> and ROI corresponding with that 
+           request.</p>
         
         <div class="summary-box" style="background-color: #E3EFFF;">
         <br />
@@ -723,7 +663,7 @@ function printDocumentationAppendices()
            to the right (128, 128). Since the ROI must be specified in arcseconds, and not in pixels, we multiply by the desired imageScale:
            128 x 9.6 = 1228.8.
            <br /><br />
-           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true">
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true">
                http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SDO,AIA,AIA,304,1,100]&imageScale=9.6&x1=-1228.8&y1=-1228.8&x2=1228.8&y2=1228.8&display=true
            </a>
            
@@ -735,7 +675,7 @@ function printDocumentationAppendices()
            to arcseconds we multiple the pixel values by the arcsecond/pixel ratio (the imageScale) to get (0, -1346.56), (1346.56, 0).
 
            <br /><br />
-           <i>Example Request:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true">
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true">
                http://helioviewer.org/api/?action=takeScreenshot&date=2011-06-21T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=1.315&x1=0&y1=-1346.56&x2=1346.56&y2=0&display=true
            </a>
         </p>
@@ -751,8 +691,143 @@ function printDocumentationAppendices()
            coordinate system which is commonly used in solar physics. To get 
            around this you can simply flip the sign for the y-coordinate you 
            see on Helioviewer.org when mouse-coordinates are being displayed.
-        </p>         
-         
+        </p>
+        
+        <h3 id="#PixelCoordinates">Pixels</h3>
+        
+        <p>
+        Alternatively, if you prefer to explicityly specify the pixel dimensions for the image or movie,
+        you can specify the center of your ROI in arc-seconds (x0, y0), relative to the center of the sun,
+        and the width and height of the ROI in pixels. Although you are still required to work with Arcseconds
+        for this method for some of the parameters, this provides a simple way to ensure that the resulting
+        image or movie is a specific size in pixels.
+        </p>
+        
+        <div style='width: 100%; text-align: center;'>
+            <img src='resources/images/Helioviewer_ROI_Pixels_Overview.png' src='Helioviewer.org Coordinates Example Diagram (Pixels)' style='margin-left: auto; margin-right: auto;'/>
+        </div>
+        
+        <p>
+        Similar to the first method, you will also need to specify the <a href="#ImageScale">image scale</a> 
+        to use, in arcseconds/pixel.
+        </p>
+        
+        <div class="summary-box" style="background-color: #E3EFFF;">
+        <br />
+        <span style='text-decoration: underline'>Examples:</span><br /><br />
+        
+        <b>1) A complete EIT image at it's natural resolution</b>
+        
+        <p>According to the <a href="#ImageScaleTable">table of image scales</a> shown below, the native image scale for EIT is 2.63 arcseconds/pixel,
+           and the image dimensions are 1024 x 1024 pixels.</p>
+           <br /><br />
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=2.63&x0=0&y0=0&width=1024&height=1024&display=true">
+               http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SOHO,EIT,EIT,171,1,100]&imageScale=2.63&x0=0&y0=0&width=1024&height=1024&display=true
+           </a>
+           
+        <br /><br />
+        <b>2) A 1024 x 768 sub-region centered at the top-right corner of an AIA 131 image, centered at the top-right quadrant, and
+            the natural scale of AIA.</b>
+        
+        <p>Since we want to center the image in the top-right corner, we need to figure out what arcsecond coordinates correspond to the pixel
+            coordinates (1024, -1024). At its native resolution, AIA images have an image scale of 0.6 arcseconds/pixel, so we multiple the pixel
+            coordinates by this ratio to get the corresponding arcsecond values.</p>
+
+           <br /><br />
+           <i>URL:</i><a href="http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SDO,AIA,AIA,131,1,100]&imageScale=0.6&x0=614.4&y0=-614.4&width=1024&height=768&display=true">
+               http://helioviewer.org/api/?action=takeScreenshot&date=2011-07-07T00:00:00.000Z&layers=[SDO,AIA,AIA,131,1,100]&imageScale=0.6&x0=614.4&y0=-614.4&width=1024&height=768&display=true
+           </a>
+        </div>
+        
+        <h3 id="#ImageScale">Image Scale</h3>
+            <p>When working with coordinates in Helioviewer.org, it is also important to understand the spatial scale
+               of the images you are viewing and requesting. Each type of image (AIA, LASCO, etc) shows the Sun at
+               some spatial scale or resolution. That is, each image pixel represents a certain number of arcseconds, 
+               and that ratio of arcseconds to pixels is refered to as the "image scale" for that image. Each of the
+               different image types have their own native image scale, which is the number of arcseconds a pixel of
+               the image represents when viewed at its native resolution.
+               
+               Below is a table listing the average native image scales and dimensions (in pixels) for images found on Helioviewer:
+            </p>
+               
+            <div id="ImageScaleTable" class="summary-box" style="background-color: #E3EFFF;">
+            <br />
+            <table class="param-list" cellspacing="10">
+                <tbody valign="top">
+                    <tr>
+                        <td width="40%"><strong>Image Type:</strong></td>
+                        <td width="35%"><strong>Dimensions (pixels)</strong></td>
+                        <td width="35%"><strong>Image Scale (arcseconds/pixel)</strong></td>
+                    </tr>
+                    <tr>
+                        <td>AIA</td>
+                        <td>4096 x 4096</td>
+                        <td>0.6</td>
+                    </tr>
+                    <tr>
+                        <td>COR-1</td>
+                        <td>512 x 512</td>
+                        <td>15.0</td>
+                    </tr>
+                    <tr>
+                        <td>COR-2</td>
+                        <td>2048 x 2048</td>
+                        <td>14.7</td>
+                    </tr>
+                    <tr>
+                        <td>EIT</td>
+                        <td>1024 x 1024</td>
+                        <td>2.63</td>
+                    </tr>
+                    <tr>
+                        <td>HMI</td>
+                        <td>4096 x 4096</td>
+                        <td>0.6</td>
+                    </tr>
+                    <tr>
+                        <td>LASCO C2</td>
+                        <td>1024 x 1024</td>
+                        <td>11.9</td>
+                    </tr>
+                    <tr>
+                        <td>LASCO C3</td>
+                        <td>1024 x 1024</td>
+                        <td>56</td>
+                    </tr>
+                    <tr>
+                        <td>MDI</td>
+                        <td>1024 x 1024</td>
+                        <td>1.985707</td>
+                    </tr>
+                </tbody>
+            </table>
+    
+            <br />
+            <strong>Note:</strong> The values listed above are average values. Often, the image scale and dimensions for a given
+            type of image tends to stay the same over time, and as such you can often use the above values as-is. Occasionally, however,
+            the scale or dimensions will vary. If you find that you are getting unexpected results, or would like a higher level of
+            precision, you should first use the getClosestImage method to determine the exact dimensions and scale for the image you are
+            requesting.
+            </div>
+    
+            <p>The smaller the (native) image scale is, the more detail you can see. 
+               For example, AIA has a much smaller native image scale (0.6"/px) than
+               EIT does (2.63"/px) which is why you can see a lot more detail in AIA
+               images.
+            </p>
+               
+            <p>You are not limited to creating screenshots and movies at an image's native
+               resolution, however, and so in an API request the imageScale specified
+               need not (and in the case of composite images, often cannot) be the same
+               as an images native resolution.
+            </p>
+               
+            <p>For example, suppose you wanted to request an AIA image that is "zoomed out"
+               by a factor of two. In this case, you would double the imageScale, so instead
+               of 0.6, you would request an image scale of 1.2. Simiarly, when making a request
+               which includes multiple layers, each of the layers will be scaled to match the
+               imageScale you requested.
+            </p>
         </div>
         </li>
 

@@ -129,7 +129,6 @@ class Module_WebClient implements Module
     public function getClosestImage ()
     {
         include_once 'src/Database/ImgIndex.php';
-        
         $imgIndex = new Database_ImgIndex();
 
         // Convert human-readable params to sourceId if needed
@@ -140,13 +139,23 @@ class Module_WebClient implements Module
             );
         }
 
-        $result = $imgIndex->getClosestImage($this->_params['date'], $this->_params['sourceId']);
+        $image = $imgIndex->getImageFromDatabase($this->_params['date'], $this->_params['sourceId']);
+        
+        // Read JPEG 2000 header
+        $file = HV_JP2_DIR . $image["filepath"] . "/" .$image["filename"];
+        $xmlBox = $imgIndex->extractJP2MetaInfo($file);
 
         // Prepare cache for tiles
-        $this->_createTileCacheDir($result['filepath']);
-
+        $this->_createTileCacheDir($image['filepath']);
+        
+        // Return date and id
+        $response = array_merge(array(
+            "id"   => $image['id'],
+            "date" => $image['date']
+        ), $xmlBox);
+        
         header('Content-Type: application/json');
-        echo json_encode($result);
+        echo json_encode($response);
     }
 
     /**
@@ -174,8 +183,15 @@ class Module_WebClient implements Module
      */
     public function getJP2Header ()
     {
+        include_once 'src/Database/ImgIndex.php';
         include_once 'src/Image/JPEG2000/JP2ImageXMLBox.php';
-        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox(HV_JP2_DIR . $this->_params["file"], "meta");
+
+        $imgIndex = new Database_ImgIndex();
+        $image = $imgIndex->getImageInformation($this->_params['id']);
+        
+        $filepath = HV_JP2_DIR . $image['filepath'] . "/" . $image['filename'];
+
+        $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($filepath, "meta");
         $xmlBox->printXMLBox();
     }
 
@@ -189,89 +205,137 @@ class Module_WebClient implements Module
      */
     public function getTile ()
     {
+        include_once 'src/Database/ImgIndex.php';
         include_once 'src/Image/JPEG2000/JP2Image.php';
         include_once 'src/Helper/RegionOfInterest.php';
         
+        // Tilesize
+        $tileSize = 512;
+
         $params = $this->_params;
         
+        // Look up image properties
+        $imgIndex = new Database_ImgIndex();
+        $image = $imgIndex->getImageInformation($this->_params['id']);
+
         // Tile filepath
         $filepath =  $this->_getTileCacheFilename(
-            $params['uri'], $params['imageScale'], $params['x1'], $params['x2'], $params['y1'], $params['y2']
+            $image['filepath'], $image['filename'], $params['imageScale'], $params['x'], $params['y']
         );
 
         // Create directories in cache
-        $this->_createTileCacheDir($params['uri']);
+        $this->_createTileCacheDir($image['filepath']);
         
         // JP2 filepath
-        $jp2Filepath = HV_JP2_DIR . $params['uri'];
+        $jp2Filepath = HV_JP2_DIR . $image['filepath'] . "/" . $image['filename'];
         
+        // Sun center offset at the original image scale
+        $offsetX =   $image['sunCenterX'] - ($image['width'] / 2);
+        $offsetY = -($image['sunCenterY'] - ($image['height'] / 2));
+
         // Instantiate a JP2Image
         $jp2 = new Image_JPEG2000_JP2Image(
-            $jp2Filepath, $this->_params['jp2Width'], $this->_params['jp2Height'], $this->_params['jp2Scale']
+            $jp2Filepath, $image['width'], $image['height'], $image['scale']
         );
-        
-        // Regon of interest
-        $roi = new Helper_RegionOfInterest(
-            $params['x1'], $params['x2'], $params['y1'], $params['y2'], $params['imageScale']
-        );
+
+        // Region of interest
+        $roi = $this->_tileCoordinatesToROI($params['x'], $params['y'], $params['imageScale'], $image['scale'], $tileSize, $offsetX, $offsetY);
 
         // Choose type of tile to create
         // TODO 2011/04/18: Generalize process of choosing class to use
-        if ($params['instrument'] == "SECCHI") {
-            if (substr($params['detector'], 0, 3) == "COR") {
+        if ($image['instrument'] == "SECCHI") {
+            if (substr($image['detector'], 0, 3) == "COR") {
                 $type = "CORImage";
-            } else {
-                $type = strtoupper($params['detector']) . "Image";
+                } else {
+                $type = strtoupper($image['detector']) . "Image";
             }
         } else {
-            $type = strtoupper($params['instrument']) . "Image";
+            $type = strtoupper($image['instrument']) . "Image";
         }
         
         include_once "src/Image/ImageType/$type.php";
-
         $classname = "Image_ImageType_" . $type;
-        
-        // Keep separate statistics for cached tiles
-        $cached = file_exists($filepath);
 
         // Create the tile
         $tile = new $classname(
-            $jp2, $filepath, $roi, $params['observatory'], 
-            $params['instrument'], $params['detector'], $params['measurement'],  
-            $params['offsetX'], $params['offsetY'], $this->_options
+            $jp2, $filepath, $roi, $image['observatory'], 
+            $image['instrument'], $image['detector'], $image['measurement'],  
+            $offsetX, $offsetY, $this->_options
         );
         
         $tile->display();
         
         // Log cached tile request now and exit to avoid double-counting
-        if (HV_ENABLE_STATISTICS_COLLECTION && $cached) {
+        if (HV_ENABLE_STATISTICS_COLLECTION && file_exists($filepath)) {
             include_once 'src/Database/Statistics.php';
             $statistics = new Database_Statistics();
             $statistics->log("getCachedTile");
             exit(0);
         }
     }
+
+    /**
+     * Converts from tile coordinates to physical coordinates in arcseconds
+     * and uses those coordinates to return an ROI object
+     * 
+     * @return Helper_RegionOfInterest Tile ROI
+     */
+    private function _tileCoordinatesToROI (
+        $x, $y, $scale, $jp2Scale, $tileSize, $offsetX, $offsetY
+    ) {
+        $relativeTileSize = $tileSize * ($scale / $jp2Scale);
+        
+        // Convert tile coordinates to arcseconds
+        $top  = $y * $relativeTileSize - $offsetY;
+        $left = $x * $relativeTileSize - $offsetX;
+        $bottom = $top  + $relativeTileSize;
+        $right  = $left + $relativeTileSize;
+        
+        // Scale coordinates
+        $top  = $top * $jp2Scale;
+        $left = $left * $jp2Scale;
+        $bottom = $bottom * $jp2Scale;
+        $right  = $right  * $jp2Scale;        
+        
+        // Regon of interest
+        return new Helper_RegionOfInterest($left, $top, $right, $bottom, $scale);
+    }
+
+// var tileCoordinatesToArcseconds = function (x, y, scale, jp2Scale, tileSize, offsetX, offsetY) {
+    // var relativeTileSize, top, left, bottom, right;
+    // relativeTileSize = tileSize * scale / jp2Scale;
+// 
+    // top  = y * relativeTileSize - offsetY;
+    // left = x * relativeTileSize - offsetX;
+    // bottom = top  + relativeTileSize;
+    // right  = left + relativeTileSize;
+// 
+    // return {
+        // y1 : top  * jp2Scale,
+        // x1 : left * jp2Scale,
+        // y2 : bottom * jp2Scale,
+        // x2 : right  * jp2Scale
+    // };
+// };
     
     /**
      * Builds a filename for a cached tile or image based on boundaries and scale
      * 
-     * @param string $uri   The uri of the original jp2 image
-     * @param float  $scale The scale of the extracted image
-     * @param float  $x1    The left boundary in arcseconds
-     * @param float  $x2    The right boundary in arcseconds
-     * @param float  $y1    The top boundary in arcseconds
-     * @param float  $y2    The bottom boundary in arcseconds
+     * @param string $directory The directory containing the image
+     * @param float  $filename  The filename of the image
+     * @param float  $x         Tile X-coordinate
+     * @param float  $y         Tile Y-coordinate
      * 
      * @return string Filepath to use when locating or creating the tile
      */
-    private function _getTileCacheFilename($uri, $scale, $x1, $x2, $y1, $y2)
+    private function _getTileCacheFilename($directory, $filename, $scale, $x, $y)
     {
         $baseDirectory = HV_CACHE_DIR . "/tiles";
-        $baseFilename  = substr(basename($uri), 0, -4);
+        $baseFilename  = substr($filename, 0, -4);
         
         return sprintf(
-            "%s%s/%s_%s_%d_%dx_%d_%dy.jpg",
-            $baseDirectory, dirname($uri), $baseFilename, $scale, round($x1), round($x2), round($y1), round($y2)
+            "%s%s/%s_%s_x%d_y%d.jpg",
+            $baseDirectory, $directory, $baseFilename, $scale, $x, $y
         );
     }
 
@@ -313,11 +377,29 @@ class Module_WebClient implements Module
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
-        // Regon of interest
-        $roi = new Helper_RegionOfInterest(
-            $this->_params['x1'], $this->_params['x2'], $this->_params['y1'], $this->_params['y2'], 
-            $this->_params['imageScale']
-        );
+        // Region of interest: x1, x2, y1, y2
+        if (isset($this->_options['x1']) && isset($this->_options['y1']) && 
+            isset($this->_options['x2']) && isset($this->_options['y2'])) {
+
+            $x1 = $this->_options['x1'];
+            $y1 = $this->_options['y1'];
+            $x2 = $this->_options['x2'];
+            $y2 = $this->_options['y2'];
+        } else if (isset($this->_options['x0']) && isset($this->_options['y0']) && 
+                   isset($this->_options['width']) && isset($this->_options['height'])) {
+
+            // Region of interest: x0, y0, width, height
+            $x1 = $this->_options['x0'] - 0.5 * $this->_options['width']  * $this->_params['imageScale'];
+            $y1 = $this->_options['y0'] - 0.5 * $this->_options['height'] * $this->_params['imageScale'];
+            $x2 = $this->_options['x0'] + 0.5 * $this->_options['width']  * $this->_params['imageScale'];
+            $y2 = $this->_options['y0'] + 0.5 * $this->_options['height'] * $this->_params['imageScale'];
+        } else {
+            throw new Exception("Region of interest not specified: you must specify values for " . 
+                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.");
+        }
+        
+        // Create RegionOfInterest helper object
+        $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
         
         // Create the screenshot
         $screenshot = new Image_Composite_HelioviewerScreenshot(
@@ -388,10 +470,10 @@ class Module_WebClient implements Module
      *
      * @return void
      */
-    private function _createTileCacheDir($filepath)
+    private function _createTileCacheDir($directory)
     {
-        $cacheDir = HV_CACHE_DIR . "/tiles" . dirname($filepath);
-
+        $cacheDir = HV_CACHE_DIR . "/tiles" . $directory;
+ 
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
         }
@@ -442,20 +524,17 @@ class Module_WebClient implements Module
             break;
 
         case "getTile":
-            $required = array('uri', 'x1', 'x2', 'y1', 'y2', 'imageScale', 'jp2Width','jp2Height', 'jp2Scale',
-                              'offsetX', 'offsetY', 'observatory', 'instrument', 'detector', 'measurement');
             $expected = array(
-                "required" => $required,
-                "floats"   => array('offsetX', 'offsetY', 'imageScale', 'jp2Scale', 'x1', 'x2', 'y1', 'y2'),
-                "files"    => array('uri'),
-                "ints"     => array('jp2Width', 'jp2Height')
+                "required" => array('id', 'x', 'y', 'imageScale'),
+                "floats"   => array('imageScale'),
+                "ints"     => array('id', 'x', 'y')
             );
             break;
 
         case "getJP2Header":
             $expected = array(
-                "required" => array('file'),
-                "files"    => array('file')
+                "required" => array('id'),
+                "ints"     => array('id')
             );
             break;
         case "getNewsFeed":
@@ -468,9 +547,10 @@ class Module_WebClient implements Module
             break;
         case "takeScreenshot":
             $expected = array(
-                "required" => array('date', 'imageScale', 'layers', 'x1', 'x2', 'y1', 'y2'),
-                "optional" => array('display', 'watermark'),
-                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2'),
+                "required" => array('date', 'imageScale', 'layers'),
+                "optional" => array('display', 'watermark', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0', 'width', 'height'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0'),
+                "ints"     => array('width', 'height'),
                 "dates"	   => array('date'),
                 "bools"    => array('display', 'watermark')
             );
@@ -550,7 +630,7 @@ class Module_WebClient implements Module
                             <td><i>2d List</i></td>
                             <td>A comma-separated list of the image layers to be
                             displayed. Each image layer should be of the form:
-                            [OBSERVATORY,INSTRUMENT,DETECTOR,MEASUREMENT,VISIBLE,OPACITY].</td>
+                            [OBSERVATORY, INSTRUMENT, DETECTOR, MEASUREMENT, VISIBLE, OPACITY].</td>
                         </tr>
                     </tbody>
                 </table>

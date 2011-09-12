@@ -21,15 +21,20 @@ var Helioviewer = Class.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (urlSettings, serverSettings) {
+    init: function (urlSettings, serverSettings, debug) {
         this._checkBrowser(); // Determines browser support
         
         this.serverSettings = serverSettings;
         this.api            = "api/index.php";
-        
+
         // User settings are globally accessible
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, 
             serverSettings);
+            
+        // Debugging helpers
+        if (debug) {
+            this._showDebugHelpers();
+        }
         
         this._initLoadingIndicator();
         this._initTooltips();
@@ -64,6 +69,11 @@ var Helioviewer = Class.extend(
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
+        
+        // Play movie if id is specified
+        if (urlSettings.movieId) {
+            this._loadMovie(urlSettings.movieId);
+        }
     },
     
     
@@ -156,8 +166,23 @@ var Helioviewer = Class.extend(
             prefetch       : this.serverSettings.prefetchSize,
             tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
             imageScale     : Helioviewer.userSettings.get('state.imageScale'),
+            centerX        : Helioviewer.userSettings.get('state.centerX'),
+            centerY        : Helioviewer.userSettings.get('state.centerY'),
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
+    },
+    
+    /**
+     * Adds a movie to the user's history and displays the movie
+     * 
+     * @param string movieId Identifier of the movie to be shown
+     */
+    _loadMovie: function (movieId) {
+        if (!this._movieManagerUI.has(movieId)) {
+            this._movieManagerUI.addMovieUsingId(movieId);
+        } else {
+            this._movieManagerUI.playMovie(movieId);            
+        }
     },
     
     /**
@@ -233,6 +258,20 @@ var Helioviewer = Class.extend(
                 btn.addClass("dialog-loaded");
             }
             return false; 
+        });
+    },
+    
+    /**
+     * Enables some debugging helpers that display extra information to help
+     * during development
+     */
+    _showDebugHelpers: function () {
+        var dimensions, win = $(window);
+        
+        dimensions = $("<div id='debug-dimensions'></div>").appendTo("body");
+
+        win.resize(function (e) {
+            dimensions.html(win.width() + "x" + win.height());
         });
     },
 
@@ -447,22 +486,16 @@ var Helioviewer = Class.extend(
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
     toURL: function () {
-        var url, date, imageScale, imageLayers;
-        
-        // Add timestamp
-        date = this.timeControls.toISOString();
-    
-        // Add image scale
-        imageScale = this.viewport.getImageScale();
-        
-        // Image layers
-        imageLayers = this.viewport.serialize();
-        
-        // Build URL
-        url = this.serverSettings.rootURL + "/?date=" + date + "&imageScale=" + imageScale +
-              "&imageLayers=" + imageLayers;
 
-        return url;
+        var params = {
+            "date"        : this.viewport.getMiddleObservationTime().toISOString(),
+            "imageScale"  : this.viewport.getImageScale(),
+            "centerX"     : Helioviewer.userSettings.get("state.centerX"),
+            "centerY"     : Helioviewer.userSettings.get("state.centerY"), 
+            "imageLayers" : this.viewport.serialize()
+        };
+        return this.serverSettings.rootURL + "/?" + 
+               decodeURIComponent($.param(params));
     },
     
     /**

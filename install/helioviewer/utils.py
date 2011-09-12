@@ -25,7 +25,7 @@ def check_modules(modules):
         print ""
 
         # Determine OS
-        system = get_OS()
+        system = get_os()
 
         knownpackages = True
 
@@ -66,7 +66,7 @@ def check_modules(modules):
         print msg
         sys.exit(2)
 
-def get_OS():
+def get_os():
     '''Attempt to determine OS in order to suggest module installation method'''
     if os.uname()[3].lower().find("ubuntu") != -1:
         return "ubuntu"

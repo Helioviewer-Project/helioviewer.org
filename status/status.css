@@ -1,9 +1,9 @@
 #main {width:60%; margin: 20px auto; text-align: center; min-width: 480px;}
 #header {vertical-align: middle; margin: 20px auto 15px;}
-#headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:2.4em;}
+#headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:34px;}
 #info {cursor: pointer;}
-#currentTime {font-size:0.8em; font-style: italic;}
-#statuses, #legend {margin-left: auto; margin-right: auto; width:50%; min-width:480px; text-align: left; font-size:0.9em;}
+#currentTime {font-size:13px; font-style: italic;}
+#statuses, #legend {margin-left: auto; margin-right: auto; width:50%; min-width:480px; text-align: left; font-size:14.4px;}
 #status-headers {font-weight:bold; background: #444; color: #fff;}
 #status td{padding: 2px 0px;}
 #legend-container {height: 24px;}

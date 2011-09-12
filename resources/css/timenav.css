@@ -4,7 +4,7 @@
     margin: 0px 5px 0px 5px;
     border: 1px solid black;
     color: white;
-    font-size: 0.95em;
+    font-size: 12.35px;
 }
 
 #observation-controls input, #observation-controls select {
@@ -77,10 +77,10 @@
 
 /* Layer timestamps */
 .timestamp {
-    font-size:1.0em;
+    font-size: 10.5px;
     font-weight: normal;
     margin-left: 0px;
-    line-height: 1.6em;
+    line-height: 17px;
     position: absolute;
     left: 120px;
 }

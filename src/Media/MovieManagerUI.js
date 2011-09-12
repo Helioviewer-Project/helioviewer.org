@@ -25,6 +25,20 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
+     * Plays the movie with the specified id if it is ready
+     */
+    playMovie: function (id) {
+        var movie = this._manager.get(id);
+        
+        // If the movie is ready, open movie player
+        if (movie.status === "FINISHED") {
+            this._createMoviePlayerDialog(movie);
+        } else {
+            return;
+        }
+    },
+    
+    /**
      * Uses the layers passed in to send an Ajax request to api.php, to have it 
      * build a movie. Upon completion, it displays a notification that lets the
      * user click to view it in a popup. 
@@ -408,6 +422,50 @@ var MovieManagerUI = MediaManagerUI.extend(
             }
             return;
         });
+    },
+    
+    /**
+     * Adds a movie to the history using it's id
+     */
+    addMovieUsingId: function (id) {
+        var callback, params, movie, self = this;
+        
+        callback = function(response) {
+            if (response.status === "FINISHED") {
+                // id, duration, imageScale, layers, dateRequested, startDate, endDate, 
+                // frameRate, numFrames, x1, x2, y1, y2, width, height
+                movie = self._manager.add(
+                    id,
+                    response.duration,
+                    response.imageScale,
+                    response.layers,
+                    response.timestamp.replace(" ", "T") + ".000Z",
+                    response.startDate,
+                    response.endDate,
+                    response.frameRate,
+                    response.numFrames,
+                    response.x1,
+                    response.x2,
+                    response.y1,
+                    response.y2,
+                    response.width,
+                    response.height,
+                    response.thumbnails.small,
+                    response.url
+                );
+                
+                self._addItem(movie);
+                self._createMoviePlayerDialog(movie)
+            }
+        }
+        
+        params = {
+            "action" : "getMovieStatus", 
+            "id"     : id,
+            "format" : self._manager.format,
+            "verbose": true
+        };
+        $.get("api/index.php", params, callback, "json");
     },
     
     /**

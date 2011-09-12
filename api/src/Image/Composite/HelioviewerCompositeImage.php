@@ -144,6 +144,7 @@ class Image_Composite_HelioviewerCompositeImage
         // Choose a temporary filename to use for storing intermediate image
         $tmpFile = $this->_dir . "/" . rand() . ".$ext";
         array_push($this->_cache, $tmpFile);
+
         
         // Choose type of image to create
         if ($layer['instrument'] == "SECCHI") {
@@ -158,7 +159,6 @@ class Image_Composite_HelioviewerCompositeImage
         include_once "src/Image/ImageType/$type.php";
         
         $classname = "Image_ImageType_" . $type;
-
         return new $classname(
             $jp2, $tmpFile, $this->roi, $layer['observatory'], $layer['instrument'], $layer['detector'], $layer['measurement'], 
             $offsetX, $offsetY, $options
@@ -429,7 +429,7 @@ class Image_Composite_HelioviewerCompositeImage
         if (!file_exists($this->_dir)) {
             mkdir($this->_dir, 0777, true);
         }
-    	
+        
         // Build individual layers
         $this->_imageLayers = $this->_buildCompositeImageLayers();
 

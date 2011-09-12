@@ -111,6 +111,21 @@ var MediaManager = Class.extend(
     },
     
     /**
+     * Check to see if an entry exists
+     */
+    has: function (id) {
+        var exists = false;
+
+        $.each(this._history, function (i, item) {
+            if (item.id === id) {
+                exists = true;
+            }
+        });
+        
+        return exists;
+    },
+    
+    /**
      * Removes a item
      * 
      * @param {String} id Item to be removed
