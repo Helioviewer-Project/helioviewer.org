@@ -70,29 +70,26 @@ var JP2Image = Class.extend(
      * Checks to see if image has been changed and calls event-handler passed in during initialization
      * if a new image should be displayed.
      * 
-     * Note:
-     * 
      * The values for offsetX and offsetY reflect the x and y coordinates with the origin
      * at the bottom-left corner of the image, not the top-left corner.
      */
     _onImageLoad: function (result) {
         //Only load image if it is different form what is currently displayed
-        if (this.filename === result.filename) {
+        if (this.id === result.id) {
             return;
         }
-        
         $.extend(this, result);
-        
+
         // Sun center offset at the original JP2 image scale (with respect to top-left origin)
         this.offsetX =   parseFloat((this.sunCenterX - (this.width  / 2)).toPrecision(8));
-        this.offsetY = - parseFloat((this.sunCenterY - (this.height / 2)).toPrecision(8));
+        this.offsetY = - parseFloat((this.sunCenterY - (this.height / 2)).toPrecision(8));        
         
-        this._onChange();        
+        this._onChange();
     },
     
     getLayerName: function () {
         return this.observatory + "," + this.instrument + "," +  
-            this.detector + "," + this.measurement;
+               this.detector + "," + this.measurement;
     },
     
     getSourceId: function () {

@@ -32,6 +32,13 @@ var MediaManagerUI = Class.extend(
         
         this._loadSavedItems();
     },
+    
+    /**
+     * Checks for media item in history
+     */
+    has: function (id) {
+        return this._manager.has(id);
+    },
 
     /**
      * Hides the media manager

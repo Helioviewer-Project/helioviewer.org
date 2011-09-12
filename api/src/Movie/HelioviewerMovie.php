@@ -71,6 +71,10 @@ class Movie_HelioviewerMovie
         $id = alphaID($publicId, true, 5, HV_MOVIE_ID_PASS);
         $info = $this->_db->getMovieInformation($id, $format);
         
+        if (is_null($info)) {
+             throw new Exception("Unable to find the requested movie.");
+        }
+        
         $this->id           = $id;
         $this->publicId     = $publicId;
         $this->format       = $format;
@@ -87,7 +91,7 @@ class Movie_HelioviewerMovie
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
         $this->watermark    = (bool) $info['watermark'];
-
+        
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
         
@@ -158,8 +162,8 @@ class Movie_HelioviewerMovie
      * 
      * @return array A list of movie properties and a URL to the finished movie
      */
-    public function getCompletedMovieInformation() {
-        return array(
+    public function getCompletedMovieInformation($verbose=false) {
+        $info = array(
             "frameRate"  => $this->frameRate,
             "numFrames"  => $this->numFrames,
             "startDate"  => $this->startDate,
@@ -170,6 +174,22 @@ class Movie_HelioviewerMovie
             "thumbnails" => $this->getPreviewImages(),
             "url"        => $this->getURL()
         );
+        
+        if ($verbose) {
+            $extra = array(
+                "timestamp"  => $this->timestamp,
+                "duration"   => $this->getDuration(),
+                "imageScale" => $this->imageScale,
+                "layers"     => $this->_layers->serialize(),
+                "x1"         => $this->_roi->left(),
+                "y1"         => $this->_roi->top(),
+                "x2"         => $this->_roi->right(),
+                "y2"         => $this->_roi->bottom()                
+            );
+            $info = array_merge($info, $extra);
+        }
+        
+        return $info;
     }
     
     /**

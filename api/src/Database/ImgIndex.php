@@ -159,6 +159,26 @@ class Database_ImgIndex
     }
 
     /**
+     * Takes an image filepath and returns some useful image information
+     */
+    public function getImageInformation($id) {
+        $sql = "SELECT * FROM images WHERE id=$id;";
+        
+        // Basic image info
+        $image = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        $image['sourceId'] = (int) $image['sourceId'];
+        
+        // Image header
+        $file = HV_JP2_DIR . $image["filepath"] . "/" .$image["filename"];
+        $xmlBox = $this->extractJP2MetaInfo($file);
+        
+        // Datasource info
+        $datasource = $this->getDatasourceInformationFromSourceId($image['sourceId']);
+        
+        return array_merge($image, $xmlBox, $datasource);
+    }
+
+    /**
      * Finds the closest available image to the requested one, and returns information from
      * database and XML box.
      *
@@ -191,14 +211,14 @@ class Database_ImgIndex
         $datestr = isoDateToMySQL($date);
 
         $sql = sprintf(
-            "( SELECT filepath, filename, date 
+            "( SELECT id, filepath, filename, date 
               FROM images 
               WHERE
                 sourceId = %d AND 
                 date < '%s'
               ORDER BY date DESC LIMIT 1 )
             UNION ALL
-            ( SELECT filepath, filename, date
+            ( SELECT id, filepath, filename, date
               FROM images
               WHERE
                 sourceId = %d AND
@@ -211,6 +231,9 @@ class Database_ImgIndex
         
         // Query database
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        
+        // Cast id to integer
+        $result['id'] = (int) $result['id'];
 
         // Make sure match was found
         if (is_null($result)) {

@@ -37,8 +37,8 @@ class Helper_RegionOfInterest
      * Creates a new RegionOfInterest instance
      * 
      * @param float $x1         Left coordinate in arc-seconds
-     * @param float $x2         Right coordinate in arc-seconds
      * @param float $y1         Top coordinate in arc-seconds
+     * @param float $x2         Right coordinate in arc-seconds
      * @param float $y2         Bottom coordinate in arc-seconds
      * @param float $imageScale Image scale in arc-seconds/pixel
      * @param int   $maxWidth   Maximum width allowed
@@ -46,7 +46,7 @@ class Helper_RegionOfInterest
      *  
      * @return void
      */
-    public function __construct($x1, $x2, $y1, $y2, $imageScale, $maxWidth=1920, $maxHeight=1200)
+    public function __construct($x1, $y1, $x2, $y2, $imageScale, $maxWidth=1920, $maxHeight=1200)
     {
         $this->_top    = (float) $y1;
         $this->_left   = (float) $x1;
@@ -223,7 +223,7 @@ class Helper_RegionOfInterest
         $topLeft     = explode(" ", $points[0]);
         $bottomRight = explode(" ", $points[2]);
         
-        return new Helper_RegionOfInterest($topLeft[0], $bottomRight[0], $topLeft[1], $bottomRight[1], $imageScale);
+        return new Helper_RegionOfInterest($topLeft[0], $topLeft[1], $bottomRight[0], $bottomRight[1], $imageScale);
     }
     
     /**
