@@ -18,7 +18,7 @@
 }
 
 #user-video-gallery-spinner {
-    background: url("../../resources/images/ajax-loader.gif");
+    background: url("../../resources/images/ajax-loader-videos.gif");
     width: 16px;
     height: 16px;
     margin: 94px auto;
