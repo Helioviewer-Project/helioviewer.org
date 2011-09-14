@@ -510,7 +510,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             // IE9 only supports relative dimensions specified using CSS
             return "<video id='movie-player-" + id + "' src='" + url +
                    "' controls preload autoplay" + 
-                   " style='width:100%; height: 95%;'></video>" + 
+                   " style='width:100%; height: 90%;'></video>" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn + 
                    "</span>";
         }
