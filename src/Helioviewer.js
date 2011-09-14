@@ -281,7 +281,9 @@ var Helioviewer = Class.extend(
     _initEventHandlers: function () {
         var self = this;
         
-        $('#link-button').click($.proxy(this.displayURL, this));
+        $('#link-button').click(function (e) {
+            self.displayURL(self.toURL());
+        });
         //$('#email-button').click($.proxy(this.displayMailForm, this));
         
         // 12/08/2010: Disabling JHelioviewer JNLP launching until better support is added
@@ -301,10 +303,7 @@ var Helioviewer = Class.extend(
      * displays a dialog containing a link to the current page
      * @param {Object} url
      */
-    displayURL: function () {
-        var url     = this.toURL(),
-            input   = $("#helioviewer-url-input-box");
-        
+    displayURL: function (url) {
         $("#url-dialog").dialog({
             dialogClass: 'helioviewer-modal-dialog',
             height    : 100,
@@ -314,9 +313,18 @@ var Helioviewer = Class.extend(
             title     : "URL",
             open      : function (e) {
                 $('.ui-widget-overlay').hide().fadeIn();
-                input.attr('value', url).select();
+                $("#helioviewer-url-input-box").attr('value', url).select();
             }
         });
+    },
+    
+    /**
+     * Displays a URL to a Helioviewer.org movie
+     * 
+     * @param string Id of the movie to be linked to
+     */
+    displayMovieURL: function (movieId) {
+        this.displayURL(this.serverSettings.rootURL + "/?movieId=" + movieId);           
     },
     
     /**
