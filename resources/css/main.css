@@ -64,11 +64,10 @@ a.light:hover {
 /* Loading Indicator */
 #loading {
     position: absolute;
-    right: 3px;
-    padding: 3px;
-    font-size: 12px;
-    background-color:#858585;
-    color: #F0F0F0;
+    right: 7px;
+    padding: 7px;
+    font-size: 13px;
+    color: #606364;
 }
 
 /* Center button */
