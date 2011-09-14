@@ -284,6 +284,12 @@ var MovieManagerUI = MediaManagerUI.extend(
             self.showYouTubeUploadDialog(movie);
             return false;
         });
+        
+        // Initialize video link button
+        $('#video-link-' + movie.id).click(function () {
+            helioviewer.displayMovieURL(movie.id);
+            return false;
+        });
     },
        
     /**
@@ -490,20 +496,25 @@ var MovieManagerUI = MediaManagerUI.extend(
      * method
      */
     getVideoPlayerHTML: function (id, width, height, url) {
-        var downloadURL, downloadLink, youtubeBtn;
+        var downloadURL, downloadLink, youtubeBtn, linkBtn;
         
         downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
 
         downloadLink = "<a target='_parent' href='" + downloadURL + "'>" + 
             "<img class='video-download-icon' " + 
-            "src='resources/images/icons/001_52.png' " +
+            "src='resources/images/34aL volume 3.2 SE/001_52.png' " +
             "alt='Download high-quality video' />Download</a>";
         
         youtubeBtn = "<a id='youtube-upload-" + id + "'  href='#' " + 
             "target='_blank'><img class='youtube-icon' " + 
             "src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
             "alt='Upload video to YouTube' />Upload</a>";
+            
+        linkBtn = "<a id='video-link-" + id + "'  href='#' " + 
+            "target='_blank'><img class='video-link-icon' " + 
+            "src='resources/images/berlin/32x32/link.png' " +
+            "alt='Get a link to the movie' />Link</a>";
         
         // HTML5 Video (H.264 or WebM)
         if ($.support.vp8 || $.support.h264) {
@@ -514,8 +525,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             return "<video id='movie-player-" + id + "' src='" + url +
                    "' controls preload autoplay" + 
                    " style='width:100%; height: 90%;'></video>" + 
-                   "<span class='video-links'>" + downloadLink + youtubeBtn + 
-                   "</span>";
+                   "<span class='video-links'>" + downloadLink + youtubeBtn +
+                   linkBtn + "</span>";
         }
 
         // Fallback (flash player)
@@ -528,8 +539,8 @@ var MovieManagerUI = MediaManagerUI.extend(
                    "<iframe src=" + url + " width='" + width +  
                    "' height='" + height + "' marginheight=0 marginwidth=0 " +
                    "scrolling=no frameborder=0 /><br />" + 
-                   "<span class='video-links'>" + downloadLink + youtubeBtn + 
-                   "</span></div>";
+                   "<span class='video-links'>" + downloadLink + youtubeBtn +
+                   linkBtn + "</span></div>";
         }
     },
     
