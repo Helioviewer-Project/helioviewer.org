@@ -30,26 +30,22 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * Displays a jGrowl notification to the user informing them that their 
      * download has completed
      */
-    _displayDownloadNotification: function (id) {
-        var jGrowlOpts, link, self = this;
+    _displayDownloadNotification: function (screenshot) {
+        var jGrowlOpts, body, self = this;
         
         // Options for the jGrowl notification
         jGrowlOpts = {
             sticky: true,
-            header: "Your screenshot is ready!",
-            open:    function (msg) {
-                msg.click(function (e) {
-                    msg.trigger("jGrowl.close");
-                });
-            }
+            header: "Just now"
         };
         
         // Download link
-        link = "<a href='api/index.php?action=downloadScreenshot&id=" + id +
-               "'>Click here to download. </a>";
+        body = "Your " + screenshot.name + " screenshot is ready! " +
+               "<a href='api/index.php?action=downloadScreenshot&id=" + 
+               screenshot.id + "'>Click here to download. </a>";
 
         // Create the jGrowl notification.
-        $(document).trigger("message-console-info", [link, jGrowlOpts]);
+        $(document).trigger("message-console-log", [body, jGrowlOpts, true, true]);
     },
     
     /**
@@ -166,7 +162,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
                 params.x1, params.x2, params.y1, params.y2
             );
             self._addItem(screenshot);
-            self._displayDownloadNotification(screenshot.id);
+            self._displayDownloadNotification(screenshot);
         });
     }
 });
