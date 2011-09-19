@@ -111,7 +111,7 @@ var MessageConsole = Class.extend(
             // Click anywhere in the message to close?
             if (easyClose) {
                 options = $.extend(options, {
-                    open: function (msg) {
+                    afterOpen: function (msg) {
                         msg.click(function (e) {
                             msg.trigger("jGrowl.close");
                         });
