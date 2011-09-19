@@ -64,10 +64,61 @@ var MessageConsole = Class.extend(
         
         events = "message-console-log message-console-info message-console-warn message-console-error";
         
-        $(document).bind(events, function (event, msg, options) {
+        $(document).bind(events, function (event, msg, options, showElapsedTime, easyClose) {
+            // Default options
             if (typeof options === "undefined") {
                 options = {};
             }
+            if (typeof showElapsedTime == "undefined") {
+                showElapsedTime = false;
+            }
+            if (typeof easyClose == "undefined") {
+                easyClose = false;
+            }
+
+            // Show time elapsed since message was opened?
+            if (showElapsedTime) {
+                var id, header, headerText, i = 1;
+
+                options = $.extend(options, {
+                    beforeOpen: function (elem, message, opts) {
+                        header = elem.find(".jGrowl-header");
+
+                        id = window.setInterval(function () {
+                            if (i == 1) {
+                                headerText = "1 minute ago";
+                            } else if (i < 60) {
+                                headerText = i + " minutes ago";
+                            } else if (i < 1440) {
+                                headerText = parseInt(i / 60, 10) + " hours ago";
+                            } else {
+                                headerText = "A long time ago..."
+                            }
+                            
+                            header.text(headerText);
+                            i += 1;
+                        }, 60000);
+                        
+                        // keep track of timer id so it can be disabled later
+                        elem.data("timerId", id);
+                    },
+                    close: function(elem, message) {
+                        window.clearInterval(elem.data("timerId"));
+                    }
+                });
+            }
+
+            // Click anywhere in the message to close?
+            if (easyClose) {
+                options = $.extend(options, {
+                    afterOpen: function (msg) {
+                        msg.click(function (e) {
+                            msg.trigger("jGrowl.close");
+                        });
+                    }
+                });
+            }
+
             if (event.type === "message-console-log") {
                 self.log(msg, options);
             } else if (event.type === "message-console-info") {
