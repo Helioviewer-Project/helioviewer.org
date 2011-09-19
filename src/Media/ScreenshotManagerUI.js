@@ -38,7 +38,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             sticky: true,
             header: "Just now"
         };
-        
+
         // Download link
         body = "Your " + screenshot.name + " screenshot is ready! " +
                "<a href='api/index.php?action=downloadScreenshot&id=" + 
