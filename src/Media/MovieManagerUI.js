@@ -211,10 +211,10 @@ var MovieManagerUI = MediaManagerUI.extend(
     _buildPreviewTooltipHTML: function (movie) {
         var width, height, thumbnail, html = "";
         
-        // Use relative paths for thumbnails (helps with debugging in VM)
-        thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));
-        
         if (movie.status === "FINISHED") {
+            // Use relative paths for thumbnails (helps with debugging in VM)
+            thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));
+
             html += "<div style='text-align: center;'>" + 
                 "<img src='" + thumbnail +
                 "' width='95%' alt='preview thumbnail' /></div>";
