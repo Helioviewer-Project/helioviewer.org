@@ -388,38 +388,47 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 
 <!-- Video Upload Dialog -->
 <div id='upload-dialog' style="display: none">
-    <img id='youtube-logo-large' src='resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
-    <h1>Upload Video</h1>
-    <br />
-    <form id="youtube-video-info" action="api/index.php" method="post">
-        <!-- Title -->
-        <label for="youtube-title">Title:</label>
-        <input id="youtube-title" type="text" name="title" maxlength="100" />
+    <!-- Loading indicator -->
+    <div id='youtube-auth-loading-indicator' style='display: none;'>
+        <div id='youtube-auth-spinner'></div>
+        <span style='font-size: 28px;'>Processing</span>
+    </div>
+    
+    <!-- Upload Form -->
+    <div id='upload-form'>
+        <img id='youtube-logo-large' src='resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
+        <h1>Upload Video</h1>
         <br />
-        
-        <!-- Description -->
-        <label for="youtube-desc">Description:</label>
-        <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="5000"></textarea>
-        <br />
-        
-        <!-- Tags -->
-        <label for="youtube-tags">Tags:</label>
-        <input id="youtube-tags" type="text" name="tags" maxlength="500" value="" />
-        <br /><br />
-        
-        <!-- Sharing -->
-        <div style='float: right; margin-right: 30px;'>
-        <label style='width: 100%; margin: 0px;'>
-            <input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
-        </label>
-        <br />
-        <input id='youtube-submit-btn' type="submit" value="Submit" />
-        </div>
-        
-        <!-- Hidden fields -->
-        <input id="youtube-movie-id" type="hidden" name="id" value="" />
-    </form>
-    <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
+        <form id="youtube-video-info" action="api/index.php" method="post">
+            <!-- Title -->
+            <label for="youtube-title">Title:</label>
+            <input id="youtube-title" type="text" name="title" maxlength="100" />
+            <br />
+            
+            <!-- Description -->
+            <label for="youtube-desc">Description:</label>
+            <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="5000"></textarea>
+            <br />
+            
+            <!-- Tags -->
+            <label for="youtube-tags">Tags:</label>
+            <input id="youtube-tags" type="text" name="tags" maxlength="500" value="" />
+            <br /><br />
+            
+            <!-- Sharing -->
+            <div style='float: right; margin-right: 30px;'>
+            <label style='width: 100%; margin: 0px;'>
+                <input type="checkbox" name="share" value="true" checked="checked" style='width: 15px; float: right; margin: 2px 2px 0 4px;'/>Share my video with other Helioviewer.org users:
+            </label>
+            <br />
+            <input id='youtube-submit-btn' type="submit" value="Submit" />
+            </div>
+            
+            <!-- Hidden fields -->
+            <input id="youtube-movie-id" type="hidden" name="id" value="" />
+        </form>
+        <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
+    </div>
 </div>
 
 <?php
