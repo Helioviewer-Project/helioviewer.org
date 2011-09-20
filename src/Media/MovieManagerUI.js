@@ -344,42 +344,19 @@ var MovieManagerUI = MediaManagerUI.extend(
      * 
      */
     submitVideoUploadForm: function (event) {
-        var params, successMsg, uploadDialog, errorConsole, loadingIndicator, 
-            url, auth = false;
-            
-        uploadDialog = $("#upload-dialog");
+        var params, successMsg, uploadDialog, url, auth;
             
         // Validate and submit form
         try {
             this._validateVideoUploadForm();
         } catch (ex) {
-            errorConsole = $("#upload-error-console");
-            errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
-                window.setTimeout(function () {
-                    errorConsole.fadeOut();
-                }, 15000);
-            });
+            this._displayValidationErrorMsg(ex);
             return false;
         }
 
-        console.log("Showing indicator " + Date());
-        loadingIndicator = $("#loading").show();
+        // Check YouTube authorization
+        auth = this._checkYouTubeAuth();
 
-        // Check authorization using a synchronous request (otherwise Google 
-        //  will not allow opening of request in a new tab)
-        $.ajax({
-            async: false,
-            url : "api/index.php?action=checkYouTubeAuth",
-            type: "GET",
-            success: function (response) {
-                auth = response;
-            }
-        });
-        
-        loadingIndicator.hide();
-        console.log("Hiding indicator: " + Date());
-        
-        
         // Base URL
         url = "api/index.php?" + $("#youtube-video-info").serialize();
 
@@ -391,11 +368,56 @@ var MovieManagerUI = MediaManagerUI.extend(
             window.open(url + "&action=getYouTubeAuth", "_blank");
         }
         
-        console.log("Closing the dialog: " + Date());
-        
         // Close the dialog
-        uploadDialog.dialog("close");
+        $("#upload-dialog").dialog("close");
         return false;
+    },
+    
+    /**
+     * Performs a synchronous request to see if the user has authorized
+     * Helioviewer.org to upload videos on their behalf
+     * 
+     * @return bool Authorization
+     */
+    _checkYouTubeAuth: function () {
+        // Check authorization using a synchronous request (otherwise Google 
+        //  will not allow opening of request in a new tab)
+        var form, loader, auth = false;
+                  
+        // Clear any remaining error messages before continuing
+        $("#upload-error-console").hide();
+
+        form = $("#upload-form").hide();
+        loader = $("#youtube-auth-loading-indicator").show();
+
+        $.ajax({
+            async: false,
+            url : "api/index.php?action=checkYouTubeAuth",
+            type: "GET",
+            success: function (response) {
+                auth = response;
+            }
+        });
+        
+        loader.hide();
+        form.show();
+        
+        return auth;
+    },
+    
+    /**
+     * Displays an error message in the YouTube upload dialog
+     * 
+     * @param string Error message
+     */
+    _displayValidationErrorMsg: function (ex) {
+        var errorConsole = $("#upload-error-console");
+        
+        errorConsole.html("<b>Error:</b> " + ex).fadeIn(function () {
+            window.setTimeout(function () {
+                errorConsole.fadeOut();
+            }, 15000);
+        });
     },
     
     /**
