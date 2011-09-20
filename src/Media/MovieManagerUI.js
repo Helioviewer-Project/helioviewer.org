@@ -344,7 +344,10 @@ var MovieManagerUI = MediaManagerUI.extend(
      * 
      */
     submitVideoUploadForm: function (event) {
-        var params, successMsg, errorConsole, loadingIndicator, url, auth = false;
+        var params, successMsg, uploadDialog, errorConsole, loadingIndicator, 
+            url, auth = false;
+            
+        uploadDialog = $("#upload-dialog");
             
         // Validate and submit form
         try {
@@ -358,7 +361,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             });
             return false;
         }
-            
+
+        console.log("Showing indicator " + Date());
         loadingIndicator = $("#loading").show();
 
         // Check authorization using a synchronous request (otherwise Google 
@@ -373,6 +377,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         loadingIndicator.hide();
+        console.log("Hiding indicator: " + Date());
+        
         
         // Base URL
         url = "api/index.php?" + $("#youtube-video-info").serialize();
@@ -385,8 +391,10 @@ var MovieManagerUI = MediaManagerUI.extend(
             window.open(url + "&action=getYouTubeAuth", "_blank");
         }
         
+        console.log("Closing the dialog: " + Date());
+        
         // Close the dialog
-        $("#upload-dialog").dialog("close");
+        uploadDialog.dialog("close");
         return false;
     },
     
