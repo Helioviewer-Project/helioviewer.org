@@ -427,7 +427,7 @@ var TileLayerAccordion = Layer.extend(
         this._updateTimeStamp(id, date);
         
         entry.find(".tile-accordion-header-left").html(name);
-
+        
         // Refresh Image header event listeners
         $("#image-info-dialog-" + id).remove();
         
