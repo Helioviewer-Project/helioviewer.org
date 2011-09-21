@@ -181,6 +181,8 @@ class Module_Movies implements Module
     {
         include_once 'src/Movie/YouTube.php';
         
+        $share = isset($this->_options['share']) ? $this->_options['share'] : false;
+        
         // Store form data for later use
         session_start();
 
@@ -188,7 +190,7 @@ class Module_Movies implements Module
         $_SESSION['video-title'] = $this->_params["title"];
         $_SESSION['video-description'] = $this->_params["description"];
         $_SESSION['video-tags'] = $this->_params["tags"];
-        $_SESSION['video-share'] = $this->_params["share"];
+        $_SESSION['video-share'] = $share;
         
         $youtube = new Movie_YouTube();
         $youtube->getYouTubeAuth($this->_params['id']);
@@ -218,7 +220,7 @@ class Module_Movies implements Module
             $title       = $this->_options["title"];
             $description = $this->_options["description"];
             $tags        = $this->_options["tags"];
-            $share       = $this->_options["share"];
+            $share       = isset($this->_options['share']) ? $this->_options['share'] : false;
         } else {
             // Otherwise read form data back in from session variables
             session_start();
@@ -471,7 +473,8 @@ class Module_Movies implements Module
             break;
         case "getYouTubeAuth":
             $expected = array(
-                "required" => array('id', 'title', 'description', 'tags', 'share'),
+                "required" => array('id', 'title', 'description', 'tags'),
+                "optional" => array('share'),
                 "alphanum" => array('id'),
                 "bools"    => array('share')
             );
