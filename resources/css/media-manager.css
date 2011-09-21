@@ -24,6 +24,27 @@
     right: 75px;
 }
 
+#movie-manager-header {
+    
+}
+
+#screenshot-manager-header {
+    background: url('../../resources/images/Media Icons/Pictures_Gradient_48x42.png') no-repeat;
+    height: 42px;
+    padding-left: 32px;
+}
+
+#movie-manager-header {
+    background: url('../../resources/images/Media Icons/Movies_Gradient_48x42.png') no-repeat;
+    height: 42px;
+    padding-left: 32px;
+}
+
+#movie-manager-header-text, #screenshot-manager-header-text {
+    font-size: 24px;
+    line-height: 1.7;
+}
+
 .history-entry {
     height: 14px;
     padding: 4px 0px;
@@ -31,15 +52,17 @@
 
 .media-manager-build-btns {
     height: 18px;
+    border-bottom: 1px solid;
+    border-top: 1px solid #666666;
+    margin-top: 5px;
+    padding: 3px 0 5px 0;
 }
 
 .media-history-title {
     line-height: 17px;
     font-weight: bold;
     padding: 9px 0px;
-    border-top: 1px solid;
     display: none;
-    margin-top: 7px;
 }
 
 .status {
