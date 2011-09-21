@@ -74,3 +74,16 @@
 #movie-button.selected, #screenshot-button.selected {
     
 }
+
+#youtube-auth-loading-indicator {
+    width: 188px;
+    margin: 150px auto;
+}
+
+#youtube-auth-spinner {
+    background: url("../../resources/images/ajax-loader-large.gif");
+    height: 32px;
+    width: 32px;
+    float: left;
+    margin-right: 10px;
+}
