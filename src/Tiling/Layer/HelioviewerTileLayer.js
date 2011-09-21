@@ -53,23 +53,6 @@ var HelioviewerTileLayer = TileLayer.extend(
     },
     
     /**
-     * Changes data source and fetches image for new source
-     */
-    updateDataSource: function (
-        event, id, observatory, instrument, detector, measurement, sourceId, name, layeringOrder
-    ) {
-        if (this.id === id) {
-            this.name = name;
-        
-            this.layeringOrder = layeringOrder;
-            this.domNode.css("z-index", parseInt(this.layeringOrder, 10) - 10);
-        
-            this.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
-            $(document).trigger("save-tile-layers");
-        }
-    },
-    
-    /**
      * onLoadImage
      */
     onLoadImage: function () {
@@ -161,7 +144,6 @@ var HelioviewerTileLayer = TileLayer.extend(
      */
     _setupEventHandlers: function () {
         $(this.domNode).bind('get-tile', $.proxy(this.getTile, this));
-        $(document).bind('toggle-layer-visibility',        $.proxy(this.toggleVisibility, this))
-                   .bind('tile-layer-data-source-changed', $.proxy(this.updateDataSource, this));
+        $(document).bind('toggle-layer-visibility',        $.proxy(this.toggleVisibility, this));
     }
 });
