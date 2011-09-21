@@ -46,7 +46,9 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         
         this._layersLoaded = 0;
         this._finishedLoading = false;
-        $(document).bind("viewport-max-dimensions-updated", $.proxy(this._onViewportUpdated, this));
+        
+        $(document).bind("viewport-max-dimensions-updated", $.proxy(this._onViewportUpdated, this))
+                   .bind('tile-layer-data-source-changed', $.proxy(this._updateDataSource, this));
     },
 
     /**
@@ -113,7 +115,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
 
-        opacity = this._computeLayerStartingOpacity(params.layeringOrder);
+        opacity = this._computeLayerStartingOpacity(params.layeringOrder, false);
 
         // Add the layer
         this.addLayer(
@@ -165,6 +167,40 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      */
     _selectTilingServer: function () {
         return Math.floor(Math.random() * (this.servers.length));
+    },
+    
+    /**
+     * Updates the data source for a tile layer after the user changes one
+     * of its properties (e.g. observatory or instrument)
+     */
+    /**
+     * Changes data source and fetches image for new source
+     */
+    _updateDataSource: function (
+        event, id, observatory, instrument, detector, measurement, sourceId, name, layeringOrder
+    ) {
+        var opacity, layer;
+        
+        // Find layer that is being acted on
+        $.each(this._layers, function () {
+            if (this.id === id) {
+                layer = this; 
+            }
+        });
+
+        // Update name
+        layer.name = name;
+        
+        // Update layering order and z-index
+        layer.layeringOrder = layeringOrder;
+        layer.domNode.css("z-index", parseInt(layeringOrder, 10) - 10);
+        
+        // Update associated JPEG 2000 image
+        layer.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
+        
+        // Update opacity (also triggers save-tile-layers event)
+        opacity = this._computeLayerStartingOpacity(layeringOrder, true);
+        $("#opacity-slider-track-" + id).slider("value", opacity);
     },
 
     /**
