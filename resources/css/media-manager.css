@@ -42,6 +42,7 @@
 
 #movie-manager-header-text, #screenshot-manager-header-text {
     font-size: 24px;
+    font-family: Verdana, Arial, Geneva, Helvetica, sans-serif;
     line-height: 1.7;
 }
 
