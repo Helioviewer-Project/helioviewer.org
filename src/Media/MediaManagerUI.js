@@ -28,6 +28,7 @@ var MediaManagerUI = Class.extend(
         this._historyBody     = $("#" + type + "-history");
         this._clearBtn        = $("#" + type + "-clear-history-button");
         this._tooltips        = $("#social-buttons div");
+        this._allButtons      = $("#movie-button, #screenshot-button");
         this._allContainers   = $(".media-manager-container");
         
         this._loadSavedItems();
@@ -45,6 +46,7 @@ var MediaManagerUI = Class.extend(
      */
     hide: function () {
         this._container.hide();
+        this._btn.removeClass("active");
         this._tooltips.qtip("enable");
     },
     
@@ -52,7 +54,10 @@ var MediaManagerUI = Class.extend(
      * Shows the media manager
      */
     show: function () {
+        
         this._allContainers.hide();
+        this._allButtons.removeClass("active");
+        this._btn.addClass("active");
         $(".jGrowl-notification").trigger("jGrowl.close");
         this._refresh();
         this._container.show();
@@ -217,6 +222,7 @@ var MediaManagerUI = Class.extend(
             if (!self.working) {
                 self.toggle();
             }
+            
         });
         
         // Clear buttons removes all saved items
