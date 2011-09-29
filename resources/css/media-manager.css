@@ -33,6 +33,15 @@
     height: 18px;
 }
 
+#movie-button.active .ui-icon, #screenshot-button.active .ui-icon {
+    background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
+}
+
+#movie-button.active, #screenshot-button.active {
+    color: #d18f61;
+}
+
+
 .media-history-title {
     line-height: 17px;
     font-weight: bold;
