@@ -186,7 +186,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             
                             <!-- Screenshot Manager -->
                             <div id='screenshot-manager-container' class='media-manager-container glow'>
-                                <div id='screenshot-manager-header'><div id='screenshot-manager-header-text'>Screenshots</div></div>
                                 <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
                                     <div id='screenshot-manager-full-viewport' class='text-btn'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
@@ -198,7 +197,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                     </div>
                                 </div>
                                 <div id='screenshot-history-title' class='media-history-title'>
-                                    History    
+                                    Screenshot History    
                                     <div id='screenshot-clear-history-button' class='text-btn' style='float:right;'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
@@ -208,7 +207,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             </div>
                             <!-- Movie Manager -->
                             <div id='movie-manager-container' class='media-manager-container glow'>
-                                <div id='movie-manager-header'><div id='movie-manager-header-text'>Movies</div></div>
                                 <div id='movie-manager-build-btns' class='media-manager-build-btns'>
                                     <div id='movie-manager-full-viewport' class='text-btn'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
@@ -220,7 +218,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                     </div>
                                 </div>
                                 <div id='movie-history-title' class='media-history-title'>
-                                    History    
+                                    Movie History    
                                     <div id='movie-clear-history-button' class='text-btn' style='float:right;'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
