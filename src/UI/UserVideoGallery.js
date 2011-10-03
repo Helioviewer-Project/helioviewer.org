@@ -54,7 +54,14 @@ var UserVideoGallery = Class.extend(
     /**
      * Retrieves a single page of video results and displays them to the user
      */
-    _fetchVideos: function () {
+    _fetchVideos: function (silent) {
+        // Silent update
+        if (typeof silent == "undefined") {
+            silent = false;
+        } else {
+            silent = true;
+        }
+        
         // Query parameters
         var params = {
             "pageSize" : this._remotePageSize,
@@ -62,9 +69,10 @@ var UserVideoGallery = Class.extend(
         };
         
         // Show loading indicator
-        this._container.find("a").empty();
-        this._loader.show();
-        
+        if (!silent) {
+            this._container.find("a").empty();
+            this._loader.show();            
+        }
         this._working = true;
 
         // Fetch videos
@@ -103,7 +111,7 @@ var UserVideoGallery = Class.extend(
         var html = "";
 
         // Remove old thumbmails
-        this._container.find("a, br").remove();
+        this._container.hide().find("a, br").remove();
         
         $.each(videos, function (i, vid) {
             var when = new Date.parseUTCDate(vid.published)
@@ -124,6 +132,7 @@ var UserVideoGallery = Class.extend(
 
         this._loader.hide();
         this._container.append(html);
+        this._container.fadeIn();
         
         this._working = false;
     },
