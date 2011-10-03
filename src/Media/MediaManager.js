@@ -15,7 +15,13 @@ var MediaManager = Class.extend(
      */    
     init: function (savedItems) {
         this._history = savedItems;
-        this._historyLimit = 10;
+        
+        if ($.support.localStorage) {
+            this._historyLimit = 20;    
+        } else {
+            this._historyLimit = 5;
+        }
+        
     },
     
     /**

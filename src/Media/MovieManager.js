@@ -115,8 +115,8 @@ var MovieManager = MediaManager.extend(
             "name"          : this._getName(layers)
         };
 
-        if (this._history.unshift(movie) > 5) {
-            this._history = this._history.slice(0, 5);            
+        if (this._history.unshift(movie) > this._historyLimit) {
+            this._history = this._history.slice(0, this._historyLimit);            
         }
         
         this._monitorQueuedMovie(id, eta);
