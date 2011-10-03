@@ -110,6 +110,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         var id = $(event.currentTarget).data('id'),
             url = "api/index.php?action=downloadScreenshot&id=" + id;
         window.open(url, '_parent');
+        
+        return false;
     },
 
     /**

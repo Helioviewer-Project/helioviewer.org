@@ -188,9 +188,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             } else {
                 this._createMoviePlayerDialog(movie);
             }
-        } else {
-            return;
         }
+        return false;
     },
    
    /**
