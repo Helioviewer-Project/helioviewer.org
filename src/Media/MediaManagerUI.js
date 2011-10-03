@@ -81,7 +81,7 @@ var MediaManagerUI = Class.extend(
      * @param {Object} The movie or screenshot to be added 
      */
     _addItem: function (item) {
-        var htmlId, html, last, name = item.name;
+        var htmlId, html, last, url, name = item.name;
 
         // Shorten names to fit inside the history dialog        
         if (name.length > 16) {
@@ -90,9 +90,18 @@ var MediaManagerUI = Class.extend(
         
         // HTML for a single row in the history dialog
         htmlId = this._type + "-" + item.id;
+        
+        // Link
+        if (this._type == "movie") {
+            url = "?movieId=" + item.id;
+        } else {
+            url = "api/?action=downloadScreenshot&id=" + item.id;
+        }
 
         html = $("<div id='" + htmlId + "' class='history-entry'>" +
-               "<div class='text-btn' style='float:left'>" + name + "</div>" +
+               "<a class='text-btn' style='float: left' href='" + url + 
+               "'>" + name + "</a>" +
+               //"<div class='text-btn' style='float:left'>" + name + "</div>" +
                "<div class='status'></div>" + 
                "</div>");
                

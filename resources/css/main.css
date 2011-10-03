@@ -123,8 +123,9 @@ a.light:hover {
 }
 
 /* Text-icon buttons */
-div.text-btn {
+div.text-btn, a.text-btn {
     cursor: pointer;
+    text-decoration: none;
     display: inline-block;
     float: left;
     color: white;
