@@ -295,7 +295,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Opens YouTube uploader either in a separate tab or in a dialog
      */
     showYouTubeUploadDialog: function (movie) {
-        var title, tags, description;
+        var title, tags, url1, url2, description;
         
         // Suggested movie title
         title = movie.name + " (" + movie.startDate + " - " + 
@@ -315,12 +315,15 @@ var MovieManagerUI = MediaManagerUI.extend(
                 }                
             });
         });
-                     
+        
+        // URLs
+        url1 = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
+        url2 = helioviewer.serverSettings.rootURL + "/api/?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true";
+               
         // Suggested Description
-        description = "This movie was produced by Helioviewer.org. " +
-                      "A high quality version of this movie can be " +
-                      "downloaded from " + helioviewer.serverSettings.rootURL +
-                      "/?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true";
+        description = "This movie was produced by Helioviewer.org. See the " + 
+                      "original at " + url1 + " or download a high-quality " + 
+                      "version from " + url2;
                      
         // Update form defaults
         $("#youtube-title").val(title);
