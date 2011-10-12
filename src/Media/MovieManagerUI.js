@@ -318,7 +318,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // URLs
         url1 = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
-        url2 = helioviewer.serverSettings.rootURL + "/api/?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true";
+        url2 = helioviewer.serverSettings.rootURL + "/api/?action=" + 
+               "downloadMovie&id=" + movie.id + "&format=mp4&hq=true";
                
         // Suggested Description
         description = "This movie was produced by Helioviewer.org. See the " + 
@@ -425,7 +426,8 @@ var MovieManagerUI = MediaManagerUI.extend(
     /**
      * Validates title, description and keyword fields for YouTube upload.
      * 
-     * @see http://code.google.com/apis/youtube/2.0/reference.html#Media_RSS_elements_reference
+     * @see http://code.google.com/apis/youtube/2.0/reference.html
+     *      #Media_RSS_elements_reference
      */
     _validateVideoUploadForm: function () {
         var keywords         = $("#youtube-tags").val(),
@@ -435,29 +437,30 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Make sure the title field is not empty
         if ($("#youtube-title").val().length === 0) {
             throw "Please specify a title for the movie.";
-            return;
         }
-    
+        
         // User must specify at least one keyword
         if (keywords.length === 0) {
             throw "You must specifiy at least one tag for your video.";
-            return;
         }
         
         // Make sure each keywords are between 2 and 30 characters each
-        $.each(keywords.split(","), function(i, keyword) {
+        $.each(keywords.split(","), function (i, keyword) {
             var len = $.trim(keyword).length;
     
             if (len > keywordMaxLength) {
-                throw "YouTube tags must not be longer than " + keywordMaxLength + " characters each.";
+                throw "YouTube tags must not be longer than " + 
+                      keywordMaxLength + " characters each.";
             } else if (len < keywordMinLength) {
-                throw "YouTube tags must be at least " + keywordMinLength + " characters each.";
+                throw "YouTube tags must be at least " + keywordMinLength + 
+                      " characters each.";
             }
             return;                     
         });
     
         // < and > are not allowed in title, description or keywords
-        $.each($("#youtube-video-info input[type='text'], #youtube-video-info textarea"), function (i, input) {
+        $.each($("#youtube-video-info input[type='text'], " + 
+                 "#youtube-video-info textarea"), function (i, input) {
             if ($(input).val().match(/[<>]/)) {
                 throw "< and > characters are not allowed";
             }
@@ -471,10 +474,10 @@ var MovieManagerUI = MediaManagerUI.extend(
     addMovieUsingId: function (id) {
         var callback, params, movie, self = this;
         
-        callback = function(response) {
+        callback = function (response) {
             if (response.status === "FINISHED") {
-                // id, duration, imageScale, layers, dateRequested, startDate, endDate, 
-                // frameRate, numFrames, x1, x2, y1, y2, width, height
+                // id, duration, imageScale, layers, dateRequested, startDate, 
+                //  endDate, frameRate, numFrames, x1, x2, y1, y2, width, height
                 movie = self._manager.add(
                     id,
                     response.duration,
@@ -496,9 +499,9 @@ var MovieManagerUI = MediaManagerUI.extend(
                 );
                 
                 self._addItem(movie);
-                self._createMoviePlayerDialog(movie)
+                self._createMoviePlayerDialog(movie);
             }
-        }
+        };
         
         params = {
             "action" : "getMovieStatus", 

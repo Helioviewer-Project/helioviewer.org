@@ -176,20 +176,22 @@ var UserSettings = Class.extend(
         }
         
         if (urlSettings.centerX) {
-            this.set("state.centerX", parseFloat(urlSettings.centerX))
+            this.set("state.centerX", parseFloat(urlSettings.centerX));
         }
         
         if (urlSettings.centerY) {
-            this.set("state.centerY", parseFloat(urlSettings.centerY))
+            this.set("state.centerY", parseFloat(urlSettings.centerY));
         }
         
         if (urlSettings.imageLayers) {
-            this.set("state.tileLayers", this._parseURLStringLayers(urlSettings.imageLayers));
+            this.set("state.tileLayers", 
+                     this._parseURLStringLayers(urlSettings.imageLayers));
         }
     },
     
     /**
-     * Processes a string containing one or more layers and converts them into JavaScript objects
+     * Processes a string containing one or more layers and converts them into 
+     * JavaScript objects
      */
     _parseURLStringLayers: function (urlLayers) {
         var layers = [], self = this;

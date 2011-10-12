@@ -183,7 +183,8 @@ var MovieManager = MediaManager.extend(
                   "Click here to watch or download it.</span>";
 
         // Create the jGrowl notification.
-        $(document).trigger("message-console-log", [message, jGrowlOpts, true, true]);
+        $(document).trigger("message-console-log", 
+                            [message, jGrowlOpts, true, true]);
     },
     
     /**

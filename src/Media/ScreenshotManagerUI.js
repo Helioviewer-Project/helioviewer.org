@@ -45,7 +45,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
                screenshot.id + "'>Click here to download. </a>";
 
         // Create the jGrowl notification.
-        $(document).trigger("message-console-log", [body, jGrowlOpts, true, true]);
+        $(document).trigger("message-console-log", 
+                            [body, jGrowlOpts, true, true]);
     },
     
     /**

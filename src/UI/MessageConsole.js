@@ -69,10 +69,10 @@ var MessageConsole = Class.extend(
             if (typeof options === "undefined") {
                 options = {};
             }
-            if (typeof showElapsedTime == "undefined") {
+            if (typeof showElapsedTime === "undefined") {
                 showElapsedTime = false;
             }
-            if (typeof easyClose == "undefined") {
+            if (typeof easyClose === "undefined") {
                 easyClose = false;
             }
 
@@ -85,14 +85,14 @@ var MessageConsole = Class.extend(
                         header = elem.find(".jGrowl-header");
 
                         id = window.setInterval(function () {
-                            if (i == 1) {
+                            if (i === 1) {
                                 headerText = "1 minute ago";
                             } else if (i < 60) {
                                 headerText = i + " minutes ago";
                             } else if (i < 1440) {
                                 headerText = parseInt(i / 60, 10) + " hours ago";
                             } else {
-                                headerText = "A long time ago..."
+                                headerText = "A long time ago...";
                             }
                             
                             header.text(headerText);
@@ -102,7 +102,7 @@ var MessageConsole = Class.extend(
                         // keep track of timer id so it can be disabled later
                         elem.data("timerId", id);
                     },
-                    close: function(elem, message) {
+                    close: function (elem, message) {
                         window.clearInterval(elem.data("timerId"));
                     }
                 });
