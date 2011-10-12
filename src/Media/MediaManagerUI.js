@@ -92,7 +92,7 @@ var MediaManagerUI = Class.extend(
         htmlId = this._type + "-" + item.id;
         
         // Link
-        if (this._type == "movie") {
+        if (this._type === "movie") {
             url = "?movieId=" + item.id;
         } else {
             url = "api/?action=downloadScreenshot&id=" + item.id;

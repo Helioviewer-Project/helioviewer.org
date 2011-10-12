@@ -102,7 +102,7 @@ var ViewportController = Class.extend(
      * Event handler for viewport update requests
      */
     onUpdateViewport: function (event, storeCoordinates) {
-        if (typeof storeCoordinates == "undefined") {
+        if (typeof storeCoordinates === "undefined") {
             storeCoordinates = false;
         }
         
@@ -142,7 +142,7 @@ var ViewportController = Class.extend(
     updateViewport: function (storeCoordinates) {
         var coordinates, imageScale, offsetX, offsetY;
 
-        if (typeof storeCoordinates == "undefined") {
+        if (typeof storeCoordinates === "undefined") {
             storeCoordinates = false;
         }
         
@@ -169,7 +169,7 @@ var ViewportController = Class.extend(
     /**
      * Returns the middle time of all of the layers currently loaded
      */
-    getMiddleObservationTime: function() {
+    getMiddleObservationTime: function () {
         var startDate, endDate, difference, dates = [];
 
         // Get the observation dates associated with each later

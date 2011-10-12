@@ -24,7 +24,7 @@ var UserVideoGallery = Class.extend(
         this._working     = false;
         
         // Feed URL
-        this.url = url || "api/?action=getUserVideos"
+        this.url = url || "api/?action=getUserVideos";
         
         // Local
         this._pageSize = this._choosePageSize();
@@ -67,7 +67,7 @@ var UserVideoGallery = Class.extend(
      */
     _fetchVideos: function (silent) {
         // Silent update
-        if (typeof silent == "undefined") {
+        if (typeof silent === "undefined") {
             silent = false;
         }
         
