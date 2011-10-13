@@ -28,12 +28,10 @@ var UserVideoGallery = Class.extend(
         
         // Local
         this._pageSize = this._choosePageSize();
-        //this._pageNum  = 1;
         this._startIndex = 0;
         
         // Remote (may differ from local due to deleted videos, etc)
-        this._remotePageSize = 40;
-        this._remotePageNum  = 1;
+        this._numVideos = 40;
         
         this._videos = [];
 
@@ -44,7 +42,7 @@ var UserVideoGallery = Class.extend(
         var self = this;
 
         window.setInterval(function () {
-            self._fetchVideos(true);
+            self._checkForNewMovies();
         }, 120000);
     },
     
@@ -58,30 +56,36 @@ var UserVideoGallery = Class.extend(
         this._buildHTML(this._videos.slice(this._startIndex, endIndex));
     },
     
-    _silentRefresh: function (i) {
-        
-    },
-    
     /**
      * Retrieves a single page of video results and displays them to the user
      */
-    _fetchVideos: function (silent) {
-        // Silent update
-        if (typeof silent === "undefined") {
-            silent = false;
-        }
-        
+    _fetchVideos: function () {
         // Query parameters
         var params = {
-            "pageSize" : this._remotePageSize,
-            "pageNum"  : this._remotePageNum
+            "num" : this._numVideos
         };
         
         // Show loading indicator
-        if (!silent) {
-            this._container.find("a").empty();
-            this._loader.show();            
-        }
+        this._container.find("a").empty();
+        this._loader.show();            
+
+        this._working = true;
+
+        // Fetch videos
+        $.getJSON(this.url, params, $.proxy(this._processResponse, this));
+    },
+    
+    /**
+     * Checks to see if any new movies have been uploaded over the past couple
+     * minutes.
+     */
+    _checkForNewMovies: function () {
+        // Query parameters
+        var params = {
+            "num"   : this._numVideos,
+            "since" : this._videos[0].published.replace(" ", "T") + ".000Z"
+        };
+        
         this._working = true;
 
         // Fetch videos
@@ -109,7 +113,7 @@ var UserVideoGallery = Class.extend(
             videos = response;
         }
         
-        this._videos = this._videos.concat(videos);
+        this._videos = videos.concat(this._videos);
         this._updateGallery();
     },
     
@@ -158,15 +162,6 @@ var UserVideoGallery = Class.extend(
             this._startIndex += this._pageSize;
             this._updateGallery();
         }
-            
-            // Fetch more videos if needed
-//            if (this._videos.length < (this._pageNum * this._pageSize - 1)) {
-//                this._remotePageNum += 1;
-//                this._fetchVideos();
-//            } else {
-//                this._updateGallery();
-//            }
-//        }
         
         return false;
     },

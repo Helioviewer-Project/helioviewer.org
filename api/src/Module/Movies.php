@@ -148,12 +148,12 @@ class Module_Movies implements Module
                 "error" => "Sorry, we are unable to create your movie at this time. Please try again later."
             );
         } else {
-            // Otherwise have the client try again in 15s
+            // Otherwise have the client try again in 60s
             // TODO 2011/04/25: Once HQ has been ported to PHP, eta should be estimated
             // instead of returning a static eta each time.
             $response = array(
                 "status" => $movie->status,
-                "eta"    => 15
+                "eta"    => 60
             );
         }
         
@@ -272,21 +272,15 @@ class Module_Movies implements Module
 
         // Default options
         $defaults = array(
-            "pageSize" => 10,
-            "pageNum"  => 1
+            "num" => 10,
+            "since" => '1000/01/01T00:00:00.000Z'
         );
-        $options = array_replace($defaults, $this->_options);
-
-        $pageSize = $options['pageSize'];
-        $pageNum  = $options['pageNum'];
+        $opts = array_replace($defaults, $this->_options);
                 
-         // Current page
-        $startIndex = $pageSize * ($pageNum - 1);
-
-        // PGet a list of recent videos
+        // Get a list of recent videos
         $videos = array();
         
-        foreach($movies->getSharedVideos($startIndex, $pageSize) as $video) {
+        foreach($movies->getSharedVideos($opts['num'], $opts['since']) as $video) {
             $youtubeId = $video['youtubeId'];
             $movieId   = (int) $video['movieId'];
              
@@ -464,8 +458,9 @@ class Module_Movies implements Module
             break;
         case "getUserVideos":
             $expected = array(
-                "optional" => array('pageSize', 'pageNum'),
-                "ints"     => array('pageSize', 'pageNum')
+                "optional" => array('num', 'since'),
+                "ints"     => array('num'),
+                "dates"    => array('since')
             );
             break;
         case "checkYouTubeAuth":

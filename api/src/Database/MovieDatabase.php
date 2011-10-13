@@ -60,11 +60,15 @@ class Database_MovieDatabase
     /**
      * Gets a list of videos recently shared on YouTube
      */
-    public function getSharedVideos($startIndex, $num)
+    public function getSharedVideos($num, $since)
     {
+        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+
+        $date = isoDateToMySQL($since);
+        
         $sql = "SELECT movieId, youtubeId, timestamp FROM youtube WHERE " .
-               "shared=1 ORDER BY id DESC LIMIT $startIndex, $num;";
-               
+               "shared=1 AND timestamp > '$date' ORDER BY id DESC LIMIT $num;";
+
         $videos = array();
 
         $result = $this->_dbConnection->query($sql);
