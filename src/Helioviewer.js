@@ -279,10 +279,11 @@ var Helioviewer = Class.extend(
      * @description Initialize event-handlers for UI components controlled by the Helioviewer class
      */
     _initEventHandlers: function () {
-        var self = this;
+        var self = this, 
+            msg  = "Use the following link to refer to current page:";
         
         $('#link-button').click(function (e) {
-            self.displayURL(self.toURL());
+            self.displayURL(self.toURL(), msg);
         });
         //$('#email-button').click($.proxy(this.displayMailForm, this));
         
@@ -303,7 +304,8 @@ var Helioviewer = Class.extend(
      * displays a dialog containing a link to the current page
      * @param {Object} url
      */
-    displayURL: function (url) {
+    displayURL: function (url, msg) {
+        $("#helioviewer-url-box-msg").text(msg);
         $("#url-dialog").dialog({
             dialogClass: 'helioviewer-modal-dialog',
             height    : 100,
@@ -324,7 +326,10 @@ var Helioviewer = Class.extend(
      * @param string Id of the movie to be linked to
      */
     displayMovieURL: function (movieId) {
-        this.displayURL(this.serverSettings.rootURL + "/?movieId=" + movieId);           
+        var url = this.serverSettings.rootURL + "/?movieId=" + movieId,
+            msg = "Use the following link to refer to this movie:";
+
+        this.displayURL(url, msg);           
     },
     
     /**

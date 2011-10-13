@@ -379,7 +379,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <!-- URL Dialog -->
 <div id='url-dialog' style="display:none;">
     <div id="helioviewer-url-box">
-        Use the following link to refer to current page:
+        <span id="helioviewer-url-box-msg">Use the following link to refer to current page:</span>
         <form style="margin-top: 5px;">
             <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
         </form>
