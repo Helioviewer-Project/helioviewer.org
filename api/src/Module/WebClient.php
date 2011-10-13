@@ -421,11 +421,29 @@ class Module_WebClient implements Module
      */
     public function getNewsFeed()
     {
-        include_once 'src/Net/Proxy.php';
-        $proxy = new Net_Proxy(HV_NEWS_FEED_URL);
+        include_once 'lib/JG_Cache/JG_Cache.php';
+
+        // Create cache dir if it doesn't already exist
+        $cacheDir = HV_CACHE_DIR . "/remote";
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+        }
         
+        // Check for feed in cache
+        $cache = new JG_Cache($cacheDir);
+
+        if(!($feed = $cache->get('news.xml', 1800))) {
+            
+            // Re-fetch if it is old than 30 mins
+            include_once 'src/Net/Proxy.php';
+            $proxy = new Net_Proxy(HV_NEWS_FEED_URL);
+            $feed = $proxy->query();
+            $cache->set('news.xml', $feed);
+        }
+
+        // Print XML
         header("Content-Type: text/xml;charset=UTF-8");
-        echo $proxy->query();
+        echo $feed;
     }
     
     /**

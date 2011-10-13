@@ -57,7 +57,7 @@ var ZoomControls = Class.extend(
         // Zoom-level steps
         this. increments = [];
         for (i = this.minImageScale; i <= this.maxImageScale; i = i * 2) {
-            this.increments.push(i);
+            this.increments.push(parseFloat(i.toPrecision(8)));
         }
 
         // Reverse orientation so that moving slider up zooms in
