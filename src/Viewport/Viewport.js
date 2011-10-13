@@ -47,6 +47,11 @@ var Viewport = Class.extend(
         this.outerNode = $(this.id + '-container-outer');
         this.shadow    = $(this.id + '-container-shadow');
         
+        // IE shadows don't behave properly during resizing/fullscreen (tested: IE9)
+        if ($.browser.msie) {
+            this.shadow.css("box-shadow", "none");
+        }
+        
         // Combined height of the header and footer in pixels (used for resizing viewport vertically)
         this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;    
     },

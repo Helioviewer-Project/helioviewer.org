@@ -128,16 +128,8 @@ var FullscreenControl = Class.extend(
             left:  this.origColMidLeft
         }, this.speed,
         function () {
-            offset = self.viewport.offset();
-
             self.meta.show();
             self.body.css('overflow', 'visible');
-            self.shadow.css({
-                "width": self.viewport.width(),
-                "height": self.viewport.height(),
-                "top": offset.top,
-                "left": offset.left
-            }).show();
             self.body.removeClass('disable-fullscreen-mode');
         });
         
@@ -164,7 +156,15 @@ var FullscreenControl = Class.extend(
         }, this.speed);
         this.sandbox.animate({
             right: 0
-        }, this.speed);
+        }, this.speed, function () {
+            offset = self.viewport.offset();
+            self.shadow.css({
+                "width": self.viewport.width(),
+                "height": self.viewport.height(),
+                "top": offset.top,
+                "left": offset.left
+            }).show();
+        });
     },
     
     /**

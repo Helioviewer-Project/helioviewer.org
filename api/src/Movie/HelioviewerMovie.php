@@ -409,8 +409,10 @@ class Movie_HelioviewerMovie
             $dateString = sprintf("%s - %s UTC", $this->startDate, $this->endDate);
         }
         
-        // URL
-        $url = "http://www.helioviewer.org/api/?action=downloadMovie&id={$this->id}&format={$this->format}";
+        // URLA
+        $url1 = HV_WEB_ROOT_URL . "/?movieId={$this->publicId}";
+        $url2 = HV_WEB_ROOT_URL . "/api/?action=downloadMovie&id={$this->publicId}&format={$this->format}";
+        
         
         // Title
         $title = sprintf("%s (%s)", $layerString, $dateString);
@@ -423,8 +425,8 @@ class Movie_HelioviewerMovie
         
         // Comment
         $comment = sprintf(
-            "This movie was produced by Helioviewer.org on %s UTC. The original movie can be found at %s.", 
-            date("F j, Y, g:i a"), $url
+            "This movie was produced by Helioviewer.org. See the original " .
+            "at %s or download a high-quality version from %s.", $url1, $url2
         );
         
         // MP4 filename

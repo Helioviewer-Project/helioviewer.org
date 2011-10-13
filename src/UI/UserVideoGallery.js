@@ -24,21 +24,26 @@ var UserVideoGallery = Class.extend(
         this._working     = false;
         
         // Feed URL
-        this.url = url || "api/?action=getUserVideos"
+        this.url = url || "api/?action=getUserVideos";
         
         // Local
         this._pageSize = this._choosePageSize();
-        //this._pageNum  = 1;
         this._startIndex = 0;
         
         // Remote (may differ from local due to deleted videos, etc)
-        this._remotePageSize = 40;
-        this._remotePageNum  = 1;
+        this._numVideos = 40;
         
         this._videos = [];
 
         this._setupEventHandlers();
         this._fetchVideos();
+        
+        // Auto-refresh every couple minutes
+        var self = this;
+
+        window.setInterval(function () {
+            self._checkForNewMovies();
+        }, 120000);
     },
     
     /**
@@ -57,13 +62,29 @@ var UserVideoGallery = Class.extend(
     _fetchVideos: function () {
         // Query parameters
         var params = {
-            "pageSize" : this._remotePageSize,
-            "pageNum"  : this._remotePageNum
+            "num" : this._numVideos
         };
         
         // Show loading indicator
         this._container.find("a").empty();
-        this._loader.show();
+        this._loader.show();            
+
+        this._working = true;
+
+        // Fetch videos
+        $.getJSON(this.url, params, $.proxy(this._processResponse, this));
+    },
+    
+    /**
+     * Checks to see if any new movies have been uploaded over the past couple
+     * minutes.
+     */
+    _checkForNewMovies: function () {
+        // Query parameters
+        var params = {
+            "num"   : this._numVideos,
+            "since" : this._videos[0].published.replace(" ", "T") + ".000Z"
+        };
         
         this._working = true;
 
@@ -92,7 +113,7 @@ var UserVideoGallery = Class.extend(
             videos = response;
         }
         
-        this._videos = this._videos.concat(videos);
+        this._videos = videos.concat(this._videos);
         this._updateGallery();
     },
     
@@ -124,6 +145,7 @@ var UserVideoGallery = Class.extend(
 
         this._loader.hide();
         this._container.append(html);
+        //this._container.fadeIn();
         
         this._working = false;
     },
@@ -140,15 +162,6 @@ var UserVideoGallery = Class.extend(
             this._startIndex += this._pageSize;
             this._updateGallery();
         }
-            
-            // Fetch more videos if needed
-//            if (this._videos.length < (this._pageNum * this._pageSize - 1)) {
-//                this._remotePageNum += 1;
-//                this._fetchVideos();
-//            } else {
-//                this._updateGallery();
-//            }
-//        }
         
         return false;
     },

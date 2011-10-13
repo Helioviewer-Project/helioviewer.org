@@ -28,6 +28,7 @@ var MediaManagerUI = Class.extend(
         this._historyBody     = $("#" + type + "-history");
         this._clearBtn        = $("#" + type + "-clear-history-button");
         this._tooltips        = $("#social-buttons div");
+        this._allButtons      = $("#movie-button, #screenshot-button");
         this._allContainers   = $(".media-manager-container");
         
         this._loadSavedItems();
@@ -45,6 +46,7 @@ var MediaManagerUI = Class.extend(
      */
     hide: function () {
         this._container.hide();
+        this._btn.removeClass("active");
         this._tooltips.qtip("enable");
     },
     
@@ -52,7 +54,10 @@ var MediaManagerUI = Class.extend(
      * Shows the media manager
      */
     show: function () {
+        
         this._allContainers.hide();
+        this._allButtons.removeClass("active");
+        this._btn.addClass("active");
         $(".jGrowl-notification").trigger("jGrowl.close");
         this._refresh();
         this._container.show();
@@ -76,7 +81,7 @@ var MediaManagerUI = Class.extend(
      * @param {Object} The movie or screenshot to be added 
      */
     _addItem: function (item) {
-        var htmlId, html, last, name = item.name;
+        var htmlId, html, last, url, name = item.name;
 
         // Shorten names to fit inside the history dialog        
         if (name.length > 16) {
@@ -85,9 +90,18 @@ var MediaManagerUI = Class.extend(
         
         // HTML for a single row in the history dialog
         htmlId = this._type + "-" + item.id;
+        
+        // Link
+        if (this._type === "movie") {
+            url = "?movieId=" + item.id;
+        } else {
+            url = "api/?action=downloadScreenshot&id=" + item.id;
+        }
 
         html = $("<div id='" + htmlId + "' class='history-entry'>" +
-               "<div class='text-btn' style='float:left'>" + name + "</div>" +
+               "<a class='text-btn' style='float: left' href='" + url + 
+               "'>" + name + "</a>" +
+               //"<div class='text-btn' style='float:left'>" + name + "</div>" +
                "<div class='status'></div>" + 
                "</div>");
                
@@ -156,13 +170,9 @@ var MediaManagerUI = Class.extend(
      * Create history entries for items from previous sessions
      */
     _loadSavedItems: function () {
-        var sorted, self = this;
-        
-        sorted = this._manager.toArray().sort(function (a, b) {
-            return a.id - b.id; 
-        });
+        var self = this;
 
-        $.each(sorted, function (i, item) {
+        $.each(this._manager.toArray().reverse(), function (i, item) {
             self._addItem(item);
         });
     },
@@ -217,6 +227,7 @@ var MediaManagerUI = Class.extend(
             if (!self.working) {
                 self.toggle();
             }
+            
         });
         
         // Clear buttons removes all saved items
