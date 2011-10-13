@@ -443,7 +443,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 
 <!-- jQuery -->
 <script src="http://code.jquery.com/jquery-1.6.4.min.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
