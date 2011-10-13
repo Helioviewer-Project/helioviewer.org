@@ -248,7 +248,7 @@ class Module_Movies implements Module
 <body style='text-align: center;'>
     <div style='margin-top: 200px;'>
         <span style='font-size: 32px;'>Finished!</span><br />
-        Your video should appear on youtube in 1-2 minutes.
+        Your video should appear on YouTube in 1-2 minutes.
     </div>
 </body>
 <?php
