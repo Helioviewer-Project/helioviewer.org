@@ -81,7 +81,7 @@ class Movie_YouTube
             $this->getYouTubeAuth($movie->id);
         }
         
-        $filepath = $movie->getFilepath();
+        $filepath = $movie->getFilepath(true);
 
         $videoEntry = $this->_createGDataVideoEntry($filepath, $title, $description, $tags, $share);
         return $this->_uploadVideoToYouTube($videoEntry, $id, $title, $description, $tags, $share);
