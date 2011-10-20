@@ -34,7 +34,7 @@ var UserSettings = Class.extend(
         this._initStorage();
         
         // Revision when config format last changed
-        this._lastChanged = 567
+        this._lastChanged = 567;
         
         // Process URL parameters
         this._processURLSettings(urlSettings);
