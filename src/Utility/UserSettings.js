@@ -33,6 +33,9 @@ var UserSettings = Class.extend(
         // Initialize storage
         this._initStorage();
         
+        // Revision when config format last changed
+        this._lastChanged = 567
+        
         // Process URL parameters
         this._processURLSettings(urlSettings);
     },
@@ -131,7 +134,7 @@ var UserSettings = Class.extend(
         }
 
         // If version is out of date, load defaults
-        if (this.get('version') < this._defaults.version) {
+        if (this.get('version') < this._lastChanged) {
             this._loadDefaults();
         }
     },
