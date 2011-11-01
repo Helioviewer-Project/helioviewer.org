@@ -62,7 +62,7 @@ class Database_MovieDatabase
      */
     public function getSharedVideos($num, $since)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $date = isoDateToMySQL($since);
         

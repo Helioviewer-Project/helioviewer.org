@@ -206,7 +206,7 @@ class Database_ImgIndex
      */
     public function getImageFromDatabase($date, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
 
@@ -254,7 +254,7 @@ class Database_ImgIndex
      */
     public function getClosestImageBeforeDate($date, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
 
@@ -281,7 +281,7 @@ class Database_ImgIndex
      */
     public function getClosestImageAfterDate ($date, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
 
@@ -323,7 +323,7 @@ class Database_ImgIndex
      */
     public function getImageCount($start, $end, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
         
@@ -344,7 +344,7 @@ class Database_ImgIndex
      */
     public function getImageRange($start, $end, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
 
@@ -369,7 +369,7 @@ class Database_ImgIndex
      */
     public function extractJP2MetaInfo ($img)
     {
-        include_once HV_ROOT_DIR . "/api/src/Image/JPEG2000/JP2ImageXMLBox.php";
+        include_once "src/Image/JPEG2000/JP2ImageXMLBox.php";
 
         try {
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($img);
