@@ -29,9 +29,14 @@ def main():
         meas = source[5]
 
         print "Processing %s %s" % (inst, meas)
+        
+        if meas == "4500":
+            gap_size = 3601
+        else:
+            gap_size = 60
 
         create_temp_table(cursor, sourceid)
-        gaps = query_temp_table(cursor)
+        gaps = query_temp_table(cursor, gap_size=gap_size)
         
         output_file = "%s_%s.csv" % (inst, meas)
         c = csv.writer(open(output_file,"wb"))
