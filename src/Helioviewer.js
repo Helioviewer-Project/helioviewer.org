@@ -66,9 +66,12 @@ var Helioviewer = Class.extend(
         this._screenshotManagerUI = new ScreenshotManagerUI();
         this._movieManagerUI      = new MovieManagerUI();
 
+        this._glossary = new VisualGlossary(this._setupDialog);
+
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
+
         
         // Play movie if id is specified
         if (urlSettings.movieId) {

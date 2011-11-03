@@ -327,6 +327,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
             <!-- Meta links -->
             <div id="footer-links">
                 <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
+                <a id="helioviewer-glossary" class="light" href="dialogs/glossary.html">Glossary</a>
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
@@ -349,6 +350,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 
 <!-- Viewport shadow -->
 <div id='helioviewer-viewport-container-shadow' class='shadow'></div>
+
+<!-- Glossary dialog -->
+<div id='glossary-dialog'></div>
 
 <!-- About dialog -->
 <div id='about-dialog'></div>
@@ -543,7 +547,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                     "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                     "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
                     "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", "UI/UserVideoGallery.js", 
-                    "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
+                    "UI/Glossary.js", "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
         foreach($js as $file)
             printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n", $file);
     }

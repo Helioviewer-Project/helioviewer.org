@@ -119,3 +119,17 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 .youtube-upload-dialog {
     overflow: hidden;    
 }
+
+/* Visual Glossary */
+#glossary-contents td {
+    padding: 10px;
+}
+#glossary-contents img, #glossary-contents video {
+    width: 450px;
+    height: 360px;    
+}
+#glossary-contents .glossary-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
