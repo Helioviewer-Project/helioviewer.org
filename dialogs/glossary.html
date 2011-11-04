@@ -1,10 +1,38 @@
-<div class="glossary-menu">
-    <a class="glossary-basic-btn selected">Basic</a>
-    <a class="glossary-complete-btn">All</a>
+<div id="glossary-menu">
+    <div class="text-btn selected" id="glossary-btn-basic">
+        <span style="float: left;" class="ui-icon ui-icon-bullet"></span>
+        <span>Basic</span>
+    </div>
+    <div class="text-btn" id="glossary-btn-events">
+        <span style="float: left;" class="ui-icon ui-icon-radio-on"></span>
+        <span>Features and Events</span>
+    </div>
+    <div class="text-btn" id="glossary-btn-obs">
+        <span style="float: left;" class="ui-icon ui-icon-radio-on"></span>
+        <span>Observatories</span>
+    </div>
+    <div class="text-btn" id="glossary-btn-inst">
+        <span style="float: left;" class="ui-icon ui-icon-radio-on"></span>
+        <span>Instruments</span>
+    </div>
+    <div class="text-btn" id="glossary-btn-det">
+        <span style="float: left;" class="ui-icon ui-icon-radio-on"></span>
+        <span>Detectors</span>
+    </div>
+    <div class="text-btn" id="glossary-btn-meas">
+        <span style="float: left;" class="ui-icon ui-icon-radio-on"></span>
+        <span>Measurements</span>
+    </div>
+    <div class="text-btn" id="glossary-btn-all">
+        <span style="float: left;" class="ui-icon ui-icon-radio-on"></span>
+        <span>All</span>
+    </div>
 </div>
+<br />
+<hr />
 <table id='glossary-contents'>
     <!--AIA-->
-    <tr name='' class=''>
+    <tr name='' class='g-basic g-instrument'>
         <td>
         </td>
         <td>
@@ -13,7 +41,7 @@
         </td>
     </tr>
     <!-- Aurora -->
-    <tr name='aurora' class=''>
+    <tr name='aurora' class='g-fe'>
         <td>
         </td>
         <td>
@@ -49,7 +77,7 @@
         </td>
     </tr>
     <!--COR1-->
-    <tr name='cor1' class=''>
+    <tr name='cor1' class='g-detector'>
         <td>
         </td>
         <td>
@@ -58,7 +86,7 @@
         </td>
     </tr>
     <!--COR2-->
-    <tr name='cor2' class=''>
+    <tr name='cor2' class='g-detector'>
         <td>
         </td>
         <td>
@@ -76,7 +104,7 @@
         </td>
     </tr>
     <!--Corona-->
-    <tr name='corona'>
+    <tr name='corona' class='g-fe'>
         <td>
         </td>
         <td>
@@ -94,7 +122,7 @@
         </td>
     </tr>
     <!--Coronal Hole-->
-    <tr name='coronal-hole'>
+    <tr name='coronal-hole' class='g-fe'>
         <td>
         </td>
         <td>
@@ -103,7 +131,7 @@
         </td>
     </tr>
     <!--CME-->
-    <tr name='cme'>
+    <tr name='cme' class='g-basic g-fe'>
         <td>
             <video controls>
                 <source src='http://helioviewer.org/api/?action=downloadMovie&id=v4s15&format=mp4' type='video/mp4' />
@@ -116,7 +144,7 @@
         </td>
     </tr>
     <!--EIT-->
-    <tr name='eit' class=''>
+    <tr name='eit' class='g-basic g-instrument'>
         <td>
         </td>
         <td>
@@ -152,7 +180,7 @@
         </td>
     </tr>
     <!--EUVI-->
-    <tr name='euvi' class=''>
+    <tr name='euvi' class='g-basic g-detector'>
         <td></td>
         <td>
             <div class='glossary-title'>EUVI</div>
@@ -160,7 +188,7 @@
         </td>
     </tr>
     <!--Faculae-->
-    <tr name='faculae'>
+    <tr name='faculae' class='g-fe'>
         <td>
         </td>
         <td>
@@ -169,7 +197,7 @@
         </td>
     </tr>
     <!-- Filament -->
-    <tr name=''>
+    <tr name='' class='g-basic g-fe'>
         <td>
             <!-- AIA 304 2010/12/06 13:50:57 UT -->
             <img src='resources/images/glossary/filament.jpg' alt='solar filament' />
@@ -180,7 +208,7 @@
         </td>
     </tr>
     <!--Flare-->
-    <tr name='flare'>
+    <tr name='flare' class='g-basic g-fe'>
         <td>
             <video controls='controls'>
                 <source src='http://helioviewer.org/api/?action=downloadMovie&id=dQD15&format=mp4' type='video/mp4' />
@@ -202,7 +230,7 @@
         </td>
     </tr>
     <!--Geomagnetic Storm-->
-    <tr name='geomagnetic-storm' class=''>
+    <tr name='geomagnetic-storm' class='g-fe'>
         <td>
         </td>
         <td>
@@ -211,7 +239,7 @@
         </td>
     </tr>
     <!--Granules-->
-    <tr name='granules' class=''>
+    <tr name='granules' class='g-fe'>
         <td>
         </td>
         <td>
@@ -220,7 +248,7 @@
         </td>
     </tr>
     <!--HMI-->
-    <tr name='hmi' class=''>
+    <tr name='hmi' class='g-instrument'>
         <td>
         </td>
         <td>
@@ -265,7 +293,7 @@
         </td>
     </tr>
     <!--LASCO-->
-    <tr name='lasco' class=''>
+    <tr name='lasco' class='g-basic g-instrument'>
         <td>
         </td>
         <td>
@@ -274,7 +302,7 @@
         </td>
     </tr>
     <!--Magnetic Loops-->
-    <tr name='magnetic-loops' class=''>
+    <tr name='magnetic-loops' class='g-fe'>
         <td>
         </td>
         <td>
@@ -310,7 +338,7 @@
         </td>
     </tr>
     <!--MDI-->
-    <tr name='mdi' class=''>
+    <tr name='mdi' class='g-instrument'>
         <td>
         </td>
         <td>
@@ -337,7 +365,7 @@
         </td>
     </tr>
     <!--Prominence-->
-    <tr name='prominence' class=''>
+    <tr name='prominence' class='g-basic g-fe'>
         <td>
         </td>
         <td>
@@ -364,7 +392,7 @@
         </td>
     </tr>
     <!--SDO-->
-    <tr name='sdo' class=''>
+    <tr name='sdo' class='g-basic g-observatory'>
         <td>
         </td>
         <td>
@@ -373,7 +401,7 @@
         </td>
     </tr>
     <!--SOHO-->
-    <tr name='soho' class=''>
+    <tr name='soho' class='g-basic g-observatory'>
         <td>
         </td>
         <td>
@@ -409,7 +437,7 @@
         </td>
     </tr>
     <!--Solar Wind-->
-    <tr name='solar-wind' class=''>
+    <tr name='solar-wind' class='g-fe'>
         <td>
         </td>
         <td>
@@ -436,7 +464,7 @@
         </td>
     </tr>
     <!--STEREO-->
-    <tr name='stereo' class=''>
+    <tr name='stereo' class='g-basic g-observatory'>
         <td>
         </td>
         <td>
@@ -445,7 +473,7 @@
         </td>
     </tr>
     <!--Sunspot-->
-    <tr name='sunspot' class=''>
+    <tr name='sunspot' class='g-basic g-fe'>
         <td>
         </td>
         <td>
