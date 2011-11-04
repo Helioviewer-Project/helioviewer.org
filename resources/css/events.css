@@ -2,9 +2,6 @@
 .event-layer {
 	position: absolute;
 }
-.event {
-	position: absolute;
-}
 div.event-marker {
 	position: absolute;
 	height: 16px;

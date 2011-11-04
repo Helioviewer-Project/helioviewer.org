@@ -121,6 +121,10 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 }
 
 /* Visual Glossary */
+
+#glossary-menu span {
+    float: left;
+}
 #glossary-contents td {
     padding: 10px;
 }
