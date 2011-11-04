@@ -82,9 +82,13 @@ var UserVideoGallery = Class.extend(
     _checkForNewMovies: function () {
         // Query parameters
         var params = {
-            "num"   : this._numVideos,
-            "since" : this._videos[0].published.replace(" ", "T") + ".000Z"
+            "num"   : this._numVideos
         };
+        
+        // Use publish date for last video retrieved
+        if(this._videos.length > 0) {
+            params.since = this._videos[0].published.replace(" ", "T") + ".000Z";
+        }
         
         this._working = true;
 
