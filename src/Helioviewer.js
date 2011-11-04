@@ -234,15 +234,15 @@ var Helioviewer = Class.extend(
     /**
      * Sets up event handlers for a single dialog
      */
-    _setupDialog: function (btn, dialog, options) {
+    _setupDialog: function (btn, dialog, options, onLoad) {
         // Default options
         var defaults = {
             title     : "Helioviewer.org",
             autoOpen  : true,
             draggable : true,
             width     : 480,
-            height    : 480            
-        };        
+            height    : 480
+        };
         
         // Button click handler
         $(btn).click(function () {
@@ -257,7 +257,7 @@ var Helioviewer = Class.extend(
                     d.dialog('open');
                 }
             } else {
-                d.load(this.href).dialog($.extend(defaults, options));
+                d.load(this.href, onLoad).dialog($.extend(defaults, options));
                 btn.addClass("dialog-loaded");
             }
             return false; 

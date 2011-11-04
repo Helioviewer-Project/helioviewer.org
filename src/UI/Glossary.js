@@ -18,22 +18,51 @@ var VisualGlossary = Class.extend(
         setupDialog("#helioviewer-glossary", "#glossary-dialog", {
             "title": "Helioviewer - Glossary",
             "width": 800,
-            "height": $(document).height() * 0.8,
-            "create": this._loadVideos
-        });
+            "height": $(document).height() * 0.8
+        }, $.proxy(this._onLoad, this));
     },
     
     /**
-     * Loads video elements using stored metadata
+     * Setup event handlers
      */
-    _loadVideos: function(evt) {
-        var videos = {
-            "v4s15": "http://helioviewer.org/cache/movies/2011/11/03/v4s15/2011_10_31_15_21_56_2011_11_01_15_09_08_AIA_304__LASCO_C3__LASCO_C2",
-            "dQD15": "http://helioviewer.org/cache/movies/2011/09/30/dQD15/2011_09_24_08_13_14_2011_09_24_11_12_38_AIA_94.mp4"
-        }
+    _onLoad: function(evt) {
+        var self = this;
         
-        //$.each(videos, function (id, url) {
-        //    $("#" + id).html(helioviewer._movieManagerUI.getVideoPlayerHTML(id, 450, 360, url + ".mp4"));            
-        //});
+        // Category buttons
+        this.btns = $('#glossary-menu .text-btn');
+        
+        // Glossary entries
+        this.entries = $("#glossary-contents tr");
+        
+        // On select
+        this.btns.click(function (e) {
+            self.btns.removeClass("selected").find('.ui-icon').removeClass('.ui-icon-bullet');
+            $(this).addClass("selected").find('.ui-icon').addClass('.ui-icon-bullet');
+            
+            var category = this.id.split("-").pop();
+            self._showCategory(category);
+        });
+
+        // Hover effect
+        this.btns.each(function () {
+            var btn = $(this);
+            addIconHoverEventListener(btn);
+        });
+        
+        // Show basic entries
+        this._showCategory("basic");
+    },
+    
+    /**
+     * On category select
+     */
+    _showCategory: function (category) {
+        this.entries.hide();
+
+        if (category == "all") {
+            this.entries.show();
+        } else {
+            this.entries.filter(".g-" + category).show();    
+        }
     }
 });
