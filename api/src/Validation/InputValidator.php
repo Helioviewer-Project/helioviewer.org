@@ -280,7 +280,8 @@ class Validation_InputValidator
      */
     public static function checkUTCDate($date)
     {
-        if (!preg_match("/^\d{4}[\/-]\d{2}[\/-]\d{2}T\d{2}:\d{2}:\d{2}\.\d{0,3}Z?$/i", $date)) {
+        //if (!preg_match("/^\d{4}[\/-]\d{2}[\/-]\d{2}T\d{2}:\d{2}:\d{2}\.\d{0,3}Z?$/i", $date)) {
+        if (!preg_match("/^\d{4}[\/-]\d{2}[\/-]\d{2}T\d{2}:\d{2}:\d{2}.\d{0,3}Z?$/i", $date)) {
             throw new Exception("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
         }
     }
