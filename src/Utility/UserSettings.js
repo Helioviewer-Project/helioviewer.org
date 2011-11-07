@@ -29,12 +29,12 @@ var UserSettings = Class.extend(
         
         // Input validator
         this._validator = new InputValidator();
-                
-        // Initialize storage
-        this._initStorage();
         
         // Revision when config format last changed
         this._lastChanged = 567;
+                
+        // Initialize storage
+        this._initStorage();
         
         // Process URL parameters
         this._processURLSettings(urlSettings);
