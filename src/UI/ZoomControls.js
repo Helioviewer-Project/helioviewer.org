@@ -52,13 +52,30 @@ var ZoomControls = Class.extend(
      * @description Initializes zoom level slider
      */
     _initSlider: function () {
-        var i, description, self = this;
+        var i, startIndex, description, self = this;
         
         // Zoom-level steps
         this. increments = [];
         for (i = this.minImageScale; i <= this.maxImageScale; i = i * 2) {
             this.increments.push(parseFloat(i.toPrecision(8)));
         }
+        
+        // Choose initial slider value
+        startIndex = $.inArray(this.imageScale, this.increments);
+        
+        // Because of browser differences, shared links may not fit exactly
+        if (startIndex === -1) {
+            var diff, bestMatch = Infinity;
+            
+            $.each(this.increments, function (i, scale) {
+                diff = Math.abs(scale - self.imageScale);
+
+                if (diff < bestMatch) {
+                    bestMatch = diff;
+                    startIndex = i;
+                }
+            });
+        } 
 
         // Reverse orientation so that moving slider up zooms in
         this.increments.reverse();
@@ -71,7 +88,7 @@ var ZoomControls = Class.extend(
             min: 0,
             max: this.increments.length - 1,
             orientation: 'vertical',
-            value: $.inArray(this.imageScale, this.increments)
+            value: startIndex
         });
         
         // Add tooltip text
