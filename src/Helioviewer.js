@@ -118,7 +118,12 @@ var Helioviewer = Class.extend(
             
             // H.264
             if (v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
-                $.support.h264 = true;
+                // 2011/11/07: Also disabling H.264 in-browser video for now:
+                // some versions of Chrome report support when it does not
+                // actually work. 
+                
+                //$.support.h264 = true;
+                $.support.h264 = false;
             }
             
         }
