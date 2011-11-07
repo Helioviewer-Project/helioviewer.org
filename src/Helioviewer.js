@@ -101,7 +101,14 @@ var Helioviewer = Class.extend(
             
             // VP8/WebM
             if (v.canPlayType('video/webm; codecs="vp8"')) {
-                $.support.vp8 = true;
+                // 2011/11/07: Disabling vp8 support until encoding time
+                // can be greatly reduced. WebM/VP8 movies will still be
+                // generated on the back-end when resources are available,
+                // but Flash/H.264 will be used in the mean-time to decrease
+                // response time and queue waits.
+                
+                //$.support.vp8 = true;
+                $.support.vp8 = false;
             }
             
             // Ogg Theora
