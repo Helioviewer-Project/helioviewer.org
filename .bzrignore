@@ -27,3 +27,4 @@ build/css
 php_errors.log
 .htaccess
 .gnupg
+cache
