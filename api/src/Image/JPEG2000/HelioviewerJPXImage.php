@@ -168,10 +168,10 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         $dates  = array();
         
         // Timer
-        $time = toUnixTimestamp($this->_startTime);
+        $time = toUnixTimestamp($this->_endTime);
        
         // Get nearest JP2 images to each time-step
-        for ($i = 0; $i < $numFrames; $i++) {
+        for ($i = 0; $i <= $numFrames; $i++) {
             // Get next image
             $isoDate = toISOString(parseUnixTimestamp($time));
 
@@ -179,11 +179,11 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             $jp2 = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
 
             // Ignore redundant images
-            if (end($images) != $jp2) {
-                array_push($images, $jp2);
-                array_push($dates, toUnixTimestamp($img['date']));
+            if ($images[0] != $jp2) {
+                array_unshift($images, $jp2);
+                array_unshift($dates, toUnixTimestamp($img['date']));
             }
-            $time += $this->_cadence;
+            $time -= $this->_cadence;
         }
         
         return array($images, $dates);
