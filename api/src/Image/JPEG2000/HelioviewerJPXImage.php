@@ -101,7 +101,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         
         // If cadence is manually specified check to make sure it is reasonable
         if ($this->_cadence) {
-            $numFrames = floor(($end - $start) / $this->_cadence);
+            $numFrames = ceil(($end - $start) / $this->_cadence);
             if ($numFrames > HV_MAX_JPX_FRAMES) {
                 $oldCadence = $this->_cadence;
                 $this->_cadence = floor(($end - $start) / HV_MAX_JPX_FRAMES);
