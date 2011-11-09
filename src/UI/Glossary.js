@@ -36,11 +36,11 @@ var VisualGlossary = Class.extend(
         
         // On select
         this.btns.click(function (e) {
-            self.btns.removeClass("selected").find('.ui-icon').removeClass('.ui-icon-bullet');
-            $(this).addClass("selected").find('.ui-icon').addClass('.ui-icon-bullet');
-            
-            var category = this.id.split("-").pop();
-            self._showCategory(category);
+            self.btns.removeClass("selected");
+            self.btns.find('.ui-icon').removeClass('ui-icon-bullet').addClass('ui-icon-radio-on');
+            $(this).addClass("selected").find('.ui-icon').removeClass('ui-icon-radio-on').addClass('ui-icon-bullet');
+
+            self._showCategory(this.id.split("-").pop());
         });
 
         // Hover effect
