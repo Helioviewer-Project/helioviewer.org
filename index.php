@@ -584,6 +584,15 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
             
             if(isset($_GET['movieId']))
                 $urlSettings['movieId'] = $_GET['movieId'];
+            
+            // Compute acceptible zoom values
+            $zoomLevels = array();
+            
+            for($imageScale = $config["min_image_scale"]; $imageScale <= $config["max_image_scale"]; $imageScale = $imageScale * 2) {
+                $zoomLevels[] = round($imageScale, 8);
+            }
+            
+            printf("\tzoomLevels = %s;\n", json_encode($zoomLevels));
 
             // Convert to JSON
             printf("\turlSettings = %s;\n", json_encode($urlSettings));
@@ -592,7 +601,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
             printf("\tdebug = %s;\n", json_encode($debug));
         ?>
         serverSettings = new Config(settingsJSON).toArray();
-        helioviewer    = new Helioviewer(urlSettings, serverSettings, debug);
+        helioviewer    = new Helioviewer(urlSettings, serverSettings, zoomLevels, debug);
     });
 </script>
 
