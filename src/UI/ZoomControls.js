@@ -15,9 +15,10 @@ var ZoomControls = Class.extend(
      * 
      * Creates a new ZoomControl
      */
-    init: function (id, imageScale, minImageScale, maxImageScale) {       
+    init: function (id, imageScale, increments, minImageScale, maxImageScale) {       
         this.id            = id;
         this.imageScale    = imageScale;
+        this.increments    = increments;
         this.minImageScale = minImageScale;
         this.maxImageScale = maxImageScale;
         
@@ -52,13 +53,7 @@ var ZoomControls = Class.extend(
      * @description Initializes zoom level slider
      */
     _initSlider: function () {
-        var i, description, self = this;
-        
-        // Zoom-level steps
-        this. increments = [];
-        for (i = this.minImageScale; i <= this.maxImageScale; i = i * 2) {
-            this.increments.push(parseFloat(i.toPrecision(8)));
-        }
+        var description, self = this;
 
         // Reverse orientation so that moving slider up zooms in
         this.increments.reverse();

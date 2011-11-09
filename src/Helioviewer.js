@@ -21,15 +21,16 @@ var Helioviewer = Class.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (urlSettings, serverSettings, debug) {
+    init: function (urlSettings, serverSettings, zoomLevels, debug) {
+        var urlDate, imageScale;
+        
         this._checkBrowser(); // Determines browser support
         
         this.serverSettings = serverSettings;
         this.api            = "api/index.php";
 
         // User settings are globally accessible
-        Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, 
-            serverSettings);
+        Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
             
         // Debugging helpers
         if (debug) {
@@ -39,8 +40,11 @@ var Helioviewer = Class.extend(
         this._initLoadingIndicator();
         this._initTooltips();
         
+        // Determine image scale to use
+        imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);
+        
         // Use URL date if specified
-        var urlDate = urlSettings.date ? Date.parseUTCDate(urlSettings.date) : false;
+        urlDate = urlSettings.date ? Date.parseUTCDate(urlSettings.date) : false;
 
         this.timeControls = new TimeControls('#date', '#time', 
             '#timestep-select', '#timeBackBtn', '#timeForwardBtn', urlDate);
@@ -52,7 +56,7 @@ var Helioviewer = Class.extend(
         this.keyboard       = new KeyboardManager();
         
         // User Interface components
-        this.zoomControls   = new ZoomControls('#zoomControls', Helioviewer.userSettings.get('state.imageScale'),
+        this.zoomControls   = new ZoomControls('#zoomControls', imageScale, zoomLevels,
                                                this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
@@ -100,7 +104,14 @@ var Helioviewer = Class.extend(
             
             // VP8/WebM
             if (v.canPlayType('video/webm; codecs="vp8"')) {
-                $.support.vp8 = true;
+                // 2011/11/07: Disabling vp8 support until encoding time
+                // can be greatly reduced. WebM/VP8 movies will still be
+                // generated on the back-end when resources are available,
+                // but Flash/H.264 will be used in the mean-time to decrease
+                // response time and queue waits.
+                
+                //$.support.vp8 = true;
+                $.support.vp8 = false;
             }
             
             // Ogg Theora
@@ -110,7 +121,12 @@ var Helioviewer = Class.extend(
             
             // H.264
             if (v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
-                $.support.h264 = true;
+                // 2011/11/07: Also disabling H.264 in-browser video for now:
+                // some versions of Chrome report support when it does not
+                // actually work. 
+                
+                //$.support.h264 = true;
+                $.support.h264 = false;
             }
             
         }
@@ -173,6 +189,33 @@ var Helioviewer = Class.extend(
             centerY        : Helioviewer.userSettings.get('state.centerY'),
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
+    },
+    
+    /**
+     * Chooses an acceptible image scale to use based on the default or
+     * requested imageScale the list of allowed increments 
+     */
+    _chooseInitialImageScale: function (imageScale, increments) {
+        // For exact match, use image scale as-is
+        if ($.inArray(imageScale, increments) !== -1) {
+            return imageScale;
+        }
+        // Otherwise choose closest acceptible image scale
+        var diff, closestScale, bestMatch = Infinity;
+        
+        $.each(increments, function (i, scale) {
+            diff = Math.abs(scale - imageScale);
+
+            if (diff < bestMatch) {
+                bestMatch = diff;
+                closestScale = scale;
+            }
+        });
+        
+        // Store closest matched image scale
+        Helioviewer.userSettings.set('state.imageScale', closestScale);
+
+        return closestScale;
     },
     
     /**

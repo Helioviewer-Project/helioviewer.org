@@ -101,7 +101,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         
         // If cadence is manually specified check to make sure it is reasonable
         if ($this->_cadence) {
-            $numFrames = floor(($end - $start) / $this->_cadence);
+            $numFrames = ceil(($end - $start) / $this->_cadence);
             if ($numFrames > HV_MAX_JPX_FRAMES) {
                 $oldCadence = $this->_cadence;
                 $this->_cadence = floor(($end - $start) / HV_MAX_JPX_FRAMES);
@@ -168,7 +168,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         $dates  = array();
         
         // Timer
-        $time = toUnixTimestamp($this->_startTime);
+        $time = toUnixTimestamp($this->_endTime);
        
         // Get nearest JP2 images to each time-step
         for ($i = 0; $i < $numFrames; $i++) {
@@ -179,11 +179,20 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             $jp2 = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
 
             // Ignore redundant images
-            if (end($images) != $jp2) {
-                array_push($images, $jp2);
-                array_push($dates, toUnixTimestamp($img['date']));
+            if ($images[0] != $jp2) {
+                array_unshift($images, $jp2);
+                array_unshift($dates, toUnixTimestamp($img['date']));
             }
-            $time += $this->_cadence;
+            $time -= $this->_cadence;
+        }
+        
+        // Add entry for start time if it isn't already included
+        $img = $imgIndex->getImageFromDatabase($this->_startTime, $this->_sourceId);
+        $jp2 = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
+        
+        if ($images[0] != $jp2) {
+            array_unshift($images, $jp2);
+            array_unshift($dates, toUnixTimestamp($img['date']));
         }
         
         return array($images, $dates);
