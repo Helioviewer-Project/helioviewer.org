@@ -100,6 +100,9 @@ var MovieManagerUI = MediaManagerUI.extend(
                     "again.";
                 $(document).trigger("message-console-info", msg);
                 return;
+            } else if (response.warning) {
+                $(document).trigger("message-console-info", response.warning);
+                return;
             }
 
             movie = self._manager.queue(
