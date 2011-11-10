@@ -22,6 +22,11 @@ $(function() {
 
     // Instrument click-handler
     $(".instrument").click(function (e) {
+        // Don't activate for source link clicks
+        if (e.target.nodeName === "A") {
+            return;
+        }
+        
         var inst = $($(this).find("td")[0]).text();
         $(".datasource." + inst).toggle();
 
@@ -39,7 +44,14 @@ $(function() {
             }
             localStorage.dataMonitorOpenGroups = JSON.stringify(instruments);
         }
+    }).find("td:first").each(function (i, item) {
+        var inst = $(this);
+        
+        //if ($.inArray(inst.text(), ["AIA", "HMI"]) !== -1) {
+        //    inst.text(inst.text() + " (LMSAL/SAO)");
+        //}
     });
+
     
     // Info popup
     $("#info").hover(function (e) {
