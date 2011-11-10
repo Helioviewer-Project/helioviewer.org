@@ -40,7 +40,7 @@
     <tr id='status-headers'>
         <th width='100'>Image</th>
         <th width='100'>Latest Image</th>
-        <th width='100'>Source</th>
+        <th width='120'>Source</th>
         <th width='50' align='center'>Status <span id='info'>(?)</span></th>
     </tr>    
     <?php
