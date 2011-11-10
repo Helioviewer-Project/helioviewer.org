@@ -12,3 +12,5 @@
 .datasource {display: none; color: gray;}
 .status-icon {width: 18px; height: 18px; vertical-align:text-bottom;}
 .status-text {margin-right: 5px;}
+.provider-link {text-decoration: none; color: #555;}
+.provider-link:hover {text-decoration: underline; color: #CC3366;}

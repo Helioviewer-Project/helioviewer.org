@@ -289,6 +289,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Initialize video link button
         $('#video-link-' + movie.id).click(function () {
+            // Hide flash movies to prevent blocking
+            if (!($.support.h264 || $.support.vp8)) {
+                $(".movie-player-dialog").dialog("close");
+            }
             helioviewer.displayMovieURL(movie.id);
             return false;
         });
