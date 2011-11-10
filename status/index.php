@@ -39,7 +39,7 @@
     <table id='statuses'>
     <tr id='status-headers'>
         <th width='100'>Image</th>
-        <th width='100'>Latest Image</th>
+        <th width='120'>Latest Image</th>
         <th width='120'>Source</th>
         <th width='50' align='center'>Status <span id='info'>(?)</span></th>
     </tr>    
@@ -184,7 +184,7 @@
             );
 
             // Only include datasources with data
-            if ($oldest['datetime']) {
+            if ($oldest['datetime'] and $name !=="MDI") {
                 if (isset($attributions[$name])) {
                     $attribution = $attributions[$name];
                 } else {
