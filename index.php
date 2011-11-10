@@ -360,6 +360,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'>
     Movie Duration: 
     <select id='settings-movie-length' name='movie-length'>
+        <option value='3600'>1 hour</option>
         <option value='10800'>3 hours</option>
         <option value='21600'>6 hours</option>
         <option value='43200'>12 hours</option>
