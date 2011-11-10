@@ -548,7 +548,7 @@ var Helioviewer = Class.extend(
             "imageScale"  : this.viewport.getImageScale(),
             "centerX"     : Helioviewer.userSettings.get("state.centerX"),
             "centerY"     : Helioviewer.userSettings.get("state.centerY"), 
-            "imageLayers" : this.viewport.serialize()
+            "imageLayers" : encodeURI(this.viewport.serialize())
         };
         return this.serverSettings.rootURL + "/?" + 
                decodeURIComponent($.param(params));
