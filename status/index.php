@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <title>Helioviewer.org - Data Monitor</title>
     <link rel="stylesheet" href="status.css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="http://code.jquery.com/jquery.min.js" type="text/javascript"></script>
     <script src="status.js" type="text/javascript"></script>
 </head>
 <body>
@@ -38,8 +38,9 @@
 
     <table id='statuses'>
     <tr id='status-headers'>
-        <th width='100'>Datasource</th>
+        <th width='100'>Image</th>
         <th width='100'>Latest Image</th>
+        <th width='100'>Source</th>
         <th width='50' align='center'>Status <span id='info'>(?)</span></th>
     </tr>    
     <?php
@@ -119,7 +120,7 @@
         // Get a list of the datasources grouped by instrument
         $instruments = $imgIndex->getDataSourcesByInstrument();
 
-        $tableRow = "<tr class='%s'><td>%s</td><td>%s</td><td align='center'>%s</td></tr>";
+        $tableRow = "<tr class='%s'><td>%s</td><td>%s</td><td>%s</td><td align='center'>%s</td></tr>";
         
         // Create table of datasource statuses
         foreach($instruments as $name => $datasources) {
@@ -153,7 +154,7 @@
                 $classes = "datasource $name";
 
                 // create HTML for subtable row
-                $subTableHTML .= sprintf($tableRow, $classes, "&nbsp;&nbsp;&nbsp;&nbsp;" . $ds['name'], $datetime->format('M j H:i:s'), $icon);
+                $subTableHTML .= sprintf($tableRow, $classes, "&nbsp;&nbsp;&nbsp;&nbsp;" . $ds['name'], $datetime->format('M j H:i:s'), "", $icon);
                 
                 // If the elapsed time is greater than previous max store it
                 if ($datetime < $oldest['datetime']) {
@@ -165,10 +166,33 @@
                 }
             }
 
-            // Ignore datasources with no data
+            // Data providers
+            $providers = array(
+                "lmsal"    => "<a class='provider-link' href='http://www.lmsal.com/' target='_blank'>LMSAL</a>",
+                "stanford" => "<a class='provider-link' href='http://jsoc.stanford.edu/' target='_blank'>Stanford</a>",
+                "sdac"     => "<a class='provider-link' href='http://umbra.nascom.nasa.gov/' target='_blank'>SDAC</a>"
+            );
+
+            // Attribution
+            $attributions = array(
+                "AIA"    => $providers['lmsal'] . " / " . $providers['stanford'],
+                "HMI"    => $providers['lmsal'] . " / " . $providers['stanford'],
+                "EIT"    => $providers['sdac'],
+                "MDI"    => $providers['sdac'],
+                "LASCO"  => $providers['sdac'],
+                "SECCHI" => $providers['sdac']
+            );
+
+            // Only include datasources with data
             if ($oldest['datetime']) {
+                if (isset($attributions[$name])) {
+                    $attribution = $attributions[$name];
+                } else {
+                    $attribution = "";
+                }
+                
                 $datetime = $oldest['datetime'];
-                printf($tableRow, "instrument", $name, $datetime->format('M j H:i:s'), $oldest['icon']);
+                printf($tableRow, "instrument", $name, $datetime->format('M j H:i:s'), $attribution, $oldest['icon']);
                 print($subTableHTML);
             }
         }
