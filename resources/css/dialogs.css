@@ -59,10 +59,8 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 
 .video-links img {
     vertical-align: bottom;
-    width: 24px;
-    height: 24px;
-    margin-left:  15px;
-    margin-right: 3px;
+    width: 32px;
+    height: 32px;
 }
 
 .helioviewer-modal-dialog.ui-dialog {

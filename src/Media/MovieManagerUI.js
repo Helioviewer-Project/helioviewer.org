@@ -296,6 +296,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             helioviewer.displayMovieURL(movie.id);
             return false;
         });
+        
+        // Initialize AddThis sharing
+        addthis.toolbox('#add-this-' + movie.id);
     },
        
     /**
@@ -307,7 +310,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Suggested movie title
         title = movie.name + " (" + movie.startDate + " - " + 
                 movie.endDate + " UTC)";
-        
+
         // Suggested YouTube tags  
         tags = [];
 
@@ -538,25 +541,30 @@ var MovieManagerUI = MediaManagerUI.extend(
      * method
      */
     getVideoPlayerHTML: function (id, width, height, url) {
-        var downloadURL, downloadLink, youtubeBtn, linkBtn;
+        var downloadURL, downloadLink, youtubeBtn, addthisBtn, linkBtn;
         
         downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
 
-        downloadLink = "<a target='_parent' href='" + downloadURL + "'>" + 
+        downloadLink = "<a target='_parent' href='" + downloadURL + "' title='Download high-quality video'>" + 
             "<img class='video-download-icon' " + 
-            "src='resources/images/34aL volume 3.2 SE/001_52.png' " +
-            "alt='Download high-quality video' />Download</a>";
+            "src='resources/images/Tango/1321375855_go-bottom.png' /></a>";
         
         youtubeBtn = "<a id='youtube-upload-" + id + "'  href='#' " + 
-            "target='_blank'><img class='youtube-icon' " + 
-            "src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
-            "alt='Upload video to YouTube' />Upload</a>";
+            "target='_blank'><img class='youtube-icon' title='Upload video to YouTube' " + 
+            "src='resources/images/Social.me/48 by 48 pixels/youtube.png' /></a>";
             
-        linkBtn = "<a id='video-link-" + id + "'  href='#' " + 
+        linkBtn = "<a id='video-link-" + id + "' href='#' title='Get a link to the movie' " + 
             "target='_blank'><img class='video-link-icon' " + 
-            "src='resources/images/berlin/32x32/link.png' " +
-            "alt='Get a link to the movie' />Link</a>";
+            "src='resources/images/berlin/32x32/link.png' /></a>";
+            
+        addthisBtn = "<div style='display:inline; float: right;' id='add-this-" + id + "' class='addthis_default_style addthis_32x32_style'>" +
+            "<a class='addthis_button_facebook addthis_32x32_style'></a>" +
+            "<a class='addthis_button_twitter addthis_32x32_style'></a>" +
+            "<a class='addthis_button_email addthis_32x32_style'></a>" +
+            "<a class='addthis_button_google addthis_32x32_style'></a>" +
+            "<a class='addthis_button_compact addthis_32x32_style'></a>" +
+            "</div>";
         
         // HTML5 Video (H.264 or WebM)
         if ($.support.vp8 || $.support.h264) {
@@ -568,7 +576,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    "' controls preload autoplay" + 
                    " style='width:100%; height: 90%;'></video>" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + "</span>";
+                   linkBtn + addthisBtn + "</span>";
         }
 
         // Fallback (flash player)
@@ -580,9 +588,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             return "<div id='movie-player-" + id + "'>" + 
                    "<iframe src=" + url + " width='" + width +  
                    "' height='" + height + "' marginheight=0 marginwidth=0 " +
-                   "scrolling=no frameborder=0 /><br />" + 
+                   "scrolling=no frameborder=0 style='margin-bottom: 2px;' /><br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + "</span></div>";
+                   linkBtn + addthisBtn + "</span></div>";
         }
     },
     
