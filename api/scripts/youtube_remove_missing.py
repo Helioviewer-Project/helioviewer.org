@@ -43,19 +43,21 @@ def main():
         
     # Once confirmed, remove all videos found to be missing
     sql = "DELETE FROM youtube WHERE youtubeId IN (%s)" % ','.join(['?'] * len(to_remove))
-    print sql
-    #cursor.execute(sql, to_remove)
+    cursor.execute(sql, to_remove)
         
     print("===========")
     print(" Summary")
     print("===========")
+    print("Number of movies in range: %d" % len(to_remove))
     print("Number of movies removed: %d" % len(to_remove))
     
 def get_youtubeids(cursor, start_date):
     """Get a list of Youtube ids starting from the specified date"""
     sql = "SELECT youtubeId FROM youtube WHERE timestamp >= '%s'" % start_date
     cursor.execute(sql)
-    return cursor.fetchall()
+    result = cursor.fetchall()
+    
+    return [row[0] for row in result]
 
 def find_missing_videos(cursor, ids):
     """Checks the list of YouTube ids for missing videos"""
