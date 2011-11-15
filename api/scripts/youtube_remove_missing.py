@@ -27,6 +27,11 @@ def main():
        
     # Find videos that no longer exist on YouTube
     to_remove = find_missing_videos(cursor, ids)
+    
+    # Stop if no matches found
+    if len(to_remove) is 0:
+        print("No missing videos found. Exiting script.")
+        sys.exit()
             
     # Confirm with user before removing
     print("Videos to be removed: ")
@@ -42,14 +47,14 @@ def main():
         sys.exit("Exiting without making any changes.")
         
     # Once confirmed, remove all videos found to be missing
-    sql = "DELETE FROM youtube WHERE youtubeId IN (%s)" % ','.join(['?'] * len(to_remove))
+    # Default param style (MySQLdb.paramstyle) is 'format' so %s is used 
+    sql = "DELETE FROM youtube WHERE youtubeId IN (%s)" % ','.join(['%s'] * len(to_remove))
     cursor.execute(sql, to_remove)
         
     print("===========")
     print(" Summary")
     print("===========")
-    print("Number of movies in range: %d" % len(to_remove))
-    print("Number of movies removed: %d" % len(to_remove))
+    print("Number of movies removed: %d / %d" % (len(to_remove), len(ids)))
     
 def get_youtubeids(cursor, start_date):
     """Get a list of Youtube ids starting from the specified date"""
