@@ -85,6 +85,21 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <?php
             }
 ?>
+
+    <!-- AddThis -->
+<?php
+        # Include analytics id if one is specified
+        $addthisId = "";
+        if ($config["addthis_analytics_id"]) {
+            $addthisId = "&pubid=${config['addthis_analytics_id']}";
+?>
+    <script type="text/javascript">
+        var addthis_config = {"data_track_clickback": true};
+    </script>
+    <?php
+        }
+?>
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#async=1<?php echo $addthisId;?>"></script>
 </head>
 <body>
 

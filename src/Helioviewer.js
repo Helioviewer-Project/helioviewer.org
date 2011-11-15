@@ -75,8 +75,10 @@ var Helioviewer = Class.extend(
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
-
         
+        // Initialize AddThis
+        addthis.init();
+
         // Play movie if id is specified
         if (urlSettings.movieId) {
             this._loadMovie(urlSettings.movieId);
