@@ -22,13 +22,17 @@ def main():
     
     # Get list of Youtube ids to check
     ids = get_youtubeids(cursor, start_date)
+    
+    print("Scanning %d matched video entries..." % len(ids));
        
     # Find videos that no longer exist on YouTube
     to_remove = find_missing_videos(cursor, ids)
             
     # Confirm with user before removing
     print("Videos to be removed: ")
-    print(to_remove)
+    for x in to_remove:
+        print x
+    print("Total: %d" % len(to_remove))
     
     choice = raw_input("Are you sure you want to remove these videos from the database? ")
     while choice.lower() not in ["yes", "y", "no", "n"]:
