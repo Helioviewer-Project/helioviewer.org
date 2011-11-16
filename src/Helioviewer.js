@@ -29,8 +29,9 @@ var Helioviewer = Class.extend(
         this.serverSettings = serverSettings;
         this.api            = "api/index.php";
 
-        // User settings are globally accessible
+        // Instantiage user settings and metadata manager in globally-accessible namespace
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
+        Helioviewer.metadataManager = new MetaDataManager();
             
         // Debugging helpers
         if (debug) {
@@ -75,6 +76,9 @@ var Helioviewer = Class.extend(
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
+        
+        // Enable manipulation of page metatags globally
+
         
         // Initialize AddThis
         addthis.init();

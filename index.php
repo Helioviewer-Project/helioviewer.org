@@ -20,7 +20,10 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
     <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
-    <meta name="keywords" content="Helioviewer, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
+    <meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
+    <meta property="og:title" content="Helioviewer.org" />
+    <meta property="og:description" content="Solar and heliospheric image visualization tool." />
+    <meta property="og:image" content="http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
     
     <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
     
@@ -551,7 +554,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                     "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
                     "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js", "Media/MediaManagerUI.js",
                     "Media/MediaManager.js", "Media/MovieManager.js", "Media/MovieManagerUI.js",
-                    "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
+                    "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js", "Utility/MetaDataManager.js",  
                     "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
                     "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                     "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
