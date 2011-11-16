@@ -9,17 +9,10 @@
 *   http://en.wikipedia.org/wiki/MIT_License
 *   http://en.wikipedia.org/wiki/GNU_General_Public_License
 *
-* Date: Sun May 15 15:19:33 2011 +0100
+* Date: Sun Nov 13 19:22:15 2011 +0000
 */
 
-/* Fluid class for determining actual width in IE */
-.ui-tooltip-fluid{
-	display: block;
-	visibility: hidden;
-	position: static !important;
-	float: left !important;
-}
-
+/* Core qTip styles */
 .ui-tooltip, .qtip{
 	position: absolute;
 	left: -28000px;
@@ -31,7 +24,17 @@
 	
 	font-size: 10.5px;
 	line-height: 12px;
+
+	z-index: 15000;
 }
+
+	/* Fluid class for determining actual width in IE */
+	.ui-tooltip-fluid{
+		display: block;
+		visibility: hidden;
+		position: static !important;
+		float: left !important;
+	}
 
 	.ui-tooltip-content{
 		position: relative;
@@ -74,9 +77,7 @@
 			border-style: solid;
 		}
 		
-		* html .ui-tooltip-titlebar .ui-state-default{
-			top: 16px;
-		}
+		* html .ui-tooltip-titlebar .ui-state-default{ top: 16px; } /* IE fix */
 
 		.ui-tooltip-titlebar .ui-icon,
 		.ui-tooltip-icon .ui-icon{
@@ -115,27 +116,71 @@
 
 
 /*! Default tooltip style */
-.ui-tooltip-titlebar,
-.ui-tooltip-content{
+.ui-tooltip-default .ui-tooltip-titlebar,
+.ui-tooltip-default .ui-tooltip-content{
 	border-color: #F1D031;
 	background-color: #FFFFA3;
 	color: #555;
 }
 
-	.ui-tooltip-titlebar{
+	.ui-tooltip-default .ui-tooltip-titlebar{
 		background-color: #FFEF93;
 	}
 
-	.ui-tooltip-titlebar .ui-tooltip-icon{
+	.ui-tooltip-default .ui-tooltip-icon{
 		border-color: #CCC;
 		background: #F1F1F1;
 		color: #777;
 	}
 	
-	.ui-tooltip-titlebar .ui-state-hover{
+	.ui-tooltip-default .ui-tooltip-titlebar .ui-state-hover{
 		border-color: #AAA;
 		color: #111;
 	}
+
+/* Modal plugin */
+#qtip-overlay{
+	position: fixed;
+	left: -10000em;
+	top: -10000em;
+}
+
+	/* Applied to modals with show.modal.blur set to true */
+	#qtip-overlay.blurs{ cursor: pointer; }
+
+	/* Change opacity of overlay here */
+	#qtip-overlay div{
+		position: absolute;
+		left: 0; top: 0;
+		width: 100%; height: 100%;
+
+		background-color: black;
+
+		opacity: 0.7;
+		filter:alpha(opacity=70);
+		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+	}
+
+/* Tips plugin */
+.ui-tooltip .ui-tooltip-tip{
+	margin: 0 auto;
+	overflow: hidden;
+	z-index: 10;
+}
+
+	.ui-tooltip .ui-tooltip-tip,
+	.ui-tooltip .ui-tooltip-tip *{
+		position: absolute;
+		
+		line-height: 0.1px !important;
+		font-size: 0.1px !important;
+		color: #123456;
+
+		background: transparent;
+		border: 0px dashed transparent;
+	}
+	
+	.ui-tooltip .ui-tooltip-tip canvas{ top: 0; left: 0; }
 
 
 /*! Light tooltip style */
@@ -263,38 +308,7 @@
 
 	.ui-tooltip-blue .ui-state-default .ui-tooltip-icon{
 		background-position: -2px 0;
-	}.ui-tooltip .ui-tooltip-tip{
-	margin: 0 auto;
-	overflow: hidden;
-
-	background: transparent !important;
-	border: 0px dashed transparent !important;
-	z-index: 10;
-}
-
-	.ui-tooltip .ui-tooltip-tip,
-	.ui-tooltip .ui-tooltip-tip *{
-		position: absolute;
-		
-		line-height: 0.1px !important;
-		font-size: 0.1px !important;
-		color: #123456;
-
-		background: transparent;
-		border: 0px dashed transparent;
 	}
-
-	.ui-tooltip .ui-tooltip-tip canvas{ position: static; }#qtip-overlay{
-	position: absolute;
-	left: -10000em;
-	top: -10000em;
-
-	background-color: black;
-
-	opacity: 0.7;
-	filter:alpha(opacity=70);
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
-}
 
 /*! Add shadows to your tooltips in: FF3+, Chrome 2+, Opera 10.6+, IE6+, Safari 2+ */
 .ui-tooltip-shadow{
@@ -351,6 +365,9 @@
 
 	.ui-tooltip-youtube .ui-tooltip-titlebar,
 	.ui-tooltip-youtube .ui-tooltip-content{
+		_margin-bottom: 0; /* IE6 */
+		.margin-bottom: 0; /* IE7 */
+
 		background: transparent;
 		background: rgba(0, 0, 0, 0.85);
 		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#D9000000,endColorstr=#D9000000);
@@ -450,6 +467,9 @@
 
 	.ui-tooltip-tipsy .ui-tooltip-titlebar,
 	.ui-tooltip-tipsy .ui-tooltip-content{
+		_margin-bottom: 0; /* IE6 */
+		.margin-bottom: 0; /* IE7 */
+
 		background: transparent;
 		background: rgba(0, 0, 0, .87);
 		filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#D9000000,endColorstr=#D9000000);
@@ -491,6 +511,8 @@
 	.ui-tooltip-tipped .ui-tooltip-titlebar,
 	.ui-tooltip-tipped .ui-tooltip-content{
 		border: 3px solid #959FA9;
+
+		filter: none; -ms-filter: none;
 	}
 
 	.ui-tooltip-tipped .ui-tooltip-titlebar{
@@ -528,3 +550,10 @@
 			background-color: #FBFBFB;
 			color: #555;
 		}
+
+/* IE9 fix - removes all filters */
+.ui-tooltip:not(.ie9haxors) div.ui-tooltip-content,
+.ui-tooltip:not(.ie9haxors) div.ui-tooltip-titlebar{
+	filter: none;
+	-ms-filter: none;
+}
