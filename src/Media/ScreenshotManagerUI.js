@@ -27,6 +27,34 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
     },
     
     /**
+     * Returns a URL to generate a screenshot of the current viewport
+     * 
+     * Used to generate thumbnails for the current page
+     */
+    getScreenshotURL: function () {
+        var roi, imageScale, layers, params; 
+        
+        imageScale = helioviewer.getImageScale();
+        layers     = helioviewer.getLayers();
+        roi        = helioviewer.getViewportRegionOfInterest();
+        
+        // Make sure selection region and number of layers are acceptible
+        if (!this._validateRequest(roi, layers)) {
+            return;
+        }
+
+        params = $.extend({
+            action        : "takeScreenshot",
+            imageScale    : imageScale,
+            layers        : layers,
+            date          : helioviewer.getDate().toISOString(),
+            display       : true
+        }, this._toArcsecCoords(roi, imageScale));
+        
+        return helioviewer.serverSettings.rootURL + "/api/?" + $.param(params);        
+    },
+    
+    /**
      * Displays a jGrowl notification to the user informing them that their 
      * download has completed
      */

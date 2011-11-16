@@ -245,7 +245,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     _createMoviePlayerDialog: function (movie) {
-        var dimensions, title, uploadURL, flvURL, html, dialog, self = this;
+        var dimensions, title, url, uploadURL, flvURL, html, dialog, self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
@@ -288,19 +288,21 @@ var MovieManagerUI = MediaManagerUI.extend(
             return false;
         });
         
+        // Helioviewer.org and Flash video URLs
+        url    = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
+        flvURL = helioviewer.serverSettings.rootURL + "/api/index.php?" + 
+                 "action=playMovie&format=flv&id=" + movie.id;
+        
         // Initialize video link button
         $('#video-link-' + movie.id).click(function () {
             // Hide flash movies to prevent blocking
             if (!($.support.h264 || $.support.vp8)) {
                 $(".movie-player-dialog").dialog("close");
             }
-            helioviewer.displayMovieURL(movie.id);
+            helioviewer.displayMovieURL(url, "Helioviewer.org", title, movie.thumbnail);
+
             return false;
         });
-        
-        // Flash video URL
-        flvURL = helioviewer.serverSettings.rootURL + 
-                 "/api/index.php?action=playMovie&format=flv&id=" + movie.id;
         
         // Update metadata
         //Helioviewer.metadataManager.setVideoTags();
@@ -309,7 +311,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Initialize AddThis sharing
         addthis.toolbox('#add-this-' + movie.id, {}, {
-            url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
+            url: url,
             title: "Helioviewer.org: " + title,
             description: "Movie of the Sun created on Helioviewer.org.",
             swfurl: flvURL,

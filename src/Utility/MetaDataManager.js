@@ -38,8 +38,8 @@ var MetaDataManager = Class.extend(
      */
     setMetaTags: function (title, desc, image) {
         this._$title.attr('content', title);
-        this._$title.attr('content', desc);
-        this._$title.attr('content', image);
+        this._$desc.attr('content', desc);
+        this._$image.attr('content', image);
     },
     
     /**
@@ -54,8 +54,8 @@ var MetaDataManager = Class.extend(
      */
     reset: function () {
         this._$title.attr('content', "Helioviewer.org");
-        this._$title.attr('content', "Solar and heliospheric image visualization tool.");
-        this._$title.attr('content', "http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png");
+        this._$desc.attr ('content', "Solar and heliospheric image visualization tool.");
+        this._$image.attr('content', "http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png");
     }
     
     
