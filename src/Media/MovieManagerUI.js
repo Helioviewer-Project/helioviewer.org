@@ -548,7 +548,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * method
      */
     getVideoPlayerHTML: function (id, width, height, url) {
-        var downloadURL, downloadLink, youtubeBtn, addthisBtn, linkBtn;
+        var downloadURL, downloadLink, youtubeBtn, addthisBtn, linkBtn, linkURL;
         
         downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
@@ -561,7 +561,9 @@ var MovieManagerUI = MediaManagerUI.extend(
             "target='_blank'><img class='youtube-icon' title='Upload video to YouTube' " + 
             "src='resources/images/Social.me/48 by 48 pixels/youtube.png' /></a>";
             
-        linkBtn = "<a id='video-link-" + id + "' href='#' title='Get a link to the movie' " + 
+        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
+            
+        linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + "' title='Get a link to the movie' " + 
             "target='_blank'><img class='video-link-icon' style='margin-left: 3px' " + 
             "src='resources/images/berlin/32x32/link.png' /></a>";
             
