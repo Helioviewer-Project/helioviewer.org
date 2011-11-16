@@ -462,7 +462,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
-<script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
+<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
 
 <!-- jGrowl -->
 <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
@@ -492,7 +492,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
-<script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.js" type="text/javascript"></script>
+<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
 
 <!-- jGrowl -->
 <script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
