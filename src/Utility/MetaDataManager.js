@@ -23,10 +23,23 @@ var MetaDataManager = Class.extend(
      * @constructs
      * Creates a new MetaDataManager instance
      */    
-    init: function () {
+    init: function (urlSettings) {
+        var self = this;
+
         this._$title = $("meta[property='og:title']");
         this._$desc  = $("meta[property='og:description']");
         this._$image = $("meta[property='og:image']");
+        
+        // Adjust defaults as needed
+        if (urlSettings.movieId) {
+            self.setMetaTags()
+        } else if (urlSettings.imageLayers) {
+            self.setMetaTags(
+                "Helioviewer.org",
+                self.viewport.getMiddleObservationTime().toUTCString(),
+                self._screenshotManagerUI.getScreenshotURL()
+            );
+        }
     },
     
     /**
