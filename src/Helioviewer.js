@@ -160,10 +160,11 @@ var Helioviewer = Class.extend(
             }
         });
         
-        $("*[title]:not(#fullscreen-btn,.text-btn)").qtip();
+        // Bottom-right tooltips
+        $("*[title]:not(.qtip-left)").qtip();
         
-        // Fullscreen
-        $("#fullscreen-btn, .text-btn").qtip({
+        // Bottom-left tooltips
+        $(".qtip-left").qtip({
             position: {
                 my: "top right",
                 at: "bottom middle"
