@@ -298,7 +298,14 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // Initialize AddThis sharing
-        addthis.toolbox('#add-this-' + movie.id);
+        addthis.toolbox('#add-this-' + movie.id, {}, {
+            url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
+            title: "Helioviewer.org: " + title,
+            description: "Movie of the Sun created on Helioviewer.org.",
+            swfurl: "http://helioviewer.org/api/index.php?action=downloadMovie&format=flv&id=" + movie.id,
+            width: movie.width,
+            height: movie.height
+        });
     },
        
     /**
@@ -555,7 +562,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "src='resources/images/Social.me/48 by 48 pixels/youtube.png' /></a>";
             
         linkBtn = "<a id='video-link-" + id + "' href='#' title='Get a link to the movie' " + 
-            "target='_blank'><img class='video-link-icon' " + 
+            "target='_blank'><img class='video-link-icon' style='margin-left: 3px' " + 
             "src='resources/images/berlin/32x32/link.png' /></a>";
             
         addthisBtn = "<div style='display:inline; float: right;' id='add-this-" + id + "' class='addthis_default_style addthis_32x32_style'>" +

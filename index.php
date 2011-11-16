@@ -87,19 +87,14 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 ?>
 
     <!-- AddThis -->
-<?php
-        # Include analytics id if one is specified
-        $addthisId = "";
-        if ($config["addthis_analytics_id"]) {
-            $addthisId = "&pubid=${config['addthis_analytics_id']}";
-?>
     <script type="text/javascript">
-        var addthis_config = {"data_track_clickback": true};
+        var addthis_config = {
+            data_track_clickback: true,
+            pub_id: "<?php echo $config['addthis_analytics_id'];?>",
+            data_ga_property: "<?php echo $config['google_analytics_id'];?>"
+        };
     </script>
-    <?php
-        }
-?>
-<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#async=1<?php echo $addthisId;?>"></script>
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#async=1"></script>
 </head>
 <body>
 
@@ -617,7 +612,14 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
             printf("\tdebug = %s;\n", json_encode($debug));
         ?>
         serverSettings = new Config(settingsJSON).toArray();
+        
+        // Initialize Helioviewer.org
         helioviewer    = new Helioviewer(urlSettings, serverSettings, zoomLevels, debug);
+        
+        // Play movie if id is specified
+        if (urlSettings.movieId) {
+            helioviewer.loadMovie(urlSettings.movieId);
+        }
     });
 </script>
 
