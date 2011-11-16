@@ -29,9 +29,7 @@ var Helioviewer = Class.extend(
         this.serverSettings = serverSettings;
         this.api            = "api/index.php";
 
-        // Instantiage user settings and metadata manager in globally-accessible namespace
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
-        Helioviewer.metadataManager = new MetaDataManager();
             
         // Debugging helpers
         if (debug) {
@@ -70,6 +68,8 @@ var Helioviewer = Class.extend(
         
         this._screenshotManagerUI = new ScreenshotManagerUI();
         this._movieManagerUI      = new MovieManagerUI();
+        
+        Helioviewer.metadataManager = new MetaDataManager(urlSettings);
 
         this._glossary = new VisualGlossary(this._setupDialog);
 
@@ -331,11 +331,7 @@ var Helioviewer = Class.extend(
             msg  = "Use the following link to refer to current page:";
         
         $('#link-button').click(function (e) {
-            var title = "Helioviewer.org",
-                desc  = self.viewport.getMiddleObservationTime().toUTCString(),
-                image = self._screenshotManagerUI.getScreenshotURL();
-
-            self.displayURL(self.toURL(), msg, title, desc, image);
+            self.displayURL(self.toURL(), msg);
         });
         //$('#email-button').click($.proxy(this.displayMailForm, this));
         
@@ -356,10 +352,7 @@ var Helioviewer = Class.extend(
      * displays a dialog containing a link to the current page
      * @param {Object} url
      */
-    displayURL: function (url, msg, title, desc, image) {
-        // Update metadata
-        Helioviewer.metadataManager.setMetaTags(title, desc, image);
-        
+    displayURL: function (url, msg) {
         // Display URL
         $("#helioviewer-url-box-msg").text(msg);
         $("#url-dialog").dialog({
@@ -372,9 +365,6 @@ var Helioviewer = Class.extend(
             open      : function (e) {
                 $('.ui-widget-overlay').hide().fadeIn();
                 $("#helioviewer-url-input-box").attr('value', url).select();
-            },
-            close     : function (e) {
-                Helioviewer.metadataManager.reset();
             }
         });
     },
@@ -384,10 +374,11 @@ var Helioviewer = Class.extend(
      * 
      * @param string Id of the movie to be linked to
      */
-    displayMovieURL: function (url, title, desc, image) {
-        var msg = "Use the following link to refer to this movie:";
+    displayMovieURL: function (movieId) {
+        var msg = "Use the following link to refer to this movie:",
+            url = this.serverSettings.rootURL + "/?movieId=" + movieId;
 
-        this.displayURL(url, msg, title, desc, image);           
+        this.displayURL(url, msg);           
     },
     
     /**
