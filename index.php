@@ -482,7 +482,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 
 <!-- qTip -->
-<script src="lib/jquery.qTip2/jquery.qtip.pack.js" type="text/javascript"></script>
+<script src="lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
 
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
