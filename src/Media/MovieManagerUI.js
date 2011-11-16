@@ -245,7 +245,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     _createMoviePlayerDialog: function (movie) {
-        var dimensions, title, uploadURL, html, dialog, self = this;
+        var dimensions, title, uploadURL, flvURL, html, dialog, self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
@@ -273,6 +273,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             resizable : $.support.h264 || $.support.vp8,
             close     : function () {
                             $(this).empty();
+                            Helioviewer.metadataManager.reset();
                         },
             zIndex    : 9999,
             show      : 'fade'
@@ -297,12 +298,21 @@ var MovieManagerUI = MediaManagerUI.extend(
             return false;
         });
         
+        // Flash video URL
+        flvURL = helioviewer.serverSettings.rootURL + 
+                 "/api/index.php?action=playMovie&format=flv&id=" + movie.id;
+        
+        // Update metadata
+        //Helioviewer.metadataManager.setVideoTags();
+        Helioviewer.metadataManager.setMetaTags("Helioviewer.org", title, 
+                                                movie.thumbnail);        
+
         // Initialize AddThis sharing
         addthis.toolbox('#add-this-' + movie.id, {}, {
             url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
             title: "Helioviewer.org: " + title,
             description: "Movie of the Sun created on Helioviewer.org.",
-            swfurl: "http://helioviewer.org/api/index.php?action=downloadMovie&format=flv&id=" + movie.id,
+            swfurl: flvURL,
             width: movie.width,
             height: movie.height
         });
