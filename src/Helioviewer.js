@@ -331,7 +331,11 @@ var Helioviewer = Class.extend(
             msg  = "Use the following link to refer to current page:";
         
         $('#link-button').click(function (e) {
-            self.displayURL(self.toURL(), msg);
+            var title = "Helioviewer.org",
+                desc  = self.viewport.getMiddleObservationTime().toUTCString(),
+                image = self._screenshotManagerUI.getScreenshotURL();
+
+            self.displayURL(self.toURL(), msg, title, desc, image);
         });
         //$('#email-button').click($.proxy(this.displayMailForm, this));
         
@@ -352,7 +356,11 @@ var Helioviewer = Class.extend(
      * displays a dialog containing a link to the current page
      * @param {Object} url
      */
-    displayURL: function (url, msg) {
+    displayURL: function (url, msg, title, desc, image) {
+        // Update metadata
+        Helioviewer.metadataManager.setMetaTags(title, desc, image);
+        
+        // Display URL
         $("#helioviewer-url-box-msg").text(msg);
         $("#url-dialog").dialog({
             dialogClass: 'helioviewer-modal-dialog',
@@ -364,6 +372,9 @@ var Helioviewer = Class.extend(
             open      : function (e) {
                 $('.ui-widget-overlay').hide().fadeIn();
                 $("#helioviewer-url-input-box").attr('value', url).select();
+            },
+            close     : function (e) {
+                Helioviewer.metadataManager.reset();
             }
         });
     },
@@ -373,11 +384,10 @@ var Helioviewer = Class.extend(
      * 
      * @param string Id of the movie to be linked to
      */
-    displayMovieURL: function (movieId) {
-        var url = this.serverSettings.rootURL + "/?movieId=" + movieId,
-            msg = "Use the following link to refer to this movie:";
+    displayMovieURL: function (url, title, desc, image) {
+        var msg = "Use the following link to refer to this movie:";
 
-        this.displayURL(url, msg);           
+        this.displayURL(url, msg, title, desc, image);           
     },
     
     /**

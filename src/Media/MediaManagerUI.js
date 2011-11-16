@@ -53,15 +53,14 @@ var MediaManagerUI = Class.extend(
     /**
      * Shows the media manager
      */
-    show: function () {
-        
+    show: function () {        
         this._allContainers.hide();
         this._allButtons.removeClass("active");
         this._btn.addClass("active");
         $(".jGrowl-notification").trigger("jGrowl.close");
         this._refresh();
         this._container.show();
-        this._tooltips.qtip("hide").qtip("disable");
+        this._tooltips.qtip("hide").qtip("disable", true);
     },
     
     /**
@@ -222,12 +221,10 @@ var MediaManagerUI = Class.extend(
         addIconHoverEventListener(this._selectAreaBtn);
         addIconHoverEventListener(this._clearBtn);
 
-        // Hide all jGrow notifications when opening the media manager
         this._btn.click(function () {
             if (!self.working) {
                 self.toggle();
             }
-            
         });
         
         // Clear buttons removes all saved items
