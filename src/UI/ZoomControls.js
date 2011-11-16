@@ -69,10 +69,10 @@ var ZoomControls = Class.extend(
             value: $.inArray(this.imageScale, this.increments)
         });
         
-        // Add tooltip text
+        // Add tooltip
         description = "Drag this handle up and down to zoom in and out of " + 
                       "the displayed image.";
-        $("#zoomControlSlider > .ui-slider-handle").attr('title', description);
+        $("#zoomControlSlider > .ui-slider-handle").attr('title', description).qtip();
     },
 
     /**

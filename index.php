@@ -151,7 +151,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             <!--Social buttons -->
                             <div id="social-buttons">
                                 <!-- Link button -->
-                                <div id="link-button" class="text-btn" title="Get a link to the current page.">
+                                <div id="link-button" class="text-btn qtip-left" title="Get a link to the current page.">
                                     <span class="ui-icon ui-icon-link" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Link</span>
                                 </div>
@@ -163,19 +163,19 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 </div>-->
 
                                 <!-- Movie button -->
-                                <div id="movie-button" class="text-btn">
+                                <div id="movie-button" class="text-btn qtip-left" title="Create and manage movies on Helioviewer.org.">
                                     <span class="ui-icon ui-icon-video" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Movie</span>
                                 </div>
 
                                 <!-- Screenshot button -->
-                                <div id="screenshot-button" class="text-btn">
+                                <div id="screenshot-button" class="text-btn qtip-left" title="Create and manage screenshots on Helioviewer.org.">
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
                                 
                                 <!-- Settings button -->
-                                <div id="settings-button" class="text-btn" title="Open Helioviewer settings dialog.">
+                                <div id="settings-button" class="text-btn qtip-left" title="Configure Helioviewer.org user preferences.">
                                     <span class="ui-icon ui-icon-gear" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Settings</span>
                                 </div>
@@ -189,7 +189,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             </div>
 
                             <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn' title="Toggle fullscreen display.">
+                            <div id='fullscreen-btn' class='qtip-left' title="Toggle fullscreen display.">
                                 <span class='ui-icon ui-icon-arrow-4-diag'></span>
                             </div>
 
@@ -202,18 +202,18 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             <!-- Screenshot Manager -->
                             <div id='screenshot-manager-container' class='media-manager-container glow'>
                                 <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
-                                    <div id='screenshot-manager-full-viewport' class='text-btn'>
+                                    <div id='screenshot-manager-full-viewport' class='text-btn' title='Create a screenshot using the entire viewport.'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Full Viewport</span>
                                     </div>
-                                    <div id='screenshot-manager-select-area' class='text-btn' style='float:right;'>
+                                    <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
                                         <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Select Area</span> 
                                     </div>
                                 </div>
                                 <div id='screenshot-history-title' class='media-history-title'>
                                     Screenshot History    
-                                    <div id='screenshot-clear-history-button' class='text-btn' style='float:right;'>
+                                    <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
                                     </div> 
@@ -223,18 +223,18 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             <!-- Movie Manager -->
                             <div id='movie-manager-container' class='media-manager-container glow'>
                                 <div id='movie-manager-build-btns' class='media-manager-build-btns'>
-                                    <div id='movie-manager-full-viewport' class='text-btn'>
+                                    <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Full Viewport</span>
                                     </div>
-                                    <div id='movie-manager-select-area' class='text-btn' style='float:right;'>
+                                    <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
                                         <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Select Area</span> 
                                     </div>
                                 </div>
                                 <div id='movie-history-title' class='media-history-title'>
                                     Movie History    
-                                    <div id='movie-clear-history-button' class='text-btn' style='float:right;'>
+                                    <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
                                     </div> 
@@ -319,13 +319,13 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                 <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
-                <a id="user-video-gallery-next" href="#" title="Go to next page.">
+                <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
                     <div class='ui-icon ui-icon-triangle-1-n'></div>
                 </a>
                 <div id="user-video-gallery-main">
                     <div id="user-video-gallery-spinner"></div>
                 </div>
-                <a id="user-video-gallery-prev" href="#" title="Go to previous page.">
+                <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
                     <div class='ui-icon ui-icon-triangle-1-s'></div>
                 </a>
             </div>
