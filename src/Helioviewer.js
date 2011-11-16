@@ -78,11 +78,6 @@ var Helioviewer = Class.extend(
         
         // Initialize AddThis
         addthis.init();
-
-        // Play movie if id is specified
-        if (urlSettings.movieId) {
-            this._loadMovie(urlSettings.movieId);
-        }
     },
     
     
@@ -226,7 +221,7 @@ var Helioviewer = Class.extend(
      * 
      * @param string movieId Identifier of the movie to be shown
      */
-    _loadMovie: function (movieId) {
+    loadMovie: function (movieId) {
         if (!this._movieManagerUI.has(movieId)) {
             this._movieManagerUI.addMovieUsingId(movieId);
         } else {
