@@ -68,8 +68,6 @@ var Helioviewer = Class.extend(
         
         this._screenshotManagerUI = new ScreenshotManagerUI();
         this._movieManagerUI      = new MovieManagerUI();
-        
-        Helioviewer.metadataManager = new MetaDataManager(urlSettings);
 
         this._glossary = new VisualGlossary(this._setupDialog);
 
