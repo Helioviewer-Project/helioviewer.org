@@ -483,7 +483,7 @@ class Movie_HelioviewerMovie
         date_default_timezone_set('UTC');
 
         if (substr($this->startDate, 0, 9) == substr($this->endDate, 0, 9)) {
-            $endDate = substr($this->endDate, 10);
+            $endDate = substr($this->endDate, 11);
         } else {
             $endDate = $this->endDate;
         }

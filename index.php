@@ -52,19 +52,21 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     $ogDescription = "Solar and heliospheric image visualization tool.";
     $ogImage       = "http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png";
 
-    if (isset($urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]*$/', $urlSettings["movieId"])) {
+    if (isset($urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $urlSettings["movieId"])) {
         include_once "api/src/Config.php";
         $configObj = new Config("settings/Config.ini");
         include_once 'api/src/Movie/HelioviewerMovie.php';
         
         $movie = new Movie_HelioviewerMovie($urlSettings["movieId"], "mp4");
         $thumbnails = $movie->getPreviewImages();
-        $flvURL = HV_API_ROOT_URL . "?action=playMovie&format=flv&id=" . $movie->publicId;
+
+        $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $movie->publicId;
+        $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
         
         $ogDescription = $movie->getTitle();
         $ogImage       = $thumbnails['full'];
 ?>
-    <meta property="og:video" content="<?php echo $flvURL;?>" />
+    <meta property="og:video" content="<?php echo $swfURL;?>" />
     <meta property="og:video:width" content="<?php echo $movie->width;?>" />
     <meta property="og:video:height" content="<?php echo $movie->height;?>" />
     <meta property="og:video:type" content="application/x-shockwave-flash" />
