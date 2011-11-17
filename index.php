@@ -22,9 +22,58 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
     <meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
     <meta property="og:title" content="Helioviewer.org" />
-    <meta property="og:description" content="Solar and heliospheric image visualization tool." />
-    <meta property="og:image" content="http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png" />
+<?php
+    // Settings specified via URL parameters
+    $urlSettings = array();
+
+    //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SOHO,AIA,AIA,171,1,70],[SOHO,LASCO,C2,white light,0,100]
+    if (isset($_GET['imageLayers'])) {
+        $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
+        $imageLayers = preg_split("/\],\[/", $imageLayersString);
+        $urlSettings['imageLayers'] = $imageLayers;
+    }
     
+    if (isset($_GET['centerX']))
+        $urlSettings['centerX'] = $_GET['centerX'];
+    
+    if (isset($_GET['centerY']))
+        $urlSettings['centerY'] = $_GET['centerY'];
+
+    if (isset($_GET['date']))
+        $urlSettings['date'] = $_GET['date'];
+
+    if (isset($_GET['imageScale']))
+        $urlSettings['imageScale'] = $_GET['imageScale'];
+    
+    if(isset($_GET['movieId']))
+        $urlSettings['movieId'] = $_GET['movieId'];
+    
+    // Open Graph meta tags
+    $ogDescription = "Solar and heliospheric image visualization tool.";
+    $ogImage       = "http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png";
+
+    if (isset($urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]*$/', $urlSettings["movieId"])) {
+        include_once "api/src/Config.php";
+        $configObj = new Config("settings/Config.ini");
+        include_once 'api/src/Movie/HelioviewerMovie.php';
+        
+        $movie = new Movie_HelioviewerMovie($urlSettings["movieId"], "mp4");
+        $thumbnails = $movie->getPreviewImages();
+        $flvURL = HV_API_ROOT_URL . "?action=playMovie&format=flv&id=" . $movie->publicId;
+        
+        $ogDescription = $movie->getTitle();
+        $ogImage       = $thumbnails['full'];
+?>
+    <meta property="og:video" content="<?php echo $flvURL;?>" />
+    <meta property="og:video:width" content="<?php echo $movie->width;?>" />
+    <meta property="og:video:height" content="<?php echo $movie->height;?>" />
+    <meta property="og:video:type" content="application/x-shockwave-flash" />
+<?php 
+    } else {
+    }
+?>
+    <meta property="og:description" content="<?php echo $ogDescription;?>" />
+    <meta property="og:image" content="<?php echo $ogImage;?>" />
     <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
     
     <link rel="shortcut icon" href="favicon.ico" />
@@ -554,7 +603,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                     "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
                     "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js", "Media/MediaManagerUI.js",
                     "Media/MediaManager.js", "Media/MovieManager.js", "Media/MovieManagerUI.js",
-                    "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js", "Utility/MetaDataManager.js",  
+                    "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
                     "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
                     "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                     "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
@@ -573,31 +622,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     $(function () {
         <?php
             printf("settingsJSON = %s;\n", json_encode($config));
-
-            // Settings specified via URL parameters
-            $urlSettings = array();
-
-            //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SOHO,AIA,AIA,171,1,70],[SOHO,LASCO,C2,white light,0,100]
-            if (isset($_GET['imageLayers'])) {
-                $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
-                $imageLayers = preg_split("/\],\[/", $imageLayersString);
-                $urlSettings['imageLayers'] = $imageLayers;
-            }
-            
-            if (isset($_GET['centerX']))
-                $urlSettings['centerX'] = $_GET['centerX'];
-            
-            if (isset($_GET['centerY']))
-                $urlSettings['centerY'] = $_GET['centerY'];
-
-            if (isset($_GET['date']))
-                $urlSettings['date'] = $_GET['date'];
-
-            if (isset($_GET['imageScale']))
-                $urlSettings['imageScale'] = $_GET['imageScale'];
-            
-            if(isset($_GET['movieId']))
-                $urlSettings['movieId'] = $_GET['movieId'];
             
             // Compute acceptible zoom values
             $zoomLevels = array();
