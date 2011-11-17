@@ -245,7 +245,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     _createMoviePlayerDialog: function (movie) {
-        var dimensions, title, uploadURL, flvURL, html, dialog, self = this;
+        var dimensions, title, uploadURL, flvURL, swfURL, html, dialog, 
+            self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
@@ -299,15 +300,20 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Flash video URL
         flvURL = helioviewer.serverSettings.rootURL + 
-                 "/api/index.php?action=playMovie&format=flv&id=" + movie.id;
+                 "/api/index.php?action=downloadMovie&format=flv&id=" + movie.id;
+                 
+        // SWF URL (The flowplayer SWF directly provides best Facebook support)
+        swfURL = helioviewer.serverSettings.rootURL + 
+                 "/lib/flowplayer/flowplayer-3.2.7.swf?config=" + 
+                 encodeURIComponent("{'clip':{'url':'" + flvURL + "'}}");
         
         // Initialize AddThis sharing
         addthis.toolbox('#add-this-' + movie.id, {}, {
             url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
-            title: "Helioviewer.org: " + title,
-            description: "Movie of the Sun created on Helioviewer.org.",
+            title: "Helioviewer.org",
+            description: title,
             screenshot: movie.thumbnail.substr(0, movie.thumbnail.length - 9) + "full.png",
-            swfurl: flvURL,
+            swfurl: swfURL,
             width: movie.width,
             height: movie.height
         });
