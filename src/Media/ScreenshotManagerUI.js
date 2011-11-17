@@ -51,7 +51,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             display       : true
         }, this._toArcsecCoords(roi, imageScale));
         
-        return helioviewer.serverSettings.rootURL + "/api/?" + $.param(params);        
+        return helioviewer.serverSettings.rootURL + "/api/?" + $.param(params);
     },
     
     /**

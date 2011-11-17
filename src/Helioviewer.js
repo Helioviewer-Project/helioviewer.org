@@ -7,8 +7,8 @@
 /*global document, window, $, Class, ImageSelectTool, MovieBuilder, 
   TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, addIconHoverEventListener, UserVideoGallery, MessageConsole,
-  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl,
-  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers */
+  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
+  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, VisualGlossary */
 "use strict";
 var Helioviewer = Class.extend(
     /** @lends Helioviewer.prototype */
@@ -74,10 +74,7 @@ var Helioviewer = Class.extend(
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
-        
-        // Enable manipulation of page metatags globally
 
-        
         // Initialize AddThis
         addthis.init();
     },

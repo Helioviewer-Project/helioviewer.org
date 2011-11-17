@@ -86,8 +86,9 @@ var UserVideoGallery = Class.extend(
         };
         
         // Use publish date for last video retrieved
-        if(this._videos.length > 0) {
-            params.since = this._videos[0].published.replace(" ", "T") + ".000Z";
+        if (this._videos.length > 0) {
+            params.since = this._videos[0].published.replace(" ", "T") + 
+                           ".000Z";
         }
         
         this._working = true;

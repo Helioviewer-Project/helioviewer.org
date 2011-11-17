@@ -6,7 +6,7 @@
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
 /*global $, window, MovieManager, MediaManagerUI, Helioviewer, helioviewer,
-  layerStringToLayerArray, humanReadableNumSeconds */
+  layerStringToLayerArray, humanReadableNumSeconds, addthis */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
     /** @lends MovieManagerUI */
@@ -246,7 +246,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _createMoviePlayerDialog: function (movie) {
         var dimensions, title, uploadURL, flvURL, swfURL, html, dialog, 
-            self = this;
+            screenshot, self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
@@ -300,19 +300,22 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Flash video URL
         flvURL = helioviewer.serverSettings.rootURL + 
-                 "/api/index.php?action=downloadMovie&format=flv&id=" + movie.id;
+                "/api/index.php?action=downloadMovie&format=flv&id=" + movie.id;
                  
         // SWF URL (The flowplayer SWF directly provides best Facebook support)
         swfURL = helioviewer.serverSettings.rootURL + 
                  "/lib/flowplayer/flowplayer-3.2.7.swf?config=" + 
                  encodeURIComponent("{'clip':{'url':'" + flvURL + "'}}");
+                 
+        screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + 
+                     "full.png";
         
         // Initialize AddThis sharing
         addthis.toolbox('#add-this-' + movie.id, {}, {
             url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
             title: "Helioviewer.org",
             description: title,
-            screenshot: movie.thumbnail.substr(0, movie.thumbnail.length - 9) + "full.png",
+            screenshot: screenshot,
             swfurl: swfURL,
             width: movie.width,
             height: movie.height
@@ -564,21 +567,28 @@ var MovieManagerUI = MediaManagerUI.extend(
         downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
 
-        downloadLink = "<a target='_parent' href='" + downloadURL + "' title='Download high-quality video'>" + 
+        downloadLink = "<a target='_parent' href='" + downloadURL + 
+            "' title='Download high-quality video'>" + 
             "<img class='video-download-icon' " + 
             "src='resources/images/Tango/1321375855_go-bottom.png' /></a>";
         
         youtubeBtn = "<a id='youtube-upload-" + id + "'  href='#' " + 
-            "target='_blank'><img class='youtube-icon' title='Upload video to YouTube' " + 
-            "src='resources/images/Social.me/48 by 48 pixels/youtube.png' /></a>";
+            "target='_blank'><img class='youtube-icon' " + 
+            "title='Upload video to YouTube' " + 
+            "src='resources/images/Social.me/48 " + 
+            "by 48 pixels/youtube.png' /></a>";
             
         linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
             
-        linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + "' title='Get a link to the movie' " + 
-            "target='_blank'><img class='video-link-icon' style='margin-left: 3px' " + 
+        linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + 
+            "' title='Get a link to the movie' " + 
+            "target='_blank'><img class='video-link-icon' " + 
+            "style='margin-left: 3px' " + 
             "src='resources/images/berlin/32x32/link.png' /></a>";
             
-        addthisBtn = "<div style='display:inline; float: right;' id='add-this-" + id + "' class='addthis_default_style addthis_32x32_style'>" +
+        addthisBtn = "<div style='display:inline; " + 
+            "float: right;' id='add-this-" + id + 
+            "' class='addthis_default_style addthis_32x32_style'>" +
             "<a class='addthis_button_facebook addthis_32x32_style'></a>" +
             "<a class='addthis_button_twitter addthis_32x32_style'></a>" +
             "<a class='addthis_button_email addthis_32x32_style'></a>" +
@@ -608,7 +618,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             return "<div id='movie-player-" + id + "'>" + 
                    "<iframe src=" + url + " width='" + width +  
                    "' height='" + height + "' marginheight=0 marginwidth=0 " +
-                   "scrolling=no frameborder=0 style='margin-bottom: 2px;' /><br />" + 
+                   "scrolling=no frameborder=0 style='margin-bottom: 2px;' />" +
+                   "<br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
                    linkBtn + addthisBtn + "</span></div>";
         }
