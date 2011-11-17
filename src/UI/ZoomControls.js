@@ -15,7 +15,7 @@ var ZoomControls = Class.extend(
      * 
      * Creates a new ZoomControl
      */
-    init: function (id, imageScale, increments, minImageScale, maxImageScale) {       
+    init: function (id, imageScale, increments, minImageScale, maxImageScale) {
         this.id            = id;
         this.imageScale    = imageScale;
         this.increments    = increments;
@@ -72,7 +72,8 @@ var ZoomControls = Class.extend(
         // Add tooltip
         description = "Drag this handle up and down to zoom in and out of " + 
                       "the displayed image.";
-        $("#zoomControlSlider > .ui-slider-handle").attr('title', description).qtip();
+        $("#zoomControlSlider > .ui-slider-handle").attr('title', description)
+                                                   .qtip();
     },
 
     /**

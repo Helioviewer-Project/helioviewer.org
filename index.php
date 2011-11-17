@@ -88,8 +88,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
             "layers" => $_GET['imageLayers'],
             "x0" => $urlSettings['centerX'],
             "y0" => $urlSettings['centerY'],
-            "width" => 512,
-            "height" => 512
+            "width" => 128,
+            "height" => 128
         );
         $ogImage = HV_API_ROOT_URL . "?" . http_build_query($screenshotParams);
         $ogDescription = $layers->toHumanReadableString() . " (" . toReadableISOString($urlSettings['date']) . " UTC)";

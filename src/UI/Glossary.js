@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, window, $, Class, helioviewer*/
+/*global document, window, $, Class, helioviewer, addIconHoverEventListener*/
 "use strict"; 
 var VisualGlossary = Class.extend(
     /** @lends VisualGlossary.prototype */
@@ -25,7 +25,7 @@ var VisualGlossary = Class.extend(
     /**
      * Setup event handlers
      */
-    _onLoad: function(evt) {
+    _onLoad: function (evt) {
         var self = this;
         
         // Category buttons
@@ -59,7 +59,7 @@ var VisualGlossary = Class.extend(
     _showCategory: function (category) {
         this.entries.hide();
 
-        if (category == "all") {
+        if (category === "all") {
             this.entries.show();
         } else {
             this.entries.filter(".g-" + category).show();    
