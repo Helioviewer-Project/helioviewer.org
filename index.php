@@ -71,7 +71,28 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <meta property="og:video:height" content="<?php echo $movie->height;?>" />
     <meta property="og:video:type" content="application/x-shockwave-flash" />
 <?php 
-    } else {
+    } else if (sizeOf($urlSettings) >= 5) {
+        include_once "api/src/Config.php";
+        $configObj = new Config("settings/Config.ini");
+
+        include_once 'api/src/Helper/HelioviewerLayers.php';
+        include_once 'api/src/Helper/DateTimeConversions.php';
+
+        $layers = new Helper_HelioviewerLayers($_GET['imageLayers']);
+
+        $screenshotParams = array(
+            "action"      => "takeScreenshot",
+            "display"     => true,
+            "date"        => $urlSettings['date'],
+            "imageScale"  => $urlSettings['imageScale'],
+            "layers" => $_GET['imageLayers'],
+            "x0" => $urlSettings['centerX'],
+            "y0" => $urlSettings['centerY'],
+            "width" => 512,
+            "height" => 512
+        );
+        $ogImage = HV_API_ROOT_URL . "?" . http_build_query($screenshotParams);
+        $ogDescription = $layers->toHumanReadableString() . " (" . toReadableISOString($urlSettings['date']) . " UTC)";
     }
 ?>
     <meta property="og:description" content="<?php echo $ogDescription;?>" />

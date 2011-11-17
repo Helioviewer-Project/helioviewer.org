@@ -25,6 +25,8 @@
  * 
  * 
  */
+require_once HV_API_ROOT_DIR . '/src/Database/ImgIndex.php';
+
 class Helper_HelioviewerLayers
 {
     private $_layers = array();
