@@ -106,7 +106,7 @@ def create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
 def create_image_table(cursor):
     """Creates table to store image information"""
     sql = \
-    """CREATE TABLE `images2` (
+    """CREATE TABLE `images` (
       `id`            INT unsigned NOT NULL auto_increment,
       `filepath`      VARCHAR(255) NOT NULL,
       `filename`      VARCHAR(255) NOT NULL,
@@ -335,7 +335,8 @@ def create_youtube_table(cursor):
       `description` VARCHAR(5000) NOT NULL,
       `keywords`    VARCHAR(500) NOT NULL,
       `shared`      BOOLEAN NOT NULL,
-       PRIMARY KEY (`id`)
+       PRIMARY KEY (`id`),
+       UNIQUE INDEX movieid_idx(movieId)
     ) DEFAULT CHARSET=utf8;""")
     
 def create_screenshots_table(cursor):

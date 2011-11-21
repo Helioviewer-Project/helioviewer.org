@@ -41,20 +41,31 @@ class Database_MovieDatabase
      * 
      * @return void
      */
-    public function insertYouTubeMovie($id, $youtubeId,  $title, $desc, $keywords, $share)
+    public function insertYouTubeMovie($movieId, $title, $desc, $keywords, $share)
     {
-       // Create the prepared statement
-       $sql = "INSERT INTO youtube values (NULL, ?, ?, NULL, ?, ?, ?, ?)";
-
+        // Create the prepared statement
+        $sql = "INSERT INTO youtube values (NULL, ?, NULL, NULL, ?, ?, ?, ?)";
         if ($stmt = $this->_dbConnection->link->prepare($sql)) {
-            $stmt->bind_param('issssi', $id, $youtubeId, $title, $desc, 
-                $keywords, $share);
-            $stmt->execute();
-            $stmt->close();    
+
+            $stmt->bind_param('isssi', $movieId, $title, $desc, $keywords, $share);
+            $result = $stmt->execute();
+            $stmt->close();
+            
+            return $result;    
         }
         else {
             printf("Prepared Statement Error: %s\n", $this->_dbConnection->link->error);
-        }  
+        }
+    }
+    
+    /**
+     * Updates youtube entry to add youtube id if upload successfully completed
+     */
+    public function updateYouTubeMovie($movieId, $youtubeId)
+    {
+        
+        $sql = "UPDATE youtube SET youtubeId='$youtubeId' WHERE movieId=$id;";
+        $this->_dbConnection->query($sql);
     }
     
     /**
