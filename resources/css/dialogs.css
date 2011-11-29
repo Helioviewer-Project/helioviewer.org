@@ -106,12 +106,13 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 }
 #helioviewer-url-box > form > input[type="text"] {
     display:block;
+    margin-bottom: 3px;
 }
 
 #helioviewer-url-box > form > label
 {
     margin-right: 5px;
-    width: 50px;
+    width: 115px;
 }
 
 .youtube-upload-dialog {

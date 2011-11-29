@@ -341,6 +341,18 @@ var Helioviewer = Class.extend(
         $("#helioviewer-viewport, .ui-slider-handle").each(function () {
             assignTouchHandlers(this);
         });
+        
+        $("#helioviewer-url-shorten").click(function(e) {
+            var url;
+
+            if (e.target.checked) {
+                url = $("#helioviewer-short-url").attr("value");   
+            } else {
+                url = $("#helioviewer-long-url").attr("value");
+            }
+            
+            $("#helioviewer-url-input-box").attr('value', url).select();
+        });
     },
     
     /**
@@ -348,21 +360,33 @@ var Helioviewer = Class.extend(
      * @param {Object} url
      */
     displayURL: function (url, msg) {
+        // Store short and long versions of URL
+        var queryString, shortURL;
+        
+        queryString = url.substr(this.serverSettings.rootURL.length + 2); 
+        
+        shortURL = this.shortenURL(queryString);
+        
+        $("#helioviewer-long-url").attr("value", url);
+        $("#helioviewer-short-url").attr("value", shortURL);
+        
         // Display URL
         $("#helioviewer-url-box-msg").text(msg);
         $("#url-dialog").dialog({
             dialogClass: 'helioviewer-modal-dialog',
-            height    : 100,
+            height    : 110,
             width     : $('html').width() * 0.7,
             modal     : true,
             resizable : false,
             title     : "URL",
             open      : function (e) {
+                $("#helioviewer-url-shorten").removeAttr("checked");
                 $('.ui-widget-overlay').hide().fadeIn();
                 $("#helioviewer-url-input-box").attr('value', url).select();
             }
         });
     },
+    
     
     /**
      * Displays a URL to a Helioviewer.org movie
@@ -542,8 +566,8 @@ var Helioviewer = Class.extend(
      * 
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
-    toURL: function () {
-
+    toURL: function (shorten) {
+        // URL parameters
         var params = {
             "date"        : this.viewport.getMiddleObservationTime().toISOString(),
             "imageScale"  : this.viewport.getImageScale(),
@@ -551,8 +575,29 @@ var Helioviewer = Class.extend(
             "centerY"     : Helioviewer.userSettings.get("state.centerY"), 
             "imageLayers" : encodeURI(this.viewport.serialize())
         };
-        return this.serverSettings.rootURL + "/?" + 
-               decodeURIComponent($.param(params));
+        
+        return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
+    },
+    
+    /**
+     * Returns a shortened version of a Helioviewer.org URL
+     */
+    shortenURL: function (queryString) {
+        var shortURL = "http://www.helioviewer.org";
+        
+        $.ajax({
+            async: false,
+            url: this.api,
+            dataType: 'json',
+            data: {
+                "action": "shortenURL",
+                "queryString": queryString 
+            },
+            success: function (response) {
+                shortURL = response.data.url;
+            }
+        });
+        return shortURL;
     },
     
     /**
