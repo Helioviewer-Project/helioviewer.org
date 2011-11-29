@@ -447,6 +447,14 @@ class Module_WebClient implements Module
     }
     
     /**
+     * Uses bit.ly to generate a shortened URL
+     */
+    public function shortenURL()
+    {
+        
+    }
+    
+    /**
      * Retrieves the latest usage statistics from the database
      */
     public function getUsageStatistics()
@@ -561,6 +569,12 @@ class Module_WebClient implements Module
             $expected = array(
                 "optional" => array("resolution"),
                 "alphanum" => array("resolution")
+            );
+            break;
+        case "shortenURL":
+            $expected = array(
+                "required" => array("queryString"),
+                "urls" => array("queryString")
             );
             break;
         case "takeScreenshot":
