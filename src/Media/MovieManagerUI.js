@@ -312,7 +312,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Initialize AddThis sharing
         addthis.toolbox('#add-this-' + movie.id, {}, {
-            url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
+            url: helioviewer.shortenURL("movieId=" + movie.id),
+            //url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
             title: "Helioviewer.org",
             description: title,
             screenshot: screenshot,
