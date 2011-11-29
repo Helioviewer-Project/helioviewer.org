@@ -472,6 +472,10 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
         <span id="helioviewer-url-box-msg">Use the following link to refer to current page:</span>
         <form style="margin-top: 5px;">
             <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
+            <label for="helioviewer-url-shorten">Shorten with bit.ly?</label>
+            <input type="checkbox" id="helioviewer-url-shorten" />
+            <input type="hidden" id="helioviewer-short-url" value="" />
+            <input type="hidden" id="helioviewer-long-url" value="" />
         </form>
     </div>
 </div>
