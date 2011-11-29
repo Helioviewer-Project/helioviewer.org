@@ -451,7 +451,20 @@ class Module_WebClient implements Module
      */
     public function shortenURL()
     {
+        include_once 'src/Net/Proxy.php';
+        $proxy = new Net_Proxy("http://api.bitly.com/v3/shorten?");
         
+        //$longURL = HV_WEB_ROOT_URL . "/?" . urldecode($this->_params['queryString']);
+        $longURL = "http://www.helioviewer.org" . "/?" . urldecode($this->_params['queryString']);
+        
+        $params = array(
+            "longUrl" => $longURL,
+            "login"   => HV_BITLY_USER,
+            "apiKey"  => HV_BITLY_API_KEY
+        );
+        
+        header('Content-Type: application/json');
+        echo $proxy->query($params);
     }
     
     /**
@@ -574,7 +587,7 @@ class Module_WebClient implements Module
         case "shortenURL":
             $expected = array(
                 "required" => array("queryString"),
-                "urls" => array("queryString")
+                "encoded"  => array("queryString")
             );
             break;
         case "takeScreenshot":
