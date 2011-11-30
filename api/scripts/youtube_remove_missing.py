@@ -26,8 +26,14 @@ def main():
     print("Scanning %d matched video entries..." % len(ids));
        
     # Find videos that no longer exist on YouTube
+    # Check videos several times to make sure it isn't just
+    # a network problem.
     to_remove = find_missing_videos(cursor, ids)
-    
+    print("Scan 1 - Found %d candidate missing videos" % len(to_remove))
+    for i in range(2):
+        to_remove = find_missing_videos(cursor, to_remove)
+        print("Scan %d - Found %d candidate missing videos" % (i + 2, 
+                                                               len(to_remove)))
     # Stop if no matches found
     if len(to_remove) is 0:
         print("No missing videos found. Exiting script.")
