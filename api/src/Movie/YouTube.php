@@ -71,7 +71,7 @@ class Movie_YouTube
         $this->_httpClient = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
         
         // Increase timeout time to prevent client from timing out during uploads
-        $this->_httpClient->setConfig(array( 'timeout' => 300 ));
+        $this->_httpClient->setConfig(array( 'timeout' => 600 ));
         
         // Creates an instance of the Youtube GData object
         $this->_youTube = $this->_getYoutubeInstance();
@@ -248,6 +248,18 @@ class Movie_YouTube
      */
     private function _uploadVideoToYouTube ($videoEntry, $id, $title, $description, $tags, $share)
     {
+        include_once 'src/Database/MovieDatabase.php';
+        include_once 'lib/alphaID/alphaID.php';
+        
+        $movies = new Database_MovieDatabase();
+        
+        // Add movie entry to YouTube table if entry does not already exist
+        $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
+        if (!$movies->insertYouTubeMovie($movieId, $title, $description, $tags, $share)) {
+            throw new Exception("Movie has already been uploaded.", 1);
+        }
+        
+        // Begin upload
         try {
             $newEntry = $this->_youTube->insertEntry(
                 $videoEntry, $this->_uploadURL, 'Zend_Gdata_YouTube_VideoEntry'
@@ -258,20 +270,12 @@ class Movie_YouTube
             throw($e);
         }
 
-        // http://www.youtube.com/watch?v=DoBgczEScvE&feature=youtube_gdata_player        
+        // When upload finishes, get youtube id
         $newEntry->setMajorProtocolVersion(2);
         $youtubeId = $newEntry->getVideoId();
         
-        // Add entry to YouTube table
-        include_once 'src/Database/MovieDatabase.php';
-        include_once 'lib/alphaID/alphaID.php';
-        
-        $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
-        
-        $movies = new Database_MovieDatabase();
-        $movies->insertYouTubeMovie(
-            $movieId, $youtubeId, $title, $description, $tags, $share
-        );
+        // Update database entry and return result
+        $movies->updateYouTubeMovie($movieId, $youtubeId);
 
         return $newEntry;
     }
