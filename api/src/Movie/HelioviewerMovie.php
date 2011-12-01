@@ -131,7 +131,7 @@ class Movie_HelioviewerMovie
                 $this->filename = $this->_buildFilename();
             }
         } catch (Exception $e) {
-            $this->_abort("Error encountered during movie frame compilation");
+            $this->_abort("Error encountered during movie frame compilation: {$e->getMessage()}");
         }
 
         $t3 = time();
@@ -235,7 +235,7 @@ class Movie_HelioviewerMovie
     private function _abort($msg, $procTime=0) {
         $this->_db->markMovieAsInvalid($this->id, $procTime);
         $this->_cleanUp();
-        throw new Exception("Unable to create movie: " . $msg, 1);
+        throw new Exception("Unable to create movie: " . $msg);
     }
     
     /**
@@ -289,6 +289,9 @@ class Movie_HelioviewerMovie
         
         // Index of preview frame
         $previewIndex = floor($this->numFrames / 2);
+        
+        // Add tolerance for single-frame failures
+        $numFailures = 0;
 
         // Compile frames
         foreach ($this->_timestamps as $time) {
@@ -304,7 +307,15 @@ class Movie_HelioviewerMovie
 	            $frameNum++;
 	            array_push($this->_frames, $filepath);
             } catch (Exception $e) {
-            	$this->numFrames--; // Recover if failure occurs on a single frame
+                $numFailures += 1;
+                
+                if ($numFailures <= 1) {
+                    // Recover if failure occurs on a single frame
+                    $this->numFrames--;
+                } else {
+                    // Otherwise proprogate exception to be logged
+                    throw $e;
+                }
             }
         }
         $this->_createPreviewImages($previewImage);
