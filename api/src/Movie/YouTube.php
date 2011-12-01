@@ -41,6 +41,7 @@ class Movie_YouTube
     public function __construct()
     {
         include_once 'Zend/Loader.php';
+
         Zend_Loader::loadClass('Zend_Gdata_AuthSub');
         
         $this->_appId     = "Helioviewer.org User Video Uploader";
@@ -48,10 +49,15 @@ class Movie_YouTube
 
         $this->_testURL   = "http://gdata.youtube.com/feeds/api/users/default/uploads?max-results=1";
         $this->_uploadURL = "http://uploads.gdata.youtube.com/feeds/api/users/default/uploads";
-        
+
         if(!isset($_SESSION)) {
+            # Note: If same user begins upload, and then shortly after tried
+            # to upload a video again, PHP may hang when attempting to call
+            # session_start(). May need a better way to make sure nothing else
+            # is going on? (e.g. check for video entry in YouTube)
             session_start();
         }
+        
     }
     
     /**
@@ -97,7 +103,7 @@ class Movie_YouTube
         if (!isset($_SESSION['sessionToken'])) {
             return false;
         }
-        
+
         $this->_httpClient = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
         $this->_youTube    = $this->_getYoutubeInstance();
 
