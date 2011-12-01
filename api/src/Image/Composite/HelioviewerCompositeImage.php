@@ -425,9 +425,11 @@ class Image_Composite_HelioviewerCompositeImage
         $this->_dir      = $path_parts['dirname']; 
     	$this->_filename = $path_parts['basename'];
     	$this->_format   = $path_parts['extension'];
-    	
+
         if (!file_exists($this->_dir)) {
-            mkdir($this->_dir, 0777, true);
+            if (!mkdir($this->_dir, 0777, true)) {
+                throw Exception("Unable to create directory: ". $this->_dir);
+            }
         }
         
         // Build individual layers

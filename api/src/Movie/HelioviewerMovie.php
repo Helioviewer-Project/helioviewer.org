@@ -271,8 +271,6 @@ class Movie_HelioviewerMovie
      * TODO: Use middle frame instead last one...
      * TODO: Create standardized thumbnail sizes (e.g. thumbnail-med.png = 480x320, etc)
      *
-     * @param {String} $tmpDir     the directory where the frames will be stored
-     *
      * @return $images an array of built movie frames
      */
     private function _buildMovieFrames($watermark)
@@ -295,7 +293,7 @@ class Movie_HelioviewerMovie
 
         // Compile frames
         foreach ($this->_timestamps as $time) {
-            $filepath =  sprintf("%s/frames/frame%d.bmp", $this->directory, $frameNum);
+            $filepath =  sprintf("%sframes/frame%d.bmp", $this->directory, $frameNum);
 
             try {
 	            $screenshot = new Image_Composite_HelioviewerMovieFrame($filepath, $this->_layers, $time, $this->_roi, $options);
@@ -369,10 +367,10 @@ class Movie_HelioviewerMovie
             $thumb->borderImage("black", $borderWidth, $borderHeight);
             $thumb->cropImage($dimensions[0], $dimensions[1], 0, 0);
             
-            $thumb->writeImage($this->directory . "/preview-$name.png");
+            $thumb->writeImage($this->directory . "preview-$name.png");
             $thumb->destroy();
         } 
-        $preview->writeImage($this->directory . "/preview-full.png");  
+        $preview->writeImage($this->directory . "preview-full.png");  
         
         $preview->destroy();   
     }
