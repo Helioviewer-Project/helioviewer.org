@@ -725,7 +725,7 @@ class Database_ImgIndex
      */
     public function getJP2FilePathFromId($id)
     {
-        $sql = "SELECT concat(filepath, '/', filename) FROM images WHERE id=1";
+        $sql = "SELECT concat(filepath, '/', filename) FROM images WHERE id=$id";
         $row = mysqli_fetch_array($this->_dbConnection->query($sql));
         return array_pop($row);
     }

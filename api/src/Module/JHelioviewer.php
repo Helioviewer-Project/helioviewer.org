@@ -78,7 +78,7 @@ class Module_JHelioviewer implements Module
         
         // If image id is set, then just use that
         if (isset($this->_params['id'])) {
-            $filepath = $imgIndex->getJP2FilePathFromId($this->_params['id']);
+            $filepath = HV_JP2_DIR . $imgIndex->getJP2FilePathFromId($this->_params['id']);
         } else {
             // Otherwise look up sourceId if not specified
             $sourceId = $this->_getSourceId($imgIndex);

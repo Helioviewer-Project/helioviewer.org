@@ -157,7 +157,7 @@ var TileLayerAccordion = Layer.extend(
      * This discussion thread</a> for explanation.
      */
     _buildEntryBody: function (id) {
-        var opacitySlide, obs, inst, det, meas, info;
+        var opacitySlide, obs, inst, det, meas, jp2, info;
         
         // Opacity slider placeholder
         opacitySlide = "<div class='layer-select-label'>Opacity: </div>";
@@ -182,11 +182,15 @@ var TileLayerAccordion = Layer.extend(
         meas += "<select name=measurement class=layer-select id='measurement-select-" + id + "'>";
         meas += "</select><br><br>";
         
+        jp2 = "<span id='image-" + id + "-download-btn'" + 
+               " class='image-download-btn ui-icon ui-icon-image'" +
+               " title='Download original JPEG 2000 image'></span>";
+        
         info = "<span id='image-" + id + "-info-btn'" + 
                " class='image-info-dialog-btn ui-icon ui-icon-info'" +
                " title='Display image header'></span>";
         
-        return (opacitySlide + obs + inst + det + meas + info);
+        return (opacitySlide + obs + inst + det + meas + jp2 + info);
     },
 
     /**
@@ -433,6 +437,12 @@ var TileLayerAccordion = Layer.extend(
         
         entry.find("#image-" + id + "-info-btn").unbind().bind('click', function () {
             self._showImageInfoDialog(id, name, imageId, server);
+        });
+        
+        // JPEG 2000 download button
+        $("#image-" + id + "-download-btn").unbind().bind('click', function () {
+            window.open("api/?action=getJP2Image&id=" + imageId);
+            return false;
         });
     },
     
