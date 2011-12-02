@@ -45,7 +45,7 @@ class Movie_YouTube
         Zend_Loader::loadClass('Zend_Gdata_AuthSub');
         
         $this->_appId     = "Helioviewer.org User Video Uploader";
-        $this->_clientId  = "Helioviewer.org (2.2.1)";
+        $this->_clientId  = "Helioviewer.org (2.2.2)";
 
         $this->_testURL   = "http://gdata.youtube.com/feeds/api/users/default/uploads?max-results=1";
         $this->_uploadURL = "http://uploads.gdata.youtube.com/feeds/api/users/default/uploads";
