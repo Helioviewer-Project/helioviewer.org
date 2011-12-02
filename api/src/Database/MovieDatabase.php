@@ -78,7 +78,7 @@ class Database_MovieDatabase
         $date = isoDateToMySQL($since);
         
         $sql = "SELECT movieId, youtubeId, timestamp FROM youtube WHERE " .
-               "shared=1 AND timestamp > '$date' ORDER BY id DESC LIMIT $num;";
+               "shared=1 AND youtubeId IS NOT NULL AND timestamp > '$date' ORDER BY id DESC LIMIT $num;";
 
         $videos = array();
 
