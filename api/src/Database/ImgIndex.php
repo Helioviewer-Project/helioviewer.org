@@ -715,5 +715,19 @@ class Database_ImgIndex
         $img = $this->getImageFromDatabase($date, $sourceId);
         return $img["filepath"] . "/" . $img["filename"];
     }
+    
+    /**
+     * Returns the filepath for the image with the specified id
+     * 
+     * @param int $id Image id
+     * 
+     * @return string Local filepath for the JP2 image
+     */
+    public function getJP2FilePathFromId($id)
+    {
+        $sql = "SELECT concat(filepath, '/', filename) FROM images WHERE id=1";
+        $row = mysqli_fetch_array($this->_dbConnection->query($sql));
+        return array_pop($row);
+    }
 }
 ?>
