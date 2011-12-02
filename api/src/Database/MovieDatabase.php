@@ -64,7 +64,7 @@ class Database_MovieDatabase
     public function updateYouTubeMovie($movieId, $youtubeId)
     {
         
-        $sql = "UPDATE youtube SET youtubeId='$youtubeId' WHERE movieId=$id;";
+        $sql = "UPDATE youtube SET youtubeId='$youtubeId' WHERE movieId=$movieId;";
         $this->_dbConnection->query($sql);
     }
     

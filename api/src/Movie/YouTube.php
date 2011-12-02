@@ -270,7 +270,7 @@ class Movie_YouTube
         // Add movie entry to YouTube table if entry does not already exist
         $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
         if (!$movies->insertYouTubeMovie($movieId, $title, $description, $tags, $share)) {
-            throw new Exception("Movie has already been uploaded.", 1);
+            throw new Exception("Movie has already been uploaded. Please allow several minutes for your video to appear on YouTube.", 1);
         }
         
         // buffer all upcoming output
@@ -295,7 +295,7 @@ class Movie_YouTube
 <?php
         } else {
             header('Content-type: application/json');
-            echo json_encode(array("id" => $video->getVideoId()));
+            echo json_encode(array("status" => "upload in progress."));
         }
         
         // get the size of the output
