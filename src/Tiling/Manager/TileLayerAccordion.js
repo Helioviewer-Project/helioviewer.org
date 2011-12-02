@@ -184,7 +184,7 @@ var TileLayerAccordion = Layer.extend(
         
         jp2 = "<span id='image-" + id + "-download-btn'" + 
                " class='image-download-btn ui-icon ui-icon-image'" +
-               " title='Download original JPEG 2000 image'></span>";
+               " title='Download original grayscale JPEG 2000 image'></span>";
         
         info = "<span id='image-" + id + "-info-btn'" + 
                " class='image-info-dialog-btn ui-icon ui-icon-info'" +

@@ -1,6 +1,45 @@
                     
                     RELEASE NOTES
                     
+Helioviewer.org 2.2.2
+======================
+
+Helioviewer.org 2.2.2 is an incremental release. This release is focused on
+sharing. Buttons have been added below movies to make it easier to share the
+movie on Facebook, Twitter, etc and optional link-shortening has been included
+for both Helioviewer.org and movie URLs using bit.ly. Another new feature is
+a visual glossary. While still a work in progress, the glossary aims to help
+make it easier to find out what the different terms used on Helioviewer.org, and
+also help determine what a partcular feature or event is.
+
+Let us know what you think, or if you have any suggestions. Feedback is always
+welcome.
+
+New features:
+
+ * Easy sharing on Facebook, Twitter, etc. using AddThis
+ * Added a visual glossary of solar terms
+ * URL shortening via bit.ly
+ * Download source JPEG 2000 images associated with an image layer
+ * It's now possible to create 1-hour or 28-day movies
+   
+Bug fixes:
+
+ * Fixed bug #890721 Prevent redundant videos from being uploaded to YouTube
+ * Fixed bug #887154 Have links shared on Facebook use relevant thumbnail.
+ * Fixed bug #887634 Add a cap to video queue to avoid excessive wait times 
+   during heavy usage
+ * Fixed bug #887152 Fix an issue causing zoom slider to be improperly 
+   initialized
+ * Fixed bug #888270 Prevent flash video player from blocking movie links
+ * Fixed bug #888585 Escape square brackets in Helioviewer.org links to enable 
+   better automatic hyperlinking
+ 
+Library updates:
+
+ * jQuery (1.6.4 => 1.7)
+ * jQuery Mousewheel (3.0.2 => 3.0.6)
+                    
 Helioviewer.org 2.2.1
 ======================
 
