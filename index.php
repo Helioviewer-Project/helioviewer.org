@@ -16,7 +16,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php printf("<!-- Helioviewer.org 2.2.1 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
+    <?php printf("<!-- Helioviewer.org 2.2.2 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
     <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
