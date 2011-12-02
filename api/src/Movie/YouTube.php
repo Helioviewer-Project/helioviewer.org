@@ -45,7 +45,7 @@ class Movie_YouTube
         Zend_Loader::loadClass('Zend_Gdata_AuthSub');
         
         $this->_appId     = "Helioviewer.org User Video Uploader";
-        $this->_clientId  = "Helioviewer.org (2.2.1)";
+        $this->_clientId  = "Helioviewer.org (2.2.2)";
 
         $this->_testURL   = "http://gdata.youtube.com/feeds/api/users/default/uploads?max-results=1";
         $this->_uploadURL = "http://uploads.gdata.youtube.com/feeds/api/users/default/uploads";
@@ -67,7 +67,7 @@ class Movie_YouTube
      * 
      * @return void
      */
-    public function uploadVideo($movie, $id, $title, $description, $tags, $share)
+    public function uploadVideo($movie, $id, $title, $description, $tags, $share, $html)
     {
         // Re-confirm authorization and convert single-use token to session 
         // token if applicable
@@ -90,7 +90,8 @@ class Movie_YouTube
         $filepath = $movie->getFilepath(true);
 
         $videoEntry = $this->_createGDataVideoEntry($filepath, $title, $description, $tags, $share);
-        return $this->_uploadVideoToYouTube($videoEntry, $id, $title, $description, $tags, $share);
+        
+        $this->_uploadVideoToYouTube($videoEntry, $id, $title, $description, $tags, $share, $html);
     }
     
     /**
@@ -250,9 +251,16 @@ class Movie_YouTube
      * @param Zend_Gdata_YouTube_VideoEntry $videoEntry A video entry object 
      * describing the video to be uploaded
      * 
+     * Note: Content-length and Connection: close headers are sent so that
+     * process can be run in the background without the user having to wait,
+     * and the database entry will be updated even if the user closes the
+     * browser window.
+     * 
+     * See: http://www.zulius.com/how-to/close-browser-connection-continue-execution/
+     * 
      * @return Zend_Gdata_YouTube_VideoEntry
      */
-    private function _uploadVideoToYouTube ($videoEntry, $id, $title, $description, $tags, $share)
+    private function _uploadVideoToYouTube ($videoEntry, $id, $title, $description, $tags, $share, $html)
     {
         include_once 'src/Database/MovieDatabase.php';
         include_once 'lib/alphaID/alphaID.php';
@@ -262,8 +270,48 @@ class Movie_YouTube
         // Add movie entry to YouTube table if entry does not already exist
         $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
         if (!$movies->insertYouTubeMovie($movieId, $title, $description, $tags, $share)) {
-            throw new Exception("Movie has already been uploaded.", 1);
+            throw new Exception("Movie has already been uploaded. Please allow several minutes for your video to appear on YouTube.", 1);
         }
+        
+        // buffer all upcoming output
+        ob_start();
+        
+        // let user know that upload is in progress
+        if ($html) {
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Helioviewer.org - YouTube Upload In Progress</title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <meta charset="utf-8" />
+</head>
+<body style='text-align: center;'>
+    <div style='margin-top: 200px;'>
+        <span style='font-size: 32px;'>Upload processing</span><br />
+        Your video should appear on YouTube in 1-2 minutes.
+    </div>
+</body>
+<?php
+        } else {
+            header('Content-type: application/json');
+            echo json_encode(array("status" => "upload in progress."));
+        }
+        
+        // get the size of the output
+        $size = ob_get_length();
+        
+        // send headers to tell the browser to close the connection
+        header("Content-Length: $size");
+        header('Connection: close');
+        
+        // flush all output
+        ob_end_flush();
+        ob_flush();
+        flush();
+        
+        // close current session
+        if (session_id()) session_write_close();
         
         // Begin upload
         try {

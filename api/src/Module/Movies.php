@@ -232,30 +232,15 @@ class Module_Movies implements Module
             $share       = $_SESSION['video-share'];
         }
         
-        $youtube = new Movie_YouTube();
-        $video = $youtube->uploadVideo($movie, $id, $title, $description, $tags, $share);
-        
-        // Output result
+        // Output format
         if (isset($this->_options['html']) && $this->_options['html']) {
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Helioviewer.org - YouTube upload complete</title>
-    <link rel="shortcut icon" href="../favicon.ico">
-    <meta charset="utf-8" />
-</head>
-<body style='text-align: center;'>
-    <div style='margin-top: 200px;'>
-        <span style='font-size: 32px;'>Finished!</span><br />
-        Your video should appear on YouTube in 1-2 minutes.
-    </div>
-</body>
-<?php
+            $html = true;
         } else {
-            header('Content-type: application/json');
-            echo json_encode(array("id" => $video->getVideoId()));
-        }      
+            $html = false;
+        }
+        
+        $youtube = new Movie_YouTube();
+        $video = $youtube->uploadVideo($movie, $id, $title, $description, $tags, $share, $html);
     }
     
     /**

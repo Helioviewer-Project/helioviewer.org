@@ -379,7 +379,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * 
      */
     submitVideoUploadForm: function (event) {
-        var params, successMsg, uploadDialog, url, auth;
+        var params, successMsg, uploadDialog, url, auth, self = this;
             
         // Validate and submit form
         try {
@@ -397,7 +397,12 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // If the user has already authorized Helioviewer, upload the movie
         if (auth) {
-            $.getJSON(url + "&action=uploadMovieToYouTube");
+            $.getJSON(url + "&action=uploadMovieToYouTube", function (response) {
+                if (response.error) {
+                    self.hide();
+                    $(document).trigger("message-console-warn", [response.error]);
+                }
+            });
         } else {
             // Otherwise open an authorization page in a new tab/window
             window.open(url + "&action=getYouTubeAuth", "_blank");
