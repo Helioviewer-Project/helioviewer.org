@@ -456,6 +456,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
         <option value='86400'>1 day</option>
         <option value='172800'>2 days</option>
         <option value='604800'>1 week</option>
+        <option value='16934400'>28 days</option>
     </select>
     <br /><br />
     <span style='font-size: 0.8em;'><b>Note:</b> When making a movie, your current observation time will become the center
