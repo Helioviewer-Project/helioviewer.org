@@ -1,5 +1,22 @@
 # Mouse Wheel ChangeLog
 
+# 3.0.6
+
+* Fix issue with delta being 0 in Firefox
+
+# 3.0.5
+
+* jQuery 1.7 compatibility
+
+# 3.0.4
+
+* Fix IE issue
+
+
+# 3.0.3
+
+* Added deltaX and deltaY for horizontal scrolling support (Thanks to Seamus Leahy)
+
 
 # 3.0.2
 

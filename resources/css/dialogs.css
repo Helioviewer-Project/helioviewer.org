@@ -59,10 +59,8 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 
 .video-links img {
     vertical-align: bottom;
-    width: 24px;
-    height: 24px;
-    margin-left:  15px;
-    margin-right: 3px;
+    width: 32px;
+    height: 32px;
 }
 
 .helioviewer-modal-dialog.ui-dialog {
@@ -108,14 +106,33 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 }
 #helioviewer-url-box > form > input[type="text"] {
     display:block;
+    margin-bottom: 3px;
 }
 
 #helioviewer-url-box > form > label
 {
     margin-right: 5px;
-    width: 50px;
+    width: 115px;
 }
 
 .youtube-upload-dialog {
     overflow: hidden;    
+}
+
+/* Visual Glossary */
+
+#glossary-menu span {
+    float: left;
+}
+#glossary-contents td {
+    padding: 10px;
+}
+#glossary-contents img, #glossary-contents video {
+    width: 450px;
+    height: 360px;    
+}
+#glossary-contents .glossary-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 5px;
 }

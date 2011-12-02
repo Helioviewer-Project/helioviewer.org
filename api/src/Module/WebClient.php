@@ -447,6 +447,27 @@ class Module_WebClient implements Module
     }
     
     /**
+     * Uses bit.ly to generate a shortened URL
+     */
+    public function shortenURL()
+    {
+        include_once 'src/Net/Proxy.php';
+        $proxy = new Net_Proxy("http://api.bitly.com/v3/shorten?");
+        
+        //$longURL = HV_WEB_ROOT_URL . "/?" . urldecode($this->_params['queryString']);
+        $longURL = "http://www.helioviewer.org" . "/?" . urldecode($this->_params['queryString']);
+        
+        $params = array(
+            "longUrl" => $longURL,
+            "login"   => HV_BITLY_USER,
+            "apiKey"  => HV_BITLY_API_KEY
+        );
+        
+        header('Content-Type: application/json');
+        echo $proxy->query($params);
+    }
+    
+    /**
      * Retrieves the latest usage statistics from the database
      */
     public function getUsageStatistics()
@@ -561,6 +582,12 @@ class Module_WebClient implements Module
             $expected = array(
                 "optional" => array("resolution"),
                 "alphanum" => array("resolution")
+            );
+            break;
+        case "shortenURL":
+            $expected = array(
+                "required" => array("queryString"),
+                "encoded"  => array("queryString")
             );
             break;
         case "takeScreenshot":

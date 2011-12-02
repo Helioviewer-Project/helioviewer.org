@@ -6,7 +6,7 @@
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
 /*global $, window, MovieManager, MediaManagerUI, Helioviewer, helioviewer,
-  layerStringToLayerArray, humanReadableNumSeconds */
+  layerStringToLayerArray, humanReadableNumSeconds, addthis */
 "use strict";
 var MovieManagerUI = MediaManagerUI.extend(
     /** @lends MovieManagerUI */
@@ -245,7 +245,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * @description Opens a pop-up with the movie player in it.
      */
     _createMoviePlayerDialog: function (movie) {
-        var dimensions, title, uploadURL, html, dialog, self = this;
+        var dimensions, title, uploadURL, flvURL, swfURL, html, dialog, 
+            screenshot, self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
@@ -296,6 +297,30 @@ var MovieManagerUI = MediaManagerUI.extend(
             helioviewer.displayMovieURL(movie.id);
             return false;
         });
+        
+        // Flash video URL
+        flvURL = helioviewer.serverSettings.rootURL + 
+                "/api/index.php?action=downloadMovie&format=flv&id=" + movie.id;
+                 
+        // SWF URL (The flowplayer SWF directly provides best Facebook support)
+        swfURL = helioviewer.serverSettings.rootURL + 
+                 "/lib/flowplayer/flowplayer-3.2.7.swf?config=" + 
+                 encodeURIComponent("{'clip':{'url':'" + flvURL + "'}}");
+                 
+        screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + 
+                     "full.png";
+        
+        // Initialize AddThis sharing
+        addthis.toolbox('#add-this-' + movie.id, {}, {
+            url: helioviewer.shortenURL("movieId=" + movie.id),
+            //url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
+            title: "Helioviewer.org",
+            description: title,
+            screenshot: screenshot,
+            swfurl: swfURL,
+            width: movie.width,
+            height: movie.height
+        });
     },
        
     /**
@@ -307,7 +332,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Suggested movie title
         title = movie.name + " (" + movie.startDate + " - " + 
                 movie.endDate + " UTC)";
-        
+
         // Suggested YouTube tags  
         tags = [];
 
@@ -538,25 +563,39 @@ var MovieManagerUI = MediaManagerUI.extend(
      * method
      */
     getVideoPlayerHTML: function (id, width, height, url) {
-        var downloadURL, downloadLink, youtubeBtn, linkBtn;
+        var downloadURL, downloadLink, youtubeBtn, addthisBtn, linkBtn, linkURL;
         
         downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
 
-        downloadLink = "<a target='_parent' href='" + downloadURL + "'>" + 
+        downloadLink = "<a target='_parent' href='" + downloadURL + 
+            "' title='Download high-quality video'>" + 
             "<img class='video-download-icon' " + 
-            "src='resources/images/34aL volume 3.2 SE/001_52.png' " +
-            "alt='Download high-quality video' />Download</a>";
+            "src='resources/images/Tango/1321375855_go-bottom.png' /></a>";
         
         youtubeBtn = "<a id='youtube-upload-" + id + "'  href='#' " + 
             "target='_blank'><img class='youtube-icon' " + 
-            "src='resources/images/Social.me/24 by 24 pixels/youtube.png' " +
-            "alt='Upload video to YouTube' />Upload</a>";
+            "title='Upload video to YouTube' " + 
+            "src='resources/images/Social.me/48 " + 
+            "by 48 pixels/youtube.png' /></a>";
             
-        linkBtn = "<a id='video-link-" + id + "'  href='#' " + 
+        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
+            
+        linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + 
+            "' title='Get a link to the movie' " + 
             "target='_blank'><img class='video-link-icon' " + 
-            "src='resources/images/berlin/32x32/link.png' " +
-            "alt='Get a link to the movie' />Link</a>";
+            "style='margin-left: 3px' " + 
+            "src='resources/images/berlin/32x32/link.png' /></a>";
+            
+        addthisBtn = "<div style='display:inline; " + 
+            "float: right;' id='add-this-" + id + 
+            "' class='addthis_default_style addthis_32x32_style'>" +
+            "<a class='addthis_button_facebook addthis_32x32_style'></a>" +
+            "<a class='addthis_button_twitter addthis_32x32_style'></a>" +
+            "<a class='addthis_button_email addthis_32x32_style'></a>" +
+            "<a class='addthis_button_google addthis_32x32_style'></a>" +
+            "<a class='addthis_button_compact addthis_32x32_style'></a>" +
+            "</div>";
         
         // HTML5 Video (H.264 or WebM)
         if ($.support.vp8 || $.support.h264) {
@@ -568,7 +607,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    "' controls preload autoplay" + 
                    " style='width:100%; height: 90%;'></video>" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + "</span>";
+                   linkBtn + addthisBtn + "</span>";
         }
 
         // Fallback (flash player)
@@ -580,9 +619,10 @@ var MovieManagerUI = MediaManagerUI.extend(
             return "<div id='movie-player-" + id + "'>" + 
                    "<iframe src=" + url + " width='" + width +  
                    "' height='" + height + "' marginheight=0 marginwidth=0 " +
-                   "scrolling=no frameborder=0 /><br />" + 
+                   "scrolling=no frameborder=0 style='margin-bottom: 2px;' />" +
+                   "<br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + "</span></div>";
+                   linkBtn + addthisBtn + "</span></div>";
         }
     },
     

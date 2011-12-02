@@ -288,7 +288,7 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     # Remove trailing comma
     query = query[:-1] + ";"
     
-    print query
+    #print query
         
     # Execute query
     try:

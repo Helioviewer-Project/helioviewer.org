@@ -329,7 +329,7 @@ def create_youtube_table(cursor):
     CREATE TABLE `youtube` (
       `id`          INT unsigned NOT NULL auto_increment,
       `movieId`     INT unsigned NOT NULL,
-      `youtubeId`   VARCHAR(16) NOT NULL,
+      `youtubeId`   VARCHAR(16),
       `timestamp`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `title`       VARCHAR(100) NOT NULL,
       `description` VARCHAR(5000) NOT NULL,

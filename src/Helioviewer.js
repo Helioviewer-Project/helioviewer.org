@@ -7,8 +7,8 @@
 /*global document, window, $, Class, ImageSelectTool, MovieBuilder, 
   TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, addIconHoverEventListener, UserVideoGallery, MessageConsole,
-  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl,
-  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers */
+  KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
+  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, VisualGlossary */
 "use strict";
 var Helioviewer = Class.extend(
     /** @lends Helioviewer.prototype */
@@ -29,7 +29,6 @@ var Helioviewer = Class.extend(
         this.serverSettings = serverSettings;
         this.api            = "api/index.php";
 
-        // User settings are globally accessible
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
             
         // Debugging helpers
@@ -70,14 +69,14 @@ var Helioviewer = Class.extend(
         this._screenshotManagerUI = new ScreenshotManagerUI();
         this._movieManagerUI      = new MovieManagerUI();
 
+        this._glossary = new VisualGlossary(this._setupDialog);
+
         this._setupDialogs();
         this._initEventHandlers();
         this._displayGreeting();
-        
-        // Play movie if id is specified
-        if (urlSettings.movieId) {
-            this._loadMovie(urlSettings.movieId);
-        }
+
+        // Initialize AddThis
+        addthis.init();
     },
     
     
@@ -155,10 +154,11 @@ var Helioviewer = Class.extend(
             }
         });
         
-        $("*[title]:not(#fullscreen-btn,.text-btn)").qtip();
+        // Bottom-right tooltips
+        $("*[title]:not(.qtip-left)").qtip();
         
-        // Fullscreen
-        $("#fullscreen-btn, .text-btn").qtip({
+        // Bottom-left tooltips
+        $(".qtip-left").qtip({
             position: {
                 my: "top right",
                 at: "bottom middle"
@@ -220,7 +220,7 @@ var Helioviewer = Class.extend(
      * 
      * @param string movieId Identifier of the movie to be shown
      */
-    _loadMovie: function (movieId) {
+    loadMovie: function (movieId) {
         if (!this._movieManagerUI.has(movieId)) {
             this._movieManagerUI.addMovieUsingId(movieId);
         } else {
@@ -274,15 +274,15 @@ var Helioviewer = Class.extend(
     /**
      * Sets up event handlers for a single dialog
      */
-    _setupDialog: function (btn, dialog, options) {
+    _setupDialog: function (btn, dialog, options, onLoad) {
         // Default options
         var defaults = {
             title     : "Helioviewer.org",
             autoOpen  : true,
             draggable : true,
             width     : 480,
-            height    : 480            
-        };        
+            height    : 480
+        };
         
         // Button click handler
         $(btn).click(function () {
@@ -297,7 +297,7 @@ var Helioviewer = Class.extend(
                     d.dialog('open');
                 }
             } else {
-                d.load(this.href).dialog($.extend(defaults, options));
+                d.load(this.href, onLoad).dialog($.extend(defaults, options));
                 btn.addClass("dialog-loaded");
             }
             return false; 
@@ -341,6 +341,18 @@ var Helioviewer = Class.extend(
         $("#helioviewer-viewport, .ui-slider-handle").each(function () {
             assignTouchHandlers(this);
         });
+        
+        $("#helioviewer-url-shorten").click(function(e) {
+            var url;
+
+            if (e.target.checked) {
+                url = $("#helioviewer-short-url").attr("value");   
+            } else {
+                url = $("#helioviewer-long-url").attr("value");
+            }
+            
+            $("#helioviewer-url-input-box").attr('value', url).select();
+        });
     },
     
     /**
@@ -348,20 +360,33 @@ var Helioviewer = Class.extend(
      * @param {Object} url
      */
     displayURL: function (url, msg) {
+        // Store short and long versions of URL
+        var queryString, shortURL;
+        
+        queryString = url.substr(this.serverSettings.rootURL.length + 2); 
+        
+        shortURL = this.shortenURL(queryString);
+        
+        $("#helioviewer-long-url").attr("value", url);
+        $("#helioviewer-short-url").attr("value", shortURL);
+        
+        // Display URL
         $("#helioviewer-url-box-msg").text(msg);
         $("#url-dialog").dialog({
             dialogClass: 'helioviewer-modal-dialog',
-            height    : 100,
+            height    : 110,
             width     : $('html').width() * 0.7,
             modal     : true,
             resizable : false,
             title     : "URL",
             open      : function (e) {
+                $("#helioviewer-url-shorten").removeAttr("checked");
                 $('.ui-widget-overlay').hide().fadeIn();
                 $("#helioviewer-url-input-box").attr('value', url).select();
             }
         });
     },
+    
     
     /**
      * Displays a URL to a Helioviewer.org movie
@@ -369,8 +394,8 @@ var Helioviewer = Class.extend(
      * @param string Id of the movie to be linked to
      */
     displayMovieURL: function (movieId) {
-        var url = this.serverSettings.rootURL + "/?movieId=" + movieId,
-            msg = "Use the following link to refer to this movie:";
+        var msg = "Use the following link to refer to this movie:",
+            url = this.serverSettings.rootURL + "/?movieId=" + movieId;
 
         this.displayURL(url, msg);           
     },
@@ -541,8 +566,8 @@ var Helioviewer = Class.extend(
      * 
      * @returns {String} A URL representing the current state of Helioviewer.org.
      */
-    toURL: function () {
-
+    toURL: function (shorten) {
+        // URL parameters
         var params = {
             "date"        : this.viewport.getMiddleObservationTime().toISOString(),
             "imageScale"  : this.viewport.getImageScale(),
@@ -550,8 +575,29 @@ var Helioviewer = Class.extend(
             "centerY"     : Helioviewer.userSettings.get("state.centerY"), 
             "imageLayers" : encodeURI(this.viewport.serialize())
         };
-        return this.serverSettings.rootURL + "/?" + 
-               decodeURIComponent($.param(params));
+        
+        return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
+    },
+    
+    /**
+     * Returns a shortened version of a Helioviewer.org URL
+     */
+    shortenURL: function (queryString) {
+        var shortURL = "http://www.helioviewer.org";
+        
+        $.ajax({
+            async: false,
+            url: this.api,
+            dataType: 'json',
+            data: {
+                "action": "shortenURL",
+                "queryString": queryString 
+            },
+            success: function (response) {
+                shortURL = response.data.url;
+            }
+        });
+        return shortURL;
     },
     
     /**
