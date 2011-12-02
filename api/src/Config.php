@@ -105,7 +105,8 @@ class Config
     private function _setAdditionalParams()
     {
         define("HV_LOG_DIR", HV_ROOT_DIR . "/log");
-        define("HV_API_ROOT_URL", "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
+        define("HV_API_ROOT_DIR", HV_ROOT_DIR . "/api");
+        define("HV_API_ROOT_URL", HV_WEB_ROOT_URL . "/api/index.php");
         define("HV_CACHE_DIR", HV_ROOT_DIR . "/cache");
         define("HV_CACHE_URL", HV_WEB_ROOT_URL . "/cache");
         

@@ -46,6 +46,7 @@ class Validation_InputValidator
             "floats"   => "checkFloats",
             "bools"    => "checkBools",
             "dates"    => "checkDates",
+            "encoded"  => "checkURLEncodedStrings",
             "urls"     => "checkURLs",
             "files"    => "checkFilePaths",
             "uuids"    => "checkUUIDs"
@@ -248,6 +249,26 @@ class Validation_InputValidator
             if (isset($params[$url])) {
                 if (!filter_var($params[$url], FILTER_VALIDATE_URL)) {
                     throw new Exception("Invalid value for $url. Please specify an URL.");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Typecasts validates URL-encoded parameters
+     *
+     * @param array $urls    A list of URL-encoded strings which are used by 
+     *                       an action.
+     * @param array &$params The parameters that were passed in
+     *
+     * @return void
+     */
+    public static function checkURLEncodedStrings($strings, &$params)
+    {
+        foreach ($strings as $str) {
+            if (isset($params[$str])) {
+                if (!preg_match('/[a-zA-Z0-9_\.\%\-]*/', $params[$str])) {
+                    throw new Exception("Invalid URL-encoded string.");
                 }
             }
         }

@@ -115,3 +115,10 @@ div#event-icon-menu-body {
 	margin: 0px 6px 0px 6px;
 	text-decoration: underline;
 }
+
+.image-download-btn {
+    margin-left: 223px;
+    float: left;
+    cursor: pointer;
+}
+

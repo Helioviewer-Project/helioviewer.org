@@ -46,8 +46,8 @@ class Database_MovieDatabase
         // Create the prepared statement
         $sql = "INSERT INTO youtube values (NULL, ?, NULL, NULL, ?, ?, ?, ?)";
         if ($stmt = $this->_dbConnection->link->prepare($sql)) {
-
             $stmt->bind_param('isssi', $movieId, $title, $desc, $keywords, $share);
+
             $result = $stmt->execute();
             $stmt->close();
             
@@ -73,7 +73,7 @@ class Database_MovieDatabase
      */
     public function getSharedVideos($num, $since)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $date = isoDateToMySQL($since);
         

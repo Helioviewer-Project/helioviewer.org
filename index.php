@@ -20,8 +20,83 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <title>Helioviewer - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
     <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
-    <meta name="keywords" content="Helioviewer, jpeg 2000, jp2, solar image viewer, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, EIT, LASCO, SDO, MDI, coronagraph, " />
+    <meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
+    <meta property="og:title" content="Helioviewer.org" />
+<?php
+    // Settings specified via URL parameters
+    $urlSettings = array();
+
+    //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SOHO,AIA,AIA,171,1,70],[SOHO,LASCO,C2,white light,0,100]
+    if (isset($_GET['imageLayers'])) {
+        $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
+        $imageLayers = preg_split("/\],\[/", $imageLayersString);
+        $urlSettings['imageLayers'] = $imageLayers;
+    }
     
+    if (isset($_GET['centerX']))
+        $urlSettings['centerX'] = $_GET['centerX'];
+    
+    if (isset($_GET['centerY']))
+        $urlSettings['centerY'] = $_GET['centerY'];
+
+    if (isset($_GET['date']))
+        $urlSettings['date'] = $_GET['date'];
+
+    if (isset($_GET['imageScale']))
+        $urlSettings['imageScale'] = $_GET['imageScale'];
+    
+    if(isset($_GET['movieId']))
+        $urlSettings['movieId'] = $_GET['movieId'];
+    
+    // Open Graph meta tags
+    $ogDescription = "Solar and heliospheric image visualization tool.";
+    $ogImage       = "http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png";
+
+    if (isset($urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $urlSettings["movieId"])) {
+        include_once "api/src/Config.php";
+        $configObj = new Config("settings/Config.ini");
+        include_once 'api/src/Movie/HelioviewerMovie.php';
+        
+        $movie = new Movie_HelioviewerMovie($urlSettings["movieId"], "mp4");
+        $thumbnails = $movie->getPreviewImages();
+
+        $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $movie->publicId;
+        $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+        
+        $ogDescription = $movie->getTitle();
+        $ogImage       = $thumbnails['full'];
+?>
+    <meta property="og:video" content="<?php echo $swfURL;?>" />
+    <meta property="og:video:width" content="<?php echo $movie->width;?>" />
+    <meta property="og:video:height" content="<?php echo $movie->height;?>" />
+    <meta property="og:video:type" content="application/x-shockwave-flash" />
+<?php 
+    } else if (sizeOf($urlSettings) >= 5) {
+        include_once "api/src/Config.php";
+        $configObj = new Config("settings/Config.ini");
+
+        include_once 'api/src/Helper/HelioviewerLayers.php';
+        include_once 'api/src/Helper/DateTimeConversions.php';
+
+        $layers = new Helper_HelioviewerLayers($_GET['imageLayers']);
+
+        $screenshotParams = array(
+            "action"      => "takeScreenshot",
+            "display"     => true,
+            "date"        => $urlSettings['date'],
+            "imageScale"  => $urlSettings['imageScale'],
+            "layers" => $_GET['imageLayers'],
+            "x0" => $urlSettings['centerX'],
+            "y0" => $urlSettings['centerY'],
+            "width" => 128,
+            "height" => 128
+        );
+        $ogImage = HV_API_ROOT_URL . "?" . http_build_query($screenshotParams);
+        $ogDescription = $layers->toHumanReadableString() . " (" . toReadableISOString($urlSettings['date']) . " UTC)";
+    }
+?>
+    <meta property="og:description" content="<?php echo $ogDescription;?>" />
+    <meta property="og:image" content="<?php echo $ogImage;?>" />
     <?php if ($config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />\n"; ?>
     
     <link rel="shortcut icon" href="favicon.ico" />
@@ -85,6 +160,16 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <?php
             }
 ?>
+
+    <!-- AddThis -->
+    <script type="text/javascript">
+        var addthis_config = {
+            data_track_clickback: true,
+            pub_id: "<?php echo $config['addthis_analytics_id'];?>",
+            data_ga_property: "<?php echo $config['google_analytics_id'];?>"
+        };
+    </script>
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#async=1"></script>
 </head>
 <body>
 
@@ -136,7 +221,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             <!--Social buttons -->
                             <div id="social-buttons">
                                 <!-- Link button -->
-                                <div id="link-button" class="text-btn" title="Get a link to the current page.">
+                                <div id="link-button" class="text-btn qtip-left" title="Get a link to the current page.">
                                     <span class="ui-icon ui-icon-link" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Link</span>
                                 </div>
@@ -160,7 +245,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 </div>
                                 
                                 <!-- Settings button -->
-                                <div id="settings-button" class="text-btn" title="Open Helioviewer settings dialog.">
+                                <div id="settings-button" class="text-btn qtip-left" title="Configure Helioviewer.org user preferences.">
                                     <span class="ui-icon ui-icon-gear" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Settings</span>
                                 </div>
@@ -174,7 +259,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             </div>
 
                             <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn' title="Toggle fullscreen display.">
+                            <div id='fullscreen-btn' class='qtip-left' title="Toggle fullscreen display.">
                                 <span class='ui-icon ui-icon-arrow-4-diag'></span>
                             </div>
 
@@ -187,18 +272,18 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             <!-- Screenshot Manager -->
                             <div id='screenshot-manager-container' class='media-manager-container glow'>
                                 <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
-                                    <div id='screenshot-manager-full-viewport' class='text-btn'>
+                                    <div id='screenshot-manager-full-viewport' class='text-btn' title='Create a screenshot using the entire viewport.'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Full Viewport</span>
                                     </div>
-                                    <div id='screenshot-manager-select-area' class='text-btn' style='float:right;'>
+                                    <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
                                         <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Select Area</span> 
                                     </div>
                                 </div>
                                 <div id='screenshot-history-title' class='media-history-title'>
                                     Screenshot History    
-                                    <div id='screenshot-clear-history-button' class='text-btn' style='float:right;'>
+                                    <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
                                     </div> 
@@ -208,18 +293,18 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             <!-- Movie Manager -->
                             <div id='movie-manager-container' class='media-manager-container glow'>
                                 <div id='movie-manager-build-btns' class='media-manager-build-btns'>
-                                    <div id='movie-manager-full-viewport' class='text-btn'>
+                                    <div id='movie-manager-full-viewport' class='text-btn qtip-left' title='Create a movie using the entire viewport.'>
                                         <span class='ui-icon ui-icon-arrowthick-2-se-nw' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Full Viewport</span>
                                     </div>
-                                    <div id='movie-manager-select-area' class='text-btn' style='float:right;'>
+                                    <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
                                         <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
                                         <span style='line-height: 1.6em'>Select Area</span> 
                                     </div>
                                 </div>
                                 <div id='movie-history-title' class='media-history-title'>
                                     Movie History    
-                                    <div id='movie-clear-history-button' class='text-btn' style='float:right;'>
+                                    <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
                                     </div> 
@@ -304,13 +389,13 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                 <span style='position: absolute; bottom: 5px;'>Recently Shared</span>
             </div>
             <div id="user-video-gallery" class="ui-widget ui-widget-content ui-corner-all shadow">
-                <a id="user-video-gallery-next" href="#" title="Go to next page.">
+                <a id="user-video-gallery-next" class="qtip-left" href="#" title="Go to next page.">
                     <div class='ui-icon ui-icon-triangle-1-n'></div>
                 </a>
                 <div id="user-video-gallery-main">
                     <div id="user-video-gallery-spinner"></div>
                 </div>
-                <a id="user-video-gallery-prev" href="#" title="Go to previous page.">
+                <a id="user-video-gallery-prev" class="qtip-left" href="#" title="Go to previous page.">
                     <div class='ui-icon ui-icon-triangle-1-s'></div>
                 </a>
             </div>
@@ -327,6 +412,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
             <!-- Meta links -->
             <div id="footer-links">
                 <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
+                <a id="helioviewer-glossary" class="light" href="dialogs/glossary.html">Glossary</a>
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
@@ -350,6 +436,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <!-- Viewport shadow -->
 <div id='helioviewer-viewport-container-shadow' class='shadow'></div>
 
+<!-- Glossary dialog -->
+<div id='glossary-dialog'></div>
+
 <!-- About dialog -->
 <div id='about-dialog'></div>
 
@@ -367,6 +456,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
         <option value='86400'>1 day</option>
         <option value='172800'>2 days</option>
         <option value='604800'>1 week</option>
+        <option value='16934400'>28 days</option>
     </select>
     <br /><br />
     <span style='font-size: 0.8em;'><b>Note:</b> When making a movie, your current observation time will become the center
@@ -383,6 +473,10 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
         <span id="helioviewer-url-box-msg">Use the following link to refer to current page:</span>
         <form style="margin-top: 5px;">
             <input type="text" id="helioviewer-url-input-box" style="width:98%;" value="http://helioviewer.org" />
+            <label for="helioviewer-url-shorten">Shorten with bit.ly?</label>
+            <input type="checkbox" id="helioviewer-url-shorten" />
+            <input type="hidden" id="helioviewer-short-url" value="" />
+            <input type="hidden" id="helioviewer-long-url" value="" />
         </form>
     </div>
 </div>
@@ -443,12 +537,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 ?>
 
 <!-- jQuery -->
-<script src="http://code.jquery.com/jquery-1.6.4.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.7.0.min.js" type="text/javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
-<script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.min.js" type="text/javascript"></script>
+<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
 
 <!-- jGrowl -->
 <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
@@ -463,7 +557,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 
 <!-- qTip -->
-<script src="lib/jquery.qTip2/jquery.qtip.pack.js" type="text/javascript"></script>
+<script src="lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
 
 <!-- XML to JSON -->
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
@@ -473,12 +567,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 ?>
 
 <!-- jQuery -->
-<script src="http://code.jquery.com/jquery-1.6.4.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.7.0.js" type="text/javascript"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 
 <!-- Mousewheel support -->
-<script src="lib/jquery.mousewheel.3.0.2/jquery.mousewheel.js" type="text/javascript"></script>
+<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
 
 <!-- jGrowl -->
 <script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
@@ -544,7 +638,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                     "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                     "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
                     "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", "UI/UserVideoGallery.js", 
-                    "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
+                    "UI/Glossary.js", "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
         foreach($js as $file)
             printf("<script src=\"src/%s?$version\" type=\"text/javascript\"></script>\n", $file);
     }
@@ -556,31 +650,6 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     $(function () {
         <?php
             printf("settingsJSON = %s;\n", json_encode($config));
-
-            // Settings specified via URL parameters
-            $urlSettings = array();
-
-            //API Example: helioviewer.org/?date=2003-10-05T00:00:00Z&imageScale=2.4&imageLayers=[SOHO,AIA,AIA,171,1,70],[SOHO,LASCO,C2,white light,0,100]
-            if (isset($_GET['imageLayers'])) {
-                $imageLayersString = ($_GET['imageLayers'][0] == "[") ? substr($_GET['imageLayers'],1,-1) : $_GET['imageLayers'];
-                $imageLayers = preg_split("/\],\[/", $imageLayersString);
-                $urlSettings['imageLayers'] = $imageLayers;
-            }
-            
-            if (isset($_GET['centerX']))
-                $urlSettings['centerX'] = $_GET['centerX'];
-            
-            if (isset($_GET['centerY']))
-                $urlSettings['centerY'] = $_GET['centerY'];
-
-            if (isset($_GET['date']))
-                $urlSettings['date'] = $_GET['date'];
-
-            if (isset($_GET['imageScale']))
-                $urlSettings['imageScale'] = $_GET['imageScale'];
-            
-            if(isset($_GET['movieId']))
-                $urlSettings['movieId'] = $_GET['movieId'];
             
             // Compute acceptible zoom values
             $zoomLevels = array();
@@ -598,7 +667,14 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
             printf("\tdebug = %s;\n", json_encode($debug));
         ?>
         serverSettings = new Config(settingsJSON).toArray();
+        
+        // Initialize Helioviewer.org
         helioviewer    = new Helioviewer(urlSettings, serverSettings, zoomLevels, debug);
+        
+        // Play movie if id is specified
+        if (urlSettings.movieId) {
+            helioviewer.loadMovie(urlSettings.movieId);
+        }
     });
 </script>
 

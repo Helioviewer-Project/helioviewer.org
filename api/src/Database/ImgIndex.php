@@ -206,7 +206,7 @@ class Database_ImgIndex
      */
     public function getImageFromDatabase($date, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
 
@@ -254,7 +254,7 @@ class Database_ImgIndex
      */
     public function getClosestImageBeforeDate($date, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
 
@@ -281,7 +281,7 @@ class Database_ImgIndex
      */
     public function getClosestImageAfterDate ($date, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
 
         $datestr = isoDateToMySQL($date);
 
@@ -323,7 +323,7 @@ class Database_ImgIndex
      */
     public function getImageCount($start, $end, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
         
@@ -344,7 +344,7 @@ class Database_ImgIndex
      */
     public function getImageRange($start, $end, $sourceId)
     {
-        include_once HV_ROOT_DIR . '/api/src/Helper/DateTimeConversions.php';
+        include_once 'src/Helper/DateTimeConversions.php';
         $startDate = isoDateToMySQL($start);
         $endDate   = isoDateToMySQL($end);
 
@@ -369,7 +369,7 @@ class Database_ImgIndex
      */
     public function extractJP2MetaInfo ($img)
     {
-        include_once HV_ROOT_DIR . "/api/src/Image/JPEG2000/JP2ImageXMLBox.php";
+        include_once "src/Image/JPEG2000/JP2ImageXMLBox.php";
 
         try {
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($img);
@@ -714,6 +714,20 @@ class Database_ImgIndex
     {
         $img = $this->getImageFromDatabase($date, $sourceId);
         return $img["filepath"] . "/" . $img["filename"];
+    }
+    
+    /**
+     * Returns the filepath for the image with the specified id
+     * 
+     * @param int $id Image id
+     * 
+     * @return string Local filepath for the JP2 image
+     */
+    public function getJP2FilePathFromId($id)
+    {
+        $sql = "SELECT concat(filepath, '/', filename) FROM images WHERE id=$id";
+        $row = mysqli_fetch_array($this->_dbConnection->query($sql));
+        return array_pop($row);
     }
 }
 ?>
