@@ -75,12 +75,17 @@ class Module_JHelioviewer implements Module
         );
         
         $options = array_replace($defaults, $this->_options);
-
-        // Look up sourceId if not specified
-        $sourceId = $this->_getSourceId($imgIndex);
-
-        // Filepath to JP2 Image
-        $filepath = HV_JP2_DIR . $imgIndex->getJP2FilePath($this->_params['date'], $sourceId);
+        
+        // If image id is set, then just use that
+        if (isset($this->_params['id'])) {
+            $filepath = $imgIndex->getJP2FilePathFromId($this->_params['id']);
+        } else {
+            // Otherwise look up sourceId if not specified
+            $sourceId = $this->_getSourceId($imgIndex);
+    
+            // Filepath to JP2 Image
+            $filepath = HV_JP2_DIR . $imgIndex->getJP2FilePath($this->_params['date'], $sourceId);
+        }
 
         // Output results
         if ($options['jpip']) {
@@ -332,9 +337,15 @@ class Module_JHelioviewer implements Module
                'bools' => array('jpip', 'json'),
                'dates' => array('date')
             );
-
-            // Either sourceId or observatory, instrument, detector and measurement must be specified
-            if (isset($this->_params['sourceId'])) {
+            
+            // If imageId is specified, that is all that is needed
+            if (isset($this->_params['id'])) {
+                $expected['required'] = array('id');
+                $expected['ints']     = array('id');
+            }
+            // Either sourceId or observatory, instrument, detector and 
+            // measurement must be specified
+            else if (isset($this->_params['sourceId'])) {
                 $expected['required'] = array('date', 'sourceId');
                 $expected['ints']     = array('sourceId');
             } else {
