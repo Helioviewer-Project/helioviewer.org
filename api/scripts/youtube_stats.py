@@ -25,13 +25,22 @@ def main():
     ids = open(args.file).read().splitlines()
     
     counts = []
+    retries = {i:0 for i in ids} # Limit number of retries due to network failures
 
     for video_id in ids:
         try:
             entry = yt_service.GetYouTubeVideoEntry(video_id=video_id)
             counts.append(int(entry.statistics.view_count))
         except gdata.service.RequestError:
-            print("Skipping %s (Not Found)" % video_id)
+            retries[video_id] += 1
+            
+            if retries[video_id] > 1:
+                print("Retrying %s (try #%d)" % (video_id, retries[video_id]))
+            
+            #For request errors, append back to end of the queue
+            if retries[video_id] <= 20:
+                ids.append(video_id)
+
         except AttributeError:
             # If entry.statistics is None, stats are unavailable (hidden by user?)
             print("Skipping %s (Statistics Unavailable)" % video_id)
