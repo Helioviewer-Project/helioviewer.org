@@ -21,7 +21,7 @@ var SettingsLoader = (
                 "minImageScale" : serverSettings.minImageScale,
                 "maxImageScale" : serverSettings.maxImageScale,
                 "minMovieLength": 300,
-                "maxMovieLength": 2629744
+                "maxMovieLength": 16934400
             };
         
         return new UserSettings(defaults, urlSettings, constraints);
