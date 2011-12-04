@@ -64,7 +64,8 @@ def main():
     
 def get_youtubeids(cursor, start_date):
     """Get a list of Youtube ids starting from the specified date"""
-    sql = "SELECT youtubeId FROM youtube WHERE timestamp >= '%s'" % start_date
+    sql = ("SELECT youtubeId FROM youtube WHERE " 
+           "timestamp >= '%s' AND youtubeId IS NOT NULL" % start_date)
     cursor.execute(sql)
     result = cursor.fetchall()
     
