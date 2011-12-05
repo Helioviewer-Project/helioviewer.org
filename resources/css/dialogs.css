@@ -136,3 +136,15 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     font-weight: 700;
     margin-bottom: 5px;
 }
+
+#glossary-contents .glossary-links {
+    padding-left: 20px;
+}
+
+#glossary-contents .glossary-links a {
+    text-decoration: none;
+}
+
+#glossary-contents .glossary-links a:hover {
+    text-decoration: underline;
+}
