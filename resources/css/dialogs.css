@@ -127,7 +127,7 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 #glossary-contents td {
     padding: 10px;
 }
-#glossary-contents img, #glossary-contents video {
+#glossary-contents img, #glossary-contents video, #glossary-contents .youtube-player {
     width: 450px;
     height: 360px;    
 }
