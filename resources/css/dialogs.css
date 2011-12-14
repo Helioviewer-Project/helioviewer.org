@@ -127,7 +127,7 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 #glossary-contents td {
     padding: 10px;
 }
-#glossary-contents img, #glossary-contents video {
+#glossary-contents img, #glossary-contents video, #glossary-contents .youtube-player {
     width: 450px;
     height: 360px;    
 }
@@ -135,4 +135,16 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 5px;
+}
+
+#glossary-contents .glossary-links {
+    padding-left: 20px;
+}
+
+#glossary-contents .glossary-links a {
+    text-decoration: none;
+}
+
+#glossary-contents .glossary-links a:hover {
+    text-decoration: underline;
 }
