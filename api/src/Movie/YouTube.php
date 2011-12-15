@@ -269,6 +269,18 @@ class Movie_YouTube
         
         // Add movie entry to YouTube table if entry does not already exist
         $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
+//         
+        // var_dump($title);
+        // var_dump($description);
+        // var_dump($tags);
+        // var_dump($share);
+//         
+        // var_dump($_SESSION);
+        // var_dump($_REQUEST);
+        // var_dump($id);
+        // var_dump($movieId);
+        // die();
+//         
         if (!$movies->insertYouTubeMovie($movieId, $title, $description, $tags, $share)) {
             throw new Exception("Movie has already been uploaded. Please allow several minutes for your video to appear on YouTube.", 1);
         }
