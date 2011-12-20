@@ -1,0 +1,25 @@
+###############################################################################
+# Helioviewer Database Simulation:
+#  Image Queries
+#
+# Command:
+#   query.py -dhv2 -uhelioviewer -p -timage -n1000 kore-mysql-indexed-20090811_fixed.txt
+#
+# (Executed n 2009-08-11 16:05:23)
+###############################################################################
+
+[Summary]
+Machine : Kore
+Database: hv2 (MySQL)
+Table   : image
+Records Total: 100000000
+
+[Query Statistics]
+n: 1000
+mean: 0.01499s
+median: 0.01456s
+std dev: 0.00605s
+
+Fastest Query: 0.00064s (1993-11-23 19:02:46)
+Slowest Query: 0.11655s (2010-08-29 14:28:01)
+    
