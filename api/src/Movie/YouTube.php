@@ -119,7 +119,7 @@ class Movie_YouTube
     {
         // Post-auth upload URL
         $uploadURL = HV_API_ROOT_URL . "?action=uploadMovieToYouTube&id=$id&html=true";
-
+        
         // Get URL for authorization
         $authURL = Zend_Gdata_AuthSub::getAuthSubTokenUri(
             $uploadURL, "http://gdata.youtube.com", false, true

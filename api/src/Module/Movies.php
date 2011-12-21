@@ -183,9 +183,12 @@ class Module_Movies implements Module
         
         $share = isset($this->_options['share']) ? $this->_options['share'] : false;
         
-        // Store form data for later use
         session_start();
 
+        // Discard any existing authorization
+        unset($_SESSION['sessionToken']);
+
+        // Store form data for later use        
         $_SESSION['video-id'] = $this->_params["id"];
         $_SESSION['video-title'] = $this->_params["title"];
         $_SESSION['video-description'] = $this->_params["description"];
@@ -230,6 +233,13 @@ class Module_Movies implements Module
             $description = $_SESSION['video-description'];
             $tags        = $_SESSION['video-tags'];
             $share       = $_SESSION['video-share'];
+            
+            if (!isset($_SESSION['video-title'])) {
+                $msg = "Error encountered during authentication. ". 
+                       "<a href='https://accounts.google.com/IssuedAuthSubTokens'>Revoke a</a> " . 
+                       "for Helioviewer.org in your Google settings page and try again.</a>";
+                throw new Exception($msg);
+            }
         }
         
         // Output format

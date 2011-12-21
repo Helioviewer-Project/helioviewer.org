@@ -1,0 +1,5547 @@
+version: 0.9.6
+cmd: /var/www/hv-trunk/api/index.php
+part: 1
+
+events: Time
+
+fl=/var/www/hv-trunk/api/src/Config.php
+fn=require_once::/var/www/hv-trunk/api/src/Config.php
+1 1
+
+fl=php:internal
+fn=php::parse_ini_file
+51 111
+
+fl=/var/www/hv-trunk/api/src/Config.php
+fn=Config->_fixTypes
+53 47
+
+fl=php:internal
+fn=php::strtoupper
+57 1
+
+fl=php:internal
+fn=php::define
+57 9
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 5
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 6
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 3
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 3
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 5
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 1
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 1
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 3
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 5
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 1
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 1
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 1
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 3
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 1
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 1
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 4
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 3
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 1
+
+fl=php:internal
+fn=php::strtoupper
+57 0
+
+fl=php:internal
+fn=php::define
+57 0
+
+fl=php:internal
+fn=php::define
+68 5
+
+fl=php:internal
+fn=php::define
+107 0
+
+fl=php:internal
+fn=php::define
+108 5
+
+fl=php:internal
+fn=php::define
+109 0
+
+fl=php:internal
+fn=php::define
+110 0
+
+fl=php:internal
+fn=php::define
+112 4
+
+fl=php:internal
+fn=php::define
+113 0
+
+fl=php:internal
+fn=php::define
+116 0
+
+fl=php:internal
+fn=php::define
+117 0
+
+fl=php:internal
+fn=php::define
+118 0
+
+fl=php:internal
+fn=php::define
+119 0
+
+fl=/var/www/hv-trunk/api/src/Config.php
+fn=Config->_setAdditionalParams
+71 80
+cfn=php::define
+calls=1 0 0
+107 0
+cfn=php::define
+calls=1 0 0
+108 5
+cfn=php::define
+calls=1 0 0
+109 0
+cfn=php::define
+calls=1 0 0
+110 0
+cfn=php::define
+calls=1 0 0
+112 4
+cfn=php::define
+calls=1 0 0
+113 0
+cfn=php::define
+calls=1 0 0
+116 0
+cfn=php::define
+calls=1 0 0
+117 0
+cfn=php::define
+calls=1 0 0
+118 0
+cfn=php::define
+calls=1 0 0
+119 0
+
+fl=php:internal
+fn=php::strripos
+73 3
+
+fl=php:internal
+fn=php::substr
+73 1
+
+fl=php:internal
+fn=php::define
+5 0
+
+fl=php:internal
+fn=php::define
+6 0
+
+fl=php:internal
+fn=php::define
+7 0
+
+fl=php:internal
+fn=php::define
+8 0
+
+fl=php:internal
+fn=php::define
+13 5
+
+fl=php:internal
+fn=php::define
+18 0
+
+fl=/var/www/hv-trunk/settings/Private.php
+fn=include_once::/var/www/hv-trunk/settings/Private.php
+1 46
+cfn=php::define
+calls=1 0 0
+5 0
+cfn=php::define
+calls=1 0 0
+6 0
+cfn=php::define
+calls=1 0 0
+7 0
+cfn=php::define
+calls=1 0 0
+8 0
+cfn=php::define
+calls=1 0 0
+13 5
+cfn=php::define
+calls=1 0 0
+18 0
+
+fl=/var/www/hv-trunk/api/src/Config.php
+fn=Config->__construct
+23 822
+cfn=php::parse_ini_file
+calls=1 0 0
+51 111
+cfn=Config->_fixTypes
+calls=1 0 0
+53 47
+cfn=php::strtoupper
+calls=1 0 0
+57 1
+cfn=php::define
+calls=1 0 0
+57 9
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 5
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 6
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 3
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 3
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 5
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 1
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 1
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 3
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 5
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 1
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 1
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 1
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 3
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 1
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 1
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 4
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 3
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 1
+cfn=php::strtoupper
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+57 0
+cfn=php::define
+calls=1 0 0
+68 5
+cfn=Config->_setAdditionalParams
+calls=1 0 0
+71 95
+cfn=php::strripos
+calls=1 0 0
+73 3
+cfn=php::substr
+calls=1 0 0
+73 1
+cfn=include_once::/var/www/hv-trunk/settings/Private.php
+calls=1 0 0
+74 56
+
+fl=php:internal
+fn=php::date_default_timezone_set
+24 2600
+
+fl=php:internal
+fn=php::register_shutdown_function
+25 5
+
+fl=/var/www/hv-trunk/api/src/Validation/InputValidator.php
+fn=include_once::/var/www/hv-trunk/api/src/Validation/InputValidator.php
+1 0
+
+fl=php:internal
+fn=php::array_key_exists
+82 2
+
+fl=php:internal
+fn=php::in_array
+110 4
+
+fl=/var/www/hv-trunk/api/src/Module/interface.Module.php
+fn=require_once::/var/www/hv-trunk/api/src/Module/interface.Module.php
+1 0
+
+fl=/var/www/hv-trunk/api/src/Module/WebClient.php
+fn=include_once::/var/www/hv-trunk/api/src/Module/WebClient.php
+1 81
+cfn=require_once::/var/www/hv-trunk/api/src/Module/interface.Module.php
+calls=1 0 0
+14 0
+
+fl=/var/www/hv-trunk/api/src/Module/WebClient.php
+fn=Module_WebClient->__construct
+149 5
+
+fl=/var/www/hv-trunk/api/src/Validation/InputValidator.php
+fn=Validation_InputValidator::checkForMissingParams
+57 8
+
+fl=php:internal
+fn=php::filter_var
+185 6
+
+fl=php:internal
+fn=php::filter_var
+185 0
+
+fl=/var/www/hv-trunk/api/src/Validation/InputValidator.php
+fn=Validation_InputValidator::checkInts
+57 24
+cfn=php::filter_var
+calls=1 0 0
+185 6
+cfn=php::filter_var
+calls=1 0 0
+185 0
+
+fl=php:internal
+fn=php::filter_var
+206 2
+
+fl=php:internal
+fn=php::filter_var
+206 0
+
+fl=php:internal
+fn=php::filter_var
+206 3
+
+fl=php:internal
+fn=php::filter_var
+206 0
+
+fl=php:internal
+fn=php::filter_var
+206 0
+
+fl=php:internal
+fn=php::filter_var
+206 2
+
+fl=php:internal
+fn=php::filter_var
+206 0
+
+fl=php:internal
+fn=php::filter_var
+206 0
+
+fl=/var/www/hv-trunk/api/src/Validation/InputValidator.php
+fn=Validation_InputValidator::checkFloats
+57 76
+cfn=php::filter_var
+calls=1 0 0
+206 2
+cfn=php::filter_var
+calls=1 0 0
+206 0
+cfn=php::filter_var
+calls=1 0 0
+206 3
+cfn=php::filter_var
+calls=1 0 0
+206 0
+cfn=php::filter_var
+calls=1 0 0
+206 0
+cfn=php::filter_var
+calls=1 0 0
+206 2
+cfn=php::filter_var
+calls=1 0 0
+206 0
+cfn=php::filter_var
+calls=1 0 0
+206 0
+
+fl=php:internal
+fn=php::strpos
+161 3
+
+fl=php:internal
+fn=php::preg_match
+163 36
+
+fl=/var/www/hv-trunk/api/src/Validation/InputValidator.php
+fn=Validation_InputValidator::checkFilePaths
+57 17
+cfn=php::strpos
+calls=1 0 0
+161 3
+cfn=php::preg_match
+calls=1 0 0
+163 36
+
+fl=/var/www/hv-trunk/api/src/Validation/InputValidator.php
+fn=Validation_InputValidator::checkInput
+483 76
+cfn=Validation_InputValidator::checkForMissingParams
+calls=1 0 0
+57 8
+cfn=Validation_InputValidator::checkInts
+calls=1 0 0
+57 30
+cfn=Validation_InputValidator::checkFloats
+calls=1 0 0
+57 88
+cfn=Validation_InputValidator::checkFilePaths
+calls=1 0 0
+57 57
+
+fl=/var/www/hv-trunk/api/src/Module/WebClient.php
+fn=Module_WebClient->validate
+51 41
+cfn=Validation_InputValidator::checkInput
+calls=1 0 0
+483 262
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=include_once::/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+1 1
+
+fl=php:internal
+fn=php::define
+14 2
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=include_once::/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+1 13
+cfn=php::define
+calls=1 0 0
+14 2
+
+fl=php:internal
+fn=php::basename
+270 9
+
+fl=php:internal
+fn=php::substr
+270 0
+
+fl=php:internal
+fn=php::dirname
+274 0
+
+fl=php:internal
+fn=php::round
+274 6
+
+fl=php:internal
+fn=php::round
+274 0
+
+fl=php:internal
+fn=php::round
+274 1
+
+fl=php:internal
+fn=php::round
+274 0
+
+fl=php:internal
+fn=php::sprintf
+275 10
+
+fl=/var/www/hv-trunk/api/src/Module/WebClient.php
+fn=Module_WebClient->_getTileCacheFilename
+200 56
+cfn=php::basename
+calls=1 0 0
+270 9
+cfn=php::substr
+calls=1 0 0
+270 0
+cfn=php::dirname
+calls=1 0 0
+274 0
+cfn=php::round
+calls=1 0 0
+274 6
+cfn=php::round
+calls=1 0 0
+274 0
+cfn=php::round
+calls=1 0 0
+274 1
+cfn=php::round
+calls=1 0 0
+274 0
+cfn=php::sprintf
+calls=1 0 0
+275 10
+
+fl=php:internal
+fn=php::dirname
+393 0
+
+fl=php:internal
+fn=php::file_exists
+395 10
+
+fl=/var/www/hv-trunk/api/src/Module/WebClient.php
+fn=Module_WebClient->_createTileCacheDir
+203 18
+cfn=php::dirname
+calls=1 0 0
+393 0
+cfn=php::file_exists
+calls=1 0 0
+395 10
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->__construct
+211 2
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->getWidth
+62 4
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->getHeight
+62 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->getPixelWidth
+236 4
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->getPixelHeight
+237 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->_limitToMaximumDimensions
+66 15
+cfn=Helper_RegionOfInterest->getPixelWidth
+calls=1 0 0
+236 4
+cfn=Helper_RegionOfInterest->getPixelHeight
+calls=1 0 0
+237 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->__construct
+216 32
+cfn=Helper_RegionOfInterest->getWidth
+calls=1 0 0
+62 4
+cfn=Helper_RegionOfInterest->getHeight
+calls=1 0 0
+62 0
+cfn=Helper_RegionOfInterest->_limitToMaximumDimensions
+calls=1 0 0
+66 20
+
+fl=php:internal
+fn=php::strtoupper
+227 1
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=require_once::/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+1 0
+
+fl=/var/www/hv-trunk/api/src/Image/HelioviewerImage.php
+fn=require_once::/var/www/hv-trunk/api/src/Image/HelioviewerImage.php
+1 700
+cfn=require_once::/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+calls=1 0 0
+15 0
+
+fl=/var/www/hv-trunk/api/src/Image/ImageType/AIAImage.php
+fn=include_once::/var/www/hv-trunk/api/src/Image/ImageType/AIAImage.php
+1 216
+cfn=require_once::/var/www/hv-trunk/api/src/Image/HelioviewerImage.php
+calls=1 0 0
+15 701
+
+fl=php:internal
+fn=php::file_exists
+235 9
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->setColorTable
+48 0
+
+fl=php:internal
+fn=php::array_replace
+58 5
+
+fl=php:internal
+fn=php::array_replace
+84 1
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->getWidth
+87 0
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->getHeight
+88 1
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->getScale
+89 0
+
+fl=php:internal
+fn=php::max
+175 1
+
+fl=php:internal
+fn=php::max
+176 0
+
+fl=php:internal
+fn=php::min
+183 0
+
+fl=php:internal
+fn=php::max
+183 0
+
+fl=php:internal
+fn=php::min
+184 0
+
+fl=php:internal
+fn=php::max
+184 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->getImageSubRegion
+92 49
+cfn=php::max
+calls=1 0 0
+175 1
+cfn=php::max
+calls=1 0 0
+176 0
+cfn=php::min
+calls=1 0 0
+183 0
+cfn=php::max
+calls=1 0 0
+183 0
+cfn=php::min
+calls=1 0 0
+184 0
+cfn=php::max
+calls=1 0 0
+184 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->imageScale
+95 0
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->getScale
+97 0
+
+fl=php:internal
+fn=php::log
+98 9
+
+fl=php:internal
+fn=php::floor
+99 0
+
+fl=php:internal
+fn=php::max
+99 0
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->__construct
+70 100
+cfn=php::array_replace
+calls=1 0 0
+84 1
+cfn=Image_JPEG2000_JP2Image->getWidth
+calls=1 0 0
+87 0
+cfn=Image_JPEG2000_JP2Image->getHeight
+calls=1 0 0
+88 1
+cfn=Image_JPEG2000_JP2Image->getScale
+calls=1 0 0
+89 0
+cfn=Helper_RegionOfInterest->getImageSubRegion
+calls=1 0 0
+92 54
+cfn=Helper_RegionOfInterest->imageScale
+calls=1 0 0
+95 0
+cfn=Image_JPEG2000_JP2Image->getScale
+calls=1 0 0
+97 0
+cfn=php::log
+calls=1 0 0
+98 9
+cfn=php::floor
+calls=1 0 0
+99 0
+cfn=php::max
+calls=1 0 0
+99 0
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->getWidth
+351 0
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->getHeight
+352 0
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->getScale
+356 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->left
+360 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->top
+361 0
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->getPixelWidth
+367 0
+
+fl=php:internal
+fn=php::round
+367 1
+
+fl=/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+fn=Helper_RegionOfInterest->getPixelHeight
+368 0
+
+fl=php:internal
+fn=php::round
+368 0
+
+fl=php:internal
+fn=php::round
+370 0
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->computePadding
+72 193
+cfn=Image_JPEG2000_JP2Image->getWidth
+calls=1 0 0
+351 0
+cfn=Image_JPEG2000_JP2Image->getHeight
+calls=1 0 0
+352 0
+cfn=Image_JPEG2000_JP2Image->getScale
+calls=1 0 0
+356 0
+cfn=Helper_RegionOfInterest->left
+calls=1 0 0
+360 0
+cfn=Helper_RegionOfInterest->top
+calls=1 0 0
+361 0
+cfn=Helper_RegionOfInterest->getPixelWidth
+calls=1 0 0
+367 0
+cfn=php::round
+calls=1 0 0
+367 1
+cfn=Helper_RegionOfInterest->getPixelHeight
+calls=1 0 0
+368 0
+cfn=php::round
+calls=1 0 0
+368 0
+cfn=php::round
+calls=1 0 0
+370 0
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->setPadding
+73 2
+
+fl=php:internal
+fn=php::file_exists
+141 7
+
+fl=/var/www/hv-trunk/api/src/Image/HelioviewerImage.php
+fn=Image_HelioviewerImage->_imageNotInCache
+75 19
+cfn=php::file_exists
+calls=1 0 0
+141 7
+
+fl=php:internal
+fn=php::substr
+224 0
+
+fl=php:internal
+fn=php::substr
+146 1
+
+fl=php:internal
+fn=php::substr
+147 3
+
+fl=php:internal
+fn=php::substr
+148 0
+
+fl=php:internal
+fn=php::substr
+149 2
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->_getRegionString
+109 55
+cfn=php::substr
+calls=1 0 0
+146 1
+cfn=php::substr
+calls=1 0 0
+147 3
+cfn=php::substr
+calls=1 0 0
+148 0
+cfn=php::substr
+calls=1 0 0
+149 2
+
+fl=php:internal
+fn=php::escapeshellcmd
+112 30
+
+fl=php:internal
+fn=php::exec
+112 40256
+
+fl=php:internal
+fn=php::sizeof
+114 3
+
+fl=/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+fn=Image_JPEG2000_JP2Image->extractRegion
+227 152
+cfn=Image_JPEG2000_JP2Image->_getRegionString
+calls=1 0 0
+109 62
+cfn=php::escapeshellcmd
+calls=1 0 0
+112 30
+cfn=php::exec
+calls=1 0 0
+112 40256
+cfn=php::sizeof
+calls=1 0 0
+114 3
+
+fl=php:internal
+fn=php::Imagick->__construct
+230 3872
+
+fl=php:internal
+fn=php::Imagick->setimageformat
+231 293
+
+fl=php:internal
+fn=php::Imagick->setimagetype
+232 18
+
+fl=php:internal
+fn=php::Imagick->setimagedepth
+233 3
+
+fl=php:internal
+fn=php::Imagick->setimagecompressionquality
+234 2
+
+fl=php:internal
+fn=php::Imagick->getimageblob
+236 16053
+
+fl=php:internal
+fn=php::imagecreatefromstring
+432 6649
+
+fl=php:internal
+fn=php::imagecreatefrompng
+438 7987
+
+fl=php:internal
+fn=php::imagecolorat
+442 5
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 1
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 0
+
+fl=php:internal
+fn=php::imagecolorat
+442 0
+
+fl=php:internal
+fn=php::imagecolorset
+446 1
+
+fl=php:internal
+fn=php::ob_start
+450 6
+
+fl=php:internal
+fn=php::imagepng
+452 22627
+
+fl=php:internal
+fn=php::ob_get_contents
+453 104
+
+fl=php:internal
+fn=php::ob_end_clean
+455 1
+
+fl=php:internal
+fn=php::imagedestroy
+458 30
+
+fl=php:internal
+fn=php::imagedestroy
+459 11
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->setColorPalette
+243 5935
+cfn=php::imagecreatefromstring
+calls=1 0 0
+432 6649
+cfn=php::imagecreatefrompng
+calls=1 0 0
+438 7987
+cfn=php::imagecolorat
+calls=1 0 0
+442 5
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 1
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 0
+cfn=php::imagecolorat
+calls=1 0 0
+442 0
+cfn=php::imagecolorset
+calls=1 0 0
+446 1
+cfn=php::ob_start
+calls=1 0 0
+450 6
+cfn=php::imagepng
+calls=1 0 0
+452 22627
+cfn=php::ob_get_contents
+calls=1 0 0
+453 104
+cfn=php::ob_end_clean
+calls=1 0 0
+455 1
+cfn=php::imagedestroy
+calls=1 0 0
+458 30
+cfn=php::imagedestroy
+calls=1 0 0
+459 11
+
+fl=php:internal
+fn=php::Imagick->__construct
+245 1
+
+fl=php:internal
+fn=php::Imagick->readimageblob
+246 91771
+
+fl=php:internal
+fn=php::Imagick->setimageopacity
+385 47858
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->setAlphaChannel
+250 50
+cfn=php::Imagick->setimageopacity
+calls=1 0 0
+385 47858
+
+fl=php:internal
+fn=php::explode
+308 12
+
+fl=php:internal
+fn=php::end
+309 3
+
+fl=php:internal
+fn=php::Imagick->setimagecompression
+326 10
+
+fl=php:internal
+fn=php::Imagick->setimagecompressionquality
+330 2
+
+fl=php:internal
+fn=php::Imagick->setinterlacescheme
+334 5
+
+fl=php:internal
+fn=php::Imagick->setimagedepth
+338 0
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->compressImage
+253 117
+cfn=php::explode
+calls=1 0 0
+308 12
+cfn=php::end
+calls=1 0 0
+309 3
+cfn=php::Imagick->setimagecompression
+calls=1 0 0
+326 10
+cfn=php::Imagick->setimagecompressionquality
+calls=1 0 0
+330 2
+cfn=php::Imagick->setinterlacescheme
+calls=1 0 0
+334 5
+cfn=php::Imagick->setimagedepth
+calls=1 0 0
+338 0
+
+fl=php:internal
+fn=php::round
+259 2
+
+fl=php:internal
+fn=php::round
+259 0
+
+fl=php:internal
+fn=php::Imagick->resizeimage
+261 156172
+
+fl=php:internal
+fn=php::Imagick->setimagebackgroundcolor
+262 567
+
+fl=php:internal
+fn=php::Imagick->extentimage
+268 150696
+
+fl=php:internal
+fn=php::Imagick->writeimage
+284 112068
+
+fl=php:internal
+fn=php::Imagick->destroy
+287 259
+
+fl=php:internal
+fn=php::Imagick->destroy
+288 203
+
+fl=php:internal
+fn=php::unlink
+289 133
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->build
+76 1091
+cfn=php::substr
+calls=1 0 0
+224 0
+cfn=Image_JPEG2000_JP2Image->extractRegion
+calls=1 0 0
+227 40506
+cfn=php::Imagick->__construct
+calls=1 0 0
+230 3872
+cfn=php::Imagick->setimageformat
+calls=1 0 0
+231 293
+cfn=php::Imagick->setimagetype
+calls=1 0 0
+232 18
+cfn=php::Imagick->setimagedepth
+calls=1 0 0
+233 3
+cfn=php::Imagick->setimagecompressionquality
+calls=1 0 0
+234 2
+cfn=php::Imagick->getimageblob
+calls=1 0 0
+236 16053
+cfn=Image_SubFieldImage->setColorPalette
+calls=1 0 0
+243 43724
+cfn=php::Imagick->__construct
+calls=1 0 0
+245 1
+cfn=php::Imagick->readimageblob
+calls=1 0 0
+246 91771
+cfn=Image_SubFieldImage->setAlphaChannel
+calls=1 0 0
+250 47909
+cfn=Image_SubFieldImage->compressImage
+calls=1 0 0
+253 153
+cfn=php::round
+calls=1 0 0
+259 2
+cfn=php::round
+calls=1 0 0
+259 0
+cfn=php::Imagick->resizeimage
+calls=1 0 0
+261 156172
+cfn=php::Imagick->setimagebackgroundcolor
+calls=1 0 0
+262 567
+cfn=php::Imagick->extentimage
+calls=1 0 0
+268 150696
+cfn=php::Imagick->writeimage
+calls=1 0 0
+284 112068
+cfn=php::Imagick->destroy
+calls=1 0 0
+287 259
+cfn=php::Imagick->destroy
+calls=1 0 0
+288 203
+cfn=php::unlink
+calls=1 0 0
+289 133
+
+fl=/var/www/hv-trunk/api/src/Image/HelioviewerImage.php
+fn=Image_HelioviewerImage->__construct
+50 174
+cfn=php::array_replace
+calls=1 0 0
+58 5
+cfn=Image_SubFieldImage->__construct
+calls=1 0 0
+70 169
+cfn=Image_SubFieldImage->computePadding
+calls=1 0 0
+72 199
+cfn=Image_SubFieldImage->setPadding
+calls=1 0 0
+73 2
+cfn=Image_HelioviewerImage->_imageNotInCache
+calls=1 0 0
+75 26
+cfn=Image_SubFieldImage->build
+calls=1 0 0
+76 665510
+
+fl=/var/www/hv-trunk/api/src/Image/ImageType/AIAImage.php
+fn=Image_ImageType_AIAImage->__construct
+242 38
+cfn=Image_SubFieldImage->setColorTable
+calls=1 0 0
+48 0
+cfn=Image_HelioviewerImage->__construct
+calls=1 0 0
+50 666088
+
+fl=php:internal
+fn=php::apache_request_headers
+472 10
+
+fl=php:internal
+fn=php::filemtime
+476 7
+
+fl=php:internal
+fn=php::gmdate
+476 21
+
+fl=php:internal
+fn=php::header
+482 14
+
+fl=php:internal
+fn=php::filesize
+484 2
+
+fl=php:internal
+fn=php::header
+484 3
+
+fl=php:internal
+fn=php::finfo->finfo
+487 16
+
+fl=php:internal
+fn=php::finfo->file
+488 900
+
+fl=php:internal
+fn=php::header
+489 13
+
+fl=php:internal
+fn=php::basename
+492 11
+
+fl=php:internal
+fn=php::header
+494 3
+
+fl=php:internal
+fn=php::readfile
+496 169
+
+fl=/var/www/hv-trunk/api/src/Image/SubFieldImage.php
+fn=Image_SubFieldImage->display
+244 159
+cfn=php::apache_request_headers
+calls=1 0 0
+472 10
+cfn=php::filemtime
+calls=1 0 0
+476 7
+cfn=php::gmdate
+calls=1 0 0
+476 21
+cfn=php::header
+calls=1 0 0
+482 14
+cfn=php::filesize
+calls=1 0 0
+484 2
+cfn=php::header
+calls=1 0 0
+484 3
+cfn=php::finfo->finfo
+calls=1 0 0
+487 16
+cfn=php::finfo->file
+calls=1 0 0
+488 900
+cfn=php::header
+calls=1 0 0
+489 13
+cfn=php::basename
+calls=1 0 0
+492 11
+cfn=php::header
+calls=1 0 0
+494 3
+cfn=php::readfile
+calls=1 0 0
+496 169
+
+fl=/var/www/hv-trunk/api/src/Module/WebClient.php
+fn=Module_WebClient->getTile
+53 819
+cfn=include_once::/var/www/hv-trunk/api/src/Image/JPEG2000/JP2Image.php
+calls=1 0 0
+192 1
+cfn=include_once::/var/www/hv-trunk/api/src/Helper/RegionOfInterest.php
+calls=1 0 0
+193 15
+cfn=Module_WebClient->_getTileCacheFilename
+calls=1 0 0
+200 87
+cfn=Module_WebClient->_createTileCacheDir
+calls=1 0 0
+203 29
+cfn=Image_JPEG2000_JP2Image->__construct
+calls=1 0 0
+211 2
+cfn=Helper_RegionOfInterest->__construct
+calls=1 0 0
+216 58
+cfn=php::strtoupper
+calls=1 0 0
+227 1
+cfn=include_once::/var/www/hv-trunk/api/src/Image/ImageType/AIAImage.php
+calls=1 0 0
+230 918
+cfn=php::file_exists
+calls=1 0 0
+235 9
+cfn=Image_ImageType_AIAImage->__construct
+calls=1 0 0
+242 666127
+cfn=Image_SubFieldImage->display
+calls=1 0 0
+244 1334
+
+fl=/var/www/hv-trunk/api/src/Module/WebClient.php
+fn=Module_WebClient->execute
+150 71
+cfn=Module_WebClient->validate
+calls=1 0 0
+51 303
+cfn=Module_WebClient->getTile
+calls=1 0 0
+53 669406
+
+fl=php:internal
+fn=php::in_array
+161 2
+
+fl=/var/www/hv-trunk/api/src/Database/Statistics.php
+fn=include_once::/var/www/hv-trunk/api/src/Database/Statistics.php
+1 0
+
+fl=/var/www/hv-trunk/api/src/Database/DbConnection.php
+fn=include_once::/var/www/hv-trunk/api/src/Database/DbConnection.php
+1 0
+
+fl=php:internal
+fn=php::mysqli_connect
+67 25301
+
+fl=php:internal
+fn=php::mysqli_select_db
+72 44
+
+fl=php:internal
+fn=php::mysqli_query
+73 465
+
+fl=/var/www/hv-trunk/api/src/Database/DbConnection.php
+fn=Database_DbConnection->connect
+57 68
+cfn=php::mysqli_connect
+calls=1 0 0
+67 25301
+cfn=php::mysqli_select_db
+calls=1 0 0
+72 44
+cfn=php::mysqli_query
+calls=1 0 0
+73 465
+
+fl=/var/www/hv-trunk/api/src/Database/DbConnection.php
+fn=Database_DbConnection->__construct
+35 16
+cfn=Database_DbConnection->connect
+calls=1 0 0
+57 25880
+
+fl=/var/www/hv-trunk/api/src/Database/Statistics.php
+fn=Database_Statistics->__construct
+163 226
+cfn=include_once::/var/www/hv-trunk/api/src/Database/DbConnection.php
+calls=1 0 0
+34 0
+cfn=Database_DbConnection->__construct
+calls=1 0 0
+35 25897
+
+fl=php:internal
+fn=php::mysqli_query
+95 110
+
+fl=/var/www/hv-trunk/api/src/Database/DbConnection.php
+fn=Database_DbConnection->query
+45 15
+cfn=php::mysqli_query
+calls=1 0 0
+95 110
+
+fl=/var/www/hv-trunk/api/src/Database/Statistics.php
+fn=Database_Statistics->log
+164 17
+cfn=Database_DbConnection->query
+calls=1 0 0
+45 125
+
+fl=/var/www/hv-trunk/api/index.php
+fn=loadModule
+35 1678
+cfn=include_once::/var/www/hv-trunk/api/src/Validation/InputValidator.php
+calls=1 0 0
+79 0
+cfn=php::array_key_exists
+calls=1 0 0
+82 2
+cfn=php::in_array
+calls=1 0 0
+110 4
+cfn=include_once::/var/www/hv-trunk/api/src/Module/WebClient.php
+calls=1 0 0
+147 82
+cfn=Module_WebClient->__construct
+calls=1 0 0
+149 5
+cfn=Module_WebClient->execute
+calls=1 0 0
+150 669781
+cfn=php::in_array
+calls=1 0 0
+161 2
+cfn=include_once::/var/www/hv-trunk/api/src/Database/Statistics.php
+calls=1 0 0
+162 0
+cfn=Database_Statistics->__construct
+calls=1 0 0
+163 26124
+cfn=Database_Statistics->log
+calls=1 0 0
+164 143
+
+fl=/var/www/hv-trunk/api/index.php
+fn={main}
+
+summary: 702168
+
+0 465
+cfn=require_once::/var/www/hv-trunk/api/src/Config.php
+calls=1 0 0
+22 1
+cfn=Config->__construct
+calls=1 0 0
+23 1268
+cfn=php::date_default_timezone_set
+calls=1 0 0
+24 2600
+cfn=php::register_shutdown_function
+calls=1 0 0
+25 5
+cfn=loadModule
+calls=1 0 0
+35 697825
+
+fl=php:internal
+fn=php::error_get_last
+858 0
+
+fl=/var/www/hv-trunk/api/index.php
+fn=shutDownFunction
+0 14
+cfn=php::error_get_last
+calls=1 0 0
+858 0
+
