@@ -1,0 +1,21 @@
+Helioviewer Background Creation
+(Updated 2011/01/12)
+
+Note: The original background was created much earlier but I never wrote down the steps I used to create the image, or
+saved a layered version of the image. This document attempt to replicate the steps with some slight modifications so that
+the bottom edge of the image seemless blends with a solid color (better for larger displays).
+
+Using GIMP:
+
+Create the gradient
+
+  1) Create a 1200x40 RGB image.
+  2) Select foreground color: #191922, and Background color ~ #f2fdff
+  3) Using gradient tool, drag from the bottom edge to -50px ABOVE the top edge.
+  4) Apply HSV Noise filter (2, 3, 10, 10)
+
+Soften the transition at the bottom of the image:
+
+  1) Zoom in and use smudge/blur tools to gradually smooth out last ~5px (burn could work, but it would darken the end of the image so a different BG color would need to be used later on)
+     Try using several iterations, each at increasing opacities (e.g. 40, 60, 80)
+

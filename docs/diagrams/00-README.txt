@@ -14,7 +14,12 @@ UML_Front-end-EventLayers               2010/02/12  Front-end feature and event 
 Helioviewer.org, and not the Helioviewer project (which includes 
 Helioviewer.org, JHelioviewer, etc).
 
-**File extensions:
+**Acronyms:
+
+DFD = Data Flow Diagram
+UML = Unified Modeling Language
+
+***File extensions:
 
 .dia Dia (http://live.gnome.org/Dia)
 .xcf GIMP (http://www.gimp.org/)

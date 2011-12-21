@@ -1,0 +1,3716 @@
+version: 0.9.6
+cmd: /home/hughitt1/Dropbox/dev/image_magick/07-binary-strings/old.php
+part: 1
+
+events: Time
+
+fl=php:internal
+fn=php::Imagick->__construct
+10 218644
+
+fl=php:internal
+fn=php::Imagick->setimageformat
+11 930
+
+fl=php:internal
+fn=php::Imagick->setimagedepth
+12 9
+
+fl=php:internal
+fn=php::Imagick->setimagetype
+13 25
+
+fl=php:internal
+fn=php::Imagick->writeimage
+14 2624911
+
+fl=php:internal
+fn=php::Imagick->destroy
+15 22083
+
+fl=php:internal
+fn=php::file_exists
+32 22
+
+fl=php:internal
+fn=php::imagecreatefrompng
+33 343365
+
+fl=php:internal
+fn=php::imagecreatefrompng
+42 227
+
+fl=php:internal
+fn=php::imagecolorat
+45 3
+
+fl=php:internal
+fn=php::imagecolorset
+49 5
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 5
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 0
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 2
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 2
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 0
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imagecolorat
+45 1
+
+fl=php:internal
+fn=php::imagecolorset
+49 1
+
+fl=php:internal
+fn=php::imageinterlace
+53 15
+
+fl=php:internal
+fn=php::imagepng
+59 2241639
+
+fl=php:internal
+fn=php::imagedestroy
+65 775
+
+fl=php:internal
+fn=php::imagedestroy
+66 21
+
+fl=/home/hughitt1/Dropbox/dev/image_magick/07-binary-strings/old.php
+fn=setColorPalette
+17 7975
+cfn=php::file_exists
+calls=1 0 0
+32 22
+cfn=php::imagecreatefrompng
+calls=1 0 0
+33 343365
+cfn=php::imagecreatefrompng
+calls=1 0 0
+42 227
+cfn=php::imagecolorat
+calls=1 0 0
+45 3
+cfn=php::imagecolorset
+calls=1 0 0
+49 5
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 5
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 0
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 2
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 2
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 0
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imagecolorat
+calls=1 0 0
+45 1
+cfn=php::imagecolorset
+calls=1 0 0
+49 1
+cfn=php::imageinterlace
+calls=1 0 0
+53 15
+cfn=php::imagepng
+calls=1 0 0
+59 2241639
+cfn=php::imagedestroy
+calls=1 0 0
+65 775
+cfn=php::imagedestroy
+calls=1 0 0
+66 21
+
+fl=php:internal
+fn=php::Imagick->__construct
+19 1195508
+
+fl=php:internal
+fn=php::Imagick->writeimage
+20 2719331
+
+fl=php:internal
+fn=php::Imagick->destroy
+21 24439
+
+fl=/home/hughitt1/Dropbox/dev/image_magick/07-binary-strings/old.php
+fn={main}
+
+summary: 9402298
+
+0 1548
+cfn=php::Imagick->__construct
+calls=1 0 0
+10 218644
+cfn=php::Imagick->setimageformat
+calls=1 0 0
+11 930
+cfn=php::Imagick->setimagedepth
+calls=1 0 0
+12 9
+cfn=php::Imagick->setimagetype
+calls=1 0 0
+13 25
+cfn=php::Imagick->writeimage
+calls=1 0 0
+14 2624911
+cfn=php::Imagick->destroy
+calls=1 0 0
+15 22083
+cfn=setColorPalette
+calls=1 0 0
+17 2594867
+cfn=php::Imagick->__construct
+calls=1 0 0
+19 1195508
+cfn=php::Imagick->writeimage
+calls=1 0 0
+20 2719331
+cfn=php::Imagick->destroy
+calls=1 0 0
+21 24439
+
