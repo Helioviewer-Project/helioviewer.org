@@ -257,16 +257,7 @@ var Helioviewer = Class.extend(
             "height": 'auto',
             "resizable": false,
             "create": function (e) {
-                var currentValue = Helioviewer.userSettings.get(
-                    "defaults.movies.duration"),
-                    select = $(this).find("#settings-movie-length");
 
-                // Select default value and bind event listener
-                select.find("[value = " + currentValue + "]").attr("selected", "selected");
-                select.bind('change', function (e) {
-                    Helioviewer.userSettings.set("defaults.movies.duration",
-                        parseInt(this.value, 10));
-                });                              
             }
         });
     },
