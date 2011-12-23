@@ -311,6 +311,94 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 </div>
                                 <div id='movie-history'></div>
                             </div>
+                            
+                            <!-- Movie Settings -->
+                            <div id='movie-settings-container' class='media-manager-container glow'>
+                                <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
+                                    <b>Settings:</b>
+                                    
+                                    <div id='movie-settings-btns' style='float:right;'>
+                                        <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear'></span>
+                                        <span style='display:inline-block;' class='ui-icon ui-icon-help'></span>
+                                    </div>
+                                </div>
+
+                                <!-- Begin movie settings -->
+                                <form id='movie-settings-form'>
+
+                                <fieldset>
+                                    <legend>Time</legend>
+
+                                    <label for='settings-movie-length'>Length</label>
+                                    <select id='settings-movie-length' name='movie-length'>
+                                        <option value='3600'>1 hour</option>
+                                        <option value='10800'>3 hours</option>
+                                        <option value='21600'>6 hours</option>
+                                        <option value='43200'>12 hours</option>
+                                        <option value='86400'>1 day</option>
+                                        <option value='172800'>2 days</option>
+                                        <option value='604800'>1 week</option>
+                                        <option value='2419200'>28 days</option>
+                                    </select>
+                                <!--<span style='display: inline-block;' class='ui-icon ui-icon-info qtip-left' title='When making a movie, your current observation time will become the center
+                                of the movie. For example, if your observation time is set to "12:00:00" and you
+                                choose to make a 6 hour movie, then movie will start at "09:00:00" and end at "15:00:00"'></span>-->
+                                    
+                                    <br />
+                                    
+                                    <div style='padding: 12px 5px;'>
+                                        <div>Start: <span style='font-style:italic;'>2011-12-03 00:34:54</span></div>
+                                        <div>End: <span style='font-style:italic;'>2011-12-03 06:34:54</span></div>
+                                    </div>
+                                </fieldset>
+                                
+                                <!-- Advanced movie settings -->
+                                <div id='movie-settings-advanced'>
+                                    
+                                    <!-- Movie Speed -->
+                                    <fieldset>
+                                        <legend>Speed</legend>
+                                        <div style='padding:10px;'>
+                                            <label for="speed-method-f">Frame-rate</label>
+                                            <input type="radio" name="speed-method" id="speed-method-f" value="framerate" />
+                                            <input size=3 type="number" name="framerate" min="1" max="30" value="15" checked=checked /> Frames/second (1-30)<br />
+                                            
+                                            <label for="speed-method-f">Duration</label>
+                                            <input type="radio" name="speed-method" id="speed-method-d" value="duration" />
+                                            <input size=3 type="number" name="duration" min="5" max="300" value="20" disabled=disabled /> Seconds (5-300)<br />
+                                        </div>
+                                    </fieldset>
+                                    
+                                   <!-- Data -->
+                                    <fieldset>
+                                        <legend>Data</legend>
+                                        <div style='padding:10px;'>
+                                            <label for="maxFrames">Max Frames</label>
+                                            <input id='maxFrames' size=3 type="number" name="maxframes" min="1" max="30" value="15" checked=checked /> Frames/second (1-30)<br />
+                                            
+                                            <label for="desiredCadence">Cadence</label>
+                                            <label for="cadence-method-u">No Limit</label>
+                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" />
+                                            
+                                            <label for="cadence-method-m">One image every</label>
+                                            <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />
+                                            <input size=3 type="number" name="duration" min="0" value="1" disabled=disabled />
+                                            <select id='settings-movie-length' name='movie-length'>
+                                                <option value='1'>Seconds</option>
+                                                <option value='60'>Minutes</option>
+                                                <option value='3600'>Hours</option>
+                                                <option value='86400'>Days</option>
+                                            </select>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                
+                                <div id='movie-settings-submit'>
+                                    <input type="submit" id='movie-settings-submit-btn' value="Ok" />                                    
+                                </div>
+                                
+                                </form>
+                            </div>
 
                             <!-- Image area select tool -->
                             <div id='image-area-select-buttons'>
@@ -447,21 +535,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 
 <!-- Settings dialog -->
 <div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'>
-    Movie Duration: 
-    <select id='settings-movie-length' name='movie-length'>
-        <option value='3600'>1 hour</option>
-        <option value='10800'>3 hours</option>
-        <option value='21600'>6 hours</option>
-        <option value='43200'>12 hours</option>
-        <option value='86400'>1 day</option>
-        <option value='172800'>2 days</option>
-        <option value='604800'>1 week</option>
-        <option value='2419200'>28 days</option>
-    </select>
-    <br /><br />
-    <span style='font-size: 0.8em;'><b>Note:</b> When making a movie, your current observation time will become the center
-    of the movie. For example, if your observation time is set to "12:00:00" and you
-    choose to make a 6 hour movie, then movie will start at "09:00:00" and end at "15:00:00".</span>
+
 </div>
 
 <!-- Usage Dialog -->

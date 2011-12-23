@@ -21,7 +21,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         var movies = Helioviewer.userSettings.get('history.movies');
         this._manager = new MovieManager(movies);
         this._super("movie");
+        this._settingsDialog = $("#movie-settings-container");
+        this._advancedSettings = $("#movie-settings-advanced");
         this._initEvents();
+        this._initSettings();
     },
     
     /**
@@ -43,21 +46,11 @@ var MovieManagerUI = MediaManagerUI.extend(
      * build a movie. Upon completion, it displays a notification that lets the
      * user click to view it in a popup. 
      */
-    _buildMovie: function (roi) {
-        var params, imageScale, layers, currentTime, endTime, startTimeStr,
-            endTimeStr, now, diff, movieLength, self = this;
-
-        if (typeof roi === "undefined") {
-            roi = helioviewer.getViewportRegionOfInterest();
-        }
-
+    _buildMovieRequest: function () {
+        var params, currentTime, endTime, startTimeStr, endTimeStr, now, 
+            diff, imageScale, movieLength, self = this;
+            
         imageScale = helioviewer.getImageScale();
-        layers = helioviewer.getLayers();
-
-        // Make sure selection region and number of layers are acceptible
-        if (!this._validateRequest(roi, layers)) {
-            return;
-        }
 
         this.building = true;
 
@@ -79,16 +72,46 @@ var MovieManagerUI = MediaManagerUI.extend(
         startTimeStr = currentTime.addSeconds(-movieLength / 2).toISOString();
         endTimeStr   = currentTime.addSeconds(movieLength).toISOString();
         
-        // Ajax Request Parameters
-        params = $.extend({
+        this._queueMovie(imageScale, layers, startTimeStr, endTimeStr, roi);
+        
+        //this.hideDialogs();
+        this.building = false;
+    },
+    
+    /**
+     * Displays movie settings dialog
+     */
+    _showMovieSettings: function (roi) {
+        if (typeof roi === "undefined") {
+            roi = helioviewer.getViewportRegionOfInterest();
+        }
+
+        var layers = helioviewer.getLayers();
+
+        // Make sure selection region and number of layers are acceptible
+        if (!this._validateRequest(roi, layers)) {
+            return;
+        }
+        
+        this.hide();
+        this._settingsDialog.show();
+        
+        //_buildMovieRequest
+    },
+    
+    /**
+     * Queues a movie request
+     */
+    _queueMovie: function (scale, layers, start, end, roi) {
+        var params = $.extend({
             action        : "queueMovie",
-            imageScale    : imageScale,
+            imageScale    : scale,
             layers        : layers,
-            startTime     : startTimeStr,
-            endTime       : endTimeStr,
+            startTime     : start,
+            endTime       : end,
             format        : this._manager.format,
             watermark     : true
-        }, this._toArcsecCoords(roi, imageScale));
+        }, this._toArcsecCoords(roi, scale));
         
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
@@ -118,10 +141,8 @@ var MovieManagerUI = MediaManagerUI.extend(
                   "time after it is ready by clicking the 'Movie' button";
             $(document).trigger("message-console-info", msg);
         });
-
-        //this.hideDialogs();
-        this.building = false;
     },
+    
     
     /**
      * Initializes MovieManager-related event handlers
@@ -134,13 +155,13 @@ var MovieManagerUI = MediaManagerUI.extend(
         // ROI selection buttons
         this._fullViewportBtn.click(function () {
             self.hide();
-            self._buildMovie();
+            self._showMovieSettings();
         });
         
         this._selectAreaBtn.click(function () {
             self.hide();
             $(document).trigger("enable-select-tool", 
-                                $.proxy(self._buildMovie, self));
+                                $.proxy(self._showMovieSettings, self));
         });
         
         // Setup hover and click handlers for movie history items
@@ -166,6 +187,47 @@ var MovieManagerUI = MediaManagerUI.extend(
             self.submitVideoUploadForm();
             return false;
         });
+    },
+    
+    /**
+     * Initializes movie settings events
+     */
+    _initSettings: function () {
+        var duration, durationSelect, self = this;
+        
+        // Settings buttons
+        $("#movie-settings-submit-btn").button().click(function (e) {
+            console.log('ouch!');
+        });
+        
+        $("#movie-settings-toggle-advanced").click(function () {
+            if (self._advancedSettings.is(":visible")) {
+                self._advancedSettings.animate({"width": 200, "height": 0}, function () {
+                    self._advancedSettings.hide();
+                });
+            } else {
+                self._advancedSettings.show();
+                self._advancedSettings.animate({"width": 300, "height": 220});
+            }
+        });
+        
+        // $("#movie-settings-cancel").button().click(function (e) {
+            // self._settingsDialog.hide();
+            // self.show();
+        // });
+        
+
+        // Movie duration
+        duration = Helioviewer.userSettings.get("defaults.movies.duration"),
+        durationSelect = $("#settings-movie-length");
+
+        // Select default value and bind event listener
+        durationSelect.find("[value = " + duration + "]")
+            .attr("selected", "selected")
+            .bind('change', function (e) {
+                Helioviewer.userSettings.set("defaults.movies.duration",
+                parseInt(this.value, 10));
+            });
     },
     
     /**
