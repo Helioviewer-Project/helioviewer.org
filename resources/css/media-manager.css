@@ -33,11 +33,11 @@
 #movie-settings-container label {
     display: inline-block;
     margin-top:5px;
-    width: 58px;
+    width: 62px;
 }
 
 #movie-settings-container fieldset {
-    padding: 5px 10px;
+    padding: 2px 10px;
 }
 
 #movie-settings-container legend {
