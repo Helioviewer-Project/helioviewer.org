@@ -359,12 +359,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                     <fieldset>
                                         <legend>Speed</legend>
                                         <div style='padding:10px;'>
-                                            <label for="speed-method-f">Frame-rate</label>
                                             <input type="radio" name="speed-method" id="speed-method-f" value="framerate" />
+                                            <label for="speed-method-f">Frame-rate</label>
                                             <input size=3 type="number" name="framerate" min="1" max="30" value="15" checked=checked /> Frames/second (1-30)<br />
                                             
-                                            <label for="speed-method-f">Duration</label>
                                             <input type="radio" name="speed-method" id="speed-method-d" value="duration" />
+                                            <label for="speed-method-f">Duration</label>
                                             <input size=3 type="number" name="duration" min="5" max="300" value="20" disabled=disabled /> Seconds (5-300)<br />
                                         </div>
                                     </fieldset>
@@ -376,9 +376,9 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                             <label for="maxFrames">Max Frames</label>
                                             <input id='maxFrames' size=3 type="number" name="maxframes" min="1" max="30" value="15" checked=checked /> Frames/second (1-30)<br />
                                             
-                                            <label for="desiredCadence">Cadence</label>
+                                            <label for="desiredCadence">Cadence</label><br />
                                             <label for="cadence-method-u">No Limit</label>
-                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" />
+                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" /><br />
                                             
                                             <label for="cadence-method-m">One image every</label>
                                             <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />
