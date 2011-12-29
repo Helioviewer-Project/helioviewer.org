@@ -355,33 +355,38 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 <!-- Advanced movie settings -->
                                 <div id='movie-settings-advanced'>
                                     
+                                    <!-- Framerate -->
+                                    <fieldset>
+                                        <legend>Framerate</legend>
+                                        <div style='padding:10px;'>
+                                            <label for="maxFrames">Max Frames/Sec</label>
+                                            <input id='maxFrames' size=3 type="number" name="maxframes" min="1" max="30" value="15" checked=checked /><br />
+                                        </div>
+                                    </fieldset>
+                                    
                                     <!-- Movie Speed -->
                                     <fieldset>
                                         <legend>Speed</legend>
                                         <div style='padding:10px;'>
                                             <input type="radio" name="speed-method" id="speed-method-f" value="framerate" />
-                                            <label for="speed-method-f">Frame-rate</label>
+                                            <label for="speed-method-f" style='width: 62px;'>Frame-rate</label>
                                             <input size=3 type="number" name="framerate" min="1" max="30" value="15" checked=checked /> Frames/second (1-30)<br />
                                             
                                             <input type="radio" name="speed-method" id="speed-method-d" value="duration" />
-                                            <label for="speed-method-f">Duration</label>
+                                            <label for="speed-method-f" style='width: 62px;'>Duration</label>
                                             <input size=3 type="number" name="duration" min="5" max="300" value="20" disabled=disabled /> Seconds (5-300)<br />
                                         </div>
                                     </fieldset>
                                     
-                                   <!-- Data -->
+                                    <!-- Cadence -->
                                     <fieldset>
-                                        <legend>Data</legend>
+                                        <legend>Cadence</legend>
                                         <div style='padding:10px;'>
-                                            <label for="maxFrames">Max Frames</label>
-                                            <input id='maxFrames' size=3 type="number" name="maxframes" min="1" max="30" value="15" checked=checked /> Frames/second (1-30)<br />
-                                            
-                                            <label for="desiredCadence">Cadence</label><br />
-                                            <label for="cadence-method-u">No Limit</label>
-                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" /><br />
-                                            
+                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" />
+                                            <label for="cadence-method-u">Unlimited</label><br />
+
+                                            <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />                                            
                                             <label for="cadence-method-m">One image every</label>
-                                            <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />
                                             <input size=3 type="number" name="duration" min="0" value="1" disabled=disabled />
                                             <select id='settings-movie-length' name='movie-length'>
                                                 <option value='1'>Seconds</option>
