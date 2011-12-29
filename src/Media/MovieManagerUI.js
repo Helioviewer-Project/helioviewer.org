@@ -201,14 +201,15 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         $("#movie-settings-toggle-advanced").click(function () {
-            if (self._advancedSettings.is(":visible")) {
-                self._advancedSettings.animate({"width": 200, "height": 0}, function () {
-                    self._advancedSettings.hide();
-                });
-            } else {
-                self._advancedSettings.show();
-                self._advancedSettings.animate({"width": 300, "height": 220});
-            }
+            self._advancedSettings.toggle(700);
+            // if (self._advancedSettings.is(":visible")) {
+                // self._advancedSettings.animate({"width": 200, "height": 0}, function () {
+                    // self._advancedSettings.hide();
+                // });
+            // } else {
+                // self._advancedSettings.show();
+                // self._advancedSettings.animate({"width": 300, "height": 300});
+            // }
         });
         
         // $("#movie-settings-cancel").button().click(function (e) {
