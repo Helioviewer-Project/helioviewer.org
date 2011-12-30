@@ -27,7 +27,6 @@
 #movie-settings-container {
     width: auto;
     min-width: 300px;
-    border: 1px solid green;
 }
 
 #movie-settings-container label {
@@ -62,6 +61,13 @@
     text-align: right;
 }
 
+input:invalid, input:-moz-ui-invalid {
+    border:0;
+    outline:none;
+    box-shadow: 0 0 1.5px 1px #ff7373;
+    -moz-box-shadow: 0 0 1.5px 1px #ff7373;
+    -webkit-box-shadow: 0 0 1.5px 1px #ff7373;
+}
 
 .history-entry {
     height: 14px;

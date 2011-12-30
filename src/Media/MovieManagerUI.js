@@ -201,22 +201,21 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         $("#movie-settings-toggle-advanced").click(function () {
-            self._advancedSettings.toggle(700);
-            // if (self._advancedSettings.is(":visible")) {
-                // self._advancedSettings.animate({"width": 200, "height": 0}, function () {
-                    // self._advancedSettings.hide();
-                // });
-            // } else {
-                // self._advancedSettings.show();
-                // self._advancedSettings.animate({"width": 300, "height": 300});
-            // }
+            if (self._advancedSettings.is(":visible")) {
+                self._advancedSettings.animate({"height": 0}, function () {
+                    self._advancedSettings.hide();
+                });
+            } else {
+                self._advancedSettings.show();
+                self._advancedSettings.animate({"height": 180});
+            }
         });
         
-        // $("#movie-settings-cancel").button().click(function (e) {
-            // self._settingsDialog.hide();
-            // self.show();
-        // });
-        
+        $("#movie-settings-cancel-btn").button().click(function (e) {
+        	self._advancedSettings.hide();
+            self._settingsDialog.hide();
+            self.show();
+        });
 
         // Movie duration
         duration = Helioviewer.userSettings.get("defaults.movies.duration"),
