@@ -315,7 +315,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                             <!-- Movie Settings -->
                             <div id='movie-settings-container' class='media-manager-container glow'>
                                 <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
-                                    <b>Settings:</b>
+                                    <b>Movie Settings:</b>
                                     
                                     <div id='movie-settings-btns' style='float:right;'>
                                         <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear'></span>
@@ -329,8 +329,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 <fieldset>
                                     <legend>Time</legend>
 
-                                    <label for='settings-movie-length'>Length</label>
-                                    <select id='settings-movie-length' name='movie-length'>
+                                    <label for='movie-length'>Length</label>
+                                    <select id='movie-length' name='movie-length'>
                                         <option value='3600'>1 hour</option>
                                         <option value='10800'>3 hours</option>
                                         <option value='21600'>6 hours</option>
@@ -346,7 +346,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                     
                                     <br />
                                     
-                                    <div style='padding: 12px 5px;'>
+                                    <div style='margin: 12px;'>
                                         <div>Start: <span style='font-style:italic;'>2011-12-03 00:34:54</span></div>
                                         <div>End: <span style='font-style:italic;'>2011-12-03 06:34:54</span></div>
                                     </div>
@@ -355,26 +355,17 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 <!-- Advanced movie settings -->
                                 <div id='movie-settings-advanced'>
                                     
-                                    <!-- Framerate -->
-                                    <fieldset>
-                                        <legend>Framerate</legend>
-                                        <div style='padding:10px;'>
-                                            <label for="maxFrames">Max Frames/Sec</label>
-                                            <input id='maxFrames' size=3 type="number" name="maxframes" min="1" max="30" value="15" checked=checked /><br />
-                                        </div>
-                                    </fieldset>
-                                    
                                     <!-- Movie Speed -->
                                     <fieldset>
                                         <legend>Speed</legend>
                                         <div style='padding:10px;'>
-                                            <input type="radio" name="speed-method" id="speed-method-f" value="framerate" />
-                                            <label for="speed-method-f" style='width: 62px;'>Frame-rate</label>
-                                            <input size=3 type="number" name="framerate" min="1" max="30" value="15" checked=checked /> Frames/second (1-30)<br />
+                                            <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
+                                            <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
+                                            <input id='frame-rate' size=3 type="number" name="framerate" min="1" max="30" value="15" />(1-30)<br />
                                             
                                             <input type="radio" name="speed-method" id="speed-method-d" value="duration" />
-                                            <label for="speed-method-f" style='width: 62px;'>Duration</label>
-                                            <input size=3 type="number" name="duration" min="5" max="300" value="20" disabled=disabled /> Seconds (5-300)<br />
+                                            <label for="speed-method-f" style='width: 62px;'>Duration (s)</label>
+                                            <input size=3 type="number" name="duration" min="5" max="300" value="20" disabled="disabled" />(5-300)<br />
                                         </div>
                                     </fieldset>
                                     
@@ -382,13 +373,13 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                     <fieldset>
                                         <legend>Cadence</legend>
                                         <div style='padding:10px;'>
-                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" />
+                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" checked="checked" />
                                             <label for="cadence-method-u">Unlimited</label><br />
 
                                             <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />                                            
                                             <label for="cadence-method-m">One image every</label>
-                                            <input size=3 type="number" name="duration" min="0" value="1" disabled=disabled />
-                                            <select id='settings-movie-length' name='movie-length'>
+                                            <input size=3 type="number" name="duration" min="0" value="1" disabled="disabled" />
+                                            <select id='settings-cadence-increment' name='cadence-increment' disabled="disabled">
                                                 <option value='1'>Seconds</option>
                                                 <option value='60'>Minutes</option>
                                                 <option value='3600'>Hours</option>
@@ -398,7 +389,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                     </fieldset>
                                 </div>
                                 
+                                <!-- Movie settings help console -->
+                                
+                                
+                                <!-- Movie request submit button -->
                                 <div id='movie-settings-submit'>
+                                	<input type="button" id='movie-settings-cancel-btn' value="Cancel" /> 
                                     <input type="submit" id='movie-settings-submit-btn' value="Ok" />                                    
                                 </div>
                                 
@@ -440,7 +436,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                 <!--  Observation Date -->
                 <div id="observation-date-container">
                     <div id="observation-date-label">Date:</div>
-                    <input type="text" id="date" name="date" value="" maxlength='10'>
+                    <input type="text" id="date" name="date" value="" maxlength='10' pattern="[\d]{4}/[\d]{2}/[\d]{2}">
                     <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
                 </div>
 
