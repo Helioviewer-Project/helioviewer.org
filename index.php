@@ -330,7 +330,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 								<!-- Movie duration -->
                                 <fieldset style='padding: 0px; margin: 5px 0px 8px'>
                                     <label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
-                                    <select id='movie-duration' name='movie-length'>
+                                    <select id='movie-duration' name='movie-duration'>
                                         <option value='3600'>1 hour</option>
                                         <option value='10800'>3 hours</option>
                                         <option value='21600'>6 hours</option>
@@ -355,7 +355,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                             
                                             <input type="radio" name="speed-method" id="speed-method-l" value="length" />
                                             <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
-                                            <input id='movie-length' size=3 type="number" name="length" min="5" max="300" value="20" disabled="disabled" />(5-300)<br />
+                                            <input id='movie-length' size=3 type="number" name="movie-length" min="5" max="300" value="20" disabled="disabled" />(5-300)<br />
                                         </div>
                                     </fieldset>
                                     
