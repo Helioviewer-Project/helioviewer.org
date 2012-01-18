@@ -319,18 +319,18 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                     
                                     <div id='movie-settings-btns' style='float:right;'>
                                         <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear'></span>
-                                        <span style='display:inline-block;' class='ui-icon ui-icon-help'></span>
+                                        <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help'></span>
                                     </div>
                                 </div>
 
                                 <!-- Begin movie settings -->
+                                <div id='movie-settings-form-container'>
                                 <form id='movie-settings-form'>
 
-                                <fieldset>
-                                    <legend>Time</legend>
-
-                                    <label for='movie-length'>Length</label>
-                                    <select id='movie-length' name='movie-length'>
+								<!-- Movie duration -->
+                                <fieldset style='padding: 0px; margin: 5px 0px 8px'>
+                                    <label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
+                                    <select id='movie-duration' name='movie-length'>
                                         <option value='3600'>1 hour</option>
                                         <option value='10800'>3 hours</option>
                                         <option value='21600'>6 hours</option>
@@ -340,37 +340,27 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                         <option value='604800'>1 week</option>
                                         <option value='2419200'>28 days</option>
                                     </select>
-                                <!--<span style='display: inline-block;' class='ui-icon ui-icon-info qtip-left' title='When making a movie, your current observation time will become the center
-                                of the movie. For example, if your observation time is set to "12:00:00" and you
-                                choose to make a 6 hour movie, then movie will start at "09:00:00" and end at "15:00:00"'></span>-->
-                                    
-                                    <br />
-                                    
-                                    <div style='margin: 12px;'>
-                                        <div>Start: <span style='font-style:italic;'>2011-12-03 00:34:54</span></div>
-                                        <div>End: <span style='font-style:italic;'>2011-12-03 06:34:54</span></div>
-                                    </div>
                                 </fieldset>
                                 
                                 <!-- Advanced movie settings -->
                                 <div id='movie-settings-advanced'>
                                     
                                     <!-- Movie Speed -->
-                                    <fieldset>
+                                    <fieldset id='movie-settings-speed'>
                                         <legend>Speed</legend>
                                         <div style='padding:10px;'>
                                             <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
                                             <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
                                             <input id='frame-rate' size=3 type="number" name="framerate" min="1" max="30" value="15" />(1-30)<br />
                                             
-                                            <input type="radio" name="speed-method" id="speed-method-d" value="duration" />
-                                            <label for="speed-method-f" style='width: 62px;'>Duration (s)</label>
-                                            <input size=3 type="number" name="duration" min="5" max="300" value="20" disabled="disabled" />(5-300)<br />
+                                            <input type="radio" name="speed-method" id="speed-method-l" value="length" />
+                                            <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
+                                            <input id='movie-length' size=3 type="number" name="length" min="5" max="300" value="20" disabled="disabled" />(5-300)<br />
                                         </div>
                                     </fieldset>
                                     
                                     <!-- Cadence -->
-                                    <fieldset>
+                                    <fieldset id='movie-settings-cadence'>
                                         <legend>Cadence</legend>
                                         <div style='padding:10px;'>
                                             <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" checked="checked" />
@@ -378,7 +368,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 
                                             <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />                                            
                                             <label for="cadence-method-m">One image every</label>
-                                            <input size=3 type="number" name="duration" min="0" value="1" disabled="disabled" />
+                                            <input id='settings-cadence-value' type="number" size=3 name="cadence-value" min="0" value="1" disabled="disabled" />
                                             <select id='settings-cadence-increment' name='cadence-increment' disabled="disabled">
                                                 <option value='1'>Seconds</option>
                                                 <option value='60'>Minutes</option>
@@ -387,11 +377,17 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                             </select>
                                         </div>
                                     </fieldset>
+                                    
+                                    <!-- Other -->
+                                    <fieldset id='movie-settings-other'>
+                                        <legend>Other</legend>
+                                        <div style='padding:10px;'>
+                                            <input type="checkbox" name="watermark-enabled" id="watermark-enabled" value="true" checked="checked" />
+                                            <label for="cadence-method-u">Watermark on</label><br />											
+                                        </div>
+                                    </fieldset>
                                 </div>
-                                
-                                <!-- Movie settings help console -->
-                                
-                                
+
                                 <!-- Movie request submit button -->
                                 <div id='movie-settings-submit'>
                                 	<input type="button" id='movie-settings-cancel-btn' value="Cancel" /> 
@@ -399,6 +395,19 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 </div>
                                 
                                 </form>
+                                </div>
+                                
+                                <!-- Movie settings help -->
+                                <div id='movie-settings-help' style='display:none'>
+                                	<b>Duration</b><br /><br />
+                                	<p>The duration of time that the movie should span, centered about your current observation time.</p><br />
+                                	
+                                	<b>Speed</b><br /><br />
+                                	<p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
+                                	
+                                	<b>Cadence</b><br /><br />
+                                	<p>The amount of time between each image in the movie.</p><br />
+                                </div>
                             </div>
 
                             <!-- Image area select tool -->
