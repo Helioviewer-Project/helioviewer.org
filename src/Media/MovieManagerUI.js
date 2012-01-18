@@ -25,6 +25,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._advancedSettings = $("#movie-settings-advanced");
         this._settingsHelp     = $("#movie-settings-help");
         this._settingsForm     = $("#movie-settings-form-container");
+        this._settingsConsole  = $("#movie-settings-validation-console");
         this._movieScale = null;
         this._movieROI = null;
         this._movieLayers = null;
@@ -53,19 +54,19 @@ var MovieManagerUI = MediaManagerUI.extend(
      * user click to view it in a popup. 
      */
     _buildMovieRequest: function (serializedFormParams) {
-        var formParams, baseParams, params, self = this;
+        var formParams, baseParams, params, frameRate, cadence, self = this;
         
         // Convert to an associative array for easier processing
         formParams = {};
         
         $.each(serializedFormParams, function (i, field) {
-   			formParams[field.name] = field.value;
-		});
-
-		this.building = true;
-		
-		// Movie request parameters
-		baseParams = {
+               formParams[field.name] = field.value;
+        });
+        
+        this.building = true;
+        
+        // Movie request parameters
+        baseParams = {
             action     : "queueMovie",
             imageScale : this._movieScale,
             layers     : this._movieLayers,
@@ -77,20 +78,34 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // (Optional) Frame-rate or movie-length
         if (formParams['speed-method'] === "framerate") {
-        	baseParams['frameRate'] = formParams['framerate'];
+            frameRate = parseInt(formParams['framerate'], 10);
+            if (frameRate < 1 || frameRate > 30) {
+                throw "Frame-rate must be between 1 and 30.";
+            }
+            baseParams['frameRate'] = formParams['framerate'];
         }
         else {
-        	baseParams['movieLength'] = formParams['movie-length'];
+            if (formParams['movie-length'] < 5 || formParams['movie-length'] > 100) {
+                throw "Movie length must be between 5 and 100 seconds.";
+            }
+            baseParams['movieLength'] = formParams['movie-length'];
         }
         
         // (Optional) cadence
         if (formParams['cadence-method'] === "minimum") {
-        	baseParams['cadence'] = parseInt(formParams['cadence-increment'], 10) * parseInt(formParams['cadence-value'], 10);
+            cadence = parseInt(formParams['cadence-increment'], 10) * parseInt(formParams['cadence-value'], 10);
+            
+            // Cadence must be between 1 second and 7 days
+            if (cadence < 1 || cadence > 604800) {
+                throw "Cadence must be between 1 second and 7 days.";
+            }
+            
+            baseParams['cadence'] = cadence;
         }
         
         // (Optional) watermark
         if (formParams['watermark-enabled']) {
-        	baseParams['watermarkOn'] = true;
+            baseParams['watermarkOn'] = true;
         }
         
         console.dir(params);
@@ -107,10 +122,10 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Determines the start and end dates to use when requesting a movie
      */
     _getMovieTimeWindow: function () {
-    	var movieLength, currentTime, endTime, startTimeStr, endTimeStr, now, diff; 
-    	
-    	movieLength = Helioviewer.userSettings.get("defaults.movies.duration");
-    	
+        var movieLength, currentTime, endTime, startTimeStr, endTimeStr, now, diff; 
+        
+        movieLength = Helioviewer.userSettings.get("defaults.movies.duration");
+        
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = helioviewer.getDate();
         
@@ -125,8 +140,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Start and end datetime strings
         return {
-        	"startTime": currentTime.addSeconds(-movieLength / 2).toISOString(),
-        	"endTime"  : currentTime.addSeconds(movieLength).toISOString()
+            "startTime": currentTime.addSeconds(-movieLength / 2).toISOString(),
+            "endTime"  : currentTime.addSeconds(movieLength).toISOString()
         }
     },
     
@@ -247,11 +262,11 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Display help
         $("#movie-settings-toggle-help").hover(function () {
-			self._settingsForm.hide();
-			self._settingsHelp.fadeIn(500);
+            self._settingsForm.hide();
+            self._settingsHelp.fadeIn(500);
         }, function () {
-        	self._settingsHelp.hide();
-        	self._settingsForm.fadeIn(500);
+            self._settingsHelp.hide();
+            self._settingsForm.fadeIn(500);
         });
     },
     
@@ -260,7 +275,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _initSettings: function () {
         var length, lengthInput, duration, durationSelect, cadenceValue, cadenceIncrement, 
-        	frameRateInput, lengthInput, settingsForm, watermarkCheckbox, self = this;
+            frameRateInput, lengthInput, settingsForm, watermarkCheckbox, self = this;
 
         // Advanced movie settings
         frameRateInput    = $("#frame-rate");
@@ -272,29 +287,29 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Speed method enable/disable
         $("#speed-method-f").change(function () {
-        	lengthInput.attr("disabled", true);
-        	frameRateInput.attr("disabled", false);
+            lengthInput.attr("disabled", true);
+            frameRateInput.attr("disabled", false);
         }).attr("checked", "checked").change();
                 
         $("#speed-method-l").change(function () {
-        	frameRateInput.attr("disabled", true);
-        	lengthInput.attr("disabled", false);        	
+            frameRateInput.attr("disabled", true);
+            lengthInput.attr("disabled", false);            
         });
         
         // Cadence method enable/disable
         $("#cadence-method-u").change(function () {
-        	cadenceValue.attr("disabled", true);
-        	cadenceIncrement.attr("disabled", true);
+            cadenceValue.attr("disabled", true);
+            cadenceIncrement.attr("disabled", true);
         }).attr("checked", "checked").change();
         
         $("#cadence-method-m").change(function () {
-        	cadenceValue.attr("disabled", false);
-        	cadenceIncrement.attr("disabled", false);        	
+            cadenceValue.attr("disabled", false);
+            cadenceIncrement.attr("disabled", false);            
         });
         
         // Cancel button
         $("#movie-settings-cancel-btn").button().click(function (e) {
-        	self._advancedSettings.hide();
+            self._advancedSettings.hide();
             self._settingsDialog.hide();
             self.show();
         });
@@ -303,7 +318,17 @@ var MovieManagerUI = MediaManagerUI.extend(
         settingsForm = $("#movie-settings-form");
 
         $("#movie-settings-submit-btn").button().click(function (e) {
-            self._buildMovieRequest(settingsForm.serializeArray());
+            // Validate and submit movie request
+            try {
+                self._buildMovieRequest(settingsForm.serializeArray());
+            } catch (ex) {
+                // Display an error message if invalid values are specified for movie settings
+                self._settingsConsole.text(ex).fadeIn(1000, function () {
+                    setTimeout(function () {
+                        self._settingsConsole.text(ex).fadeOut(1000);
+                    }, 10000);
+                });
+            }
             return false;
         });
 
@@ -317,13 +342,13 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // Reset to default values
-		frameRateInput.val(15);
-		cadenceValue.val(5);
-		lengthInput.val(20);
-		durationSelect.find("[value=" + duration + "]").attr("selected", "selected")
-		cadenceIncrement.find("[value=60]").attr("selected", "selected");
-		watermarkCheckbox.attr("checked", "checked");
-		
+        frameRateInput.val(15);
+        cadenceValue.val(5);
+        lengthInput.val(20);
+        durationSelect.find("[value=" + duration + "]").attr("selected", "selected")
+        cadenceIncrement.find("[value=60]").attr("selected", "selected");
+        watermarkCheckbox.attr("checked", "checked");
+        
     },
     
     /**

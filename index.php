@@ -355,7 +355,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                             
                                             <input type="radio" name="speed-method" id="speed-method-l" value="length" />
                                             <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
-                                            <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|[1-2][0-9][0-9]|300)$' disabled="disabled" />(5-300)<br />
+                                            <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
                                         </div>
                                     </fieldset>
                                     
@@ -407,6 +407,14 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 	
                                 	<b>Cadence</b><br /><br />
                                 	<p>The amount of time between each image in the movie.</p><br />
+                                	
+                                	<b>Watermark</b><br /><br />
+                                    <p>Whether or not to include the Helioviewer.org logo in the video.</p><br />
+                                </div>
+                                
+                                <!-- Movie settings validation console -->
+                                <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
+                                	
                                 </div>
                             </div>
 
