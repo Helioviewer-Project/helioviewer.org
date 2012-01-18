@@ -23,8 +23,12 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._super("movie");
         this._settingsDialog = $("#movie-settings-container");
         this._advancedSettings = $("#movie-settings-advanced");
+        this._movieScale = null;
+        this._movieROI = null;
+        this._movieLayers = null;
         this._initEvents();
         this._initSettings();
+        
     },
     
     /**
@@ -46,16 +50,67 @@ var MovieManagerUI = MediaManagerUI.extend(
      * build a movie. Upon completion, it displays a notification that lets the
      * user click to view it in a popup. 
      */
-    _buildMovieRequest: function () {
-        var params, currentTime, endTime, startTimeStr, endTimeStr, now, 
-            diff, imageScale, movieLength, self = this;
-            
-        imageScale = helioviewer.getImageScale();
-
-        this.building = true;
-
-        movieLength = Helioviewer.userSettings.get("defaults.movies.duration");
+    _buildMovieRequest: function (serializedFormParams) {
+        var formParams, baseParams, params, self = this;
         
+        // Convert to an associative array for easier processing
+        formParams = {};
+        
+        $.each(serializedFormParams, function (i, field) {
+   			formParams[field.name] = field.value;
+		});
+
+		this.building = true;
+		
+		// Movie request parameters
+		baseParams = {
+            action     : "queueMovie",
+            imageScale : this._movieScale,
+            layers     : this._movieLayers,
+            format     : this._manager.format
+        };
+       
+        // Add ROI and start and end dates
+        params = $.extend(baseParams, this._movieROI, this._getMovieTimeWindow());
+        
+        // Add in optional params
+        
+        // Include frame-rate or movie length
+        if (formParams['speed-method'] === "framerate") {
+        	baseParams['frameRate'] = formParams['framerate'];
+        }
+        else {
+        	baseParams['movieLength'] = formParams['movie-length'];
+        }
+        
+        // Include cadence if specified
+        if (formParams['cadence-method'] === "minimum") {
+        	baseParams['cadence'] = parseInt(formParams['cadence-increment'], 10) * parseInt(formParams['cadence-value'], 10);
+        }
+        
+        // (Optional) watermark
+        if (formParams['watermark-enabled']) {
+        	baseParams['watermarkOn'] = true;
+        }
+        
+        console.dir(params);
+        return false;
+        
+        // Submit request
+        this._queueMovie(params);
+        
+        //this.hideDialogs();
+        this.building = false;
+    },
+    
+    /**
+     * Determines the start and end dates to use when requesting a movie
+     */
+    _getMovieTimeWindow: function () {
+    	var movieLength, currentTime, endTime, startTimeStr, endTimeStr, now, diff; 
+    	
+    	movieLength = Helioviewer.userSettings.get("defaults.movies.duration");
+    	
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = helioviewer.getDate();
         
@@ -69,13 +124,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         currentTime.addSeconds(Math.min(0, -diff / 1000));
         
         // Start and end datetime strings
-        startTimeStr = currentTime.addSeconds(-movieLength / 2).toISOString();
-        endTimeStr   = currentTime.addSeconds(movieLength).toISOString();
-        
-        this._queueMovie(imageScale, layers, startTimeStr, endTimeStr, roi);
-        
-        //this.hideDialogs();
-        this.building = false;
+        return {
+        	"startTime": currentTime.addSeconds(-movieLength / 2).toISOString(),
+        	"endTime"  : currentTime.addSeconds(movieLength).toISOString()
+        }
     },
     
     /**
@@ -93,26 +145,19 @@ var MovieManagerUI = MediaManagerUI.extend(
             return;
         }
         
+        // Store chosen ROI and layers
+        this._movieScale  = helioviewer.getImageScale();
+        this._movieROI    = this._toArcsecCoords(roi, this._movieScale);
+        this._movieLayers = layers;
+        
         this.hide();
         this._settingsDialog.show();
-        
-        //_buildMovieRequest
     },
     
     /**
      * Queues a movie request
      */
-    _queueMovie: function (scale, layers, start, end, roi) {
-        var params = $.extend({
-            action        : "queueMovie",
-            imageScale    : scale,
-            layers        : layers,
-            startTime     : start,
-            endTime       : end,
-            format        : this._manager.format,
-            watermark     : true
-        }, this._toArcsecCoords(roi, scale));
-        
+    _queueMovie: function (params) {
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
             var msg, movie, waitTime;
@@ -194,12 +239,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _initSettings: function () {
         var length, lengthSelect, duration, durationSelect, cadenceValue, cadenceIncrement, 
-        	frameRateSelect, lengthSelect, self = this;
-        
-        // Settings buttons
-        $("#movie-settings-submit-btn").button().click(function (e) {
-            console.log('ouch!');
-        });
+        	frameRateSelect, lengthSelect, settingsForm, self = this;
         
         // Toggle advanced settings display
         $("#movie-settings-toggle-advanced").click(function () {
@@ -257,18 +297,23 @@ var MovieManagerUI = MediaManagerUI.extend(
             self._settingsDialog.hide();
             self.show();
         });
+        
+        // Submit button
+        settingsForm = $("#movie-settings-form");
+        $("#movie-settings-submit-btn").button().click(function (e) {
+            self._buildMovieRequest(settingsForm.serializeArray());
+            return false;
+        });
 
         // Movie duration
         duration = Helioviewer.userSettings.get("defaults.movies.duration"),
         durationSelect = $("#movie-duration");
 
         // Select default value and bind event listener
-        durationSelect.find("[value = " + duration + "]")
-            .attr("selected", "selected")
-            .bind('change', function (e) {
-                Helioviewer.userSettings.set("defaults.movies.duration",
-                parseInt(this.value, 10));
-            });
+        durationSelect.bind('change', function (e) {
+            Helioviewer.userSettings.set("defaults.movies.duration",
+            parseInt(this.value, 10));
+        }).find("[value = " + duration + "]").attr("selected", "selected");
     },
     
     /**
