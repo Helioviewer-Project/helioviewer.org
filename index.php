@@ -351,11 +351,11 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                         <div style='padding:10px;'>
                                             <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
                                             <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
-                                            <input id='frame-rate' size=3 type="number" name="framerate" min="1" max="30" value="15" />(1-30)<br />
+                                            <input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
                                             
                                             <input type="radio" name="speed-method" id="speed-method-l" value="length" />
                                             <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
-                                            <input id='movie-length' size=3 type="number" name="movie-length" min="5" max="300" value="20" disabled="disabled" />(5-300)<br />
+                                            <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|[1-2][0-9][0-9]|300)$' disabled="disabled" />(5-300)<br />
                                         </div>
                                     </fieldset>
                                     
@@ -368,7 +368,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 
                                             <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />                                            
                                             <label for="cadence-method-m">One image every</label>
-                                            <input id='settings-cadence-value' type="number" size=3 name="cadence-value" min="0" value="1" disabled="disabled" />
+                                            <input id='settings-cadence-value' type="text" size='3' maxlength='3' name="cadence-value" min="0" value="5" pattern='^[\d]+$' disabled="disabled" />
                                             <select id='settings-cadence-increment' name='cadence-increment' disabled="disabled">
                                                 <option value='1'>Seconds</option>
                                                 <option value='60'>Minutes</option>

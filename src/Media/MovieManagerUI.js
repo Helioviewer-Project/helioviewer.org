@@ -21,8 +21,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         var movies = Helioviewer.userSettings.get('history.movies');
         this._manager = new MovieManager(movies);
         this._super("movie");
-        this._settingsDialog = $("#movie-settings-container");
+        this._settingsDialog   = $("#movie-settings-container");
         this._advancedSettings = $("#movie-settings-advanced");
+        this._settingsHelp     = $("#movie-settings-help");
+        this._settingsForm     = $("#movie-settings-form-container");
         this._movieScale = null;
         this._movieROI = null;
         this._movieLayers = null;
@@ -72,10 +74,8 @@ var MovieManagerUI = MediaManagerUI.extend(
        
         // Add ROI and start and end dates
         params = $.extend(baseParams, this._movieROI, this._getMovieTimeWindow());
-        
-        // Add in optional params
-        
-        // Include frame-rate or movie length
+
+        // (Optional) Frame-rate or movie-length
         if (formParams['speed-method'] === "framerate") {
         	baseParams['frameRate'] = formParams['framerate'];
         }
@@ -83,7 +83,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         	baseParams['movieLength'] = formParams['movie-length'];
         }
         
-        // Include cadence if specified
+        // (Optional) cadence
         if (formParams['cadence-method'] === "minimum") {
         	baseParams['cadence'] = parseInt(formParams['cadence-increment'], 10) * parseInt(formParams['cadence-value'], 10);
         }
@@ -232,14 +232,6 @@ var MovieManagerUI = MediaManagerUI.extend(
             self.submitVideoUploadForm();
             return false;
         });
-    },
-    
-    /**
-     * Initializes movie settings events
-     */
-    _initSettings: function () {
-        var length, lengthSelect, duration, durationSelect, cadenceValue, cadenceIncrement, 
-        	frameRateSelect, lengthSelect, settingsForm, self = this;
         
         // Toggle advanced settings display
         $("#movie-settings-toggle-advanced").click(function () {
@@ -255,29 +247,38 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Display help
         $("#movie-settings-toggle-help").hover(function () {
-			$("#movie-settings-form-container").hide();
-			$("#movie-settings-help").fadeIn(500);
+			self._settingsForm.hide();
+			self._settingsHelp.fadeIn(500);
         }, function () {
-        	$("#movie-settings-help").hide();
-        	$("#movie-settings-form-container").fadeIn(500);
+        	self._settingsHelp.hide();
+        	self._settingsForm.fadeIn(500);
         });
-        
+    },
+    
+    /**
+     * Initializes movie settings events
+     */
+    _initSettings: function () {
+        var length, lengthInput, duration, durationSelect, cadenceValue, cadenceIncrement, 
+        	frameRateInput, lengthInput, settingsForm, watermarkCheckbox, self = this;
+
         // Advanced movie settings
-        frameRateSelect  = $("#frame-rate");
-        lengthSelect     = $("#movie-length");
-        durationSelect   = $("#movie-duration");
-        cadenceValue     = $("#settings-cadence-value");
-        cadenceIncrement = $("#settings-cadence-increment");
+        frameRateInput    = $("#frame-rate");
+        lengthInput       = $("#movie-length");
+        durationSelect    = $("#movie-duration");
+        cadenceValue      = $("#settings-cadence-value");
+        cadenceIncrement  = $("#settings-cadence-increment");
+        watermarkCheckbox = $("#watermark-enabled");
         
         // Speed method enable/disable
         $("#speed-method-f").change(function () {
-        	lengthSelect.attr("disabled", true);
-        	frameRateSelect.attr("disabled", false);
+        	lengthInput.attr("disabled", true);
+        	frameRateInput.attr("disabled", false);
         }).attr("checked", "checked").change();
                 
         $("#speed-method-l").change(function () {
-        	frameRateSelect.attr("disabled", true);
-        	lengthSelect.attr("disabled", false);        	
+        	frameRateInput.attr("disabled", true);
+        	lengthInput.attr("disabled", false);        	
         });
         
         // Cadence method enable/disable
@@ -300,6 +301,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Submit button
         settingsForm = $("#movie-settings-form");
+
         $("#movie-settings-submit-btn").button().click(function (e) {
             self._buildMovieRequest(settingsForm.serializeArray());
             return false;
@@ -307,13 +309,21 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Movie duration
         duration = Helioviewer.userSettings.get("defaults.movies.duration"),
-        durationSelect = $("#movie-duration");
-
-        // Select default value and bind event listener
+        
+        // Duration event listener
         durationSelect.bind('change', function (e) {
             Helioviewer.userSettings.set("defaults.movies.duration",
             parseInt(this.value, 10));
-        }).find("[value = " + duration + "]").attr("selected", "selected");
+        });
+        
+        // Reset to default values
+		frameRateInput.val(15);
+		cadenceValue.val(5);
+		lengthInput.val(20);
+		durationSelect.find("[value=" + duration + "]").attr("selected", "selected")
+		cadenceIncrement.find("[value=60]").attr("selected", "selected");
+		watermarkCheckbox.attr("checked", "checked");
+		
     },
     
     /**

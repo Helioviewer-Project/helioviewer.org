@@ -44,7 +44,7 @@
 }
 
 #movie-settings-container input {
-    margin: 0 5px;
+    margin: 1px 5px;
 }
 
 #movie-settings-advanced {
@@ -58,14 +58,6 @@
 #movie-settings-submit {
     padding: 5px 5px 0px;
     text-align: right;
-}
-
-input:invalid, input:-moz-ui-invalid {
-    border:0;
-    outline:none;
-    box-shadow: 0 0 1.5px 1px #ff7373;
-    -moz-box-shadow: 0 0 1.5px 1px #ff7373;
-    -webkit-box-shadow: 0 0 1.5px 1px #ff7373;
 }
 
 .history-entry {

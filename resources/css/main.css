@@ -280,6 +280,14 @@ span.ui-icon-hover, div.ui-icon-hover {
     float: left;
 }
 
+/** Invalid form fields */
+input:invalid, input:-moz-ui-invalid {
+    outline:none;
+    box-shadow: 0 0 1.5px 1px #ff7373;
+    -moz-box-shadow: 0 0 1.5px 1px #ff7373;
+    -webkit-box-shadow: 0 0 1.5px 1px #ff7373;
+}
+
 /** Debugging */
 #debug-dimensions {
     position: absolute;
