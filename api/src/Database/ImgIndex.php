@@ -91,14 +91,14 @@ class Database_ImgIndex
      * 
      * @return void
      */
-    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
+    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $length, $width, $height)
     {
         // Update movies table
     	$sql = sprintf(
     	   "UPDATE movies 
-    	     SET startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, width=%d, height=%d
+    	     SET startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, movieLength=%f, width=%d, height=%d
     	     WHERE id=%d",
-    	   $startDate, $endDate, $numFrames, $frameRate, $width, $height, $id
+    	   $startDate, $endDate, $numFrames, $frameRate, $length, $width, $height, $id
     	);
     	$this->_dbConnection->query($sql);
     }

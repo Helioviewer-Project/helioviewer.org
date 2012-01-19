@@ -3,7 +3,7 @@
 """
 Helioviewer Database Installation Tool
 
-Last Updated: 2011/07/27
+Last Updated: 2012/01/19
 
 TODO 01/17/2010:
 * Let user specify dbname

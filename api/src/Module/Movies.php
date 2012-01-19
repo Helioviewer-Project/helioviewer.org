@@ -435,11 +435,11 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2', 'format'),
-                "optional" => array('frameRate', 'maxFrames', 'watermark'),
+                "optional" => array('frameRate', 'maxFrames', 'watermark', 'movieLength'),
                 "alphanum" => array('format'),
                 "bools"    => array('watermark'),
                 "dates"    => array('startTime', 'endTime'),
-                "floats"   => array('imageScale', 'frameRate', 'x1', 'x2', 'y1', 'y2'),
+                "floats"   => array('imageScale', 'frameRate', 'movieLength', 'x1', 'x2', 'y1', 'y2'),
                 "ints"     => array('maxFrames')
             );
             break;
@@ -584,20 +584,19 @@ class Module_Movies implements Module
                         <tr>
                             <td><b>numFrames</b></td>
                             <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The maximum number of frames that will be used during movie creation. 
+                            <td><i>[Optional]</i>The maximum number of frames that will be used during movie creation. 
                                     You may have between 10 and 300 frames. The default value is 300.
                             </td>
                         </tr>
                         <tr>
                             <td><b>frameRate</b></td>
-                            <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The number of frames per second. The default value is 8.</td>
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i>The number of frames per second. The default value is 15.</td>
                         </tr>
                         <tr>
-                            <td><b>display</b></td>
-                            <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
-                                filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
+                            <td><b>movieLength</b></td>
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i>The length in seconds of the video to be produced.</td>
                         </tr>
                         <tr>
                             <td><b>watermark</b></td>
@@ -605,6 +604,12 @@ class Module_Movies implements Module
                             <td><i>[Optional]</i> Enables turning watermarking on or off. If watermark is set to false, the images will not be watermarked, 
                                 which will speed up movie generation time but you will have no timestamps on the movie. If left blank, it defaults to true 
                                 and images will be watermarked.</td>
+                        </tr>
+                        <tr>
+                            <td><b>display</b></td>
+                            <td><i>Boolean</i></td>
+                            <td><i>[Optional]</i> If display is true, the movie will display on the page when it is ready. If display is false, the
+                                filepath to the movie's flash-format file will be returned as JSON. If display is not specified, it will default to true.</td>
                         </tr>
                     </tbody>
                 </table>
