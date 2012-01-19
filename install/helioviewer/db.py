@@ -294,6 +294,7 @@ def create_movies_table(cursor):
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT,
       `frameRate`         FLOAT,
+      `movieLength`       FLOAT,
       `startDate`         datetime,
       `endDate`           datetime,
       `numFrames`         INT,

@@ -86,11 +86,12 @@ class Movie_HelioviewerMovie
         $this->timestamp    = $info['timestamp'];
         $this->imageScale   = (float) $info['imageScale'];
         $this->frameRate    = (float) $info['frameRate'];
+        $this->movieLenght  = (float) $info['movieLength'];
         $this->numFrames    = (int) $info['numFrames'];
-        $this->maxFrames    = min((int) $info['maxFrames'], HV_MAX_MOVIE_FRAMES);
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
         $this->watermark    = (bool) $info['watermark'];
+        $this->maxFrames    = min((int) $info['maxFrames'], HV_MAX_MOVIE_FRAMES);
         
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
@@ -121,7 +122,7 @@ class Movie_HelioviewerMovie
                 $t1 = time();   
                          
                 $this->_getTimeStamps();      // Get timestamps for frames in the key movie layer
-                $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, numFrames and dimensions
+                $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, movie length, numFrames and dimensions
                 $this->_buildMovieFrames($this->watermark); // Build movie frames
                 
                 $t2 = time();
@@ -164,15 +165,15 @@ class Movie_HelioviewerMovie
      */
     public function getCompletedMovieInformation($verbose=false) {
         $info = array(
-            "frameRate"  => $this->frameRate,
-            "numFrames"  => $this->numFrames,
-            "startDate"  => $this->startDate,
-            "status"     => $this->status,
-            "endDate"    => $this->endDate,
-            "width"      => $this->width,
-            "height"     => $this->height,
-            "thumbnails" => $this->getPreviewImages(),
-            "url"        => $this->getURL()
+            "frameRate"   => $this->frameRate,
+            "numFrames"   => $this->numFrames,
+            "startDate"   => $this->startDate,
+            "status"      => $this->status,
+            "endDate"     => $this->endDate,
+            "width"       => $this->width,
+            "height"      => $this->height,
+            "thumbnails"  => $this->getPreviewImages(),
+            "url"         => $this->getURL()
         );
         
         if ($verbose) {
@@ -376,25 +377,6 @@ class Movie_HelioviewerMovie
     }
 
     /**
-     * Uses numFrames to calculate the frame rate that should
-     * be used when encoding the movie.
-     *
-     * @return Int optimized frame rate
-     */
-    private function _determineOptimalFrameRate($requestedFrameRate)
-    {
-        // Subtract 1 because we added an extra frame to the end
-        $frameRate = ($this->numFrames - 1 ) / HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
-
-        // Take the smaller number in case the user specifies a larger frame rate than is practical.
-        if ($requestedFrameRate) {
-            $frameRate = min($frameRate, $requestedFrameRate);
-        }
-
-        return max(1, $frameRate);
-    }
-
-    /**
      * Builds the requested movie
      *
      * Makes a temporary directory to store frames in, calculates a timestamp for every frame, gets the closest
@@ -582,14 +564,18 @@ class Movie_HelioviewerMovie
             $this->_abort("No images available for the requested time range");
         }
 
-        $this->frameRate = $this->_determineOptimalFrameRate($this->frameRate);
+        if ($this->frameRate) {
+            $this->movieLength = $this->numFrames / $this->frameRate;
+        } else {
+            $this->frameRate = $this->numFrames / $this->movieLength;
+        }
 
         $this->_setMovieDimensions();
 
         // Update movie entry in database with new details
         $this->_db->storeMovieProperties(
-            $this->id, $this->startDate, $this->endDate, 
-            $this->numFrames, $this->frameRate, $this->width, $this->height
+            $this->id, $this->startDate, $this->endDate, $this->numFrames, 
+            $this->frameRate, $this->movieLength, $this->width, $this->height
         );
     }
 
@@ -648,7 +634,7 @@ class Movie_HelioviewerMovie
     <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
         <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$filepath.bmp"?>" durationHint="<?php echo $duration?>">
             <source src="<?php echo "$filepath.mp4"?>" /> 
-            <source src="<?php echo "$filepath.mov"?>" />
+            <source src="<?php echo "$filepath.webm"?>" />
             <source src="<?php echo "$filepath.flv"?>" /> 
         </video>
     </div>
