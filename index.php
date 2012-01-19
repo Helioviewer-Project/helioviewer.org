@@ -359,31 +359,12 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                         </div>
                                     </fieldset>
                                     
-                                    <!-- Cadence -->
-                                    <fieldset id='movie-settings-cadence'>
-                                        <legend>Cadence</legend>
-                                        <div style='padding:10px;'>
-                                            <input type="radio" name="cadence-method" id="cadence-method-u" value="unlimited" checked="checked" />
-                                            <label for="cadence-method-u">Unlimited</label><br />
-
-                                            <input type="radio" name="cadence-method" id="cadence-method-m" value="minimum" />                                            
-                                            <label for="cadence-method-m">One image every</label>
-                                            <input id='settings-cadence-value' type="text" size='3' maxlength='3' name="cadence-value" min="0" value="5" pattern='^[\d]+$' disabled="disabled" />
-                                            <select id='settings-cadence-increment' name='cadence-increment' disabled="disabled">
-                                                <option value='1'>Seconds</option>
-                                                <option value='60'>Minutes</option>
-                                                <option value='3600'>Hours</option>
-                                                <option value='86400'>Days</option>
-                                            </select>
-                                        </div>
-                                    </fieldset>
-                                    
                                     <!-- Other -->
                                     <fieldset id='movie-settings-other'>
                                         <legend>Other</legend>
                                         <div style='padding:10px;'>
                                             <input type="checkbox" name="watermark-enabled" id="watermark-enabled" value="true" checked="checked" />
-                                            <label for="cadence-method-u">Watermark on</label><br />											
+                                            <label for="watermark-enabled">Watermark on</label><br />											
                                         </div>
                                     </fieldset>
                                 </div>
@@ -405,11 +386,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
                                 	<b>Speed</b><br /><br />
                                 	<p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
                                 	
-                                	<b>Cadence</b><br /><br />
-                                	<p>The amount of time between each image in the movie.</p><br />
-                                	
                                 	<b>Watermark</b><br /><br />
-                                    <p>Whether or not to include the Helioviewer.org logo in the video.</p><br />
+                                    <p>Whether or not to include the Helioviewer.org logo and image timestamps in the video.</p><br />
                                 </div>
                                 
                                 <!-- Movie settings validation console -->
