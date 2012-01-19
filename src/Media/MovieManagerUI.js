@@ -54,7 +54,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * user click to view it in a popup. 
      */
     _buildMovieRequest: function (serializedFormParams) {
-        var formParams, baseParams, params, frameRate, cadence, self = this;
+        var formParams, baseParams, params, frameRate, self = this;
         
         // Convert to an associative array for easier processing
         formParams = {};
@@ -91,28 +91,19 @@ var MovieManagerUI = MediaManagerUI.extend(
             baseParams['movieLength'] = formParams['movie-length'];
         }
         
-        // (Optional) cadence
-        if (formParams['cadence-method'] === "minimum") {
-            cadence = parseInt(formParams['cadence-increment'], 10) * parseInt(formParams['cadence-value'], 10);
-            
-            // Cadence must be between 1 second and 7 days
-            if (cadence < 1 || cadence > 604800) {
-                throw "Cadence must be between 1 second and 7 days.";
-            }
-            
-            baseParams['cadence'] = cadence;
-        }
-        
         // (Optional) watermark
         if (formParams['watermark-enabled']) {
-            baseParams['watermarkOn'] = true;
+            baseParams['watermark'] = true;
         }
         
-        console.dir(params);
-        return false;
+        //console.dir(params);
+        //return false;
         
         // Submit request
         this._queueMovie(params);
+        
+        self._advancedSettings.hide();
+        self._settingsDialog.hide();
         
         //this.hideDialogs();
         this.building = false;
@@ -166,6 +157,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._movieLayers = layers;
         
         this.hide();
+        this._settingsConsole.hide();
         this._settingsDialog.show();
     },
     
@@ -173,6 +165,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Queues a movie request
      */
     _queueMovie: function (params) {
+        var self = this;
+        
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {
             var msg, movie, waitTime;
@@ -256,7 +250,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 });
             } else {
                 self._advancedSettings.css('height', 0).show();
-                self._advancedSettings.animate({"height": 200});
+                self._advancedSettings.animate({"height": 132});
             }
         });
         
@@ -274,15 +268,13 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Initializes movie settings events
      */
     _initSettings: function () {
-        var length, lengthInput, duration, durationSelect, cadenceValue, cadenceIncrement, 
+        var length, lengthInput, duration, durationSelect,  
             frameRateInput, lengthInput, settingsForm, watermarkCheckbox, self = this;
 
         // Advanced movie settings
         frameRateInput    = $("#frame-rate");
         lengthInput       = $("#movie-length");
         durationSelect    = $("#movie-duration");
-        cadenceValue      = $("#settings-cadence-value");
-        cadenceIncrement  = $("#settings-cadence-increment");
         watermarkCheckbox = $("#watermark-enabled");
         
         // Speed method enable/disable
@@ -294,17 +286,6 @@ var MovieManagerUI = MediaManagerUI.extend(
         $("#speed-method-l").change(function () {
             frameRateInput.attr("disabled", true);
             lengthInput.attr("disabled", false);            
-        });
-        
-        // Cadence method enable/disable
-        $("#cadence-method-u").change(function () {
-            cadenceValue.attr("disabled", true);
-            cadenceIncrement.attr("disabled", true);
-        }).attr("checked", "checked").change();
-        
-        $("#cadence-method-m").change(function () {
-            cadenceValue.attr("disabled", false);
-            cadenceIncrement.attr("disabled", false);            
         });
         
         // Cancel button
@@ -343,10 +324,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Reset to default values
         frameRateInput.val(15);
-        cadenceValue.val(5);
         lengthInput.val(20);
         durationSelect.find("[value=" + duration + "]").attr("selected", "selected")
-        cadenceIncrement.find("[value=60]").attr("selected", "selected");
         watermarkCheckbox.attr("checked", "checked");
         
     },
