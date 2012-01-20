@@ -18,4 +18,3 @@ Soften the transition at the bottom of the image:
 
   1) Zoom in and use smudge/blur tools to gradually smooth out last ~5px (burn could work, but it would darken the end of the image so a different BG color would need to be used later on)
      Try using several iterations, each at increasing opacities (e.g. 40, 60, 80)
-
