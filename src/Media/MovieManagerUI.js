@@ -423,6 +423,13 @@ var MovieManagerUI = MediaManagerUI.extend(
             "class='movie-player-dialog'></div>"
         ).append(html);
         
+        dialog.find(".video-download-icon").click(function () {
+            // Google analytics event
+            if (typeof(_gaq) != "undefined") {
+                _gaq.push(['_trackEvent', 'Movies', 'Download']);
+            } 
+        });
+        
         // Movie dialog title
         title = movie.name + " (" + movie.startDate + " - " + 
                 movie.endDate + " UTC)";

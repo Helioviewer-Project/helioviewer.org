@@ -317,6 +317,10 @@ var Helioviewer = Class.extend(
             msg  = "Use the following link to refer to current page:";
         
         $('#link-button').click(function (e) {
+            // Google analytics event
+            if (typeof(_gaq) != "undefined") {
+                _gaq.push(['_trackEvent', 'Shares', 'Homepage - URL']);
+            } 
             self.displayURL(self.toURL(), msg);
         });
         //$('#email-button').click($.proxy(this.displayMailForm, this));
@@ -388,6 +392,10 @@ var Helioviewer = Class.extend(
         var msg = "Use the following link to refer to this movie:",
             url = this.serverSettings.rootURL + "/?movieId=" + movieId;
 
+        // Google analytics event
+        if (typeof(_gaq) != "undefined") {
+            _gaq.push(['_trackEvent', 'Shares', 'Movie - URL']);
+        } 
         this.displayURL(url, msg);           
     },
     
