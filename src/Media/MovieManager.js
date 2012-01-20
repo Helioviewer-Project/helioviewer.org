@@ -25,7 +25,7 @@ var MovieManager = MediaManager.extend(
         var self = this;
         $.each(movies, function (i, movie) {
             if ((movie.status === "QUEUED") || (movie.status === "PROCESSING")) {
-                self._monitorQueuedMovie(movie.id, 0);
+                self._monitorQueuedMovie(movie.id, Date.parseUTCDate(movie.dateRequested), 0);
             }
         });
     },
@@ -119,7 +119,7 @@ var MovieManager = MediaManager.extend(
             this._history = this._history.slice(0, this._historyLimit);            
         }
         
-        this._monitorQueuedMovie(id, eta);
+        this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), eta);
 
         this._save();  
         return movie;
@@ -190,7 +190,7 @@ var MovieManager = MediaManager.extend(
     /**
      * Monitors a queued movie and notifies the user when it becomes available
      */
-    _monitorQueuedMovie: function (id, eta)
+    _monitorQueuedMovie: function (id, dateRequested, eta)
     {
         var queryMovieStatus, self = this;
 
@@ -200,7 +200,12 @@ var MovieManager = MediaManager.extend(
             callback = function (response) {
                 if (response.status === "QUEUED" || 
                     response.status === "PROCESSING") {
-                    self._monitorQueuedMovie(id, response.eta);
+                    // If more than 36 hours has elapsed, set status to ERROR
+                    if ((Date.now() - dateRequested) / 1000 > (36 * 60 * 60)) {
+                        self._abort(id);
+                    }                    
+                    // Otherwise continue to monitor
+                    self._monitorQueuedMovie(id, dateRequested, response.eta);
                 } else if (response.error) {
                     self._abort(id);
                 }  else {
