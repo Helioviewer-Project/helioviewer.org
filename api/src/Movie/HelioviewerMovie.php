@@ -38,6 +38,7 @@ class Movie_HelioviewerMovie
 {
     public $id;
     public $frameRate;
+    public $movieLength;
     public $maxFrames;
     public $numFrames;
     public $reqStartDate;
@@ -86,7 +87,7 @@ class Movie_HelioviewerMovie
         $this->timestamp    = $info['timestamp'];
         $this->imageScale   = (float) $info['imageScale'];
         $this->frameRate    = (float) $info['frameRate'];
-        $this->movieLenght  = (float) $info['movieLength'];
+        $this->movieLength  = (float) $info['movieLength'];
         $this->numFrames    = (int) $info['numFrames'];
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
