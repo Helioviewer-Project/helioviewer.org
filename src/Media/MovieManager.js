@@ -198,6 +198,12 @@ var MovieManager = MediaManager.extend(
             var params, callback;
             
             callback = function (response) {
+                // If the user has removed the movie from history, stop monitoring
+                if (!self.has(id)) {
+                    return;
+                }
+                
+                // Check status
                 if (response.status === "QUEUED" || 
                     response.status === "PROCESSING") {
                     // If more than 36 hours has elapsed, set status to ERROR
