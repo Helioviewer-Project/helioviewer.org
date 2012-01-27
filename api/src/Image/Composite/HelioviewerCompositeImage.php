@@ -256,6 +256,13 @@ class Image_Composite_HelioviewerCompositeImage
             if ($this->interlace) {
                 $imagickImage->setInterlaceScheme(IMagick::INTERLACE_PLANE);
             }
+            
+            // Quantization
+            if ($this->compress) {
+                // Reduce the number of colors used for the image (256/layer + 512 for watermark)
+                $imagickImage->quantizeImage($this->layers->length() * 256 + 512, 
+                                             IMagick::COLORSPACE_RGB, 0, FALSE, FALSE); 
+            }
         } elseif ($this->_format === "jpg") {
             // Set filetype
             $imagickImage->setImageFormat("JPG");
