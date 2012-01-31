@@ -56,13 +56,21 @@ class Module_Movies implements Module
             }
         }
     }
+    
+    /**
+     * queueMovie
+     */
+    public function queueMovie()
+    {
+        return true;
+    }
 
     /**
      * buildMovie
      *
      * @return void
      */
-    public function buildMovie ()
+    public function buildMovie()
     {
         include_once 'src/Movie/HelioviewerMovie.php';
         
@@ -434,13 +442,13 @@ class Module_Movies implements Module
             break;
         case "queueMovie":
             $expected = array(
-                "required" => array('startTime', 'endTime', 'layers', 'imageScale', 'x1', 'x2', 'y1', 'y2', 'format'),
-                "optional" => array('frameRate', 'maxFrames', 'watermark', 'movieLength'),
+                "required" => array('startTime', 'endTime', 'layers', 'imageScale'),
+                "optional" => array('format', 'frameRate', 'maxFrames', 'movieLength', 'watermark', 'width', 'height', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2'),
                 "alphanum" => array('format'),
                 "bools"    => array('watermark'),
                 "dates"    => array('startTime', 'endTime'),
-                "floats"   => array('imageScale', 'frameRate', 'movieLength', 'x1', 'x2', 'y1', 'y2'),
-                "ints"     => array('maxFrames')
+                "floats"   => array('imageScale', 'frameRate', 'movieLength', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2'),
+                "ints"     => array('maxFrames', 'width', 'height')
             );
             break;
         case "uploadMovieToYouTube":
