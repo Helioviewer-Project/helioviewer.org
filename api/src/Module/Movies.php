@@ -58,11 +58,155 @@ class Module_Movies implements Module
     }
     
     /**
-     * queueMovie
+     * Queues a request for a Helioviewer.org movie
      */
     public function queueMovie()
     {
-        return true;
+        include_once 'lib/alphaID/alphaID.php';
+        include_once 'lib/Resque.php';
+        include_once 'lib/Redisent/Redisent.php';
+        include_once 'src/Helper/HelioviewerLayers.php';
+        include_once 'src/Database/MovieDatabase.php';
+        include_once 'src/Database/ImgIndex.php';
+
+        // If the queue is currently full, don't process the request
+        $queueSize = Resque::size('on_demand_movie');
+        if ($queueSize >= MOVIE_QUEUE_MAX_SIZE) {
+            throw new Exception("Sorry, due to current high demand, we are currently unable to process your request. " .
+                                "Please try again later.");
+        }
+        
+        // Default options
+        $defaults = array(
+            "format"      => "mp4",
+            "frameRate"   => NULL,
+            "movieLength" => NULL,
+            "maxFrames"   => HV_MAX_MOVIE_FRAMES,
+            "watermark"   => TRUE
+        );
+        $options = array_replace($defaults, $this->_options);
+        
+        // Limit movies to three layers
+        $layers = new Helper_HelioviewerLayers($info['layers']);
+        if ($layers->length() < 1 || $layers->length() > 3) {
+            throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
+        }
+
+        // Max number of frames
+        $maxFrames = min($this->_getMaxFrames($queueSize), $options['maxFrames']);
+        
+        // Create a connection to the database
+        $db = new Database_ImgIndex();
+        $movieDb = new Database_MovieDatabase();
+        
+        // Estimate the number of frames
+        $numFrames = $this->_estimateNumFrames($db, $layers, $this->_params['startTime'], $this->_params['endTime']);                                               
+        $numFrames = min($numFrames, $maxFrames);
+        
+        // Estimate the time to create movie frames
+        $estBuildTime = (int) (MOVIE_EST_TIME_PER_FRAME * $numFrames);
+        
+        // Determine the ROI
+        $roi = $this->_getMovieROI($options);
+        
+        // Get datasource bitmask
+        $bitmask = bindec($layers->getBitMask());
+        
+        // Create entry in the movies table in MySQL
+        $dbId = $movieDb->insertMovie($startTime, $endTime, $this->_params['imageScale'], $roi, $maxFrames,
+                                      $options['watermark'], $this->_params['layers'], $bitmask, $options['frameRate'],
+                                      $options['movieLength']);
+                                  
+        // Convert id
+        $publicId = alphaID($dbId, false, 5, HV_MOVIE_ID_PASS);
+
+        // Queue movie request
+        $args = array(
+            'movieId' => $publicId,
+            'eta'     => $estBuildTime,
+            'format'  => $options['format']
+        );
+        $id = Resque::enqueue('on_demand_movie', 'OnDemandMovieMaker', $args, TRUE);
+        
+        // Create entries for each version of the movie in the movieFormats table
+        foreach(array('mp4', 'webm') as $format) {
+            $movieDb->insertMovieFormat($dbId, $format);
+        }
+
+        // Update queue wait time
+        $redis = new Redisent('localhost');
+        $eta = $redis->incrby('movie_queue_wait', $estBuildTime);
+        
+        // Print result
+        header('Content-type: application/json');
+        return json_encode(array("id" => $publicId, "eta" => $eta));
+    }
+
+    /**
+     * Determines the maximum number of frames allowed based on the current queue size
+     */
+    private function _getMaxFrames($queueSize)
+    {
+        // Limit max frames if the number of queued movies exceeds one of the specified throttles.
+        if ($queueSize >= MOVIE_QUEUE_THROTTLE_TWO) {
+            return HV_MAX_MOVIE_FRAMES / 2;
+        } elseif ($queueSize >= MOVIE_QUEUE_THROTTLE_ONE) {
+            return (HV_MAX_MOVIE_FRAMES * 3) / 4;
+        }
+        return HV_MAX_MOVIE_FRAMES;        
+    }
+    
+    /**
+     * Returns the region of interest for the movie request or throws an error if one was not properly specified.
+     */
+    private function _getMovieROI($options) {
+        // Region of interest (center in arcseconds and dimensions in pixels)
+        if ($options['x1'] && $options['y1'] && $options['x2'] && $options['y2']) {
+            $x1 = $options['x1'];
+            $y1 = $options['y1'];
+            $x2 = $options['x2'];
+            $y2 = $options['y2'];
+        } elseif ($options['x0'] and $options['y0'] and $options['width'] and $options['height']) {
+            // Region of interest (top-left and bottom-right coords in arcseconds)
+            $x1 = $options['x0'] - 0.5 * $options['width'] * $this->_params['imageScale'];
+            $y1 = $options['y0'] - 0.5 * $options['height'] * $this->_params['imageScale'];
+            $x2 = $options['x0'] + 0.5 * $options['width'] * $this->_params['imageScale'];
+            $y2 = $options['y0'] + 0.5 * $options['height'] * $this->_params['imageScale'];
+        } else {
+            throw new Exception("Region of interest not properly specified.");
+        }
+
+        $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
+        return $roi->getPolygonString();
+    }
+    
+    /**
+     * Estimates the number of frames that a movie will include
+     * 
+     * Determines how many frames will be included in the movie and then uses that along with some other
+     * information about the nature of the request to come up with an estimated time it will take to build
+     * the requested movie.
+     * 
+     * NOTE: This is only a temporary work-around. An ideal solution will make use of prior actual movie generation 
+     * times and will not require use of manually-selected system-dependent coefficients
+     */
+    private function _estimateNumFrames($db, $layers, $startTime, $endTime)
+    {
+        $numFrames = 0;
+        $sql =  "SELECT COUNT(*) FROM images WHERE DATE BETWEEN '%s' AND '%s' AND sourceId=%d;";
+        
+        // Estimate number of movies frames for each layer
+        foreach($layers->toArray() as $layer) {
+            $numFrames += $db->getImageCount($startTime, $endTime, $layer['sourceId']);
+        }
+
+        // Raise an error if few or no frames were found for the request range and data sources
+        if ($numFrames == 0) {
+            throw new Exception("No images found for requested time range. Please try a different time.");
+        } else if ($numFrames <= 3) {
+            throw new Exception("Insufficient data was found for the requested time range. Please try a different time.");
+        }
+        return $numFrames;
     }
 
     /**

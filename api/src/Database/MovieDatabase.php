@@ -36,6 +36,40 @@ class Database_MovieDatabase
     }
     
     /**
+     * Inserts a new movie entry into the database and returns it's id
+     */
+    public function insertMovie($startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark, $layerString, 
+                                $layerBitMask, $frameRate, $movieLength)
+    {
+        $sql = "INSERT INTO movies VALUES(NULL, NULL, ?, ?, ?, PolygonFromText(?), " .
+               "?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL);";
+                 
+        $stmt = $this->_dbConnection->link->prepare($sql);
+        $stmt->bind_param('ssfsdssdss', $startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark,
+                                        $layerString, $layerBitMask, $frameRate, $movieLength);
+                                        
+        $result = $stmt->execute();
+        $stmt->close();
+        
+        return $result;
+    }
+    
+    /**
+     * Creates a video entry in the movieFormats table
+     */
+    public function insertMovieFormat($id, $format)
+    {
+        $sql = "INSERT INTO movieFormats VALUES(NULL, ?, ?, 'QUEUED', NULL);";
+        
+        $stmt->bind_param('ds', $id, $format);
+                                        
+        $result = $stmt->execute();
+        $stmt->close();
+        
+        return $result;
+    }
+
+    /**
      * Creates a new entry in the youtube table to track a movie uploaded to
      * YouTube.
      * 
