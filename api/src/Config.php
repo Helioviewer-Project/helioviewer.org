@@ -118,5 +118,11 @@ class Config
         define("PNG_HIGH_COMPRESSION", 50);  // Slower, smalle files
         define("JPG_HIGH_COMPRESSION", 80);  // Good quality, small files, faster
         define("JPG_LOW_COMPRESSION",  100); // Best quality, large files, slower
+        
+        // Movie queue throttles for speeding up processing during high-demand
+        define("MOVIE_QUEUE_THROTTLE_ONE", 20);
+        define("MOVIE_QUEUE_THROTTLE_TWO", 50);
+        define("MOVIE_QUEUE_MAX_SIZE", 100);
+        define("MOVIE_EST_TIME_PER_FRAME", 0.5);
     }
 }
