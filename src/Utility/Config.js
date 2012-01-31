@@ -16,7 +16,7 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["distributed_mode_enabled", "disable_cache", "helioqueuer_enabled"];
+        this.bools  = ["distributed_mode_enabled", "disable_cache"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "bit_depth", "num_colors", "max_movie_frames",
                        "max_tile_layers"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
@@ -76,7 +76,6 @@ var Config = Class.extend(
             'newsURL'             : this.params["news_url"],
             'rootURL'             : this.params["web_root_url"],
             'videoFeed'           : this.params["user_video_feed"],
-            'hqEnabled'           : this.params["helioqueuer_enabled"],
             'contactEmail'        : this.params["contact_email"]
         };
     }

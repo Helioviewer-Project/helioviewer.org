@@ -78,8 +78,6 @@ function loadModule($params)
         "getMoviesForEvent"      => "SolarEvents"
     );
     
-    $helioqueuer_tasks = array ("queueMovie");
-    
     include_once "src/Validation/InputValidator.php";
 
     try {
@@ -109,39 +107,6 @@ function loadModule($params)
                     $err = "Distributed mode is disabled for this server.";
                     throw new Exception($err);
                 }
-                
-            // Forward Helioqueuer tasks 
-            } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
-                $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
-                unset ($params['action']);
-                                
-                // Set up handler to respond to warnings emitted by file_get_contents
-                function catchWarning($errno, $errstr, $errfile, $errline, array $errcontext) {
-                    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-                }
-                set_error_handler('catchWarning');
-                
-                include_once 'src/Net/Proxy.php';
-                $proxy = new Net_Proxy($url . "?");
-                
-                if ($_SERVER['REQUEST_METHOD'] == "POST") {
-                    $response = $proxy->post($params, true);    
-                } else {
-                    $response = $proxy->query($params, true);
-                }
-                
-                header('Content-type: application/json;charset=UTF-8');
-                
-                // Make sure a response was recieved
-                if ($response) {
-                    echo $response;
-                } else {
-                    handleError("Helioqueuer is currently unresponsive");
-                }
-                
-                // Restore normal behavior for dealing with warnings
-                restore_error_handler();
-
             // Local requests
             } else {
             	// Execute action
@@ -168,7 +133,6 @@ function loadModule($params)
                     $statistics->log($params["action"]);
                 }
             }
-
         }
     } catch (Exception $e) {
         printHTMLErrorMsg($e->getMessage());
