@@ -87,7 +87,7 @@ class Module_Movies implements Module
         $options = array_replace($defaults, $this->_options);
         
         // Limit movies to three layers
-        $layers = new Helper_HelioviewerLayers($info['layers']);
+        $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         if ($layers->length() < 1 || $layers->length() > 3) {
             throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
         }
@@ -100,7 +100,7 @@ class Module_Movies implements Module
         $movieDb = new Database_MovieDatabase();
         
         // Estimate the number of frames
-        $numFrames = $this->_estimateNumFrames($db, $layers, $this->_params['startTime'], $this->_params['endTime']);                                               
+        $numFrames = $this->_estimateNumFrames($db, $layers, $this->_params['startTime'], $this->_params['endTime']);
         $numFrames = min($numFrames, $maxFrames);
         
         // Estimate the time to create movie frames
@@ -108,7 +108,7 @@ class Module_Movies implements Module
         
         // Determine the ROI
         $roi = $this->_getMovieROI($options);
-        
+
         // Get datasource bitmask
         $bitmask = bindec($layers->getBitMask());
         
@@ -160,6 +160,8 @@ class Module_Movies implements Module
      * Returns the region of interest for the movie request or throws an error if one was not properly specified.
      */
     private function _getMovieROI($options) {
+        include_once 'src/Helper/RegionOfInterest.php';
+
         // Region of interest (center in arcseconds and dimensions in pixels)
         if ($options['x1'] && $options['y1'] && $options['x2'] && $options['y2']) {
             $x1 = $options['x1'];
@@ -177,6 +179,7 @@ class Module_Movies implements Module
         }
 
         $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
+
         return $roi->getPolygonString();
     }
     
