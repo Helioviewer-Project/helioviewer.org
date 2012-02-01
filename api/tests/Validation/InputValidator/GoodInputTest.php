@@ -11,7 +11,6 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'PHPUnit/Framework.php';
 require_once 'src/Validation/InputValidator.php';
 /**
  * Helioviewer InputValidator Tests
@@ -26,18 +25,6 @@ require_once 'src/Validation/InputValidator.php';
  */
 class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
 {
-    protected $inputValidator;
-
-    /**
-     * Sets up test environment
-     *
-     * @return void
-     */
-    protected function setUp()
-    {
-        $this->inputValidator = new Validation_InputValidator();
-    }
-
     /**
      * Tests method which checks for required parameters
      *
@@ -52,13 +39,7 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
      */
     public function checkForMissingParams($required, $params)
     {
-        // Check proper input
-        try {
-            Validation_InputValidator::checkForMissingParams($required, $params);
-        }
-        catch (Exception $ex) {
-            $this->fail("Unexpected exception thrown: " . $ex->getMessage());
-        }
+        Validation_InputValidator::checkForMissingParams($required, $params);
     }
 
     /**
@@ -94,13 +75,7 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
      */
     public function checkBools($bools, $params)
     {
-        // Check proper input
-        try {
-            Validation_InputValidator::checkBools($bools, $params);
-        }
-        catch (Exception $ex) {
-            $this->fail("Unexpected exception thrown: " . $ex->getMessage());
-        }
+        Validation_InputValidator::checkBools($bools, $params);
     }
 
     /**
