@@ -43,15 +43,19 @@ class Database_MovieDatabase
     {
         $sql = "INSERT INTO movies VALUES(NULL, NULL, ?, ?, ?, PolygonFromText(?), " .
                "?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL);";
+               
+        $startTime = isoDateToMySQL($startTime);
+        $endTime   = isoDateToMySQL($endTime);
                  
         $stmt = $this->_dbConnection->link->prepare($sql);
-        $stmt->bind_param('ssfsdssdss', $startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark,
+        $stmt->bind_param('ssdsisssss', $startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark,
                                         $layerString, $layerBitMask, $frameRate, $movieLength);
-                                        
+
         $result = $stmt->execute();
+        $id = $stmt->insert_id;
         $stmt->close();
         
-        return $result;
+        return $id;
     }
     
     /**
@@ -60,13 +64,15 @@ class Database_MovieDatabase
     public function insertMovieFormat($id, $format)
     {
         $sql = "INSERT INTO movieFormats VALUES(NULL, ?, ?, 'QUEUED', NULL);";
-        
-        $stmt->bind_param('ds', $id, $format);
-                                        
+
+        $stmt = $this->_dbConnection->link->prepare($sql);
+        $stmt->bind_param('is', $id, $format);
+
         $result = $stmt->execute();
+        $id = $stmt->insert_id;
         $stmt->close();
         
-        return $result;
+        return $id;
     }
 
     /**
