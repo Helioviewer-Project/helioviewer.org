@@ -126,7 +126,7 @@ class Module_Movies implements Module
             'eta'     => $estBuildTime,
             'format'  => $options['format']
         );
-        $id = Resque::enqueue('on_demand_movie', 'OnDemandMovieMaker', $args, TRUE);
+        $id = Resque::enqueue('on_demand_movie', 'Job_MovieBuilder', $args, TRUE);
         
         // Create entries for each version of the movie in the movieFormats table
         foreach(array('mp4', 'webm') as $format) {
@@ -210,22 +210,6 @@ class Module_Movies implements Module
             throw new Exception("Insufficient data was found for the requested time range. Please try a different time.");
         }
         return $numFrames;
-    }
-
-    /**
-     * buildMovie
-     *
-     * @return void
-     */
-    public function buildMovie()
-    {
-        include_once 'src/Movie/HelioviewerMovie.php';
-        
-        // Process request
-        $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
-        
-        // Build the movie
-        $movie->build();
     }
 
     /**
@@ -555,12 +539,6 @@ class Module_Movies implements Module
     {
         switch($this->_params['action'])
         {
-        case "buildMovie":
-            $expected = array(
-                "required" => array('id', 'format'),
-                "alphanum" => array('id', 'format')
-            );
-            break;
         case "downloadMovie":
             $expected = array(
                 "required" => array('id', 'format'),
