@@ -202,7 +202,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Initializes MovieManager-related event handlers
      */
     _initEvents: function () {
-        var self = this;
+        var timer, self = this;
        
         this._super();
         
@@ -254,10 +254,16 @@ var MovieManagerUI = MediaManagerUI.extend(
             }
         });
         
-        // Display help
+        // Display help (0.5s delay)
         $("#movie-settings-toggle-help").hover(function () {
-            self._settingsForm.hide();
-            self._settingsHelp.fadeIn(500);
+            if(timer) {
+                clearTimeout(timer);
+                timer = null
+            }
+            timer = setTimeout(function() {
+                self._settingsForm.hide();
+                self._settingsHelp.fadeIn(500);
+            }, 500);
         }, function () {
             self._settingsHelp.hide();
             self._settingsForm.fadeIn(500);
