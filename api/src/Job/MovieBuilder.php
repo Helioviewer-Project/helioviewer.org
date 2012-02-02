@@ -32,7 +32,7 @@ class Job_MovieBuilder
         
         # Decrement movie queue wait counter
         $redis = new Redisent('localhost');
-        $redis->decrby('movie_queue_wait', $this->args['eta']);
+        $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
         
         # If requesting an mp4, queue webm for future creation
         if ($this->args['format'] == "mp4") {
