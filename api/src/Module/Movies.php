@@ -126,7 +126,7 @@ class Module_Movies implements Module
             'eta'     => $estBuildTime,
             'format'  => $options['format']
         );
-        $id = Resque::enqueue('on_demand_movie', 'Job_MovieBuilder', $args, TRUE);
+        $token = Resque::enqueue('on_demand_movie', 'Job_MovieBuilder', $args, TRUE);
         
         // Create entries for each version of the movie in the movieFormats table
         foreach(array('mp4', 'webm') as $format) {
@@ -135,11 +135,16 @@ class Module_Movies implements Module
 
         // Update queue wait time
         $redis = new Redisent('localhost');
-        $eta = $redis->incrby('movie_queue_wait', $estBuildTime);
+        $eta = $redis->incrby('helioviewer:movie_queue_wait', $estBuildTime);
         
-        // Print result
+        // Print response
+        $response = array(
+            "id"    => $publicId,
+            "eta"   => $eta, 
+            "token" => $token
+        );
         header('Content-type: application/json');
-        print json_encode(array("id" => $publicId, "eta" => $eta));
+        print json_encode($response);
     }
 
     /**
@@ -277,25 +282,39 @@ class Module_Movies implements Module
         $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
         $verbose = isset($this->_options['verbose']) ? $this->_options['verbose'] : false;
         
-        header('Content-type: application/json');
-        
-        // If the movie is finished return movie info
+        // FINISHED
         if ($movie->status == "FINISHED") {            
             $response = $movie->getCompletedMovieInformation($verbose);
         } else if ($movie->status == "ERROR") {
+            // ERROR
             $response = array(
                 "error" => "Sorry, we are unable to create your movie at this time. Please try again later."
             );
+        } else if ($movie->status == "QUEUED") {
+            // QUEUED
+            if (isset($this->_options['token'])) {
+                // with token
+                require_once 'lib/Resque.php';
+                $status = new Resque_Job_Status($this->_options['token']);
+                // TODO
+            } else {
+                // without token
+                $response = array("status" => "QUEUED");
+            }
         } else {
-            // Otherwise have the client try again in 60s
-            // TODO 2011/04/25: Once HQ has been ported to PHP, eta should be estimated
-            // instead of returning a static eta each time.
+            // PROCESSING
+            //$dir = 
+            // If movie encoding has not been started, check frames
+            //if (sizeOf(glob(HV)) == 0) {
+                
+            //}
             $response = array(
-                "status" => $movie->status,
+                "status" => "PROCESSING",
                 "eta"    => 60
             );
         }
         
+        header('Content-type: application/json');
         print json_encode($response);
     }
     
@@ -550,8 +569,8 @@ class Module_Movies implements Module
         case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
-                "optional" => array('verbose'),
-                "alphanum" => array('id', 'format'),
+                "optional" => array('verbose', 'token'),
+                "alphanum" => array('id', 'format', 'token'),
                 "bools"    => array('verbose')
                 
             );

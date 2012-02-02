@@ -183,7 +183,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             }
 
             movie = self._manager.queue(
-                response.id, response.eta, params.imageScale, params.layers, 
+                response.id, response.eta, response.token, 
+                params.imageScale, params.layers, 
                 new Date().toISOString(), params.startTime, params.endTime, 
                 params.x1, params.x2, params.y1, params.y2
             );

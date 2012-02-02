@@ -87,6 +87,7 @@ var MovieManager = MediaManager.extend(
      * 
      * @param {Int}     id            Movie id
      * @param {Int}     eta           Estimated time in seconds before movie is ready
+     * @param {String}  token         Resque token for tracking status in queue
      * @param {Float}   imageScale    Image scale for the movie
      * @param {String}  layers        Layers in the movie serialized as a string
      * @param {String}  dateRequested Date string for when the movie was requested
@@ -99,7 +100,7 @@ var MovieManager = MediaManager.extend(
      * 
      * @return {Movie} A Movie object
      */
-    queue: function (id, eta, imageScale, layers, dateRequested, startDate, endDate, x1, x2, y1, y2) {
+    queue: function (id, eta, token, imageScale, layers, dateRequested, startDate, endDate, x1, x2, y1, y2) {
         var movie = {
             "id"            : id,
             "imageScale"    : imageScale,
@@ -112,6 +113,7 @@ var MovieManager = MediaManager.extend(
             "y1"            : y1,
             "y2"            : y2,
             "status"        : "QUEUED",
+            "token"         : token,
             "name"          : this._getName(layers)
         };
 
@@ -119,7 +121,7 @@ var MovieManager = MediaManager.extend(
             this._history = this._history.slice(0, this._historyLimit);            
         }
         
-        this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), eta);
+        this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), token, eta);
 
         this._save();  
         return movie;
@@ -153,6 +155,9 @@ var MovieManager = MediaManager.extend(
             "thumbnail" : thumbnails.small,
             "url"       : url
         });
+        
+        // Delete resque token
+        delete movie.token;
         
         this._save();
         
@@ -190,7 +195,7 @@ var MovieManager = MediaManager.extend(
     /**
      * Monitors a queued movie and notifies the user when it becomes available
      */
-    _monitorQueuedMovie: function (id, dateRequested, eta)
+    _monitorQueuedMovie: function (id, dateRequested, token, eta)
     {
         var queryMovieStatus, self = this;
 
@@ -206,12 +211,12 @@ var MovieManager = MediaManager.extend(
                 // Check status
                 if (response.status === "QUEUED" || 
                     response.status === "PROCESSING") {
-                    // If more than 36 hours has elapsed, set status to ERROR
-                    if ((Date.now() - dateRequested) / 1000 > (36 * 60 * 60)) {
+                    // If more than 24 hours has elapsed, set status to ERROR
+                    if ((Date.now() - dateRequested) / 1000 > (24 * 60 * 60)) {
                         self._abort(id);
                     }                    
                     // Otherwise continue to monitor
-                    self._monitorQueuedMovie(id, dateRequested, response.eta);
+                    self._monitorQueuedMovie(id, dateRequested, token, response.eta);
                 } else if (response.error) {
                     self._abort(id);
                 }  else {
@@ -223,8 +228,9 @@ var MovieManager = MediaManager.extend(
             };
             
             params = {
-                "action" : "getMovieStatus", 
+                "action" : "getMovieStatus",
                 "id"     : id,
+                "token"  : token,
                 "format" : self.format
             };
             $.get("api/index.php", params, callback, "json");
