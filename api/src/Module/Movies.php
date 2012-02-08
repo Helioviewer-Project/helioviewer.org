@@ -303,14 +303,9 @@ class Module_Movies implements Module
             }
         } else {
             // PROCESSING
-            //$dir = 
-            // If movie encoding has not been started, check frames
-            //if (sizeOf(glob(HV)) == 0) {
-                
-            //}
             $response = array(
                 "status" => "PROCESSING",
-                "eta"    => 60
+                "eta"    => 30
             );
         }
         
