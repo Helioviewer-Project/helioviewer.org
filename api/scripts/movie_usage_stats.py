@@ -5,9 +5,11 @@ Helioviewer.org Movie database usage analysis
 Feb 6, 2012
 """
 import sys
+import math
 import MySQLdb
 import numpy as np
 from scipy import constants
+from scipy.interpolate import interp1d
 from matplotlib import pyplot as plt
 from matplotlib import colors
 from matplotlib import mlab
@@ -30,12 +32,19 @@ def main(dbname, dbtable, dbuser, dbpass):
     # Create a figure
     fig = plt.figure()
     
+    # Basic time estimation
+    #basic_est = lambda x, y: 0.8 * x
+    #evaluate_estimation_fn(basic_est, frame_counts, area_px, times)
+    
+    #estimate_interp1d(frame_counts, area_px, times, w1=1, w2=0, 
+    #                  frame_kind='cubic', area_kind='cubic')
+        
     #plot_aspect_ratio(fig, widths, heights)
-    #plot_frames_vs_time(fig, frame_counts, times, log_time=False)
+    plot_frames_vs_time(fig, frame_counts, times, log_time=False)
     #plot_pixel_dimensions_vs_time(fig, area_px, times, norm=True)
     #plot_times_for_set_framecount(fig, frame_counts, times, 300, log_time=True)
-    #plot_times_for_set_length(fig, area_px, proc_times, 1500, log_time=True)
-    plot_physical_dimensions(fig, area_as, times, log=True)
+    #plot_times_for_set_length(fig, area_px, proc_times, 175, log_time=True)
+    #plot_physical_dimensions(fig, area_as, times, log=True)
     #plot_image_scale_vs_dimensions(fig, area_as, image_scales)
     
     #plt.savefig('output.png')
@@ -234,6 +243,65 @@ def query_database(dbname, dbtable, dbuser, dbpass, min_time, max_time):
     
     return np.fromiter((tuple(row) for row in cur), 
                         dtype=dtypes, count=cur.rowcount)
+    
+def get_mean_time_for_frame_num(frame_counts, times, frame_num):
+    """Returns the mean processing time required for movies with a specified
+    frame number"""
+    matches = filter(lambda x: x[0] == frame_num, zip(frame_counts, times))
+    
+    t, filtered_times = zip(*matches)
+    
+    return np.mean(filtered_times)
+
+def get_mean_time_for_average_side(sides, times, side, margin=5):
+    """Returns the mean processing time required for movies with a specified
+    pixel dimension"""
+    filter_fn = lambda x: x[0] >= (side - margin) and x[0] <= (side + margin)
+    matches = filter(filter_fn, zip(sides, times))
+    
+    t, filtered_times = zip(*matches)
+    
+    return np.mean(filtered_times)
+    
+def estimate_interp1d(frame_counts, area_px, times, w1=0.5, w2=0.5, 
+                      frame_kind='linear', area_kind='linear'):
+    """Uses SciPy's 1d interpolation method to estimate the contributions
+    from the number of frames and the pixel area in determining the processing
+    time for a movie."""
+    # Choose interpolation points for movie frames influence
+    frames_x = range(5, 301, 5)
+    frames_y = [get_mean_time_for_frame_num(frame_counts, times, x) for x in frames_x]
+    frame_est = interp1d([0] + frames_x, [0] + frames_y, kind=frame_kind)
+    
+    xnew = np.linspace(0, 300, 60)
+    plt.plot(frames_x, frames_y, 'o', xnew, frame_est(xnew),'-')
+    plt.show()
+    
+    # Choose interpolation points for movie dimensions influence
+    sides = np.sqrt(area_px)
+    area_x = range(int(math.floor(sides.min())), int(math.ceil(sides.max())), 30) + [int(math.ceil(sides.max()))]
+    area_y = [get_mean_time_for_average_side(sides, times, x) for x in area_x]
+    area_est = interp1d(area_x, area_y, kind=area_kind)
+    
+    combined_est = lambda x, y: w1 * frame_est(x) + w2 * area_est(y)
+    
+    evaluate_estimation_fn(combined_est, frame_counts, np.sqrt(area_px), times)
+    
+    
+def evaluate_estimation_fn(fn, frame_counts, area_px, times):
+    """Evaluates the performance of a function for estimating the time required
+    to build a movie compared with data from actual movies."""
+    offsets = []
+    
+    for i in range(len(frame_counts)):
+        estimate = fn(frame_counts[i], area_px[i])
+        offsets.append(estimate - times[i])
+        
+    print "SUMMARY:"
+    print "Average movie processing time (s): %f" % np.mean(times)
+    print "Mean est. error (s): %f" % np.mean(offsets)
+    print "Mean est. absolute error (s): %f" % np.mean(np.abs(offsets))
+    print "Standard deviation est. (s): %f" % np.std(offsets)
 
 if __name__ == '__main__':
     sys.exit(main("helioviewer", "movies_dump", "helioviewer", "helioviewer"))
