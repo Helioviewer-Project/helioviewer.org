@@ -165,7 +165,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <script type="text/javascript">
         var addthis_config = {
             data_track_clickback: true,
-            pub_id: "<?php echo $config['addthis_analytics_id'];?>",
+            pubid: "<?php echo $config['addthis_analytics_id'];?>",
             data_ga_property: "<?php echo $config['google_analytics_id'];?>"
         };
     </script>
