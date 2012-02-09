@@ -110,7 +110,7 @@ def _get_header_tags(fits, type_):
         meas = get_element_value(fits, "CONTENT").split(" ")[0].lower()
         return {
             "date": datetime.strptime(
-                get_element_value(fits, "DATE-OBS")[0:22], date_fmt1),
+                get_element_value(fits, "DATE_OBS")[0:22], date_fmt1),
             "detector": "HMI",
             "instrument": "HMI",
             "measurement": meas,
