@@ -6,9 +6,11 @@ Feb 6, 2012
 """
 import sys
 import math
+import random
 import MySQLdb
 import numpy as np
 from scipy import constants
+from scipy import polyfit
 from scipy.interpolate import interp1d
 from matplotlib import pyplot as plt
 from matplotlib import colors
@@ -29,18 +31,27 @@ def main(dbname, dbtable, dbuser, dbpass):
     # Limit outlier influence from server downtime, etc
     times = np.array(proc_times)   
     
-    # Create a figure
-    fig = plt.figure()
+    # Determine linear fit for number of frames and area
+    (m1, b1) = polyfit(frame_counts, times, 1)
+    (m2, b2) = polyfit(np.sqrt(area_px), times, 1)
+    
+    print "Linear fit for num frames: y = %fx + %f" % (m1, b1)
+    print "Linear fit for movie size: y = %fx + %f" % (m2, b2)
     
     # Basic time estimation
-    #basic_est = lambda x, y: 0.8 * x
-    #evaluate_estimation_fn(basic_est, frame_counts, area_px, times)
+    w1 = 0.8
+    w2 = 1 - w1
+    basic_est = lambda x, y: w1 * (m1 * x + b1) + w2 * (m2 * y + b2)
+    evaluate_estimation_fn(basic_est, frame_counts, np.sqrt(area_px), times)
     
     #estimate_interp1d(frame_counts, area_px, times, w1=1, w2=0, 
     #                  frame_kind='cubic', area_kind='cubic')
-        
+    
+    # Create a figure
+    #fig = plt.figure()
+
     #plot_aspect_ratio(fig, widths, heights)
-    plot_frames_vs_time(fig, frame_counts, times, log_time=False)
+    #plot_frames_vs_time(fig, frame_counts, times, log_time=True)
     #plot_pixel_dimensions_vs_time(fig, area_px, times, norm=True)
     #plot_times_for_set_framecount(fig, frame_counts, times, 300, log_time=True)
     #plot_times_for_set_length(fig, area_px, proc_times, 175, log_time=True)
@@ -48,7 +59,7 @@ def main(dbname, dbtable, dbuser, dbpass):
     #plot_image_scale_vs_dimensions(fig, area_as, image_scales)
     
     #plt.savefig('output.png')
-    plt.show()
+    #plt.show()
     
     return 0
     
@@ -288,17 +299,20 @@ def estimate_interp1d(frame_counts, area_px, times, w1=0.5, w2=0.5,
     evaluate_estimation_fn(combined_est, frame_counts, np.sqrt(area_px), times)
     
     
-def evaluate_estimation_fn(fn, frame_counts, area_px, times):
+def evaluate_estimation_fn(fn, frame_counts, area_px, times, n=1000):
     """Evaluates the performance of a function for estimating the time required
     to build a movie compared with data from actual movies."""
+    # Measure difference between estimates and actual times
     offsets = []
     
-    for i in range(len(frame_counts)):
+    for i in random.sample(range(len(frame_counts)), n):
         estimate = fn(frame_counts[i], area_px[i])
         offsets.append(estimate - times[i])
         
+    # Print summary of results
     print "SUMMARY:"
     print "Average movie processing time (s): %f" % np.mean(times)
+    print "Sample size: %d" % n
     print "Mean est. error (s): %f" % np.mean(offsets)
     print "Mean est. absolute error (s): %f" % np.mean(np.abs(offsets))
     print "Standard deviation est. (s): %f" % np.std(offsets)
