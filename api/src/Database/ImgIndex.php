@@ -105,12 +105,12 @@ class Database_ImgIndex
     }
     
     /**
-     * 
+     * Updated movie entry to include processing start and end times
      */
     public function finishedBuildingMovieFrames($id, $buildTimeStart, $buildTimeEnd)
     {
-        $this->_dbConnection->query("UPDATE movies SET buildTimeStart=$buildTimeStart,
-                                                       buildTimeEnd=$buildTimeEnd WHERE id=$id");
+        $sql = "UPDATE movies SET buildTimeStart='$buildTimeStart', buildTimeEnd='$buildTimeEnd' WHERE id=$id";
+        $this->_dbConnection->query($sql);
     }
     
     /**

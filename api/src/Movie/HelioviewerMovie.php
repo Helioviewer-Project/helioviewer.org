@@ -106,6 +106,8 @@ class Movie_HelioviewerMovie
      */
     public function build()
     {
+        date_default_timezone_set('UTC');
+        
         // Check to make sure we have not already started processing the movie
         if ($this->status !== "QUEUED") {
             throw new Exception("The requested movie is either currently being built or has already been built");
@@ -119,15 +121,15 @@ class Movie_HelioviewerMovie
             // If the movie frames have not been built create them
             if (!file_exists($this->directory . "frames")) {
                 require_once HV_API_ROOT_DIR . '/src/Image/Composite/HelioviewerMovieFrame.php';
-    
-                $t1 = time();   
+                
+                $t1 = date("Y-m-d H:i:s");
                          
                 $this->_getTimeStamps();      // Get timestamps for frames in the key movie layer
                 $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, movie length, numFrames and dimensions
                 $this->_buildMovieFrames($this->watermark); // Build movie frames
                 
-                $t2 = time();
-                
+                $t2 = date("Y-m-d H:i:s");
+
                 $this->_db->finishedBuildingMovieFrames($this->id, $t1, $t2); // Update status and log time to build frames
             } else {
                 $this->filename = $this->_buildFilename();
