@@ -128,7 +128,7 @@ class Movie_HelioviewerMovie
                 
                 $t2 = time();
                 
-                $this->_db->finishedBuildingMovieFrames($this->id, $t2 - $t1); // Update status and log time to build frames
+                $this->_db->finishedBuildingMovieFrames($this->id, $t1, $t2); // Update status and log time to build frames
             } else {
                 $this->filename = $this->_buildFilename();
             }

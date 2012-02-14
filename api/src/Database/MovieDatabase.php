@@ -39,17 +39,17 @@ class Database_MovieDatabase
      * Inserts a new movie entry into the database and returns it's id
      */
     public function insertMovie($startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark, $layerString, 
-                                $layerBitMask, $frameRate, $movieLength)
+                                $layerBitMask, $numLayers, $queueNum, $frameRate, $movieLength)
     {
         $sql = "INSERT INTO movies VALUES(NULL, NULL, ?, ?, ?, PolygonFromText(?), " .
-               "?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL);";
+               "?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL);";
                
         $startTime = isoDateToMySQL($startTime);
         $endTime   = isoDateToMySQL($endTime);
                  
         $stmt = $this->_dbConnection->link->prepare($sql);
-        $stmt->bind_param('ssdsisssss', $startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark,
-                                        $layerString, $layerBitMask, $frameRate, $movieLength);
+        $stmt->bind_param('ssdsisssiiss', $startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark,
+                                          $layerString, $layerBitMask, $numLayers, $queueNum, $frameRate, $movieLength);
 
         $result = $stmt->execute();
         $id = $stmt->insert_id;

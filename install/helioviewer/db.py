@@ -125,12 +125,12 @@ def create_datasource_table(cursor):
         `id`            SMALLINT unsigned NOT NULL,
         `name`          VARCHAR(127) NOT NULL,
         `description`   VARCHAR(255),
-        `observatoryId` SMALLINT unsigned NOT NULL,
-        `instrumentId`  SMALLINT unsigned NOT NULL,
-        `detectorId`    SMALLINT unsigned NOT NULL,
-        `measurementId` SMALLINT unsigned NOT NULL,
-        `layeringOrder` TINYINT NOT NULL,
-        `enabled`       BOOLEAN NOT NULL,
+        `observatoryId` SMALLINT UNSIGNED NOT NULL,
+        `instrumentId`  SMALLINT UNSIGNED NOT NULL,
+        `detectorId`    SMALLINT UNSIGNED NOT NULL,
+        `measurementId` SMALLINT UNSIGNED NOT NULL,
+        `layeringOrder` TINYINT UNSIGNED NOT NULL,
+        `enabled`       TINYINT(1) UNSIGNED NOT NULL,
       PRIMARY KEY  (`id`)
     ) DEFAULT CHARSET=utf8;""")
 
@@ -289,18 +289,21 @@ def create_movies_table(cursor):
       `reqEndDate`        datetime NOT NULL,
       `imageScale`        FLOAT NOT NULL,
       `regionOfInterest`  POLYGON NOT NULL,
-      `maxFrames`         INT NOT NULL,
-      `watermark`         BOOLEAN NOT NULL,
+      `maxFrames`         SMALLINT NOT NULL,
+      `watermark`         TINYINT(1) UNSIGNED NOT NULL,
       `dataSourceString`  VARCHAR(255) NOT NULL,
-      `dataSourceBitMask` BIGINT,
-      `frameRate`         FLOAT,
-      `movieLength`       FLOAT,
+      `dataSourceBitMask` BIGINT UNSIGNED,
+      `numLayers`         TINYINT UNSIGNED,
+      `queueNum`          SMALLINT UNSIGNED,
+      `frameRate`         FLOAT UNSIGNED,
+      `movieLength`       FLOAT UNSIGNED,
       `startDate`         datetime,
       `endDate`           datetime,
-      `numFrames`         INT,
-      `width`             INT,
-      `height`            INT,
-      `procTime`          INT,
+      `numFrames`         SMALLINT UNSIGNED,
+      `width`             SMALLINT UNSIGNED,
+      `height`            SMALLINT UNSIGNED,
+      `buildTimeStart`    TIMESTAMP,
+      `buildTimeEnd`      TIMESTAMP,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
     
@@ -316,7 +319,7 @@ def create_movie_formats_table(cursor):
       `movieId`           INT unsigned NOT NULL,
       `format`            VARCHAR(255) NOT NULL,
       `status`            VARCHAR(255) NOT NULL,
-      `procTime`          INT,
+      `procTime`          SMALLINT UNSIGNED,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
     
@@ -335,7 +338,7 @@ def create_youtube_table(cursor):
       `title`       VARCHAR(100) NOT NULL,
       `description` VARCHAR(5000) NOT NULL,
       `keywords`    VARCHAR(500) NOT NULL,
-      `shared`      BOOLEAN NOT NULL,
+      `shared`      TINYINT(1) UNSIGNED NOT NULL,
        PRIMARY KEY (`id`),
        UNIQUE INDEX movieid_idx(movieId)
     ) DEFAULT CHARSET=utf8;""")
@@ -356,11 +359,12 @@ def create_screenshots_table(cursor):
       `id`                INT unsigned NOT NULL auto_increment,
       `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `observationDate`   datetime NOT NULL,
-      `imageScale`        FLOAT,
+      `imageScale`        FLOAT UNSIGNED,
       `regionOfInterest`  POLYGON NOT NULL,
-      `watermark`         BOOLEAN DEFAULT TRUE,
+      `watermark`         TINYINT(1) UNSIGNED DEFAULT TRUE,
       `dataSourceString`  VARCHAR(255) NOT NULL,
-      `dataSourceBitMask` BIGINT,
+      `dataSourceBitMask` BIGINT UNSIGNED,
+      `numLayers`         TINYINT UNSIGNED NOT NULL DEFAULT 1,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
 

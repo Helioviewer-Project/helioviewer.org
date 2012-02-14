@@ -42,18 +42,19 @@ class Database_ImgIndex
      * 
      * @return int identifier for the screenshot
      */
-    public function insertScreenshot($date, $scale, $roi, $watermark, $layers, $bitmask)
+    public function insertScreenshot($date, $scale, $roi, $watermark, $layers, $bitmask, $numLayers)
     {
     	include_once 'src/Helper/DateTimeConversions.php';
     	
         // Add to screenshots table and get an id
-        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d);", 
+        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d, %d);", 
             isoDateToMySQL($date),
             $scale,
             $roi,
             $watermark,
             $layers,
-            bindec($bitmask)
+            bindec($bitmask),
+            $numLayers
         );
         
         $this->_dbConnection->query($sql);
@@ -106,9 +107,10 @@ class Database_ImgIndex
     /**
      * 
      */
-    public function finishedBuildingMovieFrames($id, $procTime)
+    public function finishedBuildingMovieFrames($id, $buildTimeStart, $buildTimeEnd)
     {
-        $this->_dbConnection->query("UPDATE movies SET procTime=$procTime WHERE id=$id");
+        $this->_dbConnection->query("UPDATE movies SET buildTimeStart=$buildTimeStart,
+                                                       buildTimeEnd=$buildTimeEnd WHERE id=$id");
     }
     
     /**
