@@ -27,12 +27,17 @@ class Job_MovieBuilder
 {
     public function perform()
     {
+        printf("Starting movie %s (%s)\n", $this->args['movieId'], strtoupper($this->args['format']));
+        
+        # Build movie
         $movie = new Movie_HelioviewerMovie($this->args['movieId'], $this->args['format']);
         $movie->build();
         
         # Decrement movie queue wait counter
         $redis = new Redisent('localhost');
         $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+        
+        printf("Finished movie %s (%s)\n", $this->args['movieId'], strtoupper($this->args['format']));
         
         # If requesting an mp4, queue webm for future creation
         if ($this->args['format'] == "mp4") {
@@ -42,6 +47,7 @@ class Job_MovieBuilder
             );
             Resque::enqueue('alternate_format_movie', 'Job_AltMovieBuilder', $args, TRUE);
         }
+        
     }
 }
 
@@ -49,7 +55,9 @@ class Job_AltMovieBuilder
 {
     public function perform()
     {
-        $movie = new Movie_HelioviewerMovie($this->args['id'], $this->args['format']);
+        printf("Starting movie %s (%s)\n", $this->args['movieId'], strtoupper($this->args['format']));
+        $movie = new Movie_HelioviewerMovie($this->args['movieId'], $this->args['format']);
         $movie->build();
+        printf("Finished movie %s (%s)\n", $this->args['movieId'], strtoupper($this->args['format']));
     }
 }

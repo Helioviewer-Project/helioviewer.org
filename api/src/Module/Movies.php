@@ -113,9 +113,9 @@ class Module_Movies implements Module
         $bitmask = bindec($layers->getBitMask());
         
         // Create entry in the movies table in MySQL
-        $dbId = $movieDb->insertMovie($this->_params['startTime'], $this->_params['endTime'], $this->_params['imageScale'], $roi, $maxFrames,
-                                      $options['watermark'], $this->_params['layers'], $bitmask, $options['frameRate'],
-                                      $options['movieLength']);
+        $dbId = $movieDb->insertMovie($this->_params['startTime'], $this->_params['endTime'], $this->_params['imageScale'], 
+                                      $roi, $maxFrames, $options['watermark'], $this->_params['layers'], $bitmask, 
+                                      $layers->length(), $queueSize, $options['frameRate'], $options['movieLength']);
 
         // Convert id
         $publicId = alphaID($dbId, false, 5, HV_MOVIE_ID_PASS);

@@ -70,7 +70,8 @@ class Image_Composite_HelioviewerScreenshot extends Image_Composite_HelioviewerC
             $this->roi->getPolygonString(),
             $this->watermark,
             $this->layers->serialize(),
-            $this->layers->getBitMask()
+            $this->layers->getBitMask(),
+            $this->layers->length()
         );
     }
 }
