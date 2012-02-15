@@ -123,7 +123,7 @@ class Database_ImgIndex
      */
     public function markMovieAsProcessing($id, $format)
     {
-        $sql = "UPDATE movieFormats SET status='PROCESSING' WHERE movieId=$id AND format='$format'";
+        $sql = "UPDATE movieFormats SET status=1 WHERE movieId=$id AND format='$format'";
         $this->_dbConnection->query($sql);
     }
     
@@ -136,7 +136,7 @@ class Database_ImgIndex
      */
     public function markMovieAsFinished($id, $format, $procTime)
     {
-        $sql = "UPDATE movieFormats SET status='FINISHED', procTime=$procTime " . 
+        $sql = "UPDATE movieFormats SET status=2, procTime=$procTime " . 
                "WHERE movieId=$id AND format='$format'";
     	$this->_dbConnection->query($sql);
     }
@@ -146,7 +146,7 @@ class Database_ImgIndex
      */
     public function markMovieAsInvalid($id)
     {
-        $this->_dbConnection->query("UPDATE movieFormats SET status='ERROR', procTime=NULL WHERE movieId=$id");
+        $this->_dbConnection->query("UPDATE movieFormats SET status=3, procTime=NULL WHERE movieId=$id");
     }
     
     /**

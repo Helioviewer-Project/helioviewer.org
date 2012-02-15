@@ -320,7 +320,7 @@ class Module_Movies implements Module
         
         
         // If the movie is finished return the file as an attachment
-        if ($movie->status == "FINISHED") {
+        if ($movie->status == 2) {
             // Get filepath
             $filepath = $movie->getFilepath($options['hq']);
             $filename = basename($filepath);
@@ -364,14 +364,14 @@ class Module_Movies implements Module
         $verbose = isset($this->_options['verbose']) ? $this->_options['verbose'] : false;
         
         // FINISHED
-        if ($movie->status == "FINISHED") {            
+        if ($movie->status == 2) {            
             $response = $movie->getCompletedMovieInformation($verbose);
-        } else if ($movie->status == "ERROR") {
+        } else if ($movie->status == 3) {
             // ERROR
             $response = array(
                 "error" => "Sorry, we are unable to create your movie at this time. Please try again later."
             );
-        } else if ($movie->status == "QUEUED") {
+        } else if ($movie->status == 0) {
             // QUEUED
             if (isset($this->_options['token'])) {
                 // with token
@@ -380,12 +380,12 @@ class Module_Movies implements Module
                 // TODO
             } else {
                 // without token
-                $response = array("status" => "QUEUED");
+                $response = array("status" => 0);
             }
         } else {
             // PROCESSING
             $response = array(
-                "status" => "PROCESSING",
+                "status" => 1,
                 "eta"    => 30
             );
         }
@@ -446,7 +446,7 @@ class Module_Movies implements Module
         // Process request
         $movie = new Movie_HelioviewerMovie($this->_params['id'], "mp4");
         
-        if ($movie->status !== "FINISHED") {
+        if ($movie->status !== 2) {
             throw new Exception("Invalid movie requested");
         }
         
@@ -579,7 +579,7 @@ class Module_Movies implements Module
         $options = array_replace($defaults, $this->_options);
 
         // Return an error if movie is not available
-        if ($movie->status != "FINISHED") {
+        if ($movie->status != 2) {
             header('Content-type: application/json');
             $response = array(
                 "error" => "The movie you requested is either being processed

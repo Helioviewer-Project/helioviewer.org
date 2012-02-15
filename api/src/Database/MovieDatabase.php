@@ -63,7 +63,7 @@ class Database_MovieDatabase
      */
     public function insertMovieFormat($id, $format)
     {
-        $sql = "INSERT INTO movieFormats VALUES(NULL, ?, ?, 'QUEUED', NULL);";
+        $sql = "INSERT INTO movieFormats VALUES(NULL, ?, ?, 0, NULL);";
 
         $stmt = $this->_dbConnection->link->prepare($sql);
         $stmt->bind_param('is', $id, $format);

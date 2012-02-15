@@ -26,6 +26,12 @@ require_once HV_API_ROOT_DIR . '/lib/alphaID/alphaID.php';
  * Note: For movies, it is easiest to work with Unix timestamps since that is what is returned
  *       from the database. To get from a javascript Date object to a Unix timestamp, simply
  *       use "date.getTime() * 1000." (getTime returns the number of miliseconds)
+ * 
+ * Movie Status:
+ *  0   QUEUED
+ *  1   PROCESSING
+ *  2   COMPLETED
+ *  3   ERROR
  *
  * @category Movie
  * @package  Helioviewer
@@ -109,7 +115,7 @@ class Movie_HelioviewerMovie
         date_default_timezone_set('UTC');
         
         // Check to make sure we have not already started processing the movie
-        if ($this->status !== "QUEUED") {
+        if ($this->status !== 0) {
             throw new Exception("The requested movie is either currently being built or has already been built");
         }
 
