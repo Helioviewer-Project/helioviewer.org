@@ -103,18 +103,21 @@ class Module_Movies implements Module
         $numFrames = $this->_estimateNumFrames($db, $layers, $this->_params['startTime'], $this->_params['endTime']);
         $numFrames = min($numFrames, $maxFrames);
         
-        // Estimate the time to create movie frames
-        $estBuildTime = (int) (MOVIE_EST_TIME_PER_FRAME * $numFrames);
-        
         // Determine the ROI
         $roi = $this->_getMovieROI($options);
+        $roiString = $roi->getPolygonString();
+        
+        $numPixels = $roi->getPixelWidth() * $roi->getPixelHeight();
+        
+        // Estimate the time to create movie frames
+        $estBuildTime = $this->_estimateMovieBuildTime($movieDb, $numFrames, $numPixels, $options['format']);
 
         // Get datasource bitmask
         $bitmask = bindec($layers->getBitMask());
         
         // Create entry in the movies table in MySQL
         $dbId = $movieDb->insertMovie($this->_params['startTime'], $this->_params['endTime'], $this->_params['imageScale'], 
-                                      $roi, $maxFrames, $options['watermark'], $this->_params['layers'], $bitmask, 
+                                      $roiString, $maxFrames, $options['watermark'], $this->_params['layers'], $bitmask, 
                                       $layers->length(), $queueSize, $options['frameRate'], $options['movieLength']);
 
         // Convert id
@@ -145,6 +148,80 @@ class Module_Movies implements Module
         );
         header('Content-type: application/json');
         print json_encode($response);
+    }
+
+    /**
+     * Estimates the amount of time (in seconds) it will take to build the
+     * requested movie using information about the most recent n movies
+     * created.
+     */
+    private function _estimateMovieBuildTime($movieDb, $numFrames, $numPixels, $format)
+    {
+        // Weights for influence of the number of frames/pixels on the
+        // esimated time
+        $w1 = 0.7;
+        $w2 = 0.3;
+
+        // Get stats for most recent 100 completed movie requests
+        $stats = $movieDb->getMovieStatistics();
+        
+        // Calculate linear fit for number of frames and pixel area
+        $l1 = $this->_linear_regression($stats['numFrames'], $stats['time']);
+        $l2 = $this->_linear_regression($stats['numPixels'], $stats['time']);
+        
+        // Estimate time to build movie frames
+        $frameEst = ($w1 * ($l1['m'] * $numFrames + $l1['b']) + 
+                     $w2 * ($l2['m'] * $numPixels + $l2['b']));
+                     
+        // Estimate time to encode movie
+        // Since the time required to encode the video is much smaller than the
+        // time to build the frames the parameters of this estimation are 
+        // hard-coded for now to save time (Feb 15, 2012)
+        if ($format == "mp4") {
+            $l3 = array("m" => 0.066, "b" => 0.778);            
+        } else if ($format == "webm") {
+            $l3 = array("m" => 0.094, "b" => 2.298);            
+        }
+        
+        $encodingEst = max(1, $l3['m'] * $numFrames + $l3['b']);
+        
+        return (int) ($frameEst + $encodingEst);
+    }
+    
+    /**
+     * Linear regression function
+     * 
+     * @param $x array x-coords
+     * @param $y array y-coords
+     * 
+     * @returns array() m=>slope, b=>intercept
+     * 
+     * http://richardathome.wordpress.com/2006/01/25/a-php-linear-regression-function/
+     */
+    private function _linear_regression($x, $y) {
+      $n = count($x);
+    
+      // calculate sums
+      $x_sum = array_sum($x);
+      $y_sum = array_sum($y);
+    
+      $xx_sum = 0;
+      $xy_sum = 0;
+    
+      for($i = 0; $i < $n; $i++) {
+        $xy_sum += ($x[$i] * $y[$i]);
+        $xx_sum += ($x[$i] * $x[$i]);
+      }
+    
+      // Calculate slope
+      $m = (($n * $xy_sum) - ($x_sum * $y_sum)) / (($n * $xx_sum) - ($x_sum * $x_sum));
+    
+      // Calculate intercept
+      $b = ($y_sum - ($m * $x_sum)) / $n;
+    
+      // Return result
+      return array("m"=>$m, "b"=>$b);
+    
     }
 
     /**
@@ -185,7 +262,7 @@ class Module_Movies implements Module
 
         $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
 
-        return $roi->getPolygonString();
+        return $roi;
     }
     
     /**

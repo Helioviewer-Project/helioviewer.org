@@ -109,6 +109,36 @@ class Database_MovieDatabase
     }
     
     /**
+     * Gets statistics for the n most recently completed movies
+     */
+    public function getMovieStatistics($n=100)
+    {    
+        $sql = "SELECT numFrames, width * height as numPixels, queueNum, " .
+               "TIMESTAMPDIFF(SECOND, buildTimeStart, buildTimeEnd) as time " .
+               "FROM movies " .
+               "WHERE TIMESTAMPDIFF(SECOND, buildTimeStart, buildTimeEnd) > 0 " .
+               "ORDER BY id DESC LIMIT $n;";
+
+        $result = $this->_dbConnection->query($sql);
+
+        // Fetch result and store as column arrays instead of rows 
+        $stats = array(
+            "numFrames" => array(),
+            "numPixels" => array(),
+            "queueNum"  => array(),
+            "time"      => array()
+        );
+        while ($row = $result->fetch_array()) {
+            array_push($stats['numFrames'], $row[0]);
+            array_push($stats['numPixels'], $row[1]);
+            array_push($stats['queueNum'], $row[2]);
+            array_push($stats['time'], $row[3]);
+        }
+        
+        return $stats;
+    }
+    
+    /**
      * Gets a list of videos recently shared on YouTube
      */
     public function getSharedVideos($num, $since)
