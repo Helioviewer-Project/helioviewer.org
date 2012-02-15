@@ -5,6 +5,13 @@
  * TODO 2011/03/14: Choose a reasonable limit for the number of entries based on whether or not
  * localStorage is supported: if supported limit can be large (e.g. 100), otherwise should be
  * closer to 3 entries.
+ * 
+ * Movie Status:
+ *  0 QUEUED
+ *  1 PROCESSING
+ *  2 COMPLETED
+ *  3 ERROR
+ * 
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
@@ -24,7 +31,8 @@ var MovieManager = MediaManager.extend(
         // Check status of any previously unfinished movie requests
         var self = this;
         $.each(movies, function (i, movie) {
-            if ((movie.status === "QUEUED") || (movie.status === "PROCESSING")) {
+            if ((movie.status === "QUEUED") || (movie.status === "PROCESSING") ||
+                (movie.status === 0) || (movie.status === 1)) {
                 self._monitorQueuedMovie(movie.id, Date.parseUTCDate(movie.dateRequested), 0);
             }
         });
@@ -73,7 +81,7 @@ var MovieManager = MediaManager.extend(
             "height"        : height,
             "ready"         : true,
             "name"          : this._getName(layers),
-            "status"        : "FINISHED",
+            "status"        : 2,
             "thumbnail"     : thumbnail,
             "url"           : url
         }; 
@@ -112,7 +120,7 @@ var MovieManager = MediaManager.extend(
             "x2"            : x2,
             "y1"            : y1,
             "y2"            : y2,
-            "status"        : "QUEUED",
+            "status"        : 0,
             "token"         : token,
             "name"          : this._getName(layers)
         };
@@ -151,7 +159,7 @@ var MovieManager = MediaManager.extend(
             "endDate"   : endDate,
             "width"     : width,
             "height"    : height,
-            "status"    : "FINISHED",
+            "status"    : 2,
             "thumbnail" : thumbnails.small,
             "url"       : url
         });
@@ -209,8 +217,7 @@ var MovieManager = MediaManager.extend(
                 }
                 
                 // Check status
-                if (response.status === "QUEUED" || 
-                    response.status === "PROCESSING") {
+                if (response.status < 2) {
                     // If more than 24 hours has elapsed, set status to ERROR
                     if ((Date.now() - dateRequested) / 1000 > (24 * 60 * 60)) {
                         self._abort(id);
@@ -245,7 +252,7 @@ var MovieManager = MediaManager.extend(
         var error, movie = this.get(id);
 
         // Mark as failed
-        movie["status"] = "ERROR";        
+        movie["status"] = 3;        
         this._save();
 
         // Notify user

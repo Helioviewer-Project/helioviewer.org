@@ -41,7 +41,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         var movie = this._manager.get(id);
         
         // If the movie is ready, open movie player
-        if (movie.status === "FINISHED") {
+        if ((movie.status === "FINISHED") || (movie.status === 2)) {
             this._createMoviePlayerDialog(movie);
         } else {
             return;
@@ -348,7 +348,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         movie = this._manager.get(id);
         
         // If the movie is ready, open movie player
-        if (movie.status === "FINISHED") {
+        if ((movie.status === "FINISHED") || (movie.status === 2)) {
             dialog = $("movie-player-" + id);
 
             // If the dialog has already been created, toggle display
@@ -688,7 +688,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         var callback, params, movie, self = this;
         
         callback = function (response) {
-            if (response.status === "FINISHED") {
+            if (response.status === 2) {
                 // id, duration, imageScale, layers, dateRequested, startDate, 
                 //  endDate, frameRate, numFrames, x1, x2, y1, y2, width, height
                 movie = self._manager.add(
@@ -818,12 +818,12 @@ var MovieManagerUI = MediaManagerUI.extend(
             status = $("#movie-" + item.id).find(".status");
 
             // For completed entries, display elapsed time
-            if (item.status === "FINISHED") {
+            if ((item.status === "FINISHED") || (item.status === 2)) {
                 elapsedTime = Date.parseUTCDate(item.dateRequested)
                                   .getElapsedTime();
                 status.html(elapsedTime);                
             // For failed movie requests, display an error
-            } else if (item.status === "ERROR") {
+            } else if ((item.status === "ERROR") || (item.status === 3)) {
                 status.html("<span style='color:LightCoral;'>Error</span>");
             // Otherwise show the item as processing
             } else {
