@@ -92,6 +92,15 @@ class Module_Movies implements Module
             throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
         }
 
+        // Determine the ROI
+        $roi = $this->_getMovieROI($options);
+        $roiString = $roi->getPolygonString();
+        
+        $numPixels = $roi->getPixelWidth() * $roi->getPixelHeight();
+        
+        // Use reduce image scale if necessary
+        $imageScale = $roi->imageScale();
+
         // Max number of frames
         $maxFrames = min($this->_getMaxFrames($queueSize), $options['maxFrames']);
         
@@ -103,12 +112,6 @@ class Module_Movies implements Module
         $numFrames = $this->_estimateNumFrames($db, $layers, $this->_params['startTime'], $this->_params['endTime']);
         $numFrames = min($numFrames, $maxFrames);
         
-        // Determine the ROI
-        $roi = $this->_getMovieROI($options);
-        $roiString = $roi->getPolygonString();
-        
-        $numPixels = $roi->getPixelWidth() * $roi->getPixelHeight();
-        
         // Estimate the time to create movie frames
         $estBuildTime = $this->_estimateMovieBuildTime($movieDb, $numFrames, $numPixels, $options['format']);
 
@@ -116,7 +119,7 @@ class Module_Movies implements Module
         $bitmask = bindec($layers->getBitMask());
         
         // Create entry in the movies table in MySQL
-        $dbId = $movieDb->insertMovie($this->_params['startTime'], $this->_params['endTime'], $this->_params['imageScale'], 
+        $dbId = $movieDb->insertMovie($this->_params['startTime'], $this->_params['endTime'], $imageScale, 
                                       $roiString, $maxFrames, $options['watermark'], $this->_params['layers'], $bitmask, 
                                       $layers->length(), $queueSize, $options['frameRate'], $options['movieLength']);
 
@@ -144,6 +147,7 @@ class Module_Movies implements Module
         $response = array(
             "id"    => $publicId,
             "eta"   => $eta, 
+            "queue" => $queueSize + 1,
             "token" => $token
         );
         header('Content-type: application/json');
