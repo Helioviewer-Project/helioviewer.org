@@ -57,8 +57,11 @@ var FullscreenControl = Class.extend(
     enableFullscreenMode: function () {
         var self = this;
         
-        // hide overflow
-        this.body.css('overflow', 'hidden');
+        // hide overflow and reduce min-width
+        this.body.css({
+            'overflow': 'hidden',
+            'min-width': 450
+        });
         
         this.meta.hide();
 
@@ -129,8 +132,9 @@ var FullscreenControl = Class.extend(
         }, this.speed,
         function () {
             self.meta.show();
-            self.body.css('overflow', 'visible');
-            self.body.removeClass('disable-fullscreen-mode');
+            self.body.css({
+                'overflow': 'visible',
+            }).removeClass('disable-fullscreen-mode');
         });
         
         this.colright.animate({
@@ -165,6 +169,8 @@ var FullscreenControl = Class.extend(
                 "left": offset.left
             }).show();
         });
+        
+        this.body.animate({'min-width': 972}, this.speed);
     },
     
     /**
