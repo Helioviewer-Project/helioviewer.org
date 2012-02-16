@@ -671,20 +671,40 @@ class Module_WebClient implements Module
                             <td>Image scale in arc-seconds/pixel</td>
                         </tr>
                         <tr>
+                            <td><b>centerX</b></td>
+                            <td><i>Float</i></td>
+                            <td>Horizontal offset from the center of the Sun in arc-seconds.</td>
+                        </tr>
+                        <tr>
+                            <td><b>centerY</b></td>
+                            <td><i>Float</i></td>
+                            <td>Vertical offset from the center of the Sun in arc-seconds.</td>
+                        </tr>
+                        <tr>
                             <td><b>imageLayers</b></td>
                             <td><i>2d List</i></td>
                             <td>A comma-separated list of the image layers to be
                             displayed. Each image layer should be of the form:
                             [OBSERVATORY, INSTRUMENT, DETECTOR, MEASUREMENT, VISIBLE, OPACITY].</td>
                         </tr>
+                        <tr>
+                            <td><b>movieId</b></td>
+                            <td><i>String</i></td>
+                            <td>Identifier of Helioviewer.org movie to display when page is loaded.</td>
+                        </tr>
+                        <tr>
+                            <td><b>fullscreen</b></td>
+                            <td><i>Boolean</i></td>
+                            <td>Whether to launch Helioviewer.org in fullscreen mode.</td>
+                        </tr>
                     </tbody>
                 </table>
         
                 <br />
-        
+
                 <span class="example-header">Example:</span> <span class="example-url">
-                <a href="<?php echo $rootURL;?>date=2011-06-01T00:00:00Z&amp;imageScale=2.4204409&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
-                   <?php echo $rootURL;?>date=2011-06-01T00:00:00Z&imageScale=2.4204409&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+                <a href="<?php echo $rootURL;?>date=2011-06-01T00:00:00Z&amp;imageScale=4.8408818&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+                   <?php echo $rootURL;?>date=2011-06-01T00:00:00Z&imageScale=4.8408818&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
                 </a>
                 </span>
             </div>
