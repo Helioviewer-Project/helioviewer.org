@@ -54,11 +54,12 @@ var FullscreenControl = Class.extend(
     /**
      * Enable fullscreen mode
      */
-    enableFullscreenMode: function () {
-        var self = this;
-        
-        // hide overflow
-        this.body.css('overflow', 'hidden');
+    enableFullscreenMode: function (animated) {        
+        // hide overflow and reduce min-width
+        this.body.css({
+            'overflow': 'hidden',
+            'min-width': 450
+        });
         
         this.meta.hide();
 
@@ -72,6 +73,21 @@ var FullscreenControl = Class.extend(
         this.origHeaderHeight       = this.header.height();
         this.origViewportHeight     = this.viewport.height();
         
+        // Expand viewport
+        if (animated) {
+            this._expandAnimated();
+        } else {
+            this._expand();
+        }
+    },
+    
+    /**
+     * Expand viewport and hide other UI componenets using an animated 
+     * transition
+     */
+    _expandAnimated: function () {
+        var self = this;
+
         this.colmid.animate({
             left: 0
         }, this.speed,
@@ -116,6 +132,45 @@ var FullscreenControl = Class.extend(
     },
     
     /**
+     * Expand viewport and hide other UI componenets using an animated 
+     * transition
+     */
+    _expand: function () {
+        this.colmid.css({
+            left: 0
+        });        
+        this.colright.css({
+            "margin-left": 0
+        });        
+        this.col1pad.css({
+            "margin-left" : 4,
+            "margin-right": 4,
+            "margin-top":   4
+        });
+        
+        this.col2.css({
+            "left": -(parseInt(this.origCol2Left, 10) + this.origCol2Width)
+        });
+        
+        this.header.height(0);
+        this.viewport.height($(window).height() - (this.marginSize * 3));
+
+        this.sandbox.css({
+            right: 1
+        });
+        
+        $(document).trigger('update-viewport');
+        this.shadow.css({
+            "width": this.viewport.width(),
+            "height": this.viewport.height(),
+            "top": 4,
+            "left": 4
+        });
+        this.panels.hide();
+        this.body.removeClass('disable-fullscreen-mode');
+    },
+    
+    /**
      * Disable fullscreen mode
      */
     disableFullscreenMode: function () {
@@ -129,8 +184,9 @@ var FullscreenControl = Class.extend(
         }, this.speed,
         function () {
             self.meta.show();
-            self.body.css('overflow', 'visible');
-            self.body.removeClass('disable-fullscreen-mode');
+            self.body.css({
+                'overflow': 'visible',
+            }).removeClass('disable-fullscreen-mode');
         });
         
         this.colright.animate({
@@ -165,6 +221,8 @@ var FullscreenControl = Class.extend(
                 "left": offset.left
             }).show();
         });
+        
+        this.body.animate({'min-width': 972}, this.speed);
     },
     
     /**
@@ -178,9 +236,20 @@ var FullscreenControl = Class.extend(
     },
     
     /**
-     * Handles clicks to fullscreen control
+     * Fullscreen button click handler
      */
     _onClick: function () {
+        this.toggle();
+    },
+    
+    /**
+     * Handles clicks to fullscreen control
+     */
+    toggle: function (animated) {
+        if (typeof(animated) == "undefined") {
+            animated = true;
+        }
+        
         if (this.body.hasClass('disable-fullscreen-mode')) {
             return;
         }
@@ -192,7 +261,7 @@ var FullscreenControl = Class.extend(
         this.body.addClass('disable-fullscreen-mode');
         
         if (this._fullscreenMode) {
-            this.enableFullscreenMode();
+            this.enableFullscreenMode(animated);
             this.viewport.addClass("fullscreen-mode");
         } else {
             this.disableFullscreenMode();
