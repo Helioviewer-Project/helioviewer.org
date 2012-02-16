@@ -245,13 +245,15 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Toggle advanced settings display
         $("#movie-settings-toggle-advanced").click(function () {
+            self._settingsHelp.hide();
             if (self._advancedSettings.is(":visible")) {
                 self._advancedSettings.animate({"height": 0}, function () {
                     self._advancedSettings.hide();
                 });
             } else {
                 self._advancedSettings.css('height', 0).show();
-                self._advancedSettings.animate({"height": 132});
+                self._advancedSettings.animate({"height": 132}, function () {
+                });
             }
         });
         
