@@ -41,7 +41,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         var movie = this._manager.get(id);
         
         // If the movie is ready, open movie player
-        if ((movie.status === "FINISHED") || (movie.status === 2)) {
+        if (movie.status === 2) {
             this._createMoviePlayerDialog(movie);
         } else {
             return;
@@ -348,7 +348,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         movie = this._manager.get(id);
         
         // If the movie is ready, open movie player
-        if ((movie.status === "FINISHED") || (movie.status === 2)) {
+        if (movie.status === 2) {
             dialog = $("movie-player-" + id);
 
             // If the dialog has already been created, toggle display
@@ -382,7 +382,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     _buildPreviewTooltipHTML: function (movie) {
         var width, height, thumbnail, html = "";
         
-        if (movie.status === "FINISHED") {
+        if (movie.status === 2) {
             // Use relative paths for thumbnails (helps with debugging in VM)
             thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));
 
@@ -818,12 +818,12 @@ var MovieManagerUI = MediaManagerUI.extend(
             status = $("#movie-" + item.id).find(".status");
 
             // For completed entries, display elapsed time
-            if ((item.status === "FINISHED") || (item.status === 2)) {
+            if (item.status === 2) {
                 elapsedTime = Date.parseUTCDate(item.dateRequested)
                                   .getElapsedTime();
                 status.html(elapsedTime);                
             // For failed movie requests, display an error
-            } else if ((item.status === "ERROR") || (item.status === 3)) {
+            } else if (item.status === 3) {
                 status.html("<span style='color:LightCoral;'>Error</span>");
             // Otherwise show the item as processing
             } else {

@@ -31,8 +31,7 @@ var MovieManager = MediaManager.extend(
         // Check status of any previously unfinished movie requests
         var self = this;
         $.each(movies, function (i, movie) {
-            if ((movie.status === "QUEUED") || (movie.status === "PROCESSING") ||
-                (movie.status === 0) || (movie.status === 1)) {
+            if (movie.status < 2) {
                 self._monitorQueuedMovie(movie.id, Date.parseUTCDate(movie.dateRequested), 0);
             }
         });
