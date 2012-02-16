@@ -31,7 +31,7 @@ var UserSettings = Class.extend(
         this._validator = new InputValidator();
         
         // Revision when config format last changed
-        this._lastChanged = 567;
+        this._lastChanged = 633;
                 
         // Initialize storage
         this._initStorage();
@@ -84,11 +84,17 @@ var UserSettings = Class.extend(
             this.settings[lookup[0]][lookup[1]][lookup[2]] = value;
         }
 
+        this._save();
+    },
+    
+    /**
+     * Saves the user settings after changes have been made
+     */
+    _save: function () {
         // localStorage
         if ($.support.localStorage) {
             localStorage.setItem("settings", $.toJSON(this.settings));
         }
-
         // cookies
         else {         
             this.cookies.set("settings", this.settings);
@@ -135,7 +141,35 @@ var UserSettings = Class.extend(
 
         // If version is out of date, load defaults
         if (this.get('version') < this._lastChanged) {
+            this._updateSettings(this.get('version'));
+        }
+    },
+    
+    /**
+     * Attempts to update user settings to reflect recent changes
+     */
+    _updateSettings: function (version) {
+        var statuses, self = this;
+        
+        // 2.2.1 and under - Load defaults
+        if (version < 567) {
             this._loadDefaults();
+        } else if (version < this._lastChanged) {
+            // 2.3.0 - Movie statuses changed to ints
+            statuses = {
+                "QUEUED": 0,
+                "PROCESSING": 1,
+                "FINISHED": 2,
+                "ERROR": 3
+            };
+            
+            // Convert string status to integer status
+            $.each(this.settings.history.movies, function (i, movie) {
+                self.settings.history.movies[i].status = statuses[movie.status];
+            });
+            
+            // Updated version number and save
+            this.set('version', this._lastChanged);
         }
     },
     
