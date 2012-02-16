@@ -247,7 +247,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2011-07-06 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
+    Last Updated: 2012-02-16 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
 </div>
 
 </body>
