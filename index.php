@@ -48,10 +48,14 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     if(isset($_GET['movieId']))
         $urlSettings['movieId'] = $_GET['movieId'];
     
+    if(isset($_GET['fullscreen']))
+        $urlSettings['fullscreen'] = $_GET['fullscreen'];
+    
     // Open Graph meta tags
     $ogDescription = "Solar and heliospheric image visualization tool.";
     $ogImage       = "http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png";
 
+    // Display movie in popup if movieId is specified
     if (isset($urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $urlSettings["movieId"])) {
         include_once "api/src/Config.php";
         $configObj = new Config("settings/Config.ini");
@@ -72,6 +76,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <meta property="og:video:type" content="application/x-shockwave-flash" />
 <?php 
     } else if (sizeOf($urlSettings) >= 5) {
+        // When opening shared link, include thumbnail metatags
+        // for Facebook, etc to use
         include_once "api/src/Config.php";
         $configObj = new Config("settings/Config.ini");
 
@@ -165,7 +171,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <script type="text/javascript">
         var addthis_config = {
             data_track_clickback: true,
-            pub_id: "<?php echo $config['addthis_analytics_id'];?>",
+            pubid: "<?php echo $config['addthis_analytics_id'];?>",
             data_ga_property: "<?php echo $config['google_analytics_id'];?>"
         };
     </script>

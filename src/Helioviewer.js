@@ -59,6 +59,11 @@ var Helioviewer = Class.extend(
                                                this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
+        if (urlSettings.fullscreen) {
+            if ((urlSettings.fullscreen.toLowerCase() === "true") || (urlSettings.fullscreen == "1")) {
+                this.fullScreenMode.toggle(false);
+            }
+        }
         
         this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
         
