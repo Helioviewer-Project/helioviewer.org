@@ -31,9 +31,9 @@ class HelioviewerWebClient extends HelioviewerClient
     /**
      * Initializes a Helioviewer.org instance
      */
-    public function __construct($ini)
+    public function __construct($urlSettings)
     {
-        parent::__construct($ini);
+        parent::__construct($urlSettings);
     }
     
     /**
@@ -41,6 +41,12 @@ class HelioviewerWebClient extends HelioviewerClient
      */
     protected function loadCustomCSS($signature)
     {
+?>
+    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
+    <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
+    
+    <!-- Helioviewer CSS -->
+<?php
         $css = array("main", "layout", "accordions", "dialogs",
                      "media-manager", "sliders", "timenav", 
                      "video-gallery", "viewport", "youtube");
@@ -124,7 +130,7 @@ class HelioviewerWebClient extends HelioviewerClient
             echo "<script src=\"$compressed?$signature\" type=\"text/javascript\"></script>\n\t";
         }
         else {
-            $js = array("Utility/Config.js", "Utility/HelperFunctions.js", "UI/IconPicker.js", 
+            $js = array("Utility/Config.js", "Utility/HelperFunctions.js", 
                         "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
                         "Tiling/Layer/HelioviewerTileLayer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js",  
                         "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", "Events/EventManager.js", 

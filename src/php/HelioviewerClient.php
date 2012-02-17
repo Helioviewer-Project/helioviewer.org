@@ -33,7 +33,7 @@ abstract class HelioviewerClient
     /**
      * Initializes an instance of a Helioviewer client
      */
-    public function __construct($ini)
+    public function __construct($urlSettings, $ini="settings/Config.ini")
     {
         // Load Server Configuration
         if ((!file_exists($ini)) || (!$this->config = parse_ini_file($ini))) {
@@ -41,7 +41,7 @@ abstract class HelioviewerClient
         }
         
         // Settings specified via URL parameters
-        $this->urlSettings = $this->_parseURLSettings();
+        $this->urlSettings = $urlSettings;
         
         // Debug support
         if ($this->urlSettings['debug']) {
@@ -142,12 +142,23 @@ abstract class HelioviewerClient
     <link rel="stylesheet" href="lib/yui-2.8.2r1/reset-fonts.css" />
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.12.custom.css" />  
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
-    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
-    <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
-    
-    <!-- Helioviewer CSS -->
     <?php
     }
+    
+    /**
+     * Loads Helioviewer-specific CSS files
+     */
+    protected function loadCustomCSS($signature) { /**empty*/ }
+    
+    /**
+     * Loads JavaScript includes
+     */
+    protected function loadJS() { /**empty*/ }
+    
+    /**
+     * Loads Helioviewer-specific JS files
+     */
+    protected function loadCustomJS($signature) { /**empty*/ }
     
     /**
      * Loads Google Analytics
@@ -190,67 +201,5 @@ abstract class HelioviewerClient
 <?php
     }
 
-
-    /**
-     * Loads Helioviewer-specific CSS files
-     */
-    protected function loadCustomCSS($signature)
-    {
-    }
-    
-    /**
-     * Parses any URL parameters specified
-     * 
-     * @return void
-     */
-    private function _parseURLSettings() {
-        $urlSettings = array();
-        
-        // imageLayers (string)
-        if (isset($_GET['imageLayers'])) {
-            if ($_GET['imageLayers'][0] == "[") {
-                $imageLayersString = substr($_GET['imageLayers'],1,-1);
-            } else {
-                $imageLayersString = $_GET['imageLayers'];
-            }
-            $urlSettings['imageLayers'] = preg_split("/\],\[/", $imageLayersString);
-        }
-        
-        // centerX (float)
-        if (isset($_GET['centerX']))
-            $urlSettings['centerX'] = (float) $_GET['centerX'];
-        
-        // centerY (float)
-        if (isset($_GET['centerY']))
-            $urlSettings['centerY'] = (float) $_GET['centerY'];
-    
-        // date (string)
-        if (isset($_GET['date']))
-            $urlSettings['date'] = $_GET['date'];
-    
-        // imageScale (float)
-        if (isset($_GET['imageScale']))
-            $urlSettings['imageScale'] = (float) $_GET['imageScale'];
-        
-        // movieId (string)
-        if(isset($_GET['movieId']))
-            $urlSettings['movieId'] = $_GET['movieId'];
-        
-        // embed (boolean)
-        if(isset($_GET['embed']) && ($_GET['embed'] == "true" || $_GET['embed'] == "1")) {
-            $urlSettings['embed'] = true;
-        } else {
-            $urlSettings['embed'] = false;
-        }
-        
-        // debug (string)
-        if(isset($_GET['debug']) && ($_GET['debug'] == "true" || $_GET['debug'] == "1")) {
-            $urlSettings['debug'] = true;
-        } else {
-            $urlSettings['debug'] = false;
-        }
-
-        return $urlSettings;
-    }
 
 }
