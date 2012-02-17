@@ -692,11 +692,6 @@ class Module_WebClient implements Module
                             <td><i>String</i></td>
                             <td>Identifier of Helioviewer.org movie to display when page is loaded.</td>
                         </tr>
-                        <tr>
-                            <td><b>fullscreen</b></td>
-                            <td><i>Boolean</i></td>
-                            <td>Whether to launch Helioviewer.org in fullscreen mode.</td>
-                        </tr>
                     </tbody>
                 </table>
         
