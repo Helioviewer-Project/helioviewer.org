@@ -83,7 +83,7 @@ class Config
     {
         // booleans
         foreach ($this->_bools as $boolean) {
-            $this->config[$boolean] = (bool) $this->config[$boolean];
+            $this->config[$boolean] = ($this->config[$boolean] == "true" || $this->config[$boolean] == "1");
         }
 
         // integers
