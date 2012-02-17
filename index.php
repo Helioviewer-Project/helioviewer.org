@@ -1,4 +1,5 @@
 <?php
+// Load Configuration
 $ini = "settings/Config.ini";
 if ((!file_exists($ini)) || (!$config = parse_ini_file($ini)))
     die("Missing config file!");
@@ -17,7 +18,7 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
 <html lang="en">
 <head>
     <?php printf("<!-- Helioviewer.org 2.2.2 (rev. %s), %s -->\n", $config["build_num"], $config["last_update"]);?>
-    <title>Helioviewer - Solar and heliospheric image visualization tool</title>
+    <title>Helioviewer.org - Solar and heliospheric image visualization tool</title>
     <meta charset="utf-8" />
     <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
     <meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
@@ -48,11 +49,18 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     if(isset($_GET['movieId']))
         $urlSettings['movieId'] = $_GET['movieId'];
     
+    if(isset($_GET['embed']) && ($_GET['embed'] == "true" || $_GET['embed'] == "1")) {
+        $urlSettings['embed'] = true;
+    } else {
+        $urlSettings['embed'] = false;
+    }
+    
     // Open Graph meta tags
     $ogDescription = "Solar and heliospheric image visualization tool.";
     $ogImage       = "http://helioviewer.org/resources/images/logos/hvlogo1s_transparent.png";
 
-    if (isset($urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $urlSettings["movieId"])) {
+    // Display movie in popup if movieId is specified
+    if (!$urlSettings['embed']  && isset($urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $urlSettings["movieId"])) {
         include_once "api/src/Config.php";
         $configObj = new Config("settings/Config.ini");
         include_once 'api/src/Movie/HelioviewerMovie.php';
@@ -72,6 +80,8 @@ if (isset($_GET['debug']) && ((bool) $_GET['debug'] == true)) {
     <meta property="og:video:type" content="application/x-shockwave-flash" />
 <?php 
     } else if (sizeOf($urlSettings) >= 5) {
+        // When opening shared link, include thumbnail metatags
+        // for Facebook, etc to use
         include_once "api/src/Config.php";
         $configObj = new Config("settings/Config.ini");
 
