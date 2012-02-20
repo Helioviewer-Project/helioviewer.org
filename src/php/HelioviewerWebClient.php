@@ -142,8 +142,9 @@ class HelioviewerWebClient extends HelioviewerClient
                         "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                         "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-                        "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", "UI/UserVideoGallery.js", 
-                        "UI/Glossary.js", "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
+                        "Viewport/ViewportController.js", "HelioviewerClient.js", "HelioviewerWebClient.js", 
+                        "UI/ZoomControls.js", "UI/UserVideoGallery.js", "UI/Glossary.js", 
+                        "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
             foreach($js as $file)
                 printf("<script src=\"src/js/%s?$signature\" type=\"text/javascript\"></script>\n", $file);
         }
@@ -615,7 +616,7 @@ class HelioviewerWebClient extends HelioviewerClient
         serverSettings = new Config(settingsJSON).toArray();
         
         // Initialize Helioviewer.org
-        helioviewer    = new Helioviewer(urlSettings, serverSettings, zoomLevels);
+        helioviewer = new HelioviewerWebClient("api/index.php", urlSettings, serverSettings, zoomLevels);
         
         // Play movie if id is specified
         if (urlSettings.movieId) {

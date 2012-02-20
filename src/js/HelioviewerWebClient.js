@@ -4,35 +4,30 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, window, $, Class, ImageSelectTool, MovieBuilder, 
+/*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder, 
   TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, addIconHoverEventListener, UserVideoGallery, MessageConsole,
   KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
   ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, VisualGlossary */
 "use strict";
-var Helioviewer = Class.extend(
-    /** @lends Helioviewer.prototype */
+var HelioviewerWebClient = HelioviewerClient.extend(
+    /** @lends HelioviewerWebClient.prototype */
     {
     /**
-     * Creates a new Helioviewer instance.
+     * Creates a new Helioviewer.org instance.
      * @constructs
      * 
      * @param {Object} urlSettings Client-specified settings to load.
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (urlSettings, serverSettings, zoomLevels, debug) {
+    init: function (api, urlSettings, serverSettings, zoomLevels) {
         var urlDate, imageScale;
         
-        this._checkBrowser(); // Determines browser support
-        
-        this.serverSettings = serverSettings;
-        this.api            = "api/index.php";
+        this._super(api, urlSettings, serverSettings, zoomLevels);
 
-        Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
-            
         // Debugging helpers
-        if (debug) {
+        if (urlSettings.debug) {
             this._showDebugHelpers();
         }
         
@@ -77,55 +72,6 @@ var Helioviewer = Class.extend(
 
         // Initialize AddThis
         addthis.init();
-    },
-    
-    
-    /**
-     * @description Checks browser support for various features used in Helioviewer
-     */
-    _checkBrowser: function () {
-        // Base support
-        $.extend($.support, {
-            "localStorage" : ('localStorage' in window) && window['localStorage'] !== null,
-            "nativeJSON"   : typeof (JSON) !== "undefined",
-            "video"        : !!document.createElement('video').canPlayType,
-            "h264"         : false,
-            "ogg"          : false,
-            "vp8"          : false
-        });
-        
-        // HTML5 Video Support
-        if ($.support.video) {
-            var v = document.createElement("video");
-            
-            // VP8/WebM
-            if (v.canPlayType('video/webm; codecs="vp8"')) {
-                // 2011/11/07: Disabling vp8 support until encoding time
-                // can be greatly reduced. WebM/VP8 movies will still be
-                // generated on the back-end when resources are available,
-                // but Flash/H.264 will be used in the mean-time to decrease
-                // response time and queue waits.
-                
-                //$.support.vp8 = true;
-                $.support.vp8 = false;
-            }
-            
-            // Ogg Theora
-            if (v.canPlayType('video/ogg; codecs="theora"')) {
-                $.support.ogg = true;
-            }
-            
-            // H.264
-            if (v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
-                // 2011/11/07: Also disabling H.264 in-browser video for now:
-                // some versions of Chrome report support when it does not
-                // actually work. 
-                
-                //$.support.h264 = true;
-                $.support.h264 = false;
-            }
-            
-        }
     },
     
     /**
