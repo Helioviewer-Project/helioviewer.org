@@ -21,7 +21,7 @@ var HelioviewerViewport = Class.extend(
     dimensions              : { width: 0, height: 0 },
     maxLayerDimensions      : { width: 0, height: 0 },
     maxTileLayers           : 6,
-        
+
     /**
      * @constructs
      * @description Creates a new Viewport
@@ -35,21 +35,12 @@ var HelioviewerViewport = Class.extend(
 
         this.domNode   = $(this.id);
         this.outerNode = $(this.container);
-        this.shadow    = $(this.id + '-container-shadow');
         
         this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale, this._rsunInArcseconds, 
                                                            this.warnMouseCoords);
-        
-        // IE shadows don't behave properly during resizing/fullscreen (tested: IE9)
-        if ($.browser.msie) {
-            this.shadow.css("box-shadow", "none");
-        }
 
         // Viewport must be resized before movement helper and sandbox are initialized.
         this.resize();
-        
-        // Display viewport shadow
-        this.shadow.show();
         
         // Compute center offset in pixels
         var centerX = this.centerX / this.imageScale,
@@ -106,21 +97,24 @@ var HelioviewerViewport = Class.extend(
 
         //Update viewport height
         this.outerNode.height(height);
-        
-        // Update viewport shadow
-        width = this.outerNode.width();
-        this.shadow.width(width).height(height);
 
         // Update viewport dimensions
         this.dimensions = {
             width : this.domNode.width() + this.prefetch,
             height: this.domNode.height() + this.prefetch
         };
-
-        if (!this._hasSameDimensions(this.dimensions, oldDimensions)) {
-            return true;
+        
+        $(document).trigger("viewport-resized");
+        
+        // For initial resize do not attempt to update layers
+        if (oldDimensions.width === 0 &&  oldDimensions.height === 0) {
+            return;
         }
-        return false;
+
+        // Otherwise if dimensions have changed update layers
+        if (!this._hasSameDimensions(this.dimensions, oldDimensions)) {
+            this.updateViewport();
+        }
     },
     
     /**
@@ -177,14 +171,13 @@ var HelioviewerViewport = Class.extend(
                    .bind("update-viewport",                 $.proxy(this.onUpdateViewport, this))
                    .bind("load-saved-roi-position",         $.proxy(this.loadROIPosition, this))
                    .bind("move-viewport mousemove mouseup", $.proxy(this.onMouseMove, this))
-                   .bind("resize-viewport",                 $.proxy(this.resizeViewport, this))
                    .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this));
         
         $(this.domNode).bind("mousedown", $.proxy(this.onMouseMove, this));
         this.domNode.dblclick($.proxy(this.doubleClick, this));
         
         $('#center-button').click($.proxy(this.centerViewport, this));
-        $(window).resize($.proxy(this.resizeViewport, this));
+        $(window).resize($.proxy(this.resize, this));
     },
     
 
@@ -347,15 +340,6 @@ var HelioviewerViewport = Class.extend(
      */
     setViewportCenter: function (x, y) {
         this.movementHelper.moveViewport(x, y);
-    },
-    
-    /**
-     * Resizes the viewport when the window is resized.
-     */
-    resizeViewport: function () {
-        if (this.resize()) {
-            this.updateViewport();
-        }
     },
 
     /**
