@@ -22,7 +22,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
     init: function (api, urlSettings, serverSettings, zoomLevels) {
-        var urlDate, imageScale;
+        var urlDate, imageScale, paddingHeight;
         
         this._super(api, urlSettings, serverSettings, zoomLevels);
 
@@ -44,7 +44,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             '#timestep-select', '#timeBackBtn', '#timeForwardBtn', urlDate);
 
         // Get available data sources and initialize viewport
-        this._initViewport(this.timeControls.getDate());
+        this._initViewport(this.timeControls.getDate(), $("#header").height() + 1, $("#footer").height() + 1);
 
         this.messageConsole = new MessageConsole();
         this.keyboard       = new KeyboardManager();
@@ -115,14 +115,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      * Initializes the viewport
      */
-    _initViewport: function (date) {
+    _initViewport: function (date, marginTop, marginBottom) {
         var self = this;
         
         $(document).bind("datasources-initialized", function (e, dataSources) {
             var tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date); 
         });
         
-        this._super(date);
+        this._super(date, marginTop, marginBottom);
     },
     
     /**

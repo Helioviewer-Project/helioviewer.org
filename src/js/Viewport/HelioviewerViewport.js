@@ -45,9 +45,6 @@ var HelioviewerViewport = Class.extend(
         if ($.browser.msie) {
             this.shadow.css("box-shadow", "none");
         }
-        
-        // Combined height of the header and footer in pixels (used for resizing viewport vertically)
-        this.headerAndFooterHeight = $("#header").height() + $("#footer").height() + 2;
 
         // Viewport must be resized before movement helper and sandbox are initialized.
         this.resize();
@@ -153,7 +150,7 @@ var HelioviewerViewport = Class.extend(
         if (this.domNode.hasClass("fullscreen-mode")) {
             return 0;
         }
-        return this.headerAndFooterHeight;
+        return this.marginTop + this.marginBottom;
     },
     
     /**
