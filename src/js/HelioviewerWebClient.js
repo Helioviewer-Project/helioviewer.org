@@ -44,7 +44,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             '#timestep-select', '#timeBackBtn', '#timeForwardBtn', urlDate);
 
         // Get available data sources and initialize viewport
-        this._initViewport();
+        this._initViewport(this.timeControls.getDate());
 
         this.messageConsole = new MessageConsole();
         this.keyboard       = new KeyboardManager();
@@ -111,27 +111,18 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             }
         });
     },
-
+    
     /**
-     * Initializes Helioviewer's viewport
+     * Initializes the viewport
      */
-    _initViewport: function () {
-        this.viewport = new ViewportController({
-            id             : '#helioviewer-viewport',
-            api            : this.api,
-            requestDate    : this.timeControls.getDate(),
-            timestep       : this.timeControls.getTimeIncrement(),
-            servers        : this.serverSettings.servers,
-            maxTileLayers  : this.serverSettings.maxTileLayers,
-            minImageScale  : this.serverSettings.minImageScale,
-            maxImageScale  : this.serverSettings.maxImageScale,
-            prefetch       : this.serverSettings.prefetchSize,
-            tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
-            imageScale     : Helioviewer.userSettings.get('state.imageScale'),
-            centerX        : Helioviewer.userSettings.get('state.centerX'),
-            centerY        : Helioviewer.userSettings.get('state.centerY'),
-            warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
-        });   
+    _initViewport: function (date) {
+        var self = this;
+        
+        $(document).bind("datasources-initialized", function (e, dataSources) {
+            var tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date); 
+        });
+        
+        this._super(date);
     },
     
     /**

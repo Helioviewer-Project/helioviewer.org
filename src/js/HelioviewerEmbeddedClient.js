@@ -23,5 +23,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var urlDate, imageScale;
         
         this._super(api, urlSettings, serverSettings, zoomLevels);
+        
+        // Determine image scale to use
+        imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);
+        
+        // Use URL date if specified
+        urlDate = urlSettings.date ? Date.parseUTCDate(urlSettings.date) : false;
     }
 });
