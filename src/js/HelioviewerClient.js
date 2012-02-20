@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, window, $, Class, TooltipHelper, ViewportController, 
+/*global document, window, $, Class, TooltipHelper, HelioviewerViewport,
   addIconHoverEventListener, KeyboardManager, SettingsLoader, addthis,
   ZoomControls, assignTouchHandlers */
 "use strict";
@@ -76,7 +76,7 @@ var HelioviewerClient = Class.extend(
      * Initializes Helioviewer's viewport
      */
     _initViewport: function (date) {
-        this.viewport = new ViewportController({
+        this.viewport = new HelioviewerViewport({
             id             : '#helioviewer-viewport',
             api            : this.api,
             requestDate    : date,
