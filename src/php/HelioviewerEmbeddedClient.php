@@ -46,7 +46,7 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     <!-- Helioviewer CSS -->
     <?php
 
-        $css = array("helioviewer-base", "helioviewer-web", "layout", "zoom-control");
+        $css = array("helioviewer-base", "helioviewer-embedded", "zoom-control");
         
         // CSS
         if ($this->config["compress_css"]) {
@@ -137,42 +137,37 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 ?>
 <body>
 <!-- Viewport -->
-<div id="helioviewer-viewport-container-outer">
-    <div id="helioviewer-viewport-container-inner">
-        <div id="helioviewer-viewport">
-            <!-- Movement sandbox -->
-            <div id="sandbox" style="position: absolute;">
-                <div id="moving-container"></div>
-            </div>
-            
-            <!-- Message console -->
-            <div id="message-console"></div>
-            
-            <!-- Image area select boundary container -->
-            <div id="image-area-select-container"></div>
-        </div>
-
-        <!--  Zoom Controls -->
-        <div id="zoomControls">
-            <div id="zoomControlZoomIn" title="Zoom in.">+</div>
-            <div id="zoomSliderContainer">
-                <div id="zoomControlSlider"></div>
-            </div>
-            <div id="zoomControlZoomOut" title="Zoom out.">-</div>
-        </div>
-
-        <!-- Center button -->
-        <div id="center-button" title="Center the image on the screen.">
-           <span>center</span>
-        </div>
-
-        <!-- Mouse coordinates display -->
-        <div id="mouse-coords" style="display: none;">
-            <div id="mouse-coords-x"></div>
-            <div id="mouse-coords-y"></div>
-        </div>
-
+<div id="helioviewer-viewport">
+    <!-- Movement sandbox -->
+    <div id="sandbox" style="position: absolute;">
+        <div id="moving-container"></div>
     </div>
+    
+    <!-- Message console -->
+    <div id="message-console"></div>
+    
+    <!-- Image area select boundary container -->
+    <div id="image-area-select-container"></div>
+</div>
+
+<!--  Zoom Controls -->
+<div id="zoomControls">
+    <div id="zoomControlZoomIn" title="Zoom in.">+</div>
+    <div id="zoomSliderContainer">
+        <div id="zoomControlSlider"></div>
+    </div>
+    <div id="zoomControlZoomOut" title="Zoom out.">-</div>
+</div>
+
+<!-- Center button -->
+<div id="center-button" title="Center the image on the screen.">
+   <span>center</span>
+</div>
+
+<!-- Mouse coordinates display -->
+<div id="mouse-coords" style="display: none;">
+    <div id="mouse-coords-x"></div>
+    <div id="mouse-coords-y"></div>
 </div>
 <!-- end Body -->
 
