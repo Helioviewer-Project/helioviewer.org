@@ -1,19 +1,13 @@
-/* Tile and Event layer accordions */
-#tileLayerAccordion, #eventAccordion {
+/* Tile layer accordions */
+#tileLayerAccordion {
     margin:0 5px 0 5px;
 }
-#TileLayerAccordion-Container, #EventLayerAccordion-Container {
+#TileLayerAccordion-Container {
 	margin-top: 2px;
     font-size: 10.5px;
 }
 
 span.tile-accordion-header-right > span.accordion-header-divider {
-    position: absolute;
-    line-height: 1.5;
-    left: 226px;
-}
-
-span.event-accordion-header-right > span.accordion-header-divider {
     position: absolute;
     line-height: 1.5;
     left: 226px;
@@ -60,9 +54,8 @@ div.accordion-arrow {
 	border:none;
 }
 
-span.event-accordion-header-left {display: block; width:65%; float: left; margin-top:2px;}
 span.tile-accordion-header-left  {display: block; width:37%; float: left; margin-top:2px;}
-span.event-accordion-header-right, span.tile-accordion-header-right {display: block; text-align: right; height: 16px;}
+span.tile-accordion-header-right {display: block; text-align: right; height: 16px;}
 
 /* TileLayerAccordion Styles */
 div.layer-select-label {
@@ -76,45 +69,6 @@ select.layer-select {
 	border: 1px solid #5c5c5c;
 	margin: 2px 0px 0px 1px;
 	}
-	
-/* EventLayerAccordion Styles */
-button.event-accordion-icon {
-	border: none;
-    position: absolute;
-    left: 202px;
-	width:  16px;
-	height: 16px;
-}
-
-div#event-icon-menu{
-	position: absolute;
-    font-size: 12px;
-	z-index: 1000;
-}
-
-div#event-icon-menu-title {
-	font-weight: bold;
-	border-bottom: 1px solid #424242;
-	text-align: center;
-	height: 20px;
-	padding-top:5px;
-}
-
-div#event-icon-menu-body {
-	position: relative;
-	padding: 10px;
-}
-
-.event-icon-menu-icon {
-	cursor: pointer;
-	margin: 2px 8px 2px 8px;
-}
-
-.event-icon-menu-icon:hover {
-	border: 2px solid #D18F61;
-	margin: 0px 6px 0px 6px;
-	text-decoration: underline;
-}
 
 .image-download-btn {
     margin-left: 223px;

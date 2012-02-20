@@ -2,48 +2,48 @@
  * Helioviewer.org Custom Styles
 */
 
-/* HTML ELEMENTS */
+/* HTML elements */
 html, body {
     background-image: url('../../resources/images/backgrounds/gradient_v5-optimized.png');
     background-color: #20242F;
     background-repeat: repeat-x;
     /*background-size: 40px 100%;
     -webkit-background-size: 40px 100%;*/
-    font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;
-}
-button {
-    cursor:pointer
-}
-strong {
-    font-weight:bold;
 }
 #col2 input, #col2 select {background-color:#F4F4F4;}
 #left-col-header, #right-col-header {height: 50px; margin-top: -24px;}
 
-/* Google Chrome Frame Installer */
-.chromeFrameOverlayContent  {border:1px solid #303030;}
-.chromeFrameOverlayUnderlay {background: #000; opacity: 0.5;}
-
-/* Text styles */
-a.dark {
-    text-decoration: none;
-    font-weight: bold;
-    color: #262424;
-    }
-a.dark:hover {
-    color: #d18f61;
-    }
-a.light {
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bold;
-    color: #E8E8E8;
+/* Viewport */
+#helioviewer-viewport-container-inner {
+    position: relative;
+    display: block;
+    top:3%;
+    width:97%;
+    height:94%;
+    margin-left:auto;
+    margin-right: auto;
+    border: 1px solid #262424;
 }
-a.light:hover {
-    color: #d18f61;
+#helioviewer-viewport-container-outer {
+    height: 520px;
+    border:1px solid black;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
 }
 
-/** CSS effects */
+#helioviewer-viewport-container-shadow {
+    position: absolute;
+    top: 24px;
+    left: 284px;
+    display: none;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    z-index: -1;
+}
+
+/* CSS effects */
 .shadow {
 box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 1); 
@@ -70,56 +70,38 @@ box-shadow: 0 0 5px rgba(0, 0, 0, 1);
     color: #606364;
 }
 
-/* Center button */
-#center-button {
-    background: transparent url(../../resources/images/blackGlass/transparentBGWhite.png);
-    font-size: 13.5px;
-	width:54px;
-	height:16px;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	border-right: 1px solid black;
-	border-bottom: 1px solid black;
-	text-align:center;
-	cursor: pointer;
-}
-
-#center-button > span {
-	color: #E8E8E8;
-    font-weight: bold;
-    vertical-align: top;
-    line-height: 1.0;
-}
-
-/* Mouse Coordinates */
-#mouse-coords {
-	background: transparent;
-	color: white;
-    font-size: 13px;
-	font-weight: 600;
-	width: 160px;
-	height: 16px;
-	position: absolute;
-    bottom: 6px;
-	right: 2px;
-}
-
-#mouse-coords-x, #mouse-coords-y {
-    width: 50%;
+/* Opacity Slider */
+.opacity-slider-track {
+    margin: 4px 0 9px 0;
+    background: url(../../resources/images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
+    border-style: solid;
+    border-color: black;
+    border-width: 0px 1px;
     float: left;
+}
+
+.opacity-slider-track > .ui-slider-handle {
+    background-color: #565656;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border: 1px solid black;
+    cursor: pointer;
+    height:19px;
+    width: 10px;
+    top:-6px;   
 }
 
 /* Message Console */
 #message-console .message-console-link {
-	text-decoration: none;
-	font-weight: bold;
-	color: #3d76e0;
+    text-decoration: none;
+    font-weight: bold;
+    color: #3d76e0;
 }
 
 #message-console .message-console-link:hover {
-	text-decoration: underline;
-	color: #e03d76;
+    text-decoration: underline;
+    color: #e03d76;
 }
 
 /* Text-icon buttons */
@@ -141,7 +123,7 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 .section-header {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 /** Meta links **/
@@ -151,10 +133,10 @@ span.ui-icon-hover, div.ui-icon-hover {
 
 #footer-container-inner {
     background-image: url(../../resources/images/backgrounds/ui-bg_gloss-wave_20_111111_500x100_transparent_15.png);
-	position: absolute;
+    position: absolute;
     width: 100%;
     height: 18px;
-	top: 10px;
+    top: 10px;
     border-color: #262424;
     border-width: 1px 0px 0px 0px;
 }
@@ -211,6 +193,17 @@ span.ui-icon-hover, div.ui-icon-hover {
     border-bottom-left-radius: 20px;
     -moz-border-radius-bottomleft: 20px;
     -webkit-border-bottom-left-radius: 20px;
+}
+
+#fullscreen-btn {
+    position: absolute;
+    background-color: #2A2A2A;
+    border-bottom: 1px solid #262424;
+    border-left  : 1px solid #2A2A2A;
+    padding-top: 1px;
+    top:0px;
+    right: 0px;
+    cursor: pointer;
 }
 
 /* Blog entries */
