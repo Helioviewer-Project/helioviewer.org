@@ -69,7 +69,6 @@ var HelioviewerClient = Class.extend(
                 //$.support.h264 = true;
                 $.support.h264 = false;
             }
-            
         }
     },
 
@@ -81,7 +80,6 @@ var HelioviewerClient = Class.extend(
             id             : '#helioviewer-viewport',
             api            : this.api,
             requestDate    : date,
-            timestep       : this.timeControls.getTimeIncrement(),
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
