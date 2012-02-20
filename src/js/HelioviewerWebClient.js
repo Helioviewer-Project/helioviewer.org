@@ -116,13 +116,32 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * Initializes the viewport
      */
     _initViewport: function (date, marginTop, marginBottom) {
-        var self = this;
+        var shadow, updateShadow, self = this;
         
         $(document).bind("datasources-initialized", function (e, dataSources) {
             var tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date); 
         });
         
         this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
+        
+        // IE shadows don't behave properly during resizing/fullscreen (tested: IE9)
+        if ($.browser.msie) {
+            shadow.css("box-shadow", "none");
+            return;
+        }
+        
+        // Viewport shadow
+        shadow = $('#helioviewer-viewport-container-shadow').show();
+        
+        updateShadow = function () {
+            shadow.width(self.viewport.outerNode.width())
+                  .height(self.viewport.outerNode.height()); 
+        };
+        
+        updateShadow();
+
+        // Update shadow when viewport is resized
+        $(document).bind("viewport-resized", updateShadow);
     },
     
     /**
