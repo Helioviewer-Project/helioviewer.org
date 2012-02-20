@@ -8,7 +8,7 @@
   HelioviewerViewport, addIconHoverEventListener, KeyboardManager, 
   SettingsLoader, addthis, ZoomControls, assignTouchHandlers */
 "use strict";
-var HelioviewerWebClient = HelioviewerClient.extend(
+var HelioviewerEmbeddedClient = HelioviewerClient.extend(
     /** @lends HelioviewerWebClient.prototype */
     {
     /**
@@ -20,14 +20,25 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
     init: function (api, urlSettings, serverSettings, zoomLevels) {
-        var urlDate, imageScale;
+        var date, imageScale;
         
         this._super(api, urlSettings, serverSettings, zoomLevels);
         
         // Determine image scale to use
         imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);
         
-        // Use URL date if specified
-        urlDate = urlSettings.date ? Date.parseUTCDate(urlSettings.date) : false;
+        // Use URL date if specified, otherwise use current time
+        if (urlSettings.date) {
+            date = Date.parseUTCDate(urlSettings.date);
+        } else {
+            date = new Date().toUTCDate();
+        }
+                
+        // Get available data sources and initialize viewport
+        this._initViewport("body", date, 0, 0);
+        
+        // User Interface components
+        this.zoomControls   = new ZoomControls('#zoomControls', imageScale, zoomLevels,
+                                               this.serverSettings.minImageScale, this.serverSettings.maxImageScale); 
     }
 });

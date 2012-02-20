@@ -94,5 +94,32 @@ var HelioviewerClient = Class.extend(
             marginBottom   : marginBottom,
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
-    }
+    },
+    
+    /**
+     * Chooses an acceptible image scale to use based on the default or
+     * requested imageScale the list of allowed increments 
+     */
+    _chooseInitialImageScale: function (imageScale, increments) {
+        // For exact match, use image scale as-is
+        if ($.inArray(imageScale, increments) !== -1) {
+            return imageScale;
+        }
+        // Otherwise choose closest acceptible image scale
+        var diff, closestScale, bestMatch = Infinity;
+        
+        $.each(increments, function (i, scale) {
+            diff = Math.abs(scale - imageScale);
+
+            if (diff < bestMatch) {
+                bestMatch = diff;
+                closestScale = scale;
+            }
+        });
+        
+        // Store closest matched image scale
+        Helioviewer.userSettings.set('state.imageScale', closestScale);
+
+        return closestScale;
+    },
 });
