@@ -1,0 +1,114 @@
+/**
+ * Helioviewer Client Shared Styles
+*/
+/* HTML elements */
+html, body {
+    font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif;
+}
+button {
+    cursor:pointer
+}
+strong {
+    font-weight:bold;
+}
+
+/* Text styles */
+a.dark {
+    text-decoration: none;
+    font-weight: bold;
+    color: #262424;
+    }
+a.dark:hover {
+    color: #d18f61;
+    }
+a.light {
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    color: #E8E8E8;
+}
+a.light:hover {
+    color: #d18f61;
+}
+
+/* Viewport */
+#helioviewer-viewport {
+    background-color: #000000;
+    color: #FFFFFF;
+    overflow: hidden;
+    z-index: 0;
+    padding: 0;
+    position:relative;
+    width:100%;
+    height:100%;
+    left: 0px;
+    top:0px;
+}
+
+/* This is what actually moves */
+#moving-container {
+  position: absolute;
+  z-index: 0;
+  left: 0px;
+  top: 0px;
+}
+
+/* Tile layer */
+.tile-layer-container {
+    position: absolute;
+}
+
+.tile
+{
+    border: 0px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: block;
+    overflow: visible;
+    -moz-user-select: none;
+}
+
+
+
+/* Center button */
+#center-button {
+    background: transparent url(../../resources/images/blackGlass/transparentBGWhite.png);
+    font-size: 13.5px;
+    width:54px;
+    height:16px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    text-align:center;
+    cursor: pointer;
+}
+
+#center-button > span {
+    color: #E8E8E8;
+    font-weight: bold;
+    vertical-align: top;
+    line-height: 1.0;
+}
+
+/* Mouse coordinates */
+#mouse-coords {
+    background: transparent;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    width: 160px;
+    height: 16px;
+    position: absolute;
+    bottom: 6px;
+    right: 2px;
+}
+
+#mouse-coords-x, #mouse-coords-y {
+    width: 50%;
+    float: left;
+}

@@ -46,7 +46,7 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     <!-- Helioviewer CSS -->
     <?php
 
-        $css = array("main", "layout", "sliders", "viewport");
+        $css = array("helioviewer-base", "helioviewer-web", "layout", "zoom-control");
         
         // CSS
         if ($this->config["compress_css"]) {

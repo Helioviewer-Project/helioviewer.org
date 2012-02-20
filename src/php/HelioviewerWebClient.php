@@ -47,9 +47,9 @@ class HelioviewerWebClient extends HelioviewerClient
     
     <!-- Helioviewer CSS -->
 <?php
-        $css = array("main", "layout", "accordions", "dialogs",
-                     "media-manager", "sliders", "timenav", 
-                     "video-gallery", "viewport", "youtube");
+        $css = array("helioviewer-base", "helioviewer-web", "layout", 
+                     "accordions", "dialogs", "media-manager", "zoom-control",  
+                     "timenav", "video-gallery", "youtube");
         // CSS
         if ($this->config["compress_css"]) {
             echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.min.css?$signature\" />\n    ";
@@ -133,11 +133,10 @@ class HelioviewerWebClient extends HelioviewerClient
             $js = array("Utility/Config.js", "Utility/HelperFunctions.js", 
                         "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
                         "Tiling/Layer/HelioviewerTileLayer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js",  
-                        "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", "Events/EventManager.js", 
+                        "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js",  
                         "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
-                        "Events/EventType.js", "Events/EventFeatureRecognitionMethod.js", "Media/MediaManagerUI.js",
-                        "Media/MediaManager.js", "Media/MovieManager.js", "Media/MovieManagerUI.js",
-                        "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
+                        "Media/MediaManagerUI.js", "Media/MediaManager.js", "Media/MovieManager.js", 
+                        "Media/MovieManagerUI.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
                         "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
                         "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                         "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 

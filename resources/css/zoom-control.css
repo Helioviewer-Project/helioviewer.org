@@ -56,25 +56,3 @@
 
 #zoomControlZoomOut {top:233px;}
 #zoomControlZoomIn  {top:0px;}
-
-/* Opacity Slider */
-.opacity-slider-track {
-    margin: 4px 0 9px 0;
-    background: url(../../resources/images/blackGlass/glass_slider_trough_horiztonal_white.png) transparent scroll 0%;
-    border-style: solid;
-    border-color: black;
-    border-width: 0px 1px;
-	float: left;
-}
-
-.opacity-slider-track > .ui-slider-handle {
-    background-color: #565656;
-	border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-	border: 1px solid black;
-    cursor: pointer;
-    height:19px;
-    width: 10px;
-    top:-6px;	
-}
