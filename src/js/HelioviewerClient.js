@@ -75,10 +75,11 @@ var HelioviewerClient = Class.extend(
     /**
      * Initializes Helioviewer's viewport
      */
-    _initViewport: function (date, marginTop, marginBottom) {
+    _initViewport: function (container, date, marginTop, marginBottom) {
         this.viewport = new HelioviewerViewport({
             id             : '#helioviewer-viewport',
             api            : this.api,
+            container      : container,
             requestDate    : date,
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,

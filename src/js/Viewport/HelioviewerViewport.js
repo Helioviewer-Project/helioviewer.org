@@ -34,7 +34,7 @@ var HelioviewerViewport = Class.extend(
         this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
 
         this.domNode   = $(this.id);
-        this.outerNode = $(this.id + '-container-outer');
+        this.outerNode = $(this.container);
         this.shadow    = $(this.id + '-container-shadow');
         
         this.mouseCoords = new HelioviewerMouseCoordinates(this.imageScale, this._rsunInArcseconds, 
@@ -108,7 +108,7 @@ var HelioviewerViewport = Class.extend(
         this.outerNode.height(height);
         
         // Update viewport shadow
-        width  = this.outerNode.width();
+        width = this.outerNode.width();
         this.shadow.width(width).height(height);
 
         // Update viewport dimensions
