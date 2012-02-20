@@ -75,7 +75,7 @@ var HelioviewerClient = Class.extend(
     /**
      * Initializes Helioviewer's viewport
      */
-    _initViewport: function (date) {
+    _initViewport: function (date, marginTop, marginBottom) {
         this.viewport = new HelioviewerViewport({
             id             : '#helioviewer-viewport',
             api            : this.api,
@@ -89,6 +89,8 @@ var HelioviewerClient = Class.extend(
             imageScale     : Helioviewer.userSettings.get('state.imageScale'),
             centerX        : Helioviewer.userSettings.get('state.centerX'),
             centerY        : Helioviewer.userSettings.get('state.centerY'),
+            marginTop      : marginTop,
+            marginBottom   : marginBottom,
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
     }
