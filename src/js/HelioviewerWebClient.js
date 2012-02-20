@@ -122,7 +122,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             var tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date); 
         });
         
-        this._super(date, marginTop, marginBottom);
+        this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
     },
     
     /**
