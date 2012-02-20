@@ -14,12 +14,12 @@
 		<!-- Concatenate in two-steps to preserve include order -->
 		<concat destfile="build/helioviewer.js" encoding="UTF-8" eol="lf">
 			<fileset dir="src/js/" includes="Utility/Config.js, Tiling/Layer/Layer.js, Tiling/Layer/TileLayer.js, Tiling/Manager/LayerManager.js, Tiling/Manager/TileLayerManager.js, Viewport/Viewport.js, Viewport/Helper/MouseCoordinates.js" />
-			<fileset dir="src/js/" includes="**/*.js" excludes="Config.js, Layer.js, LayerManager.js, IconPicker.js" />
+			<fileset dir="src/js/" includes="**/*.js" excludes="Config.js, Layer.js, LayerManager.js, IconPicker.js", "HelioviewerEmbeddedClient.js" />
 		</concat>
 
 		<concat destfile="build/css/helioviewer.css" encoding="UTF-8" eol="lf">
 			<filelist dir="${cssdir}" files="helioviewer-base.css, helioviewer-web.css"/>
-		    <fileset dir="${cssdir}" includes="*.css" excludes="helioviewer-base.css, helioviewer-web.css"/>
+		    <fileset dir="${cssdir}" includes="*.css" excludes="helioviewer-base.css,  helioviewer-embedded.css, helioviewer-web.css"/>
 		</concat>
         
         <echo>Minifying JavaScript/CSS</echo>
