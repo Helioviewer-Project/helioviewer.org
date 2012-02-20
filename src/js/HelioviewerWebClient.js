@@ -5,7 +5,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder, 
-  TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
+  TooltipHelper, HelioviewerViewport, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, addIconHoverEventListener, UserVideoGallery, MessageConsole,
   KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
   ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, VisualGlossary */
