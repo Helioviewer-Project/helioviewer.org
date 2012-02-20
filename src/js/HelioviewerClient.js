@@ -72,4 +72,26 @@ var HelioviewerClient = Class.extend(
             
         }
     },
+
+    /**
+     * Initializes Helioviewer's viewport
+     */
+    _initViewport: function (date) {
+        this.viewport = new ViewportController({
+            id             : '#helioviewer-viewport',
+            api            : this.api,
+            requestDate    : date,
+            timestep       : this.timeControls.getTimeIncrement(),
+            servers        : this.serverSettings.servers,
+            maxTileLayers  : this.serverSettings.maxTileLayers,
+            minImageScale  : this.serverSettings.minImageScale,
+            maxImageScale  : this.serverSettings.maxImageScale,
+            prefetch       : this.serverSettings.prefetchSize,
+            tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
+            imageScale     : Helioviewer.userSettings.get('state.imageScale'),
+            centerX        : Helioviewer.userSettings.get('state.centerX'),
+            centerY        : Helioviewer.userSettings.get('state.centerY'),
+            warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
+        });   
+    }
 });
