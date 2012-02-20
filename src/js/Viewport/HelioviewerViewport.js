@@ -34,7 +34,6 @@ var HelioviewerViewport = Class.extend(
         this._rsunInArcseconds = 959.705; // Solar radius in arcseconds, source: Djafer, Thuillier and Sofia (2008)
 
         this.domNode   = $(this.id);
-        this.innerNode = $(this.id + '-container-inner');
         this.outerNode = $(this.id + '-container-outer');
         this.shadow    = $(this.id + '-container-shadow');
         
@@ -113,10 +112,10 @@ var HelioviewerViewport = Class.extend(
         this.shadow.width(width).height(height);
 
         // Update viewport dimensions
-        this._updateDimensions();
-    
-        this.dimensions.width  += this.prefetch;
-        this.dimensions.height += this.prefetch;
+        this.dimensions = {
+            width : this.domNode.width() + this.prefetch,
+            height: this.domNode.height() + this.prefetch
+        };
 
         if (!this._hasSameDimensions(this.dimensions, oldDimensions)) {
             return true;
@@ -168,16 +167,6 @@ var HelioviewerViewport = Class.extend(
      */
     _hasSameDimensions: function (newDimensions, old) {
         return (newDimensions.width === old.width) && (newDimensions.height === old.height);
-    },
-    
-    /**
-     * @description Updates the viewport dimensions
-     */
-    _updateDimensions: function () {
-        this.dimensions = {
-            width : this.domNode.width(),
-            height: this.domNode.height()
-        };
     },
     
     /**
