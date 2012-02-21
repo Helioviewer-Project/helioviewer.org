@@ -73,6 +73,8 @@ abstract class HelioviewerClient
         $this->printBodyStart();
         $this->loadJS();
         $this->loadCustomJS($signature);
+        $this->printScriptStart();
+        $this->printScriptEnd();
         $this->printBodyEnd();
     }
     
@@ -114,11 +116,52 @@ abstract class HelioviewerClient
     }
 
     /**
-     * prints HTML body close
+     * Prints HTML body close
      */    
     protected function printBodyEnd()
     {
-        echo "</body>";
+?>
+</body>
+</html>
+<?php
+    }
+    
+    /**
+     * Prints main script block beginning
+     */
+    protected function printScriptStart() {
+?>
+
+<!-- Launch Helioviewer -->
+<script type="text/javascript">
+    var serverSettings, settingsJSON, urlSettings, debug;
+
+    $(function () {
+        <?php
+            printf("settingsJSON = %s;\n", json_encode($this->config));
+            
+            // Compute acceptible zoom values
+            $zoomLevels = array();
+            
+            for($imageScale = $this->config["min_image_scale"]; $imageScale <= $this->config["max_image_scale"]; $imageScale = $imageScale * 2) {
+                $zoomLevels[] = round($imageScale, 8);
+            }
+            
+            printf("\tzoomLevels = %s;\n", json_encode($zoomLevels));
+
+            // Convert to JSON
+            printf("\turlSettings = %s;\n", json_encode($this->urlSettings));
+        ?>
+        serverSettings = new Config(settingsJSON).toArray();
+
+    <?php
+    }
+    
+    /**
+     * Prints main script block end
+     */
+    protected function printScriptEnd() {
+        echo "</script>";
     }
     
     /**
