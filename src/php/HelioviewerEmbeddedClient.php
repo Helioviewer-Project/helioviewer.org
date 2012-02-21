@@ -181,7 +181,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <!-- Watermark -->
 <a href="<?php echo $link;?>"><div id='watermark'></div></a>
 
-<!-- end Body -->
 <?php
     }
     /**
