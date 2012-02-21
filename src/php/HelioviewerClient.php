@@ -141,7 +141,6 @@ abstract class HelioviewerClient
     <!-- Library CSS -->
     <link rel="stylesheet" href="lib/yui-2.8.2r1/reset-fonts.css" />
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.12.custom.css" />  
-    <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
     <?php
     }
     

@@ -37,6 +37,17 @@ class HelioviewerWebClient extends HelioviewerClient
     }
     
     /**
+     * Loads library CSS
+     */
+    protected function loadCSS()
+    {
+        parent::loadCSS();
+?>
+<link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
+<?php
+    }
+    
+    /**
      * Loads Helioviewer-specific CSS
      */
     protected function loadCustomCSS($signature)
@@ -46,7 +57,7 @@ class HelioviewerWebClient extends HelioviewerClient
     <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
     
     <!-- Helioviewer CSS -->
-<?php
+    <?php
         $css = array("helioviewer-base", "helioviewer-web", "layout", 
                      "accordions", "dialogs", "media-manager", "zoom-control",  
                      "timenav", "video-gallery", "youtube");
