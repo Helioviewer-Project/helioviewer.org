@@ -171,13 +171,15 @@ var HelioviewerViewport = Class.extend(
                    .bind("update-viewport",                 $.proxy(this.onUpdateViewport, this))
                    .bind("load-saved-roi-position",         $.proxy(this.loadROIPosition, this))
                    .bind("move-viewport mousemove mouseup", $.proxy(this.onMouseMove, this))
-                   .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this));
+                   .bind("layer-max-dimensions-changed",    $.proxy(this.updateMaxLayerDimensions, this))
+                   .bind("center-viewport",                 $.proxy(this.centerViewport, this));
         
         $(this.domNode).bind("mousedown", $.proxy(this.onMouseMove, this));
         this.domNode.dblclick($.proxy(this.doubleClick, this));
         
         $('#center-button').click($.proxy(this.centerViewport, this));
         $(window).resize($.proxy(this.resize, this));
+        
     },
     
 

@@ -181,12 +181,14 @@ var FullscreenControl = Class.extend(
             icon = btn.find(".ui-icon");
 
         addIconHoverEventListener(btn);
+        
+        $(document).bind('toggle-fullscreen', $.proxy(this._toggle, this));
     },
     
     /**
-     * Handles clicks to fullscreen control
+     * Toggles fullscreen mode on or off
      */
-    _onClick: function () {
+    _toggle: function () {
         if (this.body.hasClass('disable-fullscreen-mode')) {
             return;
         }
