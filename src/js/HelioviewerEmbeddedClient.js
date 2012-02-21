@@ -20,9 +20,23 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
     init: function (api, urlSettings, serverSettings, zoomLevels) {
-        var date, imageScale;
+        var date, imageScale, win, watermark, onResize;
+        
+        win       = $(window);
+        watermark = $("#watermark");
         
         this._super(api, urlSettings, serverSettings, zoomLevels);
+        
+        // Scale watermark
+        onResize = function (e) {
+            var w = Math.min(250, Math.max(100, win.width() * 0.15)),
+                h = 0.25 * w;
+            watermark.width(w).height(h);
+        };
+        win.bind('resize', onResize);
+        
+        onResize();
+        watermark.show();
         
         // Determine image scale to use
         imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);

@@ -141,6 +141,7 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
      */
     protected function printBodyStart()
     {
+        $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
 ?>
 <body>
 <!-- Viewport -->
@@ -176,8 +177,11 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     <div id="mouse-coords-x"></div>
     <div id="mouse-coords-y"></div>
 </div>
-<!-- end Body -->
 
+<!-- Watermark -->
+<a href="<?php echo $link;?>"><div id='watermark'></div></a>
+
+<!-- end Body -->
 <?php
     }
     /**
