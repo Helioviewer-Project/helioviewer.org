@@ -58,9 +58,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
         }
 ?>
 
-    <!-- Theme Modifications -->
-    <link rel="stylesheet" href="resources/css/dot-luv.css">
-
 <?php
     }
     
@@ -77,7 +74,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
-<script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 <script src="lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
     <?php
@@ -89,7 +85,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
-<script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 <script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
 <?php
@@ -126,7 +121,7 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
                         "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
                         "Tiling/Layer/HelioviewerTileLayer.js", "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", 
                         "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
-                        "Image/JP2Image.js", "UI/MessageConsole.js", "Viewport/Helper/MouseCoordinates.js", 
+                        "Image/JP2Image.js", "Viewport/Helper/MouseCoordinates.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                         "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
                         "HelioviewerClient.js", "HelioviewerEmbeddedClient.js",  "UI/ZoomControls.js", "Utility/InputValidator.js",
