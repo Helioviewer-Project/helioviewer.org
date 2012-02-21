@@ -2,3 +2,14 @@
  * Helioviewer.org embedded mode styles
  */
 html, body {background: #000000;}
+
+#watermark {
+    background-image: url('../../resources/images/logos/watermark_embed.svg');
+    position: absolute;
+    cursor: pointer;
+    display: none;
+    width: 200px;
+    height: 50px;
+    right: 20px;
+    bottom: 20px;
+}

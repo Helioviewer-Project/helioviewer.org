@@ -139,10 +139,10 @@ class HelioviewerWebClient extends HelioviewerClient
                         "Media/MovieManagerUI.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
                         "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
                         "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
-                        "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
+                        "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                         "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-                        "Viewport/ViewportController.js", "HelioviewerClient.js", "HelioviewerWebClient.js", 
+                        "HelioviewerClient.js", "HelioviewerWebClient.js", 
                         "UI/ZoomControls.js", "UI/UserVideoGallery.js", "UI/Glossary.js", 
                         "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
             foreach($js as $file)

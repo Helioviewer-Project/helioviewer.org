@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, window, $, Class, TooltipHelper, ViewportController, 
+/*global document, window, $, Class, TooltipHelper, HelioviewerViewport,
   addIconHoverEventListener, KeyboardManager, SettingsLoader, addthis,
   ZoomControls, assignTouchHandlers */
 "use strict";
@@ -75,10 +75,11 @@ var HelioviewerClient = Class.extend(
     /**
      * Initializes Helioviewer's viewport
      */
-    _initViewport: function (date) {
-        this.viewport = new ViewportController({
+    _initViewport: function (container, date, marginTop, marginBottom) {
+        this.viewport = new HelioviewerViewport({
             id             : '#helioviewer-viewport',
             api            : this.api,
+            container      : container,
             requestDate    : date,
             servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
@@ -89,7 +90,36 @@ var HelioviewerClient = Class.extend(
             imageScale     : Helioviewer.userSettings.get('state.imageScale'),
             centerX        : Helioviewer.userSettings.get('state.centerX'),
             centerY        : Helioviewer.userSettings.get('state.centerY'),
+            marginTop      : marginTop,
+            marginBottom   : marginBottom,
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
         });   
-    }
+    },
+    
+    /**
+     * Chooses an acceptible image scale to use based on the default or
+     * requested imageScale the list of allowed increments 
+     */
+    _chooseInitialImageScale: function (imageScale, increments) {
+        // For exact match, use image scale as-is
+        if ($.inArray(imageScale, increments) !== -1) {
+            return imageScale;
+        }
+        // Otherwise choose closest acceptible image scale
+        var diff, closestScale, bestMatch = Infinity;
+        
+        $.each(increments, function (i, scale) {
+            diff = Math.abs(scale - imageScale);
+
+            if (diff < bestMatch) {
+                bestMatch = diff;
+                closestScale = scale;
+            }
+        });
+        
+        // Store closest matched image scale
+        Helioviewer.userSettings.set('state.imageScale', closestScale);
+
+        return closestScale;
+    },
 });

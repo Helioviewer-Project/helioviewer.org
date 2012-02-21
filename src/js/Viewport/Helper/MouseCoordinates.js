@@ -17,11 +17,11 @@ var MouseCoordinates = Class.extend(
     init: function (imageScale, showMouseCoordsWarning) {
         this.imageScale      = imageScale;
         this.warnMouseCoords = showMouseCoordsWarning;
-        
-        this.container       = $('#mouse-coords');
-        this.innerViewport   = $('#helioviewer-viewport-container-inner');
-        this.sandbox         = $("#sandbox");
-        this.movingContainer = $("#moving-container");
+
+        this.viewportContainer = $('#helioviewer-viewport').parent();
+        this.movingContainer   = $("#moving-container");        
+        this.container         = $('#mouse-coords');
+        this.sandbox           = $("#sandbox");
 
         this.mouseCoords  = "disabled";
         this.mouseCoordsX = $('#mouse-coords-x');
@@ -52,7 +52,7 @@ var MouseCoordinates = Class.extend(
      * @param {Int} screeny Y-dimensions of the user's screen
      */
     getRelativeCoords: function (screenx, screeny) {
-        var offset = this.innerViewport.offset();
+        var offset = this.viewportContainer.offset();
         
         return {
             x: screenx - offset.left - 1,

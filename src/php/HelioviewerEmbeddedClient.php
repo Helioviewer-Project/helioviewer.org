@@ -94,6 +94,12 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
 <?php
 }
+?>
+<script src="lib/jquery.json-2.2/jquery.json-2.2.min.js" type="text/javascript" ></script>
+<script src="lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
+<script src="lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
+
+<?php
     }
 
     /**
@@ -120,10 +126,11 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
                         "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
                         "Tiling/Layer/HelioviewerTileLayer.js", "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", 
                         "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
-                        "Image/JP2Image.js", "UI/MessageConsole.js", "Viewport/Helper/MouseCoordinates.js", "Viewport/Viewport.js", 
+                        "Image/JP2Image.js", "UI/MessageConsole.js", "Viewport/Helper/MouseCoordinates.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                         "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-                        "Viewport/ViewportController.js", "Helioviewer.js", "UI/ZoomControls.js", "Utility/InputValidator.js");
+                        "HelioviewerClient.js", "HelioviewerEmbeddedClient.js",  "UI/ZoomControls.js", "Utility/InputValidator.js",
+                        "Utility/SettingsLoader.js", "Utility/UserSettings.js");
             foreach($js as $file)
                 printf("<script src=\"src/js/%s?$signature\" type=\"text/javascript\"></script>\n", $file);
         }
@@ -134,6 +141,7 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
      */
     protected function printBodyStart()
     {
+        $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
 ?>
 <body>
 <!-- Viewport -->
@@ -169,8 +177,48 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     <div id="mouse-coords-x"></div>
     <div id="mouse-coords-y"></div>
 </div>
-<!-- end Body -->
 
+<!-- Watermark -->
+<a href="<?php echo $link;?>"><div id='watermark'></div></a>
+
+<!-- end Body -->
+<?php
+    }
+    /**
+     * Finishes HTML body element
+     */
+    protected function printBodyEnd()
+    {
+?>
+
+<!-- Launch Helioviewer -->
+<script type="text/javascript">
+    var serverSettings, settingsJSON, urlSettings, debug;
+
+    $(function () {
+        <?php
+            printf("settingsJSON = %s;\n", json_encode($this->config));
+            
+            // Compute acceptible zoom values
+            $zoomLevels = array();
+            
+            for($imageScale = $this->config["min_image_scale"]; $imageScale <= $this->config["max_image_scale"]; $imageScale = $imageScale * 2) {
+                $zoomLevels[] = round($imageScale, 8);
+            }
+            
+            printf("\tzoomLevels = %s;\n", json_encode($zoomLevels));
+
+            // Convert to JSON
+            printf("\turlSettings = %s;\n", json_encode($this->urlSettings));
+        ?>
+        serverSettings = new Config(settingsJSON).toArray();
+        
+        // Initialize Helioviewer.org
+        helioviewer = new HelioviewerEmbeddedClient("api/index.php", urlSettings, serverSettings, zoomLevels);
+    });
+</script>
+</body>
+</html>
 <?php
     }
 }

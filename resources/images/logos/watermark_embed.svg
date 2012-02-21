@@ -1,0 +1,48 @@
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.2"
+   preserveAspectRatio="xMinYMin meet"
+   viewBox="0 0 200 50"
+   id="helvioviewer_watermark">
+  <g transform="translate(0,-1002.3622)" id="layer1">
+    <text
+       x="2.9316506"
+       y="1013.1274"
+       id="text2993"
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:0.66666667;stroke:none;font-family:Sans"><tspan
+         x="2.9316506"
+         y="1013.1274"
+         id="tspan2995"
+         style="font-size:10px;font-style:normal;fill:#ffffff;fill-opacity:0.66666667">POWERED BY</tspan></text>
+    <path
+       d="m 39.39595,35.10025 a 17.930208,17.930208 0 1 1 -35.8604161,0 17.930208,17.930208 0 1 1 35.8604161,0 z"
+       transform="matrix(0.91549296,0,0,0.91549296,1.30893,1002.2979)"
+       id="path3005"
+       style="fill:#ffffff;fill-opacity:0;stroke:#ffffff;stroke-width:2.20099998;stroke-miterlimit:4;stroke-opacity:0.66666667;stroke-dasharray:none" />
+    <text
+       x="8.0659924"
+       y="1040.7531"
+       id="text3823"
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><tspan
+         x="7"
+         y="1042"
+         id="tspan3825"
+         style="font-size:26px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:0.66666667;font-family:URW Chancery L;-inkscape-font-specification:URW Chancery L Bold Italic">hv</tspan></text>
+    <text
+       x="44.961941"
+       y="1039.7302"
+       id="text3835"
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><tspan
+         x="44.961941"
+         y="1039.7302"
+         id="tspan3837"
+         style="font-size:20px;fill:#ffffff;fill-opacity:0.66666667">Helioviewer.org</tspan></text>
+  </g>
+</svg>

@@ -5,7 +5,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder, 
-  TooltipHelper, ViewportController, ScreenshotBuilder, ScreenshotHistory,
+  TooltipHelper, HelioviewerViewport, ScreenshotBuilder, ScreenshotHistory,
   MovieHistory, addIconHoverEventListener, UserVideoGallery, MessageConsole,
   KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
   ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, VisualGlossary */
@@ -22,7 +22,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
     init: function (api, urlSettings, serverSettings, zoomLevels) {
-        var urlDate, imageScale;
+        var urlDate, imageScale, paddingHeight;
         
         this._super(api, urlSettings, serverSettings, zoomLevels);
 
@@ -44,7 +44,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             '#timestep-select', '#timeBackBtn', '#timeForwardBtn', urlDate);
 
         // Get available data sources and initialize viewport
-        this._initViewport(this.timeControls.getDate());
+        this._initViewport(this.timeControls.getDate(), $("#header").height() + 1, $("#footer").height() + 1);
 
         this.messageConsole = new MessageConsole();
         this.keyboard       = new KeyboardManager();
@@ -115,41 +115,33 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      * Initializes the viewport
      */
-    _initViewport: function (date) {
-        var self = this;
+    _initViewport: function (date, marginTop, marginBottom) {
+        var shadow, updateShadow, self = this;
         
         $(document).bind("datasources-initialized", function (e, dataSources) {
             var tileLayerAccordion = new TileLayerAccordion('#tileLayerAccordion', dataSources, date); 
         });
         
-        this._super(date);
-    },
-    
-    /**
-     * Chooses an acceptible image scale to use based on the default or
-     * requested imageScale the list of allowed increments 
-     */
-    _chooseInitialImageScale: function (imageScale, increments) {
-        // For exact match, use image scale as-is
-        if ($.inArray(imageScale, increments) !== -1) {
-            return imageScale;
+        this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
+        
+        // IE shadows don't behave properly during resizing/fullscreen (tested: IE9)
+        if ($.browser.msie) {
+            shadow.css("box-shadow", "none");
+            return;
         }
-        // Otherwise choose closest acceptible image scale
-        var diff, closestScale, bestMatch = Infinity;
         
-        $.each(increments, function (i, scale) {
-            diff = Math.abs(scale - imageScale);
-
-            if (diff < bestMatch) {
-                bestMatch = diff;
-                closestScale = scale;
-            }
-        });
+        // Viewport shadow
+        shadow = $('#helioviewer-viewport-container-shadow').show();
         
-        // Store closest matched image scale
-        Helioviewer.userSettings.set('state.imageScale', closestScale);
+        updateShadow = function () {
+            shadow.width(self.viewport.outerNode.width())
+                  .height(self.viewport.outerNode.height()); 
+        };
+        
+        updateShadow();
 
-        return closestScale;
+        // Update shadow when viewport is resized
+        $(document).bind("viewport-resized", updateShadow);
     },
     
     /**
