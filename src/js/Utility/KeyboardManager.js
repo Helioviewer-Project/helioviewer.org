@@ -91,70 +91,50 @@ var KeyboardManager = Class.extend(
 
     /**
      * @description Sets up keyboard shortcuts
+     * 
+     * Because browsers assign different characters to the arrow keys,
+     * the key code is used directly. In all other cases it is more reliable
+     * to use the character code.
+     * 
      * @TODO 01/04/2010: Use something like js-hotkeys (http://code.google.com/p/js-hotkeys/)
      *                   to allow for more advanced keyboard navigation such as "cntl + z" to undo, etc
-     * TODO 01/16/2009: Create buttons for mouse-coord and detail toggles
-     * 
-     * TODO 05/24/2010: To avoid direct links to different code, create hash of events
-     * to trigger when a given key is pressed, e.g.:
-     * 
-     * {
-     *     "c": "center-viewport",
-     *     "m": "toggle-mouse-coordinates",
-     *     etc..
-     *  }
      */
     onKeyPress: function (key) {
         // Get character pressed (letters, etc)
-        var character = String.fromCharCode(key);
+        var character, keyMapping, charMapping, doc = $(document);
 
         // Arrow keys
-        if (key === 37 || key === 38 || key === 39 || key === 40) {
-            //Right-arrow
-            if (key === 37) {
-                $(document).trigger('move-viewport', [-8, 0]);
-            }
-                
-            //Up-arrow
-            else if (key === 38) {
-                $(document).trigger('move-viewport', [0, -8]);
-            }
-                
-            //Left-arrow
-            else if (key === 39) {
-                $(document).trigger('move-viewport', [8, 0]);
-            }
-                
-            //Down-arrow
-            else if (key === 40) {
-                $(document).trigger('move-viewport', [0, 8]);
-            }
+        keyMapping = {
+            '37': [-8, 0], // Right-arrow
+            '38': [0, -8], // Up-arrow
+            '39': [8, 0],  // Left-arrow
+            '40': [0, 8]   // Down-arrow
+        };
+        
+        if (typeof(keyMapping[key]) !== "undefined") {
+            doc.trigger('move-viewport', keyMapping[key]);
             return false;
         }
-
-        else if (character === "c") {
-            $("#center-button").click();
+        
+        // All other keys
+        charMapping = {
+            'c': 'center-viewport',
+            'm': 'toggle-mouse-coords',
+            '-': 'zoom-out',
+            '_': 'zoom-out',
+            '=': 'zoom-in',
+            '+': 'zoom-in',
+            'f': 'toggle-fullscreen',
+            ',': 'timestep-backward',
+            '<': 'timestep-backward',
+            '.': 'timestep-forward',
+            '>': 'timestep-forward'
         }
-        else if (character === "m") {
-            $(document).trigger('toggle-mouse-coords');
-        }
-        else if (character === "-" || character === "_") {
-            $("#zoomControlZoomOut").click();
-        }
-        else if (character === "=" || character === "+") {
-            $("#zoomControlZoomIn").click();
-        }
-        else if (character === "d") {
-            $(document).trigger('toggle-eventLayer-labels');
-        }
-        else if (character === "f") {
-            $("#fullscreen-btn").click();
-        }
-        else if (character === "," || character === "<") {
-            $("#timeBackBtn").click();
-        }
-        else if (character === "." || character === ">") {
-            $("#timeForwardBtn").click();
+        
+        character = String.fromCharCode(key);
+        
+        if (typeof(charMapping[character]) !== "undefined") {
+            doc.trigger(charMapping[character]);
         }
     }
 });

@@ -4,7 +4,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global document, window, $, Class, helioviewer, addIconHoverEventListener*/
+/*global document, window, $, Class, helioviewer*/
 "use strict"; 
 var VisualGlossary = Class.extend(
     /** @lends VisualGlossary.prototype */
@@ -34,6 +34,16 @@ var VisualGlossary = Class.extend(
         // Glossary entries
         this.entries = $("#glossary-contents tr");
         
+        // Highlight both text and icons for text buttons
+        $("#glossary-menu .text-btn").hover(
+            function () {
+                $(this).find(".ui-icon").addClass("ui-icon-hover");
+            },
+            function () {
+                $(this).find(".ui-icon").removeClass("ui-icon-hover");
+            }
+        );
+        
         // On select
         this.btns.click(function (e) {
             self.btns.removeClass("selected");
@@ -43,12 +53,6 @@ var VisualGlossary = Class.extend(
             self._showCategory(this.id.split("-").pop());
         });
 
-        // Hover effect
-        this.btns.each(function () {
-            var btn = $(this);
-            addIconHoverEventListener(btn);
-        });
-        
         // Show basic entries
         this._showCategory("basic");
     },

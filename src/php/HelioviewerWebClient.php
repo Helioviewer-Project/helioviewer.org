@@ -37,6 +37,17 @@ class HelioviewerWebClient extends HelioviewerClient
     }
     
     /**
+     * Loads library CSS
+     */
+    protected function loadCSS()
+    {
+        parent::loadCSS();
+?>
+<link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
+<?php
+    }
+    
+    /**
      * Loads Helioviewer-specific CSS
      */
     protected function loadCustomCSS($signature)
@@ -46,7 +57,7 @@ class HelioviewerWebClient extends HelioviewerClient
     <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
     
     <!-- Helioviewer CSS -->
-<?php
+    <?php
         $css = array("helioviewer-base", "helioviewer-web", "layout", 
                      "accordions", "dialogs", "media-manager", "zoom-control",  
                      "timenav", "video-gallery", "youtube");
@@ -137,7 +148,7 @@ class HelioviewerWebClient extends HelioviewerClient
                         "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
                         "Media/MediaManagerUI.js", "Media/MediaManager.js", "Media/MovieManager.js", 
                         "Media/MovieManagerUI.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
-                        "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
+                        "Image/JP2Image.js", "UI/TileLayerAccordion.js", "UI/MessageConsole.js",
                         "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                         "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
@@ -652,48 +663,19 @@ class HelioviewerWebClient extends HelioviewerClient
         <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
     </div>
 </div>
+
 <?php
     }
+    
     /**
-     * Finishes HTML body element
+     * Prints the end of the script block
      */
-    protected function printBodyEnd()
-    {
+    protected function printScriptEnd() {
 ?>
-
-<!-- Launch Helioviewer -->
-<script type="text/javascript">
-    var serverSettings, settingsJSON, urlSettings, debug;
-
-    $(function () {
-        <?php
-            printf("settingsJSON = %s;\n", json_encode($this->config));
-            
-            // Compute acceptible zoom values
-            $zoomLevels = array();
-            
-            for($imageScale = $this->config["min_image_scale"]; $imageScale <= $this->config["max_image_scale"]; $imageScale = $imageScale * 2) {
-                $zoomLevels[] = round($imageScale, 8);
-            }
-            
-            printf("\tzoomLevels = %s;\n", json_encode($zoomLevels));
-
-            // Convert to JSON
-            printf("\turlSettings = %s;\n", json_encode($this->urlSettings));
-        ?>
-        serverSettings = new Config(settingsJSON).toArray();
-        
-        // Initialize Helioviewer.org
-        helioviewer = new HelioviewerWebClient("api/index.php", urlSettings, serverSettings, zoomLevels);
-        
-        // Play movie if id is specified
-        if (urlSettings.movieId) {
-            helioviewer.loadMovie(urlSettings.movieId);
-        }
+    // Initialize Helioviewer.org
+         helioviewer = new HelioviewerWebClient("api/index.php", urlSettings, serverSettings, zoomLevels);
     });
 </script>
-</body>
-</html>
 <?php
     }
 }
