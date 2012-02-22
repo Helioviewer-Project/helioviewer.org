@@ -627,7 +627,6 @@ class Module_WebClient implements Module
                     <li><a href="index.php#downloadScreenshot">Retrieving a Screenshot</a></li>
                 </ul>
             </li>
-            <!--<li><a href="index.php#takeScreenshot">Creating a Screenshot</a></li>-->
         <?php
     }
     
@@ -646,7 +645,8 @@ class Module_WebClient implements Module
             <p>By specifying URL parameters at the main Helioviewer.org page,
                it is possible to control what data is loaded into the page when
                the user follows a URL. This is useful for dynamically loading 
-               a specific view or observation into Helioviewer using a URL.</p>
+               a specific view or observation into Helioviewer using a URL.
+               Note that all parameters for URL generation are optional.</p>
         
             <div class="summary-box">
                 <span style="text-decoration: underline;">Usage:</span>
@@ -667,11 +667,6 @@ class Module_WebClient implements Module
                             <td width="55%">Date and time to display</td>
                         </tr>
                         <tr>
-                            <td><b>imageScale</b></td>
-                            <td><i>Float</i></td>
-                            <td>Image scale in arc-seconds/pixel</td>
-                        </tr>
-                        <tr>
                             <td><b>centerX</b></td>
                             <td><i>Float</i></td>
                             <td>Horizontal offset from the center of the Sun in arc-seconds.</td>
@@ -680,6 +675,11 @@ class Module_WebClient implements Module
                             <td><b>centerY</b></td>
                             <td><i>Float</i></td>
                             <td>Vertical offset from the center of the Sun in arc-seconds.</td>
+                        </tr>
+                        <tr>
+                            <td><b>imageScale</b></td>
+                            <td><i>Float</i></td>
+                            <td>Image scale in arc-seconds/pixel</td>
                         </tr>
                         <tr>
                             <td><b>imageLayers</b></td>
@@ -693,14 +693,25 @@ class Module_WebClient implements Module
                             <td><i>String</i></td>
                             <td>Identifier of Helioviewer.org movie to display when page is loaded.</td>
                         </tr>
+                        <tr>
+                            <td><b>output</b></td>
+                            <td><i>String</i></td>
+                            <td>Output format to use when displaying the page. Currently there are two
+                                accepted output formats: "web" and "embed". If no output method is
+                                specified the output will default to the standard web display.</td>
+                        </tr>
                     </tbody>
                 </table>
         
                 <br />
 
-                <span class="example-header">Example:</span> <span class="example-url">
+                <span class="example-header">Examples:</span> <span class="example-url">
                 <a href="<?php echo $rootURL;?>date=2011-06-01T00:00:00Z&amp;imageScale=4.8408818&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
                    <?php echo $rootURL;?>date=2011-06-01T00:00:00Z&imageScale=4.8408818&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+                </a><br /><br />
+                
+                <a href="<?php echo $rootURL;?>movieId=tk115">
+                   <?php echo $rootURL;?>movieId=tk115
                 </a>
                 </span>
             </div>
@@ -725,8 +736,9 @@ class Module_WebClient implements Module
             <div id="takeScreenshot">
                 <h1>Creating a Screenshot</h1>
                 <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
-                available image is returned.</p>
-        
+                available image is returned. The region to be included in the screenshot may be specified using either the top-left and bottom-right coordinates
+                in arc-seconds, or a center point in arc-seconds and a width and height in pixels. See the <a href="#Coordinates">Coordinates Appendix</a> for
+                more infomration about working with coordinates in Helioviewer.org.</p>        
                 <br />
         
                 <div class="summary-box"><span
@@ -763,27 +775,47 @@ class Module_WebClient implements Module
                         </tr>
                         <tr>
                             <td><b>y1</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
                         </tr>
                         <tr>
                             <td><b>x1</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                         </tr>
                         <tr>
                             <td><b>y2</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
                         </tr>
                         <tr>
                             <td><b>x2</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                        </tr>
+                        <tr>
+                            <td><b>x0</b></td>
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The horizontal offset from the center of the Sun.</td>
+                        </tr>
+                        <tr>
+                            <td><b>y0</b></td>
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The vertical offset from the center of the Sun.</td>
+                        </tr>
+                        <tr>
+                            <td><b>width</b></td>
+                            <td><i>Integer</i></td>
+                            <td><i>[Optional]</i> Width of the screenshot in pixels (Maximum: 1920).</td>
+                        </tr>
+                        <tr>
+                            <td><b>height</b></td>
+                            <td><i>Integer</i></td>
+                            <td><i>[Optional]</i> Height of the screenshot in pixels (Maximum: 1200).</td>
                         </tr>
                         <tr>
                             <td><b>display</b></td>
@@ -812,6 +844,12 @@ class Module_WebClient implements Module
                 <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2011-03-01T12:12:12Z&imageScale=10.52&layers=[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,1,100]&x1=-5000&y1=-5000&x2=5000&y2=5000
                 </a>
                 </span>
+                <br />
+                <span class="example-url">
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2011-06-07T09:00:00Z&imageScale=2.4204409&layers=[SDO,AIA,AIA,304,1,100]&x0=0&y0=0&width=1024&height=1024&display=true">
+                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&date=2011-06-07T09:00:00Z&imageScale=2.4204409&layers=[SDO,AIA,AIA,304,1,100]&x0=0&y0=0&width=1024&height=1024&display=true
+                </a>
+                </span>
                 </div>
                 <br />
             </div>
@@ -838,7 +876,7 @@ class Module_WebClient implements Module
                     <tbody valign="top">
                         <tr>
                             <td width="20%"><b>id</b></td>
-                            <td><i>int</i></td>
+                            <td><i>Integer</i></td>
                             <td>The screenshot id as returned from <a href='#takeScreenshot'>takeScreenshot</a>.</td>
                         </tr>
                     </tbody>
@@ -849,7 +887,7 @@ class Module_WebClient implements Module
                 <span class="example-header">Example:</span>
                 <span class="example-url">
                 <a href="<?php echo HV_API_ROOT_URL;?>?action=downloadScreenshot&id=181">
-                <?php echo HV_API_ROOT_URL;?>?action=takeScreenshot&id=181
+                <?php echo HV_API_ROOT_URL;?>?action=downloadScreenshot&id=181
                 </a>
                 </span><br />
 
