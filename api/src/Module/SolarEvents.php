@@ -66,11 +66,10 @@ class Module_SolarEvents implements Module
     public function  getEventFRMs()
     {
         include_once "src/Event/HEKAdapter.php";
-        
         $hek = new Event_HEKAdapter();
         
         header("Content-type: application/json");
-        echo $hek->getFRMs($this->_params['startDate'], $this->_params['endDate']);
+        echo $hek->getFRMs($this->_params['startTime'], $this->_params['endTime']);
     }
     
     /**
@@ -99,53 +98,11 @@ class Module_SolarEvents implements Module
         $hek = new Event_HEKAdapter();
 
         // Query the HEK
-        $events = $hek->getEvents($this->_params['startDate'], $this->_options);
-
-        //$result = $this->_addMediaToEventResponse(json_decode($jsonResult), $options['ipod']);
+        $events = $hek->getEvents($this->_params['startTime'], $this->_options);
         
         header('Content-Type: application/json');
         echo json_encode($events);
     }    
-    
-    /**
-     * Gets a collection of screenshots from the cache as specified by an event ID
-     *  
-     * See the API webpage for example usage.
-     *
-     * @return image
-     */
-    public function getScreenshotsForEvent()
-    {
-        include_once 'src/Event/SolarEvent.php';
-        
-        $event = new Event_SolarEvent($this->_params['eventId']);
-        
-        $response = $event->getScreenshots();        
-        
-        header('Content-Type: application/json');
-        echo json_encode($response);
-    }
-    
-    /**
-     * Gets a collection of movies from the cache as specified by an event ID
-     *  
-     * See the API webpage for example usage.
-     *
-     * @return image
-     */
-    public function getMoviesForEvent()
-    {
-        include_once 'src/Event/SolarEvent.php';
-        
-        $ipod = (isset($this->_options['ipod']) && $this->_options['ipod']);
-        
-        $event = new Event_SolarEvent($this->_params['eventId']);
-        
-        $response = $event->getMovies($ipod);        
-        
-        header('Content-Type: application/json');
-        echo json_encode($response);
-    }
     
     /**
      * Creates the directory structure that will be used to store screenshots
@@ -181,30 +138,18 @@ class Module_SolarEvents implements Module
         {
         case "getEvents":
             $expected = array(
-                "required" => array('startDate'),
-                "optional" => array('ipod', 'eventType', 'endDate'),
+                "required" => array('startTime', 'endTime'),
+                "optional" => array('ipod', 'eventType'),
                 "bools"    => array('ipod'),
-                "dates"    => array('startDate', 'endDate')
+                "dates"    => array('startTime', 'endTime')
             );
             break;
         case "getEventFRMs":
             $expected = array(
-               "required" => array('startDate', 'endDate'),
-               "dates"    => array('startDate', 'endDate')
+               "required" => array('startTime', 'endTime'),
+               "dates"    => array('startTime', 'endTime')
             );
             break;
-        case "getScreenshotsForEvent": 
-            $expected = array(
-                "required" => array('eventId')
-            );
-            break;
-        case "getMoviesForEvent": 
-            $expected = array(
-                "required" => array('eventId'),
-                "optional" => array('ipod'),
-                "bools"    => array('ipod')
-            );
-            break;  
         default:
             break;
         }
@@ -230,8 +175,6 @@ class Module_SolarEvents implements Module
             <ul>
                 <li><a href="index.php#getEventFRMs">Feature Recognition Methods (FRMs)</a></li>
                 <li><a href="index.php#getEvents">Finding Events</a></li>
-                <li><a href="index.php#getScreenshotsForEvent">Fetching or Creating Event Screenshots</a></li>
-                <li><a href="index.php#getMoviesForEvent">Fetching or Creating Event Movies</a></li>
             </ul>
         </li>
         <?php
@@ -261,7 +204,7 @@ class Module_SolarEvents implements Module
                 with the mechanism used to locate the event. This could be either an automated feature recognition method such
                 as <a href="http://sidc.oma.be/cactus/">Computer Aided CME Tracking (CACTus)</a>
                 or a simple user-submitted event. To query the list of available FRMs, simply call the "getEventFRMs" API method
-                and specify a startDate and endDate. This will return a list of the FRMs for which event data exists in 
+                and specify a startTime and endTime. This will return a list of the FRMs for which event data exists in 
                 the requested time range, as well as some meta-information describing each of the FRMs.</p>
         
                 <br />
@@ -271,7 +214,7 @@ class Module_SolarEvents implements Module
         
                 <br />
                 <br />
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEventCatalogs">
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEventFRMs">
                     <?php echo HV_API_ROOT_URL;?>?action=getEventFRMs
                 </a>
         
@@ -282,12 +225,12 @@ class Module_SolarEvents implements Module
                 <table class="param-list" cellspacing="10">
                     <tbody valign="top">
                         <tr>
-                            <td width="20%"><b>startDate</b></td>
+                            <td width="20%"><b>startTime</b></td>
                             <td width="25%"><i>ISO 8601 UTC Date</i></td>
                             <td width="55%">Beginning of query window.</td>
                         </tr>
                         <tr>
-                            <td><b>endDate</b></td>
+                            <td><b>endTime</b></td>
                             <td><i>ISO 8601 UTC Date</i></td>
                             <td>End of query window.</td>
                         </tr>
@@ -327,8 +270,8 @@ class Module_SolarEvents implements Module
                 <br />
                 
                 <span class="example-header">Example:</span> <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z">
-                   <?php echo HV_API_ROOT_URL;?>?action=getEventFRMs&startDate=2010-07-01T00:00:00.000Z&endDate=2010-07-02T00:00:00.000Z
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEventFRMs&startTime=2010-07-01T00:00:00.000Z&endTime=2010-07-02T00:00:00.000Z">
+                   <?php echo HV_API_ROOT_URL;?>?action=getEventFRMs&startTime=2010-07-01T00:00:00.000Z&endTime=2010-07-02T00:00:00.000Z
                 </a>
                 </span>
         
@@ -395,102 +338,146 @@ class Module_SolarEvents implements Module
             </div>
             </li>
             
-            <br />
-            
-            <!-- Fetching cached Event Screenshots  -->
+            <!-- Events API -->
             <li>
-            <div id="getScreenshotsForEvent">Fetching or Creating Event Screenshots
-                <p>Returns a collection of filepaths to screenshots of an event. If no screenshot files exist yet, it 
-                    will create one or more depending on parameters, or will return an empty array if <i>getOnly</i> 
-                    is set to true.</p>
+            <div id="getEvents">Events:
+                <p>To retrieve a list of events for a given time range, the getEvents API method may be used.
+                   Results may be limited to specific types/catalogs using information from a getEventFRMs query.</p>
         
                 <br />
         
-                <div class="summary-box"><span style="text-decoration: underline;">Usage:</span><br />
-                    <br />
-        
-                    <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent<br />
-                    <br />
-        
-                    Supported Parameters:<br />
-                    <br />
-            
-                    <table class="param-list" cellspacing="10">
-                        <tbody valign="top">
-                            <tr>
-                                <td width="20%"><b>eventId</b></td>
-                                <td width="20%"><i>String</i></td>
-                                <td>The unique ID of the event, as obtained from querying HEK. </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <br /><br />
-                    
-                    <span class="example-header">Examples:</span>
-                    <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
-                        <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
-                    </a>
-                    </span><br />
-                    <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443">
-                        <?php echo HV_API_ROOT_URL;?>?action=getScreenshotsForEvent&eventId=AR211_TomBerger_20100630_175443
-                    </a>
-                    </span>
-                </div>
-            </div>
-            </li>
-    
-            <br />
-                    
-            <!-- Fetching cached Event Movies -->
-            <li>
-            <div id="getMoviesForEvent">Fetching or Creating Event Movies
-                <p>Returns a collection of filepaths to movies of an event. If no movie files exist yet, it will create one or 
-                    more depending on parameters.</p>
+                <div class="summary-box">
+                <span style="text-decoration: underline;">Usage:</span>
         
                 <br />
-    
-                <div class="summary-box">            
-                    <span style="text-decoration: underline;">Usage:</span><br />
-                    <br />
-            
-                    <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent<br />
-                    <br />
-            
-                    Supported Parameters:<br />
-                    <br />
-            
-                    <table class="param-list" cellspacing="10">
-                        <tbody valign="top">
-                            <tr>
-                                <td width="20%"><b>eventId</b></td>
-                                <td width="20%"><i>String</i></td>
-                                <td>The unique ID of the event, as obtained from querying HEK. </td>
-                            </tr>
-                            <tr>
-                                <td><b>ipod</b></td>
-                                <td width="20%"><i>Boolean</i></td>
-                                <td><i>[Optional]</i> Whether or not you are looking for the iPod-compatible movie or the regular movie.
-                                    Defaults to false if not specified.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <br /><br />
-                    
-                    <span class="example-header">Examples:</span>
-                    <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR_SPoCA_20101007_085532_20100904T014848_1">
-                        <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR_SPoCA_20101007_085532_20100904T014848_1
-                    </a>
-                    </span><br />
-                    <span class="example-url">
-                    <a href="<?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&getOnly=true">
-                        <?php echo HV_API_ROOT_URL;?>?action=getMoviesForEvent&eventId=AR211_TomBerger_20100630_175443&ipod=true
-                    </a>
-                    </span>
+                <br />
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEvents">
+                    <?php echo HV_API_ROOT_URL;?>?action=getEvents
+                </a>
+                <br /><br />
+                Supported Parameters:
+                <br /><br />
+        
+                <table class="param-list" cellspacing="10">
+                    <tbody valign="top">
+                        <tr>
+                            <td width="20%"><b>startTime</b></td>
+                            <td width="25%"><i>ISO 8601 UTC Date</i></td>
+                            <td width="55%">Beginning of query window.</td>
+                        </tr>
+                        <tr>
+                            <td><b>endTime</b></td>
+                            <td><i>ISO 8601 UTC Date</i></td>
+                            <td>(Optional) End of query window.</td>
+                        </tr>
+                        <tr>
+                            <td width="20%"><b>eventType</b></td>
+                            <td width="25%"><i>string</i></td>
+                            <td width="55%">
+                                Event type to query for. The complete list of acceptible event acronyms is available at the 
+                                <a href="http://www.lmsal.com/helio-informatics/hpkb/VOEvent_Spec.html">HEK</a>.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <br /><br />
+                Result:
+                <br /><br />
+                (explain)
+                <br /><br />
+                
+                <table class="param-list" cellspacing="10">
+                    <tbody valign="top">
+                        <tr>
+                            <td width="20%"><b>count</b></td>
+                            <td width="25%"><i>Integer</i></td>
+                            <td width="55%">The number of events found for the associated FRM</td>
+                        </tr>
+                        <tr>
+                            <td><b>frm_contact</b></td>
+                            <td><i>String</i></td>
+                            <td><i>[Optional]</i>E-mail address or name associated with the FRM</td>
+                        </tr>
+                        <tr>
+                            <td><b>frm_url</b></td>
+                            <td><i>String</i></td>
+                            <td><i>[Optional]</i> The URL associated with the FRM</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <br />
+                
+                <span class="example-header">Example:</span> <span class="example-url">
+                <a href="<?php echo HV_API_ROOT_URL;?>?action=getEvents&startTime=2010-07-01T00:00:00.000Z&endTime=2010-07-02T00:00:00.000Z">
+                   <?php echo HV_API_ROOT_URL;?>?action=getEvents&startTime=2010-07-01T00:00:00.000Z&endTime=2010-07-02T00:00:00.000Z
+                </a>
+                </span>
+        
+        
                 </div>
+        
+                <br />
+            
+                <!-- FRM Example Result -->
+                <div class="summary-box" style="background-color: #E3EFFF;">
+                <span style="text-decoration: underline;">Example Result:</span>
+                <br />
+                <br />
+                <pre style="font-size:12px">
+        {
+        "AR": {
+            "NOAA SEC Observer": {
+                "frm_url": "N/A",
+                "frm_contact": "http://www.sec.noaa.gov/",
+                "frm_identifier": "NOAA SEC",
+                "count": 14
+            }
+        },
+        "SS": {
+            "EGSO_SFC": {
+                "frm_url": "n/a",
+                "frm_contact": "s.zharkov at sheffield dot ac dot uk",
+                "frm_identifier": "EGSO_SFC",
+                "count": 45
+            }
+        },
+        "FL": {
+            "SSW Latest Events": {
+                "frm_url": "http://sohowww.nascom.nasa.gov/solarsoft/packages/gevloc/idl/ssw_flare_locator.pro",
+                "frm_contact": "Samuel L. Freeland",
+                "frm_identifier": "SolarSoft",
+                "count": 13
+            },
+            "SEC standard": {
+                "frm_url": "http://www.sec.noaa.gov/",
+                "frm_contact": "SEC.Webmaster@noaa.gov",
+                "frm_identifier": "SEC",
+                "count": 13
+            },
+            "TRACE observer": {
+                "frm_url": "http://hea-www.harvard.edu/trace/flare_catalog/",
+                "frm_contact": "trace_planner at lmsal dot com",
+                "frm_identifier": "TRACE flare catalog",
+                "count": 1
+            }
+        },
+        "FA": {
+            "Karel Schrijver": {
+                "frm_url": "n/a",
+                "frm_contact": "Karel Schrijver",
+                "frm_identifier": "Karel Schrijver",
+                "count": 4
+            }
+        }
+        }
+                </pre>
+                </div>
+        
             </div>
+            
+            <br />
             </li>
             <br />
         </div>

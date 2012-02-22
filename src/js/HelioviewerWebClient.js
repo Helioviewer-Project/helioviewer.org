@@ -6,7 +6,7 @@
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder, 
   TooltipHelper, HelioviewerViewport, ScreenshotBuilder, ScreenshotHistory,
-  MovieHistory, addIconHoverEventListener, UserVideoGallery, MessageConsole,
+  MovieHistory, UserVideoGallery, MessageConsole,
   KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
   ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, VisualGlossary */
 "use strict";
@@ -72,6 +72,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         // Initialize AddThis
         addthis.init();
+        
+        // Play movie if id is specified
+        if (urlSettings.movieId) {
+            this.loadMovie(urlSettings.movieId);
+        }
     },
     
     /**
@@ -256,10 +261,17 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         // 12/08/2010: Disabling JHelioviewer JNLP launching until better support is added
         //$('#jhelioviewer-button').click($.proxy(this.launchJHelioviewer, this));
-        
-        $('#social-buttons .text-btn').each(function (i, item) {
-            addIconHoverEventListener($(this)); 
-        });
+
+        // Highlight both text and icons for text buttons
+        $("#social-buttons .text-btn, #movie-manager-container .text-btn, #image-area-select-buttons > .text-btn, " + 
+          "#screenshot-manager-container .text-btn").hover(
+            function () {
+                $(this).find(".ui-icon").addClass("ui-icon-hover");
+            },
+            function () {
+                $(this).find(".ui-icon").removeClass("ui-icon-hover");
+            }
+        );
         
         // Fix drag and drop for mobile browsers
         $("#helioviewer-viewport, .ui-slider-handle").each(function () {

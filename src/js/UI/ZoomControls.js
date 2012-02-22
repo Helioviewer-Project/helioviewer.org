@@ -120,7 +120,12 @@ var ZoomControls = Class.extend(
     _initEventHandlers: function () {
         this.zoomInBtn.click($.proxy(this._onZoomInBtnClick, this));
         this.zoomOutBtn.click($.proxy(this._onZoomOutBtnClick, this));
+        
         $("#helioviewer-viewport").mousewheel(
             $.proxy(this._onMouseWheelMove, this));
+            
+        $(document).bind("zoom-in",  $.proxy(this._onZoomInBtnClick, this))
+                   .bind("zoom-out", $.proxy(this._onZoomOutBtnClick, this));
+        
     }
 });

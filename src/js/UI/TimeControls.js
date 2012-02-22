@@ -175,6 +175,9 @@ var TimeControls = Class.extend(
         this._timeInput.bind('change', $.proxy(this._onTextFieldChange, this));
         this._dateInput.bind('change', $.proxy(this._onTextFieldChange, this));
         $("#timeNowBtn").click($.proxy(this.goToPresent, this));
+        
+        $(document).bind('timestep-backward', $.proxy(this.timePrevious, this))
+                   .bind('timestep-forward',  $.proxy(this.timeNext, this));
     },
     
     /**

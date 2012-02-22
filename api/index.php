@@ -71,11 +71,9 @@ function loadModule($params)
         "uploadMovieToYouTube" => "Movies",
         "checkYouTubeAuth"     => "Movies",
         "getYouTubeAuth"       => "Movies",
-        "getUserVideos"        => "Movies",
-        "getEventFRMs"           => "SolarEvents",
-        "getEvents"              => "SolarEvents",
-        "getScreenshotsForEvent" => "SolarEvents",
-        "getMoviesForEvent"      => "SolarEvents"
+        "getUserVideos"        => "Movies"
+        //"getEventFRMs"           => "SolarEvents",
+        //"getEvents"              => "SolarEvents"
     );
     
     include_once "src/Validation/InputValidator.php";
@@ -148,7 +146,7 @@ function loadModule($params)
  */
 function printAPIDocumentation()
 {
-    $modules = array("WebClient", "SolarEvents", "JHelioviewer", "Movies");
+    $modules = array("WebClient", "JHelioviewer", "Movies");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -215,10 +213,10 @@ function printAPIDocumentation()
         offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
         strings. The simplest APIs require only a single URI, and result in some resource being returned, e.g. a movie or
         <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading a particular "view"
-        into Helioviewer. Some API methods are more complex and involve two steps. For example, in order to get a
+        into Helioviewer. Some API methods are more complex and involve two steps. <!--For example, in order to get a
         list of solar events for a certain period of time, first a query is usually made to see which Feature Recognition
         Methods (or FRMs) include events for that time period. A second query then returns a list of features/events are 
-        fetched using a second query.
+        fetched using a second query.-->
         
         <br />
         <br />

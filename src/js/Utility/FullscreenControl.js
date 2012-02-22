@@ -11,7 +11,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window, addIconHoverEventListener */
+/*global Class, $, window */
 "use strict";
 var FullscreenControl = Class.extend(
     /** @lends FullscreenControl.prototype */
@@ -229,23 +229,16 @@ var FullscreenControl = Class.extend(
      * Sets up event handlers related to fullscreen control
      */
     _setupEventHandlers: function (btnId) {
-        var btn = $(btnId).click($.proxy(this._onClick, this)),
+        var btn = $(btnId).click($.proxy(this._toggle, this)),
             icon = btn.find(".ui-icon");
-
-        addIconHoverEventListener(btn);
+        
+        $(document).bind('toggle-fullscreen', $.proxy(this._toggle, this));
     },
     
     /**
-     * Fullscreen button click handler
+     * Toggles fullscreen mode on or off
      */
-    _onClick: function () {
-        this.toggle();
-    },
-    
-    /**
-     * Handles clicks to fullscreen control
-     */
-    toggle: function (animated) {
+    _toggle: function (animated) {
         if (typeof(animated) == "undefined") {
             animated = true;
         }

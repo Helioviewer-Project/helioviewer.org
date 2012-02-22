@@ -213,32 +213,6 @@ Math.lg = function (x) {
     return (Math.log(x) / Math.log(2));
 };
 
-/**
- * @description Log to jGrowl if Firebug console is not available
- */
-//if (typeof(console) === "undefined") {
-//    //console = new Object();
-//    console = {};
-//    
-//    // console.log
-//    console.log = function (msg) {
-//        $("#message-console").jGrowl(msg, { header: '[DEBUG] ' });
-//    };
-//    
-//    // console.dir
-//    console.dir = function (obj) {
-//        var i, str = "";
-//        
-//        for (i in obj) {
-//            // appease JSLint
-//            if (true) {
-//                str += "<b>" + typeof(i) + "</b>( " + i.toString() + ") " + i + "<br>";
-//            }
-//        }
-//            
-//        $("#message-console").jGrowl(str, { header: '[DEBUG] ' });
-//    };
-//}
 if (typeof(console) === "undefined") {
     window.console = {};
 
@@ -318,33 +292,6 @@ var pixelsToArcseconds = function (coordinates, scale) {
 };
 
 /**
- * Takes in a container and adds an event listener so that when the
- * container is hovered over, its icon will highlight too, and when 
- * done hovering, the icon goes back to normal. Necessary for some of
- * the movie/screenshot dialog box icons, which do not seem to highlight
- * correctly otherwise.
- * 
- * @input {Object} container -- jQuery-selected html element that contains 
- *                              the icon.
- *                              
- * @return void
- */
-var addIconHoverEventListener = function (container) {
-    if (container) {
-        container.hover(
-            function () {
-                var icon = container.find(".ui-icon");
-                icon.addClass("ui-icon-hover");
-            },
-            function () {
-                var icon = container.find(".ui-icon");
-                icon.removeClass("ui-icon-hover");
-            }
-        );
-    }
-};
-
-/**
  * Takes in a string of layers and formats it into an array, removing square
  * brackets
  */
@@ -386,26 +333,6 @@ var parseLayerString = function (str) {
     };
 };
 
-/**
- * RFC 4122, section 4.4 UUID Generation
- * @see http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
- * 
- * @return A unique identifier
- */
-function createUUID() {
-    // http://www.ietf.org/rfc/rfc4122.txt
-    var uuid, i, s = [],
-        hexDigits = "0123456789ABCDEF";
-    
-    for (i = 0; i < 32; i += 1) {
-        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-    }
-    s[12] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
-    s[16] = hexDigits.substr((s[16] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
-
-    uuid = s.join("");
-    return uuid;
-}
 
 /**
  * Maps iPhone/Android touch events to normal mouse events so that dragging, etc can be done.

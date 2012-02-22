@@ -58,9 +58,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
         }
 ?>
 
-    <!-- Theme Modifications -->
-    <link rel="stylesheet" href="resources/css/dot-luv.css">
-
 <?php
     }
     
@@ -77,7 +74,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
-<script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 <script src="lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
     <?php
@@ -89,7 +85,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
-<script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 <script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
 <?php
@@ -126,7 +121,7 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
                         "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
                         "Tiling/Layer/HelioviewerTileLayer.js", "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", 
                         "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
-                        "Image/JP2Image.js", "UI/MessageConsole.js", "Viewport/Helper/MouseCoordinates.js", 
+                        "Image/JP2Image.js", "Viewport/Helper/MouseCoordinates.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
                         "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
                         "HelioviewerClient.js", "HelioviewerEmbeddedClient.js",  "UI/ZoomControls.js", "Utility/InputValidator.js",
@@ -181,44 +176,18 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <!-- Watermark -->
 <a href="<?php echo $link;?>"><div id='watermark'></div></a>
 
-<!-- end Body -->
 <?php
     }
+    
     /**
-     * Finishes HTML body element
+     * Prints the end of the script block
      */
-    protected function printBodyEnd()
-    {
+    protected function printScriptEnd() {
 ?>
-
-<!-- Launch Helioviewer -->
-<script type="text/javascript">
-    var serverSettings, settingsJSON, urlSettings, debug;
-
-    $(function () {
-        <?php
-            printf("settingsJSON = %s;\n", json_encode($this->config));
-            
-            // Compute acceptible zoom values
-            $zoomLevels = array();
-            
-            for($imageScale = $this->config["min_image_scale"]; $imageScale <= $this->config["max_image_scale"]; $imageScale = $imageScale * 2) {
-                $zoomLevels[] = round($imageScale, 8);
-            }
-            
-            printf("\tzoomLevels = %s;\n", json_encode($zoomLevels));
-
-            // Convert to JSON
-            printf("\turlSettings = %s;\n", json_encode($this->urlSettings));
-        ?>
-        serverSettings = new Config(settingsJSON).toArray();
-        
-        // Initialize Helioviewer.org
+    // Initialize Helioviewer.org
         helioviewer = new HelioviewerEmbeddedClient("api/index.php", urlSettings, serverSettings, zoomLevels);
     });
 </script>
-</body>
-</html>
 <?php
     }
 }
