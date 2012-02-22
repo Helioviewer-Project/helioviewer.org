@@ -61,5 +61,35 @@ class InputValidator_BadInputTest extends PHPUnit_Framework_TestCase
             )
         );
     }
+    /**
+     * @test
+     * @covers Validation_InputValidator::checkDates
+     * @dataProvider checkDatesProvider
+     * @expectedException InvalidArgumentException
+     */
+    public function checkDates($dates, $params)
+    {
+        Validation_InputValidator::checkDates($dates, $params);
+    }
+
+    /**
+     * Data provider for checkDates
+     * 
+     * Since any failure will trigger exception, invalid dates much be checked
+     * individually to ensure expected failure.
+     */
+    public function checkDatesProvider()
+    {
+        return array(
+            array(
+                array("date"),
+                array("date" => "2011-02-21T19:08:00.")
+            ),
+            array(
+                array("date"),
+                array("date" => "2011-02-21 19:08:00.000Z")
+            )
+        );
+    }
 }
 ?>

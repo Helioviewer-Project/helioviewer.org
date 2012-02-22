@@ -228,7 +228,7 @@ function printAPIDocumentation()
         <p>The base URL is the same for each of the API methods (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
         The "action" parameter is required for all requests and specifies the specific functionality to access. In addition, other parameters
         may also be required depending on the specific API being accessed. The one exception to this rule is for
-        <a href="index.php#CustomView">launching Helioviewer.org</a> with custom settings which is accessed from
+        <a href="index.php#CustomURLs">launching Helioviewer.org</a> with custom settings which is accessed from
         <a href="http://www.helioviewer.org/index.php"> http://www.helioviewer.org/index.php</a> and does not require an
         "action" to be specified. Finally, the queries may be sent using either a GET or POST request. In both cases the
         result is a <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr> object
@@ -497,7 +497,7 @@ function printDocumentationAppendices()
                 <tr>
                     <td>List</td>
                     <td>A comma-separated list of some other type, usually strings or integers</td>
-                    <td>VSOService::noaa, GOESXRayService::GOESXRay</td>
+                    <td>item1, item2</td>
                 </tr>
                 <tr>
                     <td>2d List</td>
@@ -506,17 +506,10 @@ function printDocumentationAppendices()
                     <td>[SOHO,EIT,EIT,171,1,100],[SOHO,LASCO,C2,white-light,0,100],[SOHO,MDI,MDI,continuum,1,50]</td>
                 </tr>
                 <tr>
-                    <td>Unix Timestamp</td>
-                    <td>The number of seconds since January 1, 1970, midnight UTC.
-                    (see <a href="#variable-type-resources">[1]</a>)</td>
-                    <td>1065512000 <span style="color: grey">// October 7th 2003, 7:33:20 UTC</span></td>
-                </tr>
-                <tr>
                     <td>ISO 8601 UTC Date</td>
                     <td>ISO 8601 is a widely supported standarized date format.
-                    (See <a href="#variable-type-resources">[2]</a>, <a href="#variable-type-resources">[3]</a>)</td>
-                    <td>2003-10-05T00:00:00Z <span style="color: grey">// Note the "Z" at the end. This specifies that
-                    this is a UTC datetime</span></td>
+                    (See <a href="#variable-type-resources">[1]</a>, <a href="#variable-type-resources">[2]</a>)</td>
+                    <td>2003-10-05T00:00:00.000Z <span style="color: grey">// Milliseconds are optional but trailing "Z" should always included.</span></td>
                 </tr>
             </tbody>
         </table>
@@ -525,9 +518,8 @@ function printDocumentationAppendices()
         <br />
         <div id="variable-type-resources"><strong>References:</strong><br />
         <br />
-        [1] <a href="http://www.epochconverter.com/">Epoch Converter - Unix Timestamp Converter</a><br />
-        [2] <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 - Wikipedia</a><br />
-        [3] <a href="http://www.w3.org/TR/NOTE-datetime">Date and Time Formats - W3.org</a><br />
+        [1] <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 - Wikipedia</a><br />
+        [2] <a href="http://www.w3.org/TR/NOTE-datetime">Date and Time Formats - W3.org</a><br />
         <br />
         </div>
         </div>
