@@ -7,7 +7,7 @@
  */
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
-/*global Class, $, window, helioviewer, addIconHoverEventListener */
+/*global Class, $, window, helioviewer */
 "use strict";
 var ImageSelectTool = Class.extend(
     /** @lends ImageSelectTool.prototype */
@@ -125,8 +125,6 @@ var ImageSelectTool = Class.extend(
         this.cancelButton.click(function () {
             self.cleanup();
         });
-        
-        this._setupEventListeners();
     },
     
     /**
@@ -155,15 +153,7 @@ var ImageSelectTool = Class.extend(
             callback(roi);
         }
     },
-    
-    /**
-     * Adds hover event listeners for the icons next to the text in the dialog.
-     */
-    _setupEventListeners: function () {
-        addIconHoverEventListener(this.doneButton);
-        addIconHoverEventListener(this.cancelButton);
-        addIconHoverEventListener(this.helpButton);
-    },
+
     
     /**
      * Sets up a help tooltip that pops up when the help button is moused over
