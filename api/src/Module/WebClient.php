@@ -619,7 +619,7 @@ class Module_WebClient implements Module
     public static function printDocHeader()
     {
         ?>
-            <li><a href="index.php#CustomView">Loading Custom Settings</a></li>
+            <li><a href="index.php#CustomURLs">Helioviewer.org URLs</a></li>
             <li>
                 <a href="index.php#ScreenshotAPI">Screenshots</a>
                 <ul>
@@ -640,12 +640,13 @@ class Module_WebClient implements Module
     {
         $rootURL = substr(HV_API_ROOT_URL, 0, -13) . "index.php?";
         ?>
-        <!-- Custom View API-->
-        <div id="CustomView">
-            <h1>Custom View API:</h1>
-            <p>The custom view API enables the user to load a specific set of parameters into Helioviewer.org: "view," here, simply
-            means a given set of observation parameters. This is useful for dynamically loading a specific view or observation
-            into Helioviewer using a URL.</p>
+        <!-- Helioviewer.org URLs-->
+        <div id="CustomURLs">
+            <h1>Helioviewer.org URLs</h1>
+            <p>By specifying URL parameters at the main Helioviewer.org page,
+               it is possible to control what data is loaded into the page when
+               the user follows a URL. This is useful for dynamically loading 
+               a specific view or observation into Helioviewer using a URL.</p>
         
             <div class="summary-box">
                 <span style="text-decoration: underline;">Usage:</span>
