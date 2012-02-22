@@ -71,11 +71,9 @@ function loadModule($params)
         "uploadMovieToYouTube" => "Movies",
         "checkYouTubeAuth"     => "Movies",
         "getYouTubeAuth"       => "Movies",
-        "getUserVideos"        => "Movies",
-        "getEventFRMs"           => "SolarEvents",
-        "getEvents"              => "SolarEvents",
-        "getScreenshotsForEvent" => "SolarEvents",
-        "getMoviesForEvent"      => "SolarEvents"
+        "getUserVideos"        => "Movies"
+        //"getEventFRMs"           => "SolarEvents",
+        //"getEvents"              => "SolarEvents"
     );
     
     $helioqueuer_tasks = array ("queueMovie");
@@ -184,7 +182,7 @@ function loadModule($params)
  */
 function printAPIDocumentation()
 {
-    $modules = array("WebClient", "SolarEvents", "JHelioviewer", "Movies");
+    $modules = array("WebClient", "JHelioviewer", "Movies");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -251,10 +249,10 @@ function printAPIDocumentation()
         offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
         strings. The simplest APIs require only a single URI, and result in some resource being returned, e.g. a movie or
         <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading a particular "view"
-        into Helioviewer. Some API methods are more complex and involve two steps. For example, in order to get a
+        into Helioviewer. Some API methods are more complex and involve two steps. <!--For example, in order to get a
         list of solar events for a certain period of time, first a query is usually made to see which Feature Recognition
         Methods (or FRMs) include events for that time period. A second query then returns a list of features/events are 
-        fetched using a second query.
+        fetched using a second query.-->
         
         <br />
         <br />
@@ -283,7 +281,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2011-07-06 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
+    Last Updated: 2012-02-16 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
 </div>
 
 </body>
