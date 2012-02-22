@@ -717,9 +717,12 @@ class Module_Movies implements Module
     {
         ?>
             <li>
-                <a href="index.php#MovieAPI">Movie API</a>
+                <a href="index.php#MovieAPI">Movies</a>
                 <ul>
                     <li><a href="index.php#queueMovie">Creating a Movie</a></li>
+                </ul>
+                <ul>
+                    <li><a href="index.php#queueMovie">Retrieving a Movie</a></li>
                 </ul>
             </li>
         <?php
@@ -735,7 +738,7 @@ class Module_Movies implements Module
         ?>
         <!-- Movie API -->
         <div id="MovieAPI">
-            <h1>Movie API:</h1>
+            <h1>Movies:</h1>
             <p>The movie API allows users to create time-lapse videos of what they are viewing on the website. </p>
             <ol style="list-style-type: upper-latin;">
                 <!-- Movie -->
