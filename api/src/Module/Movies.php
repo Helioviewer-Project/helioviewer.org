@@ -517,7 +517,9 @@ class Module_Movies implements Module
                 <li>
                 <div id="queueMovie">Movie API
                 <p>Returns filepaths to a flash video and a high quality video consisting of 10-100 movie frames. The movie frames are chosen by matching the closest image
-                available at each step within the specified range of dates, and are automatically generated using the Screenshot API calls.</p>
+                available at each step within the specified range of dates, and are automatically generated using the Screenshot API calls. The region to be included in 
+                the movie may be specified using either the top-left and bottom-right coordinates in arc-seconds, or a center point in arc-seconds and a width and height 
+                in pixels. See the <a href="#Coordinates">Coordinates Appendix</a> for more infomration about working with coordinates in Helioviewer.org.</p>
         
                 <br />
         
@@ -562,27 +564,47 @@ class Module_Movies implements Module
                         </tr>
                         <tr>
                             <td><b>y1</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
                         </tr>
                         <tr>
                             <td><b>x1</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
                         </tr>
                         <tr>
                             <td><b>y2</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
                         </tr>
                         <tr>
                             <td><b>x2</b></td>
-                            <td><i>Integer</i></td>
-                            <td>The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
                                 if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                        </tr>
+                        <tr>
+                            <td><b>x0</b></td>
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The horizontal offset from the center of the Sun.</td>
+                        </tr>
+                        <tr>
+                            <td><b>y0</b></td>
+                            <td><i>Float</i></td>
+                            <td><i>[Optional]</i> The vertical offset from the center of the Sun.</td>
+                        </tr>
+                        <tr>
+                            <td><b>width</b></td>
+                            <td><i>Integer</i></td>
+                            <td><i>[Optional]</i> Width of the movie in pixels (Maximum: 1920).</td>
+                        </tr>
+                        <tr>
+                            <td><b>height</b></td>
+                            <td><i>Integer</i></td>
+                            <td><i>[Optional]</i> Height of the movie in pixels (Maximum: 1200).</td>
                         </tr>
                         <tr>
                             <td><b>numFrames</b></td>

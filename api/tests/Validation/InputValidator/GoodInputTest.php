@@ -11,7 +11,6 @@
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-require_once 'PHPUnit/Framework.php';
 require_once 'src/Validation/InputValidator.php';
 /**
  * Helioviewer InputValidator Tests
@@ -122,6 +121,32 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
             array(
                 array("not_specified"),
                 array()
+            )
+        );
+    }
+    
+    /**
+     * checkDates
+     *
+     * @test
+     * @covers Validation_InputValidator::checkDates
+     * @dataProvider checkDatesProvider
+     */
+    public function checkDates($dates, $params)
+    {
+        Validation_InputValidator::checkDates($dates, $params);
+    }
+
+    /**
+     * Data provider for checkDates
+     */
+    public function checkDatesProvider()
+    {
+        return array(
+            array(array(), array()),
+            array(
+                array("date1", "date2", "date3", "date4"),
+                array("date1" => "2011-02-21T19:08:00Z", "date2" => "2011-02-21T19:08:00.000Z")
             )
         );
     }

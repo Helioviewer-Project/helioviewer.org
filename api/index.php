@@ -264,7 +264,7 @@ function printAPIDocumentation()
         <p>The base URL is the same for each of the API methods (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
         The "action" parameter is required for all requests and specifies the specific functionality to access. In addition, other parameters
         may also be required depending on the specific API being accessed. The one exception to this rule is for
-        <a href="index.php#CustomView">launching Helioviewer.org</a> with custom settings which is accessed from
+        <a href="index.php#CustomURLs">launching Helioviewer.org</a> with custom settings which is accessed from
         <a href="http://www.helioviewer.org/index.php"> http://www.helioviewer.org/index.php</a> and does not require an
         "action" to be specified. Finally, the queries may be sent using either a GET or POST request. In both cases the
         result is a <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr> object
