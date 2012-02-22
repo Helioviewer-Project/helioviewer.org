@@ -43,8 +43,8 @@ var EventManager = LayerManager.extend({
     _queryEventFRMs: function () {
         var params = {
             "action"     : "getEventFRMs",
-            "startDate"  : new Date(this._date.getTime()).addSeconds(-this._windowSize / 2).toISOString(),
-            "endDate"    : new Date(this._date.getTime()).addSeconds(this._windowSize / 2).toISOString()
+            "startTime"  : new Date(this._date.getTime()).addSeconds(-this._windowSize / 2).toISOString(),
+            "endTime"    : new Date(this._date.getTime()).addSeconds(this._windowSize / 2).toISOString()
         };
         
         $.get("api/index.php", params, $.proxy(this._parseEventFRMs, this), "json");
