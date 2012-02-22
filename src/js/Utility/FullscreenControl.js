@@ -177,7 +177,7 @@ var FullscreenControl = Class.extend(
      * Sets up event handlers related to fullscreen control
      */
     _setupEventHandlers: function (btnId) {
-        var btn = $(btnId).click($.proxy(this._onClick, this)),
+        var btn = $(btnId).click($.proxy(this._toggle, this)),
             icon = btn.find(".ui-icon");
 
         addIconHoverEventListener(btn);

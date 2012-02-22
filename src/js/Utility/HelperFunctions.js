@@ -386,26 +386,6 @@ var parseLayerString = function (str) {
     };
 };
 
-/**
- * RFC 4122, section 4.4 UUID Generation
- * @see http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
- * 
- * @return A unique identifier
- */
-function createUUID() {
-    // http://www.ietf.org/rfc/rfc4122.txt
-    var uuid, i, s = [],
-        hexDigits = "0123456789ABCDEF";
-    
-    for (i = 0; i < 32; i += 1) {
-        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-    }
-    s[12] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
-    s[16] = hexDigits.substr((s[16] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
-
-    uuid = s.join("");
-    return uuid;
-}
 
 /**
  * Maps iPhone/Android touch events to normal mouse events so that dragging, etc can be done.

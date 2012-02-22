@@ -148,7 +148,7 @@ class HelioviewerWebClient extends HelioviewerClient
                         "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
                         "Media/MediaManagerUI.js", "Media/MediaManager.js", "Media/MovieManager.js", 
                         "Media/MovieManagerUI.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
-                        "Image/JP2Image.js", "Tiling/Manager/TileLayerAccordion.js", "UI/MessageConsole.js",
+                        "Image/JP2Image.js", "UI/TileLayerAccordion.js", "UI/MessageConsole.js",
                         "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
                         "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", 
                         "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
