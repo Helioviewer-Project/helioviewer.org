@@ -737,7 +737,7 @@ class Module_WebClient implements Module
                 <h1>Creating a Screenshot</h1>
                 <p>Returns a single image containing all layers/image types requested. If an image is not available for the date requested the closest
                 available image is returned. The region to be included in the screenshot may be specified using either the top-left and bottom-right coordinates
-                in arc-seconds, or a center point in arc-seconds and a width and height in pixels. See the <a href="#Coordinates">Coordinates Appendix</a> for
+                in arc-seconds, or a center point in arc-seconds and a width and height in pixels. See the <a style="color:#3366FF" href="#Coordinates">Coordinates Appendix</a> for
                 more infomration about working with coordinates in Helioviewer.org.</p>        
                 <br />
         
@@ -776,26 +776,22 @@ class Module_WebClient implements Module
                         <tr>
                             <td><b>y1</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's top boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>x1</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's left boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>y2</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's bottom boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>x2</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's right boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>x0</b></td>

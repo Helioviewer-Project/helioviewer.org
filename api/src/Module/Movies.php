@@ -494,6 +494,9 @@ class Module_Movies implements Module
                     <li><a href="index.php#queueMovie">Creating a Movie</a></li>
                 </ul>
                 <ul>
+                    <li><a href="index.php#queueMovie">Check a Movie's Status</a></li>
+                </ul>
+                <ul>
                     <li><a href="index.php#queueMovie">Retrieving a Movie</a></li>
                 </ul>
             </li>
@@ -511,15 +514,23 @@ class Module_Movies implements Module
         <!-- Movie API -->
         <div id="MovieAPI">
             <h1>Movies:</h1>
-            <p>The movie API allows users to create time-lapse videos of what they are viewing on the website. </p>
+            <p>The movie API allows users to create time-lapse videos of what they are viewing on the website. There are two steps involved in Helioviewer.org movie requests: 
+               1) queueing the movie, and 2) retrieving the movie once it has been processed.</p>
             <ol style="list-style-type: upper-latin;">
                 <!-- Movie -->
                 <li>
-                <div id="queueMovie">Movie API
-                <p>Returns filepaths to a flash video and a high quality video consisting of 10-100 movie frames. The movie frames are chosen by matching the closest image
-                available at each step within the specified range of dates, and are automatically generated using the Screenshot API calls. The region to be included in 
-                the movie may be specified using either the top-left and bottom-right coordinates in arc-seconds, or a center point in arc-seconds and a width and height 
-                in pixels. See the <a href="#Coordinates">Coordinates Appendix</a> for more infomration about working with coordinates in Helioviewer.org.</p>
+                <div id="queueMovie">Queueing a Movie 
+                <p>Because of the high-demands of creating movies on the fly, requests for movies from Helioviewer.org must be added to a queue before being processed. Only when
+                    all of the movies ahead of the requested one have been processed will the request be handled and the movie generated.</p>
+                    
+                <p>Upon queueing a movie, some basic information about the movie request will be returned including an identifier to reference that movie in the future and an estimated
+                    time until the movie has been processsed. This information can be used to check on the movie status using the getMovieStatus API call, and then eventually to either
+                    download or play the movie once it is ready.</p>
+                    
+                <p>Movies may contain between 10 and 300 frames. The movie frames are chosen by matching the closest image available at each step within the specified range 
+                   of dates, and are automatically generated using the Screenshot API calls. The region to be included in the movie may be specified using either the top-left 
+                   and bottom-right coordinates in arc-seconds, or a center point in arc-seconds and a width and height in pixels. See the 
+                   <a style="color:#3366FF" href="#Coordinates">Coordinates Appendix</a> for more infomration about working with coordinates in Helioviewer.org.</p>
         
                 <br />
         
@@ -565,26 +576,22 @@ class Module_Movies implements Module
                         <tr>
                             <td><b>y1</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's top boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's top boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>x1</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's left boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's left boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>y2</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's bottom boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversion</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's bottom boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>x2</b></td>
                             <td><i>Float</i></td>
-                            <td><i>[Optional]</i> The offset of the image's right boundary from the center of the sun, in arcseconds. This can be calculated, 
-                                if necessary, with <a href="index.php#ArcsecondConversions" style="color:#3366FF">pixel-to-arcsecond conversions</a>.</td>
+                            <td><i>[Optional]</i> The offset of the image's right boundary from the center of the sun, in arcseconds.</td>
                         </tr>
                         <tr>
                             <td><b>x0</b></td>
@@ -633,7 +640,28 @@ class Module_Movies implements Module
                         </tr>
                     </tbody>
                 </table>
-        
+                
+                <br />
+                Result:
+                <br /><br />
+                The result includes an identifier for the movie request and an estimated time before the movie is ready to be downloaded.
+                <br /><br />
+                
+                <table class="param-list" cellspacing="10">
+                    <tbody valign="top">
+                        <tr>
+                            <td width="20%"><b>id</b></td>
+                            <td width="25%"><i>String</i></td>
+                            <td width="55%">Movie identifier</td>
+                        </tr>
+                        <tr>
+                            <td><b>eta</b></td>
+                            <td><i>Integer</i></td>
+                            <td>The estimated time in seconds until the movie has been processed.</td>
+                        </tr>
+
+                    </tbody>
+                </table>
                 <br />
                 
                 <span class="example-header">Examples:</span>
