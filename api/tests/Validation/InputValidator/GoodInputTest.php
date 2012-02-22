@@ -100,5 +100,31 @@ class InputValidator_GoodInputTest extends PHPUnit_Framework_TestCase
             )
         );
     }
+    
+    /**
+     * checkDates
+     *
+     * @test
+     * @covers Validation_InputValidator::checkDates
+     * @dataProvider checkDatesProvider
+     */
+    public function checkDates($dates, $params)
+    {
+        Validation_InputValidator::checkDates($dates, $params);
+    }
+
+    /**
+     * Data provider for checkDates
+     */
+    public function checkDatesProvider()
+    {
+        return array(
+            array(array(), array()),
+            array(
+                array("date1", "date2", "date3", "date4"),
+                array("date1" => "2011-02-21T19:08:00Z", "date2" => "2011-02-21T19:08:00.000Z")
+            )
+        );
+    }
 }
 ?>
