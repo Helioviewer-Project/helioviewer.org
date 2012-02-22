@@ -24,12 +24,7 @@
     background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 
-span.removeBtn:hover, 
-span#timeBackBtn:hover,
-span#timeForwardBtn:hover,
-#full-screen-btn > div:hover,
-
-.accordion-arrow:hover {
+.ui-icon:hover {
     background-image: url(../../lib/jquery.ui-1.8/css/dot-luv-modified/images/ui-icons_d18f61_256x240.png) !important;
 }
 

@@ -213,32 +213,6 @@ Math.lg = function (x) {
     return (Math.log(x) / Math.log(2));
 };
 
-/**
- * @description Log to jGrowl if Firebug console is not available
- */
-//if (typeof(console) === "undefined") {
-//    //console = new Object();
-//    console = {};
-//    
-//    // console.log
-//    console.log = function (msg) {
-//        $("#message-console").jGrowl(msg, { header: '[DEBUG] ' });
-//    };
-//    
-//    // console.dir
-//    console.dir = function (obj) {
-//        var i, str = "";
-//        
-//        for (i in obj) {
-//            // appease JSLint
-//            if (true) {
-//                str += "<b>" + typeof(i) + "</b>( " + i.toString() + ") " + i + "<br>";
-//            }
-//        }
-//            
-//        $("#message-console").jGrowl(str, { header: '[DEBUG] ' });
-//    };
-//}
 if (typeof(console) === "undefined") {
     window.console = {};
 
@@ -315,33 +289,6 @@ var pixelsToArcseconds = function (coordinates, scale) {
         y1 : coordinates.y1 * scale,
         y2 : coordinates.y2 * scale
     };
-};
-
-/**
- * Takes in a container and adds an event listener so that when the
- * container is hovered over, its icon will highlight too, and when 
- * done hovering, the icon goes back to normal. Necessary for some of
- * the movie/screenshot dialog box icons, which do not seem to highlight
- * correctly otherwise.
- * 
- * @input {Object} container -- jQuery-selected html element that contains 
- *                              the icon.
- *                              
- * @return void
- */
-var addIconHoverEventListener = function (container) {
-    if (container) {
-        container.hover(
-            function () {
-                var icon = container.find(".ui-icon");
-                icon.addClass("ui-icon-hover");
-            },
-            function () {
-                var icon = container.find(".ui-icon");
-                icon.removeClass("ui-icon-hover");
-            }
-        );
-    }
 };
 
 /**

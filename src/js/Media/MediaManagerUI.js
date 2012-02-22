@@ -5,7 +5,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
-/*global Class, $, pixelsToArcseconds, addIconHoverEventListener */
+/*global Class, $, pixelsToArcseconds */
 "use strict";
 var MediaManagerUI = Class.extend(
     /** @lends MediaManagerUI */
@@ -215,11 +215,6 @@ var MediaManagerUI = Class.extend(
      */
     _initEvents: function () {
         var self = this;
-
-        // Add icon hover effects
-        addIconHoverEventListener(this._fullViewportBtn);
-        addIconHoverEventListener(this._selectAreaBtn);
-        addIconHoverEventListener(this._clearBtn);
 
         this._btn.click(function () {
             if (!self.working) {

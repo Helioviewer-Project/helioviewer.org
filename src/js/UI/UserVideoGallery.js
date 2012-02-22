@@ -6,7 +6,7 @@
 /*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
-/*global $, window, Class, addIconHoverEventListener */
+/*global $, window, Class */
 "use strict";
 var UserVideoGallery = Class.extend(
     /** @lends UserVideoGallery.prototype */
@@ -254,10 +254,6 @@ var UserVideoGallery = Class.extend(
      * Setup event handlers
      */
     _setupEventHandlers: function () {
-        // TODO 2011/01/10 Apply hover listen at .ui-icon level?
-        addIconHoverEventListener(this._nextPageBtn);
-        addIconHoverEventListener(this._prevPageBtn);
-        
         this._nextPageBtn.click($.proxy(this._nextPage, this));
         this._prevPageBtn.click($.proxy(this._prevPage, this));
         
