@@ -246,14 +246,12 @@ function printAPIDocumentation()
         <h1>Overview</h1>
         <p>In order to facilitate third-party application developers who wish to use content from and interact with
         Helioviewer.org, a number of <abbr title="Application Programming Interface">APIs</abbr> have been developed,
-        offering  access to a variety of components used by Helioviewer. All of the interfaces are accessed using HTML query
-        strings. The simplest APIs require only a single URI, and result in some resource being returned, e.g. a movie or
-        <abbr title="JPEG 2000">JP2</abbr> image series, or some action being performed, e.g. loading a particular "view"
-        into Helioviewer. Some API methods are more complex and involve two steps. <!--For example, in order to get a
-        list of solar events for a certain period of time, first a query is usually made to see which Feature Recognition
-        Methods (or FRMs) include events for that time period. A second query then returns a list of features/events are 
-        fetched using a second query.-->
-        
+        offering  access to a variety of components used by Helioviewer. The simplest API actions require only a 
+        single request and result in some resource being returned, e.g. a movie or <abbr title="JPEG 2000">JP2</abbr> 
+        image series, or some action being performed, e.g. loading a particular image into Helioviewer.org. Some 
+        API methods are more complex and involve multiple steps. For example, when creating a movie, the request is 
+        first queued using one request. Subsequent requests are then used to determine when the movie has been built, 
+        and then finally to download or play the movie.
         <br />
         <br />
     
@@ -265,8 +263,8 @@ function printAPIDocumentation()
     
         <p>The base URL is the same for each of the API methods (<a href="<?php echo HV_API_ROOT_URL;?>;"><?php echo HV_API_ROOT_URL;?></a>).
         The "action" parameter is required for all requests and specifies the specific functionality to access. In addition, other parameters
-        may also be required depending on the specific API being accessed. The one exception to this rule is the
-        <a href="index.php#CustomView">Custom View API</a> which is accessed from
+        may also be required depending on the specific API being accessed. The one exception to this rule is for
+        <a href="index.php#CustomView">launching Helioviewer.org</a> with custom settings which is accessed from
         <a href="http://www.helioviewer.org/index.php"> http://www.helioviewer.org/index.php</a> and does not require an
         "action" to be specified. Finally, the queries may be sent using either a GET or POST request. In both cases the
         result is a <abbr name="JSON" title="JavaScript Object Notation">JSON</abbr> object
@@ -281,7 +279,7 @@ function printAPIDocumentation()
 </div>
 
 <div style="font-size: 0.85em; text-align: center; margin-top: 20px;">
-    Last Updated: 2012-02-16 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
+    Last Updated: 2012-02-22 | <a href="mailto:<?php echo HV_CONTACT_EMAIL; ?>">Questions?</a>
 </div>
 
 </body>
@@ -332,16 +330,12 @@ function printDocumentationAppendices()
                 <td>STEREO_B</td>
                 <td>STEREO_B (Solar Terrestrial Relations Observatory Behind)</td>
             </tr>
-            <!--
-            <tr>
-                <td>TRACE</td>
-                <td>TRACE (Transition Region and Coronal Explorer)</td>
-            </tr>-->
         </table>
 
         <br />
 
-        <!-- Instruments --> <i>Instruments:</i><br />
+        <!-- Instruments -->
+        <i>Instruments:</i><br />
         <br />
         <table class="param-list" cellspacing="10">
             <tr>
@@ -372,17 +366,12 @@ function printDocumentationAppendices()
                 <td>SECCHI</td>
                 <td>SECCHI (Sun Earth Connection Coronal and Heliospheric Investigation)</td>
             </tr>
-            <!--
-            <tr>
-                <td>TRACE</td>
-                <td>TRACE (Transition Region and Coronal Explorer)</td>
-            </tr>
-             -->
         </table>
 
         <br />
 
-        <!-- Detectors --> <i>Detectors:</i><br />
+        <!-- Detectors -->
+        <i>Detectors:</i><br />
         <br />
         <table class="param-list" cellspacing="10">
             <tr>
@@ -501,33 +490,6 @@ function printDocumentationAppendices()
 
         <br />
 
-        <!-- Event Types --> <i>Event Types:</i><br />
-        <br />
-        <table class="param-list cellspacing="10"">
-            <tr>
-                <td width="160px"><strong>Identifier:</strong></td>
-                <td><strong>Description:</strong></td>
-            </tr>
-            <td>CME</td>
-            <td>Coronal Mass Ejection</td>
-            <tr></tr>
-            <tr>
-                <td>Solar Flare</td>
-                <td>Solar Flare</td>
-            </tr>
-            <tr>
-                <td>Type II Radio Burst</td>
-                <td>Type II Radio Burst</td>
-            </tr>
-            <tr>
-                <td>Active Region</td>
-                <td>Active Region</td>
-            </tr>
-            <tr>
-                <td>GeneralActivityReport</td>
-                <td>SOHO General Activity Report</td>
-            </tr>
-        </table>
         </div>
         </div>
         </li>
@@ -539,7 +501,7 @@ function printDocumentationAppendices()
         <div id="VariableTypes">Variable Types
         <p>This appendice contains a list of some of the variable types
         used by the Helioviewer API's.</p>
-        <div class="summary-box" style="background-color: #E3EFFF;"><!-- Observatories -->
+        <div class="summary-box" style="background-color: #E3EFFF;">
         <br />
         <table class="param-list" cellspacing="10">
             <tbody valign="top">

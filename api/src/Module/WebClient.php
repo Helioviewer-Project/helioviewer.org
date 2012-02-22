@@ -619,7 +619,7 @@ class Module_WebClient implements Module
     public static function printDocHeader()
     {
         ?>
-            <li><a href="index.php#CustomView">Loading Custom Settings</a></li>
+            <li><a href="index.php#CustomURLs">Helioviewer.org URLs</a></li>
             <li>
                 <a href="index.php#ScreenshotAPI">Screenshots</a>
                 <ul>
@@ -640,12 +640,13 @@ class Module_WebClient implements Module
     {
         $rootURL = substr(HV_API_ROOT_URL, 0, -13) . "index.php?";
         ?>
-        <!-- Custom View API-->
-        <div id="CustomView">
-            <h1>Custom View API:</h1>
-            <p>The custom view API enables the user to load a specific set of parameters into Helioviewer.org: "view," here, simply
-            means a given set of observation parameters. This is useful for dynamically loading a specific view or observation
-            into Helioviewer using a URL.</p>
+        <!-- Helioviewer.org URLs-->
+        <div id="CustomURLs">
+            <h1>Helioviewer.org URLs</h1>
+            <p>By specifying URL parameters at the main Helioviewer.org page,
+               it is possible to control what data is loaded into the page when
+               the user follows a URL. This is useful for dynamically loading 
+               a specific view or observation into Helioviewer using a URL.</p>
         
             <div class="summary-box">
                 <span style="text-decoration: underline;">Usage:</span>
@@ -671,20 +672,35 @@ class Module_WebClient implements Module
                             <td>Image scale in arc-seconds/pixel</td>
                         </tr>
                         <tr>
+                            <td><b>centerX</b></td>
+                            <td><i>Float</i></td>
+                            <td>Horizontal offset from the center of the Sun in arc-seconds.</td>
+                        </tr>
+                        <tr>
+                            <td><b>centerY</b></td>
+                            <td><i>Float</i></td>
+                            <td>Vertical offset from the center of the Sun in arc-seconds.</td>
+                        </tr>
+                        <tr>
                             <td><b>imageLayers</b></td>
                             <td><i>2d List</i></td>
                             <td>A comma-separated list of the image layers to be
                             displayed. Each image layer should be of the form:
                             [OBSERVATORY, INSTRUMENT, DETECTOR, MEASUREMENT, VISIBLE, OPACITY].</td>
                         </tr>
+                        <tr>
+                            <td><b>movieId</b></td>
+                            <td><i>String</i></td>
+                            <td>Identifier of Helioviewer.org movie to display when page is loaded.</td>
+                        </tr>
                     </tbody>
                 </table>
         
                 <br />
-        
+
                 <span class="example-header">Example:</span> <span class="example-url">
-                <a href="<?php echo $rootURL;?>date=2011-06-01T00:00:00Z&amp;imageScale=2.4204409&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
-                   <?php echo $rootURL;?>date=2011-06-01T00:00:00Z&imageScale=2.4204409&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
+                <a href="<?php echo $rootURL;?>date=2011-06-01T00:00:00Z&amp;imageScale=4.8408818&amp;imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]">
+                   <?php echo $rootURL;?>date=2011-06-01T00:00:00Z&imageScale=4.8408818&imageLayers=[SDO,AIA,AIA,171,1,100],[SOHO,LASCO,C2,white-light,1,100]
                 </a>
                 </span>
             </div>
