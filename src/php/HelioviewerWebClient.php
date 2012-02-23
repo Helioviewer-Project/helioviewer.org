@@ -181,10 +181,9 @@ class HelioviewerWebClient extends HelioviewerClient
     /**
      * Prints beginning of HTML body section
      */
-    protected function printBodyStart()
+    protected function printBody($signature)
     {
 ?>
-<body>
 
 <!-- Header -->
 <div id="header"></div>
@@ -539,17 +538,18 @@ class HelioviewerWebClient extends HelioviewerClient
     </div>
 </div>
 <?php
+    parent::printBody($signature);
     }
     
     /**
      * Prints the end of the script block
      */
-    protected function printScriptEnd() {
+    protected function printScript() {
+        parent::printScript();
 ?>
     // Initialize Helioviewer.org
          helioviewer = new HelioviewerWebClient("api/index.php", urlSettings, serverSettings, zoomLevels);
     });
-</script>
 <?php
     }
 }
