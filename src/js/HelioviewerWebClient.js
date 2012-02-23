@@ -21,10 +21,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (api, urlSettings, serverSettings, zoomLevels) {
+    init: function (urlSettings, serverSettings, zoomLevels) {
         var urlDate, imageScale, paddingHeight;
         
-        this._super(api, urlSettings, serverSettings, zoomLevels);
+        this._super(urlSettings, serverSettings, zoomLevels);
 
         // Debugging helpers
         if (urlSettings.debug) {
@@ -435,7 +435,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             "imageScale": this.viewport.getImageScaleInKilometersPerPixel(),
             "layers"    : this.viewport.serialize()
         };
-        window.open(this.api + "?" + $.param(params), "_blank");
+        window.open(Helioviewer.api + "?" + $.param(params), "_blank");
     },
 
     /**
@@ -519,7 +519,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         $.ajax({
             async: false,
-            url: this.api,
+            url: Helioviewer.api,
             dataType: 'json',
             data: {
                 "action": "shortenURL",

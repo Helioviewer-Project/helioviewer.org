@@ -111,7 +111,7 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
         parent::printScript();
 ?>
     // Initialize Helioviewer.org
-        helioviewer = new HelioviewerEmbeddedClient("api/index.php", urlSettings, serverSettings, zoomLevels);
+        helioviewer = new HelioviewerEmbeddedClient(urlSettings, serverSettings, zoomLevels);
     });
 <?php
     }

@@ -28,7 +28,7 @@ var TileLayer = Layer.extend(
      * @constructs
      * @description Creates a new TileLayer
      */
-    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, api, name, visible, 
+    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, 
             opacity, server) {
         $.extend(this, this.defaultOptions);
         this._super();
