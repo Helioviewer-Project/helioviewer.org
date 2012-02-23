@@ -29,6 +29,8 @@ abstract class HelioviewerClient
 {
     protected $config;
     protected $urlSettings;
+    protected $compressedJSFile;
+    protected $compressedCSSFile;
     
     /**
      * Initializes an instance of a Helioviewer client
@@ -95,6 +97,7 @@ abstract class HelioviewerClient
     
     <link rel="shortcut icon" href="favicon.ico" />
     
+    <!--OpenGraph Metadata-->
     <meta property="og:title" content="Helioviewer.org" />
 <?        
     }
@@ -184,23 +187,91 @@ abstract class HelioviewerClient
     <!-- Library CSS -->
     <link rel="stylesheet" href="lib/yui-2.8.2r1/reset-fonts.css" />
     <link rel="stylesheet" href="lib/jquery.ui-1.8/css/dot-luv-modified/jquery-ui-1.8.12.custom.css" />  
-    <?php
+<?php
     }
     
     /**
      * Loads Helioviewer-specific CSS files
      */
-    protected function loadCustomCSS($signature) { /**empty*/ }
+    protected function loadCustomCSS($signature, $includes=array()) {
+?>
+    <!-- Helioviewer CSS -->
+    <?php
+        $css = array_merge(array("helioviewer-base", "zoom-control"), $includes);
+        
+        // CSS
+        if ($this->config["compress_css"]) {
+            echo "<link rel=\"stylesheet\" href=\"build/css/{$this->compressedCSSFile}?$signature\" />\n    ";
+        }
+        else {
+            foreach($css as $file)
+                printf("<link rel=\"stylesheet\" href=\"resources/css/%s.css?$signature\" />\n    ", $file);
+        }
+    }
     
     /**
      * Loads JavaScript includes
      */
-    protected function loadJS() { /**empty*/ }
+    protected function loadJS() {
+    if ($this->config["compress_js"]) {
+    ?>
+<!-- Library JavaScript -->
+<script src="http://code.jquery.com/jquery-1.7.0.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
+<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
+<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
+<script src="lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
+<?php
+        } else {
+?>    
+<!-- Library JavaScript -->
+<script src="http://code.jquery.com/jquery-1.7.0.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
+<script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
+<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
+<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
+<script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
+<?php
+}
+?>
+<script src="lib/jquery.json-2.2/jquery.json-2.2.min.js" type="text/javascript" ></script>
+<script src="lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
+<script src="lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
+<?php
+    }
     
     /**
      * Loads Helioviewer-specific JS files
      */
-    protected function loadCustomJS($signature) { /**empty*/ }
+    protected function loadCustomJS($signature, $includes=array()) {
+        echo "\n<!-- Helioviewer JavaScript -->\n";
+        if ($this->config["compress_js"]) {
+            if (!file_exists("build/" . $this->compressedJSFile)) {
+               $error = "<div style='position: absolute; width: 100%; text-align: center; top: 40%; font-size: 14px;'>
+                         <img src='resources/images/logos/about.png' alt='helioviewer logo'></img><br>
+                         <b>Configuration:</b> Unable to find compressed JavaScript files.
+                         If you haven't already, use Apache Ant with the included build.xml file to generate 
+                         compressed files.</div></body></html>";
+               die($error);
+            }
+        
+            echo "<script src=\"build/{$this->compressedJSFile}?$signature\" type=\"text/javascript\"></script>\n\t";
+        }
+        else {
+            $js = array("Utility/Config.js", "Utility/HelperFunctions.js", 
+                        "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
+                        "Tiling/Layer/HelioviewerTileLayer.js", "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", 
+                        "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
+                        "Image/JP2Image.js", "Viewport/Helper/MouseCoordinates.js", 
+                        "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
+                        "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
+                        "HelioviewerClient.js", "UI/ZoomControls.js", "Utility/InputValidator.js",
+                        "Utility/SettingsLoader.js", "Utility/UserSettings.js");
+            foreach(array_merge($js, $includes) as $file)
+                printf("<script src=\"src/js/%s?$signature\" type=\"text/javascript\"></script>\n", $file);
+        }
+    }
     
     /**
      * Loads Google Analytics
@@ -231,6 +302,7 @@ abstract class HelioviewerClient
     protected function loadAddThis()
     {
 ?>
+
     <!-- AddThis -->
     <script type="text/javascript">
         var addthis_config = {
