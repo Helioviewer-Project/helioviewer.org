@@ -76,7 +76,7 @@ class Module_WebClient implements Module
         
         $layers = new Helper_HelioviewerLayers($info['dataSourceString']);
         
-        $dir =  sprintf("%s/screenshots/%s/%s/", 
+        $dir = sprintf("%s/screenshots/%s/%s/", 
            HV_CACHE_DIR,
            str_replace("-", "/", substr($info['timestamp'], 0, 10)),
            $this->_params['id']   
@@ -102,20 +102,8 @@ class Module_WebClient implements Module
         header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
         header("Content-Transfer-Encoding: binary");
         header("Content-Length: " . filesize($filepath));
-
-        // Mime type
-//        $parts = explode(".", $filename);
-//        $extension = end($parts);
-//        
-//        if (in_array($extension, array("jp2", "jpx"))) {
-//            $mimetype = "image/$extension";
-//        } else if (in_array($extension, array("ogg", "ogv", "webm"))) {
-//            $mimetype = "video/$extension";
-//        } else {        
-//            $fileinfo = new finfo(FILEINFO_MIME);
-//            $mimetype = $fileinfo->file($filepath);
-//        }
         header("Content-type: image/png");
+        
         echo file_get_contents($filepath);
     }
 
@@ -154,8 +142,8 @@ class Module_WebClient implements Module
             "date" => $image['date']
         ), $xmlBox);
         
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        // Print result
+        $this->_printJSON(json_encode($response));
     }
 
     /**
@@ -171,9 +159,9 @@ class Module_WebClient implements Module
 
         $imgIndex    = new Database_ImgIndex();
         $dataSources = $imgIndex->getDataSources($verbose);
-
-        header('Content-type: application/json;charset=UTF-8');
-        print json_encode($dataSources);
+        
+        // Print result
+        $this->_printJSON(json_encode($dataSources), true);
     }
 
     /**
@@ -300,23 +288,6 @@ class Module_WebClient implements Module
         // Regon of interest
         return new Helper_RegionOfInterest($left, $top, $right, $bottom, $scale);
     }
-
-// var tileCoordinatesToArcseconds = function (x, y, scale, jp2Scale, tileSize, offsetX, offsetY) {
-    // var relativeTileSize, top, left, bottom, right;
-    // relativeTileSize = tileSize * scale / jp2Scale;
-// 
-    // top  = y * relativeTileSize - offsetY;
-    // left = x * relativeTileSize - offsetX;
-    // bottom = top  + relativeTileSize;
-    // right  = left + relativeTileSize;
-// 
-    // return {
-        // y1 : top  * jp2Scale,
-        // x1 : left * jp2Scale,
-        // y2 : bottom * jp2Scale,
-        // x2 : right  * jp2Scale
-    // };
-// };
     
     /**
      * Builds a filename for a cached tile or image based on boundaries and scale
@@ -337,25 +308,6 @@ class Module_WebClient implements Module
             "%s%s/%s_%s_x%d_y%d.jpg",
             $baseDirectory, $directory, $baseFilename, $scale, $x, $y
         );
-    }
-
-    /**
-     * sendEmail
-     * TODO: CAPTCHA, Server-side security
-     *
-     * @return void
-     */
-    public function sendEmail()
-    {
-        // The message
-        //$message = "Line 1\nLine 2\nLine 3";
-
-        // In case any of our lines are larger than 70 characters, we should
-        // use wordwrap()
-        //$message = wordwrap($message, 70);
-
-        // Send
-        //mail('test@mail.com', 'My Subject', $message);
     }
 
     /**
@@ -411,8 +363,7 @@ class Module_WebClient implements Module
             $screenshot->display();
         } else {
             // Print JSON
-            header('Content-Type: application/json');
-            echo json_encode(array("id" => $screenshot->id));            
+            $this->_printJSON(json_encode(array("id" => $screenshot->id)));
         }
     }
     
@@ -448,23 +399,23 @@ class Module_WebClient implements Module
     
     /**
      * Uses bit.ly to generate a shortened URL
+     * 
+     * TODO 2012/02/23: Switch to using bit.ly JSONP API directly.
      */
     public function shortenURL()
     {
         include_once 'src/Net/Proxy.php';
         $proxy = new Net_Proxy("http://api.bitly.com/v3/shorten?");
         
-        //$longURL = HV_WEB_ROOT_URL . "/?" . urldecode($this->_params['queryString']);
-        $longURL = "http://www.helioviewer.org" . "/?" . urldecode($this->_params['queryString']);
-        
+        $longURL = HV_WEB_ROOT_URL . "/?" . urldecode($this->_params['queryString']);
+
         $params = array(
             "longUrl" => $longURL,
             "login"   => HV_BITLY_USER,
             "apiKey"  => HV_BITLY_API_KEY
         );
         
-        header('Content-Type: application/json');
-        echo $proxy->query($params);
+        $this->_printJSON($proxy->query($params));
     }
     
     /**
@@ -494,7 +445,7 @@ class Module_WebClient implements Module
         $statistics = new Database_Statistics();
 
         header('Content-Type: application/json');
-        print $statistics->getUsageStatistics($this->_options['resolution']);
+        $this->_printJSON($statistics->getUsageStatistics($this->_options['resolution']));
     }
     
     /**
@@ -517,6 +468,31 @@ class Module_WebClient implements Module
             mkdir($cacheDir, 0777, true);
         }
     }
+    
+    /**
+     * Helper function to output result as either JSON or JSONP
+     * 
+     * @param string JSON object string
+     * 
+     * @return void
+     */
+    private function _printJSON($json, $utf=false)
+    {
+        // Wrap JSONP requests with callback
+        if(isset($this->_params['callback'])) {
+            $json = sprintf("%s(%s)", $this->_params['callback'], $json);
+        }
+        
+        // Set Content-type HTTP header
+        if ($utf) {
+            header('Content-type: application/json;charset=UTF-8');
+        } else {
+            header('Content-Type: application/json');            
+        }
+        
+        // Print result
+        echo $json;
+    }
 
     /**
      * Handles input validation
@@ -537,7 +513,9 @@ class Module_WebClient implements Module
 
         case "getClosestImage":
             $expected = array(
-               "dates" => array('date')
+               "dates" => array('date'),
+               "optional" => array('callback'),
+               "alphanum" => array('callback')
             );
 
             if (isset($this->_params["sourceId"])) {
@@ -557,8 +535,9 @@ class Module_WebClient implements Module
 
         case "getDataSources":
             $expected = array(
-               "optional" => array('verbose'),
-               "bools"    => array('verbose')
+               "optional" => array('verbose', 'callback'),
+               "bools"    => array('verbose'),
+               "alphanum" => array('callback')
             );
             break;
 
@@ -580,24 +559,25 @@ class Module_WebClient implements Module
             break;
         case "getUsageStatistics":
             $expected = array(
-                "optional" => array("resolution"),
-                "alphanum" => array("resolution")
+                "optional" => array("resolution", "callback"),
+                "alphanum" => array("resolution", "callback")
             );
             break;
         case "shortenURL":
             $expected = array(
-                "required" => array("queryString"),
-                "encoded"  => array("queryString")
+                "required" => array("queryString", "callback"),
+                "encoded"  => array("queryString", "callback")
             );
             break;
         case "takeScreenshot":
             $expected = array(
                 "required" => array('date', 'imageScale', 'layers'),
-                "optional" => array('display', 'watermark', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0', 'width', 'height'),
+                "optional" => array('display', 'watermark', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0', 'width', 'height', 'callback'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0'),
                 "ints"     => array('width', 'height'),
                 "dates"	   => array('date'),
-                "bools"    => array('display', 'watermark')
+                "bools"    => array('display', 'watermark'),
+                "alphanum" => array('callback')
             );
             break;
         default:
