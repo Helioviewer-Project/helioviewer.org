@@ -19,11 +19,10 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
+    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
                     savedLayers, urlLayers) {
         this._super();
 
-        this.api           = api;
         this.dataSources   = dataSources;
         this.tileSize      = tileSize;
         this.viewportScale = viewportScale;
@@ -135,7 +134,7 @@ var TileLayerManager = LayerManager.extend(
 
         $.each(layers, function (index, params) {
             layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, params.nickname, params.visible, 
+                                  self.tileVisibilityRange, params.nickname, params.visible, 
                                   params.opacity, params.server, true);
 
             self.addLayer(layer);

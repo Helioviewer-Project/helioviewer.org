@@ -13,7 +13,7 @@ var JP2Image = Class.extend(
     /**
      * @constructs
      */
-    init: function (observatory, instrument, detector, measurement, sourceId, date, server, api, onChange) {
+    init: function (observatory, instrument, detector, measurement, sourceId, date, server, onChange) {
         this.observatory = observatory;
         this.instrument  = instrument;
         this.detector    = detector;
@@ -21,7 +21,6 @@ var JP2Image = Class.extend(
         this.sourceId    = sourceId;
         this.requestDate = date;
         this.server      = server;
-        this.api         = api;
         this._onChange   = onChange;
         
         this._requestImage();
@@ -31,18 +30,14 @@ var JP2Image = Class.extend(
      * Loads the closest image in time to that requested
      */
     _requestImage: function () {
-        var params = {
+        var params, dataType;
+        
+        params = {
             action:   'getClosestImage',
             sourceId: this.sourceId,
             date:     this.requestDate.toISOString()
         };
-        
-        // Only specify a server if the request should be forwarded
-        if (this.server > 0) {
-            params.server = this.server;
-        }
-
-        $.get(this.api, params, $.proxy(this._onImageLoad, this), "json");
+        $.get(Helioviewer.api, params, $.proxy(this._onImageLoad, this), Helioviewer.dataType);
     },
     
     /**

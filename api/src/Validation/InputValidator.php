@@ -115,9 +115,9 @@ class Validation_InputValidator
     {
         foreach ($strings as $str) {
             if (isset($params[$str])) {
-                if (!preg_match('/^[a-zA-Z0-9]*$/', $params[$str])) {
+                if (!preg_match('/^[a-zA-Z0-9_]*$/', $params[$str])) {
                     throw new InvalidArgumentException(
-                        "Invalid value for $str. Valid strings must consist of only letters and numbers."
+                        "Invalid value for $str. Valid strings must consist of only letters, numbers, and underscores."
                     );
                 }
             }

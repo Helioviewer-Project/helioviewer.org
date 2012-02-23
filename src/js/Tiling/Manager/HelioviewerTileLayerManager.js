@@ -19,9 +19,9 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
+    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
                     startingLayers, urlLayers) {
-        this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
+        this._super(observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
 		            startingLayers, urlLayers);
 
         // The order in which new layers are added
@@ -55,7 +55,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, params, opacity, queue, ds, server, baseURL, 
+        var currentLayers, next, params, opacity, queue, ds, server, 
             queueChoiceIsValid = false, i = 0, defaultLayer = "SDO,AIA,AIA,171";
 
         // If new layer exceeds the maximum number of layers allowed,
@@ -106,8 +106,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             }
             i += 1;
         }
-        
-        baseURL = this.api;
 
         ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
@@ -117,7 +115,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Add the layer
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
-                          this.tileVisibilityRange, this.api, baseURL, params.observatory, 
+                          this.tileVisibilityRange, params.observatory, 
                           params.instrument, params.detector, params.measurement, params.sourceId, params.nickname, 
                           params.visible, opacity, params.layeringOrder, server)
         );
@@ -135,7 +133,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             $.extend(params, basicParams);
 
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, self.api, 
+                                  self.tileVisibilityRange, 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
                                   params.sourceId, params.nickname, params.visible, params.opacity,
                                   params.layeringOrder, params.server);

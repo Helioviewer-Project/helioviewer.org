@@ -19,10 +19,10 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (api, urlSettings, serverSettings, zoomLevels) {
+    init: function (urlSettings, serverSettings, zoomLevels) {
         var date, imageScale;
         
-        this._super(api, urlSettings, serverSettings, zoomLevels);
+        this._super(urlSettings, serverSettings, zoomLevels);
         
         // Display watermark button
         this._showWatermark();
