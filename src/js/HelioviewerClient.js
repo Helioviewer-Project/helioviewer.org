@@ -81,7 +81,6 @@ var HelioviewerClient = Class.extend(
             api            : this.api,
             container      : container,
             requestDate    : date,
-            servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
             maxImageScale  : this.serverSettings.maxImageScale,

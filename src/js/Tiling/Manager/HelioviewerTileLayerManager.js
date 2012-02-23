@@ -20,9 +20,9 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Creates a new TileLayerManager instance
      */
     init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    servers, startingLayers, urlLayers) {
+                    startingLayers, urlLayers) {
         this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-		            servers, startingLayers, urlLayers);
+		            startingLayers, urlLayers);
 
         // The order in which new layers are added
         this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light", 
@@ -95,9 +95,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         } else {
             queue = this._queue.slice(); // make a copy
         }
-        
-        // Select tiling server
-        server = this._selectTilingServer();
 
         // Pull off the next layer on the queue
         while (!queueChoiceIsValid) {
@@ -110,7 +107,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             i += 1;
         }
         
-        baseURL = this.servers[server] || "api/index.php";
+        baseURL = this.api;
 
         ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
@@ -131,16 +128,14 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        var layer, basicParams, baseURL, self = this;
+        var layer, basicParams, self = this;
 
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
-            
-            baseURL = self.servers[params.server] || "api/index.php";
 
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, baseURL, 
+                                  self.tileVisibilityRange, self.api, self.api, 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
                                   params.sourceId, params.nickname, params.visible, params.opacity,
                                   params.layeringOrder, params.server);
@@ -161,14 +156,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             $(document).trigger("load-saved-roi-position");
         }
     },
-    
-    /**
-     * Selects a server to handle all tiling and image requests for a given layer
-     */
-    _selectTilingServer: function () {
-        return Math.floor(Math.random() * (this.servers.length));
-    },
-    
+
     /**
      * Updates the data source for a tile layer after the user changes one
      * of its properties (e.g. observatory or instrument)

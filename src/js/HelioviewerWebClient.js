@@ -483,15 +483,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
     
     /**
-     * Returns an array of the Helioviewer servers that should be used for requests
-     * 
-     * @return {Array} Helioviewer servers to use
-     */
-    getServers: function () {
-        return this.serverSettings.servers;
-    },
-    
-    /**
      * Returns the top-left and bottom-right coordinates for the viewport region of interest
      * 
      * @return {Object} Current ROI 

@@ -172,12 +172,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             date          : helioviewer.getDate().toISOString(),
             display       : false
         }, this._toArcsecCoords(roi, imageScale));
-        
-        // Choose server to send request to
-        server = Math.floor(Math.random() * (helioviewer.getServers().length));
-        if (server > 0) {
-            params.server = server;
-        }
 
         // AJAX Responder
         $.getJSON("api/index.php", params, function (response) {

@@ -88,28 +88,8 @@ function loadModule($params)
                 "API Documentation</a> for a list of valid actions."
             );
         } else {
-            // Remote requests
-            if (isset($params['s'])) {
-                // Forward request if neccessary
-                // TODO 08/11/2010: Create separate method or extend Net_Proxy
-                if (HV_DISTRIBUTED_MODE_ENABLED) {
-                    $url = constant("HV_SERVER_" . $params['s']) . "?";
-                    
-                    unset ($params['s']);
-                    foreach ($params as $key=>$value) {
-                        $url .= "$key=$value&";
-                    }
-                    $url = trim($url, "&");
-                    
-                    // TODO 08/11/2010: Use Net_Proxy instead
-                    echo file_get_contents($url);
-                } else {
-                    $err = "Distributed mode is disabled for this server.";
-                    throw new Exception($err);
-                }
-                
             // Forward Helioqueuer tasks 
-            } else if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
+            if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
                 $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
                 unset ($params['action']);
                                 
