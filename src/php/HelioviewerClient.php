@@ -49,13 +49,49 @@ abstract class HelioviewerClient
         if ($this->urlSettings['debug']) {
             $this->config['compress_js'] = $this->config['compress_css'] = false;
         }
-        
-        // Begin HTML header and print OpenGraph metatags
-        $this->printHeaderStart();
-        $this->addOpenGraphTags();
-        
+
+        // Print HTML
+        $this->printHTML();
+    }
+    
+    /**
+     * Prints Helioviewer HTML
+     */
+    protected function printHTML()
+    {
         // Version string
-        $signature = "rev=" + $this->config['disable_cache'] ? time() : $this->config['build_num']; 
+        $signature = "rev=" + $this->config['disable_cache'] ? time() : $this->config['build_num'];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<?php $this->printHead($signature); ?>
+</head>
+<body>
+<?php $this->printBody($signature); ?>
+</body>
+</html>
+<?php
+    }
+    
+    /**
+     * Prints the HTML head section
+     */
+    protected function printHead($signature) {
+?>
+    <?php printf("<!-- Helioviewer.org 2.2.2 (rev. %s), %s -->\n", $this->config["build_num"], $this->config["last_update"]);?>
+    <title>Helioviewer.org - Solar and heliospheric image visualization tool</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
+    <meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
+    <?php if ($this->config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />";?>
+    
+    <link rel="shortcut icon" href="favicon.ico" />
+    
+    <!--OpenGraph Metadata-->
+    <meta property="og:title" content="Helioviewer.org" />
+<?php
+        $this->addOpenGraphTags();
         
         // CSS includes
         $this->loadCSS();
@@ -70,73 +106,29 @@ abstract class HelioviewerClient
         if ($this->config['addthis_analytics_id']) {
             $this->loadAddThis();
         }
-        
-        $this->printHeaderEnd();
-        $this->printBodyStart();
-        $this->loadJS();
-        $this->loadCustomJS($signature);
-        $this->printScriptStart();
-        $this->printScriptEnd();
-        $this->printBodyEnd();
-    }
-    
-    /**
-     * Prints the HTML header
-     */
-    protected function printHeaderStart() {
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <?php printf("<!-- Helioviewer.org 2.2.2 (rev. %s), %s -->\n", $this->config["build_num"], $this->config["last_update"]);?>
-    <title>Helioviewer.org - Solar and heliospheric image visualization tool</title>
-    <meta charset="utf-8" />
-    <meta name="description" content="Helioviewer.org - Solar and heliospheric image visualization tool" />
-    <meta name="keywords" content="Helioviewer, JPEG 2000, JP2, sun, solar, heliosphere, solar physics, viewer, visualization, space, astronomy, SOHO, SDO, STEREO, AIA, HMI, EUVI, COR, EIT, LASCO, SDO, MDI, coronagraph, " />
-    <?php if ($this->config["disable_cache"]) echo "<meta http-equiv=\"Cache-Control\" content=\"No-Cache\" />";?>
-    
-    <link rel="shortcut icon" href="favicon.ico" />
-    
-    <!--OpenGraph Metadata-->
-    <meta property="og:title" content="Helioviewer.org" />
-<?        
-    }
-    
-    /**
-     * Prints HTML header closing element
-     */
-    protected function printHeaderEnd()
-    {
-        echo "</head>\n";   
-    }
-    
-    /**
-     * Prints beginning of HTML body section
-     */
-    protected function printBodyStart()
-    {
-        echo "<body>";
     }
 
     /**
-     * Prints HTML body close
-     */    
-    protected function printBodyEnd()
-    {
-?>
-</body>
-</html>
-<?php
-    }
-    
-    /**
-     * Prints main script block beginning
+     * Prints HTML body section
      */
-    protected function printScriptStart() {
+    protected function printBody($signature)
+    {
+        $this->loadJS();
+        $this->loadCustomJS($signature);
 ?>
 
 <!-- Launch Helioviewer -->
 <script type="text/javascript">
+<?php $this->printScript();?>
+</script>
+<?php
+    }
+
+    /**
+     * Prints main script block beginning
+     */
+    protected function printScript() {
+?>
     var serverSettings, settingsJSON, urlSettings, debug;
 
     $(function () {
@@ -158,13 +150,6 @@ abstract class HelioviewerClient
         serverSettings = new Config(settingsJSON).toArray();
 
     <?php
-    }
-    
-    /**
-     * Prints main script block end
-     */
-    protected function printScriptEnd() {
-        echo "</script>";
     }
     
     /**

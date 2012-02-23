@@ -59,11 +59,11 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     /**
      * Prints beginning of HTML body section
      */
-    protected function printBodyStart()
+    protected function printBody($signature)
     {
         $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
 ?>
-<body>
+
 <!-- Viewport -->
 <div id="helioviewer-viewport">
     <!-- Movement sandbox -->
@@ -101,17 +101,18 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 <!-- Watermark -->
 <a href="<?php echo $link;?>"><div id='watermark'></div></a>
     <?php
+    parent::printBody($signature);
     }
     
     /**
      * Prints the end of the script block
      */
-    protected function printScriptEnd() {
+    protected function printScript() {
+        parent::printScript();
 ?>
     // Initialize Helioviewer.org
         helioviewer = new HelioviewerEmbeddedClient("api/index.php", urlSettings, serverSettings, zoomLevels);
     });
-</script>
 <?php
     }
 }
