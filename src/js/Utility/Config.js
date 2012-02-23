@@ -16,7 +16,7 @@ var Config = Class.extend(
     init: function (params) {
         this.params = params;
         
-        this.bools  = ["distributed_mode_enabled", "disable_cache", "helioqueuer_enabled"];
+        this.bools  = ["disable_cache", "helioqueuer_enabled"];
         this.ints   = ["build_num", "default_timestep", "prefetch_size", "bit_depth", "num_colors", "max_movie_frames",
                        "max_tile_layers"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
@@ -51,13 +51,6 @@ var Config = Class.extend(
         $.each(this.floats, function () {
             self.params[this] = parseFloat(self.params[this]);
         });
-        
-        // Servers
-        if (this.params['distributed_mode_enabled']) {
-            this.params["server"].unshift("api/index.php");
-        } else {
-            this.params["server"] = ["api/index.php"];
-        }
     },
     
     /**
@@ -72,7 +65,7 @@ var Config = Class.extend(
             'maxTileLayers'       : this.params["max_tile_layers"],
             'prefetchSize'        : this.params["prefetch_size"],
             'timeIncrementSecs'   : this.params["default_timestep"],
-            'servers'             : this.params["server"],
+            'backEnd'             : this.params["back_end"],
             'newsURL'             : this.params["news_url"],
             'rootURL'             : this.params["web_root_url"],
             'videoFeed'           : this.params["user_video_feed"],
