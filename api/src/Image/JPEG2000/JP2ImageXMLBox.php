@@ -68,6 +68,9 @@ class Image_JPEG2000_JP2ImageXMLBox
 
         fclose($fp);
         
+        // Work-around Feb 24, 2012: escape < and >
+        $xml = str_replace(" < ", " &lt; ", str_replace(" > ", " &gt; ", $xml));
+        
         $this->_xmlString = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
 
         $this->_xml = new DOMDocument();
