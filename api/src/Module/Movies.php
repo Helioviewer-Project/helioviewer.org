@@ -312,8 +312,7 @@ class Module_Movies implements Module
                 printf("<a href='%s'><img src='%s' /><h3>%s</h3></a>", $vid["url"], $vid["thumbnails"]["small"], "test");
             }
         } else {**/
-        header('Content-type: application/json');
-        echo json_encode($videos);
+        $this->_printJSON(json_encode($videos));
     }
 
     /**
@@ -390,6 +389,40 @@ class Module_Movies implements Module
 </html> 
         <?php
     }
+
+    /**
+     * Helper function to output result as either JSON or JSONP
+     * 
+     * @param string $json JSON object string
+     * @param bool   $xml  Whether to wrap an XML response as JSONP
+     * @param bool   $utf  Whether to return result as UTF-8
+     * 
+     * @return void
+     */
+    private function _printJSON($json, $xml=false, $utf=false)
+    {
+        // Wrap JSONP requests with callback
+        if(isset($this->_params['callback'])) {
+            // For XML responses, surround with quotes and remove newlines to
+            // make a valid JavaScript string
+            if ($xml) {
+                $xmlStr = str_replace("\n", "", str_replace("'", "\'", $json));
+                $json = sprintf("%s('%s')", $this->_params['callback'], $xmlStr);
+            } else {
+                $json = sprintf("%s(%s)", $this->_params['callback'], $json);    
+            }
+        }
+        
+        // Set Content-type HTTP header
+        if ($utf) {
+            header('Content-type: application/json;charset=UTF-8');
+        } else {
+            header('Content-Type: application/json');            
+        }
+        
+        // Print result
+        echo $json;
+    }
     
     /**
      * validate
@@ -453,7 +486,8 @@ class Module_Movies implements Module
             break;
         case "getUserVideos":
             $expected = array(
-                "optional" => array('num', 'since'),
+                "optional" => array('num', 'since', 'callback'),
+                "alphanum" => array('callback'),
                 "ints"     => array('num'),
                 "dates"    => array('since')
             );
