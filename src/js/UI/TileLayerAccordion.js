@@ -248,8 +248,8 @@ var TileLayerAccordion = Layer.extend(
      * @description Displays the Image meta information and properties associated with a given image
      * @param {Object} layer
      */
-    _showImageInfoDialog: function (id, name, imageId, server) {
-        var params, self = this, dialog = $("#image-info-dialog-" + id);
+    _showImageInfoDialog: function (id, name, imageId) {
+        var params, dtype, self = this, dialog = $("#image-info-dialog-" + id);
         
         // Check to see if a dialog already exists
         if (dialog.length !== 0) {
@@ -268,13 +268,16 @@ var TileLayerAccordion = Layer.extend(
             id     : imageId
         };
         
-        if (server > 0) {
-            params.server = server;
+        // For remote queries, retrieve XML using JSONP
+        if (Helioviewer.dataType === "jsonp") {
+            dtype = "jsonp text xml";
+        } else {
+            dtype = "xml";
         }
         
-        $.get("api/index.php", params, function (response) {
+        $.get(Helioviewer.api, params, function (response) {
             self._buildImageInfoDialog(name, id, response);
-        });
+        }, dtype);
     },
     
     /**
@@ -425,7 +428,7 @@ var TileLayerAccordion = Layer.extend(
     /**
      * 
      */
-    _updateAccordionEntry: function (event, id, name, opacity, date, imageId, server) {
+    _updateAccordionEntry: function (event, id, name, opacity, date, imageId) {
         var entry = $("#" + id), self = this;
         
         this._updateTimeStamp(id, date);
@@ -436,7 +439,7 @@ var TileLayerAccordion = Layer.extend(
         $("#image-info-dialog-" + id).remove();
         
         entry.find("#image-" + id + "-info-btn").unbind().bind('click', function () {
-            self._showImageInfoDialog(id, name, imageId, server);
+            self._showImageInfoDialog(id, name, imageId);
         });
         
         // JPEG 2000 download button

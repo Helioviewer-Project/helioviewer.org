@@ -19,10 +19,10 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
-                    servers, startingLayers, urlLayers) {
-        this._super(api, observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
-		            servers, startingLayers, urlLayers);
+    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
+                    startingLayers, urlLayers) {
+        this._super(observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
+		            startingLayers, urlLayers);
 
         // The order in which new layers are added
         this._queue = [ "SDO,AIA,AIA,304", "SOHO,LASCO,C2,white-light", 
@@ -55,7 +55,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, params, opacity, queue, ds, server, baseURL, 
+        var currentLayers, next, params, opacity, queue, ds, 
             queueChoiceIsValid = false, i = 0, defaultLayer = "SDO,AIA,AIA,171";
 
         // If new layer exceeds the maximum number of layers allowed,
@@ -95,9 +95,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         } else {
             queue = this._queue.slice(); // make a copy
         }
-        
-        // Select tiling server
-        server = this._selectTilingServer();
 
         // Pull off the next layer on the queue
         while (!queueChoiceIsValid) {
@@ -109,8 +106,6 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             }
             i += 1;
         }
-        
-        baseURL = this.servers[server] || "api/index.php";
 
         ds = this.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
         $.extend(params, ds);
@@ -120,9 +115,9 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         // Add the layer
         this.addLayer(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
-                          this.tileVisibilityRange, this.api, baseURL, params.observatory, 
+                          this.tileVisibilityRange, params.observatory, 
                           params.instrument, params.detector, params.measurement, params.sourceId, params.nickname, 
-                          params.visible, opacity, params.layeringOrder, server)
+                          params.visible, opacity, params.layeringOrder)
         );
         this.save();
     },
@@ -131,19 +126,17 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
      */
     _loadStartingLayers: function (layers) {
-        var layer, basicParams, baseURL, self = this;
+        var layer, basicParams, self = this;
 
         $.each(layers, function (index, params) {
             basicParams = self.dataSources[params.observatory][params.instrument][params.detector][params.measurement];
             $.extend(params, basicParams);
-            
-            baseURL = self.servers[params.server] || "api/index.php";
 
             layer = new HelioviewerTileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, self.api, baseURL, 
+                                  self.tileVisibilityRange, 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
                                   params.sourceId, params.nickname, params.visible, params.opacity,
-                                  params.layeringOrder, params.server);
+                                  params.layeringOrder);
 
             self.addLayer(layer);
         });
@@ -161,14 +154,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             $(document).trigger("load-saved-roi-position");
         }
     },
-    
-    /**
-     * Selects a server to handle all tiling and image requests for a given layer
-     */
-    _selectTilingServer: function () {
-        return Math.floor(Math.random() * (this.servers.length));
-    },
-    
+
     /**
      * Updates the data source for a tile layer after the user changes one
      * of its properties (e.g. observatory or instrument)

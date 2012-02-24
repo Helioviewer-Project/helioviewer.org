@@ -616,7 +616,7 @@ class HelioviewerWebClient extends HelioviewerClient
         parent::printScript();
 ?>
     // Initialize Helioviewer.org
-         helioviewer = new HelioviewerWebClient("api/index.php", urlSettings, serverSettings, zoomLevels);
+         helioviewer = new HelioviewerWebClient(urlSettings, serverSettings, zoomLevels);
     });
 <?php
     }

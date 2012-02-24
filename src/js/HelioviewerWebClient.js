@@ -21,10 +21,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (api, urlSettings, serverSettings, zoomLevels) {
+    init: function (urlSettings, serverSettings, zoomLevels) {
         var urlDate, imageScale, paddingHeight;
         
-        this._super(api, urlSettings, serverSettings, zoomLevels);
+        this._super(urlSettings, serverSettings, zoomLevels);
 
         // Debugging helpers
         if (urlSettings.debug) {
@@ -55,7 +55,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
         
-        this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
+        this.displayBlogFeed(3, false);
         
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
         
@@ -372,11 +372,22 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      * Displays recent news from the Helioviewer Project blog
      */
-    displayBlogFeed: function (feed, n, showDescription, descriptionWordLength) {
-        var url = this.serverSettings.newsURL, html = "";
+    displayBlogFeed: function (n, showDescription, descriptionWordLength) {
+        var url, dtype, html = "";
+        
+        url = this.serverSettings.newsURL;
+        
+        // For remote queries, retrieve XML using JSONP
+        if (Helioviewer.dataType === "jsonp") {
+            dtype = "jsonp text xml";
+        } else {
+            dtype = "xml";
+        }
         
         $.getFeed({
-            url: feed,
+            url: Helioviewer.api,
+            data: {"action": "getNewsFeed"},
+            dataType: dtype,
             success: function (feed) {
                 var link, date, more, description;
                 
@@ -434,7 +445,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             "imageScale": this.viewport.getImageScaleInKilometersPerPixel(),
             "layers"    : this.viewport.serialize()
         };
-        window.open(this.api + "?" + $.param(params), "_blank");
+        window.open(Helioviewer.api + "?" + $.param(params), "_blank");
     },
 
     /**
@@ -482,15 +493,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
     
     /**
-     * Returns an array of the Helioviewer servers that should be used for requests
-     * 
-     * @return {Array} Helioviewer servers to use
-     */
-    getServers: function () {
-        return this.serverSettings.servers;
-    },
-    
-    /**
      * Returns the top-left and bottom-right coordinates for the viewport region of interest
      * 
      * @return {Object} Current ROI 
@@ -527,7 +529,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         $.ajax({
             async: false,
-            url: this.api,
+            url: Helioviewer.api,
             dataType: 'json',
             data: {
                 "action": "shortenURL",

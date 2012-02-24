@@ -151,7 +151,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * viewport roi
      */
     _takeScreenshot: function (roi) {
-        var params, imageScale, layers, server, screenshot, self = this; 
+        var params, dataType, imageScale, layers, screenshot, self = this; 
         
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
@@ -172,15 +172,9 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             date          : helioviewer.getDate().toISOString(),
             display       : false
         }, this._toArcsecCoords(roi, imageScale));
-        
-        // Choose server to send request to
-        server = Math.floor(Math.random() * (helioviewer.getServers().length));
-        if (server > 0) {
-            params.server = server;
-        }
 
         // AJAX Responder
-        $.getJSON("api/index.php", params, function (response) {
+        $.get(Helioviewer.api, params, function (response) {
             if ((response === null) || response.error) {
                 $(document).trigger("message-console-info", 
                     "Unable to create screenshot. Please try again later.");
@@ -194,6 +188,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             );
             self._addItem(screenshot);
             self._displayDownloadNotification(screenshot);
-        });
+        }, Helioviewer.dataType);
     }
 });
