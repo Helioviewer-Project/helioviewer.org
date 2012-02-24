@@ -29,8 +29,8 @@ var HelioviewerTileLayer = TileLayer.extend(
      * </div>
      */
     init: function (index, date, tileSize, viewportScale, tileVisibilityRange, observatory, instrument, 
-                    detector, measurement, sourceId, name, visible, opacity, layeringOrder, server) {
-        this._super(index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity, server);
+                    detector, measurement, sourceId, name, visible, opacity, layeringOrder) {
+        this._super(index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity);
         
         this.layeringOrder = layeringOrder;
         
@@ -48,7 +48,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
         this.image = new JP2Image(observatory, instrument, detector, measurement, sourceId, 
-                                  date, server, $.proxy(this.onLoadImage, this));
+                                  date, $.proxy(this.onLoadImage, this));
     },
     
     /**
@@ -67,7 +67,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         }
         $(document).trigger("update-tile-layer-accordion-entry", 
                             [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
-                                this.image.id, this.image.server]);
+                                this.image.id]);
     },
     
     /**
@@ -128,7 +128,6 @@ var HelioviewerTileLayer = TileLayer.extend(
      */
     toJSON: function () {
         return {
-            "server"     : this.image.server,
             "observatory": this.image.observatory,
             "instrument" : this.image.instrument,
             "detector"   : this.image.detector,

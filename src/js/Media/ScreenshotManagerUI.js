@@ -151,7 +151,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      * viewport roi
      */
     _takeScreenshot: function (roi) {
-        var params, dataType, imageScale, layers, server, screenshot, self = this; 
+        var params, dataType, imageScale, layers, screenshot, self = this; 
         
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();

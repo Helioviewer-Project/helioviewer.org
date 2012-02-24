@@ -55,7 +55,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
      * @description Adds a layer that is not already displayed
      */
     addNewLayer: function () {
-        var currentLayers, next, params, opacity, queue, ds, server, 
+        var currentLayers, next, params, opacity, queue, ds, 
             queueChoiceIsValid = false, i = 0, defaultLayer = "SDO,AIA,AIA,171";
 
         // If new layer exceeds the maximum number of layers allowed,
@@ -117,7 +117,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
             new HelioviewerTileLayer(this._layers.length, this._observationDate, this.tileSize, this.viewportScale, 
                           this.tileVisibilityRange, params.observatory, 
                           params.instrument, params.detector, params.measurement, params.sourceId, params.nickname, 
-                          params.visible, opacity, params.layeringOrder, server)
+                          params.visible, opacity, params.layeringOrder)
         );
         this.save();
     },
@@ -136,7 +136,7 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
                                   self.tileVisibilityRange, 
                                   params.observatory, params.instrument, params.detector, params.measurement, 
                                   params.sourceId, params.nickname, params.visible, params.opacity,
-                                  params.layeringOrder, params.server);
+                                  params.layeringOrder);
 
             self.addLayer(layer);
         });

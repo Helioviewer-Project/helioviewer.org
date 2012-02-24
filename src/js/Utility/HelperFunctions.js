@@ -328,8 +328,7 @@ var parseLayerString = function (str) {
         detector    : params[2],
         measurement : params[3],
         visible     : Boolean(parseInt(params[4], 10)),
-        opacity     : parseInt(params[5], 10),
-        server      : parseInt(params[6], 10) || 0
+        opacity     : parseInt(params[5], 10)
     };
 };
 
