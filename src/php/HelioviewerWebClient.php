@@ -33,6 +33,9 @@ class HelioviewerWebClient extends HelioviewerClient
      */
     public function __construct($urlSettings)
     {
+        $this->compressedJSFile  = "helioviewer.min.js";
+        $this->compressedCSSFile = "helioviewer.min.css";
+        
         parent::__construct($urlSettings);
     }
     
@@ -43,38 +46,24 @@ class HelioviewerWebClient extends HelioviewerClient
     {
         parent::loadCSS();
 ?>
-<link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
+    <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
+    <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
+    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
+
+    <!-- jQuery UI Theme Modifications -->
+    <link rel="stylesheet" href="resources/css/dot-luv.css">
+
 <?php
     }
     
     /**
      * Loads Helioviewer-specific CSS
      */
-    protected function loadCustomCSS($signature)
+    protected function loadCustomCSS($signature, $includes=array())
     {
-?>
-    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
-    <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
-    
-    <!-- Helioviewer CSS -->
-    <?php
-        $css = array("helioviewer-base", "helioviewer-web", "layout", 
-                     "accordions", "dialogs", "media-manager", "zoom-control",  
-                     "timenav", "video-gallery", "youtube");
-        // CSS
-        if ($this->config["compress_css"]) {
-            echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer.min.css?$signature\" />\n    ";
-        }
-        else {
-            foreach($css as $file)
-                printf("<link rel=\"stylesheet\" href=\"resources/css/%s.css?$signature\" />\n    ", $file);
-        }
-?>
-
-    <!-- Theme Modifications -->
-    <link rel="stylesheet" href="resources/css/dot-luv.css">
-
-<?php
+        $css = array("helioviewer-web", "layout", "accordions", "dialogs", 
+                     "media-manager", "timenav", "video-gallery", "youtube");
+        parent::loadCustomCSS($signature, $css);
     }
     
     /**
@@ -82,83 +71,37 @@ class HelioviewerWebClient extends HelioviewerClient
      */
     protected function loadJS()
     {
-    if ($this->config["compress_js"]) {
+        parent::loadJS();   
+        if ($this->config["compress_js"]) {
     ?>
-    
-<!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.0.min.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
-<script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
-<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
 <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
 <script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
-<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
-<script src="lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
     <?php
         } else {
     ?>
-    
-<!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.0.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
-<script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
-<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
 <script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
 <script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
-<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
-<script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.js" type="text/javascript" language="javascript"></script>
 <?php
-}
-?>
-<script src="lib/jquery.json-2.2/jquery.json-2.2.min.js" type="text/javascript" ></script>
-<script src="lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
-<script src="lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
-
-<?php
+        }
     }
 
     /**
      * Loads Helioviewer-specific JavaScript
      */
-    protected function loadCustomJS($signature)
+    protected function loadCustomJS($signature, $includes=array())
     {
-        echo "<!-- Helioviewer JavaScript -->\n";
-        if ($this->config["compress_js"]) {
-            $compressed = "build/helioviewer.min.js";
-            if (!file_exists($compressed)) {
-               $error = "<div style='position: absolute; width: 100%; text-align: center; top: 40%; font-size: 14px;'>
-                         <img src='resources/images/logos/about.png' alt='helioviewer logo'></img><br>
-                         <b>Configuration:</b> Unable to find compressed JavaScript files.
-                         If you haven't already, use Apache Ant with the included build.xml file to generate 
-                         compressed files.</div></body></html>";
-               die($error);
-            }
+        $js = array("UI/TreeSelect.js", "UI/ImageSelectTool.js",  
+                    "Media/MediaManagerUI.js", "Media/MediaManager.js", "Media/MovieManager.js", 
+                    "Media/MovieManagerUI.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
+                    "UI/TileLayerAccordion.js", "UI/MessageConsole.js", "UI/TimeControls.js",  
+                    "Utility/FullscreenControl.js", "HelioviewerWebClient.js", "UI/UserVideoGallery.js",
+                    "UI/Glossary.js", "UI/jquery.ui.dynaccordion.js");
+        parent::loadCustomJS($signature, $js);
         
-            echo "<script src=\"$compressed?$signature\" type=\"text/javascript\"></script>\n\t";
-        }
-        else {
-            $js = array("Utility/Config.js", "Utility/HelperFunctions.js", 
-                        "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
-                        "Tiling/Layer/HelioviewerTileLayer.js", "UI/TreeSelect.js", "UI/ImageSelectTool.js",  
-                        "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js",  
-                        "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
-                        "Media/MediaManagerUI.js", "Media/MediaManager.js", "Media/MovieManager.js", 
-                        "Media/MovieManagerUI.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
-                        "Image/JP2Image.js", "UI/TileLayerAccordion.js", "UI/MessageConsole.js",
-                        "UI/TimeControls.js", "Utility/SettingsLoader.js", "Utility/UserSettings.js", 
-                        "Utility/FullscreenControl.js", "Viewport/Helper/MouseCoordinates.js", 
-                        "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
-                        "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-                        "HelioviewerClient.js", "HelioviewerWebClient.js", 
-                        "UI/ZoomControls.js", "UI/UserVideoGallery.js", "UI/Glossary.js", 
-                        "Utility/InputValidator.js", "UI/jquery.ui.dynaccordion.js");
-            foreach($js as $file)
-                printf("<script src=\"src/js/%s?$signature\" type=\"text/javascript\"></script>\n", $file);
-        }
     }
     
     /**
@@ -238,10 +181,9 @@ class HelioviewerWebClient extends HelioviewerClient
     /**
      * Prints beginning of HTML body section
      */
-    protected function printBodyStart()
+    protected function printBody($signature)
     {
 ?>
-<body>
 
 <!-- Header -->
 <div id="header"></div>
@@ -663,19 +605,19 @@ class HelioviewerWebClient extends HelioviewerClient
         <div id='upload-error-console-container'><div id='upload-error-console'>...</div></div>
     </div>
 </div>
-
 <?php
+    parent::printBody($signature);
     }
     
     /**
      * Prints the end of the script block
      */
-    protected function printScriptEnd() {
+    protected function printScript() {
+        parent::printScript();
 ?>
     // Initialize Helioviewer.org
          helioviewer = new HelioviewerWebClient("api/index.php", urlSettings, serverSettings, zoomLevels);
     });
-</script>
 <?php
     }
 }

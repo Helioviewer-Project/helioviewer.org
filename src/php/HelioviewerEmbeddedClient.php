@@ -31,114 +31,39 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     /**
      * Initializes a Helioviewer.org embedded instance
      */
-    public function __construct($ini)
+    public function __construct($ini)        
     {
+        $this->compressedJSFile  = "helioviewer-embed.min.js";
+        $this->compressedCSSFile = "helioviewer-embed.min.css";
+        
         parent::__construct($ini);
+    }
+    
+    /**
+     * Loads Helioviewer-specific JavaScript
+     */
+    protected function loadCustomJS($signature, $includes=array())
+    {
+        parent::loadCustomJS($signature, array("HelioviewerEmbeddedClient.js"));  
     }
     
     /**
      * Loads Helioviewer-specific CSS
      */
-    protected function loadCustomCSS($signature)
+    protected function loadCustomCSS($signature, $includes=array())
     {
-    ?>
-
-    <!-- Helioviewer CSS -->
-    <?php
-
-        $css = array("helioviewer-base", "helioviewer-embedded", "zoom-control");
-        
-        // CSS
-        if ($this->config["compress_css"]) {
-            echo "<link rel=\"stylesheet\" href=\"build/css/helioviewer-embed.min.css?$signature\" />\n    ";
-        }
-        else {
-            foreach($css as $file)
-                printf("<link rel=\"stylesheet\" href=\"resources/css/%s.css?$signature\" />\n    ", $file);
-        }
-?>
-
-<?php
-    }
-    
-    /**
-     * Loads JavaScript
-     */
-    protected function loadJS()
-    {
-    if ($this->config["compress_js"]) {
-    ?>
-    
-<!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.0.min.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
-<script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
-<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
-<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
-<script src="lib/jquery.qTip2/jquery.qtip.min.js" type="text/javascript"></script>
-    <?php
-        } else {
-    ?>
-    
-<!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.0.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
-<script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
-<script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
-<script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
-<script src="lib/jquery.qTip2/jquery.qtip.js" type="text/javascript"></script>
-<?php
-}
-?>
-<script src="lib/jquery.json-2.2/jquery.json-2.2.min.js" type="text/javascript" ></script>
-<script src="lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
-<script src="lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
-
-<?php
+        echo "\n";
+        parent::loadCustomCSS($signature, array("helioviewer-embed"));
     }
 
-    /**
-     * Loads Helioviewer-specific JavaScript
-     */
-    protected function loadCustomJS($signature)
-    {
-        echo "<!-- Helioviewer JavaScript -->\n";
-        if ($this->config["compress_js"]) {
-            $compressed = "build/helioviewer-embed.min.js";
-            if (!file_exists($compressed)) {
-               $error = "<div style='position: absolute; width: 100%; text-align: center; top: 40%; font-size: 14px;'>
-                         <img src='resources/images/logos/about.png' alt='helioviewer logo'></img><br>
-                         <b>Configuration:</b> Unable to find compressed JavaScript files.
-                         If you haven't already, use Apache Ant with the included build.xml file to generate 
-                         compressed files.</div></body></html>";
-               die($error);
-            }
-        
-            echo "<script src=\"$compressed?$signature\" type=\"text/javascript\"></script>\n\t";
-        }
-        else {
-            $js = array("Utility/Config.js", "Utility/HelperFunctions.js", 
-                        "Tiling/Layer/Layer.js", "Tiling/Layer/TileLoader.js", "Tiling/Layer/TileLayer.js", 
-                        "Tiling/Layer/HelioviewerTileLayer.js", "Utility/KeyboardManager.js", "Tiling/Manager/LayerManager.js", 
-                        "Tiling/Manager/TileLayerManager.js", "Tiling/Manager/HelioviewerTileLayerManager.js", 
-                        "Image/JP2Image.js", "Viewport/Helper/MouseCoordinates.js", 
-                        "Viewport/Helper/HelioviewerMouseCoordinates.js", "Viewport/Helper/SandboxHelper.js",
-                        "Viewport/Helper/ViewportMovementHelper.js", "Viewport/HelioviewerViewport.js", 
-                        "HelioviewerClient.js", "HelioviewerEmbeddedClient.js",  "UI/ZoomControls.js", "Utility/InputValidator.js",
-                        "Utility/SettingsLoader.js", "Utility/UserSettings.js");
-            foreach($js as $file)
-                printf("<script src=\"src/js/%s?$signature\" type=\"text/javascript\"></script>\n", $file);
-        }
-    }
-    
     /**
      * Prints beginning of HTML body section
      */
-    protected function printBodyStart()
+    protected function printBody($signature)
     {
         $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
 ?>
-<body>
+
 <!-- Viewport -->
 <div id="helioviewer-viewport">
     <!-- Movement sandbox -->
@@ -175,19 +100,19 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
 
 <!-- Watermark -->
 <a href="<?php echo $link;?>"><div id='watermark'></div></a>
-
-<?php
+    <?php
+    parent::printBody($signature);
     }
     
     /**
      * Prints the end of the script block
      */
-    protected function printScriptEnd() {
+    protected function printScript() {
+        parent::printScript();
 ?>
     // Initialize Helioviewer.org
         helioviewer = new HelioviewerEmbeddedClient("api/index.php", urlSettings, serverSettings, zoomLevels);
     });
-</script>
 <?php
     }
 }
