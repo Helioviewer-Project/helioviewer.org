@@ -25,11 +25,11 @@
 		
 		<concat destfile="build/css/helioviewer.css" encoding="UTF-8" eol="lf">
 			<filelist dir="${cssdir}" files="helioviewer-base.css, helioviewer-web.css"/>
-		    <fileset dir="${cssdir}" includes="*.css" excludes="helioviewer-base.css, helioviewer-web.css, helioviewer-embedded.css"/>
+		    <fileset dir="${cssdir}" includes="*.css" excludes="helioviewer-base.css, helioviewer-web.css, helioviewer-embed.css"/>
 		</concat>
 		
         <concat destfile="build/css/helioviewer-embed.css" encoding="UTF-8" eol="lf">
-            <filelist dir="${cssdir}" files="helioviewer-base.css, helioviewer-embedded.css, zoom-control.css"/>
+            <filelist dir="${cssdir}" files="helioviewer-base.css, helioviewer-embed.css, zoom-control.css"/>
         </concat>
         
         <echo>Minifying JavaScript/CSS</echo>
