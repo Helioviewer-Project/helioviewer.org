@@ -51,7 +51,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
             display       : true
         }, this._toArcsecCoords(roi, imageScale));
         
-        return helioviewer.serverSettings.rootURL + "/api/?" + $.param(params);
+        return Helioviewer.api + "?" + $.param(params);
     },
     
     /**
@@ -69,7 +69,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
 
         // Download link
         body = "Your " + screenshot.name + " screenshot is ready! " +
-               "<a href='api/index.php?action=downloadScreenshot&id=" + 
+               "<a href='" + Helioviewer.api + "?action=downloadScreenshot&id=" + 
                screenshot.id + "'>Click here to download. </a>";
 
         // Create the jGrowl notification.
@@ -117,7 +117,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         date = screenshot.date.substr(0, 19).replace(/T/, " "); 
         
         html = "<div style='text-align: center;'>" + 
-            "<img src='api/?action=downloadScreenshot&id=" + screenshot.id +
+            "<img src='" + Helioviewer.api + "?action=downloadScreenshot&id=" + screenshot.id +
             "' alt='preview thumbnail' class='screenshot-preview' /></div>" + 
             "<table class='preview-tooltip'>" +
             "<tr><td><b>Date:</b></td><td>" + date + "</td></tr>" +
@@ -137,7 +137,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
      */
     _onScreenshotClick: function (event) {
         var id = $(event.currentTarget).data('id'),
-            url = "api/index.php?action=downloadScreenshot&id=" + id;
+            url = Helioviewer.api + "?action=downloadScreenshot&id=" + id;
         window.open(url, '_parent');
         
         return false;
