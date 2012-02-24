@@ -44,8 +44,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * user click to view it in a popup. 
      */
     _buildMovie: function (roi) {
-        var params, imageScale, layers, currentTime, endTime, startTimeStr,
-            endTimeStr, now, diff, movieLength, self = this;
+        var params, callback, imageScale, layers, currentTime, endTime, 
+            startTimeStr, endTimeStr, now, diff, movieLength, self = this;
 
         if (typeof roi === "undefined") {
             roi = helioviewer.getViewportRegionOfInterest();
@@ -91,7 +91,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         }, this._toArcsecCoords(roi, imageScale));
         
         // AJAX Responder
-        $.getJSON("api/index.php", params, function (response) {
+        callback = function (response) {
             var msg, movie, waitTime;
 
             if ((response === null) || response.error) {
@@ -117,7 +117,10 @@ var MovieManagerUI = MediaManagerUI.extend(
                   "approximately " + waitTime + ". You may view it at any " +
                   "time after it is ready by clicking the 'Movie' button";
             $(document).trigger("message-console-info", msg);
-        });
+        };
+        
+        // Make request
+        $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
 
         //this.hideDialogs();
         this.building = false;
@@ -376,7 +379,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     },
     
     /**
-     * 
+     * Processes form and submits video upload request to YouTube
      */
     submitVideoUploadForm: function (event) {
         var params, successMsg, uploadDialog, url, auth, self = this;
@@ -393,16 +396,16 @@ var MovieManagerUI = MediaManagerUI.extend(
         auth = this._checkYouTubeAuth();
 
         // Base URL
-        url = "api/index.php?" + $("#youtube-video-info").serialize();
+        url = Helioviewer.api + $("#youtube-video-info").serialize();
 
         // If the user has already authorized Helioviewer, upload the movie
         if (auth) {
-            $.getJSON(url + "&action=uploadMovieToYouTube", function (response) {
+            $.get(url, {"action": "uploadMovieToYouTube"}, function (response) {
                 if (response.error) {
                     self.hide();
                     $(document).trigger("message-console-warn", [response.error]);
                 }
-            });
+            }, "json");
         } else {
             // Otherwise open an authorization page in a new tab/window
             window.open(url + "&action=getYouTubeAuth", "_blank");
@@ -546,7 +549,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "format" : self._manager.format,
             "verbose": true
         };
-        $.get("api/index.php", params, callback, "json");
+        $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
     },
     
     /**

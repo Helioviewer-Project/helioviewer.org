@@ -102,16 +102,29 @@ function loadModule($params)
                 include_once 'src/Net/Proxy.php';
                 $proxy = new Net_Proxy($url . "?");
                 
+                // JSONP support
+                if (isset($params['callback'])) {
+                    $callback = $params['callback'];                    
+                    if (isset($params['_'])) {
+                        unset ($params['_']);
+                    }
+                    unset ($params['callback']);
+                }
+                
                 if ($_SERVER['REQUEST_METHOD'] == "POST") {
                     $response = $proxy->post($params, true);    
                 } else {
                     $response = $proxy->query($params, true);
                 }
-                
-                header('Content-type: application/json;charset=UTF-8');
+
+                // Wrap JSONP responses
+                if (isset($callback)) {
+                    $response = sprintf("%s(%s)", $callback, $response);
+                }
                 
                 // Make sure a response was recieved
                 if ($response) {
+                    header('Content-type: application/json');
                     echo $response;
                 } else {
                     handleError("Helioqueuer is currently unresponsive");
