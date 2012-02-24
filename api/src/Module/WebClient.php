@@ -161,7 +161,7 @@ class Module_WebClient implements Module
         $dataSources = $imgIndex->getDataSources($verbose);
         
         // Print result
-        $this->_printJSON(json_encode($dataSources), true);
+        $this->_printJSON(json_encode($dataSources), false, true);
     }
 
     /**
@@ -180,7 +180,12 @@ class Module_WebClient implements Module
         $filepath = HV_JP2_DIR . $image['filepath'] . "/" . $image['filename'];
 
         $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($filepath, "meta");
-        $xmlBox->printXMLBox();
+        
+        if(isset($this->_params['callback'])) {
+            $this->_printJSON($xmlBox->getXMLString(), true);
+        } else {
+            $xmlBox->printXMLBox();    
+        }
     }
 
     /**
@@ -392,9 +397,13 @@ class Module_WebClient implements Module
             $cache->set('news.xml', $feed);
         }
 
-        // Print XML
-        header("Content-Type: text/xml;charset=UTF-8");
-        echo $feed;
+        // Print Response as XML or JSONP/XML
+        if(isset($this->_params['callback'])) {
+            $this->_printJSON($feed, true, true);
+        } else {
+            header("Content-Type: text/xml;charset=UTF-8");
+            echo $feed;            
+        }
     }
     
     /**
@@ -444,7 +453,6 @@ class Module_WebClient implements Module
         include_once 'src/Database/Statistics.php';
         $statistics = new Database_Statistics();
 
-        header('Content-Type: application/json');
         $this->_printJSON($statistics->getUsageStatistics($this->_options['resolution']));
     }
     
@@ -472,15 +480,24 @@ class Module_WebClient implements Module
     /**
      * Helper function to output result as either JSON or JSONP
      * 
-     * @param string JSON object string
+     * @param string $json JSON object string
+     * @param bool   $xml  Whether to wrap an XML response as JSONP
+     * @param bool   $utf  Whether to return result as UTF-8
      * 
      * @return void
      */
-    private function _printJSON($json, $utf=false)
+    private function _printJSON($json, $xml=false, $utf=false)
     {
         // Wrap JSONP requests with callback
         if(isset($this->_params['callback'])) {
-            $json = sprintf("%s(%s)", $this->_params['callback'], $json);
+            // For XML responses, surround with quotes and remove newlines to
+            // make a valid JavaScript string
+            if ($xml) {
+                $xmlStr = str_replace("\n", "", str_replace("'", "\'", $json));
+                $json = sprintf("%s('%s')", $this->_params['callback'], $xmlStr);
+            } else {
+                $json = sprintf("%s(%s)", $this->_params['callback'], $json);    
+            }
         }
         
         // Set Content-type HTTP header
@@ -552,10 +569,16 @@ class Module_WebClient implements Module
         case "getJP2Header":
             $expected = array(
                 "required" => array('id'),
-                "ints"     => array('id')
+                "ints"     => array('id'),
+                "optional" => array('callback'),
+                "alphanum" => array('callback')
             );
             break;
         case "getNewsFeed":
+            $expected = array(
+                "optional" => array('callback'),
+                "alphanum" => array('callback')
+            );
             break;
         case "getUsageStatistics":
             $expected = array(
