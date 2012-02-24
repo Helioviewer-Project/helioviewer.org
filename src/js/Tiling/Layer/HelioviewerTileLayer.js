@@ -28,12 +28,11 @@ var HelioviewerTileLayer = TileLayer.extend(
      *      <b>opacity</b>     - Default opacity<br>
      * </div>
      */
-    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, api, baseURL, observatory, instrument, 
-                    detector, measurement, sourceId, name, visible, opacity, layeringOrder, server) {
-        this._super(index, date, tileSize, viewportScale, tileVisibilityRange, api, name, visible, opacity, server);
+    init: function (index, date, tileSize, viewportScale, tileVisibilityRange, observatory, instrument, 
+                    detector, measurement, sourceId, name, visible, opacity, layeringOrder) {
+        this._super(index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity);
         
         this.layeringOrder = layeringOrder;
-        this.baseURL = baseURL;
         
         // Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
         this.id = "tile-layer-" + new Date().getTime();
@@ -49,7 +48,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         
         this.tileLoader = new TileLoader(this.domNode, tileSize, tileVisibilityRange);
         this.image = new JP2Image(observatory, instrument, detector, measurement, sourceId, 
-                                  date, server, api, $.proxy(this.onLoadImage, this));
+                                  date, $.proxy(this.onLoadImage, this));
     },
     
     /**
@@ -68,7 +67,7 @@ var HelioviewerTileLayer = TileLayer.extend(
         }
         $(document).trigger("update-tile-layer-accordion-entry", 
                             [this.id, this.name, this.opacity, new Date(getUTCTimestamp(this.image.date)), 
-                                this.image.id, this.image.server]);
+                                this.image.id]);
     },
     
     /**
@@ -83,7 +82,7 @@ var HelioviewerTileLayer = TileLayer.extend(
             "y"           : y
         };
 
-        return this.baseURL + "?" + $.param(params);
+        return Helioviewer.api + "?" + $.param(params);
     },
 
     /**
@@ -129,7 +128,6 @@ var HelioviewerTileLayer = TileLayer.extend(
      */
     toJSON: function () {
         return {
-            "server"     : this.image.server,
             "observatory": this.image.observatory,
             "instrument" : this.image.instrument,
             "detector"   : this.image.detector,

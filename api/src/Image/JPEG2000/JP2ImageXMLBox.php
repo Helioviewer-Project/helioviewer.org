@@ -75,6 +75,14 @@ class Image_JPEG2000_JP2ImageXMLBox
     }
     
     /**
+     * Returns the XML header as a string
+     */
+    public function getXMLString()
+    {
+        return $this->_xmlString;
+    }
+    
+    /**
      * Prints xml information
      * 
      * @return void

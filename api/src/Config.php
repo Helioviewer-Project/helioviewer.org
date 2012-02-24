@@ -30,14 +30,11 @@
  */
 class Config
 {
-    private $_bools  = array("distributed_mode_enabled", "disable_cache",
-                             "enable_statistics_collection");
+    private $_bools  = array("disable_cache", "enable_statistics_collection");
                              
     private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
                              "ffmpeg_max_threads", "max_jpx_frames", "max_movie_frames");
     private $_floats = array("default_image_scale", "min_image_scale", "max_image_scale");
-
-    public  $servers;
 
     /**
      * Creates an instance of the Config helper class
@@ -53,19 +50,7 @@ class Config
         $this->_fixTypes();
 
         foreach ($this->config as $key => $value) {
-            if ($key !== "server") {
-                define("HV_" . strtoupper($key), $value);
-            }
-        }
-        
-        if ($this->config['distributed_mode_enabled']) {
-            array_unshift($this->config["server"], "api/index.php");
-        } else {
-            $this->config["server"] = array("api/index.php");
-        }
-
-        foreach ($this->config["server"] as $id => $url) {
-            define("HV_SERVER_" . ($id), $url);
+            define("HV_" . strtoupper($key), $value);
         }
 
         $this->_setAdditionalParams();

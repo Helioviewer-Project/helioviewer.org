@@ -87,7 +87,7 @@ var TimeControls = Class.extend(
      * @return void
      */
     goToPresent: function () {
-        var callback, layers, date, mostRecent = new Date(0, 0, 0), self = this;
+        var dataType, callback, layers, date, mostRecent = new Date(0, 0, 0), self = this;
         
         callback = function (dataSources) {
             
@@ -118,8 +118,7 @@ var TimeControls = Class.extend(
             });
             self.setDate(mostRecent);
         };
-        
-        $.get("api/index.php", {action: "getDataSources"}, callback, "json");
+        $.get(Helioviewer.api, {action: "getDataSources"}, callback, Helioviewer.dataType);
     },
     
     /**

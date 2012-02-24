@@ -22,12 +22,13 @@ var HelioviewerClient = Class.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (api, urlSettings, serverSettings, zoomLevels) {
+    init: function (urlSettings, serverSettings, zoomLevels) {
         this._checkBrowser(); // Determines browser support
 
         this.serverSettings = serverSettings;
-        this.api            = api;
 
+        Helioviewer.api          = serverSettings['backEnd'];
+        Helioviewer.dataType     = serverSettings['backEnd'] === "api/index.php" ? "json" : "jsonp";
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
     },
     
@@ -78,10 +79,8 @@ var HelioviewerClient = Class.extend(
     _initViewport: function (container, date, marginTop, marginBottom) {
         this.viewport = new HelioviewerViewport({
             id             : '#helioviewer-viewport',
-            api            : this.api,
             container      : container,
             requestDate    : date,
-            servers        : this.serverSettings.servers,
             maxTileLayers  : this.serverSettings.maxTileLayers,
             minImageScale  : this.serverSettings.minImageScale,
             maxImageScale  : this.serverSettings.maxImageScale,

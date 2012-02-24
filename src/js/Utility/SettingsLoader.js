@@ -68,7 +68,6 @@ var SettingsLoader = (
                 eventLayers: [],
                 imageScale: serverSettings.defaultImageScale,
                 tileLayers: [{
-                    server     : 0,
                     observatory: 'SDO',
                     instrument : 'AIA',
                     detector   : 'AIA',

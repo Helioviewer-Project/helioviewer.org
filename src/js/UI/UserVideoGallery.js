@@ -24,7 +24,7 @@ var UserVideoGallery = Class.extend(
         this._working     = false;
         
         // Feed URL
-        this.url = url || "api/?action=getUserVideos";
+        this.url = url || Helioviewer.api;
         
         // Local
         this._pageSize = this._choosePageSize();
@@ -62,7 +62,8 @@ var UserVideoGallery = Class.extend(
     _fetchVideos: function () {
         // Query parameters
         var params = {
-            "num" : this._numVideos
+            "action": "getUserVideos",
+            "num"   : this._numVideos
         };
         
         // Show loading indicator
@@ -72,7 +73,8 @@ var UserVideoGallery = Class.extend(
         this._working = true;
 
         // Fetch videos
-        $.getJSON(this.url, params, $.proxy(this._processResponse, this));
+        $.get(this.url, params, $.proxy(this._processResponse, this), 
+              Helioviewer.dataType);
     },
     
     /**
@@ -82,6 +84,7 @@ var UserVideoGallery = Class.extend(
     _checkForNewMovies: function () {
         // Query parameters
         var params = {
+            "action": "getUserVideos",
             "num"   : this._numVideos
         };
         
@@ -94,7 +97,8 @@ var UserVideoGallery = Class.extend(
         this._working = true;
 
         // Fetch videos
-        $.getJSON(this.url, params, $.proxy(this._processResponse, this));
+        $.get(this.url, params, $.proxy(this._processResponse, this), 
+              Helioviewer.dataType);
     },
     
     /**

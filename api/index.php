@@ -86,50 +86,28 @@ function loadModule($params)
                 "API Documentation</a> for a list of valid actions."
             );
         } else {
-            // Remote requests
-            if (isset($params['s'])) {
-                // Forward request if neccessary
-                // TODO 08/11/2010: Create separate method or extend Net_Proxy
-                if (HV_DISTRIBUTED_MODE_ENABLED) {
-                    $url = constant("HV_SERVER_" . $params['s']) . "?";
-                    
-                    unset ($params['s']);
-                    foreach ($params as $key=>$value) {
-                        $url .= "$key=$value&";
-                    }
-                    $url = trim($url, "&");
-                    
-                    // TODO 08/11/2010: Use Net_Proxy instead
-                    echo file_get_contents($url);
-                } else {
-                    $err = "Distributed mode is disabled for this server.";
-                    throw new Exception($err);
-                }
-            // Local requests
-            } else {
-            	// Execute action
-                $moduleName = $valid_actions[$params["action"]];
-                $className  = "Module_" . $moduleName;
-    
-                include_once "src/Module/$moduleName.php";
-    
-                $module = new $className($params);
-                $module->execute();
-                
-                // Update usage stats
-                $actions_to_keep_stats_for = array("getClosestImage", 
-                    "getTile", "takeScreenshot", "getJPX",
-                    "uploadMovieToYouTube");
-                
-				// Note that in addition to the above, buildMovie requests and 
-				// getCachedTile requests are also tracked.
-				// getCachedTile is a pseudo-action which is logged in 
-				// addition to getTile when the tile was already in the cache.
-                if (HV_ENABLE_STATISTICS_COLLECTION && in_array($params["action"], $actions_to_keep_stats_for)) {
-                    include_once 'src/Database/Statistics.php';
-                    $statistics = new Database_Statistics();
-                    $statistics->log($params["action"]);
-                }
+        	// Execute action
+            $moduleName = $valid_actions[$params["action"]];
+            $className  = "Module_" . $moduleName;
+
+            include_once "src/Module/$moduleName.php";
+
+            $module = new $className($params);
+            $module->execute();
+            
+            // Update usage stats
+            $actions_to_keep_stats_for = array("getClosestImage", 
+                "getTile", "takeScreenshot", "getJPX",
+                "uploadMovieToYouTube");
+            
+			// Note that in addition to the above, buildMovie requests and 
+			// getCachedTile requests are also tracked.
+			// getCachedTile is a pseudo-action which is logged in 
+			// addition to getTile when the tile was already in the cache.
+            if (HV_ENABLE_STATISTICS_COLLECTION && in_array($params["action"], $actions_to_keep_stats_for)) {
+                include_once 'src/Database/Statistics.php';
+                $statistics = new Database_Statistics();
+                $statistics->log($params["action"]);
             }
         }
     } catch (Exception $e) {

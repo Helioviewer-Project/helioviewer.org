@@ -58,7 +58,7 @@ var HelioviewerViewport = Class.extend(
      * and resizes when done.
      */
     loadDataSources: function () {
-        var callback, tileLayerAccordion, self = this;
+        var callback, dataType, tileLayerAccordion, self = this;
         
         callback = function (dataSources) {
             self.dataSources = dataSources;
@@ -66,14 +66,12 @@ var HelioviewerViewport = Class.extend(
             $(document).trigger("datasources-initialized", [dataSources]);
 
             // Initialize tile layers
-            self._tileLayerManager = new HelioviewerTileLayerManager(self.api, self.requestDate, self.dataSources, 
-                                  self.tileSize, self.imageScale, self.maxTileLayers,
-                                  self.servers, self.tileLayers);
+            self._tileLayerManager = new HelioviewerTileLayerManager(self.requestDate, self.dataSources, 
+                                  self.tileSize, self.imageScale, self.maxTileLayers, self.tileLayers);
 
             $(document).trigger("update-viewport");
         };
-        
-        $.get(this.api, {action: "getDataSources"}, callback, "json"); 
+        $.get(Helioviewer.api, {action: "getDataSources"}, callback, Helioviewer.dataType); 
     },    
     
     /**
