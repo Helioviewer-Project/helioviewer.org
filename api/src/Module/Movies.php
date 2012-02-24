@@ -150,8 +150,8 @@ class Module_Movies implements Module
             "queue" => $queueSize + 1,
             "token" => $token
         );
-        header('Content-type: application/json');
-        print json_encode($response);
+        
+        $this->_printJSON(json_encode($response));
     }
 
     /**
@@ -390,8 +390,7 @@ class Module_Movies implements Module
             );
         }
         
-        header('Content-type: application/json');
-        print json_encode($response);
+        $this->_printJSON(json_encode($response));
     }
     
     /**
@@ -678,8 +677,8 @@ class Module_Movies implements Module
         case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
-                "optional" => array('verbose', 'token'),
-                "alphanum" => array('id', 'format', 'token'),
+                "optional" => array('verbose', 'callback', 'token'),
+                "alphanum" => array('id', 'format', 'callback', 'token'),
                 "bools"    => array('verbose')
                 
             );
@@ -696,8 +695,8 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale'),
-                "optional" => array('format', 'frameRate', 'maxFrames', 'movieLength', 'watermark', 'width', 'height', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2'),
-                "alphanum" => array('format'),
+                "optional" => array('format', 'frameRate', 'maxFrames', 'movieLength', 'watermark', 'width', 'height', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2', 'callback'),
+                "alphanum" => array('format', 'callback'),
                 "bools"    => array('watermark'),
                 "dates"    => array('startTime', 'endTime'),
                 "floats"   => array('imageScale', 'frameRate', 'movieLength', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2'),
