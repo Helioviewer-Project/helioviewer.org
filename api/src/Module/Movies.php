@@ -138,8 +138,6 @@ class Module_Movies implements Module
         $movie = new Movie_HelioviewerMovie($this->_params['id'], $this->_params['format']);
         $verbose = isset($this->_options['verbose']) ? $this->_options['verbose'] : false;
         
-        header('Content-type: application/json');
-        
         // If the movie is finished return movie info
         if ($movie->status == "FINISHED") {            
             $response = $movie->getCompletedMovieInformation($verbose);
@@ -157,7 +155,7 @@ class Module_Movies implements Module
             );
         }
         
-        print json_encode($response);
+        $this->_printJSON(json_encode($response));
     }
     
     /**
@@ -450,8 +448,8 @@ class Module_Movies implements Module
         case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
-                "optional" => array('verbose'),
-                "alphanum" => array('id', 'format'),
+                "optional" => array('verbose', 'callback'),
+                "alphanum" => array('id', 'format', 'callback'),
                 "bools"    => array('verbose')
                 
             );
