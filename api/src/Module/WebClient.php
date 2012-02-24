@@ -588,7 +588,8 @@ class Module_WebClient implements Module
             break;
         case "shortenURL":
             $expected = array(
-                "required" => array("queryString", "callback"),
+                "required" => array("queryString"),
+                "optional" => array("callback"),
                 "encoded"  => array("queryString", "callback")
             );
             break;
