@@ -249,7 +249,7 @@ var TileLayerAccordion = Layer.extend(
      * @param {Object} layer
      */
     _showImageInfoDialog: function (id, name, imageId) {
-        var params, self = this, dialog = $("#image-info-dialog-" + id);
+        var params, dtype, self = this, dialog = $("#image-info-dialog-" + id);
         
         // Check to see if a dialog already exists
         if (dialog.length !== 0) {
@@ -268,9 +268,16 @@ var TileLayerAccordion = Layer.extend(
             id     : imageId
         };
         
-        $.get("api/index.php", params, function (response) {
+        // For remote queries, retrieve XML using JSONP
+        if (Helioviewer.dataType === "jsonp") {
+            dtype = "jsonp text xml";
+        } else {
+            dtype = Helioviewer.dataType;
+        }
+        
+        $.get(Helioviewer.api, params, function (response) {
             self._buildImageInfoDialog(name, id, response);
-        });
+        }, dtype);
     },
     
     /**
