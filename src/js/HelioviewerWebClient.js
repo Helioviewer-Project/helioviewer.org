@@ -71,7 +71,9 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         this._displayGreeting();
 
         // Initialize AddThis
-        addthis.init();
+        if (typeof(addthis) !== "undefined") {
+            addthis.init();            
+        }
         
         // Play movie if id is specified
         if (urlSettings.movieId) {
