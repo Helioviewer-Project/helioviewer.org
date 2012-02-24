@@ -272,7 +272,7 @@ var TileLayerAccordion = Layer.extend(
         if (Helioviewer.dataType === "jsonp") {
             dtype = "jsonp text xml";
         } else {
-            dtype = Helioviewer.dataType;
+            dtype = "xml";
         }
         
         $.get(Helioviewer.api, params, function (response) {

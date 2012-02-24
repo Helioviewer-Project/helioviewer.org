@@ -55,7 +55,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this.fullScreenMode = new FullscreenControl("#fullscreen-btn", 500);
         
-        this.displayBlogFeed("api/?action=getNewsFeed", 3, false);
+        this.displayBlogFeed(3, false);
         
         this._userVideos = new UserVideoGallery(this.serverSettings.videoFeed);
         
@@ -373,11 +373,22 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     /**
      * Displays recent news from the Helioviewer Project blog
      */
-    displayBlogFeed: function (feed, n, showDescription, descriptionWordLength) {
-        var url = this.serverSettings.newsURL, html = "";
+    displayBlogFeed: function (n, showDescription, descriptionWordLength) {
+        var url, dtype, html = "";
+        
+        url = this.serverSettings.newsURL;
+        
+        // For remote queries, retrieve XML using JSONP
+        if (Helioviewer.dataType === "jsonp") {
+            dtype = "jsonp text xml";
+        } else {
+            dtype = "xml";
+        }
         
         $.getFeed({
-            url: feed,
+            url: Helioviewer.api,
+            data: {"action": "getNewsFeed"},
+            dataType: dtype,
             success: function (feed) {
                 var link, date, more, description;
                 
