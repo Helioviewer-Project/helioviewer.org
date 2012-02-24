@@ -13,14 +13,13 @@ var JP2Image = Class.extend(
     /**
      * @constructs
      */
-    init: function (observatory, instrument, detector, measurement, sourceId, date, server, onChange) {
+    init: function (observatory, instrument, detector, measurement, sourceId, date, onChange) {
         this.observatory = observatory;
         this.instrument  = instrument;
         this.detector    = detector;
         this.measurement = measurement;
         this.sourceId    = sourceId;
         this.requestDate = date;
-        this.server      = server;
         this._onChange   = onChange;
         
         this._requestImage();
