@@ -302,8 +302,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // Flash video URL
-        flvURL = helioviewer.serverSettings.rootURL + 
-                "/api/index.php?action=downloadMovie&format=flv&id=" + movie.id;
+        flvURL = Helioviewer.api + 
+                "?action=downloadMovie&format=flv&id=" + movie.id;
                  
         // SWF URL (The flowplayer SWF directly provides best Facebook support)
         swfURL = helioviewer.serverSettings.rootURL + 
@@ -330,7 +330,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Opens YouTube uploader either in a separate tab or in a dialog
      */
     showYouTubeUploadDialog: function (movie) {
-        var title, tags, url1, url2, description;
+        var title, tags, baseURL, url1, url2, description;
         
         // Suggested movie title
         title = movie.name + " (" + movie.startDate + " - " + 
@@ -352,9 +352,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // URLs
-        url1 = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
-        url2 = helioviewer.serverSettings.rootURL + "/api/?action=" + 
-               "downloadMovie&id=" + movie.id + "&format=mp4&hq=true";
+        baseURL = Helioviewer.api.replace("api/index.php", "");
+        
+        url1 = baseURL + "/?movieId=" + movie.id;
+        url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
                
         // Suggested Description
         description = "This movie was produced by Helioviewer.org. See the " + 
@@ -435,7 +436,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         $.ajax({
             async: false,
-            url : "api/index.php?action=checkYouTubeAuth",
+            url : Helioviewer.api + "?action=checkYouTubeAuth",
             type: "GET",
             success: function (response) {
                 auth = response;
@@ -573,7 +574,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     getVideoPlayerHTML: function (id, width, height, url) {
         var downloadURL, downloadLink, youtubeBtn, addthisBtn, linkBtn, linkURL;
         
-        downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
+        downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
 
         downloadLink = "<a target='_parent' href='" + downloadURL + 
@@ -620,7 +621,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Fallback (flash player)
         else {
-            url = 'api/index.php?action=playMovie&id=' + id +
+            url = Helioviewer.api + '?action=playMovie&id=' + id +
                   '&width=' + width + "&height=" + height + 
                   '&format=flv';
             

@@ -444,7 +444,7 @@ var TileLayerAccordion = Layer.extend(
         
         // JPEG 2000 download button
         $("#image-" + id + "-download-btn").unbind().bind('click', function () {
-            window.open("api/?action=getJP2Image&id=" + imageId);
+            window.open(Helioviewer.api + "?action=getJP2Image&id=" + imageId);
             return false;
         });
     },
