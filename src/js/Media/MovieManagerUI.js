@@ -303,7 +303,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Flash video URL
         flvURL = Helioviewer.api + 
-                "?action=downloadMovie&format=flv&id=" + movie.id;
+                "/?action=downloadMovie&format=flv&id=" + movie.id;
                  
         // SWF URL (The flowplayer SWF directly provides best Facebook support)
         swfURL = helioviewer.serverSettings.rootURL + 
@@ -353,7 +353,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // URLs
         url1 = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
-        url2 = Helioviewer.api + "/?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
+        url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
                
         // Suggested Description
         description = "This movie was produced by Helioviewer.org. See the " + 
@@ -395,7 +395,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         auth = this._checkYouTubeAuth();
 
         // Base URL
-        url = Helioviewer.api + $("#youtube-video-info").serialize();
+        url = Helioviewer.api + "?" + $("#youtube-video-info").serialize();
 
         // If the user has already authorized Helioviewer, upload the movie
         if (auth) {
