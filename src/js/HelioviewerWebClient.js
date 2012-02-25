@@ -528,11 +528,11 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * Returns a shortened version of a Helioviewer.org URL
      */
     shortenURL: function (queryString) {
-        var shortURL = "http://www.helioviewer.org";
+        var shortURL = "http://www.helioviewer.org", self = this;
         
         $.ajax({
             async: false,
-            url: Helioviewer.api,
+            url: self.serverSettings.rootURL,
             dataType: 'json',
             data: {
                 "action": "shortenURL",
