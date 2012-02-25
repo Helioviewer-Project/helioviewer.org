@@ -330,7 +330,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Opens YouTube uploader either in a separate tab or in a dialog
      */
     showYouTubeUploadDialog: function (movie) {
-        var title, tags, baseURL, url1, url2, description;
+        var title, tags, url1, url2, description;
         
         // Suggested movie title
         title = movie.name + " (" + movie.startDate + " - " + 
@@ -352,9 +352,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // URLs
-        baseURL = Helioviewer.api.replace("api/index.php", "");
-        
-        url1 = baseURL + "/?movieId=" + movie.id;
+        url1 = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
         url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
                
         // Suggested Description
