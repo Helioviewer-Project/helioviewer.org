@@ -131,14 +131,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
         
+        // Viewport shadow
+        shadow = $('#helioviewer-viewport-container-shadow');
+        
         // IE shadows don't behave properly during resizing/fullscreen (tested: IE9)
         if ($.browser.msie) {
             shadow.css("box-shadow", "none");
             return;
         }
         
-        // Viewport shadow
-        shadow = $('#helioviewer-viewport-container-shadow').show();
+        shadow.show();
         
         updateShadow = function () {
             shadow.width(self.viewport.outerNode.width())
