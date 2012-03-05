@@ -397,7 +397,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Processes form and submits video upload request to YouTube
      */
     submitVideoUploadForm: function (event) {
-        var params, successMsg, uploadDialog, url, auth, self = this;
+        var params, successMsg, uploadDialog, url, form, loader, callback, self = this;
             
         // Validate and submit form
         try {
@@ -406,61 +406,45 @@ var MovieManagerUI = MediaManagerUI.extend(
             this._displayValidationErrorMsg(ex);
             return false;
         }
-
-        // Check YouTube authorization
-        auth = this._checkYouTubeAuth();
-
-        // Base URL
-        url = Helioviewer.api + "?" + $("#youtube-video-info").serialize();
-
-        // If the user has already authorized Helioviewer, upload the movie
-        if (auth) {
-            $.get(url, {"action": "uploadMovieToYouTube"}, function (response) {
-                if (response.error) {
-                    self.hide();
-                    $(document).trigger("message-console-warn", [response.error]);
-                }
-            }, "json");
-        } else {
-            // Otherwise open an authorization page in a new tab/window
-            window.open(url + "&action=getYouTubeAuth", "_blank");
-        }
         
-        // Close the dialog
-        $("#upload-dialog").dialog("close");
-        return false;
-    },
-    
-    /**
-     * Performs a synchronous request to see if the user has authorized
-     * Helioviewer.org to upload videos on their behalf
-     * 
-     * @return bool Authorization
-     */
-    _checkYouTubeAuth: function () {
-        // Check authorization using a synchronous request (otherwise Google 
-        //  will not allow opening of request in a new tab)
-        var form, loader, auth = false;
-                  
         // Clear any remaining error messages before continuing
         $("#upload-error-console").hide();
 
         form = $("#upload-form").hide();
         loader = $("#youtube-auth-loading-indicator").show();
 
-        $.ajax({
-            async: false,
-            url : Helioviewer.api + "?action=checkYouTubeAuth",
-            type: "GET",
-            success: function (response) {
-                auth = response;
+        // Callback function
+        callback = function (response) {
+            loader.hide();
+            form.show();
+    
+            // Base URL
+            url = Helioviewer.api + "?" + $("#youtube-video-info").serialize();
+    
+            // If the user has already authorized Helioviewer, upload the movie
+            if (auth) {
+                $.get(url, {"action": "uploadMovieToYouTube"}, function (response) {
+                    if (response.error) {
+                        self.hide();
+                        $(document).trigger("message-console-warn", [response.error]);
+                    }
+                }, "json");
+            } else {
+                // Otherwise open an authorization page in a new tab/window
+                window.open(url + "&action=getYouTubeAuth", "_blank");
             }
+            
+            // Close the dialog
+            $("#upload-dialog").dialog("close");
+            return false;
+        }
+
+        // Check YouTube authorization
+        $.ajax({
+            url : Helioviewer.api + "?action=checkYouTubeAuth",
+            dataType: Helioviewer.dataType,
+            success: callback
         });
-        
-        loader.hide();
-        form.show();
-        
-        return auth;
     },
     
     /**
