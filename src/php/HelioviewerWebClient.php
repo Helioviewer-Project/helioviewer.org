@@ -113,8 +113,15 @@ class HelioviewerWebClient extends HelioviewerClient
      */
     protected function addOpenGraphTags() {
         if (isset($this->urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $this->urlSettings["movieId"])) {
-            $this->_addOpenGraphTagsForMovie($this->urlSettings["movieId"]);
-        } else if (sizeOf($this->urlSettings) >= 7) {
+            try {
+                $this->_addOpenGraphTagsForMovie($this->urlSettings["movieId"]);
+                return;
+            } catch (Exception $e) {
+                unset($this->urlSettings["movieId"]);
+            }
+        }
+        
+        if (sizeOf($this->urlSettings) >= 7) {
             $this->_addOpenGraphForSharedURL();
         } else {
             parent::addOpenGraphTags();
@@ -145,8 +152,8 @@ class HelioviewerWebClient extends HelioviewerClient
         } else {
             // Otherwise process locally
             include_once 'api/src/Movie/HelioviewerMovie.php';
-            $movie = new Movie_HelioviewerMovie($id, "mp4");
             
+            $movie = new Movie_HelioviewerMovie($id, "mp4");
             $info = array(
                 "title" => $movie->getTitle(),
                 "thumbnails" => $movie->getPreviewImages(),
