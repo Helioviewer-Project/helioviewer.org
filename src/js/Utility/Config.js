@@ -17,7 +17,7 @@ var Config = Class.extend(
         this.params = params;
         
         this.bools  = ["disable_cache", "helioqueuer_enabled"];
-        this.ints   = ["build_num", "default_timestep", "prefetch_size", "bit_depth", "num_colors", "max_movie_frames",
+        this.ints   = ["build_num", "default_timestep", "prefetch_size", "max_movie_frames",
                        "max_tile_layers"];
         this.floats = ["default_image_scale", "min_image_scale", "max_image_scale"];
         
