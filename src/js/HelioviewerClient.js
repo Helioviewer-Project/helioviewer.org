@@ -26,10 +26,19 @@ var HelioviewerClient = Class.extend(
         this._checkBrowser(); // Determines browser support
 
         this.serverSettings = serverSettings;
-
+        
         Helioviewer.api          = serverSettings['backEnd'];
         Helioviewer.dataType     = serverSettings['backEnd'] === "api/index.php" ? "json" : "jsonp";
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
+
+        if (serverSettings['backEnd'] === "api/index.php") {
+            Helioviewer.root = serverSettings['rootURL'];
+        } else {
+            Helioviewer.root = Helioviewer.api.substr(0, Helioviewer.api .search("/api"));
+        }
+
+        
+       
     },
     
     /**
