@@ -401,9 +401,8 @@ class Module_Movies implements Module
         include_once 'src/Movie/YouTube.php';
         
         $youtube = new Movie_YouTube();
-
-        header('Content-type: application/json');
-        print json_encode($youtube->checkYouTubeAuth());
+        
+        $this->_printJSON(json_encode($youtube->checkYouTubeAuth()));
     }
 
     /**
@@ -720,7 +719,10 @@ class Module_Movies implements Module
             );
             break;
         case "checkYouTubeAuth":
-            $expected = array();
+            $expected = array(
+                "optional" => array('callback'),
+                "alphanum" => array('callback')
+            );
             break;
         case "getYouTubeAuth":
             $expected = array(

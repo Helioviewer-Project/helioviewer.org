@@ -74,7 +74,7 @@ class Image_SubFieldImage
         
         // Default settings
         $defaults = array(
-            "bitdepth"  => HV_BIT_DEPTH,
+            "bitdepth"  => 8,
             "compress"  => true,
             "interlace" => true,
             "opacity"   => 100,

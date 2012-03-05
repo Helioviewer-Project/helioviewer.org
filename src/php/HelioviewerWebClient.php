@@ -113,8 +113,15 @@ class HelioviewerWebClient extends HelioviewerClient
      */
     protected function addOpenGraphTags() {
         if (isset($this->urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $this->urlSettings["movieId"])) {
-            $this->_addOpenGraphTagsForMovie($this->urlSettings["movieId"]);
-        } else if (sizeOf($this->urlSettings) >= 7) {
+            try {
+                $this->_addOpenGraphTagsForMovie($this->urlSettings["movieId"]);
+                return;
+            } catch (Exception $e) {
+                unset($this->urlSettings["movieId"]);
+            }
+        }
+        
+        if (sizeOf($this->urlSettings) >= 7) {
             $this->_addOpenGraphForSharedURL();
         } else {
             parent::addOpenGraphTags();
@@ -129,19 +136,40 @@ class HelioviewerWebClient extends HelioviewerClient
         include_once "api/src/Config.php";
         $configObj = new Config("settings/Config.ini");
         
-        include_once 'api/src/Movie/HelioviewerMovie.php';
-        
-        $movie = new Movie_HelioviewerMovie($id, "mp4");
-        $thumbnails = $movie->getPreviewImages();
+        // Forward remote requests
+        if (HV_BACK_END !== "api/index.php") {
+            $params = array(
+                "action" => "getMovieStatus",
+                "format" => "mp4",
+                "id"     => $id
+            );
+            include_once 'api/src/Net/Proxy.php';
+            $proxy = new Net_Proxy(HV_BACK_END . "?");
+            $info = json_decode($proxy->post($params, true), true);
+            
+            $flvURL = HV_BACK_END . "?action=downloadMovie&format=flv&id=" . $id;
+            $swfURL = substr(HV_BACK_END, 0, -14) . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+        } else {
+            // Otherwise process locally
+            include_once 'api/src/Movie/HelioviewerMovie.php';
+            
+            $movie = new Movie_HelioviewerMovie($id, "mp4");
+            $info = array(
+                "title" => $movie->getTitle(),
+                "thumbnails" => $movie->getPreviewImages(),
+                "width" => $movie->width,
+                "height" => $movie->height
+            );
 
-        $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $movie->publicId;
-        $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+            $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $id;
+            $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+        }
     ?>
-        <meta property="og:description" content="<?php echo $movie->getTitle();?>" />
-        <meta property="og:image" content="<?php echo $thumbnails['full'];?>" />
+        <meta property="og:description" content="<?php //echo $info['title'];?>" />
+        <meta property="og:image" content="<?php echo $info['thumbnails']['full'];?>" />
         <meta property="og:video" content="<?php echo $swfURL;?>" />
-        <meta property="og:video:width" content="<?php echo $movie->width;?>" />
-        <meta property="og:video:height" content="<?php echo $movie->height;?>" />
+        <meta property="og:video:width" content="<?php echo $info['width'];?>" />
+        <meta property="og:video:height" content="<?php echo $info['height'];?>" />
         <meta property="og:video:type" content="application/x-shockwave-flash" />
     <?php 
     }
@@ -616,7 +644,12 @@ class HelioviewerWebClient extends HelioviewerClient
         parent::printScript();
 ?>
     // Initialize Helioviewer.org
-         helioviewer = new HelioviewerWebClient(urlSettings, serverSettings, zoomLevels);
+    helioviewer = new HelioviewerWebClient(urlSettings, serverSettings, zoomLevels);
+    
+    // Play movie if id is specified
+    if (urlSettings.movieId) {
+        helioviewer.loadMovie(urlSettings.movieId);
+    }
     });
 <?php
     }

@@ -181,6 +181,7 @@ class Movie_HelioviewerMovie
             "endDate"     => $this->endDate,
             "width"       => $this->width,
             "height"      => $this->height,
+			"title"       => $this->getTitle(),
             "thumbnails"  => $this->getPreviewImages(),
             "url"         => $this->getURL()
         );
