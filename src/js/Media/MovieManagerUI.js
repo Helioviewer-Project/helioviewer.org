@@ -389,7 +389,11 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         if (movie.status === 2) {
             // Use relative paths for thumbnails (helps with debugging in VM)
-            thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));
+            if (Helioviewer.api === "api/index.php") {
+                thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));    
+            } else {
+                thumbnail = movie.thumbnail;
+            }            
 
             html += "<div style='text-align: center;'>" + 
                 "<img src='" + thumbnail +
@@ -420,7 +424,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _createMoviePlayerDialog: function (movie) {
         var dimensions, title, uploadURL, flvURL, swfURL, html, dialog, 
-            screenshot, self = this;
+            screenshot, callback, self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
@@ -480,27 +484,39 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // Flash video URL
-        flvURL = helioviewer.serverSettings.rootURL + 
-                "/api/index.php?action=downloadMovie&format=flv&id=" + movie.id;
+        flvURL = Helioviewer.api + 
+                "/?action=downloadMovie&format=flv&id=" + movie.id;
                  
         // SWF URL (The flowplayer SWF directly provides best Facebook support)
-        swfURL = helioviewer.serverSettings.rootURL + 
+        swfURL = Helioviewer.root + 
                  "/lib/flowplayer/flowplayer-3.2.7.swf?config=" + 
                  encodeURIComponent("{'clip':{'url':'" + flvURL + "'}}");
                  
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + 
                      "full.png";
         
-        // Initialize AddThis sharing
-        addthis.toolbox('#add-this-' + movie.id, {}, {
-            url: helioviewer.shortenURL("movieId=" + movie.id),
-            //url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
-            title: "Helioviewer.org",
-            description: title,
-            screenshot: screenshot,
-            swfurl: swfURL,
-            width: movie.width,
-            height: movie.height
+        // First get a shortened version of the movie URL
+        callback = function (response) {
+            // Then initialize AddThis toolbox
+            addthis.toolbox('#add-this-' + movie.id, {}, {
+                url: response.data.url,
+                title: "Helioviewer.org",
+                description: title,
+                screenshot: screenshot,
+                swfurl: swfURL,
+                width: movie.width,
+                height: movie.height
+            });
+        };
+
+        $.ajax({
+            url: Helioviewer.api,
+            dataType: Helioviewer.dataType,
+            data: {
+                "action": "shortenURL",
+                "queryString": "movieId=" + movie.id 
+            },
+            success: callback
         });
     },
        
@@ -530,9 +546,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // URLs
-        url1 = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
-        url2 = helioviewer.serverSettings.rootURL + "/api/?action=" + 
-               "downloadMovie&id=" + movie.id + "&format=mp4&hq=true";
+        url1 = Helioviewer.root + "/?movieId=" + movie.id;
+        url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
                
         // Suggested Description
         description = "This movie was produced by Helioviewer.org. See the " + 
@@ -560,7 +575,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Processes form and submits video upload request to YouTube
      */
     submitVideoUploadForm: function (event) {
-        var params, successMsg, uploadDialog, url, auth, self = this;
+        var params, successMsg, uploadDialog, url, form, loader, callback, self = this;
             
         // Validate and submit form
         try {
@@ -569,61 +584,45 @@ var MovieManagerUI = MediaManagerUI.extend(
             this._displayValidationErrorMsg(ex);
             return false;
         }
-
-        // Check YouTube authorization
-        auth = this._checkYouTubeAuth();
-
-        // Base URL
-        url = Helioviewer.api + $("#youtube-video-info").serialize();
-
-        // If the user has already authorized Helioviewer, upload the movie
-        if (auth) {
-            $.get(url, {"action": "uploadMovieToYouTube"}, function (response) {
-                if (response.error) {
-                    self.hide();
-                    $(document).trigger("message-console-warn", [response.error]);
-                }
-            }, "json");
-        } else {
-            // Otherwise open an authorization page in a new tab/window
-            window.open(url + "&action=getYouTubeAuth", "_blank");
-        }
         
-        // Close the dialog
-        $("#upload-dialog").dialog("close");
-        return false;
-    },
-    
-    /**
-     * Performs a synchronous request to see if the user has authorized
-     * Helioviewer.org to upload videos on their behalf
-     * 
-     * @return bool Authorization
-     */
-    _checkYouTubeAuth: function () {
-        // Check authorization using a synchronous request (otherwise Google 
-        //  will not allow opening of request in a new tab)
-        var form, loader, auth = false;
-                  
         // Clear any remaining error messages before continuing
         $("#upload-error-console").hide();
 
         form = $("#upload-form").hide();
         loader = $("#youtube-auth-loading-indicator").show();
 
-        $.ajax({
-            async: false,
-            url : "api/index.php?action=checkYouTubeAuth",
-            type: "GET",
-            success: function (response) {
-                auth = response;
+        // Callback function
+        callback = function (response) {
+            loader.hide();
+            form.show();
+    
+            // Base URL
+            url = Helioviewer.api + "?" + $("#youtube-video-info").serialize();
+    
+            // If the user has already authorized Helioviewer, upload the movie
+            if (auth) {
+                $.get(url, {"action": "uploadMovieToYouTube"}, function (response) {
+                    if (response.error) {
+                        self.hide();
+                        $(document).trigger("message-console-warn", [response.error]);
+                    }
+                }, "json");
+            } else {
+                // Otherwise open an authorization page in a new tab/window
+                window.open(url + "&action=getYouTubeAuth", "_blank");
             }
+            
+            // Close the dialog
+            $("#upload-dialog").dialog("close");
+            return false;
+        }
+
+        // Check YouTube authorization
+        $.ajax({
+            url : Helioviewer.api + "?action=checkYouTubeAuth",
+            dataType: Helioviewer.dataType,
+            success: callback
         });
-        
-        loader.hide();
-        form.show();
-        
-        return auth;
     },
     
     /**
@@ -751,7 +750,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     getVideoPlayerHTML: function (id, width, height, url) {
         var downloadURL, downloadLink, youtubeBtn, addthisBtn, linkBtn, linkURL;
         
-        downloadURL = "api/index.php?action=downloadMovie&id=" + id + 
+        downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
 
         downloadLink = "<a target='_parent' href='" + downloadURL + 
@@ -765,7 +764,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "src='resources/images/Social.me/48 " + 
             "by 48 pixels/youtube.png' /></a>";
             
-        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
+        linkURL = Helioviewer.root + "/?movieId=" + id;
             
         linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + 
             "' title='Get a link to the movie' " + 
@@ -798,7 +797,7 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Fallback (flash player)
         else {
-            url = 'api/index.php?action=playMovie&id=' + id +
+            url = Helioviewer.api + '?action=playMovie&id=' + id +
                   '&width=' + width + "&height=" + height + 
                   '&format=flv';
             

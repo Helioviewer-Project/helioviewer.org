@@ -32,7 +32,7 @@ class Config
 {
     private $_bools  = array("disable_cache", "enable_statistics_collection");
                              
-    private $_ints   = array("build_num", "bit_depth", "default_timestep", "prefetch_size", "num_colors",
+    private $_ints   = array("build_num", "default_timestep", "prefetch_size",
                              "ffmpeg_max_threads", "max_jpx_frames", "max_movie_frames");
     private $_floats = array("default_image_scale", "min_image_scale", "max_image_scale");
 

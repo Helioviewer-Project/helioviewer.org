@@ -74,11 +74,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         if (typeof(addthis) !== "undefined") {
             addthis.init();            
         }
-        
-        // Play movie if id is specified
-        if (urlSettings.movieId) {
-            this.loadMovie(urlSettings.movieId);
-        }
     },
     
     /**
@@ -131,14 +126,16 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         this._super("#helioviewer-viewport-container-outer", date, marginTop, marginBottom);
         
+        // Viewport shadow
+        shadow = $('#helioviewer-viewport-container-shadow');
+        
         // IE shadows don't behave properly during resizing/fullscreen (tested: IE9)
         if ($.browser.msie) {
             shadow.css("box-shadow", "none");
             return;
         }
         
-        // Viewport shadow
-        shadow = $('#helioviewer-viewport-container-shadow').show();
+        shadow.show();
         
         updateShadow = function () {
             shadow.width(self.viewport.outerNode.width())
@@ -298,30 +295,37 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * @param {Object} url
      */
     displayURL: function (url, msg) {
-        // Store short and long versions of URL
-        var queryString, shortURL;
+        // Get short URL before displaying
+        var callback = function (response) {
+            $("#helioviewer-long-url").attr("value", url);
+            $("#helioviewer-short-url").attr("value", response.data.url);
+            
+            // Display URL
+            $("#helioviewer-url-box-msg").text(msg);
+            $("#url-dialog").dialog({
+                dialogClass: 'helioviewer-modal-dialog',
+                height    : 110,
+                width     : $('html').width() * 0.7,
+                modal     : true,
+                resizable : false,
+                title     : "URL",
+                open      : function (e) {
+                    $("#helioviewer-url-shorten").removeAttr("checked");
+                    $('.ui-widget-overlay').hide().fadeIn();
+                    $("#helioviewer-url-input-box").attr('value', url).select();
+                }
+            });
+        };
         
-        queryString = url.substr(this.serverSettings.rootURL.length + 2); 
-        
-        shortURL = this.shortenURL(queryString);
-        
-        $("#helioviewer-long-url").attr("value", url);
-        $("#helioviewer-short-url").attr("value", shortURL);
-        
-        // Display URL
-        $("#helioviewer-url-box-msg").text(msg);
-        $("#url-dialog").dialog({
-            dialogClass: 'helioviewer-modal-dialog',
-            height    : 110,
-            width     : $('html').width() * 0.7,
-            modal     : true,
-            resizable : false,
-            title     : "URL",
-            open      : function (e) {
-                $("#helioviewer-url-shorten").removeAttr("checked");
-                $('.ui-widget-overlay').hide().fadeIn();
-                $("#helioviewer-url-input-box").attr('value', url).select();
-            }
+        // Get short version of URL and open dialog
+        $.ajax({
+            url: Helioviewer.api,
+            dataType: Helioviewer.dataType,
+            data: {
+                "action": "shortenURL",
+                "queryString": url.substr(this.serverSettings.rootURL.length + 2) 
+            },
+            success: callback
         });
     },
     
@@ -521,27 +525,6 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         };
         
         return this.serverSettings.rootURL + "/?" + decodeURIComponent($.param(params));
-    },
-    
-    /**
-     * Returns a shortened version of a Helioviewer.org URL
-     */
-    shortenURL: function (queryString) {
-        var shortURL = "http://www.helioviewer.org";
-        
-        $.ajax({
-            async: false,
-            url: Helioviewer.api,
-            dataType: 'json',
-            data: {
-                "action": "shortenURL",
-                "queryString": queryString 
-            },
-            success: function (response) {
-                shortURL = response.data.url;
-            }
-        });
-        return shortURL;
     },
     
     /**

@@ -409,7 +409,8 @@ class Module_WebClient implements Module
     /**
      * Uses bit.ly to generate a shortened URL
      * 
-     * TODO 2012/02/23: Switch to using bit.ly JSONP API directly.
+     * Requests are sent via back-end for security per the bit.ly docs
+     * recommendation.
      */
     public function shortenURL()
     {
@@ -588,7 +589,8 @@ class Module_WebClient implements Module
             break;
         case "shortenURL":
             $expected = array(
-                "required" => array("queryString", "callback"),
+                "required" => array("queryString"),
+                "optional" => array("callback"),
                 "encoded"  => array("queryString", "callback")
             );
             break;

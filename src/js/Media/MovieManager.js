@@ -239,7 +239,7 @@ var MovieManager = MediaManager.extend(
                 "token"  : token,
                 "format" : self.format
             };
-            $.get("api/index.php", params, callback, "json");
+            $.get(Helioviewer.api, params, callback, Helioviewer.dataType);
         };
         setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
     },
