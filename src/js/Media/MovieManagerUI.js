@@ -218,7 +218,11 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         if (movie.status === "FINISHED") {
             // Use relative paths for thumbnails (helps with debugging in VM)
-            thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));
+            if (Helioviewer.api === "api/index.php") {
+                thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));    
+            } else {
+                thumbnail = movie.thumbnail;
+            }            
 
             html += "<div style='text-align: center;'>" + 
                 "<img src='" + thumbnail +
@@ -249,7 +253,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _createMoviePlayerDialog: function (movie) {
         var dimensions, title, uploadURL, flvURL, swfURL, html, dialog, 
-            screenshot, self = this;
+            screenshot, callback, self = this;
         
         // Make sure dialog fits nicely inside the browser window
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
@@ -306,23 +310,35 @@ var MovieManagerUI = MediaManagerUI.extend(
                 "/?action=downloadMovie&format=flv&id=" + movie.id;
                  
         // SWF URL (The flowplayer SWF directly provides best Facebook support)
-        swfURL = helioviewer.serverSettings.rootURL + 
+        swfURL = Helioviewer.root + 
                  "/lib/flowplayer/flowplayer-3.2.7.swf?config=" + 
                  encodeURIComponent("{'clip':{'url':'" + flvURL + "'}}");
                  
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + 
                      "full.png";
         
-        // Initialize AddThis sharing
-        addthis.toolbox('#add-this-' + movie.id, {}, {
-            url: helioviewer.shortenURL("movieId=" + movie.id),
-            //url: helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id,
-            title: "Helioviewer.org",
-            description: title,
-            screenshot: screenshot,
-            swfurl: swfURL,
-            width: movie.width,
-            height: movie.height
+        // First get a shortened version of the movie URL
+        callback = function (response) {
+            // Then initialize AddThis toolbox
+            addthis.toolbox('#add-this-' + movie.id, {}, {
+                url: response.data.url,
+                title: "Helioviewer.org",
+                description: title,
+                screenshot: screenshot,
+                swfurl: swfURL,
+                width: movie.width,
+                height: movie.height
+            });
+        };
+
+        $.ajax({
+            url: Helioviewer.api,
+            dataType: Helioviewer.dataType,
+            data: {
+                "action": "shortenURL",
+                "queryString": "movieId=" + movie.id 
+            },
+            success: callback
         });
     },
        
@@ -352,7 +368,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
         
         // URLs
-        url1 = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
+        url1 = Helioviewer.root + "/?movieId=" + movie.id;
         url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
                
         // Suggested Description
@@ -586,7 +602,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "src='resources/images/Social.me/48 " + 
             "by 48 pixels/youtube.png' /></a>";
             
-        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
+        linkURL = Helioviewer.root + "/?movieId=" + id;
             
         linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + 
             "' title='Get a link to the movie' " + 
