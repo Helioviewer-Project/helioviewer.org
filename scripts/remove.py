@@ -19,7 +19,7 @@ import shutil
 import MySQLdb
 
 def main(argv):
-    rootdir = "/var/www/jp2/LATEST"
+    rootdir = "/var/www/jp2"
     moveto  = "/var/www/jp2/Corrupted"
     dbname  = "dbname"
     dbuser  = "dbuser"
