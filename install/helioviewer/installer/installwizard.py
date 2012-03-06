@@ -356,7 +356,7 @@ class Ui_InstallWizard(object):
         self.jp2ArchivePage.setSubTitle(QtGui.QApplication.translate("InstallWizard", "JPEG 2000 Image Archive Location", None, QtGui.QApplication.UnicodeUTF8))
         self.jp2ArchivePageDesc.setText(QtGui.QApplication.translate("InstallWizard", "Enter the location of the JPEG 2000 image archive root directory:", None, QtGui.QApplication.UnicodeUTF8))
         self.jp2RootDirLbl.setText(QtGui.QApplication.translate("InstallWizard", "JP2 Archive Location:", None, QtGui.QApplication.UnicodeUTF8))
-        self.jp2RootDirInput.setText(QtGui.QApplication.translate("InstallWizard", "/var/www/jp2/v0.8", None, QtGui.QApplication.UnicodeUTF8))
+        self.jp2RootDirInput.setText(QtGui.QApplication.translate("InstallWizard", "/var/www/jp2", None, QtGui.QApplication.UnicodeUTF8))
         self.jp2BrowseBtn.setText(QtGui.QApplication.translate("InstallWizard", "Browse", None, QtGui.QApplication.UnicodeUTF8))
         self.installingPage.setTitle(QtGui.QApplication.translate("InstallWizard", "Installing Helioviewer Database Schema", None, QtGui.QApplication.UnicodeUTF8))
         self.installingPage.setSubTitle(QtGui.QApplication.translate("InstallWizard", "Processing JPEG 2000 Archive", None, QtGui.QApplication.UnicodeUTF8))
