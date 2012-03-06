@@ -41,13 +41,13 @@ import time
 def main(argv):
     ''' Processes incoming JP2 files and moves them to proper location '''
     installer   = "/var/www/install/install.py"
-    destination = "/var/www/jp2/v0.8"
+    destination = "/var/www/jp2"
     dbname="hvdb"
     dbuser="helioviewer"
     dbpass="helioviewer"
     dbtype="mysql"
 
-    dirs = ["/home/user/incoming/v0.8/jp2"]
+    dirs = ["/home/user/incoming/jp2"]
     
     for dir in dirs:
         processIncomingImages(installer, destination, dir, dbname, dbuser, dbpass, dbtype)

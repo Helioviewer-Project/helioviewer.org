@@ -529,7 +529,7 @@
        <item>
         <widget class="QLineEdit" name="jp2RootDirInput">
          <property name="text">
-          <string>/var/www/jp2/v0.8</string>
+          <string>/var/www/jp2</string>
          </property>
         </widget>
        </item>

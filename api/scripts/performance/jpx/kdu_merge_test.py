@@ -22,7 +22,7 @@ for channel in [94,131,171,193,211,304,335,1600,1700,4500]:
     for day in xrange(1, 2 * len(lengths)):
         n = lengths[day % len(lengths)]
 
-        dir = "/var/www/jp2/LATEST/AIA/%d/2010/%0.2d/%0.2d" % (channel, month, day)
+        dir = "/var/www/jp2/AIA/%d/2010/%0.2d/%0.2d" % (channel, month, day)
  
         # run kdu_merge
         start = datetime.datetime.now()
