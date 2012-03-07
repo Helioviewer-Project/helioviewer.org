@@ -840,36 +840,9 @@ function handleError($msg, $skipLog=false)
     // For errors which are expected (e.g. a movie request for which sufficient data is not available) a non-zero
     // exception code can be set to a non-zero value indicating that the error is known and no log should be created.
     if (!$skipLog) {
+        include_once "src/Helper/Logging.php";
         logErrorMsg($msg);
     }
-}
-
-/**
- * Logs an error message to the log whose location is specified in Config.ini
- * 
- * @param string $error The body of the error message to be logged.
- * 
- * @return void 
- */
-function logErrorMsg($error)
-{
-    $url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    $log = HV_LOG_DIR . "/" . date("Ymd_His") . ".log";
-    
-    $template = "====[DATE]====================\n\n%s\n\n====[URL]=====================\n\n%s\n\n"
-              . "====[MESSAGE]=================\n\n%s";
-    
-    $msg = sprintf($template, date("Y/m/d H:i:s"), $url, $error);
-    
-    if (!empty($_POST)) {
-        $msg .= "\n\n====[POST]=================\n\n";
-        foreach ($_POST as $key => $value) {
-           $msg .= "'$key' => $value\n";
-        }
-        $msg .= "\n$url?" . http_build_query($_POST);
-    }
-
-    file_put_contents($log, $msg);
 }
 
 /**
