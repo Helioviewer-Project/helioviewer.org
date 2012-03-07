@@ -420,7 +420,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         loader = $("#youtube-auth-loading-indicator").show();
 
         // Callback function
-        callback = function (response) {
+        callback = function (auth) {
             loader.hide();
             form.show();
     
