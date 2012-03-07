@@ -592,7 +592,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "src='resources/images/Social.me/48 " + 
             "by 48 pixels/youtube.png' /></a>";
             
-        linkURL = Helioviewer.root + "/?movieId=" + id;
+        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
             
         linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + 
             "' title='Get a link to the movie' " + 
