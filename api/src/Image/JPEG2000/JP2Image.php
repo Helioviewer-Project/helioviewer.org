@@ -109,7 +109,7 @@ class Image_JPEG2000_JP2Image
         $cmd .= $this->_getRegionString($roi);
 
         // Execute the command
-        $result = exec(HV_PATH_CMD . escapeshellcmd($cmd), $out, $ret);
+        $result = exec(escapeshellcmd($cmd), $out, $ret);
 
         if (($ret != 0) || (sizeof($out) > 6)) {
             $msg = "Error extracting JPEG 2000 subfield region!\n\tCommand: \"" . escapeshellcmd($cmd) . "\".\n\tResult: $result";

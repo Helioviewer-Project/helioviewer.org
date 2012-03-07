@@ -435,7 +435,7 @@ class Image_Composite_HelioviewerCompositeImage
 
         if (!file_exists($this->_dir)) {
             if (!mkdir($this->_dir, 0777, true)) {
-                throw Exception("Unable to create directory: ". $this->_dir);
+                throw new Exception("Unable to create directory: ". $this->_dir);
             }
         }
         

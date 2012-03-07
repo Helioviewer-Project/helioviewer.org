@@ -494,6 +494,11 @@ var MovieManagerUI = MediaManagerUI.extend(
                  
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + 
                      "full.png";
+                     
+        // If AddThis is not supported, skip toolbox initialization
+        if (typeof(addthis) == "undefined") {
+            return;
+        }
         
         // First get a shortened version of the movie URL
         callback = function (response) {
@@ -509,6 +514,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             });
         };
 
+        // Initialize AddThis toolbox once a shortened URL has been requested
         $.ajax({
             url: Helioviewer.api,
             dataType: Helioviewer.dataType,
@@ -592,7 +598,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         loader = $("#youtube-auth-loading-indicator").show();
 
         // Callback function
-        callback = function (response) {
+        callback = function (auth) {
             loader.hide();
             form.show();
     
@@ -764,7 +770,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "src='resources/images/Social.me/48 " + 
             "by 48 pixels/youtube.png' /></a>";
             
-        linkURL = Helioviewer.root + "/?movieId=" + id;
+        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
             
         linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + 
             "' title='Get a link to the movie' " + 

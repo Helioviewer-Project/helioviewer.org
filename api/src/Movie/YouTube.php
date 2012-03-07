@@ -164,7 +164,11 @@ class Movie_YouTube
         // Attempt a simple query to make sure session token has not expired
         try {
             $this->_youTube->getVideoFeed($this->_testURL);
-        } catch (Exception $e) { //Zend_Gdata_App_HttpException
+        } catch (Exception $e) {
+            //Zend_Gdata_App_HttpException
+            include_once "src/Helper/Logging.php";
+            logErrorMsg($msg, "Youtube_");
+                        
             unset($_SESSION['sessionToken']); // Discard expired authorization
             return false;
         }
