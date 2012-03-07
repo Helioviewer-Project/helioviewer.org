@@ -164,9 +164,6 @@ class HelioviewerWebClient extends HelioviewerClient
             $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $id;
             $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
         }
-        
-        var_dump($info);
-        die();
     ?>
         <meta property="og:description" content="<?php //echo $info['title'];?>" />
         <meta property="og:image" content="<?php echo $info['thumbnails']['full'];?>" />
