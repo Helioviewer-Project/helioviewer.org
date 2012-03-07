@@ -56,7 +56,7 @@ class Image_JPEG2000_JPXImage
      *
      * @return void
      */
-    protected function buildJPXImage($frames, $linked, $kduMerge = HV_KDU_MERGE_BIN, $pathCmd = HV_PATH_CMD)
+    protected function buildJPXImage($frames, $linked, $kduMerge = HV_KDU_MERGE_BIN)
     {
         //Append filepaths to kdu_merge command
         $cmd =  "$kduMerge -i ";
@@ -76,7 +76,7 @@ class Image_JPEG2000_JPXImage
         $cmd .= " -o " . $this->outputFile;
 
         // Execute kdu_merge command
-        exec("$pathCmd " . escapeshellcmd($cmd), $output, $return);
+        exec(escapeshellcmd($cmd), $output, $return);
     }
 
     /**

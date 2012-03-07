@@ -68,9 +68,9 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         };
 
         // Download link
-        body = "Your " + screenshot.name + " screenshot is ready! " +
-               "<a href='" + Helioviewer.api + "?action=downloadScreenshot&id=" + 
-               screenshot.id + "'>Click here to download. </a>";
+        body = "<a href='" + Helioviewer.api + "?action=downloadScreenshot&id=" + 
+               screenshot.id + "'>Your " + screenshot.name + 
+               " screenshot is ready! Click here to download. </a>";
 
         // Create the jGrowl notification.
         $(document).trigger("message-console-log", 
