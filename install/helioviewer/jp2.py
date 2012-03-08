@@ -249,7 +249,7 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
         
         directory, filename = os.path.split(img)
 
-        path = os.path.relpath(directory, rootdir)
+        path = "/" + os.path.relpath(directory, rootdir)
         
         # Extract header meta information
         try:

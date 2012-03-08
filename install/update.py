@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
-"""
+'''
 Helioviewer Image Ingestion Tool
 Last Updated: 2012/03/08
 
@@ -10,14 +10,10 @@ to the archive and then added to the database.
 
 To periodically scan a directory for new images, you can simply create a cronjob
 to run update.py.
-
-Example usage:
-
-    update.py -d hvdb -u hvuser -p hvpass -i /home/user/incoming -o /var/www/jp2
-
-"""
+'''
 import sys
 import os
+import shutil
 from helioviewer.jp2 import find_images, process_jp2_images
 from helioviewer.db  import get_db_cursor
 from optparse import OptionParser, IndentedHelpFormatter
@@ -26,7 +22,7 @@ def main(argv):
     '''Main application access point'''
     options = get_options()
     
-    print("Processing Images...")
+    print('Processing Images...')
     
     # Get a list of images to process
     images = find_images(options.source)
@@ -54,30 +50,45 @@ def main(argv):
     process_jp2_images(filepaths, options.destination, cursor, True)    
     cursor.close()
     
-    print("Finished!")
+    print('Finished!')
         
 def get_options():
-    ''' Gets command-line parameters'''
-    parser = OptionParser("%prog [options]", 
+    '''Gets command-line parameters'''
+    parser = OptionParser('%prog [options]', 
                           formatter=IndentedHelpFormatter(4,100))
-    parser.add_option("-d", "--database-name", dest="dbname",
-                      help="Database to insert images into")
-    parser.add_option("-u", "--database-user", dest="dbuser",
-                      help="Helioviewer.org database user")
-    parser.add_option("-p", "--database-pass", dest="dbpass",
-                      help="Helioviewer.org database password")
-    parser.add_option("-i", "--input-dir", dest="source",
-                      help="Directory containing files to process")
-    parser.add_option("-o", "--output-dir", dest="destination",
-                      help="Directory to move files to")
     
-    try:                                
-        options, args = parser.parse_args()
-                    
-    except:
-        sys.exit(2)
+    params = [
+        ('-d', '--database-name', 'dbname', 'Database to insert images into'),
+        ('-u', '--database-user', 'dbuser', 'Helioviewer.org database user'),
+        ('-p', '--database-pass', 'dbpass', 'Helioviewer.org database password'),
+        ('-i', '--input-dir', 'source', 'Directory containing files to process'),
+        ('-o', '--output-dir', 'destination', 'Directory to move files to')
+    ]
+    
+    for param in params:
+        parser.add_option(param[0], param[1], dest=param[2], help=param[3])
 
+    try:
+        options, args = parser.parse_args()
+
+        for param in params:
+            if getattr(options, param[2]) is None:
+                raise Exception("ERROR: missing required parameter %s.\n" % param[2])
+    except Exception, e:
+        print_help(parser)
+        print e
+        sys.exit(2)
+            
     return options
+
+def print_help(parser):
+    '''Prints program usage description'''
+    print ""
+    parser.print_help()
+    print "\nRequired: \n"
+    print "\tdbname, dbuser, dbpass, input-dir and output-dir must all be specified.\n"
+    print "Example: \n"
+    print "\tupdate.py -d dbname -u user -p pass -i /home/user/incoming -o /var/www/jp2\n"
 
 if __name__ == '__main__':
     main(sys.argv)
