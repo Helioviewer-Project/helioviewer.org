@@ -67,16 +67,11 @@ class Database_ImgIndex
      * 
      * @return string The movie information
      */
-    public function getMovieInformation($id, $format)
+    public function getMovieInformation($id)
     {
-        // FLV status is same as MP4
-        if ($format == "flv") {
-            $format = "mp4";
-        }
-
         $sql = "SELECT *, AsText(regionOfInterest) as roi FROM movies " .
                "LEFT JOIN movieFormats ON movies.id = movieFormats.movieId " . 
-               "WHERE movies.id=$id AND movieFormats.format='$format'";
+               "WHERE movies.id=$id AND movieFormats.format='mp4'";
         return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
     }
     

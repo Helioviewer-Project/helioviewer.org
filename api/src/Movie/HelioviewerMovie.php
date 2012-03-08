@@ -76,7 +76,7 @@ class Movie_HelioviewerMovie
         $this->_db = new Database_ImgIndex();
         
         $id = alphaID($publicId, true, 5, HV_MOVIE_ID_PASS);
-        $info = $this->_db->getMovieInformation($id, $format);
+        $info = $this->_db->getMovieInformation($id);
         
         if (is_null($info)) {
              throw new Exception("Unable to find the requested movie.");
@@ -155,7 +155,7 @@ class Movie_HelioviewerMovie
         }
 		
 		// Log buildMovie in statistics table
-        if (HV_ENABLE_STATISTICS_COLLECTION && $this->format == "mp4") {
+        if (HV_ENABLE_STATISTICS_COLLECTION) {
             include_once HV_API_ROOT_DIR . '/src/Database/Statistics.php';
             $statistics = new Database_Statistics();
             $statistics->log("buildMovie");
@@ -452,15 +452,13 @@ class Movie_HelioviewerMovie
         $t3 = time();
         
         //Create a Low-quality webm movie for in-browser use if requested
-        if ($this->format == "webm") {
-            $ffmpeg->setFormat("webm");
-            $ffmpeg->createVideo();
-            
-            $t4 = time();
-                    
-            // Mark movie as completed
-            $this->_db->markMovieAsFinished($this->id, "webm", $t4 - $t3);
-        }
+        $ffmpeg->setFormat("webm");
+        $ffmpeg->createVideo();
+        
+        $t4 = time();
+                
+        // Mark movie as completed
+        $this->_db->markMovieAsFinished($this->id, "webm", $t4 - $t3);
     }
 
     /**
