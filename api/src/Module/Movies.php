@@ -186,14 +186,11 @@ class Module_Movies implements Module
         // Since the time required to encode the video is much smaller than the
         // time to build the frames the parameters of this estimation are 
         // hard-coded for now to save time (Feb 15, 2012)
-        if ($format == "mp4") {
-            $l3 = array("m" => 0.066, "b" => 0.778);            
-        } else if ($format == "webm") {
-            $l3 = array("m" => 0.094, "b" => 2.298);            
-        }
         
-        $encodingEst = max(1, $l3['m'] * $numFrames + $l3['b']);
-        
+        // MP4, WebM
+        $encodingEst = max(1, 0.066 * $numFrames + 0.778) +
+                       max(1, 0.094 * $numFrames + 2.298);
+
         return (int) ($frameEst + $encodingEst);
     }
     
