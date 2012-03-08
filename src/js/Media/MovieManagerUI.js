@@ -54,7 +54,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * user click to view it in a popup. 
      */
     _buildMovieRequest: function (serializedFormParams) {
-        var formParams, baseParams, params, frameRate, self = this;
+        var formParams, baseParams, params, frameRate;
         
         // Convert to an associative array for easier processing
         formParams = {};
@@ -102,8 +102,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Submit request
         this._queueMovie(params);
         
-        self._advancedSettings.hide();
-        self._settingsDialog.hide();
+        this._advancedSettings.hide();
+        this._settingsDialog.hide();
         
         //this.hideDialogs();
         this.building = false;
@@ -165,7 +165,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Queues a movie request
      */
     _queueMovie: function (params) {
-        var self = this;
+        var callback, self = this;
         
         // AJAX Responder
         callback = function (response) {

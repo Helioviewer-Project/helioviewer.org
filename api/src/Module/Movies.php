@@ -132,7 +132,7 @@ class Module_Movies implements Module
             'eta'     => $estBuildTime,
             'format'  => $options['format']
         );
-        $token = Resque::enqueue('on_demand_movie', 'Job_MovieBuilder', $args, TRUE);
+        $token = Resque::enqueue('on_demand_movie', 'Job_MovieBuilder', $args, true);
         
         // Create entries for each version of the movie in the movieFormats table
         foreach(array('mp4', 'webm') as $format) {
@@ -168,6 +168,11 @@ class Module_Movies implements Module
 
         // Get stats for most recent 100 completed movie requests
         $stats = $movieDb->getMovieStatistics();
+        
+        // If no movie statistics have been collected yet, skip this step
+        if (sizeOf($stats['time']) === 0) {
+            return 60;
+        }
         
         // Calculate linear fit for number of frames and pixel area
         $l1 = $this->_linear_regression($stats['numFrames'], $stats['time']);
@@ -369,15 +374,28 @@ class Module_Movies implements Module
         } else if ($movie->status == 3) {
             // ERROR
             $response = array(
-                "error" => "Sorry, we are unable to create your movie at this time. Please try again later."
+                "status" => 3,
+                "error"  => "Sorry, we are unable to create your movie at this time. Please try again later."
             );
         } else if ($movie->status == 0) {
             // QUEUED
             if (isset($this->_options['token'])) {
-                // with token
                 require_once 'lib/Resque.php';
-                $status = new Resque_Job_Status($this->_options['token']);
-                // TODO
+                
+                // with token
+                
+                // NOTE: since resque token is only useful for determining the general
+                // status of a job (e.g. QUEUED) and queue position can be found
+                // using the movie id, the tokenId can probably be removed.
+                //$queueNum  = $this->_getQueueNum("on_demand_movie", $this->_options['token']);
+                $queueNum  = $this->_getQueueNum("on_demand_movie", $this->_params['id']);
+                $queueSize = Resque::size('on_demand_movie');
+
+                $response = array(
+                    "status" => 0,
+                    "position" => $queueNum,
+                    "total" => $queueSize
+                );
             } else {
                 // without token
                 $response = array("status" => 0);
@@ -385,12 +403,31 @@ class Module_Movies implements Module
         } else {
             // PROCESSING
             $response = array(
-                "status" => 1,
-                "eta"    => 30
+                "status" => 1
             );
         }
         
         $this->_printJSON(json_encode($response));
+    }
+
+    /**
+     * Determines the position of a job within a specified queue
+     * 
+     * Note: https://github.com/chrisboulton/php-resque/issues/45
+     * 
+     * @return int Returns queue position or else -1 if job not found
+     */
+    private function _getQueueNum($queue, $id) {
+        $i = 0;
+
+        foreach (Resque::redis()->lrange("queue:$queue", 0, -1) as $job) {
+            if (strpos($job, $id) !== false) {
+                return $i; 
+            }
+            $i += 1;
+        }
+        
+        return -1;
     }
     
     /**
