@@ -61,7 +61,7 @@ class HelioviewerInstallWizard(QtGui.QWizard):
             jp2dir = str(self.ui.jp2RootDirInput.text())
             
             self.ui.statusMsg.setText("Searching for JPEG 2000 Images...")
-            self.images = traverse_directory(jp2dir)
+            self.images = find_images(jp2dir)
             n = len(self.images)
 
             if n == 0:
@@ -152,7 +152,7 @@ If this is correct, please press "Start" to begin processing.
         directory = fd.getExistingDirectory()
         self.ui.jp2RootDirInput.setText(directory)
 
-def install(args):
+def install():
     ''' Load graphical installer '''
     app = QtGui.QApplication(sys.argv)
     win = HelioviewerInstallWizard()
