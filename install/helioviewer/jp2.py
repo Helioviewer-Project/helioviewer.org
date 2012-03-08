@@ -8,7 +8,7 @@ from helioviewer.db import get_datasources, enable_datasource
 __INSERTS_PER_QUERY__ = 500
 __STEP_FXN_THROTTLE__ = 50
 
-def traverse_directory(path):
+def find_images(path):
     '''Searches a directory for JPEG 2000 images.
     
     Traverses file-tree starting with the specified path and builds a list of
@@ -19,7 +19,7 @@ def traverse_directory(path):
     for child in os.listdir(path):
         node = os.path.join(path, child)
         if os.path.isdir(node):
-            newImgs = traverse_directory(node)
+            newImgs = find_images(node)
             images.extend(newImgs)
         else:
             if node[-3:] == "jp2":
@@ -247,12 +247,9 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     
         print("Processing image: " + img)
         
-        path, filename = os.path.split(img)
-        
-        # Remove static part of filepath
-        if rootdir[-1] == "/":
-            rootdir = rootdir[:-1]
-        path = path[len(rootdir):]
+        directory, filename = os.path.split(img)
+
+        path = os.path.relpath(directory, rootdir)
         
         # Extract header meta information
         try:

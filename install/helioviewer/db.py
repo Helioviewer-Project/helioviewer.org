@@ -32,7 +32,7 @@ def setup_database_schema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
 
     return cursor
 
-def get_db_cursor(dbname, dbuser, dbpass, mysql):
+def get_db_cursor(dbname, dbuser, dbpass, mysql=True):
     """Creates a database connection"""
     if mysql:
         import MySQLdb

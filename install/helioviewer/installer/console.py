@@ -10,9 +10,9 @@ from helioviewer.db  import *
 
 class HelioviewerConsoleInstaller:
     """Text-based installer class"""
-    def __init__(self, options):
-        self.options = options
-        
+    def __init__(self):
+        pass
+
     def getFilePath(self):
         '''Prompts the user for the directory information'''
     
@@ -115,16 +115,16 @@ class HelioviewerConsoleInstaller:
 =                                                                  =
 ====================================================================""")
 
-def install(options):
+def install():
     ''' Loads the text-based installation tool '''
-    app = HelioviewerConsoleInstaller(options)
+    app = HelioviewerConsoleInstaller()
     app.printGreeting()
     
     # Filepath
     path = app.getFilePath()
     
     # Locate jp2 images in specified filepath
-    images = traverse_directory(path)
+    images = find_images(path)
     
     # Check to make sure the filepath contains jp2 images
     if len(images) is 0:
@@ -162,24 +162,6 @@ def install(options):
 
     # Insert image information into database
     process_jp2_images(images, path, cursor, mysql)
-    cursor.close()
-
-    print("Finished!")
-    
-def update(options):
-    ''' Loads the text-based installation tool and runs it in update-mode '''
-    app = HelioviewerConsoleInstaller(options)
-    
-    # MySQL?
-    mysql = options.dbtype == "mysql"
-        
-    cursor = get_db_cursor(options.dbname, options.dbuser, options.dbpass, mysql)
-
-    print("Processing Images...")
-
-    # Insert image information into database
-    process_jp2_images(options.files, options.basedir, cursor, mysql)
-    
     cursor.close()
 
     print("Finished!")
