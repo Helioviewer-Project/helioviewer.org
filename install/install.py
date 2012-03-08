@@ -18,7 +18,7 @@ def main():
         import PyQt4
         import helioviewer.installer.gui
         helioviewer.installer.gui.install()
-    except:
+    except Exception, e:
         import helioviewer.installer.console
         helioviewer.installer.console.install()
 
