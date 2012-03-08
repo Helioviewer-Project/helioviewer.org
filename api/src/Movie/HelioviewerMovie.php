@@ -82,18 +82,18 @@ class Movie_HelioviewerMovie
              throw new Exception("Unable to find the requested movie.");
         }
         
-        $this->id           = $id;
         $this->publicId     = $publicId;
         $this->format       = $format;
         $this->reqStartDate = $info['reqStartDate'];
         $this->reqEndDate   = $info['reqEndDate'];
         $this->startDate    = $info['startDate'];
         $this->endDate      = $info['endDate'];
-        $this->status       = $info['status'];
         $this->timestamp    = $info['timestamp'];
         $this->imageScale   = (float) $info['imageScale'];
         $this->frameRate    = (float) $info['frameRate'];
         $this->movieLength  = (float) $info['movieLength'];
+        $this->id           = (int) $id;
+        $this->status       = (int) $info['status'];
         $this->numFrames    = (int) $info['numFrames'];
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
