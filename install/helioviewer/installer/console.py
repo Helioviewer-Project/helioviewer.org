@@ -24,7 +24,7 @@ class HelioviewerConsoleInstaller:
             print("Found %d JPEG 2000 images." % len(images))
     
         # Setup database schema if needed
-        cursor = self.get_db_cursor()
+        cursor, mysql = self.get_db_cursor()
     
         print("Processing Images...")
     
@@ -50,7 +50,9 @@ class HelioviewerConsoleInstaller:
         print("Please enter Helioviewer.org database user information")
         dbuser, dbpass, mysql = self.get_database_info()
         
-        return get_db_cursor(dbname, dbuser, dbpass, mysql)
+        cursor = get_db_cursor(dbname, dbuser, dbpass, mysql)
+        
+        return cursor, mysql
         
     def create_db(self):
         """Sets up the database tables needed for Helioviewer"""
@@ -63,8 +65,13 @@ class HelioviewerConsoleInstaller:
         dbuser, dbpass, mysql = self.get_database_info()
 
         # Setup database schema
-        return setup_database_schema(dbuser, dbpass, dbname, hvuser, 
-                                     hvpass, mysql)
+        try:
+            cursor = setup_database_schema(dbuser, dbpass, dbname, hvuser, 
+                                           hvpass, mysql)
+            return cursor, mysql
+        except:
+            print("Specified database already exists! Exiting installer.")
+            sys.exit()
 
     def get_filepath(self):
         '''Prompts the user for the directory information'''
@@ -94,7 +101,7 @@ class HelioviewerConsoleInstaller:
     def get_database_name(self):
         ''' Prompts the user for the database name '''
 
-        dbname = get_input("    Database name [helioviewer]: ")
+        dbname = get_input("\tDatabase name [helioviewer]: ")
    
         # Default values
         if not dbname: dbname = "helioviewer"

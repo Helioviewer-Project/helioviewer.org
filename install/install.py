@@ -15,7 +15,6 @@ import sys
 def main():
     '''Main application access point'''
     try:
-        raise 'e'
         import PyQt4
         import helioviewer.installer.gui
         helioviewer.installer.gui.install()
