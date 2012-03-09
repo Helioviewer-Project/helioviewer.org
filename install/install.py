@@ -15,12 +15,13 @@ import sys
 def main():
     '''Main application access point'''
     try:
+        raise 'e'
         import PyQt4
         import helioviewer.installer.gui
         helioviewer.installer.gui.install()
     except Exception, e:
-        import helioviewer.installer.console
-        helioviewer.installer.console.install()
+        from helioviewer.installer.console import HelioviewerConsoleInstaller
+        app = HelioviewerConsoleInstaller()
 
 if __name__ == '__main__':
     sys.exit(main())
