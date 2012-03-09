@@ -19,7 +19,7 @@ def find_images(path):
     for root, dirs, files in os.walk(path):
         for file_ in files:
             if file_.endswith('.jp2'):
-                images.append(file_)
+                images.append(os.path.join(root, file_))
 
     return images
 
