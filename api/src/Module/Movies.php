@@ -205,29 +205,34 @@ class Module_Movies implements Module
      * http://richardathome.wordpress.com/2006/01/25/a-php-linear-regression-function/
      */
     private function _linear_regression($x, $y) {
-      $n = count($x);
+        $n = count($x);
+        
+        // calculate sums
+        $x_sum = array_sum($x);
+        $y_sum = array_sum($y);
+        
+        $xx_sum = 0;
+        $xy_sum = 0;
+        
+        for($i = 0; $i < $n; $i++) {
+            $xy_sum += ($x[$i] * $y[$i]);
+            $xx_sum += ($x[$i] * $x[$i]);
+        }
+        
+        // Calculate slope
+        $divisor = (($n * $xx_sum) - ($x_sum * $x_sum));
     
-      // calculate sums
-      $x_sum = array_sum($x);
-      $y_sum = array_sum($y);
-    
-      $xx_sum = 0;
-      $xy_sum = 0;
-    
-      for($i = 0; $i < $n; $i++) {
-        $xy_sum += ($x[$i] * $y[$i]);
-        $xx_sum += ($x[$i] * $x[$i]);
-      }
-    
-      // Calculate slope
-      $m = (($n * $xy_sum) - ($x_sum * $y_sum)) / (($n * $xx_sum) - ($x_sum * $x_sum));
-    
-      // Calculate intercept
-      $b = ($y_sum - ($m * $x_sum)) / $n;
-    
-      // Return result
-      return array("m"=>$m, "b"=>$b);
-    
+        if ($divisor == 0) {
+            $m = 0;
+        } else {
+            $m = (($n * $xy_sum) - ($x_sum * $y_sum)) / $divisor;          
+        }
+            
+        // Calculate intercept
+        $b = ($y_sum - ($m * $x_sum)) / $n;
+        
+        // Return result
+        return array("m"=>$m, "b"=>$b);
     }
 
     /**

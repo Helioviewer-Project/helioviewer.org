@@ -222,7 +222,7 @@ var MovieManager = MediaManager.extend(
                         self._abort(id);
                     }                    
                     // Otherwise continue to monitor
-                    self._monitorQueuedMovie(id, dateRequested, token, response.eta);
+                    self._monitorQueuedMovie(id, dateRequested, token, 60);
                 } else if (response.error) {
                     self._abort(id);
                 }  else {
