@@ -163,7 +163,7 @@ class Movie_HelioviewerMovie
         
         // If all of the queued videos have been created remove frames
         if ($this->_db->getNumUnfinishedMovies($this->id) === 0) {
-            $this->_cleanUp();
+            //$this->_cleanUp();
         }
     }
     
@@ -245,7 +245,7 @@ class Movie_HelioviewerMovie
      */
     private function _abort($msg, $procTime=0) {
         $this->_db->markMovieAsInvalid($this->id, $procTime);
-        $this->_cleanUp();
+        //$this->_cleanUp();
         throw new Exception("Unable to create movie: " . $msg);
     }
     
