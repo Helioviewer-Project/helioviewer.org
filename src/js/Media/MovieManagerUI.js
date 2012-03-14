@@ -375,7 +375,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // URLs
         url1 = Helioviewer.root + "/?movieId=" + movie.id;
-        url2 = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
+        url2 = Helioviewer.root + "/api/?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
                
         // Suggested Description
         description = "This movie was produced by Helioviewer.org. See the " + 
