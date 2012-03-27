@@ -21,6 +21,7 @@
  *
  */
 include_once 'src/Movie/HelioviewerMovie.php';
+include_once 'src/Helper/ErrorHandler.php';
 include_once 'lib/Redisent/Redisent.php';
 
 class Job_MovieBuilder
@@ -35,10 +36,14 @@ class Job_MovieBuilder
         try {
             $movie = new Movie_HelioviewerMovie($this->args['movieId']);
             $movie->build();
-        } catch (Exception $ex) {
+        } catch (Exception $e) {
+            # Handle any errors encountered
             printf("Error processing movie %s\n", $this->args['movieId']);
+            
             $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
-            throw $ex;
+            logErrorMsg($e->getMessage(), "Resque_");
+            
+            throw $e;
         }
         
         printf("Finished movie %s\n", $this->args['movieId']);

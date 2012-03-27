@@ -151,7 +151,8 @@ class Movie_HelioviewerMovie
             $this->_encodeMovie();
         } catch (Exception $e) {
             $t4 = time();
-            $this->_abort("Error encountered during video encoding.", $t4 - $t3);
+            $this->_abort("Error encountered during video encoding. This may be caused
+            by a FFmpeg configuration issue, or by insufficient permissions in the cache.", $t4 - $t3);
         }
 		
 		// Log buildMovie in statistics table
