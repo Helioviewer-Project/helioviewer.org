@@ -6,7 +6,7 @@
     </description>
 
     <!-- Minification and concatenation -->
-	<target name="build">
+	<target name="build" depends="clean">
         <property name="cssdir"  value="resources/css"/>
         <property name="baseclasses" value="Utility/Config.js, Tiling/Layer/Layer.js, Tiling/Layer/TileLayer.js, Tiling/Manager/LayerManager.js, Tiling/Manager/TileLayerManager.js, Viewport/Helper/MouseCoordinates.js"/>
         
@@ -103,5 +103,14 @@
 		    <arg path="${rhino.jar}"/>
 		    <arg path="${jslint.js}"/>
 		</apply>
+    </target>
+    
+    <!-- Cleanup -->
+    <target name="clean">
+        <echo>Removing old build files</echo>
+        <delete>
+            <fileset dir="build/" includes="*.js" />
+            <fileset dir="build/css" includes="*.css" />
+        </delete>
     </target>
 </project>
