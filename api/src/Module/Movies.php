@@ -68,6 +68,9 @@ class Module_Movies implements Module
         include_once 'src/Helper/HelioviewerLayers.php';
         include_once 'src/Database/MovieDatabase.php';
         include_once 'src/Database/ImgIndex.php';
+        
+        // Connect to redis
+        $redis = new Redisent('localhost');
 
         // If the queue is currently full, don't process the request
         $queueSize = Resque::size('on_demand_movie');
@@ -75,6 +78,12 @@ class Module_Movies implements Module
             throw new Exception("Sorry, due to current high demand, we are currently unable to process your request. " .
                                 "Please try again later.");
         }
+        
+        // Get current number of on_demand_movie workers
+        $workers = Resque::redis()->smembers("workers");
+        $movieWorkers = array_filter($workers, function ($elem) {
+            return strpos($elem, "on_demand_movie") !== false;
+        });
         
         // Default options
         $defaults = array(
@@ -115,6 +124,16 @@ class Module_Movies implements Module
         // Estimate the time to create movie frames
         $estBuildTime = $this->_estimateMovieBuildTime($movieDb, $numFrames, $numPixels, $options['format']);
 
+        // If all workers are in use, increment and use estimated wait counter
+        if($queueSize +1 >= sizeOf($movieWorkers)) {
+            $eta = $redis->incrby('helioviewer:movie_queue_wait', $estBuildTime);
+            $updateCounter = true;
+        } else {
+            // Otherwise simply use the time estimated for the single movie
+            $eta = $estBuildTime;
+            $updateCounter = false;
+        }
+
         // Get datasource bitmask
         $bitmask = bindec($layers->getBitMask());
         
@@ -125,12 +144,15 @@ class Module_Movies implements Module
 
         // Convert id
         $publicId = alphaID($dbId, false, 5, HV_MOVIE_ID_PASS);
+        
+        
 
         // Queue movie request
         $args = array(
             'movieId' => $publicId,
             'eta'     => $estBuildTime,
-            'format'  => $options['format']
+            'format'  => $options['format'],
+            'counter' => $updateCounter
         );
         $token = Resque::enqueue('on_demand_movie', 'Job_MovieBuilder', $args, true);
         
@@ -139,15 +161,11 @@ class Module_Movies implements Module
             $movieDb->insertMovieFormat($dbId, $format);
         }
 
-        // Update queue wait time
-        $redis = new Redisent('localhost');
-        $eta = $redis->incrby('helioviewer:movie_queue_wait', $estBuildTime);
-        
         // Print response
         $response = array(
             "id"    => $publicId,
             "eta"   => $eta, 
-            "queue" => $queueSize + 1,
+            "queue" => max(0, $queueSize + 1 - sizeOf($movieWorkers)),
             "token" => $token
         );
         
@@ -171,7 +189,7 @@ class Module_Movies implements Module
         
         // If no movie statistics have been collected yet, skip this step
         if (sizeOf($stats['time']) === 0) {
-            return 60;
+            return 30;
         }
         
         // Calculate linear fit for number of frames and pixel area
@@ -190,8 +208,11 @@ class Module_Movies implements Module
         // MP4, WebM
         $encodingEst = max(1, 0.066 * $numFrames + 0.778) +
                        max(1, 0.094 * $numFrames + 2.298);
+                       
+        // Scale by pixel area
+        $encodingEst = ($numPixels / (1920 * 1200)) * $encodingEst;
 
-        return (int) ($frameEst + $encodingEst);
+        return (int) max(10, ($frameEst + $encodingEst));
     }
     
     /**
