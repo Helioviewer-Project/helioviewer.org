@@ -166,7 +166,7 @@ class Movie_YouTube
             $this->_youTube->getVideoFeed($this->_testURL);
         } catch (Exception $e) {
             //Zend_Gdata_App_HttpException
-            include_once "src/Helper/Logging.php";
+            include_once "src/Helper/ErrorHandler.php";
             logErrorMsg($msg, "Youtube_");
                         
             unset($_SESSION['sessionToken']); // Discard expired authorization

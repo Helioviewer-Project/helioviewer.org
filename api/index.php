@@ -23,6 +23,8 @@
  *  = Add getPlugins method to JHelioviewer module (empty function for now)
  */
 require_once "src/Config.php";
+require_once "src/Helper/ErrorHandler.php";
+
 $config = new Config("../settings/Config.ini");
 date_default_timezone_set('UTC');
 register_shutdown_function('shutdownFunction');
@@ -761,37 +763,6 @@ function printHTMLErrorMsg($msg)
 </html>
     <?php
     exit();
-}
-
-/**
- * Handles errors encountered during request processing.
- * 
- * @param string $msg     The error message to display
- * @param bool   $skipLog If true no log file will be created
- * 
- * Note: If multiple levels of verbosity are needed, one option would be to split up the complete error message
- *       into it's separate parts, add a "details" field with the full message, and display only the top-level
- *       error message in "error" 
- * 
- * @see http://www.firephp.org/
- */
-function handleError($msg, $skipLog=false)
-{
-    header('Content-type: application/json;charset=UTF-8');
-    
-    // JSON
-    echo json_encode(array("error"=>$msg));
-
-    // Fire PHP
-    include_once "lib/FirePHPCore/fb.php";
-    FB::error($msg);
-    
-    // For errors which are expected (e.g. a movie request for which sufficient data is not available) a non-zero
-    // exception code can be set to a non-zero value indicating that the error is known and no log should be created.
-    if (!$skipLog) {
-        include_once "src/Helper/Logging.php";
-        logErrorMsg($msg);
-    }
 }
 
 /**
