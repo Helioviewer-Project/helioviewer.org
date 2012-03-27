@@ -24,7 +24,7 @@ def main():
     check_php()
     check_python()
     check_kakadu()
-    #check_ffmpeg
+    check_ffmpeg()
     
 def check_platform():
     """Checks platform"""
@@ -96,11 +96,42 @@ def check_php():
     print ("GD: %s" % pattern.search(phpinfo).group(1))
     
     if phpinfo.find('mysqli') != -1:
-        print("MySQLi: supported")
+        print("MySQLi: SUPPORTED\n")
     else:
-        print("MySQLi: NOT FOUND")
+        print("MySQLi: NOT FOUND\n")
     
     # Zend Gdata?
+    
+def check_ffmpeg():
+    """Prints FFmpeg support information"""
+    print("###########")
+    print(" FFmpeg")
+    print("###########")
+    
+    p = subprocess.Popen(["ffmpeg", "-version"], stdout=subprocess.PIPE, 
+                                                 stderr=open('/dev/null'))
+    out, err = p.communicate()
+    
+    version = out[:out.find(":")]
+    print(version)
+    
+    p = subprocess.Popen(["ffmpeg", "-codecs"], stdout=subprocess.PIPE, 
+                                                stderr=open('/dev/null'))
+    out, err = p.communicate()
+    
+    # H.264
+    libx264 = [i for i in out.split('\n') if "libx264" in i]
+    if len(libx264) > 0 and "E" in libx264[0][:8]:
+        print("libx264: SUPPORTED")
+    else:
+        print("libx264: NOT SUPPORTED")
+    
+    # VP8
+    libvp8 = [i for i in out.split('\n') if "libvpx" in i]
+    if len(libvp8) > 0 and "E" in libvp8[0][:8]:
+        print("libvpx: SUPPORTED")
+    else:
+        print("libvpx: NOT SUPPORTED")
     
 def check_python():
     """Checks Python support"""

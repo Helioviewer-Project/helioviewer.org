@@ -74,14 +74,7 @@ class Database_ImgIndex
                "WHERE movies.id=$id AND movieFormats.format='mp4'";
         return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
     }
-    
-    public function getNumUnfinishedMovies($id)
-    {
-        $sql = "SELECT COUNT(*) FROM movieFormats WHERE movieId=$id AND status < 2";
-        $row = mysqli_fetch_array($this->_dbConnection->query($sql));
-        return (int) array_pop($row);
-    }
-    
+
     /**
      * Updates movie entry with new information
      * 
