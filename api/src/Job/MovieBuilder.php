@@ -32,15 +32,18 @@ class Job_MovieBuilder
         
         $redis = new Redisent('localhost');
         
-        # Build movie
+        // Build movie
         try {
             $movie = new Movie_HelioviewerMovie($this->args['movieId']);
             $movie->build();
         } catch (Exception $e) {
-            # Handle any errors encountered
+            // Handle any errors encountered
             printf("Error processing movie %s\n", $this->args['movieId']);
             
-            $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+            // If counter was increased at queue time, decrement
+            if ($this->args['counter']) {
+                $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+            }
             logErrorMsg($e->getMessage(), "Resque_");
             
             throw $e;
@@ -48,7 +51,9 @@ class Job_MovieBuilder
         
         printf("Finished movie %s\n", $this->args['movieId']);
         
-        # Decrement movie queue wait counter
-        $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+        // If counter was increased at queue time, decrement
+        if ($this->args['counter']) {
+            $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+        }
     }
 }
