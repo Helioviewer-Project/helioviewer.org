@@ -162,10 +162,7 @@ class Movie_HelioviewerMovie
             $statistics->log("buildMovie");
         }
         
-        // If all of the queued videos have been created remove frames
-        if ($this->_db->getNumUnfinishedMovies($this->id) === 0) {
-            //$this->_cleanUp();
-        }
+        $this->_cleanUp();
     }
     
     /**
