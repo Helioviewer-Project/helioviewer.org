@@ -95,6 +95,11 @@ class Module_Movies implements Module
         );
         $options = array_replace($defaults, $this->_options);
         
+        // Default to 15fps if no frame-rate or length was specified
+        if (is_null($options['frameRate']) && is_null($options['movieLength'])) {
+            $options['frameRate'] = 15;
+        }
+        
         // Limit movies to three layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         if ($layers->length() < 1 || $layers->length() > 3) {
@@ -144,8 +149,6 @@ class Module_Movies implements Module
 
         // Convert id
         $publicId = alphaID($dbId, false, 5, HV_MOVIE_ID_PASS);
-        
-        
 
         // Queue movie request
         $args = array(
