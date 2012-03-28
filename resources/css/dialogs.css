@@ -119,6 +119,11 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
     overflow: hidden;    
 }
 
+/* About Dialog */
+#about-credits a {
+    text-decoration: none;
+}
+
 /* Visual Glossary */
 
 #glossary-menu span {
