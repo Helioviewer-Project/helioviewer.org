@@ -105,6 +105,8 @@ class Image_JPEG2000_JP2ImageXMLBox
      */
     public function getDSun()
     {
+        $maxDSUN = 2.25e11; // A reasonable max for solar observatories, ~1.5 AU
+        
         try {
             // AIA, EUVI, COR 
             $dsun = $this->_getElementValue("DSUN_OBS");
@@ -132,7 +134,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         }
         
         // Check to make sure header information is valid
-        if ((filter_var($dsun, FILTER_VALIDATE_FLOAT) === false) || ($dsun <= 0)) {
+        if ((filter_var($dsun, FILTER_VALIDATE_FLOAT) === false) || ($dsun <= 0) || ($dsun >= $maxDSUN)) {
             throw new Exception("Invalid value for DSUN: $dsun");
         }
         
