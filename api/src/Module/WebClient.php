@@ -257,14 +257,6 @@ class Module_WebClient implements Module
         );
         
         $tile->display();
-        
-        // Log cached tile request now and exit to avoid double-counting
-        if (HV_ENABLE_STATISTICS_COLLECTION && file_exists($filepath)) {
-            include_once 'src/Database/Statistics.php';
-            $statistics = new Database_Statistics();
-            $statistics->log("getCachedTile");
-            exit(0);
-        }
     }
 
     /**
