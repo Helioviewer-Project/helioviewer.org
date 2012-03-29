@@ -49,8 +49,9 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         $this->_startTime = $startTime;
         $this->_endTime   = $endTime;
         $this->_cadence   = $cadence;
-        
-        $filepath = HV_JP2_DIR . '/movies/' . $filename;
+
+        $directory = HV_JP2_DIR . '/movies/';
+        $filepath = $directory . $filename;
 
         $this->_url = HV_JP2_ROOT_URL . "/movies/" . $filename;
 
@@ -77,6 +78,23 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             }
             
             $this->_writeFileGenerationReport();
+        } else {
+            // If the JPX exists, but no JSON is present, kdu_merge is still running.
+            if (!file_exists($this->_summaryFile)) {
+                $i = 0;
+                
+                // Wait five seconds and check to see if processing is finished.
+                // If not, sleep and try again.
+                while ($i < 24) {
+                    sleep(5);
+                    if (file_exists($this->_summaryFile)) {
+                        return;
+                    }
+                }
+                // If the summary file is still not present after 120 seconds, 
+                // display an error message
+                throw new Exception("JPX is taking an unusually long time to process. Please try again in 1-2 minutes.");
+            }
         }
     }
 
@@ -176,11 +194,11 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
             $isoDate = toISOString(parseUnixTimestamp($time));
 
             $img = $imgIndex->getImageFromDatabase($isoDate, $this->_sourceId);
-            $jp2 = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
+            $filepath = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
 
             // Ignore redundant images
-            if ($images[0] != $jp2) {
-                array_unshift($images, $jp2);
+            if (!$images || $images[0] != $filepath) {
+                array_unshift($images, $filepath);
                 array_unshift($dates, toUnixTimestamp($img['date']));
             }
             $time -= $this->_cadence;
