@@ -140,8 +140,11 @@ var TimeControls = Class.extend(
         } else if (Helioviewer.userSettings.get("defaults.date") === "latest") {
             this._date = new Date(+new Date());
         } else {
-            this._date = Helioviewer.userSettings.get("state.date");
+            this._date = new Date(Helioviewer.userSettings.get("state.date"));
         }
+        
+        // Update stored date
+        Helioviewer.userSettings.set("state.date", this._date.getTime());
     },
       
    /**

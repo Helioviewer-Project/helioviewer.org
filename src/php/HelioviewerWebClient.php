@@ -570,7 +570,17 @@ class HelioviewerWebClient extends HelioviewerClient
 <div id='layer-choice-dialog'></div>
 
 <!-- Settings dialog -->
-<div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'></div>
+<div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'>
+    <form id='helioviewer-settings'>
+        <fieldset id='helioviewer-settings-date'>
+        <legend>Starting time:</legend>
+            <div style='padding: 10px;'>
+                <input id='settings-date-latest' type="radio" name="date" value="latest" /><label>Current time</label><br />
+                <input id='settings-date-previous' type="radio" name="date" value="last-used" /><label>Last Used</label><br />
+            </div>
+        </fieldset>
+    </form>
+</div>
 
 <!-- Usage Dialog -->
 <div id='usage-dialog'></div>
