@@ -59,10 +59,8 @@ class Database_Statistics
         // Array to keep track of counts for each action
         $counts = array(
             "buildMovie"           => array(),
-            "getCachedTile"        => array(),
             "getClosestImage"      => array(),
             "getJPX"               => array(),
-            "getTile"              => array(),
             "takeScreenshot"       => array(),
             "uploadMovieToYouTube" => array()
         );
@@ -70,10 +68,8 @@ class Database_Statistics
         // Summary array
         $summary = array(
             "buildMovie"           => 0,
-            "getCachedTile"        => 0,
             "getClosestImage"      => 0,
             "getJPX"               => 0,
-            "getTile"              => 0,
             "takeScreenshot"       => 0,
             "uploadMovieToYouTube" => 0
         );

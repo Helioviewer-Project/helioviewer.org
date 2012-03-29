@@ -99,12 +99,9 @@ function loadModule($params)
             
             // Update usage stats
             $actions_to_keep_stats_for = array("getClosestImage", 
-                "getTile", "takeScreenshot", "getJPX",
-                "uploadMovieToYouTube");
+                "takeScreenshot", "getJPX", "uploadMovieToYouTube");
             
 			// Note that in addition to the above, buildMovie requests and 
-			// getCachedTile requests are also tracked.
-			// getCachedTile is a pseudo-action which is logged in 
 			// addition to getTile when the tile was already in the cache.
             if (HV_ENABLE_STATISTICS_COLLECTION && in_array($params["action"], $actions_to_keep_stats_for)) {
                 include_once 'src/Database/Statistics.php';
