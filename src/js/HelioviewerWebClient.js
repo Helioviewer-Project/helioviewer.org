@@ -68,6 +68,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this._setupDialogs();
         this._initEventHandlers();
+        this._setupSettingsUI();
+        
         this._displayGreeting();
 
         // Initialize AddThis
@@ -240,6 +242,34 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         win.resize(function (e) {
             dimensions.html(win.width() + "x" + win.height());
         });
+    },
+    
+    /**
+     * Configures the user settings form to match the stored values and
+     * initializes event-handlers
+     */
+    _setupSettingsUI: function () {
+        var form, dateLatest, datePrevious;
+        
+        form = $("#helioviewer-settings");
+        dateLatest   = $("#settings-date-latest");
+        datePrevious = $("#settings-date-previous");
+        
+        // Starting date
+        if (Helioviewer.userSettings.get("defaults.date") === "latest") {
+            dateLatest.attr("checked", "checked");    
+        } else {
+            datePrevious.attr("checked", "checked");
+        }
+        
+        // Event-handlers
+        dateLatest.change(function (e) {
+            Helioviewer.userSettings.set("defaults.date", "latest");
+        });
+        datePrevious.change(function (e) {
+            Helioviewer.userSettings.set("defaults.date", "previous");
+        });
+        
     },
 
     /**

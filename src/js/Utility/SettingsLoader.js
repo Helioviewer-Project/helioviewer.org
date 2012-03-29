@@ -43,7 +43,7 @@ var SettingsLoader = (
         return {
             // Default settings
             defaults: {
-                date: "latest", // "previous" | "latest" | "custom"
+                date: "latest", // "previous" | "latest"
                 movies: {
                     cadence: "auto", // "auto" | number of seconds
                     duration: 86400,
