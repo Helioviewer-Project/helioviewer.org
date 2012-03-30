@@ -249,25 +249,43 @@ var HelioviewerWebClient = HelioviewerClient.extend(
      * initializes event-handlers
      */
     _setupSettingsUI: function () {
-        var form, dateLatest, datePrevious;
+        var form, dateLatest, datePrevious, autorefresh, self = this;
         
-        form = $("#helioviewer-settings");
+        form         = $("#helioviewer-settings");
         dateLatest   = $("#settings-date-latest");
         datePrevious = $("#settings-date-previous");
+        autorefresh  = $("#settings-latest-image");        
         
         // Starting date
-        if (Helioviewer.userSettings.get("defaults.date") === "latest") {
+        if (Helioviewer.userSettings.get("options.date") === "latest") {
             dateLatest.attr("checked", "checked");    
         } else {
             datePrevious.attr("checked", "checked");
         }
         
+        // Auto-refresh
+        if (Helioviewer.userSettings.get("options.autorefresh")) {
+            autorefresh.attr("checked", "checked");
+            this.timeControls.enableAutoRefresh();
+        } else {
+            autorefresh.removeAttr("checked");
+            this.timeControls.disableAutoRefresh();
+        }
+        
         // Event-handlers
         dateLatest.change(function (e) {
-            Helioviewer.userSettings.set("defaults.date", "latest");
+            Helioviewer.userSettings.set("options.date", "latest");
         });
         datePrevious.change(function (e) {
-            Helioviewer.userSettings.set("defaults.date", "previous");
+            Helioviewer.userSettings.set("options.date", "previous");
+        });
+        autorefresh.change(function (e) {
+            Helioviewer.userSettings.set("options.autorefresh", e.target.checked);
+            if (e.target.checked) {
+                self.timeControls.enableAutoRefresh();
+            } else {
+                self.timeControls.disableAutoRefresh();
+            }
         });
         
     },

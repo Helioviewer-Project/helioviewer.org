@@ -168,6 +168,10 @@ var UserSettings = Class.extend(
                 self.settings.history.movies[i].status = statuses[movie.status];
             });
             
+            // 2.3.0 - "defaults" section renamed "options"
+            this.settings.options = this.settings.defaults;
+            delete this.settings.defaults;
+            
             // Updated version number and save
             this.set('version', this._lastChanged);
         }
@@ -271,7 +275,7 @@ var UserSettings = Class.extend(
                 self._validator.checkDateString(screenshot["dateRequested"]);
             });
             break;
-        case "defaults.movies.duration":
+        case "options.movies.duration":
             this._validator.checkInt(value, {
                 "min": this._constraints.minMovieLength,
                 "max": this._constraints.maxMovieLength

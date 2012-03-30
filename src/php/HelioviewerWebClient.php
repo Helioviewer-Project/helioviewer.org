@@ -570,14 +570,24 @@ class HelioviewerWebClient extends HelioviewerClient
 <div id='layer-choice-dialog'></div>
 
 <!-- Settings dialog -->
-<div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'>
+<div id='settings-dialog'>
     <form id='helioviewer-settings'>
+        <!-- Initial observation date -->
         <fieldset id='helioviewer-settings-date'>
         <legend>Starting time:</legend>
             <div style='padding: 10px;'>
                 <input id='settings-date-latest' type="radio" name="date" value="latest" /><label>Current time</label><br />
                 <input id='settings-date-previous' type="radio" name="date" value="last-used" /><label>Last Used</label><br />
             </div>
+        </fieldset>
+        
+        <!-- Other -->
+        <fieldset id='helioviewer-settings-other'>
+        <legend>Other</legend>
+        <div style='padding:10px;'>
+            <input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
+            <label for="latest-image-option">Always show latest image</label><br />                                           
+        </div>
         </fieldset>
     </form>
 </div>

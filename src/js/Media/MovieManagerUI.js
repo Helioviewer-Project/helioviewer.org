@@ -115,7 +115,7 @@ var MovieManagerUI = MediaManagerUI.extend(
     _getMovieTimeWindow: function () {
         var movieLength, currentTime, endTime, startTimeStr, endTimeStr, now, diff; 
         
-        movieLength = Helioviewer.userSettings.get("defaults.movies.duration");
+        movieLength = Helioviewer.userSettings.get("options.movies.duration");
         
         // Webkit doesn't like new Date("2010-07-27T12:00:00.000Z")
         currentTime = helioviewer.getDate();
@@ -326,11 +326,11 @@ var MovieManagerUI = MediaManagerUI.extend(
         });
 
         // Movie duration
-        duration = Helioviewer.userSettings.get("defaults.movies.duration"),
+        duration = Helioviewer.userSettings.get("options.movies.duration"),
         
         // Duration event listener
         durationSelect.bind('change', function (e) {
-            Helioviewer.userSettings.set("defaults.movies.duration",
+            Helioviewer.userSettings.set("options.movies.duration",
             parseInt(this.value, 10));
         });
         

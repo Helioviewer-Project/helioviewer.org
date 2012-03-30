@@ -274,6 +274,12 @@ span.ui-icon-hover, div.ui-icon-hover {
 }
 
 /** Settings dialog */
+    
+#settings-dialog {
+    display:none;
+    margin: 15px 15px 0 15px;
+    font-size: 1em;
+}
 
 #helioviewer-settings label {
     display: inline-block;

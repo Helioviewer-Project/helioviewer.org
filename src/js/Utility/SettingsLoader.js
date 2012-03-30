@@ -42,13 +42,14 @@ var SettingsLoader = (
 
         return {
             // Default settings
-            defaults: {
+            options: {
                 date: "latest", // "previous" | "latest"
                 movies: {
                     cadence: "auto", // "auto" | number of seconds
                     duration: 86400,
                     format: "mp4"
-                }        
+                },
+                autorefresh: false
             },
             // Saved movie and screenshots 
             history: {
