@@ -108,7 +108,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         $maxDSUN = 2.25e11; // A reasonable max for solar observatories, ~1.5 AU
         
         try {
-            // AIA, EUVI, COR 
+            // AIA, EUVI, COR, SWAP
             $dsun = $this->_getElementValue("DSUN_OBS");
         } catch (Exception $e) {
             try {
