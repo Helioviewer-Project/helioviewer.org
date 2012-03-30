@@ -20,8 +20,44 @@
     right: 15px;
 }
 
-#movie-manager-container {
+#movie-manager-container, #movie-settings-container {
     right: 75px;
+}
+
+#movie-settings-container {
+    width: 300px;
+}
+
+#movie-settings-container label {
+    display: inline-block;
+    margin: 5px 2px 0 0;
+}
+
+#movie-settings-container fieldset {
+    padding: 2px 10px;
+}
+
+#movie-settings-container legend {
+    margin-left: -10px;
+    font-style: italic;
+    color: white;
+}
+
+#movie-settings-container input {
+    margin: 1px 5px;
+}
+
+#movie-settings-advanced {
+    display: none;
+}
+
+#movie-settings-btns span {
+    cursor: pointer;
+}
+
+#movie-settings-submit {
+    padding: 5px 5px 0px;
+    text-align: right;
 }
 
 .history-entry {

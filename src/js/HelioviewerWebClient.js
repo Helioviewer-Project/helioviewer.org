@@ -68,6 +68,8 @@ var HelioviewerWebClient = HelioviewerClient.extend(
 
         this._setupDialogs();
         this._initEventHandlers();
+        this._setupSettingsUI();
+        
         this._displayGreeting();
 
         // Initialize AddThis
@@ -190,16 +192,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             "height": 'auto',
             "resizable": false,
             "create": function (e) {
-                var currentValue = Helioviewer.userSettings.get(
-                    "defaults.movies.duration"),
-                    select = $(this).find("#settings-movie-length");
 
-                // Select default value and bind event listener
-                select.find("[value = " + currentValue + "]").attr("selected", "selected");
-                select.bind('change', function (e) {
-                    Helioviewer.userSettings.set("defaults.movies.duration",
-                        parseInt(this.value, 10));
-                });                              
             }
         });
     },
@@ -250,6 +243,52 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             dimensions.html(win.width() + "x" + win.height());
         });
     },
+    
+    /**
+     * Configures the user settings form to match the stored values and
+     * initializes event-handlers
+     */
+    _setupSettingsUI: function () {
+        var form, dateLatest, datePrevious, autorefresh, self = this;
+        
+        form         = $("#helioviewer-settings");
+        dateLatest   = $("#settings-date-latest");
+        datePrevious = $("#settings-date-previous");
+        autorefresh  = $("#settings-latest-image");        
+        
+        // Starting date
+        if (Helioviewer.userSettings.get("options.date") === "latest") {
+            dateLatest.attr("checked", "checked");    
+        } else {
+            datePrevious.attr("checked", "checked");
+        }
+        
+        // Auto-refresh
+        if (Helioviewer.userSettings.get("options.autorefresh")) {
+            autorefresh.attr("checked", "checked");
+            this.timeControls.enableAutoRefresh();
+        } else {
+            autorefresh.removeAttr("checked");
+            this.timeControls.disableAutoRefresh();
+        }
+        
+        // Event-handlers
+        dateLatest.change(function (e) {
+            Helioviewer.userSettings.set("options.date", "latest");
+        });
+        datePrevious.change(function (e) {
+            Helioviewer.userSettings.set("options.date", "previous");
+        });
+        autorefresh.change(function (e) {
+            Helioviewer.userSettings.set("options.autorefresh", e.target.checked);
+            if (e.target.checked) {
+                self.timeControls.enableAutoRefresh();
+            } else {
+                self.timeControls.disableAutoRefresh();
+            }
+        });
+        
+    },
 
     /**
      * @description Initialize event-handlers for UI components controlled by the Helioviewer class
@@ -259,6 +298,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             msg  = "Use the following link to refer to current page:";
         
         $('#link-button').click(function (e) {
+            // Google analytics event
+            if (typeof(_gaq) != "undefined") {
+                _gaq.push(['_trackEvent', 'Shares', 'Homepage - URL']);
+            } 
             self.displayURL(self.toURL(), msg);
         });
         //$('#email-button').click($.proxy(this.displayMailForm, this));
@@ -344,6 +387,10 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         var msg = "Use the following link to refer to this movie:",
             url = this.serverSettings.rootURL + "/?movieId=" + movieId;
 
+        // Google analytics event
+        if (typeof(_gaq) != "undefined") {
+            _gaq.push(['_trackEvent', 'Shares', 'Movie - URL']);
+        } 
         this.displayURL(url, msg);           
     },
     

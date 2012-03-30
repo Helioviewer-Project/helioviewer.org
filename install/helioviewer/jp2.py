@@ -8,22 +8,18 @@ from helioviewer.db import get_datasources, enable_datasource
 __INSERTS_PER_QUERY__ = 500
 __STEP_FXN_THROTTLE__ = 50
 
-def traverse_directory(path):
+def find_images(path):
     '''Searches a directory for JPEG 2000 images.
     
     Traverses file-tree starting with the specified path and builds a list of
     the available images.
     '''
     images = []
-
-    for child in os.listdir(path):
-        node = os.path.join(path, child)
-        if os.path.isdir(node):
-            newImgs = traverse_directory(node)
-            images.extend(newImgs)
-        else:
-            if node[-3:] == "jp2":
-                images.append(node)
+    
+    for root, dirs, files in os.walk(path):
+        for file_ in files:
+            if file_.endswith('.jp2'):
+                images.append(os.path.join(root, file_))
 
     return images
 
@@ -47,13 +43,13 @@ def parse_header(img):
     detector = get_element_value(fits, "DETECTOR")
     instrume = get_element_value(fits, "INSTRUME")
     
-    if instrume and instrume[0:3] == 'AIA':
+    if instrume and instrume.startswith('AIA'):
         datatype = "aia"
-    elif instrume and instrume[0:3] == 'HMI':
+    elif instrume and instrume.startswith('HMI'):
         datatype = "hmi"
     elif detector == 'EUVI':
         datatype = "euvi"
-    elif detector and detector[0:3] == "COR":
+    elif detector and detector.startswith("COR"):
         datatype = "cor"
     elif instrume == 'EIT':
         datatype = "eit"
@@ -61,6 +57,8 @@ def parse_header(img):
         datatype = "lasco"
     elif instrume == 'MDI':
         datatype = "mdi"
+    elif instrume == 'SWAP':
+        datatype = "swap"
         
     try:
         info = _get_header_tags(fits, datatype)
@@ -170,6 +168,15 @@ def _get_header_tags(fits, type_):
             "measurement": meas,
             "observatory": "SOHO"
         }
+    elif type_ == "swap":
+        return {
+            "date": datetime.strptime(
+                get_element_value(fits, "DATE-OBS"), date_fmt1),
+            "detector": "SWAP",
+            "instrument": "SWAP",
+            "measurement": get_element_value(fits, "WAVELNTH"),
+            "observatory": "PROBA2"
+        }
 
 def get_element_value(dom, name):
     '''Gets the value for the specified dom-node if it exists.
@@ -204,7 +211,7 @@ def read_xmlbox(file, root):
     # 2010/04/12 TEMP Work-around for AIA invalid XML
     return xml.replace("&", "&amp;")
 
-def process_jp2_images (images, rootdir, cursor, mysql, stepFxn=None):
+def process_jp2_images (images, rootdir, cursor, mysql, step_function=None):
     '''Processes a collection of JPEG 2000 Images'''
     
     if mysql:
@@ -221,16 +228,16 @@ def process_jp2_images (images, rootdir, cursor, mysql, stepFxn=None):
     if len(images) >= __INSERTS_PER_QUERY__:
         for x in range(len(images) // __INSERTS_PER_QUERY__):
             insert_n_images(images, __INSERTS_PER_QUERY__, sources,
-                          rootdir, cursor, mysql, stepFxn)
+                          rootdir, cursor, mysql, step_function)
             
     # Update tree of known data-sources
     sources = get_datasources(cursor)
             
     # Process remaining images
-    insert_n_images(images, remainder, sources, rootdir, cursor, mysql, stepFxn)
+    insert_n_images(images, remainder, sources, rootdir, cursor, mysql, step_function)
 
     
-def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
+def insert_n_images(images, n, sources, rootdir, cursor, mysql, step_function=None):
     """Inserts multiple images into a database using a single query"""
     
     # 2011/06/27
@@ -247,12 +254,9 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
     
         print("Processing image: " + img)
         
-        path, filename = os.path.split(img)
-        
-        # Remove static part of filepath
-        if rootdir[-1] == "/":
-            rootdir = rootdir[:-1]
-        path = path[len(rootdir):]
+        directory, filename = os.path.split(img)
+
+        path = "/" + os.path.relpath(directory, rootdir)
         
         # Extract header meta information
         try:
@@ -276,8 +280,8 @@ def insert_n_images(images, n, sources, rootdir, cursor, mysql, stepFxn=None):
             query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, date, source['id'])
         
             # Progressbar
-            if stepFxn and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
-                stepFxn(filename)
+            if step_function and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
+                step_function(filename)
                 
     # Log any errors encountered
     if error:

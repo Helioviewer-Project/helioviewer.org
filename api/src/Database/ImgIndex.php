@@ -42,18 +42,19 @@ class Database_ImgIndex
      * 
      * @return int identifier for the screenshot
      */
-    public function insertScreenshot($date, $scale, $roi, $watermark, $layers, $bitmask)
+    public function insertScreenshot($date, $scale, $roi, $watermark, $layers, $bitmask, $numLayers)
     {
     	include_once 'src/Helper/DateTimeConversions.php';
     	
         // Add to screenshots table and get an id
-        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d);", 
+        $sql = sprintf("INSERT INTO screenshots VALUES(NULL, NULL, '%s', %f, PolygonFromText('%s'), %b, '%s', %d, %d);", 
             isoDateToMySQL($date),
             $scale,
             $roi,
             $watermark,
             $layers,
-            bindec($bitmask)
+            bindec($bitmask),
+            $numLayers
         );
         
         $this->_dbConnection->query($sql);
@@ -66,49 +67,38 @@ class Database_ImgIndex
      * 
      * @return string The movie information
      */
-    public function getMovieInformation($id, $format)
+    public function getMovieInformation($id)
     {
-        // FLV status is same as MP4
-        if ($format == "flv") {
-            $format = "mp4";
-        }
-
         $sql = "SELECT *, AsText(regionOfInterest) as roi FROM movies " .
                "LEFT JOIN movieFormats ON movies.id = movieFormats.movieId " . 
-               "WHERE movies.id=$id AND movieFormats.format='$format'";
+               "WHERE movies.id=$id AND movieFormats.format='mp4'";
         return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
     }
-    
-    public function getNumUnfinishedMovies($id)
-    {
-        $sql = "SELECT COUNT(*) FROM movieFormats WHERE movieId=$id AND status!='FINISHED'";
-        $row = mysqli_fetch_array($this->_dbConnection->query($sql));
-        return (int) array_pop($row);
-    }
-    
+
     /**
      * Updates movie entry with new information
      * 
      * @return void
      */
-    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $width, $height)
+    public function storeMovieProperties($id, $startDate, $endDate, $numFrames, $frameRate, $length, $width, $height)
     {
         // Update movies table
     	$sql = sprintf(
     	   "UPDATE movies 
-    	     SET startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, width=%d, height=%d
+    	     SET startDate='%s', endDate='%s', numFrames=%f, frameRate=%f, movieLength=%f, width=%d, height=%d
     	     WHERE id=%d",
-    	   $startDate, $endDate, $numFrames, $frameRate, $width, $height, $id
+    	   $startDate, $endDate, $numFrames, $frameRate, $length, $width, $height, $id
     	);
     	$this->_dbConnection->query($sql);
     }
     
     /**
-     * 
+     * Updated movie entry to include processing start and end times
      */
-    public function finishedBuildingMovieFrames($id, $procTime)
+    public function finishedBuildingMovieFrames($id, $buildTimeStart, $buildTimeEnd)
     {
-        $this->_dbConnection->query("UPDATE movies SET procTime=$procTime WHERE id=$id");
+        $sql = "UPDATE movies SET buildTimeStart='$buildTimeStart', buildTimeEnd='$buildTimeEnd' WHERE id=$id";
+        $this->_dbConnection->query($sql);
     }
     
     /**
@@ -121,7 +111,7 @@ class Database_ImgIndex
      */
     public function markMovieAsProcessing($id, $format)
     {
-        $sql = "UPDATE movieFormats SET status='PROCESSING' WHERE movieId=$id AND format='$format'";
+        $sql = "UPDATE movieFormats SET status=1 WHERE movieId=$id AND format='$format'";
         $this->_dbConnection->query($sql);
     }
     
@@ -134,7 +124,7 @@ class Database_ImgIndex
      */
     public function markMovieAsFinished($id, $format, $procTime)
     {
-        $sql = "UPDATE movieFormats SET status='FINISHED', procTime=$procTime " . 
+        $sql = "UPDATE movieFormats SET status=2, procTime=$procTime " . 
                "WHERE movieId=$id AND format='$format'";
     	$this->_dbConnection->query($sql);
     }
@@ -144,7 +134,7 @@ class Database_ImgIndex
      */
     public function markMovieAsInvalid($id)
     {
-        $this->_dbConnection->query("UPDATE movieFormats SET status='ERROR', procTime=NULL WHERE movieId=$id");
+        $this->_dbConnection->query("UPDATE movieFormats SET status=3, procTime=NULL WHERE movieId=$id");
     }
     
     /**

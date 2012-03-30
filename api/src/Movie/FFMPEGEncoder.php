@@ -246,12 +246,12 @@ class Movie_FFMPEGEncoder
     private function _getMetaDataString()
     {
         return sprintf(
-            '-metadata title="%s" -metadata composer="Helioviewer.org" -metadata year="%d" ' . 
-            '-metadata description="%s" -metadata comment="%s" ',
+            '-metadata title="%s" -metadata artist="Helioviewer.org" ' . 
+            '-metadata description="%s" -metadata comment="%s" -timestamp "%s" ',
             $this->_title,
-            date("Y"),
             $this->_description,
-            str_replace(array("mp4", "webm"), $this->_format, $this->_comment)
+            str_replace(array("mp4", "webm"), $this->_format, $this->_comment),
+            date("Y-m-d\TH:i:s\Z")
         );
     }
 }

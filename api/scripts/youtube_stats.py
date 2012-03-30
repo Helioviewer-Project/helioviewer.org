@@ -5,6 +5,10 @@ YouTube View Count Statistics
 
 Queries YouTube and determines the total number of views of Helioviewer.org
 videos.
+
+To generate list of 
+mysql -uUSERNAME -p DBNAME -e "SELECT youtubeId FROM youtube" | sed 1d > youtube_ids
+
 """
 import os
 import sys

@@ -61,8 +61,8 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
                
             this.movingContainer.bind('mousemove', $.proxy(this.updateMouseCoords, this));     
                
-            // TODO: Execute handler once immediately if mouse is over viewport to show new coords     
-            // Use trigger to fire mouse move event and then check to make sure mouse is within viewport?         
+            // Execute handler to display mouse coordinates placeholder
+            this.movingContainer.trigger("mousemove");
         } else {
             this.movingContainer.unbind('mousemove', this.updateMouseCoords);
         }
@@ -72,9 +72,19 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
      * updateMouseCoords
      */
     updateMouseCoords: function (event) {
-        var cartesian, polar;
+        var cartesian, polar, r, theta;
         
         if (!this.enabled) {
+            return;
+        }
+
+        // When mouse-coordinates are first turned on just shows dashes
+        if (typeof(event.pageX) == "undefined") {
+            if (this.mouseCoords === "arcseconds") {
+                this.showCartesianCoordinates("--", "--");
+            } else {
+                this.showPolarCoordinates("--", "--");
+            }
             return;
         }
             
@@ -83,16 +93,30 @@ var HelioviewerMouseCoordinates = MouseCoordinates.extend(
                             
         // Arc-seconds
         if (this.mouseCoords === "arcseconds") {
-            this.mouseCoordsX.html("x: " + cartesian.x + " &prime;&prime;");
-            this.mouseCoordsY.html("y: " + cartesian.y + " &prime;&prime;");
-                 
-        // Polar coords
+            this.showCartesianCoordinates(cartesian.x, cartesian.y);
         } else {
-            polar = Math.toPolarCoords(cartesian.x, cartesian.y);     
+            // Polar coords
+            polar = Math.toPolarCoords(cartesian.x, cartesian.y);
+            r     = ((polar.r / this.rsun) + "").substring(0, 5);
+            theta = Math.round(polar.theta);
             
-            this.mouseCoordsX.html(((polar.r / this.rsun) + "").substring(0, 5) +
-                 " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
-            this.mouseCoordsY.html(Math.round(polar.theta) + " &#176;");
+            this.showPolarCoordinates(r, theta); 
         }
+    },
+    
+    /**
+     * Displays cartesian coordinates in arc-seconds
+     */
+    showCartesianCoordinates: function(x, y) {
+        this.mouseCoordsX.html("x: " + x + " &prime;&prime;");
+        this.mouseCoordsY.html("y: " + y + " &prime;&prime;");
+    },
+    
+    /**
+     * Displays cartesian coordinates in arc-seconds
+     */
+    showPolarCoordinates: function(r, theta) {
+            this.mouseCoordsX.html(r + " R<span style='vertical-align: sub; font-size:10px;'>&#9737;</span>");
+            this.mouseCoordsY.html(theta + " &#176;");
     }
 });

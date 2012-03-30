@@ -23,6 +23,8 @@
  *  = Add getPlugins method to JHelioviewer module (empty function for now)
  */
 require_once "src/Config.php";
+require_once "src/Helper/ErrorHandler.php";
+
 $config = new Config("../settings/Config.ini");
 date_default_timezone_set('UTC');
 register_shutdown_function('shutdownFunction');
@@ -76,8 +78,6 @@ function loadModule($params)
         //"getEvents"              => "SolarEvents"
     );
     
-    $helioqueuer_tasks = array ("queueMovie");
-    
     include_once "src/Validation/InputValidator.php";
 
     try {
@@ -88,78 +88,26 @@ function loadModule($params)
                 "API Documentation</a> for a list of valid actions."
             );
         } else {
-            // Forward Helioqueuer tasks 
-            if (HV_HELIOQUEUER_ENABLED && in_array($params["action"], $helioqueuer_tasks)) {
-                $url = HV_HELIOQUEUER_API_URL . "/" . strtolower(preg_replace('/([A-Z])/', '/\1', $params['action']));
-                unset ($params['action']);
-                                
-                // Set up handler to respond to warnings emitted by file_get_contents
-                function catchWarning($errno, $errstr, $errfile, $errline, array $errcontext) {
-                    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-                }
-                set_error_handler('catchWarning');
-                
-                include_once 'src/Net/Proxy.php';
-                $proxy = new Net_Proxy($url . "?");
-                
-                // JSONP support
-                if (isset($params['callback'])) {
-                    $callback = $params['callback'];                    
-                    if (isset($params['_'])) {
-                        unset ($params['_']);
-                    }
-                    unset ($params['callback']);
-                }
-                
-                if ($_SERVER['REQUEST_METHOD'] == "POST") {
-                    $response = $proxy->post($params, true);    
-                } else {
-                    $response = $proxy->query($params, true);
-                }
+        	// Execute action
+            $moduleName = $valid_actions[$params["action"]];
+            $className  = "Module_" . $moduleName;
 
-                // Wrap JSONP responses
-                if (isset($callback)) {
-                    $response = sprintf("%s(%s)", $callback, $response);
-                }
-                
-                // Make sure a response was recieved
-                if ($response) {
-                    header('Content-type: application/json');
-                    echo $response;
-                } else {
-                    handleError("Helioqueuer is currently unresponsive");
-                }
-                
-                // Restore normal behavior for dealing with warnings
-                restore_error_handler();
+            include_once "src/Module/$moduleName.php";
 
-            // Local requests
-            } else {
-            	// Execute action
-                $moduleName = $valid_actions[$params["action"]];
-                $className  = "Module_" . $moduleName;
-    
-                include_once "src/Module/$moduleName.php";
-    
-                $module = new $className($params);
-                $module->execute();
-                
-                // Update usage stats
-                $actions_to_keep_stats_for = array("getClosestImage", 
-                    "getTile", "takeScreenshot", "getJPX",
-                    "uploadMovieToYouTube");
-                
-				// Note that in addition to the above, buildMovie requests and 
-				// getCachedTile requests are also tracked.
-				// getCachedTile is a pseudo-action which is logged in 
-				// addition to getTile when the tile was already in the cache.
-                if (HV_ENABLE_STATISTICS_COLLECTION && in_array($params["action"], $actions_to_keep_stats_for)) {
-                    include_once 'src/Database/Statistics.php';
-                    $statistics = new Database_Statistics();
-                    $statistics->log($params["action"]);
-                }
+            $module = new $className($params);
+            $module->execute();
+            
+            // Update usage stats
+            $actions_to_keep_stats_for = array("getClosestImage", 
+                "takeScreenshot", "getJPX", "uploadMovieToYouTube");
+            
+			// Note that in addition to the above, buildMovie requests and 
+			// addition to getTile when the tile was already in the cache.
+            if (HV_ENABLE_STATISTICS_COLLECTION && in_array($params["action"], $actions_to_keep_stats_for)) {
+                include_once 'src/Database/Statistics.php';
+                $statistics = new Database_Statistics();
+                $statistics->log($params["action"]);
             }
-
         }
     } catch (Exception $e) {
         printHTMLErrorMsg($e->getMessage());
@@ -812,37 +760,6 @@ function printHTMLErrorMsg($msg)
 </html>
     <?php
     exit();
-}
-
-/**
- * Handles errors encountered during request processing.
- * 
- * @param string $msg     The error message to display
- * @param bool   $skipLog If true no log file will be created
- * 
- * Note: If multiple levels of verbosity are needed, one option would be to split up the complete error message
- *       into it's separate parts, add a "details" field with the full message, and display only the top-level
- *       error message in "error" 
- * 
- * @see http://www.firephp.org/
- */
-function handleError($msg, $skipLog=false)
-{
-    header('Content-type: application/json;charset=UTF-8');
-    
-    // JSON
-    echo json_encode(array("error"=>$msg));
-
-    // Fire PHP
-    include_once "lib/FirePHPCore/fb.php";
-    FB::error($msg);
-    
-    // For errors which are expected (e.g. a movie request for which sufficient data is not available) a non-zero
-    // exception code can be set to a non-zero value indicating that the error is known and no log should be created.
-    if (!$skipLog) {
-        include_once "src/Helper/Logging.php";
-        logErrorMsg($msg);
-    }
 }
 
 /**

@@ -59,7 +59,7 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
         
         // Scale watermark
         onResize = function (e) {
-            var w = Math.min(250, Math.max(125, win.width() * 0.15)),
+            var w = Math.min(180, Math.max(125, win.width() * 0.15)),
                 h = 0.25 * w;
             watermark.width(w).height(h);
         };

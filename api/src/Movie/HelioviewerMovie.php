@@ -26,6 +26,12 @@ require_once HV_API_ROOT_DIR . '/lib/alphaID/alphaID.php';
  * Note: For movies, it is easiest to work with Unix timestamps since that is what is returned
  *       from the database. To get from a javascript Date object to a Unix timestamp, simply
  *       use "date.getTime() * 1000." (getTime returns the number of miliseconds)
+ * 
+ * Movie Status:
+ *  0   QUEUED
+ *  1   PROCESSING
+ *  2   COMPLETED
+ *  3   ERROR
  *
  * @category Movie
  * @package  Helioviewer
@@ -38,6 +44,7 @@ class Movie_HelioviewerMovie
 {
     public $id;
     public $frameRate;
+    public $movieLength;
     public $maxFrames;
     public $numFrames;
     public $reqStartDate;
@@ -69,28 +76,29 @@ class Movie_HelioviewerMovie
         $this->_db = new Database_ImgIndex();
         
         $id = alphaID($publicId, true, 5, HV_MOVIE_ID_PASS);
-        $info = $this->_db->getMovieInformation($id, $format);
+        $info = $this->_db->getMovieInformation($id);
         
         if (is_null($info)) {
              throw new Exception("Unable to find the requested movie.");
         }
         
-        $this->id           = $id;
         $this->publicId     = $publicId;
         $this->format       = $format;
         $this->reqStartDate = $info['reqStartDate'];
         $this->reqEndDate   = $info['reqEndDate'];
         $this->startDate    = $info['startDate'];
         $this->endDate      = $info['endDate'];
-        $this->status       = $info['status'];
         $this->timestamp    = $info['timestamp'];
         $this->imageScale   = (float) $info['imageScale'];
         $this->frameRate    = (float) $info['frameRate'];
+        $this->movieLength  = (float) $info['movieLength'];
+        $this->id           = (int) $id;
+        $this->status       = (int) $info['status'];
         $this->numFrames    = (int) $info['numFrames'];
-        $this->maxFrames    = min((int) $info['maxFrames'], HV_MAX_MOVIE_FRAMES);
         $this->width        = (int) $info['width'];
         $this->height       = (int) $info['height'];
         $this->watermark    = (bool) $info['watermark'];
+        $this->maxFrames    = min((int) $info['maxFrames'], HV_MAX_MOVIE_FRAMES);
         
         // Data Layers
         $this->_layers = new Helper_HelioviewerLayers($info['dataSourceString']);
@@ -104,8 +112,10 @@ class Movie_HelioviewerMovie
      */
     public function build()
     {
+        date_default_timezone_set('UTC');
+        
         // Check to make sure we have not already started processing the movie
-        if ($this->status !== "QUEUED") {
+        if ($this->status !== 0) {
             throw new Exception("The requested movie is either currently being built or has already been built");
         }
 
@@ -117,16 +127,16 @@ class Movie_HelioviewerMovie
             // If the movie frames have not been built create them
             if (!file_exists($this->directory . "frames")) {
                 require_once HV_API_ROOT_DIR . '/src/Image/Composite/HelioviewerMovieFrame.php';
-    
-                $t1 = time();   
+                
+                $t1 = date("Y-m-d H:i:s");
                          
                 $this->_getTimeStamps();      // Get timestamps for frames in the key movie layer
-                $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, numFrames and dimensions
+                $this->_setMovieProperties(); // Sets the actual start and end dates, frame-rate, movie length, numFrames and dimensions
                 $this->_buildMovieFrames($this->watermark); // Build movie frames
                 
-                $t2 = time();
-                
-                $this->_db->finishedBuildingMovieFrames($this->id, $t2 - $t1); // Update status and log time to build frames
+                $t2 = date("Y-m-d H:i:s");
+
+                $this->_db->finishedBuildingMovieFrames($this->id, $t1, $t2); // Update status and log time to build frames
             } else {
                 $this->filename = $this->_buildFilename();
             }
@@ -141,20 +151,18 @@ class Movie_HelioviewerMovie
             $this->_encodeMovie();
         } catch (Exception $e) {
             $t4 = time();
-            $this->_abort("Error encountered during video encoding.", $t4 - $t3);
+            $this->_abort("Error encountered during video encoding. This may be caused
+            by a FFmpeg configuration issue, or by insufficient permissions in the cache.", $t4 - $t3);
         }
 		
 		// Log buildMovie in statistics table
-        if (HV_ENABLE_STATISTICS_COLLECTION && $this->format == "mp4") {
+        if (HV_ENABLE_STATISTICS_COLLECTION) {
             include_once HV_API_ROOT_DIR . '/src/Database/Statistics.php';
             $statistics = new Database_Statistics();
             $statistics->log("buildMovie");
         }
         
-        // If all of the queued videos have been created remove frames
-        if ($this->_db->getNumUnfinishedMovies($this->id) === 0) {
-            $this->_cleanUp();
-        }
+        $this->_cleanUp();
     }
     
     /**
@@ -164,16 +172,16 @@ class Movie_HelioviewerMovie
      */
     public function getCompletedMovieInformation($verbose=false) {
         $info = array(
-            "frameRate"  => $this->frameRate,
-            "numFrames"  => $this->numFrames,
-            "startDate"  => $this->startDate,
-            "status"     => $this->status,
-            "endDate"    => $this->endDate,
-            "width"      => $this->width,
-            "height"     => $this->height,
-            "title"      => $this->getTitle(),
-            "thumbnails" => $this->getPreviewImages(),
-            "url"        => $this->getURL()
+            "frameRate"   => $this->frameRate,
+            "numFrames"   => $this->numFrames,
+            "startDate"   => $this->startDate,
+            "status"      => $this->status,
+            "endDate"     => $this->endDate,
+            "width"       => $this->width,
+            "height"      => $this->height,
+			"title"       => $this->getTitle(),
+            "thumbnails"  => $this->getPreviewImages(),
+            "url"         => $this->getURL()
         );
         
         if ($verbose) {
@@ -235,7 +243,7 @@ class Movie_HelioviewerMovie
      */
     private function _abort($msg, $procTime=0) {
         $this->_db->markMovieAsInvalid($this->id, $procTime);
-        $this->_cleanUp();
+        //$this->_cleanUp();
         throw new Exception("Unable to create movie: " . $msg);
     }
     
@@ -377,25 +385,6 @@ class Movie_HelioviewerMovie
     }
 
     /**
-     * Uses numFrames to calculate the frame rate that should
-     * be used when encoding the movie.
-     *
-     * @return Int optimized frame rate
-     */
-    private function _determineOptimalFrameRate($requestedFrameRate)
-    {
-        // Subtract 1 because we added an extra frame to the end
-        $frameRate = ($this->numFrames - 1 ) / HV_DEFAULT_MOVIE_PLAYBACK_IN_SECONDS;
-
-        // Take the smaller number in case the user specifies a larger frame rate than is practical.
-        if ($requestedFrameRate) {
-            $frameRate = min($frameRate, $requestedFrameRate);
-        }
-
-        return max(1, $frameRate);
-    }
-
-    /**
      * Builds the requested movie
      *
      * Makes a temporary directory to store frames in, calculates a timestamp for every frame, gets the closest
@@ -461,15 +450,13 @@ class Movie_HelioviewerMovie
         $t3 = time();
         
         //Create a Low-quality webm movie for in-browser use if requested
-        if ($this->format == "webm") {
-            $ffmpeg->setFormat("webm");
-            $ffmpeg->createVideo();
-            
-            $t4 = time();
-                    
-            // Mark movie as completed
-            $this->_db->markMovieAsFinished($this->id, "webm", $t4 - $t3);
-        }
+        $ffmpeg->setFormat("webm");
+        $ffmpeg->createVideo();
+        
+        $t4 = time();
+                
+        // Mark movie as completed
+        $this->_db->markMovieAsFinished($this->id, "webm", $t4 - $t3);
     }
 
     /**
@@ -583,14 +570,18 @@ class Movie_HelioviewerMovie
             $this->_abort("No images available for the requested time range");
         }
 
-        $this->frameRate = $this->_determineOptimalFrameRate($this->frameRate);
+        if ($this->frameRate) {
+            $this->movieLength = $this->numFrames / $this->frameRate;
+        } else {
+            $this->frameRate = $this->numFrames / $this->movieLength;
+        }
 
         $this->_setMovieDimensions();
 
         // Update movie entry in database with new details
         $this->_db->storeMovieProperties(
-            $this->id, $this->startDate, $this->endDate, 
-            $this->numFrames, $this->frameRate, $this->width, $this->height
+            $this->id, $this->startDate, $this->endDate, $this->numFrames, 
+            $this->frameRate, $this->movieLength, $this->width, $this->height
         );
     }
 
@@ -649,7 +640,7 @@ class Movie_HelioviewerMovie
     <div style="margin-left: auto; margin-right: auto; <?php echo $css;?>";>
         <video style="margin-left: auto; margin-right: auto;" poster="<?php echo "$filepath.bmp"?>" durationHint="<?php echo $duration?>">
             <source src="<?php echo "$filepath.mp4"?>" /> 
-            <source src="<?php echo "$filepath.mov"?>" />
+            <source src="<?php echo "$filepath.webm"?>" />
             <source src="<?php echo "$filepath.flv"?>" /> 
         </video>
     </div>

@@ -29,6 +29,7 @@ var TimeControls = Class.extend(
         }
         this._setInitialDate(urlDate);
         this._timeIncrement = Helioviewer.userSettings.get("state.timeStep");
+        this._timer;
 
         this._dateInput       = $(dateInput);
         this._timeInput       = $(timeInput);
@@ -132,16 +133,33 @@ var TimeControls = Class.extend(
     },
     
     /**
+     * Enables automatic updating of observation time every five minutes
+     */
+    enableAutoRefresh: function () {
+        this._timer = setInterval($.proxy(this.goToPresent, this), 300000);
+    },
+    
+    /**
+     * Enables automatic updating of observation time every five minutes
+     */
+    disableAutoRefresh: function () {
+        clearInterval(this._timer);
+    },
+    
+    /**
      * Chooses the date to use when Helioviewer.org is first loaded
      */
     _setInitialDate: function (urlDate) {
         if (urlDate) {
             this._date = urlDate;
-        } else if (Helioviewer.userSettings.get("defaults.date") === "latest") {
+        } else if (Helioviewer.userSettings.get("options.date") === "latest") {
             this._date = new Date(+new Date());
         } else {
-            this._date = Helioviewer.userSettings.get("state.date");
+            this._date = new Date(Helioviewer.userSettings.get("state.date"));
         }
+        
+        // Update stored date
+        Helioviewer.userSettings.set("state.date", this._date.getTime());
     },
       
    /**
