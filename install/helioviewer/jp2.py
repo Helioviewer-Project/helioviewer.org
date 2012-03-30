@@ -57,6 +57,8 @@ def parse_header(img):
         datatype = "lasco"
     elif instrume == 'MDI':
         datatype = "mdi"
+    elif instrume == 'SWAP':
+        datatype = "swap"
         
     try:
         info = _get_header_tags(fits, datatype)
@@ -165,6 +167,15 @@ def _get_header_tags(fits, type_):
             "instrument": "MDI",
             "measurement": meas,
             "observatory": "SOHO"
+        }
+    elif type_ == "swap":
+        return {
+            "date": datetime.strptime(
+                get_element_value(fits, "DATE-OBS"), date_fmt1),
+            "detector": "SWAP",
+            "instrument": "SWAP",
+            "measurement": get_element_value(fits, "WAVELNTH"),
+            "observatory": "PROBA2"
         }
 
 def get_element_value(dom, name):
