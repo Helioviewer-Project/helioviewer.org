@@ -46,7 +46,7 @@ def getArguments():
                     
     except:
         sys.exit(2)
-        x 
+
     # check for filename
     if len(args) != 1:
         usage(parser)

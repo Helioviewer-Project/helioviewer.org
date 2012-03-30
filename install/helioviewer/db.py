@@ -32,7 +32,7 @@ def setup_database_schema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
 
     return cursor
 
-def get_db_cursor(dbname, dbuser, dbpass, mysql):
+def get_db_cursor(dbname, dbuser, dbpass, mysql=True):
     """Creates a database connection"""
     if mysql:
         import MySQLdb
@@ -125,12 +125,12 @@ def create_datasource_table(cursor):
         `id`            SMALLINT unsigned NOT NULL,
         `name`          VARCHAR(127) NOT NULL,
         `description`   VARCHAR(255),
-        `observatoryId` SMALLINT unsigned NOT NULL,
-        `instrumentId`  SMALLINT unsigned NOT NULL,
-        `detectorId`    SMALLINT unsigned NOT NULL,
-        `measurementId` SMALLINT unsigned NOT NULL,
-        `layeringOrder` TINYINT NOT NULL,
-        `enabled`       BOOLEAN NOT NULL,
+        `observatoryId` SMALLINT UNSIGNED NOT NULL,
+        `instrumentId`  SMALLINT UNSIGNED NOT NULL,
+        `detectorId`    SMALLINT UNSIGNED NOT NULL,
+        `measurementId` SMALLINT UNSIGNED NOT NULL,
+        `layeringOrder` TINYINT UNSIGNED NOT NULL,
+        `enabled`       TINYINT(1) UNSIGNED NOT NULL,
       PRIMARY KEY  (`id`)
     ) DEFAULT CHARSET=utf8;""")
 
@@ -167,7 +167,8 @@ def create_datasource_table(cursor):
         (28, 'COR1-A', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
         (29, 'COR2-A', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
         (30, 'COR1-B', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
-        (31, 'COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0);
+        (31, 'COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0),
+        (32, 'SWAP 174', 'PROBA-2 SWAP 174', 5, 7, 10, 15, 1, 0);
     """)
 
 def create_observatory_table(cursor):
@@ -187,7 +188,8 @@ def create_observatory_table(cursor):
         (1, 'TRACE', 'The Transition Region and Coronal Explorer'),
         (2, 'SDO', 'Solar Dynamics Observatory'),
         (3, 'STEREO_A', 'Solar Terrestrial Relations Observatory Ahead'),
-        (4, 'STEREO_B', 'Solar Terrestrial Relations Observatory Behind');
+        (4, 'STEREO_B', 'Solar Terrestrial Relations Observatory Behind'),
+        (5, 'PROBA2', 'Project for OnBoard Autonomy 2');
     """)
 
 def create_instrument_table(cursor):
@@ -209,7 +211,8 @@ def create_instrument_table(cursor):
         (3, 'TRACE',  'The Transition Region and Coronal Explorer'),
         (4, 'AIA',    'Atmospheric Imaging Assembly'),
         (5, 'HMI',    'Helioseismic and Magnetic Imager'),
-        (6, 'SECCHI', 'Sun Earth Connection Coronal and Heliospheric Investigation');
+        (6, 'SECCHI', 'Sun Earth Connection Coronal and Heliospheric Investigation'),
+        (7, 'SWAP',   'Sun watcher using APS detectors and image processing');
     """)
 
 
@@ -227,16 +230,17 @@ def create_detector_table(cursor):
 
     cursor.execute("""
     INSERT INTO `detectors` VALUES
-        (0, 'EIT',   'Extreme ultraviolet Imaging Telescope'),
-        (1, 'C2',    'Coronograph 2'),
-        (2, 'C3',    'Coronograph 3'),
-        (3, 'MDI',   'Michelson Doppler Imager'),
-        (4, 'TRACE', 'The Transition Region and Coronal Explorer'),
-        (5, 'AIA',   'Atmospheric Imaging Assembly'),
-        (6, 'HMI',   'Helioseismic and Magnetic Imager'),
-        (7, 'EUVI',  'Extreme Ultraviolet Imager'),
-        (8, 'COR1',  'Coronograph 1'),
-        (9, 'COR2',  'Coronograph 2');
+        (0,  'EIT',   'Extreme ultraviolet Imaging Telescope'),
+        (1,  'C2',    'Coronograph 2'),
+        (2,  'C3',    'Coronograph 3'),
+        (3,  'MDI',   'Michelson Doppler Imager'),
+        (4,  'TRACE', 'The Transition Region and Coronal Explorer'),
+        (5,  'AIA',   'Atmospheric Imaging Assembly'),
+        (6,  'HMI',   'Helioseismic and Magnetic Imager'),
+        (7,  'EUVI',  'Extreme Ultraviolet Imager'),
+        (8,  'COR1',  'Coronograph 1'),
+        (9,  'COR2',  'Coronograph 2'),
+        (10, 'SWAP',  'Sun watcher using APS detectors and image processing');
     """)
 
 
@@ -269,7 +273,8 @@ def create_measurement_table(cursor):
         (11, '4500', '4500 Ångström extreme ultraviolet', 'Å'),
         (12, 'continuum', 'Intensitygram', 'DN'),
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
-        (14, 'white-light', 'White Light', 'DN');""")
+        (14, 'white-light', 'White Light', 'DN'),
+        (15, '174', '174 Ångström extreme ultraviolet', 'Å');""")
     
 def create_movies_table(cursor):
     """Creates movie table
@@ -289,17 +294,21 @@ def create_movies_table(cursor):
       `reqEndDate`        datetime NOT NULL,
       `imageScale`        FLOAT NOT NULL,
       `regionOfInterest`  POLYGON NOT NULL,
-      `maxFrames`         INT NOT NULL,
-      `watermark`         BOOLEAN NOT NULL,
+      `maxFrames`         SMALLINT NOT NULL,
+      `watermark`         TINYINT(1) UNSIGNED NOT NULL,
       `dataSourceString`  VARCHAR(255) NOT NULL,
-      `dataSourceBitMask` BIGINT,
-      `frameRate`         FLOAT,
+      `dataSourceBitMask` BIGINT UNSIGNED,
+      `numLayers`         TINYINT UNSIGNED,
+      `queueNum`          SMALLINT UNSIGNED,
+      `frameRate`         FLOAT UNSIGNED,
+      `movieLength`       FLOAT UNSIGNED,
       `startDate`         datetime,
       `endDate`           datetime,
-      `numFrames`         INT,
-      `width`             INT,
-      `height`            INT,
-      `procTime`          INT,
+      `numFrames`         SMALLINT UNSIGNED,
+      `width`             SMALLINT UNSIGNED,
+      `height`            SMALLINT UNSIGNED,
+      `buildTimeStart`    TIMESTAMP,
+      `buildTimeEnd`      TIMESTAMP,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
     
@@ -315,7 +324,7 @@ def create_movie_formats_table(cursor):
       `movieId`           INT unsigned NOT NULL,
       `format`            VARCHAR(255) NOT NULL,
       `status`            VARCHAR(255) NOT NULL,
-      `procTime`          INT,
+      `procTime`          SMALLINT UNSIGNED,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
     
@@ -334,7 +343,7 @@ def create_youtube_table(cursor):
       `title`       VARCHAR(100) NOT NULL,
       `description` VARCHAR(5000) NOT NULL,
       `keywords`    VARCHAR(500) NOT NULL,
-      `shared`      BOOLEAN NOT NULL,
+      `shared`      TINYINT(1) UNSIGNED NOT NULL,
        PRIMARY KEY (`id`),
        UNIQUE INDEX movieid_idx(movieId)
     ) DEFAULT CHARSET=utf8;""")
@@ -355,11 +364,12 @@ def create_screenshots_table(cursor):
       `id`                INT unsigned NOT NULL auto_increment,
       `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `observationDate`   datetime NOT NULL,
-      `imageScale`        FLOAT,
+      `imageScale`        FLOAT UNSIGNED,
       `regionOfInterest`  POLYGON NOT NULL,
-      `watermark`         BOOLEAN DEFAULT TRUE,
+      `watermark`         TINYINT(1) UNSIGNED DEFAULT TRUE,
       `dataSourceString`  VARCHAR(255) NOT NULL,
-      `dataSourceBitMask` BIGINT,
+      `dataSourceBitMask` BIGINT UNSIGNED,
+      `numLayers`         TINYINT UNSIGNED NOT NULL DEFAULT 1,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
 

@@ -273,6 +273,34 @@ span.ui-icon-hover, div.ui-icon-hover {
     float: left;
 }
 
+/** Settings dialog */
+    
+#settings-dialog {
+    display:none;
+    margin: 15px 15px 0 15px;
+    font-size: 1em;
+}
+
+#helioviewer-settings label {
+    display: inline-block;
+    margin: 5px 2px 0 0;
+}
+
+#helioviewer-settings fieldset {
+    padding: 2px 10px;
+}
+
+#helioviewer-settings legend {
+    margin-left: -10px;
+    font-style: italic;
+    color: white;
+}
+
+#helioviewer-settings input {
+    margin: 1px 5px;
+}
+
+
 /** Debugging */
 #debug-dimensions {
     position: absolute;

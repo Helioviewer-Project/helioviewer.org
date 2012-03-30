@@ -36,6 +36,46 @@ class Database_MovieDatabase
     }
     
     /**
+     * Inserts a new movie entry into the database and returns it's id
+     */
+    public function insertMovie($startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark, $layerString, 
+                                $layerBitMask, $numLayers, $queueNum, $frameRate, $movieLength)
+    {
+        $sql = "INSERT INTO movies VALUES(NULL, NULL, ?, ?, ?, PolygonFromText(?), " .
+               "?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, NULL);";
+               
+        $startTime = isoDateToMySQL($startTime);
+        $endTime   = isoDateToMySQL($endTime);
+                 
+        $stmt = $this->_dbConnection->link->prepare($sql);
+        $stmt->bind_param('ssdsisssiiss', $startTime, $endTime, $imageScale, $roi, $maxFrames, $watermark,
+                                          $layerString, $layerBitMask, $numLayers, $queueNum, $frameRate, $movieLength);
+
+        $result = $stmt->execute();
+        $id = $stmt->insert_id;
+        $stmt->close();
+        
+        return $id;
+    }
+    
+    /**
+     * Creates a video entry in the movieFormats table
+     */
+    public function insertMovieFormat($id, $format)
+    {
+        $sql = "INSERT INTO movieFormats VALUES(NULL, ?, ?, 0, NULL);";
+
+        $stmt = $this->_dbConnection->link->prepare($sql);
+        $stmt->bind_param('is', $id, $format);
+
+        $result = $stmt->execute();
+        $id = $stmt->insert_id;
+        $stmt->close();
+        
+        return $id;
+    }
+
+    /**
      * Creates a new entry in the youtube table to track a movie uploaded to
      * YouTube.
      * 
@@ -66,6 +106,36 @@ class Database_MovieDatabase
         
         $sql = "UPDATE youtube SET youtubeId='$youtubeId' WHERE movieId=$movieId;";
         $this->_dbConnection->query($sql);
+    }
+    
+    /**
+     * Gets statistics for the n most recently completed movies
+     */
+    public function getMovieStatistics($n=100)
+    {    
+        $sql = "SELECT numFrames, width * height as numPixels, queueNum, " .
+               "TIMESTAMPDIFF(SECOND, buildTimeStart, buildTimeEnd) as time " .
+               "FROM movies " .
+               "WHERE TIMESTAMPDIFF(SECOND, buildTimeStart, buildTimeEnd) > 0 " .
+               "ORDER BY id DESC LIMIT $n;";
+
+        $result = $this->_dbConnection->query($sql);
+
+        // Fetch result and store as column arrays instead of rows 
+        $stats = array(
+            "numFrames" => array(),
+            "numPixels" => array(),
+            "queueNum"  => array(),
+            "time"      => array()
+        );
+        while ($row = $result->fetch_array()) {
+            array_push($stats['numFrames'], $row[0]);
+            array_push($stats['numPixels'], $row[1]);
+            array_push($stats['queueNum'], $row[2]);
+            array_push($stats['time'], $row[3]);
+        }
+        
+        return $stats;
     }
     
     /**

@@ -1,50 +1,43 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
+"""
+Helioviewer.org Image Removal Tool
 
-###############################################################################
-# Helioviewer.org Image Removal Tool
-# Last Updated: 2010/09/23
-#
-# This tool can be used to remove corrupted images from the archive. Note that
-# only filenames should be specified, and not entire filepaths
-#
-# Usage:
-#
-#    python remove.py filename.jp2 [filename2.jp2 ...]
-#    
-###############################################################################
+Last Updated: 2012/03/28
+
+This tool can be used to remove corrupted images from the archive. Note that
+only filenames should be specified, and not entire filepaths
+
+Usage:
+    python remove.py filename.jp2 [filename2.jp2 ...]
+
+"""
 import sys
 import os
 import shutil
-import MySQLdb
+import database
 
 def main(argv):
     rootdir = "/var/www/jp2"
     moveto  = "/var/www/jp2/Corrupted"
-    dbname  = "dbname"
-    dbuser  = "dbuser"
-    dbpass  = "dbpass"
     
+    # Make sure at least one file was specified
     if len(argv) < 2:
         print "Incorrect number of arguments. Please specify the names of the files you wish to remove."
         sys.exit()
         
+    # Connect to database
+    cursor = database.get_dbcursor()
+        
     for filename in argv[1:]:
-        filepath = removeFromDatabase(rootdir, filename, dbname, dbuser, dbpass)
-        removeFromArchive(filepath, moveto)    
+        filepath = remove_from_db(cursor, rootdir, filename)
+        remove_from_archive(filepath, moveto)    
     
     print "Done!"
     
-def removeFromDatabase(rootdir, filename, dbname, dbuser, dbpass):
+def remove_from_db(cursor, rootdir, filename):
     print "Removing %s from the database" % filename
-    
-    try:
-        db = MySQLdb.connect(host="localhost", db=dbname, user=dbuser, passwd=dbpass)
-        cursor = db.cursor()
-    except Exception, e:
-        print e
-        sys.exit()
-    
+
     # First get the filepath    
     sql = "SELECT CONCAT('%s', filepath, '/', filename) FROM images WHERE filename = '%s'" % (rootdir, filename)
     
@@ -60,7 +53,7 @@ def removeFromDatabase(rootdir, filename, dbname, dbuser, dbpass):
     
     return filepath
 
-def removeFromArchive(filepath, moveto):
+def remove_from_archive(filepath, moveto):
     print "Moving %s to %s" % (filepath.split("/").pop(), moveto)
     
     if not os.path.isdir(moveto):

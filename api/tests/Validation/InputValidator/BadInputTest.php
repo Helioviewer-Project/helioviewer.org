@@ -25,18 +25,6 @@ require_once 'src/Validation/InputValidator.php';
  */
 class InputValidator_BadInputTest extends PHPUnit_Framework_TestCase
 {
-    protected $inputValidator;
-
-    /**
-     * Sets up test environment
-     *
-     * @return void
-     */
-    protected function setUp()
-    {
-        $this->inputValidator = new Validation_InputValidator();
-    }
-
     /**
      * Tests method which checks for required parameters
      *

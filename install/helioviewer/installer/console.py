@@ -2,18 +2,78 @@
 """A text-based installer for Helioviewer.org"""
 import sys
 import os
-import math
 import getpass
-from datetime import datetime
 from helioviewer.jp2 import *
 from helioviewer.db  import *
 
 class HelioviewerConsoleInstaller:
     """Text-based installer class"""
-    def __init__(self, options):
-        self.options = options
+    def __init__(self):
+        self.print_greeting()
         
-    def getFilePath(self):
+        path = self.get_filepath()
+        
+        # Locate jp2 images in specified filepath
+        images = find_images(path)
+        
+        # Check to make sure the filepath contains jp2 images
+        if len(images) is 0:
+            print("No JPEG 2000 images found. Exiting installation.")
+            sys.exit(2)
+        else:
+            print("Found %d JPEG 2000 images." % len(images))
+    
+        # Setup database schema if needed
+        cursor, mysql = self.get_db_cursor()
+    
+        print("Processing Images...")
+    
+        # Insert image information into database
+        process_jp2_images(images, path, cursor, mysql)
+        cursor.close()
+        
+        print("Finished!")
+        
+    def get_db_cursor(self):
+        """Returns a database cursor"""
+        if (self.should_setup_db()):
+            return self.create_db()        
+        else:
+            return self.get_existing_db_info()
+        
+    def get_existing_db_info(self):
+        """Gets information about existing database from user and returns
+        a cursor to that database."""
+        print("Please enter Helioviewer.org database name")
+        dbname = self.get_database_name()
+        
+        print("Please enter Helioviewer.org database user information")
+        dbuser, dbpass, mysql = self.get_database_info()
+        
+        cursor = get_db_cursor(dbname, dbuser, dbpass, mysql)
+        
+        return cursor, mysql
+        
+    def create_db(self):
+        """Sets up the database tables needed for Helioviewer"""
+        print("Please enter new database information:")
+        dbname = self.get_database_name()
+        hvuser, hvpass = self.get_new_user_info()
+        
+        # Get database information
+        print("\nPlease enter existing database admin information:")
+        dbuser, dbpass, mysql = self.get_database_info()
+
+        # Setup database schema
+        try:
+            cursor = setup_database_schema(dbuser, dbpass, dbname, hvuser, 
+                                           hvpass, mysql)
+            return cursor, mysql
+        except:
+            print("Specified database already exists! Exiting installer.")
+            sys.exit()
+
+    def get_filepath(self):
         '''Prompts the user for the directory information'''
     
         path = get_input("Location of JP2 Images: ")
@@ -23,14 +83,14 @@ class HelioviewerConsoleInstaller:
     
         return path
     
-    def getDatabaseType(self):
+    def get_database_type(self):
         ''' Prompts the user for the database type '''
         dbtypes = {1: "mysql", 2: "postgres"}
         
         while True:
             print("Please select the desired database to use for installation:")
-            print("   [1] MySQL")
-            print("   [2] PostgreSQL")
+            print("\t[1] MySQL")
+            print("\t[2] PostgreSQL")
             choice = get_input("Choice: ")
             
             if choice not in ['1', '2']:
@@ -38,25 +98,25 @@ class HelioviewerConsoleInstaller:
             else:
                 return dbtypes[int(choice)]
             
-    def getDatabasename(self):
+    def get_database_name(self):
         ''' Prompts the user for the database name '''
 
-        dbname = get_input("    Database name [helioviewer]: ")
+        dbname = get_input("\tDatabase name [helioviewer]: ")
    
         # Default values
         if not dbname: dbname = "helioviewer"
     
         return dbname
                 
-    def shouldSetupSchema(self):
+    def should_setup_db(self):
         ''' Prompts the user for the database type '''
         options = {1: True, 2: False}
         
         while True:
             print("Would you like to create the database schema used by "
                   "Helioviewer.org?:")
-            print("   [1] Yes")
-            print("   [2] No")
+            print("\t[1] Yes")
+            print("\t[2] No")
             choice = get_input("Choice: ")
             
             if choice not in ['1', '2']:
@@ -64,14 +124,14 @@ class HelioviewerConsoleInstaller:
             else:
                 return options[int(choice)]
     
-    def getDatabaseInfo(self):
+    def get_database_info(self):
         ''' Gets database type and administrator login information '''
         import getpass
         
         while True:  
-            dbtype = self.getDatabaseType()
-            dbuser = get_input("    Username: ")        
-            dbpass = getpass.getpass("    Password: ")
+            dbtype = self.get_database_type()
+            dbuser = get_input("\tUsername: ")        
+            dbpass = getpass.getpass("\tPassword: ")
         
             # Default values
             if not dbuser:
@@ -86,12 +146,12 @@ class HelioviewerConsoleInstaller:
             else:
                 return dbuser,dbpass,mysql        
 
-    def getNewUserInfo(self):
+    def get_new_user_info(self):
         ''' Prompts the user for the required database information '''
 
         # Get new user information (Todo 2009/08/24: validate input form)
-        dbuser = get_input("    Username [helioviewer]: ")
-        dbpass = get_input("    Password [helioviewer]: ")
+        dbuser = get_input("\tUsername [helioviewer]: ")
+        dbpass = get_input("\tPassword [helioviewer]: ")
     
         # Default values
         if not dbuser:
@@ -101,7 +161,7 @@ class HelioviewerConsoleInstaller:
     
         return dbuser, dbpass
 
-    def printGreeting(self):
+    def print_greeting(self):
         ''' Prints a greeting to the user'''
         os.system("clear")
         
@@ -115,78 +175,8 @@ class HelioviewerConsoleInstaller:
 =                                                                  =
 ====================================================================""")
 
-def install(options):
-    ''' Loads the text-based installation tool '''
-    app = HelioviewerConsoleInstaller(options)
-    app.printGreeting()
-    
-    # Filepath
-    path = app.getFilePath()
-    
-    # Locate jp2 images in specified filepath
-    images = traverse_directory(path)
-    
-    # Check to make sure the filepath contains jp2 images
-    if len(images) is 0:
-        print("No JPEG 2000 images found. Exiting installation.")
-        sys.exit(2)
-    else:
-        print("Found %d JPEG2000 images." % len(images))
-
-    # Setup database schema if needed
-    if (app.shouldSetupSchema()):
-        print("Please enter new database information:")
-        dbname = app.getDatabasename()
-        hvuser, hvpass = app.getNewUserInfo()
-        
-        print("")
-        
-        # Get database information
-        print("Please enter existing database admin information:")
-        dbuser, dbpass, mysql = app.getDatabaseInfo()
-
-        # Setup database schema
-        cursor = setup_database_schema(dbuser, dbpass, dbname, hvuser, hvpass, 
-                                       mysql)
-    
-    else:
-        # Get database information
-        print("Please enter Helioviewer.org database name")
-        dbname = app.getDatabasename()
-        
-        print("Please enter Helioviewer.org database user information")
-        dbuser, dbpass, mysql = app.getDatabaseInfo()
-        cursor = get_db_cursor(dbname, dbuser, dbpass, mysql)
-
-    print("Processing Images...")
-
-    # Insert image information into database
-    process_jp2_images(images, path, cursor, mysql)
-    cursor.close()
-
-    print("Finished!")
-    
-def update(options):
-    ''' Loads the text-based installation tool and runs it in update-mode '''
-    app = HelioviewerConsoleInstaller(options)
-    
-    # MySQL?
-    mysql = options.dbtype == "mysql"
-        
-    cursor = get_db_cursor(options.dbname, options.dbuser, options.dbpass, mysql)
-
-    print("Processing Images...")
-
-    # Insert image information into database
-    process_jp2_images(options.files, options.basedir, cursor, mysql)
-    
-    cursor.close()
-
-    print("Finished!")
-    
 # Python 3 compatibility work-around
 if sys.version_info[0] >= 3:
     get_input = input
 else:
     get_input = raw_input
-

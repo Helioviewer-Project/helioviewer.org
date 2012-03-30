@@ -351,6 +351,90 @@ class HelioviewerWebClient extends HelioviewerClient
                                 </div>
                                 <div id='movie-history'></div>
                             </div>
+                            
+                            <!-- Movie Settings -->
+                            <div id='movie-settings-container' class='media-manager-container glow'>
+                                <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
+                                    <b>Movie Settings:</b>
+                                    
+                                    <div id='movie-settings-btns' style='float:right;'>
+                                        <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear'></span>
+                                        <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help'></span>
+                                    </div>
+                                </div>
+
+                                <!-- Begin movie settings -->
+                                <div id='movie-settings-form-container'>
+                                <form id='movie-settings-form'>
+
+                                <!-- Movie duration -->
+                                <fieldset style='padding: 0px; margin: 5px 0px 8px'>
+                                    <label for='movie-duration' style='margin-right: 5px; font-style: italic;'>Duration</label>
+                                    <select id='movie-duration' name='movie-duration'>
+                                        <option value='3600'>1 hour</option>
+                                        <option value='10800'>3 hours</option>
+                                        <option value='21600'>6 hours</option>
+                                        <option value='43200'>12 hours</option>
+                                        <option value='86400'>1 day</option>
+                                        <option value='172800'>2 days</option>
+                                        <option value='604800'>1 week</option>
+                                        <option value='2419200'>28 days</option>
+                                    </select>
+                                </fieldset>
+                                
+                                <!-- Advanced movie settings -->
+                                <div id='movie-settings-advanced'>
+                                    
+                                    <!-- Movie Speed -->
+                                    <fieldset id='movie-settings-speed'>
+                                        <legend>Speed</legend>
+                                        <div style='padding:10px;'>
+                                            <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
+                                            <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
+                                            <input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
+                                            
+                                            <input type="radio" name="speed-method" id="speed-method-l" value="length" />
+                                            <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
+                                            <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
+                                        </div>
+                                    </fieldset>
+                                    
+                                    <!-- Other -->
+                                    <fieldset id='movie-settings-other'>
+                                        <legend>Other</legend>
+                                        <div style='padding:10px;'>
+                                            <input type="checkbox" name="watermark-enabled" id="watermark-enabled" value="true" checked="checked" />
+                                            <label for="watermark-enabled">Watermark on</label><br />                                           
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <!-- Movie request submit button -->
+                                <div id='movie-settings-submit'>
+                                    <input type="button" id='movie-settings-cancel-btn' value="Cancel" /> 
+                                    <input type="submit" id='movie-settings-submit-btn' value="Ok" />                                    
+                                </div>
+                                
+                                </form>
+                                </div>
+                                
+                                <!-- Movie settings help -->
+                                <div id='movie-settings-help' style='display:none'>
+                                    <b>Duration</b><br /><br />
+                                    <p>The duration of time that the movie should span, centered about your current observation time.</p><br />
+                                    
+                                    <b>Speed</b><br /><br />
+                                    <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
+                                    
+                                    <b>Watermark</b><br /><br />
+                                    <p>Whether or not to include the Helioviewer.org logo and image timestamps in the video.</p><br />
+                                </div>
+                                
+                                <!-- Movie settings validation console -->
+                                <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
+                                    
+                                </div>
+                            </div>
 
                             <!-- Image area select tool -->
                             <div id='image-area-select-buttons'>
@@ -387,7 +471,7 @@ class HelioviewerWebClient extends HelioviewerClient
                 <!--  Observation Date -->
                 <div id="observation-date-container">
                     <div id="observation-date-label">Date:</div>
-                    <input type="text" id="date" name="date" value="" maxlength='10'>
+                    <input type="text" id="date" name="date" value="" pattern="[\d]{4}/[\d]{2}/[\d]{2}" maxlength='10'>
                     <span id="timeNowBtn" title="Go to the time of the most recent available image for the currently loaded layers.">latest</span>
                 </div>
 
@@ -486,22 +570,26 @@ class HelioviewerWebClient extends HelioviewerClient
 <div id='layer-choice-dialog'></div>
 
 <!-- Settings dialog -->
-<div id='settings-dialog' style='display:none; margin: 15px; font-size: 1em;'>
-    Movie Duration: 
-    <select id='settings-movie-length' name='movie-length'>
-        <option value='3600'>1 hour</option>
-        <option value='10800'>3 hours</option>
-        <option value='21600'>6 hours</option>
-        <option value='43200'>12 hours</option>
-        <option value='86400'>1 day</option>
-        <option value='172800'>2 days</option>
-        <option value='604800'>1 week</option>
-        <option value='2419200'>28 days</option>
-    </select>
-    <br /><br />
-    <span style='font-size: 0.8em;'><b>Note:</b> When making a movie, your current observation time will become the center
-    of the movie. For example, if your observation time is set to "12:00:00" and you
-    choose to make a 6 hour movie, then movie will start at "09:00:00" and end at "15:00:00".</span>
+<div id='settings-dialog'>
+    <form id='helioviewer-settings'>
+        <!-- Initial observation date -->
+        <fieldset id='helioviewer-settings-date'>
+        <legend>Starting time:</legend>
+            <div style='padding: 10px;'>
+                <input id='settings-date-latest' type="radio" name="date" value="latest" /><label>Current time</label><br />
+                <input id='settings-date-previous' type="radio" name="date" value="last-used" /><label>Last Used</label><br />
+            </div>
+        </fieldset>
+        
+        <!-- Other -->
+        <fieldset id='helioviewer-settings-other'>
+        <legend>Other</legend>
+        <div style='padding:10px;'>
+            <input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
+            <label for="latest-image-option">Always show latest image</label><br />                                           
+        </div>
+        </fieldset>
+    </form>
 </div>
 
 <!-- Usage Dialog -->

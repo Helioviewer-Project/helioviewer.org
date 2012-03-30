@@ -27,7 +27,7 @@ class Validation_InputValidator
     /**
      * Validates and type-casts API Request parameters
      *
-     * TODO 02/09/2009: Create more informative exception classes:
+     * TODO 02/09/2009: Create more informative InvalidArgumentException classes:
      *  InvalidInputException, MissingRequiredParameterException, etc.
      *
      * @param array &$expected Types of checks required for request
@@ -62,6 +62,22 @@ class Validation_InputValidator
         // Create array of optional parameters
         if (isset($expected["optional"])) {
             Validation_InputValidator::checkOptionalParams($expected["optional"], $input, $optional);
+        }
+        
+        // Check for unknown parameters
+        $allowed = array("action");
+        
+        if(isset($expected["required"])) {
+            $allowed = array_merge($allowed, array_values($expected["required"]));
+        }
+        if(isset($expected["optional"])) {
+            $allowed = array_merge($allowed, array_values($expected["optional"]));
+        }
+
+        foreach(array_keys($_REQUEST) as $param) {
+            if (!in_array($param, $allowed)) {
+                throw new InvalidArgumentException("Unrecognized parameter <b>$param</b>.");
+            } 
         }
     }
 
