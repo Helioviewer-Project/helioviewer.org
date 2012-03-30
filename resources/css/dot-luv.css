@@ -44,3 +44,5 @@
 }
 
 .ui-dialog {font-size: 13px;}
+
+.ui-dialog-buttonpane {border: none;}
