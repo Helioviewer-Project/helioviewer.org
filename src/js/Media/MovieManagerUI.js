@@ -91,11 +91,6 @@ var MovieManagerUI = MediaManagerUI.extend(
             baseParams['movieLength'] = formParams['movie-length'];
         }
         
-        // (Optional) watermark
-        if (formParams['watermark-enabled']) {
-            baseParams['watermark'] = true;
-        }
-        
         //console.dir(params);
         //return false;
         
@@ -248,31 +243,29 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Toggle advanced settings display
         $("#movie-settings-toggle-advanced").click(function () {
-            self._settingsHelp.hide();
+            // If help is visible, simply hide
+            if (self._settingsHelp.is(":visible")) {
+                self._settingsHelp.hide();
+                self._settingsForm.show();
+                return;
+            }
+            
+            // Otherwise, toggle advanced settings visibility
             if (self._advancedSettings.is(":visible")) {
                 self._advancedSettings.animate({"height": 0}, function () {
                     self._advancedSettings.hide();
                 });
             } else {
                 self._advancedSettings.css('height', 0).show();
-                self._advancedSettings.animate({"height": 132}, function () {
+                self._advancedSettings.animate({"height": 85}, function () {
                 });
             }
         });
         
-        // Display help (0.5s delay)
-        $("#movie-settings-toggle-help").hover(function () {
-            if(timer) {
-                clearTimeout(timer);
-                timer = null
-            }
-            timer = setTimeout(function() {
-                self._settingsForm.hide();
-                self._settingsHelp.fadeIn(500);
-            }, 500);
-        }, function () {
-            self._settingsHelp.hide();
-            self._settingsForm.fadeIn(500);
+        // Toggle help display
+        $("#movie-settings-toggle-help").click(function () {
+            self._settingsForm.toggle();
+            self._settingsHelp.toggle();
         });
     },
     
@@ -281,13 +274,12 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _initSettings: function () {
         var length, lengthInput, duration, durationSelect,  
-            frameRateInput, lengthInput, settingsForm, watermarkCheckbox, self = this;
+            frameRateInput, lengthInput, settingsForm, self = this;
 
         // Advanced movie settings
         frameRateInput    = $("#frame-rate");
         lengthInput       = $("#movie-length");
         durationSelect    = $("#movie-duration");
-        watermarkCheckbox = $("#watermark-enabled");
         
         // Speed method enable/disable
         $("#speed-method-f").change(function () {
@@ -338,7 +330,6 @@ var MovieManagerUI = MediaManagerUI.extend(
         frameRateInput.val(15);
         lengthInput.val(20);
         durationSelect.find("[value=" + duration + "]").attr("selected", "selected")
-        watermarkCheckbox.attr("checked", "checked");
         
     },
     
@@ -489,7 +480,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                  
         // SWF URL (The flowplayer SWF directly provides best Facebook support)
         swfURL = Helioviewer.root + 
-                 "/lib/flowplayer/flowplayer-3.2.7.swf?config=" + 
+                 "/lib/flowplayer/flowplayer-3.2.8.swf?config=" + 
                  encodeURIComponent("{'clip':{'url':'" + flvURL + "'}}");
                  
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + 

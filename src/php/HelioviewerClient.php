@@ -201,8 +201,8 @@ abstract class HelioviewerClient
     if ($this->config["compress_js"]) {
     ?>
 <!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.0.min.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.7.2.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -211,8 +211,8 @@ abstract class HelioviewerClient
         } else {
 ?>    
 <!-- Library JavaScript -->
-<script src="http://code.jquery.com/jquery-1.7.0.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-1.7.2.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -220,7 +220,7 @@ abstract class HelioviewerClient
 <?php
 }
 ?>
-<script src="lib/jquery.json-2.2/jquery.json-2.2.min.js" type="text/javascript" ></script>
+<script src="lib/jquery.json-2.3/jquery.json-2.3.min.js" type="text/javascript" ></script>
 <script src="lib/jquery.cookie/jquery.cookie.min.js" type="text/javascript" ></script>
 <script src="lib/Cookiejar/jquery.cookiejar.pack.js" type="text/javascript"></script>
 <?php
