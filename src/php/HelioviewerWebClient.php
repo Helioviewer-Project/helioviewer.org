@@ -48,7 +48,7 @@ class HelioviewerWebClient extends HelioviewerClient
 ?>
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
     <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
-    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
+    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
 
     <!-- jQuery UI Theme Modifications -->
     <link rel="stylesheet" href="resources/css/dot-luv.css">
@@ -75,14 +75,14 @@ class HelioviewerWebClient extends HelioviewerClient
         if ($this->config["compress_js"]) {
     ?>
 <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
-<script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
+<script src="lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
     <?php
         } else {
     ?>
 <script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
-<script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
+<script src="lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.js" type="text/javascript" language="javascript"></script>
 <?php
