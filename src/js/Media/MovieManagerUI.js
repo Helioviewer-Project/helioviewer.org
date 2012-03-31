@@ -480,7 +480,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                  
         // SWF URL (The flowplayer SWF directly provides best Facebook support)
         swfURL = Helioviewer.root + 
-                 "/lib/flowplayer/flowplayer-3.2.7.swf?config=" + 
+                 "/lib/flowplayer/flowplayer-3.2.8.swf?config=" + 
                  encodeURIComponent("{'clip':{'url':'" + flvURL + "'}}");
                  
         screenshot = movie.thumbnail.substr(0, movie.thumbnail.length - 9) + 
