@@ -48,7 +48,7 @@ class HelioviewerWebClient extends HelioviewerClient
 ?>
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
     <link rel="stylesheet" href="lib/jquery.qTip2/jquery.qtip.min.css" />
-    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.5/css/imgareaselect-default.css" />
+    <link rel="stylesheet" href="lib/jquery.imgareaselect-0.9.8/css/imgareaselect-default.css" />
 
     <!-- jQuery UI Theme Modifications -->
     <link rel="stylesheet" href="resources/css/dot-luv.css">
@@ -75,14 +75,14 @@ class HelioviewerWebClient extends HelioviewerClient
         if ($this->config["compress_js"]) {
     ?>
 <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
-<script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
+<script src="lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
     <?php
         } else {
     ?>
 <script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
-<script src="lib/jquery.imgareaselect-0.9.5/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
+<script src="lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.js" type="text/javascript" language="javascript"></script>
 <?php
@@ -148,7 +148,7 @@ class HelioviewerWebClient extends HelioviewerClient
             $info = json_decode($proxy->post($params, true), true);
             
             $flvURL = HV_BACK_END . "?action=downloadMovie&format=flv&id=" . $id;
-            $swfURL = substr(HV_BACK_END, 0, -14) . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+            $swfURL = substr(HV_BACK_END, 0, -14) . "/lib/flowplayer/flowplayer-3.2.8.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
         } else {
             // Otherwise process locally
             include_once 'api/src/Movie/HelioviewerMovie.php';
@@ -162,7 +162,7 @@ class HelioviewerWebClient extends HelioviewerClient
             );
 
             $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $id;
-            $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+            $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.8.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
         }
     ?>
         <meta property="og:description" content="<?php //echo $info['title'];?>" />
@@ -358,8 +358,8 @@ class HelioviewerWebClient extends HelioviewerClient
                                     <b>Movie Settings:</b>
                                     
                                     <div id='movie-settings-btns' style='float:right;'>
-                                        <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear'></span>
-                                        <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help'></span>
+                                        <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear qtip-left' title='Advanced movie settings'></span>
+                                        <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help qtip-left' title='Movie settings help'></span>
                                     </div>
                                 </div>
 
@@ -398,15 +398,6 @@ class HelioviewerWebClient extends HelioviewerClient
                                             <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
                                         </div>
                                     </fieldset>
-                                    
-                                    <!-- Other -->
-                                    <fieldset id='movie-settings-other'>
-                                        <legend>Other</legend>
-                                        <div style='padding:10px;'>
-                                            <input type="checkbox" name="watermark-enabled" id="watermark-enabled" value="true" checked="checked" />
-                                            <label for="watermark-enabled">Watermark on</label><br />                                           
-                                        </div>
-                                    </fieldset>
                                 </div>
 
                                 <!-- Movie request submit button -->
@@ -425,9 +416,6 @@ class HelioviewerWebClient extends HelioviewerClient
                                     
                                     <b>Speed</b><br /><br />
                                     <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
-                                    
-                                    <b>Watermark</b><br /><br />
-                                    <p>Whether or not to include the Helioviewer.org logo and image timestamps in the video.</p><br />
                                 </div>
                                 
                                 <!-- Movie settings validation console -->

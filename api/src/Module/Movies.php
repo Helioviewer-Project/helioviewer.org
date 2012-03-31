@@ -663,7 +663,7 @@ class Module_Movies implements Module
 <html> 
 <head> 
     <title>Helioviewer.org - <?php echo $filename?></title>
-    <script src="../lib/flowplayer/flowplayer-3.2.6.js"></script>            
+    <script src="../lib/flowplayer/flowplayer-3.2.8.min.js"></script>            
 </head> 
 <body>
     <!-- Movie player -->
@@ -673,7 +673,7 @@ class Module_Movies implements Module
     </div>
     <br>
     <script language="javascript">
-        flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.7.swf", {
+        flowplayer("movie-player", "../lib/flowplayer/flowplayer-3.2.8.swf", {
             clip: {
                 autoBuffering: true,
                 scaling: "fit"
