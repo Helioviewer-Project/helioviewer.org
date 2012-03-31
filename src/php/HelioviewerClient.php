@@ -202,7 +202,7 @@ abstract class HelioviewerClient
     ?>
 <!-- Library JavaScript -->
 <script src="http://code.jquery.com/jquery-1.7.2.min.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.min.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.min.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
@@ -212,7 +212,7 @@ abstract class HelioviewerClient
 ?>    
 <!-- Library JavaScript -->
 <script src="http://code.jquery.com/jquery-1.7.2.js" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js" type="text/javascript"></script>
 <script src="lib/jquery.class/jquery.class.js" type="text/javascript"></script>
 <script src="lib/jquery.mousewheel.3.0.6/jquery.mousewheel.js" type="text/javascript"></script>
 <script src="lib/date.js/date-en-US.js" type="text/javascript"></script>
