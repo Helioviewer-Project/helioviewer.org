@@ -91,11 +91,6 @@ var MovieManagerUI = MediaManagerUI.extend(
             baseParams['movieLength'] = formParams['movie-length'];
         }
         
-        // (Optional) watermark
-        if (formParams['watermark-enabled']) {
-            baseParams['watermark'] = true;
-        }
-        
         //console.dir(params);
         //return false;
         
@@ -255,7 +250,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                 });
             } else {
                 self._advancedSettings.css('height', 0).show();
-                self._advancedSettings.animate({"height": 132}, function () {
+                self._advancedSettings.animate({"height": 85}, function () {
                 });
             }
         });
@@ -281,13 +276,12 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _initSettings: function () {
         var length, lengthInput, duration, durationSelect,  
-            frameRateInput, lengthInput, settingsForm, watermarkCheckbox, self = this;
+            frameRateInput, lengthInput, settingsForm, self = this;
 
         // Advanced movie settings
         frameRateInput    = $("#frame-rate");
         lengthInput       = $("#movie-length");
         durationSelect    = $("#movie-duration");
-        watermarkCheckbox = $("#watermark-enabled");
         
         // Speed method enable/disable
         $("#speed-method-f").change(function () {
@@ -338,7 +332,6 @@ var MovieManagerUI = MediaManagerUI.extend(
         frameRateInput.val(15);
         lengthInput.val(20);
         durationSelect.find("[value=" + duration + "]").attr("selected", "selected")
-        watermarkCheckbox.attr("checked", "checked");
         
     },
     
