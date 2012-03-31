@@ -358,8 +358,8 @@ class HelioviewerWebClient extends HelioviewerClient
                                     <b>Movie Settings:</b>
                                     
                                     <div id='movie-settings-btns' style='float:right;'>
-                                        <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear'></span>
-                                        <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help'></span>
+                                        <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear qtip-left' title='Advanced movie settings'></span>
+                                        <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help qtip-left' title='Movie settings help'></span>
                                     </div>
                                 </div>
 
