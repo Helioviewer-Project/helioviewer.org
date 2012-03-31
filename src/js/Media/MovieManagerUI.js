@@ -243,7 +243,14 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // Toggle advanced settings display
         $("#movie-settings-toggle-advanced").click(function () {
-            self._settingsHelp.hide();
+            // If help is visible, simply hide
+            if (self._settingsHelp.is(":visible")) {
+                self._settingsHelp.hide();
+                self._settingsForm.show();
+                return;
+            }
+            
+            // Otherwise, toggle advanced settings visibility
             if (self._advancedSettings.is(":visible")) {
                 self._advancedSettings.animate({"height": 0}, function () {
                     self._advancedSettings.hide();
@@ -255,19 +262,10 @@ var MovieManagerUI = MediaManagerUI.extend(
             }
         });
         
-        // Display help (0.5s delay)
-        $("#movie-settings-toggle-help").hover(function () {
-            if(timer) {
-                clearTimeout(timer);
-                timer = null
-            }
-            timer = setTimeout(function() {
-                self._settingsForm.hide();
-                self._settingsHelp.fadeIn(500);
-            }, 500);
-        }, function () {
-            self._settingsHelp.hide();
-            self._settingsForm.fadeIn(500);
+        // Toggle help display
+        $("#movie-settings-toggle-help").click(function () {
+            self._settingsForm.toggle();
+            self._settingsHelp.toggle();
         });
     },
     
