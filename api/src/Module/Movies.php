@@ -657,7 +657,7 @@ class Module_Movies implements Module
         $filename = basename($filepath);  
         
         // Movie URL
-        $url = ".." . str_replace(HV_ROOT_DIR, "", $filepath);
+        $url = str_replace(HV_ROOT_DIR, HV_WEB_ROOT_URL, $filepath);
         ?>
 <!DOCTYPE html> 
 <html> 
@@ -667,7 +667,7 @@ class Module_Movies implements Module
 </head> 
 <body>
     <!-- Movie player -->
-    <div href="<?php echo urlencode($url);?>" 
+    <div href="<?php echo $url;?>" 
        style="display:block; <?php print $dimensions;?>"
        id="movie-player">
     </div>
