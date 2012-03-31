@@ -398,15 +398,6 @@ class HelioviewerWebClient extends HelioviewerClient
                                             <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
                                         </div>
                                     </fieldset>
-                                    
-                                    <!-- Other -->
-                                    <fieldset id='movie-settings-other'>
-                                        <legend>Other</legend>
-                                        <div style='padding:10px;'>
-                                            <input type="checkbox" name="watermark-enabled" id="watermark-enabled" value="true" checked="checked" />
-                                            <label for="watermark-enabled">Watermark on</label><br />                                           
-                                        </div>
-                                    </fieldset>
                                 </div>
 
                                 <!-- Movie request submit button -->
@@ -425,9 +416,6 @@ class HelioviewerWebClient extends HelioviewerClient
                                     
                                     <b>Speed</b><br /><br />
                                     <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
-                                    
-                                    <b>Watermark</b><br /><br />
-                                    <p>Whether or not to include the Helioviewer.org logo and image timestamps in the video.</p><br />
                                 </div>
                                 
                                 <!-- Movie settings validation console -->
