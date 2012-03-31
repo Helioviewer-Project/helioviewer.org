@@ -562,19 +562,19 @@ class HelioviewerWebClient extends HelioviewerClient
     <form id='helioviewer-settings'>
         <!-- Initial observation date -->
         <fieldset id='helioviewer-settings-date'>
-        <legend>Starting time:</legend>
+        <legend>When starting Helioviewer.org:</legend>
             <div style='padding: 10px;'>
-                <input id='settings-date-latest' type="radio" name="date" value="latest" /><label>Current time</label><br />
-                <input id='settings-date-previous' type="radio" name="date" value="last-used" /><label>Last Used</label><br />
+                <input id='settings-date-latest' type="radio" name="date" value="latest" /><label>Display most recent images available</label><br />
+                <input id='settings-date-previous' type="radio" name="date" value="last-used" /><label>Display images from previous visit</label><br />
             </div>
         </fieldset>
         
         <!-- Other -->
         <fieldset id='helioviewer-settings-other'>
-        <legend>Other</legend>
+        <legend>When using Helioviewer.org:</legend>
         <div style='padding:10px;'>
             <input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
-            <label for="latest-image-option">Always show latest image</label><br />                                           
+            <label for="latest-image-option">Update viewport every 5 minutes</label><br />                                           
         </div>
         </fieldset>
     </form>
