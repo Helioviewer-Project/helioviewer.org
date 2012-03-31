@@ -148,7 +148,7 @@ class HelioviewerWebClient extends HelioviewerClient
             $info = json_decode($proxy->post($params, true), true);
             
             $flvURL = HV_BACK_END . "?action=downloadMovie&format=flv&id=" . $id;
-            $swfURL = substr(HV_BACK_END, 0, -14) . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+            $swfURL = substr(HV_BACK_END, 0, -14) . "/lib/flowplayer/flowplayer-3.2.8.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
         } else {
             // Otherwise process locally
             include_once 'api/src/Movie/HelioviewerMovie.php';
@@ -162,7 +162,7 @@ class HelioviewerWebClient extends HelioviewerClient
             );
 
             $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $id;
-            $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.7.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+            $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.8.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
         }
     ?>
         <meta property="og:description" content="<?php //echo $info['title'];?>" />
