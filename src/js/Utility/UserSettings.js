@@ -29,9 +29,6 @@ var UserSettings = Class.extend(
         
         // Input validator
         this._validator = new InputValidator();
-        
-        // Revision when config format last changed
-        this._lastChanged = 633;
                 
         // Initialize storage
         this._initStorage();
@@ -54,7 +51,7 @@ var UserSettings = Class.extend(
         } catch (ex) {
             // If an error is encountered, then settings are likely outdated;
             // use the default value
-            value = this._getDefault(key);
+            var value = this._getDefault(key);
             this.set(key, value)
             return value;
         }
@@ -174,7 +171,7 @@ var UserSettings = Class.extend(
         }
 
         // If version is out of date, load defaults
-        if (this.get('version') < this._lastChanged) {
+        if (this.get('version') < this._defaults.version) {
             this._updateSettings(this.get('version'));
         }
     },
@@ -188,7 +185,7 @@ var UserSettings = Class.extend(
         // 2.2.1 and under - Load defaults
         if (version < 567) {
             this._loadDefaults();
-        } else if (version < this._lastChanged) {
+        } else if (version < 700) {
             // 2.3.0 - Movie statuses changed to ints
             statuses = {
                 "QUEUED": 0,
@@ -207,7 +204,7 @@ var UserSettings = Class.extend(
             delete this.settings.defaults;
             
             // Updated version number and save
-            this.set('version', this._lastChanged);
+            this.set('version', this._defaults.version);
         }
     },
     
