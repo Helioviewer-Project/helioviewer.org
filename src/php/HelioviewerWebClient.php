@@ -428,7 +428,7 @@ class HelioviewerWebClient extends HelioviewerClient
                             <div id='image-area-select-buttons'>
                                 <div id='done-selecting-image' class='text-btn'>
                                     <span class='ui-icon ui-icon-circle-check'></span>
-                                    <span>Done</span>
+                                    <span>OK</span>
                                 </div> 
                                 <div id='cancel-selecting-image' class='text-btn'> 
                                     <span class='ui-icon ui-icon-circle-close'></span>
