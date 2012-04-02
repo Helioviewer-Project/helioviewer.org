@@ -48,9 +48,28 @@ var UserSettings = Class.extend(
      * @returns {Object} The value of the desired setting
      */
     get: function (key) {
-        var lookup = key.split(".");
-        
         // Nesting depth is limited to three levels
+        try {
+            return this._get(key);
+        } catch (ex) {
+            // If an error is encountered, then settings are likely outdated;
+            // use the default value
+            value = this._getDefault(key);
+            this.set(key, value)
+            return value;
+        }
+    },
+
+    /**
+     * Gets a specified setting
+     * 
+       @param {String} key The setting to retrieve
+     * 
+     * @returns {Object} The value of the desired setting
+     */
+    _get: function (key) {
+        var lookup = key.split(".");
+
         if (lookup.length === 1) {
             return this.settings[key];                
         } else if (lookup.length === 2) {
@@ -58,6 +77,21 @@ var UserSettings = Class.extend(
         }
         
         return this.settings[lookup[0]][lookup[1]][lookup[2]];
+    },
+    
+    /**
+     * Returns the default value associated with the specified key
+     */
+    _getDefault: function (key) {
+        var lookup = key.split(".");
+
+        if (lookup.length === 1) {
+            return this._defaults[key];                
+        } else if (lookup.length === 2) {
+            return this._defaults[lookup[0]][lookup[1]];
+        }
+        
+        return this._defaults[lookup[0]][lookup[1]][lookup[2]];
     },
 
     /**

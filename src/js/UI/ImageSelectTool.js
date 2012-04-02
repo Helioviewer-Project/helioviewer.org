@@ -32,6 +32,11 @@ var ImageSelectTool = Class.extend(
 
         this._setupHelpDialog();
         
+        this.x1 = null;
+        this.x2 = null;
+        this.y1 = null;
+        this.y2 = null;
+        
         // Handle image area select requests
         $(document).bind("enable-select-tool", $.proxy(this.enableAreaSelect, this));
     },
@@ -79,14 +84,26 @@ var ImageSelectTool = Class.extend(
     },
     
     /**
-     * @description Loads the imgAreaSelect plugin and uses it on the transparent image that covers the viewport.
-     *                 The function imgAreaSelect() returns two variables, "img", which is the original transparent
-     *                 image, and "selection", which is an array describing the selected area. Available data for 
-     *                 "selection" is x1, y1, x2, y2, width, and height.
-     *                 See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation. 
+     * Loads the imgAreaSelect plugin and uses it on the transparent image that 
+     * covers the viewport.
+     * 
+     * The function imgAreaSelect() returns two variables, "img", which is the 
+     * original transparent image, and "selection", which is an array describing
+     * the selected area. Available data for "selection" is x1, y1, x2, y2, 
+     * width, and height.
+     * 
+     * See: http://odyniec.net/projects/imgareaselect/
      */
     selectArea: function (callback) {
         var area, self = this;
+        
+        // If select tool has already been used this session, compute defaults
+        if (this.x1 === null) {
+            this.x1 = this.width / 4;
+            this.x2 = this.width * 3 / 4;
+            this.y1 = this.height / 4;
+            this.y2 = this.height * 3 / 4;            
+        }
         
         // Use imgAreaSelect on the transparent region to get the 
         // top, left, bottom, and right coordinates of the selected region. 
@@ -94,10 +111,10 @@ var ImageSelectTool = Class.extend(
             instance: true,
             handles : true,
             parent  : "#imgContainer",
-            x1      : this.width / 4,
-            x2      : this.width * 3 / 4,
-            y1      : this.height / 4,
-            y2      : this.height * 3 / 4,
+            x1      : self.x1,
+            x2      : self.x2,
+            y1      : self.y1,
+            y2      : self.y2,
             onInit  : function () {
                 self.vpButtons.hide('fast');
                 self.buttons.show();
@@ -139,6 +156,12 @@ var ImageSelectTool = Class.extend(
             // Get the coordinates of the selected image, and adjust them to be 
             // heliocentric like the viewport coords.
             selection = area.getSelection();
+            
+            // Store selection
+            this.x1 = selection.x1;
+            this.x2 = selection.x2;
+            this.y1 = selection.y1;
+            this.y2 = selection.y2;
 
             visibleCoords = helioviewer.getViewportRegionOfInterest();
 
@@ -170,7 +193,7 @@ var ImageSelectTool = Class.extend(
                 },
                 text: "Resize by dragging the edges of the selection.<br /> Move the selection by clicking inside " +
                         "and dragging it.<br /> Click and drag outside the selected area to start " +
-                        "a new selection.<br /> Click \"Done\" when you have finished to submit."
+                        "a new selection.<br /> Click \"OK\" when you have finished to submit."
             }
         });
     },
