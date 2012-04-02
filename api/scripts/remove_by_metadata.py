@@ -32,7 +32,7 @@ def main():
     if os.path.isdir(input_):
         images = find_images(input_)
     else:
-        images = [i for i in open(input_)]
+        images = [i.rstrip() for i in open(input_)]
     
     print("Scanning %d images..." % len(images))
     
