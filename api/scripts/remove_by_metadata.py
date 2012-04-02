@@ -15,7 +15,7 @@ def main():
     cursor = database.get_dbcursor()
     
     # Get search path
-    root_dir = raw_input("Directory to scan: ")
+    input_ = raw_input("Enter a directory or path to a list of files to check: ")
     corrupt_dir = "/var/www/jp2/Corrupted"
     
     # Get search criterion (e.g. CDELT < 0.01 or IMG_TYPE = DARK)
@@ -29,7 +29,10 @@ def main():
     filter_val = raw_input("Value: ")
 
     # Get a list of files to search
-    images = find_images(root_dir)
+    if os.path.isdir(input_):
+        images = find_images(input_)
+    else:
+        images = [i for i in open(input_)]
     
     print("Scanning %d images..." % len(images))
     
