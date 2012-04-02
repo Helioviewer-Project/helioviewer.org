@@ -32,8 +32,9 @@ following software:
     * Python
     * Python-MySQLDb
     * FFmpeg
-    * ImageMagick 6.3.2+    
-    * PyQt 4.5 (Optional)
+    * libx264
+    * libvpx
+    * ImageMagick 6.3.2+
     
 INSTALLATION:
 
