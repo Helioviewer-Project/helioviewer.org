@@ -1,6 +1,75 @@
                     
                     RELEASE NOTES
                     
+Helioviewer.org 2.3.0
+======================
+
+Helioviewer.org 2.3.0 is an major release focusing back-end improvements,
+reuse, and the movie generation experience. Support has been added for
+embedding Helioviewer.org into third-party websites, and JSONP support makes
+it easier for new versions of the front-end to be created which interact
+with the main Helioviewer.org back-end. Similarly, the front-end has been
+rewritten to allow for easier creation of custom front-end clients without
+having to reimplement a tiling system, etc.
+
+The back-end queueing system (Helioqueuer) has been ported from Ruby to PHP
+to allow for better integration with the rest of the back-end, and the movies
+table structure has been modified for improved time estimation and similarity
+searching. Additional options (frame-rate and movie length) are offered to
+allow users further control over the movies they create and the duration
+option has been moved to a more obvious location.  
+
+Let us know what you think, or if you have any suggestions. Feedback is always
+welcome.
+
+New features:
+
+ * JSONP support
+ * Added option display date from last visit when returning to Helioviewer.org
+ * Added setting to automatically update images every 5 minutes
+ * Added support for embedding Helioviewer.org in other websites
+ * Added support for specifying frame-rate or duration during movie creation
+ * Added support for PROBA-2 SWAP data
+ * Created an installer diagnostic script
+ * Added support for tracking custom events in Google Analytics
+ * Movie and screenshot selection rectangle preserved during visit
+ * Data availability information included in getDateSources response
+   
+Bug fixes:
+
+ * Fixed bug #691356 JPX Summary file does not exist
+ * Fixed bug #783497 Port Helioqueuer to PHP 
+ * Fixed bug #903360 Error occurs for certain layer orders when attempting to 
+   create AIA/LASCO
+ * Fixed bug #925542 The minimum width of the display window is too big
+ * Fixed bug #624857 After clicking "clear history" unfinished requests are 
+   still processed, and download links displayed
+ * Fixed bug #885795 Add image attribution to about dialog
+ * Fixed bug #888269 Attempt to normalize movie frame-rate instead of duration 
+   when possible
+ * Fixed bug #909795 Normalize date strings for API requests
+ * Fixed bug #909897 Mark movies that have not finished in less than x hours 
+   as Error
+ * Fixed bug #930628 Improve movie creation time estimation
+ * Fixed bug #942547 Validate value for dsun before attempting to process in 
+   front-side
+ * Fixed bug #609219 API should return an error message when an invalid 
+   parameter is specified in a request
+ * Fixed bug #783481 Report mouse coordinates immediately upon activation
+ * Fixed bug #787744 Add a checkSettings method to the UserSettings class to 
+   verify user settings integrity 
+ * Fixed bug #876707 Included creation_time in FFmpeg metadata for mp4/webm 
+   movies
+ * Fixed bug #789515 Reduce filesize of WebM movies
+ 
+Library updates:
+
+ * Flowplayer (3.2.7 => 3.2.8)
+ * jQuery (1.7.0 => 1.7.2)
+ * jQuery UI (1.8.16 => 1.8.18)
+ * jQuery.JSON (2.2 => 2.3)
+ * jQuery imgAreaSelect (0.9.5 => 0.9.8) 
+                    
 Helioviewer.org 2.2.2
 ======================
 
