@@ -57,14 +57,19 @@ class Image_JPEG2000_JP2ImageXMLBox
 
         $xml  = "";
 
+        // Read file until header has been retrieved
         while (!feof($fp)) {
             $line = fgets($fp);
             $xml .= $line;
+
             if (strpos($line, "</$root>") !== false) {
                 break;
             }
         }
-        $xml = substr($xml, strpos($xml, "<$root>"));
+        $start = strpos($xml, "<$root>");
+        $end   = strpos($xml, "</$root>") + strlen("</$root>");
+
+        $xml = substr($xml, $start, $end - $start);
 
         fclose($fp);
         
@@ -74,6 +79,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         $this->_xmlString = '<?xml version="1.0" encoding="utf-8"?>' . "\n" . $xml;
 
         $this->_xml = new DOMDocument();
+
         $this->_xml->loadXML($this->_xmlString);
     }
     
