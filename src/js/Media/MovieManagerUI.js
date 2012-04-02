@@ -31,7 +31,6 @@ var MovieManagerUI = MediaManagerUI.extend(
         this._movieLayers = null;
         this._initEvents();
         this._initSettings();
-        
     },
     
     /**

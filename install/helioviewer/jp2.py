@@ -204,7 +204,11 @@ def read_xmlbox(file, root):
          xml += line
          if line.find("</%s>" % root) != -1:
                  break
-    xml = xml[xml.find("<%s>" % root):]
+             
+    start = xml.find("<%s>" % root)
+    end = xml.find("</%s>" % root) + len("</%s>" % root)
+    
+    xml = xml[start : end]
     
     fp.close()
 
