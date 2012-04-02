@@ -79,11 +79,15 @@ var ImageSelectTool = Class.extend(
     },
     
     /**
-     * @description Loads the imgAreaSelect plugin and uses it on the transparent image that covers the viewport.
-     *                 The function imgAreaSelect() returns two variables, "img", which is the original transparent
-     *                 image, and "selection", which is an array describing the selected area. Available data for 
-     *                 "selection" is x1, y1, x2, y2, width, and height.
-     *                 See http://odyniec.net/projects/imgareaselect/  for usage examples and documentation. 
+     * Loads the imgAreaSelect plugin and uses it on the transparent image that 
+     * covers the viewport.
+     * 
+     * The function imgAreaSelect() returns two variables, "img", which is the 
+     * original transparent image, and "selection", which is an array describing
+     * the selected area. Available data for "selection" is x1, y1, x2, y2, 
+     * width, and height.
+     * 
+     * See: http://odyniec.net/projects/imgareaselect/
      */
     selectArea: function (callback) {
         var area, self = this;

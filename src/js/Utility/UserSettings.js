@@ -53,9 +53,10 @@ var UserSettings = Class.extend(
             return this._get(key);
         } catch (ex) {
             // If an error is encountered, then settings are likely outdated;
-            // reset to defaults and try again
-            this._loadDefaults();
-            return this._get(key);
+            // use the default value
+            value = this._getDefault(key);
+            this.set(key, value)
+            return value;
         }
     },
 
@@ -76,6 +77,21 @@ var UserSettings = Class.extend(
         }
         
         return this.settings[lookup[0]][lookup[1]][lookup[2]];
+    },
+    
+    /**
+     * Returns the default value associated with the specified key
+     */
+    _getDefault: function (key) {
+        var lookup = key.split(".");
+
+        if (lookup.length === 1) {
+            return this._defaults[key];                
+        } else if (lookup.length === 2) {
+            return this._defaults[lookup[0]][lookup[1]];
+        }
+        
+        return this._defaults[lookup[0]][lookup[1]][lookup[2]];
     },
 
     /**
