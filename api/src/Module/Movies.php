@@ -76,7 +76,7 @@ class Module_Movies implements Module
         $queueSize = Resque::size('on_demand_movie');
         if ($queueSize >= MOVIE_QUEUE_MAX_SIZE) {
             throw new Exception("Sorry, due to current high demand, we are currently unable to process your request. " .
-                                "Please try again later.");
+                                "Please try again later.", 1);
         }
         
         // Get current number of on_demand_movie workers
@@ -322,9 +322,9 @@ class Module_Movies implements Module
 
         // Raise an error if few or no frames were found for the request range and data sources
         if ($numFrames == 0) {
-            throw new Exception("No images found for requested time range. Please try a different time.");
+            throw new Exception("No images found for requested time range. Please try a different time.", 1);
         } else if ($numFrames <= 3) {
-            throw new Exception("Insufficient data was found for the requested time range. Please try a different time.");
+            throw new Exception("Insufficient data was found for the requested time range. Please try a different time.", 1);
         }
         return $numFrames;
     }
