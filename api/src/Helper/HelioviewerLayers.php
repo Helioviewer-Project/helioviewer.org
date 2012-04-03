@@ -180,7 +180,17 @@ class Helper_HelioviewerLayers
     
         foreach ($this->_layers as $layer) {
             $obs = $layer['observatory'];
-            list($name1, $name2) = explode(" ", $layer['name']);
+            
+            $parts = explode(" ", $layer['name']);
+            
+            // AIA 171, LASCO C2, etc.
+            if (sizeOf($parts) == 2) {
+                list($name1, $name2) = $parts;
+            } else {
+                // COR1-A, COR2-B, etc.
+                $name1 = $layer['name'];
+                $name2 = "";
+            }
             
             if (!isset($tree[$obs])) {
                 $tree[$obs] = array();
