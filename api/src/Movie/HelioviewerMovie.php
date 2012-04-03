@@ -243,7 +243,7 @@ class Movie_HelioviewerMovie
      */
     private function _abort($msg, $procTime=0) {
         $this->_db->markMovieAsInvalid($this->id, $procTime);
-        //$this->_cleanUp();
+        $this->_cleanUp();
         throw new Exception("Unable to create movie: " . $msg);
     }
     
@@ -573,7 +573,7 @@ class Movie_HelioviewerMovie
         if ($this->frameRate) {
             $this->movieLength = $this->numFrames / $this->frameRate;
         } else {
-            $this->frameRate = $this->numFrames / $this->movieLength;
+            $this->frameRate = min(30, max(1, $this->numFrames / $this->movieLength));
         }
 
         $this->_setMovieDimensions();
