@@ -286,7 +286,11 @@ class Image_SubFieldImage
             // Clean up
             $grayscale->destroy();
             $coloredImage->destroy();
-            unlink($input);
+            
+            // Check for PGM before deleting just in case another process already removed it 
+            if (file_exists($input)) {
+                unlink($input);
+            }
 
         } catch(Exception $e) {
             // Clean-up intermediate files
