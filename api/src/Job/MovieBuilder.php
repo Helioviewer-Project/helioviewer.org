@@ -53,7 +53,12 @@ class Job_MovieBuilder
         
         // If counter was increased at queue time, decrement
         if ($this->args['counter']) {
-            $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+            try {
+                $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+            } catch (Exception $e) {
+                logErrorMsg("Unable to decrement movie time counter. " .
+                            "(eta: " . $this->args['eta'] . ")\n\n" . $e->getMessage(), "Resque_");
+            }
         }
     }
 }
