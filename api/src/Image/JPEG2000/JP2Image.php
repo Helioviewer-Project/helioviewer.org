@@ -91,7 +91,7 @@ class Image_JPEG2000_JP2Image
      *
      * @return String - outputFile of the expanded region
      */
-    public function extractRegion($outputFile, $roi, $scaleFactor = 0)
+    public function extractRegion($outputFile, $roi, $scaleFactor=0)
     {
         $cmd = HV_KDU_EXPAND . " -i $this->_file -o $outputFile ";
 
@@ -123,6 +123,7 @@ class Image_JPEG2000_JP2Image
                 return;
             }
             $attempts += 1;
+            usleep(200000); // wait 0.2s
         }
         
         // If the extraction fails after three attempts, log error
