@@ -316,7 +316,7 @@ class Movie_HelioviewerMovie
             } catch (Exception $e) {
                 $numFailures += 1;
                 
-                if ($numFailures <= 1) {
+                if ($numFailures <= 3) {
                     // Recover if failure occurs on a single frame
                     $this->numFrames--;
                 } else {
