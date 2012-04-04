@@ -51,7 +51,18 @@ class Job_MovieBuilder
         
         printf("Finished movie %s\n", $this->args['movieId']);
         
-        // If counter was increased at queue time, decrement
+        // If the queue is empty and no jobs are being processed, set estimated
+        // time counter to zero
+        $numWorkers = sizeOf($redis->smembers("resque:workers"));
+        $numWorking = sizeOf($redis-keys("resque:worker:*on_demand_movie"));
+        $queueSize  = $redis->llen("resque:queue:on_demand_movie");
+        
+        if ($numWorking <= 1 && $queueSize == 0) {
+            $redis->set('helioviewer:movie_queue_wait', 0);
+            return;
+        }
+        
+        // Otherwise, if counter was increased at queue time, decrement
         if ($this->args['counter']) {
             try {
                 $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
