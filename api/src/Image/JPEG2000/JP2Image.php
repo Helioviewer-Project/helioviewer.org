@@ -107,15 +107,30 @@ class Image_JPEG2000_JP2Image
 
         // Add desired region
         $cmd .= $this->_getRegionString($roi);
-
-        // Execute the command
-        $result = exec(escapeshellcmd($cmd), $out, $ret);
-
-        if (($ret != 0) || (sizeof($out) > 6)) {
-            $msg = "Error extracting JPEG 2000 subfield region!\n\tCommand: \"" . escapeshellcmd($cmd) . "\".\n\tResult: $result";
-            throw new Exception($msg);
+        
+        
+        $attempts = 0;
+        
+        // Attempt JP2 extraction. If the command fails, retry up to two times
+        while ($attempts < 3) {
+            // Execute the command
+            $result = exec(escapeshellcmd($cmd), $out, $ret);
+            
+            // Succesfull conversions should have return code 0 and 6 lines
+            // of output. If either of these conditions are not true the
+            // process has likely failed
+            if (($ret == 0) && (sizeof($out) <= 6)) {
+                return;
+            }
+            $attempts += 1;
         }
-    }
+        
+        // If the extraction fails after three attempts, log error
+        $msg = sprintf("Error extracting JPEG 2000 subfield region!" . 
+                       "\n\nCOMMAND:\n%s\n\nRETURN VALUE:%d\n\nOUTPUT:\n%s", 
+                       escapeshellcmd($cmd), $ret, implode("\n", $out));
+        throw new Exception($msg);
+     }
 
     /**
      * Builds a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
