@@ -54,7 +54,7 @@ class Redisent {
     }
 
     function establishConnection() {
-        $this->__sock = fsockopen($this->host, $this->port, $errno, $errstr);
+        $this->__sock = @fsockopen($this->host, $this->port, $errno, $errstr);
         if (!$this->__sock) {
             throw new Exception("{$errno} - {$errstr}");
         }
