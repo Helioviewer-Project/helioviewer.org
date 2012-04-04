@@ -278,8 +278,6 @@ class Module_Movies implements Module
      */
     private function _getMovieROI($options) {
         include_once 'src/Helper/RegionOfInterest.php';
-        
-        var_dump($options);
 
         // Region of interest (center in arcseconds and dimensions in pixels)
         if (isset($options['x1']) && isset($options['y1']) && isset($options['x2']) && isset($options['y2'])) {
