@@ -84,7 +84,8 @@ class Movie_YouTube
         
         // If authorization is expired, reauthorize
         if (!$this->_authorizationIsValid()) {
-            $this->getYouTubeAuth($movie->id);
+            //$this->getYouTubeAuth($movie->id);
+            $this->getYouTubeAuth($id);
         }
         
         $filepath = $movie->getFilepath(true);
