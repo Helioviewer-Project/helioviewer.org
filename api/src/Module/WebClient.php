@@ -233,7 +233,7 @@ class Module_WebClient implements Module
 
         // Region of interest
         $roi = $this->_tileCoordinatesToROI($params['x'], $params['y'], $params['imageScale'], $image['scale'], $tileSize, $offsetX, $offsetY);
-
+        
         // Choose type of tile to create
         // TODO 2011/04/18: Generalize process of choosing class to use
         if ($image['instrument'] == "SECCHI") {
