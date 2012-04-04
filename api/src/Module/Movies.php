@@ -76,7 +76,7 @@ class Module_Movies implements Module
         $queueSize = Resque::size('on_demand_movie');
         if ($queueSize >= MOVIE_QUEUE_MAX_SIZE) {
             throw new Exception("Sorry, due to current high demand, we are currently unable to process your request. " .
-                                "Please try again later.");
+                                "Please try again later.", 1);
         }
         
         // Get current number of on_demand_movie workers
@@ -278,14 +278,16 @@ class Module_Movies implements Module
      */
     private function _getMovieROI($options) {
         include_once 'src/Helper/RegionOfInterest.php';
+        
+        var_dump($options);
 
         // Region of interest (center in arcseconds and dimensions in pixels)
-        if ($options['x1'] && $options['y1'] && $options['x2'] && $options['y2']) {
+        if (isset($options['x1']) && isset($options['y1']) && isset($options['x2']) && isset($options['y2'])) {
             $x1 = $options['x1'];
             $y1 = $options['y1'];
             $x2 = $options['x2'];
             $y2 = $options['y2'];
-        } elseif ($options['x0'] and $options['y0'] and $options['width'] and $options['height']) {
+        } elseif (isset($options['x0']) and isset($options['y0']) and isset($options['width']) and isset($options['height'])) {
             // Region of interest (top-left and bottom-right coords in arcseconds)
             $x1 = $options['x0'] - 0.5 * $options['width'] * $this->_params['imageScale'];
             $y1 = $options['y0'] - 0.5 * $options['height'] * $this->_params['imageScale'];
@@ -322,9 +324,9 @@ class Module_Movies implements Module
 
         // Raise an error if few or no frames were found for the request range and data sources
         if ($numFrames == 0) {
-            throw new Exception("No images found for requested time range. Please try a different time.");
+            throw new Exception("No images found for requested time range. Please try a different time.", 1);
         } else if ($numFrames <= 3) {
-            throw new Exception("Insufficient data was found for the requested time range. Please try a different time.");
+            throw new Exception("Insufficient data was found for the requested time range. Please try a different time.", 1);
         }
         return $numFrames;
     }

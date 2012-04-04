@@ -49,11 +49,12 @@ class Redisent {
     function __construct($host, $port = 6379) {
         $this->host = $host;
         $this->port = $port;
-				$this->establishConnection();
+        $this->max_reconnect_attempts = 1;
+        $this->establishConnection();
     }
 
     function establishConnection() {
-        $this->__sock = fsockopen($this->host, $this->port, $errno, $errstr);
+        $this->__sock = @fsockopen($this->host, $this->port, $errno, $errstr);
         if (!$this->__sock) {
             throw new Exception("{$errno} - {$errstr}");
         }
@@ -70,12 +71,7 @@ class Redisent {
         $command = sprintf('*%d%s%s%s', count($args), CRLF, implode(array_map(array($this, 'formatArgument'), $args), CRLF), CRLF);
 
         /* Open a Redis connection and execute the command */
-        for ($written = 0; $written < strlen($command); $written += $fwrite) {
-            $fwrite = fwrite($this->__sock, substr($command, $written));
-            if ($fwrite === FALSE) {
-                throw new Exception('Failed to write entire command to stream');
-            }
-        }
+        $this->writeCommand($command);
 
         /* Parse the response based on the reply identifier */
         $reply = trim(fgets($this->__sock, 512));
@@ -139,6 +135,23 @@ class Redisent {
         }
         /* Party on */
         return $response;
+    }
+
+    private function writeCommand($command) {
+        $reconnects = 0;
+        for ($written = 0; $written < strlen($command); $written += $fwrite) {
+            $fwrite = fwrite($this->__sock, substr($command, $written));
+            if ($fwrite === false || $fwrite === 0) {
+                if ($reconnects > $this->max_reconnect_attempts) {
+                    throw new Exception('Failed to write entire command to stream');
+                } else {
+                    $reconnects += 1;
+                    fclose($this->__sock);
+                    $this->establishConnection();
+                    $written = 0;
+                }
+            }
+        }
     }
 
     private function formatArgument($arg) {
