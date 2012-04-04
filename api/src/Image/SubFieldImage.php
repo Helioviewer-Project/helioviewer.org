@@ -221,7 +221,7 @@ class Image_SubFieldImage
     protected function build()
     {
         try {
-            $input = substr($this->outputFile, 0, -3) . "pgm";
+            $input = substr($this->outputFile, 0, -4) . rand() . ".pgm";
             
             // Extract region (PGM)
             $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
@@ -286,7 +286,11 @@ class Image_SubFieldImage
             // Clean up
             $grayscale->destroy();
             $coloredImage->destroy();
-            unlink($input);
+            
+            // Check for PGM before deleting just in case another process already removed it 
+            if (file_exists($input)) {
+                unlink($input);
+            }
 
         } catch(Exception $e) {
             // Clean-up intermediate files
@@ -493,10 +497,20 @@ class Image_SubFieldImage
             
             header("Content-Disposition: inline; filename=\"$filename\"");
             
-            if (!readfile($this->outputFile)) {
-                throw new Exception("Unable to read tile from cache: $filename");
+            // Attempt to display image
+            $attempts = 0;
+            
+            while ($attempts < 3) {
+                // If read is successfull, we are finished
+                if (readfile($this->outputFile)) {
+                    return;
+                }
+                $attempts += 1;
+                usleep(500000); // wait 0.5s
             }
-
+            
+            // If the image fails to load after 3 tries, display an error message
+            throw new Exception("Unable to read image from cache: $filename");
         }
     }
 }

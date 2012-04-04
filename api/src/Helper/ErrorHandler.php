@@ -58,7 +58,7 @@ function logErrorMsg($error, $prefix="")
         foreach ($_REQUEST as $key => $value) {
            $msg .= "'$key' => $value\n";
         }
-        $msg .= "\n$source?" . http_build_query($_REQUEST);
+        $msg .= "\n$source";
     }
 
     file_put_contents($log, $msg);
