@@ -101,7 +101,10 @@ var TileLayer = Layer.extend(
         this.width  = this.image.width  * scaleFactor;
         this.height = this.image.height * scaleFactor;
 
-        this.tileLoader.updateDimensions(this.width, this.height);
+        // Use Math.floor to avoid unnecessary tile requests when the computed
+        // dimensions are something like 2048.32 
+        this.tileLoader.updateDimensions(Math.floor(this.width), 
+                                         Math.floor(this.height));
         
         // Offset image
         offsetX = parseFloat((this.image.offsetX * scaleFactor).toPrecision(8));
