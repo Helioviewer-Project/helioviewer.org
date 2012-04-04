@@ -172,16 +172,26 @@ class Helper_RegionOfInterest
         $centerX = $imageWidth  / 2 + $offsetX;
         $centerY = $imageHeight / 2 + $offsetY;
         
+        // top, left
         $top  = max($this->_top   /$imageScale + $centerY, 0);
         $left = max($this->_left  /$imageScale + $centerX, 0);
         $top  = $top  < 0.1 ? 0 : $top;
         $left = $left < 0.1 ? 0 : $left;
         
+        // bottom, right
+        $bottom = max(min($this->_bottom /$imageScale + $centerY, $imageHeight), 0);
+        $right  = max(min($this->_right  /$imageScale + $centerX, $imageWidth), 0);
+        
+        // Throw and exception if either dimension is zero
+        if (($right - $left == 0) || ($bottom - $top == 0)) {
+            throw new Exception(INVALID_REGION_OF_INTEREST);
+        }
+        
         return array(
             'top'    => $top,
             'left'   => $left,
-            'bottom' => max(min($this->_bottom /$imageScale + $centerY, $imageHeight), 0),
-            'right'  => max(min($this->_right  /$imageScale + $centerX, $imageWidth), 0)
+            'bottom' => $bottom,
+            'right'  => $right
         );
     }
     
