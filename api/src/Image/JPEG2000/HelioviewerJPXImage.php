@@ -208,7 +208,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
         $img = $imgIndex->getImageFromDatabase($this->_startTime, $this->_sourceId);
         $jp2 = HV_JP2_DIR . $img["filepath"] . "/" . $img["filename"];
         
-        if ($images[0] != $jp2) {
+        if ($images && $images[0] != $jp2) {
             array_unshift($images, $jp2);
             array_unshift($dates, toUnixTimestamp($img['date']));
         }
