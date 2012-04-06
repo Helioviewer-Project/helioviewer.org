@@ -44,9 +44,8 @@ class Image_ImageType_SWAPImage extends Image_HelioviewerImage
      */     
     public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
-        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/SDO_AIA_171.png";
-        $this->setColorTable($colorTable);
-        
+        // SWAP JP2s include their own color table
+        $this->setColorTable(false);
         parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
