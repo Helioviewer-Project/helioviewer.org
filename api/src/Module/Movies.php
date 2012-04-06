@@ -84,7 +84,7 @@ class Module_Movies implements Module
         $movieWorkers = array_filter($workers, function ($elem) {
             return strpos($elem, "on_demand_movie") !== false;
         });
-        
+                
         // Default options
         $defaults = array(
             "format"      => "mp4",
