@@ -53,8 +53,7 @@ class Job_MovieBuilder
         
         // If the queue is empty and no jobs are being processed, set estimated
         // time counter to zero
-        $numWorkers = sizeOf($redis->smembers("resque:workers"));
-        $numWorking = sizeOf($redis-keys("resque:worker:*on_demand_movie"));
+        $numWorking = sizeOf($redis->keys("resque:worker:*on_demand_movie"));
         $queueSize  = $redis->llen("resque:queue:on_demand_movie");
         
         if ($numWorking <= 1 && $queueSize == 0) {
