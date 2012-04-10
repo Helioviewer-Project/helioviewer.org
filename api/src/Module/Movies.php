@@ -84,7 +84,7 @@ class Module_Movies implements Module
         $movieWorkers = array_filter($workers, function ($elem) {
             return strpos($elem, "on_demand_movie") !== false;
         });
-        
+                
         // Default options
         $defaults = array(
             "format"      => "mp4",
@@ -278,8 +278,6 @@ class Module_Movies implements Module
      */
     private function _getMovieROI($options) {
         include_once 'src/Helper/RegionOfInterest.php';
-        
-        var_dump($options);
 
         // Region of interest (center in arcseconds and dimensions in pixels)
         if (isset($options['x1']) && isset($options['y1']) && isset($options['x2']) && isset($options['y2'])) {
@@ -741,8 +739,8 @@ class Module_Movies implements Module
         case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
-                "optional" => array('verbose', 'callback', 'token'),
-                "alphanum" => array('id', 'format', 'callback', 'token'),
+                "optional" => array('verbose', 'callback', 'token', '_'),
+                "alphanum" => array('id', 'format', 'callback', 'token', '_'),
                 "bools"    => array('verbose')
                 
             );
@@ -759,8 +757,8 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale'),
-                "optional" => array('format', 'frameRate', 'maxFrames', 'movieLength', 'watermark', 'width', 'height', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2', 'callback'),
-                "alphanum" => array('format', 'callback'),
+                "optional" => array('format', 'frameRate', 'maxFrames', 'movieLength', 'watermark', 'width', 'height', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2', 'callback', '_'),
+                "alphanum" => array('format', 'callback', '_'),
                 "bools"    => array('watermark'),
                 "dates"    => array('startTime', 'endTime'),
                 "floats"   => array('imageScale', 'frameRate', 'movieLength', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2'),
@@ -777,16 +775,16 @@ class Module_Movies implements Module
             break;
         case "getUserVideos":
             $expected = array(
-                "optional" => array('num', 'since', 'callback'),
-                "alphanum" => array('callback'),
+                "optional" => array('num', 'since', 'callback', '_'),
+                "alphanum" => array('callback', '_'),
                 "ints"     => array('num'),
                 "dates"    => array('since')
             );
             break;
         case "checkYouTubeAuth":
             $expected = array(
-                "optional" => array('callback'),
-                "alphanum" => array('callback')
+                "optional" => array('callback', '_'),
+                "alphanum" => array('callback', '_')
             );
             break;
         case "getYouTubeAuth":

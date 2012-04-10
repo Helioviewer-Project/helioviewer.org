@@ -524,8 +524,8 @@ class Module_WebClient implements Module
         case "getClosestImage":
             $expected = array(
                "dates" => array('date'),
-               "optional" => array('callback'),
-               "alphanum" => array('callback')
+               "optional" => array('callback', '_'),
+               "alphanum" => array('callback', '_')
             );
 
             if (isset($this->_params["sourceId"])) {
@@ -545,9 +545,9 @@ class Module_WebClient implements Module
 
         case "getDataSources":
             $expected = array(
-               "optional" => array('verbose', 'callback'),
+               "optional" => array('verbose', 'callback', '_'),
                "bools"    => array('verbose'),
-               "alphanum" => array('callback')
+               "alphanum" => array('callback', '_')
             );
             break;
 
@@ -563,38 +563,38 @@ class Module_WebClient implements Module
             $expected = array(
                 "required" => array('id'),
                 "ints"     => array('id'),
-                "optional" => array('callback'),
-                "alphanum" => array('callback')
+                "optional" => array('callback', '_'),
+                "alphanum" => array('callback', '_')
             );
             break;
         case "getNewsFeed":
             $expected = array(
-                "optional" => array('callback'),
-                "alphanum" => array('callback')
+                "optional" => array('callback', '_'),
+                "alphanum" => array('callback', '_')
             );
             break;
         case "getUsageStatistics":
             $expected = array(
-                "optional" => array("resolution", "callback"),
-                "alphanum" => array("resolution", "callback")
+                "optional" => array("resolution", "callback", '_'),
+                "alphanum" => array("resolution", "callback", '_')
             );
             break;
         case "shortenURL":
             $expected = array(
                 "required" => array("queryString"),
-                "optional" => array("callback"),
-                "encoded"  => array("queryString", "callback")
+                "optional" => array("callback", '_'),
+                "encoded"  => array("queryString", "callback", '_')
             );
             break;
         case "takeScreenshot":
             $expected = array(
                 "required" => array('date', 'imageScale', 'layers'),
-                "optional" => array('display', 'watermark', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0', 'width', 'height', 'callback'),
+                "optional" => array('display', 'watermark', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0', 'width', 'height', 'callback', '_'),
                 "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0'),
                 "ints"     => array('width', 'height'),
                 "dates"	   => array('date'),
                 "bools"    => array('display', 'watermark'),
-                "alphanum" => array('callback')
+                "alphanum" => array('callback', '_')
             );
             break;
         default:
