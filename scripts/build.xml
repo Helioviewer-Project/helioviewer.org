@@ -108,7 +108,7 @@
     <!-- Cleanup -->
     <target name="clean">
         <echo>Removing old build files</echo>
-        <delete>
+        <delete quiet='true'>
             <fileset dir="build/" includes="*.js" />
             <fileset dir="build/css" includes="*.css" />
         </delete>
