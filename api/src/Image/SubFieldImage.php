@@ -261,18 +261,25 @@ class Image_SubFieldImage
             );
             $coloredImage->setImageBackgroundColor('transparent');
 
-            // Places the current image on a larger field of black if the final image is larger than this one
-            $coloredImage->extentImage(
-                $this->padding['width'], $this->padding['height'],
-                -$this->padding['offsetX'], -$this->padding['offsetY']
-            );
-			
-			// 2011-05-10: On Arch (newer version of PHP/IM) below is needed to
-			// properly extend the image
-            // $coloredImage->extentImage(
-                // $this->padding['width'], $this->padding['height'],
-                // $this->padding['offsetX'], $this->padding['offsetY']
-            // );
+            // Places the current image on a larger field of black if the final 
+            // image is larger than this one
+			$imagickVersion = IMagick::getVersion();
+
+			if ($imagickVersion['versionNumber'] > IMAGE_MAGICK_662_VERSION_NUM) {
+			    // ImageMagick 6.6.2-6 and higher 
+			    // Problematic change occurred in revision 6.6.4-2
+			    // See: http://www.imagemagick.org/script/changelog.php
+                $coloredImage->extentImage(
+                    $this->padding['width'], $this->padding['height'],
+                    $this->padding['offsetX'], $this->padding['offsetY']
+                );			    
+			} else {
+			    // Imagick 3.0 and lower
+                $coloredImage->extentImage(
+                    $this->padding['width'], $this->padding['height'],
+                    -$this->padding['offsetX'], -$this->padding['offsetY']
+                );
+			}
             
             /* 
              * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors 
