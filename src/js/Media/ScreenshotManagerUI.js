@@ -161,8 +161,6 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
 
         imageScale = helioviewer.getImageScale();
         layers     = helioviewer.getVisibleLayers(roi);
-        
-        console.log(layers);
 
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
