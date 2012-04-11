@@ -426,9 +426,13 @@ class Movie_HelioviewerMovie
         // MP4 filename
         $filename = str_replace("webm", "mp4", $this->filename);
         
+        // Limit frame-rate floating-point precision 
+        // https://bugs.launchpad.net/helioviewer.org/+bug/979231
+        $frameRate = round($this->frameRate, 1);
+        
         // Create and FFmpeg encoder instance
         $ffmpeg = new Movie_FFMPEGEncoder(
-            $this->directory, $filename, $this->frameRate, $this->width, 
+            $this->directory, $filename, $frameRate, $this->width, 
             $this->height, $title, $description, $comment
         );
         
