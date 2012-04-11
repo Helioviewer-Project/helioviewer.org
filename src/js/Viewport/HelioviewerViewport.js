@@ -135,6 +135,14 @@ var HelioviewerViewport = Class.extend(
     },
     
     /**
+     * Returns a string representation of the layers which are visible and
+     * overlap the specified region of interest
+     */
+    getVisibleLayers: function (roi) {
+        return this._tileLayerManager.getVisibleLayers(roi);
+    },
+    
+    /**
      * Makes room for header and footer if not in fullscreen mode
      */
     _getPadHeight: function () {
