@@ -121,22 +121,6 @@ var LayerManager = Class.extend(
     },
     
     /**
-     * @description Returns a string representation of the layers currently being displayed
-     */
-    serialize: function () {
-        var layers = "";
-
-        $.each(this._layers, function () {
-            layers += "[" + this.serialize() + "],";
-        });
-        
-        // Remove trailing comma
-        layers = layers.slice(0, -1);
-        
-        return layers;
-    },
-    
-    /**
      * @description Returns a JSON representation of the layers currently being displayed
      */
     toJSON: function () {

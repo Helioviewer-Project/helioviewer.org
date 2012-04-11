@@ -138,7 +138,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             roi = helioviewer.getViewportRegionOfInterest();
         }
 
-        var layers = helioviewer.getLayers();
+        var layers = helioviewer.getVisibleLayers(roi);
 
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {

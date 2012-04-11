@@ -104,6 +104,9 @@ class Config
         define("JPG_HIGH_COMPRESSION", 80);  // Good quality, small files, faster
         define("JPG_LOW_COMPRESSION",  100); // Best quality, large files, slower
         
+        // ImageMagick 6.6.2-6 API Version Number
+        define("IMAGE_MAGICK_662_VERSION_NUM", 1634);
+        
         // Movie queue throttles for speeding up processing during high-demand
         define("MOVIE_QUEUE_THROTTLE_ONE", 20);
         define("MOVIE_QUEUE_THROTTLE_TWO", 50);

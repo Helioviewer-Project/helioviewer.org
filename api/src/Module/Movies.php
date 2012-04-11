@@ -105,6 +105,11 @@ class Module_Movies implements Module
         if ($layers->length() < 1 || $layers->length() > 3) {
             throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
         }
+        
+        // TODO 2012/04/11
+        // Discard any layers which do not share an overlap with the roi to
+        // avoid generating kdu_expand errors later. Check is performed already
+        // on front-end, but should also be done before queuing a request.
 
         // Determine the ROI
         $roi = $this->_getMovieROI($options);

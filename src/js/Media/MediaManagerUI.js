@@ -48,6 +48,7 @@ var MediaManagerUI = Class.extend(
         this._container.hide();
         this._btn.removeClass("active");
         this._tooltips.qtip("enable");
+        $(".qtip").qtip("hide");
     },
     
     /**
