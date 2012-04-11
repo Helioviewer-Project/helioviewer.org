@@ -192,11 +192,75 @@ var TileLayerManager = LayerManager.extend(
     },
     
     /**
+     * Tests all four corners of the visible image area to see if they are 
+     * within the transparent circle region of LASCO/COR coronagraph images.
+     *  
+     * Uses the distance formula:
+     * 
+     *     d = sqrt( (x2 - x1)^2 + (y2 - y1)^2 )
+     * 
+     * ...to find the distance from the center to each corner, and if that 
+     * distance is less than the radius, it is inside the circle region.
+     *  
+     * @param {Object} radius -- The radius of the circle region in the image
+     * @param {Object} top -- Top coordinate of the selected region 
+     * @param {Object} left -- Left coordinate of the selected region
+     * @param {Object} width -- width of the selected region
+     * @param {Object} height -- height of the selected region
+     * 
+     * @return false as soon as it finds a distance outside the radius, or 
+     * true if it doesn't.
+     */
+    _insideCircle: function (radius, top, left, bottom, right) {
+        var corners, corner, dx2, dy2;
+        
+        // Corners of region of interest
+        corners = {
+            topLeft     : {x: left,  y: top},
+            topRight    : {x: right, y: top},
+            bottomLeft  : {x: left,  y: bottom},
+            bottomRight : {x: right, y: bottom}
+        };
+
+        // Check each corner to see if it lies within the circle
+        for (corner in corners) {
+            // dx^2, dy^2
+            dx2 = Math.pow(corners[corner].x, 2);
+            dy2 = Math.pow(corners[corner].y, 2);
+            
+            // dist = sqrt(dx^2 + dy^2)
+            if (Math.sqrt(dx2 + dy2) > radius) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+    
+    /**
      * Returns a list of layers which are currently visible and overlap the
      * specified region of interest by at least 10px
+     * 
+     * @param array roi Region of interest in pixels
      */
     getVisibleLayers: function(roi) {
-        var layers = [], threshold = 10;
+        var rsunAS, rsun, radii, layers = [], threshold = 10, self = this;
+        
+        // Coronagraph inner circle radii in arc-seconds
+        // TODO 2012/04/11: Compute using header info? are hv-tags 
+        // (rocc_inner, etc) hard-coded or dynamic? Since COR images vary
+        // a lot over time, conservative estimate used for now.
+        radii = {
+            "LASCO C2": 2.415,
+            "LASCO C3": 4.62,
+            "COR1-A": 6.5,
+            "COR2-A": 3.67,
+            "COR1-B": 6.5,
+            "COR2-B": 3.67
+        };
+        
+        // Solar radius at 1au (TODO: compute for layer)
+        rsunAS = 959.705;
         
         $.each(this._layers, function (i, layer) {
             // Check visibility
@@ -209,6 +273,16 @@ var TileLayerManager = LayerManager.extend(
                 (roi.left >= layer.dimensions.right - threshold) ||
                 (roi.top >= layer.dimensions.bottom - threshold)) {
                 return;
+            }
+            
+            // Check coronagraph overlap
+            if (layer.name in radii) {
+                // radius of outer edge of occulting disk in pixels
+                rsun = rsunAS * radii[layer.name] / layer.viewportScale;
+                
+                if (self._insideCircle(rsun, roi.top, roi.left, roi.bottom, roi.right)) {
+                    return;
+                }
             }
             layers.push(layer);
         });
