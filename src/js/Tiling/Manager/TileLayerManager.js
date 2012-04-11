@@ -125,6 +125,13 @@ var TileLayerManager = LayerManager.extend(
 
         return 100 / counter;
     },
+    
+    /**
+     * Returns a list of the layers which overlap the current viewport ROI
+     */
+    _getVisibleLayers: function () {
+        
+    },
 
     /**
      * Loads initial layers either from URL parameters, saved user settings, or the defaults.
@@ -160,5 +167,52 @@ var TileLayerManager = LayerManager.extend(
     
     getRequestDateAsISOString: function () {
         return this._observationDate.toISOString();
+    },
+    
+    /**
+     * Returns a string representation of the tile layers
+     */
+    serialize: function () {
+        return this._stringify(this._layers);
+    },
+    
+    /**
+     * Creates a string representation of an array of layers
+     */
+    _stringify: function (layers) {
+        var layerString = "";
+        
+        // Get a string representation of each layer that overlaps the ROI
+        $.each(layers, function () {
+            layerString += "[" + this.serialize() + "],";
+        });
+        
+        // Remove trailing comma and return
+        return layerString.slice(0, -1);
+    },
+    
+    /**
+     * Returns a list of layers which are currently visible and overlap the
+     * specified region of interest by at least 10px
+     */
+    getVisibleLayers: function(roi) {
+        var layers = [], threshold = 10;
+        
+        $.each(this._layers, function (i, layer) {
+            // Check visibility
+            if (!layer.visible || layer.opacity <= 5) {
+                return;
+            }
+            // Check overlap
+            if ((roi.right <= -layer.dimensions.left + threshold) ||
+                (roi.bottom <= -layer.dimensions.top + threshold) ||
+                (roi.left >= layer.dimensions.right - threshold) ||
+                (roi.top >= layer.dimensions.bottom - threshold)) {
+                return;
+            }
+            layers.push(layer);
+        });
+        
+        return this._stringify(layers);
     }
 });

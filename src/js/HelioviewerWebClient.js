@@ -538,6 +538,14 @@ var HelioviewerWebClient = HelioviewerClient.extend(
     },
     
     /**
+     * Returns a string representation of the layers which are visible and
+     * overlap the specified region of interest
+     */
+    getVisibleLayers: function (roi) {
+        return this.viewport.getVisibleLayers(roi);
+    },
+    
+    /**
      * Returns the currently displayed image scale
      *
      * @return {Float} image scale in arc-seconds/pixel
