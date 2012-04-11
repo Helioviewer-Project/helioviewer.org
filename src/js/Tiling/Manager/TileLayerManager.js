@@ -253,10 +253,10 @@ var TileLayerManager = LayerManager.extend(
         radii = {
             "LASCO C2": 2.415,
             "LASCO C3": 4.62,
-            "COR1-A": 6.5,
-            "COR2-A": 3.67,
-            "COR1-B": 6.5,
-            "COR2-B": 3.67
+            "COR1-A": 1.45,
+            "COR2-A": 2.6,
+            "COR1-B": 1.45,
+            "COR2-B": 2.6
         };
         
         // Solar radius at 1au (TODO: compute for layer)
