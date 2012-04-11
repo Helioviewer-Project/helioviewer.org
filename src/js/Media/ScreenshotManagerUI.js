@@ -35,8 +35,10 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         var roi, imageScale, layers, params; 
         
         imageScale = helioviewer.getImageScale();
-        layers     = helioviewer.getLayers();
         roi        = helioviewer.getViewportRegionOfInterest();
+        
+        // Remove any layers which do not lie in the reguested region
+        layers = this._checkLayers(helioviewer.getLayers());
         
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
@@ -158,7 +160,7 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         }
 
         imageScale = helioviewer.getImageScale();
-        layers     = helioviewer.getLayers();
+        layers     = helioviewer.getVisibleLayers(roi);
 
         // Make sure selection region and number of layers are acceptible
         if (!this._validateRequest(roi, layers)) {
