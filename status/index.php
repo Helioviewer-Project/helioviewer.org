@@ -198,6 +198,12 @@
         }
     ?>
     </table>
+    <br />
+    <div id='footer'><strong>Upstream: </strong>
+        <a class='provider-link' href='http://aia.lmsal.com/public/SDOcalendar.html'>SDO Calendar</a>,
+        <a class='provider-link' href='http://sdowww.lmsal.com/hek_monitor/sdo_pipeline_status.html'>SDO Pipeline Monitor</a>,
+        <a class='provider-link' href='http://sdowww.lmsal.com/sdomedia/hek_monitor/status.html'>HEK Status</a>
+    </div>
     </div>
 </body>
 </html>
