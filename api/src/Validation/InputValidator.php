@@ -65,7 +65,7 @@ class Validation_InputValidator
         }
         
         // Check for unknown parameters
-        $allowed = array("action");
+        $allowed = array("action", "_", "XDEBUG_PROFILE");
         
         if(isset($expected["required"])) {
             $allowed = array_merge($allowed, array_values($expected["required"]));

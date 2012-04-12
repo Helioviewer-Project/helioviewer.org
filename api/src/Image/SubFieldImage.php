@@ -263,7 +263,7 @@ class Image_SubFieldImage
 
             // Places the current image on a larger field of black if the final 
             // image is larger than this one
-			$imagickVersion = IMagick::getVersion();
+			$imagickVersion = $coloredImage->getVersion();
 
 			if ($imagickVersion['versionNumber'] > IMAGE_MAGICK_662_VERSION_NUM) {
 			    // ImageMagick 6.6.2-6 and higher 

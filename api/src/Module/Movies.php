@@ -744,8 +744,8 @@ class Module_Movies implements Module
         case "getMovieStatus":
             $expected = array(
                 "required" => array('id', 'format'),
-                "optional" => array('verbose', 'callback', 'token', '_'),
-                "alphanum" => array('id', 'format', 'callback', 'token', '_'),
+                "optional" => array('verbose', 'callback', 'token'),
+                "alphanum" => array('id', 'format', 'callback', 'token'),
                 "bools"    => array('verbose')
                 
             );
@@ -762,8 +762,8 @@ class Module_Movies implements Module
         case "queueMovie":
             $expected = array(
                 "required" => array('startTime', 'endTime', 'layers', 'imageScale'),
-                "optional" => array('format', 'frameRate', 'maxFrames', 'movieLength', 'watermark', 'width', 'height', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2', 'callback', '_'),
-                "alphanum" => array('format', 'callback', '_'),
+                "optional" => array('format', 'frameRate', 'maxFrames', 'movieLength', 'watermark', 'width', 'height', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2', 'callback'),
+                "alphanum" => array('format', 'callback'),
                 "bools"    => array('watermark'),
                 "dates"    => array('startTime', 'endTime'),
                 "floats"   => array('imageScale', 'frameRate', 'movieLength', 'x0', 'y0', 'x1', 'x2', 'y1', 'y2'),
@@ -780,16 +780,16 @@ class Module_Movies implements Module
             break;
         case "getUserVideos":
             $expected = array(
-                "optional" => array('num', 'since', 'callback', '_'),
-                "alphanum" => array('callback', '_'),
+                "optional" => array('num', 'since', 'callback'),
+                "alphanum" => array('callback'),
                 "ints"     => array('num'),
                 "dates"    => array('since')
             );
             break;
         case "checkYouTubeAuth":
             $expected = array(
-                "optional" => array('callback', '_'),
-                "alphanum" => array('callback', '_')
+                "optional" => array('callback'),
+                "alphanum" => array('callback')
             );
             break;
         case "getYouTubeAuth":
