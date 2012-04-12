@@ -19,13 +19,15 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
      */
-    init: function (urlSettings, serverSettings, zoomLevels) {
+    init: function (urlSettings, serverSettings, zoomLevels, link) {
         var date, imageScale;
         
         this._super(urlSettings, serverSettings, zoomLevels);
         
         // Display watermark button
-        this._showWatermark();
+        if (!urlSettings.hideWatermark) {
+            this._showWatermark(link);
+        }
         
         // Determine image scale to use
         imageScale = this._chooseInitialImageScale(Helioviewer.userSettings.get('state.imageScale'), zoomLevels);
@@ -50,11 +52,15 @@ var HelioviewerEmbeddedClient = HelioviewerClient.extend(
     /**
      * Displays the Helioviewer.org watermark which includes a link to the
      * main web-site.
+     * 
+     * @param {string} link URL for the non-embedded version of the same page.
      */
-    _showWatermark: function () {
+    _showWatermark: function (link) {
         var win, watermark, onResize;
         
-        win       = $(window);
+        win = $(window);
+
+        $('body').append("<a href='" + link + "'><div id='watermark'></div></a>");
         watermark = $("#watermark");
         
         // Scale watermark

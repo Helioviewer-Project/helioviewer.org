@@ -61,7 +61,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
      */
     protected function printBody($signature)
     {
-        $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("output=embed", "", $_SERVER['REQUEST_URI']));
 ?>
 
 <!-- Viewport -->
@@ -98,8 +97,6 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
     <div id="mouse-coords-y"></div>
 </div>
 
-<!-- Watermark -->
-<a href="<?php echo $link;?>"><div id='watermark'></div></a>
     <?php
     parent::printBody($signature);
     }
@@ -109,9 +106,11 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
      */
     protected function printScript() {
         parent::printScript();
+        $link = sprintf("http://%s%s", $_SERVER['HTTP_HOST'], str_replace("&hideWatermark=false", "", 
+                                                              str_replace("output=embed", "", $_SERVER['REQUEST_URI'])));
 ?>
     // Initialize Helioviewer.org
-        helioviewer = new HelioviewerEmbeddedClient(urlSettings, serverSettings, zoomLevels);
+        helioviewer = new HelioviewerEmbeddedClient(urlSettings, serverSettings, zoomLevels, "<?php echo $link;?>");
     });
 <?php
     }

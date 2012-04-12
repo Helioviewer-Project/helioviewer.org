@@ -3,7 +3,7 @@
     $params = array(
         "strings" => array("date", "movieId", "output"),
         "floats"  => array("centerX", "centerY", "imageScale"),
-        "bools"   => array("debug")
+        "bools"   => array("debug", "hideWatermark")
     );
     
     $urlSettings = array();
