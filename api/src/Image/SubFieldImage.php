@@ -68,17 +68,17 @@ class Image_SubFieldImage
       */
     public function __construct($jp2, $roi, $outputFile, $offsetX, $offsetY, $options)
     {
-        $this->outputFile = $outputFile;
-        $this->jp2        = $jp2;
-        $this->roi        = $roi;
+        $this->outputFile  = $outputFile;
+        $this->jp2         = $jp2;
+        $this->roi         = $roi;
         
         // Default settings
         $defaults = array(
-            "bitdepth"  => 8,
-            "compress"  => true,
-            "interlace" => true,
-            "opacity"   => 100,
-            "rescale"   => IMagick::FILTER_TRIANGLE
+            "bitdepth"    => 8,
+            "compress"    => true,
+            "interlace"   => true,
+            "opacity"     => 100,
+            "rescale"     => IMagick::FILTER_TRIANGLE
         );
         
         $this->imageOptions = array_replace($defaults, $options);
@@ -221,30 +221,43 @@ class Image_SubFieldImage
     protected function build()
     {
         try {
-            $input = substr($this->outputFile, 0, -4) . rand() . ".pgm";
+            // Choose extension to convert source image to
+            if ($this->options['palettedJP2']) {
+                $extension = ".bmp";     
+            } else {
+                $extension = ".pgm";
+            }
+            $input = substr($this->outputFile, 0, -4) . rand() . $extension;
             
             // Extract region (PGM)
             $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
-			
-            // Convert to GD-readable format
-            $grayscale = new IMagick($input);
-            $grayscale->setImageFormat('PNG');
-            $grayscale->setImageType(IMagick::IMGTYPE_GRAYSCALE); 
-            $grayscale->setImageDepth(8);
-            $grayscale->setImageCompressionQuality(10); // Fastest PNG compression setting
             
-            $grayscaleString = $grayscale->getimageblob();
-			
-            // Assume that no color table is needed
-            $coloredImage = $grayscale;
-            
-            // Apply color table if one exists
-            if ($this->colorTable) {
-                $coloredImageString = $this->setColorPalette($grayscaleString);
-            
-                $coloredImage = new IMagick();        
-                $coloredImage->readimageblob($coloredImageString);
-            }    
+            // Apply colormap if needed
+            if (!$this->options['palettedJP2']) {
+                
+                // Convert to GD-readable format
+                $grayscale = new IMagick($input);
+                $grayscale->setImageFormat('PNG');
+                $grayscale->setImageType(IMagick::IMGTYPE_GRAYSCALE); 
+                $grayscale->setImageDepth(8);
+                $grayscale->setImageCompressionQuality(10); // Fastest PNG compression setting
+                
+                $grayscaleString = $grayscale->getimageblob();
+                
+                // Assume that no color table is needed
+                $coloredImage = $grayscale;
+                $grayscale->destroy();
+                
+                // Apply color table if one exists
+                if ($this->colorTable) {
+                    $coloredImageString = $this->setColorPalette($grayscaleString);
+                
+                    $coloredImage = new IMagick();        
+                    $coloredImage->readimageblob($coloredImageString);
+                }                
+            } else {
+                $coloredImage = new IMagick($input);
+            }
             
             // Set alpha channel for images with transparent components
             $this->setAlphaChannel($coloredImage);
@@ -291,7 +304,6 @@ class Image_SubFieldImage
             $coloredImage->writeImage($this->outputFile);
             
             // Clean up
-            $grayscale->destroy();
             $coloredImage->destroy();
             
             // Check for PGM before deleting just in case another process already removed it 

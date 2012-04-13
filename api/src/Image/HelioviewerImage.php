@@ -53,7 +53,8 @@ class Image_HelioviewerImage extends Image_SubFieldImage
             "date"          => "",
             "compress"      => true,
             "layeringOrder" => 1,
-            "opacity"       => 100
+            "opacity"       => 100,
+            "palettedJP2"   => false
         );
         $this->options = array_replace($defaults, $options);
         
