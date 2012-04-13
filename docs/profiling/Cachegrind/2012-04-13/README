@@ -1,0 +1,23 @@
+Paletted JPEG 2000 Support Profiling
+Keith Hughitt
+2012/04/13
+
+Comparison of takeScreenshot performance before/after support added to use
+paletted JPEG 2000 images. The test image was a PROBA2 SWAP JP2 (2012_04_03__06_15_48__PROBA2_SWAP_SWAP_174.jp2). Two versions were compared:
+
+(1) Grayscale JP2
+(2) Paletted JP2
+
+Similar tests were run for getTile and the results are compatible with the
+takeScreenshot profiles.
+
+Summary:
+
+BEFORE:
+ getTile: 204.654ms
+ takeScreenshot: 1.254s
+AFTER:
+ getTile: 97.877ms
+ takeScreenshot: 0.941s
+
+code: hv-trunk bzr r724
