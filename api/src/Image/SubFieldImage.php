@@ -32,6 +32,7 @@
 class Image_SubFieldImage
 {
     protected $jp2;
+    protected $image;
     protected $outputFile;
     protected $roi;
     protected $imageSubRegion;
@@ -294,17 +295,7 @@ class Image_SubFieldImage
                 );
 			}
             
-            /* 
-             * Need to extend the time limit that writeImage() can use so it doesn't throw fatal errors 
-             * when movie frames are being made. It seems that even if this particular instance of writeImage 
-             * doesn't take the  full time frame, if several instances of it are running PHP will complain.  
-             */
-            //set_time_limit(60);
-            
-            $coloredImage->writeImage($this->outputFile);
-            
-            // Clean up
-            $coloredImage->destroy();
+            $this->image = $coloredImage;
             
             // Check for PGM before deleting just in case another process already removed it 
             if (file_exists($input)) {
@@ -316,6 +307,22 @@ class Image_SubFieldImage
             $this->_abort($this->outputFile);
             throw $e;
         }
+    }
+
+    /**
+     * Returns the IMagick instance assocated with the image
+     */
+    public function getIMagickImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * Saves the file using the specified output filename
+     */
+    public function save()
+    {
+        $this->image->writeImage($this->outputFile);
     }
     
     /**
@@ -530,6 +537,19 @@ class Image_SubFieldImage
             
             // If the image fails to load after 3 tries, display an error message
             throw new Exception("Unable to read image from cache: $filename");
+        }
+    }
+
+    /**
+     * Destructor
+     * 
+     * @return void
+     */
+    public function __destruct()
+    {
+        // Destroy IMagick object
+        if (isset($this->image)) {
+            $this->image->destroy();    
         }
     }
 }
