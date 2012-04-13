@@ -231,7 +231,7 @@ class Image_SubFieldImage
             
             // Extract region (PGM)
             $this->jp2->extractRegion($input, $this->imageSubRegion, $this->reduce);
-            
+
             // Apply colormap if needed
             if (!$this->options['palettedJP2']) {
                 

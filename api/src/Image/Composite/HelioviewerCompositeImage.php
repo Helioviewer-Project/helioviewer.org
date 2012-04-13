@@ -145,7 +145,6 @@ class Image_Composite_HelioviewerCompositeImage
         $tmpFile = $this->_dir . "/" . rand() . ".$ext";
         array_push($this->_cache, $tmpFile);
 
-        
         // Choose type of image to create
         if ($layer['instrument'] == "SECCHI") {
             if (substr($layer['detector'], 0, 3) == "COR") {
