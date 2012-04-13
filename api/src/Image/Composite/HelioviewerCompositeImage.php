@@ -175,31 +175,33 @@ class Image_Composite_HelioviewerCompositeImage
         if (sizeOf($this->_imageLayers) > 1) {
             $sortedImages = $this->_sortByLayeringOrder($this->_imageLayers);
 
-            $imagickImage = false;
-            foreach ($sortedImages as $image) {
-                $previous = $imagickImage;
-                $imagickImage = new IMagick($image->getFilepath());
-    
+            $image = null;
+            
+            foreach ($sortedImages as $layer) {
+                $previous = $image;
+                $image = $layer->getIMagickImage();
+
                 // If $previous exists, then the images need to be composited. For memory purposes, 
                 // destroy $previous when done with it. 
                 if ($previous) { 
-                    $imagickImage->compositeImage($previous, IMagick::COMPOSITE_DSTOVER, 0, 0);
+                    $image->compositeImage($previous, IMagick::COMPOSITE_DSTOVER, 0, 0);
                     $previous->destroy();
                 }
             }
         } else {
             // For single layer images the composite image is simply the first image layer
-            $imagickImage = new IMagick($this->_imageLayers[0]->getFilepath());
+            //$imagickImage = new IMagick($this->_imageLayers[0]->getFilepath());
+            $image = $this->_imageLayers[0]->getIMagickImage();
         }
         
         if ($this->watermark) {
-            $this->_addWatermark($imagickImage);
+            $this->_addWatermark($image);
         }
         
-        $this->_finalizeImage($imagickImage, $this->_filepath);
+        $this->_finalizeImage($image, $this->_filepath);
 
         // Store the IMagick composite image
-        $this->_composite = $imagickImage;
+        $this->_composite = $image;
     }
 
     /**
