@@ -46,6 +46,8 @@ class Image_ImageType_SWAPImage extends Image_HelioviewerImage
     {
         // SWAP JP2s include their own color table
         $this->setColorTable(false);
+        $options['palettedJP2'] = true;
+
         parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
     
