@@ -256,6 +256,8 @@ class Module_WebClient implements Module
             $offsetX, $offsetY, $this->_options
         );
         
+        // Save and display
+        $tile->save();
         $tile->display();
     }
 
