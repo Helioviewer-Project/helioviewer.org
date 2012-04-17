@@ -505,14 +505,15 @@ class Image_SubFieldImage
         
         // Enable caching of images served by PHP
         // http://us.php.net/manual/en/function.header.php#61903
-        $lastModified = 'Last-Modified: '.gmdate('D, d M Y H:i:s', filemtime($this->outputFile)).' GMT';
+        $lastModified = 'Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($this->outputFile)) . ' GMT';
+        
         if (isset($headers['If-Modified-Since']) && (strtotime($headers['If-Modified-Since']) == filemtime($this->outputFile))) {
             // Cache is current (304)
             header($lastModified, true, 304);    
         } else {
             // Image not in cache or out of date (200)
             header($lastModified, true, 200);
-
+            
             header('Content-Length: '.filesize($this->outputFile));
 
             // Set content-type
@@ -524,26 +525,21 @@ class Image_SubFieldImage
             $filename = basename($this->outputFile);
             
             header("Content-Disposition: inline; filename=\"$filename\"");
+
+            // Attempt to read in from cache and display
+            $attempts = 0;
             
-            // Load image from memory if just created
-            if (!is_null($this->image)) {
-                echo $this->image;
-            } else {
-                // Otherwise attempt to read in from cache and display
-                $attempts = 0;
-                
-                while ($attempts < 3) {
-                    // If read is successfull, we are finished
-                    if (readfile($this->outputFile)) {
-                        return;
-                    }
-                    $attempts += 1;
-                    usleep(500000); // wait 0.5s
+            while ($attempts < 3) {
+                // If read is successful, we are finished
+                if (readfile($this->outputFile)) {
+                    return;
                 }
-                
-                // If the image fails to load after 3 tries, display an error message
-                throw new Exception("Unable to read image from cache: $filename");                
+                $attempts += 1;
+                usleep(500000); // wait 0.5s
             }
+            
+            // If the image fails to load after 3 tries, display an error message
+            throw new Exception("Unable to read image from cache: $filename");                
         }
     }
 
