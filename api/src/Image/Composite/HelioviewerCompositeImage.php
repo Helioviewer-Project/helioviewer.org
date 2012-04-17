@@ -30,7 +30,6 @@ require_once 'src/Database/ImgIndex.php';
  */
 class Image_Composite_HelioviewerCompositeImage
 {
-    private   $_cache = array();
 	private   $_composite;
 	private   $_dir;
     private   $_imageLayers;
@@ -141,9 +140,8 @@ class Image_Composite_HelioviewerCompositeImage
         // For layers with transparent regions use PNG
         $ext = $layer['layeringOrder'] > 1 ? "png" : "bmp";
         
-        // Choose a temporary filename to use for storing intermediate image
+        // Choose a temporary filename (should never be used)
         $tmpFile = $this->_dir . "/" . rand() . ".$ext";
-        array_push($this->_cache, $tmpFile);
 
         // Choose type of image to create
         if ($layer['instrument'] == "SECCHI") {
@@ -487,10 +485,6 @@ class Image_Composite_HelioviewerCompositeImage
         // Destroy IMagick object
         if (isset($this->_composite)) {
             $this->_composite->destroy();    
-        }
-
-        foreach($this->_cache as $tmpFile) {
-        	unlink($tmpFile);
         }
     }
 }
