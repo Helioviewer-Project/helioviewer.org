@@ -19,7 +19,7 @@ function handleError($msg, $skipLog=false)
     echo json_encode(array("error"=>$msg));
 
     // Fire PHP
-    include_once "lib/FirePHPCore/fb.php";
+    include_once HV_API_ROOT_DIR ."/lib/FirePHPCore/fb.php";
     FB::error($msg);
     
     // For errors which are expected (e.g. a movie request for which sufficient data is not available) a non-zero
