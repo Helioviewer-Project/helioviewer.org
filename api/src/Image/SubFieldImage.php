@@ -322,7 +322,9 @@ class Image_SubFieldImage
      */
     public function save()
     {
-        $this->image->writeImage($this->outputFile);
+        if (!file_exists($this->outputFile) && !is_null($this->image)) {
+            $this->image->writeImage($this->outputFile);
+        }
     }
     
     /**
@@ -523,20 +525,25 @@ class Image_SubFieldImage
             
             header("Content-Disposition: inline; filename=\"$filename\"");
             
-            // Attempt to display image
-            $attempts = 0;
-            
-            while ($attempts < 3) {
-                // If read is successfull, we are finished
-                if (readfile($this->outputFile)) {
-                    return;
+            // Load image from memory if just created
+            if (!is_null($this->image)) {
+                echo $this->image;
+            } else {
+                // Otherwise attempt to read in from cache and display
+                $attempts = 0;
+                
+                while ($attempts < 3) {
+                    // If read is successfull, we are finished
+                    if (readfile($this->outputFile)) {
+                        return;
+                    }
+                    $attempts += 1;
+                    usleep(500000); // wait 0.5s
                 }
-                $attempts += 1;
-                usleep(500000); // wait 0.5s
+                
+                // If the image fails to load after 3 tries, display an error message
+                throw new Exception("Unable to read image from cache: $filename");                
             }
-            
-            // If the image fails to load after 3 tries, display an error message
-            throw new Exception("Unable to read image from cache: $filename");
         }
     }
 
