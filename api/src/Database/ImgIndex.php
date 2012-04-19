@@ -221,15 +221,15 @@ class Database_ImgIndex
         
         // Query database
         $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
-        
-        // Cast id to integer
-        $result['id'] = (int) $result['id'];
 
         // Make sure match was found
         if (is_null($result)) {
             $source = $this->_getDataSourceName($sourceId);
             throw new Exception("No images of the requested type ($source) are currently available.");
         }
+        
+        // Cast id to integer
+        $result['id'] = (int) $result['id'];
 
         return $result;
     }
