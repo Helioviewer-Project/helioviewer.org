@@ -3,9 +3,9 @@ import sys
 import math
 import getpass
 from PyQt4 import QtCore, QtGui
-from installer.installwizard import Ui_InstallWizard
-from shared.jp2 import *
-from shared.db  import *
+from helioviewer.installer.installwizard import Ui_InstallWizard
+from helioviewer.jp2 import *
+from helioviewer.db  import *
 
 __INTRO_PAGE__ = 0
 __DBADMIN_PAGE__ = 1

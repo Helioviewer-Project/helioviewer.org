@@ -2,7 +2,7 @@
 """Helioviewer.org JPEG 2000 processing functions"""
 import os
 import logging
-from shared.db import get_datasources, enable_datasource
+from helioviewer.db import get_datasources, enable_datasource
 
 __INSERTS_PER_QUERY__ = 500
 __STEP_FXN_THROTTLE__ = 50

@@ -1,5 +1,5 @@
 """SOHO DataServer"""
-from downloader.servers import DataServer
+from helioviewer.downloader.servers import DataServer
 import datetime
 
 class SOHODataServer(DataServer):

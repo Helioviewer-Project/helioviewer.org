@@ -4,7 +4,6 @@ desc...
 """
 import browser
 import downloader
-import image
 import net
 import servers
 import validation

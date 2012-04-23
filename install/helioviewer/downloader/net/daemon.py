@@ -22,7 +22,7 @@ class ImageRetrievalDaemon:
         
         # Redis info
         self.redis_host = conf.get('redis', 'host')
-        self.redis_port = int(conf.get('redis', 'port'))
+        self.redis_port = conf.getint('redis', 'port')
         self.redis_dbnum = conf.get('redis', 'database')
         
         # MySQL/Postgres info
@@ -32,7 +32,7 @@ class ImageRetrievalDaemon:
         
         # Maximum number of simultaneous downloads
         self.queue = Queue.Queue()
-        self.max_downloads = conf.get('net', 'max_downloads')
+        self.max_downloads = conf.getint('net', 'max_downloads')
         
         # Filepaths
         self.working_dir = os.path.expanduser(conf.get('directories',
@@ -81,19 +81,19 @@ class ImageRetrievalDaemon:
 
     def _load_server(self, server):
         """Loads a data server"""
-        cls = self._load_class('downloader.servers', 
+        cls = self._load_class('helioviewer.downloader.servers', 
                                server, self.get_servers().get(server))
         return cls()
             
     def _load_browser(self, browse_method, uri):
         """Loads a data browser"""
-        cls = self._load_class('downloader.browser', browse_method, 
+        cls = self._load_class('helioviewer.downloader.browser', browse_method, 
                                self.get_browsers().get(browse_method))
         return cls(uri)
     
     def _load_downloader(self, download_method):
         """Loads a data downloader"""
-        cls = self._load_class('downloader.downloader', download_method, 
+        cls = self._load_class('helioviewer.downloader.downloader', download_method, 
                                self.get_downloaders().get(download_method))
         downloader = cls(self.image_archive, self.working_dir, 
                          self.server.get_uri(), self.queue)
