@@ -1,6 +1,6 @@
 """Local data browser"""
 import os
-from downloader.browser.basebrowser import BaseDataBrowser
+from helioviewer.downloader.browser.basebrowser import BaseDataBrowser
 
 class LocalDataBrowser(BaseDataBrowser):
     def __init__(self, uri):

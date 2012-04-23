@@ -2,7 +2,7 @@
 import os
 import urllib
 from sgmllib import SGMLParser
-from downloader.browser.basebrowser import BaseDataBrowser
+from helioviewer.downloader.browser.basebrowser import BaseDataBrowser
 
 class HTTPDataBrowser(BaseDataBrowser):
     def __init__(self, uri):

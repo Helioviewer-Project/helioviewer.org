@@ -1,5 +1,5 @@
 """LMSAL DataServer definition"""
-from downloader.servers import DataServer
+from helioviewer.downloader.servers import DataServer
 
 class LMSALDataServer(DataServer):
     """LMSAL Datasource definition"""
