@@ -11,9 +11,12 @@ TODO 01/17/2010:
 * Udpate graphical installer to reflect changes to text installer
 """
 import sys
+from shared.util import init_logger
 
 def main():
     '''Main application access point'''
+    init_logger("install.log")
+
     try:
         import PyQt4
         import installer.gui
