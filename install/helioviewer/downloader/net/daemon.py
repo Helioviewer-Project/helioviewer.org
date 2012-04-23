@@ -11,6 +11,8 @@ import os
 import redis
 import sunpy
 import Queue
+from helioviewer.jp2 import process_jp2_images
+from helioviewer.db  import get_db_cursor
 
 class ImageRetrievalDaemon:
     """Retrieves images from the server as specified"""
@@ -18,14 +20,19 @@ class ImageRetrievalDaemon:
         """Explain."""
         self._db = None
         
-        # Database info
-        self.dbhost = conf.get('redis', 'host')
-        self.dbnum = conf.get('redis', 'database')
-        self.dbport = int(conf.get('redis', 'port'))
+        # Redis info
+        self.redis_host = conf.get('redis', 'host')
+        self.redis_port = int(conf.get('redis', 'port'))
+        self.redis_dbnum = conf.get('redis', 'database')
+        
+        # MySQL/Postgres info
+        self.dbname = conf.get('database', 'dbname')
+        self.dbuser = conf.get('database', 'user')
+        self.dbpass = conf.get('database', 'pass')
         
         # Maximum number of simultaneous downloads
         self.queue = Queue.Queue()
-        self.max_downloads = 4
+        self.max_downloads = conf.get('net', 'max_downloads')
         
         # Filepaths
         self.working_dir = os.path.expanduser(conf.get('directories',
@@ -54,8 +61,9 @@ class ImageRetrievalDaemon:
     def _init_db(self):
         """Initialise the database"""
         try:
-            self._db = redis.StrictRedis(host=self.dbhost, port=self.dbport, 
-                                         db=self.dbnum)
+            self._db = redis.StrictRedis(host=self.redis_host, 
+                                         port=self.redis_port, 
+                                         db=self.redis_dbnum)
             self._db.ping()
         except redis.ConnectionError:
             logging.error('Unable to connect to Redis. Is redis running?')
@@ -101,7 +109,12 @@ class ImageRetrievalDaemon:
         
         date_fmt = "%Y-%m-%d %H:%M:%S"
         
-        # TODO: Process urls in batches of ~1-500.. this way images start
+        # Connect to database
+        
+        # @NOTE: Should db cursor be recreated with each loop?
+        cursor = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+        
+        # @TODO: Process urls in batches of ~1-500.. this way images start
         # appearing more quickly when filling in large gaps, etc.
         
         # Determine starttime to use
@@ -115,14 +128,14 @@ class ImageRetrievalDaemon:
             endtime = datetime.datetime.strptime(endtime, date_fmt)
             urls = self.query(starttime, endtime)
             self.acquire(urls)
-            self.ingest(urls)
+            self.ingest(cursor, urls)
             return None
         else:
         # Otherwise, first query from start -> now
             now = datetime.datetime.utcnow()
             urls = self.query(starttime, now)
             self.acquire(urls)
-            self.ingest(urls)
+            self.ingest(cursor, urls)
         
         # Begin main loop
         while not self.shutdown_requested:
@@ -134,7 +147,7 @@ class ImageRetrievalDaemon:
             
             # acquire the data files
             self.acquire(urls)
-            self.ingest(urls)
+            self.ingest(cursor, urls)
             
             #time.sleep(self.server.pause.seconds)
             time.sleep(self.server.pause.seconds)
@@ -146,7 +159,7 @@ class ImageRetrievalDaemon:
         logging.info("Exiting HVPull")
         sys.exit()
         
-    def ingest(self, urls):
+    def ingest(self, cursor, urls):
         """
         Add images to helioviewer images db.
           (1) Make sure the file exists
@@ -161,6 +174,7 @@ class ImageRetrievalDaemon:
         
         # Get filepaths
         filepaths = []
+        images = []
         
         for url in urls:
             p = os.path.join(self.image_archive, url.replace(base_url, ""))
@@ -174,7 +188,8 @@ class ImageRetrievalDaemon:
             img_counter = self._db.incr('counter:img_id')
             img_id = 'img:%s' % os.path.basename(filepath)
             
-            params = {
+            # Add to Redis
+            params_redis = {
                 "id": img_counter,
                 "timestamp": datetime.datetime.utcnow(),
                 "observatory": info['observatory'],
@@ -183,8 +198,19 @@ class ImageRetrievalDaemon:
                 "measurement": info['measurement'],
                 "date_obs": info['date']
             }
-            self._db.hmset(img_id, params)
-
+            self._db.hmset(img_id, params_redis)
+            
+            params_mysql = {
+                "observatory": info['observatory'],
+                "instrument": info['instrument'],
+                "detector": info['detector'],
+                "measurement": info['measurement'],
+                "date_obs": info['date']
+            }
+            images.append[params_mysql]
+            
+        # Add valid images to main Database
+        process_jp2_images(images, self.image_archive, cursor)
 
     def acquire(self, urls):
         """Acquires all the available files."""
