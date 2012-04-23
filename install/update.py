@@ -14,9 +14,9 @@ to run update.py.
 import sys
 import os
 import shutil
-from shared.jp2 import find_images, process_jp2_images
-from shared.util import init_logger
-from shared.db  import get_db_cursor
+from helioviewer.jp2 import find_images, process_jp2_images
+from helioviewer.db  import get_db_cursor
+from helioviewer import init_logger
 from optparse import OptionParser, IndentedHelpFormatter
 
 def main(argv):

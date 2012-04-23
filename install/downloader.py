@@ -2,7 +2,9 @@
 #-*- coding:utf-8 -*-
 """Helioviewer.org JP2 Download Daemon (HVPull)
 Code to pull files from remote and local locations
+
 Terminology:
+
 servers: locations that provide data available for download
 browsers: methods of browsing the data available at a 'server'
 downloaders: methods of acquiring data from a 'server'
@@ -22,8 +24,8 @@ import signal
 import logging
 import argparse
 import ConfigParser
-from shared.util import init_logger
-from hvpull.net.daemon import ImageRetrievalDaemon
+from helioviewer import init_logger
+from helioviewer.downloader.net.daemon import ImageRetrievalDaemon
 
 def main():
     """Main application"""

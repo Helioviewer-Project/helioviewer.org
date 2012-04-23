@@ -73,19 +73,19 @@ class ImageRetrievalDaemon:
 
     def _load_server(self, server):
         """Loads a data server"""
-        cls = self._load_class('hvpull.servers', 
+        cls = self._load_class('downloader.servers', 
                                server, self.get_servers().get(server))
         return cls()
             
     def _load_browser(self, browse_method, uri):
         """Loads a data browser"""
-        cls = self._load_class('hvpull.browser', browse_method, 
+        cls = self._load_class('downloader.browser', browse_method, 
                                self.get_browsers().get(browse_method))
         return cls(uri)
     
     def _load_downloader(self, download_method):
         """Loads a data downloader"""
-        cls = self._load_class('hvpull.downloader', download_method, 
+        cls = self._load_class('downloader.downloader', download_method, 
                                self.get_downloaders().get(download_method))
         downloader = cls(self.image_archive, self.working_dir, 
                          self.server.get_uri(), self.queue)

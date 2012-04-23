@@ -3,7 +3,7 @@
 """
 Helioviewer Database Installation Tool
 
-Last Updated: 2012/01/19
+Last Updated: 2012/04/23
 
 TODO 01/17/2010:
 * Let user specify dbname
@@ -11,7 +11,7 @@ TODO 01/17/2010:
 * Udpate graphical installer to reflect changes to text installer
 """
 import sys
-from shared.util import init_logger
+from helioviewer import init_logger
 
 def main():
     '''Main application access point'''
@@ -19,10 +19,10 @@ def main():
 
     try:
         import PyQt4
-        import installer.gui
-        installer.gui.install()
+        import helioviewer.installer.gui
+        helioviewer.installer.gui.install()
     except Exception as e:
-        from installer.console import HelioviewerConsoleInstaller
+        from helioviewer.installer.console import HelioviewerConsoleInstaller
         app = HelioviewerConsoleInstaller()
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 """Local data browser"""
 import os
-from hvpull.browser.basebrowser import BaseDataBrowser
+from downloader.browser.basebrowser import BaseDataBrowser
 
 class LocalDataBrowser(BaseDataBrowser):
     def __init__(self, uri):
