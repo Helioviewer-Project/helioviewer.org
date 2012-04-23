@@ -22,7 +22,7 @@ def find_images(path):
 
     return images
 
-def process_jp2_images (images, rootdir, cursor, mysql, step_function=None):
+def process_jp2_images (images, rootdir, cursor, mysql=True, step_function=None):
     '''Processes a collection of JPEG 2000 Images'''
     if mysql:
         import MySQLdb
