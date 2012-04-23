@@ -167,7 +167,7 @@ class ImageRetrievalDaemon:
             if os.path.isfile(p):
                 filepaths.append(p)
             
-        # Add to database
+        # Add to hvpull/Helioviewer.org databases
         for filepath in filepaths:
             info = sunpy.read_header(filepath)
             
