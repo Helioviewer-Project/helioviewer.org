@@ -1,5 +1,5 @@
 """LMSAL DataServer definition"""
-from hvpull.servers import DataServer
+from downloader.servers import DataServer
 
 class LMSALDataServer(DataServer):
     """LMSAL Datasource definition"""

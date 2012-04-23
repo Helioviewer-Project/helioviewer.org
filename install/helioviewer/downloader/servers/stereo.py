@@ -1,5 +1,5 @@
 """STEREO DataServer"""
-from hvpull.servers import DataServer
+from downloader.servers import DataServer
 import datetime
 
 class STEREODataServer(DataServer):
