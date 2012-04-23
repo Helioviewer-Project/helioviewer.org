@@ -3,8 +3,8 @@
 import sys
 import os
 import getpass
-from helioviewer.jp2 import *
-from helioviewer.db  import *
+from shared.jp2 import *
+from shared.db  import *
 
 class HelioviewerConsoleInstaller:
     """Text-based installer class"""

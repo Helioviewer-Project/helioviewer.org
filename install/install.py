@@ -16,10 +16,10 @@ def main():
     '''Main application access point'''
     try:
         import PyQt4
-        import helioviewer.installer.gui
-        helioviewer.installer.gui.install()
-    except Exception, e:
-        from helioviewer.installer.console import HelioviewerConsoleInstaller
+        import installer.gui
+        installer.gui.install()
+    except Exception as e:
+        from installer.console import HelioviewerConsoleInstaller
         app = HelioviewerConsoleInstaller()
 
 if __name__ == '__main__':
