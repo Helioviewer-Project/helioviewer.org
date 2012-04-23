@@ -15,12 +15,15 @@ import sys
 import os
 import shutil
 from shared.jp2 import find_images, process_jp2_images
+from shared.util import init_logger
 from shared.db  import get_db_cursor
 from optparse import OptionParser, IndentedHelpFormatter
 
 def main(argv):
     '''Main application access point'''
     options = get_options()
+    
+    init_logger('update.log')
     
     print('Processing Images...')
     
