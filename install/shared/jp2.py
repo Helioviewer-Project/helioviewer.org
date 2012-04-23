@@ -217,31 +217,22 @@ def read_xmlbox(file, root):
 
 def process_jp2_images (images, rootdir, cursor, mysql, step_function=None):
     '''Processes a collection of JPEG 2000 Images'''
-    
     if mysql:
         import MySQLdb
     else:
         import pgdb
 
-    remainder = len(images) % __INSERTS_PER_QUERY__
-
     # Return tree of known data-sources
     sources = get_datasources(cursor)
     
     # Insert images into database, 500 at a time
-    if len(images) >= __INSERTS_PER_QUERY__:
-        for x in range(len(images) // __INSERTS_PER_QUERY__):
-            insert_n_images(images, __INSERTS_PER_QUERY__, sources,
-                          rootdir, cursor, mysql, step_function)
-            
-    # Update tree of known data-sources
-    sources = get_datasources(cursor)
-            
-    # Process remaining images
-    insert_n_images(images, remainder, sources, rootdir, cursor, mysql, step_function)
-
+    while len(images) > 0:
+        subset = images[:__INSERTS_PER_QUERY__]
+        images = images[__INSERTS_PER_QUERY__:]
+        insert_images(subset, __INSERTS_PER_QUERY__, sources, rootdir, cursor, 
+                      mysql, step_function)
     
-def insert_n_images(images, n, sources, rootdir, cursor, mysql, step_function=None):
+def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
     """Inserts multiple images into a database using a single query"""
     
     # 2011/06/27
