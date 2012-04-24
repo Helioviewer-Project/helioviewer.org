@@ -22,7 +22,7 @@ def find_images(path):
 
     return images
 
-def process_jp2_images (images, rootdir, cursor, mysql=True, step_function=None):
+def process_jp2_images (images, root_dir, cursor, mysql=True, step_fxn=None):
     '''Processes a collection of JPEG 2000 Images'''
     if mysql:
         import MySQLdb
@@ -31,29 +31,12 @@ def process_jp2_images (images, rootdir, cursor, mysql=True, step_function=None)
 
     # Return tree of known data-sources
     sources = get_datasources(cursor)
-    
-    valid_images = []
-    
-    # Parse image headers
-    for img in images:
-        print("Processing image: " + img)
 
-        try:
-            meta_info = parse_header(img)
-            meta_info["filepath"] = img
-        except Exception as e:
-            directory, filename = os.path.split(img)
-            logging.error("Unable to process header for %s (%s)\n", filename, e)
-            print("Error processing %s" % filename)
-        else:
-            valid_images.append(meta_info)
-    
     # Insert images into database, 500 at a time
-    while len(valid_images) > 0:
-        subset = valid_images[:__INSERTS_PER_QUERY__]
-        valid_images = valid_images[__INSERTS_PER_QUERY__:]
-        insert_images(subset, __INSERTS_PER_QUERY__, sources, rootdir, cursor, 
-                      mysql, step_function)
+    while len(images) > 0:
+        subset = images[:__INSERTS_PER_QUERY__]
+        images = images[__INSERTS_PER_QUERY__:]
+        insert_images(subset, sources, root_dir, cursor, mysql, step_fxn)
     
 def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
     """Inserts multiple images into a database using a single query

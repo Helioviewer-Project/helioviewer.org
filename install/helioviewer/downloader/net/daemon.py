@@ -60,7 +60,7 @@ class ImageRetrievalDaemon:
         # Initialize databases
         self._init_redis()
 
-    def _init_db(self):
+    def _init_redis(self):
         """Initialise the database"""
         try:
             self._redis = redis.StrictRedis(host=self.redis_host, 
@@ -205,7 +205,7 @@ class ImageRetrievalDaemon:
                 "measurement": info['measurement'],
                 "date_obs": info['date']
             }
-            images.append[params_mysql]
+            images.append(params_mysql)
             
         # Add valid images to main Database
         process_jp2_images(images, self.image_archive, self._db)
@@ -290,7 +290,7 @@ class ImageRetrievalDaemon:
         files = []
         
         # TESTING>>>>>>
-        # measurements = [measurements[1]]
+        #measurements = [measurements[1]]
 
         # Check each remote directory for new files
         for measurement in measurements:
