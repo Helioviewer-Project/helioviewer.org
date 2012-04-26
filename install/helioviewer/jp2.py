@@ -60,7 +60,7 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
 
     # Add images to SQL query
     for img in images:    
-        directory, filename = os.path.split(img)
+        directory, filename = os.path.split(img['filepath'])
 
         path = "/" + os.path.relpath(directory, rootdir)
         
