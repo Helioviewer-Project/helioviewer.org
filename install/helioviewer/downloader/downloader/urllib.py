@@ -34,7 +34,10 @@ class URLLibDownloader(threading.Thread):
             
             # Create sub-directory if it does not already exist
             if not os.path.exists(os.path.dirname(filepath)):
-                os.makedirs(os.path.dirname(filepath))
+                try:
+                    os.makedirs(os.path.dirname(filepath))
+                except OSError:
+                    pass
     
             # TODO: should urlretrieve be used instead?
             remote_file = urlopen(Request(url))

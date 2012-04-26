@@ -148,7 +148,8 @@ class ImageRetrievalDaemon:
             self.acquire(urls)
             
             #time.sleep(self.server.pause.seconds)
-            time.sleep(self.server.pause.seconds)
+            logging.info("Sleeping for %d seconds." % self.server.pause.total_seconds())
+            time.sleep(self.server.pause.total_seconds())
         
         # Shutdown
         self.stop()
@@ -156,89 +157,6 @@ class ImageRetrievalDaemon:
     def stop(self):
         logging.info("Exiting HVPull")
         sys.exit()
-        
-    def ingest(self, urls):
-        """
-        Add images to helioviewer images db.
-          (1) Make sure the file exists
-          (2) Make sure the file is 'good', and quarantine if it is not.
-          (3) Apply the ESA JPIP encoding.
-          (4) Ingest
-          (5) Update database to say that the file has been successfully 
-              'ingested'.
-              
-        """
-        base_url = self.server.get_uri()
-        
-        # Get filepaths
-        filepaths = []
-        images = []
-        
-        for url in urls:
-            p = os.path.join(self.image_archive, url.replace(base_url, ""))
-            if os.path.isfile(p):
-                filepaths.append(p)
-            
-        # Add to hvpull/Helioviewer.org databases
-        for filepath in filepaths:
-            info = sunpy.read_header(filepath)
-            
-            img_counter = self._redis.incr('counter:img_id')
-            img_id = 'img:%s' % os.path.basename(filepath)
-            
-            # Add to Redis
-            params_redis = {
-                "id": img_counter,
-                "timestamp": datetime.datetime.utcnow(),
-                "observatory": info['observatory'],
-                "instrument": info['instrument'],
-                "detector": info['detector'],
-                "measurement": info['measurement'],
-                "date_obs": info['date']
-            }
-            self._redis.hmset(img_id, params_redis)
-            
-            params_mysql = {
-                "observatory": info['observatory'],
-                "instrument": info['instrument'],
-                "detector": info['detector'],
-                "measurement": info['measurement'],
-                "date_obs": info['date']
-            }
-            images.append(params_mysql)
-            
-        # Add valid images to main Database
-        process_jp2_images(images, self.image_archive, self._db)
-
-    def acquire(self, urls):
-        """Acquires all the available files."""
-        # If no new files are available do nothing
-        if not urls:
-            return
-        
-        print("Found %d new files" % len(urls))
-        
-        # Download files
-        while len(urls) > 0:
-            # Download files 20 at a time to avoid blocking shutdown requests
-            for i in range(20): #pylint: disable=W0612
-                if len(urls) > 0:
-                    url = urls.pop()
-                    self.queue.put(url)
-                
-            self.queue.join()
-            
-            if self.shutdown_requested:
-                break
-            
-        self.ingest(urls)
-
-    def shutdown(self):
-        print("Stopping HVPull...")
-        self.shutdown_requested = True
-        
-        for downloader in self.downloaders:
-            downloader.stop()
         
     def query(self, starttime, endtime):
         """Query and retrieve data within the specified range.
@@ -290,7 +208,7 @@ class ImageRetrievalDaemon:
         files = []
         
         # TESTING>>>>>>
-        #measurements = [measurements[1]]
+        measurements = [measurements[2]]
 
         # Check each remote directory for new files
         for measurement in measurements:
@@ -303,7 +221,92 @@ class ImageRetrievalDaemon:
         # Remove any duplicates
         files = list(set(files))
         
+        # TESTING>>>>>>
+        files = files[:50]
+        
         return filter(self._filter_new, files) or None
+        
+    def acquire(self, urls):
+        """Acquires all the available files."""
+        # If no new files are available do nothing
+        if not urls:
+            return
+        
+        print("Found %d new files" % len(urls))
+        
+        finished = []
+        
+        # Download files
+        while len(urls) > 0:
+            # Download files 20 at a time to avoid blocking shutdown requests
+            for i in range(20): #pylint: disable=W0612
+                if len(urls) > 0:
+                    url = urls.pop()
+                    finished.append(url)
+                    self.queue.put(url)
+                
+            self.queue.join()
+            
+            if self.shutdown_requested:
+                break
+            
+        self.ingest(finished)
+        
+    def ingest(self, urls):
+        """
+        Add images to helioviewer images db.
+          (1) Make sure the file exists
+          (2) Make sure the file is 'good', and quarantine if it is not.
+          (3) Apply the ESA JPIP encoding.
+          (4) Ingest
+          (5) Update database to say that the file has been successfully 
+              'ingested'.
+              
+        """
+        base_url = self.server.get_uri()
+        
+        # Get filepaths
+        filepaths = []
+        images = []
+        
+        for url in urls:
+            p = os.path.join(self.image_archive, url.replace(base_url, ""))
+            if os.path.isfile(p):
+                filepaths.append(p)
+            
+        # Add to hvpull/Helioviewer.org databases
+        for filepath in filepaths:
+            info = sunpy.read_header(filepath)
+            
+            info['filepath'] = filepath
+            
+            img_counter = self._redis.incr('counter:img_id')
+            img_id = 'img:%s' % os.path.basename(filepath)
+            
+            # Add to Redis
+            params_redis = {
+                "id": img_counter,
+                "timestamp": datetime.datetime.utcnow(),
+                "observatory": info['observatory'],
+                "instrument": info['instrument'],
+                "detector": info['detector'],
+                "measurement": info['measurement'],
+                "date_obs": info['date']
+            }
+            self._redis.hmset(img_id, params_redis)
+
+            # Add to list to send to main database
+            images.append(info)
+            
+        # Add valid images to main Database
+        process_jp2_images(images, self.image_archive, self._db)
+
+    def shutdown(self):
+        print("Stopping HVPull...")
+        self.shutdown_requested = True
+        
+        for downloader in self.downloaders:
+            downloader.stop()
     
     def _load_class(self, base_package, packagename, classname):
         """Dynamically loads a class given a set of strings indicating its 
