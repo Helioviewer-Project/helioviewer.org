@@ -94,7 +94,7 @@ class Movie_FFMPEGEncoder
         $outputFile = sprintf("%s%s-hq.%s", $this->_directory, $baseFilename, $this->_format);
         
         if ($this->_format == "mp4") {
-            $this->_createH264Video($outputFile, "ultrafast", 15);
+            $this->_createH264Video($outputFile, HV_X264_HQ_PRESET, 15);
         } else if ($this->_format == "webm") {
             $this->_createWebMVideo($outputFile, 1);
         }
@@ -145,10 +145,16 @@ class Movie_FFMPEGEncoder
      * 
      * @return String the filename of the video
      */
-    private function _createH264Video($outputFile, $preset="lossless_fast", $crf=18)
+    private function _createH264Video($outputFile, $preset=HV_X264_PRESET, $crf=18)
     {
+        // Include x264 FFpreset if specified
+        if ($preset) {
+            $ffpreset = "-vpre $preset ";
+        } else {
+            $ffpreset = "";
+        }
         $cmd = HV_FFMPEG . " -r " . $this->_frameRate . " -i " . $this->_directory . "frames/frame%d.bmp"
-            . " -r " . $this->_frameRate . " -vcodec libx264 -vpre $preset " . $this->_getMetaDataString() . "-threads " 
+            . " -r " . $this->_frameRate . " -vcodec libx264 " . $ffpreset . $this->_getMetaDataString() . "-threads " 
             . HV_FFMPEG_MAX_THREADS . " -crf $crf -s " . $this->_width . "x" . $this->_height . " -an -y $outputFile 2>/dev/null";
             
         $this->_logCommand($cmd);
