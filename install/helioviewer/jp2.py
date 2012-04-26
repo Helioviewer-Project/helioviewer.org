@@ -64,6 +64,9 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
 
         path = "/" + os.path.relpath(directory, rootdir)
         
+        # Cast measurement to string
+        img["measurement"] = str(img["measurement"])
+        
         # Data Source
         source = sources[img["observatory"]][img["instrument"]][img["detector"]][img["measurement"]]
         

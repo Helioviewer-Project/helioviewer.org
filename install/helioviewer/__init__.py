@@ -7,10 +7,11 @@ def init_logger(filepath):
     # Check for logging directory
     directory, filename = os.path.split(os.path.expanduser(filepath))
     
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-        
-    os.chdir(directory)
+    if directory is not "":
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            
+        os.chdir(directory)
         
     # TODO: Rotate logs
     # e.g. Move previous log to hvpull.log.1, hvpull.log.1 to hvpull.log.2, etc

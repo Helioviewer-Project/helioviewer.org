@@ -14,6 +14,7 @@ to run update.py.
 import sys
 import os
 import shutil
+import sunpy
 from helioviewer.jp2 import find_images, process_jp2_images
 from helioviewer.db  import get_db_cursor
 from helioviewer import init_logger
@@ -28,29 +29,34 @@ def main(argv):
     print('Processing Images...')
     
     # Get a list of images to process
-    images = find_images(options.source)
+    filepaths = find_images(options.source)
     
-    if len(images) is 0:
+    if len(filepaths) is 0:
         return
 
-    filepaths = []
+    images = []
 
     # Move images to main archive
-    for image in images:
+    for filepath in filepaths:
         dest = os.path.join(options.destination, 
-                            os.path.relpath(image, options.source))
-        filepaths.append(dest)
+                            os.path.relpath(filepath, options.source))
+        
+        # Parse image header
+        image_params = sunpy.read_header(filepath)
+        image_params['filepath'] = dest
+        
+        images.append(image_params)
 
         directory = os.path.dirname(dest)
         
         if not os.path.isdir(directory):
             os.makedirs(directory)
 
-        shutil.move(image, dest)
+        shutil.move(filepath, dest)
     
     # Add images to the database
     cursor = get_db_cursor(options.dbname, options.dbuser, options.dbpass)
-    process_jp2_images(filepaths, options.destination, cursor, True)    
+    process_jp2_images(images, options.destination, cursor, True)    
     cursor.close()
     
     print('Finished!')
