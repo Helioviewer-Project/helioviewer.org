@@ -3,8 +3,8 @@ import os
 from helioviewer.downloader.browser.basebrowser import BaseDataBrowser
 
 class LocalDataBrowser(BaseDataBrowser):
-    def __init__(self, uri):
-        BaseDataBrowser.__init__(self, uri)
+    def __init__(self, server):
+        BaseDataBrowser.__init__(self, server)
 
     def get_directories(self,uri):
         """Get a list of directories at the passed uri"""

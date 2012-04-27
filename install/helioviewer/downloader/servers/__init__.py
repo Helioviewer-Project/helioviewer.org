@@ -4,8 +4,9 @@ import datetime
 
 class DataServer:
     """Class for interacting with data servers."""
-    def __init__(self, uri):
+    def __init__(self, uri, name):
         self.uri = uri
+        self.name = name
         self.pause = datetime.timedelta(minutes=3)
         
         # Example: 2011_11_17__08_13_08_13__SDO_AIA_AIA_304.jp2

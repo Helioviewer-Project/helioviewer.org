@@ -10,12 +10,13 @@ import logging
 import os
 import sunpy
 import Queue
+from random import shuffle
 from helioviewer.jp2 import process_jp2_images
 from helioviewer.db  import get_db_cursor
 
 class ImageRetrievalDaemon:
     """Retrieves images from the server as specified"""
-    def __init__(self, server, browse_method, download_method, conf):
+    def __init__(self, servers, browse_method, download_method, conf):
         """Explain."""
         # MySQL/Postgres info
         self.dbname = conf.get('database', 'dbname')
@@ -37,9 +38,12 @@ class ImageRetrievalDaemon:
         self._check_permissions() 
         
         # Load data server, browser, and downloader
-        self.server = self._load_server(server)
-        self.browser = self._load_browser(browse_method, self.server.get_uri())
+        self.servers = self._load_servers(servers)
         
+        self.browsers = []
+        for server in self.servers:
+            self.browsers.append(self._load_browser(browse_method, server))
+
         # Start downloaders
         self.downloaders = []
         
@@ -58,11 +62,16 @@ class ImageRetrievalDaemon:
                       "settings.cfg and try again...")
                 sys.exit()
 
-    def _load_server(self, server):
+    def _load_servers(self, names):
         """Loads a data server"""
-        cls = self._load_class('helioviewer.downloader.servers', 
-                               server, self.get_servers().get(server))
-        return cls()
+        servers = []
+        
+        for name in names:
+            server = self._load_class('helioviewer.downloader.servers', 
+                                      name, self.get_servers().get(name))
+            servers.append(server())
+        
+        return servers
             
     def _load_browser(self, browse_method, uri):
         """Loads a data browser"""
@@ -143,16 +152,8 @@ class ImageRetrievalDaemon:
         if any new files have appeared since the first execution. This continues
         until no new files are found (for xxx minutes?)
         """
-        # Get the nickname subdirectory list present at the server
-        root_url = self.server.get_uri()
-        nicknames = self.browser.get_directories(root_url)
-
-        # No nicknames found.
-        if nicknames == []:
-            return None
+        files = []
         
-        logging.info("Querying time range %s - %s", starttime, endtime)
-                
         # Get the list of dates
         fmt = "%Y/%m/%d"
         dates = [starttime.strftime(fmt)]
@@ -166,6 +167,34 @@ class ImageRetrievalDaemon:
         dates.sort()
         dates.reverse()
         
+        for browser in self.browsers:
+            logging.info("(%s) Querying time range %s - %s", browser.server.name, 
+                                                             starttime, endtime)
+            files = self.query_server(browser, dates)
+        
+        # Remove duplicate files, randomizing to spread load across servers
+        if len(self.servers) > 1:
+            shuffle(files)
+            
+            for i, filepath in files:
+                filenames = [os.path.basename(x) for x in files[i + 1:]]
+                if os.path.basename(filepath) in filename:
+                    files.pop(i)
+                    
+        # Filter out files that are already in the database
+        files = filter(self._filter_new, files)
+
+        return files
+    
+    def query_server(self, browser, dates):
+        """Queries a single server for new files"""
+        # Get the nickname subdirectory list present at the server
+        nicknames = self.browser.get_directories(self.browser.server.get_uri())
+
+        # No nicknames found.
+        if nicknames == []:
+            return None
+
         # Get the measurement subdirectories present at the server        
         measurements = []
         for nickname in nicknames:
@@ -191,7 +220,8 @@ class ImageRetrievalDaemon:
         for measurement in measurements:
             if self.shutdown_requested:
                 return            
-            logging.info('Scanning ' + measurement)
+            logging.info('(%s) Scanning %s' % (browser.server.name, 
+                                               str(measurement)))
             matches = self.browser.get_files(measurement, "jp2")
             files.extend(matches)
 
@@ -201,7 +231,7 @@ class ImageRetrievalDaemon:
         # TESTING>>>>>>
         files = files[:50]
         
-        return filter(self._filter_new, files) or None
+        return files
         
     def acquire(self, urls):
         """Acquires all the available files."""
@@ -292,7 +322,8 @@ class ImageRetrievalDaemon:
         return {
             "lmsal": "LMSALDataServer",
             "soho": "SOHODataServer",
-            "stereo": "STEREODataServer"
+            "stereo": "STEREODataServer",
+            "jsoc": "JSOCDataServer"
         }
         
     @classmethod

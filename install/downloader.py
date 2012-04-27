@@ -6,15 +6,15 @@ Code to pull files from remote and local locations
 Terminology:
 
 servers: locations that provide data available for download
-browsers: methods of browsing the data available at a 'server'
-downloaders: methods of acquiring data from a 'server'
+browsers: methods of browsing the data available at a server
+downloaders: methods of acquiring data from a server
 
-The user specifies a server, a browse method, and a download method.
-The code then browses the server and collects information on the
+The user specifies one or more servers, a browse method, and a download method.
+The code then browses the servers and collects information on the
 data available.  The user can then define what is to be done with the
-data at the server.  For example, we can download the difference
+data at the servers.  For example, we can download the difference
 between the data that has already been downloaded compared to the data
-on the server.  We could also specify that a certain range of data
+on the servers.  We could also specify that a certain range of data
 has to be re-downloaded again, over-writing previous data.
 
 """
@@ -44,7 +44,7 @@ def main():
     init_logger(logfile)
     
     # Initialize daemon
-    daemon = ImageRetrievalDaemon(args.server, args.browse_method,
+    daemon = ImageRetrievalDaemon(args.servers, args.browse_method,
                                   args.download_method, conf)
 
     # Signal handlers
@@ -78,12 +78,12 @@ def get_config(filepath):
 def get_args():
     parser = argparse.ArgumentParser(description='Retrieves JPEG 2000 images.', add_help=False)
     parser.add_argument('-h', '--help', help='Show this help message and exit', action='store_true')
-    parser.add_argument('-d', '--data-server', dest='server', 
-                        help='Data server from which data should be retrieved', default='lmsal')
+    parser.add_argument('-d', '--data-servers', dest='servers', 
+                        help='Data servers from which data should be retrieved', default='lmsal')
     parser.add_argument('-b', '--browse-method', dest='browse_method', default='http',
-                        help='Method for locating files on server (default: http)')
+                        help='Method for locating files on servers (default: http)')
     parser.add_argument('-m', '--download-method', dest='download_method', default='urllib',
-                        help='Method for retrieving files on server (default: urllib)')
+                        help='Method for retrieving files on servers (default: urllib)')
     parser.add_argument('-s', '--start', metavar='date', dest='start', 
                         help='Search for data with observation times later than this date/time (default: 24 hours ago)')
     parser.add_argument('-e', '--end', metavar='date', dest='end',
@@ -102,16 +102,20 @@ def get_args():
     # Append browser to browse_method
     args.browse_method += "browser"
     
+    # Parse servers
+    args.servers = args.servers.split(",")
+    
     return args
 
 def validate_args(args, servers, browsers, downloaders):
     """Validate arguments"""
-    if args.server not in servers:
-        print "Invalid data server specified. Valid server choices include:"
-        for i in servers.keys():
-            print i
-        sys.exit()
-    elif args.browse_method not in browsers:
+    for server in args.servers:
+        if args.servers not in servers:
+            print "Invalid data server specified. Valid server choices include:"
+            for i in servers.keys():
+                print i
+            sys.exit()
+    if args.browse_method not in browsers:
         print "Invalid browse method specified. Valid browse methods include:"
         for i in browsers.keys():
             print i
