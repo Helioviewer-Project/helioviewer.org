@@ -5,7 +5,7 @@ import threading
 from urllib2 import urlopen, Request # URLError, HTTPError
 
 class URLLibDownloader(threading.Thread):
-    def __init__(self, image_archive, working_dir, base_url, queue):
+    def __init__(self, image_archive, working_dir, queue):
         """Creates a new URLLibDownloader"""
         threading.Thread.__init__(self)
         
@@ -13,7 +13,6 @@ class URLLibDownloader(threading.Thread):
         
         self.image_archive = image_archive
         self.working_dir = working_dir
-        self.base_url = base_url
         self.queue = queue
         self.quarantine = os.path.join(self.working_dir, 'quarantine')
         
@@ -28,9 +27,10 @@ class URLLibDownloader(threading.Thread):
         while not self.shutdown_requested:
             url = self.queue.get()
             
+            # @TODO: compute path to download file to...
+            
             # Location to save file to
-            filepath = os.path.join(self.image_archive, 
-                                    url.replace(self.base_url, ""))
+            filepath = os.path.join(self.image_archive, os.path.basename(url))
             
             # Create sub-directory if it does not already exist
             if not os.path.exists(os.path.dirname(filepath)):

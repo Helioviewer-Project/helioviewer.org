@@ -110,7 +110,7 @@ def get_args():
 def validate_args(args, servers, browsers, downloaders):
     """Validate arguments"""
     for server in args.servers:
-        if args.servers not in servers:
+        if server not in servers:
             print "Invalid data server specified. Valid server choices include:"
             for i in servers.keys():
                 print i

@@ -83,8 +83,7 @@ class ImageRetrievalDaemon:
         """Loads a data downloader"""
         cls = self._load_class('helioviewer.downloader.downloader', download_method, 
                                self.get_downloaders().get(download_method))
-        downloader = cls(self.image_archive, self.working_dir, 
-                         self.server.get_uri(), self.queue)
+        downloader = cls(self.image_archive, self.working_dir, self.queue)
         
         downloader.setDaemon(True)
         downloader.start()
@@ -103,11 +102,14 @@ class ImageRetrievalDaemon:
         # @TODO: Process urls in batches of ~1-500.. this way images start
         # appearing more quickly when filling in large gaps, etc.
         
+        # @TODO: Redo handling of server-specific start time and pause
+        # time
+        
         # Determine starttime to use
         if starttime is not None:
             starttime = datetime.datetime.strptime(starttime, date_fmt)
         else:
-            starttime = self.server.get_starttime()
+            starttime = self.servers[0].get_starttime()
             
         # If end time is specified, fill in data from start to end
         if endtime is not None:
@@ -125,7 +127,7 @@ class ImageRetrievalDaemon:
         # Begin main loop
         while not self.shutdown_requested:
             now = datetime.datetime.utcnow()
-            starttime = self.server.get_starttime()
+            starttime = self.servers[0].get_starttime()
             
             # get a list of files available
             urls = self.query(starttime, now)
@@ -134,8 +136,8 @@ class ImageRetrievalDaemon:
             self.acquire(urls)
             
             #time.sleep(self.server.pause.seconds)
-            logging.info("Sleeping for %d seconds." % self.server.pause.total_seconds())
-            time.sleep(self.server.pause.total_seconds())
+            logging.info("Sleeping for %d seconds." % self.servers[0].pause.total_seconds())
+            time.sleep(self.servers[0].pause.total_seconds())
         
         # Shutdown
         self.stop()
@@ -170,7 +172,7 @@ class ImageRetrievalDaemon:
         for browser in self.browsers:
             logging.info("(%s) Querying time range %s - %s", browser.server.name, 
                                                              starttime, endtime)
-            files = self.query_server(browser, dates)
+            files += self.query_server(browser, dates)
         
         # Remove duplicate files, randomizing to spread load across servers
         if len(self.servers) > 1:
@@ -189,7 +191,7 @@ class ImageRetrievalDaemon:
     def query_server(self, browser, dates):
         """Queries a single server for new files"""
         # Get the nickname subdirectory list present at the server
-        nicknames = self.browser.get_directories(self.browser.server.get_uri())
+        nicknames = browser.get_directories(browser.server.get_uri())
 
         # No nicknames found.
         if nicknames == []:
@@ -200,8 +202,12 @@ class ImageRetrievalDaemon:
         for nickname in nicknames:
             for date in dates:
                 location = os.path.join(nickname, date)
-                measurement = self.browser.get_directories(location)
-                measurements.extend(measurement)
+                try:
+                    # If data exists for that day, include files
+                    measurement = browser.get_directories(location)
+                    measurements.extend(measurement)
+                except IOError:
+                    continue
 
         # No measurements found
         if measurements == []:
@@ -222,7 +228,7 @@ class ImageRetrievalDaemon:
                 return            
             logging.info('(%s) Scanning %s' % (browser.server.name, 
                                                str(measurement)))
-            matches = self.browser.get_files(measurement, "jp2")
+            matches = browser.get_files(measurement, "jp2")
             files.extend(matches)
 
         # Remove any duplicates
@@ -269,14 +275,12 @@ class ImageRetrievalDaemon:
           (5) Update database to say that the file has been successfully 
               'ingested'.
         """
-        base_url = self.server.get_uri()
-        
         # Get filepaths
         filepaths = []
         images = []
         
         for url in urls:
-            p = os.path.join(self.image_archive, url.replace(base_url, ""))
+            p = os.path.join(self.image_archive, os.path.basename(url)) # @TODO: Better path computation
             if os.path.isfile(p):
                 filepaths.append(p)
             
