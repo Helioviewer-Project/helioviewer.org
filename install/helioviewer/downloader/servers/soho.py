@@ -5,7 +5,7 @@ import datetime
 class SOHODataServer(DataServer):
     def __init__(self):
         """EXPLAIN"""
-        DataServer.__init__(self, "/home/ireland/download_test")
+        DataServer.__init__(self, "/home/ireland/download_test", "JSOC")
         self.pause = datetime.timedelta(minutes=30)
     
     def get_starttime(self):

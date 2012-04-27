@@ -1,8 +1,8 @@
 """Base data browser definition"""
 class BaseDataBrowser:
     """BaseDataBrowser"""
-    def __init__(self, uri):
-        self.uri = uri
+    def __init__(self, server):
+        self.server = server
 
     def get_directories(self, uri):
         """Get a list of directories at the root of the dataprovider.  We
