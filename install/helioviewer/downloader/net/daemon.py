@@ -8,7 +8,6 @@ import datetime
 import time
 import logging
 import os
-import redis
 import sunpy
 import Queue
 from helioviewer.jp2 import process_jp2_images
@@ -18,13 +17,6 @@ class ImageRetrievalDaemon:
     """Retrieves images from the server as specified"""
     def __init__(self, server, browse_method, download_method, conf):
         """Explain."""
-        # Redis info
-        self.redis_host = conf.get('redis', 'host')
-        self.redis_port = conf.getint('redis', 'port')
-        self.redis_dbnum = conf.get('redis', 'database')
-        
-        self._redis = None
-        
         # MySQL/Postgres info
         self.dbname = conf.get('database', 'dbname')
         self.dbuser = conf.get('database', 'user')
@@ -34,7 +26,7 @@ class ImageRetrievalDaemon:
         
         # Maximum number of simultaneous downloads
         self.queue = Queue.Queue()
-        self.max_downloads = conf.getint('net', 'max_downloads')
+        self.max_downloads = conf.getint('network', 'max_downloads')
         
         # Filepaths
         self.working_dir = os.path.expanduser(conf.get('directories',
@@ -56,21 +48,6 @@ class ImageRetrievalDaemon:
 
         # Shutdown switch
         self.shutdown_requested = False
-        
-        # Initialize databases
-        self._init_redis()
-
-    def _init_redis(self):
-        """Initialise the database"""
-        try:
-            self._redis = redis.StrictRedis(host=self.redis_host, 
-                                         port=self.redis_port, 
-                                         db=self.redis_dbnum)
-            self._redis.ping()
-        except redis.ConnectionError:
-            logging.error('Unable to connect to Redis. Is redis running?')
-            print("Please start redis and try again...")
-            sys.exit()
 
     def _check_permissions(self):
         """Checks to make sure we have write permissions to directories"""
@@ -261,7 +238,6 @@ class ImageRetrievalDaemon:
           (4) Ingest
           (5) Update database to say that the file has been successfully 
               'ingested'.
-              
         """
         base_url = self.server.get_uri()
         
@@ -276,27 +252,11 @@ class ImageRetrievalDaemon:
             
         # Add to hvpull/Helioviewer.org databases
         for filepath in filepaths:
-            info = sunpy.read_header(filepath)
-            
-            info['filepath'] = filepath
-            
-            img_counter = self._redis.incr('counter:img_id')
-            img_id = 'img:%s' % os.path.basename(filepath)
-            
-            # Add to Redis
-            params_redis = {
-                "id": img_counter,
-                "timestamp": datetime.datetime.utcnow(),
-                "observatory": info['observatory'],
-                "instrument": info['instrument'],
-                "detector": info['detector'],
-                "measurement": info['measurement'],
-                "date_obs": info['date']
-            }
-            self._redis.hmset(img_id, params_redis)
+            image_params = sunpy.read_header(filepath)
+            image_params['filepath'] = filepath
 
             # Add to list to send to main database
-            images.append(info)
+            images.append(image_params)
             
         # Add valid images to main Database
         process_jp2_images(images, self.image_archive, self._db)
@@ -322,7 +282,9 @@ class ImageRetrievalDaemon:
         """For a given list of remote files determines which ones have not
         yet been acquired."""
         filename = os.path.basename(url)
-        return not self._redis.exists("img:%s" % filename)
+        self._db.execute("SELECT COUNT(*) FROM images WHERE filename='%s'" % 
+                         filename)
+        return self._db.fetchone()[0] == 0
     
     @classmethod
     def get_servers(cls):
