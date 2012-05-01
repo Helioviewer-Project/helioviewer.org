@@ -29,13 +29,16 @@ class ImageRetrievalDaemon:
         self.queue = Queue.Queue()
         self.max_downloads = conf.getint('network', 'max_downloads')
         
-        # Filepaths
+        # Directories
         self.working_dir = os.path.expanduser(conf.get('directories',
                                                        'working_dir'))
         self.image_archive = os.path.expanduser(conf.get('directories',
                                                          'image_archive'))
+        self.incoming = os.path.join(self.working_dir, 'incoming')
+        self.quarantine = os.path.join(self.working_dir, 'quarantine')
+        
         # Check directory permission
-        self._check_permissions() 
+        self._init_directories() 
         
         # Load data server, browser, and downloader
         self.servers = self._load_servers(servers)
@@ -230,13 +233,15 @@ class ImageRetrievalDaemon:
         for downloader in self.downloaders:
             downloader.stop()
             
-    def _check_permissions(self):
-        """Checks to make sure we have write permissions to directories"""
-        for d in [self.working_dir, self.image_archive]:
-            if not (os.path.isdir(d) and os.access(d, os.W_OK)):
-                print("Unable to write to specified directories. "
-                      "Please check permissions for locations listed in "
-                      "settings.cfg and try again...")
+    def _init_directories(self):
+        """Checks to see if working directories exists and attempts to create
+        them if they do not."""
+        for d in [self.working_dir, self.image_archive, self.incoming, self.quarantine]:
+            if not os.path.exists(d):
+                os.makedirs(d)
+            elif not (os.path.isdir(d) and os.access(d, os.W_OK)):
+                print("Unable to write to specified directories specified in "
+                      "settings.cfg.")
                 sys.exit()
 
     def _load_servers(self, names):
@@ -260,7 +265,7 @@ class ImageRetrievalDaemon:
         """Loads a data downloader"""
         cls = self._load_class('helioviewer.downloader.downloader', download_method, 
                                self.get_downloaders().get(download_method))
-        downloader = cls(self.image_archive, self.working_dir, self.queue)
+        downloader = cls(self.incoming, self.queue)
         
         downloader.setDaemon(True)
         downloader.start()
