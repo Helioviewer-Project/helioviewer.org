@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title>Helioviewer.org - Recent Videos</title>
     <link rel="stylesheet" href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" />
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/mobile/latest/jquery.mobile.js"></script>
 </head>
 <body>
@@ -20,15 +20,14 @@
         <!--<a href="#page=2" data-icon="arrow-r" class="ui-btn-right">Next</a>-->
     </div> 
     </div>
-    <script type="text/javascript" src="../src/Utility/HelperFunctions.js"></script>
+    <script type="text/javascript" src="../src/js/Utility/HelperFunctions.js"></script>
     <script type="text/javascript">
         $(function () {
             var params, callback, $videos = $("#videos");
             
             params = {
                 "action": "getUserVideos",
-                "pageSize": 20,
-                "pageNum": 1
+                "num": 30
             };
             
             callback = function (videos) {
