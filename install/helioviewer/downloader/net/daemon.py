@@ -8,6 +8,7 @@ import datetime
 import time
 import logging
 import os
+import shutil
 import sunpy
 import Queue
 from random import shuffle
@@ -182,8 +183,8 @@ class ImageRetrievalDaemon:
         
         # Download files
         while len(urls) > 0:
-            # Download files 20 at a time to avoid blocking shutdown requests
-            for i in range(20): #pylint: disable=W0612
+            # Download files 30 at a time to avoid blocking shutdown requests
+            for i in range(30): #pylint: disable=W0612
                 if len(urls) > 0:
                     url = urls.pop()
                     finished.append(url)
@@ -211,14 +212,24 @@ class ImageRetrievalDaemon:
         images = []
         
         for url in urls:
-            p = os.path.join(self.image_archive, os.path.basename(url)) # @TODO: Better path computation
-            if os.path.isfile(p):
-                filepaths.append(p)
+            path = os.path.join(self.incoming, os.path.basename(url)) # @TODO: Better path computation
+            if os.path.isfile(path):
+                filepaths.append(path)
             
         # Add to hvpull/Helioviewer.org databases
         for filepath in filepaths:
             image_params = sunpy.read_header(filepath)
-            image_params['filepath'] = filepath
+            
+            # If everything looks good, move to archive and add to database
+            date_str = image_params['date'].strftime('%Y/%m/%d')
+            
+            # Destination filepath
+            dest = os.path.join(self.image_archive, image_params['nickname'],
+                                date_str, str(image_params['measurement']))
+            image_params['filepath'] = dest
+            
+            # Move to archive
+            shutil.move(filepath, dest)
 
             # Add to list to send to main database
             images.append(image_params)
