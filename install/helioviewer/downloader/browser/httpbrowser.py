@@ -7,13 +7,14 @@ from helioviewer.downloader.browser.basebrowser import BaseDataBrowser
 class HTTPDataBrowser(BaseDataBrowser):
     def __init__(self, server):
         BaseDataBrowser.__init__(self, server)
+        
+    def get_directories(self, start_date, end_date):
+        """Generates a list of remote directories which may be queried
+        for files corresponding to the requested range. Note that these
+        directories do not necessarily exist on the remote server."""
+        # filter(lambda url: url.endswith("/"), self._query(location))
+        return self.server.compute_directories(start_date, end_date)
 
-    def get_directories(self, location):
-        """Get a list of directories at the root of the dataprovider.  
-        We assume that these directories are in fact a list of instrument
-        nicknames."""
-        return filter(lambda url: url.endswith("/"), self._query(location))
-    
     def get_files(self, location, extension):
         """Get all the files that end with specified extension at the uri"""
         return filter(lambda url: url.endswith("." + extension), 

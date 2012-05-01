@@ -53,43 +53,6 @@ class ImageRetrievalDaemon:
         # Shutdown switch
         self.shutdown_requested = False
 
-    def _check_permissions(self):
-        """Checks to make sure we have write permissions to directories"""
-        for d in [self.working_dir, self.image_archive]:
-            if not (os.path.isdir(d) and os.access(d, os.W_OK)):
-                print("Unable to write to specified directories. "
-                      "Please check permissions for locations listed in "
-                      "settings.cfg and try again...")
-                sys.exit()
-
-    def _load_servers(self, names):
-        """Loads a data server"""
-        servers = []
-        
-        for name in names:
-            server = self._load_class('helioviewer.downloader.servers', 
-                                      name, self.get_servers().get(name))
-            servers.append(server())
-        
-        return servers
-            
-    def _load_browser(self, browse_method, uri):
-        """Loads a data browser"""
-        cls = self._load_class('helioviewer.downloader.browser', browse_method, 
-                               self.get_browsers().get(browse_method))
-        return cls(uri)
-    
-    def _load_downloader(self, download_method):
-        """Loads a data downloader"""
-        cls = self._load_class('helioviewer.downloader.downloader', download_method, 
-                               self.get_downloaders().get(download_method))
-        downloader = cls(self.image_archive, self.working_dir, self.queue)
-        
-        downloader.setDaemon(True)
-        downloader.start()
-
-        return downloader
-        
     def start(self, starttime=None, endtime=None):
         """Start daemon operation."""
         logging.info("Initializing HVPull")
@@ -156,84 +119,49 @@ class ImageRetrievalDaemon:
         """
         files = []
         
-        # Get the list of dates
-        fmt = "%Y/%m/%d"
-        dates = [starttime.strftime(fmt)]
-
-        date = starttime.date()
-        while date < endtime.date():
-            date = date + datetime.timedelta(days=1)
-            dates.append(date.strftime(fmt))
-        
-        # Ensure the dates are most recent first
-        dates.sort()
-        dates.reverse()
-        
         for browser in self.browsers:
             logging.info("(%s) Querying time range %s - %s", browser.server.name, 
                                                              starttime, endtime)
-            files += self.query_server(browser, dates)
+            files += self.query_server(browser, starttime, endtime)
         
         # Remove duplicate files, randomizing to spread load across servers
         if len(self.servers) > 1:
             shuffle(files)
             
-            for i, filepath in files:
-                filenames = [os.path.basename(x) for x in files[i + 1:]]
-                if os.path.basename(filepath) in filename:
+            filenames = [os.path.basename(x) for x in files]
+            
+            for i, filepath in enumerate(files):
+                if os.path.basename(filepath) in filenames[i + 1:]:
                     files.pop(i)
                     
         # Filter out files that are already in the database
         files = filter(self._filter_new, files)
 
+        # Ensure the dates are most recent first
+        files.sort()
+        files.reverse()
+
         return files
     
-    def query_server(self, browser, dates):
+    def query_server(self, browser, starttime, endtime):
         """Queries a single server for new files"""
         # Get the nickname subdirectory list present at the server
-        nicknames = browser.get_directories(browser.server.get_uri())
-
-        # No nicknames found.
-        if nicknames == []:
-            return None
-
-        # Get the measurement subdirectories present at the server        
-        measurements = []
-        for nickname in nicknames:
-            for date in dates:
-                location = os.path.join(nickname, date)
-                try:
-                    # If data exists for that day, include files
-                    measurement = browser.get_directories(location)
-                    measurements.extend(measurement)
-                except IOError:
-                    continue
-
-        # No measurements found
-        if measurements == []:
-            return None
-
-        # Get all the unique measurements
-        measurements = list(set(measurements))
+        directories = browser.get_directories(starttime, endtime)
 
         # Get a sorted list of available JP2 files via browser
         files = []
         
         # TESTING>>>>>>
-        measurements = [measurements[2]]
+        directories = [directories[3]]
 
         # Check each remote directory for new files
-        for measurement in measurements:
+        for directory in directories:
             if self.shutdown_requested:
-                return            
-            logging.info('(%s) Scanning %s' % (browser.server.name, 
-                                               str(measurement)))
-            matches = browser.get_files(measurement, "jp2")
+                return []
+            logging.info('(%s) Scanning %s' % (browser.server.name, directory))
+            matches = browser.get_files(directory, "jp2")
             files.extend(matches)
 
-        # Remove any duplicates
-        files = list(set(files))
-        
         # TESTING>>>>>>
         files = files[:50]
         
@@ -301,6 +229,43 @@ class ImageRetrievalDaemon:
         
         for downloader in self.downloaders:
             downloader.stop()
+            
+    def _check_permissions(self):
+        """Checks to make sure we have write permissions to directories"""
+        for d in [self.working_dir, self.image_archive]:
+            if not (os.path.isdir(d) and os.access(d, os.W_OK)):
+                print("Unable to write to specified directories. "
+                      "Please check permissions for locations listed in "
+                      "settings.cfg and try again...")
+                sys.exit()
+
+    def _load_servers(self, names):
+        """Loads a data server"""
+        servers = []
+        
+        for name in names:
+            server = self._load_class('helioviewer.downloader.servers', 
+                                      name, self.get_servers().get(name))
+            servers.append(server())
+        
+        return servers
+            
+    def _load_browser(self, browse_method, uri):
+        """Loads a data browser"""
+        cls = self._load_class('helioviewer.downloader.browser', browse_method, 
+                               self.get_browsers().get(browse_method))
+        return cls(uri)
+    
+    def _load_downloader(self, download_method):
+        """Loads a data downloader"""
+        cls = self._load_class('helioviewer.downloader.downloader', download_method, 
+                               self.get_downloaders().get(download_method))
+        downloader = cls(self.image_archive, self.working_dir, self.queue)
+        
+        downloader.setDaemon(True)
+        downloader.start()
+
+        return downloader
     
     def _load_class(self, base_package, packagename, classname):
         """Dynamically loads a class given a set of strings indicating its 

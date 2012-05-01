@@ -16,14 +16,30 @@ class DataServer:
             "(?P<microsec>\d{2,3})__" +
             "(?P<obs>[a-zA-Z0-9]{3})_(?P<inst>[a-zA-Z0-9]{3})_" +
             "(?P<det>[a-zA-Z0-9]{3})_(?P<meas>[a-zA-Z0-9]{2,11})\.jp2$")
+        
+    def compute_directories(self, start_date, end_date):
+        """Creates a list of possible directories containing new files"""
+        return []
 
     def get_starttime(self):
         """Default start time to use when retrieving data"""
         return datetime.datetime.utcnow() - datetime.timedelta(days=1)
    
-    def get_dates(self, start, end):
+    def get_dates(self, starttime, endtime):
         """Get a complete list of dates between the start and the end time"""
-        return None
+        fmt = "%Y/%m/%d"
+        dates = [starttime.strftime(fmt)]
+
+        date = starttime.date()
+        while date < endtime.date():
+            date = date + datetime.timedelta(days=1)
+            dates.append(date.strftime(fmt))
+        
+        # Ensure the dates are most recent first
+        dates.sort()
+        dates.reverse()
+        
+        return dates
     
     def get_file_regex(self):
         """Returns a regex which described the expected format of filenames on
