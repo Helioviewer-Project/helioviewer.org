@@ -221,6 +221,15 @@ class Image_SubFieldImage
      */
     protected function build()
     {
+        /* 
+         * Need to extend the time limit that writeImage() can use so it 
+         * doesn't throw fatal errors when movie frames are being made. 
+         * It seems that even if this particular instance of writeImage 
+         * doesn't take the  full time frame, if several instances of it are 
+         * running PHP will complain.
+         */
+        set_time_limit(600);
+        
         try {
             // Choose extension to convert source image to
             if ($this->options['palettedJP2']) {
