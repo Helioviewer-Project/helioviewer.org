@@ -25,7 +25,7 @@ import logging
 import argparse
 import ConfigParser
 from helioviewer import init_logger
-from helioviewer.downloader.net.daemon import ImageRetrievalDaemon
+from helioviewer.hvpull.net.daemon import ImageRetrievalDaemon
 
 def main():
     """Main application"""
