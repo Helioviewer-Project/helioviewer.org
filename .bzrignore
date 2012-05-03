@@ -29,3 +29,4 @@ php_errors.log
 .gnupg
 cache
 settings/settings.cfg
+settings.cfg
