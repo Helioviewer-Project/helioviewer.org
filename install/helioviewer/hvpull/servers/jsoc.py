@@ -1,6 +1,6 @@
 """JSOC DataServer definition"""
 import os
-from helioviewer.downloader.servers import DataServer
+from helioviewer.hvpull.servers import DataServer
 
 class JSOCDataServer(DataServer):
     """JSOC Datasource at Stanford University"""
@@ -10,12 +10,12 @@ class JSOCDataServer(DataServer):
         
     def compute_directories(self, start_date, end_date):
         """Computes a list of remote directories expected to contain files"""
-        directories = []
+        dirs = []
         
-        measurements = [94, 131, 171, 193, 211, 304, 335, 1600, 1700, 45000]
+        aia_wavelengths = [94, 131, 171, 193, 211, 304, 335, 1600, 1700, 4500]
         
         for date in self.get_dates(start_date, end_date):
-            for meas in measurements:
-                directories.append(os.path.join(self.uri, date, str(meas)))
+            for meas in aia_wavelengths:
+                dirs.append(os.path.join(self.uri, date, str(meas)))
                 
-        return directories
+        return dirs

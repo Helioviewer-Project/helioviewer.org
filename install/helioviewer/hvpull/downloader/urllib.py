@@ -2,7 +2,7 @@
 import os
 import logging
 import threading
-from urllib2 import urlopen, Request # URLError, HTTPError
+from urllib2 import urlopen, Request, URLError, HTTPError
 
 class URLLibDownloader(threading.Thread):
     def __init__(self, incoming, queue):
@@ -33,17 +33,26 @@ class URLLibDownloader(threading.Thread):
                 except OSError:
                     pass
     
-            # TODO: should urlretrieve be used instead?
-            remote_file = urlopen(Request(url))
-            
-            logging.info("Downloading " + os.path.basename(filepath))
-            
-            # Open our local file for writing
-            local_file = open(filepath, "wb")
-            
             #Write to our local file
-            local_file.write(remote_file.read())
-            local_file.close()
+            try:
+                # TODO: should urlretrieve be used instead?
+                remote_file = urlopen(Request(url))
+                
+                #logging.info("Downloading " + os.path.basename(filepath))
+                logging.info("Downloading " + url)
+
+                file_contents = remote_file.read()
+            except URLError:
+                # If download fails, add back into queue and try again later
+                print("failed for file %s " % url)
+                self.queue.put(url)
+            except:
+                print("failed for file %s " % url) 
+            else:
+                # Open our local file for writing
+                local_file = open(filepath, "wb")
+                local_file.write(file_contents)
+                local_file.close()            
             
             self.queue.task_done()
     

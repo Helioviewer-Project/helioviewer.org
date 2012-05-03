@@ -45,14 +45,14 @@ class ImageRetrievalDaemon:
         self.servers = self._load_servers(servers)
         
         self.browsers = []
-        for server in self.servers:
-            self.browsers.append(self._load_browser(browse_method, server))
-
-        # Start downloaders
         self.downloaders = []
         
-        for i in range(self.max_downloads):
-            self.downloaders.append(self._load_downloader(download_method))
+        # For each server instantiate a browser and one or more downloaders
+        for server in self.servers:
+            self.browsers.append(self._load_browser(browse_method, server))
+            
+            self.downloaders.append([self._load_downloader(download_method) 
+                                     for i in range(self.max_downloads)])
 
         # Shutdown switch
         self.shutdown_requested = False
@@ -121,31 +121,27 @@ class ImageRetrievalDaemon:
         if any new files have appeared since the first execution. This continues
         until no new files are found (for xxx minutes?)
         """
-        files = []
+        urls = []
+        
+        logging.info("Querying time range %s - %s", starttime, endtime)
         
         for browser in self.browsers:
-            logging.info("(%s) Querying time range %s - %s", browser.server.name, 
-                                                             starttime, endtime)
-            files += self.query_server(browser, starttime, endtime)
+            matches = self.query_server(browser, starttime, endtime)
+            
+            if len(matches) > 0:
+                urls.append(matches)
         
         # Remove duplicate files, randomizing to spread load across servers
-        if len(self.servers) > 1:
-            shuffle(files)
-            
-            filenames = [os.path.basename(x) for x in files]
-            
-            for i, filepath in enumerate(files):
-                if os.path.basename(filepath) in filenames[i + 1:]:
-                    files.pop(i)
+        if len(urls) > 1:
+            urls = self._deduplicate(urls)
                     
         # Filter out files that are already in the database
-        files = filter(self._filter_new, files)
+        new_urls = []
+        
+        for url_list in urls:
+            new_urls.append(filter(self._filter_new, url_list))
 
-        # Ensure the dates are most recent first
-        files.sort()
-        files.reverse()
-
-        return files
+        return new_urls
     
     def query_server(self, browser, starttime, endtime):
         """Queries a single server for new files"""
@@ -156,7 +152,7 @@ class ImageRetrievalDaemon:
         files = []
         
         # TESTING>>>>>>
-        directories = [directories[3]]
+        directories = directories[:3]
 
         # Check each remote directory for new files
         for directory in directories:
@@ -167,7 +163,7 @@ class ImageRetrievalDaemon:
             files.extend(matches)
 
         # TESTING>>>>>>
-        files = files[:50]
+        files = files[:100]
         
         return files
         
@@ -177,18 +173,23 @@ class ImageRetrievalDaemon:
         if not urls:
             return
         
-        print("Found %d new files" % len(urls))
+        n = sum(len(x) for x in urls)
+        
+        print("Found %d new files" % n)
         
         finished = []
         
         # Download files
-        while len(urls) > 0:
+        n = sum(len(x) for x in urls)
+        
+        while n > 0:
             # Download files 30 at a time to avoid blocking shutdown requests
-            for i in range(30): #pylint: disable=W0612
-                if len(urls) > 0:
-                    url = urls.pop()
-                    finished.append(url)
-                    self.queue.put(url)
+            for server in urls:
+                for i in range(30): #pylint: disable=W0612
+                    if len(server) > 0:
+                        url = server.pop()
+                        finished.append(url)
+                        self.queue.put(url)
                 
             self.queue.join()
             
@@ -223,12 +224,19 @@ class ImageRetrievalDaemon:
             # If everything looks good, move to archive and add to database
             date_str = image_params['date'].strftime('%Y/%m/%d')
             
-            # Destination filepath
-            dest = os.path.join(self.image_archive, image_params['nickname'],
-                                date_str, str(image_params['measurement']))
-            image_params['filepath'] = dest
-            
             # Move to archive
+            filename = os.path.basename(filepath)
+            
+            # Destination filepath
+            directory = os.path.join(self.image_archive, 
+                                     image_params['nickname'], date_str, 
+                                     str(image_params['measurement']))
+            dest = os.path.join(directory, filename)
+
+            image_params['filepath'] = dest
+
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             shutil.move(filepath, dest)
 
             # Add to list to send to main database
@@ -244,6 +252,62 @@ class ImageRetrievalDaemon:
         for downloader in self.downloaders:
             downloader.stop()
             
+    def _deduplicate(self, urls):
+        """When working with multiple files, this function will ensure that
+        each file is only downloaded once.
+        
+        Sorting is preserved and load is distributed evenly across each server.
+        """
+        # Filenames
+        files = [[os.path.basename(url) for url in x] for x in urls]
+        
+        # Number of servers and total number of remote files matched
+        m = len(self.servers)
+        n = sum(len(x) for x in files)
+        
+        # Counters to keep track of sub-list iteration
+        counters = [0] * m
+        
+        # Loop through files, switching between servers on each iteration
+        for i in range(n):
+            idx = i % m # Server index 
+            
+            if(len(files[idx]) > counters[idx]):
+                value = files[idx][counters[idx]]
+                
+                # Skip over files that have been set to None
+                while value is None:
+                    counters[idx] += 1
+                    
+                    if(len(files[idx]) > counters[idx]):
+                        value = files[idx][counters[idx]]
+                    else:
+                        break
+
+                if value is None:
+                    continue
+                
+                filename = os.path.basename(value)
+                
+                # Ignore file on other servers if it exists
+                for i, file_list in enumerate(files):
+                    if i == idx:
+                        continue
+                    
+                    if filename in file_list:
+                        files[i][counters[idx]] = None
+                        urls[i][counters[idx]] = None
+
+            counters[idx] += 1
+            
+        # Remove all entries set to None
+        new_list = []
+        
+        for url_list in urls:
+            new_list.append([x for x in url_list if x is not None])
+            
+        return new_list
+                    
     def _init_directories(self):
         """Checks to see if working directories exists and attempts to create
         them if they do not."""
@@ -260,7 +324,7 @@ class ImageRetrievalDaemon:
         servers = []
         
         for name in names:
-            server = self._load_class('helioviewer.downloader.servers', 
+            server = self._load_class('helioviewer.hvpull.servers', 
                                       name, self.get_servers().get(name))
             servers.append(server())
         
@@ -268,13 +332,13 @@ class ImageRetrievalDaemon:
             
     def _load_browser(self, browse_method, uri):
         """Loads a data browser"""
-        cls = self._load_class('helioviewer.downloader.browser', browse_method, 
+        cls = self._load_class('helioviewer.hvpull.browser', browse_method, 
                                self.get_browsers().get(browse_method))
         return cls(uri)
     
     def _load_downloader(self, download_method):
         """Loads a data downloader"""
-        cls = self._load_class('helioviewer.downloader.downloader', download_method, 
+        cls = self._load_class('helioviewer.hvpull.downloader', download_method, 
                                self.get_downloaders().get(download_method))
         downloader = cls(self.incoming, self.queue)
         

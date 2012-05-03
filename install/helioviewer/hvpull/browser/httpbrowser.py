@@ -2,7 +2,7 @@
 import os
 import urllib
 from sgmllib import SGMLParser
-from helioviewer.downloader.browser.basebrowser import BaseDataBrowser
+from helioviewer.hvpull.browser.basebrowser import BaseDataBrowser
 
 class HTTPDataBrowser(BaseDataBrowser):
     def __init__(self, server):
@@ -17,8 +17,13 @@ class HTTPDataBrowser(BaseDataBrowser):
 
     def get_files(self, location, extension):
         """Get all the files that end with specified extension at the uri"""
-        return filter(lambda url: url.endswith("." + extension), 
-                      self._query(location))
+        try:
+            files = filter(lambda url: url.endswith("." + extension), 
+                          self._query(location))
+        except IOError:
+            files = []
+
+        return files
     
     def _query(self, location):
         """Get a list of files and folders at the specified remote location"""
