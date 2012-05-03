@@ -124,7 +124,10 @@ class ImageRetrievalDaemon:
         """
         urls = []
         
-        logging.info("Querying time range %s - %s", starttime, endtime)
+        fmt = '%Y-%m-%d %H:%M:%S'
+        
+        logging.info("Querying time range %s - %s", starttime.strftime(fmt),
+                                                    endtime.strftime(fmt))
         
         for browser in self.browsers:
             matches = self.query_server(browser, starttime, endtime)
@@ -153,7 +156,7 @@ class ImageRetrievalDaemon:
         files = []
         
         # TESTING>>>>>>
-        directories = directories[:3]
+        directories = directories[4:6]
 
         # Check each remote directory for new files
         for directory in directories:
@@ -188,7 +191,7 @@ class ImageRetrievalDaemon:
                     if len(server) > 0:
                         url = server.pop()
                         finished.append(url)
-                        self.queues[i].put(url)
+                        self.queues[i].put([self.servers[i].name, url])
                         
                         n -= 1
                 
@@ -198,6 +201,7 @@ class ImageRetrievalDaemon:
             if self.shutdown_requested:
                 break
             
+        # TODO: Verify that items in finished list actually downloaded            
         self.ingest(finished)
         
     def ingest(self, urls):
