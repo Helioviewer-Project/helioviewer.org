@@ -27,7 +27,6 @@ class ImageRetrievalDaemon:
         self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
         
         # Maximum number of simultaneous downloads
-        self.queue = Queue.Queue()
         self.max_downloads = conf.getint('network', 'max_downloads')
         
         # Directories
@@ -46,12 +45,14 @@ class ImageRetrievalDaemon:
         
         self.browsers = []
         self.downloaders = []
+        self.queues = []
         
         # For each server instantiate a browser and one or more downloaders
         for server in self.servers:
             self.browsers.append(self._load_browser(browse_method, server))
-            
-            self.downloaders.append([self._load_downloader(download_method) 
+            queue = Queue.Queue()
+            self.queues.append(queue)            
+            self.downloaders.append([self._load_downloader(download_method, queue) 
                                      for i in range(self.max_downloads)])
 
         # Shutdown switch
@@ -175,23 +176,24 @@ class ImageRetrievalDaemon:
         
         n = sum(len(x) for x in urls)
         
-        print("Found %d new files" % n)
+        logging.info("Found %d new files", n)
         
         finished = []
         
         # Download files
-        n = sum(len(x) for x in urls)
-        
         while n > 0:
             # Download files 30 at a time to avoid blocking shutdown requests
-            for server in urls:
-                for i in range(30): #pylint: disable=W0612
+            for i, server in enumerate(urls):
+                for j in range(30): #pylint: disable=W0612
                     if len(server) > 0:
                         url = server.pop()
                         finished.append(url)
-                        self.queue.put(url)
+                        self.queues[i].put(url)
+                        
+                        n -= 1
                 
-            self.queue.join()
+            for q in self.queues:
+                q.join()
             
             if self.shutdown_requested:
                 break
@@ -336,11 +338,11 @@ class ImageRetrievalDaemon:
                                self.get_browsers().get(browse_method))
         return cls(uri)
     
-    def _load_downloader(self, download_method):
+    def _load_downloader(self, download_method, queue):
         """Loads a data downloader"""
         cls = self._load_class('helioviewer.hvpull.downloader', download_method, 
                                self.get_downloaders().get(download_method))
-        downloader = cls(self.incoming, self.queue)
+        downloader = cls(self.incoming, queue)
         
         downloader.setDaemon(True)
         downloader.start()
