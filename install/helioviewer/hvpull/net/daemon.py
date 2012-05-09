@@ -255,8 +255,9 @@ class ImageRetrievalDaemon:
         print("Stopping HVPull...")
         self.shutdown_requested = True
         
-        for downloader in self.downloaders:
-            downloader.stop()
+        for server in self.downloaders:
+            for downloader in server:
+                downloader.stop()
             
     def _deduplicate(self, urls):
         """When working with multiple files, this function will ensure that

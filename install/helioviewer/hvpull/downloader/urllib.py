@@ -20,6 +20,7 @@ class URLLibDownloader(threading.Thread):
     def run(self):
         """Downloads the file at the specified URL"""
         while not self.shutdown_requested:
+            #ValueError: too many values to unpack
             server, url = self.queue.get()
             
             # @TODO: compute path to download file to...
@@ -49,7 +50,7 @@ class URLLibDownloader(threading.Thread):
             except URLError:
                 # If download fails, add back into queue and try again later
                 print("failed for file %s " % url)
-                self.queue.put(url)
+                self.queue.put([server, url])
             except:
                 print("failed for file %s " % url) 
             else:
