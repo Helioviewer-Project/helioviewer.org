@@ -64,9 +64,6 @@ class ImageRetrievalDaemon:
         
         date_fmt = "%Y-%m-%d %H:%M:%S"
         
-        # @NOTE: Should db cursor be recreated with each loop?
-        
-        
         # @TODO: Process urls in batches of ~1-500.. this way images start
         # appearing more quickly when filling in large gaps, etc.
         
@@ -82,15 +79,13 @@ class ImageRetrievalDaemon:
         # If end time is specified, fill in data from start to end
         if endtime is not None:
             endtime = datetime.datetime.strptime(endtime, date_fmt)
-            urls = self.query(starttime, endtime)
-            self.acquire(urls)
+            self.query(starttime, endtime)
             
             return None
         else:
         # Otherwise, first query from start -> now
             now = datetime.datetime.utcnow()
-            urls = self.query(starttime, now)
-            self.acquire(urls)
+            self.query(starttime, now)
         
         # Begin main loop
         while not self.shutdown_requested:
@@ -98,11 +93,8 @@ class ImageRetrievalDaemon:
             starttime = self.servers[0].get_starttime()
             
             # get a list of files available
-            urls = self.query(starttime, now)
-            
-            # acquire the data files
-            self.acquire(urls)
-            
+            self.query(starttime, now)
+
             #time.sleep(self.server.pause.seconds)
             logging.info("Sleeping for %d seconds." % self.servers[0].pause.total_seconds())
             time.sleep(self.servers[0].pause.total_seconds())
@@ -145,7 +137,8 @@ class ImageRetrievalDaemon:
         for url_list in urls:
             new_urls.append(filter(self._filter_new, url_list))
 
-        return new_urls
+        # acquire the data files
+        self.acquire(new_urls)
     
     def query_server(self, browser, starttime, endtime):
         """Queries a single server for new files"""
@@ -156,7 +149,7 @@ class ImageRetrievalDaemon:
         files = []
         
         # TESTING>>>>>>
-        directories = directories[4:6]
+        directories = directories[6:8]
 
         # Check each remote directory for new files
         for directory in directories:
@@ -167,7 +160,7 @@ class ImageRetrievalDaemon:
             files.extend(matches)
 
         # TESTING>>>>>>
-        files = files[:100]
+        #files = files[:100]
         
         return files
         
@@ -181,13 +174,14 @@ class ImageRetrievalDaemon:
         
         logging.info("Found %d new files", n)
         
-        finished = []
-        
         # Download files
         while n > 0:
-            # Download files 30 at a time to avoid blocking shutdown requests
+            finished = []
+            
+            # Download files 100 at a time to avoid blocking shutdown requests
+            # and to allow images to be added to database sooner
             for i, server in enumerate(urls):
-                for j in range(30): #pylint: disable=W0612
+                for j in range(100): #pylint: disable=W0612
                     if len(server) > 0:
                         url = server.pop()
                         finished.append(url)
@@ -197,12 +191,11 @@ class ImageRetrievalDaemon:
                 
             for q in self.queues:
                 q.join()
-            
+                
+            self.ingest(finished)
+
             if self.shutdown_requested:
                 break
-            
-        # TODO: Verify that items in finished list actually downloaded            
-        self.ingest(finished)
         
     def ingest(self, urls):
         """
@@ -225,7 +218,12 @@ class ImageRetrievalDaemon:
             
         # Add to hvpull/Helioviewer.org databases
         for filepath in filepaths:
-            image_params = sunpy.read_header(filepath)
+            # Parse header and validate metadata
+            try:
+                image_params = sunpy.read_header(filepath)
+                self._validate(image_params)
+            except:
+                continue
             
             # If everything looks good, move to archive and add to database
             date_str = image_params['date'].strftime('%Y/%m/%d')
@@ -250,6 +248,8 @@ class ImageRetrievalDaemon:
             
         # Add valid images to main Database
         process_jp2_images(images, self.image_archive, self._db)
+        
+        logging.info("Added %d images to database", len(images))
 
     def shutdown(self):
         print("Stopping HVPull...")
@@ -302,8 +302,9 @@ class ImageRetrievalDaemon:
                         continue
                     
                     if filename in file_list:
-                        files[i][counters[idx]] = None
-                        urls[i][counters[idx]] = None
+                        j = files[i].index(filename)
+                        files[i][j] = None
+                        urls[i][j] = None
 
             counters[idx] += 1
             
@@ -314,6 +315,23 @@ class ImageRetrievalDaemon:
             new_list.append([x for x in url_list if x is not None])
             
         return new_list
+    
+    def _validate(self, params):
+        """Filters out images that are known to have problems using information
+        in their metadata"""
+        
+        # AIA
+        if params['detector'] == "AIA":
+            if params['header'].get("IMG_TYPE") == "DARK":
+                raise BadImage
+        
+        # LASCO
+        if params['instrument'] == "LASCO":
+            hcomp_sf = params['header'].get('hcomp_sf')
+            
+            if ((params['detector'] == "C2" and hcomp_sf == 32) or
+                (params['detector'] == "C3" and hcomp_sf == 64)):
+                    raise BadImage
                     
     def _init_directories(self):
         """Checks to see if working directories exists and attempts to create
@@ -396,3 +414,8 @@ class ImageRetrievalDaemon:
         return {
             "urllib": "URLLibDownloader"
         }
+
+class BadImage(ValueError):
+    """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
+    encountered."""
+    pass

@@ -45,7 +45,9 @@ class URLLibDownloader(threading.Thread):
                 file_contents = remote_file.read()
                 
                 t2 = time.time()
-                logging.info("(%s) Downloaded %s (%0.3fs)", server, url, t2 - t1)
+                
+                mbps = (len(file_contents) / 10e5) / (t2 - t1)
+                logging.info("(%s) Downloaded %s (%0.3f MB/s)", server, url, mbps)
                 
             except URLError:
                 # If download fails, add back into queue and try again later
