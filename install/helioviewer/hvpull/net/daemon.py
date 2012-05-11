@@ -149,7 +149,7 @@ class ImageRetrievalDaemon:
         files = []
         
         # TESTING>>>>>>
-        directories = directories[6:8]
+        #directories = directories[6:8]
 
         # Check each remote directory for new files
         for directory in directories:
@@ -218,20 +218,21 @@ class ImageRetrievalDaemon:
             
         # Add to hvpull/Helioviewer.org databases
         for filepath in filepaths:
+            filename = os.path.basename(filepath)
+            
             # Parse header and validate metadata
             try:
                 image_params = sunpy.read_header(filepath)
                 self._validate(image_params)
             except:
+                logging.warn("Quarantining invalid image: %f", filename)
+                shutil.move(filepath, os.path.join(self.quarantine, filename))
                 continue
             
             # If everything looks good, move to archive and add to database
             date_str = image_params['date'].strftime('%Y/%m/%d')
             
             # Move to archive
-            filename = os.path.basename(filepath)
-            
-            # Destination filepath
             directory = os.path.join(self.image_archive, 
                                      image_params['nickname'], date_str, 
                                      str(image_params['measurement']))
@@ -241,7 +242,14 @@ class ImageRetrievalDaemon:
 
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            shutil.move(filepath, dest)
+                
+            try:
+                shutil.move(filepath, dest)
+            except IOError:
+                logging.error("Unable to move files to destination. Is there "
+                              "enough free space?")
+                self.shutdown_requested = True
+                
 
             # Add to list to send to main database
             images.append(image_params)
