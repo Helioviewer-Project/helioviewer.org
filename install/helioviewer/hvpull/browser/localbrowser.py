@@ -8,7 +8,7 @@ class LocalDataBrowser(BaseDataBrowser):
 
     def get_directories(self,uri):
         """Get a list of directories at the passed uri"""
-        return self.get_files(uri, "jp2")
+        return self.server.compute_directories(start_date, end_date)
   
     def get_files(self, uri, extension):
         """Get all the files that end with specified extension at the uri"""
