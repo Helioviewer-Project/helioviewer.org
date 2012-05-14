@@ -80,12 +80,14 @@ class ImageRetrievalDaemon:
         if endtime is not None:
             endtime = datetime.datetime.strptime(endtime, date_fmt)
             self.query(starttime, endtime)
+            self.sleep()
             
             return None
         else:
         # Otherwise, first query from start -> now
             now = datetime.datetime.utcnow()
             self.query(starttime, now)
+            self.sleep()
         
         # Begin main loop
         while not self.shutdown_requested:
@@ -95,12 +97,15 @@ class ImageRetrievalDaemon:
             # get a list of files available
             self.query(starttime, now)
 
-            #time.sleep(self.server.pause.seconds)
-            logging.info("Sleeping for %d seconds." % self.servers[0].pause.total_seconds())
-            time.sleep(self.servers[0].pause.total_seconds())
+            self.sleep()
         
         # Shutdown
         self.stop()
+        
+    def sleep(self):
+        """Sleep for some time before checking again for new images"""
+        logging.info("Sleeping for %d minutes." % (self.servers[0].pause.total_seconds() / 60))
+        time.sleep(self.servers[0].pause.total_seconds())
         
     def stop(self):
         logging.info("Exiting HVPull")
@@ -332,6 +337,8 @@ class ImageRetrievalDaemon:
         if params['detector'] == "AIA":
             if params['header'].get("IMG_TYPE") == "DARK":
                 raise BadImage
+            if params['percentd'].get('PERCENTD') < 75:
+                raise BadImage
         
         # LASCO
         if params['instrument'] == "LASCO":
@@ -405,7 +412,8 @@ class ImageRetrievalDaemon:
             "lmsal": "LMSALDataServer",
             "soho": "SOHODataServer",
             "stereo": "STEREODataServer",
-            "jsoc": "JSOCDataServer"
+            "jsoc": "JSOCDataServer",
+            "rob": "ROBDataServer"
         }
         
     @classmethod
