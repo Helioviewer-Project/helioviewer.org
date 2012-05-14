@@ -142,7 +142,7 @@ class ImageRetrievalDaemon:
     
     def query_server(self, browser, starttime, endtime):
         """Queries a single server for new files"""
-        # Get the nickname subdirectory list present at the server
+        # Get a list of directories which may contain new images
         directories = browser.get_directories(starttime, endtime)
 
         # Get a sorted list of available JP2 files via browser
