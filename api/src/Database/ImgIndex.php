@@ -576,8 +576,10 @@ class Database_ImgIndex
                 
         // 2011/06/10 Temporarily hiding STEREO from verbose output (used by
         // JHelioviewer.) Will remove when JHelioviewer adds support.
+        
+        // 2012/05/26 Same thing with SWAP
         if ($verbose) {
-            $sql = substr($sql, 0, -1) . " " . 'WHERE observatories.name NOT IN ("STEREO_A", "STEREO_B");';
+            $sql = substr($sql, 0, -1) . " " . 'WHERE observatories.name NOT IN ("STEREO_A", "STEREO_B", "PROBA2");';
         }
         
         // Use UTF-8 for responses
