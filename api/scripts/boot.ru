@@ -11,5 +11,5 @@ if AUTH_PASS
 end
 
 Rack::Handler::Mongrel.run Rack::URLMap.new({
-  "/" => Resque::Server.new
+  "/resque" => Resque::Server.new
 }), :Port => 4567
