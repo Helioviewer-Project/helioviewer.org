@@ -64,7 +64,7 @@ def main():
 def get_config(filepath):
     """Load configuration file"""
     config = ConfigParser.ConfigParser()
-    default_userconfig = os.path.expanduser('~/.hvpull/settings.cfg')
+    default_userconfig = os.path.expanduser('settings/settings.cfg')
     
     if filepath is not None and os.path.isfile(filepath):
         config.readfp(open(filepath))

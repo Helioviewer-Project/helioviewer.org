@@ -237,6 +237,12 @@ class ImageRetrievalDaemon:
             # If everything looks good, move to archive and add to database
             date_str = image_params['date'].strftime('%Y/%m/%d')
             
+            # Transcode
+            if image_params['instrument'] == "AIA":
+                self._transcode(filepath, cprecincts=[128, 128])
+            else:
+                self._transcode(filepath)
+
             # Move to archive
             directory = os.path.join(self.image_archive, 
                                      image_params['nickname'], date_str, 
@@ -271,6 +277,36 @@ class ImageRetrievalDaemon:
         for server in self.downloaders:
             for downloader in server:
                 downloader.stop()
+                
+    def _transcode(self, filepath, corder='RPCL', orggen_plt='yes', cprecincts=None):
+        """Transcodes JPEG 2000 images to allow support for use with JHelioviewer
+        and the JPIP server"""
+        tmp = filepath + '.tmp.jp2'
+        
+        # Base command
+        command ='kdu_transcode -i %s -o %s' % (filename, tmp)
+        
+        # Corder
+        if corder is not None:
+            command += " Corder=%s" % corder
+            
+        # ORGgen_plt
+        if orggen_plt is not None:
+            command += " ORGgen_plt=%s" % orggen_plt
+            
+        # Cprecincts
+        if cprecincts is not None:
+            command += " Cprecincts=\{%d,%d\}" % (cprecincts[0], cprecincts[1])
+            
+        # Hide output
+        command += " >/dev/null"
+        
+        # Execute
+        os.system(command)
+        
+        # Remove old version and replace with transcoded one
+        os.remove(filepath)
+        os.rename(tmp, filepath)
             
     def _deduplicate(self, urls):
         """When working with multiple files, this function will ensure that
