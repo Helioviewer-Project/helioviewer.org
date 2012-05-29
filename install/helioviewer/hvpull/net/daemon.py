@@ -255,7 +255,13 @@ class ImageRetrievalDaemon:
             image_params['filepath'] = dest
 
             if not os.path.exists(directory):
-                os.makedirs(directory)
+                try:
+                    os.makedirs(directory)
+                except OSError:
+                    logging.error("Unable to create the directory '" + 
+                                  directory + "'. Please ensure that you "
+                                  "have the proper permissions and try again.")
+                    self.shutdown_requested = True
                 
             try:
                 shutil.move(filepath, dest)
