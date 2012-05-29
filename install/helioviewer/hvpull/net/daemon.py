@@ -287,7 +287,7 @@ class ImageRetrievalDaemon:
         tmp = filepath + '.tmp.jp2'
         
         # Base command
-        command ='kdu_transcode -i %s -o %s' % (filename, tmp)
+        command ='kdu_transcode -i %s -o %s' % (filepath, tmp)
         
         # Corder
         if corder is not None:
