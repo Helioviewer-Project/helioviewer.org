@@ -64,14 +64,17 @@ def main():
 def get_config(filepath):
     """Load configuration file"""
     config = ConfigParser.ConfigParser()
-    default_userconfig = os.path.expanduser('~/.hvpull/settings.cfg')
+    
+    basedir = os.path.dirname(os.path.realpath(__file__))
+    default_userconfig = os.path.join(basedir, 'settings/settings.cfg')
     
     if filepath is not None and os.path.isfile(filepath):
         config.readfp(open(filepath))
     elif os.path.isfile(default_userconfig):
         config.readfp(open(default_userconfig))
     else:
-        config.readfp(open('settings/settings.example.cfg'))
+        config.readfp(open(os.path.join(basedir, 
+                                        'settings/settings.example.cfg')))
         
     return config
         
