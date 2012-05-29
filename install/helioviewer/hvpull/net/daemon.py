@@ -104,6 +104,9 @@ class ImageRetrievalDaemon:
         
     def sleep(self):
         """Sleep for some time before checking again for new images"""
+        if self.shutdown_requested:
+            return
+
         logging.info("Sleeping for %d minutes." % (self.servers[0].pause.total_seconds() / 60))
         time.sleep(self.servers[0].pause.total_seconds())
         
