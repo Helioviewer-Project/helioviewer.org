@@ -13,10 +13,6 @@ if($APP_INCLUDE) {
 	require_once $APP_INCLUDE;
 }
 
-// Load Helioviewer configuration
-require_once "src/Config.php";
-$config = new Config("../settings/Config.ini");
-require_once 'src/Job/MovieBuilder.php';
 require_once 'lib/Resque.php';
 require_once 'lib/Resque/Worker.php';
 
