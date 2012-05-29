@@ -28,3 +28,5 @@ php_errors.log
 .htaccess
 .gnupg
 cache
+settings/settings.cfg
+settings.cfg
