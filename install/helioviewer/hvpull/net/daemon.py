@@ -274,7 +274,7 @@ class ImageRetrievalDaemon:
         logging.info("Added %d images to database", len(images))
 
     def shutdown(self):
-        print("Stopping HVPull...")
+        print("Stopping HVPull. This may take a few minutes...")
         self.shutdown_requested = True
         
         for server in self.downloaders:
@@ -376,7 +376,7 @@ class ImageRetrievalDaemon:
         if params['detector'] == "AIA":
             if params['header'].get("IMG_TYPE") == "DARK":
                 raise BadImage
-            if params['percentd'].get('PERCENTD') < 75:
+            if params['header'].get('PERCENTD') < 75:
                 raise BadImage
         
         # LASCO
