@@ -460,9 +460,20 @@ class ImageRetrievalDaemon:
         """For a given list of remote files determines which ones have not
         yet been acquired."""
         filename = os.path.basename(url)
+        
+        # Check to see if image is in images
         self._db.execute("SELECT COUNT(*) FROM images WHERE filename='%s'" % 
                          filename)
-        return self._db.fetchone()[0] == 0
+        if self._db.fetchone()[0] != 0:
+            return False
+        
+        # Check to see if image is in corrupt
+        self._db.execute("SELECT COUNT(*) FROM corrupt WHERE filename='%s'" % 
+                 filename)
+        if self._db.fetchone()[0] != 0:
+            return False
+
+        return True
     
     @classmethod
     def get_servers(cls):
