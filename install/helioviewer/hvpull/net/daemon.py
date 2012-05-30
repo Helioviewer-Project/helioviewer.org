@@ -233,7 +233,7 @@ class ImageRetrievalDaemon:
                 image_params = sunpy.read_header(filepath)
                 self._validate(image_params)
             except:
-                logging.warn("Quarantining invalid image: %f", filename)
+                logging.warn("Quarantining invalid image: %s", filename)
                 shutil.move(filepath, os.path.join(self.quarantine, filename))
                 continue
             
