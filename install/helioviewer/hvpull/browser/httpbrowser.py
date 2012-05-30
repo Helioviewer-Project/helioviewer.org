@@ -1,12 +1,14 @@
 """HTTP data browser"""
 import os
 import urllib
+import socket
 from sgmllib import SGMLParser
 from helioviewer.hvpull.browser.basebrowser import BaseDataBrowser
 
 class HTTPDataBrowser(BaseDataBrowser):
     def __init__(self, server):
         BaseDataBrowser.__init__(self, server)
+        #socket.setdefaulttimeout(5)
         
     def get_directories(self, start_date, end_date):
         """Generates a list of remote directories which may be queried

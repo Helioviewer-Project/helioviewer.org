@@ -141,7 +141,7 @@ Example Usage:
 Default behavior: daemon is initialized, retrieves all data from most recent 24 hours
 and then continues running and retrieving data until stopped by user.
 
-2. downloader.py --start-date="2011-10-31 00:00:00"
+2. downloader.py --start="2011-10-31 00:00:00"
 
 Similar to above, but retrieves all data from Oct 31, 2011 onward.
 

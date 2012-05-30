@@ -13,7 +13,7 @@ import sunpy
 import Queue
 from random import shuffle
 from helioviewer.jp2 import process_jp2_images
-from helioviewer.db  import get_db_cursor
+from helioviewer.db  import get_db_cursor, mark_as_corrupt
 
 class ImageRetrievalDaemon:
     """Retrieves images from the server as specified"""
@@ -163,8 +163,13 @@ class ImageRetrievalDaemon:
         for directory in directories:
             if self.shutdown_requested:
                 return []
+            #t1 = time.time()
             logging.info('(%s) Scanning %s' % (browser.server.name, directory))
             matches = browser.get_files(directory, "jp2")
+            
+            #t2 = time.time()
+            
+            #print("time: %f" % (t2 - t1))
             files.extend(matches)
 
         # TESTING>>>>>>
@@ -218,6 +223,7 @@ class ImageRetrievalDaemon:
         # Get filepaths
         filepaths = []
         images = []
+        corrupt = []
         
         for url in urls:
             path = os.path.join(self.incoming, os.path.basename(url)) # @TODO: Better path computation
@@ -230,11 +236,16 @@ class ImageRetrievalDaemon:
             
             # Parse header and validate metadata
             try:
-                image_params = sunpy.read_header(filepath)
+                try:
+                    image_params = sunpy.read_header(filepath)
+                except:
+                    raise BadImage("HEADER")
                 self._validate(image_params)
-            except:
+            except BadImage, e:
                 logging.warn("Quarantining invalid image: %s", filename)
                 shutil.move(filepath, os.path.join(self.quarantine, filename))
+                mark_as_corrupt(self._db, filename, e.get_message())
+                corrupt.append(filename)
                 continue
             
             # If everything looks good, move to archive and add to database
@@ -278,6 +289,9 @@ class ImageRetrievalDaemon:
         process_jp2_images(images, self.image_archive, self._db)
         
         logging.info("Added %d images to database", len(images))
+        
+        if (len(corrupt) > 0):
+            logging.info("Marked %d images as corrupt", len(corrupt))
 
     def shutdown(self):
         print("Stopping HVPull. This may take a few minutes...")
@@ -381,9 +395,9 @@ class ImageRetrievalDaemon:
         # AIA
         if params['detector'] == "AIA":
             if params['header'].get("IMG_TYPE") == "DARK":
-                raise BadImage
+                raise BadImage("DARK")
             if params['header'].get('PERCENTD') < 75:
-                raise BadImage
+                raise BadImage("PERCENTD")
         
         # LASCO
         if params['instrument'] == "LASCO":
@@ -391,7 +405,7 @@ class ImageRetrievalDaemon:
             
             if ((params['detector'] == "C2" and hcomp_sf == 32) or
                 (params['detector'] == "C3" and hcomp_sf == 64)):
-                    raise BadImage
+                    raise BadImage("WrongMask")
                     
     def _init_directories(self):
         """Checks to see if working directories exists and attempts to create
@@ -479,4 +493,8 @@ class ImageRetrievalDaemon:
 class BadImage(ValueError):
     """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
     encountered."""
-    pass
+    def __init__(self, message=""):
+        self.message = message
+    def get_message(self):
+        return self.message
+        
