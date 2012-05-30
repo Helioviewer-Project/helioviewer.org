@@ -2,8 +2,8 @@
 /**
  * Helioviewer environment for running Resque
  */
-# change directories to api/
-$dir = getdir(realpath($argv[0]));
+# switch to api/
+$dir = dirname(dirname(realpath($argv[0])));
 chdir($dir); 
 
 require_once "src/Config.php";
