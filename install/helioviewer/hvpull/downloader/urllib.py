@@ -21,7 +21,7 @@ class URLLibDownloader(threading.Thread):
         """Downloads the file at the specified URL"""
         while not self.shutdown_requested:
             #ValueError: too many values to unpack
-            server, url = self.queue.get()
+            server, percent, url = self.queue.get()
             
             # @TODO: compute path to download file to...
             
@@ -47,7 +47,7 @@ class URLLibDownloader(threading.Thread):
                 t2 = time.time()
                 
                 mbps = (len(file_contents) / 10e5) / (t2 - t1)
-                logging.info("(%s) Downloaded %s (%0.3f MB/s)", server, url, mbps)
+                logging.info("(%s) Downloaded %s (%0.3f MB/s) [%0.2f%%]", server, url, mbps, percent)
                 
             except URLError:
                 # If download fails, add back into queue and try again later
