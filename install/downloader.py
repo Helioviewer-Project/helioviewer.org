@@ -17,6 +17,8 @@ between the data that has already been downloaded compared to the data
 on the servers.  We could also specify that a certain range of data
 has to be re-downloaded again, over-writing previous data.
 
+@TODO 05/31/2012: Email notifications for data outages
+
 """
 import os
 import sys
