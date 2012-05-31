@@ -1,6 +1,7 @@
 """Helioviewer Python utility mehtods"""
 import os
 import logging
+import logging.handlers
 
 def init_logger(filepath):
     """Initializes logging"""
@@ -13,9 +14,6 @@ def init_logger(filepath):
             
         os.chdir(directory)
         
-    # TODO: Rotate logs
-    # e.g. Move previous log to hvpull.log.1, hvpull.log.1 to hvpull.log.2, etc
-    # and delete any logs greater than 10.    
     logging.basicConfig(filename=filename, level=logging.INFO,
                         format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
@@ -24,3 +22,8 @@ def init_logger(filepath):
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
     logging.getLogger('').addHandler(console)
+    
+    # Enable log-rotation for root logger
+    rotate = logging.handlers.RotatingFileHandler(filename, 
+                                                  maxBytes=10000000, backupCount=10)
+    logging.getLogger('').addHandler(rotate)

@@ -42,7 +42,7 @@ def main():
     conf = get_config(args.config)
     
     # Configure loggings'
-    logfile = os.path.join(conf.get('directories', 'working_dir'), "hvpull.log")
+    logfile = os.path.join(conf.get('directories', 'working_dir'), "log/hvpull.log")
     init_logger(logfile)
     
     # Initialize daemon
