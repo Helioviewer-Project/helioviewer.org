@@ -155,26 +155,17 @@ class ImageRetrievalDaemon:
 
         # Get a sorted list of available JP2 files via browser
         files = []
-        
-        # TESTING>>>>>>
-        #directories = directories[6:8]
 
         # Check each remote directory for new files
         for directory in directories:
             if self.shutdown_requested:
                 return []
-            #t1 = time.time()
+            
             logging.info('(%s) Scanning %s' % (browser.server.name, directory))
             matches = browser.get_files(directory, "jp2")
             
-            #t2 = time.time()
-            
-            #print("time: %f" % (t2 - t1))
             files.extend(matches)
 
-        # TESTING>>>>>>
-        #files = files[:100]
-        
         return files
         
     def acquire(self, urls):

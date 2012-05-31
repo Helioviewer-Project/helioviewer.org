@@ -51,10 +51,10 @@ class URLLibDownloader(threading.Thread):
                 
             except URLError:
                 # If download fails, add back into queue and try again later
-                print("failed for file %s " % url)
+                logging.warning("Failed to download %s. Adding to end of queue to retry later.", url)
                 self.queue.put([server, url])
             except:
-                print("failed for file %s " % url) 
+                logging.warning("Failed to download %s.", url)
             else:
                 # Open our local file for writing
                 local_file = open(filepath, "wb")
