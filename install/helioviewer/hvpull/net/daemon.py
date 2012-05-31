@@ -176,6 +176,10 @@ class ImageRetrievalDaemon:
         
         n = sum(len(x) for x in urls)
         
+        # Keep track of progress
+        total = n
+        counter = 0
+        
         logging.info("Found %d new files", n)
         
         # Download files
@@ -189,8 +193,11 @@ class ImageRetrievalDaemon:
                     if len(server) > 0:
                         url = server.pop()
                         finished.append(url)
-                        self.queues[i].put([self.servers[i].name, url])
                         
+                        counter += 1.
+                        
+                        self.queues[i].put([self.servers[i].name, counter / total, url])
+
                         n -= 1
                 
             for q in self.queues:
