@@ -54,7 +54,7 @@ class Image_ImageType_LASCOImage extends Image_HelioviewerImage
             $this->setColorTable($colorTable);
         }
         
-        $filepath = substr($filepath, 0, -3) . "png";
+        //$filepath = substr($filepath, 0, -3) . "png";
 
         parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }
