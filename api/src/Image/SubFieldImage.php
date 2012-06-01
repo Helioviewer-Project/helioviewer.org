@@ -256,10 +256,10 @@ class Image_SubFieldImage
                 
                 // Assume that no color table is needed
                 $coloredImage = $grayscale;
-                $grayscale->destroy();
                 
                 // Apply color table if one exists
                 if ($this->colorTable) {
+                    $grayscale->destroy();
                     $coloredImageString = $this->setColorPalette($grayscaleString);
                 
                     $coloredImage = new IMagick();        

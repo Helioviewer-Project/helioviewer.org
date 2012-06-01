@@ -117,6 +117,20 @@ def create_image_table(cursor):
       UNIQUE INDEX filename_idx(filename)
     ) DEFAULT CHARSET=ascii;"""
     cursor.execute(sql)
+    
+def create_corrupt_table(cursor):
+    """Creates table to store corrupt image information"""
+    sql = \
+    """CREATE TABLE `corrupt` (
+      `id`            INT unsigned NOT NULL auto_increment,
+      `timestamp`     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      `filename`      VARCHAR(255) NOT NULL,      
+      `note`        VARCHAR(255) DEFAULT '',
+      PRIMARY KEY  (`id`),
+      KEY `timestamp_index` (`filename`,`timestamp`) USING BTREE,
+      UNIQUE INDEX filename_idx(filename)
+    ) DEFAULT CHARSET=ascii;"""
+    cursor.execute(sql)
 
 def create_datasource_table(cursor):
     """Creates a table with the known datasources"""
@@ -399,6 +413,13 @@ def enable_datasource(cursor, sourceId):
 def update_image_table_index(cursor):
     """Updates index on images table"""
     cursor.execute("OPTIMIZE TABLE images;")
+    
+def mark_as_corrupt(cursor, filename, note):
+    """Adds an image to the 'corrupt' database table"""
+    sql = "INSERT INTO corrupt VALUES (NULL, NULL, '%s', '%s');" % (filename,
+                                                                    note)
+    
+    cursor.execute(sql)
 
 def get_datasources(cursor):
     """Returns a list of the known datasources"""

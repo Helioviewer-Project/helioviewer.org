@@ -1,12 +1,14 @@
 """HTTP data browser"""
 import os
 import urllib
+import socket
 from sgmllib import SGMLParser
 from helioviewer.hvpull.browser.basebrowser import BaseDataBrowser
 
 class HTTPDataBrowser(BaseDataBrowser):
     def __init__(self, server):
         BaseDataBrowser.__init__(self, server)
+        socket.setdefaulttimeout(60)
         
     def get_directories(self, start_date, end_date):
         """Generates a list of remote directories which may be queried
@@ -17,11 +19,24 @@ class HTTPDataBrowser(BaseDataBrowser):
 
     def get_files(self, location, extension):
         """Get all the files that end with specified extension at the uri"""
-        try:
-            files = filter(lambda url: url.endswith("." + extension), 
-                          self._query(location))
-        except IOError:
-            files = []
+        files = None
+        num_retries = 0
+        
+        # Get a list of the files at the remote location, if it exists
+        # To avoid spending too much time, we will timeout after a short time
+        # and retry up to 10 times.
+        while files is None and num_retries <= 10:
+            try:
+                files = filter(lambda url: url.endswith("." + extension), 
+                               self._query(location))
+            except IOError, e:
+                if isinstance(e.strerror, socket.timeout):
+                    # for socket timeouts, retry
+                    num_retries += 1
+                    continue
+                else:
+                    # 404 - no files are there
+                    files = []
 
         return files
     
