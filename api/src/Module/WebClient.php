@@ -304,7 +304,7 @@ class Module_WebClient implements Module
         $baseFilename  = substr($filename, 0, -4);
         
         return sprintf(
-            "%s%s/%s_%s_x%d_y%d.jpg",
+            "%s%s/%s_%s_x%d_y%d.png",
             $baseDirectory, $directory, $baseFilename, $scale, $x, $y
         );
     }
