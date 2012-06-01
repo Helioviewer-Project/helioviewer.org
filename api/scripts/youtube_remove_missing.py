@@ -29,7 +29,7 @@ def main():
     # a network problem.
     to_remove = find_missing_videos(cursor, ids)
     print("Scan 1 - Found %d candidate missing videos" % len(to_remove))
-    for i in range(2):
+    for i in range(10):
         to_remove = find_missing_videos(cursor, to_remove)
         print("Scan %d - Found %d candidate missing videos" % (i + 2, 
                                                                len(to_remove)))
