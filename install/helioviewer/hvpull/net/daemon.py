@@ -196,7 +196,8 @@ class ImageRetrievalDaemon:
                         
                         counter += 1.
                         
-                        self.queues[i].put([self.servers[i].name, counter / total, url])
+                        self.queues[i].put([self.servers[i].name, 
+                                            (counter / total) * 100, url])
 
                         n -= 1
                 
