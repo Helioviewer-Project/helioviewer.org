@@ -14,6 +14,7 @@ import Queue
 from random import shuffle
 from helioviewer.jp2 import process_jp2_images
 from helioviewer.db  import get_db_cursor, mark_as_corrupt
+from helioviewer.hvpull.browser.basebrowser import NetworkError
 
 class ImageRetrievalDaemon:
     """Retrieves images from the server as specified"""
@@ -25,6 +26,11 @@ class ImageRetrievalDaemon:
         self.dbpass = conf.get('database', 'pass')
         
         self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+        
+        # Email notification
+        self.email_server = conf.get('notifications', 'server')
+        self.email_from = conf.get('notifications', 'from')
+        self.email_to = conf.get('notifications', 'to')
         
         # Maximum number of simultaneous downloads
         self.max_downloads = conf.getint('network', 'max_downloads')
@@ -162,10 +168,16 @@ class ImageRetrievalDaemon:
                 return []
             
             logging.info('(%s) Scanning %s' % (browser.server.name, directory))
-            matches = browser.get_files(directory, "jp2")
             
-            files.extend(matches)
-
+            try:
+                matches = browser.get_files(directory, "jp2")
+                files.extend(matches)
+            except NetworkError:
+                logging.error("Unable to reach %s. Shutting down HVPull.", 
+                              browser.server.name)
+                msg = "Unable to reach %s. Is the server online?"
+                self.send_email_alert(msg % browser.server.name)
+                self.shutdown()
         return files
         
     def acquire(self, urls):
@@ -291,6 +303,35 @@ class ImageRetrievalDaemon:
         
         if (len(corrupt) > 0):
             logging.info("Marked %d images as corrupt", len(corrupt))
+            
+    def send_email_alert(self, message):
+        """Sends an email notification to the Helioviewer admin(s) when a
+        one of the data sources becomes unreachable."""
+        # If no server was specified, don't do anything
+        if self.email_server is "":
+            return
+
+        # import email modules
+        import smtplib
+        from email.MIMEMultipart import MIMEMultipart
+        from email.MIMEText import MIMEText
+        from email.Utils import formatdate
+        
+        msg = MIMEMultipart()
+        msg['From'] = self.email_from
+        msg['To'] = self.email_to
+        msg['Date'] = formatdate()
+        msg['Subject'] = "HVPull - Remote Server Inaccessible!"
+     
+        msg.attach(MIMEText(message))
+        
+        # Expand email recipient list
+        recipients = [x.lstrip().rstrip() for x in self.email_to.split(",")]
+     
+        smtp = smtplib.SMTP(self.email_server)
+        smtp.sendmail(self.email_from, recipients, msg.as_string() )
+        smtp.close()        
+        
 
     def shutdown(self):
         print("Stopping HVPull. This may take a few minutes...")
