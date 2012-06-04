@@ -42,7 +42,11 @@ def main():
     conf = get_config(args.config)
     
     # Configure loggings'
-    logfile = os.path.join(conf.get('directories', 'working_dir'), "log/hvpull.log")
+    if args.log is not None:
+        logfile = os.path.abspath(args.log)
+    else:
+        logfile = os.path.join(conf.get('directories', 'working_dir'), 
+                               "log/hvpull.log")
     init_logger(logfile)
     
     # Initialize daemon
@@ -95,6 +99,8 @@ def get_args():
                         help='Search for data with observation times earlier than this date/time (default: repeats indefinitely using updated UT)')
     parser.add_argument('-c', '--config-file', metavar='file', dest='config',
                         help='Full path to hvpull user defined general configuration file')
+    parser.add_argument('-l', '--log-path', metavar='log', dest='log',
+                        help='Filepath to use for logging events. Defaults to HVPull working directory.')
    
     # Parse arguments
     args = parser.parse_args()
@@ -147,7 +153,7 @@ and then continues running and retrieving data until stopped by user.
 
 Similar to above, but retrieves all data from Oct 31, 2011 onward.
 
-3. downloader.py -s "1900-1-1 00:00:00"
+3. downloader.py -s "1900-1-1 00:00:00" -l /var/log/hvpull-server1.log
 
 Using a very early date has the effect of pulling all available data.
 
