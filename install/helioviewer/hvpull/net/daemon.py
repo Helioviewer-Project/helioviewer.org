@@ -11,6 +11,7 @@ import os
 import shutil
 import sunpy
 import Queue
+import MySQLdb
 from random import shuffle
 from helioviewer.jp2 import process_jp2_images
 from helioviewer.db  import get_db_cursor, mark_as_corrupt
@@ -25,8 +26,15 @@ class ImageRetrievalDaemon:
         self.dbuser = conf.get('database', 'user')
         self.dbpass = conf.get('database', 'pass')
         
-        self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+        self.downloaders = []
         
+        try:
+            self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+        except MySQLdb.OperationalError:
+            logging.error("Unable to access MySQL. Is the database daemon running?")
+            self.shutdown()
+            self.stop()
+
         # Email notification
         self.email_server = conf.get('notifications', 'server')
         self.email_from = conf.get('notifications', 'from')
@@ -149,7 +157,24 @@ class ImageRetrievalDaemon:
         new_urls = []
         
         for url_list in urls:
-            new_urls.append(filter(self._filter_new, url_list))
+            filtered = None
+            
+            while filtered is None:
+                try:
+                    filtered = filter(self._filter_new, url_list)
+                except MySQLdb.OperationalError:
+                    # MySQL has gone away -- try again in 5s
+                    logging.error(("Unable to access database to check for file"
+                                   " existence. Will try again in 5 seconds."))
+                    time.sleep(5)
+                    
+                    # Try and reconnect
+                    try:                        
+                        self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+                    except:
+                        pass
+                
+            new_urls.append(filtered)
 
         # acquire the data files
         self.acquire(new_urls)
