@@ -528,6 +528,7 @@ class HelioviewerWebClient extends HelioviewerClient
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
+                <a href="http://community.helioviewer.org/" class="light" target="_blank">Community</a>
                 <a href="http://blog.helioviewer.org/" class="light" target="_blank">Blog</a>
                 <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
                 <a href="api/" class="light" target="_blank">API</a>
