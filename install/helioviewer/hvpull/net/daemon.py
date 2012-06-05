@@ -166,7 +166,7 @@ class ImageRetrievalDaemon:
                     filtered = filter(self._filter_new, url_list)
                 except MySQLdb.OperationalError:
                     # MySQL has gone away -- try again in 5s
-                    logging.error(("Unable to access database to check for file"
+                    logging.warning(("Unable to access database to check for file"
                                    " existence. Will try again in 5 seconds."))
                     time.sleep(5)
                     
@@ -216,7 +216,7 @@ class ImageRetrievalDaemon:
                         msg = "Unable to reach %s. Will try again in 30 seconds."
                         if num_retries > 0:
                             msg += " (retry %d)" % num_retries
-                        logging.info(msg, browser.server.name)
+                        logging.warning(msg, browser.server.name)
                         time.sleep(30)
                         num_retries += 1
                         
@@ -478,7 +478,7 @@ class ImageRetrievalDaemon:
         if params['detector'] == "AIA":
             if params['header'].get("IMG_TYPE") == "DARK":
                 raise BadImage("DARK")
-            if params['header'].get('PERCENTD') < 75:
+            if params['header'].get('PERCENTD') < 50:
                 raise BadImage("PERCENTD")
         
         # LASCO
