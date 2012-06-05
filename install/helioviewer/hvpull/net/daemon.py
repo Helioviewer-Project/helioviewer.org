@@ -83,6 +83,8 @@ class ImageRetrievalDaemon:
         
         # @TODO: Redo handling of server-specific start time and pause
         # time
+        #
+        # @TODO: Send email notification when HVpull stops/exits for any reason?
         
         # Determine starttime to use
         if starttime is not None:
@@ -192,17 +194,32 @@ class ImageRetrievalDaemon:
             if self.shutdown_requested:
                 return []
             
+            matches = None
+            num_retries = 0
+            
             logging.info('(%s) Scanning %s' % (browser.server.name, directory))
             
-            try:
-                matches = browser.get_files(directory, "jp2")
-                files.extend(matches)
-            except NetworkError:
-                logging.error("Unable to reach %s. Shutting down HVPull.", 
-                              browser.server.name)
-                msg = "Unable to reach %s. Is the server online?"
-                self.send_email_alert(msg % browser.server.name)
-                self.shutdown()
+            # Attempt to read directory contents. Retry up to 10 times
+            # if failed and then notify admin
+            while matches is None:
+                try:
+                    matches = browser.get_files(directory, "jp2")
+                    files.extend(matches)
+                except NetworkError:
+                    if num_retries >= 9:
+                        logging.error("Unable to reach %s. Shutting down HVPull.", 
+                                      browser.server.name)
+                        msg = "Unable to reach %s. Is the server online?"
+                        self.send_email_alert(msg % browser.server.name)
+                        self.shutdown()
+                    else:
+                        msg = "Unable to reach %s. Will try again in 30 seconds."
+                        if num_retries > 0:
+                            msg += " (retry %d)" % num_retries
+                        logging.info(msg, browser.server.name)
+                        time.sleep(30)
+                        num_retries += 1
+                        
         return files
         
     def acquire(self, urls):
