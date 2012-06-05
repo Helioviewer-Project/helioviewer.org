@@ -473,6 +473,16 @@ var MovieManagerUI = MediaManagerUI.extend(
             return false;
         });
         
+        // BBCode link
+        $("#bbcode-" + movie.id).click(function () {
+            // Hide flash movies to prevent blocking
+            if (!($.support.h264 || $.support.vp8)) {
+                $(".movie-player-dialog").dialog("close");
+            }
+            self._showBBCode(movie.id, dimensions.width, dimensions.height);
+            return false;
+        });
+        
         // Flash video URL
         flvURL = Helioviewer.api + 
                 "/?action=downloadMovie&format=flv&id=" + movie.id;
@@ -744,7 +754,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * method
      */
     getVideoPlayerHTML: function (id, width, height, url) {
-        var downloadURL, downloadLink, youtubeBtn, addthisBtn, linkBtn, linkURL;
+        var downloadURL, downloadLink, youtubeBtn, bbcodeBtn, addthisBtn, 
+            linkBtn, linkURL;
         
         downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + id + 
                       "&format=mp4&hq=true";
@@ -754,7 +765,7 @@ var MovieManagerUI = MediaManagerUI.extend(
             "<img class='video-download-icon' " + 
             "src='resources/images/Tango/1321375855_go-bottom.png' /></a>";
         
-        youtubeBtn = "<a id='youtube-upload-" + id + "'  href='#' " + 
+        youtubeBtn = "<a id='youtube-upload-" + id + "' href='#' " + 
             "target='_blank'><img class='youtube-icon' " + 
             "title='Upload video to YouTube' " + 
             "src='resources/images/Social.me/48 " + 
@@ -767,6 +778,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             "target='_blank'><img class='video-link-icon' " + 
             "style='margin-left: 3px' " + 
             "src='resources/images/berlin/32x32/link.png' /></a>";
+            
+        bbcodeBtn = "<img class='bbcode-btn' id='bbcode-" + id + "' src='resources/images/codefisher/bbcode_32.png' alt='Helioviewer.org Community Forums BBCode link string' />";
             
         addthisBtn = "<div style='display:inline; " + 
             "float: right;' id='add-this-" + id + 
@@ -803,8 +816,27 @@ var MovieManagerUI = MediaManagerUI.extend(
                    "scrolling=no frameborder=0 style='margin-bottom: 2px;' />" +
                    "<br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + addthisBtn + "</span></div>";
+                   linkBtn + bbcodeBtn + addthisBtn + "</span></div>";
         }
+    },
+    
+    _showBBCode: function(id, width, height) {
+            var bbcode = "[hvmovie width=" + width + " height=" + height + 
+                         "]" + id + "[/hvmovie]";             
+            
+            // Display BBCode
+            $("#bbcode-dialog").dialog({
+                //dialogClass: 'helioviewer-modal-dialog',
+                height    : 100,
+                width     : $('html').width() * 0.5,
+                modal     : true,
+                resizable : false,
+                title     : "Helioviewer.org Movie BBCode",
+                open      : function (e) {
+                    //$('.ui-widget-overlay').hide().fadeIn();
+                    $(this).find('input').attr('value', bbcode).select();
+                }
+            });
     },
     
     /**

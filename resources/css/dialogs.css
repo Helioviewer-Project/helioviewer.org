@@ -93,7 +93,7 @@ a.show-fits-tags-btn, a.show-helioviewer-tags-btn {
 }
 
 /* URL dialog */
-#helioviewer-url-box {
+#helioviewer-url-box, #helioviewer-bbcode-box {
     font-size: 13px;
     padding: 5px;
     color: white;

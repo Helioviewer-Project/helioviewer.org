@@ -132,3 +132,7 @@
     float: left;
     margin-right: 10px;
 }
+
+.bbcode-btn {
+    cursor: pointer;
+}
