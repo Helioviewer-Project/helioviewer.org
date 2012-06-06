@@ -67,7 +67,7 @@ class Database_DbConnection
         if (!$this->link = mysqli_connect($this->_host, $this->_user, $this->_password)) {
             throw new Exception("Database not configured properly. Please " + 
             "check the database configuration file to make sure that the " +
-            "information is correct.");
+            "information is correct.", 1);
         }
         mysqli_select_db($this->link, $this->_dbname);
         mysqli_query($this->link, "SET @@session.time_zone = '+00:00'");
@@ -95,7 +95,7 @@ class Database_DbConnection
         $result = mysqli_query($this->link, $query);
 
         if ($result === false) {
-            throw new Exception(sprintf("Error executing database query (%s): %s", $query, mysqli_error($this->link)));
+            throw new Exception(sprintf("Error executing database query (%s): %s", $query, mysqli_error($this->link)), 2);
         }
         return $result;
     }

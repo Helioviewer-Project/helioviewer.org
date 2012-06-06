@@ -76,7 +76,7 @@ class Validation_InputValidator
 
         foreach(array_keys($_REQUEST) as $param) {
             if (!in_array($param, $allowed)) {
-                throw new InvalidArgumentException("Unrecognized parameter <b>$param</b>.");
+                throw new InvalidArgumentException("Unrecognized parameter <b>$param</b>.", 27);
             } 
         }
     }
@@ -93,7 +93,7 @@ class Validation_InputValidator
     {
         foreach ($required as $req) {
             if (!isset($params[$req])) {
-                throw new InvalidArgumentException("No value set for required parameter \"$req\".");
+                throw new InvalidArgumentException("No value set for required parameter \"$req\".", 28);
             }
         }
     }
@@ -133,7 +133,7 @@ class Validation_InputValidator
             if (isset($params[$str])) {
                 if (!preg_match('/^[a-zA-Z0-9_]*$/', $params[$str])) {
                     throw new InvalidArgumentException(
-                        "Invalid value for $str. Valid strings must consist of only letters, numbers, and underscores."
+                        "Invalid value for $str. Valid strings must consist of only letters, numbers, and underscores.", 25
                     );
                 }
             }
@@ -157,7 +157,7 @@ class Validation_InputValidator
                 } elseif ((strtolower($params[$bool]) === "false") || $params[$bool] === "0") {
                     $params[$bool] = false;
                 } else {
-                    throw new InvalidArgumentException("Invalid value for $bool. Please specify a boolean value.");
+                    throw new InvalidArgumentException("Invalid value for $bool. Please specify a boolean value.", 25);
                 }
             }
         }
@@ -176,11 +176,11 @@ class Validation_InputValidator
         foreach ($files as $file) {
             if (isset($params[$file])) {
                 if (strpos($params[$file], '..')) {
-                    throw new InvalidArgumentException("Invalid file requested: .. not allowed in filenames.");
+                    throw new InvalidArgumentException("Invalid file requested: .. not allowed in filenames.", 25);
                 } elseif (preg_match('/[^\/.-\w]/', $params[$file])) {
                     throw new InvalidArgumentException(
                         "Invalid file requested. Valid characters for filenames include letters, " .
-                        "digits, underscores, hyphens and periods."
+                        "digits, underscores, hyphens and periods.", 25
                     );
                 }
             }
@@ -200,7 +200,7 @@ class Validation_InputValidator
         foreach ($ints as $int) {
             if (isset($params[$int])) {
                 if (filter_var($params[$int], FILTER_VALIDATE_INT) === false) {
-                    throw new InvalidArgumentException("Invalid value for $int. Please specify an integer value.");
+                    throw new InvalidArgumentException("Invalid value for $int. Please specify an integer value.", 25);
                 } else {
                     $params[$int] = (int) $params[$int];
                 }
@@ -221,7 +221,7 @@ class Validation_InputValidator
         foreach ($floats as $float) {
             if (isset($params[$float])) {
                 if (filter_var($params[$float], FILTER_VALIDATE_FLOAT) === false) {
-                    throw new InvalidArgumentException("Invalid value for $float. Please specify an float value.");
+                    throw new InvalidArgumentException("Invalid value for $float. Please specify an float value.", 25);
                 } else {
                     $params[$float] = (float) $params[$float];
                 }
@@ -244,7 +244,7 @@ class Validation_InputValidator
                 if (!preg_match('/^[a-z0-9]{8}-?[a-z0-9]{4}-?[a-z0-9]{4}-?[a-z0-9]{4}-?[a-z0-9]{12}$/', $params[$uuid])) {
                     throw new InvalidArgumentException(
                         "Invalid identifier. Valid characters for UUIDs include " .
-                        "lowercase letters, digits, and hyphens."
+                        "lowercase letters, digits, and hyphens.", 25
                     );
                 }
             }
@@ -264,7 +264,7 @@ class Validation_InputValidator
         foreach ($urls as $url) {
             if (isset($params[$url])) {
                 if (!filter_var($params[$url], FILTER_VALIDATE_URL)) {
-                    throw new InvalidArgumentException("Invalid value for $url. Please specify an URL.");
+                    throw new InvalidArgumentException("Invalid value for $url. Please specify an URL.", 25);
                 }
             }
         }
@@ -284,7 +284,7 @@ class Validation_InputValidator
         foreach ($strings as $str) {
             if (isset($params[$str])) {
                 if (!preg_match('/[a-zA-Z0-9_\.\%\-]*/', $params[$str])) {
-                    throw new InvalidArgumentException("Invalid URL-encoded string.");
+                    throw new InvalidArgumentException("Invalid URL-encoded string.", 25);
                 }
             }
         }
@@ -318,7 +318,7 @@ class Validation_InputValidator
     public static function checkUTCDate($date)
     {
         if (!preg_match("/^\d{4}[\/-]\d{2}[\/-]\d{2}T\d{2}:\d{2}:\d{2}\.?\d{0,6}?Z$/i", $date)) {
-            throw new InvalidArgumentException("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z");
+            throw new InvalidArgumentException("Invalid date string. Please enter a date of the form 2003-10-06T00:00:00.000Z", 25);
         }
     }
 }

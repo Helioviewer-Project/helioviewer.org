@@ -76,7 +76,7 @@ class Module_Movies implements Module
         $queueSize = Resque::size('on_demand_movie');
         if ($queueSize >= MOVIE_QUEUE_MAX_SIZE) {
             throw new Exception("Sorry, due to current high demand, we are currently unable to process your request. " .
-                                "Please try again later.", 1);
+                                "Please try again later.", 40);
         }
         
         // Get current number of on_demand_movie workers
@@ -103,7 +103,7 @@ class Module_Movies implements Module
         // Limit movies to three layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         if ($layers->length() < 1 || $layers->length() > 3) {
-            throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.");
+            throw new Exception("Invalid layer choices! You must specify 1-3 comma-separated layer names.", 22);
         }
         
         // TODO 2012/04/11
@@ -132,6 +132,8 @@ class Module_Movies implements Module
         $numFrames = min($numFrames, $maxFrames);
         
         // Estimate the time to create movie frames
+        // @TODO 06/2012: Factor in total number of workers and number of workers
+        // that are currently available?
         $estBuildTime = $this->_estimateMovieBuildTime($movieDb, $numFrames, $numPixels, $options['format']);
 
         // If all workers are in use, increment and use estimated wait counter
@@ -297,7 +299,7 @@ class Module_Movies implements Module
             $x2 = $options['x0'] + 0.5 * $options['width'] * $this->_params['imageScale'];
             $y2 = $options['y0'] + 0.5 * $options['height'] * $this->_params['imageScale'];
         } else {
-            throw new Exception("Region of interest not properly specified.");
+            throw new Exception("Region of interest not properly specified.", 23);
         }
 
         $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
@@ -327,9 +329,9 @@ class Module_Movies implements Module
 
         // Raise an error if few or no frames were found for the request range and data sources
         if ($numFrames == 0) {
-            throw new Exception("No images found for requested time range. Please try a different time.", 1);
+            throw new Exception("No images found for requested time range. Please try a different time.", 12);
         } else if ($numFrames <= 3) {
-            throw new Exception("Insufficient data was found for the requested time range. Please try a different time.", 1);
+            throw new Exception("Insufficient data was found for the requested time range. Please try a different time.", 16);
         }
         return $numFrames;
     }
@@ -513,7 +515,7 @@ class Module_Movies implements Module
         $movie = new Movie_HelioviewerMovie($this->_params['id'], "mp4");
         
         if ($movie->status !== 2) {
-            throw new Exception("Invalid movie requested");
+            throw new Exception("Invalid movie requested", 41);
         }
         
         // If this was not the first upload for the current session, then
@@ -538,7 +540,7 @@ class Module_Movies implements Module
                 $msg = "Error encountered during authentication. ". 
                        "<a href='https://accounts.google.com/IssuedAuthSubTokens'>Revoke a</a> " . 
                        "for Helioviewer.org in your Google settings page and try again.</a>";
-                throw new Exception($msg);
+                throw new Exception($msg, 42);
             }
         }
         

@@ -85,7 +85,7 @@ function loadModule($params)
             $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
             throw new Exception(
                 "Invalid action specified. See the <a href='$url'>" .
-                "API Documentation</a> for a list of valid actions."
+                "API Documentation</a> for a list of valid actions.", 26
             );
         } else {
         	// Execute action
@@ -768,7 +768,7 @@ function printHTMLErrorMsg($msg)
 function shutDownFunction() { 
     $error = error_get_last();
     if ($error['type'] == 1) {
-        handleError(sprintf("%s:%d - %s", $error['file'], $error['line'], $error['message']));
+        handleError(sprintf("%s:%d - %s", $error['file'], $error['line'], $error['message']), $e->getCode());
     } 
 }
 ?>
