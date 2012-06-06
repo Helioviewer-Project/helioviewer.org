@@ -39,8 +39,7 @@
  *   60 JHV         Failed to create JPX
  *   61 JHV         JPX creation taking too long
  *   62 JHV         JPX summary file not found
- *  
- *  255 Unexpected error
+ *  255 GENERAL     Unexpected error
  * 
  * 
  * Note: If multiple levels of verbosity are needed, one option would be to 
@@ -56,8 +55,8 @@ function handleError($msg, $errorCode=255)
     
     // JSON
     echo json_encode(array(
-        "error"    =>$msg,
-        "errorNum" =>$errorCode
+        "error" =>$msg,
+        "errno" =>$errorCode
     ));
 
     // Fire PHP
