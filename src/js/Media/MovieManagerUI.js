@@ -166,9 +166,15 @@ var MovieManagerUI = MediaManagerUI.extend(
             var msg, movie, waitTime;
 
             if ((response === null) || response.error) {
-                msg = "We are unable to create a movie for the time you " +
-                    "requested. Please select a different time range and try " +
-                    "again.";
+                // Queue full
+                if (response.errno == 40) {
+                    msg = response.error;
+                } else {
+                    // Other error
+                    msg = "We are unable to create a movie for the time you " +
+                        "requested. Please select a different time range and try " +
+                        "again.";
+                }
                 $(document).trigger("message-console-info", msg);
                 return;
             } else if (response.warning) {
