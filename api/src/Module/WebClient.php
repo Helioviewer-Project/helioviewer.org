@@ -91,7 +91,7 @@ class Module_WebClient implements Module
 
         // Make sure file exists
         if (!file_exists($filepath)) {
-            throw new Exception("Unable to locate the requested file: $filepath");
+            throw new Exception("Unable to locate the requested file: $filepath", 24);
         }
 
         // Set HTTP headers
@@ -346,7 +346,7 @@ class Module_WebClient implements Module
             $y2 = $this->_options['y0'] + 0.5 * $this->_options['height'] * $this->_params['imageScale'];
         } else {
             throw new Exception("Region of interest not specified: you must specify values for " . 
-                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.");
+                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.", 23);
         }
         
         // Create RegionOfInterest helper object
@@ -429,7 +429,7 @@ class Module_WebClient implements Module
     {
         // Are usage stats enabled?
         if (!HV_ENABLE_STATISTICS_COLLECTION) {
-            throw new Exception("Sorry, usage statistics are not collected for this site.");
+            throw new Exception("Sorry, usage statistics are not collected for this site.", 26);
         }
         
         // Determine resolution to use
@@ -438,7 +438,7 @@ class Module_WebClient implements Module
             // Make sure a valid resolution was specified
             if (!in_array($this->_options['resolution'], $validResolutions)) {
                 $msg = "Invalid resolution specified. Valid options include hourly, daily, weekly, monthly, and yearly";
-                throw new Exception($msg);                
+                throw new Exception($msg, 25);                
             }
         } else {
             // Default to daily

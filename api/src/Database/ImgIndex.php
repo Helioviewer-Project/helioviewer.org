@@ -225,7 +225,7 @@ class Database_ImgIndex
         // Make sure match was found
         if (is_null($result)) {
             $source = $this->_getDataSourceName($sourceId);
-            throw new Exception("No images of the requested type ($source) are currently available.");
+            throw new Exception("No images of the requested type ($source) are currently available.", 10);
         }
         
         // Cast id to integer
@@ -255,7 +255,7 @@ class Database_ImgIndex
         // Make sure match was founds
         if (is_null($img)) {
             $source = $this->_getDataSourceName($sourceId);
-            throw new Exception("No $source images are available on or before $date.");
+            throw new Exception("No $source images are available on or before $date.", 11);
         }
 
         return $img;
@@ -282,7 +282,7 @@ class Database_ImgIndex
         // Make sure match was found
         if (is_null($img)) {
             $source = $this->_getDataSourceName($sourceId);
-            throw new Exception("No $source images are available on or after $date.");
+            throw new Exception("No $source images are available on or after $date.", 11);
         }
 
         return $img;
@@ -380,7 +380,7 @@ class Database_ImgIndex
                 "sunCenterY" => (float) $center[1]
             );
         } catch (Exception $e) {
-            throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()));
+            throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()), 13);
         }
 
         return $meta;

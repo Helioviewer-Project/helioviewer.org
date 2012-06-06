@@ -104,7 +104,7 @@ class Image_Composite_HelioviewerCompositeImage
         
         // Check to see if layers were created
         if (empty($imageLayers)) {
-            throw new Exception("Unable to create layers needed for composite image");
+            throw new Exception("Unable to create layers needed for composite image", 30);
         }
         
         return $imageLayers;
@@ -434,7 +434,7 @@ class Image_Composite_HelioviewerCompositeImage
 
         if (!file_exists($this->_dir)) {
             if (!mkdir($this->_dir, 0777, true)) {
-                throw new Exception("Unable to create directory: ". $this->_dir);
+                throw new Exception("Unable to create directory: ". $this->_dir, 50);
             }
         }
         
@@ -446,7 +446,7 @@ class Image_Composite_HelioviewerCompositeImage
         
         // Check to see if composite image was successfully created
         if (!file_exists($this->_filepath)) {
-            throw new Exception('The requested image is either unavailable or does not exist.');
+            throw new Exception('The requested image is either unavailable or does not exist.', 31);
         }
     }
 

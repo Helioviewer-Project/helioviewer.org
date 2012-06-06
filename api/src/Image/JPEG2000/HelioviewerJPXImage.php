@@ -71,10 +71,10 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
                 if (sizeOf($images) > 0) {
                     $this->buildJPXImage($images, $linked);
                 } else {
-                    throw new Exception("No images were found for the requested time range.", 1); // Do not log
+                    throw new Exception("No images were found for the requested time range.", 12); // Do not log
                 }
             } catch (Exception $e) {
-                throw new Exception("Error encountered during JPX creation: {$e->getMessage()}");
+                throw new Exception("Error encountered during JPX creation: {$e->getMessage()}", 60);
             }
             
             $this->_writeFileGenerationReport();
@@ -93,7 +93,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
                 }
                 // If the summary file is still not present after 120 seconds, 
                 // display an error message
-                throw new Exception("JPX is taking an unusually long time to process. Please try again in 1-2 minutes.");
+                throw new Exception("JPX is taking an unusually long time to process. Please try again in 1-2 minutes.", 61);
             }
         }
     }
@@ -264,7 +264,7 @@ class Image_JPEG2000_HelioviewerJPXImage extends Image_JPEG2000_JPXImage
     private function _parseFileGenerationReport()
     {
         if (!file_exists($this->_summaryFile)) {
-            throw new Exception("JPX Summary file does not exist.");
+            throw new Exception("JPX Summary file does not exist.", 62);
         }
         $fp = fopen($this->_summaryFile, "r");
         $contents = fread($fp, filesize($this->_summaryFile));
