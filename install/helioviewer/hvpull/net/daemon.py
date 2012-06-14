@@ -202,22 +202,25 @@ class ImageRetrievalDaemon:
             # Attempt to read directory contents. Retry up to 10 times
             # if failed and then notify admin
             while matches is None:
+                if self.shutdown_requested:
+                    return []
+            
                 try:
                     matches = browser.get_files(directory, "jp2")
                     files.extend(matches)
                 except NetworkError:
-                    if num_retries >= 9:
+                    if num_retries >= 100:
                         logging.error("Unable to reach %s. Shutting down HVPull.", 
                                       browser.server.name)
                         msg = "Unable to reach %s. Is the server online?"
                         self.send_email_alert(msg % browser.server.name)
                         self.shutdown()
                     else:
-                        msg = "Unable to reach %s. Will try again in 30 seconds."
+                        msg = "Unable to reach %s. Will try again in 5 seconds."
                         if num_retries > 0:
                             msg += " (retry %d)" % num_retries
                         logging.warning(msg, browser.server.name)
-                        time.sleep(30)
+                        time.sleep(5)
                         num_retries += 1
                         
         return files
