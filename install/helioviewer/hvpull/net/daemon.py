@@ -483,6 +483,8 @@ class ImageRetrievalDaemon:
                 raise BadImage("DARK")
             if params['header'].get('PERCENTD') < 50:
                 raise BadImage("PERCENTD")
+            if params['header'].get('WAVE_STR').endswith("_OPEN"):
+                raise BadImage("WAVE_STR")
         
         # LASCO
         if params['instrument'] == "LASCO":
