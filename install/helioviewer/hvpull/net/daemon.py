@@ -308,10 +308,14 @@ class ImageRetrievalDaemon:
             date_str = image_params['date'].strftime('%Y/%m/%d')
             
             # Transcode
-            if image_params['instrument'] == "AIA":
-                self._transcode(filepath, cprecincts=[128, 128])
-            else:
-                self._transcode(filepath)
+            try:
+                if image_params['instrument'] == "AIA":
+                    self._transcode(filepath, cprecincts=[128, 128])
+                else:
+                    self._transcode(filepath)
+            except KduTranscodeError, e:
+                logging.warning(e.get_message())
+                continue
 
             # Move to archive
             directory = os.path.join(self.image_archive, 
@@ -409,10 +413,19 @@ class ImageRetrievalDaemon:
         # Hide output
         command += " >/dev/null"
         
-        # Execute
-        os.system(command)
+        # Execute kdu_transcode (retry up to five times)
+        num_retries = 0
+        
+        while not os.path.isfile(tmp) and num_retries <= 5:
+            os.system(command)
+            num_retries += 1
+            
+        # If transcode failed, raise an exception
+        if not os.path.isfile(tmp):
+            raise KduTranscodeError(filepath)
         
         # Remove old version and replace with transcoded one
+        # OSError
         os.remove(filepath)
         os.rename(tmp, filepath)
             
@@ -591,6 +604,13 @@ class ImageRetrievalDaemon:
 class BadImage(ValueError):
     """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
     encountered."""
+    def __init__(self, message=""):
+        self.message = message
+    def get_message(self):
+        return self.message
+    
+class KduTranscodeError(RuntimeError):
+    """Exception to raise an image cannot be transcoded."""
     def __init__(self, message=""):
         self.message = message
     def get_message(self):
