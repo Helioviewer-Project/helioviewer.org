@@ -40,6 +40,9 @@ class ImageRetrievalDaemon:
         self.email_from = conf.get('notifications', 'from')
         self.email_to = conf.get('notifications', 'to')
         
+        # Warning flags
+        self.sent_diskspace_warning = False
+        
         # Maximum number of simultaneous downloads
         self.max_downloads = conf.getint('network', 'max_downloads')
         
@@ -171,12 +174,20 @@ class ImageRetrievalDaemon:
                     time.sleep(5)
                     
                     # Try and reconnect
+                    
+                    # @note: May be a good idea to move the reconnect
+                    # functionality to the db module and have it occur
+                    # for all queries.
                     try:                        
                         self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
                     except:
                         pass
                 
             new_urls.append(filtered)
+            
+        # check disk space
+        if not self.sent_diskspace_warning:
+            self._check_free_space()
 
         # acquire the data files
         self.acquire(new_urls)
@@ -428,6 +439,20 @@ class ImageRetrievalDaemon:
         # OSError
         os.remove(filepath)
         os.rename(tmp, filepath)
+        
+    def _check_free_space(self):
+        """Checks the amount of free space on the data volume and emails admins
+        the first time HVPull detects low disk space"""
+        s = os.statvfs(self.image_archive)
+        
+        # gigabytes available
+        gb_avail = (s.f_bsize * s.f_bavail) / 2**30
+        
+        # if less than 500, alert admins
+        if gb_avail < 500:
+            msg = "Warning: Running low on disk space! 500 GB remaining"
+            send_email_alert(msg)
+            self.sent_diskspace_warning = True
             
     def _deduplicate(self, urls):
         """When working with multiple files, this function will ensure that
