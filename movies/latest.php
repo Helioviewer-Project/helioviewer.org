@@ -1,3 +1,19 @@
+<?php
+/**
+ * Helioviewer.org - Latest Movie player
+ * 
+ * July 2012
+ * 
+ * This page was put together as a quick hack to provide a simple way to show
+ * what users have been uploading on Helioviewer.org at conferences, etc.
+ * 
+ * It has not been advertised outside of the meeting, or made available on
+ * the main site.
+ * 
+ * One possibility would be to provide a button on the main site which opens
+ * a jQuery dialog with the video player portion of the contents below. 
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
