@@ -1,3 +1,19 @@
+<?php
+/**
+ * Helioviewer.org - Mobile Video Gallery Test
+ * 
+ * 2011/06/20
+ * 
+ * This page was developed to test the capabilities of jQuery mobile as an
+ * interface to some/all of Helioviewer.org's functionality on mobile devices
+ * and touchpads.
+ * 
+ * Eventually separate version of the main web UI could be developed which uses
+ * jQuery mobile for the UI. Users who arrive at helioviewer.org and are
+ * detected to be using such a device could be automatically directed to
+ * the alternative page.
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
