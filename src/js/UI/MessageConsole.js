@@ -20,6 +20,9 @@ var MessageConsole = Class.extend(
      */
     init: function () {
         this._setupEventHandlers();
+        this._defaults = {
+            "life": 15000
+        }
     },
     
     /**
@@ -27,6 +30,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     log: function (msg, options) {
+        options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
     
@@ -36,6 +40,7 @@ var MessageConsole = Class.extend(
      * @param {Object} options
      */
     info: function (msg, options) {
+        options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
     
@@ -44,6 +49,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     warn: function (msg, options) {
+        options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
     },
     
@@ -52,6 +58,7 @@ var MessageConsole = Class.extend(
      * @param {String} msg Message to display
      */
     error: function (msg, options) {
+        options = $.extend(this._defaults, options);
         $("#message-console").jGrowl(msg, options);
         //$("#helioviewer-viewport-container-outer").effect("shake", { times: 1 });
     },
