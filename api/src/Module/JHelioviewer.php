@@ -121,6 +121,12 @@ class Module_JHelioviewer implements Module
         );
         $options = array_replace($defaults, $this->_options);
         
+        // Make sure cadence is valid
+        if ($options['cadence'] && $options['cadence'] <= 0) {
+            throw new Exception("Invalid cadence specified. Cadence must be greater than 0.");
+        }
+        
+        
         // Both sourceId and observatory, instrument, detector and measurement names are needed
         $sourceId = $this->_getSourceId($imgIndex);        
         list($obs, $inst, $det, $meas) = $this->_getSourceIdInfo($sourceId, $imgIndex);
