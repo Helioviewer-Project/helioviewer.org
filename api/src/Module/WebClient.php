@@ -156,9 +156,17 @@ class Module_WebClient implements Module
         include_once 'src/Database/ImgIndex.php';
 
         $verbose = isset($this->_options['verbose']) ? $this->_options['verbose'] : false;
+        
+        // Work-around to enable JHelioviewer to toggle on/off a specific data
+        // source or sources when doing a verbose getDataSources request.
+        if (isset($this->_options['enable'])) {
+            $enabled = explode(",", substr($this->_options['enable'], 1, -1));
+        } else {
+            $enabled = array();
+        }
 
         $imgIndex    = new Database_ImgIndex();
-        $dataSources = $imgIndex->getDataSources($verbose);
+        $dataSources = $imgIndex->getDataSources($verbose, $enabled);
         
         // Print result
         $this->_printJSON(json_encode($dataSources), false, true);
@@ -547,7 +555,7 @@ class Module_WebClient implements Module
 
         case "getDataSources":
             $expected = array(
-               "optional" => array('verbose', 'callback'),
+               "optional" => array('verbose', 'callback', 'enable'),
                "bools"    => array('verbose'),
                "alphanum" => array('callback')
             );

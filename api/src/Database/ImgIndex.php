@@ -550,7 +550,7 @@ class Database_ImgIndex
      *
      * @return array A tree representation of the known data sources
      */
-    public function getDataSources ($verbose)
+    public function getDataSources ($verbose, $enabled)
     {
         $fields = array("instrument", "detector", "measurement");
         
@@ -574,12 +574,34 @@ class Database_ImgIndex
                 LEFT JOIN detectors ON datasources.detectorId = detectors.id
                 LEFT JOIN measurements ON datasources.measurementId = measurements.id;";
                 
-        // 2011/06/10 Temporarily hiding STEREO from verbose output (used by
-        // JHelioviewer.) Will remove when JHelioviewer adds support.
-        
+        // 2011/06/10 Temporarily hiding STEREO from verbose outpu to prevent JHelioviewer from attempting to use
         // 2012/05/26 Same thing with SWAP
+        // 2012/07/11 Adding switch to enable these layers for JHelioviewer
         if ($verbose) {
-            $sql = substr($sql, 0, -1) . " " . 'WHERE observatories.name NOT IN ("STEREO_A", "STEREO_B", "PROBA2");';
+            $ignore = array("STEREO_A", "STEREO_B", "PROBA2");
+            
+            $enabledList = "(";
+            
+            // Override hidden observatories if specified
+            foreach($enabled as $x) {
+                $key = array_search($x, $ignore);
+                if ($key !== FALSE) {
+                    unset($ignore[$key]);
+                }
+            }
+            
+            // Ignore remaining obseratories in ignore list
+            foreach($ignore as $observatory) {
+                $enabledList .= "'$observatory',";
+            }
+            $enabledList = substr($enabledList, 0, -1) . ");";
+            
+            if (sizeOf($ignore) > 0) {
+                $sql = substr($sql, 0, -1) . " WHERE observatories.name NOT IN $enabledList";    
+            } else {
+                $sql = substr($sql, 0, -1) . ";";
+            }
+            
         }
         
         // Use UTF-8 for responses
