@@ -104,7 +104,7 @@ def filter_images(images, filter_key, filter_op, filter_val):
                     # Cast numeric values to floats
                     if isinstance(filter_val, float):
                         try:
-                            value = float(filter_val)
+                            value = float(value)
                         except ValueError, TypeError:
                             pass
                     
