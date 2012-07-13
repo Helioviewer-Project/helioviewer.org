@@ -67,8 +67,9 @@ class Job_MovieBuilder
         if (!$this->args['counter']) {
             return;
         }
-        
+        # Get current time estimation counter
         $redis = new Redisent('localhost');
-        $redis->decrby('helioviewer:movie_queue_wait', $this->args['eta']);
+        $totalWait = (int) $redis->get('helioviewer:movie_queue_wait');
+        $redis->decrby('helioviewer:movie_queue_wait', min($totalWait, $this->args['eta']));
     }
 }
