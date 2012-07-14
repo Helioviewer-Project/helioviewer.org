@@ -519,9 +519,9 @@ class ImageRetrievalDaemon:
         if params['detector'] == "AIA":
             if params['header'].get("IMG_TYPE") == "DARK":
                 raise BadImage("DARK")
-            if params['header'].get('PERCENTD') < 50:
+            if float(params['header'].get('PERCENTD')) < 50:
                 raise BadImage("PERCENTD")
-            if params['header'].get('WAVE_STR').endswith("_OPEN"):
+            if str(params['header'].get('WAVE_STR')).endswith("_OPEN"):
                 raise BadImage("WAVE_STR")
         
         # LASCO
