@@ -37,6 +37,20 @@ class HelioviewerEmbeddedClient extends HelioviewerClient
         $this->compressedCSSFile = "helioviewer-embed.min.css";
         
         parent::__construct($ini);
+        
+        # Log embed API call if stats are enabled
+        if ($this->config['enable_statistics_collection']) {
+            date_default_timezone_set('UTC');
+            
+            # load config
+            require_once "api/src/Config.php";
+            $config = new Config("settings/Config.ini");
+            
+            # record in statistics table
+            require_once 'api/src/Database/Statistics.php';
+            $statistics = new Database_Statistics();
+            $statistics->log("embed");            
+        }
     }
     
     /**

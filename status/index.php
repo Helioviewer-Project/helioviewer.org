@@ -15,7 +15,7 @@
 <body>
     <div id='main'>
 	<div id="header">
-        <img src="../resources/images/logos/hvlogo1s_transparent_logo.png" alt="Helioviewer logo" />
+        <a href='http://www.helioviewer.org'><img src="../resources/images/logos/hvlogo1s_transparent_logo.png" alt="Helioviewer logo" /></a>
         <div id='headerText'>The Helioviewer Project - Data Monitor</div>
         <div id='currentTime'>Current time: <?php echo $now;?></div>
     </div>
@@ -73,9 +73,13 @@
                 $t2 = 12 * 3600;
                 $t3 = 24 * 3600;
             } else if ($inst == "SECCHI") {
-                $t1 = 84  * 3600; // 3 days 12 hours
+                $t1 = 84  * 3600;  // 3 days 12 hours
                 $t2 = 120  * 3600; // 5 days 
-                $t3 = 144 * 3600; // 6 days
+                $t3 = 144 * 3600;  // 6 days
+            } else if ($inst == "SWAP") {
+                $t1 = 4  * 3600;
+                $t2 = 8  * 3600; 
+                $t3 = 12 * 3600;
             }
  
             if ($elapsed <= $t1) {
