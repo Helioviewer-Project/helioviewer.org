@@ -62,7 +62,8 @@ class Database_Statistics
             "getClosestImage"      => array(),
             "getJPX"               => array(),
             "takeScreenshot"       => array(),
-            "uploadMovieToYouTube" => array()
+            "uploadMovieToYouTube" => array(),
+            "embed"                => array()
         );
         
         // Summary array
@@ -71,7 +72,8 @@ class Database_Statistics
             "getClosestImage"      => 0,
             "getJPX"               => 0,
             "takeScreenshot"       => 0,
-            "uploadMovieToYouTube" => 0
+            "uploadMovieToYouTube" => 0,
+            "embed"                => 0
         );
         
         // Format to use for displaying dates

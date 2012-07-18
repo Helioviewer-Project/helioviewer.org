@@ -10,6 +10,8 @@
  *                      hourly, daily, weekly, etc.
  *  @return void
  */
+colors = ["#d82641", "#9bd927", "#27d9be", "#6527d9"];
+
 var getUsageStatistics = function(timeInterval) {
     $.getJSON("../api/index.php", {action: "getUsageStatistics", resolution: timeInterval}, function (response) {
         displayUsageStatistics(response, timeInterval);
@@ -39,9 +41,10 @@ var displayUsageStatistics = function (data, timeInterval) {
     createPieChart('pieChart', summary, pieChartHeight);
 
     // Create bar graphs for each request type
-    createColumnChart('takeScreenshot', data['takeScreenshot'], 'Screenshot', barChartHeight, "#8e305c");
-    createColumnChart('buildMovie', data['buildMovie'], 'Movie', barChartHeight, "#5d8f31");
-    createColumnChart('getJPX', data['getJPX'], 'JPX', barChartHeight, "#315d8f");
+    createColumnChart('takeScreenshot', data['takeScreenshot'], 'Screenshot', barChartHeight, colors[0]);
+    createColumnChart('buildMovie', data['buildMovie'], 'Movie', barChartHeight, colors[1]);
+    createColumnChart('getJPX', data['getJPX'], 'JPX', barChartHeight, colors[2]);
+    createColumnChart('embed', data['embed'], 'Embeds', barChartHeight, colors[3])
     
     // Spreads bar graphs out a bit if space permits
     barChartMargin = Math.round(($("#visualizations").height() - $("#barCharts").height()) / 6);
@@ -71,9 +74,10 @@ var displaySummaryText = function(timeInterval, summary) {
     
     // Generate HTML
     html = '<span id="when">During the last <b>' + when + '</b> Helioviewer.org users created</span> ' +
-           '<span id="numScreenshots" class="summaryCount">' + summary['takeScreenshot'] + ' screenshots</span>, ' +
-           '<span id="numMovies" class="summaryCount">' + summary['buildMovie'] + ' movies</span>, and ' +
-           '<span id="numJPXMovies" class="summaryCount">' + summary['getJPX'] + ' JPX movies</span>.';
+           '<span style="color:"' + colors[0] + ';" class="summaryCount">' + summary['takeScreenshot'] + ' screenshots</span>, ' +
+           '<span style="color:"' + colors[1] + ';" class="summaryCount">' + summary['buildMovie'] + ' movies</span>, ' +
+           '<span style="color:"' + colors[2] + ';" class="summaryCount">' + summary['getJPX'] + ' JPX movies</span>, and ' + 
+           'Helioviewer.org was <span style="color:"' + colors[3] + ';" class="summaryCount">embedded ' + summary['embed'] + ' times</span>.';
 
     $("#overview").html(html);
     
@@ -135,7 +139,7 @@ var createPieChart = function (id, totals, size) {
     data.addColumn('string', 'Request');
     data.addColumn('number', 'Frequency of requests');
 
-    data.addRows(3);
+    data.addRows(4);
 
     data.setValue(0, 0, 'Screenshots');
     data.setValue(0, 1, totals['takeScreenshot']);
@@ -143,7 +147,9 @@ var createPieChart = function (id, totals, size) {
     data.setValue(1, 1, totals['buildMovie']);
     data.setValue(2, 0, 'JPX Movies');
     data.setValue(2, 1, totals['getJPX']);
+    data.setValue(3, 0, 'Helioviewer.org Embeds');
+    data.setValue(3, 1, totals['embed']);
 
     chart = new google.visualization.PieChart(document.getElementById(id));
-    chart.draw(data, {width: size, height: size, colors: ["#8e305c", "#5d8f31", "#315d8f"], title: "Frequency of requests"});
+    chart.draw(data, {width: size, height: size, colors: colors, title: "Frequency of requests"});
 };
