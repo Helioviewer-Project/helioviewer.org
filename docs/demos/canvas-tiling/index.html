@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<!-- Last update: 2009/08/14 -->
+	<title>Canvas > Client-side Tiling</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+	<style type='text/css'>
+		#tile-container {position: relative;}
+		#nw-container, #ne-container, #sw-container, #se-container {position: absolute; width:512px; height:512px;}
+		#nw-container {top:0px; left:0px;}
+		#ne-container {top:0px; left:512px;}
+		#sw-container {top:512px; left:0px;}
+		#se-container {top:512px; left:512px;}
+	</style>
+
+</head>
+<body>
+	<h1>Canvas > Client-side Tiling</h1>
+	<input id="zoom-btn" type="button" value="Zoom In" />
+	<div id="tile-container">
+		<div id="nw-container">
+			<img id="tile" src="tile.jpg" alt="Original tile" />
+		</div>
+		<div id="ne-container"></div>
+		<div id="sw-container"></div>
+		<div id="se-container"></div>
+	</div>
+	<br>
+
+<script type="text/javascript">
+$(function (){
+	$("#zoom-btn").click(function(e) {
+		var nw, tile;
+
+		// NOTE 1: Canvas doesn't like jQuery selectors (e.g. $("#northwest").getContext('2d'))
+		// NOTE 2: Canvas dimensions must be specified using width and height attributes, and not CSS!
+		tile = document.getElementById('tile');
+
+		$(tile).hide();		
+
+		// Northwest
+		$("#nw-container").append($('<canvas id="northwest" width="512" height="512"></canvas>'));
+		nw = document.getElementById('northwest').getContext('2d');
+		nw.drawImage(tile,0,0,256,256,0,0,512,512);
+
+		// Northeast
+		$("#ne-container").append($('<canvas id="northeast" width="512" height="512"></canvas>'));
+		nw = document.getElementById('northeast').getContext('2d');
+		nw.drawImage(tile,256,0,256,256,0,0,512,512);		
+		
+		// Southwest
+		$("#sw-container").append($('<canvas id="southwest" width="512" height="512"></canvas>'));
+		sw = document.getElementById('southwest').getContext('2d');
+		sw.drawImage(tile,0,256,256,256,0,0,512,512);	
+		
+		// Southeast
+		$("#se-container").append($('<canvas id="southeast" width="512" height="512"></canvas>'));
+		nw = document.getElementById('southeast').getContext('2d');
+		nw.drawImage(tile,256,256,256,256,0,0,512,512);	
+
+	});
+});
+</script>
+</body>
+</html>
