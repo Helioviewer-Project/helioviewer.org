@@ -501,28 +501,46 @@ class Module_WebClient implements Module
           */
         $instruments = $imgIndex->getDataSourcesByInstrument();
         
+        // Date format
         $format = 'Y-m-d H:i:s';
+        
+        // Current time
+        $now = new DateTime();
         
         // Iterate through instruments
         foreach($instruments as $inst => $dataSources) {
-            $oldest = new DateTime('9999-01-01');
+            $oldest = new DateTime('2035-01-01');
             
             // Keep track of which datasource is the furthest behind
             foreach($dataSources as $dataSource) {
-                // Convert to DateTime
+                // Get date string for most recent image 
                 $dateStr = $imgIndex->getNewestImage($dataSource['id']);
+                
+                // Skip data source if no images are found
+                if (is_null($dateStr)) {
+                    continue;
+                }
+                
+                // Convert to DateTime
                 $date = DateTime::createFromFormat($format, $dateStr);
 
-                // Store if newer
+                // Store if older
                 if ($date < $oldest) {
                     $oldest = $date;
                 }
             }
+
+            // Get elapsed time
+            $delta = $now->getTimestamp() - $oldest->getTimestamp();
             
             // Add to result array
-            $statuses[$inst] = array(
-                "time" => toISOString($oldest)
-            );
+            if ($delta > 0) {
+                $statuses[$inst] = array(
+                    "time" => toISOString($oldest),
+                    "level" => $this->_computeStatusLevel($delta, $inst),
+                    "secondsBehind" => $delta
+                );                
+            }
         }
 
          // Case 2: nickname (instrument + measurement)
@@ -531,6 +549,58 @@ class Module_WebClient implements Module
          // Get a list of the datasources grouped by instrument
          $this->_printJSON(json_encode($statuses));
      }
+
+    /**
+     * Determines a numeric indicator ("level") of how up to date a particular
+     * image source is relative to it's normal operational availability.
+     * 
+     * Note: values are currently hard-coded for different instruments.
+     * A better solution might be to 
+     * 
+     */
+     private function _computeStatusLevel($elapsed, $inst) {
+        // Default values
+        $t1 = 7200;  // 2 hrs
+        $t2 = 14400; // 4 hrs
+        $t3 = 43200; // 12 hrs
+        $t4 = 604800; // 1 week
+        
+        // Instrument-specific thresholds
+        if ($inst == "EIT") {
+            $t1 = 14 * 3600;
+            $t2 = 24 * 3600;
+            $t3 = 48 * 3600;
+        } else if ($inst == "HMI") {
+            $t1 = 4 * 3600;
+            $t2 = 8 * 3600;
+            $t3 = 24 * 3600;
+        } else if ($inst == "LASCO") {
+            $t1 = 8 * 3600;
+            $t2 = 12 * 3600;
+            $t3 = 24 * 3600;
+        } else if ($inst == "SECCHI") {
+            $t1 = 84  * 3600;  // 3 days 12 hours
+            $t2 = 120  * 3600; // 5 days 
+            $t3 = 144 * 3600;  // 6 days
+        } else if ($inst == "SWAP") {
+            $t1 = 4  * 3600;
+            $t2 = 8  * 3600; 
+            $t3 = 12 * 3600;
+        }
+ 
+        // Return level
+        if ($elapsed <= $t1) {
+            return 1;
+        } else if ($elapsed <= $t2) {
+            return 2;
+        } else if ($elapsed <= $t3) {
+            return 3;
+        } else if ($elapsed <= $t4){
+            return 4;
+        } else {
+            return 5;
+        }
+    }
     
     /**
      * Creates the directory structure which will be used to cache
