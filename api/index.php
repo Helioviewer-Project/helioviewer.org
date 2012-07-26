@@ -62,6 +62,7 @@ function loadModule($params)
         "getUsageStatistics"   => "WebClient",
         "shortenURL"           => "WebClient",
         "takeScreenshot"       => "WebClient",
+        "getStatus"            => "WebClient",
         "getJP2Image"          => "JHelioviewer",
         "getJPX"               => "JHelioviewer",
         "launchJHelioviewer"   => "JHelioviewer",
