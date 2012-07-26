@@ -458,6 +458,79 @@ class Module_WebClient implements Module
 
         $this->_printJSON($statistics->getUsageStatistics($this->_options['resolution']));
     }
+
+    /**
+     * Returns status information (i.e. time of most recent available data)
+     * based on either observatory, instrument, detector or measurement.
+     * 
+     * There are two types of queries that can be made:
+     * 
+     * (1) instrument
+     * 
+     * If key is set to instrument, then the time of the data source associated
+     * with that instrument that is lagging the furthest behind is returned.
+     * 
+     * (2) nickname
+     * 
+     * If the key is set to nickname, then the most recent image times
+     * are returned for all datasources, sorted by instrument.
+     */
+     public function getStatus()
+     {
+         // Connect to database
+         include_once 'src/Database/ImgIndex.php';
+         include_once 'src/Helper/DateTimeConversions.php';
+         
+         $imgIndex = new Database_ImgIndex();
+
+         // Default to instrument-level status information         
+         if (!isset($this->_options['key'])) {
+             $this->_options['key'] = "instrument";
+         }
+         
+         $statuses = array();
+         
+         // Case 1: instrument
+         /**
+          * 
+          * $instIds = (SELECT * FROM instruments)
+          * foreach $instId as $instId:
+          *     $datasources = (SELECT * FROM datasources WHERE instrumentId=$instId)
+          *         find newest (and oldest?) date among the datasources
+          * 
+          */
+        $instruments = $imgIndex->getDataSourcesByInstrument();
+        
+        $format = 'Y-m-d H:i:s';
+        
+        // Iterate through instruments
+        foreach($instruments as $inst => $dataSources) {
+            $oldest = new DateTime('9999-01-01');
+            
+            // Keep track of which datasource is the furthest behind
+            foreach($dataSources as $dataSource) {
+                // Convert to DateTime
+                $dateStr = $imgIndex->getNewestImage($dataSource['id']);
+                $date = DateTime::createFromFormat($format, $dateStr);
+
+                // Store if newer
+                if ($date < $oldest) {
+                    $oldest = $date;
+                }
+            }
+            
+            // Add to result array
+            $statuses[$inst] = array(
+                "time" => toISOString($oldest)
+            );
+        }
+
+         // Case 2: nickname (instrument + measurement)
+         // @TODO
+         
+         // Get a list of the datasources grouped by instrument
+         $this->_printJSON(json_encode($statuses));
+     }
     
     /**
      * Creates the directory structure which will be used to cache
@@ -607,6 +680,11 @@ class Module_WebClient implements Module
                 "alphanum" => array('callback')
             );
             break;
+        case "getStatus":
+            $expected = array(
+                "optional" => array("key"),
+                "alphanum" => array("key")
+            );
         default:
             break;
         }
