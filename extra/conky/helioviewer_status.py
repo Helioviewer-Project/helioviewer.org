@@ -28,9 +28,6 @@ def main():
     # Query Helioviewer.org
     response = urlopen(HV_QUERY_URL).read()
     instruments = json.loads(response)
-
-    # Sort results by instrument
-
     
     # Generate conky snippet
     voffset = "${voffset %d}" % CONKY_VOFFSET
@@ -38,7 +35,10 @@ def main():
     color = "${color%d}" % CONKY_COLOR_NUM
     alignc = "${alignc %d}" % CONKY_ALIGNC
 
-    for inst, status in instruments.items():
+    # Iterate through instruments in sorted order
+    iterator = iter(sorted(instruments.iteritems()))
+
+    for inst, status in iterator:
         # Ignore non-active datasets (30 days or more behind real-time)
         if status['secondsBehind'] > (30 * 24 * 60 * 60):
             continue
