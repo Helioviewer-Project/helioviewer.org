@@ -2,10 +2,6 @@
 #header {font-size:32px; vertical-align: middle; margin-top: 15px; margin-bottom: 26px;}
 #headerText {display: inline-block; vertical-align: super; font-family: arial,helvetica,liberation sans,bitstream vera sans,freesans,clean,sans-serif; font-size:38px;}
 #footer {font-size: 9.6px;}
-#overview {}
-#numScreenshots {color: #8e305c;}
-#numMovies {color: #5d8f31;}
-#numJPXMovies {color: #315d8f;}
 #visualizations {margin: 10px 0;}
 #pieChart {width: 45%; display: inline-block; overflow: hidden;}
 #barCharts {width: 45%; display: inline-block; overflow: hidden; vertical-align: top;}

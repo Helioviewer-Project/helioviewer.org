@@ -50,7 +50,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         if (!file_exists($this->_file)) {
         	// NOTE 02/02/2011: This error may also be thrown if web server cannot write to cache dir
             $msg = "Unable to access file. Do you have the proper permissions?";
-            throw new Exception($msg);
+            throw new Exception($msg, 50);
         }
 
         $fp = fopen($this->_file, "rb");
@@ -141,7 +141,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         
         // Check to make sure header information is valid
         if ((filter_var($dsun, FILTER_VALIDATE_FLOAT) === false) || ($dsun <= 0) || ($dsun >= $maxDSUN)) {
-            throw new Exception("Invalid value for DSUN: $dsun");
+            throw new Exception("Invalid value for DSUN: $dsun", 15);
         }
         
         return $dsun;
@@ -158,7 +158,7 @@ class Image_JPEG2000_JP2ImageXMLBox
             $width  = $this->_getElementValue("NAXIS1");
             $height = $this->_getElementValue("NAXIS2");
         } catch (Exception $e) {
-            throw new Exception('Unable to locate image dimensions in header tags!');
+            throw new Exception('Unable to locate image dimensions in header tags!', 15);
         }
         
         return array($width, $height);
@@ -179,7 +179,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         
         // Check to make sure header information is valid
         if ((filter_var($scale, FILTER_VALIDATE_FLOAT) === false) || ($scale <= 0)) {
-            throw new Exception("Invalid value for CDELT1: $scale");
+            throw new Exception("Invalid value for CDELT1: $scale", 15);
         }
         
         return $scale;
@@ -199,7 +199,7 @@ class Image_JPEG2000_JP2ImageXMLBox
             $x = $this->_getElementValue("CRPIX1");
             $y = $this->_getElementValue("CRPIX2");
         } catch (Exception $e) {
-            throw new Exception('Unable to locate sun center center in header tags!');
+            throw new Exception('Unable to locate sun center center in header tags!', 15);
         }
         return array($x, $y);
     }
@@ -243,6 +243,6 @@ class Image_JPEG2000_JP2ImageXMLBox
                 return $element->item(0)->childNodes->item(0)->nodeValue;
             }
         }
-        throw new Exception('Element not found');
+        throw new Exception('Element not found', 15);
     }
 }

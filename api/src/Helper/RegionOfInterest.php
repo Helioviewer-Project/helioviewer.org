@@ -60,7 +60,7 @@ class Helper_RegionOfInterest
         
         // Make sure width and height are non-zero
         if ($this->getWidth() <= 0 || $this->getHeight() <= 0) {
-            throw new Exception(INVALID_REGION_OF_INTEREST, 1);
+            throw new Exception(INVALID_REGION_OF_INTEREST, 21);
         }
 
         $this->_limitToMaximumDimensions();
@@ -184,7 +184,7 @@ class Helper_RegionOfInterest
         
         // Throw and exception if either dimension is zero
         if (($right - $left == 0) || ($bottom - $top == 0)) {
-            throw new Exception(INVALID_REGION_OF_INTEREST);
+            throw new Exception(INVALID_REGION_OF_INTEREST, 21);
         }
         
         return array(

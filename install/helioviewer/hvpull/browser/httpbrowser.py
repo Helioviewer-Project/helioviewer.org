@@ -3,7 +3,7 @@ import os
 import urllib
 import socket
 from sgmllib import SGMLParser
-from helioviewer.hvpull.browser.basebrowser import BaseDataBrowser
+from helioviewer.hvpull.browser.basebrowser import BaseDataBrowser, NetworkError
 
 class HTTPDataBrowser(BaseDataBrowser):
     def __init__(self, server):
@@ -30,7 +30,10 @@ class HTTPDataBrowser(BaseDataBrowser):
                 files = filter(lambda url: url.endswith("." + extension), 
                                self._query(location))
             except IOError, e:
-                if isinstance(e.strerror, socket.timeout):
+                if isinstance(e.strerror, socket.error):
+                    # if server is unreachable, raise an exception
+                    raise NetworkError()
+                elif isinstance(e.strerror, socket.timeout):
                     # for socket timeouts, retry
                     num_retries += 1
                     continue

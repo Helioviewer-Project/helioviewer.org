@@ -91,7 +91,7 @@ class Module_WebClient implements Module
 
         // Make sure file exists
         if (!file_exists($filepath)) {
-            throw new Exception("Unable to locate the requested file: $filepath");
+            throw new Exception("Unable to locate the requested file: $filepath", 24);
         }
 
         // Set HTTP headers
@@ -156,9 +156,17 @@ class Module_WebClient implements Module
         include_once 'src/Database/ImgIndex.php';
 
         $verbose = isset($this->_options['verbose']) ? $this->_options['verbose'] : false;
+        
+        // Work-around to enable JHelioviewer to toggle on/off a specific data
+        // source or sources when doing a verbose getDataSources request.
+        if (isset($this->_options['enable'])) {
+            $enabled = explode(",", substr($this->_options['enable'], 1, -1));
+        } else {
+            $enabled = array();
+        }
 
         $imgIndex    = new Database_ImgIndex();
-        $dataSources = $imgIndex->getDataSources($verbose);
+        $dataSources = $imgIndex->getDataSources($verbose, $enabled);
         
         // Print result
         $this->_printJSON(json_encode($dataSources), false, true);
@@ -346,7 +354,7 @@ class Module_WebClient implements Module
             $y2 = $this->_options['y0'] + 0.5 * $this->_options['height'] * $this->_params['imageScale'];
         } else {
             throw new Exception("Region of interest not specified: you must specify values for " . 
-                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.");
+                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.", 23);
         }
         
         // Create RegionOfInterest helper object
@@ -429,7 +437,7 @@ class Module_WebClient implements Module
     {
         // Are usage stats enabled?
         if (!HV_ENABLE_STATISTICS_COLLECTION) {
-            throw new Exception("Sorry, usage statistics are not collected for this site.");
+            throw new Exception("Sorry, usage statistics are not collected for this site.", 26);
         }
         
         // Determine resolution to use
@@ -438,7 +446,7 @@ class Module_WebClient implements Module
             // Make sure a valid resolution was specified
             if (!in_array($this->_options['resolution'], $validResolutions)) {
                 $msg = "Invalid resolution specified. Valid options include hourly, daily, weekly, monthly, and yearly";
-                throw new Exception($msg);                
+                throw new Exception($msg, 25);                
             }
         } else {
             // Default to daily
@@ -449,6 +457,149 @@ class Module_WebClient implements Module
         $statistics = new Database_Statistics();
 
         $this->_printJSON($statistics->getUsageStatistics($this->_options['resolution']));
+    }
+
+    /**
+     * Returns status information (i.e. time of most recent available data)
+     * based on either observatory, instrument, detector or measurement.
+     * 
+     * There are two types of queries that can be made:
+     * 
+     * (1) instrument
+     * 
+     * If key is set to instrument, then the time of the data source associated
+     * with that instrument that is lagging the furthest behind is returned.
+     * 
+     * (2) nickname
+     * 
+     * If the key is set to nickname, then the most recent image times
+     * are returned for all datasources, sorted by instrument.
+     */
+     public function getStatus()
+     {
+         // Connect to database
+         include_once 'src/Database/ImgIndex.php';
+         include_once 'src/Helper/DateTimeConversions.php';
+         
+         $imgIndex = new Database_ImgIndex();
+
+         // Default to instrument-level status information         
+         if (!isset($this->_options['key'])) {
+             $this->_options['key'] = "instrument";
+         }
+         
+         $statuses = array();
+         
+         // Case 1: instrument
+         /**
+          * 
+          * $instIds = (SELECT * FROM instruments)
+          * foreach $instId as $instId:
+          *     $datasources = (SELECT * FROM datasources WHERE instrumentId=$instId)
+          *         find newest (and oldest?) date among the datasources
+          * 
+          */
+        $instruments = $imgIndex->getDataSourcesByInstrument();
+        
+        // Date format
+        $format = 'Y-m-d H:i:s';
+        
+        // Current time
+        $now = new DateTime();
+        
+        // Iterate through instruments
+        foreach($instruments as $inst => $dataSources) {
+            $oldest = new DateTime('2035-01-01');
+            
+            // Keep track of which datasource is the furthest behind
+            foreach($dataSources as $dataSource) {
+                // Get date string for most recent image 
+                $dateStr = $imgIndex->getNewestImage($dataSource['id']);
+                
+                // Skip data source if no images are found
+                if (is_null($dateStr)) {
+                    continue;
+                }
+                
+                // Convert to DateTime
+                $date = DateTime::createFromFormat($format, $dateStr);
+
+                // Store if older
+                if ($date < $oldest) {
+                    $oldest = $date;
+                }
+            }
+
+            // Get elapsed time
+            $delta = $now->getTimestamp() - $oldest->getTimestamp();
+            
+            // Add to result array
+            if ($delta > 0) {
+                $statuses[$inst] = array(
+                    "time" => toISOString($oldest),
+                    "level" => $this->_computeStatusLevel($delta, $inst),
+                    "secondsBehind" => $delta
+                );                
+            }
+        }
+
+         // Case 2: nickname (instrument + measurement)
+         // @TODO
+         
+         // Get a list of the datasources grouped by instrument
+         $this->_printJSON(json_encode($statuses));
+     }
+
+    /**
+     * Determines a numeric indicator ("level") of how up to date a particular
+     * image source is relative to it's normal operational availability.
+     * 
+     * Note: values are currently hard-coded for different instruments.
+     * A better solution might be to 
+     * 
+     */
+     private function _computeStatusLevel($elapsed, $inst) {
+        // Default values
+        $t1 = 7200;  // 2 hrs
+        $t2 = 14400; // 4 hrs
+        $t3 = 43200; // 12 hrs
+        $t4 = 604800; // 1 week
+        
+        // Instrument-specific thresholds
+        if ($inst == "EIT") {
+            $t1 = 14 * 3600;
+            $t2 = 24 * 3600;
+            $t3 = 48 * 3600;
+        } else if ($inst == "HMI") {
+            $t1 = 4 * 3600;
+            $t2 = 8 * 3600;
+            $t3 = 24 * 3600;
+        } else if ($inst == "LASCO") {
+            $t1 = 8 * 3600;
+            $t2 = 12 * 3600;
+            $t3 = 24 * 3600;
+        } else if ($inst == "SECCHI") {
+            $t1 = 84  * 3600;  // 3 days 12 hours
+            $t2 = 120  * 3600; // 5 days 
+            $t3 = 144 * 3600;  // 6 days
+        } else if ($inst == "SWAP") {
+            $t1 = 4  * 3600;
+            $t2 = 8  * 3600; 
+            $t3 = 12 * 3600;
+        }
+ 
+        // Return level
+        if ($elapsed <= $t1) {
+            return 1;
+        } else if ($elapsed <= $t2) {
+            return 2;
+        } else if ($elapsed <= $t3) {
+            return 3;
+        } else if ($elapsed <= $t4){
+            return 4;
+        } else {
+            return 5;
+        }
     }
     
     /**
@@ -547,7 +698,7 @@ class Module_WebClient implements Module
 
         case "getDataSources":
             $expected = array(
-               "optional" => array('verbose', 'callback'),
+               "optional" => array('verbose', 'callback', 'enable'),
                "bools"    => array('verbose'),
                "alphanum" => array('callback')
             );
@@ -599,6 +750,11 @@ class Module_WebClient implements Module
                 "alphanum" => array('callback')
             );
             break;
+        case "getStatus":
+            $expected = array(
+                "optional" => array("key"),
+                "alphanum" => array("key")
+            );
         default:
             break;
         }

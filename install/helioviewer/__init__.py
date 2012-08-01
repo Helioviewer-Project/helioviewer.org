@@ -14,16 +14,20 @@ def init_logger(filepath):
             
         os.chdir(directory)
         
-    logging.basicConfig(filename=filename, level=logging.INFO,
-                        format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S')
+    # %(asctime)s.%(msecs)03d
+    formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s',
+                                  datefmt='%Y-%m-%d %H:%M:%S')
     
-    # Also log INFO or higher messages to STDOUT
+    logger = logging.getLogger('')
+    logger.setLevel(logging.INFO)
+    
+    # STDOUT logger
     console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
-    logging.getLogger('').addHandler(console)
-    
-    # Enable log-rotation for root logger
+
+    # File logger
     rotate = logging.handlers.RotatingFileHandler(filename, 
                                                   maxBytes=10000000, backupCount=10)
-    logging.getLogger('').addHandler(rotate)
+    rotate.setFormatter(formatter)
+    
+    logger.addHandler(console)
+    logger.addHandler(rotate)
