@@ -528,6 +528,7 @@ class HelioviewerWebClient extends HelioviewerClient
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
+                <a href="http://community.helioviewer.org/" class="light" target="_blank">Community</a>
                 <a href="http://blog.helioviewer.org/" class="light" target="_blank">Blog</a>
                 <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
                 <a href="api/" class="light" target="_blank">API</a>
@@ -593,6 +594,17 @@ class HelioviewerWebClient extends HelioviewerClient
             <input type="checkbox" id="helioviewer-url-shorten" />
             <input type="hidden" id="helioviewer-short-url" value="" />
             <input type="hidden" id="helioviewer-long-url" value="" />
+        </form>
+    </div>
+</div>
+
+<!-- BBCode -->
+<!-- URL Dialog -->
+<div id='bbcode-dialog' style="display:none;">
+    <div id="helioviewer-bbcode-box">
+        <span id="helioviewer-bbcode-box-msg">Use the following code snippet to embed this movie in the <a href='http://community.helioviewer.org'>Helioviewer Community Forums:</a></span>
+        <form style="margin-top: 5px;">
+            <input type="text" id="helioviewer-bbcode-input-box" style="width:98%;" value="" />
         </form>
     </div>
 </div>

@@ -20,11 +20,11 @@ def main():
     
     # Get search criterion (e.g. CDELT < 0.01 or IMG_TYPE = DARK)
     filter_key = raw_input("Header key: ")
-    filter_op = raw_input("Operator [=, <, <=, >, or >=]: ")
+    filter_op = raw_input("Operator [=, ~=, <, <=, >, >=, or CONTAINS]: ").lower()
     
-    while filter_op not in ["=", "<", ">", "<=", ">="]:
+    while filter_op not in ["=", "<", ">", "<=", ">=", "contains"]:
         print ("Invalid operator specified. Please try again.")
-        filter_op = raw_input("Operator [=, <, <=, >, or >=]: ")
+        filter_op = raw_input("Operator [=, ~=, <, <=, >, >=, or CONTAINS]: ")
 
     filter_val = raw_input("Value: ")
 
@@ -69,13 +69,18 @@ def filter_images(images, filter_key, filter_op, filter_val):
     # Filter regex
     pattern = re.compile("[^>]*>([^<]*)")
     
+    # Find function
+    def contains(needle, haystack):
+        return haystack.find(needle) != -1
+    
     # Get operator
     operators = {
         "=": operator.eq,
         "<": operator.lt,
         "<=": operator.le,
         ">": operator.gt,
-        ">=": operator.ge
+        ">=": operator.ge,
+        "contains": contains
     }
     op_function = operators[filter_op]
     
@@ -99,7 +104,7 @@ def filter_images(images, filter_key, filter_op, filter_val):
                     # Cast numeric values to floats
                     if isinstance(filter_val, float):
                         try:
-                            value = float(filter_val)
+                            value = float(value)
                         except ValueError, TypeError:
                             pass
                     

@@ -80,7 +80,7 @@ class Movie_FFMPEGEncoder
         
         // If FFmpeg segfaults, an empty movie container may still be produced,
         if (!file_exists($outputFile) || filesize($outputFile) < 1000)
-            throw new Exception("FFmpeg error encountered.");
+            throw new Exception("FFmpeg error encountered.", 43);
 
         return $outputFile;
     }
@@ -101,7 +101,7 @@ class Movie_FFMPEGEncoder
         
         // If FFmpeg segfaults, an empty movie container may still be produced
         if (!file_exists($outputFile) || filesize($outputFile) < 1000)
-            throw new Exception("FFmpeg error encountered.");
+            throw new Exception("FFmpeg error encountered.", 43);
 
         return $outputFile;
     }
@@ -190,7 +190,7 @@ class Movie_FFMPEGEncoder
 
         // Check to ensure that movie size is valid
         if (filesize($file . ".flv") < 1000)
-            throw new Exception("FFmpeg error encountered: Unable to create flv.");
+            throw new Exception("FFmpeg error encountered: Unable to create flv.", 43);
     }
     
     
@@ -218,7 +218,7 @@ class Movie_FFMPEGEncoder
 
         // Check to ensure that movie size is valid
         if (filesize($ipodVideoName) < 1000)
-            throw new Exception("FFmpeg error encountered: Unable to create iPod video.");
+            throw new Exception("FFmpeg error encountered: Unable to create iPod video.", 43);
 
         return $ipodVideoName;
     }

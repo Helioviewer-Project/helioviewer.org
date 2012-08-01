@@ -79,7 +79,7 @@ class Movie_HelioviewerMovie
         $info = $this->_db->getMovieInformation($id);
         
         if (is_null($info)) {
-             throw new Exception("Unable to find the requested movie.");
+             throw new Exception("Unable to find the requested movie.", 24);
         }
         
         $this->publicId     = $publicId;
@@ -116,7 +116,7 @@ class Movie_HelioviewerMovie
         
         // Check to make sure we have not already started processing the movie
         if ($this->status !== 0) {
-            throw new Exception("The requested movie is either currently being built or has already been built");
+            throw new Exception("The requested movie is either currently being built or has already been built", 44);
         }
 
         $this->_db->markMovieAsProcessing($this->id, $this->format);

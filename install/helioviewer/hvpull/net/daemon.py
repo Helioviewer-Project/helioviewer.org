@@ -11,9 +11,11 @@ import os
 import shutil
 import sunpy
 import Queue
+import MySQLdb
 from random import shuffle
 from helioviewer.jp2 import process_jp2_images
 from helioviewer.db  import get_db_cursor, mark_as_corrupt
+from helioviewer.hvpull.browser.basebrowser import NetworkError
 
 class ImageRetrievalDaemon:
     """Retrieves images from the server as specified"""
@@ -24,7 +26,22 @@ class ImageRetrievalDaemon:
         self.dbuser = conf.get('database', 'user')
         self.dbpass = conf.get('database', 'pass')
         
-        self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+        self.downloaders = []
+        
+        try:
+            self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+        except MySQLdb.OperationalError:
+            logging.error("Unable to access MySQL. Is the database daemon running?")
+            self.shutdown()
+            self.stop()
+
+        # Email notification
+        self.email_server = conf.get('notifications', 'server')
+        self.email_from = conf.get('notifications', 'from')
+        self.email_to = conf.get('notifications', 'to')
+        
+        # Warning flags
+        self.sent_diskspace_warning = False
         
         # Maximum number of simultaneous downloads
         self.max_downloads = conf.getint('network', 'max_downloads')
@@ -69,6 +86,8 @@ class ImageRetrievalDaemon:
         
         # @TODO: Redo handling of server-specific start time and pause
         # time
+        #
+        # @TODO: Send email notification when HVpull stops/exits for any reason?
         
         # Determine starttime to use
         if starttime is not None:
@@ -143,7 +162,32 @@ class ImageRetrievalDaemon:
         new_urls = []
         
         for url_list in urls:
-            new_urls.append(filter(self._filter_new, url_list))
+            filtered = None
+            
+            while filtered is None:
+                try:
+                    filtered = filter(self._filter_new, url_list)
+                except MySQLdb.OperationalError:
+                    # MySQL has gone away -- try again in 5s
+                    logging.warning(("Unable to access database to check for file"
+                                   " existence. Will try again in 5 seconds."))
+                    time.sleep(5)
+                    
+                    # Try and reconnect
+                    
+                    # @note: May be a good idea to move the reconnect
+                    # functionality to the db module and have it occur
+                    # for all queries.
+                    try:                        
+                        self._db = get_db_cursor(self.dbname, self.dbuser, self.dbpass)
+                    except:
+                        pass
+                
+            new_urls.append(filtered)
+            
+        # check disk space
+        if not self.sent_diskspace_warning:
+            self._check_free_space()
 
         # acquire the data files
         self.acquire(new_urls)
@@ -161,11 +205,35 @@ class ImageRetrievalDaemon:
             if self.shutdown_requested:
                 return []
             
-            logging.info('(%s) Scanning %s' % (browser.server.name, directory))
-            matches = browser.get_files(directory, "jp2")
+            matches = None
+            num_retries = 0
             
-            files.extend(matches)
-
+            logging.info('(%s) Scanning %s' % (browser.server.name, directory))
+            
+            # Attempt to read directory contents. Retry up to 10 times
+            # if failed and then notify admin
+            while matches is None:
+                if self.shutdown_requested:
+                    return []
+            
+                try:
+                    matches = browser.get_files(directory, "jp2")
+                    files.extend(matches)
+                except NetworkError:
+                    if num_retries >= 100:
+                        logging.error("Unable to reach %s. Shutting down HVPull.", 
+                                      browser.server.name)
+                        msg = "Unable to reach %s. Is the server online?"
+                        self.send_email_alert(msg % browser.server.name)
+                        self.shutdown()
+                    else:
+                        msg = "Unable to reach %s. Will try again in 5 seconds."
+                        if num_retries > 0:
+                            msg += " (retry %d)" % num_retries
+                        logging.warning(msg, browser.server.name)
+                        time.sleep(5)
+                        num_retries += 1
+                        
         return files
         
     def acquire(self, urls):
@@ -251,10 +319,14 @@ class ImageRetrievalDaemon:
             date_str = image_params['date'].strftime('%Y/%m/%d')
             
             # Transcode
-            if image_params['instrument'] == "AIA":
-                self._transcode(filepath, cprecincts=[128, 128])
-            else:
-                self._transcode(filepath)
+            try:
+                if image_params['instrument'] == "AIA":
+                    self._transcode(filepath, cprecincts=[128, 128])
+                else:
+                    self._transcode(filepath)
+            except KduTranscodeError, e:
+                logging.warning(e.get_message())
+                continue
 
             # Move to archive
             directory = os.path.join(self.image_archive, 
@@ -291,6 +363,35 @@ class ImageRetrievalDaemon:
         
         if (len(corrupt) > 0):
             logging.info("Marked %d images as corrupt", len(corrupt))
+            
+    def send_email_alert(self, message):
+        """Sends an email notification to the Helioviewer admin(s) when a
+        one of the data sources becomes unreachable."""
+        # If no server was specified, don't do anything
+        if self.email_server is "":
+            return
+
+        # import email modules
+        import smtplib
+        from email.MIMEMultipart import MIMEMultipart
+        from email.MIMEText import MIMEText
+        from email.Utils import formatdate
+        
+        msg = MIMEMultipart()
+        msg['From'] = self.email_from
+        msg['To'] = self.email_to
+        msg['Date'] = formatdate()
+        msg['Subject'] = "HVPull - Remote Server Inaccessible!"
+     
+        msg.attach(MIMEText(message))
+        
+        # Expand email recipient list
+        recipients = [x.lstrip().rstrip() for x in self.email_to.split(",")]
+     
+        smtp = smtplib.SMTP(self.email_server)
+        smtp.sendmail(self.email_from, recipients, msg.as_string() )
+        smtp.close()        
+        
 
     def shutdown(self):
         print("Stopping HVPull. This may take a few minutes...")
@@ -323,12 +424,35 @@ class ImageRetrievalDaemon:
         # Hide output
         command += " >/dev/null"
         
-        # Execute
-        os.system(command)
+        # Execute kdu_transcode (retry up to five times)
+        num_retries = 0
+        
+        while not os.path.isfile(tmp) and num_retries <= 5:
+            os.system(command)
+            num_retries += 1
+            
+        # If transcode failed, raise an exception
+        if not os.path.isfile(tmp):
+            raise KduTranscodeError(filepath)
         
         # Remove old version and replace with transcoded one
+        # OSError
         os.remove(filepath)
         os.rename(tmp, filepath)
+        
+    def _check_free_space(self):
+        """Checks the amount of free space on the data volume and emails admins
+        the first time HVPull detects low disk space"""
+        s = os.statvfs(self.image_archive)
+        
+        # gigabytes available
+        gb_avail = (s.f_bsize * s.f_bavail) / 2**30
+        
+        # if less than 500, alert admins
+        if gb_avail < 500:
+            msg = "Warning: Running low on disk space! 500 GB remaining"
+            send_email_alert(msg)
+            self.sent_diskspace_warning = True
             
     def _deduplicate(self, urls):
         """When working with multiple files, this function will ensure that
@@ -395,8 +519,10 @@ class ImageRetrievalDaemon:
         if params['detector'] == "AIA":
             if params['header'].get("IMG_TYPE") == "DARK":
                 raise BadImage("DARK")
-            if params['header'].get('PERCENTD') < 75:
+            if float(params['header'].get('PERCENTD')) < 50:
                 raise BadImage("PERCENTD")
+            if str(params['header'].get('WAVE_STR')).endswith("_OPEN"):
+                raise BadImage("WAVE_STR")
         
         # LASCO
         if params['instrument'] == "LASCO":
@@ -503,6 +629,13 @@ class ImageRetrievalDaemon:
 class BadImage(ValueError):
     """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
     encountered."""
+    def __init__(self, message=""):
+        self.message = message
+    def get_message(self):
+        return self.message
+    
+class KduTranscodeError(RuntimeError):
+    """Exception to raise an image cannot be transcoded."""
     def __init__(self, message=""):
         self.message = message
     def get_message(self):

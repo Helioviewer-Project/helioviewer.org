@@ -473,7 +473,7 @@ class Image_SubFieldImage
         $gd = imagecreatefromstring($input);
 
         if (!$gd) {
-            throw new Exception("Unable to apply color-table: $input is not a valid image.");
+            throw new Exception("Unable to apply color-table: $input is not a valid image.", 32);
         }
 
         $ctable = imagecreatefrompng($clut);
@@ -548,7 +548,7 @@ class Image_SubFieldImage
             }
             
             // If the image fails to load after 3 tries, display an error message
-            throw new Exception("Unable to read image from cache: $filename");                
+            throw new Exception("Unable to read image from cache: $filename", 33);                
         }
     }
 

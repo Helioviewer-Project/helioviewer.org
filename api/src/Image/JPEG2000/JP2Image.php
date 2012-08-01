@@ -130,7 +130,7 @@ class Image_JPEG2000_JP2Image
         $msg = sprintf("Error extracting JPEG 2000 subfield region!" . 
                        "\n\nCOMMAND:\n%s\n\nRETURN VALUE:%d\n\nOUTPUT:\n%s", 
                        escapeshellcmd($cmd), $ret, implode("\n", $out));
-        throw new Exception($msg);
+        throw new Exception($msg, 14);
      }
 
     /**

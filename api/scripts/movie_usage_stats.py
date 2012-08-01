@@ -61,7 +61,7 @@ def main(dbname, dbtable, dbuser, dbpass):
     #plt.savefig('output.png')
     #plt.show()
     
-    return 0
+    #return 0
     
 def plot_aspect_ratio(fig, widths, heights, subplot=111):
     """Plots the frequency of movie aspect ratios"""
@@ -242,9 +242,11 @@ def query_database(dbname, dbtable, dbuser, dbpass, min_time, max_time):
     cur = db.cursor()
     
     # Get movie build data
-    sql = '''SELECT numFrames, imageScale, width, height, procTime 
+    sql = '''SELECT numFrames, imageScale, width, height, 
+             buildTimeEnd - buildTimeStart as procTime 
              FROM %s
-             WHERE procTime >= %d AND procTime <= %d''' % (dbtable, 
+             WHERE buildTimeEnd - buildTimeStart >= %d 
+             AND buildTimeEnd - buildTimeStart <= %d''' % (dbtable, 
                                                            min_time, max_time)
     cur.execute(sql)
 

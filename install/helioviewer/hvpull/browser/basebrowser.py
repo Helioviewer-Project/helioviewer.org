@@ -11,3 +11,7 @@ class BaseDataBrowser:
     def get_files(self, uri, extension):
         """Get all the files that end with specified extension at the uri"""
         return None
+    
+class NetworkError(IOError):
+    """Exception to raise a remove server is unreachable"""
+    pass

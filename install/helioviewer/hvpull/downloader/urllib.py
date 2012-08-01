@@ -52,11 +52,13 @@ class URLLibDownloader(threading.Thread):
             except URLError:
                 # If download fails, add back into queue and try again later
                 logging.warning("Failed to download %s. Adding to end of queue to retry later.", url)
-                self.queue.put([server, url])
+                self.queue.put([server, percent, url])
             except:
                 logging.warning("Failed to download %s.", url)
             else:
                 # Open our local file for writing
+                # @TODO: handle full disk scenario:
+                # IOError: [Errno 28] No space left on device
                 local_file = open(filepath, "wb")
                 local_file.write(file_contents)
                 local_file.close()            

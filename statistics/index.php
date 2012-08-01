@@ -9,6 +9,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+    <meta charset="utf-8" />
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="statistics.js"></script>
     <title>Helioviewer.org - Usage Statistics</title>

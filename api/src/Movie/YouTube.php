@@ -149,7 +149,7 @@ class Movie_YouTube
                 $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
             } else {
                 // Otherwise, send user to authorization page
-                throw new Exception("Authorization required before movie can be uploaded.");
+                throw new Exception("Authorization required before movie can be uploaded.", 45);
             }
         }
     }
@@ -276,7 +276,7 @@ class Movie_YouTube
         $movieId = alphaID($id, true, 5, HV_MOVIE_ID_PASS);
      
         if (!$movies->insertYouTubeMovie($movieId, $title, $description, $tags, $share)) {
-            throw new Exception("Movie has already been uploaded. Please allow several minutes for your video to appear on YouTube.", 1);
+            throw new Exception("Movie has already been uploaded. Please allow several minutes for your video to appear on YouTube.", 46);
             // 12/14/2011: Tracking down upload error
             // $log = HV_LOG_DIR . "/upload-" . date("Ymd_His") . ".log";
             // $msg = "id: $movieId\n" . "title: $title\n". "desc: $description\n" . 
