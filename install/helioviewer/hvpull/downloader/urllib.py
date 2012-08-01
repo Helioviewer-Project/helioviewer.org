@@ -57,6 +57,8 @@ class URLLibDownloader(threading.Thread):
                 logging.warning("Failed to download %s.", url)
             else:
                 # Open our local file for writing
+                # @TODO: handle full disk scenario:
+                # IOError: [Errno 28] No space left on device
                 local_file = open(filepath, "wb")
                 local_file.write(file_contents)
                 local_file.close()            
