@@ -6,9 +6,10 @@
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, HelioviewerClient, ImageSelectTool, MovieBuilder, 
   TooltipHelper, HelioviewerViewport, ScreenshotBuilder, ScreenshotHistory,
-  MovieHistory, UserVideoGallery, MessageConsole,
+  MovieHistory, UserVideoGallery, MessageConsole, Helioviewer,
   KeyboardManager, SettingsLoader, TimeControls, FullscreenControl, addthis,
-  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, VisualGlossary */
+  ZoomControls, ScreenshotManagerUI, MovieManagerUI, assignTouchHandlers, 
+  TileLayerAccordion, VisualGlossary, _gaq */
 "use strict";
 var HelioviewerWebClient = HelioviewerClient.extend(
     /** @lends HelioviewerWebClient.prototype */
@@ -299,7 +300,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
         
         $('#link-button').click(function (e) {
             // Google analytics event
-            if (typeof(_gaq) != "undefined") {
+            if (typeof(_gaq) !== "undefined") {
                 _gaq.push(['_trackEvent', 'Shares', 'Homepage - URL']);
             } 
             self.displayURL(self.toURL(), msg);
@@ -325,7 +326,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             assignTouchHandlers(this);
         });
         
-        $("#helioviewer-url-shorten").click(function(e) {
+        $("#helioviewer-url-shorten").click(function (e) {
             var url;
 
             if (e.target.checked) {
@@ -388,7 +389,7 @@ var HelioviewerWebClient = HelioviewerClient.extend(
             url = this.serverSettings.rootURL + "/?movieId=" + movieId;
 
         // Google analytics event
-        if (typeof(_gaq) != "undefined") {
+        if (typeof(_gaq) !== "undefined") {
             _gaq.push(['_trackEvent', 'Shares', 'Movie - URL']);
         } 
         this.displayURL(url, msg);           
