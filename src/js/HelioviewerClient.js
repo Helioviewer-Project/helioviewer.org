@@ -34,7 +34,7 @@ var HelioviewerClient = Class.extend(
         if (serverSettings['backEnd'] === "api/index.php") {
             Helioviewer.root = serverSettings['rootURL'];
         } else {
-            Helioviewer.root = Helioviewer.api.substr(0, Helioviewer.api .search("/api"));
+            Helioviewer.root = Helioviewer.api.substr(0, Helioviewer.api.search("/api"));
         }
 
         
@@ -129,5 +129,5 @@ var HelioviewerClient = Class.extend(
         Helioviewer.userSettings.set('state.imageScale', closestScale);
 
         return closestScale;
-    },
+    }
 });
