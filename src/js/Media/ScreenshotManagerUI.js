@@ -70,7 +70,8 @@ var ScreenshotManagerUI = MediaManagerUI.extend(
         };
 
         // Download link
-        body = "<a href='" + Helioviewer.api + "?action=downloadScreenshot&id=" + 
+        body = "<a href='" + Helioviewer.api + 
+               "?action=downloadScreenshot&id=" + 
                screenshot.id + "'>Your " + screenshot.name + 
                " screenshot is ready! Click here to download. </a>";
 

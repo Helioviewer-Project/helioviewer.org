@@ -59,7 +59,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         formParams = {};
         
         $.each(serializedFormParams, function (i, field) {
-               formParams[field.name] = field.value;
+            formParams[field.name] = field.value;
         });
         
         this.building = true;
@@ -73,7 +73,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         };
        
         // Add ROI and start and end dates
-        params = $.extend(baseParams, this._movieROI, this._getMovieTimeWindow());
+        params = $.extend(baseParams, this._movieROI, 
+                          this._getMovieTimeWindow());
 
         // (Optional) Frame-rate or movie-length
         if (formParams['speed-method'] === "framerate") {
@@ -84,7 +85,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             baseParams['frameRate'] = formParams['framerate'];
         }
         else {
-            if (formParams['movie-length'] < 5 || formParams['movie-length'] > 100) {
+            if (formParams['movie-length'] < 5 || 
+                formParams['movie-length'] > 100) {
                 throw "Movie length must be between 5 and 100 seconds.";
             }
             baseParams['movieLength'] = formParams['movie-length'];
@@ -107,7 +109,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Determines the start and end dates to use when requesting a movie
      */
     _getMovieTimeWindow: function () {
-        var movieLength, currentTime, endTime, startTimeStr, endTimeStr, now, diff; 
+        var movieLength, currentTime, endTime, startTimeStr, endTimeStr, 
+            now, diff; 
         
         movieLength = Helioviewer.userSettings.get("options.movies.duration");
         
@@ -127,7 +130,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         return {
             "startTime": currentTime.addSeconds(-movieLength / 2).toISOString(),
             "endTime"  : currentTime.addSeconds(movieLength).toISOString()
-        }
+        };
     },
     
     /**
@@ -167,13 +170,13 @@ var MovieManagerUI = MediaManagerUI.extend(
 
             if ((response === null) || response.error) {
                 // Queue full
-                if (response.errno == 40) {
+                if (response.errno === 40) {
                     msg = response.error;
                 } else {
                     // Other error
                     msg = "We are unable to create a movie for the time you " +
-                        "requested. Please select a different time range and try " +
-                        "again.";
+                        "requested. Please select a different time range " +
+                        "and try again.";
                 }
                 $(document).trigger("message-console-info", msg);
                 return;
@@ -279,12 +282,12 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     _initSettings: function () {
         var length, lengthInput, duration, durationSelect,  
-            frameRateInput, lengthInput, settingsForm, self = this;
+            frameRateInput, settingsForm, self = this;
 
         // Advanced movie settings
-        frameRateInput    = $("#frame-rate");
-        lengthInput       = $("#movie-length");
-        durationSelect    = $("#movie-duration");
+        frameRateInput = $("#frame-rate");
+        lengthInput    = $("#movie-length");
+        durationSelect = $("#movie-duration");
         
         // Speed method enable/disable
         $("#speed-method-f").change(function () {
@@ -312,7 +315,8 @@ var MovieManagerUI = MediaManagerUI.extend(
             try {
                 self._buildMovieRequest(settingsForm.serializeArray());
             } catch (ex) {
-                // Display an error message if invalid values are specified for movie settings
+                // Display an error message if invalid values are specified 
+                // for movie settings
                 self._settingsConsole.text(ex).fadeIn(1000, function () {
                     setTimeout(function () {
                         self._settingsConsole.text(ex).fadeOut(1000);
@@ -334,8 +338,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         // Reset to default values
         frameRateInput.val(15);
         lengthInput.val(20);
-        durationSelect.find("[value=" + duration + "]").attr("selected", "selected")
-        
+        durationSelect.find("[value=" + duration + "]").attr("selected", "selected");        
     },
     
     /**
@@ -386,7 +389,9 @@ var MovieManagerUI = MediaManagerUI.extend(
         if (movie.status === 2) {
             // Use relative paths for thumbnails (helps with debugging in VM)
             if (Helioviewer.api === "api/index.php") {
-                thumbnail = movie.thumbnail.substr(movie.thumbnail.search("cache"));    
+                thumbnail = movie.thumbnail.substr(
+                                movie.thumbnail.search("cache")
+                            );    
             } else {
                 thumbnail = movie.thumbnail;
             }            
@@ -426,8 +431,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         dimensions = this.getVideoPlayerDimensions(movie.width, movie.height);
         
         // Movie player HTML
-        html = self.getVideoPlayerHTML(movie.id, dimensions.width, 
-                                       dimensions.height, movie.url);
+        html = self.getVideoPlayerHTML(movie, dimensions.width, 
+                                       dimensions.height);
         
         // Movie player dialog
         dialog = $(
@@ -559,7 +564,8 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         // URLs
         url1 = Helioviewer.root + "/?movieId=" + movie.id;
-        url2 = Helioviewer.root + "/api/?action=downloadMovie&id=" + movie.id + "&format=mp4&hq=true"; 
+        url2 = Helioviewer.root + "/api/?action=downloadMovie&id=" + movie.id + 
+               "&format=mp4&hq=true"; 
                
         // Suggested Description
         description = "This movie was produced by Helioviewer.org. See the " + 
@@ -587,7 +593,8 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Processes form and submits video upload request to YouTube
      */
     submitVideoUploadForm: function (event) {
-        var params, successMsg, uploadDialog, url, form, loader, callback, self = this;
+        var params, successMsg, uploadDialog, url, form, loader, callback, 
+            self = this;
             
         // Validate and submit form
         try {
@@ -613,11 +620,13 @@ var MovieManagerUI = MediaManagerUI.extend(
     
             // If the user has already authorized Helioviewer, upload the movie
             if (auth) {
-                $.get(url, {"action": "uploadMovieToYouTube"}, function (response) {
-                    if (response.error) {
-                        self.hide();
-                        $(document).trigger("message-console-warn", [response.error]);
-                    }
+                $.get(url, {"action": "uploadMovieToYouTube"}, 
+                    function (response) {
+                        if (response.error) {
+                            self.hide();
+                            $(document).trigger("message-console-warn", 
+                                                [response.error]);
+                        }
                 }, "json");
             } else {
                 // Otherwise open an authorization page in a new tab/window
@@ -759,11 +768,12 @@ var MovieManagerUI = MediaManagerUI.extend(
      * Decides how to display video and returns HTML corresponding to that 
      * method
      */
-    getVideoPlayerHTML: function (id, width, height, url) {
-        var downloadURL, downloadLink, youtubeBtn, bbcodeBtn, addthisBtn, 
-            linkBtn, linkURL;
+    getVideoPlayerHTML: function (movie, width, height) {
+        var downloadURL, downloadLink, youtubeBtn, bbcodeBtn, 
+            hekBtn, addthisBtn, linkBtn, linkURL;
         
-        downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + id + 
+        // Download
+        downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + 
                       "&format=mp4&hq=true";
 
         downloadLink = "<a target='_parent' href='" + downloadURL + 
@@ -771,24 +781,38 @@ var MovieManagerUI = MediaManagerUI.extend(
             "<img class='video-download-icon' " + 
             "src='resources/images/Tango/1321375855_go-bottom.png' /></a>";
         
-        youtubeBtn = "<a id='youtube-upload-" + id + "' href='#' " + 
+        // Upload to YouTube
+        youtubeBtn = "<a id='youtube-upload-" + movie.id + "' href='#' " + 
             "target='_blank'><img class='youtube-icon' " + 
             "title='Upload video to YouTube' " + 
             "src='resources/images/Social.me/48 " + 
             "by 48 pixels/youtube.png' /></a>";
             
-        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + id;
+        // Link
+        linkURL = helioviewer.serverSettings.rootURL + "/?movieId=" + movie.id;
             
-        linkBtn = "<a id='video-link-" + id + "' href='" + linkURL + 
+        linkBtn = "<a id='video-link-" + movie.id + "' href='" + linkURL + 
             "' title='Get a link to the movie' " + 
             "target='_blank'><img class='video-link-icon' " + 
             "style='margin-left: 3px' " + 
             "src='resources/images/berlin/32x32/link.png' /></a>";
             
-        bbcodeBtn = "<img class='bbcode-btn' id='bbcode-" + id + "' src='resources/images/codefisher/bbcode_32.png' alt='Helioviewer.org Community Forums BBCode link string' />";
-            
+        // BBcode
+        bbcodeBtn = "<img class='bbcode-btn' id='bbcode-" + movie.id + 
+                    "' src='resources/images/codefisher/bbcode_32.png' " + 
+                    "alt='Helioviewer.org Community Forums BBCode " + 
+                    "link string' />";
+                    
+        // HEK Cut-out service (AIA only)
+        if (movie.layers.search("SDO,AIA") !== -1) {
+            hekBtn = this._generateHEKLink(movie);
+        } else {
+            hekBtn = "";
+        }
+
+        // AddThis
         addthisBtn = "<div style='display:inline; " + 
-            "float: right;' id='add-this-" + id + 
+            "float: right;' id='add-this-" + movie.id + 
             "' class='addthis_default_style addthis_32x32_style'>" +
             "<a class='addthis_button_facebook addthis_32x32_style'></a>" +
             "<a class='addthis_button_twitter addthis_32x32_style'></a>" +
@@ -800,10 +824,10 @@ var MovieManagerUI = MediaManagerUI.extend(
         // HTML5 Video (H.264 or WebM)
         if ($.support.vp8 || $.support.h264) {
             // Work-around: use relative paths to simplify debugging
-            url = url.substr(url.search("cache"));
+            url = movie.url.substr(movie.url.search("cache"));
             
             // IE9 only supports relative dimensions specified using CSS
-            return "<video id='movie-player-" + id + "' src='" + url +
+            return "<video id='movie-player-" + movie.id + "' src='" + url +
                    "' controls preload autoplay" + 
                    " style='width:100%; height: 90%;'></video>" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
@@ -812,18 +836,55 @@ var MovieManagerUI = MediaManagerUI.extend(
 
         // Fallback (flash player)
         else {
-            url = Helioviewer.api + '?action=playMovie&id=' + id +
+            var url = Helioviewer.api + '?action=playMovie&id=' + movie.id +
                   '&width=' + width + "&height=" + height + 
                   '&format=flv';
             
-            return "<div id='movie-player-" + id + "'>" + 
+            return "<div id='movie-player-" + movie.id + "'>" + 
                    "<iframe src=" + url + " width='" + width +  
                    "' height='" + height + "' marginheight=0 marginwidth=0 " +
                    "scrolling=no frameborder=0 style='margin-bottom: 2px;' />" +
                    "<br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + bbcodeBtn + addthisBtn + "</span></div>";
+                   linkBtn + bbcodeBtn + hekBtn + addthisBtn + "</span></div>";
         }
+    },
+    
+    /**
+     * Generates a link to the HEK cutout service
+     * 
+     * @todo: Add HMI support
+     */
+    _generateHEKLink: function (movie) {
+        // wavelengths
+        var regex, indices = [], wavelengths = [], hekParams,
+            baseURL = "http://www.lmsal.com/get_aia_data/?";
+        
+        regex = new RegExp('SDO,AIA,AIA,', 'g');
+
+        while (regex.exec(movie.layers)){
+          indices.push(regex.lastIndex);
+        }
+        $.each(indices, function(i, index) {
+            wavelengths.push(movie.layers.substr(index, 3));
+        });
+
+        // query parameters
+        hekParams = {
+            "startDate" : movie.startDate.substr(0,10),
+            "startTime" : movie.startDate.substring(11,16),
+            "stopDate"  : movie.endDate.substr(0,10),
+            "stopTime"  : movie.endDate.substring(11,16),
+            "wavelengths": wavelengths.join(","),
+            "width": parseInt(movie.width * movie.imageScale, 10),
+            "height": parseInt(movie.height * movie.imageScale, 10),
+            "xCen": parseInt((movie.x1 + movie.x2) / 2, 10),
+            "yCen": -parseInt((movie.y1 + movie.y2) / 2, 10)
+        };
+        
+        return "<a href='" + baseURL + $.param(hekParams) + 
+               "' alt='Download original data from the HEK'>" + 
+               "<img src='resources/images/iPhone/iPhone_CUT_32x32.png' title='HEK Cutout Service' /></a>";
     },
     
     _showBBCode: function(id, width, height) {
