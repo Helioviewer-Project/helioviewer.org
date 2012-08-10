@@ -770,7 +770,7 @@ var MovieManagerUI = MediaManagerUI.extend(
      */
     getVideoPlayerHTML: function (movie, width, height) {
         var downloadURL, downloadLink, youtubeBtn, bbcodeBtn, 
-            hekBtn, addthisBtn, linkBtn, linkURL;
+            hekBtn, sswBtn, addthisBtn, linkBtn, linkURL;
         
         // Download
         downloadURL = Helioviewer.api + "?action=downloadMovie&id=" + movie.id + 
@@ -803,12 +803,16 @@ var MovieManagerUI = MediaManagerUI.extend(
                     "alt='Helioviewer.org Community Forums BBCode " + 
                     "link string' />";
                     
-        // HEK Cut-out service (AIA only)
+        // SDO Cut-out service (AIA only)
         if (movie.layers.search("SDO,AIA") !== -1) {
             hekBtn = this._generateHEKLink(movie);
         } else {
             hekBtn = "";
         }
+        
+        // SSW Download Script
+        sswBtn = "<img style='margin:0 4px;' src='resources/images/iPhone/ssw_idl_32x32.png' " + 
+                 "alt='SolarSoft (SSW) download script />"
 
         // AddThis
         addthisBtn = "<div style='display:inline; " + 
@@ -846,7 +850,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    "scrolling=no frameborder=0 style='margin-bottom: 2px;' />" +
                    "<br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + bbcodeBtn + hekBtn + addthisBtn + "</span></div>";
+                   linkBtn + bbcodeBtn + hekBtn + sswBtn + addthisBtn + "</span></div>";
         }
     },
     
@@ -884,7 +888,7 @@ var MovieManagerUI = MediaManagerUI.extend(
         
         return "<a href='" + baseURL + $.param(hekParams) + 
                "' alt='Download original data from the HEK'>" + 
-               "<img src='resources/images/iPhone/iPhone_CUT_32x32.png' title='HEK Cutout Service' /></a>";
+               "<img style='margin:0 4px;' src='resources/images/iPhone/sdo_cutout_32x32.png' title='HEK Cutout Service' /></a>";
     },
     
     _showBBCode: function(id, width, height) {
