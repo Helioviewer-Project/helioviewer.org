@@ -270,54 +270,6 @@ class Module_WebClient implements Module
     }
 
     /**
-     * Converts from tile coordinates to physical coordinates in arcseconds
-     * and uses those coordinates to return an ROI object
-     * 
-     * @return Helper_RegionOfInterest Tile ROI
-     */
-    private function _tileCoordinatesToROI (
-        $x, $y, $scale, $jp2Scale, $tileSize, $offsetX, $offsetY
-    ) {
-        $relativeTileSize = $tileSize * ($scale / $jp2Scale);
-        
-        // Convert tile coordinates to arcseconds
-        $top  = $y * $relativeTileSize - $offsetY;
-        $left = $x * $relativeTileSize - $offsetX;
-        $bottom = $top  + $relativeTileSize;
-        $right  = $left + $relativeTileSize;
-        
-        // Scale coordinates
-        $top  = $top * $jp2Scale;
-        $left = $left * $jp2Scale;
-        $bottom = $bottom * $jp2Scale;
-        $right  = $right  * $jp2Scale;        
-        
-        // Regon of interest
-        return new Helper_RegionOfInterest($left, $top, $right, $bottom, $scale);
-    }
-    
-    /**
-     * Builds a filename for a cached tile or image based on boundaries and scale
-     * 
-     * @param string $directory The directory containing the image
-     * @param float  $filename  The filename of the image
-     * @param float  $x         Tile X-coordinate
-     * @param float  $y         Tile Y-coordinate
-     * 
-     * @return string Filepath to use when locating or creating the tile
-     */
-    private function _getTileCacheFilename($directory, $filename, $scale, $x, $y)
-    {
-        $baseDirectory = HV_CACHE_DIR . "/tiles";
-        $baseFilename  = substr($filename, 0, -4);
-        
-        return sprintf(
-            "%s%s/%s_%s_x%d_y%d.png",
-            $baseDirectory, $directory, $baseFilename, $scale, $x, $y
-        );
-    }
-
-    /**
      * Obtains layer information, ranges of pixels visible, and the date being
      * looked at and creates a composite image (a Screenshot) of all the layers.
      *
@@ -331,34 +283,12 @@ class Module_WebClient implements Module
     {
         include_once 'src/Image/Composite/HelioviewerScreenshot.php';
         include_once 'src/Helper/HelioviewerLayers.php';
-        include_once 'src/Helper/RegionOfInterest.php';
         
         // Data Layers
         $layers = new Helper_HelioviewerLayers($this->_params['layers']);
         
-        // Region of interest: x1, x2, y1, y2
-        if (isset($this->_options['x1']) && isset($this->_options['y1']) && 
-            isset($this->_options['x2']) && isset($this->_options['y2'])) {
-
-            $x1 = $this->_options['x1'];
-            $y1 = $this->_options['y1'];
-            $x2 = $this->_options['x2'];
-            $y2 = $this->_options['y2'];
-        } else if (isset($this->_options['x0']) && isset($this->_options['y0']) && 
-                   isset($this->_options['width']) && isset($this->_options['height'])) {
-
-            // Region of interest: x0, y0, width, height
-            $x1 = $this->_options['x0'] - 0.5 * $this->_options['width']  * $this->_params['imageScale'];
-            $y1 = $this->_options['y0'] - 0.5 * $this->_options['height'] * $this->_params['imageScale'];
-            $x2 = $this->_options['x0'] + 0.5 * $this->_options['width']  * $this->_params['imageScale'];
-            $y2 = $this->_options['y0'] + 0.5 * $this->_options['height'] * $this->_params['imageScale'];
-        } else {
-            throw new Exception("Region of interest not specified: you must specify values for " . 
-                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.", 23);
-        }
-        
-        // Create RegionOfInterest helper object
-        $roi = new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
+        // Region of interest
+        $roi = $this->_getRegionOfInterest();
         
         // Create the screenshot
         $screenshot = new Image_Composite_HelioviewerScreenshot(
@@ -458,6 +388,17 @@ class Module_WebClient implements Module
 
         $this->_printJSON($statistics->getUsageStatistics($this->_options['resolution']));
     }
+
+    /**
+     * Creates a SSW script to download the original data associated with
+     * the specified parameters.
+     */
+     public function getSSWScript()
+     {
+         include_once 'src/Helper/SSW.php';
+         $roi = $this->_getRegionOfInterest();
+         createSSWScript("SDO", "AIA", "AIA", "171");
+     }
 
     /**
      * Returns status information (i.e. time of most recent available data)
@@ -603,6 +544,42 @@ class Module_WebClient implements Module
     }
     
     /**
+     * Parses input and returns a RegionOfInterest instance. Excepts input
+     * in one of two formats:
+     * 
+     *  1) x1, y1, x2, y2, OR
+     *  2) x0, y0, width, height
+     */
+    private function _getRegionOfInterest() {
+        include_once 'src/Helper/RegionOfInterest.php';
+        
+        // Region of interest: x1, x2, y1, y2
+        if (isset($this->_options['x1']) && isset($this->_options['y1']) && 
+            isset($this->_options['x2']) && isset($this->_options['y2'])) {
+
+            $x1 = $this->_options['x1'];
+            $y1 = $this->_options['y1'];
+            $x2 = $this->_options['x2'];
+            $y2 = $this->_options['y2'];
+        } else if (isset($this->_options['x0']) && isset($this->_options['y0']) && 
+                   isset($this->_options['width']) && isset($this->_options['height'])) {
+
+            // Region of interest: x0, y0, width, height
+            $x1 = $this->_options['x0'] - 0.5 * $this->_options['width']  * $this->_params['imageScale'];
+            $y1 = $this->_options['y0'] - 0.5 * $this->_options['height'] * $this->_params['imageScale'];
+            $x2 = $this->_options['x0'] + 0.5 * $this->_options['width']  * $this->_params['imageScale'];
+            $y2 = $this->_options['y0'] + 0.5 * $this->_options['height'] * $this->_params['imageScale'];
+        } else {
+            throw new Exception("Region of interest not specified: you must specify values for " . 
+                                "imageScale and either x1, x2, y1, and y2 or x0, y0, width and height.", 23);
+        }
+        
+        // Create RegionOfInterest helper object
+        return new Helper_RegionOfInterest($x1, $y1, $x2, $y2, $this->_params['imageScale']);
+    }
+
+    
+    /**
      * Creates the directory structure which will be used to cache
      * generated tiles.
      * 
@@ -621,6 +598,27 @@ class Module_WebClient implements Module
         if (!file_exists($cacheDir)) {
             mkdir($cacheDir, 0777, true);
         }
+    }
+
+    /**
+     * Builds a filename for a cached tile or image based on boundaries and scale
+     * 
+     * @param string $directory The directory containing the image
+     * @param float  $filename  The filename of the image
+     * @param float  $x         Tile X-coordinate
+     * @param float  $y         Tile Y-coordinate
+     * 
+     * @return string Filepath to use when locating or creating the tile
+     */
+    private function _getTileCacheFilename($directory, $filename, $scale, $x, $y)
+    {
+        $baseDirectory = HV_CACHE_DIR . "/tiles";
+        $baseFilename  = substr($filename, 0, -4);
+        
+        return sprintf(
+            "%s%s/%s_%s_x%d_y%d.png",
+            $baseDirectory, $directory, $baseFilename, $scale, $x, $y
+        );
     }
     
     /**
@@ -656,7 +654,34 @@ class Module_WebClient implements Module
         // Print result
         echo $json;
     }
-
+    
+    /**
+     * Converts from tile coordinates to physical coordinates in arcseconds
+     * and uses those coordinates to return an ROI object
+     * 
+     * @return Helper_RegionOfInterest Tile ROI
+     */
+    private function _tileCoordinatesToROI (
+        $x, $y, $scale, $jp2Scale, $tileSize, $offsetX, $offsetY
+    ) {
+        $relativeTileSize = $tileSize * ($scale / $jp2Scale);
+        
+        // Convert tile coordinates to arcseconds
+        $top  = $y * $relativeTileSize - $offsetY;
+        $left = $x * $relativeTileSize - $offsetX;
+        $bottom = $top  + $relativeTileSize;
+        $right  = $left + $relativeTileSize;
+        
+        // Scale coordinates
+        $top  = $top * $jp2Scale;
+        $left = $left * $jp2Scale;
+        $bottom = $bottom * $jp2Scale;
+        $right  = $right  * $jp2Scale;        
+        
+        // Regon of interest
+        return new Helper_RegionOfInterest($left, $top, $right, $bottom, $scale);
+    }
+    
     /**
      * Handles input validation
      *
@@ -723,6 +748,16 @@ class Module_WebClient implements Module
         case "getNewsFeed":
             $expected = array(
                 "optional" => array('callback'),
+                "alphanum" => array('callback')
+            );
+            break;
+        case "getSSWScript":
+            $expected = array(
+                "required" => array('startTime', 'endTime', 'imageScale', 'layers'),
+                "optional" => array('x1', 'x2', 'y1', 'y2', 'x0', 'y0', 'width', 'height', 'callback'),
+                "floats"   => array('imageScale', 'x1', 'x2', 'y1', 'y2', 'x0', 'y0'),
+                "ints"     => array('width', 'height'),
+                "dates"    => array('startTime', 'endTime'),
                 "alphanum" => array('callback')
             );
             break;
