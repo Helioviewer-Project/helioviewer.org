@@ -2,6 +2,7 @@
 """Helioviewer.org JPEG 2000 processing functions"""
 import os
 import logging
+import sunpy
 from helioviewer.db import get_datasources, enable_datasource
 
 __INSERTS_PER_QUERY__ = 500
@@ -22,7 +23,7 @@ def find_images(path):
 
     return images
 
-def process_jp2_images (images, root_dir, cursor, mysql=True, step_fxn=None):
+def process_jp2_images (filepaths, root_dir, cursor, mysql=True, step_fxn=None):
     '''Processes a collection of JPEG 2000 Images'''
     if mysql:
         import MySQLdb
@@ -31,6 +32,14 @@ def process_jp2_images (images, root_dir, cursor, mysql=True, step_fxn=None):
 
     # Return tree of known data-sources
     sources = get_datasources(cursor)
+    
+    # Read image headers
+    images = []
+    
+    for filepath in filepaths:
+        image_params = sunpy.read_header(filepath)
+        image_params['filepath'] = filepath
+        images.append(image_params)
 
     # Insert images into database, 500 at a time
     while len(images) > 0:
@@ -59,7 +68,8 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
     query = "INSERT IGNORE INTO images VALUES "
 
     # Add images to SQL query
-    for img in images:    
+    for i, img in enumerate(images):
+        # break up directory and filepath
         directory, filename = os.path.split(img['filepath'])
 
         path = "/" + os.path.relpath(directory, rootdir)
@@ -79,7 +89,7 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
         query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, img["date"], source['id'])
     
         # Progressbar
-        if step_function and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
+        if step_function and (i + 1) % __STEP_FXN_THROTTLE__ is 0:
             step_function(filename)
     
     # Remove trailing comma
