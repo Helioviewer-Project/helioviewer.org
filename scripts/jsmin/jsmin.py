@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 # This code is original from jsmin by Douglas Crockford, it was translated to
 # Python by Baruch Even. The original code had the following copyright and
