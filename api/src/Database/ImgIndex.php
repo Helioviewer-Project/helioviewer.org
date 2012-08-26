@@ -72,7 +72,7 @@ class Database_ImgIndex
         $sql = "SELECT *, AsText(regionOfInterest) as roi FROM movies " .
                "LEFT JOIN movieFormats ON movies.id = movieFormats.movieId " . 
                "WHERE movies.id=$id AND movieFormats.format='mp4'";
-        return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);
     }
 
     /**
@@ -145,7 +145,7 @@ class Database_ImgIndex
     public function getScreenshot($id)
     {
     	$sql = "SELECT * FROM screenshots WHERE id=$id";
-    	return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+    	return mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);
     }
 
     /**
@@ -155,7 +155,7 @@ class Database_ImgIndex
         $sql = "SELECT * FROM images WHERE id=$id;";
         
         // Basic image info
-        $image = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        $image = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);
         $image['sourceId'] = (int) $image['sourceId'];
         
         // Image header
@@ -220,7 +220,7 @@ class Database_ImgIndex
         );
         
         // Query database
-        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);
 
         // Make sure match was found
         if (is_null($result)) {
@@ -250,7 +250,7 @@ class Database_ImgIndex
 
         // Search database
         $sql = sprintf("SELECT filepath, filename, date FROM images WHERE sourceId = %d AND date <= '%s' ORDER BY date DESC LIMIT 1;", $sourceId, $datestr);
-        $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);
 
         // Make sure match was founds
         if (is_null($img)) {
@@ -277,7 +277,7 @@ class Database_ImgIndex
 
         // Search database
         $sql = sprintf("SELECT filepath, filename, date FROM images WHERE sourceId = %d AND date >= '%s' ORDER BY date ASC LIMIT 1;", $sourceId, $datestr);
-        $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        $img = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);
 
         // Make sure match was found
         if (is_null($img)) {
@@ -298,7 +298,7 @@ class Database_ImgIndex
     private function _getDataSourceName ($sourceId)
     {
         $sql = "SELECT name FROM datasources WHERE id=$sourceId";
-        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);
         return $result["name"];
     }
 
@@ -344,7 +344,7 @@ class Database_ImgIndex
 
         $result = $this->_dbConnection->query($sql);
 
-        while ($image = $result->fetch_array(MYSQL_ASSOC)) {
+        while ($image = $result->fetch_array(MYSQLI_ASSOC)) {
             array_push($images, $image);
         }
         return $images;
@@ -418,7 +418,7 @@ class Database_ImgIndex
         );
 
         $result = $this->_dbConnection->query($sql);
-        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+        $result_array = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
         return $result_array;		
     }
@@ -457,7 +457,7 @@ class Database_ImgIndex
             mysqli_real_escape_string($this->_dbConnection->link, $meas)
         );
         $result = $this->_dbConnection->query($sql);
-        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+        $result_array = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
         return $result_array;
     }
@@ -493,7 +493,7 @@ class Database_ImgIndex
             mysqli_real_escape_string($this->_dbConnection->link, $meas)
         );
         $result = $this->_dbConnection->query($sql);
-        $result_array = mysqli_fetch_array($result, MYSQL_ASSOC);
+        $result_array = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
         return (int) ($result_array["id"]);
     }
@@ -504,7 +504,7 @@ class Database_ImgIndex
     public function getOldestImage($sourceId)
     {
     	$sql = "SELECT date FROM images WHERE sourceId=$sourceId ORDER BY date ASC LIMIT 1";
-    	$result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);    	
+    	$result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);    	
     	return $result['date'];
     }
     
@@ -514,7 +514,7 @@ class Database_ImgIndex
     public function getNewestImage($sourceId)
     {
         $sql = "SELECT date FROM images WHERE sourceId=$sourceId ORDER BY date DESC LIMIT 1";
-        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQL_ASSOC);        
+        $result = mysqli_fetch_array($this->_dbConnection->query($sql), MYSQLI_ASSOC);        
         return $result['date'];
     }
     

@@ -102,7 +102,7 @@ class Database_Statistics
             $result = $this->_dbConnection->query($sql);
             
             // And append counts for each action during that interval to the relevant array
-            while ($count = $result->fetch_array(MYSQL_ASSOC)) {
+            while ($count = $result->fetch_array(MYSQLI_ASSOC)) {
                 $num = (int) $count['count'];
                 
                 $counts[$count['action']][$i][$dateIndex] = $num;
