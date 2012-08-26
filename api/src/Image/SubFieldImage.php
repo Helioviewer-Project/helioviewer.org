@@ -449,8 +449,12 @@ class Image_SubFieldImage
      */
     private function _abort($filename)
     {
-        foreach(glob(substr($filename, 0, -3) . "*") as $file) {
-            unlink($file);
+        $files = glob(substr($filename, 0, -3) . "*");
+
+        if ($files) {
+            foreach($tmpFiles as $file) {
+                unlink($file);
+            }
         }
     }
 

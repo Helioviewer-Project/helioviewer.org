@@ -770,7 +770,7 @@ function printHTMLErrorMsg($msg)
 function shutDownFunction() { 
     $error = error_get_last();
     if ($error['type'] == 1) {
-        handleError(sprintf("%s:%d - %s", $error['file'], $error['line'], $error['message']), $e->getCode());
+        handleError(sprintf("%s:%d - %s", $error['file'], $error['line'], $error['message']), $error->getCode());
     } 
 }
 ?>
