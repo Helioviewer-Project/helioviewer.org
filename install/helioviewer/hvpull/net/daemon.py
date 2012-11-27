@@ -13,7 +13,7 @@ import sunpy
 import Queue
 import MySQLdb
 from random import shuffle
-from helioviewer.jp2 import process_jp2_images
+from helioviewer.jp2 import process_jp2_images, BadImage
 from helioviewer.db  import get_db_cursor, mark_as_corrupt
 from helioviewer.hvpull.browser.basebrowser import NetworkError
 
@@ -626,14 +626,6 @@ class ImageRetrievalDaemon:
             "urllib": "URLLibDownloader"
         }
 
-class BadImage(ValueError):
-    """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
-    encountered."""
-    def __init__(self, message=""):
-        self.message = message
-    def get_message(self):
-        return self.message
-    
 class KduTranscodeError(RuntimeError):
     """Exception to raise an image cannot be transcoded."""
     def __init__(self, message=""):
