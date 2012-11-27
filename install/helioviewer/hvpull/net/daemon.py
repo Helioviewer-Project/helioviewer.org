@@ -325,7 +325,7 @@ class ImageRetrievalDaemon:
                 else:
                     self._transcode(filepath)
             except KduTranscodeError, e:
-                logging.warning(e.get_message())
+                logging.warning("kdu_transcode: " + e.get_message())
                 continue
 
             # Move to archive
