@@ -292,7 +292,7 @@ def create_measurement_table(cursor):
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
         (14, 'white-light', 'White Light', 'DN'),
         (15, '174', '174 Ångström extreme ultraviolet', 'Å'),
-        (16, 'AlMg', '');""")
+        (16, 'AlMg', 'Al/Mg Filter', 'Å');""")
     
 def create_movies_table(cursor):
     """Creates movie table

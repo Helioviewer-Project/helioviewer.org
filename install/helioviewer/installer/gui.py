@@ -2,6 +2,7 @@
 import sys
 import math
 import getpass
+import sunpy
 from PyQt4 import QtCore, QtGui
 from helioviewer.installer.installwizard import Ui_InstallWizard
 from helioviewer.jp2 import *
@@ -61,7 +62,21 @@ class HelioviewerInstallWizard(QtGui.QWizard):
             jp2dir = str(self.ui.jp2RootDirInput.text())
             
             self.ui.statusMsg.setText("Searching for JPEG 2000 Images...")
-            self.images = find_images(jp2dir)
+            
+            # Locate jp2 images in specified filepath
+            filepaths = find_images(jp2dir)
+        
+            # Extract image parameters
+            self.images = []
+            
+            for filepath in filepaths:
+                try:
+                    image = sunpy.read_header(filepath)
+                    image['filepath'] = filepath
+                    self.images.append(image)
+                except:
+                    raise BadImage("HEADER")
+
             n = len(self.images)
 
             if n == 0:

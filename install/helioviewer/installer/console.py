@@ -3,6 +3,7 @@
 import sys
 import os
 import getpass
+import sunpy
 from helioviewer.jp2 import *
 from helioviewer.db  import *
 
@@ -14,7 +15,18 @@ class HelioviewerConsoleInstaller:
         path = self.get_filepath()
         
         # Locate jp2 images in specified filepath
-        images = find_images(path)
+        filepaths = find_images(path)
+
+        # Extract image parameters
+        images = []
+        
+        for filepath in filepaths:
+            try:
+                image = sunpy.read_header(filepath)
+                image['filepath'] = filepath
+                images.append(image)
+            except:
+                raise BadImage("HEADER")
         
         # Check to make sure the filepath contains jp2 images
         if len(images) is 0:
