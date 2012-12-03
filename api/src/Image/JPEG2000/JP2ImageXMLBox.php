@@ -122,13 +122,32 @@ class Image_JPEG2000_JP2ImageXMLBox
                 $rsun = $this->_getElementValue("SOLAR_R");
             } catch (Exception $e) {
                 try {
-                    // MDI
+                    // MDI, SXT
                     $rsun = $this->_getElementValue("RADIUS");
                 } catch (Exception $e) {
                 }
             }
             if (isset($rsun)) {
-                $scale = $this->_getElementValue("CDELT1");
+                try {
+                    $scale = $this->_getElementValue("CDELT1");
+                } catch (Exception $e) {
+                    try {
+                        // SXT 
+                        $resolution = $this->_getElementValue("RESOLUT");
+                        switch ($resolution) {
+                            case 'Full':
+                                $scale = 2.46;
+                                break;
+                            case 'half':
+                                $scale = 4.92;
+                                break;
+                            case 'qrtr':
+                                $scale = 9.84;
+                                break;
+                        }
+                    } catch (Exception $e) {
+                    }
+                }
                 $dsun = (HV_CONSTANT_RSUN / ($rsun * $scale)) * HV_CONSTANT_AU;
             }
         }

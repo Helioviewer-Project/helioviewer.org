@@ -49,7 +49,6 @@ def get_db_cursor(dbname, dbuser, dbpass, mysql=True):
     
     db.autocommit(True)
     return db.cursor()
-
 def check_db_info(adminuser, adminpass, mysql):
     """Validate database login information"""
     try:
@@ -179,10 +178,15 @@ def create_datasource_table(cursor):
         (26, 'EUVI-B 284', 'STEREO B EUVI 284', 4, 6, 7, 6, 1, 0),
         (27, 'EUVI-B 304', 'STEREO B EUVI 304', 4, 6, 7, 7, 1, 0),
         (28, 'COR1-A', 'STEREO A COR1', 3, 6, 8, 14, 2, 0),
-        (29, 'COR2-A', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
+        (29, 'COR2-A', 'STEREO A COR2', 3, 6, 9, 14, ,3, 0),
         (30, 'COR1-B', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
         (31, 'COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0),
-        (32, 'SWAP 174', 'PROBA-2 SWAP 174', 5, 7, 10, 15, 1, 0);
+        (32, 'SWAP 174', 'PROBA-2 SWAP 174', 5, 7, 10, 15, 1, 0),
+        (33, 'SXT AlMg', 'YOHKOH SXT AlMg', 6, 8, 11, 16, 1, 1),
+        (34, 'SXT Al.1', 'YOHKOH SXT Al.1', 6, 8, 11, 17, 1, 1),
+        (35, 'SXT Be119', 'YOHKOH SXT Be119', 6, 8, 11, 18, 1, 1),
+        (36, 'SXT Al12', 'YOHKOH SXT Al12', 6, 8, 11, 19, 1, 1),
+        (37, 'SXT Mg3', 'YOHKOH SXT Mg3', 6, 8, 11, 20, 1, 1);
     """)
 
 def create_observatory_table(cursor):
@@ -292,7 +296,11 @@ def create_measurement_table(cursor):
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
         (14, 'white-light', 'White Light', 'DN'),
         (15, '174', '174 Ångström extreme ultraviolet', 'Å'),
-        (16, 'AlMg', 'Al/Mg Filter', 'Å');""")
+        (16, 'AlMg', 'Al/Mg/Mn filter (2.4 Å - 32 Å pass band)', 'Å'),
+        (17, 'Al.1', '11.6 μm Al filter (2.4 Å - 13 Å pass band)', 'Å'),
+        (18, 'Be119', '119 μm Be filter (2.3 Å - 10 Å pass band)', 'Å'),
+        (19, 'Al12', '1265 Ångström-thick Al filter (2.5 Å - 36 Å pass band)', 'Å'),
+        (20, 'Mg3', '2.52 μm Mg filter (2.4 Å - 23 Å pass band)', 'Å');""")
     
 def create_movies_table(cursor):
     """Creates movie table
