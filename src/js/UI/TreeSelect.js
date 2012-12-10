@@ -110,6 +110,8 @@ var TreeSelect = Class.extend(
                 
                 // set selected value
                 choice = self.selected[depth];
+                // escape any periods ('.') before using in a JQuery selector
+                choice = choice.replace('.','\\.');
                 select.find("option[value=" + choice + "]").prop("selected", true);
             }
         });

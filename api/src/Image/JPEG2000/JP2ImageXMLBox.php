@@ -114,40 +114,33 @@ class Image_JPEG2000_JP2ImageXMLBox
         $maxDSUN = 2.25e11; // A reasonable max for solar observatories, ~1.5 AU
         
         try {
-            // AIA, EUVI, COR, SWAP
-            $dsun = $this->_getElementValue("DSUN_OBS");
+            // SXT
+            // The SXT headers do not have a value of the distance from
+            // the spacecraft to the center of the Sun.  The FITS keyword 'DSUN_OBS'
+            // appears to refer to the observed diameter of the Sun.  Until such 
+            // time as that is calculated and properly included in the file, we will 
+            // use simple trigonometry to calculate the distance of the center of 
+            // the Sun from the spacecraft.  Note that the small angle approximation
+            // is used, and the solar radius stored in SXT FITS files is in arcseconds.
+            if ( $this->_getElementValue("INSTRUME") == "SXT" ) {
+                $dsun = HV_CONSTANT_RSUN_M/deg2rad($this->_getElementValue("SOLAR_R")/3600.0);
+            } else {
+                // AIA, EUVI, COR, SWAP
+                $dsun = $this->_getElementValue("DSUN_OBS");
+            }
         } catch (Exception $e) {
             try {
                 // EIT
                 $rsun = $this->_getElementValue("SOLAR_R");
             } catch (Exception $e) {
                 try {
-                    // MDI, SXT
+                    // MDI
                     $rsun = $this->_getElementValue("RADIUS");
                 } catch (Exception $e) {
                 }
             }
             if (isset($rsun)) {
-                try {
-                    $scale = $this->_getElementValue("CDELT1");
-                } catch (Exception $e) {
-                    try {
-                        // SXT 
-                        $resolution = $this->_getElementValue("RESOLUT");
-                        switch ($resolution) {
-                            case 'Full':
-                                $scale = 2.46;
-                                break;
-                            case 'half':
-                                $scale = 4.92;
-                                break;
-                            case 'qrtr':
-                                $scale = 9.84;
-                                break;
-                        }
-                    } catch (Exception $e) {
-                    }
-                }
+                $scale = $this->_getElementValue("CDELT1");
                 $dsun = (HV_CONSTANT_RSUN / ($rsun * $scale)) * HV_CONSTANT_AU;
             }
         }
