@@ -274,8 +274,8 @@ function printDocumentationAppendices()
                 <td>STEREO_B (Solar Terrestrial Relations Observatory Behind)</td>
             </tr>
             <tr>
-                <td>YOHKOH</td>
-                <td>YOHKOH (SOLAR-A)</td>
+                <td>Yohkoh</td>
+                <td>Yohkoh (SOLAR-A)</td>
             </tr>
         </table>
 
@@ -729,17 +729,17 @@ function printDocumentationAppendices()
                         <td>1.985707</td>
                     </tr>
                     <tr>
-                        <td>YOHKOH SXT (Full)</td>
+                        <td>Yohkoh SXT (Full)</td>
                         <td>1024 x 1024</td>
                         <td>2.46</td>
                     </tr>
                     <tr>
-                        <td>YOHKOH SXT (Half)</td>
+                        <td>Yohkoh SXT (Half)</td>
                         <td>512 x 512</td>
                         <td>4.92</td>
                     </tr>
                     <tr>
-                        <td>YOHKOH SXT (Qrtr)</td>
+                        <td>Yohkoh SXT (Qrtr)</td>
                         <td>256 x 256</td>
                         <td>9.84</td>
                     </tr>

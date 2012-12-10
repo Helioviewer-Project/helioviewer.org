@@ -46,10 +46,13 @@ class Image_ImageType_SXTImage extends Image_HelioviewerImage
      */     
     public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options)
     {
-        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/YOHKOH_SXT_$meas.png";
+        $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/Yohkoh_SXT_$meas.png";
 
         if (file_exists($colorTable)) {
             $this->setColorTable($colorTable);
+        }
+        else {
+            $this->setColorTable(false);
         }
         
         parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);

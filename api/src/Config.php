@@ -97,6 +97,7 @@ class Config
         
         define("HV_CONSTANT_AU", 149597870700); // 1 au in meters (http://maia.usno.navy.mil/NSFA/IAU2009_consts.html)
         define("HV_CONSTANT_RSUN", 959.644); // Solar radius in arc-seconds at 1 au
+        define("HV_CONSTANT_RSUN_M", 695508000.0); // Solar radius in meters (sunpy.sun.constants.radius)
         
         // Image compression settings (See http://www.imagemagick.org/script/command-line-options.php#quality)
         define("PNG_LOW_COMPRESSION",  10);  // Faster, large files
