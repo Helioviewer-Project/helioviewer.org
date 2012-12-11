@@ -3,6 +3,7 @@ import os
 from helioviewer.hvpull.browser.basebrowser import BaseDataBrowser
 
 class LocalDataBrowser(BaseDataBrowser):
+    """Methods for acquiring data on a local file system."""
     def __init__(self, server):
         BaseDataBrowser.__init__(self, server)
 
@@ -12,8 +13,13 @@ class LocalDataBrowser(BaseDataBrowser):
   
     def get_files(self, uri, extension):
         """Get all the files that end with specified extension at the uri"""
-        # ensure the location has the correct suffix
-        if os.path.exists(uri):
-            return os.listdir(uri)
+        # ensure the location exists
+        full_path = os.path.expanduser(uri)
+        if os.path.exists(full_path):
+            filenames = filter(lambda f: f.endswith("." + extension), 
+                           os.listdir(full_path))
+            files = [os.path.join(full_path,f) for f in filenames]
         else:
-            return []
+            files = []
+        
+        return files
