@@ -3,7 +3,7 @@ import os
 from helioviewer.hvpull.servers import DataServer
 
 class UIODataServer(DataServer):
-    """UIO Datasource definition"""
+    """UIO Datasource definition."""
     def __init__(self):
         """Defines the root directory of where the data is kept at UIO."""
         DataServer.__init__(self, "http://sdc.uio.no/vol/jpeg2000/", "UIO")

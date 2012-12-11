@@ -4,7 +4,10 @@ import datetime
 
 class SOHODataServer(DataServer):
     def __init__(self):
-        """EXPLAIN"""
+        """This assumes that SOHO jp2 files are calculated locally.  They are 
+        then copied over to a directory on the main Helioviewer server, from 
+        which it can be picked up by the ingestion services.  Note that
+        a full path is required to specify the location of the data."""
         DataServer.__init__(self, "/home/ireland/incoming/soho_incoming/v0.8/jp2", "SOHO")
         self.pause = datetime.timedelta(minutes=30)
         
@@ -22,12 +25,12 @@ class SOHODataServer(DataServer):
                 dirs.append(os.path.join(self.uri, "EIT", date, str(meas)))
             
             # MDI
-            for meas in mdi_measurements:
-                dirs.append(os.path.join(self.uri, "MDI", date, meas))
+            #for meas in mdi_measurements:
+            #    dirs.append(os.path.join(self.uri, "MDI", date, meas))
                 
             # LASCO
             for detector in last_detectors:
-                dirs.append(os.path.join(self.uri, "LASCO-", detector, date, "white-light"))
+                dirs.append(os.path.join(self.uri, "LASCO-"+detector, date, "white-light"))
                 
         return dirs
     

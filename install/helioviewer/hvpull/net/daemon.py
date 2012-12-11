@@ -608,7 +608,8 @@ class ImageRetrievalDaemon:
             "soho": "SOHODataServer",
             "stereo": "STEREODataServer",
             "jsoc": "JSOCDataServer",
-            "rob": "ROBDataServer"
+            "rob": "ROBDataServer",
+            "uio": "UIODataServer"
         }
         
     @classmethod
