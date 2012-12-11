@@ -277,6 +277,10 @@ function printDocumentationAppendices()
                 <td>Yohkoh</td>
                 <td>Yohkoh (SOLAR-A)</td>
             </tr>
+            <tr>
+                <td>HINODE</td>
+                <td>HINODE (SOLAR-B)</td>
+            </tr>
         </table>
 
         <br />
@@ -316,6 +320,10 @@ function printDocumentationAppendices()
             <tr>
                 <td>SXT</td>
                 <td>SXT (Soft X-ray Telescope)<td>
+            </tr>
+            <tr>
+                <td>XRT</td>
+                <td>XRT (X-Ray Telescope)<td>
             </tr>
         </table>
 
@@ -368,6 +376,10 @@ function printDocumentationAppendices()
             <tr>
                 <td>SXT</td>
                 <td>SXT (Soft X-ray Telescope)</td>
+            </tr>
+            <tr>
+                <td>XRT</td>
+                <td>XRT (X-Ray Telescope)<td>
             </tr>
         </table>
 

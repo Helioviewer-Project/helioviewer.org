@@ -42,7 +42,9 @@ def main(argv):
                             os.path.relpath(filepath, options.source))
         
         # Parse image header
-        image_params = sunpy.read_header(filepath)
+        image_params = sunpy.read_header(filepath)        
+        if (image_params["measurement"] == '' and image_params["instrument"] == 'XRT'):
+            image_params["measurement"] = image_params['header']['EC_FW1_']+'/'+image_params['header']['EC_FW2_']
         image_params['filepath'] = dest
         
         images.append(image_params)

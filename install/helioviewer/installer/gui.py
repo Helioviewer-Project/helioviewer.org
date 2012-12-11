@@ -72,6 +72,8 @@ class HelioviewerInstallWizard(QtGui.QWizard):
             for filepath in filepaths:
                 try:
                     image = sunpy.read_header(filepath)
+                    if (image["measurement"] == '' and image["instrument"] == 'XRT'):
+                        image["measurement"] = image['header']['EC_FW1_']+'/'+image['header']['EC_FW2_']
                     image['filepath'] = filepath
                     self.images.append(image)
                 except:

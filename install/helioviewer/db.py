@@ -187,7 +187,43 @@ def create_datasource_table(cursor):
         (35, 'SXT Be119', 'Yohkoh SXT Be119', 6, 8, 11, 18, 1, 1),
         (36, 'SXT Al12', 'Yohkoh SXT Al12', 6, 8, 11, 19, 1, 1),
         (37, 'SXT Mg3', 'Yohkoh SXT Mg3', 6, 8, 11, 20, 1, 1),
-        (38, 'SXT Open', 'Yohkoh SXT Open', 6, 8, 11, 21, 1, 1);
+        (38, 'SXT Open', 'Yohkoh SXT Open', 6, 8, 11, 21, 1, 1),
+        (39, 'XRT Al_med/Open', 'Hinode XRT Al_med/Open', 7, 9, 12, 22, 1, 1),
+        (40, 'XRT Al_med/Al_mesh', 'Hinode XRT Al_med/Al_mesh', 7, 9, 12, 23, 1, 1),
+        (41, 'XRT Al_med/Al_thick', 'Hinode XRT Al_med/Al_thick', 7, 9, 12, 24, 1, 1),
+        (42, 'XRT Al_med/Be_thick', 'Hinode XRT Al_med/Be_thick', 7, 9, 12, 25, 1, 1),
+        (43, 'XRT Al_med/Gband', 'Hinode XRT Al_med/Gband', 7, 9, 12, 26, 1, 1),
+        (44, 'XRT Al_med/Ti_poly', 'Hinode XRT Al_med/Ti_poly', 7, 9, 12, 27, 1, 1),
+        (45, 'XRT Al_poly/Open', 'Hinode XRT Al_poly/Open', 7, 9, 12, 28, 1, 1),
+        (46, 'XRT Al_poly/Al_mesh', 'Hinode XRT Al_poly/Al_mesh', 7, 9, 12, 29, 1, 1),
+        (47, 'XRT Al_poly/Al_thick', 'Hinode XRT Al_poly/Al_thick', 7, 9, 12, 30, 1, 1),
+        (48, 'XRT Al_poly/Be_thick', 'Hinode XRT Al_poly/Be_thick', 7, 9, 12, 31, 1, 1),
+        (49, 'XRT Al_poly/Gband', 'Hinode XRT Al_poly/Gband', 7, 9, 12, 32, 1, 1),
+        (50, 'XRT Al_poly/Ti_poly', 'Hinode XRT Al_poly/Ti_poly', 7, 9, 12, 33, 1, 1),
+        (51, 'XRT Be_med/Open', 'Hinode XRT Be_med/Open', 7, 9, 12, 34, 1, 1),
+        (52, 'XRT Be_med/Al_mesh', 'Hinode XRT Be_med/Al_mesh', 7, 9, 12, 35, 1, 1),
+        (53, 'XRT Be_med/Al_thick', 'Hinode XRT Be_med/Al_thick', 7, 9, 12, 36, 1, 1),
+        (54, 'XRT Be_med/Be_thick', 'Hinode XRT Be_med/Be_thick', 7, 9, 12, 37, 1, 1),
+        (55, 'XRT Be_med/Gband', 'Hinode XRT Be_med/Gband', 7, 9, 12, 38, 1, 1),
+        (56, 'XRT Be_med/Ti_poly', 'Hinode XRT Be_med/Ti_poly', 7, 9, 12, 39, 1, 1),
+        (57, 'XRT Be_thin/Open', 'Hinode XRT Be_thin/Open', 7, 9, 12, 40, 1, 1),
+        (58, 'XRT Be_thin/Al_mesh', 'Hinode XRT Be_thin/Al_mesh', 7, 9, 12, 41, 1, 1),
+        (59, 'XRT Be_thin/Al_thick', 'Hinode XRT Be_thin/Al_thick', 7, 9, 12, 42, 1, 1),
+        (60, 'XRT Be_thin/Be_thick', 'Hinode XRT Be_thin/Be_thick', 7, 9, 12, 43, 1, 1),
+        (61, 'XRT Be_thin/Gband', 'Hinode XRT Be_thin/Gband', 7, 9, 12, 44, 1, 1),
+        (62, 'XRT Be_thin/Ti_poly', 'Hinode XRT Be_thin/Ti_poly', 7, 9, 12, 45, 1, 1),
+        (63, 'XRT C_poly/Open', 'Hinode XRT C_poly/Open', 7, 9, 12, 46, 1, 1),
+        (64, 'XRT C_poly/Al_mesh', 'Hinode XRT C_poly/Al_mesh', 7, 9, 12, 47, 1, 1),
+        (65, 'XRT C_poly/Al_thick', 'Hinode XRT C_poly/Al_thick', 7, 9, 12, 48, 1, 1),
+        (66, 'XRT C_poly/Be_thick', 'Hinode XRT C_poly/Be_thick', 7, 9, 12, 49, 1, 1),
+        (67, 'XRT C_poly/Gband', 'Hinode XRT C_poly/Gband', 7, 9, 12, 50, 1, 1),
+        (68, 'XRT C_poly/Ti_poly', 'Hinode XRT C_poly/Ti_poly', 7, 9, 12, 51, 1, 1),
+        (69, 'XRT Open/Open', 'Hinode XRT Open/Open', 7, 9, 12, 52, 1, 1),
+        (70, 'XRT Open/Al_mesh', 'Hinode XRT Open/Al_mesh', 7, 9, 12, 53, 1, 1),
+        (71, 'XRT Open/Al_thick', 'Hinode XRT Open/Al_thick', 7, 9, 12, 54, 1, 1),
+        (72, 'XRT Open/Be_thick', 'Hinode XRT Open/Be_thick', 7, 9, 12, 55, 1, 1),
+        (73, 'XRT Open/Gband', 'Hinode XRT Open/Gband', 7, 9, 12, 56, 1, 1),
+        (74, 'XRT Open/Ti_poly', 'Hinode XRT Open/Ti_poly', 7, 9, 12, 57, 1, 1);
     """)
 
 def create_observatory_table(cursor):
@@ -209,7 +245,8 @@ def create_observatory_table(cursor):
         (3, 'STEREO_A', 'Solar Terrestrial Relations Observatory Ahead'),
         (4, 'STEREO_B', 'Solar Terrestrial Relations Observatory Behind'),
         (5, 'PROBA2', 'Project for OnBoard Autonomy 2'),
-        (6, 'Yohkoh', 'Yohkoh (Solar-A)');
+        (6, 'Yohkoh', 'Yohkoh (Solar-A)'),
+        (7, 'Hinode', 'Hinode (Solar-B)');
     """)
 
 def create_instrument_table(cursor):
@@ -233,7 +270,8 @@ def create_instrument_table(cursor):
         (5, 'HMI',    'Helioseismic and Magnetic Imager'),
         (6, 'SECCHI', 'Sun Earth Connection Coronal and Heliospheric Investigation'),
         (7, 'SWAP',   'Sun watcher using APS detectors and image processing'),
-        (8, 'SXT',    'Soft X-ray Telescope');
+        (8, 'SXT',    'Soft X-ray Telescope'),
+        (9, 'XRT',    'X-Ray Telescope');
     """)
 
 
@@ -262,7 +300,8 @@ def create_detector_table(cursor):
         (8,  'COR1',  'Coronograph 1'),
         (9,  'COR2',  'Coronograph 2'),
         (10, 'SWAP',  'Sun watcher using APS detectors and image processing'),
-        (11, 'SXT',   'Soft X-ray Telescope');
+        (11, 'SXT',   'Soft X-ray Telescope'),
+        (12, 'XRT',   'X-Ray Telescope');
     """)
 
 
@@ -302,7 +341,43 @@ def create_measurement_table(cursor):
         (18, 'Be119', '119 μm Be filter (2.3 Å - 10 Å pass band)', 'Å'),
         (19, 'Al12', '1265 Ångström-thick Al filter (2.5 Å - 36 Å pass band)', 'Å'),
         (20, 'Mg3', '2.52 μm Mg filter (2.4 Å - 23 Å pass band)', 'Å'),
-        (21, 'Open', 'No filter', '');""")
+        (21, 'Open', 'No filter', ''),
+        (22, 'Al_med/Open', '', ''),
+        (23, 'Al_med/Al_mesh', '', ''),
+        (24, 'Al_med/Al_thick', '', ''),
+        (25, 'Al_med/Be_thick', '', ''),
+        (26, 'Al_med/Gband', '', ''),
+        (27, 'Al_med/Ti_poly', '', ''),
+        (28, 'Al_poly/Open', '', ''),
+        (29, 'Al_poly/Al_mesh', '', ''),
+        (30, 'Al_poly/Al_thick', '', ''),
+        (31, 'Al_poly/Be_thick', '', ''),
+        (32, 'Al_poly/Gband', '', ''),
+        (33, 'Al_poly/Ti_poly', '', ''),
+        (34, 'Be_med/Open', '', ''),
+        (35, 'Be_med/Al_mesh', '', ''),
+        (36, 'Be_med/Al_thick', '', ''),
+        (37, 'Be_med/Be_thick', '', ''),
+        (38, 'Be_med/Gband', '', ''),
+        (39, 'Be_med/Ti_poly', '', ''),
+        (40, 'Be_thin/Open', '', ''),
+        (41, 'Be_thin/Al_mesh', '', ''),
+        (42, 'Be_thin/Al_thick', '', ''),
+        (43, 'Be_thin/Be_thick', '', ''),
+        (44, 'Be_thin/Gband', '', ''),
+        (45, 'Be_thin/Ti_poly', '', ''),
+        (46, 'C_poly/Open', '', ''),
+        (47, 'C_poly/Al_mesh', '', ''),
+        (48, 'C_poly/Al_thick', '', ''),
+        (49, 'C_poly/Be_thick', '', ''),
+        (50, 'C_poly/Gband', '', ''),
+        (51, 'C_poly/Ti_poly', '', ''),
+        (52, 'Open/Open', '', ''),
+        (53, 'Open/Al_mesh', '', ''),
+        (54, 'Open/Al_thick', '', ''),
+        (55, 'Open/Be_thick', '', ''),
+        (56, 'Open/Gband', '', ''),
+        (57, 'Open/Ti_poly', '', '');""")
     
 def create_movies_table(cursor):
     """Creates movie table

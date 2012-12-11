@@ -305,6 +305,8 @@ class ImageRetrievalDaemon:
             try:
                 try:
                     image_params = sunpy.read_header(filepath)
+                    if (image_params["measurement"] == '' and image_params["instrument"] == 'XRT'):
+                        image_params["measurement"] = image_params['header']['EC_FW1_']+'/'+image_params['header']['EC_FW2_']
                 except:
                     raise BadImage("HEADER")
                 self._validate(image_params)
