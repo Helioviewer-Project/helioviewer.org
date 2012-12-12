@@ -153,7 +153,7 @@ class Database_MovieDatabase
         $videos = array();
 
         $result = $this->_dbConnection->query($sql);
-        while ($row = $result->fetch_array(MYSQL_ASSOC)) {
+        while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
             array_push($videos, $row);
         }
         
