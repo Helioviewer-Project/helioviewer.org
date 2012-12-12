@@ -451,7 +451,7 @@ class ImageRetrievalDaemon:
         # if less than 500, alert admins
         if gb_avail < 500:
             msg = "Warning: Running low on disk space! 500 GB remaining"
-            send_email_alert(msg)
+            self.send_email_alert(msg)
             self.sent_diskspace_warning = True
             
     def _deduplicate(self, urls):
