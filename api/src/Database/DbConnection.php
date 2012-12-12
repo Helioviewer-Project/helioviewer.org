@@ -40,7 +40,7 @@ class Database_DbConnection
      *
      * @return void
      */
-    public function __construct($dbname = null, $user = null, $password = null, $host = null)
+    public function __construct($dbname=null, $user=null, $password=null, $host=null)
     {
         if ($user) {
             $this->_user = $user;
