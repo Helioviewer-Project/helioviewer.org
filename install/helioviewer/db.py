@@ -203,7 +203,8 @@ def create_observatory_table(cursor):
         (2, 'SDO', 'Solar Dynamics Observatory'),
         (3, 'STEREO_A', 'Solar Terrestrial Relations Observatory Ahead'),
         (4, 'STEREO_B', 'Solar Terrestrial Relations Observatory Behind'),
-        (5, 'PROBA2', 'Project for OnBoard Autonomy 2');
+        (5, 'PROBA2', 'Project for OnBoard Autonomy 2'),
+        (6, 'Yohkoh', 'Yohkoh (Solar-A)');
     """)
 
 def create_instrument_table(cursor):
@@ -226,7 +227,8 @@ def create_instrument_table(cursor):
         (4, 'AIA',    'Atmospheric Imaging Assembly'),
         (5, 'HMI',    'Helioseismic and Magnetic Imager'),
         (6, 'SECCHI', 'Sun Earth Connection Coronal and Heliospheric Investigation'),
-        (7, 'SWAP',   'Sun watcher using APS detectors and image processing');
+        (7, 'SWAP',   'Sun watcher using APS detectors and image processing'),
+        (8, 'SXT',    'Soft X-ray Telescope');
     """)
 
 
@@ -254,7 +256,8 @@ def create_detector_table(cursor):
         (7,  'EUVI',  'Extreme Ultraviolet Imager'),
         (8,  'COR1',  'Coronograph 1'),
         (9,  'COR2',  'Coronograph 2'),
-        (10, 'SWAP',  'Sun watcher using APS detectors and image processing');
+        (10, 'SWAP',  'Sun watcher using APS detectors and image processing'),
+        (11, 'SXT',   'Soft X-ray Telescope');
     """)
 
 
@@ -288,7 +291,8 @@ def create_measurement_table(cursor):
         (12, 'continuum', 'Intensitygram', 'DN'),
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
         (14, 'white-light', 'White Light', 'DN'),
-        (15, '174', '174 Ångström extreme ultraviolet', 'Å');""")
+        (15, '174', '174 Ångström extreme ultraviolet', 'Å'),
+        (16, 'AlMg', 'Al/Mg Filter', 'Å');""")
     
 def create_movies_table(cursor):
     """Creates movie table
