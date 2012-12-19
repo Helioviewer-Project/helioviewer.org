@@ -623,7 +623,8 @@ class ImageRetrievalDaemon:
     def get_downloaders(cls):
         """Returns a list of valid data downloaders to interact with"""
         return {
-            "urllib": "URLLibDownloader"
+            "urllib": "URLLibDownloader",
+            "localcopy": "LocalFileCopy"
         }
 
 class BadImage(ValueError):
