@@ -14,6 +14,6 @@ class LocalDataBrowser(BaseDataBrowser):
         """Get all the files that end with specified extension at the uri"""
         # ensure the location has the correct suffix
         if os.path.exists(uri):
-            return os.listdir(uri)
+            return [os.path.join(uri,f) for f in os.listdir(uri)]
         else:
             return []
