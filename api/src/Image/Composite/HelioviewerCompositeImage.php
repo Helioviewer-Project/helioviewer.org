@@ -126,8 +126,8 @@ class Image_Composite_HelioviewerCompositeImage
       
         $jp2 = new Image_JPEG2000_JP2Image($jp2Filepath, $image['width'], $image['height'], $image['scale']);
 
-        $offsetX =  $image['sunCenterX']  - ($image['width'] / 2);
-        $offsetY = ($image['height'] / 2) -  $image['sunCenterY'];
+        $offsetX =   $image['refPixelX'] - ($image['width']  / 2);
+        $offsetY = -($image['refPixelY'] - ($image['height'] / 2));
 
         // Options for individual layers
         $options = array(
@@ -158,7 +158,7 @@ class Image_Composite_HelioviewerCompositeImage
         $classname = "Image_ImageType_" . $type;
         return new $classname(
             $jp2, $tmpFile, $this->roi, $layer['observatory'], $layer['instrument'], $layer['detector'], $layer['measurement'], 
-            $offsetX, $offsetY, $options
+            $offsetX, $offsetY, $options, $image['sunCenterOffsetParams']
         );
     }
 

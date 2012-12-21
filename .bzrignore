@@ -30,3 +30,6 @@ php_errors.log
 cache
 settings/settings.cfg
 settings.cfg
+docs/profiling.tar
+.idea
+.bzrignore

@@ -198,22 +198,71 @@ class Image_JPEG2000_JP2ImageXMLBox
     }
 
     /**
-     * Returns the coordinates for the center of the sun in the image.
+     * Returns the coordinates for the image's reference pixel.
      * 
      * NOTE: The values for CRPIX1 and CRPIX2 reflect the x and y coordinates with the origin
      * at the bottom-left corner of the image, not the top-left corner.
      *
-     * @return array Pixel coordinates of the solar center
+     * @return array Pixel coordinates of the reference pixel
      */
-    public function getSunCenter()
+    public function getRefPixelCoords()
     {
         try {
             $x = $this->_getElementValue("CRPIX1");
             $y = $this->_getElementValue("CRPIX2");
         } catch (Exception $e) {
-            throw new Exception('Unable to locate sun center center in header tags!', 15);
+            throw new Exception('Unable to locate reference pixel coordinates in header tags!', 15);
         }
         return array($x, $y);
+    }
+
+    /**
+     * Returns the Header keywords containing any Sun-center location information
+     *
+     * @return array Header keyword/value pairs from JP2 file XML 
+     */
+    public function getSunCenterOffsetParams()
+    {
+        $sunCenterOffsetParams = array();
+        
+        try {
+            if ( $this->_getElementValue('INSTRUME') == 'XRT' ) {
+                $sunCenterOffsetParams['XCEN'] = $this->_getElementValue('XCEN');
+                $sunCenterOffsetParams['YCEN'] = $this->_getElementValue('YCEN');
+                $sunCenterOffsetParams['OSLO_XCEN_DELTA'] = $this->_getElementValue('OSLO_XCEN_DELTA');
+                $sunCenterOffsetParams['OSLO_YCEN_DELTA'] = $this->_getElementValue('OSLO_YCEN_DELTA');
+                $sunCenterOffsetParams['CDELT1'] = $this->_getElementValue('CDELT1');
+                $sunCenterOffsetParams['CDELT2'] = $this->_getElementValue('CDELT2');
+            }
+        } catch (Exception $e) {
+            throw new Exception('Unable to locate Sun center offset parameters in header tags!', 15);
+        }
+
+        return $sunCenterOffsetParams;
+    }
+
+    /**
+     * Returns the value by which to increment the layeringOrder.
+	 *
+     * NOTE: Used to handle data sets that intermix fulldisk and sub-field images.
+     *
+     * @return integer
+     */
+    public function getIncreaseLayeringOrderBy()
+    {
+        $increaseLayeringOrderBy = 0;
+        try {
+            if ( $this->_getElementValue('INSTRUME') == 'XRT' &&
+                 $this->_getElementValue('NAXIS1')  * $this->_getElementValue("CDELT1") < 2048.0 &&
+                 $this->_getElementValue('NAXIS2')  * $this->_getElementValue("CDELT2") < 2048.0 ) {
+                     
+                $increaseLayeringOrderBy = 1;
+            }
+        } catch (Exception $e) {
+            throw new Exception('Unable to locate Sun center offset parameters in header tags!', 15);
+        }
+
+        return $increaseLayeringOrderBy;
     }
     
     /**
