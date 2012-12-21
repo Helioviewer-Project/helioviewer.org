@@ -32,19 +32,20 @@ class Image_ImageType_XRTImage extends Image_HelioviewerImage
     /**
      * Creates a new XRTImage
      * 
-     * @param string $jp2      Source JP2 image
-     * @param string $filepath Location to output the file to
-     * @param array  $roi      Top-left and bottom-right pixel coordinates on the image
-     * @param string $inst     Instrument
-     * @param string $det      Detector
-     * @param string $meas     Measurement
-     * @param int    $offsetX  Offset of the sun center from the image center
-     * @param int    $offsetY  Offset of the sun center from the iamge center
-     * @param array  $options  Optional parameters
+     * @param string $jp2                    Source JP2 image
+     * @param string $filepath               Location to output the file to
+     * @param array  $roi                    Top-left and bottom-right pixel coordinates on the image
+     * @param string $inst                   Instrument
+     * @param string $det                    Detector
+     * @param string $meas                   Measurement
+     * @param int    $offsetX                Offset of the sun center from the image center
+     * @param int    $offsetY                Offset of the sun center from the image center
+     * @param array  $options                Optional parameters
+     * @param array  $sunCenterOffsetParams  Header keywords for Sun center offset calculation
      * 
      * @return void
      */     
-    public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options)
+    public function __construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options, $sunCenterOffsetParams)
     {
         $colorTable = HV_ROOT_DIR . "/api/resources/images/color-tables/HINODE_XRT_$meas.png";
 
@@ -54,6 +55,12 @@ class Image_ImageType_XRTImage extends Image_HelioviewerImage
         else {
             $this->setColorTable(false);
         }
+        
+        // Apply Sun center offset
+        $offsetX = -( $sunCenterOffsetParams["XCEN"] + ($sunCenterOffsetParams["CDELT1"] * -$offsetX) ) / 
+                      $sunCenterOffsetParams["CDELT1"];
+        $offsetY =  ( $sunCenterOffsetParams["YCEN"] + ($sunCenterOffsetParams["CDELT2"] * -$offsetY) ) / 
+                      $sunCenterOffsetParams["CDELT2"];
         
         parent::__construct($jp2, $filepath, $roi, $obs, $inst, $det, $meas, $offsetX, $offsetY, $options);
     }

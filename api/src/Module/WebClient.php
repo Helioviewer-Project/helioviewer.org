@@ -230,9 +230,9 @@ class Module_WebClient implements Module
         // JP2 filepath
         $jp2Filepath = HV_JP2_DIR . $image['filepath'] . "/" . $image['filename'];
         
-        // Sun center offset at the original image scale
-        $offsetX =   $image['sunCenterX'] - ($image['width'] / 2);
-        $offsetY = -($image['sunCenterY'] - ($image['height'] / 2));
+        // Reference pixel offset at the original image scale
+        $offsetX =   $image['refPixelX'] - ($image['width']  / 2);
+        $offsetY = -($image['refPixelY'] - ($image['height'] / 2));
 
         // Instantiate a JP2Image
         $jp2 = new Image_JPEG2000_JP2Image(
@@ -261,7 +261,7 @@ class Module_WebClient implements Module
         $tile = new $classname(
             $jp2, $filepath, $roi, $image['observatory'], 
             $image['instrument'], $image['detector'], $image['measurement'],  
-            $offsetX, $offsetY, $this->_options
+            $offsetX, $offsetY, $this->_options, $image['sunCenterOffsetParams']
         );
         
         // Save and display

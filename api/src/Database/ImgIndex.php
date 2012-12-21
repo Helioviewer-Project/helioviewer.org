@@ -149,7 +149,7 @@ class Database_ImgIndex
     }
 
     /**
-     * Takes an image filepath and returns some useful image information
+     * Takes an image ID and returns some useful image information
      */
     public function getImageInformation($id) {
         $sql = "SELECT * FROM images WHERE id=$id;";
@@ -364,10 +364,12 @@ class Database_ImgIndex
         try {
             $xmlBox = new Image_JPEG2000_JP2ImageXMLBox($img);
 
-            $dimensions = $xmlBox->getImageDimensions();
-            $center     = $xmlBox->getSunCenter();
-            $imageScale = (float) $xmlBox->getImagePlateScale();
-            $dsun       = (float) $xmlBox->getDSun();
+            $dimensions              = $xmlBox->getImageDimensions();
+            $refPixel                = $xmlBox->getRefPixelCoords();
+            $imageScale              = (float) $xmlBox->getImagePlateScale();
+            $dsun                    = (float) $xmlBox->getDSun();
+            $sunCenterOffsetParams   = $xmlBox->getSunCenterOffsetParams();
+            $increaseLayeringOrderBy = $xmlBox->getIncreaseLayeringOrderBy();
             
             // Normalize image scale
             $imageScale = $imageScale * ($dsun / HV_CONSTANT_AU);
@@ -376,8 +378,10 @@ class Database_ImgIndex
                 "scale"      => $imageScale,
                 "width"      => (int) $dimensions[0],
                 "height"     => (int) $dimensions[1],
-                "sunCenterX" => (float) $center[0],
-                "sunCenterY" => (float) $center[1]
+                "refPixelX"  => (float) $refPixel[0],
+                "refPixelY"  => (float) $refPixel[1],
+                "sunCenterOffsetParams"   => $sunCenterOffsetParams,
+                "increaseLayeringOrderBy" => $increaseLayeringOrderBy
             );
         } catch (Exception $e) {
             throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()), 13);
@@ -574,7 +578,7 @@ class Database_ImgIndex
                 LEFT JOIN detectors ON datasources.detectorId = detectors.id
                 LEFT JOIN measurements ON datasources.measurementId = measurements.id;";
                 
-        // 2011/06/10 Temporarily hiding STEREO from verbose outpu to prevent JHelioviewer from attempting to use
+        // 2011/06/10 Temporarily hiding STEREO from verbose output to prevent JHelioviewer from attempting to use
         // 2012/05/26 Same thing with SWAP
         // 2012/07/11 Adding switch to enable these layers for JHelioviewer
         if ($verbose) {

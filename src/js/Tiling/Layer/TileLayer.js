@@ -75,7 +75,7 @@ var TileLayer = Layer.extend(
      * @return string String representation of the tile layer
      */
     serialize: function () {
-        return this.image.getLayerName() + "," + (this.visible ? "1" : "0") + "," + this.opacity;
+        return this.image.getLayerName() + "," + (this.visible ? this.layeringOrder : "0") + "," + this.opacity;
     },
     
     toggleVisibility: function (event, id) {

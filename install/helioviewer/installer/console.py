@@ -23,8 +23,9 @@ class HelioviewerConsoleInstaller:
         for filepath in filepaths:
             try:
                 image = sunpy.read_header(filepath)
+                # JS: Temporary workaround for Hinode
                 if (image["measurement"] == '' and image["instrument"] == 'XRT'):
-                    image["measurement"] = image['header']['EC_FW1_']+'/'+image['header']['EC_FW2_']
+                    image["measurement"] = image['header']['EC_FW1_']+'-'+image['header']['EC_FW2_']
                 image['filepath'] = filepath
                 images.append(image)
             except:
