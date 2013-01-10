@@ -220,18 +220,18 @@ class Helper_HelioviewerLayers
     
         // [obs,inst,det,meas,visible,opacity] 
         if (sizeOf($layerArray) === 6) {
-            list($observatory, $instrument, $detector, $measurement, $visible, $opacity) = $layerArray;
+            list($observatory, $instrument, $detector, $measurement, $layeringOrder, $opacity) = $layerArray;
             $info = $this->_db->getDatasourceInformationFromNames(
                 $observatory, $instrument, $detector, $measurement
             );
             
             $sourceId      = $info["id"];
             $name          = $info["name"];
-            $layeringOrder = $info["layeringOrder"];
+            $layeringOrder = $layeringOrder;
             
         } else if (sizeOf($layerArray === 3)) {
             // [sourceId,visible,opacity]
-            list($sourceId, $visible, $opacity) = $layerArray;
+            list($sourceId, $layeringOrder, $opacity) = $layerArray;
 
             $source = $this->_db->getDatasourceInformationFromSourceId($sourceId);
 
@@ -239,7 +239,7 @@ class Helper_HelioviewerLayers
             $instrument    = $source["instrument"];
             $detector      = $source["detector"];
             $measurement   = $source["measurement"];
-            $layeringOrder = $source["layeringOrder"];
+            $layeringOrder = $layeringOrder;
             $name          = $source["name"];
         }
         
@@ -252,7 +252,7 @@ class Helper_HelioviewerLayers
             "name"          => $name,
             "sourceId"      => (int)  $sourceId,
             "layeringOrder" => (int)  $layeringOrder,
-            "visible"       => (bool) $visible,
+            "visible"       => ($layeringOrder > 0) ? true : false,
             "opacity"       => (int)  $opacity
         );
     }

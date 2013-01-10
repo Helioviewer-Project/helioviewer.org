@@ -29,10 +29,8 @@ var HelioviewerTileLayer = TileLayer.extend(
      * </div>
      */
     init: function (index, date, tileSize, viewportScale, tileVisibilityRange, observatory, instrument, 
-                    detector, measurement, sourceId, name, visible, opacity, layeringOrder) {
+                    detector, measurement, sourceId, name, visible, opacity) {
         this._super(index, date, tileSize, viewportScale, tileVisibilityRange, name, visible, opacity);
-        
-        this.layeringOrder = layeringOrder;
         
         // Create a random id which can be used to link tile layer with its corresponding tile layer accordion entry
         this.id = "tile-layer-" + new Date().getTime();
@@ -56,8 +54,7 @@ var HelioviewerTileLayer = TileLayer.extend(
     onLoadImage: function () {
         this.loaded = true;
 		
-		// Account for sub-field images in a dataset containing both full-disk and subfield images
-        this.layeringOrder += this.image.increaseLayeringOrderBy;
+        this.layeringOrder = this.image.layeringOrder;
 
         this._loadStaticProperties();
 
