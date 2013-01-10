@@ -369,7 +369,7 @@ class Database_ImgIndex
             $imageScale              = (float) $xmlBox->getImagePlateScale();
             $dsun                    = (float) $xmlBox->getDSun();
             $sunCenterOffsetParams   = $xmlBox->getSunCenterOffsetParams();
-            $increaseLayeringOrderBy = $xmlBox->getIncreaseLayeringOrderBy();
+            $layeringOrder           = $xmlBox->getLayeringOrder();
             
             // Normalize image scale
             $imageScale = $imageScale * ($dsun / HV_CONSTANT_AU);
@@ -380,8 +380,8 @@ class Database_ImgIndex
                 "height"     => (int) $dimensions[1],
                 "refPixelX"  => (float) $refPixel[0],
                 "refPixelY"  => (float) $refPixel[1],
-                "sunCenterOffsetParams"   => $sunCenterOffsetParams,
-                "increaseLayeringOrderBy" => $increaseLayeringOrderBy
+                "sunCenterOffsetParams" => $sunCenterOffsetParams,
+                "layeringOrder"         => $layeringOrder
             );
         } catch (Exception $e) {
             throw new Exception(sprintf("Unable to process XML Header for %s: %s", $img, $e->getMessage()), 13);

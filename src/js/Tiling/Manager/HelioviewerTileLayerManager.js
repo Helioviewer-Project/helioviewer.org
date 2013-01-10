@@ -179,13 +179,13 @@ var HelioviewerTileLayerManager = TileLayerManager.extend(
         
         // Update layering order and z-index
         layer.layeringOrder = layeringOrder;
-        layer.domNode.css("z-index", parseInt(layeringOrder, 10) - 10);
+        layer.domNode.css("z-index", parseInt(layer.layeringOrder, 10) - 10);
         
         // Update associated JPEG 2000 image
-        layer.image.updateDataSource(observatory, instrument, detector, measurement, sourceId);
-        
+        layer.image.updateDataSource(observatory, instrument, detector, measurement, sourceId );
+   
         // Update opacity (also triggers save-tile-layers event)
-        opacity = this._computeLayerStartingOpacity(layeringOrder, true);
+        opacity = this._computeLayerStartingOpacity(layer.layeringOrder, true);
         $("#opacity-slider-track-" + id).slider("value", opacity);
     },
 

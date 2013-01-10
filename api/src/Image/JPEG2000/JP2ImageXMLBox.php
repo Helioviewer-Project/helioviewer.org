@@ -242,27 +242,45 @@ class Image_JPEG2000_JP2ImageXMLBox
     }
 
     /**
-     * Returns the value by which to increment the layeringOrder.
-	 *
-     * NOTE: Used to handle data sets that intermix fulldisk and sub-field images.
+     * Returns layering order based on data source
      *
-     * @return integer
+     * NOTE: In the case of Hinode XRT, layering order is decided on an image-by-image basis
+     *
+     * @return integer layering order
      */
-    public function getIncreaseLayeringOrderBy()
+    public function getLayeringOrder()
     {
-        $increaseLayeringOrderBy = 0;
         try {
-            if ( $this->_getElementValue('INSTRUME') == 'XRT' &&
-                 $this->_getElementValue('NAXIS1')  * $this->_getElementValue("CDELT1") < 2048.0 &&
-                 $this->_getElementValue('NAXIS2')  * $this->_getElementValue("CDELT2") < 2048.0 ) {
+            switch ($this->_getElementValue('TELESCOP')) {
+                case 'SOHO':
+                    $layeringOrder = 2;     // SOHO LASCO C2
+                    if ( $this->_getElementValue('DETECTOR') == 'C3' ) {
+                        $layeringOrder = 3; // SOHO LASCO C3
+                    }
+                    break;
+                case 'STEREO':
+                    $layeringOrder = 2;     // STEREO_A/B SECCHI COR1
+                    if ( $this->_getElementValue('DETECTOR') == 'COR2' ) {
+                        $layeringOrder = 3; // STEREO_A/B SECCHI COR2
+                    }
+                    break;
+                case 'HINODE':
+                    $layeringOrder = 1;     // Hinode XRT full disk
+                    if ( $this->_getElementValue('NAXIS1') * $this->_getElementValue("CDELT1") < 2048.0 &&
+                         $this->_getElementValue('NAXIS2') * $this->_getElementValue("CDELT2") < 2048.0 ) {
                      
-                $increaseLayeringOrderBy = 1;
+                        $layeringOrder = 2; // Hinode XRT sub-field
+                    }
+                    break;
+                default:
+                    // All other data sources
+                    $layeringOrder = 1;
             }
         } catch (Exception $e) {
-            throw new Exception('Unable to locate Sun center offset parameters in header tags!', 15);
+            throw new Exception('Unable to determine layeringOrder from header tags!', 15);
         }
 
-        return $increaseLayeringOrderBy;
+        return $layeringOrder;
     }
     
     /**
