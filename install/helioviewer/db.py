@@ -49,6 +49,7 @@ def get_db_cursor(dbname, dbuser, dbpass, mysql=True):
     
     db.autocommit(True)
     return db.cursor()
+
 def check_db_info(adminuser, adminpass, mysql):
     """Validate database login information"""
     try:
