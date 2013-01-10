@@ -114,20 +114,8 @@ class Image_JPEG2000_JP2ImageXMLBox
         $maxDSUN = 2.25e11; // A reasonable max for solar observatories, ~1.5 AU
         
         try {
-            // SXT
-            // The SXT headers do not have a value of the distance from
-            // the spacecraft to the center of the Sun.  The FITS keyword 'DSUN_OBS'
-            // appears to refer to the observed diameter of the Sun.  Until such 
-            // time as that is calculated and properly included in the file, we will 
-            // use simple trigonometry to calculate the distance of the center of 
-            // the Sun from the spacecraft.  Note that the small angle approximation
-            // is used, and the solar radius stored in SXT FITS files is in arcseconds.
-            if ( $this->_getElementValue("INSTRUME") == "SXT" ) {
-                $dsun = HV_CONSTANT_RSUN_M/deg2rad($this->_getElementValue("SOLAR_R")/3600.0);
-            } else {
-                // AIA, EUVI, COR, SWAP
-                $dsun = $this->_getElementValue("DSUN_OBS");
-            }
+            // AIA, EUVI, COR, SWAP, SXT, XRT
+            $dsun = $this->_getElementValue("DSUN_OBS");
         } catch (Exception $e) {
             try {
                 // EIT
