@@ -97,3 +97,11 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
         
     # Execute query
     cursor.execute(query)
+    
+class BadImage(ValueError):
+    """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
+    encountered."""
+    def __init__(self, message=""):
+        self.message = message
+    def get_message(self):
+        return self.message
