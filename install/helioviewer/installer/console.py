@@ -27,7 +27,7 @@ class HelioviewerConsoleInstaller:
                 images.append(image)
             except:
                 #raise BadImage("HEADER")
-                print("Skipping corrupt image: %s", 
+                print("Skipping corrupt image: %s" %
                       os.path.basename(filepath))
                 continue
         
