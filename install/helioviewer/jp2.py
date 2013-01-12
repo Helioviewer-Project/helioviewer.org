@@ -23,7 +23,7 @@ def find_images(path):
 
     return images
 
-def process_jp2_images (filepaths, root_dir, cursor, mysql=True, step_fxn=None):
+def process_jp2_images (images, root_dir, cursor, mysql=True, step_fxn=None):
     '''Processes a collection of JPEG 2000 Images'''
     if mysql:
         import MySQLdb
@@ -32,14 +32,6 @@ def process_jp2_images (filepaths, root_dir, cursor, mysql=True, step_fxn=None):
 
     # Return tree of known data-sources
     sources = get_datasources(cursor)
-    
-    # Read image headers
-    images = []
-    
-    for filepath in filepaths:
-        image_params = sunpy.read_header(filepath)
-        image_params['filepath'] = filepath
-        images.append(image_params)
 
     # Insert images into database, 500 at a time
     while len(images) > 0:
@@ -97,3 +89,11 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
         
     # Execute query
     cursor.execute(query)
+    
+class BadImage(ValueError):
+    """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
+    encountered."""
+    def __init__(self, message=""):
+        self.message = message
+    def get_message(self):
+        return self.message
