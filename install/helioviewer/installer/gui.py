@@ -75,7 +75,10 @@ class HelioviewerInstallWizard(QtGui.QWizard):
                     image['filepath'] = filepath
                     self.images.append(image)
                 except:
-                    raise BadImage("HEADER")
+                    #raise BadImage("HEADER")
+                    print("Skipping corrupt image: %s", 
+                          os.path.basename(filepath))
+                    continue
 
             n = len(self.images)
 
