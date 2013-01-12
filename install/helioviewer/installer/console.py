@@ -26,7 +26,10 @@ class HelioviewerConsoleInstaller:
                 image['filepath'] = filepath
                 images.append(image)
             except:
-                raise BadImage("HEADER")
+                #raise BadImage("HEADER")
+                print("Skipping corrupt image: %s" %
+                      os.path.basename(filepath))
+                continue
         
         # Check to make sure the filepath contains jp2 images
         if len(images) is 0:
@@ -180,7 +183,7 @@ class HelioviewerConsoleInstaller:
         print("""\
 ====================================================================
 = Helioviewer Database Population Script                           =
-= Last updated: 2010/10/07                                         =
+= Last updated: 203/01/12                                          =
 =                                                                  =
 = This script processes JP2 images, extracts their associated      =
 = meta-information and stores it away in a database.               =
