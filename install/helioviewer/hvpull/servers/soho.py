@@ -1,6 +1,7 @@
 """SOHO DataServer"""
 from helioviewer.hvpull.servers import DataServer
 import datetime
+import os
 
 class SOHODataServer(DataServer):
     def __init__(self):
@@ -8,7 +9,7 @@ class SOHODataServer(DataServer):
         then copied over to a directory on the main Helioviewer server, from 
         which it can be picked up by the ingestion services.  Note that
         a full path is required to specify the location of the data."""
-        DataServer.__init__(self, "/home/ireland/incoming/soho_incoming/v0.8/jp2", "SOHO")
+        DataServer.__init__(self, "/home/ireland/Data/hvorg_incoming/soho_incoming/v0.8/jp2", "SOHO")
         self.pause = datetime.timedelta(minutes=30)
         
     def compute_directories(self, start_date, end_date):
