@@ -29,7 +29,7 @@ class SOHODataServer(DataServer):
             #    dirs.append(os.path.join(self.uri, "MDI", date, meas))
                 
             # LASCO
-            for detector in last_detectors:
+            for detector in lasco_detectors:
                 dirs.append(os.path.join(self.uri, "LASCO-"+detector, date, "white-light"))
                 
         return dirs
