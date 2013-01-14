@@ -2,6 +2,7 @@
 """Helioviewer.org JPEG 2000 processing functions"""
 import os
 import logging
+import sunpy
 from helioviewer.db import get_datasources, enable_datasource
 
 __INSERTS_PER_QUERY__ = 500
@@ -59,7 +60,8 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
     query = "INSERT IGNORE INTO images VALUES "
 
     # Add images to SQL query
-    for img in images:    
+    for i, img in enumerate(images):
+        # break up directory and filepath
         directory, filename = os.path.split(img['filepath'])
 
         path = "/" + os.path.relpath(directory, rootdir)
@@ -79,7 +81,7 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
         query += "(NULL, '%s', '%s', '%s', %d)," % (path, filename, img["date"], source['id'])
     
         # Progressbar
-        if step_function and (y + 1) % __STEP_FXN_THROTTLE__ is 0:
+        if step_function and (i + 1) % __STEP_FXN_THROTTLE__ is 0:
             step_function(filename)
     
     # Remove trailing comma
@@ -87,3 +89,11 @@ def insert_images(images, sources, rootdir, cursor, mysql, step_function=None):
         
     # Execute query
     cursor.execute(query)
+    
+class BadImage(ValueError):
+    """Exception to raise when a "bad" image (e.g. corrupt or calibration) is
+    encountered."""
+    def __init__(self, message=""):
+        self.message = message
+    def get_message(self):
+        return self.message
