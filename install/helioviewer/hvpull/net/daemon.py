@@ -407,6 +407,7 @@ class ImageRetrievalDaemon:
         tmp = filepath + '.tmp.jp2'
         
         # Base command
+        
         command ='kdu_transcode -i %s -o %s' % (filepath, tmp)
         
         # Corder
@@ -593,11 +594,14 @@ class ImageRetrievalDaemon:
             return False
         
         # Check to see if image is in corrupt
+        # TODO: Remove the commenting around this code when it comes time to merge
+        print("!!! Remove the commenting around this code when it comes time to merge !!!")
+        """
         self._db.execute("SELECT COUNT(*) FROM corrupt WHERE filename='%s'" % 
                  filename)
         if self._db.fetchone()[0] != 0:
             return False
-
+        """
         return True
     
     @classmethod
@@ -625,7 +629,7 @@ class ImageRetrievalDaemon:
         """Returns a list of valid data downloaders to interact with"""
         return {
             "urllib": "URLLibDownloader",
-            "localcopy": "LocalFileCopy"
+            "localmove": "LocalFileMove"
         }
 
 class KduTranscodeError(RuntimeError):
