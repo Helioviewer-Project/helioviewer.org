@@ -108,9 +108,9 @@ class Config
         define("IMAGE_MAGICK_662_VERSION_NUM", 1634);
         
         // Movie queue throttles for speeding up processing during high-demand
-        define("MOVIE_QUEUE_THROTTLE_ONE", 20);
-        define("MOVIE_QUEUE_THROTTLE_TWO", 50);
-        define("MOVIE_QUEUE_MAX_SIZE", 100);
+        define("MOVIE_QUEUE_THROTTLE_ONE", 15);
+        define("MOVIE_QUEUE_THROTTLE_TWO", 30);
+        define("MOVIE_QUEUE_MAX_SIZE", 50);
         define("MOVIE_EST_TIME_PER_FRAME", 0.5);
     }
 }

@@ -366,7 +366,7 @@ class Movie_HelioviewerMovie
         );
         
         foreach ($sizes as $name=>$dimensions) {
-            $thumb = $preview->clone();
+            $thumb = clone $preview;
             $thumb->thumbnailImage($dimensions[0], $dimensions[1], true);
             
             // Add black border to reach desired preview image sizes
