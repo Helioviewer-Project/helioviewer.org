@@ -8,7 +8,7 @@ class STEREODataServer(DataServer):
         then copied over to a directory on the main Helioviewer server, from 
         which it can be picked up by the ingestion services.  Note that
         a full path is required to specify the location of the data."""
-        DataServer.__init__(self, "/home/ireland/incoming/stereo_incoming/v0.8/jp2", "STEREO")
+        DataServer.__init__(self, "/home/ireland/Data/hvorg_incoming/stereo_incoming/v0.8/jp2", "STEREO")
         self.pause = datetime.timedelta(hours=24)
         
     def compute_directories(self, start_date, end_date):

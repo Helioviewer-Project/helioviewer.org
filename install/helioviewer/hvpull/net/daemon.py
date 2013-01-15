@@ -594,14 +594,11 @@ class ImageRetrievalDaemon:
             return False
         
         # Check to see if image is in corrupt
-        # TODO: Remove the commenting around this code when it comes time to merge
-        print("!!! Remove the commenting around this code when it comes time to merge !!!")
-        """
         self._db.execute("SELECT COUNT(*) FROM corrupt WHERE filename='%s'" % 
                  filename)
         if self._db.fetchone()[0] != 0:
             return False
-        """
+
         return True
     
     @classmethod
