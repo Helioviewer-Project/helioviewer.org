@@ -162,6 +162,13 @@ Using a very early date has the effect of pulling all available data.
 If an end date is specified, HVPull will stop execution once all of the data 
 between the specified date (end-date - 24 hrs if none is specified) and end-date
 has been retrieved.
+
+5. downloader.py -b local -m localcopy -d soho
+
+You can move local files in a local directory to Helioviewer. This moves SOHO 
+files from their directory into Helioviewer.  It is assumed that the SOHO files
+are on the same file system as Helioviewer.
+
 ''')    
     
 if __name__ == "__main__":
