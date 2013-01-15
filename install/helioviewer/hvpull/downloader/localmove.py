@@ -36,7 +36,6 @@ class LocalFileMove(threading.Thread):
                     pass
             #Attempt to move the file
             try:
-                print(uri,filepath)
                 t1 = time.time()
                 shutil.move(uri, filepath)
                 t2 = time.time()

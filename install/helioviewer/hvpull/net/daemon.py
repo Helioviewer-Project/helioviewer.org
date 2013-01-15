@@ -240,6 +240,7 @@ class ImageRetrievalDaemon:
         """Acquires all the available files."""
         # If no new files are available do nothing
         if not urls:
+            logging.info("Found no new files.")
             return
         
         n = sum(len(x) for x in urls)
