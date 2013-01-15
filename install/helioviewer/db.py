@@ -23,6 +23,7 @@ def setup_database_schema(adminuser, adminpass, dbname, dbuser, dbpass, mysql):
     create_detector_table(cursor)
     create_measurement_table(cursor)
     create_image_table(cursor)
+    create_corrupt_table(cursor)
     create_screenshots_table(cursor)
     create_movies_table(cursor)
     create_movie_formats_table(cursor)
@@ -117,7 +118,7 @@ def create_image_table(cursor):
       UNIQUE INDEX filename_idx(filename)
     ) DEFAULT CHARSET=ascii;"""
     cursor.execute(sql)
-    
+
 def create_corrupt_table(cursor):
     """Creates table to store corrupt image information"""
     sql = \
