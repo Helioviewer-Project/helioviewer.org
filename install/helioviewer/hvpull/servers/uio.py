@@ -1,5 +1,6 @@
 """UIO (University of Oslo) DataServer definition"""
 import os
+import datetime
 from helioviewer.hvpull.servers import DataServer
 
 class UIODataServer(DataServer):
@@ -7,6 +8,7 @@ class UIODataServer(DataServer):
     def __init__(self):
         """Defines the root directory of where the data is kept at UIO."""
         DataServer.__init__(self, "http://sdc.uio.no/vol/jpeg2000/", "UIO")
+        self.pause = datetime.timedelta(minutes=15)
         
     def compute_directories(self, start_date, end_date):
         """Computes a list of remote directories expected to contain files"""
@@ -29,3 +31,7 @@ class UIODataServer(DataServer):
                 dirs.append(os.path.join(self.uri, "XRT", date, str(meas)))
                 
         return dirs
+        
+    def get_starttime(self):
+        """Default start time to use when retrieving data"""
+        return datetime.datetime.utcnow() - datetime.timedelta(days=3)
