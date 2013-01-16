@@ -595,10 +595,11 @@ class ImageRetrievalDaemon:
             return False
         
         # Check to see if image is in corrupt
-        self._db.execute("SELECT COUNT(*) FROM corrupt WHERE filename='%s'" % 
-                 filename)
-        if self._db.fetchone()[0] != 0:
-            return False
+        print('Remove comments characters to reactivate the code beneath when in production!!!')
+        #self._db.execute("SELECT COUNT(*) FROM corrupt WHERE filename='%s'" % 
+        #         filename)
+        #if self._db.fetchone()[0] != 0:
+        #    return False
 
         return True
     
