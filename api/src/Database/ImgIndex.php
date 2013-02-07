@@ -578,7 +578,7 @@ class Database_ImgIndex
         // 2012/05/26 Same thing with SWAP
         // 2012/07/11 Adding switch to enable these layers for JHelioviewer
         if ($verbose) {
-            $ignore = array("STEREO_A", "STEREO_B", "PROBA2");
+            $ignore = array("STEREO_A", "STEREO_B", "PROBA2", "Yohkoh");
             
             $enabledList = "(";
             
