@@ -126,8 +126,8 @@ class Image_Composite_HelioviewerCompositeImage
       
         $jp2 = new Image_JPEG2000_JP2Image($jp2Filepath, $image['width'], $image['height'], $image['scale']);
 
-        $offsetX =  $image['sunCenterX']  - ($image['width'] / 2);
-        $offsetY = ($image['height'] / 2) -  $image['sunCenterY'];
+        $offsetX =   $image['refPixelX'] - ($image['width']  / 2);
+        $offsetY = -($image['refPixelY'] - ($image['height'] / 2));
 
         // Options for individual layers
         $options = array(

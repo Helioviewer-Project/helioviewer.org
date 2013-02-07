@@ -273,6 +273,10 @@ function printDocumentationAppendices()
                 <td>STEREO_B</td>
                 <td>STEREO_B (Solar Terrestrial Relations Observatory Behind)</td>
             </tr>
+            <tr>
+                <td>Yohkoh</td>
+                <td>Yohkoh (SOLAR-A)</td>
+            </tr>
         </table>
 
         <br />
@@ -308,6 +312,10 @@ function printDocumentationAppendices()
             <tr>
                 <td>SECCHI</td>
                 <td>SECCHI (Sun Earth Connection Coronal and Heliospheric Investigation)</td>
+            </tr>
+            <tr>
+                <td>SXT</td>
+                <td>SXT (Soft X-ray Telescope)<td>
             </tr>
         </table>
 
@@ -356,6 +364,10 @@ function printDocumentationAppendices()
             <tr>
                 <td>MDI</td>
                 <td>MDI (The Michelson Doppler Imager)</td>
+            </tr>
+            <tr>
+                <td>SXT</td>
+                <td>SXT (Soft X-ray Telescope)</td>
             </tr>
         </table>
 
@@ -428,6 +440,14 @@ function printDocumentationAppendices()
             <tr>
                 <td>magnetogram</td>
                 <td>Magnetogram</td>
+            </tr>
+            <tr>
+                <td>AlMgMn</td>
+                <td>Al/Mg/Mn filter (2.4 Å - 32 Å pass band)</td>
+            </tr>
+            <tr>
+                <td>thin-Al</td>
+                <td>11.6 μm Al filter (2.4 Å - 13 Å pass band)</td>
             </tr>
         </table>
 
@@ -555,7 +575,7 @@ function printDocumentationAppendices()
         <p>In this case the desired image scale is 2^4 x (natural scale) = 16 x 0.6 = 9.6. Now to determine the ROI coordinates,
            we must first determine how large the image will be at the specified scale. AIA is normally 4096x4096, so at 1/16 its
            natural resolution it will be 256x256 pixels. Since the origin is in the middle of the Sun (which here is in the middle
-           of the Sun), there top-left corner is 128 pixels up and to the left (-128, -128), and the bottom-right corner is 128 pixels down and
+           of the Sun), the top-left corner is 128 pixels up and to the left (-128, -128), and the bottom-right corner is 128 pixels down and
            to the right (128, 128). Since the ROI must be specified in arcseconds, and not in pixels, we multiply by the desired imageScale:
            128 x 9.6 = 1228.8.
            <br /><br />
@@ -694,6 +714,21 @@ function printDocumentationAppendices()
                         <td>MDI</td>
                         <td>1024 x 1024</td>
                         <td>1.985707</td>
+                    </tr>
+                    <tr>
+                        <td>Yohkoh SXT (Full)</td>
+                        <td>1024 x 1024</td>
+                        <td>2.46</td>
+                    </tr>
+                    <tr>
+                        <td>Yohkoh SXT (Half)</td>
+                        <td>512 x 512</td>
+                        <td>4.92</td>
+                    </tr>
+                    <tr>
+                        <td>Yohkoh SXT (Qrtr)</td>
+                        <td>256 x 256</td>
+                        <td>9.84</td>
                     </tr>
                 </tbody>
             </table>

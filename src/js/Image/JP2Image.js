@@ -68,15 +68,15 @@ var JP2Image = Class.extend(
      * at the bottom-left corner of the image, not the top-left corner.
      */
     _onImageLoad: function (result) {
-        //Only load image if it is different form what is currently displayed
+        // Only load image if it is different form what is currently displayed
         if (this.id === result.id) {
             return;
         }
         $.extend(this, result);
 
-        // Sun center offset at the original JP2 image scale (with respect to top-left origin)
-        this.offsetX =   parseFloat((this.sunCenterX - (this.width  / 2)).toPrecision(8));
-        this.offsetY = - parseFloat((this.sunCenterY - (this.height / 2)).toPrecision(8));        
+        // Reference pixel offset at the original JP2 image scale (with respect to top-left origin)
+        this.offsetX =   parseFloat((this.refPixelX - (this.width  / 2)).toPrecision(8));
+        this.offsetY = - parseFloat((this.refPixelY - (this.height / 2)).toPrecision(8));        
         
         this._onChange();
     },
