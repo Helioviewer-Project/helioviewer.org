@@ -316,7 +316,7 @@ var extractLayerName = function (layer) {
  * Breaks up a given layer identifier (e.g. SOHO,LASCO,C2,white-light) into its
  * component parts and returns a JavaScript representation.
  *
- * @param {String} The layer identifier as an underscore-concatenated string
+ * @param {String} The layer identifier as an comma-concatenated string
  * 
  * @returns {Object} A simple JavaScript object representing the layer parameters
  */

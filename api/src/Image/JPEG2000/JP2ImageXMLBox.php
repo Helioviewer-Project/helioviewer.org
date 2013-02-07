@@ -114,7 +114,7 @@ class Image_JPEG2000_JP2ImageXMLBox
         $maxDSUN = 2.25e11; // A reasonable max for solar observatories, ~1.5 AU
         
         try {
-            // AIA, EUVI, COR, SWAP
+            // AIA, EUVI, COR, SWAP, SXT
             $dsun = $this->_getElementValue("DSUN_OBS");
         } catch (Exception $e) {
             try {
@@ -186,20 +186,20 @@ class Image_JPEG2000_JP2ImageXMLBox
     }
 
     /**
-     * Returns the coordinates for the center of the sun in the image.
+     * Returns the coordinates for the image's reference pixel.
      * 
      * NOTE: The values for CRPIX1 and CRPIX2 reflect the x and y coordinates with the origin
      * at the bottom-left corner of the image, not the top-left corner.
      *
-     * @return array Pixel coordinates of the solar center
+     * @return array Pixel coordinates of the reference pixel
      */
-    public function getSunCenter()
+    public function getRefPixelCoords()
     {
         try {
             $x = $this->_getElementValue("CRPIX1");
             $y = $this->_getElementValue("CRPIX2");
         } catch (Exception $e) {
-            throw new Exception('Unable to locate sun center center in header tags!', 15);
+            throw new Exception('Unable to locate reference pixel coordinates in header tags!', 15);
         }
         return array($x, $y);
     }

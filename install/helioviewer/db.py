@@ -183,7 +183,10 @@ def create_datasource_table(cursor):
         (29, 'COR2-A', 'STEREO A COR2', 3, 6, 9, 14, 3, 0),
         (30, 'COR1-B', 'STEREO B COR1', 4, 6, 8, 14, 2, 0),
         (31, 'COR2-B', 'STEREO B COR2', 4, 6, 9, 14, 3, 0),
-        (32, 'SWAP 174', 'PROBA-2 SWAP 174', 5, 7, 10, 15, 1, 0);
+        (32, 'SWAP 174', 'PROBA-2 SWAP 174', 5, 7, 10, 15, 1, 0),
+        (33, 'SXT AlMgMn', 'Yohkoh SXT AlMgMn', 6, 8, 11, 16, 1, 1),
+        (34, 'SXT thin-Al', 'Yohkoh SXT thin-Al', 6, 8, 11, 17, 1, 1),
+        (35, 'SXT white-light', 'Yohkoh SXT white-light', 6, 8, 11, 18, 1, 1);
     """)
 
 def create_observatory_table(cursor):
@@ -293,7 +296,9 @@ def create_measurement_table(cursor):
         (13, 'magnetogram', 'Magnetogram', 'Mx'),
         (14, 'white-light', 'White Light', 'DN'),
         (15, '174', '174 Ångström extreme ultraviolet', 'Å'),
-        (16, 'AlMg', 'Al/Mg Filter', 'Å');""")
+        (16, 'AlMgMn', 'Al/Mg/Mn filter (2.4 Å - 32 Å pass band)', 'Å'),
+        (17, 'thin-Al', '11.6 μm Al filter (2.4 Å - 13 Å pass band)', 'Å'),
+        (18, 'white-light', 'No filter', '');""")
     
 def create_movies_table(cursor):
     """Creates movie table
