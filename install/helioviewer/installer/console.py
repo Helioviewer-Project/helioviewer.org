@@ -2,6 +2,7 @@
 """A text-based installer for Helioviewer.org"""
 import sys
 import os
+import gc
 import getpass
 import sunpy
 from helioviewer.jp2 import *
@@ -16,35 +17,44 @@ class HelioviewerConsoleInstaller:
         
         # Locate jp2 images in specified filepath
         filepaths = find_images(path)
-
-        # Extract image parameters
-        images = []
         
-        for filepath in filepaths:
-            try:
-                image = sunpy.read_header(filepath)
-                image['filepath'] = filepath
-                images.append(image)
-            except:
-                #raise BadImage("HEADER")
-                print("Skipping corrupt image: %s" %
-                      os.path.basename(filepath))
-                continue
-        
-        # Check to make sure the filepath contains jp2 images
-        if len(images) is 0:
+        # Check to make sure some images were found
+        if len(filepaths) is 0:
             print("No JPEG 2000 images found. Exiting installation.")
             sys.exit(2)
-        else:
-            print("Found %d JPEG 2000 images." % len(images))
-    
+            
         # Setup database schema if needed
         cursor, mysql = self.get_db_cursor()
-    
+        
         print("Processing Images...")
-    
-        # Insert image information into database
-        process_jp2_images(images, path, cursor, mysql)
+
+        # Extract image parameters, 10,000 at a time
+        while len(filepaths) > 0:
+            subset = filepaths[:10000]
+            filepaths = filepaths[10000:]
+
+            images = []
+            
+            for filepath in subset:
+                try:
+                    image = sunpy.read_header(filepath)
+                    image['filepath'] = filepath
+                    images.append(image)
+                except:
+                    #raise BadImage("HEADER")
+                    print("Skipping corrupt image: %s" %
+                          os.path.basename(filepath))
+                    continue
+            
+            # Insert image information into database
+            if len(images) > 0:
+                process_jp2_images(images, path, cursor, mysql)
+                
+            # clean up afterwards
+            images = []
+            gc.collect()
+
+        # close db connection
         cursor.close()
         
         print("Finished!")
