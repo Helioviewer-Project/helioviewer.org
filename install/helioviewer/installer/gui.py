@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import gc
 import math
 import getpass
 import sunpy
@@ -64,23 +65,9 @@ class HelioviewerInstallWizard(QtGui.QWizard):
             self.ui.statusMsg.setText("Searching for JPEG 2000 Images...")
             
             # Locate jp2 images in specified filepath
-            filepaths = find_images(jp2dir)
-        
-            # Extract image parameters
-            self.images = []
-            
-            for filepath in filepaths:
-                try:
-                    image = sunpy.read_header(filepath)
-                    image['filepath'] = filepath
-                    self.images.append(image)
-                except:
-                    #raise BadImage("HEADER")
-                    print("Skipping corrupt image: %s" %
-                          os.path.basename(filepath))
-                    continue
+            self.filepaths = find_images(jp2dir)
 
-            n = len(self.images)
+            n = len(self.filepaths)
 
             if n == 0:
                 print("No JPEG 2000 images found. Exiting installation.")
@@ -135,8 +122,32 @@ If this is correct, please press "Start" to begin processing.
         self.ui.statusMsg.setText("Creating database schema")
 
         cursor = setup_database_schema(admin, adminpass, hvdb, hvuser, hvpass, mysql)
+        
+        # Extract image parameters, 10,000 at a time
+        while len(self.filepaths) > 0:
+            subset = self.filepaths[:10000]
+            self.filepaths = self.filepaths[10000:]
 
-        process_jp2_images(self.images, jp2dir, cursor, mysql, self.update_progress)
+            images = []
+            
+            for filepath in subset:
+                try:
+                    image = sunpy.read_header(filepath)
+                    image['filepath'] = filepath
+                    images.append(image)
+                except:
+                    #raise BadImage("HEADER")
+                    print("Skipping corrupt image: %s" %
+                          os.path.basename(filepath))
+                    continue
+            
+            # Insert image information into database
+            if len(images) > 0:
+                process_jp2_images(images, jp2dir, cursor, mysql, self.update_progress)
+                
+            # clean up afterwards
+            images = []
+            gc.collect()
     
         cursor.close()
         #self.ui.installProgress.setValue(len(images))
