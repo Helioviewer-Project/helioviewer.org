@@ -157,7 +157,7 @@ class ImageRetrievalDaemon:
         # Remove duplicate files, randomizing to spread load across servers
         if len(urls) > 1:
             urls = self._deduplicate(urls)
-                    
+            
         # Filter out files that are already in the database
         new_urls = []
         
@@ -218,6 +218,7 @@ class ImageRetrievalDaemon:
             
                 try:
                     matches = browser.get_files(directory, "jp2")
+
                     files.extend(matches)
                 except NetworkError:
                     if num_retries >= 100:
@@ -595,11 +596,11 @@ class ImageRetrievalDaemon:
             return False
         
         # Check to see if image is in corrupt
-        print('Remove comments characters to reactivate the code beneath when in production!!!')
-        #self._db.execute("SELECT COUNT(*) FROM corrupt WHERE filename='%s'" % 
-        #         filename)
-        #if self._db.fetchone()[0] != 0:
-        #    return False
+        #print('Remove comments characters to reactivate the code beneath when in production!!!')
+        self._db.execute("SELECT COUNT(*) FROM corrupt WHERE filename='%s'" % 
+                 filename)
+        if self._db.fetchone()[0] != 0:
+            return False
 
         return True
     
