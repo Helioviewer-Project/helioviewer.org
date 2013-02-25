@@ -163,11 +163,13 @@ If an end date is specified, HVPull will stop execution once all of the data
 between the specified date (end-date - 24 hrs if none is specified) and end-date
 has been retrieved.
 
-5. downloader.py -b local -m localcopy -d soho
+5. downloader.py -b local -m localmove -d soho
 
 You can move local files in a local directory to Helioviewer. This moves SOHO 
 files from their directory into Helioviewer.  It is assumed that the SOHO files
-are on the same file system as Helioviewer.
+are on the same file system as Helioviewer.  Note that using "-m localmove" does
+not imply the use of "-b local".  The browse method "-b local" must be specified
+when using "-m localmove".
 
 ''')    
     
