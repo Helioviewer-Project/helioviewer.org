@@ -850,7 +850,7 @@ var MovieManagerUI = MediaManagerUI.extend(
                    "scrolling=no frameborder=0 style='margin-bottom: 2px;' />" +
                    "<br />" + 
                    "<span class='video-links'>" + downloadLink + youtubeBtn +
-                   linkBtn + bbcodeBtn + hekBtn + sswBtn + addthisBtn + "</span></div>";
+                   linkBtn + bbcodeBtn + /* hekBtn + sswBtn + */ addthisBtn + "</span></div>";
         }
     },
     

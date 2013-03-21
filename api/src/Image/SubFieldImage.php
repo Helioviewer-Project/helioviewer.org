@@ -55,7 +55,7 @@ class Image_SubFieldImage
      * Creates an Image_SubFieldImage instance
      *
      * @param string $jp2          Original JP2 image from which the subfield should be derrived
-     * @param array	 $roi          Subfield region of interest
+     * @param array  $roi          Subfield region of interest
      * @param string $outputFile   Location to output the subfield image to
      * @param float  $offsetX      Offset of the center of the sun from the center of the image on the x-axis
      * @param float  $offsetY      Offset of the center of the sun from the center of the image on the y-axis
@@ -286,25 +286,25 @@ class Image_SubFieldImage
 
             // Places the current image on a larger field of black if the final 
             // image is larger than this one
-			$imagickVersion = $coloredImage->getVersion();
+            $imagickVersion = $coloredImage->getVersion();
 
-			if ($imagickVersion['versionNumber'] > IMAGE_MAGICK_662_VERSION_NUM) {
-			    // ImageMagick 6.6.2-6 and higher 
-			    // Problematic change occurred in revision 6.6.4-2
-			    // See: http://www.imagemagick.org/script/changelog.php
+            if ($imagickVersion['versionNumber'] > IMAGE_MAGICK_662_VERSION_NUM) {
+                // ImageMagick 6.6.2-6 and higher 
+		// Problematic change occurred in revision 6.6.4-2
+                // See: http://www.imagemagick.org/script/changelog.php
                 $coloredImage->extentImage(
                     $this->padding['width'], $this->padding['height'],
                     $this->padding['offsetX'], $this->padding['offsetY']
                 );			    
-			} else {
-			    // Imagick 3.0 and lower
+            } else {
+                // Imagick 3.0 and lower
                 $coloredImage->extentImage(
                     $this->padding['width'], $this->padding['height'],
                     -$this->padding['offsetX'], -$this->padding['offsetY']
                 );
-			}
-            
+            }
             $this->image = $coloredImage;
+
             
             // Check for PGM before deleting just in case another process already removed it 
             if (file_exists($input)) {
