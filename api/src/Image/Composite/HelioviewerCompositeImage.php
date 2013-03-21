@@ -30,8 +30,8 @@ require_once 'src/Database/ImgIndex.php';
  */
 class Image_Composite_HelioviewerCompositeImage
 {
-	private   $_composite;
-	private   $_dir;
+    private   $_composite;
+    private   $_dir;
     private   $_imageLayers;
     private   $_filepath;
     private   $_filename;
@@ -227,6 +227,8 @@ class Image_Composite_HelioviewerCompositeImage
 
         // Flatten image and write to disk
         $imagickImage->setImageAlphaChannel(IMagick::ALPHACHANNEL_OPAQUE);
+        $imagickImage->setImageBackgroundColor('black');
+        $imagickImage = $imagickImage->flattenImages();
         $imagickImage->writeImage($output);
     }
     
