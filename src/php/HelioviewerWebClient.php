@@ -1,13 +1,14 @@
-<?php 
+<?php
 /**
  * HelioviewerWebClient class definition
- * 
+ *
  * Helioviewer.org HTML web client
  *
  * PHP version 5
  *
  * @category Application
  * @package  Helioviewer
+ * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
@@ -15,35 +16,33 @@
 require_once "HelioviewerClient.php";
 /**
  * HelioviewerWebClient class definition
- * 
+ *
  * Helioviewer.org HTML web client
  *
  * PHP version 5
  *
  * @category Application
  * @package  Helioviewer
+ * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
-class HelioviewerWebClient extends HelioviewerClient
-{
+class HelioviewerWebClient extends HelioviewerClient {
     /**
      * Initializes a Helioviewer.org instance
      */
-    public function __construct($urlSettings)
-    {
-        $this->compressedJSFile  = "helioviewer.min.js";
-        $this->compressedCSSFile = "helioviewer.min.css";
-        
+    public function __construct($urlSettings) {
+        $this->compressedJSFile  = 'helioviewer.min.js';
+        $this->compressedCSSFile = 'helioviewer.min.css';
+
         parent::__construct($urlSettings);
     }
-    
+
     /**
      * Loads library CSS
      */
-    protected function loadCSS()
-    {
+    protected function loadCSS() {
         parent::loadCSS();
 ?>
     <link rel="stylesheet" href="lib/jquery.jgrowl/jquery.jgrowl.css" />
@@ -55,36 +54,38 @@ class HelioviewerWebClient extends HelioviewerClient
 
 <?php
     }
-    
+
     /**
      * Loads Helioviewer-specific CSS
      */
-    protected function loadCustomCSS($signature, $includes=array())
-    {
-        $css = array("helioviewer-web", "layout", "accordions", "dialogs", 
-                     "media-manager", "timenav", "video-gallery", "youtube");
+    protected function loadCustomCSS($signature, $includes=array()) {
+        $css = array("helioviewer-web", "layout", "accordions", "dialogs",
+                     "events", "media-manager", "timenav", "video-gallery",
+                     "youtube");
         parent::loadCustomCSS($signature, $css);
     }
-    
+
     /**
      * Loads JavaScript
      */
-    protected function loadJS()
-    {
-        parent::loadJS();   
+    protected function loadJS() {
+        parent::loadJS();
+
         if ($this->config["compress_js"]) {
     ?>
 <script src="lib/jquery.jgrowl/jquery.jgrowl_minimized.js" type="text/javascript"></script>
 <script src="lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.pack.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.pack.js" type="text/javascript" language="javascript"></script>
-    <?php
+<script src="lib/jquery.jsTree-1.0rc/jquery.jstree.min.js"></script>
+<?php
         } else {
     ?>
 <script src="lib/jquery.jgrowl/jquery.jgrowl.js" type="text/javascript"></script>
 <script src="lib/jquery.imgareaselect-0.9.8/scripts/jquery.imgareaselect.js" type="text/javascript"></script>
 <script src="lib/jquery.jfeed/build/jquery.jfeed.js" type="text/javascript"></script>
 <script src="lib/jquery.xml2json/jquery.xml2json.js" type="text/javascript" language="javascript"></script>
+<script src="lib/jquery.jsTree-1.0rc/jquery.jstree.js"></script>
 <?php
         }
     }
@@ -92,114 +93,138 @@ class HelioviewerWebClient extends HelioviewerClient
     /**
      * Loads Helioviewer-specific JavaScript
      */
-    protected function loadCustomJS($signature, $includes=array())
-    {
-        $js = array("UI/TreeSelect.js", "UI/ImageSelectTool.js",  
-                    "Media/MediaManagerUI.js", "Media/MediaManager.js", "Media/MovieManager.js", 
-                    "Media/MovieManagerUI.js", "Media/ScreenshotManager.js", "Media/ScreenshotManagerUI.js",  
-                    "UI/TileLayerAccordion.js", "UI/MessageConsole.js", "UI/TimeControls.js",  
-                    "Utility/FullscreenControl.js", "HelioviewerWebClient.js", "UI/UserVideoGallery.js",
+    protected function loadCustomJS($signature, $includes=array()) {
+
+        $js = array("UI/TreeSelect.js", "UI/ImageSelectTool.js",
+                    "Media/MediaManagerUI.js", "Media/MediaManager.js",
+                    "Media/MovieManager.js", "Media/MovieManagerUI.js",
+                    "Media/ScreenshotManager.js",
+                    "Media/ScreenshotManagerUI.js",
+                    "UI/TileLayerAccordion.js",
+                    "UI/EventLayerAccordion.js", "UI/MessageConsole.js",
+                    "UI/TimeControls.js", "Utility/FullscreenControl.js",
+                    "HelioviewerWebClient.js", "UI/UserVideoGallery.js",
                     "UI/Glossary.js", "UI/jquery.ui.dynaccordion.js");
+
         parent::loadCustomJS($signature, $js);
-        
     }
-    
+
     /**
      * Adds OpenGraph metatags corresponding to data loaded
-     * 
-     * When a custom Helioviewer.org was used to load the page, customize metatags
+     *
+     * When a custom Helioviewer.org was used to load the page, customize
+     * metatags
      * to reflect the data loaded. This improves experience when sharing links
      * on Facebook, etc.
      */
     protected function addOpenGraphTags() {
-        if (isset($this->urlSettings["movieId"]) && preg_match('/^[a-zA-Z0-9]+$/', $this->urlSettings["movieId"])) {
+
+        if ( isset($this->urlSettings['movieId']) &&
+             preg_match('/^[a-zA-Z0-9]+$/', $this->urlSettings["movieId"]) ) {
+
             try {
-                $this->_addOpenGraphTagsForMovie($this->urlSettings["movieId"]);
+                $this->_addOpenGraphTagsForMovie(
+                    $this->urlSettings['movieId'] );
                 return;
-            } catch (Exception $e) {
-                unset($this->urlSettings["movieId"]);
+            }
+            catch (Exception $e) {
+                unset($this->urlSettings['movieId']);
             }
         }
-        
-        if (sizeOf($this->urlSettings) >= 7) {
+
+        if ( sizeOf($this->urlSettings) >= 7 ) {
             $this->_addOpenGraphForSharedURL();
-        } else {
+        }
+        else {
             parent::addOpenGraphTags();
         }
     }
-    
+
     /**
      * Adds OpenGraph metatags for a shared movie link
      */
-    private function _addOpenGraphTagsForMovie($id)
-    {
-        include_once "api/src/Config.php";
-        $configObj = new Config("settings/Config.ini");
-        
+    private function _addOpenGraphTagsForMovie($id) {
+
+        include_once 'api/src/Config.php';
+
+        $configObj = new Config('settings/Config.ini');
+
         // Forward remote requests
-        if (HV_BACK_END !== "api/index.php") {
+        if ( HV_BACK_END !== 'api/index.php' ) {
             $params = array(
-                "action" => "getMovieStatus",
-                "format" => "mp4",
-                "id"     => $id
-            );
-            include_once 'api/src/Net/Proxy.php';
-            $proxy = new Net_Proxy(HV_BACK_END . "?");
-            $info = json_decode($proxy->post($params, true), true);
-            
-            $flvURL = HV_BACK_END . "?action=downloadMovie&format=flv&id=" . $id;
-            $swfURL = substr(HV_BACK_END, 0, -14) . "/lib/flowplayer/flowplayer-3.2.8.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
-        } else {
-            // Otherwise process locally
-            include_once 'api/src/Movie/HelioviewerMovie.php';
-            
-            $movie = new Movie_HelioviewerMovie($id, "mp4");
-            $info = array(
-                "title" => $movie->getTitle(),
-                "thumbnails" => $movie->getPreviewImages(),
-                "width" => $movie->width,
-                "height" => $movie->height
+                'action' => 'getMovieStatus',
+                'format' => 'mp4',
+                'id'     => $id
             );
 
-            $flvURL = HV_API_ROOT_URL . "?action=downloadMovie&format=flv&id=" . $id;
-            $swfURL = HV_WEB_ROOT_URL . "/lib/flowplayer/flowplayer-3.2.8.swf?config=" . urlencode("{'clip':{'url':'$flvURL'}}");
+            include_once 'api/src/Net/Proxy.php';
+
+            $proxy = new Net_Proxy(HV_BACK_END.'?');
+            $info = json_decode($proxy->post($params, true), true);
+
+            $flvURL = HV_BACK_END.'?action=downloadMovie&format=flv&id='.$id;
+            $swfURL = substr(HV_BACK_END, 0, -14)
+                    . '/lib/flowplayer/flowplayer-3.2.8.swf?config="'
+                    . urlencode("{'clip':{'url':'$flvURL'}}");
         }
-    ?>
+        else {
+            // Otherwise process locally
+            include_once 'api/src/Movie/HelioviewerMovie.php';
+
+            $movie = new Movie_HelioviewerMovie($id, 'mp4');
+            $info = array(
+                'title'      => $movie->getTitle(),
+                'thumbnails' => $movie->getPreviewImages(),
+                'width'      => $movie->width,
+                'height'     => $movie->height
+            );
+
+            $flvURL = HV_API_ROOT_URL . '?action=downloadMovie&format=flv&id='
+                    . $id;
+            $swfURL = HV_WEB_ROOT_URL
+                    . '/lib/flowplayer/flowplayer-3.2.8.swf?config='
+                    . urlencode("{'clip':{'url':'$flvURL'}}");
+        }
+?>
         <meta property="og:description" content="<?php //echo $info['title'];?>" />
         <meta property="og:image" content="<?php echo $info['thumbnails']['full'];?>" />
         <meta property="og:video" content="<?php echo $swfURL;?>" />
         <meta property="og:video:width" content="<?php echo $info['width'];?>" />
         <meta property="og:video:height" content="<?php echo $info['height'];?>" />
         <meta property="og:video:type" content="application/x-shockwave-flash" />
-    <?php 
+<?php
     }
 
     /**
      * Adds OpenGraph metatags for a shared URL
      */
     private function _addOpenGraphForSharedURL() {
+
         // When opening shared link, include thumbnail metatags for Facebook, etc to use
-        include_once "api/src/Config.php";
-        $configObj = new Config("settings/Config.ini");
-        
+        include_once 'api/src/Config.php';
+        $configObj = new Config('settings/Config.ini');
+
         include_once 'api/src/Helper/HelioviewerLayers.php';
         include_once 'api/src/Helper/DateTimeConversions.php';
-        
+
         $layers = new Helper_HelioviewerLayers($_GET['imageLayers']);
-        
+
         $screenshotParams = array(
-            "action"      => "takeScreenshot",
-            "display"     => true,
-            "date"        => $this->urlSettings['date'],
-            "imageScale"  => $this->urlSettings['imageScale'],
-            "layers" => $_GET['imageLayers'],
-            "x0" => $this->urlSettings['centerX'],
-            "y0" => $this->urlSettings['centerY'],
-            "width" => 128,
-            "height" => 128
+            'action'      => 'takeScreenshot',
+            'display'     => true,
+            'date'        => $this->urlSettings['date'],
+            'imageScale'  => $this->urlSettings['imageScale'],
+            'layers'      => $_GET['imageLayers'],
+            'x0'          => $this->urlSettings['centerX'],
+            'y0'          => $this->urlSettings['centerY'],
+            'width'       => 128,
+            'height'      => 128
         );
-        $ogImage = HV_API_ROOT_URL . "?" . http_build_query($screenshotParams);
-        $ogDescription = $layers->toHumanReadableString() . " (" . toReadableISOString($this->urlSettings['date']) . " UTC)";
+
+        $ogImage = HV_API_ROOT_URL.'?'.http_build_query($screenshotParams);
+        $ogDescription = $layers->toHumanReadableString().' ('
+                       . toReadableISOString($this->urlSettings['date'])
+                       . ' UTC)';
         ?>
         <meta property="og:description" content="<?php echo $ogDescription;?>" />
         <meta property="og:image" content="<?php echo $ogImage;?>" />
@@ -209,8 +234,7 @@ class HelioviewerWebClient extends HelioviewerClient
     /**
      * Prints beginning of HTML body section
      */
-    protected function printBody($signature)
-    {
+    protected function printBody($signature) {
 ?>
 
 <!-- Header -->
@@ -233,13 +257,13 @@ class HelioviewerWebClient extends HelioviewerClient
                                 <div id="sandbox" style="position: absolute;">
                                     <div id="moving-container"></div>
                                 </div>
-                                
+
                                 <!-- Message console -->
                                 <div id="message-console"></div>
-                                
+
                                 <!-- Image area select boundary container -->
                                 <div id="image-area-select-container"></div>
-                                
+
                             </div>
 
                             <!-- UI COMPONENTS -->
@@ -261,7 +285,7 @@ class HelioviewerWebClient extends HelioviewerClient
                             <!--Social buttons -->
                             <div id="social-buttons">
                                 <!-- Link button -->
-                                <div id="link-button" class="text-btn qtip-left" title="Get a link to the current page.">
+                                <div id="link-button" class="text-btn qtip-topleft" title="Generate a direct link to the current view.">
                                     <span class="ui-icon ui-icon-link" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Link</span>
                                 </div>
@@ -273,19 +297,19 @@ class HelioviewerWebClient extends HelioviewerClient
                                 </div>-->
 
                                 <!-- Movie button -->
-                                <div id="movie-button" class="text-btn">
+                                <div id="movie-button" class="text-btn qtip-topleft" title="Generate a movie based on the current view.">
                                     <span class="ui-icon ui-icon-video" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Movie</span>
                                 </div>
 
                                 <!-- Screenshot button -->
-                                <div id="screenshot-button" class="text-btn">
+                                <div id="screenshot-button" class="text-btn qtip-topleft" title="Save a screenshot of the current view.">
                                     <span class="ui-icon ui-icon-image" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Screenshot</span>
                                 </div>
-                                
+
                                 <!-- Settings button -->
-                                <div id="settings-button" class="text-btn qtip-left" title="Configure Helioviewer.org user preferences.">
+                                <div id="settings-button" class="text-btn qtip-topleft" title="Configure Helioviewer.org user preferences.">
                                     <span class="ui-icon ui-icon-gear" style="float: left;"></span>
                                     <span style="line-height: 1.6em">Settings</span>
                                 </div>
@@ -299,7 +323,7 @@ class HelioviewerWebClient extends HelioviewerClient
                             </div>
 
                             <!-- Fullscreen toggle -->
-                            <div id='fullscreen-btn' class='qtip-left' title="Toggle fullscreen display.">
+                            <div id='fullscreen-btn' class='qtip-topleft' title="Toggle fullscreen display.">
                                 <span class='ui-icon ui-icon-arrow-4-diag'></span>
                             </div>
 
@@ -308,7 +332,7 @@ class HelioviewerWebClient extends HelioviewerClient
                                 <div id="mouse-coords-x"></div>
                                 <div id="mouse-coords-y"></div>
                             </div>
-                            
+
                             <!-- Screenshot Manager -->
                             <div id='screenshot-manager-container' class='media-manager-container glow'>
                                 <div id='screenshot-manager-build-btns' class='media-manager-build-btns'>
@@ -318,15 +342,15 @@ class HelioviewerWebClient extends HelioviewerClient
                                     </div>
                                     <div id='screenshot-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a screenshot of a sub-region of the viewport.'>
                                         <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
-                                        <span style='line-height: 1.6em'>Select Area</span> 
+                                        <span style='line-height: 1.6em'>Select Area</span>
                                     </div>
                                 </div>
                                 <div id='screenshot-history-title' class='media-history-title'>
-                                    Screenshot History    
+                                    Screenshot History
                                     <div id='screenshot-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all screenshots from the history.'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
-                                    </div> 
+                                    </div>
                                 </div>
                                 <div id='screenshot-history'></div>
                             </div>
@@ -339,24 +363,24 @@ class HelioviewerWebClient extends HelioviewerClient
                                     </div>
                                     <div id='movie-manager-select-area' class='text-btn qtip-left' style='float:right;' title='Create a movie of a sub-region of the viewport.'>
                                         <span class='ui-icon ui-icon-scissors' style='float:left;'></span>
-                                        <span style='line-height: 1.6em'>Select Area</span> 
+                                        <span style='line-height: 1.6em'>Select Area</span>
                                     </div>
                                 </div>
                                 <div id='movie-history-title' class='media-history-title'>
-                                    Movie History    
+                                    Movie History
                                     <div id='movie-clear-history-button' class='text-btn qtip-left' style='float:right;' title='Remove all movies from the history.'>
                                         <span class='ui-icon ui-icon-trash' style='float:left;'></span>
                                         <span style='font-weight:normal'><i>Clear</i></span>
-                                    </div> 
+                                    </div>
                                 </div>
                                 <div id='movie-history'></div>
                             </div>
-                            
+
                             <!-- Movie Settings -->
                             <div id='movie-settings-container' class='media-manager-container glow'>
                                 <div style='margin-bottom: 10px; border-bottom: 1px solid; padding-bottom: 10px;'>
                                     <b>Movie Settings:</b>
-                                    
+
                                     <div id='movie-settings-btns' style='float:right;'>
                                         <span id='movie-settings-toggle-advanced' style='display:inline-block;' class='ui-icon ui-icon-gear qtip-left' title='Advanced movie settings'></span>
                                         <span id='movie-settings-toggle-help' style='display:inline-block;' class='ui-icon ui-icon-help qtip-left' title='Movie settings help'></span>
@@ -381,10 +405,10 @@ class HelioviewerWebClient extends HelioviewerClient
                                         <option value='2419200'>28 days</option>
                                     </select>
                                 </fieldset>
-                                
+
                                 <!-- Advanced movie settings -->
                                 <div id='movie-settings-advanced'>
-                                    
+
                                     <!-- Movie Speed -->
                                     <fieldset id='movie-settings-speed'>
                                         <legend>Speed</legend>
@@ -392,7 +416,7 @@ class HelioviewerWebClient extends HelioviewerClient
                                             <input type="radio" name="speed-method" id="speed-method-f" value="framerate" checked="checked" />
                                             <label for="speed-method-f" style='width: 62px;'>Frames/Sec</label>
                                             <input id='frame-rate' maxlength='2' size='3' type="text" name="framerate" min="1" max="30" value="15" pattern='^(0?[1-9]|[1-2][0-9]|30)$' />(1-30)<br />
-                                            
+
                                             <input type="radio" name="speed-method" id="speed-method-l" value="length" />
                                             <label for="speed-method-l" style='width: 62px;'>Length (s)</label>
                                             <input id='movie-length' maxlength='3' size='3' type="text" name="movie-length" min="5" max="300" value="20" pattern='^(0{0,2}[5-9]|0?[1-9][0-9]|100)$' disabled="disabled" />(5-100)<br />
@@ -402,25 +426,25 @@ class HelioviewerWebClient extends HelioviewerClient
 
                                 <!-- Movie request submit button -->
                                 <div id='movie-settings-submit'>
-                                    <input type="button" id='movie-settings-cancel-btn' value="Cancel" /> 
-                                    <input type="submit" id='movie-settings-submit-btn' value="Ok" />                                    
+                                    <input type="button" id='movie-settings-cancel-btn' value="Cancel" />
+                                    <input type="submit" id='movie-settings-submit-btn' value="Ok" />
                                 </div>
-                                
+
                                 </form>
                                 </div>
-                                
+
                                 <!-- Movie settings help -->
                                 <div id='movie-settings-help' style='display:none'>
                                     <b>Duration</b><br /><br />
                                     <p>The duration of time that the movie should span, centered about your current observation time.</p><br />
-                                    
+
                                     <b>Speed</b><br /><br />
                                     <p>Movie speed can be controlled either by specifying a desired frame-rate (the number of frames displayed each second) or a length in seconds.</p><br />
                                 </div>
-                                
+
                                 <!-- Movie settings validation console -->
                                 <div id='movie-settings-validation-console' style='display:none; text-align: center; margin: 7px 1px 0px; padding: 0.5em; border: 1px solid #fa5f4d; color: #333; background: #fa8072;' class='ui-corner-all'>
-                                    
+
                                 </div>
                             </div>
 
@@ -429,12 +453,12 @@ class HelioviewerWebClient extends HelioviewerClient
                                 <div id='done-selecting-image' class='text-btn'>
                                     <span class='ui-icon ui-icon-circle-check'></span>
                                     <span>OK</span>
-                                </div> 
-                                <div id='cancel-selecting-image' class='text-btn'> 
+                                </div>
+                                <div id='cancel-selecting-image' class='text-btn'>
                                     <span class='ui-icon ui-icon-circle-close'></span>
                                     <span>Cancel</span>
                                 </div>
-                                <div id='help-selecting-image' class='text-btn' style='float:right;'> 
+                                <div id='help-selecting-image' class='text-btn' style='float:right;'>
                                     <span class='ui-icon ui-icon-info'></span>
                                 </div>
                             </div>
@@ -482,17 +506,19 @@ class HelioviewerWebClient extends HelioviewerClient
             <br><br>
             <div id="tileLayerAccordion"></div>
             <br><br>
+            <div id="eventLayerAccordion"></div>
+            <br><br>
 
         </div>
 
         <!-- Right Column -->
         <div id="col3">
             <div id="right-col-header" style='height: 11px'></div>
-            
+
             <!-- Recent Blog Entries -->
             <div style="margin-left: 5px; margin-top: 15px;" class="section-header">News</div>
             <div id="social-panel" class="ui-widget ui-widget-content ui-corner-all shadow"></div>
-            
+
             <!-- User-Submitted Videos -->
             <div id="user-video-gallery-header" class="section-header">
                 <a href="http://www.youtube.com/user/HelioviewerScience" target="_blank" style='text-decoration: none;'>
@@ -523,12 +549,11 @@ class HelioviewerWebClient extends HelioviewerClient
         <div id="footer-container-inner">
             <!-- Meta links -->
             <div id="footer-links">
-                <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide" class="light" target="_blank">Help</a>
+                <a href="http://helioviewer.org/wiki/Helioviewer.org_User_Guide_2.4.0" class="light" target="_blank">Help</a>
                 <a id="helioviewer-glossary" class="light" href="dialogs/glossary.html">Glossary</a>
                 <a id="helioviewer-about" class="light" href="dialogs/about.php">About</a>
                 <a id="helioviewer-usage" class="light" href="dialogs/usage.php">Usage Tips</a>
                 <a href="http://wiki.helioviewer.org/wiki/Main_Page" class="light" target="_blank">Wiki</a>
-                <a href="http://community.helioviewer.org/" class="light" target="_blank">Community</a>
                 <a href="http://blog.helioviewer.org/" class="light" target="_blank">Blog</a>
                 <a href="http://jhelioviewer.org" class="light" target="_blank">JHelioviewer</a>
                 <a href="api/" class="light" target="_blank">API</a>
@@ -565,17 +590,17 @@ class HelioviewerWebClient extends HelioviewerClient
         <fieldset id='helioviewer-settings-date'>
         <legend>When starting Helioviewer.org:</legend>
             <div style='padding: 10px;'>
-                <input id='settings-date-latest' type="radio" name="date" value="latest" /><label>Display most recent images available</label><br />
-                <input id='settings-date-previous' type="radio" name="date" value="last-used" /><label>Display images from previous visit</label><br />
+                <input id="settings-date-latest" type="radio" name="date" value="latest" /><label for="settings-date-latest">Display most recent images available</label><br />
+                <input id="settings-date-previous" type="radio" name="date" value="last-used" /><label for="settings-date-previous">Display images from previous visit</label><br />
             </div>
         </fieldset>
-        
+
         <!-- Other -->
         <fieldset id='helioviewer-settings-other'>
         <legend>When using Helioviewer.org:</legend>
         <div style='padding:10px;'>
             <input type="checkbox" name="latest-image-option" id="settings-latest-image" value="true" />
-            <label for="latest-image-option">Update viewport every 5 minutes</label><br />                                           
+            <label for="settings-latest-image">Update viewport every 5 minutes</label><br />
         </div>
         </fieldset>
     </form>
@@ -598,17 +623,6 @@ class HelioviewerWebClient extends HelioviewerClient
     </div>
 </div>
 
-<!-- BBCode -->
-<!-- URL Dialog -->
-<div id='bbcode-dialog' style="display:none;">
-    <div id="helioviewer-bbcode-box">
-        <span id="helioviewer-bbcode-box-msg">Use the following code snippet to embed this movie in the <a href='http://community.helioviewer.org'>Helioviewer Community Forums:</a></span>
-        <form style="margin-top: 5px;">
-            <input type="text" id="helioviewer-bbcode-input-box" style="width:98%;" value="" />
-        </form>
-    </div>
-</div>
-
 <!-- Video Upload Dialog -->
 <div id='upload-dialog' style="display: none">
     <!-- Loading indicator -->
@@ -616,7 +630,7 @@ class HelioviewerWebClient extends HelioviewerClient
         <div id='youtube-auth-spinner'></div>
         <span style='font-size: 28px;'>Processing</span>
     </div>
-    
+
     <!-- Upload Form -->
     <div id='upload-form'>
         <img id='youtube-logo-large' src='resources/images/Social.me/60 by 60 pixels/youtube.png' alt='YouTube logo' />
@@ -627,17 +641,17 @@ class HelioviewerWebClient extends HelioviewerClient
             <label for="youtube-title">Title:</label>
             <input id="youtube-title" type="text" name="title" maxlength="100" />
             <br />
-            
+
             <!-- Description -->
             <label for="youtube-desc">Description:</label>
             <textarea id="youtube-desc" type="text" rows="5" cols="45" name="description" maxlength="5000"></textarea>
             <br />
-            
+
             <!-- Tags -->
             <label for="youtube-tags">Tags:</label>
             <input id="youtube-tags" type="text" name="tags" maxlength="500" value="" />
             <br /><br />
-            
+
             <!-- Sharing -->
             <div style='float: right; margin-right: 30px;'>
             <label style='width: 100%; margin: 0px;'>
@@ -646,7 +660,7 @@ class HelioviewerWebClient extends HelioviewerClient
             <br />
             <input id='youtube-submit-btn' type="submit" value="Submit" />
             </div>
-            
+
             <!-- Hidden fields -->
             <input id="youtube-movie-id" type="hidden" name="id" value="" />
         </form>
@@ -656,7 +670,7 @@ class HelioviewerWebClient extends HelioviewerClient
 <?php
     parent::printBody($signature);
     }
-    
+
     /**
      * Prints the end of the script block
      */
@@ -665,7 +679,7 @@ class HelioviewerWebClient extends HelioviewerClient
 ?>
     // Initialize Helioviewer.org
     helioviewer = new HelioviewerWebClient(urlSettings, serverSettings, zoomLevels);
-    
+
     // Play movie if id is specified
     if (urlSettings.movieId) {
         helioviewer.loadMovie(urlSettings.movieId);
@@ -674,3 +688,4 @@ class HelioviewerWebClient extends HelioviewerClient
 <?php
     }
 }
+?>

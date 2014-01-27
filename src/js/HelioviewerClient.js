@@ -1,8 +1,9 @@
 /**
  * @fileOverview Contains base Helioviewer client JavaScript
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
   bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global document, window, $, Class, TooltipHelper, HelioviewerViewport,
   KeyboardManager, SettingsLoader, addthis,
@@ -17,7 +18,7 @@ var HelioviewerClient = Class.extend(
     /**
      * Base Helioviewer client class
      * @constructs
-     * 
+     *
      * @param {Object} urlSettings Client-specified settings to load.
      *  Includes imageLayers, date, and imageScale. May be empty.
      * @param {Object} serverSettings Server settings loaded from Config.ini
@@ -26,7 +27,7 @@ var HelioviewerClient = Class.extend(
         this._checkBrowser(); // Determines browser support
 
         this.serverSettings = serverSettings;
-        
+
         Helioviewer.api          = serverSettings['backEnd'];
         Helioviewer.dataType     = serverSettings['backEnd'] === "api/index.php" ? "json" : "jsonp";
         Helioviewer.userSettings = SettingsLoader.loadSettings(urlSettings, serverSettings);
@@ -37,10 +38,10 @@ var HelioviewerClient = Class.extend(
             Helioviewer.root = Helioviewer.api.substr(0, Helioviewer.api.search("/api"));
         }
 
-        
-       
+
+
     },
-    
+
     /**
      * @description Checks browser support for various features used in Helioviewer
      */
@@ -53,11 +54,11 @@ var HelioviewerClient = Class.extend(
             "h264"         : false,
             "vp8"          : false
         });
-        
+
         // HTML5 Video Support
         if ($.support.video) {
             var v = document.createElement("video");
-            
+
             // VP8/WebM
             if (v.canPlayType('video/webm; codecs="vp8"')) {
                 // 2011/11/07: Disabling vp8 support until encoding time
@@ -65,17 +66,17 @@ var HelioviewerClient = Class.extend(
                 // generated on the back-end when resources are available,
                 // but Flash/H.264 will be used in the mean-time to decrease
                 // response time and queue waits.
-                
+
                 //$.support.vp8 = true;
                 $.support.vp8 = false;
             }
-            
+
             // H.264
             if (v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
                 // 2011/11/07: Also disabling H.264 in-browser video for now:
                 // some versions of Chrome report support when it does not
-                // actually work. 
-                
+                // actually work.
+
                 //$.support.h264 = true;
                 $.support.h264 = false;
             }
@@ -95,18 +96,20 @@ var HelioviewerClient = Class.extend(
             maxImageScale  : this.serverSettings.maxImageScale,
             prefetch       : this.serverSettings.prefetchSize,
             tileLayers     : Helioviewer.userSettings.get('state.tileLayers'),
+            eventLayers    : Helioviewer.userSettings.get('state.eventLayers'),
+            eventLabels    : Helioviewer.userSettings.get('state.eventLabels'),
             imageScale     : Helioviewer.userSettings.get('state.imageScale'),
             centerX        : Helioviewer.userSettings.get('state.centerX'),
             centerY        : Helioviewer.userSettings.get('state.centerY'),
             marginTop      : marginTop,
             marginBottom   : marginBottom,
             warnMouseCoords: Helioviewer.userSettings.get('notifications.coordinates')
-        });   
+        });
     },
-    
+
     /**
      * Chooses an acceptible image scale to use based on the default or
-     * requested imageScale the list of allowed increments 
+     * requested imageScale the list of allowed increments
      */
     _chooseInitialImageScale: function (imageScale, increments) {
         // For exact match, use image scale as-is
@@ -115,7 +118,7 @@ var HelioviewerClient = Class.extend(
         }
         // Otherwise choose closest acceptible image scale
         var diff, closestScale, bestMatch = Infinity;
-        
+
         $.each(increments, function (i, scale) {
             diff = Math.abs(scale - imageScale);
 
@@ -124,7 +127,7 @@ var HelioviewerClient = Class.extend(
                 closestScale = scale;
             }
         });
-        
+
         // Store closest matched image scale
         Helioviewer.userSettings.set('state.imageScale', closestScale);
 

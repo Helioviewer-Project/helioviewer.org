@@ -1,13 +1,14 @@
 /* Tile layer accordions */
-#tileLayerAccordion {
+#tileLayerAccordion, #eventLayerAccordion {
     margin:0 5px 0 5px;
 }
-#TileLayerAccordion-Container {
-	margin-top: 2px;
+#TileLayerAccordion-Container, #EventLayerAccordion-Container {
+    margin-top: 2px;
     font-size: 10.5px;
 }
 
-span.tile-accordion-header-right > span.accordion-header-divider {
+span.tile-accordion-header-right > span.accordion-header-divider,
+span.event-accordion-header-right > span.accordion-header-divider {
     position: absolute;
     line-height: 1.5;
     left: 226px;
@@ -24,7 +25,7 @@ span.tile-accordion-header-right > span.accordion-header-divider {
 }
 
 .layerManagerBtn.visible {
-	background: url(../../resources/images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent;
+    background: url(../../resources/images/blackGlass/LayerManagerButton_Visibility_Visible.png) transparent;
     position: absolute;
     width: 20px;
     height: 12px;
@@ -32,7 +33,7 @@ span.tile-accordion-header-right > span.accordion-header-divider {
     margin-top:2px;
  }
 .layerManagerBtn.hidden {
-	background: url(../../resources/images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent;
+    background: url(../../resources/images/blackGlass/LayerManagerButton_Visibility_Hidden.png) transparent;
     position: absolute;
     width: 20px;
     height: 12px;
@@ -44,31 +45,56 @@ span.tile-accordion-header-right > span.accordion-header-divider {
     margin-bottom:2px;
 }
 
-.removeBtn {
+.removeBtn, .labelsBtn {
     position: absolute;
     right: 10px;
 }
 
-div.accordion-arrow {
-	float:left;
-	border:none;
+.labelsBtn {
+    background: url(../../resources/images/blackGlass/labels_visible_10x10.png) transparent;
+    width: 10px;
+    height: 10px;
+    margin: 3px 3px 0 0;
+}
+.labelsBtn:hover {
+    background: url(../../resources/images/blackGlass/labels_visible_hover_10x10.png) transparent;
+}
+.labelsBtn.hidden {
+    background: url(../../resources/images/blackGlass/labels_hidden_10x10.png) transparent;
+}
+.labelsBtn.hidden:hover {
+    background: url(../../resources/images/blackGlass/labels_hidden_hover_10x10.png) transparent;
 }
 
-span.tile-accordion-header-left  {display: block; width:37%; float: left; margin-top:2px;}
-span.tile-accordion-header-right {display: block; text-align: right; height: 16px;}
+div.accordion-arrow {
+    float:left;
+    border:none;
+}
+
+span.tile-accordion-header-left, span.event-accordion-header-left {
+    display: block;
+    width:37%;
+    float: left;
+    margin-top:2px;
+}
+span.tile-accordion-header-right, span.event-accordion-header-right {
+    display: block;
+    text-align: right;
+    height: 16px;
+}
 
 /* TileLayerAccordion Styles */
 div.layer-select-label {
-	width:102px;
-	float: left;
-	color: white;
-	margin: 2px 0px 0px 1px;
+    width:102px;
+    float: left;
+    color: white;
+    margin: 2px 0px 0px 1px;
 }
 select.layer-select {
-	width: 100px;
-	border: 1px solid #5c5c5c;
-	margin: 2px 0px 0px 1px;
-	}
+    width: 100px;
+    border: 1px solid #5c5c5c;
+    margin: 2px 0px 0px 1px;
+}
 
 .image-download-btn {
     margin-left: 223px;
@@ -76,3 +102,13 @@ select.layer-select {
     cursor: pointer;
 }
 
+/* EventLayerAccordion Styles */
+.checkboxBtn {
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 3px;
+}
+.checkboxBtn:hover {
+    color: #d18f61;
+}

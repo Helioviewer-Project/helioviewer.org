@@ -39,15 +39,15 @@ def get_db_cursor(dbname, dbuser, dbpass, mysql=True):
         import MySQLdb
     else:
         import pgdb
-    
+
     if mysql:
-        db = MySQLdb.connect(use_unicode=True, charset = "utf8", 
-                             host="localhost", db=dbname, user=dbuser, 
+        db = MySQLdb.connect(use_unicode=True, charset = "utf8",
+                             host="localhost", db=dbname, user=dbuser,
                              passwd=dbpass)
     else:
-        db = pgdb.connect(use_unicode=True, charset = "utf8", database=dbname, 
+        db = pgdb.connect(use_unicode=True, charset = "utf8", database=dbname,
                           user=dbuser, password=dbpass)
-    
+
     db.autocommit(True)
     return db.cursor()
 
@@ -63,7 +63,7 @@ def check_db_info(adminuser, adminpass, mysql):
             db = MySQLdb.connect(user=adminuser, passwd=adminpass)
         else:
             import pgdb
-            db = pgdb.connect(database="postgres", user=adminuser, 
+            db = pgdb.connect(database="postgres", user=adminuser,
                               password=adminpass)
     except MySQLdb.Error as e:
         print(e)
@@ -74,14 +74,14 @@ def check_db_info(adminuser, adminpass, mysql):
 
 def create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
     """Creates Helioviewer database
-    
+
     TODO (2009/08/18) Catch error when db already exists and gracefully exit
     """
-    
+
     create_str = "CREATE DATABASE IF NOT EXISTS %s;" % dbname
     grant_str = "GRANT ALL ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s';" % (
                 dbname, dbuser, dbpass)
-    
+
     if mysql:
         try:
            db = adaptor.connect(user=adminuser, passwd=adminpass)
@@ -93,7 +93,7 @@ def create_db(adminuser, adminpass, dbname, dbuser, dbpass, mysql, adaptor):
             sys.exit(2)
     else:
         try:
-            db = adaptor.connect(database="postgres", user=adminuser, 
+            db = adaptor.connect(database="postgres", user=adminuser,
                                  password=adminpass)
             cursor = db.cursor()
             cursor.execute(create_str)
@@ -125,7 +125,7 @@ def create_corrupt_table(cursor):
     """CREATE TABLE `corrupt` (
       `id`            INT unsigned NOT NULL auto_increment,
       `timestamp`     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      `filename`      VARCHAR(255) NOT NULL,      
+      `filename`      VARCHAR(255) NOT NULL,
       `note`        VARCHAR(255) DEFAULT '',
       PRIMARY KEY  (`id`),
       KEY `timestamp_index` (`filename`,`timestamp`) USING BTREE,
@@ -164,7 +164,7 @@ def create_datasource_table(cursor):
         (10, 'AIA 171', 'SDO AIA 171',  2, 4, 5, 2, 1, 0),
         (11, 'AIA 193', 'SDO AIA 193',  2, 4, 5, 3, 1, 0),
         (12, 'AIA 211', 'SDO AIA 211',  2, 4, 5, 5, 1, 0),
-        (13, 'AIA 304', 'SDO AIA 304',  2, 4, 5, 7, 1, 0),        
+        (13, 'AIA 304', 'SDO AIA 304',  2, 4, 5, 7, 1, 0),
         (14, 'AIA 335', 'SDO AIA 335',  2, 4, 5, 8, 1, 0),
         (15, 'AIA 1600', 'SDO AIA 1600',  2, 4, 5, 9, 1, 0),
         (16, 'AIA 1700', 'SDO AIA 1700',  2, 4, 5, 10, 1, 0),
@@ -285,7 +285,7 @@ def create_measurement_table(cursor):
         (2, '171', '171 Ångström extreme ultraviolet', 'Å'),
         (3, '193', '193 Ångström extreme ultraviolet', 'Å'),
         (4, '195', '195 Ångström extreme ultraviolet', 'Å'),
-        (5, '211', '211 Ångström extreme ultraviolet', 'Å'),        
+        (5, '211', '211 Ångström extreme ultraviolet', 'Å'),
         (6, '284', '284 Ångström extreme ultraviolet', 'Å'),
         (7, '304', '304 Ångström extreme ultraviolet', 'Å'),
         (8, '335', '335 Ångström extreme ultraviolet', 'Å'),
@@ -299,13 +299,13 @@ def create_measurement_table(cursor):
         (16, 'AlMgMn', 'Al/Mg/Mn filter (2.4 Å - 32 Å pass band)', 'Å'),
         (17, 'thin-Al', '11.6 μm Al filter (2.4 Å - 13 Å pass band)', 'Å'),
         (18, 'white-light', 'No filter', '');""")
-    
+
 def create_movies_table(cursor):
     """Creates movie table
-    
+
     Creates a simple table for storing information about movies built on
     Helioviewer.org.
-    
+
     Note: Region of interest coordinates are stored in arc-seconds even though
     request is done in pixels in order to make it easier to find screenshots
     with similar ROIs regardless of scale.
@@ -313,7 +313,7 @@ def create_movies_table(cursor):
     cursor.execute("""
     CREATE TABLE `movies` (
       `id`                INT unsigned NOT NULL auto_increment,
-      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+      `timestamp`         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `reqStartDate`      datetime NOT NULL,
       `reqEndDate`        datetime NOT NULL,
       `imageScale`        FLOAT NOT NULL,
@@ -322,6 +322,12 @@ def create_movies_table(cursor):
       `watermark`         TINYINT(1) UNSIGNED NOT NULL,
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT UNSIGNED,
+      `eventSourceString` VARCHAR(1024) DEFAULT NULL,
+      `eventsLabels`      TINYINT(1) UNSIGNED NOT NULL,
+      `scale`             TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+      `scaleType`         VARCHAR(12) DEFAULT 'earth',
+      `scaleX`            FLOAT DEFAULT '0',
+      `scaleY`            FLOAT DEFAULT '0',
       `numLayers`         TINYINT UNSIGNED,
       `queueNum`          SMALLINT UNSIGNED,
       `frameRate`         FLOAT UNSIGNED,
@@ -335,11 +341,11 @@ def create_movies_table(cursor):
       `buildTimeEnd`      TIMESTAMP,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
-    
+
 def create_movie_formats_table(cursor):
     """Creates movie formats table
-    
-    Creates a table to keep track of the processing status for each format 
+
+    Creates a table to keep track of the processing status for each format
     (mp4, web, etc) movie that needsto be created for a given movie request.
     """
     cursor.execute("""
@@ -351,11 +357,11 @@ def create_movie_formats_table(cursor):
       `procTime`          SMALLINT UNSIGNED,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
-    
+
 def create_youtube_table(cursor):
     """Creates a table to track shared movie uploads.
-    
-    Creates table to keep track of movies that have been uploaded to YouTube 
+
+    Creates table to keep track of movies that have been uploaded to YouTube
     and shared with other Helioviewer users.
     """
     cursor.execute("""
@@ -371,18 +377,18 @@ def create_youtube_table(cursor):
        PRIMARY KEY (`id`),
        UNIQUE INDEX movieid_idx(movieId)
     ) DEFAULT CHARSET=utf8;""")
-    
+
 def create_screenshots_table(cursor):
     """Creates screenshot table
-    
+
     Creates a simple table for storing information about screenshots built on
-    Helioviewer.org 
-    
+    Helioviewer.org
+
     Note: Region of interest coordinates are stored in arc-seconds even though
     request is done in pixels in order to make it easier to find screenshots
     with similar ROIs regardless of scale.
     """
-    
+
     cursor.execute("""
     CREATE TABLE `screenshots` (
       `id`                INT unsigned NOT NULL auto_increment,
@@ -393,14 +399,20 @@ def create_screenshots_table(cursor):
       `watermark`         TINYINT(1) UNSIGNED DEFAULT TRUE,
       `dataSourceString`  VARCHAR(255) NOT NULL,
       `dataSourceBitMask` BIGINT UNSIGNED,
+      `eventSourceString` VARCHAR(1024) DEFAULT NULL,
+      `eventsLabels`      TINYINT(1) UNSIGNED NOT NULL,
+      `scale`             TINYINT(1) unsigned NOT NULL DEFAULT '0',
+      `scaleType`         VARCHAR(12) DEFAULT 'earth',
+      `scaleX`            FLOAT DEFAULT '0',
+      `scaleY`            FLOAT DEFAULT '0',
       `numLayers`         TINYINT UNSIGNED NOT NULL DEFAULT 1,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
 
 def create_statistics_table(cursor):
     """Creates a table to keep query statistics
-    
-    Creates a simple table for storing query statistics for selected types of 
+
+    Creates a simple table for storing query statistics for selected types of
     requests
     """
     cursor.execute("""
@@ -410,25 +422,25 @@ def create_statistics_table(cursor):
       `action`      VARCHAR(32)  NOT NULL,
        PRIMARY KEY (`id`)
     ) DEFAULT CHARSET=utf8;""")
-    
+
 
 def enable_datasource(cursor, sourceId):
     """Enables datasource
-    
+
     Marks a single datasource as enabled to signal that there is data for that
-    source 
+    source
     """
     cursor.execute("UPDATE datasources SET enabled=1 WHERE id=%d;" % sourceId)
-    
+
 def update_image_table_index(cursor):
     """Updates index on images table"""
     cursor.execute("OPTIMIZE TABLE images;")
-    
+
 def mark_as_corrupt(cursor, filename, note):
     """Adds an image to the 'corrupt' database table"""
     sql = "INSERT INTO corrupt VALUES (NULL, NULL, '%s', '%s');" % (filename,
                                                                     note)
-    
+
     cursor.execute(sql)
 
 def get_datasources(cursor):
@@ -439,7 +451,7 @@ def get_datasources(cursor):
     __INST_NAME_IDX__ = 3
     __DET_NAME_IDX__ = 4
     __MEAS_NAME_IDX__ = 5
-    
+
     sql = \
     """ SELECT
             datasources.id as id,
@@ -450,21 +462,21 @@ def get_datasources(cursor):
             measurements.name as measurement
         FROM datasources
             LEFT JOIN observatories
-            ON datasources.observatoryId=observatories.id 
+            ON datasources.observatoryId=observatories.id
             LEFT JOIN instruments
-            ON datasources.instrumentId=instruments.id 
+            ON datasources.instrumentId=instruments.id
             LEFT JOIN detectors
-            ON datasources.detectorId=detectors.id 
+            ON datasources.detectorId=detectors.id
             LEFT JOIN measurements
             ON datasources.measurementId=measurements.id;"""
 
     # Fetch available data-sources
     cursor.execute(sql)
     results = cursor.fetchall()
-    
+
     # Convert results into a more easily traversable tree structure
     tree = {}
-    
+
     for source in results:
         # Image parameters
         obs = source[__OBS_NAME_IDX__]
@@ -473,7 +485,7 @@ def get_datasources(cursor):
         meas = source[__MEAS_NAME_IDX__]
         id = int(source[__SOURCE_ID_IDX__])
         enabled = bool(source[__ENABLED_IDX__])
-        
+
         # Build tree
         if obs not in tree:
             tree[obs] = {}
@@ -483,5 +495,5 @@ def get_datasources(cursor):
             tree[obs][inst][det] = {}
         if meas not in tree[obs][inst][det]:
             tree[obs][inst][det][meas] = {"id": id, "enabled": enabled}
-            
-    return tree    
+
+    return tree

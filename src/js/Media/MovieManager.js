@@ -1,19 +1,20 @@
 /**
  * MovieManager class definition
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * 
+ *
  * TODO 2011/03/14: Choose a reasonable limit for the number of entries based on whether or not
  * localStorage is supported: if supported limit can be large (e.g. 100), otherwise should be
  * closer to 3 entries.
- * 
+ *
  * Movie Status:
  *  0 QUEUED
  *  1 PROCESSING
  *  2 COMPLETED
  *  3 ERROR
- * 
+ *
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: false, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Helioviewer, MediaManager, $, setTimeout */
 "use strict";
@@ -22,12 +23,12 @@ var MovieManager = MediaManager.extend(
     {
     /**
      * @constructs
-     * Creates a new MovieManager instance 
-     */    
+     * Creates a new MovieManager instance
+     */
     init: function (movies) {
         this._super(movies);
         this.format   = $.support.vp8 ? "webm" : "mp4";
-        
+
         // Check status of any previously unfinished movie requests
         var self = this;
         $.each(movies, function (i, movie) {
@@ -36,10 +37,10 @@ var MovieManager = MediaManager.extend(
             }
         });
     },
-    
+
     /**
      * Adds a new movie
-     * 
+     *
      * @param {Int}     id            Movie id
      * @param {Float}   duration      Movie duration in seconds
      * @param {Float}   imageScale    Image scale for the movie
@@ -55,11 +56,12 @@ var MovieManager = MediaManager.extend(
      * @param {Float}   y2            Bottom-right corner y-coordinate
      * @param {Int}     width         Movie width
      * @param {Int}     height        Movie height
-     * 
+     *
      * @return {Movie} A Movie object
      */
     add: function (
-            id, duration, imageScale, layers, dateRequested, startDate, endDate, 
+            id, duration, imageScale, layers, events, eventsLabels, scale,
+            scaleType, scaleX, scaleY, dateRequested, startDate, endDate,
             frameRate, numFrames, x1, x2, y1, y2, width, height, thumbnail, url
     ) {
         var movie = {
@@ -67,6 +69,12 @@ var MovieManager = MediaManager.extend(
             "duration"      : duration,
             "imageScale"    : imageScale,
             "layers"        : layers,
+            "events"        : events,
+            "eventsLabels"  : eventsLabels,
+            "scale"         : scale,
+            "scaleType"     : scaleType,
+            "scaleX"        : scaleX,
+            "scaleY"        : scaleY,
             "dateRequested" : dateRequested,
             "startDate"     : startDate,
             "endDate"       : endDate,
@@ -83,15 +91,15 @@ var MovieManager = MediaManager.extend(
             "status"        : 2,
             "thumbnail"     : thumbnail,
             "url"           : url
-        }; 
+        };
         this._super(movie);
 
         return movie;
     },
-    
+
     /**
      * Adds a movie that is currently being processed
-     * 
+     *
      * @param {Int}     id            Movie id
      * @param {Int}     eta           Estimated time in seconds before movie is ready
      * @param {String}  token         Resque token for tracking status in queue
@@ -104,14 +112,23 @@ var MovieManager = MediaManager.extend(
      * @param {Float}   y1            Top-left corner y-coordinate
      * @param {Float}   x2            Bottom-right corner x-coordinate
      * @param {Float}   y2            Bottom-right corner y-coordinate
-     * 
+     *
      * @return {Movie} A Movie object
      */
-    queue: function (id, eta, token, imageScale, layers, dateRequested, startDate, endDate, x1, x2, y1, y2) {
+    queue: function (id, eta, token, imageScale, layers, events, eventsLabels,
+                scale, scaleType, scaleX, scaleY, dateRequested, startDate,
+                endDate, x1, x2, y1, y2) {
+
         var movie = {
             "id"            : id,
             "imageScale"    : imageScale,
             "layers"        : layers,
+            "events"        : events,
+            "eventsLabels"  : eventsLabels,
+            "scale"         : scale,
+            "scaleType"     : scaleType,
+            "scaleX"        : scaleX,
+            "scaleY"        : scaleY,
             "dateRequested" : dateRequested,
             "startDate"     : startDate,
             "endDate"       : endDate,
@@ -125,18 +142,18 @@ var MovieManager = MediaManager.extend(
         };
 
         if (this._history.unshift(movie) > this._historyLimit) {
-            this._history = this._history.slice(0, this._historyLimit);            
+            this._history = this._history.slice(0, this._historyLimit);
         }
-        
+
         this._monitorQueuedMovie(id, Date.parseUTCDate(dateRequested), token, eta);
 
-        this._save();  
+        this._save();
         return movie;
     },
-    
+
     /**
      * Updates stored information for a given movie and notify user that movie is available
-     * 
+     *
      * @param {Int}     id            Movie id
      * @param {Float}   frameRate     Movie frame-rate in frames/sec
      * @param {Int}     numFrames     Total number of frames in the movie
@@ -145,11 +162,11 @@ var MovieManager = MediaManager.extend(
      * @param {Int}     width         Movie width
      * @param {Int}     height        Movie height
      */
-    update: function (id, frameRate, numFrames, startDate, endDate, width, 
+    update: function (id, frameRate, numFrames, startDate, endDate, width,
         height, thumbnails, url) {
 
         var movie = this.get(id);
-        
+
         // Add the new values
         $.extend(movie, {
             "frameRate" : frameRate,
@@ -162,26 +179,26 @@ var MovieManager = MediaManager.extend(
             "thumbnail" : thumbnails.small,
             "url"       : url
         });
-        
+
         // Delete resque token
         delete movie.token;
-        
+
         this._save();
-        
+
         // Update preview tooltip
         $(document).trigger("movie-ready", [movie]);
-        
+
         // Notify user
         this._displayDownloadNotification(movie);
     },
-    
+
     /**
-     * Displays a jGrowl notification to the user informing them that their 
+     * Displays a jGrowl notification to the user informing them that their
      * download has completed
      */
     _displayDownloadNotification: function (movie) {
         var jGrowlOpts, message, self = this;
-        
+
         // Options for the jGrowl notification
         jGrowlOpts = {
             sticky: true,
@@ -190,15 +207,15 @@ var MovieManager = MediaManager.extend(
                 msg.find(".message-console-movie-ready").data("movie", movie);
             }
         };
-        message = "<span class='message-console-movie-ready'>" + 
-                  "Your " + movie.name + " movie is ready! " + 
+        message = "<span class='message-console-movie-ready'>" +
+                  "Your " + movie.name + " movie is ready! " +
                   "Click here to watch or download it.</span>";
 
         // Create the jGrowl notification.
-        $(document).trigger("message-console-log", 
+        $(document).trigger("message-console-log",
                             [message, jGrowlOpts, true, true]);
     },
-    
+
     /**
      * Monitors a queued movie and notifies the user when it becomes available
      */
@@ -208,19 +225,19 @@ var MovieManager = MediaManager.extend(
 
         queryMovieStatus = function () {
             var params, callback;
-            
+
             callback = function (response) {
                 // If the user has removed the movie from history, stop monitoring
                 if (!self.has(id)) {
                     return;
                 }
-                
+
                 // Check status
                 if (response.status < 2) {
                     // If more than 24 hours has elapsed, set status to ERROR
                     if ((Date.now() - dateRequested) / 1000 > (24 * 60 * 60)) {
                         self._abort(id);
-                    }                    
+                    }
                     // Otherwise continue to monitor
                     self._monitorQueuedMovie(id, dateRequested, token, 60);
                 } else if (response.error) {
@@ -232,7 +249,7 @@ var MovieManager = MediaManager.extend(
                                 response.thumbnails, response.url);
                 }
             };
-            
+
             params = {
                 "action" : "getMovieStatus",
                 "id"     : id,
@@ -243,7 +260,7 @@ var MovieManager = MediaManager.extend(
         };
         setTimeout(queryMovieStatus, Math.max(eta, 5) * 1000);
     },
-    
+
     /**
      * Aborts a failed movie request
      */
@@ -251,18 +268,18 @@ var MovieManager = MediaManager.extend(
         var error, movie = this.get(id);
 
         // Mark as failed
-        movie["status"] = 3;        
+        movie["status"] = 3;
         this._save();
 
         // Notify user
         error = "Sorry, we were unable to create the movie you requested. " +
                 "This usually means that there are not enough images for the " +
-                "time range requested. Please try adjusting the observation " + 
+                "time range requested. Please try adjusting the observation " +
                 "date or movie duration and try creating a new movie.";
 
         $(document).trigger("message-console-error", [error, {"sticky": true}]);
     },
-    
+
     /**
      * Saves the current list of movies
      */

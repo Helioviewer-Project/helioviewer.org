@@ -1,8 +1,9 @@
 /**
  * @fileOverview Contains the class definition for an UserSettings class.
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Class, InputValidator, CookieJar, $, localStorage, parseLayerString, getUTCTimestamp */
 "use strict";
@@ -11,37 +12,37 @@ var UserSettings = Class.extend(
     {
     /**
      * Class to manage user preferences.<br><br>
-     * 
+     *
      * Creates a class which handles the storing the retrieving of custom user settings. This includes things
      * like the requested observation time, image zoom level, and the layers currently loaded. The UserSettings
      * class has the ability to use both HTML5 local storage and cookies for saving information.
-     *    
+     *
      * TODO 2010/04/09: Generalize the validation step by passing in an array of validation criteria instead
      * of passing in parameters individually.
-     *    
+     *
      * @constructs
-     * 
+     *
      * @see <a href="https://developer.mozilla.org/en/DOM/Storage">https://developer.mozilla.org/en/DOM/Storage</a>
      */
     init: function (defaults, urlSettings, constraints) {
         this._defaults    = defaults;
         this._constraints = constraints;
-        
+
         // Input validator
         this._validator = new InputValidator();
-                
+
         // Initialize storage
         this._initStorage();
-        
+
         // Process URL parameters
         this._processURLSettings(urlSettings);
     },
-    
+
     /**
      * Gets a specified setting
-     * 
+     *
      * @param {String} key The setting to retrieve
-     * 
+     *
      * @returns {Object} The value of the desired setting
      */
     get: function (key) {
@@ -59,23 +60,23 @@ var UserSettings = Class.extend(
 
     /**
      * Gets a specified setting
-     * 
+     *
        @param {String} key The setting to retrieve
-     * 
+     *
      * @returns {Object} The value of the desired setting
      */
     _get: function (key) {
         var lookup = key.split(".");
 
         if (lookup.length === 1) {
-            return this.settings[key];                
+            return this.settings[key];
         } else if (lookup.length === 2) {
             return this.settings[lookup[0]][lookup[1]];
         }
-        
+
         return this.settings[lookup[0]][lookup[1]][lookup[2]];
     },
-    
+
     /**
      * Returns the default value associated with the specified key
      */
@@ -83,17 +84,17 @@ var UserSettings = Class.extend(
         var lookup = key.split(".");
 
         if (lookup.length === 1) {
-            return this._defaults[key];                
+            return this._defaults[key];
         } else if (lookup.length === 2) {
             return this._defaults[lookup[0]][lookup[1]];
         }
-        
+
         return this._defaults[lookup[0]][lookup[1]][lookup[2]];
     },
 
     /**
      * Saves a specified setting
-     * 
+     *
      * @param {String} key   The setting to update
      * @param {Object} value The new value for the setting
      */
@@ -103,12 +104,12 @@ var UserSettings = Class.extend(
         } catch (e) {
             return;
         }
-        
+
         // Update settings
         var lookup = key.split(".");
-        
+
         if (lookup.length === 1) {
-            this.settings[key] = value;                
+            this.settings[key] = value;
         } else if (lookup.length === 2) {
             this.settings[lookup[0]][lookup[1]] = value;
         } else {
@@ -117,7 +118,7 @@ var UserSettings = Class.extend(
 
         this._save();
     },
-    
+
     /**
      * Saves the user settings after changes have been made
      */
@@ -127,11 +128,11 @@ var UserSettings = Class.extend(
             localStorage.setItem("settings", $.toJSON(this.settings));
         }
         // cookies
-        else {         
+        else {
             this.cookies.set("settings", this.settings);
         }
     },
-    
+
     /**
      * Removes all existing settings
      */
@@ -142,17 +143,17 @@ var UserSettings = Class.extend(
             $.cookieJar("empty");
         }
     },
-    
+
     /**
      * Checks to see if there are any existing stored user settings
-     * 
+     *
      * @returns {Boolean} Returns true if stored Helioviewer.org settings are detected
      */
     _exists: function () {
-        return ($.support.localStorage ? (localStorage.getItem("settings") !== null) 
+        return ($.support.localStorage ? (localStorage.getItem("settings") !== null)
                 : (this.cookies.toString().length > 2));
     },
-        
+
     /**
      * Decides on best storage format to use, and initializes it
      */
@@ -161,7 +162,7 @@ var UserSettings = Class.extend(
         if (!$.support.localStorage) {
             this.cookies = $.cookieJar("settings");
         }
-        
+
         // If no stored user settings exist, load defaults
         if (!this._exists()) {
             this._loadDefaults();
@@ -175,13 +176,13 @@ var UserSettings = Class.extend(
             this._updateSettings(this.get('version'));
         }
     },
-    
+
     /**
      * Attempts to update user settings to reflect recent changes
      */
     _updateSettings: function (version) {
         var statuses, self = this;
-        
+
         // 2.2.1 and under - Load defaults
         if (version < 567) {
             this._loadDefaults();
@@ -193,21 +194,21 @@ var UserSettings = Class.extend(
                 "FINISHED": 2,
                 "ERROR": 3
             };
-            
+
             // Convert string status to integer status
             $.each(this.settings.history.movies, function (i, movie) {
                 self.settings.history.movies[i].status = statuses[movie.status];
             });
-            
+
             // 2.3.0 - "defaults" section renamed "options"
             this.settings.options = this.settings.defaults;
             delete this.settings.defaults;
-            
+
             // Updated version number and save
             this.set('version', this._defaults.version);
         }
     },
-    
+
     /**
      * Loads defaults user settings
      */
@@ -220,10 +221,10 @@ var UserSettings = Class.extend(
         else {
             this.cookies.set("settings", this._defaults);
         }
-            
+
         this.settings = this._defaults;
     },
-    
+
     /**
      * Retrieves the saved user settings and saved them locally
      */
@@ -236,56 +237,104 @@ var UserSettings = Class.extend(
             this.settings = this.cookies.get("settings");
         }
     },
-    
+
     /**
      * Processes and validates any URL parameters that have been set
-     * 
+     *
      * Note that date is handled separately in TimeControls
      */
     _processURLSettings: function (urlSettings) {
         if (urlSettings.imageScale) {
             this.set("state.imageScale", parseFloat(urlSettings.imageScale));
         }
-        
+
         if (urlSettings.centerX) {
             this.set("state.centerX", parseFloat(urlSettings.centerX));
         }
-        
+
         if (urlSettings.centerY) {
             this.set("state.centerY", parseFloat(urlSettings.centerY));
         }
-        
+
         if (urlSettings.imageLayers) {
-            this.set("state.tileLayers", 
+            this.set("state.tileLayers",
                      this._parseURLStringLayers(urlSettings.imageLayers));
         }
+
+        if (typeof urlSettings.eventLayers != 'undefined' && urlSettings.eventLayers != '') {
+            this.set("state.eventLayers",
+                     this._parseURLStringEvents(urlSettings.eventLayers));
+        }
+
+        // Event labels are ON by default
+        if ( urlSettings.eventLabels == true ) {
+            this.set("state.eventLabels", true);
+        }
+        // Override event label default with value from URL
+        else if ( typeof urlSettings.eventLabels != 'undefined'
+            && urlSettings.eventLabels == false) {
+
+            this.set("state.eventLabels", false);
+        }
     },
-    
+
     /**
-     * Processes a string containing one or more layers and converts them into 
+     * Processes a string containing one or more layers and converts them into
      * JavaScript objects
      */
     _parseURLStringLayers: function (urlLayers) {
         var layers = [], self = this;
-        
+
         $.each(urlLayers, function (i, layerString) {
             layers.push(parseLayerString(layerString));
         });
 
         return layers;
     },
-    
+
+    /**
+     * Processes a string containing one or more event types and FRMs and
+     * converts them into JavaScript objects
+     */
+    _parseURLStringEvents: function (urlEventLayers) {
+        var events = [], self = this;
+
+        $.each(urlEventLayers, function (i, eventLayerString) {
+            events.push(parseEventString(eventLayerString));
+        });
+        return events;
+    },
+
+    /**
+     * Processes an array of objects representing selected event types and FRMs
+     * and convert it into a string for passing through URLs
+     */
+    parseEventsURLString: function (eventLayerArray) {
+        var eventLayerString = '';
+
+        if ( typeof eventLayerArray == "undefined" ) {
+            eventLayerArray = this.get("state.eventLayers");
+        }
+
+        $.each(eventLayerArray, function (i, eventLayerObj) {
+            eventLayerString += "[" + eventLayerObj.event_type     + ","
+                                    + eventLayerObj.frms.join(';') + ","
+                                    + eventLayerObj.open           + "],";
+        });
+        return eventLayerString.slice(0, -1);
+    },
+
     /**
      * Validates a setting (Currently checks observation date and image scale)
-     * 
+     *
      * @param {String} setting The setting to be validated
      * @param {String} value   The value of the setting to check
-     * 
+     *
      * @returns {Boolean} Returns true if the setting is valid
      */
     _validate: function (setting, value) {
         var self = this;
-        
+
         switch (setting) {
         case "state.date":
             this._validator.checkTimestamp(value);
@@ -313,7 +362,7 @@ var UserSettings = Class.extend(
             });
             break;
         default:
-            break;        
+            break;
         }
     }
 });

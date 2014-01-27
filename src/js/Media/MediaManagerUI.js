@@ -1,8 +1,9 @@
 /**
  * MediaManagerUI class definition
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false,
 eqeqeq: true, plusplus: true, bitwise: true, regexp: false, strict: true,
 newcap: true, immed: true, maxlen: 80, sub: true */
 /*global Class, $, pixelsToArcseconds */
@@ -13,12 +14,12 @@ var MediaManagerUI = Class.extend(
     /**
      * @constructs
      * Creates a new ScreenshotManagerUI instance
-     * 
+     *
      * @param {ScreenshotManager} model ScreenshotManager instance
-     */    
+     */
     init: function (type) {
         this._type = type;
-        
+
         this._btn             = $("#" + type + "-button");
         this._container       = $("#" + type + "-manager-container");
         this._buildBtns       = $("#" + type + "-manager-build-btns");
@@ -30,10 +31,10 @@ var MediaManagerUI = Class.extend(
         this._tooltips        = $("#social-buttons div");
         this._allButtons      = $("#movie-button, #screenshot-button");
         this._allContainers   = $(".media-manager-container");
-        
+
         this._loadSavedItems();
     },
-    
+
     /**
      * Checks for media item in history
      */
@@ -50,11 +51,11 @@ var MediaManagerUI = Class.extend(
         this._tooltips.qtip("enable");
         $(".qtip").qtip("hide");
     },
-    
+
     /**
      * Shows the media manager
      */
-    show: function () {        
+    show: function () {
         this._allContainers.hide();
         this._allButtons.removeClass("active");
         this._btn.addClass("active");
@@ -63,7 +64,7 @@ var MediaManagerUI = Class.extend(
         this._container.show();
         this._tooltips.qtip("hide").qtip("disable", true);
     },
-    
+
     /**
      * Toggles the visibility of the media manager
      */
@@ -77,20 +78,20 @@ var MediaManagerUI = Class.extend(
 
     /**
      * Adds a movie or screenshot to the history
-     * 
-     * @param {Object} The movie or screenshot to be added 
+     *
+     * @param {Object} The movie or screenshot to be added
      */
     _addItem: function (item) {
         var htmlId, html, last, url, name = item.name;
 
-        // Shorten names to fit inside the history dialog        
+        // Shorten names to fit inside the history dialog
         if (name.length > 16) {
             name = name.slice(0, 16) + "...";
         }
-        
+
         // HTML for a single row in the history dialog
         htmlId = this._type + "-" + item.id;
-        
+
         // Link
         if (this._type === "movie") {
             url = Helioviewer.api.replace("api/index.php", "") + "?movieId=" + item.id;
@@ -99,31 +100,31 @@ var MediaManagerUI = Class.extend(
         }
 
         html = $("<div id='" + htmlId + "' class='history-entry'>" +
-               "<a class='text-btn' style='float: left' href='" + url + 
+               "<a class='text-btn' style='float: left' href='" + url +
                "'>" + name + "</a>" +
                //"<div class='text-btn' style='float:left'>" + name + "</div>" +
-               "<div class='status'></div>" + 
+               "<div class='status'></div>" +
                "</div>");
-               
+
         // Store id with dom-node for easy access
         html.data("id", item.id);
-        
+
         this._historyBody.prepend(html);
-        
+
         // Create a preview tooltip
         this._buildPreviewTooltip(item);
 
         // Remove any entries beyond limit
-        if (this._historyBody.find(".history-entry").length > 
+        if (this._historyBody.find(".history-entry").length >
             this._manager._historyLimit) {
             last = this._historyBody.find(".history-entry").last().data('id');
             this._removeItem(last);
         }
-        
+
         // Show the history section title if it is not already visible
         this._historyTitle.show();
     },
-    
+
     /**
      * Creates a simple preview tooltip which pops up when the user moves
      * the mouse over the specified history entry.
@@ -151,21 +152,21 @@ var MediaManagerUI = Class.extend(
             }
         });
     },
-    
+
     /**
      * Removes a movie or screenshot from the history
-     * 
+     *
      * @param {Int} Identifier of the screenshot to be removed
      */
     _removeItem: function (id) {
         $("#" + this._type + "-" + id).qtip("destroy").unbind().remove();
-        
+
         // Hide the history section if the last entry was removed
         if (this._historyBody.find(".history-entry").length === 0) {
             this._historyTitle.hide();
         }
     },
-    
+
     /**
      * Create history entries for items from previous sessions
      */
@@ -176,27 +177,27 @@ var MediaManagerUI = Class.extend(
             self._addItem(item);
         });
     },
-    
+
     /**
      * Refreshes status information for screenshots or movies in the history
      * and preview tooltip positions
      */
     _refresh: function () {
         var type = this._type;
-        
+
         // Update preview tooltip positioning
         this._historyBody.find(".qtip").qtip('reposition');
 
         // Update the status information for each row in the history
         $.each(this._manager.toArray(), function (i, item) {
             var status, elapsed;
-            
+
             status = $("#" + type + "-" + item.id).find(".status");
             elapsed = Date.parseUTCDate(item.dateRequested).getElapsedTime();
-            status.html(elapsed);                
+            status.html(elapsed);
         });
     },
-    
+
     /**
      * Translates viewport coordinates into arcseconds
      */
@@ -207,10 +208,10 @@ var MediaManagerUI = Class.extend(
             y1: pixels.top,
             y2: pixels.bottom
         };
-        
+
         return pixelsToArcseconds(coordinates, scale);
     },
-    
+
     /**
      * Initializes event handlers
      */
@@ -222,7 +223,7 @@ var MediaManagerUI = Class.extend(
                 self.toggle();
             }
         });
-        
+
         // Clear buttons removes all saved items
         this._clearBtn.click(function () {
             $.each(self._manager.toArray(), function (i, item) {
@@ -231,11 +232,11 @@ var MediaManagerUI = Class.extend(
             self._manager.empty();
         });
     },
-    
+
     /**
-     * Validates the screenshot or movie request and displays an error message 
+     * Validates the screenshot or movie request and displays an error message
      * if there is a problem
-     * 
+     *
      * @return {Boolean} Returns true if the request is valid
      */
     _validateRequest: function (roi, layers) {

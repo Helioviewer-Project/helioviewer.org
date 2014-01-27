@@ -1,14 +1,15 @@
 /**
  * @fileOverview Contains the class definition for an TileLayerManager class.
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @see LayerManager, TileLayer
  * @requires LayerManager
- * 
+ *
  * TODO (12/3/2009): Provide support for cases where solar center isn't the best
  * sandbox-center, e.g. sub-field images.
- * 
+ *
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global Helioviewer, LayerManager, TileLayer, Layer, $ */
 "use strict";
@@ -19,7 +20,7 @@ var TileLayerManager = LayerManager.extend(
      * @constructs
      * @description Creates a new TileLayerManager instance
      */
-    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers, 
+    init: function (observationDate, dataSources, tileSize, viewportScale, maxTileLayers,
                     savedLayers, urlLayers) {
         this._super();
 
@@ -27,9 +28,9 @@ var TileLayerManager = LayerManager.extend(
         this.tileSize      = tileSize;
         this.viewportScale = viewportScale;
         this.maxTileLayers = maxTileLayers;
-     
+
         this.tileVisibilityRange  = {xStart: 0, xEnd: 0, yStart: 0, yEnd: 0};
-      
+
         this._observationDate = observationDate;
 
         $(document).bind("tile-layer-finished-loading", $.proxy(this.updateMaxDimensions, this))
@@ -45,11 +46,12 @@ var TileLayerManager = LayerManager.extend(
      */
     save: function () {
         var layers = this.toJSON();
+
         Helioviewer.userSettings.set("state.tileLayers", layers);
     },
-    
+
     /**
-     * 
+     *
      */
     updateTileVisibilityRange: function (vpCoords) {
         var old, ts, self, vp;
@@ -74,22 +76,22 @@ var TileLayerManager = LayerManager.extend(
         self = this;
         if (this.tileVisibilityRange !== old) {
             $.each(this._layers, function () {
-                this.updateTileVisibilityRange(self.tileVisibilityRange); 
+                this.updateTileVisibilityRange(self.tileVisibilityRange);
             });
         }
     },
-    
+
     /**
-     * 
+     *
      */
     adjustImageScale: function (scale) {
         if (this.viewportScale === scale) {
-            return; 
+            return;
         }
-        
+
         this.viewportScale = scale;
         var self = this;
-        
+
         $.each(this._layers, function () {
             this.updateImageScale(scale, self.tileVisibilityRange);
         });
@@ -100,9 +102,9 @@ var TileLayerManager = LayerManager.extend(
      * layers are currently loaded
      */
     /**
-     * Sets the opacity for the layer, taking into account layers which overlap 
+     * Sets the opacity for the layer, taking into account layers which overlap
      * one another.
-     * 
+     *
      * @param layeringOrder int  The layer's stacking order
      * @param layerExists   bool Whether or not the layer already exists
      */
@@ -111,11 +113,11 @@ var TileLayerManager = LayerManager.extend(
 
         // If the layer has not been added yet, start counter at 1 instead of 0
         if (layerExists) {
-            counter = 0;    
+            counter = 0;
         } else {
             counter = 1;
         }
-        
+
 
         $.each(this._layers, function () {
             if (this.layeringOrder === layeringOrder) {
@@ -125,12 +127,12 @@ var TileLayerManager = LayerManager.extend(
 
         return 100 / counter;
     },
-    
+
     /**
      * Returns a list of the layers which overlap the current viewport ROI
      */
     _getVisibleLayers: function () {
-        
+
     },
 
     /**
@@ -140,21 +142,21 @@ var TileLayerManager = LayerManager.extend(
         var layer, self = this;
 
         $.each(layers, function (index, params) {
-            layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale, 
-                                  self.tileVisibilityRange, params.nickname, params.visible, 
+            layer = new TileLayer(index, self._observationDate, self.tileSize, self.viewportScale,
+                                  self.tileVisibilityRange, params.nickname, params.visible,
                                   params.opacity, true);
 
             self.addLayer(layer);
         });
     },
-    
+
     /**
      * Remove a specified layer
      */
     _onLayerRemove: function (event, id) {
         this.removeLayer(id);
     },
-    
+
     /**
      * Handles observation time changes
      */
@@ -164,56 +166,56 @@ var TileLayerManager = LayerManager.extend(
             this.updateRequestTime(date);
         });
     },
-    
+
     getRequestDateAsISOString: function () {
         return this._observationDate.toISOString();
     },
-    
+
     /**
      * Returns a string representation of the tile layers
      */
     serialize: function () {
         return this._stringify(this._layers);
     },
-    
+
     /**
      * Creates a string representation of an array of layers
      */
     _stringify: function (layers) {
         var layerString = "";
-        
+
         // Get a string representation of each layer that overlaps the ROI
         $.each(layers, function () {
             layerString += "[" + this.serialize() + "],";
         });
-        
+
         // Remove trailing comma and return
         return layerString.slice(0, -1);
     },
-    
+
     /**
-     * Tests all four corners of the visible image area to see if they are 
+     * Tests all four corners of the visible image area to see if they are
      * within the transparent circle region of LASCO/COR coronagraph images.
-     *  
+     *
      * Uses the distance formula:
-     * 
+     *
      *     d = sqrt( (x2 - x1)^2 + (y2 - y1)^2 )
-     * 
-     * ...to find the distance from the center to each corner, and if that 
+     *
+     * ...to find the distance from the center to each corner, and if that
      * distance is less than the radius, it is inside the circle region.
-     *  
+     *
      * @param {Object} radius -- The radius of the circle region in the image
-     * @param {Object} top -- Top coordinate of the selected region 
+     * @param {Object} top -- Top coordinate of the selected region
      * @param {Object} left -- Left coordinate of the selected region
      * @param {Object} width -- width of the selected region
      * @param {Object} height -- height of the selected region
-     * 
-     * @return false as soon as it finds a distance outside the radius, or 
+     *
+     * @return false as soon as it finds a distance outside the radius, or
      * true if it doesn't.
      */
     _insideCircle: function (radius, top, left, bottom, right) {
         var corners, corner, dx2, dy2;
-        
+
         // Corners of region of interest
         corners = {
             topLeft     : {x: left,  y: top},
@@ -227,7 +229,7 @@ var TileLayerManager = LayerManager.extend(
             // dx^2, dy^2
             dx2 = Math.pow(corners[corner].x, 2);
             dy2 = Math.pow(corners[corner].y, 2);
-            
+
             // dist = sqrt(dx^2 + dy^2)
             if (Math.sqrt(dx2 + dy2) > radius) {
                 return false;
@@ -236,18 +238,18 @@ var TileLayerManager = LayerManager.extend(
 
         return true;
     },
-    
+
     /**
      * Returns a list of layers which are currently visible and overlap the
      * specified region of interest by at least 10px
-     * 
+     *
      * @param array roi Region of interest in pixels
      */
     getVisibleLayers: function(roi) {
         var rsunAS, rsun, radii, layers = [], threshold = 10, self = this;
-        
+
         // Coronagraph inner circle radii in arc-seconds
-        // TODO 2012/04/11: Compute using header info? are hv-tags 
+        // TODO 2012/04/11: Compute using header info? are hv-tags
         // (rocc_inner, etc) hard-coded or dynamic? Since COR images vary
         // a lot over time, conservative estimate used for now.
         radii = {
@@ -258,10 +260,10 @@ var TileLayerManager = LayerManager.extend(
             "COR1-B": 1.45,
             "COR2-B": 2.6
         };
-        
+
         // Solar radius at 1au (TODO: compute for layer)
         rsunAS = 959.705;
-        
+
         $.each(this._layers, function (i, layer) {
             // Check visibility
             if (!layer.visible || layer.opacity <= 5) {
@@ -274,19 +276,19 @@ var TileLayerManager = LayerManager.extend(
                 (roi.top >= layer.dimensions.bottom - threshold)) {
                 return;
             }
-            
+
             // Check coronagraph overlap
             if (layer.name in radii) {
                 // radius of outer edge of occulting disk in pixels
                 rsun = rsunAS * radii[layer.name] / layer.viewportScale;
-                
+
                 if (self._insideCircle(rsun, roi.top, roi.left, roi.bottom, roi.right)) {
                     return;
                 }
             }
             layers.push(layer);
         });
-        
+
         return this._stringify(layers);
     }
 });
