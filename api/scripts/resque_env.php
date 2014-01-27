@@ -4,7 +4,7 @@
  */
 # switch to api/
 $dir = dirname(dirname(realpath($argv[0])));
-chdir($dir); 
+chdir($dir);
 
 require_once "src/Config.php";
 $config = new Config("../settings/Config.ini");

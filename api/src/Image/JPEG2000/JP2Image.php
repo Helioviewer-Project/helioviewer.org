@@ -7,6 +7,7 @@
  *
  * @category Image
  * @package  Helioviewer
+ * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
@@ -16,6 +17,7 @@
  *
  * @category Image
  * @package  Helioviewer
+ * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
@@ -26,12 +28,12 @@
  * @TODO: build up a "process log" string for each tile process which can be
  *        output to the log in case of failure.
  */
-class Image_JPEG2000_JP2Image
-{
-    private $_file;   //$jp2;
-    private $_width;  //$jp2Width;
-    private $_height; //$jp2Height;
-    private $_scale;  //$jp2Scale;
+class Image_JPEG2000_JP2Image {
+
+    private $_file;
+    private $_width;
+    private $_height;
+    private $_scale;
 
     /**
      * Creates a new Image_JPEG2000_JP2Image instance
@@ -41,8 +43,7 @@ class Image_JPEG2000_JP2Image
      * @param int    $height JP2 image height
      * @param float  $scale  JP2 image plate-scale
      */
-    public function __construct($file, $width, $height, $scale)
-    {
+    public function __construct($file, $width, $height, $scale) {
         $this->_file   = $file;
         $this->_width  = $width;
         $this->_height = $height;
@@ -54,8 +55,7 @@ class Image_JPEG2000_JP2Image
      *
      * @return float image scale
      */
-    public function getScale()
-    {
+    public function getScale() {
         return $this->_scale;
     }
 
@@ -64,8 +64,7 @@ class Image_JPEG2000_JP2Image
      *
      * @return int image width
      */
-    public function getWidth()
-    {
+    public function getWidth() {
         return $this->_width;
     }
 
@@ -74,8 +73,7 @@ class Image_JPEG2000_JP2Image
      *
      * @return int image height
      */
-    public function getHeight()
-    {
+    public function getHeight() {
         return $this->_height;
     }
 
@@ -83,88 +81,102 @@ class Image_JPEG2000_JP2Image
      * Extract a region using kdu_expand
      *
      * @param string $outputFile  Location to output file to.
-     * @param array  $roi         An array representing the rectangular region of interest (roi).
-     * @param int    $scaleFactor Difference between the JP2's natural resolution and the requested resolution, if
-     *                            the requested resolution is less than the natural one.
+     * @param array  $roi         An array representing the rectangular
+     *                            region of interest (roi).
+     * @param int    $scaleFactor Difference between the JP2's natural
+     *                            resolution and the requested resolution, if
+     *                            the requested resolution is less than the
+     *                            natural one.
      *
-     * @TODO: Should precision of -reduce be limited in same manner as region strings? (e.g. MDI @ zoom-level 9)
+     * @TODO: Should precision of -reduce be limited in same manner as
+     *        region strings? (e.g. MDI @ zoom-level 9)
      *
      * @return String - outputFile of the expanded region
      */
-    public function extractRegion($outputFile, $roi, $scaleFactor=0)
-    {
-        $cmd = HV_KDU_EXPAND . " -i $this->_file -o $outputFile ";
+    public function extractRegion($outputFile, $roi, $scaleFactor=0) {
+
+        $cmd = HV_KDU_EXPAND . ' -i '.$this->_file.' -o '.$outputFile.' ';
 
         // Case 1: JP2 image resolution = desired resolution
         // Nothing special to do...
 
         // Case 2: JP2 image resolution > desired resolution (use -reduce)
-        if ($scaleFactor > 0)
-            $cmd .= "-reduce $scaleFactor ";
+        if ( $scaleFactor > 0 )
+            $cmd .= '-reduce '.$scaleFactor.' ';
 
         // Case 3: JP2 image resolution < desired resolution
         // Don't do anything...
 
         // Add desired region
         $cmd .= $this->_getRegionString($roi);
-        
-        
+
+
         $attempts = 0;
-        
+
         // Attempt JP2 extraction. If the command fails, retry up to two times
-        while ($attempts < 3) {
+        while ( $attempts < 3 ) {
             // Execute the command
             $result = exec(escapeshellcmd($cmd), $out, $ret);
-            
+
             // Succesfull conversions should have return code 0 and 6 lines
             // of output. If either of these conditions are not true the
             // process has likely failed
-            if (($ret == 0) && (sizeof($out) <= 6)) {
+            if ( $ret == 0 && sizeof($out) <= 6 ) {
                 return;
             }
             $attempts += 1;
             usleep(200000); // wait 0.2s
         }
-        
+
         // If the extraction fails after three attempts, log error
-        $msg = sprintf("Error extracting JPEG 2000 subfield region!" . 
-                       "\n\nCOMMAND:\n%s\n\nRETURN VALUE:%d\n\nOUTPUT:\n%s", 
-                       escapeshellcmd($cmd), $ret, implode("\n", $out));
+        $msg = sprintf(
+                'Error extracting JPEG 2000 subfield region!' .
+                "\n\nCOMMAND:\n%s\n\nRETURN VALUE:%d\n\nOUTPUT:\n%s",
+                escapeshellcmd($cmd),
+                $ret,
+                implode("\n", $out) );
+
         throw new Exception($msg, 14);
-     }
+    }
 
     /**
-     * Builds a region string to be used by kdu_expand. e.g. "-region {0.0,0.0},{0.5,0.5}"
+     * Builds a region string to be used by kdu_expand.
+     * e.g. "-region {0.0,0.0},{0.5,0.5}"
      *
-     * NOTE: Because kakadu's internal precision for region strings is less than PHP,
-     * the numbers used are cut off to prevent erronious rounding.
+     * NOTE: Because kakadu's internal precision for region strings is less
+     * than PHP, the numbers used are cut off to prevent erronious rounding.
      *
      * @param array $roi The requestd region of interest.
      *
      * @return string A kdu_expand -region formatted sub-command.
      */
-    private function _getRegionString($roi)
-    {
+    private function _getRegionString($roi) {
         $precision = 6;
 
-        $top    = $roi["top"];
-        $left   = $roi["left"];
-        $bottom = $roi["bottom"];
-        $right  = $roi["right"];
+        $top    = $roi['top'];
+        $left   = $roi['left'];
+        $bottom = $roi['bottom'];
+        $right  = $roi['right'];
 
-        // Calculate the top, left, width, and height in terms of kdu_expand parameters (between 0 and 1)
-        $scaledTop    = $top / $this->_height;
+        // Calculate the top, left, width, and height in terms of kdu_expand
+        // parameters (between 0 and 1)
+        $scaledTop    = $top  / $this->_height;
         $scaledLeft   = $left / $this->_width;
         $scaledHeight = ($bottom - $top) / $this->_height;
-        $scaledWidth  = ($right - $left) / $this->_width; 
-        
+        $scaledWidth  = ($right - $left) / $this->_width;
+
         // Ensure no negative exponents.
-        $scaledTop    = substr($scaledTop    > 0.0001? $scaledTop    : 0, 0, $precision);
-        $scaledLeft   = substr($scaledLeft   > 0.0001? $scaledLeft   : 0, 0, $precision);
-        $scaledHeight = substr($scaledHeight > 0.0001? $scaledHeight : 0, 0, $precision);
-        $scaledWidth  = substr($scaledWidth  > 0.0001? $scaledWidth  : 0, 0, $precision);
-        
-        $region = '-region {' . "$scaledTop,$scaledLeft" . '},{' . "$scaledHeight,$scaledWidth" . '}';
+        $scaledTop    = substr(
+            $scaledTop    > 0.0001 ? $scaledTop    : 0, 0, $precision );
+        $scaledLeft   = substr(
+            $scaledLeft   > 0.0001 ? $scaledLeft   : 0, 0, $precision );
+        $scaledHeight = substr(
+            $scaledHeight > 0.0001 ? $scaledHeight : 0, 0, $precision );
+        $scaledWidth  = substr(
+            $scaledWidth  > 0.0001 ? $scaledWidth  : 0, 0, $precision );
+
+        $region = '-region {'.$scaledTop   .','.$scaledLeft .'},'
+                         .'{'.$scaledHeight.','.$scaledWidth.'}';
 
         return $region;
     }

@@ -1,10 +1,11 @@
 /**
  * @fileOverview Various helper functions used throughout Helioviewer.
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
- * 
+ *
  * TODO: Move helper functions to a separate namespcae? (e.g. $hv)
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: false, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true, console: true */
 /*global window, console, $, navigator, Storage */
 "use strict";
@@ -17,7 +18,7 @@ var humanReadableNumSeconds = function (seconds) {
     if (seconds <= 60) {
         return Math.ceil(seconds) + " seconds";
     } else if (seconds <= 119) {
-        // Since it's flooring values, any number under 2 minutes (120 seconds) 
+        // Since it's flooring values, any number under 2 minutes (120 seconds)
         // should come up as "1 minute ago" rather than "1 minutes ago"
         return "1 minute";
     } else if (seconds <= 3600) {
@@ -34,7 +35,7 @@ var humanReadableNumSeconds = function (seconds) {
         return "1 day";
     } else {
         return Math.floor(seconds / 86400) + " days";
-    }   
+    }
 };
 
 /**
@@ -61,7 +62,7 @@ Date.prototype.toUTCTimeString = function () {
 
 /**
  * Takes a localized javascript date and returns a date set to the UTC time.
- * 
+ *
  */
 Date.prototype.toUTCDate = function () {
     return new Date(Date.UTC(
@@ -70,7 +71,7 @@ Date.prototype.toUTCDate = function () {
 };
 
 /**
- * Takes in a time difference in seconds and converts it to elapsed time, 
+ * Takes in a time difference in seconds and converts it to elapsed time,
  * e.g. "5 minutes ago" or "3 days ago"
  */
 Date.prototype.getElapsedTime = function () {
@@ -81,17 +82,17 @@ Date.prototype.getElapsedTime = function () {
 
 /**
  * Parses dates and returns a UTC JavaScript date object.
- * 
- * @param  {String} s A UTC date string of the form 2011-03-14 17:41:39, 
+ *
+ * @param  {String} s A UTC date string of the form 2011-03-14 17:41:39,
  *                    2011-03-14T17:41:39, or 2011-03-14T17:41:39.000Z
- *                    
+ *
  * @return {Date} UTC JavaScript Date object
  */
 Date.parseUTCDate = function (s) {
     try {
         return new Date(Date.UTC(
             s.substring(0, 4), parseInt(s.substring(5, 7), 10) - 1, s.substring(8, 10),
-            s.substring(11, 13), s.substring(14, 16), s.substring(17, 19) 
+            s.substring(11, 13), s.substring(14, 16), s.substring(17, 19)
         ));
     } catch (e) {
         throw "Invalid UTC date string";
@@ -100,23 +101,23 @@ Date.parseUTCDate = function (s) {
 
 /**
  * Normalizes behavior for Date.toISOString
- * 
+ *
  * Fixes two issues:
- *   1. Browsers with native support for toISOString return a quoted date string, 
+ *   1. Browsers with native support for toISOString return a quoted date string,
  *      whereas other browsers return unquoted date string.
  *   2. IE8 doesn't include milliseconds
  *
  * @see http://code.google.com/p/datejs/issues/detail?id=54
- * 
+ *
  */
 var toISOString = Date.prototype.toISOString;
 Date.prototype.toISOString = function () {
     var date = toISOString.call(this).replace(/"/g, '');
-    
+
     if (date.length === 20) {
         date = date.substring(0, 19) + ".000Z";
     }
-    
+
     return date;
 };
 
@@ -126,7 +127,7 @@ Date.prototype.toISOString = function () {
  */
 var getUTCTimestamp = function (date) {
     var year, month, day, hours, minutes, seconds, ms;
-    
+
     year    = parseInt(date.substr(0, 4), 10);
     month   = parseInt(date.substr(5, 2), 10) - 1;
     day     = parseInt(date.substr(8, 2), 10);
@@ -166,7 +167,7 @@ var loadCSS = function (filename) {
  */
 var getOS = function () {
     var os = "other";
-    
+
     if (navigator.appVersion.indexOf("Win") !== -1) {
         os = "win";
     }
@@ -179,7 +180,7 @@ var getOS = function () {
     if (navigator.appVersion.indexOf("Linux") !== -1) {
         os = "linux";
     }
-    
+
     return os;
 };
 
@@ -187,7 +188,7 @@ var getOS = function () {
  * @description Convert from cartesian to polar coordinates
  * @param {Int} x X coordinate
  * @param {Int} y Y coordinate
- * @returns {Object} Polar coordinates (r, theta) resulting from conversion 
+ * @returns {Object} Polar coordinates (r, theta) resulting from conversion
  */
 Math.toPolarCoords = function (x, y) {
     var radians = Math.atan(-x / y);
@@ -197,7 +198,7 @@ Math.toPolarCoords = function (x, y) {
     } else if ((x >= 0) && (y >= 0)) {
         radians += (2 * Math.PI);
     }
-        
+
     return {
         r     : Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)),
         theta : (180 / Math.PI) * radians
@@ -219,7 +220,7 @@ if (typeof(console) === "undefined") {
     console.log = function (msg) {
         return false;
     };
-    
+
     console.dir = function (obj) {
         return false;
     };
@@ -235,51 +236,51 @@ $.isNumber = function (x) {
 
 /**
  * @description Converts coordinates from solar radii to helioprojective (arc-seconds as seen from earth).
- * 
+ *
  * @input {Float} rx    Solar radii from the center of the sun in the x-direction.
  * @input {Float} ry    Solar radii from the center of the sun in the y-direction.
  * @input {Float} scale The physical scale covered by a single pixel at the current resolution.
  * @input {Float} rsun  The radius of the sun in pixels at the current resolution
- * 
+ *
  * @return {Object} Returns an object literal containing the converted x and y coordinates.
  */
 var solarRadiiToHelioprojective = function (rx, ry, scale, rsun) {
     var rsunInArcSeconds = rsun * scale;
-    
+
     return {
         x: rx * rsunInArcSeconds,
-        y: ry * rsunInArcSeconds 
+        y: ry * rsunInArcSeconds
     };
 };
 
 /**
  * @description Converts coordinates from helioprojective (arc-seconds as seen from earth) to solar radii.
- * 
+ *
  * @input {Float} hx    Helioprojective x-coordinate.
  * @input {Float} hy    Helioprojective y-coordinate.
  * @input {Float} scale The physical scale covered by a single pixel at the current resolution.
  * @input {Float} rsun  The radius of the sun in pixels at the current resolution
- * 
+ *
  * @return {Object} Returns an object literal containing the converted x and y coordinates.
- * 
+ *
  * @see Viewport.getRSun
  */
 var helioprojectiveToSolarRadii = function (hx, hy, scale, rsun) {
     var rsunInArcSeconds = rsun * scale;
-    
+
     return {
         x: hx / rsunInArcSeconds,
-        y: hy / rsunInArcSeconds 
+        y: hy / rsunInArcSeconds
     };
 };
 
 /**
- * Takes in pixel coordinates and converts them to arcseconds. 
- * Pixel coordinates must be relative to the center of the sun. 
- * 
+ * Takes in pixel coordinates and converts them to arcseconds.
+ * Pixel coordinates must be relative to the center of the sun.
+ *
  * @input {Object} coordinates -- contains values for x1, x2, y1, and y2
  * @input {Float}  scale       -- the scale of the image in arcsec/pixel
- * 
+ *
  * @return object
  */
 var pixelsToArcseconds = function (coordinates, scale) {
@@ -297,7 +298,7 @@ var pixelsToArcseconds = function (coordinates, scale) {
  */
 var layerStringToLayerArray = function (layers) {
     var layerArray = [], rawArray = layers.split("],");
-    
+
     $.each(rawArray, function () {
         layerArray.push(this.replace(/[\[\]]/g, ""));
     });
@@ -317,7 +318,7 @@ var extractLayerName = function (layer) {
  * component parts and returns a JavaScript representation.
  *
  * @param {String} The layer identifier as an comma-concatenated string
- * 
+ *
  * @returns {Object} A simple JavaScript object representing the layer parameters
  */
 var parseLayerString = function (str) {
@@ -332,16 +333,38 @@ var parseLayerString = function (str) {
     };
 };
 
+/**
+ * Breaks up a given event layer identifier (e.g. <type>,<frm>,<open>) into its
+ * component parts and returns a JavaScript representation.
+ *
+ * @param {String} The event layer identifier as an comma-concatenated string
+ *
+ * @returns {Object} A simple JavaScript object representing the levent ayer parameters
+ */
+var parseEventString = function (str) {
+    var frms = [], params = str.split(",");
+
+    $.each(params[1].split(";"), function (i, frm_name) {
+        frms.push(frm_name);
+    });
+
+    return {
+        event_type : params[0],
+        frms       : frms,
+        open       : Boolean(parseInt(params[2], 10))
+    };
+};
+
 
 /**
  * Maps iPhone/Android touch events to normal mouse events so that dragging, etc can be done.
- * 
+ *
  * @see http://ross.posterous.com/2008/08/19/iphone-touch-events-in-javascript/
  */
 function touchHandler(event)
 {
     var touches, first, type, simulatedEvent;
-    
+
     touches = event.changedTouches;
     first   = touches[0];
     type    = "";
@@ -352,14 +375,14 @@ function touchHandler(event)
         break;
     case "touchmove":
         type = "mousemove";
-        break;        
+        break;
     case "touchend":
         type = "mouseup";
         break;
     default:
         return;
     }
-    
+
     simulatedEvent = document.createEvent("MouseEvent");
     simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY,
                                   first.clientX, first.clientY, false, false, false, false, 0, null);
@@ -370,9 +393,9 @@ function touchHandler(event)
 
 /**
  * Maps the touch handler events to mouse events for a given element using the touchHandler event listener above
- * 
+ *
  * @param element HTML element to assign events to
- * 
+ *
  * @return void
  */
 function assignTouchHandlers(element) {
@@ -382,5 +405,5 @@ function assignTouchHandlers(element) {
     element.addEventListener("touchstart", touchHandler, true);
     element.addEventListener("touchmove", touchHandler, true);
     element.addEventListener("touchend", touchHandler, true);
-    element.addEventListener("touchcancel", touchHandler, true);    
+    element.addEventListener("touchcancel", touchHandler, true);
 }

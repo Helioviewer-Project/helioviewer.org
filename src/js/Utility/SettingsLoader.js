@@ -1,18 +1,19 @@
 /**
  * @fileOverview Contains the class definition for a SettingsLoader class.
+ * @author <a href="mailto:jeff.stys@nasa.gov">Jeff Stys</a>
  * @author <a href="mailto:keith.hughitt@nasa.gov">Keith Hughitt</a>
  * @author <a href="mailto:jaclyn.r.beck@gmail.com">Jaclyn Beck</a>
  */
-/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, 
+/*jslint browser: true, white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true,
 bitwise: true, regexp: true, strict: true, newcap: true, immed: true, maxlen: 120, sub: true */
 /*global $, Class, getUTCTimestamp, parseFloat, UserSettings */
 "use strict";
 var SettingsLoader = (
     /** @lends SettingsLoader.prototype */
-    {    
+    {
     /**
      * Loads default settings and URL settings.
-     * 
+     *
      * @returns {Object} A UserSettings object
      */
     loadSettings: function (urlSettings, serverSettings) {
@@ -23,17 +24,17 @@ var SettingsLoader = (
                 "minMovieLength": 300,
                 "maxMovieLength": 16934400
             };
-        
+
         return new UserSettings(defaults, urlSettings, constraints);
     },
-    
+
     /**
      * Creates a hash containing the default settings to use. Change default settings here.
-     * 
+     *
      * TODO 10/01/2010: Add check when adding default layer to make sure it is available.
-     * 
+     *
      * @param {Object} Helioviewer.org server-specified defaults
-     * 
+     *
      * @returns {Object} The default Helioviewer.org settings
      */
     _getDefaultSettings: function (serverSettings) {
@@ -51,7 +52,7 @@ var SettingsLoader = (
                 },
                 autorefresh: false
             },
-            // Saved movie and screenshots 
+            // Saved movie and screenshots
             history: {
                 movies: [],
                 screenshots: []
@@ -63,12 +64,17 @@ var SettingsLoader = (
             },
             // Application state
             state: {
-                centerX: 0,
-                centerY: 0,
-                date: date.getTime(),
+                centerX    : 0,
+                centerY    : 0,
+                date       : date.getTime(),
                 eventLayers: [],
-                imageScale: serverSettings.defaultImageScale,
-                tileLayers: [{
+                eventLabels: true,
+                scale      : true,
+                scaleType  : 'earth',
+                scaleX     : 0,
+                scaleY     : 0,
+                imageScale : serverSettings.defaultImageScale,
+                tileLayers : [{
                     observatory: 'SDO',
                     instrument : 'AIA',
                     detector   : 'AIA',
@@ -76,7 +82,7 @@ var SettingsLoader = (
                     visible    : true,
                     opacity    : 100
                 }],
-                timeStep: 86400
+                timeStep   : 86400
             },
             version: serverSettings.version
         };
