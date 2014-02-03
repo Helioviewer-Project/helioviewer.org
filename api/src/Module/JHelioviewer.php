@@ -7,272 +7,304 @@
  *
  * @category Modules
  * @package  Helioviewer
+ * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  */
 require_once 'interface.Module.php';
-
 /**
  * Provides methods for assisting JHelioviewer such as JPEG 2000 archive
  * searching and JPX file generation
  *
  * @category Modules
  * @package  Helioviewer
+ * @author   Jeff Stys <jeff.stys@nasa.gov>
  * @author   Keith Hughitt <keith.hughitt@nasa.gov>
  * @license  http://www.mozilla.org/MPL/MPL-1.1.html Mozilla Public License 1.1
  * @link     http://launchpad.net/helioviewer.org
  *
  */
-class Module_JHelioviewer implements Module
-{
+class Module_JHelioviewer implements Module {
+
     private $_params;
     private $_options;
 
     /**
-     * Creates a JHelioviewer module instance
+     * Create a JHelioviewer module instance
      *
      * @param array &$params API Request parameters.
      *
      * @return void
      */
-    public function __construct(&$params)
-    {
+    public function __construct(&$params) {
         $this->_params = $params;
         $this->_options = array();
     }
 
     /**
-     * Validates and executes the request
+     * Validate and execute the requested API action
      *
      * @return void
      */
-    public function execute()
-    {
-        if ($this->validate()) {
+    public function execute() {
+
+        if ( $this->validate() ) {
             try {
                 $this->{$this->_params['action']}();
-            } catch (Exception $e) {
+            }
+            catch (Exception $e) {
                 handleError($e->getMessage(), $e->getCode());
             }
         }
     }
 
     /**
-     * Finds the best match for a single JPEG 2000 image and either prints a link to it or displays it directly.
+     * Find the best match for a single JPEG2000 image and either
+     * output a link to the image, or display the image directly.
      *
      * @return void
      */
-    public function getJP2Image ()
-    {
+    public function getJP2Image() {
+
         include_once 'src/Database/ImgIndex.php';
         $imgIndex = new Database_ImgIndex();
-        
+
         // Optional parameters
         $defaults = array(
-            "jpip" => false,
-            "json" => false
+            'jpip' => false,
+            'json' => false
         );
-        
+
         $options = array_replace($defaults, $this->_options);
-        
-        // If image id is set, then just use that
-        if (isset($this->_params['id'])) {
-            $filepath = HV_JP2_DIR . $imgIndex->getJP2FilePathFromId($this->_params['id']);
-        } else {
+
+        // If image id is set, use it
+        if ( isset($this->_params['id']) ) {
+            $filepath = HV_JP2_DIR
+                      . $imgIndex->getJP2FilePathFromId($this->_params['id']);
+        }
+        else {
             // Otherwise look up sourceId if not specified
             $sourceId = $this->_getSourceId($imgIndex);
-    
+
             // Filepath to JP2 Image
-            $filepath = HV_JP2_DIR . $imgIndex->getJP2FilePath($this->_params['date'], $sourceId);
+            $filepath = HV_JP2_DIR.$imgIndex->getJP2FilePath(
+                $this->_params['date'], $sourceId);
         }
 
         // Output results
-        if ($options['jpip']) {
-            if ($options['json']) {
+        if ( $options['jpip'] ) {
+
+            if ( $options['json'] ) {
                 header('Content-type: application/json;charset=UTF-8');
-                echo json_encode(array("uri" => $this->_getJPIPURL($filepath)));
-            } else {
+                echo json_encode(
+                    array('uri' => $this->_getJPIPURL($filepath)) );
+            }
+            else {
                 echo $this->_getJPIPURL($filepath);
             }
-        } else {
+        }
+        else {
             $this->_displayJP2($filepath);
         }
     }
-    
+
     /**
-     * Constructs a JPX image series
+     * Construct a JPX image series
      *
      * @return void
      */
-    public function getJPX ()
-    {
+    public function getJPX() {
+
         include_once 'src/Image/JPEG2000/HelioviewerJPXImage.php';
         include_once 'src/Database/ImgIndex.php';
-        
+
         $imgIndex = new Database_ImgIndex();
 
         // Optional parameters
         $defaults = array(
-            "jpip"    => false,
-            "cadence" => false,
-            "linked"  => false,
-            "verbose" => false
+            'jpip'    => false,
+            'cadence' => false,
+            'linked'  => false,
+            'verbose' => false
         );
         $options = array_replace($defaults, $this->_options);
-        
+
+/*
         // Make sure cadence is valid
         if ($options['cadence'] && $options['cadence'] <= 0) {
-            throw new Exception("Invalid cadence specified. Cadence must be greater than 0.");
+            $options['cadence'] = 1;
+//            throw new Exception('Invalid cadence specified. ' .
+//                                'Cadence must be greater than 0.');
         }
-        
-        
-        // Both sourceId and observatory, instrument, detector and measurement names are needed
-        $sourceId = $this->_getSourceId($imgIndex);        
-        list($obs, $inst, $det, $meas) = $this->_getSourceIdInfo($sourceId, $imgIndex);
-        
+*/
+
+        // sourceId as well as observatory, instrument, detector and
+        // measurement names are required
+        $sourceId = $this->_getSourceId($imgIndex);
+        list($obs, $inst, $det, $meas) = $this->_getSourceIdInfo($sourceId,
+            $imgIndex);
+
         // Compute filename
         $filename = $this->_getJPXFilename(
-            $obs, $inst, $det, $meas, $this->_params['startTime'], $this->_params['endTime'], 
-            $options['cadence'], $options['linked']
+            $obs, $inst, $det, $meas, $this->_params['startTime'],
+            $this->_params['endTime'], $options['cadence'], $options['linked']
         );
-        
+
         // Create JPX image instance
         try {
             $jpx = new Image_JPEG2000_HelioviewerJPXImage(
-                $sourceId, $this->_params['startTime'], $this->_params['endTime'], 
-                $options['cadence'], $options['linked'], $filename
+                $sourceId, $this->_params['startTime'],
+                $this->_params['endTime'], $options['cadence'],
+                $options['linked'], $filename
             );
-            
-        } catch (Exception $e) {
-            // If a problem is encountered, return an error message as JSON            
+        }
+        catch (Exception $e) {
+            // If a problem is encountered, return an error message as JSON
             header('Content-type: application/json;charset=UTF-8');
             echo json_encode(
                 array(
-                    "error"   => $e->getMessage(),
-                    "uri"     => null
+                    'error'   => $e->getMessage(),
+                    'uri'     => null
                 )
             );
             return;
         }
 
         // Chose appropriate action based on request parameters
-        if ($options['verbose']) {
+        if ( $options['verbose'] ) {
             $jpx->printJSON($options['jpip'], $options['verbose']);
-        } else {
-            if ($options['jpip']) {
+        }
+        else {
+            if ( $options['jpip'] ) {
                 echo $jpx->getJPIPURL();
-            } else {
+            }
+            else {
                 $jpx->displayImage();
-            }            
+            }
         }
     }
-    
+
     /**
-     * Returns the sourceId for the current request
-     * 
+     * Return the sourceId for the current request
+     *
      * @param object &$imgIndex A Helioviewer database instance
-     * 
+     *
      * @return int The id of the datasource specified for the request
      */
-    private function _getSourceId(&$imgIndex)
-    {
-        if (isset($this->_params['sourceId'])) {
+    private function _getSourceId(&$imgIndex) {
+
+        if ( isset($this->_params['sourceId']) ) {
             return $this->_params['sourceId'];
         }
 
         return $imgIndex->getSourceId(
             $this->_params['observatory'], $this->_params['instrument'],
-            $this->_params['detector'], $this->_params['measurement']
+            $this->_params['detector'],    $this->_params['measurement']
         );
     }
-    
+
     /**
-     * Returns info for a given sourceId
-     * 
+     * Return info for a given sourceId
+     *
      * @param int    $sourceId  Id of data source
      * @param object &$imgIndex Database accessor
-     * 
+     *
      * @return array An array containing the observatory, instrument, detector and measurement associated with the
      *               specified datasource id.
      */
-    private function _getSourceIdInfo($sourceId, &$imgIndex)
-    {
-        if (!(isset($this->_params['observatory']) && isset($this->_params['instrument'])
-            && isset($this->_params['detector'])    && isset($this->_params['measurement']))
-        ) {
-            // Get an associative array of the datasource meta information     
+    private function _getSourceIdInfo($sourceId, &$imgIndex) {
+
+        if ( !( isset($this->_params['observatory']) &&
+                isset($this->_params['instrument'])  &&
+                isset($this->_params['detector'])    &&
+                isset($this->_params['measurement'])    ) ) {
+
+            // Get an associative array of the datasource meta information
             $info = $imgIndex->getDatasourceInformationFromSourceId($sourceId);
 
             // Return as an indexed array
-            return array($info['observatory'], $info['instrument'], $info['detector'], $info['measurement']);
-        } else {
-            return array($this->_params['observatory'], $this->_params['instrument'], 
-                         $this->_params['detector'], $this->_params['measurement']);
+            return array( $info['observatory'],
+                          $info['instrument'],
+                          $info['detector'],
+                          $info['measurement'] );
+        }
+        else {
+            return array( $this->_params['observatory'],
+                          $this->_params['instrument'],
+                          $this->_params['detector'],
+                          $this->_params['measurement'] );
         }
     }
-    
+
     /**
-     * Determines filename to use for storing generated JPX image. Filenames are of the form:
-     *
-     *  Obs_Inst_Det_Meas_FROM_TO_BY(L).jpx
+     * Generate the filename to use for storing JPXimage.
+     * Filenames are of the form:
+     *     Obs_Inst_Det_Meas_FROM_TO_BY[L].jpx
      *
      * @param string $obs       Observatory
      * @param string $inst      Instrument
      * @param string $det       Detector
      * @param string $meas      Measurement
-     * @param string $startTime Requested start time for JPX (ISO 8601 UTC date string)
-     * @param string $endTime   Requested finish time for JPX (ISO 8601 UTC date string)
-     * @param int    $cadence   Number of seconds between each frame in the image series
-     * @param bool   $linked    Whether or not requested JPX image should be a linked JPX
+     * @param string $startTime Requested start time for JPX
+     *                          (ISO 8601 UTC date string)
+     * @param string $endTime   Requested finish time for JPX
+     *                          (ISO 8601 UTC date string)
+     * @param int    $cadence   Number of seconds between each frame in the
+     *                          image series
+     * @param bool   $linked    Whether or not requested JPX image should be
+     *                          a linked JPX
      *
      * @return string Filename to use for generated JPX image
      */
-    private function _getJPXFilename($obs, $inst, $det, $meas, $startTime, $endTime, $cadence, $linked)
-    {
-        $from = str_replace(":", ".", $startTime);
-        $to   = str_replace(":", ".", $endTime);
-        $filename = implode("_", array($obs, $inst, $det, $meas, "F$from", "T$to"));
+    private function _getJPXFilename($obs, $inst, $det, $meas, $startTime,
+        $endTime, $cadence, $linked) {
 
-        // If cadence was manually specified include it in the filename
-        if ($cadence) {
-            $filename .= "B$cadence";
+        $from = str_replace(':', '.', $startTime);
+        $to   = str_replace(':', '.', $endTime);
+        $filename = implode('_', array( $obs, $inst, $det, $meas,
+                                        'F'.$from, 'T'.$to ) );
+
+        // Indicate the cadence in the filename if one was specified
+        if ( $cadence ) {
+            $filename .= 'B'.$cadence;
         }
 
-        // Differentiate linked JPX files
-        if ($linked) {
-            $filename .= "L";
+        // Append an "L" to the filename for "Linked" JPX files
+        if ( $linked ) {
+            $filename .= 'L';
         }
 
-        return str_replace(" ", "-", $filename) . ".jpx";
+        return str_replace(' ', '-', $filename).'.jpx';
     }
 
     /**
-     * Prints a JP2 image to the screen
+     * Output the specified JP2 image directly
      *
      * @param string $filepath The location of the image to be displayed.
      *
      * @return void
      */
-    private function _displayJP2($filepath)
-    {
-        $fp   = fopen($filepath, 'r');
+    private function _displayJP2($filepath) {
+
+        $fp   = @fopen($filepath, 'r');
         $stat = stat($filepath);
 
         $filename = basename($filepath);
 
-        header("Content-Length: " . $stat['size']);
-        header("Content-Type: "   . image_type_to_mime_type(IMAGETYPE_JP2));
-        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header('Content-Length: '.$stat['size']);
+        header('Content-Type: '  .image_type_to_mime_type(IMAGETYPE_JP2));
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-        $contents = fread($fp, $stat['size']);
+        $contents = @fread($fp, $stat['size']);
 
         echo $contents;
-        fclose($fp);
+
+        @fclose($fp);
     }
 
     /**
-     * Converts a regular HTTP URL to a JPIP URL
+     * Convert a URL from the 'http' protocol to 'jpip'
      *
      * @param string $filepath    Location of JPX file
      * @param string $jp2Dir      The JPEG 2000 archive root directory
@@ -280,28 +312,29 @@ class Module_JHelioviewer implements Module
      *
      * @return string A JPIP URL.
      */
-    private function _getJPIPURL($filepath, $jp2Dir = HV_JP2_DIR, $jpipBaseURL = HV_JPIP_ROOT_URL)
-    {
-        $webRootRegex = "/" . preg_replace("/\//", "\/", $jp2Dir) . "/";
+    private function _getJPIPURL($filepath, $jp2Dir=HV_JP2_DIR,
+        $jpipBaseURL = HV_JPIP_ROOT_URL) {
+
+        $webRootRegex = '/'.preg_replace("/\//", "\/", $jp2Dir).'/';
         $jpip = preg_replace($webRootRegex, $jpipBaseURL, $filepath);
+
         return $jpip;
     }
 
     /**
-     * launchJHelioviewer
+     * launch JHelioviewer
      *
      * @return void
      */
-    public function launchJHelioviewer ()
-    {
-        $args = array($this->_params['startTime'], $this->_params['endTime'], 
+    public function launchJHelioviewer () {
+
+        $args = array($this->_params['startTime'], $this->_params['endTime'],
                       $this->_params['imageScale'], $this->_params['layers']);
-     
+
         header('content-type: application/x-java-jnlp-file');
         header('content-disposition: attachment; filename="JHelioviewer.jnlp"');
         echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
-
-        ?>
+?>
             <jnlp spec="1.0+" codebase="http://achilles.nascom.nasa.gov/~dmueller/jhv/" href="JHelioviewer.jnlp">
                 <information>
                     <title>JHelioviewer</title>
@@ -310,52 +343,55 @@ class Module_JHelioviewer implements Module
                     <description>JHelioviewer web launcher</description>
                     <offline-allowed />
                 </information>
-            
+
                 <resources>
                     <j2se version="1.5+" max-heap-size="1000M"/>
                     <jar href="JHelioviewer.jar" />
                 </resources>
-            
+
                 <security>
                     <all-permissions />
                 </security>
-            
+
                 <application-desc main-class="org.helioviewer.JavaHelioViewer">
                     <argument>-jhv</argument>
-                    <argument><?php vprintf("[startTime=%s;endTime=%s;linked=true;imageScale=%f;imageLayers=%s]", $args);?></argument>
+                    <argument><?php vprintf("[startTime=%s;endTime=%s;linked=true;imageScale=%f;imageLayers=%s]", $args); ?></argument>
                 </application-desc>
             </jnlp>
-        <?php
+<?php
     }
 
     /**
-     * Validate the requested action and input
+     * Validate the requested action and associated input parameters.
      *
      * @return void
      */
-    public function validate()
-    {
-        switch($this->_params['action'])
-        {
+    public function validate() {
+
+        switch($this->_params['action']) {
+
         case 'getJP2Image':
             $expected = array(
                'optional' => array('jpip', 'json'),
-               'bools' => array('jpip', 'json'),
-               'dates' => array('date')
+               'bools'    => array('jpip', 'json'),
+               'dates'    => array('date')
             );
-            
+
             // If imageId is specified, that is all that is needed
-            if (isset($this->_params['id'])) {
+            if ( isset($this->_params['id']) ) {
                 $expected['required'] = array('id');
                 $expected['ints']     = array('id');
             }
-            // Either sourceId or observatory, instrument, detector and 
+            // Either sourceId or observatory, instrument, detector and
             // measurement must be specified
-            else if (isset($this->_params['sourceId'])) {
+            else if ( isset($this->_params['sourceId']) ) {
                 $expected['required'] = array('date', 'sourceId');
                 $expected['ints']     = array('sourceId');
-            } else {
-                $expected['required'] = array('date', 'observatory', 'instrument', 'detector', 'measurement');
+            }
+            else {
+                $expected['required'] = array('date', 'observatory',
+                                              'instrument', 'detector',
+                                              'measurement');
             }
             break;
 
@@ -367,42 +403,49 @@ class Module_JHelioviewer implements Module
                 'dates'    => array('startTime', 'endTime'),
                 'ints'     => array('cadence')
             );
-            
-            // Either sourceId or observatory, instrument, detector and measurement must be specified
-            if (isset($this->_params['sourceId'])) {
-                $expected['required'] = array('startTime', 'endTime', 'sourceId');
-                $expected['ints']     = array('sourceId');
-            } else {
-                $expected['required'] = array('startTime', 'endTime', 'observatory', 'instrument', 'detector', 'measurement');
-            }
 
+            // Either sourceId or observatory, instrument, detector
+            // and measurement must be specified
+            if ( isset($this->_params['sourceId']) ) {
+                $expected['required'] = array('startTime', 'endTime',
+                                              'sourceId');
+                $expected['ints']     = array('sourceId');
+            }
+            else {
+                $expected['required'] = array('startTime', 'endTime',
+                                              'observatory', 'instrument',
+                                              'detector', 'measurement');
+            }
             break;
-        case "launchJHelioviewer":
+
+        case 'launchJHelioviewer':
             $expected = array(
-                'required' => array('startTime', 'endTime', 'imageScale', 'layers'),
+                'required' => array('startTime', 'endTime', 'imageScale',
+                                    'layers'),
                 'floats'   => array('imageScale'),
                 'dates'    => array('startTime', 'endTime'),
             );
             break;
+
         default:
             break;
-        }
+        } // end switch block
 
-        if (isset($expected)) {
-            Validation_InputValidator::checkInput($expected, $this->_params, $this->_options);
+        if ( isset($expected) ) {
+            Validation_InputValidator::checkInput($expected, $this->_params,
+                $this->_options);
         }
 
         return true;
     }
 
     /**
-     * Prints the JHelioviewer module's documentation header
-     * 
+     * Print the JHelioviewer module's documentation header
+     *
      * @return void
      */
-    public static function printDocHeader()
-    {
-        ?>
+    public static function printDocHeader() {
+?>
             <li>
                 <a href="index.php#JPEG2000API">JPEG 2000</a>
                 <ul>
@@ -410,42 +453,42 @@ class Module_JHelioviewer implements Module
                     <li><a href="index.php#getJPX">Creating a JPX Movie</a></li>
                 </ul>
             </li>
-        <?php     
+<?php
     }
 
-
     /**
-     * Prints JHelioviewer module documentation
+     * Print JHelioviewer module documentation
      *
      * @return void
      */
-    public static function printDoc()
-    {
-        ?>
+    public static function printDoc() {
+?>
         <!-- JPEG 2000 API -->
         <div id="JPEG2000API">
             <h1>JPEG 2000 API:</h1>
-            <p>Helioviewer's JPEG 2000 API's enable access to the raw JPEG 2000 images used to generate the tiles seen on the
-            site, as well as real-time generation of JPEG 2000 Image Series (JPX).</p>
+            <p>Helioviewer's JPEG 2000 API's enable access to the raw JPEG
+            2000 images used to generate the tiles seen on the site, as well
+            as real-time generation of JPEG 2000 Image Series (JPX).</p>
             <ol style="list-style-type: upper-latin;">
                 <!-- JPEG 2000 Image API -->
                 <li>
                 <div id="getJP2Image">JP2 Images:
-                <p>Returns a single JPEG 2000 (JP2) image. If an image is not available for the date request the closest
-                available image is returned.</p>
-        
+                <p>Returns a single JPEG 2000 (JP2) image. If an image is not
+                available for the date request the closest available image is
+                returned.</p>
+
                 <br />
-        
+
                 <div class="summary-box"><span
                     style="text-decoration: underline;">Usage:</span><br />
                 <br />
-        
-                <?php echo HV_API_ROOT_URL;?>?action=getJP2Image<br />
+
+                <?php echo HV_API_ROOT_URL; ?>?action=getJP2Image<br />
                 <br />
-        
+
                 Supported Parameters:<br />
                 <br />
-        
+
                 <table class="param-list" cellspacing="10">
                     <tbody valign="top">
                         <tr>
@@ -476,54 +519,57 @@ class Module_JHelioviewer implements Module
                         <tr>
                             <td><b>sourceId</b></td>
                             <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
-                            measurement parameters).</td>
+                            <td><i>[Optional]</i> The image source ID (can be
+                            used in place of observatory, instrument, detector
+                            and measurement parameters).</td>
                         </tr>
                         <tr>
                             <td><b>jpip</b></td>
                             <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Returns a JPIP URI instead of an actual image.</td>
+                            <td><i>[Optional]</i> Returns a JPIP URI instead
+                            of an actual image.</td>
                         </tr>
                     </tbody>
                 </table>
-        
+
                 <br />
-        
+
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;date=2003-10-05T00:00:00Z">
-                <?php echo HV_API_ROOT_URL;?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z
+                <a href="<?php echo HV_API_ROOT_URL; ?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;date=2003-10-05T00:00:00Z">
+                <?php echo HV_API_ROOT_URL; ?>?action=getJP2Image&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&date=2003-10-05T00:00:00Z
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
-                <?php echo HV_API_ROOT_URL;?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
+                <a href="<?php echo HV_API_ROOT_URL; ?>?action=getJP2Image&amp;observatory=SOHO&amp;instrument=LASCO&amp;detector=C2&amp;measurement=white-light&amp;date=2003-10-05T00:00:00Z&amp;jpip=true">
+                <?php echo HV_API_ROOT_URL; ?>?action=getJP2Image&observatory=SOHO&instrument=LASCO&detector=C2&measurement=white-light&date=2003-10-05T00:00:00Z&jpip=true
                 </a>
                 </span>
                 </div>
                 </div>
                 </li>
-        
+
                 <br />
-        
+
                 <!-- JPX API -->
                 <li>
                 <div id="getJPX">JPX API
-                <p>Returns a JPEG 2000 Image Series (JPX) file. The movie frames are chosen by matching the closest image
-                available at each step within the specified range of dates.</p>
-        
+                <p>Returns a JPEG 2000 Image Series (JPX) file. The movie
+                frames are chosen by matching the closest image available at
+                each step within the specified range of dates.</p>
+
                 <br />
-        
+
                 <div class="summary-box"><span style="text-decoration: underline;">Usage:</span><br />
-        
+
                 <br />
-        
-                <?php echo HV_API_ROOT_URL;?>?action=getJPX<br />
+
+                <?php echo HV_API_ROOT_URL; ?>?action=getJPX<br />
                 <br />
-        
+
                 Supported Parameters:<br />
                 <br />
-        
+
                 <table class="param-list" cellspacing="10">
                     <tbody valign="top">
                         <tr>
@@ -559,49 +605,60 @@ class Module_JHelioviewer implements Module
                         <tr>
                             <td><b>cadence</b></td>
                             <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The desired amount of time between each movie-frame, in seconds. If no 
-                            cadence is specified, the server will attempt to select an optimal cadence.</td>
+                            <td><i>[Optional]</i> The desired amount of time
+                            between each movie-frame, in seconds. If no
+                            cadence is specified, the server will attempt to
+                            select an optimal cadence.</td>
                         </tr>
                         <tr>
                             <td><b>sourceId</b></td>
                             <td><i>Integer</i></td>
-                            <td><i>[Optional]</i> The image source ID (can be used in place of observatory, instrument, detector and
-                            measurement parameters).</td>
+                            <td><i>[Optional]</i> The image source ID (can be
+                            used in place of observatory, instrument, detector
+                            and measurement parameters).</td>
                         </tr>
                         <tr>
                             <td><b>verbose</b></td>
                             <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> In addition to the JPX file URI, timestamps for each frame in the 
-                            resulting movie and any warning messages generated are included in a JSON response.</td>
+                            <td><i>[Optional]</i> In addition to the JPX file
+                            URI, timestamps for each frame in the resulting
+                            movie and any warning messages generated are
+                            included in a JSON response.</td>
                         </tr>
                         <tr>
                             <td><b>jpip</b></td>
                             <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Returns a JPIP URI instead of an actual movie.</td>
+                            <td><i>[Optional]</i> Returns a JPIP URI instead
+                            of an actual movie.</td>
                         </tr>
                         <tr>
                             <td><b>linked</b></td>
                             <td><i>Boolean</i></td>
-                            <td><i>[Optional]</i> Returns a linked JPX file containing image pointers instead of data for each
-                            individual frame in the series. Currently, only JPX image series support this feature.</td>
+                            <td><i>[Optional]</i> Returns a linked JPX file
+                            containing image pointers instead of data for each
+                            individual frame in the series. Currently, only
+                            JPX image series support this feature.</td>
                         </tr>
                     </tbody>
                 </table>
-        
+
                 <br />
                 Result:<br />
                 <br />
-                The default action is to simply return the requested JPX file. If additional information is needed,
-                for example, then a JSON result will be returned with the file URI plus any additional parameters requested.
+                The default action is to simply return the requested JPX file.
+                If additional information is needed, for example, then a JSON
+                result will be returned with the file URI plus any additional
+                parameters requested.
                 <br /><br />
-        
+
                 <!-- Return parameter description -->
                 <table class="param-list" cellspacing="10">
                     <tbody valign="top">
                         <tr>
                             <td width="20%"><b>uri</b></td>
                             <td width="20%"><i>String</i></td>
-                            <td><i>[Optional]</i> Location of the requested file.</td>
+                            <td><i>[Optional]</i> Location of the requested
+                            file.</td>
                         </tr>
                         <tr>
                             <td><b>frames</b></td>
@@ -611,48 +668,52 @@ class Module_JHelioviewer implements Module
                         <tr>
                             <td><b>error</b></td>
                             <td><i>String</i></td>
-                            <td><i>[Optional]</i> Any fatal error messages generated during the request</td>
-                        </tr>                        
+                            <td><i>[Optional]</i> Any fatal error messages
+                            generated during the request</td>
+                        </tr>
                         <tr>
                             <td><b>warning</b></td>
                             <td><i>String</i></td>
-                            <td><i>[Optional]</i> Any non-fatal warning messages generated during the request</td>
+                            <td><i>[Optional]</i> Any non-fatal warning
+                            messages generated during the request</td>
                         </tr>
                     </tbody>
                 </table>
-        
+
                 <br />
-        
+
                 <span class="example-header">Examples:</span>
                 <span class="example-url">
-                <a href="<?php echo HV_API_ROOT_URL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
-                    <?php echo HV_API_ROOT_URL;?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
+                <a href="<?php echo HV_API_ROOT_URL; ?>?action=getJPX&amp;observatory=SOHO&amp;instrument=EIT&amp;detector=EIT&amp;measurement=171&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z">
+                    <?php echo HV_API_ROOT_URL; ?>?action=getJPX&observatory=SOHO&instrument=EIT&detector=EIT&measurement=171&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z
                 </a>
                 </span><br />
                 <span class="example-url">
-                <a href="<?php HV_API_ROOT_URL;?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;jpip=true">
-                    <?php echo HV_API_ROOT_URL;?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&jpip=true
+                <a href="<?php HV_API_ROOT_URL; ?>?action=getJPX&amp;observatory=SOHO&amp;instrument=MDI&amp;detector=MDI&amp;measurement=magnetogram&amp;startTime=2003-10-05T00:00:00Z&amp;endTime=2003-10-20T00:00:00Z&amp;cadence=3600&amp;linked=true&amp;jpip=true">
+                    <?php echo HV_API_ROOT_URL; ?>?action=getJPX&observatory=SOHO&instrument=MDI&detector=MDI&measurement=magnetogram&startTime=2003-10-05T00:00:00Z&endTime=2003-10-20T00:00:00Z&cadence=3600&linked=true&jpip=true
                 </a>
                 </span></div>
                 </div>
-        
+
                 <br />
-        
+
                 <!-- getJPX API Notes -->
                 <div class="summary-box" style="background-color: #E3EFFF;">
                 <span style="text-decoration: underline;">Notes:</span>
-        
+
                 <br /><br />
-        
+
                 <ul>
                     <li>
-                    <p>If no cadence is specified Helioviewer.org attempts to choose an optimal cadence for the requested range and data source.</p>
+                    <p>If no cadence is specified Helioviewer.org attempts to
+                    choose an optimal cadence for the requested range and data
+                    source.</p>
                     </li>
                 </ul>
                 </div>
-        
+
                 <br />
-        <?php
+<?php
     }
 }
 ?>

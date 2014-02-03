@@ -440,13 +440,14 @@ class Database_ImgIndex {
      * Return an array of data from a given data source within the specified
      * time range.
      *
-     * @param datetime $start    Query start time
-     * @param datetime $end      Query end time
-     * @param int      $sourceId The data source identifier in the database
+     * @param datetime $start     Query start time
+     * @param datetime $end       Query end time
+     * @param int      $sourceId  The data source identifier in the database
+     * @param int      $maxFrames Optionally limit the size of the result set
      *
      * @return array Array containing matched rows from the `images` table
      */
-    public function getImageRange($start, $end, $sourceId) {
+    public function getImageRange($start, $end, $sourceId, $maxFrames=null) {
         include_once 'src/Helper/DateTimeConversions.php';
 
         $this->_dbConnect();
@@ -459,6 +460,9 @@ class Database_ImgIndex {
                'WHERE sourceId='.$sourceId.' ' .
                'AND date BETWEEN "'.$startDate.'" AND "'.$endDate.'" ' .
                'ORDER BY date ASC';
+        if ( !is_null($maxFrames) && $maxFrames > 0 ) {
+            $sql .= ' LIMIT '.(int)$maxFrames;
+        }
 
         $result = $this->_dbConnection->query($sql);
 
