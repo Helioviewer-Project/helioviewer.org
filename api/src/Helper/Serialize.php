@@ -115,7 +115,7 @@ class Helper_Serialize {
         @fclose($fh);
 
         // Move temporary file into permanent location
-        if ( !rename($this->_path.'/'.$temp_filename, $this->_path.'/'.$this->_filename) ) {
+        if ( !@rename($this->_path.'/'.$temp_filename, $this->_path.'/'.$this->_filename) ) {
 
             @unlink($this->_path.'/'.$temp_filename);
             return false;
