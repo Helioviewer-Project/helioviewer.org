@@ -15,6 +15,7 @@
         <echo>### Web Client ###</echo>
 
         <echo>removing old build files...</echo>
+        <mkdir dir="build/css"/>
         <delete quiet='false'>
             <fileset dir="build/" includes="helioviewer.js, helioviewer.min.js" />
             <fileset dir="build/css" includes="helioviewer.css, helioviewer.min.css" />
