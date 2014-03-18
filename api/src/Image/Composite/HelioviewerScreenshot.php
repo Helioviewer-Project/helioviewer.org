@@ -75,7 +75,7 @@ class Image_Composite_HelioviewerScreenshot
     private function _getScreenshotId() {
         return $this->db->insertScreenshot(
             $this->date,
-            $this->scale,
+            $this->imageScale,
             $this->roi->getPolygonString(),
             $this->watermark,
             $this->layers->serialize(),
